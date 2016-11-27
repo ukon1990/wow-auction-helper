@@ -1,0 +1,8 @@
+<p>Showing auctions:</p>
+{{getType(auctions)}}
+<table>
+    <tr><th>Item</th><th>Buyout</th></tr>
+    <tr *ngFor="let auc of buildAuctionArray(auctions) | slice:0:10">
+        <td>{{ auc }}</td><td>{{ "s" }}</td>
+    </tr>
+</table>
