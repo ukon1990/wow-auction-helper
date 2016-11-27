@@ -1,0 +1,1 @@
+wow-profession-crafting-helper
