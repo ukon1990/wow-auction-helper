@@ -14,11 +14,11 @@ import { Auction } from '../types/auction';
 
 export class AuctionComponent{
     private title = 'Auctions';
-    private observer = {};
-    private observertwo = {};
+    private auctionObserver = {};
+    private itemObserver = {};
     private auctions = [];
     private autionList = [];
-    private shit = {};
+    private itemList = {};
 
     private limit: number = 100;
     private index: number = 0;
@@ -30,7 +30,13 @@ export class AuctionComponent{
     ){}
 
     ngOnInit(): void {
-        this.observer = this.auctionService.getAuctions()
+        this.itemObserver = this.auctionService.getItems()
+            .subscribe(
+                i => {
+                    this.itemList = i
+                }
+            );
+        this.auctionObserver = this.auctionService.getAuctions()
             .subscribe(
                 r => {
                     this.auctions = this.buildAuctionArray(r.auctions)
@@ -38,13 +44,30 @@ export class AuctionComponent{
             );
     }
 
-    buildAuctionArray(arr){
-        let list = [];
-        let i = 0;
-        for(let o of arr){
-            list[o.auc] = o;
+    buildItemArray(arr){
+        let items = [];
+        for(let i of arr){
+            items[i['id']] = i.data;
         }
-        return list;
+        return items;
+    }
+
+    getItemName(itemID): string{
+        if(this.itemList[itemID] !== undefined){
+            return this.itemList[itemID]['name'];
+        }
+        return 'no item data';
+    }
+
+    buildAuctionArray(arr){
+        /*let i = 0;
+        for(let o of arr){
+            if(o.auc !== undefined){
+                this.autionList[o.auc] = o;
+            }
+            i++;
+        }*/
+        return arr;
     }
 
     getSize(list): number{
