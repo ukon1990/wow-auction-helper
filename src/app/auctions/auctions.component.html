@@ -1,7 +1,21 @@
 <p>Showing auctions:</p>
+<input class="search-field" type="text" placeholder="Search for a item"/>
 <table>
-    <tr><th>Item</th><th>Buyout</th></tr>
+    <tr>
+        <th>Item</th>
+        <th>Owner</th>
+        <th>Quantity</th>
+        <th>Time left</th>
+        <th (click)="sortAuctions('bid')">Bid</th>
+        <th (click)="sortAuctions('buyout')">Buyout</th>
+    </tr>
+            <!-- TODO: optemize price value fetch -->
     <tr *ngFor="let auc of auctions | slice:0:25">
-        <td>{{ getItemName(auc.item) }}</td><td>{{ auc.buyout }}</td>
+        <td>{{ getItemName(auc.item) }}</td>
+        <td>{{ auc.owner }}</td>
+        <td>{{ auc.quantity }}</td>
+        <td>{{ auc.timeLeft }}</td>
+        <td>{{ copperToArray(auc.bid) }}</td>
+        <td>{{ copperToArray(auc.buyout) }}</td>
     </tr>
 </table>

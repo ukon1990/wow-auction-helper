@@ -14,7 +14,7 @@ export class ItemService{
   }
   getItems(){
       //http://wah.jonaskf.net/GetItems.php
-      return this.http.get('http://wah.jonaskf.net/GetItems.php')
+      return this.http.get('http://wah.jonaskf.net/GetItems.php?fields=id,name')
         .map(response => <Object>function(r){ console.log('Loaded items');return r;  }(response.json().items));
   }
 }
