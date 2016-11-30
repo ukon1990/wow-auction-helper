@@ -9,7 +9,12 @@ export class ItemService{
   constructor(private http: Http){}
 
   getItem(itemid){
-    return this.http.get('http://localhost:8888/wow-api-layer/GetItems.php?itemid=' + itemid)
-      .map(response => <Auction>function(r){  console.log(r); return r;  }(response.json()));
+    return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
+      .map(response => <Object>function(r){  console.log(r); return r;  }(response.json()));
+  }
+  getItems(){
+      //http://wah.jonaskf.net/GetItems.php
+      return this.http.get('http://wah.jonaskf.net/GetItems.php')
+        .map(response => <Object>function(r){ console.log('Loaded items');return r;  }(response.json().items));
   }
 }

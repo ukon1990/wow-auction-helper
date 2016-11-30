@@ -30,7 +30,7 @@ export class AuctionComponent{
     ){}
 
     ngOnInit(): void {
-        this.itemObserver = this.auctionService.getItems()
+        this.itemObserver = this.itemService.getItems()
             .subscribe(
                 i => {
                     this.itemList = i
@@ -60,13 +60,12 @@ export class AuctionComponent{
     }
 
     buildAuctionArray(arr){
-        /*let i = 0;
         for(let o of arr){
-            if(o.auc !== undefined){
-                this.autionList[o.auc] = o;
+            if(this.itemList[o.item] === undefined){
+                this.itemList[o.item] = {"id": o.item, "name": "Loading"}
+                this.getItem(o.item);
             }
-            i++;
-        }*/
+        }
         return arr;
     }
 
@@ -83,10 +82,9 @@ export class AuctionComponent{
     }
 
     getItem(id){
-        this.observertwo = this.itemService.getItem(id)
+        this.itemObserver = this.itemService.getItem(id)
             .subscribe(
-                r => this.shit = r
+                r => this.itemList[r['id']] = r
             );
     }
-
 }
