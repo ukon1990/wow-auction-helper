@@ -10,3 +10,20 @@ table tr{
 table tr th{
     background: dimgrey;
 }
+
+tr .tooltip{
+    clear: both;
+    display: none;
+    position: fixed;
+    left: 1em;
+    margin-top: 1.3em;
+    width: 5em;
+}
+tr:hover .tooltip{
+    display: block;
+    position: fixed;
+    padding: 0.5em;
+    width: 200px;
+    min-height: 100px;
+    background: pink;
+}

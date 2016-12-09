@@ -13,16 +13,30 @@ import { Auction } from '../types/auction';
 })
 
 export class AuctionComponent{
+    //Strings
     private title = 'Auctions';
+    private searchQuery = '';
+
+    //Objects and arrays
     private auctionObserver = {};
     private itemObserver = {};
     private auctions = [];
     private autionList = [];
     private itemList = {};
+    private auctionDuration = {
+        "VERY_LONG": "12h+",
+        "LONG": "2-12h",
+        "MEDIUM": "30min-2h",
+        "SHORT": "<30min"
+    }
 
-    private limit: number = 100;
+    //Numbers
+    private limit: number = 25;//per page
     private index: number = 0;
     private numberOfAuctions: number = 0;
+    private currentPage: number = 0;
+    private numOfPages: number = this.numberOfAuctions/this.limit;
+
     private buyOutAsc: boolean = true;
 
     constructor(
@@ -37,6 +51,50 @@ export class AuctionComponent{
                     this.itemList = this.buildItemArray(i)
                 }
             );
+    }
+
+    changePage(change: number): void{
+        if( change > 0 && this.currentPage <= this.numOfPages ){
+            this.currentPage++;
+        }else if( change < 0 && this.currentPage >= 1 ){
+            this.currentPage--;
+        }
+    }
+
+    getToolTip(itemID: string){
+        if(this.itemList[itemID]['description'] === undefined){
+            this.getItem(itemID);
+        }
+    }
+
+    getDescription(itemID: string): string{
+        let item = this.itemList[itemID];
+        if(item['description'] !== undefined && item['description'].length > 0){
+            return item['description'];
+        }else if(item['itemSpells'] !== undefined){
+            let itemSpells = item['itemSpells'];
+            if(itemSpells.length > 0){
+                return itemSpells[0]['spell']['description'];
+            }
+        }
+    }
+
+    getNumOfPages(){
+        this.numOfPages = this.numberOfAuctions/this.limit;
+        return this.numOfPages;
+    }
+
+    filterAuctions(): Array<Object>{
+        if(this.searchQuery.length >0){
+            let list: Array<Object> = [];
+            for(let a of this.auctions){
+                if(this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1){
+                    list.push(a);
+                }
+            }
+            return list;
+        }
+        return this.auctions;
     }
 
     buildItemArray(arr){
@@ -65,6 +123,7 @@ export class AuctionComponent{
 
     buildAuctionArray(arr){
         for(let o of arr){
+            this.numberOfAuctions++;
             if(this.itemList[o.item] === undefined){
                 this.itemList[o.item] = {"id": o.item, "name": "Loading"}
             }
