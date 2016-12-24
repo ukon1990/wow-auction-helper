@@ -5,11 +5,13 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { AuctionComponent } from './auctions/auctions.component';
+import { UserComponent } from './components/user/user.component';
+import { AuctionComponent } from './components/auctions/auctions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    UserComponent,
     AuctionComponent
   ],
   imports: [

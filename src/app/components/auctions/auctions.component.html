@@ -1,5 +1,7 @@
 <p>Showing auctions:</p>
-<input class="search-field" type="text" placeholder="Search for a item" [(ngModel)]="searchQuery"/><br>
+{{ user.character }} <button (click)="getAuctions()">Update</button>
+<label name="onlyUserAuctions">Only my auctions</label><input type="checkbox" [(ngModel)]="filterByCharacter"/>
+<input class="search-field" type="text" placeholder="Search for a item" [(ngModel)]="searchQuery" /><br>
 <table>
     <tr>
         <th>Item</th>
@@ -9,26 +11,22 @@
         <th (click)="sortAuctions('bid')">Bid</th>
         <th (click)="sortAuctions('buyout')">Buyout</th>
     </tr>
-            <!-- TODO: optemize price value fetch -->
-    <tr
-    *ngFor="let auc of filterAuctions() | slice:currentPage*limit : (currentPage*limit) + limit ;"
-    on-mouseover="getToolTip(auc.item)" >
-        <td>{{ getItemName(auc.item) }}</td>
+    <!-- TODO: optemize price value fetch -->
+    <tr *ngFor="let auc of filterAuctions() | slice:currentPage*limit : (currentPage*limit) + limit ;" on-mouseover="getToolTip(auc.item)">
+        <td><a rel="item={{ auc.item }}">{{ getItemName(auc.item) }}</a></td>
         <td>{{ auc.owner }}</td>
         <td>{{ auc.quantity }}</td>
         <td>{{ auctionDuration[auc.timeLeft] }}</td>
         <td>{{ copperToArray(auc.bid) }}</td>
         <td>{{ copperToArray(auc.buyout) }}</td>
-        <div class="tooltip">
+        <!--<div class="tooltip">
             Description: {{ getDescription(auc.item) }} <br>
             Inventory type: {{ itemList[auc.item].inventoryType }}
-        </div>
+        </div>-->
     </tr>
 </table>
 <div>
     <button (click)="changePage(-1)"> <- </button>
-    <input style="width:5em;" type="number" [(ngModel)]="currentPage"/> of {{ getNumOfPages() }}
+    <input style="width:5em;" type="number" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
     <button (click)="changePage(1)"> -> </button>
 </div>
-<!-- $WowheadPower.init() -->
-<script type="text/javascript" src="//wow.zamimg.com/widgets/power.js"></script><script>var wowhead_tooltips = { "colorlinks": true, "iconizelinks": true, "renamelinks": true }</script>
