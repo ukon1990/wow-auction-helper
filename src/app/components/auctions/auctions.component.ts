@@ -59,6 +59,7 @@ export class AuctionComponent{
             );
     }
 
+
     changePage(change: number): void{
         if( change > 0 && this.currentPage <= this.numOfPages ){
             this.currentPage++;
@@ -68,6 +69,12 @@ export class AuctionComponent{
         $WowheadPower.init();
     }
 
+    getItemIcon(id: string): string {
+        console.log(this.itemList[id]);
+        return 'http://media.blizzard.com/wow/icons/56/'+
+            this.itemList[id].icon
+            + '.jpg';
+    }
     getToolTip(itemID: string){
         if(this.itemList[itemID]['description'] === undefined){
             this.getItem(itemID);

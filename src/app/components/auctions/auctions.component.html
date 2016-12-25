@@ -4,8 +4,7 @@
 <input class="search-field" type="text" placeholder="Search for a item" [(ngModel)]="searchQuery" /><br>
 <table>
     <tr>
-        <th>Item</th>
-        <th>Owner</th>
+        <th>Name</th>
         <th>Quantity</th>
         <th>Time left</th>
         <th (click)="sortAuctions('bid')">Bid</th>
@@ -13,8 +12,18 @@
     </tr>
     <!-- TODO: optemize price value fetch -->
     <tr *ngFor="let auc of filterAuctions() | slice:currentPage*limit : (currentPage*limit) + limit ;" on-mouseover="getToolTip(auc.item)">
-        <td><a rel="item={{ auc.item }}">{{ getItemName(auc.item) }}</a></td>
-        <td>{{ auc.owner }}</td>
+        <td>
+            <div>
+            <span xmlns="http://www.w3.org/1999/xhtml" 
+                class="icon-frame frame-56 align-left" 
+                style="background-image: url({{ getItemIcon(auc.item) }} );">
+		    </span>
+            <div class="align-left">
+                <a rel="item={{ auc.item }}">{{ getItemName(auc.item) }}</a><br>
+                <a rel="item={{ auc.item }}">{{ auc.owner }}</a>
+            </div>
+            </div>
+        </td>
         <td>{{ auc.quantity }}</td>
         <td>{{ auctionDuration[auc.timeLeft] }}</td>
         <td>{{ copperToArray(auc.bid) }}</td>
