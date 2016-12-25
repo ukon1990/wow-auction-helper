@@ -4,7 +4,7 @@ import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 
 import { Auction } from '../../utils/types/auction';
-import { user } from '../../utils/globals';
+import { user, itemClasses } from '../../utils/globals';
 
 declare var $WowheadPower;
 
@@ -20,9 +20,11 @@ export class AuctionComponent{
     private title = 'Auctions';
     private searchQuery = '';
     private filterByCharacter = false;
+    private filter = {'itemClass': 0, 'itemSubclass': 0};
 
     //Objects and arrays
     private user = {};
+    private itemClasses = {};
     private auctionObserver = {};
     private itemObserver = {};
     private auctions = [];
@@ -36,7 +38,7 @@ export class AuctionComponent{
     }
 
     //Numbers
-    private limit: number = 25;//per page
+    private limit: number = 10;//per page
     private index: number = 0;
     private numberOfAuctions: number = 0;
     private currentPage: number = 0;
@@ -48,6 +50,7 @@ export class AuctionComponent{
         private auctionService: AuctionService,
         private itemService: ItemService) {
         this.user = user;
+        this.itemClasses = itemClasses;
     }
 
     ngOnInit(): void {
@@ -70,7 +73,6 @@ export class AuctionComponent{
     }
 
     getItemIcon(id: string): string {
-        console.log(this.itemList[id]);
         return 'http://media.blizzard.com/wow/icons/56/'+
             this.itemList[id].icon
             + '.jpg';
@@ -148,7 +150,7 @@ export class AuctionComponent{
         for(let o of arr){
             this.numberOfAuctions++;
             if(this.itemList[o.item] === undefined){
-                this.itemList[o.item] = {'id': o.item, 'name': 'Loading'}
+                this.itemList[o.item] = {'id': o.item, 'name': 'Loading'};
             }
         }
         return arr;

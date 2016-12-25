@@ -1,34 +1,6 @@
-input{
-    width: 100%;
-}
+
 .align-left{
     float:left;
-}
-table{
-    width: 100%;
-}
-table tr{
-    border-bottom: 1em black solid;
-}
-table tr th{
-    background: dimgrey;
-}
-
-tr .tooltip{
-    clear: both;
-    display: none;
-    position: fixed;
-    left: 1em;
-    margin-top: 1.3em;
-    width: 5em;
-}
-tr:hover .tooltip{
-    display: block;
-    position: fixed;
-    padding: 0.5em;
-    width: 200px;
-    min-height: 100px;
-    background: pink;
 }
 
 /* From blizzard */
@@ -38,9 +10,9 @@ tr:hover .tooltip{
     left: 0;
     top: 5px;
 }
-.icon-frame.frame-36, .icon-frame.frame-50, .icon-frame.frame-56 {
-    height: 56px;
-    width: 56px;
+.icon-frame.frame-36 {
+    height: 36px;
+    width: 36px;
     -moz-box-shadow: #000 0 0 10px;
     -webkit-box-shadow: #000 0 0 10px;
     box-shadow: #000 0 0 10px;
