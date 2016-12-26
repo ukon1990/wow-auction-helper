@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
+import { FrontPageComponent } from './components/frontpage/front.page.component';
 import { UserComponent } from './components/user/user.component';
 import { AuctionComponent } from './components/auctions/auctions.component';
 
@@ -12,6 +13,7 @@ import { AuctionComponent } from './components/auctions/auctions.component';
   declarations: [
     AppComponent,
     UserComponent,
+    FrontPageComponent,
     AuctionComponent
   ],
   imports: [
@@ -21,6 +23,9 @@ import { AuctionComponent } from './components/auctions/auctions.component';
     RouterModule.forRoot([
       {
         path: '',
+        component: FrontPageComponent
+      },{
+        path: 'auctions',
         component: AuctionComponent
       }
     ])

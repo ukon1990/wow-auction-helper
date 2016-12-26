@@ -122,7 +122,6 @@ export class AuctionComponent {
                     && this.getItemName(a.item).length === 0
                     && !this.filterByCharacter) {
                     list.push(a);
-
                     this.numberOfAuctions++;
                 }
             }
@@ -137,7 +136,7 @@ export class AuctionComponent {
         if (this.filter.itemClass === '0' || item.itemClass === itemClasses.classes[this.filter.itemClass].class) {
             match = true;
         }
-        return match;
+        return true;
     }
 
     buildItemArray(arr) {
