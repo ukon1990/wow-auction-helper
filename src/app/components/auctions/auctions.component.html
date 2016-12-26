@@ -19,7 +19,7 @@
     </tr>
     <!-- TODO: optemize price value fetch -->
     <tr class="row" 
-        *ngFor="let auc of filterAuctions() | slice:currentPage*limit : (currentPage*limit) + limit ;" on-mouseover="getToolTip(auc.item)">
+        *ngFor="let auc of filterAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
         <td>
             <div>
             <span xmlns="http://www.w3.org/1999/xhtml" 

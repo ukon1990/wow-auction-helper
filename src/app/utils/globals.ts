@@ -1,5 +1,5 @@
 export let region = 'eu';
-export let realm = 'emerald-dream';
+export let realm = 'draenor';
 export let character = '';
 
 export let itemClasses = {
