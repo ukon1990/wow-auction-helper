@@ -20,7 +20,7 @@ export class AuctionComponent{
     private title = 'Auctions';
     private searchQuery = '';
     private filterByCharacter = false;
-    private filter = {'itemClass': 0, 'itemSubclass': 0};
+    private filter = {'itemClass': '0', 'itemSubClass': '0'};
 
     //Objects and arrays
     private user = {};
@@ -57,7 +57,7 @@ export class AuctionComponent{
         this.itemObserver = this.itemService.getItems()
             .subscribe(
                 i => {
-                    this.itemList = this.buildItemArray(i)
+                    this.buildItemArray(i)
                 }
             );
     }
@@ -103,12 +103,20 @@ export class AuctionComponent{
     filterAuctions(): Array<Object>{
         if(this.filterByCharacter || this.searchQuery.length > 0){
             let list: Array<Object> = [];
+            let match = true;
             for(let a of this.auctions){
-                if(this.filterByCharacter && a.owner === user.character 
-                && this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1 ) {
+                if(this.filterByCharacter && a.owner === user.character
+                && this.isTypeMatch(this.itemList[a.item]) 
+                && this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1 
+                && this.isTypeMatch(this.itemList[a.item])) {
                     list.push(a);
                 }else if(!this.filterByCharacter 
-                && this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1){
+                && this.isTypeMatch(this.itemList[a.item])
+                && this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1 ) {
+                    list.push(a);
+                }else if(this.isTypeMatch(this.itemList[a.item])
+                    && this.getItemName(a.item).length === 0
+                    && !this.filterByCharacter){
                     list.push(a);
                 }
             }
@@ -117,13 +125,21 @@ export class AuctionComponent{
         return this.auctions;
     }
 
+    isTypeMatch(item): boolean{
+        let match: boolean = false;
+       if(this.filter.itemClass === '0' || item.itemClass === itemClasses.classes[this.filter.itemClass].class){
+           match = true;
+       }
+        return match;
+    }
+
     buildItemArray(arr){
         let items = [];
         for(let i of arr){
             items[i['id']] = i;
         }
+        this.itemList = items;
         this.getAuctions();
-        return items;
     }
 
     getAuctions(): void {
@@ -131,7 +147,7 @@ export class AuctionComponent{
         this.auctionObserver = this.auctionService.getAuctions()
             .subscribe(
                 r => {
-                    this.auctions = this.buildAuctionArray(r.auctions)
+                    this.buildAuctionArray(r.auctions)
                 }
             );
     }
@@ -150,10 +166,11 @@ export class AuctionComponent{
         for(let o of arr){
             this.numberOfAuctions++;
             if(this.itemList[o.item] === undefined){
-                this.itemList[o.item] = {'id': o.item, 'name': 'Loading'};
+                this.itemList[o.item] = {'id': o.item, 'name': 'Loading', 'icon': ''};
+                //this.getItem(o.item);
             }
         }
-        return arr;
+        this.auctions = arr;
     }
 
     getSize(list): number{
@@ -162,10 +179,6 @@ export class AuctionComponent{
             count++;
         }
         return count;
-    }
-
-    getType(anything): string{
-        return typeof anything;
     }
 
     getItem(id){

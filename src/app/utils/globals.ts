@@ -4,10 +4,10 @@ export let character = '';
 
 export let itemClasses = {
     "classes": [{
-        "class": -1,
+        "class": 0,
         "name": "All",
         "subclasses": [{
-            "subclass": -1,
+            "subclass": 0,
             "name": "All"
         }]
     },{

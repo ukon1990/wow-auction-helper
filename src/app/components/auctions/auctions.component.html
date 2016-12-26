@@ -1,5 +1,5 @@
 <p>Showing auctions:</p>
-{{ user.character }} <button class="btn btn-default" (click)="getAuctions()">Update</button>
+{{ filter | json }} <button class="btn btn-default" (click)="getAuctions()">Update</button>
 <label name="onlyUserAuctions">Only my auctions</label><input type="checkbox" [(ngModel)]="filterByCharacter"/>
 <input class="col-md-2" type="text" placeholder="Item name" [(ngModel)]="searchQuery" />
 <select [(ngModel)]="filter.itemClass">
