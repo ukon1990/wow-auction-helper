@@ -83,6 +83,10 @@ export class AuctionComponent {
         }
     }
 
+    getType(s) {
+        return typeof s;
+    }
+
     getDescription(itemID: string): string {
         let item = this.itemList[itemID];
         if (item['description'] !== undefined && item['description'].length > 0) {
@@ -103,40 +107,46 @@ export class AuctionComponent {
     filterAuctions(): Array<Object> {
 
         this.numberOfAuctions = 0;
-        if (this.filterByCharacter || this.searchQuery.length > 0) {
-            let list: Array<Object> = [];
+
+        let list: Array<Object> = [];
+        for (let a of this.auctions) {
             let match = true;
-            for (let a of this.auctions) {
-                if (this.filterByCharacter && a.owner === user.character
-                    && this.isTypeMatch(this.itemList[a.item])
-                    && this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1
-                    && this.isTypeMatch(this.itemList[a.item])) {
-                    list.push(a);
-                    this.numberOfAuctions++;
-                } else if (!this.filterByCharacter
-                    && this.isTypeMatch(this.itemList[a.item])
-                    && this.getItemName(a.item).toLowerCase().indexOf(this.searchQuery.toLowerCase()) != -1) {
-                    list.push(a);
-                    this.numberOfAuctions++;
-                } else if (this.isTypeMatch(this.itemList[a.item])
-                    && this.getItemName(a.item).length === 0
-                    && !this.filterByCharacter) {
-                    list.push(a);
-                    this.numberOfAuctions++;
+            // Matching against item type
+            if (this.isTypeMatch(this.itemList[a.item]) && match) {
+                match = true;
+            } else {
+                match = false;
+            }
+            if (this.filterByCharacter || this.searchQuery.length > 0) {
+                // Matching against item name
+                if (this.searchQuery.length !== 0 && match) {
+                    // TODO: Used to use getItemName()
+                    if (this.itemList[a.item].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+                        match = true;
+                    } else {
+                        match = false;
+                    }
+                }
+
+                // Matching against auction owner
+                if (this.filterByCharacter && match) {
+                    match = a.owner === user.character;
                 }
             }
-            return list;
+            if (match) {
+                this.numberOfAuctions++;
+                list.push(a);
+            }
         }
-        this.numberOfAuctions = this.auctions.length;
-        return this.auctions;
+        return list;
     }
 
     isTypeMatch(item): boolean {
         let match: boolean = false;
-        if (this.filter.itemClass === '0' || item.itemClass === itemClasses.classes[this.filter.itemClass].class) {
+        if (this.filter.itemClass == '0' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
             match = true;
         }
-        return true;
+        return match;
     }
 
     buildItemArray(arr) {

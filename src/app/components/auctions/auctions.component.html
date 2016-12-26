@@ -9,6 +9,8 @@
     <option *ngFor="let i of itemClasses.classes[filter.itemClass].subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
 </select>
 <br>
+test: {{ itemList['109219']?.itemClass }} is in? {{ itemClasses.classes[filter.itemClass].name }} equality: {{ itemClasses.classes[filter.itemClass].class == itemList['109219']?.itemClass }}<br>
+Type: {{ getType(itemList['109219']?.itemClass) }} or {{ getType(itemClasses.classes[filter.itemClass].class) }}
 <table class="table table-striped">
     <tr class="row" >
         <th>Name</th>
