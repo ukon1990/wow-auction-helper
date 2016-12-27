@@ -20,16 +20,18 @@ export class AuctionComponent {
     private title = 'Auctions';
     private searchQuery = '';
     private filterByCharacter = false;
-    private filter = { 'itemClass': '0', 'itemSubClass': '0' };
+    private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
 
     //Objects and arrays
     private user = {};
     private itemClasses = {};
     private auctionObserver = {};
     private itemObserver = {};
+    private petObserver = {};
     private auctions = [];
     private autionList = [];
     private itemList = {};
+    private petList = [];
     private auctionDuration = {
         'VERY_LONG': '12h+',
         'LONG': '2-12h',
@@ -143,8 +145,15 @@ export class AuctionComponent {
 
     isTypeMatch(item): boolean {
         let match: boolean = false;
-        if (this.filter.itemClass == '0' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
-            match = true;
+        if (this.filter.itemClass == '-1' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
+            if(this.filter.itemSubClass == '-1' || 
+            item.itemSubClass == itemClasses
+                .classes[this.filter.itemClass]
+                    .subclasses[this.filter.itemSubClass].subclass){
+                match = true;
+            }else{
+                match = false;
+            }
         }
         return match;
     }
@@ -168,14 +177,35 @@ export class AuctionComponent {
             );
     }
 
-    getItemName(itemID): string {
-        if (this.itemList[itemID] !== undefined) {
+    getItemName(auction): string {
+        let itemID = auction.item;
+        if(auction.petSpeciesId !== undefined){
+            return auction.petSpeciesId.toString();// TODO: FIx backend to add less stress to Blizz server! this.getPet(auction.petSpeciesId);
+        }else{
+            if (this.itemList[itemID] !== undefined) {
             if (this.itemList[itemID]['name'] === 'Loading') {
                 this.getItem(itemID);
             }
             return this.itemList[itemID]['name'];
         }
+        }
         return 'no item data';
+    }
+
+    getPet(speciesId){
+        this.petList[speciesId] = {
+            "speciesId": speciesId,
+            "petTypeId": 0,
+            "creatureId": 54730,
+            "name": "Loading",
+            "icon": "spell_shadow_summonimp",
+        };
+        this.petObserver = this.itemService.getPet(speciesId).subscribe(
+            r => {
+                this.petList[speciesId] = r;
+            }
+        );
+        return this.petList[speciesId].name;
     }
 
     buildAuctionArray(arr) {

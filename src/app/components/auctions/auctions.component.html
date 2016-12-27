@@ -1,37 +1,36 @@
 <p>Showing auctions:</p>
-{{ filter | json }} <button class="btn btn-default" (click)="getAuctions()">Update</button>
-<label name="onlyUserAuctions">Only my auctions</label><input type="checkbox" [(ngModel)]="filterByCharacter"/>
-<input class="col-md-2" type="text" placeholder="Item name" [(ngModel)]="searchQuery" />
-<select [(ngModel)]="filter.itemClass">
+<div class="row">
+    <label name="onlyUserAuctions">Only my auctions</label><input type="checkbox" [(ngModel)]="filterByCharacter" />
+    <input class="col-md-2" type="text" placeholder="Item name" [(ngModel)]="searchQuery" />
+    <select [(ngModel)]="filter.itemClass">
+    <option value="-1">All</option>
     <option *ngFor="let i of itemClasses.classes; let p = index;" value="{{ p }}">{{ i.name }}</option>
 </select>
-<select [(ngModel)]="filter.itemSubClass">
-    <option *ngFor="let i of itemClasses.classes[filter.itemClass].subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
+    <select [(ngModel)]="filter.itemSubClass">
+    <option value="-1">All</option>
+    <option *ngFor="let i of itemClasses.classes[filter.itemClass]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
 </select>
+    <button class="btn btn-default" (click)="getAuctions()">Update</button>
+</div>
 <br>
-test: {{ itemList['109219']?.itemClass }} is in? {{ itemClasses.classes[filter.itemClass].name }} equality: {{ itemClasses.classes[filter.itemClass].class == itemList['109219']?.itemClass }}<br>
-Type: {{ getType(itemList['109219']?.itemClass) }} or {{ getType(itemClasses.classes[filter.itemClass].class) }}
 <table class="table table-striped">
-    <tr class="row" >
+    <tr class="row">
         <th>Name</th>
         <th>Quantity</th>
         <th>Time left</th>
         <th (click)="sortAuctions('bid')">Bid</th>
         <th (click)="sortAuctions('buyout')">Buyout</th>
     </tr>
-    <!-- TODO: optemize price value fetch -->
-    <tr class="row" 
-        *ngFor="let auc of filterAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+    <!-- TODO: optimize price value fetch -->
+    <tr class="row" *ngFor="let auc of filterAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
         <td>
             <div>
-            <span xmlns="http://www.w3.org/1999/xhtml" 
-                class="icon-frame frame-36 align-left" 
-                [style.background-image] = "'url('+ getItemIcon(auc.item) +')'">
+                <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getItemIcon(auc.item) +')'">
 		    </span>
-            <div class="align-left col-md-offset-1">
-                <a rel="item={{ auc.item }}">{{ getItemName(auc.item) }}</a><br>
-                <a rel="item={{ auc.item }}">{{ auc.owner }}</a>
-            </div>
+                <div class="align-left col-md-offset-1">
+                    <a rel="item={{ auc.item }}">{{ getItemName(auc) }}</a><br>
+                    <a rel="item={{ auc.item }}">{{ auc.owner }}</a>
+                </div>
             </div>
         </td>
         <td>{{ auc.quantity }}</td>
@@ -45,7 +44,7 @@ Type: {{ getType(itemList['109219']?.itemClass) }} or {{ getType(itemClasses.cla
     </tr>
 </table>
 <div class="pager">
-    <button class="btn btn-default glyphicon glyphicon-arrow-left"  (click)="changePage(-1)"></button>
+    <button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
     <input style="width:5em;" type="number" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
-    <button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 </div>

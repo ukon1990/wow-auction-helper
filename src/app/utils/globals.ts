@@ -4,10 +4,10 @@ export let character = '';
 
 export let itemClasses = {
     "classes": [{
-        "class": 0,
+        "class": -1,
         "name": "All",
         "subclasses": [{
-            "subclass": 0,
+            "subclass": -1,
             "name": "All"
         }]
     },{
@@ -439,15 +439,21 @@ export let itemClasses = {
             "subclass": 12,
             "name": "Demon Hunter"
         }]
-    }, {
-        "class": 18,
-        "name": "WoW Token",
-        "subclasses": [{
-            "subclass": 0,
-            "name": "WoW Token"
-        }]
     }]
 }
+
+let examplePetAuction =
+    {
+        "modifiers": [
+            { "type": 3, "value": 333 }, 
+            { "type": 4, "value": 50331659 },
+        { "type": 5, "value": 1 }
+        ], 
+        "petSpeciesId": 333, 
+        "petBreedId": 11, 
+        "petLevel": 1, 
+        "petQualityId": 3
+    };
 
 export let user = {
 	'region': region,
