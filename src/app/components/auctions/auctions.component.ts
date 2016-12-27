@@ -146,6 +146,7 @@ export class AuctionComponent {
     isTypeMatch(item): boolean {
         let match: boolean = false;
         if (this.filter.itemClass == '-1' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
+            // TODO: handle undefined subClass
             if(this.filter.itemSubClass == '-1' || 
             item.itemSubClass == itemClasses
                 .classes[this.filter.itemClass]
