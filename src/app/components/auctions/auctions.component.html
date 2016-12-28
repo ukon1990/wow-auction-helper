@@ -25,7 +25,7 @@
     <tr class="row" *ngFor="let auc of filterAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
         <td>
             <div>
-                <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getItemIcon(auc.item) +')'">
+                <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getItemIcon(auc) +')'">
 		    </span>
                 <div class="align-left col-md-offset-1">
                     <a rel="item={{ auc.item }}">{{ getItemName(auc) }}</a><br>

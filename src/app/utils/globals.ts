@@ -455,6 +455,16 @@ let examplePetAuction =
         "petQualityId": 3
     };
 
+    let petExample = {
+    "speciesId": 258,
+    "petTypeId": 9,
+    "creatureId": 42078,
+    "name": "Mini Thor",
+    "icon": "t_roboticon",
+    "description": "Powerful artillery of the Terran army. The Thor is always the first one in and the last one out!",
+    "source": "Promotion: StarCraft II: Wings of Liberty Collector's Edition",
+};
+
 export let user = {
 	'region': region,
 	'realm': realm,

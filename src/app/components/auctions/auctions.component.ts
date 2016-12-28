@@ -56,6 +56,10 @@ export class AuctionComponent {
     }
 
     ngOnInit(): void {
+        this.petObserver = this.itemService.getPets()
+            .subscribe(pets => {
+                this.buildPetArray(pets['pets']);
+            });
         this.itemObserver = this.itemService.getItems()
             .subscribe(
             i => {
@@ -73,10 +77,18 @@ export class AuctionComponent {
         $WowheadPower.init();
     }
 
-    getItemIcon(id: string): string {
-        return 'http://media.blizzard.com/wow/icons/56/' +
-            this.itemList[id].icon
-            + '.jpg';
+    getItemIcon(auction): string {
+        let icon = 'http://media.blizzard.com/wow/icons/56/';
+        if (auction.petSpeciesId !== undefined) {
+            if (this.petList[auction.petSpeciesId] === undefined) {
+                this.getPet(auction.petSpeciesId);
+            }
+            icon += this.petList[auction.petSpeciesId].icon;
+        } else {
+            icon += this.itemList[auction.item].icon;
+        }
+        icon += '.jpg';
+        return icon;
     }
 
     getToolTip(itemID: string) {
@@ -123,7 +135,7 @@ export class AuctionComponent {
                 // Matching against item name
                 if (this.searchQuery.length !== 0 && match) {
                     // TODO: Used to use getItemName()
-                    if (this.itemList[a.item].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+                    if (a.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
                         match = true;
                     } else {
                         match = false;
@@ -147,12 +159,12 @@ export class AuctionComponent {
         let match: boolean = false;
         if (this.filter.itemClass == '-1' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
             // TODO: handle undefined subClass
-            if(this.filter.itemSubClass == '-1' || 
-            item.itemSubClass == itemClasses
-                .classes[this.filter.itemClass]
-                    .subclasses[this.filter.itemSubClass].subclass){
+            if (this.filter.itemSubClass == '-1' ||
+                item.itemSubClass == itemClasses
+                    .classes[this.filter.itemClass]
+                    .subclasses[this.filter.itemSubClass].subclass) {
                 match = true;
-            }else{
+            } else {
                 match = false;
             }
         }
@@ -180,44 +192,67 @@ export class AuctionComponent {
 
     getItemName(auction): string {
         let itemID = auction.item;
-        if(auction.petSpeciesId !== undefined){
-            return auction.petSpeciesId.toString();// TODO: FIx backend to add less stress to Blizz server! this.getPet(auction.petSpeciesId);
-        }else{
+        if (auction.petSpeciesId !== undefined) {
+            auction['name'] = this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+            return this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+        } else {
             if (this.itemList[itemID] !== undefined) {
-            if (this.itemList[itemID]['name'] === 'Loading') {
-                this.getItem(itemID);
+                if (this.itemList[itemID]['name'] === 'Loading') {
+                    this.getItem(itemID);
+                }
+                return this.itemList[itemID]['name'];
             }
-            return this.itemList[itemID]['name'];
-        }
         }
         return 'no item data';
     }
 
-    getPet(speciesId){
-        this.petList[speciesId] = {
-            "speciesId": speciesId,
-            "petTypeId": 0,
-            "creatureId": 54730,
-            "name": "Loading",
-            "icon": "spell_shadow_summonimp",
-        };
-        this.petObserver = this.itemService.getPet(speciesId).subscribe(
-            r => {
-                this.petList[speciesId] = r;
-            }
-        );
+    getPet(speciesId) {
+        if (this.petList[speciesId] === undefined) {
+            this.petList[speciesId] = {
+                "speciesId": speciesId,
+                "petTypeId": 0,
+                "creatureId": 54730,
+                "name": "Loading",
+                "icon": "spell_shadow_summonimp",
+            };
+            this.petObserver = this.itemService.getPet(speciesId).subscribe(
+                r => {
+                    this.petList[speciesId] = r;
+                    console.log(r);
+                }
+            );
+        }
         return this.petList[speciesId].name;
     }
 
     buildAuctionArray(arr) {
+        let list = [];
         for (let o of arr) {
             this.numberOfAuctions++;
             if (this.itemList[o.item] === undefined) {
                 this.itemList[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
+                o['name'] = 'Loading';
                 //this.getItem(o.item);
+            }else{
+                o['name'] = this.itemList[o.item].name;
             }
+            if (o.petSpeciesId !== undefined) {
+                if (this.petList[o.petSpeciesId] === null) {
+                    this.getPet(o.petSpeciesId);
+                }
+                o['name'] = this.getItemName(o);
+            }
+            list.push(o);
         }
-        this.auctions = arr;
+        this.auctions = list;
+    }
+
+    buildPetArray(pets) {
+        let list = [];
+        pets.forEach(p => {
+            list[p.speciesId] = p;
+        });
+        this.petList = list;
     }
 
     getSize(list): number {
