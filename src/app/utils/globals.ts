@@ -1,6 +1,4 @@
-export let region = 'eu';
-export let realm = 'draenor';
-export let character = '';
+import {IUser} from './interfaces';
 
 export let itemClasses = {
     "classes": [{
@@ -465,8 +463,8 @@ let examplePetAuction =
     "source": "Promotion: StarCraft II: Wings of Liberty Collector's Edition",
 };
 
-export let user = {
-	'region': region,
-	'realm': realm,
-	'character': character
+export let user: IUser = {
+	'region': undefined,
+	'realm': undefined,
+	'character': undefined
 }

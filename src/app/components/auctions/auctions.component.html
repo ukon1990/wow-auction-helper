@@ -10,7 +10,7 @@
     <option value="-1">All</option>
     <option *ngFor="let i of itemClasses.classes[filter.itemClass]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
 </select>
-    <button class="btn btn-default" (click)="getAuctions()">Update</button>
+    <button class="btn btn-default" (click)="getAuctions(); saveSettings();">Update</button>
 </div>
 <br>
 <table class="table table-striped">
@@ -28,8 +28,8 @@
                 <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getItemIcon(auc) +')'">
 		    </span>
                 <div class="align-left col-md-offset-1">
-                    <a rel="item={{ auc.item }}">{{ getItemName(auc) }}</a><br>
-                    <a rel="item={{ auc.item }}">{{ auc.owner }}</a>
+                    <a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}" target="_blank">{{ getItemName(auc) }}</a><br>
+                    <a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}" target="_blank">{{ auc.owner }}</a>
                 </div>
             </div>
         </td>

@@ -7,7 +7,7 @@ import { user } from '../../utils/globals';
 })
 export class UserComponent implements OnInit {
 	u;
-	constructor() { 
+	constructor() {
 		this.u = user;
 	}
 

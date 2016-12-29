@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import { Auction } from '../utils/types/auction';
+import { IAuction, IPet, IUser, IItem } from '../utils/interfaces';
 
 import 'rxjs/add/operator/map';
 
@@ -13,7 +13,7 @@ export class ItemService {
       .map(response => <Object>function(r){ return r;  }(response.json()));
   }
   getPet(petSpeciesId: string) {
-    return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId )// TODO: Add API call to API https://eu.api.battle.net/wow/pet/species/123456789?locale=en_GB&apikey=5+6546546456456546456
+    return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId )
       .map(response => <Object> function(r){return r;}(response.json()));
   }
 

@@ -13,9 +13,16 @@ export class FrontPageComponent {
 		this.u = user;
 	}
 
-	ngOnInit() { }
+	ngOnInit() {
+		if(this.u.realm !== undefined && this.u.region !== undefined){
+			this.nextPage();
+		}
+	}
 
 	nextPage(){
+		localStorage.setItem('region', user.region);
+		localStorage.setItem('realm', user.realm);
+		localStorage.setItem('charater', user.character);
 		this.router.navigateByUrl('/auctions');
 	}
 
