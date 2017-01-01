@@ -35,8 +35,14 @@
         </td>
         <td>{{ auc.quantity }}</td>
         <td>{{ auctionDuration[auc.timeLeft] }}</td>
-        <td>{{ copperToArray(auc.bid) }}</td>
-        <td>{{ copperToArray(auc.buyout) }}</td>
+        <td>
+            {{ copperToArray(auc.bid) }} total <br>
+            {{ copperToArray(auc.bid / auc.quantity ) }} a pcs
+        </td>
+        <td>
+            {{ copperToArray(auc.buyout) }} total<br>
+            {{ copperToArray(auc.buyout / auc.quantity) }} a pcs
+        </td>
         <!--<div class="tooltip">
             Description: {{ getDescription(auc.item) }} <br>
             Inventory type: {{ itemList[auc.item].inventoryType }}

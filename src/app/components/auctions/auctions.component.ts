@@ -3,10 +3,13 @@ import { NgClass } from '@angular/common';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 
-import { user, itemClasses } from '../../utils/globals';
+import { user, itemClasses, lists } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
+	let auctions = [];
+	let itemList = {};
+	let petList = [];
 
 @Component({
 	selector: 'auctions',
@@ -28,10 +31,6 @@ export class AuctionComponent {
 	private auctionObserver = {};
 	private itemObserver = {};
 	private petObserver = {};
-	private auctions = [];
-	private autionList: IAuction[];
-	private itemList = {};
-	private petList = [];
 	private auctionDuration = {
 		'VERY_LONG': '12h+',
 		'LONG': '2-12h',
@@ -56,7 +55,9 @@ export class AuctionComponent {
 	}
 
 	ngOnInit(): void {
-		if (this.auctions.length === 0) {
+
+		if (auctions !== undefined && auctions.length === 0) {
+			
 			this.petObserver = this.itemService.getPets()
 				.subscribe(pets => {
 					this.buildPetArray(pets['pets']);
@@ -83,19 +84,19 @@ export class AuctionComponent {
 	getItemIcon(auction): string {
 		let icon = 'http://media.blizzard.com/wow/icons/56/';
 		if (auction.petSpeciesId !== undefined) {
-			if (this.petList[auction.petSpeciesId] === undefined) {
+			if (petList[auction.petSpeciesId] === undefined) {
 				this.getPet(auction.petSpeciesId);
 			}
-			icon += this.petList[auction.petSpeciesId].icon;
+			icon += petList[auction.petSpeciesId].icon;
 		} else {
-			icon += this.itemList[auction.item].icon;
+			icon += itemList[auction.item].icon;
 		}
 		icon += '.jpg';
 		return icon;
 	}
 
 	getToolTip(itemID: string) {
-		if (this.itemList[itemID]['description'] === undefined) {
+		if (itemList[itemID]['description'] === undefined) {
 			this.getItem(itemID);
 		}
 	}
@@ -105,7 +106,7 @@ export class AuctionComponent {
 	}
 
 	getDescription(itemID: string): string {
-		let item = this.itemList[itemID];
+		let item = itemList[itemID];
 		if (item['description'] !== undefined && item['description'].length > 0) {
 			return item['description'];
 		} else if (item['itemSpells'] !== undefined) {
@@ -124,12 +125,13 @@ export class AuctionComponent {
 	filterAuctions(): Array<Object> {
 
 		this.numberOfAuctions = 0;
+		this.currentPage = 1;
 
 		let list: Array<Object> = [];
-		for (let a of this.auctions) {
+		for (let a of auctions) {
 			let match = true;
 			// Matching against item type
-			if (this.isTypeMatch(this.itemList[a.item]) && match) {
+			if (this.isTypeMatch(itemList[a.item]) && match) {
 				match = true;
 			} else {
 				match = false;
@@ -175,11 +177,16 @@ export class AuctionComponent {
 	}
 
 	buildItemArray(arr) {
-		let items = [];
 		for (let i of arr) {
-			items[i['id']] = i;
+			itemList[i['id']] = i;
+			if(i['itemSource'].length > 0){
+				i['itemSource'].forEach(sid => {
+					if(sid['sourceType'] === 'CREATED_BY_SPELL') {
+						console.log('Item: ' + i['name'] + ' -> ' + sid['sourceId']);
+					}
+				});
+			}
 		}
-		this.itemList = items;
 		this.getAuctions();
 	}
 
@@ -199,19 +206,19 @@ export class AuctionComponent {
 			auction['name'] = this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
 			return this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
 		} else {
-			if (this.itemList[itemID] !== undefined) {
-				if (this.itemList[itemID]['name'] === 'Loading') {
+			if (itemList[itemID] !== undefined) {
+				if (itemList[itemID]['name'] === 'Loading') {
 					this.getItem(itemID);
 				}
-				return this.itemList[itemID]['name'];
+				return itemList[itemID]['name'];
 			}
 		}
 		return 'no item data';
 	}
 
 	getPet(speciesId) {
-		if (this.petList[speciesId] === undefined) {
-			this.petList[speciesId] = {
+		if (petList[speciesId] === undefined) {
+			petList[speciesId] = {
 				"speciesId": speciesId,
 				"petTypeId": 0,
 				"creatureId": 54730,
@@ -220,34 +227,34 @@ export class AuctionComponent {
 			};
 			this.petObserver = this.itemService.getPet(speciesId).subscribe(
 				r => {
-					this.petList[speciesId] = r;
+					petList[speciesId] = r;
 					console.log(r);
 				}
 			);
 		}
-		return this.petList[speciesId].name;
+		return petList[speciesId].name;
 	}
 
 	buildAuctionArray(arr) {
 		let list = [];
 		for (let o of arr) {
 			this.numberOfAuctions++;
-			if (this.itemList[o.item] === undefined) {
-				this.itemList[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
+			if (itemList[o.item] === undefined) {
+				itemList[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
 				o['name'] = 'Loading';
 				//this.getItem(o.item);
 			} else {
-				o['name'] = this.itemList[o.item].name;
+				o['name'] = itemList[o.item].name;
 			}
 			if (o.petSpeciesId !== undefined) {
-				if (this.petList[o.petSpeciesId] === null) {
+				if (petList[o.petSpeciesId] === null) {
 					this.getPet(o.petSpeciesId);
 				}
 				o['name'] = this.getItemName(o);
 			}
 			list.push(o);
 		}
-		this.auctions = list;
+		auctions = list;
 	}
 
 	buildPetArray(pets) {
@@ -255,7 +262,7 @@ export class AuctionComponent {
 		pets.forEach(p => {
 			list[p.speciesId] = p;
 		});
-		this.petList = list;
+		petList = list;
 	}
 
 	getSize(list): number {
@@ -269,13 +276,14 @@ export class AuctionComponent {
 	getItem(id) {
 		this.itemObserver = this.itemService.getItem(id)
 			.subscribe(
-			r => this.itemList[r['id']] = r
+			r => itemList[r['id']] = r
 			);
 	}
 
 	copperToArray(c): string {
 		//Just return a string
 		var result = [];
+		c = Math.round(c);
 		result[0] = c % 100;
 		c = (c - result[0]) / 100;
 		result[1] = c % 100; //Silver
@@ -286,9 +294,9 @@ export class AuctionComponent {
 	sortAuctions(sortBy: string) {
 		if (this.buyOutAsc) {
 			this.buyOutAsc = false;
-			this.auctions.sort(
+			auctions.sort(
 				function (a, b) {
-					if (a[sortBy] < b[sortBy]) {
+					if (a[sortBy] / a['quantity'] < b[sortBy] / a['quantity']) {
 						return 1;
 					}
 					return -1;
@@ -296,9 +304,9 @@ export class AuctionComponent {
 			);
 		} else {
 			this.buyOutAsc = true;
-			this.auctions.sort(
+			auctions.sort(
 				function (a, b) {
-					if (a[sortBy] > b[sortBy]) {
+					if (a[sortBy] / a['quantity'] > b[sortBy] / a['quantity']) {
 						return 1;
 					}
 					return -1;

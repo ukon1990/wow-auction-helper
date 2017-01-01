@@ -463,6 +463,25 @@ let examplePetAuction =
     "source": "Promotion: StarCraft II: Wings of Liberty Collector's Edition",
 };
 
+// sourceType = CREATED_BY_SPELL
+let exampleRecipeResponse = {
+    "id": 17187,
+    "name": "Transmute: Arcanite",
+    "profession": "Alchemy",
+    "icon": "inv_misc_stonetablet_05"
+};
+
+
+let auctions = [Object];
+let items = {};
+let pets = [Object];
+
+export let lists = {
+    auctions: this.auctions,
+    items: this.items,
+    pets: this.pets
+};
+
 export let user: IUser = {
 	'region': undefined,
 	'realm': undefined,
