@@ -179,15 +179,14 @@ export class AuctionComponent {
 
 				// Matching against auction owner
 				if (this.filterByCharacter && match) {
-					match = a.owner === user.character;
+					try{
+						match = a.owner.toString().toLowerCase() === user.character.toLowerCase();
+					}catch(err){ match = false;}
 				}
 				// Item source
-				if (this.onlyCraftables &&
-					itemList[a.item]['itemSource'] !== undefined &&
-					itemList[a.item]['itemSource']['sourceType'] === 'CREATED_BY_SPELL') {
-					match = true;
-				} else {
-					match = false;
+				if (this.onlyCraftables && match) {
+					match = itemList[a.item]['itemSource'] !== undefined &&
+							itemList[a.item]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
 				}
 			}
 			if (match) {

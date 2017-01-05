@@ -17,9 +17,7 @@ export class AppComponent {
     if (this.isRealmSet()) {
       this.u.region = localStorage.getItem('region');
       this.u.realm = localStorage.getItem('realm');
-      if (this.exists(localStorage.getItem('character'))) {
-        this.u.character = localStorage.getItem('character');
-      }
+      this.u.character = localStorage.getItem('character');
     }
   }
 

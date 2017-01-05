@@ -13,16 +13,16 @@ export class FrontPageComponent {
 		this.u = user;
 	}
 
-	ngOnInit() {
+	ngOnInit(): void {
 		if(this.u.realm !== undefined && this.u.region !== undefined){
-			this.nextPage();
+			this.router.navigateByUrl('/auctions');
 		}
 	}
 
-	nextPage(){
-		localStorage.setItem('region', user.region);
-		localStorage.setItem('realm', user.realm);
-		localStorage.setItem('charater', user.character);
+	nextPage() {
+		localStorage.setItem('region', this.u.region);
+		localStorage.setItem('realm', this.u.realm);
+		localStorage.setItem('charater', this.u.character);
 		this.router.navigateByUrl('/auctions');
 	}
 
