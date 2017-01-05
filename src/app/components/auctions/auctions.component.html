@@ -1,16 +1,31 @@
-<p>Showing auctions:</p>
-<div class="row">
-    <label name="onlyUserAuctions">Only my auctions</label><input type="checkbox" [(ngModel)]="filterByCharacter" />
-    <input class="col-md-2" type="text" placeholder="Item name" [(ngModel)]="searchQuery" />
-    <select [(ngModel)]="filter.itemClass">
-    <option value="-1">All</option>
-    <option *ngFor="let i of itemClasses.classes; let p = index;" value="{{ p }}">{{ i.name }}</option>
-</select>
-    <select [(ngModel)]="filter.itemSubClass">
-    <option value="-1">All</option>
-    <option *ngFor="let i of itemClasses.classes[filter.itemClass]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
-</select>
-    <button class="btn btn-default" (click)="getAuctions(); saveSettings();">Update</button>
+<div class="row col-md-12">
+    <form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm" >
+        <div class="checkbox">
+            <label name="onlyUserAuctions">
+                <input type="checkbox" [formControl]="filterForm.controls['filterByCharacter']"/>
+                Only my auctions
+            </label>
+        </div>
+        <div class="checkbox">
+            <label name="onlyUserAuctions">
+                <input type="checkbox" [formControl]="filterForm.controls['onlyCraftables']"/>
+                Crafting mode
+            </label>
+        </div>
+        <input class="col-md-2 form-control" type="text" placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" />
+    <select  class="form-control"[formControl]="filterForm.controls['itemClass']">
+        <option value="-1">All</option>
+        <option *ngFor="let i of itemClasses.classes; let p = index;" value="{{ p }}">{{ i.name }}</option>
+    </select>
+    <select  class="form-control" [formControl]="filterForm.controls['itemSubClass']">
+        <option value="-1">All</option>
+        <option *ngFor="let i of itemClasses.classes[filter.itemClass]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
+    </select>
+    <button class="btn btn-primary" type="submit">Apply filter</button>
+    <button class="btn btn-default" type="button" (click)="clearFilters()">Clear filter</button>
+    </form>
+    
+    <button class="btn btn-default"  (click)="getAuctions(); saveSettings();">Update</button>
 </div>
 <br>
 <table class="table table-striped">
@@ -22,7 +37,7 @@
         <th (click)="sortAuctions('buyout')">Buyout</th>
     </tr>
     <!-- TODO: optimize price value fetch -->
-    <tr class="row" *ngFor="let auc of filterAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+    <tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
         <td>
             <div>
                 <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getItemIcon(auc) +')'">
@@ -51,6 +66,6 @@
 </table>
 <div class="pager">
     <button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-    <input style="width:5em;" type="number" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
+    <input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
 <button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 </div>

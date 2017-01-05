@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 
@@ -7,9 +8,9 @@ import { user, itemClasses, lists } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
-	let auctions = [];
-	let itemList = {};
-	let petList = [];
+let auctions = [];
+let itemList = {};
+let petList = [];
 
 @Component({
 	selector: 'auctions',
@@ -23,7 +24,9 @@ export class AuctionComponent {
 	private title = 'Auctions';
 	private searchQuery = '';
 	private filterByCharacter = false;
+	private onlyCraftables = false;
 	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
+	private filterForm: FormGroup;
 
 	//Objects and arrays
 	private user: IUser;
@@ -37,6 +40,7 @@ export class AuctionComponent {
 		'MEDIUM': '30min-2h',
 		'SHORT': '<30min'
 	}
+	private filteredAuctions = [];
 
 	//Numbers
 	private limit: number = 10;//per page
@@ -49,15 +53,21 @@ export class AuctionComponent {
 
 	constructor(
 		private auctionService: AuctionService,
-		private itemService: ItemService) {
+		private itemService: ItemService,
+		private formBuilder: FormBuilder) {
 		this.user = user;
 		this.itemClasses = itemClasses;
+		this.filterForm = formBuilder.group({
+			'searchQuery': '',
+			'filterByCharacter': this.filterByCharacter,
+			'onlyCraftables': this.onlyCraftables,
+			'itemClass': this.filter.itemClass,
+			'itemSubClass': this.filter.itemSubClass
+		});
 	}
 
 	ngOnInit(): void {
-
 		if (auctions !== undefined && auctions.length === 0) {
-			
 			this.petObserver = this.itemService.getPets()
 				.subscribe(pets => {
 					this.buildPetArray(pets['pets']);
@@ -78,21 +88,24 @@ export class AuctionComponent {
 		} else if (change < 0 && this.currentPage > 1) {
 			this.currentPage--;
 		}
-		$WowheadPower.init();
 	}
 
 	getItemIcon(auction): string {
-		let icon = 'http://media.blizzard.com/wow/icons/56/';
+		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
 		if (auction.petSpeciesId !== undefined) {
 			if (petList[auction.petSpeciesId] === undefined) {
 				this.getPet(auction.petSpeciesId);
 			}
-			icon += petList[auction.petSpeciesId].icon;
+			icon = petList[auction.petSpeciesId].icon;
 		} else {
-			icon += itemList[auction.item].icon;
+			icon = itemList[auction.item].icon;
 		}
-		icon += '.jpg';
-		return icon;
+		if (icon === undefined) {
+			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+		} else {
+			url += icon + '.jpg';
+		}
+		return url;
 	}
 
 	getToolTip(itemID: string) {
@@ -122,12 +135,28 @@ export class AuctionComponent {
 		return Math.round(this.numOfPages);
 	}
 
-	filterAuctions(): Array<Object> {
+	clearFilters(): void {
+		this.filterForm.value['searchQuery'] = '';
+		this.filterForm.value['filterByCharacter'] = false;
+		this.filterForm.value['itemClass'] = '-1';
+		this.filterForm.value['itemSubClass'] = '-1';
+
+		this.filterAuctions();
+	}
+
+	filterAuctions(): void {
+		// From form
+		this.searchQuery = this.filterForm.value['searchQuery'];
+		this.filterByCharacter = this.filterForm.value['filterByCharacter'];
+		this.onlyCraftables = this.filterForm.value['onlyCraftables'];
+		this.filter = {
+			'itemClass': this.filterForm.value['itemClass'],
+			'itemSubClass': this.filterForm.value['itemSubClass']};
 
 		this.numberOfAuctions = 0;
 		this.currentPage = 1;
+		this.filteredAuctions = [];
 
-		let list: Array<Object> = [];
 		for (let a of auctions) {
 			let match = true;
 			// Matching against item type
@@ -136,7 +165,8 @@ export class AuctionComponent {
 			} else {
 				match = false;
 			}
-			if (this.filterByCharacter || this.searchQuery.length > 0) {
+
+			if (this.filterByCharacter || this.searchQuery.length > 0 || this.onlyCraftables) {
 				// Matching against item name
 				if (this.searchQuery.length !== 0 && match) {
 					// TODO: Used to use getItemName()
@@ -151,13 +181,20 @@ export class AuctionComponent {
 				if (this.filterByCharacter && match) {
 					match = a.owner === user.character;
 				}
+				// Item source
+				if (this.onlyCraftables &&
+					itemList[a.item]['itemSource'] !== undefined &&
+					itemList[a.item]['itemSource']['sourceType'] === 'CREATED_BY_SPELL') {
+					match = true;
+				} else {
+					match = false;
+				}
 			}
 			if (match) {
 				this.numberOfAuctions++;
-				list.push(a);
+				this.filteredAuctions.push(a);
 			}
 		}
-		return list;
 	}
 
 	isTypeMatch(item): boolean {
@@ -255,6 +292,7 @@ export class AuctionComponent {
 			list.push(o);
 		}
 		auctions = list;
+		this.filterAuctions();
 	}
 
 	buildPetArray(pets) {
