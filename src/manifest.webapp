@@ -1,0 +1,23 @@
+{
+  "name": "WoW Auction Helper",
+  "short_name": "WoW Auction Helper",
+  "icons": [
+    {
+            "src": "/favicon-32x32.png",
+            "sizes": "36x36",
+            "type": "image/png",
+            "density": 0.75
+        },
+        {
+            "src": "/favicon-16x16.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "density": 1
+        }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#e0e0e0",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}
