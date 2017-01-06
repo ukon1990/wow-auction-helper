@@ -14,6 +14,7 @@ export class AppComponent {
   private title = 'WAH';
   private lastModified: number;
   private timeSinceLastModified: number;
+  private oldTimeDiff: number;
   private date: Date;
 
   u: IUser = new IUser();
@@ -37,14 +38,19 @@ export class AppComponent {
     let updateTime =  new Date(this.lastModified).getMinutes(),
       currentTime = this.date.getMinutes(),
       oldTime = this.timeSinceLastModified;
-    this.timeSinceLastModified =
-      (updateTime > currentTime ?
-        (60 - updateTime + currentTime) : currentTime - updateTime);
-      
-    // Checking if there is a new update available
-    if(oldTime > this.timeSinceLastModified) {
+      // Checking if there is a new update available
+    if(this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
       this.auctionService.getAuctions();
     }
+    
+    this.timeSinceLastModified = this.timeDiff(updateTime, currentTime);
+    this.oldTimeDiff = this.timeDiff(updateTime, currentTime);
+    
+  }
+
+  timeDiff(updateTime, currentTime) {
+    return (updateTime > currentTime ?
+        (60 - updateTime + currentTime) : currentTime - updateTime);
   }
 
   exists(value): boolean {
