@@ -78,8 +78,9 @@ export class AuctionComponent {
 					this.buildItemArray(i)
 				}
 				);
+		} else {
+			this.filterAuctions();
 		}
-
 	}
 
 	changePage(change: number): void {
