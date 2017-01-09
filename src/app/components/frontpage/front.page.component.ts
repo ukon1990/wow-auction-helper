@@ -9,7 +9,7 @@ import { user } from '../../utils/globals';
 })
 export class FrontPageComponent {
 	private u;
-	constructor(private router: Router) { 
+	constructor(private router: Router) {
 		this.u = user;
 	}
 
@@ -23,6 +23,8 @@ export class FrontPageComponent {
 		localStorage.setItem('region', this.u.region);
 		localStorage.setItem('realm', this.u.realm);
 		localStorage.setItem('charater', this.u.character);
+		localStorage.setItem('apiTsm', this.u.apiTsm);
+		localStorage.setItem('apiWoWu', this.u.apiWoWu);
 		this.router.navigateByUrl('/auctions');
 	}
 

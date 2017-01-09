@@ -443,13 +443,13 @@ export let itemClasses = {
 let examplePetAuction =
     {
         "modifiers": [
-            { "type": 3, "value": 333 }, 
+            { "type": 3, "value": 333 },
             { "type": 4, "value": 50331659 },
         { "type": 5, "value": 1 }
-        ], 
-        "petSpeciesId": 333, 
-        "petBreedId": 11, 
-        "petLevel": 1, 
+        ],
+        "petSpeciesId": 333,
+        "petBreedId": 11,
+        "petLevel": 1,
         "petQualityId": 3
     };
 
@@ -485,5 +485,7 @@ export let lists = {
 export let user: IUser = {
 	'region': undefined,
 	'realm': undefined,
-	'character': undefined
+	'character': undefined,
+	'apiTsm': undefined,
+	'apiWoWu': undefined
 }

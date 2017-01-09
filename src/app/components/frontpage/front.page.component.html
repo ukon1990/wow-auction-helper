@@ -1,11 +1,27 @@
 <p>This is a webapplication that is currently in development. There is no guarantee that it ever will be completed.</p>
 <form class="form-group col-md-6 container" (ngSubmit)="nextPage()">
-	<p>Please select realm and region. Optionally you can add your character as well. No personal data is stored on the client or server.</p>
-	<select class="col-md-2 form-control" name="region" type="text" [(ngModel)]="u.region" required>
-		<option value="eu">EU</option>
-		<option value="us">US</option>
-	</select>
-	<input class="form-control" type="text" name="realm" placeholder="Realm" [(ngModel)]="u.realm" required/><br>
-	<input class="col-md-6 form-control" name="character" placeholder="Character" type="text" [(ngModel)]="u.character"/><br>
+	<h2>Disclaimer:</h2>
+	<p>
+		No personal data is stored on the client or server, if you wish to look at the code, please feel free to do so. The GitHub link can be found <a routerLink="/about">here</a>. The only data you need to input is your realm and region, anything else is
+		optional.
+	</p>
+	<fieldset class="form-inline">
+		<h3>Requiered</h3>
+		<div class="form-group">
+			<select class="col-sm-1 form-control" name="region" type="text" [(ngModel)]="u.region" required>
+				<option selected="selected" value="eu">EU</option>
+				<option value="us">US</option>
+			</select>
+			<input class="form-control" type="text" name="realm" placeholder="Realm" [(ngModel)]="u.realm" required/><br>
+		</div>
+	</fieldset>
+	<fieldset class="form-inline">
+		<h3>Optional</h3>
+		<div class="form-group">
+			<input class="col-md-6 form-control" name="character" placeholder="Character" type="text" [(ngModel)]="u.character" /><br>
+			<input name="apiTsm" placeholder="TSM api key" />
+			<input name="apiWoWu" placeholder="WoWuction api key" />
+		</div>
+	</fieldset>
 	<button type="submit"> Go to auctions</button>
 </form>
