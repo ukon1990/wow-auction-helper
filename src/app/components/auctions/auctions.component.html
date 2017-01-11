@@ -35,6 +35,8 @@
 		<th>Time left</th>
 		<th (click)="sortAuctions('bid')">Bid</th>
 		<th (click)="sortAuctions('buyout')">Buyout</th>
+		<th>avg Posted/Sold</th>
+		<th (click)="sortAuctions('estDemand')">Demand</th>
 	</tr>
 	<!-- TODO: optimize price value fetch -->
 	<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
@@ -55,6 +57,13 @@
 		</td>
 		<td>
 			{{ copperToArray(auc.buyout) }} total<br> {{ copperToArray(auc.buyout / auc.quantity) }} a pcs
+		</td>
+		<td>
+			{{ auc.avgDailyPosted }} <br>
+			{{ auc.avgDailySold }}
+		</td>
+		<td>
+			{{ auc.estDemand }}%
 		</td>
 		<!--<div class="tooltip">
             Description: {{ getDescription(auc.item) }} <br>

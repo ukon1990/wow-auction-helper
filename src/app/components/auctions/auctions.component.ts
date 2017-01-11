@@ -8,6 +8,7 @@ import { user, itemClasses, lists } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
+declare var $wu;
 let auctions = [];
 let itemList = {};
 let petList = [];
@@ -41,6 +42,7 @@ export class AuctionComponent {
 		'SHORT': '<30min'
 	}
 	private filteredAuctions = [];
+	private wowUList = [];
 
 	//Numbers
 	private limit: number = 10;//per page
@@ -68,6 +70,9 @@ export class AuctionComponent {
 
 	ngOnInit(): void {
 		if (auctions !== undefined && auctions.length === 0) {
+			this.auctionService.getWoWuctionData().subscribe( res => {
+				this.wowUList = res;
+			});
 			this.petObserver = this.itemService.getPets()
 				.subscribe(pets => {
 					this.buildPetArray(pets['pets']);
@@ -195,6 +200,7 @@ export class AuctionComponent {
 				this.filteredAuctions.push(a);
 			}
 		}
+		console.log(itemList);
 	}
 
 	isTypeMatch(item): boolean {
@@ -265,7 +271,6 @@ export class AuctionComponent {
 			this.petObserver = this.itemService.getPet(speciesId).subscribe(
 				r => {
 					petList[speciesId] = r;
-					console.log(r);
 				}
 			);
 		}
@@ -279,7 +284,6 @@ export class AuctionComponent {
 			if (itemList[o.item] === undefined) {
 				itemList[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
 				o['name'] = 'Loading';
-				//this.getItem(o.item);
 			} else {
 				o['name'] = itemList[o.item].name;
 			}
@@ -289,6 +293,18 @@ export class AuctionComponent {
 				}
 				o['name'] = this.getItemName(o);
 			}
+			if(this.wowUList[o.item] !== undefined) {
+				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
+				o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
+				o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
+				o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
+			} else {
+				o['estDemand'] = 0;
+				o['avgDailySold'] = 0;
+				o['avgDailyPosted'] = 0;
+				o['mktPrice'] = 0;
+			}
+
 			list.push(o);
 		}
 		auctions = list;
@@ -332,22 +348,24 @@ export class AuctionComponent {
 	sortAuctions(sortBy: string) {
 		if (this.buyOutAsc) {
 			this.buyOutAsc = false;
-			auctions.sort(
+			this.filteredAuctions.sort(
 				function (a, b) {
-					if (a[sortBy] / a['quantity'] < b[sortBy] / a['quantity']) {
-						return 1;
+					if(sortBy === 'buyout' || sortBy === 'bid') {
+						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 :-1;
+					}else {
+						return a[sortBy] < b[sortBy] ? 1 :-1;
 					}
-					return -1;
 				}
 			);
 		} else {
 			this.buyOutAsc = true;
-			auctions.sort(
+			this.filteredAuctions.sort(
 				function (a, b) {
-					if (a[sortBy] / a['quantity'] > b[sortBy] / a['quantity']) {
-						return 1;
+					if(sortBy === 'buyout' || sortBy === 'bid') {
+						return a[sortBy] / a['quantity'] > b[sortBy] / a['quantity'] ? 1 : -1;
+					} else {
+						return a[sortBy] > b[sortBy] ? 1 : -1;
 					}
-					return -1;
 				}
 			);
 		}
