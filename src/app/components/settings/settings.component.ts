@@ -16,7 +16,7 @@ export class SettingsComponent {
 	saveUserData(): void {
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
-		localStorage.setItem('charater', this.user.character);
+		localStorage.setItem('character', this.user.character);
 		localStorage.setItem('apiTsm', this.user.apiTsm);
 		localStorage.setItem('apiWoWu', this.user.apiWoWu);
 	}
@@ -37,7 +37,7 @@ export class SettingsComponent {
 		user.region = undefined;
 		localStorage.removeItem('realm');
 		user.realm = undefined;
-		localStorage.removeItem('charater');
+		localStorage.removeItem('character');
 		user.character = undefined;
 		localStorage.removeItem('apiTsm');
 		user.apiTsm = undefined;

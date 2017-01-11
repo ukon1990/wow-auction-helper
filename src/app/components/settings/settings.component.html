@@ -10,10 +10,12 @@
 	<br>
 	<h3>API</h3>
 	<label for="wowuction">WoWuction key:</label>
-	<input name="wowuction" placeholder="API key" type="text" /><br>
+	<input name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu"/><br>
 	<label for="tsm">TSM key:</label>
-	<input name="tsm" placeholder="API key" type="text" /><br>
+	<input name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm"/><br>
 	<br>
+	<button (click)="saveUserData()">Save changes</button>
+
 	<h3>Stored data</h3>
 	<button (click)="importUserData()">Import settings</button>
 	<button (click)="exportUserData()">Export settings</button>
