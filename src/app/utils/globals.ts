@@ -473,10 +473,12 @@ let exampleRecipeResponse = {
 
 
 let auctions = [Object];
+let myAuctions = [Object];
 let items = {};
 let pets = [Object];
 
 export let lists = {
+    myAuctions: this.myAuctions,
     auctions: this.auctions,
     items: this.items,
     pets: this.pets

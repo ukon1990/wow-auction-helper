@@ -163,44 +163,45 @@ export class AuctionComponent {
 		this.currentPage = 1;
 		this.filteredAuctions = [];
 
-		for (let a of auctions) {
-			let match = true;
+		for (var id in auctions) {
+			if(auctions.hasOwnProperty(id)) {
+				let match = true;
 			// Matching against item type
-			if (this.isTypeMatch(itemList[a.item]) && match) {
-				match = true;
-			} else {
-				match = false;
-			}
+			if (this.isTypeMatch(itemList[id]) && match) {
+					match = true;
+				} else {
+					match = false;
+				}
 
-			if (this.filterByCharacter || this.searchQuery.length > 0 || this.onlyCraftables) {
-				// Matching against item name
-				if (this.searchQuery.length !== 0 && match) {
-					// TODO: Used to use getItemName()
-					if (a.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
-						match = true;
-					} else {
-						match = false;
+				if (this.filterByCharacter || this.searchQuery.length > 0 || this.onlyCraftables) {
+					// Matching against item name
+					if (this.searchQuery.length !== 0 && match) {
+						// TODO: Used to use getItemName()
+						if (auctions[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+							match = true;
+						} else {
+							match = false;
+						}
+					}
+
+					// Matching against auction owner
+					if (this.filterByCharacter && match) {
+						try{
+							match = auctions[id].owner.toString().toLowerCase() === user.character.toLowerCase();
+						}catch(err){ match = false;}
+					}
+					// Item source
+					if (this.onlyCraftables && match) {
+						match = itemList[id]['itemSource'] !== undefined &&
+								itemList[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
 					}
 				}
-
-				// Matching against auction owner
-				if (this.filterByCharacter && match) {
-					try{
-						match = a.owner.toString().toLowerCase() === user.character.toLowerCase();
-					}catch(err){ match = false;}
+				if (match) {
+					this.numberOfAuctions++;
+					this.filteredAuctions.push(auctions[id]);
 				}
-				// Item source
-				if (this.onlyCraftables && match) {
-					match = itemList[a.item]['itemSource'] !== undefined &&
-							itemList[a.item]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
-				}
-			}
-			if (match) {
-				this.numberOfAuctions++;
-				this.filteredAuctions.push(a);
 			}
 		}
-		console.log(itemList);
 	}
 
 	isTypeMatch(item): boolean {
@@ -305,7 +306,27 @@ export class AuctionComponent {
 				o['mktPrice'] = 0;
 			}
 
-			list.push(o);
+			if(list[o.item] !== undefined) {
+
+				list[o.item]['auctions'][o.auc] = o;
+				list[o.item]['quantity'] += o['quantity'];
+
+				if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] >
+						o['buyout'] / o['quantity']) {
+
+					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
+					list[o.item]['owner'] = o['owner'];
+				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] ===
+						o['buyout'] / o['quantity'] &&
+						list[o.item]['owner'] !== o['owner']) {
+
+					list[o.item]['owner'] += ', ' + o['owner']
+				}
+			} else {
+				list[o.item] = o;
+				list[o.item]['auctions'] = [];
+				list[o.item]['auctions'][o.auc] = o;
+			}
 		}
 		auctions = list;
 		this.filterAuctions();

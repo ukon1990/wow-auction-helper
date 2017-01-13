@@ -32,8 +32,6 @@
 	<tr class="row">
 		<th>Name</th>
 		<th>Quantity</th>
-		<th>Time left</th>
-		<th (click)="sortAuctions('bid')">Bid</th>
 		<th (click)="sortAuctions('buyout')">Buyout</th>
 		<th>avg Posted/Sold</th>
 		<th (click)="sortAuctions('estDemand')">Demand</th>
@@ -51,12 +49,8 @@
 			</div>
 		</td>
 		<td>{{ auc.quantity }}</td>
-		<td>{{ auctionDuration[auc.timeLeft] }}</td>
 		<td>
-			{{ copperToArray(auc.bid) }} total <br> {{ copperToArray(auc.bid / auc.quantity ) }} a pcs
-		</td>
-		<td>
-			{{ copperToArray(auc.buyout) }} total<br> {{ copperToArray(auc.buyout / auc.quantity) }} a pcs
+			{{ copperToArray(auc.buyout) }}
 		</td>
 		<td>
 			{{ auc.avgDailyPosted }} <br>
@@ -65,10 +59,6 @@
 		<td>
 			{{ auc.estDemand }}%
 		</td>
-		<!--<div class="tooltip">
-            Description: {{ getDescription(auc.item) }} <br>
-            Inventory type: {{ itemList[auc.item].inventoryType }}
-        </div>-->
 	</tr>
 </table>
 <div class="pager">
