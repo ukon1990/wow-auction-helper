@@ -1,23 +1,29 @@
-<h2>Settings</h2>
-<form>
-	<h3>Realm & Character</h3>
-	<select class="col-md-2 " name="region" type="text" [(ngModel)]="user.region">
-		<option value="eu">EU</option>
-		<option value="us">US</option>
-	</select>
-	<input class=" col-md-2" name="realm" placeholder="Realm" type="text" [(ngModel)]="user.realm" />
-	<input class="col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" />
-	<br>
-	<h3>API</h3>
-	<label for="wowuction">WoWuction key:</label>
-	<input name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu"/><br>
-	<label for="tsm">TSM key:</label>
-	<input name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm"/><br>
-	<br>
-	<button (click)="saveUserData()">Save changes</button>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Settings</h2>
+	</div>
+	<div class="panel-body">
+		<form>
+		<h3>Realm & Character</h3>
+		<select class="col-md-2 " name="region" type="text" [(ngModel)]="user.region">
+			<option value="eu">EU</option>
+			<option value="us">US</option>
+		</select>
+		<input class=" col-md-2" name="realm" placeholder="Realm" type="text" [(ngModel)]="user.realm" />
+		<input class="col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" />
+		<br>
+		<h3>API</h3>
+		<label for="wowuction">WoWuction key:</label>
+		<input name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu"/><br>
+		<label for="tsm">TSM key:</label>
+		<input name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm"/><br>
+		<br>
+		<button (click)="saveUserData()">Save changes</button>
 
-	<h3>Stored data</h3>
-	<button (click)="importUserData()">Import settings</button>
-	<button (click)="exportUserData()">Export settings</button>
-	<button (click)="deleteUserData()">Delete settings</button>
-</form>
+		<h3>Stored data</h3>
+		<button (click)="importUserData()">Import settings</button>
+		<button (click)="exportUserData()">Export settings</button>
+		<button (click)="deleteUserData()">Delete settings</button>
+	</form>
+	</div>
+</div>

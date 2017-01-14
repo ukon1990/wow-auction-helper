@@ -62,6 +62,10 @@ export class AppComponent {
             this.exists(localStorage.getItem('region'));
     }
 
+    isCharacterSet(): boolean {
+        return this.isRealmSet() && this.exists(user.character);
+    }
+
     checkForUpdate() {
         if (this.isRealmSet()) {
             this.auctionService.getLastUpdated()

@@ -31,3 +31,10 @@
     border-bottom-color: #2f3032;
     border-top-color: #b1b2b4;
 }
+
+#my-auctions {
+    position: absolute;
+    min-height: 10em;
+    min-width: 10em;
+    top: 0;
+}

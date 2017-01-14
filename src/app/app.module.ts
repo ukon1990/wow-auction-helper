@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { FrontPageComponent } from './components/frontpage/front.page.component';
 import { AuctionComponent } from './components/auctions/auctions.component';
+import { MyAuctionsComponent } from './components/auctions/my.auctions.component';
 import { AboutComponent } from './components/about/about.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
@@ -15,6 +16,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 		AppComponent,
 		FrontPageComponent,
 		AuctionComponent,
+		MyAuctionsComponent,
 		AboutComponent,
 		SettingsComponent
 	],
@@ -30,6 +32,9 @@ import { SettingsComponent } from './components/settings/settings.component';
 			}, {
 				path: 'auctions',
 				component: AuctionComponent
+			}, {
+				path: 'my-auctions',
+				component: MyAuctionsComponent
 			}, {
 				path: 'about',
 				component: AboutComponent
