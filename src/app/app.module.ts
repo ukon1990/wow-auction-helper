@@ -11,6 +11,9 @@ import { MyAuctionsComponent } from './components/auctions/my.auctions.component
 import { AboutComponent } from './components/about/about.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
+import { AuctionService } from './services/auctions';
+import { ItemService } from './services/item';
+
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -44,7 +47,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 			}
 		])
 	],
-	providers: [],
+	providers: [AuctionService, ItemService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

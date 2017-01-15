@@ -87,7 +87,7 @@ export class MyAuctionsComponent {
 		}
 	}
 	getNumOfPages() {
-		let size = lists.myAuctions.length || 0;
+		let size = lists.myAuctions !== undefined ? lists.myAuctions.length : 0;
 		this.numOfPages = size / this.limit;
 		return Math.round(this.numOfPages);
 	}

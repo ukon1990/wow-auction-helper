@@ -29,9 +29,7 @@ export class AuctionComponent {
 	// Objects and arrays
 	private user: IUser;
 	private itemClasses = {};
-	private auctionObserver = {};
-	private itemObserver = {};
-	private petObserver = {};
+
 	private auctionDuration = {
 		'VERY_LONG': '12h+',
 		'LONG': '2-12h',
@@ -41,9 +39,6 @@ export class AuctionComponent {
 
 	private filteredAuctions = [];
 	private wowUList = [];
-	private itemList = {};
-	private auctions = [];
-	private petList = [];
 
 	// Numbers
 	private limit: number = 10;//per page
@@ -70,63 +65,7 @@ export class AuctionComponent {
 	}
 
 	ngOnInit(): void {
-		this.setAuctions();
-		this.setItems();
-		this.setPets();
-		if (this.auctions !== undefined && this.auctions.length === 0) {
-			this.auctionService.getWoWuctionData().subscribe( res => {
-				this.wowUList = res;
-			});
-			this.petObserver = this.itemService.getPets()
-				.subscribe(pets => {
-					this.buildPetArray(pets['pets']);
-				});
-			this.itemObserver = this.itemService.getItems()
-				.subscribe(
-				i => {
-					this.buildItemArray(i)
-				}
-				);
-		} else {
-			//Loading auction list
-			this.filterAuctions();
-		}
-	}
-
-	setItems(list?): void {
-		if(lists.items === undefined) {
-			lists.items = [];
-		}
-
-		if(list === undefined) {
-			this.itemList = lists.items;
-		} else {
-			lists.items = list;
-		}
-	}
-
-	setAuctions(list?): void {
-		if(lists.auctions === undefined) {
-			lists.auctions = [];
-		}
-
-		if(list === undefined) {
-			this.auctions = lists.auctions;
-		} else {
-			lists.auctions = list;
-		}
-	}
-
-	setPets(list?) {
-		if(lists.pets === undefined) {
-			lists.pets = [];
-		}
-
-		if(list === undefined) {
-			this.petList = lists.pets;
-		} else {
-			lists.pets = list;
-		}
+		this.filterAuctions();
 	}
 
 	changePage(change: number): void {
@@ -140,12 +79,12 @@ export class AuctionComponent {
 	getItemIcon(auction): string {
 		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
 		if (auction.petSpeciesId !== undefined) {
-			if (this.petList[auction.petSpeciesId] === undefined) {
-				this.getPet(auction.petSpeciesId);
+			if (lists.pets[auction.petSpeciesId] === undefined) {
+				// TODO: this.getPet(auction.petSpeciesId);
 			}
-			icon = this.petList[auction.petSpeciesId].icon;
+			icon = undefined;// TODO: this.petList[auction.petSpeciesId].icon;
 		} else {
-			icon = this.itemList[auction.item].icon;
+			icon = lists.items[auction.item].icon;
 		}
 		if (icon === undefined) {
 			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
@@ -155,18 +94,12 @@ export class AuctionComponent {
 		return url;
 	}
 
-	getToolTip(itemID: string) {
-		if (this.itemList[itemID]['description'] === undefined) {
-			this.getItem(itemID);
-		}
-	}
-
 	getType(s) {
 		return typeof s;
 	}
 
 	getDescription(itemID: string): string {
-		let item = this.itemList[itemID];
+		let item = lists.items[itemID];
 		if (item['description'] !== undefined && item['description'].length > 0) {
 			return item['description'];
 		} else if (item['itemSpells'] !== undefined) {
@@ -203,11 +136,11 @@ export class AuctionComponent {
 		this.currentPage = 1;
 		this.filteredAuctions = [];
 
-		for (let id in this.auctions) {
-			if(this.auctions.hasOwnProperty(id)) {
+		for (let id in lists.auctions) {
+			if(lists.auctions.hasOwnProperty(id)) {
 				let match = true;
 			// Matching against item type
-			if (this.isTypeMatch(this.itemList[id]) && match) {
+			if (this.isTypeMatch(lists.items[id]) && match) {
 					match = true;
 				} else {
 					match = false;
@@ -217,7 +150,7 @@ export class AuctionComponent {
 					// Matching against item name
 					if (this.searchQuery.length !== 0 && match) {
 						// TODO: Used to use getItemName()
-						if (this.auctions[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+						if (lists.auctions[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
 							match = true;
 						} else {
 							match = false;
@@ -227,18 +160,18 @@ export class AuctionComponent {
 					// Matching against auction owner
 					if (this.filterByCharacter && match) {
 						try{
-							match = this.auctions[id].owner.toString().toLowerCase() === user.character.toLowerCase();
+							match = lists.auctions[id].owner.toString().toLowerCase() === user.character.toLowerCase();
 						}catch(err) { match = false;}
 					}
 					// Item source
 					if (this.onlyCraftables && match) {
-						match = this.itemList[id]['itemSource'] !== undefined &&
-								this.itemList[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
+						match = lists.items[id]['itemSource'] !== undefined &&
+								lists.items[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
 					}
 				}
 				if (match) {
 					this.numberOfAuctions++;
-					this.filteredAuctions.push(this.auctions[id]);
+					this.filteredAuctions.push(lists.auctions[id]);
 				}
 			}
 		}
@@ -260,155 +193,7 @@ export class AuctionComponent {
 		return match;
 	}
 
-	buildItemArray(arr) {
-		for (let i of arr) {
-			this.itemList[i['id']] = i;
-			if(i['itemSource'].length > 0){
-				i['itemSource'].forEach(sid => {
-					if(sid['sourceType'] === 'CREATED_BY_SPELL') {
-						console.log('Item: ' + i['name'] + ' -> ' + sid['sourceId']);
-					}
-				});
-			}
-		}
-		this.setItems(this.itemList);
-		this.getAuctions();
-	}
-
-	getAuctions(): void {
-		console.log('Loading auctions');
-		this.auctionObserver = this.auctionService.getAuctions()
-			.subscribe(
-			r => {
-				this.buildAuctionArray(r.auctions)
-			}
-			);
-	}
-
-	getItemName(auction): string {
-		let itemID = auction.item;
-		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-			return this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-		} else {
-			if (this.itemList[itemID] !== undefined) {
-				if (this.itemList[itemID]['name'] === 'Loading') {
-					this.getItem(itemID);
-				}
-				return this.itemList[itemID]['name'];
-			}
-		}
-		return 'no item data';
-	}
-
-	getPet(speciesId) {
-		if (this.petList[speciesId] === undefined) {
-			this.petList[speciesId] = {
-				"speciesId": speciesId,
-				"petTypeId": 0,
-				"creatureId": 54730,
-				"name": "Loading",
-				"icon": "spell_shadow_summonimp",
-			};
-			this.petObserver = this.itemService.getPet(speciesId).subscribe(
-				r => {
-					this.petList[speciesId] = r;
-				}
-			);
-		}
-		return this.petList[speciesId].name;
-	}
-
-	buildAuctionArray(arr) {
-		console.log('s');
-		let list = [];
-		for (let o of arr) {
-			this.numberOfAuctions++;
-			if (this.itemList[o.item] === undefined) {
-				this.itemList[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
-				o['name'] = 'Loading';
-			} else {
-				o['name'] = this.itemList[o.item].name;
-			}
-			if (o.petSpeciesId !== undefined) {
-				if (this.petList[o.petSpeciesId] === null) {
-					this.getPet(o.petSpeciesId);
-				}
-				o['name'] = this.getItemName(o);
-			}
-			if(this.wowUList[o.item] !== undefined) {
-				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
-				o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
-				o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
-			} else {
-				o['estDemand'] = 0;
-				o['avgDailySold'] = 0;
-				o['avgDailyPosted'] = 0;
-				o['mktPrice'] = 0;
-			}
-
-			if(list[o.item] !== undefined) {
-
-				list[o.item]['auctions'][o.auc] = o;
-				list[o.item]['quantity'] += o['quantity'];
-
-				if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] >
-						o['buyout'] / o['quantity']) {
-
-					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
-					list[o.item]['owner'] = o['owner'];
-				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] ===
-						o['buyout'] / o['quantity'] &&
-						list[o.item]['owner'] !== o['owner']) {
-
-					list[o.item]['owner'] += ', ' + o['owner']
-				}
-			} else {
-				list[o.item] = o;
-				list[o.item]['auctions'] = [];
-				list[o.item]['auctions'][o.auc] = o;
-			}
-
-			// Storing a users auctions in a list
-			if(this.user.character !== undefined) {
-				if (o.owner === this.user.character) {
-					if(lists.myAuctions === undefined) {
-						lists.myAuctions = [];
-					}
-					lists.myAuctions.push(o);
-				}
-			}
-		}
-		this.auctions = list;
-		this.setAuctions(list);
-		console.log(lists.myAuctions);
-		this.filterAuctions();
-	}
-
-	buildPetArray(pets) {
-		let list = [];
-		pets.forEach(p => {
-			list[p.speciesId] = p;
-		});
-		this.petList = list;
-		this.setPets(list);
-	}
-
-	getSize(list): number {
-		let count = 0;
-		for (let c of list) {
-			count++;
-		}
-		return count;
-	}
-
-	getItem(id) {
-		this.itemObserver = this.itemService.getItem(id)
-			.subscribe(
-			r => this.itemList[r['id']] = r
-			);
-	}
+	
 
 	copperToArray(c): string {
 		//Just return a string
