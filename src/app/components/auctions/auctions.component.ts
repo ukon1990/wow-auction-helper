@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 
-import { user, itemClasses, lists, copperToArray  } from '../../utils/globals';
+import { user, itemClasses, lists, copperToArray , getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
@@ -41,7 +41,7 @@ export class AuctionComponent {
 	private wowUList = [];
 
 	// Numbers
-	private limit: number = 10;//per page
+	private limit: number = 10;// per page
 	private index: number = 0;
 	private numberOfAuctions: number = 0;
 	private currentPage: number = 1;
@@ -54,6 +54,7 @@ export class AuctionComponent {
 		private itemService: ItemService,
 		private formBuilder: FormBuilder) {
 		this.user = user;
+		this.filteredAuctions = lists.auctions;
 		this.itemClasses = itemClasses;
 		this.filterForm = formBuilder.group({
 			'searchQuery': '',
@@ -68,19 +69,15 @@ export class AuctionComponent {
 		this.filterAuctions();
 	}
 
-	changePage(change: number): void {
-		if (change > 0 && this.currentPage <= this.numOfPages) {
-			this.currentPage++;
-		} else if (change < 0 && this.currentPage > 1) {
-			this.currentPage--;
-		}
+	ngAfterViewInit(): void {
+		this.filterAuctions();
 	}
 
-	getItemIcon(auction): string {
+	getIcon(auction): string {
 		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
 		if (auction.petSpeciesId !== undefined) {
 			if (lists.pets[auction.petSpeciesId] === undefined) {
-				// TODO: this.getPet(auction.petSpeciesId);
+				getPet(auction.petSpeciesId);
 			}
 			icon = undefined;// TODO: this.petList[auction.petSpeciesId].icon;
 		} else {
@@ -94,8 +91,12 @@ export class AuctionComponent {
 		return url;
 	}
 
-	getType(s) {
-		return typeof s;
+	changePage(change: number): void {
+		if (change > 0 && this.currentPage <= this.numOfPages) {
+			this.currentPage++;
+		} else if (change < 0 && this.currentPage > 1) {
+			this.currentPage--;
+		}
 	}
 
 	getDescription(itemID: string): string {
@@ -159,7 +160,7 @@ export class AuctionComponent {
 
 					// Matching against auction owner
 					if (this.filterByCharacter && match) {
-						try{
+						try {
 							match = lists.auctions[id].owner.toString().toLowerCase() === user.character.toLowerCase();
 						}catch(err) { match = false;}
 					}
@@ -178,7 +179,7 @@ export class AuctionComponent {
 	}
 
 	isTypeMatch(item): boolean {
-		let match: boolean = false;
+		let match = false;
 		if (this.filter.itemClass == '-1' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
 			// TODO: handle undefined subClass
 			if (this.filter.itemSubClass == '-1' ||
@@ -192,8 +193,6 @@ export class AuctionComponent {
 		}
 		return match;
 	}
-
-	
 
 	copperToArray(c): string {
 		//Just return a string

@@ -45,11 +45,11 @@
 			<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
 				<td>
 					<div>
-						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getItemIcon(auc) +')'">
+						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">
 					</span>
 						<div class="align-left col-md-offset-1">
 							<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
-								target="_blank">{{ getItemName(auc) }}</a><br>
+								target="_blank">{{ auc.name }}</a><br>
 							<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
 								target="_blank">{{ auc.owner }}</a>
 						</div>

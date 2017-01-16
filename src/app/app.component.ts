@@ -1,71 +1,64 @@
 import { Component } from '@angular/core';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
-import { user, lists } from './utils/globals';
+import { user, lists, getPet } from './utils/globals';
 import { IUser } from './utils/interfaces';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
-    providers: [AuctionService]
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css'],
+	providers: [AuctionService]
 })
 export class AppComponent {
     // http://realfavicongenerator.net/
-    private title = 'WAH';
-    private lastModified: number;
-    private timeSinceLastModified: number;
-    private oldTimeDiff: number;
-    private date: Date;
-    private wowUList = [];
-    private auctionObserver = {};
+	private title = 'WAH';
+	private lastModified: number;
+	private timeSinceLastModified: number;
+	private oldTimeDiff: number;
+	private date: Date;
+	private wowUList = [];
+	private auctionObserver = {};
 	private itemObserver = {};
 	private petObserver = {};
+	private u: IUser;
 
-    u: IUser = new IUser();
+	constructor(private auctionService: AuctionService,
+		private itemService: ItemService) {
+			this.u = user;
+	}
 
-    constructor(private auctionService: AuctionService,
-        private itemService: ItemService) {
-            this.u = user; 
-        }
-
-    ngOnInit() {
-        this.date = new Date();
-        if (this.isRealmSet()) {
-            this.u.region = localStorage.getItem('region');
-            this.u.realm = localStorage.getItem('realm');
-            this.u.character = localStorage.getItem('character');
-            this.checkForUpdate();
-        }
-        setInterval(() => this.setTimeSinceLastModified(), 1000);
-        setInterval(() => this.checkForUpdate(), 60000);
-
-        if (lists.auctions !== undefined && lists.auctions.length === 0) {
-			this.auctionService.getWoWuctionData().subscribe( res => {
-				this.wowUList = res;
-			});
-			this.petObserver = this.itemService.getPets()
-				.subscribe(pets => {
-					this.buildPetArray(pets['pets']);
-				});
-			this.itemObserver = this.itemService.getItems()
-				.subscribe(
-				i => {
-					this.buildItemArray(i)
-				}
-				);
-		} else {
-			//Loading auction list
-			// this.filterAuctions();
+	ngOnInit() {
+		this.date = new Date();
+		if (this.isRealmSet()) {
+			this.u.region = localStorage.getItem('region');
+			this.u.realm = localStorage.getItem('realm');
+			this.u.character = localStorage.getItem('character');
+			this.checkForUpdate();
 		}
-    }
+		setInterval(() => this.setTimeSinceLastModified(), 1000);
+		setInterval(() => this.checkForUpdate(), 60000);
+
+		this.auctionService.getWoWuctionData().subscribe(res => {
+			this.wowUList = res;
+		});
+		this.petObserver = this.itemService.getPets()
+			.subscribe(pets => {
+				this.buildPetArray(pets['pets']);
+			});
+		this.itemObserver = this.itemService.getItems()
+			.subscribe(i => {this.buildItemArray(i)});
+	}
 
 	buildItemArray(arr) {
+		if(lists.items === undefined) {
+			lists.items = [];
+		}
 		for (let i of arr) {
 			lists.items[i['id']] = i;
-			if(i['itemSource'].length > 0){
+			if (i['itemSource'].length > 0) {
 				i['itemSource'].forEach(sid => {
-					if(sid['sourceType'] === 'CREATED_BY_SPELL') {
+					if (sid['sourceType'] === 'CREATED_BY_SPELL') {
 						console.log('Item: ' + i['name'] + ' -> ' + sid['sourceId']);
 					}
 				});
@@ -75,135 +68,118 @@ export class AppComponent {
 	}
 
     getAuctions(): void {
-		console.log('Loading auctions');
-		this.auctionObserver = this.auctionService.getAuctions()
-			.subscribe(
-			r => {
-				this.buildAuctionArray(r.auctions)
-			}
-			);
-	}
+        console.log('Loading auctions');
+        this.auctionObserver = this.auctionService.getAuctions()
+        .subscribe(
+        r => {
+            this.buildAuctionArray(r.auctions)
+        }
+        );
+    }
 
     buildAuctionArray(arr) {
-		console.log('s');
-		let list = [];
-		for (let o of arr) {
-			// TODO: this.numberOfAuctions++;
-			if (lists.items[o.item] === undefined) {
-				lists.items[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
-				o['name'] = 'Loading';
-			} else {
-				o['name'] = lists.items[o.item].name;
-			}
-			if (o.petSpeciesId !== undefined) {
-				if (lists.pets[o.petSpeciesId] === null) {
-					this.getPet(o.petSpeciesId);
-				}
-				o['name'] = this.getItemName(o);
-			}
-			if(this.wowUList[o.item] !== undefined) {
-				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
-				o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
-				o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
-			} else {
-				o['estDemand'] = 0;
-				o['avgDailySold'] = 0;
-				o['avgDailyPosted'] = 0;
-				o['mktPrice'] = 0;
-			}
+        console.log('s');
+        let list = [];
+        for (let o of arr) {
+            // TODO: this.numberOfAuctions++;
+            if (lists.items[o.item] === undefined) {
+                lists.items[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
+                o['name'] = 'Loading';
+				this.getItem(o.item);
+            } else {
+                o['name'] = lists.items[o.item].name;
+            }
+            if (o.petSpeciesId !== undefined) {
+                if (lists.pets[o.petSpeciesId] === null) {
+                    getPet(o.petSpeciesId);
+                }
+                o['name'] = this.getItemName(o);
+            }
+            if (this.wowUList[o.item] !== undefined) {
+                o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
+                o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
+                o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
+                o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
+            } else {
+                o['estDemand'] = 0;
+                o['avgDailySold'] = 0;
+                o['avgDailyPosted'] = 0;
+                o['mktPrice'] = 0;
+            }
 
-			if(list[o.item] !== undefined) {
+            if (list[o.item] !== undefined) {
 
-				list[o.item]['auctions'][o.auc] = o;
-				list[o.item]['quantity'] += o['quantity'];
+                list[o.item]['auctions'][o.auc] = o;
+                list[o.item]['quantity'] += o['quantity'];
 
-				if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] >
-						o['buyout'] / o['quantity']) {
+                if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] >
+                    o['buyout'] / o['quantity']) {
 
-					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
-					list[o.item]['owner'] = o['owner'];
-				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] ===
-						o['buyout'] / o['quantity'] &&
-						list[o.item]['owner'] !== o['owner']) {
+                    list[o.item]['buyout'] = o['buyout'] / o['quantity'];
+                    list[o.item]['owner'] = o['owner'];
+                } else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
+                    o['buyout'] / o['quantity'] &&
+                    list[o.item]['owner'] !== o['owner']) {
 
-					list[o.item]['owner'] += ', ' + o['owner']
-				}
-			} else {
-				list[o.item] = o;
-				list[o.item]['auctions'] = [];
-				list[o.item]['auctions'][o.auc] = o;
-			}
+                    list[o.item]['owner'] += ', ' + o['owner']
+                }
+            } else {
+                list[o.item] = o;
+                list[o.item]['auctions'] = [];
+                list[o.item]['auctions'][o.auc] = o;
+            }
 
-			// Storing a users auctions in a list
-			if(this.u.character !== undefined) {
-				if (o.owner === this.u.character) {
-					if(lists.myAuctions === undefined) {
-						lists.myAuctions = [];
-					}
-					lists.myAuctions.push(o);
-				}
-			}
-		}
-		lists.auctions = list;
-	}
+            // Storing a users auctions in a list
+            if (this.u.character !== undefined) {
+                if (o.owner === this.u.character) {
+                    if (lists.myAuctions === undefined) {
+                        lists.myAuctions = [];
+                    }
+                    lists.myAuctions.push(o);
+                }
+            }
+        }
+        lists.auctions = list;
+    }
 
     getItemName(auction): string {
-		let itemID = auction.item;
-		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-			return this.getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-		} else {
-			if (lists.items[itemID] !== undefined) {
-				if (lists.items[itemID]['name'] === 'Loading') {
-					this.getItem(itemID);
-				}
-				return lists.items[itemID]['name'];
-			}
-		}
-		return 'no item data';
-	}
+        let itemID = auction.item;
+        if (auction.petSpeciesId !== undefined) {
+            auction['name'] = getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+            return getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+        } else {
+            if (lists.items[itemID] !== undefined) {
+                if (lists.items[itemID]['name'] === 'Loading') {
+                    this.getItem(itemID);
+                }
+                return lists.items[itemID]['name'];
+            }
+        }
+        return 'no item data';
+    }
 
-	getPet(speciesId) {
-		if (lists.pets[speciesId] === undefined) {
-			lists.pets[speciesId] = {
-				"speciesId": speciesId,
-				"petTypeId": 0,
-				"creatureId": 54730,
-				"name": "Loading",
-				"icon": "spell_shadow_summonimp",
-			};
-			this.petObserver = this.itemService.getPet(speciesId).subscribe(
-				r => {
-					lists.pets[speciesId] = r;
-				}
-			);
-		}
-		return lists.pets[speciesId].name;
-	}
+    getSize(list): number {
+        let count = 0;
+        for (let c of list) {
+            count++;
+        }
+        return count;
+    }
 
-	getSize(list): number {
-		let count = 0;
-		for (let c of list) {
-			count++;
-		}
-		return count;
-	}
+    getItem(id) {
+        this.itemObserver = this.itemService.getItem(id)
+            .subscribe(
+            r => lists.items[r['id']] = r
+            );
+    }
 
-	getItem(id) {
-		this.itemObserver = this.itemService.getItem(id)
-			.subscribe(
-			r => lists.items[r['id']] = r
-			);
-	}
-
-	buildPetArray(pets) {
-		let list = [];
-		pets.forEach(p => {
-			list[p.speciesId] = p;
-		});
-		lists.pets = list;
-	}
+    buildPetArray(pets) {
+        let list = [];
+        pets.forEach(p => {
+            list[p.speciesId] = p;
+        });
+        lists.pets = list;
+    }
 
     setTimeSinceLastModified() {
         this.date = new Date();
