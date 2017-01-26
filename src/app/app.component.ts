@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
 import { user, lists, getPet } from './utils/globals';
@@ -24,7 +25,8 @@ export class AppComponent {
 	private u: IUser;
 
 	constructor(private auctionService: AuctionService,
-		private itemService: ItemService) {
+		private itemService: ItemService,
+		private router: Router) {
 			this.u = user;
 	}
 
@@ -47,7 +49,9 @@ export class AppComponent {
 				this.buildPetArray(pets['pets']);
 			});
 		this.itemObserver = this.itemService.getItems()
-			.subscribe(i => {this.buildItemArray(i)});
+			.subscribe(i => {
+				this.buildItemArray(i);
+			});
 	}
 
 	buildItemArray(arr) {
@@ -56,39 +60,31 @@ export class AppComponent {
 		}
 		for (let i of arr) {
 			lists.items[i['id']] = i;
-			if (i['itemSource'].length > 0) {
-				i['itemSource'].forEach(sid => {
-					if (sid['sourceType'] === 'CREATED_BY_SPELL') {
-						console.log('Item: ' + i['name'] + ' -> ' + sid['sourceId']);
-					}
-				});
-			}
 		}
 		this.getAuctions();
 	}
 
-    getAuctions(): void {
-        console.log('Loading auctions');
-        this.auctionObserver = this.auctionService.getAuctions()
-        .subscribe(
-        r => {
-            this.buildAuctionArray(r.auctions)
-        }
-        );
-    }
+	getAuctions(): void {
+		console.log('Loading auctions');
+		this.auctionObserver = this.auctionService.getAuctions()
+		.subscribe(
+			r => {
+				this.buildAuctionArray(r.auctions);
+			}
+		);
+	}
 
-    buildAuctionArray(arr) {
-        console.log('s');
-        let list = [];
-        for (let o of arr) {
+	buildAuctionArray(arr) {
+		let list = [];
+		for (let o of arr) {
             // TODO: this.numberOfAuctions++;
-            if (lists.items[o.item] === undefined) {
-                lists.items[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
-                o['name'] = 'Loading';
+			if (lists.items[o.item] === undefined) {
+				lists.items[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
+				o['name'] = 'Loading';
 				this.getItem(o.item);
-            } else {
-                o['name'] = lists.items[o.item].name;
-            }
+			} else {
+				o['name'] = lists.items[o.item].name;
+			}
             if (o.petSpeciesId !== undefined) {
                 if (lists.pets[o.petSpeciesId] === null) {
                     getPet(o.petSpeciesId);
@@ -121,7 +117,7 @@ export class AppComponent {
                     o['buyout'] / o['quantity'] &&
                     list[o.item]['owner'] !== o['owner']) {
 
-                    list[o.item]['owner'] += ', ' + o['owner']
+                    list[o.item]['owner'] += ', ' + o['owner'];
                 }
             } else {
                 list[o.item] = o;

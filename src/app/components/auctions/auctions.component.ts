@@ -79,7 +79,7 @@ export class AuctionComponent {
 			if (lists.pets[auction.petSpeciesId] === undefined) {
 				getPet(auction.petSpeciesId);
 			}
-			icon = undefined;// TODO: this.petList[auction.petSpeciesId].icon;
+			icon = lists.pets[auction.petSpeciesId].icon;
 		} else {
 			icon = lists.items[auction.item].icon;
 		}
@@ -137,11 +137,13 @@ export class AuctionComponent {
 		this.currentPage = 1;
 		this.filteredAuctions = [];
 
-		for (let id in lists.auctions) {
-			if(lists.auctions.hasOwnProperty(id)) {
+		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
+		let scanList = this.filter.itemClass === '1' ? lists.auctions[82800].auctions : lists.auctions;
+		for (let id in scanList) {
+			if(scanList.hasOwnProperty(id)) {
 				let match = true;
 			// Matching against item type
-			if (this.isTypeMatch(lists.items[id]) && match) {
+			if (this.isTypeMatch(lists.items[this.filter.itemClass === '1' ? 82800 : id]) && match) {
 					match = true;
 				} else {
 					match = false;
@@ -151,7 +153,7 @@ export class AuctionComponent {
 					// Matching against item name
 					if (this.searchQuery.length !== 0 && match) {
 						// TODO: Used to use getItemName()
-						if (lists.auctions[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+						if (scanList[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
 							match = true;
 						} else {
 							match = false;
@@ -161,7 +163,7 @@ export class AuctionComponent {
 					// Matching against auction owner
 					if (this.filterByCharacter && match) {
 						try {
-							match = lists.auctions[id].owner.toString().toLowerCase() === user.character.toLowerCase();
+							match = scanList[id].owner.toString().toLowerCase() === user.character.toLowerCase();
 						}catch(err) { match = false;}
 					}
 					// Item source
@@ -172,7 +174,7 @@ export class AuctionComponent {
 				}
 				if (match) {
 					this.numberOfAuctions++;
-					this.filteredAuctions.push(lists.auctions[id]);
+					this.filteredAuctions.push(scanList[id]);
 				}
 			}
 		}

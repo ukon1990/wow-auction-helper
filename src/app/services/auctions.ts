@@ -13,12 +13,12 @@ export class AuctionService {
     }
 
     getAuctions() {
-		let localUrl: string = '/assets/auctions.json';
-		let apiUrl: string = 'http://www.wah.jonaskf.net/GetAuctions.php?region=' + this.user.region + '&realm=' + this.user.realm;
+		let localUrl = '/assets/auctions.json';
+		let apiUrl = 'http://www.wah.jonaskf.net/GetAuctions.php?region=' + this.user.region + '&realm=' + this.user.realm;
 		return this.http.get(localUrl)
 			.map(response => <IAuction>function(r) { console.log('Loaded auctions'); return r; } (response.json()));
 	}
-	
+
 	getWoWuctionData() {
 		let url = '/assets/wowuction.tsv';
 		return this.http.get(url)
@@ -27,8 +27,8 @@ export class AuctionService {
 					obj = {},
 					tempObj = {},
 					isFirst = true;
-				// 5 == itemID, 7 == market price, 
-				// 14 == Avg Daily Posted, 15 == Avg Estimated Daily Sold, 
+				// 5 == itemID, 7 == market price,
+				// 14 == Avg Daily Posted, 15 == Avg Estimated Daily Sold,
 				// 16 == Estimated demand
 				r.split('\n').forEach(function(l) {
 					if(isFirst) {
