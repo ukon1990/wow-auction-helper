@@ -514,8 +514,8 @@ export let lists = {
 };
 
 export let user: IUser = {
-	'region': undefined,
-	'realm': undefined,
+	'region': 'eu',
+	'realm': 'aegwynn',
 	'character': undefined,
 	'apiTsm': undefined,
 	'apiWoWu': undefined

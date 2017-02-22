@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { Ng2AutoCompleteModule} from 'ng2-auto-complete';
 
 import { AppComponent } from './app.component';
 import { FrontPageComponent } from './components/frontpage/front.page.component';
@@ -28,6 +29,7 @@ import { ItemService } from './services/item';
 		FormsModule,
 		ReactiveFormsModule,
 		HttpModule,
+		Ng2AutoCompleteModule,
 		RouterModule.forRoot([
 			{
 				path: '',

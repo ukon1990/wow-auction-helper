@@ -85,135 +85,134 @@ export class AppComponent {
 			} else {
 				o['name'] = lists.items[o.item].name;
 			}
-            if (o.petSpeciesId !== undefined) {
-                if (lists.pets[o.petSpeciesId] === null) {
-                    getPet(o.petSpeciesId);
-                }
-                o['name'] = this.getItemName(o);
-            }
-            if (this.wowUList[o.item] !== undefined) {
-                o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
-                o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
-                o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
-                o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
-            } else {
-                o['estDemand'] = 0;
-                o['avgDailySold'] = 0;
-                o['avgDailyPosted'] = 0;
-                o['mktPrice'] = 0;
-            }
+			if (o.petSpeciesId !== undefined) {
+				if (lists.pets[o.petSpeciesId] === null) {
+					getPet(o.petSpeciesId);
+				}
+				o['name'] = this.getItemName(o);
+			}
+			if (this.wowUList[o.item] !== undefined) {
+				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
+				o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
+				o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
+				o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
+			} else {
+				o['estDemand'] = 0;
+				o['avgDailySold'] = 0;
+				o['avgDailyPosted'] = 0;
+				o['mktPrice'] = 0;
+			}
 
-            if (list[o.item] !== undefined) {
+			if (list[o.item] !== undefined) {
 
-                list[o.item]['auctions'][o.auc] = o;
-                list[o.item]['quantity'] += o['quantity'];
+				list[o.item]['auctions'][o.auc] = o;
+				list[o.item]['quantity'] += o['quantity'];
 
-                if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] >
-                    o['buyout'] / o['quantity']) {
+				if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] >
+				o['buyout'] / o['quantity']) {
 
-                    list[o.item]['buyout'] = o['buyout'] / o['quantity'];
-                    list[o.item]['owner'] = o['owner'];
-                } else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
-                    o['buyout'] / o['quantity'] &&
-                    list[o.item]['owner'] !== o['owner']) {
-
-                    list[o.item]['owner'] += ', ' + o['owner'];
-                }
-            } else {
-                list[o.item] = o;
-                list[o.item]['auctions'] = [];
-                list[o.item]['auctions'][o.auc] = o;
-            }
+					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
+					list[o.item]['owner'] = o['owner'];
+				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
+				o['buyout'] / o['quantity'] &&
+				list[o.item]['owner'] !== o['owner']) {
+					list[o.item]['owner'] += ', ' + o['owner'];
+				}
+			} else {
+				list[o.item] = o;
+				list[o.item]['auctions'] = [];
+				list[o.item]['auctions'][o.auc] = o;
+			}
 
             // Storing a users auctions in a list
-            if (this.u.character !== undefined) {
-                if (o.owner === this.u.character) {
-                    if (lists.myAuctions === undefined) {
-                        lists.myAuctions = [];
-                    }
-                    lists.myAuctions.push(o);
-                }
-            }
-        }
-        lists.auctions = list;
-    }
+			if (this.u.character !== undefined) {
+				if (o.owner === this.u.character) {
+					if (lists.myAuctions === undefined) {
+						lists.myAuctions = [];
+					}
+					lists.myAuctions.push(o);
+				}
+			}
+		}
+		lists.auctions = list;
+	}
 
-    getItemName(auction): string {
-        let itemID = auction.item;
-        if (auction.petSpeciesId !== undefined) {
-            auction['name'] = getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-            return getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-        } else {
-            if (lists.items[itemID] !== undefined) {
-                if (lists.items[itemID]['name'] === 'Loading') {
-                    this.getItem(itemID);
-                }
-                return lists.items[itemID]['name'];
-            }
-        }
-        return 'no item data';
-    }
+	getItemName(auction): string {
+		let itemID = auction.item;
+		if (auction.petSpeciesId !== undefined) {
+			auction['name'] = getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+			return getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+		} else {
+			if (lists.items[itemID] !== undefined) {
+				if (lists.items[itemID]['name'] === 'Loading') {
+					this.getItem(itemID);
+				}
+				return lists.items[itemID]['name'];
+			}
+		}
+		return 'no item data';
+	}
 
-    getSize(list): number {
-        let count = 0;
-        for (let c of list) {
-            count++;
-        }
-        return count;
-    }
+	getSize(list): number {
+		let count = 0;
+		for (let c of list) {
+			count++;
+		}
+		return count;
+	}
 
-    getItem(id) {
-        this.itemObserver = this.itemService.getItem(id)
-            .subscribe(
-            r => lists.items[r['id']] = r
-            );
-    }
+	getItem(id) {
+		this.itemObserver = this.itemService.getItem(id)
+			.subscribe(
+				r => lists.items[r['id']] = r
+			);
+	}
 
-    buildPetArray(pets) {
-        let list = [];
-        pets.forEach(p => {
-            list[p.speciesId] = p;
-        });
-        lists.pets = list;
-    }
+	buildPetArray(pets) {
+		let list = [];
+		pets.forEach(p => {
+			list[p.speciesId] = p;
+		});
+		lists.pets = list;
+	}
 
-    setTimeSinceLastModified() {
-        this.date = new Date();
-        let updateTime = new Date(this.lastModified).getMinutes(),
-            currentTime = this.date.getMinutes(),
-            oldTime = this.timeSinceLastModified;
+	setTimeSinceLastModified() {
+		this.date = new Date();
+
+		let updateTime = new Date(this.lastModified).getMinutes(),
+			currentTime = this.date.getMinutes(),
+			oldTime = this.timeSinceLastModified;
         // Checking if there is a new update available
-        if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
-            this.auctionService.getAuctions();
-        }
+		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
+			this.auctionService.getAuctions();
+		}
 
-        this.timeSinceLastModified = this.timeDiff(updateTime, currentTime);
-        this.oldTimeDiff = this.timeDiff(updateTime, currentTime);
+		this.timeSinceLastModified = this.timeDiff(updateTime, currentTime);
+		this.oldTimeDiff = this.timeDiff(updateTime, currentTime);
+	}
 
-    }
+	timeDiff(updateTime, currentTime) {
+		return (updateTime > currentTime ?
+			(60 - updateTime + currentTime) : currentTime - updateTime);
+	}
 
-    timeDiff(updateTime, currentTime) {
-        return (updateTime > currentTime ?
-            (60 - updateTime + currentTime) : currentTime - updateTime);
-    }
+	exists(value): boolean {
+		return value !== null && value !== undefined && value.length > 0;
+	}
 
-    exists(value): boolean {
-        return value !== null && value !== undefined && value.length > 0;
-    }
+	isRealmSet(): boolean {
+		return this.exists(localStorage.getItem('realm')) &&
+		this.exists(localStorage.getItem('region'));
+	}
 
-    isRealmSet(): boolean {
-        return this.exists(localStorage.getItem('realm')) &&
-            this.exists(localStorage.getItem('region'));
-    }
+	isCharacterSet(): boolean {
+		return this.isRealmSet() && this.exists(user.character);
+	}
 
-    isCharacterSet(): boolean {
-        return this.isRealmSet() && this.exists(user.character);
-    }
-
-    checkForUpdate() {
-        if (this.isRealmSet()) {
-            this.auctionService.getLastUpdated()
-                .subscribe(r => this.lastModified = r['lastModified']);
-        }
-    }
+	checkForUpdate() {
+		if (this.isRealmSet()) {
+			this.auctionService.getLastUpdated()
+			.subscribe(r => this.lastModified = r['lastModified']);
+		}
+	}
 }

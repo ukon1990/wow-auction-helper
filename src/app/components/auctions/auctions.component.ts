@@ -67,6 +67,15 @@ export class AuctionComponent {
 
 	ngOnInit(): void {
 		this.filterAuctions();
+		let to = setInterval(function(){
+			if(lists.auctions.length > 0) {
+				console.log('yeh', to);
+				this.filterAuctions();
+				to.clearTask();
+			} else {
+				console.log('nehh');
+			}
+		}, 100);
 	}
 
 	ngAfterViewInit(): void {
