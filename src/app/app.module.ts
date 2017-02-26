@@ -8,6 +8,7 @@ import { Ng2AutoCompleteModule} from 'ng2-auto-complete';
 import { AppComponent } from './app.component';
 import { FrontPageComponent } from './components/frontpage/front.page.component';
 import { AuctionComponent } from './components/auctions/auctions.component';
+import { CraftingComponent } from './components/crafting/crafting.component';
 import { MyAuctionsComponent } from './components/auctions/my.auctions.component';
 import { AboutComponent } from './components/about/about.component';
 import { SettingsComponent } from './components/settings/settings.component';
@@ -20,6 +21,7 @@ import { ItemService } from './services/item';
 		AppComponent,
 		FrontPageComponent,
 		AuctionComponent,
+		CraftingComponent,
 		MyAuctionsComponent,
 		AboutComponent,
 		SettingsComponent
@@ -37,6 +39,9 @@ import { ItemService } from './services/item';
 			}, {
 				path: 'auctions',
 				component: AuctionComponent
+			}, {
+				path: 'crafting',
+				component: CraftingComponent
 			}, {
 				path: 'my-auctions',
 				component: MyAuctionsComponent

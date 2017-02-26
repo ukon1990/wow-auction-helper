@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Crafting</h2>
+	</div>
+	<div class="panel-body">
+		<table class="table table-striped">
+			<tr class="row">
+				<th>Name</th>
+				<th>Cost</th>
+				<th>Buyout</th>
+				<th>avg Posted/Sold</th>
+				<th>Demand</th>
+			</tr>
+			<!-- TODO: optimize price value fetch -->
+			<tr class="row" *ngFor="let craft of crafts">
+				<td>
+					<div>
+						<div class="align-left col-md-offset-1">
+							<a rel="item={{ getItem(craft.itemID).id }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={getItem(craft.itemID).id}}"
+								target="_blank">{{ getItem(craft.itemID).name }}</a>
+						</div>
+					</div>
+				</td>
+				<td>{{ goldConversion(craft.cost) }}</td>
+				<td>
+					num
+				</td>
+				<td>
+					fill
+				</td>
+				<td>
+					0%
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
