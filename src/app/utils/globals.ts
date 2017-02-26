@@ -488,6 +488,24 @@ export function copperToArray(c): string {
     return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
 }
 
+export function getPet(speciesId) {
+	if (lists.pets[speciesId] === undefined) {
+		lists.pets[speciesId] = {
+			"speciesId": speciesId,
+			"petTypeId": 0,
+			"creatureId": 54730,
+			"name": "Loading",
+			"icon": "spell_shadow_summonimp",
+		};
+		this.petObserver = this.itemService.getPet(speciesId).subscribe(
+			r => {
+				lists.pets[speciesId] = r;
+			}
+		);
+	}
+	return lists.pets[speciesId].name;
+}
+
 export let lists = {
     myAuctions: this.myAuctions,
     auctions: this.auctions,
@@ -496,8 +514,8 @@ export let lists = {
 };
 
 export let user: IUser = {
-	'region': undefined,
-	'realm': undefined,
+	'region': 'eu',
+	'realm': 'aegwynn',
 	'character': undefined,
 	'apiTsm': undefined,
 	'apiWoWu': undefined

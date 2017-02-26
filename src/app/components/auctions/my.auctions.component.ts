@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { IUser, IAuction } from '../../utils/interfaces';
-import { user, itemClasses, lists, copperToArray } from '../../utils/globals';
+import { IUser, IAuction  } from '../../utils/interfaces';
+import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/globals';
 
 @Component({
 	selector: 'my-auctions',
-	templateUrl: 'my.auctions.component.html'
+	templateUrl: 'my.auctions.component.html',
+	styleUrls: ['auctions.component.css']
 })
 
 export class MyAuctionsComponent {
@@ -31,7 +32,7 @@ export class MyAuctionsComponent {
 	};
 
 	// Numbers
-	private limit: number = 10;//per page
+	private limit: number = 10;// per page
 	private index: number = 0;
 	private numberOfAuctions: number = 0;
 	private currentPage: number = 1;
@@ -48,6 +49,24 @@ export class MyAuctionsComponent {
 		result[1] = c % 100; //Silver
 		result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //Gold
 		return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
+	}
+
+	getIcon(auction): string {
+		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
+		if (auction.petSpeciesId !== undefined) {
+			if (lists.pets[auction.petSpeciesId] === undefined) {
+				getPet(auction.petSpeciesId);
+			}
+			icon = undefined;// TODO: this.petList[auction.petSpeciesId].icon;
+		} else {
+			icon = lists.items[auction.item].icon;
+		}
+		if (icon === undefined) {
+			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+		} else {
+			url += icon + '.jpg';
+		}
+		return url;
 	}
 
 	getAuctions (): any[] {
@@ -87,7 +106,7 @@ export class MyAuctionsComponent {
 		}
 	}
 	getNumOfPages() {
-		let size = lists.myAuctions.length || 0;
+		let size = lists.myAuctions !== undefined ? lists.myAuctions.length : 0;
 		this.numOfPages = size / this.limit;
 		return Math.round(this.numOfPages);
 	}
