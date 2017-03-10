@@ -8,6 +8,7 @@
 				<th>Name</th>
 				<th>Cost</th>
 				<th>Buyout</th>
+				<th>Profit</th>
 				<th>avg Posted/Sold</th>
 				<th>Demand</th>
 			</tr>
@@ -23,7 +24,10 @@
 				</td>
 				<td>{{ goldConversion(craft.cost) }}</td>
 				<td>
-					num
+					{{ goldConversion(craft.buyout) }}
+				</td>
+				<td>
+					{{ goldConversion(craft.profit) }}
 				</td>
 				<td>
 					fill

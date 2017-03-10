@@ -36,7 +36,7 @@
 		<table class="table table-striped">
 			<tr class="row">
 				<th>Name</th>
-				<th>Quantity</th>
+				<th>Auctions</th>
 				<th (click)="sortAuctions('buyout')">Buyout</th>
 				<th>avg Posted/Sold</th>
 				<th (click)="sortAuctions('estDemand')">Demand</th>
@@ -55,7 +55,7 @@
 						</div>
 					</div>
 				</td>
-				<td>{{ auc.quantity }}</td>
+				<td>{{ auc.quantity_total }}</td>
 				<td>
 					{{ copperToArray(auc.buyout) }}
 				</td>

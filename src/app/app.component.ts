@@ -37,6 +37,9 @@ export class AppComponent {
 			this.u.realm = localStorage.getItem('realm');
 			this.u.character = localStorage.getItem('character');
 			this.checkForUpdate();
+			this.auctionService.getTSMData().subscribe( r => {
+				console.log(r);
+			});
 		}
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);
@@ -85,12 +88,15 @@ export class AppComponent {
 			} else {
 				o['name'] = lists.items[o.item].name;
 			}
-			if (o.petSpeciesId !== undefined) {
+			try {
+				if (o.petSpeciesId !== undefined) {
 				if (lists.pets[o.petSpeciesId] === null) {
 					getPet(o.petSpeciesId);
 				}
-				o['name'] = this.getItemName(o);
-			}
+					o['name'] = this.getItemName(o);
+				}
+			} catch (e) { console.log(e);}
+
 			if (this.wowUList[o.item] !== undefined) {
 				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
 				o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
@@ -106,7 +112,7 @@ export class AppComponent {
 			if (list[o.item] !== undefined) {
 
 				list[o.item]['auctions'][o.auc] = o;
-				list[o.item]['quantity'] += o['quantity'];
+				list[o.item]['quantity_total'] += o['quantity'];
 
 				if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] >
 				o['buyout'] / o['quantity']) {
@@ -119,6 +125,7 @@ export class AppComponent {
 					list[o.item]['owner'] += ', ' + o['owner'];
 				}
 			} else {
+				o['quantity_total'] = o['quantity'];
 				list[o.item] = o;
 				list[o.item]['auctions'] = [];
 				list[o.item]['auctions'][o.auc] = o;

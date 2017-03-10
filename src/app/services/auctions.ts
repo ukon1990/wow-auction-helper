@@ -51,6 +51,17 @@ export class AuctionService {
 			}(res['_body'].toString()));
 	}
 
+	// Need to ask the user how often they want this data to be updated.
+	getTSMData() {
+		let localUrl = '/assets/tsm-draenor.json';
+		let apiUrl = 'http://api.tradeskillmaster.com/v1/item/'
+			+ this.user.region + '/'
+			+ this.user.realm
+			+ '?format=json&apiKey=ftQB3Fv7-UIvbLrbYghiu3FxAS-3LjMO';
+		return this.http.get(localUrl)
+			.map(response => <IAuction>function(r) { console.log('Loaded TSM'); console.log(r); return r; } (response.json()));
+	}
+
 	getLastUpdated() {
 		return this.http.get('http://www.wah.jonaskf.net/GetAuctions.php?region='
 			+ this.user.region + '&realm=' + this.user.realm + '&lastModified')
