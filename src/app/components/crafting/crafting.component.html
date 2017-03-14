@@ -1,11 +1,12 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Crafting</h2>
+		<h2 class="panel-title">Crafting</h2>{{getCraftingCosts()}}
 	</div>
 	<div class="panel-body">
 		<table class="table table-striped">
 			<tr class="row">
 				<th>Name</th>
+				<th>Materials</th>
 				<th>Cost</th>
 				<th>Buyout</th>
 				<th>Profit</th>
@@ -22,7 +23,14 @@
 						</div>
 					</div>
 				</td>
-				<td>{{ goldConversion(craft.cost) }}</td>
+				<td>
+					<div class="clearfix" *ngFor="let m of craft.materials">
+							{{ m.quantity }} x {{getItem(m.itemID).name}} {{getMinPrice(m.itemID)}}
+					</div>
+				</td>
+				<td>
+					{{ goldConversion(craft.cost) }}
+				</td>
 				<td>
 					{{ goldConversion(craft.buyout) }}
 				</td>
