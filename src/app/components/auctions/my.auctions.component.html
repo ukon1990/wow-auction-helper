@@ -3,6 +3,10 @@
 		<h2 class="panel-title">My auctions</h2>
 	</div>
 	<div class="panel-body">
+		<ul>
+			<li>Auctions: {{ activeAuctions }}</li>
+			<li>Value of auctions: {{ copperToArray(auctionsValue) }}</li>
+		</ul>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
 			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
@@ -16,7 +20,7 @@
 				<th>avg Posted/Sold</th>
 				<th (click)="sortAuctions('estDemand')">Demand</th>
 			</tr>
-			<tr class="row" *ngFor="let auc of getAuctions()  | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+			<tr class="row" *ngFor="let auc of getAuctions()  | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;" [ngClass]="{undercut: getAuctionOwner(auc.item) !== character}">
 				<td>
 					<div>
 						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">

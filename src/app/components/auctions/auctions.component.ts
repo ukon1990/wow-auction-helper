@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 
-import { user, itemClasses, lists, copperToArray , getPet } from '../../utils/globals';
+import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
@@ -66,23 +66,14 @@ export class AuctionComponent {
 	}
 
 	ngOnInit(): void {
-		this.filterAuctions();
-		let to = setInterval(function(){
-			if(lists.auctions.length > 0) {
-				this.filterAuctions();
-			} else {
-				console.log('nehh');
-			}
-		}, 100);
-	}
-
-	ngAfterViewInit(): void {
-		this.filterAuctions();
+		if (lists.auctions !== undefined && lists.auctions.length > 0) {
+			this.filterAuctions();
+		}
 	}
 
 	getIcon(auction): string {
 		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
-		if (auction.petSpeciesId !== undefined) {
+		if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
 			if (lists.pets[auction.petSpeciesId] === undefined) {
 				getPet(auction.petSpeciesId);
 			}
@@ -138,7 +129,8 @@ export class AuctionComponent {
 		this.onlyCraftables = this.filterForm.value['onlyCraftables'];
 		this.filter = {
 			'itemClass': this.filterForm.value['itemClass'],
-			'itemSubClass': this.filterForm.value['itemSubClass']};
+			'itemSubClass': this.filterForm.value['itemSubClass']
+		};
 
 		this.numberOfAuctions = 0;
 		this.currentPage = 1;
@@ -147,10 +139,10 @@ export class AuctionComponent {
 		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
 		let scanList = this.filter.itemClass === '1' ? lists.auctions[82800].auctions : lists.auctions;
 		for (let id in scanList) {
-			if(scanList.hasOwnProperty(id)) {
+			if (scanList.hasOwnProperty(id)) {
 				let match = true;
-			// Matching against item type
-			if (this.isTypeMatch(lists.items[this.filter.itemClass === '1' ? 82800 : id]) && match) {
+				// Matching against item type
+				if (this.isTypeMatch(lists.items[this.filter.itemClass === '1' ? 82800 : id]) && match) {
 					match = true;
 				} else {
 					match = false;
@@ -171,12 +163,12 @@ export class AuctionComponent {
 					if (this.filterByCharacter && match) {
 						try {
 							match = scanList[id].owner.toString().toLowerCase() === user.character.toLowerCase();
-						}catch(err) { match = false;}
+						} catch (err) { match = false; }
 					}
 					// Item source
 					if (this.onlyCraftables && match) {
 						match = lists.items[id]['itemSource'] !== undefined &&
-								lists.items[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
+							lists.items[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
 					}
 				}
 				if (match) {
@@ -219,10 +211,10 @@ export class AuctionComponent {
 			this.buyOutAsc = false;
 			this.filteredAuctions.sort(
 				function (a, b) {
-					if(sortBy === 'buyout' || sortBy === 'bid') {
-						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 :-1;
-					}else {
-						return a[sortBy] < b[sortBy] ? 1 :-1;
+					if (sortBy === 'buyout' || sortBy === 'bid') {
+						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 : -1;
+					} else {
+						return a[sortBy] < b[sortBy] ? 1 : -1;
 					}
 				}
 			);
@@ -230,7 +222,7 @@ export class AuctionComponent {
 			this.buyOutAsc = true;
 			this.filteredAuctions.sort(
 				function (a, b) {
-					if(sortBy === 'buyout' || sortBy === 'bid') {
+					if (sortBy === 'buyout' || sortBy === 'bid') {
 						return a[sortBy] / a['quantity'] > b[sortBy] / a['quantity'] ? 1 : -1;
 					} else {
 						return a[sortBy] > b[sortBy] ? 1 : -1;

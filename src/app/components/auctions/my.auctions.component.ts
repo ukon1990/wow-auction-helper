@@ -17,6 +17,9 @@ export class MyAuctionsComponent {
 	private onlyCraftables = false;
 	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
 	private filterForm: FormGroup;
+	private character: string;
+	private activeAuctions = 0;
+	private auctionsValue = 0;
 
 	// Objects and arrays
 	private user: IUser;
@@ -40,6 +43,10 @@ export class MyAuctionsComponent {
 
 	private buyOutAsc: boolean = true;
 
+	constructor(){
+		this.character = user.character;
+	}
+
 	copperToArray(c): string {
 		//Just return a string
 		var result = [];
@@ -50,6 +57,10 @@ export class MyAuctionsComponent {
 		result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //Gold
 		return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
 	}
+
+	getAuctionOwner(itemID): string {
+		return lists.auctions[itemID].owner;
+	};
 
 	getIcon(auction): string {
 		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
@@ -70,6 +81,12 @@ export class MyAuctionsComponent {
 	}
 
 	getAuctions (): any[] {
+		this.auctionsValue = 0;
+		if(lists.myAuctions !== undefined && lists.myAuctions.length > 0) {
+		this.activeAuctions = lists.myAuctions.length;
+			lists.myAuctions.forEach(
+				a => { this.auctionsValue += a.buyout });
+		}
 		return lists.myAuctions;
 	}
 

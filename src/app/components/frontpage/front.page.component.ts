@@ -24,7 +24,7 @@ export class FrontPageComponent {
 				this.realmListEu = r.region.eu;
 				this.realmListUs = r.region.us;
 			});
-		console.log('dasda', localStorage.getItem('region'));
+		console.log('Stored region:', localStorage.getItem('region'));
 		if(localStorage.getItem('realm') !== null && localStorage.getItem('region') !== null) {
 			this.router.navigateByUrl('/auctions');
 		}
@@ -42,8 +42,8 @@ export class FrontPageComponent {
 		localStorage.setItem('region', this.u.region);
 		localStorage.setItem('realm', this.u.realm);
 		localStorage.setItem('charater', this.u.character);
-		localStorage.setItem('apiTsm', this.u.apiTsm);
-		localStorage.setItem('apiWoWu', this.u.apiWoWu);
+		localStorage.setItem('api_tsm', this.u.apiTsm);
+		localStorage.setItem('api_wowuction', this.u.apiWoWu);
 		this.router.navigateByUrl('/auctions');
 	}
 

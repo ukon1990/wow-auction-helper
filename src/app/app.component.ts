@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
-import { user, lists, getPet } from './utils/globals';
+import { user, lists, getPet, db } from './utils/globals';
 import { IUser } from './utils/interfaces';
 
 @Component({
@@ -37,9 +37,9 @@ export class AppComponent {
 			this.u.realm = localStorage.getItem('realm');
 			this.u.character = localStorage.getItem('character');
 			this.checkForUpdate();
-			this.auctionService.getTSMData().subscribe( r => {
-				console.log(r);
-			});
+			this.auctionService.getTSMData().then( r => {
+				console.log('tsm result:',r);
+			}).catch(err => console.log(err));
 		}
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);

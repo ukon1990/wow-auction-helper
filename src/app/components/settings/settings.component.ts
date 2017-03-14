@@ -17,8 +17,8 @@ export class SettingsComponent {
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
 		localStorage.setItem('character', this.user.character);
-		localStorage.setItem('apiTsm', this.user.apiTsm);
-		localStorage.setItem('apiWoWu', this.user.apiWoWu);
+		localStorage.setItem('api_wowuction', this.user.apiTsm);
+		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 	}
 
 	importUserData(): void {
@@ -39,9 +39,9 @@ export class SettingsComponent {
 		user.realm = undefined;
 		localStorage.removeItem('character');
 		user.character = undefined;
-		localStorage.removeItem('apiTsm');
+		localStorage.removeItem('api_tsm');
 		user.apiTsm = undefined;
-		localStorage.removeItem('apiWoWu');
+		localStorage.removeItem('api_wowuction');
 		user.apiWoWu = undefined;
 	}
 }

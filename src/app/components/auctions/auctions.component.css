@@ -38,3 +38,7 @@
     min-width: 10em;
     top: 0;
 }
+
+.undercut {
+    background-color: #fddddd !important;
+}
