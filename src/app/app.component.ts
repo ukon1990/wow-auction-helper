@@ -52,7 +52,18 @@ export class AppComponent {
 				this.buildPetArray(pets['pets']);
 				this.itemService.getRecipes()
 					.subscribe(recipe => {
-						lists.recipes = recipe.recipes;
+						let accepted = true;
+						let num = 0;
+						if(lists.recipes === undefined) {
+								lists.recipes = [];
+						}
+						recipe.recipes.forEach(r => {
+							num++;
+							if(r !== null && r['profession'] !== undefined && r['profession'] !== null) {
+								lists.recipes.push(r);
+							}
+						});
+						console.log('num ' + num);
 						this.itemObserver = this.itemService.getItems()
 							.subscribe(i => {
 								this.buildItemArray(i);

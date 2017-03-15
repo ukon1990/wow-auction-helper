@@ -33,6 +33,11 @@
 			<button class="btn btn-default" (click)="getAuctions(); saveSettings();">Update</button>
 		</div>
 		<br>
+		<div class="pager">
+			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+		</div>
 		<table class="table table-striped">
 			<tr class="row">
 				<th>Name</th>

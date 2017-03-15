@@ -3,6 +3,24 @@
 		<h2 class="panel-title">Crafting</h2>
 	</div>
 	<div class="panel-body">
+		<div class="row col-md-12">
+			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+				<input class="col-md-2 form-control" type="text" placeholder="Item name" [formControl]="filterForm.controls['searchQuery']"
+				/>
+				<select class="form-control" [formControl]="filterForm.controls['profession']">
+					<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
+				</select>
+				<button class="btn btn-primary" type="submit">Apply filter</button>
+			</form>
+
+			<button class="btn btn-default" (click)="getAuctions(); saveSettings();">Update</button>
+		</div>
+		<br>
+		<div class="pager">
+			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+		</div>
 		<table class="table table-striped">
 			<tr class="row">
 				<th>Name</th>
@@ -18,14 +36,15 @@
 				<td>
 					<div>
 						<div class="align-left col-md-offset-1">
-							<a rel="item={{ getItem(craft.itemID).id }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={getItem(craft.itemID).id}}"
-								target="_blank">{{ getItem(craft.itemID).name }}</a>
+							<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={craft.itemID}}"
+							 target="_blank">{{ craft.name }}</a>
+							<br> {{ craft.profession }}
 						</div>
 					</div>
 				</td>
 				<td>
 					<div class="clearfix" *ngFor="let m of craft.reagents">
-							{{ m.count }} x {{getItem(m.itemID).name}} {{getMinPrice(m.itemID)}}
+						{{ m.count }} x {{m.name}} {{getMinPrice(m.itemID)}}
 					</div>
 				</td>
 				<td>
@@ -35,7 +54,7 @@
 					{{ goldConversion(craft.buyout) }}
 				</td>
 				<td>
-					{{ goldConversion(craft.profit) }}
+					{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
 				</td>
 				<td>
 					{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}

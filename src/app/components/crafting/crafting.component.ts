@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 
 @Component({
@@ -6,108 +7,49 @@ import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/glo
 	templateUrl: 'crafting.component.html'
 })
 export class CraftingComponent {
+	// Strings
+	private searchQuery = '';
+	private filter = { 'itemClass': '-1', 'itemSubClass': '-1', 'profession': 'All' };
+	private filterForm: FormGroup;
 
-	private crafts = [
-		// Alchemy
-		{
-			spellID: 188334,
-			itemID: 127846,
-			professionId: 171,
-			expansionId: 6,
-			rank: 2,
-			cost: 0,
-			buyout: 0,
-			profit: 0,
-			materials: [{
-				itemID: 124105,
-				quantity: 2
-			}, {
-				itemID: 124101,
-				quantity: 4
-			}, {
-				itemID: 124102,
-				quantity: 4
-			}
-			]
-		}, {
-			spellID: 188325,
-			itemID: 127843,
-			professionId: 171,
-			expansionId: 6,
-			rank: 2,
-			cost: 0,
-			buyout: 0,
-			profit: 0,
-			materials: [{
-				itemID: 124105,
-				quantity: 2
-			}, {
-				itemID: 124104,
-				quantity: 4
-			}, {
-				itemID: 124102,
-				quantity: 4
-			}
-			]
-		},
-		// Enchanting
-		{
-			spellID: 191021,
-			itemID: 128549,
-			professionId: 333,
-			expansionId: 6,
-			rank: 3,
-			cost: 0,
-			buyout: 0,
-			profit: 0,
-			materials: [{
-				itemID: 124442,
-				quantity: 8
-			}, {
-				itemID: 124440,
-				quantity: 20
-			}, {
-				itemID: 124124,
-				quantity: 1
-			}
-			]
-		}
-	];
+	private crafts = [];
 
 	private limit: number = 10;// per page
 	private index: number = 0;
 	private currentPage: number = 1;
 	private numOfPages: number = this.crafts.length / this.limit;
 
+
+
+	private professions = [
+		'All',
+		'First Aid',
+		'Blacksmithing',
+		'Leatherworking',
+		'Alchemy',
+		'Cooking',
+		'Mining',
+		'Tailoring',
+		'Engineering',
+		'Enchanting',
+		'Jewelcrafting',
+		'Inscription'
+	];
+
 	setCrafts() {
 		this.crafts = lists.recipes;
 		this.numOfPages = this.crafts.length / this.limit;
 	}
 
-	private professions = {
-		129: 'First Aid',
-		164: 'Blacksmithing',
-		165: 'Leatherworking',
-		171: 'Alchemy',
-		185: 'Cooking',
-		186: 'Mining',
-		197: 'Tailoring',
-		202: 'Engineering',
-		333: 'Enchanting',
-		755: 'Jewelcrafting',
-		773: 'Inscription'
-	};
-	private expansions = {
-		0: 'Classic',
-		1: 'The burning crusade',
-		2: 'Wrath of the Lich King',
-		3: 'Cataclysm',
-		4: 'Mists of Pandaria',
-		5: 'Warlords of Draenor',
-		6: 'Legion'
-	};
-
-	constructor() { }
+	constructor(
+		private formBuilder: FormBuilder) {
+		this.filterForm = formBuilder.group({
+			'searchQuery': '',
+			'profession': this.filter.profession,
+			'profit': 0,
+			'demand': 0
+		});
+	}
 
 	ngOnInit() {
 		try {
@@ -116,12 +58,34 @@ export class CraftingComponent {
 			console.log(e);
 		}
 	}
+	filteRecipes() {
+		this.crafts = [];
+		this.searchQuery = this.filterForm.value['searchQuery'];
+		this.filter.profession = this.filterForm.value['profession'];
+		let match = false;
+		lists.recipes.forEach(r => {
+			try {
+				if (this.filter.profession === 'All') {
+					match = true;
+				} else if (this.filter.profession === r.profession) {
+					match = true;
+				} else {
+					match = false;
+				}
+
+				if(match){
+					this.crafts.push(r);
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		});
+	}
 
 	getItem(itemID) {
-		try {
+		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
-		} catch (err) {
-			console.log(err);
+		} else {
 			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0 };
 		}
 	}
@@ -133,6 +97,10 @@ export class CraftingComponent {
 			return '0g 0s 0c';
 		}
 	}
+
+	getProfitPercent(profit, buyout) {
+		return Math.round((profit / buyout) * 100);
+	};
 
 	getAuctionItem(itemID) {
 		return lists.auctions[itemID];
