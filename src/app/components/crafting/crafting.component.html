@@ -1,6 +1,6 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Crafting</h2>{{getCraftingCosts()}}
+		<h2 class="panel-title">Crafting</h2>
 	</div>
 	<div class="panel-body">
 		<table class="table table-striped">
@@ -14,7 +14,7 @@
 				<th>Demand</th>
 			</tr>
 			<!-- TODO: optimize price value fetch -->
-			<tr class="row" *ngFor="let craft of crafts">
+			<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
 				<td>
 					<div>
 						<div class="align-left col-md-offset-1">
@@ -24,8 +24,8 @@
 					</div>
 				</td>
 				<td>
-					<div class="clearfix" *ngFor="let m of craft.materials">
-							{{ m.quantity }} x {{getItem(m.itemID).name}} {{getMinPrice(m.itemID)}}
+					<div class="clearfix" *ngFor="let m of craft.reagents">
+							{{ m.count }} x {{getItem(m.itemID).name}} {{getMinPrice(m.itemID)}}
 					</div>
 				</td>
 				<td>
@@ -38,12 +38,17 @@
 					{{ goldConversion(craft.profit) }}
 				</td>
 				<td>
-					fill
+					{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
 				</td>
 				<td>
-					0%
+					{{ getItem(craft.itemID).estDemand }}%
 				</td>
 			</tr>
 		</table>
+		<div class="pager">
+			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+		</div>
 	</div>
 </div>

@@ -1,23 +1,24 @@
 import { Component } from '@angular/core';
-import { user, itemClasses, lists, copperToArray , getPet } from '../../utils/globals';
+import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 
 @Component({
 	selector: 'crafting',
 	templateUrl: 'crafting.component.html'
 })
 export class CraftingComponent {
+
 	private crafts = [
 		// Alchemy
 		{
-		spellID: 188334,
-		itemID: 127846,
-		professionId: 171,
-		expansionId: 6,
-		rank: 2,
-		cost: 0,
-		buyout: 0,
-		profit: 0,
-		materials: [{
+			spellID: 188334,
+			itemID: 127846,
+			professionId: 171,
+			expansionId: 6,
+			rank: 2,
+			cost: 0,
+			buyout: 0,
+			profit: 0,
+			materials: [{
 				itemID: 124105,
 				quantity: 2
 			}, {
@@ -27,7 +28,8 @@ export class CraftingComponent {
 				itemID: 124102,
 				quantity: 4
 			}
-		]},{
+			]
+		}, {
 			spellID: 188325,
 			itemID: 127843,
 			professionId: 171,
@@ -37,15 +39,15 @@ export class CraftingComponent {
 			buyout: 0,
 			profit: 0,
 			materials: [{
-					itemID: 124105,
-					quantity: 2
-				}, {
-					itemID: 124104,
-					quantity: 4
-				}, {
-					itemID: 124102,
-					quantity: 4
-				}
+				itemID: 124105,
+				quantity: 2
+			}, {
+				itemID: 124104,
+				quantity: 4
+			}, {
+				itemID: 124102,
+				quantity: 4
+			}
 			]
 		},
 		// Enchanting
@@ -59,18 +61,28 @@ export class CraftingComponent {
 			buyout: 0,
 			profit: 0,
 			materials: [{
-					itemID: 124442,
-					quantity: 8
-				}, {
-					itemID: 124440,
-					quantity: 20
-				}, {
-					itemID: 124124,
-					quantity: 1
-				}
+				itemID: 124442,
+				quantity: 8
+			}, {
+				itemID: 124440,
+				quantity: 20
+			}, {
+				itemID: 124124,
+				quantity: 1
+			}
 			]
 		}
 	];
+
+	private limit: number = 10;// per page
+	private index: number = 0;
+	private currentPage: number = 1;
+	private numOfPages: number = this.crafts.length / this.limit;
+
+	setCrafts() {
+		this.crafts = lists.recipes;
+		this.numOfPages = this.crafts.length / this.limit;
+	}
 
 	private professions = {
 		129: 'First Aid',
@@ -95,21 +107,22 @@ export class CraftingComponent {
 		6: 'Legion'
 	};
 
-	constructor() {}
+	constructor() { }
 
 	ngOnInit() {
 		try {
-			this.getCraftingCosts();
-		} catch (e){
+			this.setCrafts();
+		} catch (e) {
 			console.log(e);
 		}
 	}
 
 	getItem(itemID) {
 		try {
-			return lists.items[itemID];
+			return lists.auctions[itemID];
 		} catch (err) {
-			return {'name': 'loading'};
+			console.log(err);
+			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0 };
 		}
 	}
 
@@ -125,22 +138,15 @@ export class CraftingComponent {
 		return lists.auctions[itemID];
 	}
 
-	getCraftingCosts(): void {
-		let matBuyout: number;
-		this.crafts.forEach(c => {
-			c.buyout = lists.auctions[c.itemID] !== undefined ?
-				(lists.auctions[c.itemID].buyout / lists.auctions[c.itemID].quantity):
-				0;
-
-			c.materials.forEach(m => {
-				matBuyout = lists.auctions[m.itemID] !== undefined ?
-					(lists.auctions[m.itemID].buyout / lists.auctions[m.itemID].quantity) :
-					0;
-				c.cost += m.quantity * matBuyout;
-			});
-			c.profit = c.buyout - c.cost;
-		});
-	}
-
 	goldConversion = copperToArray;
+
+
+	changePage(change: number): void {
+		console.log(change, this.currentPage, this.numOfPages);
+		if (change > 0 && this.currentPage <= this.numOfPages) {
+			this.currentPage++;
+		} else if (change < 0 && this.currentPage > 1) {
+			this.currentPage--;
+		}
+	}
 }
