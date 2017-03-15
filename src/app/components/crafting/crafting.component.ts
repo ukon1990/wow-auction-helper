@@ -19,8 +19,6 @@ export class CraftingComponent {
 	private currentPage: number = 1;
 	private numOfPages: number = this.crafts.length / this.limit;
 
-
-
 	private professions = [
 		'All',
 		'First Aid',
@@ -62,7 +60,10 @@ export class CraftingComponent {
 		this.crafts = [];
 		this.searchQuery = this.filterForm.value['searchQuery'];
 		this.filter.profession = this.filterForm.value['profession'];
-		let match = false;
+		let match = false,
+			profit = this.filterForm.value['profit'] || 0,
+			demand = this.filterForm.value['demand'] || 0;
+		console.log(profit, demand);
 		lists.recipes.forEach(r => {
 			try {
 				if (this.filter.profession === 'All') {
@@ -73,13 +74,27 @@ export class CraftingComponent {
 					match = false;
 				}
 
-				if(match){
+				if(match && (profit === 0 || profit <= this.getProfitPercent(r.profit, r.buyout)) ) {
+					match = true;
+				} else {
+					match = false;
+				}
+
+				if(match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand) ) {
+					match = true;
+				} else {
+					match = false;
+				}
+
+				if(match) {
 					this.crafts.push(r);
 				}
 			} catch (err) {
 				console.log(err);
 			}
 		});
+		this.currentPage = 1;
+		this.numOfPages = this.crafts.length / this.limit;
 	}
 
 	getItem(itemID) {
@@ -110,7 +125,6 @@ export class CraftingComponent {
 
 
 	changePage(change: number): void {
-		console.log(change, this.currentPage, this.numOfPages);
 		if (change > 0 && this.currentPage <= this.numOfPages) {
 			this.currentPage++;
 		} else if (change < 0 && this.currentPage > 1) {

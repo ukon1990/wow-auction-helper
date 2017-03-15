@@ -5,15 +5,34 @@
 	<div class="panel-body">
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
-				<input class="col-md-2 form-control" type="text" placeholder="Item name" [formControl]="filterForm.controls['searchQuery']"
-				/>
-				<select class="form-control" [formControl]="filterForm.controls['profession']">
-					<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
-				</select>
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Search</span>
+					<input class="col-md-2 form-control" type="text" 
+						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
+				</div>
+				
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Min profit</span>
+					<input name="profit" class="col-md-2 form-control" type="number" 
+						placeholder="0 is default" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
+				</div>
+
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Min demand</span>
+					<input class="col-md-2 form-control" type="number" 
+						placeholder="0 is default" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
+				</div>
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Profession</span>
+					<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
+						<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
+					</select>
+				</div>
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 			</form>
-
-			<button class="btn btn-default" (click)="getAuctions(); saveSettings();">Update</button>
 		</div>
 		<br>
 		<div class="pager">
@@ -37,7 +56,7 @@
 					<div>
 						<div class="align-left col-md-offset-1">
 							<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={craft.itemID}}"
-							 target="_blank">{{ craft.name }}</a>
+							    target="_blank">{{ craft.name }}</a>
 							<br> {{ craft.profession }}
 						</div>
 					</div>
