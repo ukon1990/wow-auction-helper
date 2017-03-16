@@ -3,37 +3,74 @@
 		<h2 class="panel-title">Settings</h2>
 	</div>
 	<div class="panel-body">
-		<h3>Realm & Character</h3>
-		<select class="col-md-2 " name="region" type="text" [(ngModel)]="user.region">
-			<option value="eu">EU</option>
-			<option value="us">US</option>
-		</select>
-		<input class=" col-md-2" name="realm" placeholder="Realm" type="text" [(ngModel)]="user.realm" />
-		<input class="col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" />
-		<br>
-		<h3>API</h3>
-		<label for="wowuction">WoWuction key:</label>
-		<input name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu"/><br>
-		<label for="tsm">TSM key:</label>
-		<input name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm"/><br>
-		<br>
-		<button (click)="saveUserData()">Save changes</button>
+		<div class="col-md-4">
+			<h3>Realm & Character</h3>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">Region</span>
+				<select class="form-control" name="region" type="text" [(ngModel)]="user.region" aria-describedby="basic-addon1">
+					<option value="eu">EU</option>
+					<option value="us">US</option>
+				</select>
+			</div>
 
-		<h3>Stored data</h3>
-		<div class="input-group">
-			<span class="input-group-btn">
-				<button class="btn btn-default" (click)="importUserData()">Import settings</button>
-			</span>
-			<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
-		</div>
-		
-		<div class="input-group">
-			<span class="input-group-btn">
-				<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
-			</span>
-			<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">Realm</span>
+				<input class="form-control col-md-2" name="realm" placeholder="Realm" type="text" [(ngModel)]="user.realm" aria-describedby="basic-addon1"
+				/>
+			</div>
+
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">Character</span>
+				<input class="form-control col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" aria-describedby="basic-addon1"
+				/>
+			</div>
 		</div>
 
-		<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
+		<div class="col-md-4">
+			<h3>API</h3>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">WoWuction key</span>
+				<input class="form-control" name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu" aria-describedby="basic-addon1"/>
+			</div>
+
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">TSM key</span>
+			<input class="form-control" name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm" aria-describedby="basic-addon1"/>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<h3>Custom item prices</h3>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">WoWuction key</span>
+				<input class="form-control" name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu" aria-describedby="basic-addon1"/>
+			</div>
+
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon" id="basic-addon1">TSM key</span>
+			<input class="form-control" name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm" aria-describedby="basic-addon1"/>
+			</div>
+		</div>
+
+		<br>
+		<button (click)="saveUserData()">Save all changes</button>
+
+		<div class="row col-md-12">
+			<h3>Stored data</h3>
+			<div class="input-group">
+				<span class="input-group-btn">
+					<button class="btn btn-default" (click)="importUserData()">Import settings</button>
+				</span>
+				<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
+			</div>
+			<div class="input-group">
+				<span class="input-group-btn">
+					<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
+				</span>
+				<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
+			</div>
+
+			<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
+		</div>
 	</div>
 </div>
