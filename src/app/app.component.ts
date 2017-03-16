@@ -18,7 +18,6 @@ export class AppComponent {
 	private timeSinceLastModified: number;
 	private oldTimeDiff: number;
 	private date: Date;
-	private wowUList = [];
 	private auctionObserver = {};
 	private itemObserver = {};
 	private petObserver = {};
@@ -49,7 +48,7 @@ export class AppComponent {
 		setInterval(() => this.checkForUpdate(), 60000);
 
 		this.auctionService.getWoWuctionData().subscribe(res => {
-			this.wowUList = res;
+			lists.wowuction = res;
 		});
 		this.petObserver = this.itemService.getPets()
 			.subscribe(pets => {
@@ -129,11 +128,11 @@ export class AppComponent {
 				}
 			} catch (e) { console.log(e); }
 
-			if (this.wowUList[o.item] !== undefined) {
-				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = parseFloat(this.wowUList[o.item]['avgDailySold']) || 0;
-				o['avgDailyPosted'] = parseFloat(this.wowUList[o.item]['avgDailyPosted']) || 0;
-				o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
+			if (lists.wowuction[o.item] !== undefined) {
+				o['estDemand'] = Math.round(lists.wowuction[o.item]['estDemand'] * 100) || 0;
+				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['avgDailySold']) || 0;
+				o['avgDailyPosted'] = parseFloat(lists.wowuction[o.item]['avgDailyPosted']) || 0;
+				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
 			} else {
 				o['estDemand'] = 0;
 				o['avgDailySold'] = 0;
@@ -269,16 +268,16 @@ export class AppComponent {
 			c['cost'] = 0;
 			c['buyout'] = 0;
 			c['profit'] = 0;
-			try {
+			try { // 699 Immaculate Fibril
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
-					(lists.auctions[c.itemID].buyout / lists.auctions[c.itemID].quantity) :
-					0;
+					(lists.auctions[c.itemID].buyout / lists.auctions[c.itemID].quantity) : 0;
 				try {
 					for (let m of c.reagents) {
 						try {
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout / lists.auctions[m.itemID].quantity) :
-								0;
+									lists.customPrices[m.itemID] !== undefined ?
+										lists.customPrices[m.itemID] : 0;
 							c.cost += matBuyout !== 0 ? m.count * matBuyout : 0;
 						} catch (errr) {
 							console.log('Failed at calculating cost', errr);

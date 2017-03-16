@@ -138,6 +138,9 @@ export class CraftingComponent {
 		} catch (e) {
 			if(lists.customPrices[itemID] !== undefined) {
 				return this.goldConversion(lists.customPrices[itemID]);
+			} else if(lists.wowuction[itemID] !== undefined) {
+				//console.log(lists.wowuction[itemID]);
+				return this.goldConversion(lists.wowuction[itemID]['mktPrice']);
 			}
 			return '0g 0s 0c';
 		}

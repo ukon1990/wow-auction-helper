@@ -3,6 +3,11 @@
 		<h2 class="panel-title">Crafting</h2>
 	</div>
 	<div class="panel-body">
+		<p>
+			Materials marked with red indicates that the item is not currently at AH, if there 
+			is an available market value for that item that will be displayed but not used in cost calculation. <br>
+			Blood of Sargarass is calculated in the cost with a value of {{ getMinPrice('124124') }}.
+			</p>
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
 

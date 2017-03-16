@@ -1,13 +1,15 @@
 export let lists = {
 	myAuctions: [],
 	auctions: [],
+	wowuction: [],
+	tsm: [],
 	items: {},
 	pets: [],
 	recipes: [],
 	customPrices: []
 };
 
-lists.customPrices['124124'] = 400000;
+lists.customPrices['124124'] = 3000000;
 
 // Local database start
 import Dexie from 'dexie';

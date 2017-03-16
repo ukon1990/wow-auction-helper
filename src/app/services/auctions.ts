@@ -40,6 +40,7 @@ export class AuctionService {
 				r.split('\n').forEach(function (l) {
 					if (isFirst) {
 						isFirst = false;
+						console.log(l.split('\t'));
 					} else {
 						tempObj = l.split('\t');
 						obj = {
