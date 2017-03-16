@@ -35,8 +35,10 @@ export class CraftingComponent {
 	];
 
 	setCrafts() {
-		this.crafts = lists.recipes;
-		this.numOfPages = this.crafts.length / this.limit;
+		if(lists.recipes !== undefined) {
+			this.crafts = lists.recipes;
+			this.numOfPages = this.crafts.length / this.limit;
+		}
 	}
 
 	constructor(

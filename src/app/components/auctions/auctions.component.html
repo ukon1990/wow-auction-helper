@@ -5,32 +5,38 @@
 	<div class="panel-body">
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
-				<div class="checkbox">
-					<label name="onlyUserAuctions">
-						<input type="checkbox" [formControl]="filterForm.controls['filterByCharacter']"/>
-						Only my auctions
-					</label>
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Search</span>
+					<input class="col-md-2 form-control" type="text" 
+						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
 				</div>
-				<div class="checkbox">
-					<label name="onlyUserAuctions">
-						<input type="checkbox" [formControl]="filterForm.controls['onlyCraftables']"/>
-						Crafting mode
-					</label>
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Search</span>
+					<input class="col-md-2 form-control" type="text" 
+						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
 				</div>
-				<input class="col-md-2 form-control" type="text" placeholder="Item name" [formControl]="filterForm.controls['searchQuery']"/>
-				<select class="form-control" [formControl]="filterForm.controls['itemClass']">
-				<option value="-1">All</option>
-				<option *ngFor="let i of itemClasses.classes; let p = index;" value="{{ p }}">{{ i.name }}</option>
-			</select>
-				<select class="form-control" [formControl]="filterForm.controls['itemSubClass']">
-				<option value="-1">All</option>
-				<option *ngFor="let i of itemClasses.classes[filter.itemClass]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
-			</select>
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Item type</span>
+					<select class="form-control" [formControl]="filterForm.controls['itemClass']" aria-describedby="sizing-addon3">
+						<option value="-1">All</option>
+						<option *ngFor="let i of itemClasses.classes; let p = index;" value="{{ p }}">{{ i.name }}</option>
+					</select>
+				</div>
+
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Sub type</span>
+					<select class="form-control" [formControl]="filterForm.controls['itemSubClass']" aria-describedby="sizing-addon3">
+						<option value="-1">All</option>
+						<option *ngFor="let i of itemClasses.classes[filterForm.value['itemClass']]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
+					</select>
+				</div>
+
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 				<button class="btn btn-default" type="button" (click)="clearFilters()">Clear filter</button>
 			</form>
-
-			<button class="btn btn-default" (click)="getAuctions(); saveSettings();">Update</button>
 		</div>
 		<br>
 		<div class="pager">
@@ -74,7 +80,7 @@
 		</table>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
 	</div>

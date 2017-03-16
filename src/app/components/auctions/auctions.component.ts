@@ -109,11 +109,6 @@ export class AuctionComponent {
 		}
 	}
 
-	getNumOfPages() {
-		this.numOfPages = this.numberOfAuctions / this.limit;
-		return Math.round(this.numOfPages);
-	}
-
 	clearFilters(): void {
 		this.filterForm.value['searchQuery'] = '';
 		this.filterForm.value['filterByCharacter'] = false;
@@ -177,6 +172,7 @@ export class AuctionComponent {
 				}
 			}
 		}
+		this.numOfPages = Math.round(this.numberOfAuctions / this.limit);
 	}
 
 	isTypeMatch(item): boolean {
