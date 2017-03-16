@@ -145,12 +145,12 @@ export class AppComponent {
 				list[o.item]['auctions'][o.auc] = o;
 				list[o.item]['quantity_total'] += o['quantity'];
 
-				if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] >
+				if (list[o.item]['buyout'] >
 					o['buyout'] / o['quantity']) {
 
 					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
 					list[o.item]['owner'] = o['owner'];
-				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
+				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] ===
 					o['buyout'] / o['quantity'] &&
 					list[o.item]['owner'] !== o['owner']) {
 					list[o.item]['owner'] += ', ' + o['owner'];
