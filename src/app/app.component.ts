@@ -111,6 +111,10 @@ export class AppComponent {
 	buildAuctionArray(arr) {
 		let list = [];
 		for (let o of arr) {
+			if(o['buyout'] === 0) {
+				continue;
+			}
+
 			// TODO: this.numberOfAuctions++;
 			if (lists.items[o.item] === undefined) {
 				lists.items[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };

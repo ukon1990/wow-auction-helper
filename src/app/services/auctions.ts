@@ -28,7 +28,8 @@ export class AuctionService {
 						localStorage.getItem('realm') +'/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
 			url = this.getUrl(apiUrl, localUrl);
 
-		return this.http.get(url)
+		// TODO: Make it not use the local URL by storing the value temporarily with Dexie!
+		return this.http.get(localUrl)
 			.map(res => function (r: string) {
 				let list = [],
 					obj = {},
