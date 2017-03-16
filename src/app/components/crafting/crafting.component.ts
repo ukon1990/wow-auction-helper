@@ -54,6 +54,9 @@ export class CraftingComponent {
 	}
 
 	ngOnInit() {
+		if(lists.customPrices === undefined) {
+			lists.customPrices = [];
+		}
 		try {
 			this.setCrafts();
 		} catch (e) {
@@ -133,6 +136,9 @@ export class CraftingComponent {
 		try {
 			return this.goldConversion(lists.auctions[itemID].buyout / lists.auctions[itemID].quantity);
 		} catch (e) {
+			if(lists.customPrices[itemID] !== undefined) {
+				return this.goldConversion(lists.customPrices[itemID]);
+			}
 			return '0g 0s 0c';
 		}
 	}

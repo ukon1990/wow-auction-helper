@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IUser } from '../../utils/interfaces';
-import { user } from '../../utils/globals';
+import { user, lists } from '../../utils/globals';
 
 @Component({
 	selector: 'settings',
@@ -8,11 +8,13 @@ import { user } from '../../utils/globals';
 })
 export class SettingsComponent {
 	private user: IUser;
+	private customPrices = [];
 	private importedSettings: string;
 	private exportedSettings: string;
 
 	constructor() {
 		this.user = user;
+		this.customPrices = lists.customPrices;
 	}
 
 	saveUserData(): void {

@@ -1,3 +1,14 @@
+export let lists = {
+	myAuctions: [],
+	auctions: [],
+	items: {},
+	pets: [],
+	recipes: [],
+	customPrices: []
+};
+
+lists.customPrices['124124'] = 400000;
+
 // Local database start
 import Dexie from 'dexie';
 
@@ -487,13 +498,6 @@ let petExample = {
 	"source": "Promotion: StarCraft II: Wings of Liberty Collector's Edition",
 };
 
-
-let auctions = [Object];
-let myAuctions = [Object];
-let items = {};
-let pets = [Object];
-let recipes = [Object];
-
 export function copperToArray(c): string {
 	//Just return a string
 	var result = [];
@@ -522,14 +526,6 @@ export function getPet(speciesId) {
 	}
 	return lists.pets[speciesId].name;
 }
-
-export let lists = {
-	myAuctions: this.myAuctions,
-	auctions: this.auctions,
-	items: this.items,
-	pets: this.pets,
-	recipes: this.recipes
-};
 
 export let user: IUser = {
 	'region': 'eu',

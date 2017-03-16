@@ -54,28 +54,15 @@ export class AppComponent {
 		this.petObserver = this.itemService.getPets()
 			.subscribe(pets => {
 				this.buildPetArray(pets['pets']);
-				this.itemService.getRecipes()
-					.subscribe(recipe => {
-						let accepted = true;
-						let num = 0;
-						if(lists.recipes === undefined) {
-								lists.recipes = [];
-						}
-						recipe.recipes.forEach(r => {
-							num++;
-							if(r !== null && r['profession'] !== undefined && r['profession'] !== null) {
-								lists.recipes.push(r);
-							}
+				try {
+					this.itemObserver = this.itemService.getItems()
+						.subscribe(i => {
+							this.buildItemArray(i);
 						});
-						try {
-							this.itemObserver = this.itemService.getItems()
-							.subscribe(i => {
-								this.buildItemArray(i);
-							});
-						} catch (err) {
-							console.log('Failed at loading items', err);
-						}
-					});
+				} catch (err) {
+					console.log('Failed at loading items', err);
+				}
+
 			});
 	}
 
@@ -96,14 +83,29 @@ export class AppComponent {
 		} catch (err) {
 			console.log('Failed at loading auctions', err);
 		}
+		this.itemService.getRecipes()
+			.subscribe(recipe => {
+				let accepted = true;
+				let num = 0;
+				if (lists.recipes === undefined) {
+					lists.recipes = [];
+				}
+				recipe.recipes.forEach(r => {
+					num++;
+					if (r !== null && r['profession'] !== undefined && r['profession'] !== null) {
+						lists.recipes.push(r);
+					}
+				});
+
+			});
 	}
 
 	getAuctions(): void {
 		console.log('Loading auctions');
 		this.auctionObserver = this.auctionService.getAuctions()
 			.subscribe(r => {
-					this.buildAuctionArray(r.auctions);
-				}
+				this.buildAuctionArray(r.auctions);
+			}
 			);
 	}
 
