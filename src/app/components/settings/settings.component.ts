@@ -8,6 +8,8 @@ import { user } from '../../utils/globals';
 })
 export class SettingsComponent {
 	private user: IUser;
+	private importedSettings: string;
+	private exportedSettings: string;
 
 	constructor() {
 		this.user = user;
@@ -17,19 +19,16 @@ export class SettingsComponent {
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
 		localStorage.setItem('character', this.user.character);
-		localStorage.setItem('api_wowuction', this.user.apiTsm);
+		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 	}
 
 	importUserData(): void {
-		// TODO:
-		console.log('Not yet implemented!');
+		this.user = JSON.parse(this.importedSettings);
 	}
 
 	exportUserData(): void {
-		// TODO:
-		console.log('Not yet implemented!');
-		console.log(JSON.stringify(user));
+		this.exportedSettings = JSON.stringify(user);
 	}
 
 	deleteUserData(): void {

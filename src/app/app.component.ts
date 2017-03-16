@@ -33,9 +33,13 @@ export class AppComponent {
 	ngOnInit() {
 		this.date = new Date();
 		if (this.isRealmSet()) {
+			// Loading user settings
 			this.u.region = localStorage.getItem('region');
 			this.u.realm = localStorage.getItem('realm');
 			this.u.character = localStorage.getItem('character');
+			this.u.apiTsm = localStorage.getItem('api_tsm');
+			this.u.apiWoWu = localStorage.getItem('api_wowuction');
+			this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
 			this.checkForUpdate();
 			/*this.auctionService.getTSMData().then( r => {
 				console.log('tsm result:',r);

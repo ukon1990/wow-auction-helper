@@ -3,7 +3,6 @@
 		<h2 class="panel-title">Settings</h2>
 	</div>
 	<div class="panel-body">
-		<form>
 		<h3>Realm & Character</h3>
 		<select class="col-md-2 " name="region" type="text" [(ngModel)]="user.region">
 			<option value="eu">EU</option>
@@ -21,9 +20,20 @@
 		<button (click)="saveUserData()">Save changes</button>
 
 		<h3>Stored data</h3>
-		<button (click)="importUserData()">Import settings</button>
-		<button (click)="exportUserData()">Export settings</button>
-		<button (click)="deleteUserData()">Delete settings</button>
-	</form>
+		<div class="input-group">
+			<span class="input-group-btn">
+				<button class="btn btn-default" (click)="importUserData()">Import settings</button>
+			</span>
+			<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
+		</div>
+		
+		<div class="input-group">
+			<span class="input-group-btn">
+				<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
+			</span>
+			<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
+		</div>
+
+		<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
 	</div>
 </div>
