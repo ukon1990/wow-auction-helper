@@ -282,12 +282,12 @@ export class AppComponent {
 			c['profit'] = 0;
 			try { // 699 Immaculate Fibril
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
-					(lists.auctions[c.itemID].buyout / lists.auctions[c.itemID].quantity) : 0;
+					(lists.auctions[c.itemID].buyout) : 0;
 				try {
 					for (let m of c.reagents) {
 						try {
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
-								(lists.auctions[m.itemID].buyout / lists.auctions[m.itemID].quantity) :
+								(lists.auctions[m.itemID].buyout) :
 									lists.customPrices[m.itemID] !== undefined ?
 										lists.customPrices[m.itemID] : 0;
 							c.cost += matBuyout !== 0 ? m.count * matBuyout : 0;

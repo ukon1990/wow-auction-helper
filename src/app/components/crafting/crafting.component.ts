@@ -146,7 +146,7 @@ export class CraftingComponent {
 
 	getMinPrice(itemID) {
 		try {
-			return this.goldConversion(lists.auctions[itemID].buyout / lists.auctions[itemID].quantity);
+			return this.goldConversion(lists.auctions[itemID].buyout);
 		} catch (e) {
 			if(lists.customPrices[itemID] !== undefined) {
 				return this.goldConversion(lists.customPrices[itemID]);
