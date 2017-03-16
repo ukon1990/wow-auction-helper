@@ -286,6 +286,7 @@ export class AppComponent {
 				try {
 					for (let m of c.reagents) {
 						try {
+							m.count = m.count/ c.minCount;
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout) :
 									lists.customPrices[m.itemID] !== undefined ?
