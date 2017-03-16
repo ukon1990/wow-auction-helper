@@ -28,8 +28,16 @@
 				</div>
 
 				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Min sold</span>
+					<input class="col-md-2 form-control" type="number" 
+						placeholder="0 is default" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
+					<span class="input-group-addon" id="sizing-addon3">pcs</span>
+				</div>
+
+				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Profession</span>
 					<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
+						<option value="All">All</option>
 						<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
 					</select>
 				</div>
@@ -56,6 +64,7 @@
 			<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
 				<td>
 					<div>
+						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
 						<div class="align-left col-md-offset-1">
 							<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={craft.itemID}}"
 							    target="_blank">{{ craft.name }}</a>
@@ -64,8 +73,11 @@
 					</div>
 				</td>
 				<td>
-					<div class="clearfix" *ngFor="let m of craft.reagents">
-						{{ m.count }} x {{m.name}} {{getMinPrice(m.itemID)}}
+					<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
+						{{ m.count }} x 
+						<a rel="item={{ m.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={m.itemID}}"
+							    target="_blank">{{m.name}}</a>
+						{{getMinPrice(m.itemID)}} ({{ getItem(m.itemID).quantity_total }} @ AH)
 					</div>
 				</td>
 				<td>

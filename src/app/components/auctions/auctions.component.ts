@@ -61,7 +61,8 @@ export class AuctionComponent {
 			'filterByCharacter': this.filterByCharacter,
 			'onlyCraftables': this.onlyCraftables,
 			'itemClass': this.filter.itemClass,
-			'itemSubClass': this.filter.itemSubClass
+			'itemSubClass': this.filter.itemSubClass,
+			'demand': 0
 		});
 	}
 
@@ -122,6 +123,7 @@ export class AuctionComponent {
 		this.searchQuery = this.filterForm.value['searchQuery'];
 		this.filterByCharacter = this.filterForm.value['filterByCharacter'];
 		this.onlyCraftables = this.filterForm.value['onlyCraftables'];
+		let demand = this.filterForm.value['demand'];
 		this.filter = {
 			'itemClass': this.filterForm.value['itemClass'],
 			'itemSubClass': this.filterForm.value['itemSubClass']
@@ -143,7 +145,7 @@ export class AuctionComponent {
 					match = false;
 				}
 
-				if (this.filterByCharacter || this.searchQuery.length > 0 || this.onlyCraftables) {
+				if (match && this.searchQuery.length > 0) {
 					// Matching against item name
 					if (this.searchQuery.length !== 0 && match) {
 						// TODO: Used to use getItemName()
@@ -154,18 +156,19 @@ export class AuctionComponent {
 						}
 					}
 
-					// Matching against auction owner
-					if (this.filterByCharacter && match) {
-						try {
-							match = scanList[id].owner.toString().toLowerCase() === user.character.toLowerCase();
-						} catch (err) { match = false; }
-					}
 					// Item source
-					if (this.onlyCraftables && match) {
+					/*if (match) {
 						match = lists.items[id]['itemSource'] !== undefined &&
 							lists.items[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
-					}
+					}*/
 				}
+
+				if(match && (demand === 0 || demand <= scanList[id].auctions.estDemand) ) {
+					match = true;
+				} else {
+					match = false;
+				}
+
 				if (match) {
 					this.numberOfAuctions++;
 					this.filteredAuctions.push(scanList[id]);

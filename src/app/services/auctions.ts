@@ -15,17 +15,20 @@ export class AuctionService {
 	}
 
 	getAuctions() {
-		let localUrl = '/assets/auctions.json';
-		let apiUrl = 'http://www.wah.jonaskf.net/GetAuctions.php?region=' + this.user.region + '&realm=' + this.user.realm;
-		return this.http.get(localUrl)
+		let localUrl = '/assets/auctions.json',
+			apiUrl = 'http://www.wah.jonaskf.net/GetAuctions.php?region=' + this.user.region + '&realm=' + this.user.realm;
+
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <IAuction>function (r) { console.log('Loaded auctions'); return r; }(response.json()));
 	}
 
 	getWoWuctionData() {
 		let localUrl = '/assets/wowuction.tsv',
 			apiUrl = 'http://www.wowuction.com/'+ localStorage.getItem('region') +'/'+
-						localStorage.getItem('realm') +'/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction');
-		return this.http.get(localUrl)
+						localStorage.getItem('realm') +'/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
+			url = this.getUrl(apiUrl, localUrl);
+
+		return this.http.get(url)
 			.map(res => function (r: string) {
 				let list = [],
 					obj = {},
@@ -61,9 +64,9 @@ export class AuctionService {
 			+ this.user.region + '/'
 			+ this.user.realm
 			+ '?fields=' + DB_TABLES.TSM_TABLE_COLUMNS + '&format=json&apiKey=' + localStorage.getItem('api_tsm');
-		console.log(localUrl);
+
 		if(new Date(parseInt(localStorage.getItem('timestamp_tsm'), 10)).toDateString() !== new Date().toDateString()) {
-			return this.http.get(localUrl).toPromise()
+			return this.http.get(this.getUrl(apiUrl, localUrl)).toPromise()
 			.then(response => <any>function (r) {
 				console.log('Loaded TSM');
 				r.forEach( obj => {
@@ -81,6 +84,18 @@ export class AuctionService {
 	getLastUpdated() {
 		return this.http.get('http://www.wah.jonaskf.net/GetAuctions.php?region='
 			+ this.user.region + '&realm=' + this.user.realm + '&lastModified')
-			.map(response => <IAuction>function (r) { console.log('Loaded auctions'); return r; }(response.json()));
+			.map(response => <IAuction>function (r) {
+				console.log('API last updated ' + new Date(r.lastModified).toLocaleTimeString());
+				return r;
+			}(response.json()));
 	}
+
+	getUrl(apiUrl, localUrl) {
+		if(window.location.hostname === 'localhost') {
+			console.log('Using local files', localUrl);
+			return localUrl;
+		}
+
+		return apiUrl;
+	};
 }

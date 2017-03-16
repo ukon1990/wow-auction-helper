@@ -63,11 +63,14 @@ export class AppComponent {
 								lists.recipes.push(r);
 							}
 						});
-						console.log('num ' + num);
-						this.itemObserver = this.itemService.getItems()
+						try {
+							this.itemObserver = this.itemService.getItems()
 							.subscribe(i => {
 								this.buildItemArray(i);
 							});
+						} catch (err) {
+							console.log('Failed at loading items', err);
+						}
 					});
 			});
 	}
@@ -84,16 +87,19 @@ export class AppComponent {
 			}
 			index++;
 		}
-		this.getAuctions();
+		try {
+			this.getAuctions();
+		} catch (err) {
+			console.log('Failed at loading auctions', err);
+		}
 	}
 
 	getAuctions(): void {
 		console.log('Loading auctions');
 		this.auctionObserver = this.auctionService.getAuctions()
-			.subscribe(
-			r => {
-				this.buildAuctionArray(r.auctions);
-			}
+			.subscribe(r => {
+					this.buildAuctionArray(r.auctions);
+				}
 			);
 	}
 
@@ -119,8 +125,8 @@ export class AppComponent {
 
 			if (this.wowUList[o.item] !== undefined) {
 				o['estDemand'] = Math.round(this.wowUList[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = this.wowUList[o.item]['avgDailySold'] || 0;
-				o['avgDailyPosted'] = this.wowUList[o.item]['avgDailyPosted'] || 0;
+				o['avgDailySold'] = parseFloat(this.wowUList[o.item]['avgDailySold']) || 0;
+				o['avgDailyPosted'] = parseFloat(this.wowUList[o.item]['avgDailyPosted']) || 0;
 				o['mktPrice'] = this.wowUList[o.item]['mktPrice'] || 0;
 			} else {
 				o['estDemand'] = 0;

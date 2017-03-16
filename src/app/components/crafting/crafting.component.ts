@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
+import { ItemService } from '../../services/item';
 
 @Component({
 	selector: 'crafting',
-	templateUrl: 'crafting.component.html'
+	templateUrl: 'crafting.component.html',
+	styleUrls: ['../auctions/auctions.component.css']
 })
 export class CraftingComponent {
 	// Strings
@@ -20,7 +22,6 @@ export class CraftingComponent {
 	private numOfPages: number = this.crafts.length / this.limit;
 
 	private professions = [
-		'All',
 		'First Aid',
 		'Blacksmithing',
 		'Leatherworking',
@@ -32,22 +33,23 @@ export class CraftingComponent {
 		'Enchanting',
 		'Jewelcrafting',
 		'Inscription'
-	];
+	].sort();
 
 	setCrafts() {
-		if(lists.recipes !== undefined) {
+		if (lists.recipes !== undefined) {
 			this.crafts = lists.recipes;
 			this.numOfPages = this.crafts.length / this.limit;
 		}
 	}
 
-	constructor(
+	constructor(private itemService: ItemService,
 		private formBuilder: FormBuilder) {
 		this.filterForm = formBuilder.group({
 			'searchQuery': '',
 			'profession': this.filter.profession,
 			'profit': 0,
-			'demand': 0
+			'demand': 0,
+			'minSold': 0
 		});
 	}
 
@@ -64,9 +66,19 @@ export class CraftingComponent {
 		this.filter.profession = this.filterForm.value['profession'];
 		let match = false,
 			profit = this.filterForm.value['profit'] || 0,
-			demand = this.filterForm.value['demand'] || 0;
-		console.log(profit, demand);
+			demand = this.filterForm.value['demand'] || 0,
+			minSold = this.filterForm.value['minSold'] || 0;
+
 		lists.recipes.forEach(r => {
+			// Checking if there are any items missing in the DB
+			if (lists.items[r.itemID] === undefined) {
+				console.log('Importing item ' + r.name + '(' + r.itemID + ')');
+				this.itemService.getItem(r.itemID).subscribe(i => {
+					lists.items[r.itemID] = i;
+					console.log(r.itemID + ' added');
+				});
+			}
+
 			try {
 				if (this.filter.profession === 'All') {
 					match = true;
@@ -76,19 +88,25 @@ export class CraftingComponent {
 					match = false;
 				}
 
-				if(match && (profit === 0 || profit <= this.getProfitPercent(r.profit, r.buyout)) ) {
+				if(match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
 					match = true;
 				} else {
 					match = false;
 				}
 
-				if(match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand) ) {
+				if (match && (profit === 0 || profit <= this.getProfitPercent(r.profit, r.buyout))) {
 					match = true;
 				} else {
 					match = false;
 				}
 
-				if(match) {
+				if (match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
+					match = true;
+				} else {
+					match = false;
+				}
+
+				if (match) {
 					this.crafts.push(r);
 				}
 			} catch (err) {
@@ -103,8 +121,12 @@ export class CraftingComponent {
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
 		} else {
-			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0 };
+			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
 		}
+	}
+
+	isAtAH(itemID) {
+		return lists.auctions[itemID] !== undefined ? true : false;
 	}
 
 	getMinPrice(itemID) {
@@ -132,5 +154,15 @@ export class CraftingComponent {
 		} else if (change < 0 && this.currentPage > 1) {
 			this.currentPage--;
 		}
+	}
+
+	getIcon(itemID): string {
+		let url = 'http://media.blizzard.com/wow/icons/56/', icon = lists.items[itemID].icon;
+		if (icon === undefined) {
+			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+		} else {
+			url += icon + '.jpg';
+		}
+		return url;
 	}
 }

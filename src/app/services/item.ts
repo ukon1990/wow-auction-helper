@@ -21,20 +21,27 @@ export class ItemService {
 	}
 
 	getItems() {
-		return this.http.get('http://wah.jonaskf.net/GetItems.php')
+		let apiUrl = 'http://wah.jonaskf.net/GetItems.php',
+			localUrl = '/assets/GetItems.json';
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function (r) { console.log('Loaded items'); return r; }(response.json().items));
 	}
 
 	getPets() {
 		console.log('Loading pets');
-		return this.http.get('http://wah.jonaskf.net/GetSpecies.php')
+		let apiUrl = 'http://wah.jonaskf.net/GetSpecies.php',
+			localUrl = '/assets/GetSpecies.json';
+
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function (r) { console.log('Loaded pets'); return r; }(response.json()));
 	}
 
 	getRecipe(itemID): any {
 		console.log('Downloaded recipe for item ' + itemID);
-		let localUrl = '/assets/GetRecipe.json', apiURL = 'http://wah.jonaskf.net/GetRecipe.php?itemid=' + itemID;
-		return this.http.get(apiURL)
+		let localUrl = '/assets/GetRecipe.json',
+			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php?itemid=' + itemID;
+
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(r => {
 				return r.json();
 			}, error => console.log(error));
@@ -42,8 +49,10 @@ export class ItemService {
 
 	getRecipes(): any {
 		console.log('Loaded recipes');
-		let localUrl = '/assets/GetRecipe.json', apiURL = 'http://wah.jonaskf.net/GetRecipe.php';
-		return this.http.get(localUrl)
+		let localUrl = '/assets/GetRecipe.json',
+			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php';
+
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(r => {
 				return r.json();
 			}, error => console.log(error));
@@ -73,4 +82,12 @@ export class ItemService {
 		}
 		return recipeObject;
 	}
+
+	getUrl(apiUrl, localUrl) {
+		if(window.location.hostname === 'localhost') {
+			console.log('Using local files');
+		}
+
+		return window.location.hostname === 'localhost' ? localUrl : apiUrl;
+	};
 }

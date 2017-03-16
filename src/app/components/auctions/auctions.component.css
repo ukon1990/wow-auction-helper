@@ -42,3 +42,7 @@
 .undercut {
     background-color: #fddddd !important;
 }
+
+.not-found, .not-found a {
+    color: #ff0000 !important;
+}
