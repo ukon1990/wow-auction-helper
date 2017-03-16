@@ -71,7 +71,7 @@
 					<div>
 						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
 						<div class="align-left col-md-offset-1">
-							<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={craft.itemID}}"
+							<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{craft.itemID}}"
 							    target="_blank">{{ craft.name }}</a>
 							<br> {{ craft.profession }}
 						</div>
@@ -80,7 +80,7 @@
 				<td>
 					<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
 						{{ m.count }} x 
-						<a rel="item={{ m.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={m.itemID}}"
+						<a rel="item={{ m.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 							    target="_blank">{{m.name}}</a>
 						{{getMinPrice(m.itemID)}} ({{ getItem(m.itemID).quantity_total }} @ AH)
 					</div>

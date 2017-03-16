@@ -91,6 +91,18 @@ export class CraftingComponent {
 					match = false;
 				}
 
+				if (match && this.searchQuery.length > 0) {
+					// Matching against item name
+					if (this.searchQuery.length !== 0 && match) {
+						// TODO: Used to use getItemName()
+						if (r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+							match = true;
+						} else {
+							match = false;
+						}
+					}
+				}
+
 				if(match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
 					match = true;
 				} else {

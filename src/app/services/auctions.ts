@@ -7,6 +7,7 @@ import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
 
+declare var $;
 @Injectable()
 export class AuctionService {
 	private user;
@@ -14,11 +15,9 @@ export class AuctionService {
 		this.user = user;
 	}
 
-	getAuctions() {
-		let localUrl = '/assets/auctions.json',
-			apiUrl = 'http://www.wah.jonaskf.net/GetAuctions.php?region=' + this.user.region + '&realm=' + this.user.realm;
-
-		return this.http.get(this.getUrl(apiUrl, localUrl))
+	getAuctions(url) {
+		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
+		return this.http.get(url)
 			.map(response => <IAuction>function (r) { console.log('Loaded auctions'); return r; }(response.json()));
 	}
 

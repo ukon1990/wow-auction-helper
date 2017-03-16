@@ -22,6 +22,7 @@ export class AppComponent {
 	private itemObserver = {};
 	private petObserver = {};
 	private u: IUser;
+	private downloadingText = '';
 
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService,
@@ -50,15 +51,18 @@ export class AppComponent {
 		this.auctionService.getWoWuctionData().subscribe(res => {
 			lists.wowuction = res;
 		});
+		this.downloadingText = 'Downloading pets';
 		this.petObserver = this.itemService.getPets()
 			.subscribe(pets => {
 				this.buildPetArray(pets['pets']);
 				try {
+				this.downloadingText = 'Downloading items';
 					this.itemObserver = this.itemService.getItems()
 						.subscribe(i => {
 							this.buildItemArray(i);
 						});
 				} catch (err) {
+					this.downloadingText = 'Failed at downloading items';
 					console.log('Failed at loading items', err);
 				}
 
@@ -100,12 +104,15 @@ export class AppComponent {
 	}
 
 	getAuctions(): void {
+		this.downloadingText = 'Downloading auctions, this might take a while';
 		console.log('Loading auctions');
-		this.auctionObserver = this.auctionService.getAuctions()
-			.subscribe(r => {
-				this.buildAuctionArray(r.auctions);
-			}
-			);
+		this.auctionService.getLastUpdated().subscribe(r => {
+			this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\',''))
+			.subscribe(a => {
+				this.downloadingText = '';
+				this.buildAuctionArray(a.auctions);
+			});
+		});
 	}
 
 	buildAuctionArray(arr) {
@@ -227,7 +234,7 @@ export class AppComponent {
 			oldTime = this.timeSinceLastModified;
 		// Checking if there is a new update available
 		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
-			this.auctionService.getAuctions();
+			this.getAuctions();
 		}
 
 		this.timeSinceLastModified = this.timeDiff(updateTime, currentTime);
@@ -255,7 +262,8 @@ export class AppComponent {
 	checkForUpdate() {
 		if (this.isRealmSet()) {
 			this.auctionService.getLastUpdated()
-				.subscribe(r => this.lastModified = r['lastModified']);
+				.subscribe(r =>
+				this.lastModified = r['lastModified']);
 		}
 	}
 
