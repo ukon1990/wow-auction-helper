@@ -41,21 +41,21 @@
 			</form>
 		</div>
 		<br>
-		<div class="col-md-12">
+		<div class="col-md-12 row">
 			<div class="pager">
 				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
 				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
 			<div class="col-md-8">
-				<table class="table table-striped">
+				<table class="table table-striped row">
 					<tr class="row">
 						<th>Name</th>
 						<th>@AH</th>
 						<th (click)="sortAuctions('buyout')">Buyout</th>
-						<th>avg Posted/Sold</th>
-						<th (click)="sortAuctions('estDemand')">Demand</th>
-						<th>Action</th>
+						<th class="hidden-xs">avg Posted/Sold</th>
+						<th class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
+						<th class="hidden-xs">Action</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
 					<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;">
@@ -73,13 +73,13 @@
 						<td>
 							{{ copperToArray(auc.buyout) }}
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ auc.estDemand }}% 
 						</td>
-						<td>
+						<td class="hidden-xs">
 							<a class="glyphicon glyphicon-shopping-cart" 
 								aria-hidden="true" 
 								href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
@@ -93,7 +93,7 @@
 				</table>
 			</div>
 			<div class="col-md-4">
-				<table class="table table-striped">
+				<table class="table table-striped row">
 					<tr class="row">
 						<th>Item</th>
 						<th>Auction</th>

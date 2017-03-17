@@ -50,22 +50,22 @@
 			</form>
 		</div>
 		<br>
-		<div class="col-md-12">
+		<div class="col-md-12 row">
 			<div class="pager">
 				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
 				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
-			<div class="col-md-8">
+			<div class="col-md-8 row">
 				<table class="table table-striped">
 					<tr class="row">
 						<th>Name</th>
 						<th>Materials</th>
-						<th (click)="sortCrafts('cost')">Cost</th>
-						<th (click)="sortCrafts('buyout')">Buyout</th>
+						<th class="hidden-xs" (click)="sortCrafts('cost')">Cost</th>
+						<th class="hidden-xs" (click)="sortCrafts('buyout')">Buyout</th>
 						<th (click)="sortCrafts('profit')">Profit</th>
-						<th>avg Posted/Sold</th>
-						<th (click)="sortCrafts('estDemand')">Demand</th>
+						<th class="hidden-xs">avg Posted/Sold</th>
+						<th class="hidden-xs" (click)="sortCrafts('estDemand')">Demand</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
 					<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
@@ -87,19 +87,20 @@
 								{{ goldConversion(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
 							</div>
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ goldConversion(craft.cost) }}
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ goldConversion(craft.buyout) }}
 						</td>
 						<td>
 							{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
+							<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ craft.estDemand }}% <br>
 							<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>

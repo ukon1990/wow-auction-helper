@@ -12,15 +12,15 @@
 			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
 			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
-		<div class="col-md-12">
+		<div class="col-md-12 row">
 			<div class="col-md-8">
-				<table class="table table-striped">
+				<table class="table table-striped row">
 					<tr class="row">
 						<th>Name</th>
 						<th>Quantity</th>
 						<th (click)="sortAuctions('buyout')">Buyout</th>
-						<th>avg Posted/Sold</th>
-						<th (click)="sortAuctions('estDemand')">Demand</th>
+						<th class="hidden-xs">avg Posted/Sold</th>
+						<th class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
 					</tr>
 					<tr class="row" *ngFor="let auc of getAuctions()  | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;" [ngClass]="{undercut: getAuctionOwner(auc.item) !== character}">
 						<td>
@@ -38,17 +38,17 @@
 						<td>
 							{{ copperToArray(auc.buyout * auc.quantity) }} ({{ copperToArray(auc.buyout) }} pcs)
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
 						</td>
-						<td>
+						<td class="hidden-xs">
 							{{ auc.estDemand }}%
 						</td>
 					</tr>
 				</table>
 			</div>
 			<div class="col-md-4">
-				<table class="table table-striped">
+				<table class="table table-striped row">
 					<tr class="row">
 						<th>Item</th>
 						<th>Auction</th>
