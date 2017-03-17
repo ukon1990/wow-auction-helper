@@ -59,11 +59,11 @@
 			<tr class="row">
 				<th>Name</th>
 				<th>Materials</th>
-				<th>Cost</th>
-				<th>Buyout</th>
-				<th>Profit</th>
+				<th (click)="sortCrafts('cost')">Cost</th>
+				<th (click)="sortCrafts('buyout')">Buyout</th>
+				<th (click)="sortCrafts('profit')">Profit</th>
 				<th>avg Posted/Sold</th>
-				<th>Demand</th>
+				<th (click)="sortCrafts('estDemand')">Demand</th>
 			</tr>
 			<!-- TODO: optimize price value fetch -->
 			<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
@@ -98,7 +98,7 @@
 					{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
 				</td>
 				<td>
-					{{ getItem(craft.itemID).estDemand }}%
+					{{ craft.estDemand }}%
 				</td>
 			</tr>
 		</table>

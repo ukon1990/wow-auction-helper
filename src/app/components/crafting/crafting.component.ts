@@ -20,6 +20,7 @@ export class CraftingComponent {
 	private index: number = 0;
 	private currentPage: number = 1;
 	private numOfPages: number = this.crafts.length / this.limit;
+	private sortAsc = false;
 
 	private professions = [
 		'First Aid',
@@ -130,6 +131,24 @@ export class CraftingComponent {
 		});
 		this.currentPage = 1;
 		this.numOfPages = this.crafts.length / this.limit;
+	}
+
+	sortCrafts(sortBy: string) {
+		if (this.sortAsc) {
+			this.sortAsc = false;
+			this.crafts.sort(
+				function (a, b) {
+					return a[sortBy] - b[sortBy];
+				}
+			);
+		} else {
+			this.sortAsc = true;
+			this.crafts.sort(
+				function (a, b) {
+					return b[sortBy] - a[sortBy];
+				}
+			);
+		}
 	}
 
 	getItem(itemID) {

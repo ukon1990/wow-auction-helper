@@ -89,13 +89,12 @@ export class AppComponent {
 		this.itemService.getRecipes()
 			.subscribe(recipe => {
 				let accepted = true;
-				let num = 0;
 				if (lists.recipes === undefined) {
 					lists.recipes = [];
 				}
 				recipe.recipes.forEach(r => {
-					num++;
 					if (r !== null && r['profession'] !== undefined && r['profession'] !== null) {
+						r['estDemand'] = 0;
 						lists.recipes.push(r);
 					}
 				});
@@ -283,6 +282,9 @@ export class AppComponent {
 			c['cost'] = 0;
 			c['buyout'] = 0;
 			c['profit'] = 0;
+			c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
+				Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
+
 			try { // 699 Immaculate Fibril
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
 					(lists.auctions[c.itemID].buyout) : 0;
