@@ -11,7 +11,6 @@ export class ItemService {
 	constructor(private http: Http) { }
 
 	getItem(itemid: string) {
-		console.log(itemid);
 		return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
 			.map(response => <Object>function (r) { return r; }(response.json()), error => console.log(error));
 	}

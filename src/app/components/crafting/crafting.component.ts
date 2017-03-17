@@ -9,13 +9,14 @@ import { ItemService } from '../../services/item';
 	styleUrls: ['../auctions/auctions.component.css']
 })
 export class CraftingComponent {
+	goldConversion = copperToArray;
 	// Strings
 	private searchQuery = '';
 	private filter = { 'itemClass': '-1', 'itemSubClass': '-1', 'profession': 'All' };
 	private filterForm: FormGroup;
 
 	private crafts = [];
-	private shoppingCart = {'recipes': [], 'reagents': []};
+	private shoppingCart = {'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0};
 
 	private limit: number = 10;// per page
 	private index: number = 0;
@@ -54,6 +55,10 @@ export class CraftingComponent {
 			'demand': 0,
 			'minSold': 0
 		});
+		let sc = localStorage.getItem('shopping_cart');
+		if(sc !== null && sc !== undefined && sc !== 'undefined') {
+			this.shoppingCart = JSON.parse(sc);
+		}
 	}
 
 	ngOnInit() {
@@ -62,6 +67,7 @@ export class CraftingComponent {
 		}
 		try {
 			this.setCrafts();
+			console.log(lists.recipes);
 		} catch (e) {
 			console.log(e);
 		}
@@ -187,9 +193,6 @@ export class CraftingComponent {
 		return lists.auctions[itemID];
 	}
 
-	goldConversion = copperToArray;
-
-
 	changePage(change: number): void {
 		if (change > 0 && this.currentPage <= this.numOfPages) {
 			this.currentPage++;
@@ -208,9 +211,10 @@ export class CraftingComponent {
 		return url;
 	}
 
-	addToCart(recipe) {
+	addToCart(recipe): void {
 		if(this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
-			this.shoppingCart.recipes.push({'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID, 'quantity': 1});
+			this.shoppingCart.recipes.push({
+				'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID, 'quantity': 1, 'reagents': recipe.reagents});
 		} else {
 			this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
 		}
@@ -221,6 +225,52 @@ export class CraftingComponent {
 				this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': r.count});
 			}
 		});
+
+		this.setShoppingCartCost();
+		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
+	}
+
+	removeFromCart(spellID): void {
+		console.log('Removed ' + spellID);
+		let recipeIndex = 0,
+			reagentRemoveList = [],
+			recipe = {};
+		// Fetching the recipe's index key
+		if(this.keyValueInArray(this.shoppingCart.recipes, 'spellID', spellID)) {
+			recipeIndex = this.reagentIndex;
+			recipe = this.shoppingCart.recipes[recipeIndex];
+		}
+
+		// Removing reagents
+		recipe['reagents'].forEach(r => {
+			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
+				this.shoppingCart.reagents[this.reagentIndex].count -= (r.count * recipe['quantity']);
+				if(this.shoppingCart.reagents[this.reagentIndex].count <= 0) {
+					this.shoppingCart.reagents.splice(this.reagentIndex, 1);
+					console.log(this.shoppingCart.reagents);
+				}
+			}
+		});
+
+		// Removing recipe and storing changes
+		this.shoppingCart.recipes.splice(recipeIndex, 1);
+		this.setShoppingCartCost();
+		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
+	}
+
+	setShoppingCartCost(): void {
+		this.shoppingCart.buyout = 0;
+		this.shoppingCart.cost = 0;
+
+		this.shoppingCart.recipes.forEach(v => {
+			this.shoppingCart.buyout += this.getMinPrice(v.itemID) * v.quantity;
+		});
+
+		this.shoppingCart.reagents.forEach(v => {
+			this.shoppingCart.cost += this.getMinPrice(v.itemID) * v.count;
+		});
+
+		this.shoppingCart.profit = this.shoppingCart.buyout - this.shoppingCart.cost;
 	}
 
 	keyValueInArray(array, key, value): boolean {
@@ -229,10 +279,10 @@ export class CraftingComponent {
 			if(o[key] === value ) {
 				contains = true;
 				this.reagentIndex = index;
+				console.log(index);
 			}
 			index++;
 		});
-		console.log(array, key, value, contains);
 		return contains;
 	}
 }
