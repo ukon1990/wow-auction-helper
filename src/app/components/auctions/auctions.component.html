@@ -55,6 +55,7 @@
 						<th (click)="sortAuctions('buyout')">Buyout</th>
 						<th>avg Posted/Sold</th>
 						<th (click)="sortAuctions('estDemand')">Demand</th>
+						<th>Action</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
 					<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;">
@@ -63,10 +64,9 @@
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">
 							</span>
 								<div class="align-left col-md-offset-1">
-									<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
-										target="_blank">{{ auc.name }}</a><br>
-									<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
-										target="_blank">{{ auc.owner }}</a>
+									<a rel="item={{ auc.item }}" (click)="selectAuction(auc.auctions)"
+										target="_blank">{{ auc.name }} <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a><br>
+									{{ auc.owner }}
 								</div>
 							</div>
 						</td>
@@ -78,7 +78,17 @@
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
 						</td>
 						<td>
-							{{ auc.estDemand }}% <button (click)="selectAuction(auc.auctions)">open</button>
+							{{ auc.estDemand }}% 
+						</td>
+						<td>
+							<a class="glyphicon glyphicon-shopping-cart" 
+								aria-hidden="true" 
+								href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
+								target="_blank">Buy</a><br>
+							<a class="glyphicon glyphicon-exclamation-sign" 
+								aria-hidden="true" 
+								href="http://www.wowhead.com/item={{auc.item}}"
+								target="_blank">Wowhead</a><br>
 						</td>
 					</tr>
 				</table>
