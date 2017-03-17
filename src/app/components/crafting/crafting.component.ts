@@ -15,10 +15,12 @@ export class CraftingComponent {
 	private filterForm: FormGroup;
 
 	private crafts = [];
+	private shoppingCart = {'recipes': [], 'reagents': []};
 
 	private limit: number = 10;// per page
 	private index: number = 0;
 	private currentPage: number = 1;
+	private reagentIndex: number = 0;
 	private numOfPages: number = this.crafts.length / this.limit;
 	private sortAsc = false;
 
@@ -165,15 +167,15 @@ export class CraftingComponent {
 
 	getMinPrice(itemID) {
 		try {
-			return this.goldConversion(lists.auctions[itemID].buyout);
+			return lists.auctions[itemID].buyout;
 		} catch (e) {
 			if(lists.customPrices[itemID] !== undefined) {
-				return this.goldConversion(lists.customPrices[itemID]);
+				return lists.customPrices[itemID];
 			} else if(lists.wowuction[itemID] !== undefined) {
 				//console.log(lists.wowuction[itemID]);
-				return this.goldConversion(lists.wowuction[itemID]['mktPrice']);
+				return lists.wowuction[itemID]['mktPrice'];
 			}
-			return '0g 0s 0c';
+			return 0;
 		}
 	}
 
@@ -204,5 +206,33 @@ export class CraftingComponent {
 			url += icon + '.jpg';
 		}
 		return url;
+	}
+
+	addToCart(recipe) {
+		if(this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
+			this.shoppingCart.recipes.push({'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID, 'quantity': 1});
+		} else {
+			this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
+		}
+		recipe.reagents.forEach(r => {
+			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
+				this.shoppingCart.reagents[this.reagentIndex].count += r.count;
+			} else {
+				this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': r.count});
+			}
+		});
+	}
+
+	keyValueInArray(array, key, value): boolean {
+		let contains = false, index = 0;
+		array.forEach(o => {
+			if(o[key] === value ) {
+				contains = true;
+				this.reagentIndex = index;
+			}
+			index++;
+		});
+		console.log(array, key, value, contains);
+		return contains;
 	}
 }

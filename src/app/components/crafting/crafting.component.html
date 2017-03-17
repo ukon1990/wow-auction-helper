@@ -50,58 +50,77 @@
 			</form>
 		</div>
 		<br>
-		<div class="pager">
-			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+		<div class="col-md-12">
+			<div class="pager">
+				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+			</div>
+			<div class="col-md-8">
+				<table class="table table-striped">
+					<tr class="row">
+						<th>Name</th>
+						<th>Materials</th>
+						<th (click)="sortCrafts('cost')">Cost</th>
+						<th (click)="sortCrafts('buyout')">Buyout</th>
+						<th (click)="sortCrafts('profit')">Profit</th>
+						<th>avg Posted/Sold</th>
+						<th (click)="sortCrafts('estDemand')">Demand</th>
+					</tr>
+					<!-- TODO: optimize price value fetch -->
+					<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+						<td>
+							<div>
+								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+								<div class="align-left col-md-offset-1">
+									<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{craft.itemID}}"
+										target="_blank">{{ craft.name }}</a>
+									<br> {{ craft.profession }}
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
+								{{ m.count }} x 
+								<a rel="item={{ m.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+										target="_blank">{{m.name}}</a>
+								{{ goldConversion(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+							</div>
+						</td>
+						<td>
+							{{ goldConversion(craft.cost) }}
+						</td>
+						<td>
+							{{ goldConversion(craft.buyout) }}
+						</td>
+						<td>
+							{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
+						</td>
+						<td>
+							{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
+						</td>
+						<td>
+							{{ craft.estDemand }}% <br>
+							<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-md-4">
+				<strong>Shopping cart</strong>
+				<ul>
+					<li *ngFor="let a of shoppingCart.recipes">
+						{{ a.name }} x {{ a.quantity }}
+					</li>
+				</ul>
+				<strong>Reagents</strong>
+				<ul>
+					<li *ngFor="let a of shoppingCart.reagents">
+						{{ a.name }} x {{ a.count }} à {{ goldConversion( getMinPrice(a.itemID) * a.count) }}
+					</li>
+				</ul>
+			</div>
 		</div>
-		<table class="table table-striped">
-			<tr class="row">
-				<th>Name</th>
-				<th>Materials</th>
-				<th (click)="sortCrafts('cost')">Cost</th>
-				<th (click)="sortCrafts('buyout')">Buyout</th>
-				<th (click)="sortCrafts('profit')">Profit</th>
-				<th>avg Posted/Sold</th>
-				<th (click)="sortCrafts('estDemand')">Demand</th>
-			</tr>
-			<!-- TODO: optimize price value fetch -->
-			<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
-				<td>
-					<div>
-						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
-						<div class="align-left col-md-offset-1">
-							<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{craft.itemID}}"
-							    target="_blank">{{ craft.name }}</a>
-							<br> {{ craft.profession }}
-						</div>
-					</div>
-				</td>
-				<td>
-					<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
-						{{ m.count }} x 
-						<a rel="item={{ m.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
-							    target="_blank">{{m.name}}</a>
-						{{getMinPrice(m.itemID)}} ({{ getItem(m.itemID).quantity_total }} @ AH)
-					</div>
-				</td>
-				<td>
-					{{ goldConversion(craft.cost) }}
-				</td>
-				<td>
-					{{ goldConversion(craft.buyout) }}
-				</td>
-				<td>
-					{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
-				</td>
-				<td>
-					{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
-				</td>
-				<td>
-					{{ craft.estDemand }}%
-				</td>
-			</tr>
-		</table>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
 			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
