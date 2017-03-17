@@ -17,7 +17,8 @@ export class AuctionService {
 
 	getAuctions(url) {
 		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
-		return this.http.get(url)
+		let localUrl = '/assets/auctions.json';
+		return this.http.get(this.getUrl(url, localUrl))
 			.map(response => <IAuction>function (r) { console.log('Loaded auctions'); return r; }(response.json()));
 	}
 

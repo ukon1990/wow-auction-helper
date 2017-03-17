@@ -55,7 +55,7 @@
 				<th (click)="sortAuctions('estDemand')">Demand</th>
 			</tr>
 			<!-- TODO: optimize price value fetch -->
-			<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+			<tr class="row" *ngFor="let auc of getAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
 				<td>
 					<div>
 						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">

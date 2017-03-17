@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 
@@ -50,6 +51,7 @@ export class AuctionComponent {
 	private buyOutAsc: boolean = true;
 
 	constructor(
+		private router: Router,
 		private auctionService: AuctionService,
 		private itemService: ItemService,
 		private formBuilder: FormBuilder) {
@@ -117,6 +119,17 @@ export class AuctionComponent {
 		this.filterForm.value['itemSubClass'] = '-1';
 
 	}
+	getAuctions() {
+		if(this.filteredAuctions.length !== undefined
+			&& this.filteredAuctions.length === 0 
+			&& lists.auctions !== undefined && lists.auctions.length > 0) {
+			this.filteredAuctions = lists.auctions;
+			this.router.navigateByUrl('crafting').then( () => {
+				this.router.navigateByUrl('auctions');
+			});
+		}
+		return this.filteredAuctions;
+	}
 
 	filterAuctions(): void {
 		// From form
@@ -163,10 +176,14 @@ export class AuctionComponent {
 					}*/
 				}
 
-				if(match && (demand === 0 || demand <= scanList[id].auctions.estDemand) ) {
-					match = true;
-				} else {
-					match = false;
+				try {
+					if(match && (demand === 0 || demand <= scanList[id].estDemand) ) {
+						match = true;
+					} else {
+						match = false;
+					}
+				} catch (err){
+					console.log(err);
 				}
 
 				if (match) {

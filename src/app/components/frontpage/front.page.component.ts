@@ -26,7 +26,7 @@ export class FrontPageComponent {
 			});
 		console.log('Stored region:', localStorage.getItem('region'));
 		if(localStorage.getItem('realm') !== null && localStorage.getItem('region') !== null) {
-			this.router.navigateByUrl('/auctions');
+			this.router.navigateByUrl('/crafting');
 		}
 	}
 
@@ -41,10 +41,11 @@ export class FrontPageComponent {
 	nextPage() {
 		localStorage.setItem('region', this.u.region);
 		localStorage.setItem('realm', this.u.realm);
-		localStorage.setItem('charater', this.u.character);
+		localStorage.setItem('character', this.u.character);
 		localStorage.setItem('api_tsm', this.u.apiTsm);
 		localStorage.setItem('api_wowuction', this.u.apiWoWu);
-		this.router.navigateByUrl('/auctions');
+		this.router.navigateByUrl('/crafting');
+		location.reload();
 	}
 
 	getRealmValue(realm): void {
