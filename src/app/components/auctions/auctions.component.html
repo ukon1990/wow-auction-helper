@@ -3,7 +3,7 @@
 		<h2 class="panel-title">Auctions</h2>
 	</div>
 	<div class="panel-body">
-		<p>All auctions with no buyout price is ignored.</p>
+		<p>All auctions with no buyout price is ignored.</p> 
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
 
@@ -41,45 +41,63 @@
 			</form>
 		</div>
 		<br>
-		<div class="pager">
-			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+		<div class="col-md-12">
+			<div class="pager">
+				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+			</div>
+			<div class="col-md-8">
+				<table class="table table-striped">
+					<tr class="row">
+						<th>Name</th>
+						<th>@AH</th>
+						<th (click)="sortAuctions('buyout')">Buyout</th>
+						<th>avg Posted/Sold</th>
+						<th (click)="sortAuctions('estDemand')">Demand</th>
+					</tr>
+					<!-- TODO: optimize price value fetch -->
+					<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;">
+						<td>
+							<div>
+								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">
+							</span>
+								<div class="align-left col-md-offset-1">
+									<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
+										target="_blank">{{ auc.name }}</a><br>
+									<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
+										target="_blank">{{ auc.owner }}</a>
+								</div>
+							</div>
+						</td>
+						<td>{{ auc.quantity_total }} pcs</td>
+						<td>
+							{{ copperToArray(auc.buyout) }}
+						</td>
+						<td>
+							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
+						</td>
+						<td>
+							{{ auc.estDemand }}% <button (click)="selectAuction(auc.auctions)">open</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-md-4">
+				<table class="table table-striped">
+					<tr class="row">
+						<th>Stack</th>
+						<th>Per item</th>
+						<th>Stack size</th>
+					</tr>
+					<tr class="row" *ngFor="let a of selectedAuctions  | slice:0 : 15;">
+						<td>{{ copperToArray(a.buyout) }}</td>
+						<td>{{ copperToArray(a.buyout / a.quantity) }}</td>
+						<td>{{ a.quantity }}</td>
+					</tr>
+				</table>
+			</div>
 		</div>
-		<table class="table table-striped">
-			<tr class="row">
-				<th>Name</th>
-				<th>Auctions</th>
-				<th (click)="sortAuctions('buyout')">Buyout</th>
-				<th>avg Posted/Sold</th>
-				<th (click)="sortAuctions('estDemand')">Demand</th>
-			</tr>
-			<!-- TODO: optimize price value fetch -->
-			<tr class="row" *ngFor="let auc of getAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
-				<td>
-					<div>
-						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">
-					</span>
-						<div class="align-left col-md-offset-1">
-							<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
-								target="_blank">{{ auc.name }}</a><br>
-							<a rel="item={{ auc.item }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{auc.item}}"
-								target="_blank">{{ auc.owner }}</a>
-						</div>
-					</div>
-				</td>
-				<td>{{ auc.quantity_total }}</td>
-				<td>
-					{{ copperToArray(auc.buyout) }}
-				</td>
-				<td>
-					{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
-				</td>
-				<td>
-					{{ auc.estDemand }}%
-				</td>
-			</tr>
-		</table>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
 			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}

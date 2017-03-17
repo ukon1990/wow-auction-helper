@@ -104,6 +104,7 @@ export class AppComponent {
 	}
 
 	getAuctions(): void {
+		lists.isDownloading = true;
 		this.downloadingText = 'Downloading auctions, this might take a while';
 		console.log('Loading auctions');
 		this.auctionService.getLastUpdated().subscribe(r => {
@@ -154,7 +155,7 @@ export class AppComponent {
 
 			if (list[o.item] !== undefined) {
 
-				list[o.item]['auctions'][o.auc] = o;
+				list[o.item]['auctions'].push({'name':o.name, 'owner': o.owner, 'buyout': o.buyout, 'quantity': o.quantity});
 				list[o.item]['quantity_total'] += o['quantity'];
 
 				if (list[o.item]['buyout'] >
@@ -171,7 +172,7 @@ export class AppComponent {
 				o['quantity_total'] = o['quantity'];
 				list[o.item] = o;
 				list[o.item]['auctions'] = [];
-				list[o.item]['auctions'][o.auc] = o;
+				list[o.item]['auctions'].push({'name':o.name, 'owner': o.owner, 'buyout': o.buyout, 'quantity': o.quantity});
 			}
 
 			// Storing a users auctions in a list
@@ -186,6 +187,7 @@ export class AppComponent {
 		}
 		lists.auctions = list;
 		this.getCraftingCosts();
+		lists.isDownloading = false;
 	}
 
 	getItemName(auction): string {
@@ -285,9 +287,13 @@ export class AppComponent {
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
 					(lists.auctions[c.itemID].buyout) : 0;
 				try {
+					if(c.minCount < 1) {
+						console.log(c.minCount === 0 ? 1 : c.minCount);
+						c.minCount = 1;
+					}
 					for (let m of c.reagents) {
 						try {
-							m.count = m.count/ c.minCount;
+							m.count = m.count / c.minCount;
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout) :
 									lists.customPrices[m.itemID] !== undefined ?

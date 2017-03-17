@@ -30,6 +30,8 @@ export class AuctionComponent {
 	// Objects and arrays
 	private user: IUser;
 	private itemClasses = {};
+	private selectedItem = {'name': 'No item selected', 'auctions': []};
+	private selectedAuctions = [];
 
 	private auctionDuration = {
 		'VERY_LONG': '12h+',
@@ -47,6 +49,7 @@ export class AuctionComponent {
 	private numberOfAuctions: number = 0;
 	private currentPage: number = 1;
 	private numOfPages: number = this.numberOfAuctions / this.limit;
+	private hasLoaded = false;
 
 	private buyOutAsc: boolean = true;
 
@@ -119,17 +122,6 @@ export class AuctionComponent {
 		this.filterForm.value['itemSubClass'] = '-1';
 
 	}
-	getAuctions() {
-		if(this.filteredAuctions.length !== undefined
-			&& this.filteredAuctions.length === 0 
-			&& lists.auctions !== undefined && lists.auctions.length > 0) {
-			this.filteredAuctions = lists.auctions;
-			this.router.navigateByUrl('crafting').then( () => {
-				this.router.navigateByUrl('auctions');
-			});
-		}
-		return this.filteredAuctions;
-	}
 
 	filterAuctions(): void {
 		// From form
@@ -193,6 +185,12 @@ export class AuctionComponent {
 			}
 		}
 		this.numOfPages = Math.round(this.numberOfAuctions / this.limit);
+	}
+
+	selectAuction(auctions): void {
+		this.selectedAuctions = auctions.sort(function(a,b){
+			return a.buyout/a.quantity - b.buyout/b.quantity;
+		});
 	}
 
 	isTypeMatch(item): boolean {

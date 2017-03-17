@@ -1,4 +1,5 @@
 export let lists = {
+	isDownloading: true,
 	myAuctions: [],
 	auctions: [],
 	wowuction: [],
