@@ -117,6 +117,7 @@ export class AppComponent {
 
 	buildAuctionArray(arr) {
 		let list = [];
+		lists.myAuctions = [];
 		for (let o of arr) {
 			if(o['buyout'] === 0) {
 				continue;

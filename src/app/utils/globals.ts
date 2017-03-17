@@ -10,6 +10,7 @@ export let lists = {
 };
 
 lists.customPrices['124124'] = 3000000;
+lists.customPrices['120945'] = 500000;
 
 // Local database start
 import Dexie from 'dexie';
