@@ -27,6 +27,7 @@ export class MyAuctionsComponent {
 	private auctionObserver = {};
 	private itemObserver = {};
 	private petObserver = {};
+	private selectedAuctions = [];
 	private auctionDuration = {
 		'VERY_LONG': '12h+',
 		'LONG': '2-12h',
@@ -83,9 +84,11 @@ export class MyAuctionsComponent {
 	getAuctions (): any[] {
 		this.auctionsValue = 0;
 		if(lists.myAuctions !== undefined && lists.myAuctions.length > 0) {
-		this.activeAuctions = lists.myAuctions.length;
+			this.activeAuctions = lists.myAuctions.length;
 			lists.myAuctions.forEach(
-				a => { this.auctionsValue += a.buyout });
+				a => {
+					this.auctionsValue += a.buyout * a.quantity;
+				});
 		}
 		return lists.myAuctions;
 	}
@@ -122,6 +125,7 @@ export class MyAuctionsComponent {
 			);
 		}
 	}
+
 	getNumOfPages() {
 		let size = lists.myAuctions !== undefined ? lists.myAuctions.length : 0;
 		this.numOfPages = size / this.limit;
@@ -159,6 +163,12 @@ export class MyAuctionsComponent {
 			}
 		}
 		return 'no item data';
+	}
+
+	selectAuction(auctions): void {
+		this.selectedAuctions = lists.auctions[auctions.item].auctions.sort(function(a,b){
+			return a.buyout/a.quantity - b.buyout/b.quantity;
+		});
 	}
 
 	getPet(speciesId) {

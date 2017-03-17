@@ -79,14 +79,17 @@ export class AuctionComponent {
 
 	getIcon(auction): string {
 		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
-		if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
-			if (lists.pets[auction.petSpeciesId] === undefined) {
-				getPet(auction.petSpeciesId);
+		try {
+			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
+				if (lists.pets[auction.petSpeciesId] === undefined) {
+					getPet(auction.petSpeciesId);
+				}
+				icon = lists.pets[auction.petSpeciesId].icon;
+			} else {
+				icon = lists.items[auction.item].icon;
 			}
-			icon = lists.pets[auction.petSpeciesId].icon;
-		} else {
-			icon = lists.items[auction.item].icon;
-		}
+		} catch(err) {console.log(err,auction);}
+
 		if (icon === undefined) {
 			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
 		} else {

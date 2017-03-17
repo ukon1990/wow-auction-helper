@@ -154,7 +154,10 @@ export class AppComponent {
 
 			if (list[o.item] !== undefined) {
 
-				list[o.item]['auctions'].push({'name':o.name, 'owner': o.owner, 'buyout': o.buyout, 'quantity': o.quantity});
+				list[o.item]['auctions'].push({
+						'item': o.item, 'name':o.name,
+						'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
+						'buyout': o.buyout, 'quantity': o.quantity});
 				list[o.item]['quantity_total'] += o['quantity'];
 
 				if (list[o.item]['buyout'] >
@@ -171,7 +174,10 @@ export class AppComponent {
 				o['quantity_total'] = o['quantity'];
 				list[o.item] = o;
 				list[o.item]['auctions'] = [];
-				list[o.item]['auctions'].push({'name':o.name, 'owner': o.owner, 'buyout': o.buyout, 'quantity': o.quantity});
+				list[o.item]['auctions'].push({
+						'item': o.item, 'name':o.name,
+						'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
+						'buyout': o.buyout, 'quantity': o.quantity});
 			}
 
 			// Storing a users auctions in a list
