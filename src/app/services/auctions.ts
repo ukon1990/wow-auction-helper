@@ -41,7 +41,7 @@ export class AuctionService {
 				r.split('\n').forEach(function (l) {
 					if (isFirst) {
 						isFirst = false;
-						console.log(l.split('\t'));
+						// console.log(l.split('\t'));
 					} else {
 						tempObj = l.split('\t');
 						obj = {
@@ -53,6 +53,7 @@ export class AuctionService {
 							'realm': tempObj[0]
 						};
 						list[obj['id']] = obj;
+						// db['wowuction'].add(obj);
 					}
 				});
 				return list;

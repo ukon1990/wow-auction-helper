@@ -3,40 +3,107 @@
 		<h2 class="panel-title">Setup</h2>
 	</div>
 	<div class="panel-body">
-		<p>This is a webapplication that is currently in development. There is no guarantee that it ever will be completed.</p>
+		<h2>WoW Auction Helper</h2>
+		<p>
+			This is a webapplication, that shows the user the
+			potential profit of certain receipes in-game. It is
+			aimed at helping the user earn gold in World of Warcraft.
+			<br>
+			Some of it's features include:
+		</p>
+		<ul>
+			<li>
+				The ability to make a shopping cart for materials from receipes, 
+				that is persistent between sessions (won't be lost if you reload)
+			</li>
+			<li>
+				A clean overview of the current auctions (as live as available).
+			</li>
+			<li>
+				Displaying the users current auctions, with indication for what auctions
+				are undercutted, and wich aren't. (requires character name set)
+			</li>
+		</ul>
 		<form class="form-group col-md-6 container" (ngSubmit)="nextPage()">
-			<h2>Disclaimer:</h2>
-			<p>
-				No personal data is stored on the client or server, if you wish to look at the code, please feel free to do so. The GitHub link can be found <a routerLink="/about">here</a>. The only data you need to input is your realm and region, anything else is
-				optional.
-			</p>
-			<fieldset class="form-inline form-group">
+			<h3>Disclaimer:</h3>
+			<ul>
+				<li>
+					The application will use much data,
+					so do not use it on the mobile network. If you are on a high populated realm,
+					each auction download can be up to 25 MB. Low populated realms can be as low as 5 MB.
+				</li>
+				<li>
+					All calculations are done on the client (your computer).
+				</li>
+				<li>
+					No personal data sent from your computer.
+					Anything persistent is stored on your computer.
+				</li>
+				<li>
+					If you wish to look at the code, please feel free to do so. 
+					The GitHub link can be found <a routerLink="/about">here</a>.
+				</li>
+				<li>
+					The only data you need to input is your realm and region, anything else is optional.
+				</li>
+			</ul>
+			<div class="col-md-6">
 				<h3>Requiered</h3>
 				<div class="form-group">
 					{{u.realm}}@{{u.region}} <br>
-					<select name="region" type="text" [(ngModel)]="u.region" required>
-						<option value="eu">EU</option>
-						<option value="us">US</option>
-					</select>
-					<select #realm (change)="getRealmValue(realm.value)" required>
-						<option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
-					</select>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">Region</span>
+						<select class="form-control" 
+							name="region" type="text"
+							aria-describedby="basic-addon1"
+							[(ngModel)]="u.region" required>
+							
+							<option value="eu">EU</option>
+							<option value="us">US</option>
+						</select>
+					</div>
 
-					<!--<input ng2-auto-complete [source]="getRealms()"
-                   [list-formatter]="autocompleListFormatter"
-					value-property-name="slug"
-                   display-property-name="name" class="form-control" type="text" name="realm" placeholder="Realm" [(ngModel)]="u.realm" required/><br>-->
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">Realm</span>
+						<select class="form-control" 
+							name="realm" type="text"
+							aria-describedby="basic-addon1"
+							 #realm (change)="getRealmValue(realm.value)" required>
+							
+							<option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
+						</select>
+					</div>
 				</div>
-			</fieldset>
-			<fieldset class="form-inline form-group">
+			</div>
+			<div class="col-md-6">
 				<h3>Optional</h3>
 				<div class="form-group">
-					<input class="col-md-6" name="character" placeholder="Character" type="text" [(ngModel)]="u.character" /><br>
-					<input name="apiTsm" placeholder="TSM api key" />
-					<input name="apiWoWu" placeholder="WoWuction api key" />
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">Character</span>
+						<input class="form-control col-md-2" 
+							name="character" placeholder="Character" type="text" 
+							[(ngModel)]="u.character" aria-describedby="basic-addon1"/>
+					</div>
+
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">TSM api key</span>
+						<input class="form-control col-md-2" 
+							name="apiTsm" placeholder="api key" type="text" 
+							[(ngModel)]="u.apiTsm" aria-describedby="basic-addon1"/>
+					</div>
+
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">Wowuction api key</span>
+						<input class="form-control col-md-2" 
+							name="apiWoWu" placeholder="api key" type="text" 
+							[(ngModel)]="u.apiWoWu" aria-describedby="basic-addon1"/>
+					</div>
 				</div>
-			</fieldset>
-			<button type="submit"> Go to auctions</button>
+			</div><br>
+			<button class="btn btn-primary" type="submit">
+				Save and continue
+				<i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i>
+				</button>
 		</form>
 
 	</div>
