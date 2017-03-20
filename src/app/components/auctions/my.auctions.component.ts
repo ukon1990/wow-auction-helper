@@ -20,6 +20,7 @@ export class MyAuctionsComponent {
 	private character: string;
 	private activeAuctions = 0;
 	private auctionsValue = 0;
+	private apiToUse = user.apiToUse;
 
 	// Objects and arrays
 	private user: IUser;
@@ -39,12 +40,13 @@ export class MyAuctionsComponent {
 	private limit: number = 10;// per page
 	private index: number = 0;
 	private numberOfAuctions: number = 0;
+	private numberOfUndercuttedAuctions: number = 0;
 	private currentPage: number = 1;
 	private numOfPages: number = this.numberOfAuctions / this.limit;
 
 	private buyOutAsc: boolean = true;
 
-	constructor(){
+	constructor() {
 		this.character = user.character;
 	}
 
@@ -83,11 +85,15 @@ export class MyAuctionsComponent {
 
 	getAuctions (): any[] {
 		this.auctionsValue = 0;
+		this.numberOfUndercuttedAuctions = 0;
 		if(lists.myAuctions !== undefined && lists.myAuctions.length > 0) {
 			this.activeAuctions = lists.myAuctions.length;
 			lists.myAuctions.forEach(
 				a => {
 					this.auctionsValue += a.buyout * a.quantity;
+					if(this.getAuctionOwner(a.item) !== this.character){
+						this.numberOfUndercuttedAuctions++;
+					}
 				});
 		}
 		return lists.myAuctions;

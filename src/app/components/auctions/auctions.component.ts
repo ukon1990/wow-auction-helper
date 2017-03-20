@@ -26,6 +26,7 @@ export class AuctionComponent {
 	private onlyCraftables = false;
 	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
 	private filterForm: FormGroup;
+	private apiToUse = user.apiToUse;
 
 	// Objects and arrays
 	private user: IUser;

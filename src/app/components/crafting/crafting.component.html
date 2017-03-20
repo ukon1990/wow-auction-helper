@@ -6,7 +6,11 @@
 		<p>
 			Materials marked with red indicates that the item is not currently at AH, if there 
 			is an available market value for that item that will be displayed but not used in cost calculation. <br>
-			Blood of Sargarass is calculated in the cost with a value of {{ getMinPrice('124124') }}.
+			Blood of Sargarass is calculated in the cost with a value of {{ goldConversion(getMinPrice('124124')) }}.
+			</p>
+			<p *ngIf="apiToUse !== 'none'" class="alert alert-info" role="alert">
+				If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
+				You can get a WoWuction key <a href="http://www.wowuction.com/" target="_blank">here</a>(go to data export, copy the part after "?token=" in the export), and a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
 			</p>
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
@@ -25,14 +29,14 @@
 				</div>
 
 
-				<div class="input-group input-group-sm">
+				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min demand</span>
 					<input class="col-md-2 form-control" type="number" 
 						placeholder="0 is default" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
 
-				<div class="input-group input-group-sm">
+				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min sold</span>
 					<input class="col-md-2 form-control" type="number" 
 						placeholder="0 is default" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
@@ -53,7 +57,7 @@
 		<div class="col-md-12 row">
 			<div class="pager">
 				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
 			<div class="col-md-8 row">
@@ -64,8 +68,8 @@
 						<th class="hidden-xs" (click)="sortCrafts('cost')">Cost</th>
 						<th class="hidden-xs" (click)="sortCrafts('buyout')">Buyout</th>
 						<th (click)="sortCrafts('profit')">Profit</th>
-						<th class="hidden-xs">avg Posted/Sold</th>
-						<th class="hidden-xs" (click)="sortCrafts('estDemand')">Demand</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">avg Posted/Sold</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortCrafts('estDemand')">Demand</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
 					<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
@@ -97,11 +101,11 @@
 							{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
 							<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>
-						<td class="hidden-xs">
+						<td *ngIf="apiToUse !== 'none'"  class="hidden-xs">
 							{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
 						</td>
 						<td class="hidden-xs">
-							{{ craft.estDemand }}% <br>
+							<span *ngIf="apiToUse !== 'none'" >{{ craft.estDemand }}% <br></span>
 							<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>
 					</tr>
@@ -127,7 +131,7 @@
 		</div>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
 			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
 	</div>

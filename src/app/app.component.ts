@@ -157,7 +157,7 @@ export class AppComponent {
 	buildAuctionArray(arr) {
 		let list = [];
 		lists.myAuctions = [];
-		console.log('api to use: ' + user.apiToUse, lists.wowuction);
+		console.log('api to use: ' + user.apiToUse, lists[user.apiToUse]);
 		for (let o of arr) {
 			if (o['buyout'] === 0) {
 				continue;
@@ -182,14 +182,15 @@ export class AppComponent {
 
 			if (user.apiToUse === 'wowuction' && lists.wowuction[o.item] !== undefined) {
 				o['estDemand'] = Math.round(lists.wowuction[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['RegionAvgDailySold']) || 0;
+				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['avgDailySold']) || 0;
 				o['avgDailyPosted'] = parseFloat(lists.wowuction[o.item]['avgDailyPosted']) || 0;
 				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
 
 			} else if (user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
 				o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
 				o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
-				o['avgDailyPosted'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
+				o['avgDailyPosted'] = Math.round(
+					(parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) / parseFloat(lists.tsm[o.item]['RegionSaleRate'])) * 100) / 100 || 0;
 				o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
 
 			} else {
@@ -338,9 +339,15 @@ export class AppComponent {
 			c['cost'] = 0;
 			c['buyout'] = 0;
 			c['profit'] = 0;
-			c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
-				Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
+			c['estDemand'] = 0;
 
+			if(user.apiToUse === 'tsm'){
+				c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
+				Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
+			} else if(user.apiToUse === 'wowuction') {
+				c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
+				Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
+			}
 			try { // 699 Immaculate Fibril
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
 					(lists.auctions[c.itemID].buyout) : 0;

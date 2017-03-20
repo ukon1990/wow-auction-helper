@@ -24,6 +24,7 @@ export class CraftingComponent {
 	private reagentIndex: number = 0;
 	private numOfPages: number = this.crafts.length / this.limit;
 	private sortAsc = false;
+	private apiToUse = user.apiToUse;
 
 	private professions = [
 		'First Aid',
@@ -82,6 +83,7 @@ export class CraftingComponent {
 			console.log(e);
 		}
 	}
+
 	filteRecipes() {
 		this.crafts = [];
 		this.searchQuery = this.filterForm.value['searchQuery'];
@@ -175,6 +177,11 @@ export class CraftingComponent {
 		} else {
 			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
 		}
+	}
+
+	getNumOfPages() {
+		this.numOfPages = Math.round(this.crafts.length / this.limit);
+		return this.numOfPages;
 	}
 
 	isAtAH(itemID) {

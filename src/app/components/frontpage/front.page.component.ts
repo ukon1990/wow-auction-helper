@@ -44,6 +44,13 @@ export class FrontPageComponent {
 		localStorage.setItem('character', this.u.character);
 		localStorage.setItem('api_tsm', this.u.apiTsm);
 		localStorage.setItem('api_wowuction', this.u.apiWoWu);
+		if(this.u.apiTsm.length > 0) {
+			localStorage.setItem('api_to_use', 'tsm');
+		} else if(this.u.apiWoWu.length > 0) {
+			localStorage.setItem('api_to_use', 'wowuction');
+		}else {
+			localStorage.setItem('api_to_use', 'none');
+		}
 		this.router.navigateByUrl('/crafting');
 		location.reload();
 	}

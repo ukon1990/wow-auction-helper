@@ -4,6 +4,11 @@
 	</div>
 	<div class="panel-body">
 		<p>All auctions with no buyout price is ignored.</p> 
+		<p *ngIf="apiToUse !== 'none'" class="alert alert-info" role="alert">
+			If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
+			You can get a WoWuction key <a href="http://www.wowuction.com/" target="_blank">here</a>(go to data export, 
+			copy the part after "?token=" in the export), and a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
+		</p>
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
 
@@ -13,7 +18,7 @@
 						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
 				</div>
 
-				<div class="input-group input-group-sm">
+				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Demand</span>
 					<input class="col-md-2 form-control" type="text" 
 						placeholder="Item name" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
@@ -53,8 +58,8 @@
 						<th>Name</th>
 						<th>@AH</th>
 						<th (click)="sortAuctions('buyout')">Buyout</th>
-						<th class="hidden-xs">avg Posted/Sold</th>
-						<th class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">avg Posted/Sold</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
 						<th class="hidden-xs">Action</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
@@ -73,10 +78,10 @@
 						<td>
 							{{ copperToArray(auc.buyout) }}
 						</td>
-						<td class="hidden-xs">
+						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
 						</td>
-						<td class="hidden-xs">
+						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							{{ auc.estDemand }}% 
 						</td>
 						<td class="hidden-xs">
