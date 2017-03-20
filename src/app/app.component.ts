@@ -41,22 +41,42 @@ export class AppComponent {
 			this.u.apiWoWu = localStorage.getItem('api_wowuction');
 			this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
 			this.checkForUpdate();
-			/*this.auctionService.getTSMData().then( r => {
-				console.log('tsm result:',r);
-			}).catch(err => console.log(err));*/
+
+			if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
+				this.auctionService.getTSMData().subscribe(r => {
+					lists.tsm = r;
+				}, err => {
+					console.log(err);
+				});
+			} else {
+				console.log('Loaded TSM from local DB');
+				db.table('tsm').toArray().then(
+					result => {
+						lists.tsm = result;
+					});
+			}
 		}
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);
 
-		this.auctionService.getWoWuctionData().subscribe(res => {
-			lists.wowuction = res;
-		});
+		if( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
+			console.log('Downloading wowuction data');
+			this.auctionService.getWoWuctionData().subscribe(res => {
+				lists.wowuction = res;
+			});
+		} else {
+			console.log('Loading wowuction data from local storage');
+			db.table('wowuction').toArray().then( r => {
+				lists.wowuction = r;
+			});
+		}
+
 		this.downloadingText = 'Downloading pets';
 		this.petObserver = this.itemService.getPets()
 			.subscribe(pets => {
 				this.buildPetArray(pets['pets']);
 				try {
-				this.downloadingText = 'Downloading items';
+					this.downloadingText = 'Downloading items';
 					this.itemObserver = this.itemService.getItems()
 						.subscribe(i => {
 							this.buildItemArray(i);
@@ -104,14 +124,27 @@ export class AppComponent {
 
 	getAuctions(): void {
 		lists.isDownloading = true;
-		this.downloadingText = 'Downloading auctions, this might take a while';
-		console.log('Loading auctions');
+		this.downloadingText = 'Checking for new auctions';
+		console.log('Checking for new auction data');
+
 		this.auctionService.getLastUpdated().subscribe(r => {
-			this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\',''))
-			.subscribe(a => {
-				this.downloadingText = '';
-				this.buildAuctionArray(a.auctions);
-			});
+			this.downloadingText = 'Downloading auctions, this might take a while';
+			console.log('Downloading auctions');
+			if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
+				this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
+				.subscribe(a => {
+					this.downloadingText = '';
+					this.buildAuctionArray(a.auctions);
+				});
+			} else {
+			this.downloadingText = 'Loading auctions from local storage';
+				console.log('No new auction data available so loaded from local storage.');
+				db.table('auctions').toArray().then(
+					result => {
+						this.downloadingText = '';
+						this.buildAuctionArray(result);;
+					});
+			}
 		});
 	}
 
@@ -119,7 +152,7 @@ export class AppComponent {
 		let list = [];
 		lists.myAuctions = [];
 		for (let o of arr) {
-			if(o['buyout'] === 0) {
+			if (o['buyout'] === 0) {
 				continue;
 			}
 
@@ -155,9 +188,10 @@ export class AppComponent {
 			if (list[o.item] !== undefined) {
 
 				list[o.item]['auctions'].push({
-						'item': o.item, 'name':o.name,
-						'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
-						'buyout': o.buyout, 'quantity': o.quantity});
+					'item': o.item, 'name': o.name,
+					'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
+					'buyout': o.buyout, 'quantity': o.quantity
+				});
 				list[o.item]['quantity_total'] += o['quantity'];
 
 				if (list[o.item]['buyout'] >
@@ -165,7 +199,7 @@ export class AppComponent {
 
 					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
 					list[o.item]['owner'] = o['owner'];
-				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][ list[o.item]['auc'] ] ===
+				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
 					o['buyout'] / o['quantity'] &&
 					list[o.item]['owner'] !== o['owner']) {
 					list[o.item]['owner'] += ', ' + o['owner'];
@@ -175,9 +209,10 @@ export class AppComponent {
 				list[o.item] = o;
 				list[o.item]['auctions'] = [];
 				list[o.item]['auctions'].push({
-						'item': o.item, 'name':o.name,
-						'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
-						'buyout': o.buyout, 'quantity': o.quantity});
+					'item': o.item, 'name': o.name,
+					'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
+					'buyout': o.buyout, 'quantity': o.quantity
+				});
 			}
 
 			// Storing a users auctions in a list
@@ -271,7 +306,7 @@ export class AppComponent {
 		if (this.isRealmSet()) {
 			this.auctionService.getLastUpdated()
 				.subscribe(r =>
-				this.lastModified = r['lastModified']);
+					this.lastModified = r['lastModified']);
 		}
 	}
 
@@ -295,17 +330,16 @@ export class AppComponent {
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
 					(lists.auctions[c.itemID].buyout) : 0;
 				try {
-					if(c.minCount < 1) {
-						console.log(c.minCount === 0 ? 1 : c.minCount);
+					if (c.minCount < 1) {
 						c.minCount = 1;
 					}
 					for (let m of c.reagents) {
 						try {
-							m.count = m.count / c.minCount;
+							m.count = Math.round((m.count / c.minCount) * 100) / 100;
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout) :
-									lists.customPrices[m.itemID] !== undefined ?
-										lists.customPrices[m.itemID] : 0;
+								lists.customPrices[m.itemID] !== undefined ?
+									lists.customPrices[m.itemID] : 0;
 							c.cost += matBuyout !== 0 ? m.count * matBuyout : 0;
 						} catch (errr) {
 							console.log('Failed at calculating cost', errr);

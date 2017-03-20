@@ -15,11 +15,20 @@ export class AuctionService {
 		this.user = user;
 	}
 
-	getAuctions(url) {
+	getAuctions(url, timestamp) {
 		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
 		let localUrl = '/assets/auctions.json';
 		return this.http.get(this.getUrl(url, localUrl))
-			.map(response => <IAuction>function (r) { console.log('Loaded auctions'); return r; }(response.json()));
+			.map(response => <IAuction>function (r) {
+				console.log('Loaded auctions');
+				db['auctions'].clear();
+				db['auctions'].bulkAdd(r.auctions);
+				console.log('Done storing auctions in object store');
+				localStorage.setItem('timestamp_auctions',timestamp);
+				return r;
+			}(response.json()), e => {
+				console.log('Unable to download "live" auctions', e);
+			});
 	}
 
 	getWoWuctionData() {
@@ -29,8 +38,9 @@ export class AuctionService {
 			url = this.getUrl(apiUrl, localUrl);
 
 		// TODO: Make it not use the local URL by storing the value temporarily with Dexie!
-		return this.http.get(localUrl)
+		return this.http.get(url)
 			.map(res => function (r: string) {
+				db['wowuction'].clear();
 				let list = [],
 					obj = {},
 					tempObj = {},
@@ -52,36 +62,33 @@ export class AuctionService {
 							'estDemand': tempObj[17],
 							'realm': tempObj[0]
 						};
+						db['wowuction'].add(obj);
 						list[obj['id']] = obj;
 						// db['wowuction'].add(obj);
 					}
 				});
+				db.table('wowuction').toArray().then(arr => {console.log('wowuction',arr);});
+				localStorage.setItem('timestamp_wowuction', new Date().toDateString());
 				return list;
 			}(res['_body'].toString()));
 	}
 
 	// Need to ask the user how often they want this data to be updated.
-	getTSMData(): Promise<any[]> {
+	getTSMData() {
 		let localUrl = '/assets/tsm-emerald-dream.json';
 		let apiUrl = 'http://api.tradeskillmaster.com/v1/item/'
 			+ this.user.region + '/'
 			+ this.user.realm
 			+ '?fields=' + DB_TABLES.TSM_TABLE_COLUMNS + '&format=json&apiKey=' + localStorage.getItem('api_tsm');
 
-		if(new Date(parseInt(localStorage.getItem('timestamp_tsm'), 10)).toDateString() !== new Date().toDateString()) {
-			return this.http.get(this.getUrl(apiUrl, localUrl)).toPromise()
-			.then(response => <any>function (r) {
-				console.log('Loaded TSM');
-				r.forEach( obj => {
-					db['tsm'].add(obj);
-				});
-				return r;
-			}(response.json()));
-		} else {
-			console.log('Loaded TSM from local DB');
-			db.table('tsm').get(25).then(shit => console.log(shit));
-			return new Promise(function(){return db.table('tsm').toArray().then(result => {return result;})});
-		}
+		return this.http.get(this.getUrl(apiUrl, localUrl))
+		.map(response => <any>function (r) {
+			console.log('Loaded TSM');
+			db['tsm'].clear();
+			db['tsm'].bulkAdd(r);
+			localStorage.setItem('timestamp_tsm', new Date().toDateString());
+			return r;
+		}(response.json()));
 	}
 
 	getLastUpdated() {

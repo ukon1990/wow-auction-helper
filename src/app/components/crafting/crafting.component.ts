@@ -64,10 +64,20 @@ export class CraftingComponent {
 	ngOnInit() {
 		if(lists.customPrices === undefined) {
 			lists.customPrices = [];
+		} else {
+			Object.keys(lists.customPrices).forEach( k => {
+				if(lists.items[k] === undefined) {
+					this.itemService.getItem(k).subscribe(r => {
+						lists.items[k] = r;
+					}, e => {
+						console.log('', e);
+					});
+				}
+			});
 		}
+
 		try {
 			this.setCrafts();
-			console.log(lists.recipes);
 		} catch (e) {
 			console.log(e);
 		}
@@ -221,6 +231,7 @@ export class CraftingComponent {
 		recipe.reagents.forEach(r => {
 			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
 				this.shoppingCart.reagents[this.reagentIndex].count += r.count;
+				this.shoppingCart.reagents[this.reagentIndex].count = Math.round(this.shoppingCart.reagents[this.reagentIndex].count * 100) / 100;
 			} else {
 				this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': r.count});
 			}
@@ -247,7 +258,6 @@ export class CraftingComponent {
 				this.shoppingCart.reagents[this.reagentIndex].count -= (r.count * recipe['quantity']);
 				if(this.shoppingCart.reagents[this.reagentIndex].count <= 0) {
 					this.shoppingCart.reagents.splice(this.reagentIndex, 1);
-					console.log(this.shoppingCart.reagents);
 				}
 			}
 		});
@@ -279,7 +289,6 @@ export class CraftingComponent {
 			if(o[key] === value ) {
 				contains = true;
 				this.reagentIndex = index;
-				console.log(index);
 			}
 			index++;
 		});
