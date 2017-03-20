@@ -538,5 +538,6 @@ export let user: IUser = {
 	'character': undefined,
 	'apiTsm': undefined,
 	'apiWoWu': undefined,
-	'apiToUse': 'none'
+	'apiToUse': 'none',
+	'customPrices': []
 }

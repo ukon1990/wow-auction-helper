@@ -29,6 +29,6 @@ export class IUser {
 	character?: string;
 	apiTsm?: string;
 	apiWoWu?: string;
-	customPrices?: [any];
+	customPrices?: any;
 	apiToUse: string;
 }

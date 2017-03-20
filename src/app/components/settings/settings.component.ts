@@ -14,7 +14,7 @@ export class SettingsComponent {
 
 	constructor() {
 		this.user = user;
-		this.customPrices = lists.customPrices;
+		this.user.customPrices = lists.customPrices;
 	}
 
 	saveUserData(): void {
@@ -29,6 +29,7 @@ export class SettingsComponent {
 
 	importUserData(): void {
 		this.user = JSON.parse(this.importedSettings);
+		this.saveUserData();
 	}
 
 	exportUserData(): void {
