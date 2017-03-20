@@ -43,37 +43,45 @@ export class AppComponent {
 			this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
 			this.checkForUpdate();
 
-			if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
-				this.auctionService.getTSMData().subscribe(r => {
-					lists.tsm = r;
-				}, err => {
-					console.log(err);
-				});
-			} else {
-				console.log('Loaded TSM from local DB');
-				db.table('tsm').toArray().then(
-					result => {
-						result.forEach( r => {
-							lists.tsm[r.Id] = r;
-						});
+			if(localStorage.getItem('api_tsm') !== undefined &&
+				localStorage.getItem('api_tsm').length > 0 &&
+				localStorage.getItem('api_tsm') !== 'null') {
+				if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
+					this.auctionService.getTSMData().subscribe(r => {
+						lists.tsm = r;
+					}, err => {
+						console.log(err);
 					});
+				} else {
+					console.log('Loaded TSM from local DB');
+					db.table('tsm').toArray().then(
+						result => {
+							result.forEach( r => {
+								lists.tsm[r.Id] = r;
+							});
+						});
+				}
 			}
 		}
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);
 
-		if( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
-			console.log('Downloading wowuction data');
-			this.auctionService.getWoWuctionData().subscribe(res => {
-				lists.wowuction = res;
-			});
-		} else {
-			console.log('Loading wowuction data from local storage');
-			db.table('wowuction').toArray().then( r => {
-				r.forEach(w => {
-					lists.wowuction[w.id] = w;
+		if(localStorage.getItem('api_wowuction') !== undefined &&
+			localStorage.getItem('api_wowuction').length > 0 &&
+			localStorage.getItem('api_wowuction') !== 'null' ) {
+			if( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
+				console.log('Downloading wowuction data');
+				this.auctionService.getWoWuctionData().subscribe(res => {
+					lists.wowuction = res;
 				});
-			});
+			} else {
+				console.log('Loading wowuction data from local storage');
+				db.table('wowuction').toArray().then( r => {
+					r.forEach(w => {
+						lists.wowuction[w.id] = w;
+					});
+				});
+			}
 		}
 
 		this.downloadingText = 'Downloading pets';

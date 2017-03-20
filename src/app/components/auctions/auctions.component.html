@@ -4,10 +4,9 @@
 	</div>
 	<div class="panel-body">
 		<p>All auctions with no buyout price is ignored.</p> 
-		<p *ngIf="apiToUse !== 'none'" class="alert alert-info" role="alert">
+		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
 			If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
-			You can get a WoWuction key <a href="http://www.wowuction.com/" target="_blank">here</a>(go to data export, 
-			copy the part after "?token=" in the export), and a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
+			You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
 		</p>
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
