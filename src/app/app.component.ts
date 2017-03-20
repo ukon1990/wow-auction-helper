@@ -40,6 +40,7 @@ export class AppComponent {
 			this.u.apiTsm = localStorage.getItem('api_tsm');
 			this.u.apiWoWu = localStorage.getItem('api_wowuction');
 			this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
+			this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
 			this.checkForUpdate();
 
 			if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
@@ -52,7 +53,9 @@ export class AppComponent {
 				console.log('Loaded TSM from local DB');
 				db.table('tsm').toArray().then(
 					result => {
-						lists.tsm = result;
+						result.forEach( r => {
+							lists.tsm[r.Id] = r;
+						});
 					});
 			}
 		}
@@ -67,7 +70,9 @@ export class AppComponent {
 		} else {
 			console.log('Loading wowuction data from local storage');
 			db.table('wowuction').toArray().then( r => {
-				lists.wowuction = r;
+				r.forEach(w => {
+					lists.wowuction[w.id] = w;
+				});
 			});
 		}
 
@@ -93,6 +98,7 @@ export class AppComponent {
 		if (lists.items === undefined) {
 			lists.items = [];
 		}
+
 		let index = 0;
 		for (let i of arr) {
 			lists.items[i['id']] = i;
@@ -151,6 +157,7 @@ export class AppComponent {
 	buildAuctionArray(arr) {
 		let list = [];
 		lists.myAuctions = [];
+		console.log('api to use: ' + user.apiToUse, lists.wowuction);
 		for (let o of arr) {
 			if (o['buyout'] === 0) {
 				continue;
@@ -173,11 +180,18 @@ export class AppComponent {
 				}
 			} catch (e) { console.log(e); }
 
-			if (lists.wowuction[o.item] !== undefined) {
+			if (user.apiToUse === 'wowuction' && lists.wowuction[o.item] !== undefined) {
 				o['estDemand'] = Math.round(lists.wowuction[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['avgDailySold']) || 0;
+				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['RegionAvgDailySold']) || 0;
 				o['avgDailyPosted'] = parseFloat(lists.wowuction[o.item]['avgDailyPosted']) || 0;
 				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
+
+			} else if (user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
+				o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
+				o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
+				o['avgDailyPosted'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
+				o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
+
 			} else {
 				o['estDemand'] = 0;
 				o['avgDailySold'] = 0;
@@ -257,8 +271,9 @@ export class AppComponent {
 	getItem(id) {
 		this.itemObserver = this.itemService.getItem(id)
 			.subscribe(
-			r => lists.items[r['id']] = r
-			);
+			r => {
+				lists.items[r['id']] = r;
+		});
 	}
 
 	buildPetArray(pets) {
@@ -323,8 +338,8 @@ export class AppComponent {
 			c['cost'] = 0;
 			c['buyout'] = 0;
 			c['profit'] = 0;
-			c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
-				Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
+			c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
+				Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
 
 			try { // 699 Immaculate Fibril
 				c.buyout = lists.auctions[c.itemID] !== undefined ?

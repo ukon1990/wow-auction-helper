@@ -537,5 +537,6 @@ export let user: IUser = {
 	'realm': 'aegwynn',
 	'character': undefined,
 	'apiTsm': undefined,
-	'apiWoWu': undefined
+	'apiWoWu': undefined,
+	'apiToUse': 'none'
 }
