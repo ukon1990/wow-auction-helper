@@ -129,10 +129,10 @@ export class AuctionComponent {
 
 	filterAuctions(): void {
 		// From form
+		let demand = this.filterForm.value['demand'], scanList, petsAdded = {};
 		this.searchQuery = this.filterForm.value['searchQuery'];
 		this.filterByCharacter = this.filterForm.value['filterByCharacter'];
 		this.onlyCraftables = this.filterForm.value['onlyCraftables'];
-		let demand = this.filterForm.value['demand'];
 		this.filter = {
 			'itemClass': this.filterForm.value['itemClass'],
 			'itemSubClass': this.filterForm.value['itemSubClass']
@@ -144,11 +144,21 @@ export class AuctionComponent {
 
 
 		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
-		let scanList = this.filter.itemClass === '1' ? lists.auctions[82800].auctions : lists.auctions;
+		if(this.filter.itemClass === '1') {
+			if(lists.auctions[82800] !== undefined) {
+				lists.auctions[82800].auctions.forEach(r => {
+					if(r.petSpeciesId !== undefined && (petsAdded[r.petSpeciesId] === undefined || petsAdded[r.petSpeciesId].buyout > r.buyout)) {
+						petsAdded[r.petSpeciesId] = r;
+					}
+				});
+				scanList = petsAdded;
+			}
+		} else {
+			scanList = lists.auctions;
+		}
 		for (let id in scanList) {
 			if (scanList.hasOwnProperty(id)) {
-				let match = true;
-
+				let  match = true;
 				// Assigning auc ID to pets
 				if(scanList[id].item === 82800) {
 					try {
@@ -171,22 +181,13 @@ export class AuctionComponent {
 					match = false;
 				}
 
-				if (match && this.searchQuery.length > 0) {
+				if (match && this.searchQuery.length !== 0 && this.searchQuery.length > 0) {
 					// Matching against item name
-					if (this.searchQuery.length !== 0 && match) {
-						// TODO: Used to use getItemName()
-						if (scanList[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
-							match = true;
-						} else {
-							match = false;
-						}
+					if (scanList[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+						match = true;
+					} else {
+						match = false;
 					}
-
-					// Item source
-					/*if (match) {
-						match = lists.items[id]['itemSource'] !== undefined &&
-							lists.items[id]['itemSource']['sourceType'] === 'CREATED_BY_SPELL';
-					}*/
 				}
 
 				try {
@@ -195,7 +196,7 @@ export class AuctionComponent {
 					} else {
 						match = false;
 					}
-				} catch (err){
+				} catch (err) {
 					console.log(err);
 				}
 
