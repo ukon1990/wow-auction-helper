@@ -34,16 +34,22 @@ export class AppComponent {
 		this.date = new Date();
 		if (this.isRealmSet()) {
 			// Loading user settings
-			this.u.region = localStorage.getItem('region');
-			this.u.realm = localStorage.getItem('realm');
-			this.u.character = localStorage.getItem('character');
-			this.u.apiTsm = localStorage.getItem('api_tsm');
-			this.u.apiWoWu = localStorage.getItem('api_wowuction');
-			this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
-			this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
+			try {
+				this.u.region = localStorage.getItem('region') || undefined;
+				this.u.realm = localStorage.getItem('realm') || undefined;
+				this.u.character = localStorage.getItem('character') || undefined;
+				this.u.apiTsm = localStorage.getItem('api_tsm') || undefined;
+				this.u.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
+				this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
+				this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
+			} catch(e) {
+				console.log('app.component init', e);
+			}
+
 			this.checkForUpdate();
 
-			if(localStorage.getItem('api_tsm') !== undefined &&
+			if(localStorage.getItem('api_tsm') !== null &&
+				localStorage.getItem('api_tsm') !== undefined &&
 				localStorage.getItem('api_tsm').length > 0 &&
 				localStorage.getItem('api_tsm') !== 'null') {
 				if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
@@ -66,7 +72,8 @@ export class AppComponent {
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);
 
-		if(localStorage.getItem('api_wowuction') !== undefined &&
+		if(localStorage.getItem('api_wowuction') !== null &&
+			localStorage.getItem('api_wowuction') !== undefined &&
 			localStorage.getItem('api_wowuction').length > 0 &&
 			localStorage.getItem('api_wowuction') !== 'null' ) {
 			if( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
