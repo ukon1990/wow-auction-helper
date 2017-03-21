@@ -356,14 +356,14 @@ export class AppComponent {
 			c['profit'] = 0;
 			c['estDemand'] = 0;
 
-			if(user.apiToUse === 'tsm'){
+			if(user.apiToUse === 'tsm') {
 				c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
-				Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
+					Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
 			} else if(user.apiToUse === 'wowuction') {
 				c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
-				Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
+					Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
 			}
-			try { // 699 Immaculate Fibril
+			try {
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
 					(lists.auctions[c.itemID].buyout) : 0;
 				try {

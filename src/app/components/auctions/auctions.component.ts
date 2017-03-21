@@ -142,11 +142,28 @@ export class AuctionComponent {
 		this.currentPage = 1;
 		this.filteredAuctions = [];
 
+
 		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
 		let scanList = this.filter.itemClass === '1' ? lists.auctions[82800].auctions : lists.auctions;
 		for (let id in scanList) {
 			if (scanList.hasOwnProperty(id)) {
 				let match = true;
+
+				// Assigning auc ID to pets
+				if(scanList[id].item === 82800) {
+					try {
+						let auctionsForPet = [];
+						lists.auctions[82800].auctions.forEach(r => {
+							if(r.petSpeciesId !== undefined && r.petSpeciesId === scanList[id].petSpeciesId) {
+								auctionsForPet.push(r);;
+							}
+						});
+						scanList[id].petAuctions = auctionsForPet;
+					} catch(err) {
+						console.log(err);
+					}
+				}
+
 				// Matching against item type
 				if (this.isTypeMatch(lists.items[this.filter.itemClass === '1' ? 82800 : id]) && match) {
 					match = true;
@@ -192,9 +209,17 @@ export class AuctionComponent {
 	}
 
 	selectAuction(auctions): void {
-		this.selectedAuctions = auctions.sort(function(a,b){
-			return a.buyout/a.quantity - b.buyout/b.quantity;
-		});
+		console.log(auctions);
+		if(auctions.petAuctions !== undefined) {
+			this.selectedAuctions = auctions.petAuctions.sort(function(a,b){
+				return a.buyout/a.quantity - b.buyout/b.quantity;
+			});
+		} else {
+			this.selectedAuctions = auctions.auctions.sort(function(a,b){
+				return a.buyout/a.quantity - b.buyout/b.quantity;
+			});
+		}
+		
 	}
 
 	isTypeMatch(item): boolean {
