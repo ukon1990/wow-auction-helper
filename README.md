@@ -1,7 +1,7 @@
 # WoW Auction Helper Online
 This is a hobby project created, with the intention of finding profitable items to craft in World of Warcraft. If you wish to try to use it, it's live @ http://wah.jonaskf.net
 
-The application uses localStorage and indexedDB to store user settings and data locally, rather than storing anything in a database.
+The application uses localStorage and indexedDB to store user settings and data locally, rather than storing anything in a database. It also uses the "HashbangStrategy" for urls.
 
 ## Technology
 The application uses the following:
