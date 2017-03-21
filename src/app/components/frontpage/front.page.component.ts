@@ -24,7 +24,6 @@ export class FrontPageComponent {
 				this.realmListEu = r.region.eu;
 				this.realmListUs = r.region.us;
 			});
-		console.log('Stored region:', localStorage.getItem('region'));
 		if(localStorage.getItem('realm') !== null && localStorage.getItem('region') !== null) {
 			this.router.navigateByUrl('/crafting');
 		}
