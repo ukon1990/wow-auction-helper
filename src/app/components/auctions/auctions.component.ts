@@ -209,7 +209,6 @@ export class AuctionComponent {
 	}
 
 	selectAuction(auctions): void {
-		console.log(auctions);
 		if(auctions.petAuctions !== undefined) {
 			this.selectedAuctions = auctions.petAuctions.sort(function(a,b){
 				return a.buyout/a.quantity - b.buyout/b.quantity;
@@ -219,7 +218,7 @@ export class AuctionComponent {
 				return a.buyout/a.quantity - b.buyout/b.quantity;
 			});
 		}
-		
+
 	}
 
 	isTypeMatch(item): boolean {
