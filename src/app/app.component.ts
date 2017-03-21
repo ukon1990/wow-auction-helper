@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
 import { user, lists, getPet, db } from './utils/globals';
 import { IUser } from './utils/interfaces';
+
+declare var ga: Function;
 
 @Component({
 	selector: 'app-root',
@@ -28,6 +30,14 @@ export class AppComponent {
 		private itemService: ItemService,
 		private router: Router) {
 		this.u = user;
+
+		// Google Analytics
+		router.events.subscribe( (event: Event) => {
+			if(event instanceof NavigationEnd) {
+				ga('set', 'page', router.url);
+				ga('send', 'pageview');
+			}
+		});
 	}
 
 	ngOnInit() {
