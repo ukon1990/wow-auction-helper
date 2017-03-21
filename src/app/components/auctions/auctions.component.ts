@@ -75,6 +75,15 @@ export class AuctionComponent {
 	ngOnInit(): void {
 		if (lists.auctions !== undefined && lists.auctions.length > 0) {
 			this.filterAuctions();
+		} else {
+			let refreshId = setInterval(() => {
+				try {
+					if (!lists.isDownloading && lists.auctions.length > 0) {
+						this.filterAuctions();
+						clearInterval(refreshId);
+					}
+				} catch(e) {console.log(e);}
+			}, 100);
 		}
 	}
 
