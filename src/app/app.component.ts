@@ -102,21 +102,40 @@ export class AppComponent {
 		}
 
 		this.downloadingText = 'Downloading pets';
-		this.petObserver = this.itemService.getPets()
-			.subscribe(pets => {
-				this.buildPetArray(pets['pets']);
-				try {
-					this.downloadingText = 'Downloading items';
-					this.itemObserver = this.itemService.getItems()
-						.subscribe(i => {
-							this.buildItemArray(i);
-						});
-				} catch (err) {
-					this.downloadingText = 'Failed at downloading items';
-					console.log('Failed at loading items', err);
-				}
+		db.table('pets').toArray().then(p => {
+			if(p.length > 0) {
+				this.buildPetArray(p);
+				this.downloadItems();
+			} else {
+				this.itemService.getPets()
+					.subscribe(p => {
+						this.buildPetArray(p);
+						this.downloadItems();
+					});
+			}
+		});
+	}
 
+	downloadItems() {
+		try {
+			this.downloadingText = 'Downloading items';
+			// Attempting to get from local storage
+			db.table('items').toArray().then(i => {
+				if(i.length > 0) {
+					this.buildItemArray(i);
+				} else {
+					// The db was empty so we're downloading
+					this.itemService.getItems()
+						.subscribe(iDL => {
+							this.buildItemArray(iDL);
+						});
+				}
 			});
+
+		} catch (err) {
+			this.downloadingText = 'Failed at downloading items';
+			console.log('Failed at loading items', err);
+		}
 	}
 
 	buildItemArray(arr) {
@@ -182,7 +201,6 @@ export class AppComponent {
 	buildAuctionArray(arr) {
 		let list = [];
 		lists.myAuctions = [];
-		console.log('api to use: ' + user.apiToUse, lists[user.apiToUse]);
 		for (let o of arr) {
 			if (o['buyout'] === 0) {
 				continue;
@@ -212,11 +230,15 @@ export class AppComponent {
 				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
 
 			} else if (user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
-				o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
-				o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
-				o['avgDailyPosted'] = Math.round(
-					(parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) / parseFloat(lists.tsm[o.item]['RegionSaleRate'])) * 100) / 100 || 0;
-				o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
+				try{
+					o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
+					o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
+					o['avgDailyPosted'] = Math.round(
+						(parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) / parseFloat(lists.tsm[o.item]['RegionSaleRate'])) * 100) / 100 || 0;
+					o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
+				} catch(err) {
+					console.log(err);
+				}
 
 			} else {
 				o['estDemand'] = 0;
@@ -268,6 +290,23 @@ export class AppComponent {
 		lists.auctions = list;
 		this.getCraftingCosts();
 		lists.isDownloading = false;
+	}
+
+	attemptDownloadOfMissingRecipes(): void {
+		let recipes = {};
+		lists.recipes.forEach(re => {
+			recipes[re.spellID] = re.spellID;
+		});
+
+		for(let i in lists.items) {
+			if(lists.items[i].itemSource.sourceType === 'CREATED_BY_SPELL' &&
+				recipes[lists.items[i].itemSource.sourceId] === undefined) {
+					console.log('Attempting to add ' + lists.items[i].name);
+					this.itemService.getRecipe(lists.items[i].id).subscribe(shit => {
+						console.log(shit);
+					});
+			}
+		}
 	}
 
 	getItemName(auction): string {

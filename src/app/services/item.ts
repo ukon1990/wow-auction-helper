@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { IAuction, IPet, IUser, IItem } from '../utils/interfaces';
+import { user, DB_TABLES, db } from '../utils/globals';
+import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
 
@@ -12,18 +14,32 @@ export class ItemService {
 
 	getItem(itemid: string) {
 		return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
-			.map(response => <Object>function (r) { return r; }(response.json()), error => console.log(error));
+			.map(response => <Object>function (r) {
+				if(r.itemID !== undefined) {
+					db.table('items').add(r);
+				}
+				return r;
+			}(response.json()),
+			error => console.log(error));
 	}
 	getPet(petSpeciesId: string) {
 		return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
-			.map(response => <Object>function (r) { return r; }(response.json()));
+			.map(response => <Object>function (r) {
+				db.table('pets').add(r);
+				return r;
+			}(response.json()));
 	}
 
 	getItems() {
 		let apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
 		return this.http.get(this.getUrl(apiUrl, localUrl))
-			.map(response => <Object>function (r) { console.log('Loaded items'); return r; }(response.json().items));
+			.map(response => <Object>function (r) {
+				console.log('Loaded items');
+				db.table('items').clear();
+				db.table('items').bulkAdd(r);
+				return r;
+			}(response.json().items));
 	}
 
 	getPets() {
@@ -32,7 +48,12 @@ export class ItemService {
 			localUrl = '/assets/GetSpecies.json';
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
-			.map(response => <Object>function (r) { console.log('Loaded pets'); return r; }(response.json()));
+			.map(response => <Object>function (r) {
+				console.log('Loaded pets');
+				db.table('pets').clear();
+				db.table('pets').bulkAdd(r);
+				return r;
+			}(response.json().pets));
 	}
 
 	getRecipe(itemID): any {
