@@ -93,8 +93,8 @@ export class MyAuctionsComponent {
 			this.activeAuctions = lists.myAuctions.length;
 			lists.myAuctions.forEach(
 				a => {
-					this.auctionsValue += a.buyout * a.quantity;
-					if(this.getAuctionOwner(a.item) !== this.character){
+					this.auctionsValue += a.buyout;
+					if(this.getAuctionOwner(a.item) !== this.character) {
 						this.numberOfUndercuttedAuctions++;
 					}
 				});
