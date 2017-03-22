@@ -284,6 +284,13 @@ export class AuctionComponent {
 		}
 	}
 
+	buyoutVersusMarketValue(auction) {
+		if(auction.mktPrice === 0) {
+			return 0;
+		}
+		return Math.round((auction.buyout / auction.mktPrice) * 100);
+	}
+
 	saveSettings(): void {
 		localStorage.setItem('region', user.region);
 		localStorage.setItem('realm', user.realm);

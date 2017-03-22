@@ -76,6 +76,10 @@
 						<td>{{ auc.quantity_total }} pcs</td>
 						<td>
 							{{ copperToArray(auc.buyout) }}
+							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction' ">
+								<br>Market value {{ copperToArray(auc.mktPrice) }} 
+								({{ buyoutVersusMarketValue(auc)}}%)
+							</span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
@@ -110,6 +114,7 @@
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
 								<div class="align-left col-md-offset-1">
 									<a
+										rel="item={{ a.item }}"
 										href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{a.item}}&n={{a.name.replace('@'+a.petLevel, '')}}"
 										target="_blank">{{ a.name }}<i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i></a><br>
 									{{ a.owner }}
