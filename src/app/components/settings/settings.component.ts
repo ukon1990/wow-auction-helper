@@ -11,10 +11,14 @@ export class SettingsComponent {
 	private customPrices = [];
 	private importedSettings: string;
 	private exportedSettings: string;
+	private darkMode = true;
 
 	constructor() {
 		this.user = user;
 		this.user.customPrices = lists.customPrices;
+		if(localStorage.getItem('darkMode') !== null){
+			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
+		}
 	}
 
 	saveUserData(): void {
@@ -49,5 +53,14 @@ export class SettingsComponent {
 		user.apiWoWu = undefined;
 		localStorage.removeItem('api_to_use');
 		user.apiToUse = undefined;
+	}
+
+	changeStyle(): void {
+		this.darkMode = !this.darkMode;
+		document
+			.getElementById('custom-style')
+				.setAttribute('href',
+					(this.darkMode ? 'assets/solar.bootstrap.min.css' : 'assets/paper.bootstrap.min'));
+		localStorage.setItem('darkMode', this.darkMode.toString());
 	}
 }

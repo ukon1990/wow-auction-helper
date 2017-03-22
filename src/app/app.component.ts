@@ -38,6 +38,15 @@ export class AppComponent {
 				ga('send', 'pageview');
 			}
 		});
+
+		try {
+			// Just for fun :)
+			if(localStorage.getItem('darkMode') !== null && localStorage.getItem('darkMode') === 'false') {
+				document
+					.getElementById('custom-style')
+						.setAttribute('href', 'assets/paper.bootstrap.min.css');
+			}
+		} catch (err) {console.log('style',err);}
 	}
 
 	ngOnInit() {

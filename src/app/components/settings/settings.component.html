@@ -71,7 +71,8 @@
 		</div>
 
 		<br>
-		<button (click)="saveUserData()">Save all changes</button>
+		<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
+		<button class="btn btn-secondary" (click)="changeStyle()">Turn dark mode {{ darkMode ? 'off' : 'on' }}</button>
 
 		<div class="row col-md-12">
 			<h3>Stored data</h3>
