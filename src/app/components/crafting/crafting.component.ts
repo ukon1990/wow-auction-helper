@@ -85,6 +85,15 @@ export class CraftingComponent {
 		} catch (e) {
 			console.log(e);
 		}
+
+		let refreshId = setInterval(() => {
+				try {
+					if (!lists.isDownloading && lists.auctions.length > 0) {
+						this.setShoppingCartCost();
+						clearInterval(refreshId);
+					}
+				} catch(e) {console.log(e);}
+			}, 100);
 	}
 
 	filteRecipes() {
