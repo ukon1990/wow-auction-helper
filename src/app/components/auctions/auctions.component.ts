@@ -68,6 +68,7 @@ export class AuctionComponent {
 			'onlyCraftables': this.onlyCraftables,
 			'itemClass': this.filter.itemClass,
 			'itemSubClass': this.filter.itemSubClass,
+			'mktPrice': 0,
 			'demand': 0
 		});
 	}
@@ -138,7 +139,10 @@ export class AuctionComponent {
 
 	filterAuctions(): void {
 		// From form
-		let demand = this.filterForm.value['demand'], scanList, petsAdded = {};
+		let demand = this.filterForm.value['demand'],
+			mktPrice = this.filterForm.value['mktPrice'],
+			scanList,
+			petsAdded = {};
 		this.searchQuery = this.filterForm.value['searchQuery'];
 		this.filterByCharacter = this.filterForm.value['filterByCharacter'];
 		this.onlyCraftables = this.filterForm.value['onlyCraftables'];
@@ -201,6 +205,13 @@ export class AuctionComponent {
 
 				try {
 					if(match && (demand === 0 || demand <= scanList[id].estDemand) ) {
+						match = true;
+					} else {
+						match = false;
+					}
+					let valueOfMkt = this.buyoutVersusMarketValue(scanList[id]);
+					if(match &&
+						(mktPrice === 0 || (valueOfMkt > 0 && mktPrice > valueOfMkt) ) ) {
 						match = true;
 					} else {
 						match = false;
