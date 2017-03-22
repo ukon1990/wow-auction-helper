@@ -28,7 +28,7 @@
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">avg Posted/Sold</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
 					</tr>
-					<tr class="row" *ngFor="let auc of getAuctions()  | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;" [ngClass]="{undercut: getAuctionOwner(auc.item) !== character}">
+					<tr class="row" *ngFor="let auc of getAuctions()  | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;" [ngClass]="{info: getAuctionOwner(auc.item) !== character}">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'">

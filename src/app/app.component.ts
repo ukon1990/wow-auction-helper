@@ -57,17 +57,25 @@ export class AppComponent {
 			}
 
 			this.checkForUpdate();
-
-			if(localStorage.getItem('api_tsm') !== null &&
+			if(
+				this.u.apiToUse === 'tsm' &&
+				localStorage.getItem('api_tsm') !== null &&
 				localStorage.getItem('api_tsm') !== undefined &&
 				localStorage.getItem('api_tsm').length > 0 &&
 				localStorage.getItem('api_tsm') !== 'null') {
 				if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
-					this.auctionService.getTSMData().subscribe(r => {
-						lists.tsm = r;
+					this.auctionService.getTSMData().subscribe(result => {
+						result.forEach( r => {
+							lists.tsm[r.Id] = r;
+						});
 					}, err => {
 						console.log(err);
 					});
+					console.log('TSM done');
+
+					if(user.apiToUse === 'tsm') {
+						this.downloadPets();
+					}
 				} else {
 					console.log('Loaded TSM from local DB');
 					db.table('tsm').toArray().then(
@@ -76,20 +84,32 @@ export class AppComponent {
 								lists.tsm[r.Id] = r;
 							});
 						});
+
+						if(user.apiToUse === 'tsm') {
+							this.downloadPets();
+						}
 				}
 			}
 		}
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);
 
-		if(localStorage.getItem('api_wowuction') !== null &&
+		if(
+			this.u.apiToUse === 'wowuction' &&
+			localStorage.getItem('api_wowuction') !== null &&
 			localStorage.getItem('api_wowuction') !== undefined &&
 			localStorage.getItem('api_wowuction').length > 0 &&
 			localStorage.getItem('api_wowuction') !== 'null' ) {
 			if( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
 				console.log('Downloading wowuction data');
 				this.auctionService.getWoWuctionData().subscribe(res => {
-					lists.wowuction = res;
+					res.forEach(r => {
+						lists.wowuction[r.id] = r;
+					});
+
+					if(user.apiToUse === 'wowuction') {
+						this.downloadPets();
+					}
 				});
 			} else {
 				console.log('Loading wowuction data from local storage');
@@ -97,10 +117,20 @@ export class AppComponent {
 					r.forEach(w => {
 						lists.wowuction[w.id] = w;
 					});
+
+					if(user.apiToUse === 'wowuction') {
+						this.downloadPets();
+					}
 				});
 			}
 		}
 
+		if(user.apiToUse === 'none') {
+			this.downloadPets();
+		}
+	}
+
+	downloadPets() {
 		this.downloadingText = 'Downloading pets';
 		db.table('pets').toArray().then(p => {
 			if(p.length > 0) {
@@ -192,7 +222,12 @@ export class AppComponent {
 				db.table('auctions').toArray().then(
 					result => {
 						this.downloadingText = '';
-						this.buildAuctionArray(result);;
+						if(result.length > 0) {
+							this.buildAuctionArray(result);;
+						} else {
+							localStorage.setItem('timestamp_auctions', '0');
+							this.getAuctions();
+						}
 					});
 			}
 		});
@@ -391,6 +426,7 @@ export class AppComponent {
 	}
 
 	getCraftingCosts(): void {
+		console.log('starting crafting cost calc');
 		for (let c of lists.recipes) {
 			this.calcCost(c);
 		}

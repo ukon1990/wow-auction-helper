@@ -115,13 +115,19 @@
 				<strong>Shopping cart</strong>
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">
-						{{ a.name }} x {{ a.quantity }} <i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
+						<a rel="item={{ a.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{a.itemID}}"
+										target="_blank">{{ a.name }}</a> x {{ a.quantity }}<i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
 					</li>
 				</ul>
 				<strong>Reagents</strong>
 				<ul>
 					<li *ngFor="let a of shoppingCart.reagents">
-						{{ a.name }} x {{ a.count }} for {{ goldConversion( getMinPrice(a.itemID) * a.count) }}
+						<a rel="item={{ a.itemID }}"
+							href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{a.itemID}}"
+							target="_blank">
+							{{ a.name }} x {{ a.count }} for {{ goldConversion( getMinPrice(a.itemID) * a.count) }}
+							<i  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
+						</a>
 					</li>
 				</ul>
 				Sum buyout from AH: {{ goldConversion(shoppingCart.buyout) }} <br>

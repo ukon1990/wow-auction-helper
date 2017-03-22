@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
 
+declare var $WowheadPower;
+declare var $wu;
+
 @Component({
 	selector: 'crafting',
 	templateUrl: 'crafting.component.html',

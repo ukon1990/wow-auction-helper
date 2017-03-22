@@ -5,6 +5,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IUser, IAuction  } from '../../utils/interfaces';
 import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/globals';
 
+declare var $WowheadPower;
+declare var $wu;
+
 @Component({
 	selector: 'my-auctions',
 	templateUrl: 'my.auctions.component.html',

@@ -42,6 +42,9 @@
 .undercut {
     background-color: #fddddd !important;
 }
+tr.info a {
+    color: white !important;
+}
 
 .not-found, .not-found a {
     color: #ff0000 !important;
