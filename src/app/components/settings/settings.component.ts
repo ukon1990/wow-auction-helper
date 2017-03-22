@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IUser } from '../../utils/interfaces';
-import { user, lists } from '../../utils/globals';
+import { user, lists, copperToArray } from '../../utils/globals';
 
 @Component({
 	selector: 'settings',
@@ -15,8 +15,14 @@ export class SettingsComponent {
 
 	constructor() {
 		this.user = user;
-		this.user.customPrices = lists.customPrices;
-		if(localStorage.getItem('darkMode') !== null){
+		Object.keys(lists.customPrices).forEach(k => {
+			this.customPrices.push({
+				'itemID': k,
+				'name': lists.items[k] !== undefined ? lists.items[k].name : 'undefined',
+				'price': lists.customPrices[k]});
+		});
+
+		if(localStorage.getItem('darkMode') !== null) {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
 	}
@@ -29,6 +35,17 @@ export class SettingsComponent {
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
+		/*
+		TODO: Later...
+		lists.customPrices = [];
+		this.customPrices.forEach(cp => {
+			if(cp !== null) {
+				console.log(cp);
+				lists.customPrices['"' + cp.itemID + '"'] = cp.price;
+			}
+		});
+		console.log(lists.customPrices);*/
+		// localStorage.setItem('custom_prices', JSON.stringify(lists.customPrices));
 	}
 
 	importUserData(): void {
@@ -62,5 +79,8 @@ export class SettingsComponent {
 				.setAttribute('href',
 					(this.darkMode ? 'assets/solar.bootstrap.min.css' : 'assets/paper.bootstrap.min'));
 		localStorage.setItem('darkMode', this.darkMode.toString());
+		location.reload();
 	}
+
+	copperToArray = copperToArray;
 }

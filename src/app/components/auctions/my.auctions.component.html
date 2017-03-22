@@ -42,7 +42,7 @@
 						</td>
 						<td>{{ auc.quantity }}</td>
 						<td>
-							{{ copperToArray(auc.buyout * auc.quantity) }} ({{ copperToArray(auc.buyout) }} pcs)
+							{{ copperToArray(auc.buyout) }} ({{ copperToArray(auc.buyout / auc.quantity) }} pcs)
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}

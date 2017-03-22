@@ -137,6 +137,12 @@ export class AppComponent {
 		if(user.apiToUse === 'none') {
 			this.downloadPets();
 		}
+
+		/*
+		TODO: Later
+		if(localStorage.getItem('custom_prices') !== null){
+			lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
+		}*/
 	}
 
 	downloadPets() {
