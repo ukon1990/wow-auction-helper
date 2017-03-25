@@ -68,7 +68,7 @@
 				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
-			<div class="col-md-8 row">
+			<div class="col-md-9 row">
 				<table class="table table-striped">
 					<tr class="row">
 						<th>Name</th>
@@ -86,8 +86,10 @@
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
 								<div class="align-left col-md-offset-1">
 									<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{craft.itemID}}"
-										target="_blank">{{ craft.name }}</a>
-									<br> {{ craft.profession }}
+										target="_blank">
+										{{ craft.name }}</a>
+									<br> {{ craft.profession }} 
+									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
 								</div>
 							</div>
 						</td>
@@ -126,7 +128,7 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<strong>Shopping cart</strong>
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">

@@ -220,6 +220,9 @@ export class CraftingComponent {
 	};
 
 	getAuctionItem(itemID) {
+		if(lists.auctions[itemID] === undefined){
+			return {'quantity_total': 0};
+		}
 		return lists.auctions[itemID];
 	}
 
