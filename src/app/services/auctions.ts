@@ -92,8 +92,9 @@ export class AuctionService {
 	}
 
 	getLastUpdated() {
-		return this.http.get('http://www.wah.jonaskf.net/GetAuctions.php?region='
-			+ this.user.region + '&realm=' + this.user.realm + '&lastModified')
+		let url = 'http://www.wah.jonaskf.net/GetAuctions.php?region='
+			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
+		return this.http.get(url)
 			.map(response => <IAuction>function (r) {
 				console.log('API last updated ' + new Date(r.lastModified).toLocaleTimeString());
 				return r;

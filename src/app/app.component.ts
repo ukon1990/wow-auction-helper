@@ -217,7 +217,7 @@ export class AppComponent {
 			});
 	}
 
-	getAuctions(): void {
+	public getAuctions(): void {
 		lists.isDownloading = true;
 		this.downloadingText = 'Checking for new auctions';
 		console.log('Checking for new auction data');
@@ -457,9 +457,13 @@ export class AppComponent {
 			c['estDemand'] = 0;
 
 			if(user.apiToUse === 'tsm') {
+				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
+					lists.tsm[c.itemID]['MarketValue'] : 0;
 				c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
 					Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
 			} else if(user.apiToUse === 'wowuction') {
+				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
+					lists.wowuction[c.itemID]['mktPrice'] : 0;
 				c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
 					Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
 			}

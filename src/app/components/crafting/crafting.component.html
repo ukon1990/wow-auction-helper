@@ -95,7 +95,14 @@
 							{{ goldConversion(craft.cost) }}
 						</td>
 						<td class="hidden-xs">
-							{{ goldConversion(craft.buyout) }}
+							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
+								Live: 
+							</span>
+							{{ goldConversion(craft.buyout) }} 
+							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
+								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
+								<br>Mkt: {{ goldConversion(craft.mktPrice) }}
+							</span>
 						</td>
 						<td>
 							{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %

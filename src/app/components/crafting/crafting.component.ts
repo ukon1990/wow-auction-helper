@@ -302,6 +302,13 @@ export class CraftingComponent {
 		this.shoppingCart.profit = this.shoppingCart.buyout - this.shoppingCart.cost;
 	}
 
+	percentOf(val1, val2) {
+		if(val1 === 0) {
+			return 0;
+		}
+		return Math.round((val2 / val1) * 100);
+	}
+
 	keyValueInArray(array, key, value): boolean {
 		let contains = false, index = 0;
 		array.forEach(o => {

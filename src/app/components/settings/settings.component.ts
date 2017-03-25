@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppComponent } from '../../app.component';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray } from '../../utils/globals';
 
@@ -11,9 +12,10 @@ export class SettingsComponent {
 	private customPrices = [];
 	private importedSettings: string;
 	private exportedSettings: string;
+	private originalRealm: string;
 	private darkMode = true;
 
-	constructor() {
+	constructor(private ac: AppComponent) {
 		this.user = user;
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
@@ -25,6 +27,7 @@ export class SettingsComponent {
 		if(localStorage.getItem('darkMode') !== null) {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
+		this.originalRealm = localStorage.getItem('realm');
 	}
 
 	saveUserData(): void {
@@ -35,6 +38,14 @@ export class SettingsComponent {
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
+
+		if(this.originalRealm !== this.user.realm) {
+			console.log('The realm is chagned. The old realm was ' +
+				this.originalRealm + ' and new realm is ' +
+				this.user.realm + '. Downloading new auction data.');
+			localStorage.setItem('timestamp_auctions', '0');
+			this.downloadAuctions();
+		}
 		/*
 		TODO: Later...
 		lists.customPrices = [];
@@ -80,6 +91,10 @@ export class SettingsComponent {
 					(this.darkMode ? 'assets/solar.bootstrap.min.css' : 'assets/paper.bootstrap.min'));
 		localStorage.setItem('darkMode', this.darkMode.toString());
 		location.reload();
+	}
+
+	downloadAuctions() {
+		this.ac.getAuctions();
 	}
 
 	copperToArray = copperToArray;
