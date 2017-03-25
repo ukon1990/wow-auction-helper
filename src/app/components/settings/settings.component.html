@@ -58,10 +58,26 @@
 			</div>
 
 			<div class="col-md-4">
-				<h3>Custom item prices</h3>
+				<h3>Crafting</h3>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="basic-addon1">
+						Use market value instead of buyout if buyout >=
+					</span>
+					<input class="form-control" 
+						placeholder="API key" type="number"
+						[(ngModel)]="user.buyoutLimit" aria-describedby="basic-addon1"/>
+					<span class="input-group-addon" id="basic-addon1">
+						% of the market value.
+					</span>
+				</div>
+				<strong>Custom item prices</strong>
 				<p>Altering this is not yet implemented</p>
 				<ul>
-					<li *ngFor="let cp of customPrices">{{cp.name}}({{cp.itemID}}) <input type="number" [(ngModel)]="cp.price"/> {{copperToArray(cp.price)}}</li>
+					<li *ngFor="let cp of customPrices">
+						{{cp.name}}({{cp.itemID}}) 
+						<input type="number" [(ngModel)]="cp.price"/> 
+						{{copperToArray(cp.price)}}
+					</li>
 				</ul>
 			</div>
 		</div>

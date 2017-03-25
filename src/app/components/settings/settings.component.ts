@@ -38,6 +38,10 @@ export class SettingsComponent {
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
+		if(localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
+			this.ac.getCraftingCosts();
+			localStorage.setItem('crafting_buyout_limit', this.user.buyoutLimit.toString());
+		}
 
 		if(this.originalRealm !== this.user.realm) {
 			console.log('The realm is chagned. The old realm was ' +
@@ -81,6 +85,8 @@ export class SettingsComponent {
 		user.apiWoWu = undefined;
 		localStorage.removeItem('api_to_use');
 		user.apiToUse = undefined;
+		localStorage.removeItem('crafting_buyout_limit');
+		user.buyoutLimit = 200;
 	}
 
 	changeStyle(): void {

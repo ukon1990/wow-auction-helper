@@ -61,6 +61,7 @@ export class AppComponent {
 				this.u.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
 				this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
 				this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
+				this.u.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
 			} catch(e) {
 				console.log('app.component init', e);
 			}
@@ -441,6 +442,7 @@ export class AppComponent {
 	}
 
 	getCraftingCosts(): void {
+		console.log('Value = ' + this.u.buyoutLimit);
 		console.log('starting crafting cost calc');
 		for (let c of lists.recipes) {
 			this.calcCost(c);
@@ -493,7 +495,7 @@ export class AppComponent {
 				}
 				if((user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') &&
 					c.mktPrice !== 0 &&
-					Math.round((c.buyout / c.mktPrice) * 100) >= 200) {
+					Math.round((c.buyout / c.mktPrice) * 100) >= this.u.buyoutLimit) {
 					c.profit = c.mktPrice - c.cost;
 				} else {
 					c.profit = c.buyout - c.cost;

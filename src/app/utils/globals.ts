@@ -101,5 +101,6 @@ export let user: IUser = {
 	'apiTsm': undefined,
 	'apiWoWu': undefined,
 	'apiToUse': 'none',
-	'customPrices': []
+	'customPrices': [],
+	'buyoutLimit': 200
 }

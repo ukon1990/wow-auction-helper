@@ -31,4 +31,5 @@ export class IUser {
 	apiWoWu?: string;
 	customPrices?: any;
 	apiToUse: string;
+	buyoutLimit: number;
 }

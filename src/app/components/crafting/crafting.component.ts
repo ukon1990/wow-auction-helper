@@ -28,6 +28,7 @@ export class CraftingComponent {
 	private numOfPages: number = this.crafts.length / this.limit;
 	private sortAsc = false;
 	private apiToUse = user.apiToUse;
+	private buyoutLimit = user.buyoutLimit;
 
 	private professions = [
 		'First Aid',
