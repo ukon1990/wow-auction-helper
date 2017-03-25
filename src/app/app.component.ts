@@ -491,7 +491,14 @@ export class AppComponent {
 					console.log(err);
 					console.log(c);
 				}
-				c.profit = c.buyout - c.cost;
+				if((user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') &&
+					c.mktPrice !== 0 &&
+					Math.round((c.buyout / c.mktPrice) * 100) >= 200) {
+					c.profit = c.mktPrice - c.cost;
+				} else {
+					c.profit = c.buyout - c.cost;
+				}
+
 			} catch (e) {
 				console.log(e);
 				console.log(c);

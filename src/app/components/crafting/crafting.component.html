@@ -12,6 +12,15 @@
 				If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
 				You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
 			</p>
+			<p *ngIf="apiToUse !== 'none'">
+				<em>
+					If an item is currently priced 200% or more than the market price.
+					The market price will be used instead of the current lowest 
+					buyout price for calculating profit (buyout - cost). Manually 
+					altering this is to be implemented soon, and will be available 
+					through the settings panel.
+				</em>
+			</p>
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
 
