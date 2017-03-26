@@ -301,8 +301,8 @@ export class AppComponent {
 			if (list[o.item] !== undefined) {
 
 				list[o.item]['auctions'].push({
-					'item': o.item, 'name': o.name,
-					'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
+					'item': o.item, 'name': o.name, 'petSpeciesId': o.petSpeciesId,
+					'owner': o.owner, 'ownerRealm': o.ownerRealm,
 					'buyout': o.buyout, 'quantity': o.quantity
 				});
 				list[o.item]['quantity_total'] += o['quantity'];
@@ -322,8 +322,8 @@ export class AppComponent {
 				list[o.item] = o;
 				list[o.item]['auctions'] = [];
 				list[o.item]['auctions'].push({
-					'item': o.item, 'name': o.name,
-					'petSpeciesId': o.petSpeciesId, 'owner': o.owner,
+					'item': o.item, 'name': o.name, 'petSpeciesId': o.petSpeciesId,
+					'owner': o.owner, 'ownerRealm': o.ownerRealm,
 					'buyout': o.buyout, 'quantity': o.quantity
 				});
 			}
