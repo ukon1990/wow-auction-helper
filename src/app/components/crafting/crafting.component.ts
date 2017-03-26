@@ -27,6 +27,7 @@ export class CraftingComponent {
 	private reagentIndex: number = 0;
 	private numOfPages: number = this.crafts.length / this.limit;
 	private sortAsc = false;
+	private isInitiated = false;
 	private apiToUse = user.apiToUse;
 	private buyoutLimit = user.buyoutLimit;
 
@@ -48,17 +49,28 @@ export class CraftingComponent {
 		if (lists.recipes !== undefined) {
 			this.crafts = lists.recipes;
 			this.numOfPages = this.crafts.length / this.limit;
+
+			let refreshId = setInterval(() => {
+				try {
+					if (!lists.isDownloading && lists.auctions.length > 0 && !this.isInitiated) {
+						this.isInitiated = true;
+						this.filteRecipes();
+						clearInterval(refreshId);
+					}
+				} catch(e) {console.log(e);}
+			}, 100);
 		}
 	}
 
 	constructor(private itemService: ItemService,
 		private formBuilder: FormBuilder) {
+		let query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
-			'searchQuery': '',
-			'profession': this.filter.profession,
-			'profit': 0,
-			'demand': 0,
-			'minSold': 0
+			'searchQuery': query !== undefined ? query.searchQuery : '',
+			'profession': query !== undefined ? query.profession : this.filter.profession,
+			'profit': query !== undefined ? parseFloat(query.profit) : 0,
+			'demand': query !== undefined ? parseFloat(query.demand) : 0,
+			'minSold': query !== undefined ? parseFloat(query.minSold) : 0
 		});
 		let sc = localStorage.getItem('shopping_cart');
 		if(sc !== null && sc !== undefined && sc !== 'undefined') {
@@ -105,6 +117,10 @@ export class CraftingComponent {
 			profit = this.filterForm.value['profit'] || 0,
 			demand = this.filterForm.value['demand'] || 0,
 			minSold = this.filterForm.value['minSold'] || 0;
+		localStorage.setItem(
+			'query_crafting',
+			JSON.stringify(
+				{'searchQuery': this.searchQuery, 'profession': this.filter.profession, 'profit': profit, 'demand': demand, 'minSold': minSold}));
 
 		lists.recipes.forEach(r => {
 			// Checking if there are any items missing in the DB

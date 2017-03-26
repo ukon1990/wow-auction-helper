@@ -62,14 +62,18 @@ export class AuctionComponent {
 		this.user = user;
 		this.filteredAuctions = lists.auctions;
 		this.itemClasses = itemClasses;
+		let filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
+		if(filter !== undefined) {
+			this.filter = filter.filter;
+		}
 		this.filterForm = formBuilder.group({
-			'searchQuery': '',
+			'searchQuery': filter !== undefined ? filter.searchQuery : '',
 			'filterByCharacter': this.filterByCharacter,
 			'onlyCraftables': this.onlyCraftables,
 			'itemClass': this.filter.itemClass,
 			'itemSubClass': this.filter.itemSubClass,
-			'mktPrice': 0,
-			'demand': 0
+			'mktPrice': filter !== undefined ? filter.mktPrice : 0,
+			'demand': filter !== undefined ? filter.demand : 0
 		});
 	}
 
@@ -151,6 +155,10 @@ export class AuctionComponent {
 			'itemSubClass': this.filterForm.value['itemSubClass']
 		};
 
+		localStorage.setItem(
+			'query_auctions',
+			JSON.stringify(
+				{'searchQuery': this.searchQuery, 'demand': demand, 'mktPrice': mktPrice, 'filter': this.filter}));
 		this.numberOfAuctions = 0;
 		this.currentPage = 1;
 		this.filteredAuctions = [];
