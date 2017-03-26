@@ -76,7 +76,7 @@
 								<div class="align-left col-md-offset-1">
 									<a rel="item={{ auc.item }}" (click)="selectAuction(auc)"
 										target="_blank">{{ auc.name }} <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a><br>
-									{{ auc.owner }}
+									{{ auc.owner }} @ {{ auc.ownerRealm }}
 								</div>
 							</div>
 						</td>
@@ -127,7 +127,7 @@
 										rel="item={{ a.item }}"
 										href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{a.item}}&n={{a.name.replace('@'+a.petLevel, '')}}"
 										target="_blank">{{ a.name }}<i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i></a><br>
-									{{ a.owner }}
+									{{ a.owner }}  @ {{ a.ownerRealm }}
 								</div>
 							</div>
 						</td>
