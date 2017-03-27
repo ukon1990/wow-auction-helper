@@ -1,21 +1,25 @@
 import { Component } from '@angular/core';
 import { AppComponent } from '../../app.component';
+import { RealmService } from '../../services/realm';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray } from '../../utils/globals';
 
 @Component({
 	selector: 'settings',
-	templateUrl: 'settings.component.html'
+	templateUrl: 'settings.component.html',
+	providers: [RealmService]
 })
 export class SettingsComponent {
 	private user: IUser;
 	private customPrices = [];
+	private realmListEu = [];
+	private realmListUs = [];
 	private importedSettings: string;
 	private exportedSettings: string;
 	private originalRealm: string;
 	private darkMode = true;
 
-	constructor(private ac: AppComponent) {
+	constructor(private ac: AppComponent, private rs: RealmService) {
 		this.user = user;
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
@@ -28,6 +32,22 @@ export class SettingsComponent {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
 		this.originalRealm = localStorage.getItem('realm');
+	}
+
+	ngOnInit(): void {
+		this.rs.getRealms().subscribe(
+			r => {
+				this.realmListEu = r.region.eu;
+				this.realmListUs = r.region.us;
+			});
+	}
+
+	getRealms() {
+		if(this.user.region === 'us') {
+			return this.realmListUs['realms'] || [];
+		} else {
+			return this.realmListEu['realms'] || [];
+		}
 	}
 
 	saveUserData(): void {

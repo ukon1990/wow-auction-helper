@@ -20,8 +20,13 @@
 
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Realm</span>
-					<input class="form-control col-md-2" name="realm" placeholder="Realm" type="text" [(ngModel)]="user.realm" aria-describedby="basic-addon1"
-					/>
+					<select class="form-control" 
+						name="realm" type="text"
+						aria-describedby="basic-addon1"
+							[(ngModel)]="user.realm" required>
+						
+						<option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
+					</select>
 				</div>
 
 				<div class="input-group input-group-sm">
