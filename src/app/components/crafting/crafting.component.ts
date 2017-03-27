@@ -255,7 +255,8 @@ export class CraftingComponent {
 	}
 
 	getIcon(itemID): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon = lists.items[itemID].icon;
+		let url = 'http://media.blizzard.com/wow/icons/56/',
+			icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
 		if (icon === undefined) {
 			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
 		} else {

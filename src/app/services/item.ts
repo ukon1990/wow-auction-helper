@@ -16,7 +16,13 @@ export class ItemService {
 		return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
 			.map(response => <Object>function (r) {
 				if(r.itemID !== undefined) {
-					db.table('items').add(r);
+					try {
+						db.table('items').put(r).catch(c => {
+							console.log(c);
+						});
+					} catch (err) {
+						console.log('Unable to add item to db', err);
+					}
 				}
 				return r;
 			}(response.json()),
@@ -25,7 +31,7 @@ export class ItemService {
 	getPet(petSpeciesId: string) {
 		return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
 			.map(response => <Object>function (r) {
-				db.table('pets').add(r);
+				db.table('pets').put(r);
 				return r;
 			}(response.json()));
 	}
@@ -36,8 +42,7 @@ export class ItemService {
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function (r) {
 				console.log('Loaded items');
-				db.table('items').clear();
-				db.table('items').bulkAdd(r);
+				db.table('items').bulkPut(r);
 				return r;
 			}(response.json().items));
 	}
@@ -50,8 +55,7 @@ export class ItemService {
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function (r) {
 				console.log('Loaded pets');
-				db.table('pets').clear();
-				db.table('pets').bulkAdd(r);
+				db.table('pets').bulkPut(r);
 				return r;
 			}(response.json().pets));
 	}

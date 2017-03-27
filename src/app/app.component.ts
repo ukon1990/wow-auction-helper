@@ -214,7 +214,7 @@ export class AppComponent {
 						lists.recipes.push(r);
 					}
 				});
-
+				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
 			});
 	}
 
@@ -343,10 +343,12 @@ export class AppComponent {
 		lists.isDownloading = false;
 	}
 
-	attemptDownloadOfMissingRecipes(): void {
+	attemptDownloadOfMissingRecipes(list): void {
 		let recipes = {};
-		lists.recipes.forEach(re => {
-			recipes[re.spellID] = re.spellID;
+		list.forEach(re => {
+			if(re !== null) {
+				recipes[re.spellID] = re.spellID;
+			}
 		});
 
 		for(let i in lists.items) {
@@ -354,7 +356,7 @@ export class AppComponent {
 				recipes[lists.items[i].itemSource.sourceId] === undefined) {
 					console.log('Attempting to add ' + lists.items[i].name);
 					this.itemService.getRecipe(lists.items[i].id).subscribe(shit => {
-						console.log(shit);
+						console.log(i);
 					});
 			}
 		}
@@ -478,6 +480,11 @@ export class AppComponent {
 					}
 					for (let m of c.reagents) {
 						try {
+							if(lists.items[m.itemID] === undefined) {
+								console.log('Lacking item=' + m.name + ' id=' + m.itemID);
+								this.getItem(m.itemID);
+							}
+
 							m.count = Math.round((m.count / c.minCount) * 100) / 100;
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout) :
