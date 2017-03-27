@@ -50,6 +50,7 @@ export class MyAuctionsComponent {
 	private buyOutAsc: boolean = true;
 
 	constructor() {
+		this.user = user;
 		this.character = user.character;
 	}
 

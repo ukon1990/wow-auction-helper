@@ -85,7 +85,7 @@
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
 								<div class="align-left col-md-offset-1">
-									<a rel="item={{ craft.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{craft.itemID}}"
+									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 										target="_blank">
 										{{ craft.name }}</a>
 									<br> {{ craft.profession }} 
@@ -96,7 +96,7 @@
 						<td>
 							<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
 								{{ m.count }} x 
-								<a rel="item={{ m.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+								<a rel="item={{ m.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 										target="_blank">{{m.name}}</a>
 								{{ goldConversion(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
 							</div>
@@ -132,7 +132,7 @@
 				<strong>Shopping cart</strong>
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">
-						<a rel="item={{ a.itemID }}" href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{a.itemID}}"
+						<a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
 										target="_blank">{{ a.name }}</a> x {{ a.quantity }}<i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
 					</li>
 				</ul>
@@ -140,7 +140,7 @@
 				<ul>
 					<li *ngFor="let a of shoppingCart.reagents">
 						<a rel="item={{ a.itemID }}"
-							href="https://eu.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{a.itemID}}"
+							href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
 							target="_blank">
 							{{ a.name }} x {{ a.count }} for {{ goldConversion( getMinPrice(a.itemID) * a.count) }}
 							<i  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>

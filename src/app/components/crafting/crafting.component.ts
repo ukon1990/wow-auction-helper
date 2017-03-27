@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
+import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
 declare var $wu;
@@ -17,6 +18,7 @@ export class CraftingComponent {
 	private searchQuery = '';
 	private filter = { 'itemClass': '-1', 'itemSubClass': '-1', 'profession': 'All' };
 	private filterForm: FormGroup;
+	private user: IUser;
 
 	private crafts = [];
 	private shoppingCart = {'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0};
@@ -72,6 +74,7 @@ export class CraftingComponent {
 			'demand': query !== undefined ? parseFloat(query.demand) : 0,
 			'minSold': query !== undefined ? parseFloat(query.minSold) : 0
 		});
+		this.user = user;
 		let sc = localStorage.getItem('shopping_cart');
 		if(sc !== null && sc !== undefined && sc !== 'undefined') {
 			this.shoppingCart = JSON.parse(sc);
