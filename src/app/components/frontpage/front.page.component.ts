@@ -3,6 +3,7 @@ import { FormsModule }   from '@angular/forms';
 import { Router } from '@angular/router';
 import { user } from '../../utils/globals';
 import { RealmService } from '../../services/realm';
+import { Title }     from '@angular/platform-browser';
 
 @Component({
 	selector: 'selector',
@@ -14,8 +15,9 @@ export class FrontPageComponent {
 	private realmListEu = [];
 	private realmListUs = [];
 
-	constructor(private router: Router, private rs: RealmService) {
+	constructor(private router: Router, private titleService: Title, private rs: RealmService) {
 		this.u = user;
+		this.titleService.setTitle('Wah - Setup');
 	}
 
 	ngOnInit(): void {

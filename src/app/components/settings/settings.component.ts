@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm';
+import { Title }     from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray } from '../../utils/globals';
 
@@ -19,7 +20,7 @@ export class SettingsComponent {
 	private originalRealm: string;
 	private darkMode = true;
 
-	constructor(private ac: AppComponent, private rs: RealmService) {
+	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService) {
 		this.user = user;
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
@@ -32,6 +33,7 @@ export class SettingsComponent {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
 		this.originalRealm = localStorage.getItem('realm');
+		this.titleService.setTitle('Wah - Settings');
 	}
 
 	ngOnInit(): void {

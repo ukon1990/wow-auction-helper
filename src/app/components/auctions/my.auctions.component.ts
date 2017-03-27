@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
+import { Title } from '@angular/platform-browser';
 import { IUser, IAuction  } from '../../utils/interfaces';
 import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/globals';
 
@@ -46,12 +46,15 @@ export class MyAuctionsComponent {
 	private numberOfUndercuttedAuctions: number = 0;
 	private currentPage: number = 1;
 	private numOfPages: number = this.numberOfAuctions / this.limit;
+	private currentAuctionPage: number = 1;
+	private numOfAuctionPages: number = this.numberOfAuctions / this.limit;
 
 	private buyOutAsc: boolean = true;
 
-	constructor() {
+	constructor(private titleService: Title) {
 		this.user = user;
 		this.character = user.character;
+		this.titleService.setTitle('Wah - My auctions');
 	}
 
 	copperToArray(c): string {
@@ -110,6 +113,15 @@ export class MyAuctionsComponent {
 			this.currentPage--;
 		}
 	}
+
+	changeAuctionPage(change: number): void {
+		if (change > 0 && this.currentAuctionPage <= this.numOfAuctionPages) {
+			this.currentAuctionPage++;
+		} else if (change < 0 && this.currentAuctionPage > 1) {
+			this.currentAuctionPage--;
+		}
+	}
+
 	sortAuctions(sortBy: string) {
 		if (this.buyOutAsc) {
 			this.buyOutAsc = false;
@@ -179,6 +191,7 @@ export class MyAuctionsComponent {
 		this.selectedAuctions = lists.auctions[auctions.item].auctions.sort(function(a,b){
 			return a.buyout/a.quantity - b.buyout/b.quantity;
 		});
+		this.numOfAuctionPages = Math.round(this.selectedAuctions.length / this.limit);
 	}
 
 	getPet(speciesId) {

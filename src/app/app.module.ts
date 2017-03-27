@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import {HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -55,7 +55,12 @@ import { ItemService } from './services/item';
 			}
 		])
 	],
-	providers: [AuctionService, ItemService, Location, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+	providers: [
+		AuctionService,
+		ItemService,
+		Title,
+		Location,
+		{provide: LocationStrategy, useClass: HashLocationStrategy}],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

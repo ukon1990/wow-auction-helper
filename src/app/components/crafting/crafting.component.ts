@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
+import { Title }     from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 declare var $WowheadPower;
@@ -64,8 +65,7 @@ export class CraftingComponent {
 		}
 	}
 
-	constructor(private itemService: ItemService,
-		private formBuilder: FormBuilder) {
+	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
 		let query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
 			'searchQuery': query !== undefined ? query.searchQuery : '',
@@ -79,6 +79,7 @@ export class CraftingComponent {
 		if(sc !== null && sc !== undefined && sc !== 'undefined') {
 			this.shoppingCart = JSON.parse(sc);
 		}
+		this.titleService.setTitle('Wah - Crafting');
 	}
 
 	ngOnInit() {

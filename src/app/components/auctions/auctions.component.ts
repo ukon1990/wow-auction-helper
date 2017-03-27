@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
+import { Title }     from '@angular/platform-browser';
 
 import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
@@ -50,12 +51,15 @@ export class AuctionComponent {
 	private numberOfAuctions: number = 0;
 	private currentPage: number = 1;
 	private numOfPages: number = this.numberOfAuctions / this.limit;
+	private currentAuctionPage: number = 1;
+	private numOfAuctionPages: number = this.numberOfAuctions / this.limit;
 	private hasLoaded = false;
 
 	private buyOutAsc: boolean = true;
 
 	constructor(
 		private router: Router,
+		private titleService: Title,
 		private auctionService: AuctionService,
 		private itemService: ItemService,
 		private formBuilder: FormBuilder) {
@@ -72,9 +76,10 @@ export class AuctionComponent {
 			'onlyCraftables': this.onlyCraftables,
 			'itemClass': this.filter.itemClass,
 			'itemSubClass': this.filter.itemSubClass,
-			'mktPrice': filter !== undefined ? filter.mktPrice : 0,
-			'demand': filter !== undefined ? filter.demand : 0
+			'mktPrice': filter !== undefined ? parseFloat(filter.mktPrice) : 0,
+			'demand': filter !== undefined ? parseFloat(filter.demand) : 0
 		});
+		this.titleService.setTitle('Wah - Auctions');
 	}
 
 	ngOnInit(): void {
@@ -118,6 +123,14 @@ export class AuctionComponent {
 			this.currentPage++;
 		} else if (change < 0 && this.currentPage > 1) {
 			this.currentPage--;
+		}
+	}
+
+	changeAuctionPage(change: number): void {
+		if (change > 0 && this.currentAuctionPage <= this.numOfAuctionPages) {
+			this.currentAuctionPage++;
+		} else if (change < 0 && this.currentAuctionPage > 1) {
+			this.currentAuctionPage--;
 		}
 	}
 
@@ -242,10 +255,13 @@ export class AuctionComponent {
 			this.selectedAuctions = auctions.petAuctions.sort(function(a,b){
 				return a.buyout/a.quantity - b.buyout/b.quantity;
 			});
+
+		this.numOfAuctionPages = Math.round(auctions.petAuctions.length / this.limit);
 		} else {
 			this.selectedAuctions = auctions.auctions.sort(function(a,b){
 				return a.buyout/a.quantity - b.buyout/b.quantity;
 			});
+		this.numOfAuctionPages = Math.round(auctions.auctions.length / this.limit);
 		}
 
 	}

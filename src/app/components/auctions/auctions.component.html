@@ -19,14 +19,14 @@
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Demand</span>
-					<input class="col-md-2 form-control" type="text" 
+					<input class="col-md-2 form-control" type="number" 
 						placeholder="Item name" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Buyout lower than</span>
-					<input class="col-md-2 form-control" type="text" 
+					<input class="col-md-2 form-control" type="number" 
 						placeholder="Item name" [formControl]="filterForm.controls['mktPrice']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">% of Market value</span>
 				</div>
@@ -53,12 +53,12 @@
 		</div>
 		<br>
 		<div class="col-md-12 row">
-			<div class="pager">
-				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-			</div>
 			<div class="col-md-8">
+				<div class="pager">
+					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+				</div>
 				<table class="table table-striped row">
 					<tr class="row">
 						<th>Name</th>
@@ -117,8 +117,18 @@
 						</td>
 					</tr>
 				</table>
+				<div class="pager">
+					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+				</div>
 			</div>
 			<div class="col-md-4">
+				<div class="pager">
+					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changeAuctionPage(-1)"></button>
+					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentAuctionPage" /> of {{ numOfAuctionPages }}
+					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changeAuctionPage(1)"></button>
+				</div>
 				<table class="table table-striped row">
 					<tr class="row">
 						<th>Item</th>
@@ -126,7 +136,7 @@
 						<th>Per item</th>
 						<th>Size</th>
 					</tr>
-					<tr class="row" *ngFor="let a of selectedAuctions  | slice:0 : 10;">
+					<tr class="row" *ngFor="let a of selectedAuctions  | slice:(currentAuctionPage - 1)*limit : ((currentAuctionPage - 1)*limit) + limit;">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
@@ -144,12 +154,12 @@
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>
+				<div class="pager">
+					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changeAuctionPage(-1)"></button>
+					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentAuctionPage" /> of {{ numOfAuctionPages }}
+					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changeAuctionPage(1)"></button>
+				</div>
 			</div>
-		</div>
-		<div class="pager">
-			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
 	</div>
 </div>
