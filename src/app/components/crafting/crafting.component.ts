@@ -70,9 +70,9 @@ export class CraftingComponent {
 		this.filterForm = formBuilder.group({
 			'searchQuery': query !== undefined ? query.searchQuery : '',
 			'profession': query !== undefined ? query.profession : this.filter.profession,
-			'profit': query !== undefined ? parseFloat(query.profit) : 0,
-			'demand': query !== undefined ? parseFloat(query.demand) : 0,
-			'minSold': query !== undefined ? parseFloat(query.minSold) : 0
+			'profit': query !== undefined  && query.profit !== null ? parseFloat(query.profit) : 0,
+			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
+			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0
 		});
 		this.user = user;
 		let sc = localStorage.getItem('shopping_cart');

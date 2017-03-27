@@ -32,7 +32,7 @@
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min profit</span>
 					<input name="profit" class="col-md-2 form-control" type="number" 
-						placeholder="0 is default" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
+						placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
 
@@ -40,14 +40,14 @@
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min demand</span>
 					<input class="col-md-2 form-control" type="number" 
-						placeholder="0 is default" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
+						placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min sold</span>
 					<input class="col-md-2 form-control" type="number" 
-						placeholder="0 is default" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
+						placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">pcs</span>
 				</div>
 
