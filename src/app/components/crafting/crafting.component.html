@@ -73,11 +73,25 @@
 					<tr class="row">
 						<th>Name</th>
 						<th>Materials</th>
-						<th class="hidden-xs" (click)="sortCrafts('cost')">Cost</th>
-						<th class="hidden-xs" (click)="sortCrafts('buyout')">Buyout</th>
-						<th (click)="sortCrafts('profit')">Profit</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">avg Posted/Sold</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortCrafts('estDemand')">Demand</th>
+						<th class="hidden-xs" (click)="sortCrafts('cost')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Cost
+						</th>
+						<th class="hidden-xs" (click)="sortCrafts('buyout')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Buyout
+						</th>
+						<th (click)="sortCrafts('profit')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Profit
+							</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
+							avg Posted/Sold
+						</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortCrafts('estDemand')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Demand
+						</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
 					<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">

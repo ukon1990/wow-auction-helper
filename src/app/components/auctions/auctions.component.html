@@ -63,9 +63,17 @@
 					<tr class="row">
 						<th>Name</th>
 						<th>@AH</th>
-						<th (click)="sortAuctions('buyout')">Buyout</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">avg Posted/Sold</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
+						<th (click)="sortAuctions('buyout')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Buyout
+						</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
+							avg Posted/Sold
+						</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortAuctions('estDemand')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Demand
+						</th>
 						<th class="hidden-xs">Action</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->

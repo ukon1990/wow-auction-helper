@@ -24,9 +24,17 @@
 					<tr class="row">
 						<th>Name</th>
 						<th>Size</th>
-						<th (click)="sortAuctions('buyout')">Buyout</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">avg Posted/Sold</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortAuctions('estDemand')">Demand</th>
+						<th (click)="sortAuctions('buyout')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Buyout
+						</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
+							avg Posted/Sold
+						</th>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortAuctions('estDemand')">
+							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+							Demand
+						</th>
 					</tr>
 					<tr class="row" *ngFor="let auc of getAuctions()  | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;" [ngClass]="{info: getAuctionOwner(auc.item) !== character}">
 						<td>
