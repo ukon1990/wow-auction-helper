@@ -93,7 +93,8 @@
 								</div>
 							</div>
 						</td>
-						<td>{{ auc.quantity_total }} pcs</td>
+						<td>
+							{{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
 						<td>
 							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
 								Live: 

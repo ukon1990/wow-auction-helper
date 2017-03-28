@@ -181,7 +181,8 @@ export class AuctionComponent {
 
 
 		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
-		if(this.filter.itemClass === '1') {
+		console.log(this.filter.itemClass);
+		if(this.filter.itemClass === '0') {
 			if(lists.auctions[82800] !== undefined) {
 				lists.auctions[82800].auctions.forEach(r => {
 					if(r.petSpeciesId !== undefined && (petsAdded[r.petSpeciesId] === undefined || petsAdded[r.petSpeciesId].buyout > r.buyout)) {
@@ -212,7 +213,7 @@ export class AuctionComponent {
 				}
 
 				// Matching against item type
-				if (this.isTypeMatch(lists.items[this.filter.itemClass === '1' ? 82800 : id]) && match) {
+				if (this.isTypeMatch(lists.items[this.filter.itemClass === '0' ? 82800 : id]) && match) {
 					match = true;
 				} else {
 					match = false;
