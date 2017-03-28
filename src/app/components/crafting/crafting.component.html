@@ -160,7 +160,7 @@
 							{{ goldConversion(craft.buyout) }} 
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
-								<br>Mkt: {{ goldConversion(craft.mktPrice) }}
+								<br>Region mkt avg: {{ goldConversion(craft.mktPrice) }}
 								<br>Region sale avg: {{ goldConversion(getItem(craft.itemID).regionSaleAvg) }}
 							</span>
 						</td>
