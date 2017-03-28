@@ -417,7 +417,7 @@ export class CraftingComponent {
 			v.reagents.forEach(reagent => {
 				if(reagent.useCraftedBy) {
 					console.log(this.getMinPrice(reagent.itemID), reagent.count);
-					this.shoppingCart.buyout -= this.getMinPrice(reagent.itemID) * reagent.count;
+					this.shoppingCart.buyout -= (this.getMinPrice(reagent.itemID) * parseFloat(reagent.count)) * v.quantity;
 				}
 			});
 		});
