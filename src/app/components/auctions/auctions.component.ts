@@ -158,7 +158,7 @@ export class AuctionComponent {
 	filterAuctions(): void {
 		// From form
 		let demand = this.filterForm.value['demand'],
-			mktPrice = this.filterForm.value['mktPrice'],
+			mktPrice = this.filterForm.value['mktPrice'] || 0,
 			onlyVendorSellable = this.filterForm.value['onlyVendorSellable'],
 			scanList,
 			petsAdded = {};
