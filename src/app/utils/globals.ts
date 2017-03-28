@@ -99,6 +99,7 @@ export function calcCost(c) {
 				c.buyout = lists.auctions[c.itemID] !== undefined ?
 					(lists.auctions[c.itemID].buyout) : 0;
 				try {
+					c.minCount = parseInt(c.minCount, 10);
 					if (c.minCount < 1) {
 						c.minCount = 1;
 					}
@@ -109,7 +110,11 @@ export function calcCost(c) {
 								//this.getItem(m.itemID);
 							}
 
-							m.count = Math.round((m.count / c.minCount) * 100) / 100;
+							if(m.altered === undefined && !m.altered) {
+								m.count = (m.count / c.minCount).toFixed(2);
+								m.altered = true;
+							}
+
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout) :
 								lists.customPrices[m.itemID] !== undefined ?

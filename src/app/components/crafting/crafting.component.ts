@@ -214,7 +214,7 @@ export class CraftingComponent {
 								case this.craftManually[2] :
 									// If cheaper
 									if(lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
-										lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < r.cost) {
+										lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < (reagent.count * this.getMinPrice(reagent.itemID))) {
 										reagent.useCraftedBy = true;
 										isAffected = true;
 									} else {
