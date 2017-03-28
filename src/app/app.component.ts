@@ -288,6 +288,7 @@ export class AppComponent {
 						(parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) / parseFloat(lists.tsm[o.item]['RegionSaleRate'])) * 100) / 100 || 0;
 					o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
 					o['regionSaleAvg'] = lists.tsm[o.item].RegionSaleAvg;
+					o['vendorSell'] = lists.tsm[o.item].VendorSell;
 				} catch(err) {
 					console.log(err);
 				}

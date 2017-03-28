@@ -101,6 +101,9 @@
 							{{ copperToArray(auc.buyout) }}
 							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
 								({{ buyoutVersusMarketValue(auc)}}% mkt)
+								<span *ngIf="filterForm.value['onlyVendorSellable']">
+									<br>Vendor price: {{ copperToArray(auc.vendorSell) }} | 
+									{{ ((auc.buyout / auc.vendorSell) * 100).toFixed(2) }}%</span>
 								<br>Region mkt avg: {{ copperToArray(auc.mktPrice) }}
 								<br>Region sale avg: {{ copperToArray(auc.regionSaleAvg) }}
 							</span>

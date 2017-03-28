@@ -159,6 +159,7 @@ export class AuctionComponent {
 		// From form
 		let demand = this.filterForm.value['demand'],
 			mktPrice = this.filterForm.value['mktPrice'],
+			onlyVendorSellable = this.filterForm.value['onlyVendorSellable'],
 			scanList,
 			petsAdded = {};
 		this.searchQuery = this.filterForm.value['searchQuery'];
@@ -172,7 +173,8 @@ export class AuctionComponent {
 		localStorage.setItem(
 			'query_auctions',
 			JSON.stringify(
-				{'searchQuery': this.searchQuery, 'demand': demand, 'mktPrice': mktPrice, 'filter': this.filter}));
+				{'searchQuery': this.searchQuery, 'demand': demand,
+					'mktPrice': mktPrice, 'filter': this.filter, 'onlyVendorSellable': onlyVendorSellable}));
 		this.numberOfAuctions = 0;
 		this.currentPage = 1;
 		this.filteredAuctions = [];
@@ -231,12 +233,21 @@ export class AuctionComponent {
 					} else {
 						match = false;
 					}
+
 					let valueOfMkt = this.buyoutVersusMarketValue(scanList[id]);
 					if(match &&
 						(mktPrice === 0 || (valueOfMkt > 0 && mktPrice > valueOfMkt) ) ) {
 						match = true;
 					} else {
 						match = false;
+					}
+
+					if(match && onlyVendorSellable) {
+						if(scanList[id].buyout < scanList[id].vendorSell) {
+							match = true;
+						} else {
+						match = false;
+					}
 					}
 				} catch (err) {
 					console.log(err);
