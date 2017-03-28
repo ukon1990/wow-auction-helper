@@ -336,10 +336,12 @@ export class CraftingComponent {
 	addToCart(recipe): void {
 		if(this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
 			this.shoppingCart.recipes.push({
-				'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID, 'quantity': 1, 'reagents': recipe.reagents});
+				'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID,
+					'quantity': 1, 'minCount': recipe.minCount, 'reagents': recipe.reagents});
 		} else {
 			this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
 		}
+
 		this.addReagentToCart(recipe);
 
 		this.setShoppingCartCost();
@@ -350,20 +352,20 @@ export class CraftingComponent {
 		recipe.reagents.forEach(r => {
 			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
 				if(r.useCraftedBy) {
-					for(let i = 0; i < r.count; i++) {
+					for(let i = 0, x = parseFloat(r.count); i < x; i++) {
 						this.addToCart(lists.recipes[lists.recipesIndex[r.createdBy]]);
 					}
 				} else {
-					this.shoppingCart.reagents[this.reagentIndex].count += r.count;
+					this.shoppingCart.reagents[this.reagentIndex].count += parseFloat(r.count);
 					this.shoppingCart.reagents[this.reagentIndex].count = Math.round(this.shoppingCart.reagents[this.reagentIndex].count * 100) / 100;
 				}
 			} else {
 				if(r.useCraftedBy) {
-					for(let i = 0; i < r.count; i++) {
+					for(let i = 0, x = parseFloat(r.count); i < x; i++) {
 						this.addToCart(lists.recipes[lists.recipesIndex[r.createdBy]]);
 					}
 				} else {
-					this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': r.count});
+					this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': parseFloat(r.count), 'useCraftedBy': r.useCraftedBy});
 				}
 			}
 		});
@@ -383,7 +385,7 @@ export class CraftingComponent {
 		// Removing reagents
 		recipe['reagents'].forEach(r => {
 			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
-				this.shoppingCart.reagents[this.reagentIndex].count -= (r.count * recipe['quantity']);
+				this.shoppingCart.reagents[this.reagentIndex].count -= (parseFloat(r.count) * recipe['quantity']);
 				if(this.shoppingCart.reagents[this.reagentIndex].count <= 0) {
 					this.shoppingCart.reagents.splice(this.reagentIndex, 1);
 				}
@@ -411,9 +413,17 @@ export class CraftingComponent {
 
 		this.shoppingCart.recipes.forEach(v => {
 			this.shoppingCart.buyout += this.getMinPrice(v.itemID) * v.quantity;
+
+			v.reagents.forEach(reagent => {
+				if(reagent.useCraftedBy) {
+					console.log(this.getMinPrice(reagent.itemID), reagent.count);
+					this.shoppingCart.buyout -= this.getMinPrice(reagent.itemID) * reagent.count;
+				}
+			});
 		});
 
 		this.shoppingCart.reagents.forEach(v => {
+			console.log('count', v);
 			this.shoppingCart.cost += this.getMinPrice(v.itemID) * v.count;
 		});
 

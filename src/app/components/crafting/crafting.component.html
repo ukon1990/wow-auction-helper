@@ -4,22 +4,21 @@
 	</div>
 	<div class="panel-body">
 		<p>
-			Materials marked with red indicates that the item is not currently at AH, if there 
-			is an available market value for that item that will be displayed but not used in cost calculation. <br>
-			Blood of Sargarass is calculated in the cost with a value of {{ goldConversion(getMinPrice('124124')) }}.
-			</p>
-			<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
-				If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
-				You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
-			</p>
-			<p *ngIf="apiToUse !== 'none'">
-				<em>
-					If an item is currently priced {{ buyoutLimit }}% or more than the market price.
-					The market price will be used instead of the current lowest 
-					buyout price for calculating profit (buyout - cost). Manually 
-					altering this can be done in the settings panel.
-				</em>
-			</p>
+			Materials marked with red indicates that the item is not currently at AH.
+		</p>
+		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
+			If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
+			You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
+		</p>
+		<p *ngIf="apiToUse !== 'none'">
+			<em>
+				If an item is currently priced <strong>{{ buyoutLimit }}%</strong> or more than the market value.
+				The market price will be used instead of the current lowest 
+				buyout price for calculating profit (buyout - cost). Manually 
+				altering this can be done in the settings panel. The market value 
+				will also be used if a item does not exsist on your AH.
+			</em>
+		</p>
 		<div class="row col-md-12">
 			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
 
@@ -183,7 +182,9 @@
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">
 						<a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-										target="_blank">{{ a.name }}</a> x {{ a.quantity }}<i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
+										target="_blank">{{ a.name }}</a> x 
+										{{ (a.quantity / a.minCount).toFixed(2) }} 
+										<span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span> <i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
 					</li>
 				</ul>
 				<strong>Reagents</strong>
