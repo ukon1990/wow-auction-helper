@@ -46,6 +46,11 @@
 						<option *ngFor="let i of itemClasses.classes[filterForm.value['itemClass']]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
 					</select>
 				</div>
+				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Only items below vendor sell</span>
+					<input type="checkbox" 
+						[formControl]="filterForm.controls['onlyVendorSellable']" aria-describedby="sizing-addon3"/>
+				</div>
 
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 				<button class="btn btn-default" type="button" (click)="clearFilters()">Clear filter</button>

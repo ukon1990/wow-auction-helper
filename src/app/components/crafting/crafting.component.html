@@ -58,6 +58,12 @@
 						<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
 					</select>
 				</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon3">Craft items</span>
+					<select name="profession" class="form-control" [formControl]="filterForm.controls['craftManually']" aria-describedby="sizing-addon3">
+						<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
+					</select>
+				</div>
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 			</form>
 		</div>
@@ -108,11 +114,40 @@
 							</div>
 						</td>
 						<td>
-							<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
-								{{ m.count }} x 
-								<a rel="item={{ m.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
-										target="_blank">{{m.name}}</a>
-								{{ goldConversion(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+							<div class="clearfix" 
+								*ngFor="let m of craft.reagents"
+								[ngClass]="{'not-found': !isAtAH(m.itemID)}">
+								<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">
+									{{ m.count }} x 
+									<a
+										rel="item={{ m.itemID }}" 
+										href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+											target="_blank">{{m.name}}</a>
+
+									{{ goldConversion(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+									<i *ngIf="m.useCraftedBy !== undefined" 
+										class="glyphicon glyphicon-piggy-bank" 
+										[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}" 
+										(click)="setManualCraft(m, craft)"
+										aria-hidden="true"></i>
+								</span>
+								
+								<!-- For "child" recipes -->
+								<div *ngIf="m.useCraftedBy !== undefined && m.useCraftedBy">
+									<div class="clearfix"
+										*ngFor="let subMats of getSubMaterials(m)" 
+										[ngClass]="{'not-found': !isAtAH(subMats.itemID)}">
+										{{ subMats.count * m.count }} x 
+										<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
+												target="_blank">{{subMats.name}}</a>
+										{{ goldConversion(getMinPrice(subMats.itemID)) }} ({{ getItem(subMats.itemID).quantity_total }} @ AH)
+										<i *ngIf="m.useCraftedBy !== undefined" 
+											class="glyphicon glyphicon-piggy-bank" 
+											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}" 
+											(click)="setManualCraft(m, craft)"
+											aria-hidden="true"></i>
+									</div>
+								</div>
 							</div>
 						</td>
 						<td class="hidden-xs">
@@ -126,6 +161,7 @@
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
 								<br>Mkt: {{ goldConversion(craft.mktPrice) }}
+								<br>Region sale avg: {{ goldConversion(getItem(craft.itemID).regionSaleAvg) }}
 							</span>
 						</td>
 						<td>
@@ -163,7 +199,8 @@
 				</ul>
 				Sum buyout from AH: {{ goldConversion(shoppingCart.buyout) }} <br>
 				Sum material cost from AH: {{ goldConversion(shoppingCart.cost) }} <br>
-				Potential profit: {{ goldConversion(shoppingCart.profit) }}
+				Potential profit: {{ goldConversion(shoppingCart.profit) }}<br>
+				<a class="btn btn-default" (click)="clearCart()">Empty shopping cart</a>
 			</div>
 		</div>
 		<div class="pager">

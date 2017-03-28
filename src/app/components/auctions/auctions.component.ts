@@ -77,7 +77,8 @@ export class AuctionComponent {
 			'itemClass': this.filter.itemClass,
 			'itemSubClass': this.filter.itemSubClass,
 			'mktPrice': filter !== undefined && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
-			'demand': filter !== undefined && filter.demand !== null ? parseFloat(filter.demand) : 0
+			'demand': filter !== undefined && filter.demand !== null ? parseFloat(filter.demand) : 0,
+			'onlyVendorSellable': filter !== undefined && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false
 		});
 		this.titleService.setTitle('Wah - Auctions');
 	}

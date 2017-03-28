@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
+import { calcCost, user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
 import { Title }     from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
@@ -48,6 +48,8 @@ export class CraftingComponent {
 		'Inscription'
 	].sort();
 
+	private craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
+
 	setCrafts() {
 		if (lists.recipes !== undefined) {
 			this.crafts = lists.recipes;
@@ -72,7 +74,8 @@ export class CraftingComponent {
 			'profession': query !== undefined ? query.profession : this.filter.profession,
 			'profit': query !== undefined  && query.profit !== null ? parseFloat(query.profit) : 0,
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
-			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0
+			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
+			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0]
 		});
 		this.user = user;
 		let sc = localStorage.getItem('shopping_cart');
@@ -113,27 +116,47 @@ export class CraftingComponent {
 			}, 100);
 	}
 
+	setManualCraft(material, recipe) {
+		material.useCraftedBy = !material.useCraftedBy;
+		console.log(material.name + ' using manual craft ' + material.useCraftedBy);
+		this.updateCraftingCost(recipe);
+	}
+
+	updateCraftingCost(recipe) {
+		calcCost(recipe);
+		recipe.reagents.forEach(reagent => {
+			if(reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
+				delete reagent.createdBy;
+				delete reagent.useCraftedBy;
+			}
+		});
+	}
+
 	filteRecipes() {
 		this.crafts = [];
 		this.searchQuery = this.filterForm.value['searchQuery'];
 		this.filter.profession = this.filterForm.value['profession'];
-		let match = false,
+		let isAffected = false,
+			match = false,
 			profit = this.filterForm.value['profit'] || 0,
 			demand = this.filterForm.value['demand'] || 0,
-			minSold = this.filterForm.value['minSold'] || 0;
+			minSold = this.filterForm.value['minSold'] || 0,
+			craftManually = this.filterForm.value['craftManually'] || 0;
 		localStorage.setItem(
 			'query_crafting',
 			JSON.stringify(
-				{'searchQuery': this.searchQuery, 'profession': this.filter.profession, 'profit': profit, 'demand': demand, 'minSold': minSold}));
+				{'searchQuery': this.searchQuery, 'profession': this.filter.profession,
+					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually}));
 
 		lists.recipes.forEach(r => {
+			isAffected = false;
 			// Checking if there are any items missing in the DB
 			if (lists.items[r.itemID] === undefined) {
-				console.log('Importing item ' + r.name + '(' + r.itemID + ')');
+				/*console.log('Importing item ' + r.name + '(' + r.itemID + ')');
 				this.itemService.getItem(r.itemID).subscribe(i => {
 					lists.items[r.itemID] = i;
 					console.log(r.itemID + ' added');
-				});
+				});*/
 			}
 
 			try {
@@ -176,6 +199,37 @@ export class CraftingComponent {
 				}
 
 				if (match) {
+					r.reagents.forEach(reagent => {
+						if(reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
+							delete reagent.createdBy;
+							delete reagent.useCraftedBy;
+						} else if(lists.recipes[lists.recipesIndex[reagent.createdBy]] !== undefined) {
+							switch(craftManually) {
+								// ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!']
+								case this.craftManually[1] :
+									// Disable
+									reagent.useCraftedBy = false;
+									isAffected = true;
+									break;
+								case this.craftManually[2] :
+									// If cheaper
+									if(lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
+										lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < r.cost) {
+										reagent.useCraftedBy = true;
+										isAffected = true;
+									} else {
+										reagent.useCraftedBy = false;
+										isAffected = true;
+									}
+									break;
+								case this.craftManually[3] :
+									// For everything
+									reagent.useCraftedBy = true;
+									break;
+							}
+						}
+					});
+					this.updateCraftingCost(r);
 					this.crafts.push(r);
 				}
 			} catch (err) {
@@ -184,6 +238,10 @@ export class CraftingComponent {
 		});
 		this.currentPage = 1;
 		this.numOfPages = this.crafts.length / this.limit;
+	}
+
+	getSubMaterials(material) {
+		return lists.recipes[lists.recipesIndex[material.createdBy]].reagents;
 	}
 
 	sortCrafts(sortBy: string) {
@@ -207,6 +265,14 @@ export class CraftingComponent {
 	getItem(itemID) {
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
+		} else if(user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			return { 'name': lists.tsm[itemID].name, 
+					'estDemand': lists.tsm[itemID].RegionSaleRate,
+					'avgDailySold': lists.tsm[itemID].RegionAvgDailySold,
+					'avgDailyPosted': Math.round(
+						(parseFloat(lists.tsm[itemID]['RegionAvgDailySold']) / parseFloat(lists.tsm[itemID]['RegionSaleRate'])) * 100) / 100 || 0,
+					'regionSaleAvg': lists.tsm[itemID].RegionSaleAvg,
+					'quantity_total': 0 };
 		} else {
 			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
 		}
@@ -227,9 +293,11 @@ export class CraftingComponent {
 		} catch (e) {
 			if(lists.customPrices[itemID] !== undefined) {
 				return lists.customPrices[itemID];
-			} else if(lists.wowuction[itemID] !== undefined) {
+			} else if(user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				//console.log(lists.wowuction[itemID]);
 				return lists.wowuction[itemID]['mktPrice'];
+			} else if(user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+				return lists.tsm[itemID].MarketValue;
 			}
 			return 0;
 		}
@@ -272,17 +340,33 @@ export class CraftingComponent {
 		} else {
 			this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
 		}
-		recipe.reagents.forEach(r => {
-			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
-				this.shoppingCart.reagents[this.reagentIndex].count += r.count;
-				this.shoppingCart.reagents[this.reagentIndex].count = Math.round(this.shoppingCart.reagents[this.reagentIndex].count * 100) / 100;
-			} else {
-				this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': r.count});
-			}
-		});
+		this.addReagentToCart(recipe);
 
 		this.setShoppingCartCost();
 		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
+	}
+
+	addReagentToCart(recipe) {
+		recipe.reagents.forEach(r => {
+			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
+				if(r.useCraftedBy) {
+					for(let i = 0; i < r.count; i++) {
+						this.addToCart(lists.recipes[lists.recipesIndex[r.createdBy]]);
+					}
+				} else {
+					this.shoppingCart.reagents[this.reagentIndex].count += r.count;
+					this.shoppingCart.reagents[this.reagentIndex].count = Math.round(this.shoppingCart.reagents[this.reagentIndex].count * 100) / 100;
+				}
+			} else {
+				if(r.useCraftedBy) {
+					for(let i = 0; i < r.count; i++) {
+						this.addToCart(lists.recipes[lists.recipesIndex[r.createdBy]]);
+					}
+				} else {
+					this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': r.count});
+				}
+			}
+		});
 	}
 
 	removeFromCart(spellID): void {
@@ -309,6 +393,15 @@ export class CraftingComponent {
 		// Removing recipe and storing changes
 		this.shoppingCart.recipes.splice(recipeIndex, 1);
 		this.setShoppingCartCost();
+		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
+	}
+
+	clearCart(): void {
+		this.shoppingCart.reagents = [];
+		this.shoppingCart.recipes = [];
+		this.shoppingCart.buyout = 0;
+		this.shoppingCart.profit = 0;
+		this.shoppingCart.cost = 0;
 		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
 	}
 

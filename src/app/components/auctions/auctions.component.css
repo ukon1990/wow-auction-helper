@@ -49,3 +49,11 @@ tr.info a {
 .not-found, .not-found a {
     color: #ff0000 !important;
 }
+
+.using-manual-craft, .using-manual-craft a {
+    color: green;
+}
+
+.not-using-manual-craft, .not-using-manual-craft a {
+    color: orangered;
+}

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
-import { user, lists, getPet, db } from './utils/globals';
+import { calcCost, user, lists, getPet, db } from './utils/globals';
 import { IUser } from './utils/interfaces';
 
 declare var ga: Function;
@@ -193,7 +193,7 @@ export class AppComponent {
 		for (let i of arr) {
 			lists.items[i['id']] = i;
 			if (i['itemSource']['sourceType'] === 'CREATED_BY_SPELL') {
-				// Logic for adding new recipes
+				// TODO: Logic for adding new recipes
 			}
 			index++;
 		}
@@ -209,9 +209,9 @@ export class AppComponent {
 					lists.recipes = [];
 				}
 				recipe.recipes.forEach(r => {
-					if (r !== null && r['profession'] !== undefined && r['profession'] !== null) {
+					if (r !== null && r !== undefined&& r['profession'] !== undefined && r['profession'] !== null) {
 						r['estDemand'] = 0;
-						lists.recipes.push(r);
+						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
 					}
 				});
 				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
@@ -281,12 +281,13 @@ export class AppComponent {
 				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
 
 			} else if (user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
-				try{
+				try {
 					o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
 					o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
 					o['avgDailyPosted'] = Math.round(
 						(parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) / parseFloat(lists.tsm[o.item]['RegionSaleRate'])) * 100) / 100 || 0;
 					o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
+					o['regionSaleAvg'] = lists.tsm[o.item].RegionSaleAvg;
 				} catch(err) {
 					console.log(err);
 				}
@@ -444,74 +445,10 @@ export class AppComponent {
 	}
 
 	getCraftingCosts(): void {
-		console.log('Value = ' + this.u.buyoutLimit);
 		console.log('starting crafting cost calc');
 		for (let c of lists.recipes) {
-			this.calcCost(c);
+			calcCost(c);
 		}
 		console.log('Done calculating crafting costs');
-	}
-
-	calcCost(c) {
-		if (c !== null) {
-			let matBuyout: number;
-			c['cost'] = 0;
-			c['buyout'] = 0;
-			c['profit'] = 0;
-			c['estDemand'] = 0;
-
-			if(user.apiToUse === 'tsm') {
-				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
-					lists.tsm[c.itemID]['MarketValue'] : 0;
-				c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
-					Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
-			} else if(user.apiToUse === 'wowuction') {
-				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
-					lists.wowuction[c.itemID]['mktPrice'] : 0;
-				c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
-					Math.round(lists.wowuction[c.itemID]['estDemand'] * 100) : 0;
-			}
-			try {
-				c.buyout = lists.auctions[c.itemID] !== undefined ?
-					(lists.auctions[c.itemID].buyout) : 0;
-				try {
-					if (c.minCount < 1) {
-						c.minCount = 1;
-					}
-					for (let m of c.reagents) {
-						try {
-							if(lists.items[m.itemID] === undefined) {
-								console.log('Lacking item=' + m.name + ' id=' + m.itemID);
-								this.getItem(m.itemID);
-							}
-
-							m.count = Math.round((m.count / c.minCount) * 100) / 100;
-							matBuyout = lists.auctions[m.itemID] !== undefined ?
-								(lists.auctions[m.itemID].buyout) :
-								lists.customPrices[m.itemID] !== undefined ?
-									lists.customPrices[m.itemID] : 0;
-							c.cost += matBuyout !== 0 ? m.count * matBuyout : 0;
-						} catch (errr) {
-							console.log('Failed at calculating cost', errr);
-							console.log(c);
-						}
-					}
-				} catch (err) {
-					console.log(err);
-					console.log(c);
-				}
-				if((user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') &&
-					c.mktPrice !== 0 &&
-					Math.round((c.buyout / c.mktPrice) * 100) >= this.u.buyoutLimit) {
-					c.profit = c.mktPrice - c.cost;
-				} else {
-					c.profit = c.buyout - c.cost;
-				}
-
-			} catch (e) {
-				console.log(e);
-				console.log(c);
-			}
-		}
 	}
 }
