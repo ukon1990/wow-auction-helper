@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm';
+import { AuctionService } from '../../services/auctions';
 import { Title }     from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray } from '../../utils/globals';
@@ -8,7 +9,7 @@ import { user, lists, copperToArray } from '../../utils/globals';
 @Component({
 	selector: 'settings',
 	templateUrl: 'settings.component.html',
-	providers: [RealmService]
+	providers: [RealmService, AuctionService]
 })
 export class SettingsComponent {
 	private user: IUser;
@@ -20,7 +21,7 @@ export class SettingsComponent {
 	private originalRealm: string;
 	private darkMode = true;
 
-	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService) {
+	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService, private auctionService: AuctionService) {
 		this.user = user;
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
@@ -69,8 +70,18 @@ export class SettingsComponent {
 			console.log('The realm is chagned. The old realm was ' +
 				this.originalRealm + ' and new realm is ' +
 				this.user.realm + '. Downloading new auction data.');
-			localStorage.setItem('timestamp_auctions', '0');
-			this.downloadAuctions();
+
+			this.ac.downloadingText = 'Downloading TSM data for the new realm';
+			this.auctionService.getTSMData().subscribe(result => {
+				result.forEach( r => {
+					lists.tsm[r.Id] = r;
+				});
+				// Downloading the auctions
+				localStorage.setItem('timestamp_auctions', '0');
+				this.downloadAuctions();
+			}, err => {
+				console.log(err);
+			});
 		}
 		/*
 		TODO: Later...

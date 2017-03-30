@@ -75,10 +75,11 @@ export class AuctionService {
 
 	// Need to ask the user how often they want this data to be updated.
 	getTSMData() {
-		let localUrl = '/assets/tsm-emerald-dream.json';
-		let apiUrl = 'http://api.tradeskillmaster.com/v1/item/'
-			+ this.user.region + '/'
-			+ this.user.realm
+		// The localhost requires a json file for the realm!
+		let localUrl = '/assets/tsm-' + localStorage.getItem('realm') + '.json',
+			apiUrl = 'http://api.tradeskillmaster.com/v1/item/'
+			+ localStorage.getItem('region') + '/'
+			+ localStorage.getItem('realm')
 			+ '?fields=' + DB_TABLES.TSM_TABLE_COLUMNS + '&format=json&apiKey=' + localStorage.getItem('api_tsm');
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))

@@ -162,7 +162,7 @@
 							{{ copperToString(craft.buyout) }} 
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
-								<br>Region mkt avg: {{ copperToString(craft.mktPrice) }}
+								<br>Market value: {{ copperToString(craft.mktPrice) }}
 								<br>Region sale avg: {{ copperToString(getItem(craft.itemID).regionSaleAvg) }}
 							</span>
 						</td>
