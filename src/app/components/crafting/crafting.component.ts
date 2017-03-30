@@ -1,39 +1,27 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
 import { calcCost, user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
 import { Title }     from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 
-declare var $WowheadPower;
-declare var $wu;
 
 @Component({
 	selector: 'crafting',
 	templateUrl: 'crafting.component.html',
 	styleUrls: ['../auctions/auctions.component.css']
 })
-export class CraftingComponent {
-	goldConversion = copperToArray;
-	// Strings
-	private searchQuery = '';
-	private filter = { 'itemClass': '-1', 'itemSubClass': '-1', 'profession': 'All' };
-	private filterForm: FormGroup;
-	private user: IUser;
 
+export class CraftingComponent extends ParentAuctionComponent{
 	private crafts = [];
 	private shoppingCart = {'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0};
 
-	private limit: number = 10;// per page
-	private index: number = 0;
-	private currentPage: number = 1;
 	private reagentIndex: number = 0;
-	private numOfPages: number = this.crafts.length / this.limit;
+
 	private sortAsc = false;
 	private isInitiated = false;
-	private apiToUse = user.apiToUse;
 	private buyoutLimit = user.buyoutLimit;
-
 	private professions = [
 		'First Aid',
 		'Blacksmithing',
@@ -47,37 +35,20 @@ export class CraftingComponent {
 		'Jewelcrafting',
 		'Inscription'
 	].sort();
-
 	private craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
 
-	setCrafts() {
-		if (lists.recipes !== undefined) {
-			this.crafts = lists.recipes;
-			this.numOfPages = this.crafts.length / this.limit;
-
-			let refreshId = setInterval(() => {
-				try {
-					if (!lists.isDownloading && lists.auctions.length > 0 && !this.isInitiated) {
-						this.isInitiated = true;
-						this.filteRecipes();
-						clearInterval(refreshId);
-					}
-				} catch(e) {console.log(e);}
-			}, 100);
-		}
-	}
 
 	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
+		super();
 		let query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
 			'searchQuery': query !== undefined ? query.searchQuery : '',
-			'profession': query !== undefined ? query.profession : this.filter.profession,
+			'profession': query !== undefined ? query.profession : 'All',
 			'profit': query !== undefined  && query.profit !== null ? parseFloat(query.profit) : 0,
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
 			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
 			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0]
 		});
-		this.user = user;
 		let sc = localStorage.getItem('shopping_cart');
 		if(sc !== null && sc !== undefined && sc !== 'undefined') {
 			this.shoppingCart = JSON.parse(sc);
@@ -116,6 +87,23 @@ export class CraftingComponent {
 			}, 100);
 	}
 
+	setCrafts() {
+		if (lists.recipes !== undefined) {
+			this.crafts = lists.recipes;
+			this.numOfPages = this.crafts.length / this.limit;
+
+			let refreshId = setInterval(() => {
+				try {
+					if (!lists.isDownloading && lists.auctions.length > 0 && !this.isInitiated) {
+						this.isInitiated = true;
+						this.filteRecipes();
+						clearInterval(refreshId);
+					}
+				} catch(e) {console.log(e);}
+			}, 100);
+		}
+	}
+
 	setManualCraft(material, recipe) {
 		material.useCraftedBy = !material.useCraftedBy;
 		console.log(material.name + ' using manual craft ' + material.useCraftedBy);
@@ -134,10 +122,10 @@ export class CraftingComponent {
 
 	filteRecipes() {
 		this.crafts = [];
-		this.searchQuery = this.filterForm.value['searchQuery'];
-		this.filter.profession = this.filterForm.value['profession'];
 		let isAffected = false,
 			match = false,
+			searchQuery = this.filterForm.value['searchQuery'],
+			profession = this.filterForm.value['profession'],
 			profit = this.filterForm.value['profit'] || 0,
 			demand = this.filterForm.value['demand'] || 0,
 			minSold = this.filterForm.value['minSold'] || 0,
@@ -145,7 +133,7 @@ export class CraftingComponent {
 		localStorage.setItem(
 			'query_crafting',
 			JSON.stringify(
-				{'searchQuery': this.searchQuery, 'profession': this.filter.profession,
+				{'searchQuery': searchQuery, 'profession': profession,
 					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually}));
 
 		lists.recipes.forEach(r => {
@@ -160,19 +148,19 @@ export class CraftingComponent {
 			}
 
 			try {
-				if (this.filter.profession === 'All') {
+				if (profession === 'All') {
 					match = true;
-				} else if (this.filter.profession === r.profession) {
+				} else if (profession === r.profession) {
 					match = true;
 				} else {
 					match = false;
 				}
 
-				if (match && this.searchQuery.length > 0) {
+				if (match && searchQuery.length > 0) {
 					// Matching against item name
-					if (this.searchQuery.length !== 0 && match) {
+					if (searchQuery.length !== 0 && match) {
 						// TODO: Used to use getItemName()
-						if (r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+						if (r.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
 							match = true;
 						} else {
 							match = false;
@@ -244,7 +232,7 @@ export class CraftingComponent {
 		return lists.recipes[lists.recipesIndex[material.createdBy]].reagents;
 	}
 
-	sortCrafts(sortBy: string) {
+	sortList(sortBy: string) {
 		if (this.sortAsc) {
 			this.sortAsc = false;
 			this.crafts.sort(

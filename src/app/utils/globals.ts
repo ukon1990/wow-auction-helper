@@ -157,7 +157,18 @@ export function calcCost(c) {
 		}
 	}
 
-export function copperToArray(c): string {
+export function copperToString(c): string {
+	//Just return a string
+	var result = [];
+	c = Math.round(c);
+	result[0] = c % 100;
+	c = (c - result[0]) / 100;
+	result[1] = c % 100; //Silver
+	result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //Gold
+	return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
+}
+
+export function	copperToArray(c): string {
 	//Just return a string
 	var result = [];
 	c = Math.round(c);

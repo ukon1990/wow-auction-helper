@@ -2,15 +2,13 @@ import { Component } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ParentAuctionComponent } from './parent.auctions.component';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 import { Title }     from '@angular/platform-browser';
 
-import { user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
+import { user, itemClasses, lists, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
-
-declare var $WowheadPower;
-declare var $wu;
 
 @Component({
 	selector: 'auctions',
@@ -19,61 +17,32 @@ declare var $wu;
 	providers: [AuctionService, ItemService]
 })
 
-export class AuctionComponent {
-	// Strings
-	private title = 'Auctions';
-	private searchQuery = '';
-	private filterByCharacter = false;
-	private onlyCraftables = false;
-	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
-	private filterForm: FormGroup;
-	private apiToUse = user.apiToUse;
+export class AuctionComponent extends ParentAuctionComponent {
 
 	// Objects and arrays
-	private user: IUser;
 	private itemClasses = {};
 	private selectedItem = {'name': 'No item selected', 'auctions': []};
-	private selectedAuctions = [];
-
-	private auctionDuration = {
-		'VERY_LONG': '12h+',
-		'LONG': '2-12h',
-		'MEDIUM': '30min-2h',
-		'SHORT': '<30min'
-	};
-
+	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
 	private filteredAuctions = [];
-	private wowUList = [];
 
-	// Numbers
-	private limit: number = 10;// per page
-	private index: number = 0;
-	private numberOfAuctions: number = 0;
-	private currentPage: number = 1;
-	private numOfPages: number = this.numberOfAuctions / this.limit;
-	private currentAuctionPage: number = 1;
-	private numOfAuctionPages: number = this.numberOfAuctions / this.limit;
 	private hasLoaded = false;
-
 	private buyOutAsc: boolean = true;
 
 	constructor(
-		private router: Router,
-		private titleService: Title,
-		private auctionService: AuctionService,
-		private itemService: ItemService,
+		private router: Router, private titleService: Title,
+		private auctionService: AuctionService, private itemService: ItemService,
 		private formBuilder: FormBuilder) {
-		this.user = user;
+		super();
 		this.filteredAuctions = lists.auctions;
 		this.itemClasses = itemClasses;
 		let filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
+
 		if(filter !== undefined) {
 			this.filter = filter.filter;
 		}
+
 		this.filterForm = formBuilder.group({
 			'searchQuery': filter !== undefined ? filter.searchQuery : '',
-			'filterByCharacter': this.filterByCharacter,
-			'onlyCraftables': this.onlyCraftables,
 			'itemClass': this.filter.itemClass,
 			'itemSubClass': this.filter.itemSubClass,
 			'mktPrice': filter !== undefined && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
@@ -95,43 +64,6 @@ export class AuctionComponent {
 					}
 				} catch(e) {console.log(e);}
 			}, 100);
-		}
-	}
-
-	getIcon(auction): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
-		try {
-			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
-				if (lists.pets[auction.petSpeciesId] === undefined) {
-					getPet(auction.petSpeciesId);
-				}
-				icon = lists.pets[auction.petSpeciesId].icon;
-			} else {
-				icon = lists.items[auction.item].icon;
-			}
-		} catch(err) {console.log(err,auction);}
-
-		if (icon === undefined) {
-			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
-		} else {
-			url += icon + '.jpg';
-		}
-		return url;
-	}
-
-	changePage(change: number): void {
-		if (change > 0 && this.currentPage <= this.numOfPages) {
-			this.currentPage++;
-		} else if (change < 0 && this.currentPage > 1) {
-			this.currentPage--;
-		}
-	}
-
-	changeAuctionPage(change: number): void {
-		if (change > 0 && this.currentAuctionPage <= this.numOfAuctionPages) {
-			this.currentAuctionPage++;
-		} else if (change < 0 && this.currentAuctionPage > 1) {
-			this.currentAuctionPage--;
 		}
 	}
 
@@ -160,11 +92,9 @@ export class AuctionComponent {
 		let demand = this.filterForm.value['demand'],
 			mktPrice = this.filterForm.value['mktPrice'] || 0,
 			onlyVendorSellable = this.filterForm.value['onlyVendorSellable'],
+			searchQuery = this.filterForm.value['searchQuery'],
 			scanList,
 			petsAdded = {};
-		this.searchQuery = this.filterForm.value['searchQuery'];
-		this.filterByCharacter = this.filterForm.value['filterByCharacter'];
-		this.onlyCraftables = this.filterForm.value['onlyCraftables'];
 		this.filter = {
 			'itemClass': this.filterForm.value['itemClass'],
 			'itemSubClass': this.filterForm.value['itemSubClass']
@@ -173,7 +103,7 @@ export class AuctionComponent {
 		localStorage.setItem(
 			'query_auctions',
 			JSON.stringify(
-				{'searchQuery': this.searchQuery, 'demand': demand,
+				{'searchQuery': searchQuery, 'demand': demand,
 					'mktPrice': mktPrice, 'filter': this.filter, 'onlyVendorSellable': onlyVendorSellable}));
 		this.numberOfAuctions = 0;
 		this.currentPage = 1;
@@ -181,7 +111,6 @@ export class AuctionComponent {
 
 
 		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
-		console.log(this.filter.itemClass);
 		if(this.filter.itemClass === '0') {
 			if(lists.auctions[82800] !== undefined) {
 				lists.auctions[82800].auctions.forEach(r => {
@@ -194,6 +123,7 @@ export class AuctionComponent {
 		} else {
 			scanList = lists.auctions;
 		}
+
 		for (let id in scanList) {
 			if (scanList.hasOwnProperty(id)) {
 				let  match = true;
@@ -219,9 +149,9 @@ export class AuctionComponent {
 					match = false;
 				}
 
-				if (match && this.searchQuery.length !== 0 && this.searchQuery.length > 0) {
+				if (match && searchQuery.length !== 0 && searchQuery.length > 0) {
 					// Matching against item name
-					if (scanList[id].name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) !== -1) {
+					if (scanList[id].name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
 						match = true;
 					} else {
 						match = false;
@@ -263,22 +193,6 @@ export class AuctionComponent {
 		this.numOfPages = Math.round(this.numberOfAuctions / this.limit);
 	}
 
-	selectAuction(auctions): void {
-		if(auctions.petAuctions !== undefined) {
-			this.selectedAuctions = auctions.petAuctions.sort(function(a,b){
-				return a.buyout/a.quantity - b.buyout/b.quantity;
-			});
-
-		this.numOfAuctionPages = Math.round(auctions.petAuctions.length / this.limit);
-		} else {
-			this.selectedAuctions = auctions.auctions.sort(function(a,b){
-				return a.buyout/a.quantity - b.buyout/b.quantity;
-			});
-		this.numOfAuctionPages = Math.round(auctions.auctions.length / this.limit);
-		}
-
-	}
-
 	isTypeMatch(item): boolean {
 		let match = false;
 		if (this.filter.itemClass == '-1' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
@@ -295,18 +209,7 @@ export class AuctionComponent {
 		return match;
 	}
 
-	copperToArray(c): string {
-		//Just return a string
-		var result = [];
-		c = Math.round(c);
-		result[0] = c % 100;
-		c = (c - result[0]) / 100;
-		result[1] = c % 100; //Silver
-		result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //Gold
-		return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
-	}
-
-	sortAuctions(sortBy: string) {
+	sortList(sortBy: string) {
 		if (this.buyOutAsc) {
 			this.buyOutAsc = false;
 			this.filteredAuctions.sort(
@@ -337,11 +240,5 @@ export class AuctionComponent {
 			return 0;
 		}
 		return Math.round((auction.buyout / auction.mktPrice) * 100);
-	}
-
-	saveSettings(): void {
-		localStorage.setItem('region', user.region);
-		localStorage.setItem('realm', user.realm);
-		localStorage.setItem('charater', user.character);
 	}
 }

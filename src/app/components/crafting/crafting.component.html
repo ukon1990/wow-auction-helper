@@ -78,24 +78,27 @@
 					<tr class="row">
 						<th>Name</th>
 						<th>Materials</th>
-						<th class="hidden-xs" (click)="sortCrafts('cost')">
+						<th class="hidden-xs" (click)="sortList('cost')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
 							Cost
 						</th>
-						<th class="hidden-xs" (click)="sortCrafts('buyout')">
+						<th class="hidden-xs" (click)="sortList('buyout')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
 							Buyout
 						</th>
-						<th (click)="sortCrafts('profit')">
+						<th (click)="sortList('profit')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
 							Profit
 							</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							avg Posted/Sold
 						</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortCrafts('estDemand')">
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
 							Demand
+						</th>
+						<th>
+							Action
 						</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
@@ -103,7 +106,7 @@
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
-								<div class="align-left col-md-offset-1">
+								<div class="align-left col-md-9">
 									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 										target="_blank">
 										{{ craft.name }}</a>
@@ -123,7 +126,7 @@
 										href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 											target="_blank">{{m.name}}</a>
 
-									{{ goldConversion(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+									{{ copperToString(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
 									<i *ngIf="m.useCraftedBy !== undefined" 
 										class="glyphicon glyphicon-piggy-bank" 
 										[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}" 
@@ -139,7 +142,7 @@
 										{{ subMats.count * m.count }} x 
 										<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 												target="_blank">{{subMats.name}}</a>
-										{{ goldConversion(getMinPrice(subMats.itemID)) }} ({{ getItem(subMats.itemID).quantity_total }} @ AH)
+										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getItem(subMats.itemID).quantity_total }} @ AH)
 										<i *ngIf="m.useCraftedBy !== undefined" 
 											class="glyphicon glyphicon-piggy-bank" 
 											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}" 
@@ -150,21 +153,21 @@
 							</div>
 						</td>
 						<td class="hidden-xs">
-							{{ goldConversion(craft.cost) }}
+							{{ copperToString(craft.cost) }}
 						</td>
 						<td class="hidden-xs">
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								Live: 
 							</span>
-							{{ goldConversion(craft.buyout) }} 
+							{{ copperToString(craft.buyout) }} 
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
-								<br>Region mkt avg: {{ goldConversion(craft.mktPrice) }}
-								<br>Region sale avg: {{ goldConversion(getItem(craft.itemID).regionSaleAvg) }}
+								<br>Region mkt avg: {{ copperToString(craft.mktPrice) }}
+								<br>Region sale avg: {{ copperToString(getItem(craft.itemID).regionSaleAvg) }}
 							</span>
 						</td>
 						<td>
-							{{ goldConversion(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
+							{{ copperToString(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
 							<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'"  class="hidden-xs">
@@ -172,7 +175,13 @@
 						</td>
 						<td class="hidden-xs">
 							<span *ngIf="apiToUse !== 'none'" >{{ craft.estDemand }}% <br></span>
-							<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
+						</td>
+						<td>
+							<a class="glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)">Add</a><br>
+							<a class="glyphicon glyphicon-exclamation-sign" 
+								aria-hidden="true" 
+								href="http://www.wowhead.com/item={{craft.itemID}}"
+								target="_blank">Wowhead</a><br>
 						</td>
 					</tr>
 				</table>
@@ -193,14 +202,14 @@
 						<a rel="item={{ a.itemID }}"
 							href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
 							target="_blank">
-							{{ a.name }} x {{ a.count }} for {{ goldConversion( getMinPrice(a.itemID) * a.count) }}
+							{{ a.name }} x {{ a.count }} for {{ copperToString( getMinPrice(a.itemID) * a.count) }}
 							<i  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
 						</a>
 					</li>
 				</ul>
-				Sum buyout from AH: {{ goldConversion(shoppingCart.buyout) }} <br>
-				Sum material cost from AH: {{ goldConversion(shoppingCart.cost) }} <br>
-				Potential profit: {{ goldConversion(shoppingCart.profit) }}<br>
+				Sum buyout from AH: {{ copperToString(shoppingCart.buyout) }} <br>
+				Sum material cost from AH: {{ copperToString(shoppingCart.cost) }} <br>
+				Potential profit: {{ copperToString(shoppingCart.profit) }}<br>
 				<a class="btn btn-default" (click)="clearCart()">Empty shopping cart</a>
 			</div>
 		</div>
