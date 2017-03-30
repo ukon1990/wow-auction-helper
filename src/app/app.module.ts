@@ -12,6 +12,7 @@ import { AuctionComponent } from './components/auctions/auctions.component';
 import { CraftingComponent } from './components/crafting/crafting.component';
 import { MyAuctionsComponent } from './components/auctions/my.auctions.component';
 import { AboutComponent } from './components/about/about.component';
+import { TradeVendorComponent } from './components/trade_vendor/trade.vendor.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
 import { AuctionService } from './services/auctions';
@@ -24,6 +25,7 @@ import { ItemService } from './services/item';
 		AuctionComponent,
 		CraftingComponent,
 		MyAuctionsComponent,
+		TradeVendorComponent,
 		AboutComponent,
 		SettingsComponent
 	],
@@ -46,6 +48,9 @@ import { ItemService } from './services/item';
 			}, {
 				path: 'my-auctions',
 				component: MyAuctionsComponent
+			}, {
+				path: 'trade-vendor',
+				component: TradeVendorComponent
 			}, {
 				path: 'about',
 				component: AboutComponent

@@ -54,6 +54,7 @@ export class SettingsComponent {
 	}
 
 	saveUserData(): void {
+		let oldTSMKey = localStorage.getItem('api_tsm') || '';
 		console.log(this.user, this.user.apiToUse);
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
@@ -79,6 +80,15 @@ export class SettingsComponent {
 				// Downloading the auctions
 				localStorage.setItem('timestamp_auctions', '0');
 				this.downloadAuctions();
+			}, err => {
+				console.log(err);
+			});
+		} else if(oldTSMKey !== localStorage.getItem('api_tsm')) {
+			this.ac.downloadingText = 'Downloading TSM data for the new realm';
+			this.auctionService.getTSMData().subscribe(result => {
+				result.forEach( r => {
+					lists.tsm[r.Id] = r;
+				});
 			}, err => {
 				console.log(err);
 			});

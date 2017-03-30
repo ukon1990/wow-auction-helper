@@ -12,7 +12,7 @@ export abstract class ParentAuctionComponent {
 	numberOfAuctions: number = 0;
 	currentPage: number = 1;
 	user: IUser;
-	limit: number = 10;// per page
+	limit: number = 8;// per page
 	index: number = 0;
 	numOfPages: number = this.numberOfAuctions / this.limit;
 	currentAuctionPage: number = 1;
@@ -44,17 +44,17 @@ export abstract class ParentAuctionComponent {
 	}
 
 	getIcon(auction): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
+		let url = 'http://media.blizzard.com/wow/icons/56/', icon, itemID = auction.item !== undefined ? auction.item : auction.itemID;
 		try {
 			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
 				if (lists.pets[auction.petSpeciesId] === undefined) {
 					getPet(auction.petSpeciesId);
 				}
 				icon = lists.pets[auction.petSpeciesId].icon;
-			} else {
-				icon = lists.items[auction.item].icon;
+			} else if(lists.items[itemID] !== undefined) {
+				icon = lists.items[itemID].icon;
 			}
-		} catch(err) {console.log(err,auction);}
+		} catch(err) {console.log(err,auction, itemID);}
 
 		if (icon === undefined) {
 			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
@@ -62,6 +62,10 @@ export abstract class ParentAuctionComponent {
 			url += icon + '.jpg';
 		}
 		return url;
+	}
+
+	getItem(itemID: string) {
+		return lists.items[itemID] || {'name': itemID};
 	}
 
 	getItemName(auction): string {

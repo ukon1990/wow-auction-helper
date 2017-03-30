@@ -1,0 +1,70 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Trade vendors</h2>
+	</div>
+	<div class="panel-body">
+		<div class="col-md-2">
+			<ul class="nav nav-pills nav-stacked">
+				<li class="active" *ngFor="let vendor of vendors; let i = index" [ngClass]="{'active': vendorIndex == i}" (click)="selectVendor(i)">
+					<a rel="item={{ vendor.itemID }}" target="_blank">
+						{{ vendor.name }}
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-10">
+			<div class="pager">
+				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+			</div>
+			<table class="table table-striped row">
+				<tr class="row">
+					<th>Item</th>
+					<th>Quantity</th>
+					<th>Value</th>
+					<th *ngIf="apiToUse !== 'none'">
+						Region avg sold
+					</th>
+					<th *ngIf="apiToUse !== 'none'">
+						Region avg demand
+					</th>
+				</tr>
+				<tr class="row" *ngFor="let a of vendors[vendorIndex].materials | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;">
+					<td>
+						<div>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
+							<div class="align-left col-md-offset-1">
+								<a
+									rel="item={{ a.itemID }}"
+									href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
+									target="_blank">{{ getItem(a.itemID).name }}<i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i></a><br>
+							</div>
+						</div>
+					</td>
+					<td>{{ a.quantity }}</td>
+					<td>
+						{{ copperToArray(a.value) }} <br>
+						Buyout per item: {{ copperToArray(a.buyout) }}
+						<div *ngIf="apiToUse !== 'none'">
+							Market value: {{ copperToArray(a.mktPrice) }}<br>
+							Region sale avg: {{ copperToArray(a.regionSaleAvg) }}
+						</div>
+					</td>
+					<td *ngIf="apiToUse !== 'none'">
+						{{a.avgSold}}
+					</td>
+					<td *ngIf="apiToUse !== 'none'">
+						{{a.estDemand}}%
+					</td>
+				</tr>
+			</table>
+
+			<div class="pager">
+				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
+				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
+			</div>
+		</div>
+	</div>
+</div>
