@@ -1,6 +1,6 @@
 import { browser, element, by } from 'protractor';
 
-export class WahPage {
+export class Ag4Page {
   navigateTo() {
     return browser.get('/');
   }
