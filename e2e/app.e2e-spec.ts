@@ -1,10 +1,10 @@
-import { WahPage } from './app.po';
+import { Ag4Page } from './app.po';
 
-describe('wah App', function() {
-  let page: WahPage;
+describe('ag4 App', () => {
+  let page: Ag4Page;
 
   beforeEach(() => {
-    page = new WahPage();
+    page = new Ag4Page();
   });
 
   it('should display message saying app works', () => {
