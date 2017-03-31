@@ -11,9 +11,9 @@ import { Title }     from '@angular/platform-browser';
 	providers: [RealmService]
 })
 export class FrontPageComponent {
-	private u;
-	private realmListEu = [];
-	private realmListUs = [];
+	u;
+	realmListEu = [];
+	realmListUs = [];
 
 	constructor(private router: Router, private titleService: Title, private rs: RealmService) {
 		this.u = user;

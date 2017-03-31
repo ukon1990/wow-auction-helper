@@ -23,19 +23,19 @@ export abstract class ParentAuctionComponent {
 	copperToArray = copperToArray;
 	copperToString = copperToString;
 
-	private character: string;
-
-	// Objects and arrays
-	private auctionObserver = {};
-	private itemObserver = {};
-	private petObserver = {};
-	private selectedAuctions = [];
-	private auctionDuration = {
+	character: string;
+	selectedAuctions = [];
+	auctionDuration = {
 		'VERY_LONG': '12h+',
 		'LONG': '2-12h',
 		'MEDIUM': '30min-2h',
 		'SHORT': '<30min'
 	};
+
+	// Objects and arrays
+	private auctionObserver = {};
+	private itemObserver = {};
+	private petObserver = {};
 
 
 	constructor() {

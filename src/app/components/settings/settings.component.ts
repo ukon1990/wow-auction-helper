@@ -12,14 +12,14 @@ import { user, lists, copperToArray } from '../../utils/globals';
 	providers: [RealmService, AuctionService]
 })
 export class SettingsComponent {
-	private user: IUser;
-	private customPrices = [];
-	private realmListEu = [];
-	private realmListUs = [];
-	private importedSettings: string;
-	private exportedSettings: string;
-	private originalRealm: string;
-	private darkMode = true;
+	user: IUser;
+	customPrices = [];
+	realmListEu = [];
+	realmListUs = [];
+	importedSettings: string;
+	exportedSettings: string;
+	originalRealm: string;
+	darkMode = true;
 
 	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService, private auctionService: AuctionService) {
 		this.user = user;

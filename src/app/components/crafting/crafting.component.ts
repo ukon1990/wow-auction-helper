@@ -14,15 +14,14 @@ import { IUser, IAuction } from '../../utils/interfaces';
 })
 
 export class CraftingComponent extends ParentAuctionComponent{
-	private crafts = [];
-	private shoppingCart = {'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0};
+	crafts = [];
+	shoppingCart = {'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0};
 
-	private reagentIndex: number = 0;
+	reagentIndex: number = 0;
 
-	private sortAsc = false;
-	private isInitiated = false;
-	private buyoutLimit = user.buyoutLimit;
-	private professions = [
+	sortAsc = false;
+	buyoutLimit = user.buyoutLimit;
+	professions = [
 		'First Aid',
 		'Blacksmithing',
 		'Leatherworking',
@@ -35,8 +34,9 @@ export class CraftingComponent extends ParentAuctionComponent{
 		'Jewelcrafting',
 		'Inscription'
 	].sort();
-	private craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
+	craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
 
+	private isInitiated = false;
 
 	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
 		super();

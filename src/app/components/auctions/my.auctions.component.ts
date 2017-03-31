@@ -14,9 +14,9 @@ import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/glo
 })
 
 export class MyAuctionsComponent extends ParentAuctionComponent {
-	private activeAuctions = 0;
-	private auctionsValue = 0;
-	private numberOfUndercuttedAuctions: number = 0;
+	activeAuctions = 0;
+	auctionsValue = 0;
+	numberOfUndercuttedAuctions: number = 0;
 	private buyOutAsc: boolean = true;
 
 

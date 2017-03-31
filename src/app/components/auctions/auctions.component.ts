@@ -20,11 +20,11 @@ import { IUser, IAuction } from '../../utils/interfaces';
 export class AuctionComponent extends ParentAuctionComponent {
 
 	// Objects and arrays
-	private itemClasses = {};
-	private selectedItem = {'name': 'No item selected', 'auctions': []};
-	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
-	private filteredAuctions = [];
+	itemClasses = {'classes':[]};
+	selectedItem = {'name': 'No item selected', 'auctions': []};
+	filteredAuctions = [];
 
+	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
 	private hasLoaded = false;
 	private buyOutAsc: boolean = true;
 

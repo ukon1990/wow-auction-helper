@@ -16,9 +16,8 @@ declare var ga: Function;
 export class AppComponent {
 	// http://realfavicongenerator.net/
 	downloadingText = '';
-	private title = 'WAH';
 	private lastModified: number;
-	private timeSinceLastModified: number;
+	timeSinceLastModified: number;
 	private oldTimeDiff: number;
 	private date: Date;
 	private auctionObserver = {};

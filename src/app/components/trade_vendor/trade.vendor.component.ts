@@ -9,7 +9,7 @@ import { lists } from '../../utils/globals';
 	styleUrls: ['../auctions/auctions.component.css']
 })
 export class TradeVendorComponent extends ParentAuctionComponent {
-	private vendors = [{
+	vendors = [{
 		'itemID': 124124,
 		'name': 'Blood of Sargeras',
 		'materials': [{
@@ -308,7 +308,7 @@ export class TradeVendorComponent extends ParentAuctionComponent {
 	}
 	];
 
-	private vendorIndex = 0;
+	vendorIndex = 0;
 
 	constructor(private titleService: Title) {
 		super();
