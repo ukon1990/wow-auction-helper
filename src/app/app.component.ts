@@ -305,14 +305,15 @@ export class AppComponent {
 				list[o.item]['auctions'].push({
 					'item': o.item, 'name': o.name, 'petSpeciesId': o.petSpeciesId,
 					'owner': o.owner, 'ownerRealm': o.ownerRealm,
-					'buyout': o.buyout, 'quantity': o.quantity
+					'buyout': o.buyout, 'quantity': o.quantity,
+					'bid': o.bid
 				});
 				list[o.item]['quantity_total'] += o['quantity'];
 
-				if (list[o.item]['buyout'] >
-					o['buyout'] / o['quantity']) {
+				if (list[o.item]['buyout'] > o['buyout'] / o['quantity']) {
 
 					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
+					list[o.item]['bid'] = o['bid'] / o['quantity'];
 					list[o.item]['owner'] = o['owner'];
 				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
 					o['buyout'] / o['quantity'] &&
@@ -326,7 +327,8 @@ export class AppComponent {
 				list[o.item]['auctions'].push({
 					'item': o.item, 'name': o.name, 'petSpeciesId': o.petSpeciesId,
 					'owner': o.owner, 'ownerRealm': o.ownerRealm,
-					'buyout': o.buyout, 'quantity': o.quantity
+					'buyout': o.buyout, 'quantity': o.quantity,
+					'bid': o.bid
 				});
 			}
 

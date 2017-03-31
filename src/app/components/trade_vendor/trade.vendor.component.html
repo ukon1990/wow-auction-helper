@@ -23,10 +23,10 @@
 					<th>Item</th>
 					<th>Quantity</th>
 					<th>Value</th>
-					<th *ngIf="apiToUse !== 'none'">
+					<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
 						Region avg sold
 					</th>
-					<th *ngIf="apiToUse !== 'none'">
+					<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
 						Region avg demand
 					</th>
 				</tr>
@@ -51,10 +51,10 @@
 							Region sale avg: {{ copperToArray(a.regionSaleAvg) }}
 						</div>
 					</td>
-					<td *ngIf="apiToUse !== 'none'">
+					<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 						{{a.avgSold}}
 					</td>
-					<td *ngIf="apiToUse !== 'none'">
+					<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 						{{a.estDemand}}%
 					</td>
 				</tr>

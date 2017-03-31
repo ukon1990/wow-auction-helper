@@ -214,22 +214,14 @@ export class AuctionComponent extends ParentAuctionComponent {
 			this.buyOutAsc = false;
 			this.filteredAuctions.sort(
 				function (a, b) {
-					if (sortBy === 'buyout' || sortBy === 'bid') {
-						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 : -1;
-					} else {
-						return a[sortBy] < b[sortBy] ? 1 : -1;
-					}
+					return a[sortBy] <= b[sortBy] ? 1 : -1;
 				}
 			);
 		} else {
 			this.buyOutAsc = true;
 			this.filteredAuctions.sort(
 				function (a, b) {
-					if (sortBy === 'buyout' || sortBy === 'bid') {
-						return a[sortBy] / a['quantity'] > b[sortBy] / a['quantity'] ? 1 : -1;
-					} else {
-						return a[sortBy] > b[sortBy] ? 1 : -1;
-					}
+					return a[sortBy] >= b[sortBy] ? 1 : -1;
 				}
 			);
 		}
@@ -240,5 +232,13 @@ export class AuctionComponent extends ParentAuctionComponent {
 			return 0;
 		}
 		return Math.round((auction.buyout / auction.mktPrice) * 100);
+	}
+
+	bidVersusMarketValue(auction) {
+		if(auction.mktPrice === 0) {
+			return 0;
+		}
+		return Math.round(
+			(auction.bid / auction.mktPrice) * 100);
 	}
 }

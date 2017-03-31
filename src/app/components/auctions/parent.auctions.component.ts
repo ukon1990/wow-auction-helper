@@ -19,7 +19,7 @@ export abstract class ParentAuctionComponent {
 	numOfAuctionPages: number = this.numberOfAuctions / this.limit;
 	apiToUse = user.apiToUse;
 
-	// Imported functions to be used in the template
+	// Imported functions to be used in the templates
 	copperToArray = copperToArray;
 	copperToString = copperToString;
 

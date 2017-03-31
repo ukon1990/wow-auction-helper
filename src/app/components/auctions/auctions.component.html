@@ -70,7 +70,7 @@
 						<th>@AH</th>
 						<th (click)="sortList('buyout')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-							Buyout
+							Price
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							avg Posted/Sold
@@ -96,12 +96,18 @@
 						<td>
 							{{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
 						<td>
-							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
-								Live: 
-							</span>
-							{{ copperToArray(auc.buyout) }}
-							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
+							Buyout: {{ copperToArray(auc.buyout) }} 
+							<span *ngIf="user.apiToUse !== 'none'">
 								({{ buyoutVersusMarketValue(auc)}}% mkt)
+							</span><br>
+
+							Bid: {{ copperToArray(auc.bid) }}
+							<span *ngIf="user.apiToUse !== 'none'">
+								({{ bidVersusMarketValue(auc)}}% mkt)
+							</span>
+
+
+							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
 								<span *ngIf="filterForm.value['onlyVendorSellable']">
 									<br>Vendor price: {{ copperToArray(auc.vendorSell) }} | 
 									{{ ((auc.buyout / auc.vendorSell) * 100).toFixed(2) }}%</span>
@@ -159,8 +165,14 @@
 								</div>
 							</div>
 						</td>
-						<td>{{ copperToArray(a.buyout) }}</td>
-						<td>{{ copperToArray(a.buyout / a.quantity) }}</td>
+						<td>
+							{{ copperToArray(a.buyout) }} <br>
+							{{ copperToArray(a.bid) }}
+						</td>
+						<td>
+							{{ copperToArray(a.buyout / a.quantity) }}<br>
+							{{ copperToArray(a.bid / a.quantity) }}
+						</td>
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>
