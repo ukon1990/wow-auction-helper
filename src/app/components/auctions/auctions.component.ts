@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { ParentAuctionComponent } from './parent.auctions.component';
 import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
-import { Title }     from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 
 import { user, itemClasses, lists, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
@@ -20,13 +20,13 @@ import { IUser, IAuction } from '../../utils/interfaces';
 export class AuctionComponent extends ParentAuctionComponent {
 
 	// Objects and arrays
-	itemClasses = {'classes':[]};
+	itemClasses = {'classes': []};
 	selectedItem = {'name': 'No item selected', 'auctions': []};
 	filteredAuctions = [];
 
 	private filter = { 'itemClass': '-1', 'itemSubClass': '-1' };
 	private hasLoaded = false;
-	private buyOutAsc: boolean = true;
+	private buyOutAsc = true;
 
 	constructor(
 		private router: Router, private titleService: Title,
