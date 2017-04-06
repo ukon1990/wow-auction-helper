@@ -3,7 +3,7 @@
 		<h2 class="panel-title">Auctions</h2>
 	</div>
 	<div class="panel-body">
-		<p>All auctions with no buyout price is ignored.</p> 
+		<p>All auctions with no buyout price is ignored.</p>
 		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
 			If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
 			You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
@@ -13,20 +13,20 @@
 
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Search</span>
-					<input class="col-md-2 form-control" type="text" 
+					<input class="col-md-2 form-control" type="text"
 						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
 				</div>
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Demand</span>
-					<input class="col-md-2 form-control" type="number" 
+					<input class="col-md-2 form-control" type="number"
 						placeholder="Demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Buyout lower than</span>
-					<input class="col-md-2 form-control" type="number" 
+					<input class="col-md-2 form-control" type="number"
 						placeholder="Market value (default 0)" [formControl]="filterForm.controls['mktPrice']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">% of Market value</span>
 				</div>
@@ -46,9 +46,9 @@
 						<option *ngFor="let i of itemClasses.classes[filterForm.value['itemClass']]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
 					</select>
 				</div>
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
+				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Only items below vendor sell</span>
-					<input type="checkbox" 
+					<input type="checkbox"
 						[formControl]="filterForm.controls['onlyVendorSellable']" aria-describedby="sizing-addon3"/>
 				</div>
 
@@ -96,7 +96,7 @@
 						<td>
 							{{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
 						<td>
-							Buyout: {{ copperToArray(auc.buyout) }} 
+							Buyout: {{ copperToArray(auc.buyout) }}
 							<span *ngIf="user.apiToUse !== 'none'">
 								({{ buyoutVersusMarketValue(auc)}}% mkt)
 							</span><br>
@@ -106,11 +106,11 @@
 								({{ bidVersusMarketValue(auc)}}% mkt)
 							</span>
 
-
+							<span *ngIf="filterForm.value['onlyVendorSellable']">
+								<br>Vendor price: {{ copperToArray(getItem(auc.item).sellPrice) }} |
+								{{ ((auc.buyout / auc.vendorSell) * 100).toFixed(2) }}%
+							</span>
 							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
-								<span *ngIf="filterForm.value['onlyVendorSellable']">
-									<br>Vendor price: {{ copperToArray(auc.vendorSell) }} | 
-									{{ ((auc.buyout / auc.vendorSell) * 100).toFixed(2) }}%</span>
 								<br>Market value: {{ copperToArray(auc.mktPrice) }}
 								<br>Region sale avg: {{ copperToArray(auc.regionSaleAvg) }}
 							</span>
@@ -119,15 +119,15 @@
 							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							{{ auc.estDemand }}% 
+							{{ auc.estDemand }}%
 						</td>
 						<td class="hidden-xs">
-							<a class="glyphicon glyphicon-shopping-cart" 
-								aria-hidden="true" 
+							<a class="glyphicon glyphicon-shopping-cart"
+								aria-hidden="true"
 								href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ auc.item }}"
 								target="_blank">Buy</a><br>
-							<a class="glyphicon glyphicon-exclamation-sign" 
-								aria-hidden="true" 
+							<a class="glyphicon glyphicon-exclamation-sign"
+								aria-hidden="true"
 								href="http://www.wowhead.com/item={{auc.item}}"
 								target="_blank">Wowhead</a><br>
 						</td>
