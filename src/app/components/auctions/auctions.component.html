@@ -108,7 +108,7 @@
 
 							<span *ngIf="filterForm.value['onlyVendorSellable']">
 								<br>Vendor price: {{ copperToArray(getItem(auc.item).sellPrice) }} |
-								{{ ((auc.buyout / auc.vendorSell) * 100).toFixed(2) }}%
+								{{ ((auc.buyout / getItem(auc.item).sellPrice) * 100).toFixed(2) }}%
 							</span>
 							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
 								<br>Market value: {{ copperToArray(auc.mktPrice) }}
