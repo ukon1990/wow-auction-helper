@@ -174,7 +174,7 @@ export class AuctionComponent extends ParentAuctionComponent {
 					}
 
 					if(match && onlyVendorSellable) {
-						if(scanList[id].buyout < scanList[id].vendorSell) {
+						if(scanList[id].buyout < lists.items[id].sellPrice) {
 							match = true;
 						} else {
 						match = false;

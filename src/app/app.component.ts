@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
 import { calcCost, user, lists, getPet, db } from './utils/globals';
 import { IUser } from './utils/interfaces';
 
-declare var ga: Function;
+declare const ga: Function;
 
 @Component({
 	selector: 'app-root',
@@ -13,7 +13,7 @@ declare var ga: Function;
 	styleUrls: ['./app.component.css'],
 	providers: [AuctionService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	// http://realfavicongenerator.net/
 	downloadingText = '';
 	private lastModified: number;
@@ -24,6 +24,7 @@ export class AppComponent {
 	private itemObserver = {};
 	private petObserver = {};
 	private u: IUser;
+	private allItemSources = [];
 
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService,
@@ -32,7 +33,7 @@ export class AppComponent {
 
 		// Google Analytics
 		router.events.subscribe( (event: Event) => {
-			if(event instanceof NavigationEnd) {
+			if (event instanceof NavigationEnd) {
 				ga('set', 'page', router.url);
 				ga('send', 'pageview');
 			}
@@ -40,12 +41,14 @@ export class AppComponent {
 
 		try {
 			// Just for fun :)
-			if(localStorage.getItem('darkMode') !== null && localStorage.getItem('darkMode') === 'false') {
+			if (localStorage.getItem('darkMode') !== null && localStorage.getItem('darkMode') === 'false') {
 				document
 					.getElementById('custom-style')
 						.setAttribute('href', 'assets/paper.bootstrap.min.css');
 			}
-		} catch (err) {console.log('style',err);}
+		} catch (err) {
+			console.log('style', err);
+		}
 	}
 
 	ngOnInit() {
@@ -61,12 +64,12 @@ export class AppComponent {
 				this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
 				this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
 				this.u.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
-			} catch(e) {
+			} catch (e) {
 				console.log('app.component init', e);
 			}
 
 			this.checkForUpdate();
-			if(
+			if (
 				this.u.apiToUse === 'tsm' &&
 				localStorage.getItem('api_tsm') !== null &&
 				localStorage.getItem('api_tsm') !== undefined &&
@@ -82,7 +85,7 @@ export class AppComponent {
 					});
 					console.log('TSM done');
 
-					if(user.apiToUse === 'tsm') {
+					if (user.apiToUse === 'tsm') {
 						this.downloadPets();
 					}
 				} else {
@@ -94,7 +97,7 @@ export class AppComponent {
 							});
 						});
 
-						if(user.apiToUse === 'tsm') {
+						if (user.apiToUse === 'tsm') {
 							this.downloadPets();
 						}
 				}
@@ -103,20 +106,20 @@ export class AppComponent {
 		setInterval(() => this.setTimeSinceLastModified(), 1000);
 		setInterval(() => this.checkForUpdate(), 60000);
 
-		if(
+		if (
 			this.u.apiToUse === 'wowuction' &&
 			localStorage.getItem('api_wowuction') !== null &&
 			localStorage.getItem('api_wowuction') !== undefined &&
 			localStorage.getItem('api_wowuction').length > 0 &&
 			localStorage.getItem('api_wowuction') !== 'null' ) {
-			if( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
+			if ( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
 				console.log('Downloading wowuction data');
 				this.auctionService.getWoWuctionData().subscribe(res => {
 					res.forEach(r => {
 						lists.wowuction[r.id] = r;
 					});
 
-					if(user.apiToUse === 'wowuction') {
+					if (user.apiToUse === 'wowuction') {
 						this.downloadPets();
 					}
 				});
@@ -127,14 +130,14 @@ export class AppComponent {
 						lists.wowuction[w.id] = w;
 					});
 
-					if(user.apiToUse === 'wowuction') {
+					if (user.apiToUse === 'wowuction') {
 						this.downloadPets();
 					}
 				});
 			}
 		}
 
-		if(user.apiToUse === 'none') {
+		if (user.apiToUse === 'none') {
 			this.downloadPets();
 		}
 
@@ -147,9 +150,9 @@ export class AppComponent {
 
 	downloadPets() {
 		this.downloadingText = 'Downloading pets';
-		db.table('pets').toArray().then(p => {
-			if(p.length > 0) {
-				this.buildPetArray(p);
+		db.table('pets').toArray().then(pets => {
+			if (pets.length > 0) {
+				this.buildPetArray(pets);
 				this.downloadItems();
 			} else {
 				this.itemService.getPets()
@@ -165,17 +168,28 @@ export class AppComponent {
 		try {
 			this.downloadingText = 'Downloading items';
 			// Attempting to get from local storage
-			db.table('items').toArray().then(i => {
-				if(i.length > 0) {
-					this.buildItemArray(i);
-				} else {
-					// The db was empty so we're downloading
-					this.itemService.getItems()
-						.subscribe(iDL => {
-							this.buildItemArray(iDL);
-						});
-				}
-			});
+			if (
+				localStorage.getItem('timestamp_items') === null ||
+				localStorage.getItem('timestamp_items') === undefined ||
+				localStorage.getItem('timestamp_items') !== new Date().toDateString()) {
+				// The db was empty so we're downloading
+				this.itemService.getItems()
+					.subscribe(iDL => {
+						this.buildItemArray(iDL);
+					});
+			} else {
+				db.table('items').toArray().then(i => {
+					if (i.length > 0) {
+						this.buildItemArray(i);
+					} else {
+						// The db was empty so we're downloading
+						this.itemService.getItems()
+							.subscribe(iDL => {
+								this.buildItemArray(iDL);
+							});
+					}
+				});
+			}
 
 		} catch (err) {
 			this.downloadingText = 'Failed at downloading items';
@@ -340,7 +354,11 @@ export class AppComponent {
 					lists.myAuctions.push(o);
 				}
 			}
+
+
+			this.addToContextList(o);
 		}
+		console.log(JSON.stringify(this.allItemSources));
 		lists.auctions = list;
 		this.getCraftingCosts();
 		lists.isDownloading = false;
@@ -452,5 +470,74 @@ export class AppComponent {
 			calcCost(c);
 		}
 		console.log('Done calculating crafting costs');
+	}
+
+	/**
+	 * Used to add item to the list of available contexts for an auction item
+	 * @param {[type]} o - Auction item
+	 */
+	addToContextList(o): void {
+		switch (o.context) {
+			case 0:
+				this.allItemSources[o.context] = 'Drop'
+				break;
+			case 1:
+				this.allItemSources[o.context] = 'World drop'
+				break;
+			case 2:
+				this.allItemSources[o.context] = 'Raid (old)'
+				break;
+			case 3:
+				this.allItemSources[o.context] = 'Normal dungeon';
+				break;
+			case 4:
+				this.allItemSources[o.context] = 'Raid finder';
+				break;
+			case 5:
+				this.allItemSources[o.context] = 'Heroic';
+				break;
+			case 6:
+				this.allItemSources[o.context] = 'Mythic';
+				break;
+			case 7:
+				this.allItemSources[o.context] = 'Player drop';
+				break;
+			case 9:
+				this.allItemSources[o.context] = 'Gathering';
+				break;
+			case 11:
+				this.allItemSources[o.context] = 'Drop';
+				break;
+			case 13:
+				this.allItemSources[o.context] = 'Profession';
+				break;
+			case 14:
+				this.allItemSources[o.context] = 'Vendor';
+				break;
+			case 15:
+				this.allItemSources[o.context] = 'Vendor';
+				break;
+			case 22:
+				this.allItemSources[o.context] = 'Timewalking';
+				break;
+			case 23:
+				this.allItemSources[o.context] = 'Trash drop';
+				break;
+			case 25:
+				this.allItemSources[o.context] = 'World drop';
+				break;
+			case 26:
+				this.allItemSources[o.context] = 'World drop';
+				break;
+			case 30:
+				this.allItemSources[o.context] = 'Mythic dungeon';
+				break;
+			case 31:
+				this.allItemSources[o.context] = 'Garrison mission';
+				break;
+			default:
+				this.allItemSources[o.context] = o.context + ' - ' + o.item + ' - ' + o.name;
+				break;
+		}
 	}
 }

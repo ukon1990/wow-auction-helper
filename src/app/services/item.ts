@@ -14,8 +14,8 @@ export class ItemService {
 
 	getItem(itemid: string) {
 		return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
-			.map(response => <Object>function (r) {
-				if(r.itemID !== undefined) {
+			.map(response => <Object>function(r) {
+				if (r.itemID !== undefined) {
 					try {
 						db.table('items').put(r).catch(c => {
 							console.log(c);
@@ -25,26 +25,28 @@ export class ItemService {
 					}
 				}
 				return r;
-			}(response.json()),
+			} (response.json()),
 			error => console.log(error));
 	}
 	getPet(petSpeciesId: string) {
 		return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
-			.map(response => <Object>function (r) {
+			.map(response => <Object>function(r) {
 				db.table('pets').put(r);
 				return r;
-			}(response.json()));
+			} (response.json()));
 	}
 
 	getItems() {
 		let apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
 		return this.http.get(this.getUrl(apiUrl, localUrl))
-			.map(response => <Object>function (r) {
-				console.log('Loaded items');
-				db.table('items').bulkPut(r);
+			.map(response => <Object>function(r) {
+				db['items'].clear();
+				db['items'].bulkAdd(r);
+				localStorage.setItem('timestamp_items', new Date().toDateString());
+				console.log('Item download completed');
 				return r;
-			}(response.json().items));
+			} (response.json().items));
 	}
 
 	getPets() {
@@ -53,11 +55,11 @@ export class ItemService {
 			localUrl = '/assets/GetSpecies.json';
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
-			.map(response => <Object>function (r) {
+			.map(response => <Object>function(r) {
 				console.log('Loaded pets');
 				db.table('pets').bulkPut(r);
 				return r;
-			}(response.json().pets));
+			} (response.json().pets));
 	}
 
 	getRecipe(itemID): any {
@@ -108,7 +110,7 @@ export class ItemService {
 	}
 
 	getUrl(apiUrl, localUrl) {
-		if(window.location.hostname === 'localhost') {
+		if (window.location.hostname === 'localhost') {
 			console.log('Using local files');
 		}
 

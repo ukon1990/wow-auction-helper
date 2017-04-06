@@ -65,6 +65,7 @@ export abstract class ParentAuctionComponent {
 	}
 
 	getItem(itemID: string) {
+		console.log(lists.items[itemID]);
 		return lists.items[itemID] || {'name': itemID};
 	}
 
