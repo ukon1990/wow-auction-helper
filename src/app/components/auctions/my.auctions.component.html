@@ -29,11 +29,14 @@
 							Buyout
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							avg Posted/Sold
+							<span *ngIf="apiToUse === 'tsm'">Regional avg </span>
+							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
+							sold
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-							Demand
+							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
+							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>
 					</tr>
 					<tr class="row" *ngFor="let auc of getAuctions() | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;" [ngClass]="{info: getAuctionOwner(auc.item) !== character}">
@@ -52,7 +55,10 @@
 							{{ copperToArray(auc.buyout) }} ({{ copperToArray(auc.buyout / auc.quantity) }} pcs)
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
+							<span *ngIf="apiToUse === 'wowuctions'">
+								{{ auc.avgDailyPosted }} <br>
+							</span>
+							 {{ auc.avgDailySold }}
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							{{ auc.estDemand }}%

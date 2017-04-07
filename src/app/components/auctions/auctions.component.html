@@ -73,11 +73,14 @@
 							Price
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							avg Posted/Sold
+							<span *ngIf="apiToUse === 'tsm'">Regional avg </span>
+							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
+							sold
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-							Demand
+							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
+							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>
 						<th class="hidden-xs">Action</th>
 					</tr>
@@ -116,7 +119,10 @@
 							</span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							{{ auc.avgDailyPosted }} <br> {{ auc.avgDailySold }}
+							<span *ngIf="apiToUse === 'wowuctions'">
+								{{ auc.avgDailyPosted }} <br>
+							</span>
+							 {{ auc.avgDailySold }}
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							{{ auc.estDemand }}%

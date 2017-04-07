@@ -13,9 +13,9 @@
 		<p *ngIf="apiToUse !== 'none'">
 			<em>
 				If an item is currently priced <strong>{{ buyoutLimit }}%</strong> or more than the market value.
-				The market price will be used instead of the current lowest 
-				buyout price for calculating profit (buyout - cost). Manually 
-				altering this can be done in the settings panel. The market value 
+				The market price will be used instead of the current lowest
+				buyout price for calculating profit (buyout - cost). Manually
+				altering this can be done in the settings panel. The market value
 				will also be used if a item does not exsist on your AH.
 			</em>
 		</p>
@@ -24,13 +24,13 @@
 
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Search</span>
-					<input class="col-md-2 form-control" type="text" 
+					<input class="col-md-2 form-control" type="text"
 						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
 				</div>
-				
+
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min profit</span>
-					<input name="profit" class="col-md-2 form-control" type="number" 
+					<input name="profit" class="col-md-2 form-control" type="number"
 						placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
@@ -38,14 +38,14 @@
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min demand</span>
-					<input class="col-md-2 form-control" type="number" 
+					<input class="col-md-2 form-control" type="number"
 						placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">%</span>
 				</div>
 
 				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min sold</span>
-					<input class="col-md-2 form-control" type="number" 
+					<input class="col-md-2 form-control" type="number"
 						placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
 					<span class="input-group-addon" id="sizing-addon3">pcs</span>
 				</div>
@@ -91,11 +91,14 @@
 							Profit
 							</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							avg Posted/Sold
+							<span *ngIf="apiToUse === 'tsm'">Regional avg </span>
+							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
+							sold
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-							Demand
+							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
+							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>
 						<th>
 							Action
@@ -110,42 +113,42 @@
 									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 										target="_blank">
 										{{ craft.name }}</a>
-									<br> {{ craft.profession }} 
+									<br> {{ craft.profession }}
 									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
 								</div>
 							</div>
 						</td>
 						<td>
-							<div class="clearfix" 
+							<div class="clearfix"
 								*ngFor="let m of craft.reagents"
 								[ngClass]="{'not-found': !isAtAH(m.itemID)}">
 								<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">
-									{{ m.count }} x 
+									{{ m.count }} x
 									<a
-										rel="item={{ m.itemID }}" 
+										rel="item={{ m.itemID }}"
 										href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 											target="_blank">{{m.name}}</a>
 
 									{{ copperToString(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
-									<i *ngIf="m.useCraftedBy !== undefined" 
-										class="glyphicon glyphicon-piggy-bank" 
-										[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}" 
+									<i *ngIf="m.useCraftedBy !== undefined"
+										class="glyphicon glyphicon-piggy-bank"
+										[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
 										(click)="setManualCraft(m, craft)"
 										aria-hidden="true"></i>
 								</span>
-								
+
 								<!-- For "child" recipes -->
 								<div *ngIf="m.useCraftedBy !== undefined && m.useCraftedBy">
 									<div class="clearfix"
-										*ngFor="let subMats of getSubMaterials(m)" 
+										*ngFor="let subMats of getSubMaterials(m)"
 										[ngClass]="{'not-found': !isAtAH(subMats.itemID)}">
-										{{ subMats.count * m.count }} x 
+										{{ subMats.count * m.count }} x
 										<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 												target="_blank">{{subMats.name}}</a>
 										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getItem(subMats.itemID).quantity_total }} @ AH)
-										<i *ngIf="m.useCraftedBy !== undefined" 
-											class="glyphicon glyphicon-piggy-bank" 
-											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}" 
+										<i *ngIf="m.useCraftedBy !== undefined"
+											class="glyphicon glyphicon-piggy-bank"
+											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
 											(click)="setManualCraft(m, craft)"
 											aria-hidden="true"></i>
 									</div>
@@ -157,9 +160,9 @@
 						</td>
 						<td class="hidden-xs">
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
-								Live: 
+								Live:
 							</span>
-							{{ copperToString(craft.buyout) }} 
+							{{ copperToString(craft.buyout) }}
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
 								<br>Market value: {{ copperToString(craft.mktPrice) }}
@@ -171,15 +174,20 @@
 							<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'"  class="hidden-xs">
-							{{ getItem(craft.itemID).avgDailyPosted }} <br> {{ getItem(craft.itemID).avgDailySold }}
+							<span *ngIf="apiToUse === 'wowuctions'">
+								{{ getItem(craft.itemID).avgDailyPosted }} <br>
+							</span>
+							{{ getItem(craft.itemID).avgDailySold }}
 						</td>
 						<td class="hidden-xs">
 							<span *ngIf="apiToUse !== 'none'" >{{ craft.estDemand }}% <br></span>
 						</td>
 						<td>
-							<a class="glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)">Add</a><br>
-							<a class="glyphicon glyphicon-exclamation-sign" 
-								aria-hidden="true" 
+							<a class="glyphicon glyphicon-shopping-cart"
+								aria-hidden="true"
+								(click)="addToCart(craft)">Add</a><br>
+							<a class="glyphicon glyphicon-exclamation-sign"
+								aria-hidden="true"
 								href="http://www.wowhead.com/item={{craft.itemID}}"
 								target="_blank">Wowhead</a><br>
 						</td>
@@ -191,8 +199,8 @@
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">
 						<a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-										target="_blank">{{ a.name }}</a> x 
-										{{ (a.quantity / a.minCount).toFixed(2) }} 
+										target="_blank">{{ a.name }}</a> x
+										{{ (a.quantity / a.minCount).toFixed(2) }}
 										<span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span> <i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
 					</li>
 				</ul>

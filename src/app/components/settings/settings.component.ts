@@ -4,7 +4,7 @@ import { RealmService } from '../../services/realm';
 import { AuctionService } from '../../services/auctions';
 import { Title }     from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, copperToArray } from '../../utils/globals';
+import { user, lists, copperToArray, db } from '../../utils/globals';
 
 @Component({
 	selector: 'settings',
@@ -62,7 +62,7 @@ export class SettingsComponent {
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
-		if(localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
+		if (localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
 			this.ac.getCraftingCosts();
 			localStorage.setItem('crafting_buyout_limit', this.user.buyoutLimit.toString());
 		}
@@ -88,9 +88,16 @@ export class SettingsComponent {
 			this.auctionService.getTSMData().subscribe(result => {
 				result.forEach( r => {
 					lists.tsm[r.Id] = r;
+					db.table('auctions').toArray().then(a => {
+						this.ac.buildAuctionArray(a);
+					});
 				});
 			}, err => {
 				console.log(err);
+			});
+		} else {
+			db.table('auctions').toArray().then(a => {
+				this.ac.buildAuctionArray(a);
 			});
 		}
 		/*
