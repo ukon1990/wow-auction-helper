@@ -11,7 +11,7 @@ export let lists = {
 	pets: [],
 	recipes: [],
 	recipesIndex: [],
-	customPrices: []
+	customPrices: {}
 };
 export let user: IUser = {
 	'region': 'eu',
@@ -24,9 +24,8 @@ export let user: IUser = {
 	'buyoutLimit': 200
 }
 
-lists.customPrices['124124'] = 3000000;
-lists.customPrices['120945'] = 500000;
-lists.customPrices['115524'] = 200000;
+
+lists.customPrices = {'124124': 3000000, '120945': 500000, '115524': 200000};
 
 // Local database start
 const TSM_TABLE_COLUMNS = `Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,

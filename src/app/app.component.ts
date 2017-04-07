@@ -141,11 +141,9 @@ export class AppComponent implements OnInit {
 			this.downloadPets();
 		}
 
-		/*
-		TODO: Later
-		if(localStorage.getItem('custom_prices') !== null){
+		if (localStorage.getItem('custom_prices') !== null) {
 			lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
-		}*/
+		}
 	}
 
 	downloadPets() {

@@ -7,7 +7,7 @@
 			<div class="col-md-4">
 				<h3>Realm & Character</h3>
 				<p>
-					Realm and region are requiered, while the character name is not. 
+					Realm and region are requiered, while the character name is not.
 					However, you will not be able to see if you have been undercutted if you don't.
 				</p>
 				<div class="input-group input-group-sm">
@@ -20,11 +20,11 @@
 
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Realm</span>
-					<select class="form-control" 
+					<select class="form-control"
 						name="realm" type="text"
 						aria-describedby="basic-addon1"
 							[(ngModel)]="user.realm" required>
-						
+
 						<option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
 					</select>
 				</div>
@@ -68,7 +68,7 @@
 					<span class="input-group-addon" id="basic-addon1">
 						Use market value instead of buyout if buyout >=
 					</span>
-					<input class="form-control" 
+					<input class="form-control"
 						placeholder="API key" type="number"
 						[(ngModel)]="user.buyoutLimit" aria-describedby="basic-addon1"/>
 					<span class="input-group-addon" id="basic-addon1">
@@ -76,11 +76,11 @@
 					</span>
 				</div>
 				<strong>Custom item prices</strong>
-				<p>Altering this is not yet implemented</p>
+				<p>Using trade vendor panel values coming soon™</p>
 				<ul>
 					<li *ngFor="let cp of customPrices">
-						{{cp.name}}({{cp.itemID}}) 
-						<input type="number" [(ngModel)]="cp.price"/> 
+						{{cp.name}}({{cp.itemID}})
+						<input type="number" [(ngModel)]="cp.price"/>
 						{{copperToArray(cp.price)}}
 					</li>
 				</ul>

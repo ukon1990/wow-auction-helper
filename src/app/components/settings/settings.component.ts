@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm';
 import { AuctionService } from '../../services/auctions';
-import { Title }     from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray, db } from '../../utils/globals';
 
@@ -11,9 +11,10 @@ import { user, lists, copperToArray, db } from '../../utils/globals';
 	templateUrl: 'settings.component.html',
 	providers: [RealmService, AuctionService]
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
 	user: IUser;
 	customPrices = [];
+	newCustomPrice = {'itemID': 0};
 	realmListEu = [];
 	realmListUs = [];
 	importedSettings: string;
@@ -30,7 +31,7 @@ export class SettingsComponent {
 				'price': lists.customPrices[k]});
 		});
 
-		if(localStorage.getItem('darkMode') !== null) {
+		if (localStorage.getItem('darkMode') !== null) {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
 		this.originalRealm = localStorage.getItem('realm');
@@ -46,7 +47,7 @@ export class SettingsComponent {
 	}
 
 	getRealms() {
-		if(this.user.region === 'us') {
+		if (this.user.region === 'us') {
 			return this.realmListUs['realms'] || [];
 		} else {
 			return this.realmListEu['realms'] || [];
@@ -54,7 +55,7 @@ export class SettingsComponent {
 	}
 
 	saveUserData(): void {
-		let oldTSMKey = localStorage.getItem('api_tsm') || '';
+		const oldTSMKey = localStorage.getItem('api_tsm') || '';
 		console.log(this.user, this.user.apiToUse);
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
@@ -62,12 +63,20 @@ export class SettingsComponent {
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
+
+		this.customPrices.forEach(cp => {
+			if (cp.itemID !== null) {
+				lists.customPrices[cp.itemID] = cp.price;
+			}
+		});
+		localStorage.setItem('custom_prices', JSON.stringify(lists.customPrices));
+
 		if (localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
 			this.ac.getCraftingCosts();
 			localStorage.setItem('crafting_buyout_limit', this.user.buyoutLimit.toString());
 		}
 
-		if(this.originalRealm !== this.user.realm) {
+		if (this.originalRealm !== this.user.realm) {
 			console.log('The realm is chagned. The old realm was ' +
 				this.originalRealm + ' and new realm is ' +
 				this.user.realm + '. Downloading new auction data.');
@@ -83,7 +92,7 @@ export class SettingsComponent {
 			}, err => {
 				console.log(err);
 			});
-		} else if(oldTSMKey !== localStorage.getItem('api_tsm')) {
+		} else if (oldTSMKey !== localStorage.getItem('api_tsm')) {
 			this.ac.downloadingText = 'Downloading TSM data for the new realm';
 			this.auctionService.getTSMData().subscribe(result => {
 				result.forEach( r => {
@@ -100,17 +109,6 @@ export class SettingsComponent {
 				this.ac.buildAuctionArray(a);
 			});
 		}
-		/*
-		TODO: Later...
-		lists.customPrices = [];
-		this.customPrices.forEach(cp => {
-			if(cp !== null) {
-				console.log(cp);
-				lists.customPrices['"' + cp.itemID + '"'] = cp.price;
-			}
-		});
-		console.log(lists.customPrices);*/
-		// localStorage.setItem('custom_prices', JSON.stringify(lists.customPrices));
 	}
 
 	importUserData(): void {
@@ -151,6 +149,10 @@ export class SettingsComponent {
 
 	downloadAuctions() {
 		this.ac.getAuctions();
+	}
+
+	addCustomPrice(): void {
+
 	}
 
 	copperToArray = copperToArray;
