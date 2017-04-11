@@ -232,7 +232,11 @@ export class CraftingComponent extends ParentAuctionComponent{
 		return lists.recipes[lists.recipesIndex[material.createdBy]].reagents;
 	}
 
-	sortList(sortBy: string) {
+	/**
+	 * Used for sorting the list.
+	 * @param  {string} sortBy A string for the field to sort by
+	 */
+	sortList(sortBy: string): void {
 		if (this.sortAsc) {
 			this.sortAsc = false;
 			this.crafts.sort(
@@ -254,7 +258,7 @@ export class CraftingComponent extends ParentAuctionComponent{
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
 		} else if(user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
-			return { 'name': lists.tsm[itemID].name, 
+			return { 'name': lists.tsm[itemID].name,
 					'estDemand': lists.tsm[itemID].RegionSaleRate,
 					'avgDailySold': lists.tsm[itemID].RegionAvgDailySold,
 					'avgDailyPosted': Math.round(

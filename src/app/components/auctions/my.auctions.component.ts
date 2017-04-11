@@ -46,9 +46,11 @@ export class MyAuctionsComponent extends ParentAuctionComponent {
 		return lists.myAuctions;
 	}
 
-
-
-	sortList(sortBy: string) {
+	/**
+	 * Used for sorting the list.
+	 * @param  {string} sortBy A string for the field to sort by
+	 */
+	sortList(sortBy: string): void {
 		if (this.buyOutAsc) {
 			this.buyOutAsc = false;
 			lists.myAuctions.sort(

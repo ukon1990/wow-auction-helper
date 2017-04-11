@@ -67,6 +67,10 @@ export class AuctionComponent extends ParentAuctionComponent {
 		}
 	}
 
+	getPet(speciesId) {
+		return getPet(speciesId, this.itemService);
+	};
+
 	getDescription(itemID: string): string {
 		let item = lists.items[itemID];
 		if (item['description'] !== undefined && item['description'].length > 0) {
@@ -209,7 +213,11 @@ export class AuctionComponent extends ParentAuctionComponent {
 		return match;
 	}
 
-	sortList(sortBy: string) {
+	/**
+	 * Used for sorting the list.
+	 * @param  {string} sortBy A string for the field to sort by
+	 */
+	sortList(sortBy: string): void {
 		if (this.buyOutAsc) {
 			this.buyOutAsc = false;
 			this.filteredAuctions.sort(

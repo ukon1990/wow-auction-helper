@@ -192,21 +192,21 @@ export function	copperToArray(c): string {
 	return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
 }
 
-export function getPet(speciesId) {
+export function getPet(speciesId, itemService) {
 	if (lists.pets[speciesId] === undefined) {
 		lists.pets[speciesId] = {
-			"speciesId": speciesId,
-			"petTypeId": 0,
-			"creatureId": 54730,
-			"name": "Loading",
-			"icon": "spell_shadow_summonimp",
+			'speciesId': speciesId,
+			'petTypeId': 0,
+			'creatureId': 54730,
+			'name': 'Loading',
+			'icon': 'spell_shadow_summonimp',
 		};
-		this.petObserver = this.itemService.getPet(speciesId).subscribe(
+		itemService.getPet(speciesId).subscribe(
 			r => {
 				lists.pets[speciesId] = r;
 			}
 		);
 	}
-	return lists.pets[speciesId].name;
+	return lists.pets[speciesId];
 }
 export const itemContext = ['Drop', 'World drop', 'Raid (old)', 'Normal dungeon', 'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown', 'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor', 'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop', 'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon', 'Garrison mission'];

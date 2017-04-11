@@ -220,7 +220,7 @@ export class AppComponent implements OnInit {
 					lists.recipes = [];
 				}
 				recipe.recipes.forEach(r => {
-					if (r !== null && r !== undefined&& r['profession'] !== undefined && r['profession'] !== null) {
+					if (r !== null && r !== undefined && r['profession'] !== undefined && r['profession'] !== null) {
 						r['estDemand'] = 0;
 						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
 					}
@@ -278,8 +278,8 @@ export class AppComponent implements OnInit {
 			}
 			try {
 				if (o.petSpeciesId !== undefined) {
-					if (lists.pets[o.petSpeciesId] === null) {
-						getPet(o.petSpeciesId);
+					if (lists.pets[o.petSpeciesId] === null || lists.pets[o.petSpeciesId] === undefined) {
+						getPet(o.petSpeciesId, this.itemService);
 					}
 					o['name'] = this.getItemName(o);
 				}
@@ -382,10 +382,10 @@ export class AppComponent implements OnInit {
 	}
 
 	getItemName(auction): string {
-		let itemID = auction.item;
+		const itemID = auction.item;
 		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-			return getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+			auction['name'] = getPet(auction.petSpeciesId, this.itemService).name + ' @' + auction.petLevel;
+			return auction['name'];
 		} else {
 			if (lists.items[itemID] !== undefined) {
 				if (lists.items[itemID]['name'] === 'Loading') {

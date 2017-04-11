@@ -90,7 +90,7 @@
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'"></span>
 								<div class="align-left col-md-9">
-									<a rel="item={{ auc.item }}" (click)="selectAuction(auc)"
+									<a rel="{{ auc.petSpeciesId !== undefined ? 'npc=' + getPet(auc.petSpeciesId).creatureId : 'item=' + auc.item }}" (click)="selectAuction(auc)"
 										target="_blank">{{ auc.name }} <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a><br>
 									{{ auc.owner }} @ {{ auc.ownerRealm }}
 								</div>
@@ -113,19 +113,29 @@
 								<br>Vendor price: {{ copperToArray(getItem(auc.item).sellPrice) }} |
 								{{ ((auc.buyout / getItem(auc.item).sellPrice) * 100).toFixed(2) }}%
 							</span>
-							<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
+							<span *ngIf="(user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') && auc.petAuctions === undefined">
 								<br>Market value: {{ copperToArray(auc.mktPrice) }}
 								<br>Region sale avg: {{ copperToArray(auc.regionSaleAvg) }}
 							</span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							<span *ngIf="apiToUse === 'wowuctions'">
-								{{ auc.avgDailyPosted }} <br>
+							<span *ngIf="auc.petAuctions !== undefined; else show">
+								Not available for battle pets
 							</span>
-							 {{ auc.avgDailySold }}
+							<ng-template #show>
+								<span *ngIf="apiToUse === 'wowuctions'">
+									{{ auc.avgDailyPosted }} <br>
+								</span>
+								 {{ auc.avgDailySold }}
+							</ng-template>
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							{{ auc.estDemand }}%
+							<span *ngIf="auc.petAuctions !== undefined; else showDemand">
+								Not available for battle pets
+							</span>
+							<ng-template #showDemand>
+								{{ auc.estDemand }}%
+							</ng-template>
 						</td>
 						<td class="hidden-xs">
 							<a class="glyphicon glyphicon-shopping-cart"

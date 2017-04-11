@@ -9,13 +9,13 @@ declare var $wu;
 export abstract class ParentAuctionComponent {
 	filterForm: FormGroup;
 	searchQuery = '';
-	numberOfAuctions: number = 0;
-	currentPage: number = 1;
+	numberOfAuctions = 0;
+	currentPage = 1;
 	user: IUser;
-	limit: number = 8;// per page
-	index: number = 0;
+	limit = 8; // per page
+	index = 0;
 	numOfPages: number = this.numberOfAuctions / this.limit;
-	currentAuctionPage: number = 1;
+	currentAuctionPage = 1;
 	numOfAuctionPages: number = this.numberOfAuctions / this.limit;
 	apiToUse = user.apiToUse;
 
@@ -48,13 +48,13 @@ export abstract class ParentAuctionComponent {
 		try {
 			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
 				if (lists.pets[auction.petSpeciesId] === undefined) {
-					getPet(auction.petSpeciesId);
+					// getPet(auction.petSpeciesId);
 				}
 				icon = lists.pets[auction.petSpeciesId].icon;
-			} else if(lists.items[itemID] !== undefined) {
+			} else if (lists.items[itemID] !== undefined) {
 				icon = lists.items[itemID].icon;
 			}
-		} catch(err) {console.log(err,auction, itemID);}
+		} catch (err) {console.log(err, auction, itemID); }
 
 		if (icon === undefined) {
 			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
@@ -69,10 +69,10 @@ export abstract class ParentAuctionComponent {
 	}
 
 	getItemName(auction): string {
-		let itemID = auction.item;
+		const itemID = auction.item;
 		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
-			return getPet(auction.petSpeciesId) + ' @' + auction.petLevel;
+			auction['name'] = lists.pets[auction.petSpeciesId].name + ' @' + auction.petLevel;
+			return auction['name'];
 		} else {
 			if (lists.items[itemID] !== undefined) {
 				if (lists.items[itemID]['name'] === 'Loading') {
@@ -81,36 +81,47 @@ export abstract class ParentAuctionComponent {
 				return lists.items[itemID]['name'];
 			}
 		}
-		return 'no item data';
+		return 'no item data for ' + auction.item;
 	}
 
+	/**
+	 * Selects a spesific items auctions
+	 * @param {[type]} auctions an auction item
+	 */
 	selectAuction(auctions): void {
-		if(lists.auctions[auctions.item] !== undefined) {
-			this.selectedAuctions = lists.auctions[auctions.item].auctions.sort(function(a,b){
-				return a.buyout/a.quantity - b.buyout/b.quantity;
-			});
-		this.numOfAuctionPages = Math.round(lists.auctions[auctions.item].auctions.length / this.limit);
-
-		} else if(auctions.petAuctions !== undefined) {
-			this.selectedAuctions = auctions.petAuctions.sort(function(a,b){
-				return a.buyout/a.quantity - b.buyout/b.quantity;
+		if (auctions.petAuctions !== undefined) {
+			this.selectedAuctions = auctions.petAuctions.sort(function(a, b) {
+				return a.buyout / a.quantity - b.buyout / b.quantity;
 			});
 
-		this.numOfAuctionPages = Math.round(auctions.petAuctions.length / this.limit);
+			this.numOfAuctionPages = Math.ceil(auctions.petAuctions.length / this.limit);
+		} else if (lists.auctions[auctions.item] !== undefined) {
+			this.selectedAuctions = lists.auctions[auctions.item].auctions.sort(function(a, b) {
+				return a.buyout / a.quantity - b.buyout / b.quantity;
+			});
+		this.numOfAuctionPages = Math.ceil(lists.auctions[auctions.item].auctions.length / this.limit);
+
 		} else {
-			this.selectedAuctions = auctions.auctions.sort(function(a,b){
-				return a.buyout/a.quantity - b.buyout/b.quantity;
+			this.selectedAuctions = auctions.auctions.sort(function(a, b) {
+				return a.buyout  / a.quantity - b.buyout / b.quantity;
 			});
-		this.numOfAuctionPages = Math.round(auctions.auctions.length / this.limit);
+		this.numOfAuctionPages = Math.ceil(auctions.auctions.length / this.limit);
 		}
 	}
 
-	getNumOfPages() {
-		let size = lists.myAuctions !== undefined ? lists.myAuctions.length : 0;
-		this.numOfPages = size / this.limit;
-		return Math.round(this.numOfPages);
+	/**
+	 * Retrieves the total number of pages rounded up
+	 * @return {number}
+	 */
+	getNumOfPages(): number {
+		this.numOfPages = (lists.myAuctions !== undefined ? lists.myAuctions.length : 0) / this.limit;
+		return Math.ceil(this.numOfPages);
 	}
 
+	/**
+	 * Is used to change between the pages
+	 * @param {number} change The value change. Either 1 or -1
+	 */
 	changePage(change: number): void {
 		if (change > 0 && this.currentPage <= this.numOfPages) {
 			this.currentPage++;
@@ -119,6 +130,10 @@ export abstract class ParentAuctionComponent {
 		}
 	}
 
+	/**
+	 * Is used to change between the pages of a selected item
+	 * @param {number} change The value change. Either 1 or -1
+	 */
 	changeAuctionPage(change: number): void {
 		if (change > 0 && this.currentAuctionPage <= this.numOfAuctionPages) {
 			this.currentAuctionPage++;
@@ -127,5 +142,9 @@ export abstract class ParentAuctionComponent {
 		}
 	}
 
-	abstract sortList(sortBy: string);
+	/**
+	 * Used for sorting the list. This is implemented in the child class
+	 * @param  {string} sortBy A string for the field to sort by
+	 */
+	abstract sortList(sortBy: string): void;
 }
