@@ -123,7 +123,7 @@ export abstract class ParentAuctionComponent {
 	 * @param {number} change The value change. Either 1 or -1
 	 */
 	changePage(change: number): void {
-		if (change > 0 && this.currentPage <= this.numOfPages) {
+		if (change > 0 && this.currentPage < this.numOfPages) {
 			this.currentPage++;
 		} else if (change < 0 && this.currentPage > 1) {
 			this.currentPage--;
@@ -135,7 +135,7 @@ export abstract class ParentAuctionComponent {
 	 * @param {number} change The value change. Either 1 or -1
 	 */
 	changeAuctionPage(change: number): void {
-		if (change > 0 && this.currentAuctionPage <= this.numOfAuctionPages) {
+		if (change > 0 && this.currentAuctionPage < this.numOfAuctionPages) {
 			this.currentAuctionPage++;
 		} else if (change < 0 && this.currentAuctionPage > 1) {
 			this.currentAuctionPage--;
