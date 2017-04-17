@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,13 +11,13 @@ import { user, itemClasses, lists, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 @Component({
-	selector: 'auctions',
+	selector: 'app-auctions',
 	templateUrl: 'auctions.component.html',
 	styleUrls: ['auctions.component.css'],
 	providers: [AuctionService, ItemService]
 })
 
-export class AuctionComponent extends ParentAuctionComponent {
+export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 
 	// Objects and arrays
 	itemClasses = {'classes': []};
@@ -35,9 +35,9 @@ export class AuctionComponent extends ParentAuctionComponent {
 		super();
 		this.filteredAuctions = lists.auctions;
 		this.itemClasses = itemClasses;
-		let filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
+		const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
 
-		if(filter !== undefined) {
+		if (filter !== undefined) {
 			this.filter = filter.filter;
 		}
 
@@ -56,33 +56,48 @@ export class AuctionComponent extends ParentAuctionComponent {
 		if (lists.auctions !== undefined && lists.auctions.length > 0) {
 			this.filterAuctions();
 		} else {
-			let refreshId = setInterval(() => {
+			const refreshId = setInterval(() => {
 				try {
 					if (!lists.isDownloading && lists.auctions.length > 0) {
 						this.filterAuctions();
 						clearInterval(refreshId);
 					}
-				} catch(e) {console.log(e);}
+				} catch (e) {
+					console.log(e);
+				}
 			}, 100);
 		}
 	}
 
-	getPet(speciesId) {
+	/**
+	 * Used to get a given pet for an auction
+	 * @param  {string} speciesId Retrieves a pet
+	 * @return {Pet}              Returns a pet object
+	 */
+	getPet(speciesId: string) {
 		return getPet(speciesId, this.itemService);
 	};
 
+	/**
+	 * Retrieves the description of a item
+	 * @param  {string} itemID An items ID
+	 * @return {string}        Item description
+	 */
 	getDescription(itemID: string): string {
-		let item = lists.items[itemID];
+		const item = lists.items[itemID];
 		if (item['description'] !== undefined && item['description'].length > 0) {
 			return item['description'];
 		} else if (item['itemSpells'] !== undefined) {
-			let itemSpells = item['itemSpells'];
+			const itemSpells = item['itemSpells'];
 			if (itemSpells.length > 0) {
 				return itemSpells[0]['spell']['description'];
 			}
 		}
 	}
 
+	/**
+	 * Used to clear the search filters
+	 */
 	clearFilters(): void {
 		this.filterForm.value['searchQuery'] = '';
 		this.filterForm.value['filterByCharacter'] = false;
@@ -91,14 +106,19 @@ export class AuctionComponent extends ParentAuctionComponent {
 
 	}
 
+	/**
+	 * Used to filter the auctions by the users parameters
+	 */
 	filterAuctions(): void {
 		// From form
-		let demand = this.filterForm.value['demand'],
+		const demand = this.filterForm.value['demand'],
 			mktPrice = this.filterForm.value['mktPrice'] || 0,
 			onlyVendorSellable = this.filterForm.value['onlyVendorSellable'],
-			searchQuery = this.filterForm.value['searchQuery'],
-			scanList,
+			searchQuery = this.filterForm.value['searchQuery'];
+
+		let scanList,
 			petsAdded = {};
+
 		this.filter = {
 			'itemClass': this.filterForm.value['itemClass'],
 			'itemSubClass': this.filterForm.value['itemSubClass']
@@ -115,10 +135,12 @@ export class AuctionComponent extends ParentAuctionComponent {
 
 
 		// If the list filter is set to battlepet, we  need to open all the "Pet cages"
-		if(this.filter.itemClass === '0') {
-			if(lists.auctions[82800] !== undefined) {
+		if (this.filter.itemClass === '0') {
+			if (lists.auctions[82800] !== undefined) {
 				lists.auctions[82800].auctions.forEach(r => {
-					if(r.petSpeciesId !== undefined && (petsAdded[r.petSpeciesId] === undefined || petsAdded[r.petSpeciesId].buyout > r.buyout)) {
+					if (r.petSpeciesId !== undefined &&
+						(petsAdded[r.petSpeciesId] === undefined ||
+							petsAdded[r.petSpeciesId].buyout > r.buyout)) {
 						petsAdded[r.petSpeciesId] = r;
 					}
 				});
@@ -132,16 +154,16 @@ export class AuctionComponent extends ParentAuctionComponent {
 			if (scanList.hasOwnProperty(id)) {
 				let  match = true;
 				// Assigning auc ID to pets
-				if(scanList[id].item === 82800) {
+				if (scanList[id].item === 82800) {
 					try {
 						let auctionsForPet = [];
 						lists.auctions[82800].auctions.forEach(r => {
-							if(r.petSpeciesId !== undefined && r.petSpeciesId === scanList[id].petSpeciesId) {
-								auctionsForPet.push(r);;
+							if (r.petSpeciesId !== undefined && r.petSpeciesId === scanList[id].petSpeciesId) {
+								auctionsForPet.push(r);
 							}
 						});
 						scanList[id].petAuctions = auctionsForPet;
-					} catch(err) {
+					} catch (err) {
 						console.log(err);
 					}
 				}
@@ -163,22 +185,22 @@ export class AuctionComponent extends ParentAuctionComponent {
 				}
 
 				try {
-					if(match && (demand === 0 || demand <= scanList[id].estDemand) ) {
+					if (match && (demand === 0 || demand <= scanList[id].estDemand) ) {
 						match = true;
 					} else {
 						match = false;
 					}
 
-					let valueOfMkt = this.buyoutVersusMarketValue(scanList[id]);
-					if(match &&
+					const valueOfMkt = this.buyoutVersusMarketValue(scanList[id]);
+					if (match &&
 						(mktPrice === 0 || (valueOfMkt > 0 && mktPrice > valueOfMkt) ) ) {
 						match = true;
 					} else {
 						match = false;
 					}
 
-					if(match && onlyVendorSellable) {
-						if(scanList[id].buyout < lists.items[id].sellPrice) {
+					if (match && onlyVendorSellable) {
+						if (scanList[id].buyout < lists.items[id].sellPrice) {
 							match = true;
 						} else {
 						match = false;
@@ -197,6 +219,11 @@ export class AuctionComponent extends ParentAuctionComponent {
 		this.numOfPages = Math.round(this.numberOfAuctions / this.limit);
 	}
 
+	/**
+	 * Checks if an item is a mtach or not.
+	 * @param  {object}  An item object
+	 * @return {boolean}
+	 */
 	isTypeMatch(item): boolean {
 		let match = false;
 		if (this.filter.itemClass == '-1' || item.itemClass == itemClasses.classes[this.filter.itemClass].class) {
@@ -235,15 +262,25 @@ export class AuctionComponent extends ParentAuctionComponent {
 		}
 	}
 
-	buyoutVersusMarketValue(auction) {
-		if(auction.mktPrice === 0) {
+	/**
+	 * Used to get the percent difference between buyout price and market value
+	 * @param  {Auction} auction An item auction
+	 * @return {number}         An integer with the result value
+	 */
+	buyoutVersusMarketValue(auction): number {
+		if (auction.mktPrice === 0) {
 			return 0;
 		}
 		return Math.round((auction.buyout / auction.mktPrice) * 100);
 	}
 
-	bidVersusMarketValue(auction) {
-		if(auction.mktPrice === 0) {
+	/**
+	 * Returns the difference between the bid value and the market value in percent
+	 * @param  {Auction} auction An item auction
+	 * @return {number}         An integer with the result value
+	 */
+	bidVersusMarketValue(auction): number {
+		if (auction.mktPrice === 0) {
 			return 0;
 		}
 		return Math.round(

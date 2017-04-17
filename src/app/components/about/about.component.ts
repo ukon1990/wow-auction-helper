@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { Title }     from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 
 @Component({
-	selector: 'about',
+	selector: 'app-about',
 	templateUrl: 'about.component.html'
 })
 export class AboutComponent {
-	constructor(private titleService: Title) { 
+	constructor(private titleService: Title) {
 		this.titleService.setTitle('Wah - About');
 	}
 

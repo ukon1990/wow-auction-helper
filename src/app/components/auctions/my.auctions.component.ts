@@ -8,7 +8,7 @@ import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/glo
 
 
 @Component({
-	selector: 'my-auctions',
+	selector: 'app-my-auctions',
 	templateUrl: 'my.auctions.component.html',
 	styleUrls: ['auctions.component.css']
 })
@@ -16,8 +16,8 @@ import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/glo
 export class MyAuctionsComponent extends ParentAuctionComponent {
 	activeAuctions = 0;
 	auctionsValue = 0;
-	numberOfUndercuttedAuctions: number = 0;
-	private buyOutAsc: boolean = true;
+	numberOfUndercuttedAuctions = 0;
+	private buyOutAsc = true;
 
 
 	constructor(private titleService: Title) {
@@ -25,20 +25,29 @@ export class MyAuctionsComponent extends ParentAuctionComponent {
 		this.titleService.setTitle('Wah - My auctions');
 	}
 
-	getAuctionOwner(itemID): string {
+	/**
+	 * Used toget the name of the owner of an auction
+	 * @param  {string} itemID
+	 * @return {string}        The owners name
+	 */
+	getAuctionOwner(itemID: string): string {
 		return lists.auctions[itemID].owner;
 	};
 
 
+	/**
+	 * Retrieves a list of the users auctions.
+	 * @return {any[]}
+	 */
 	getAuctions (): any[] {
 		this.auctionsValue = 0;
 		this.numberOfUndercuttedAuctions = 0;
-		if(lists.myAuctions !== undefined && lists.myAuctions.length > 0) {
+		if (lists.myAuctions !== undefined && lists.myAuctions.length > 0) {
 			this.activeAuctions = lists.myAuctions.length;
 			lists.myAuctions.forEach(
 				a => {
 					this.auctionsValue += a.buyout;
-					if(this.getAuctionOwner(a.item) !== user.character) {
+					if (this.getAuctionOwner(a.item) !== user.character) {
 						this.numberOfUndercuttedAuctions++;
 					}
 				});
@@ -55,10 +64,10 @@ export class MyAuctionsComponent extends ParentAuctionComponent {
 			this.buyOutAsc = false;
 			lists.myAuctions.sort(
 				function (a, b) {
-					if(sortBy === 'buyout' || sortBy === 'bid') {
-						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 :-1;
-					}else {
-						return a[sortBy] < b[sortBy] ? 1 :-1;
+					if (sortBy === 'buyout' || sortBy === 'bid') {
+						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 : -1;
+					} else {
+						return a[sortBy] < b[sortBy] ? 1 : -1;
 					}
 				}
 			);
@@ -66,7 +75,7 @@ export class MyAuctionsComponent extends ParentAuctionComponent {
 			this.buyOutAsc = true;
 			lists.myAuctions.sort(
 				function (a, b) {
-					if(sortBy === 'buyout' || sortBy === 'bid') {
+					if (sortBy === 'buyout' || sortBy === 'bid') {
 						return a[sortBy] / a['quantity'] > b[sortBy] / a['quantity'] ? 1 : -1;
 					} else {
 						return a[sortBy] > b[sortBy] ? 1 : -1;

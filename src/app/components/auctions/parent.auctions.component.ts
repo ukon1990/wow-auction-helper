@@ -43,8 +43,14 @@ export abstract class ParentAuctionComponent {
 		this.character = user.character;
 	}
 
+	/**
+	 * Used to get the icon url for a given item or pet.
+	 * @param  {Auction or Item} auction It takes a auction or Item object.
+	 * @return {string}         [description]
+	 */
 	getIcon(auction): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon, itemID = auction.item !== undefined ? auction.item : auction.itemID;
+		const itemID = auction.item !== undefined ? auction.item : auction.itemID;
+		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
 		try {
 			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
 				if (lists.pets[auction.petSpeciesId] === undefined) {
@@ -64,10 +70,20 @@ export abstract class ParentAuctionComponent {
 		return url;
 	}
 
+	/**
+	 * Fetches a item from the memory
+	 * @param  {string} itemID An items ID
+	 * @return {Item}        The desired object
+	 */
 	getItem(itemID: string) {
 		return lists.items[itemID] || {'name': itemID};
 	}
 
+	/**
+	 * Used to get the items name. This will retrieve the pet's name if it's a pet auction.
+	 * @param  {Auction} auction The given auction
+	 * @return {string}         Item name, or pet name + pet level
+	 */
 	getItemName(auction): string {
 		const itemID = auction.item;
 		if (auction.petSpeciesId !== undefined) {

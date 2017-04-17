@@ -1,23 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
 import { calcCost, user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
-import { Title }     from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 
 
 @Component({
-	selector: 'crafting',
+	selector: 'app-crafting',
 	templateUrl: 'crafting.component.html',
 	styleUrls: ['../auctions/auctions.component.css']
 })
 
-export class CraftingComponent extends ParentAuctionComponent{
+export class CraftingComponent extends ParentAuctionComponent implements OnInit {
 	crafts = [];
-	shoppingCart = {'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0};
+	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
 
-	reagentIndex: number = 0;
+	reagentIndex = 0;
 
 	sortAsc = false;
 	buyoutLimit = user.buyoutLimit;
@@ -40,28 +40,28 @@ export class CraftingComponent extends ParentAuctionComponent{
 
 	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
 		super();
-		let query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
+		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
 			'searchQuery': query !== undefined ? query.searchQuery : '',
 			'profession': query !== undefined ? query.profession : 'All',
-			'profit': query !== undefined  && query.profit !== null ? parseFloat(query.profit) : 0,
+			'profit': query !== undefined && query.profit !== null ? parseFloat(query.profit) : 0,
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
 			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
 			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0]
 		});
-		let sc = localStorage.getItem('shopping_cart');
-		if(sc !== null && sc !== undefined && sc !== 'undefined') {
+		const sc = localStorage.getItem('shopping_cart');
+		if (sc !== null && sc !== undefined && sc !== 'undefined') {
 			this.shoppingCart = JSON.parse(sc);
 		}
 		this.titleService.setTitle('Wah - Crafting');
 	}
 
 	ngOnInit() {
-		if(lists.customPrices === undefined) {
+		if (lists.customPrices === undefined) {
 			lists.customPrices = [];
 		} else {
-			Object.keys(lists.customPrices).forEach( k => {
-				if(lists.items[k] === undefined) {
+			Object.keys(lists.customPrices).forEach(k => {
+				if (lists.items[k] === undefined) {
 					this.itemService.getItem(k).subscribe(r => {
 						lists.items[k] = r;
 					}, e => {
@@ -77,34 +77,41 @@ export class CraftingComponent extends ParentAuctionComponent{
 			console.log(e);
 		}
 
-		let refreshId = setInterval(() => {
-				try {
-					if (!lists.isDownloading && lists.auctions.length > 0) {
-						this.setShoppingCartCost();
-						clearInterval(refreshId);
-					}
-				} catch(e) {console.log(e);}
-			}, 100);
+		const refreshId = setInterval(() => {
+			try {
+				if (!lists.isDownloading && lists.auctions.length > 0) {
+					this.setShoppingCartCost();
+					clearInterval(refreshId);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}, 100);
 	}
 
-	setCrafts() {
+	/**
+	 * Applying recipes to list. adding the item filter once auction download is completed
+	 */
+	setCrafts(): void {
 		if (lists.recipes !== undefined) {
 			this.crafts = lists.recipes;
 			this.numOfPages = this.crafts.length / this.limit;
 
-			let refreshId = setInterval(() => {
+			const refreshId = setInterval(() => {
 				try {
 					if (!lists.isDownloading && lists.auctions.length > 0 && !this.isInitiated) {
 						this.isInitiated = true;
 						this.filteRecipes();
 						clearInterval(refreshId);
 					}
-				} catch(e) {console.log(e);}
+				} catch (e) {
+					console.log(e);
+				}
 			}, 100);
 		}
 	}
 
-	setManualCraft(material, recipe) {
+	setManualCraft(material, recipe): void {
 		material.useCraftedBy = !material.useCraftedBy;
 		console.log(material.name + ' using manual craft ' + material.useCraftedBy);
 		this.updateCraftingCost(recipe);
@@ -113,18 +120,21 @@ export class CraftingComponent extends ParentAuctionComponent{
 	updateCraftingCost(recipe) {
 		calcCost(recipe);
 		recipe.reagents.forEach(reagent => {
-			if(reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
+			if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
 				delete reagent.createdBy;
 				delete reagent.useCraftedBy;
 			}
 		});
 	}
 
-	filteRecipes() {
+	/**
+	 * Filtering the craftables by user query
+	 */
+	filteRecipes(): void {
 		this.crafts = [];
 		let isAffected = false,
-			match = false,
-			searchQuery = this.filterForm.value['searchQuery'],
+			match = false;
+		const searchQuery = this.filterForm.value['searchQuery'],
 			profession = this.filterForm.value['profession'],
 			profit = this.filterForm.value['profit'] || 0,
 			demand = this.filterForm.value['demand'] || 0,
@@ -133,8 +143,10 @@ export class CraftingComponent extends ParentAuctionComponent{
 		localStorage.setItem(
 			'query_crafting',
 			JSON.stringify(
-				{'searchQuery': searchQuery, 'profession': profession,
-					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually}));
+				{
+					'searchQuery': searchQuery, 'profession': profession,
+					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
+				}));
 
 		lists.recipes.forEach(r => {
 			isAffected = false;
@@ -168,7 +180,7 @@ export class CraftingComponent extends ParentAuctionComponent{
 					}
 				}
 
-				if(match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
+				if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
 					match = true;
 				} else {
 					match = false;
@@ -188,20 +200,20 @@ export class CraftingComponent extends ParentAuctionComponent{
 
 				if (match) {
 					r.reagents.forEach(reagent => {
-						if(reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
+						if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
 							delete reagent.createdBy;
 							delete reagent.useCraftedBy;
-						} else if(lists.recipes[lists.recipesIndex[reagent.createdBy]] !== undefined) {
-							switch(craftManually) {
+						} else if (lists.recipes[lists.recipesIndex[reagent.createdBy]] !== undefined) {
+							switch (craftManually) {
 								// ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!']
-								case this.craftManually[1] :
+								case this.craftManually[1]:
 									// Disable
 									reagent.useCraftedBy = false;
 									isAffected = true;
 									break;
-								case this.craftManually[2] :
+								case this.craftManually[2]:
 									// If cheaper
-									if(lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
+									if (lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
 										lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < (reagent.count * this.getMinPrice(reagent.itemID))) {
 										reagent.useCraftedBy = true;
 										isAffected = true;
@@ -210,7 +222,7 @@ export class CraftingComponent extends ParentAuctionComponent{
 										isAffected = true;
 									}
 									break;
-								case this.craftManually[3] :
+								case this.craftManually[3]:
 									// For everything
 									reagent.useCraftedBy = true;
 									break;
@@ -228,6 +240,11 @@ export class CraftingComponent extends ParentAuctionComponent{
 		this.numOfPages = this.crafts.length / this.limit;
 	}
 
+	/**
+	 * Used for fetching the sub reagents of a recipe
+	 * @param  {object} material Reagent object
+	 * @return {object}          List of reagents
+	 */
 	getSubMaterials(material) {
 		return lists.recipes[lists.recipesIndex[material.createdBy]].reagents;
 	}
@@ -240,72 +257,106 @@ export class CraftingComponent extends ParentAuctionComponent{
 		if (this.sortAsc) {
 			this.sortAsc = false;
 			this.crafts.sort(
-				function (a, b) {
+				function(a, b) {
 					return a[sortBy] - b[sortBy];
 				}
 			);
 		} else {
 			this.sortAsc = true;
 			this.crafts.sort(
-				function (a, b) {
+				function(a, b) {
 					return b[sortBy] - a[sortBy];
 				}
 			);
 		}
 	}
 
-	getItem(itemID) {
+	/**
+	 * Retrieves an item.
+	 * @param  {string} itemID
+	 * @return {Item}
+	 */
+	getItem(itemID: string) {
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
-		} else if(user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
-			return { 'name': lists.tsm[itemID].name,
-					'estDemand': lists.tsm[itemID].RegionSaleRate,
-					'avgDailySold': lists.tsm[itemID].RegionAvgDailySold,
-					'avgDailyPosted': Math.round(
-						(parseFloat(lists.tsm[itemID]['RegionAvgDailySold']) / parseFloat(lists.tsm[itemID]['RegionSaleRate'])) * 100) / 100 || 0,
-					'regionSaleAvg': lists.tsm[itemID].RegionSaleAvg,
-					'quantity_total': 0 };
+		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			return {
+				'name': lists.tsm[itemID].name,
+				'estDemand': lists.tsm[itemID].RegionSaleRate,
+				'avgDailySold': lists.tsm[itemID].RegionAvgDailySold,
+				'avgDailyPosted': Math.round(
+					(parseFloat(lists.tsm[itemID]['RegionAvgDailySold']) / parseFloat(lists.tsm[itemID]['RegionSaleRate'])) * 100) / 100 || 0,
+				'regionSaleAvg': lists.tsm[itemID].RegionSaleAvg,
+				'quantity_total': 0
+			};
 		} else {
 			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
 		}
 	}
 
-	getNumOfPages() {
+	/**
+	 * Retrieves the number of pages
+	 */
+	getNumOfPages(): number {
 		this.numOfPages = Math.round(this.crafts.length / this.limit);
 		return this.numOfPages;
 	}
 
-	isAtAH(itemID) {
+	/**
+	 * Checks if an item is @ AH or not.
+	 * @param  {string}  itemID
+	 * @return {boolean}        Availability
+	 */
+	isAtAH(itemID: string): boolean {
 		return lists.auctions[itemID] !== undefined ? true : false;
 	}
 
-	getMinPrice(itemID) {
+	/**
+	 * Finds the minimum price for an item
+	 * @param  {string} itemID
+	 * @return {number}
+	 */
+	getMinPrice(itemID: string): number {
 		try {
 			return lists.auctions[itemID].buyout;
 		} catch (e) {
-			if(lists.customPrices[itemID] !== undefined) {
+			if (lists.customPrices[itemID] !== undefined) {
 				return lists.customPrices[itemID];
-			} else if(user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
-				//console.log(lists.wowuction[itemID]);
+			} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				return lists.wowuction[itemID]['mktPrice'];
-			} else if(user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 				return lists.tsm[itemID].MarketValue;
 			}
 			return 0;
 		}
 	}
 
-	getProfitPercent(profit, buyout) {
+	/**
+	 * Calculating potential profit
+	 * @param  {number} profit
+	 * @param  {number} buyout
+	 * @return {number}
+	 */
+	getProfitPercent(profit: number, buyout: number): number {
 		return Math.round((profit / buyout) * 100);
 	};
 
-	getAuctionItem(itemID) {
-		if(lists.auctions[itemID] === undefined){
-			return {'quantity_total': 0};
+	/**
+	 * Gets thre auction item for an item
+	 * @param  {string} itemID
+	 * @return {object}
+	 */
+	getAuctionItem(itemID: string) {
+		if (lists.auctions[itemID] === undefined) {
+			return { 'quantity_total': 0 };
 		}
 		return lists.auctions[itemID];
 	}
 
+	/**
+	 * Used for changing the page
+	 * @param {number} change The value for pages to move forward or back
+	 */
 	changePage(change: number): void {
 		if (change > 0 && this.currentPage <= this.numOfPages) {
 			this.currentPage++;
@@ -314,9 +365,14 @@ export class CraftingComponent extends ParentAuctionComponent{
 		}
 	}
 
-	getIcon(itemID): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/',
-			icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
+	/**
+	 * Generates an icon url
+	 * @param  {string} itemID
+	 * @return {string}
+	 */
+	getIcon(itemID: string): string {
+		let url = 'http://media.blizzard.com/wow/icons/56/';
+		const icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
 		if (icon === undefined) {
 			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
 		} else {
@@ -325,26 +381,34 @@ export class CraftingComponent extends ParentAuctionComponent{
 		return url;
 	}
 
+	/**
+	 * Adds an item to a shopping cart
+	 * @param {object} recipe
+	 */
 	addToCart(recipe): void {
-		if(this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
+		if (this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
 			this.shoppingCart.recipes.push({
 				'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID,
-					'quantity': 1, 'minCount': recipe.minCount, 'reagents': recipe.reagents});
+				'quantity': 1, 'minCount': recipe.minCount, 'reagents': recipe.reagents
+			});
 		} else {
 			this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
 		}
 
 		this.addReagentToCart(recipe);
-
 		this.setShoppingCartCost();
 		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
 	}
 
-	addReagentToCart(recipe) {
+	/**
+	 * Adds a reagent to the shopping cart
+	 * @param {object} recipe
+	 */
+	addReagentToCart(recipe): void {
 		recipe.reagents.forEach(r => {
-			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
-				if(r.useCraftedBy) {
-					for(let i = 0, x = parseFloat(r.count); i < x; i++) {
+			if (this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
+				if (r.useCraftedBy) {
+					for (let i = 0, x = parseFloat(r.count); i < x; i++) {
 						this.addToCart(lists.recipes[lists.recipesIndex[r.createdBy]]);
 					}
 				} else {
@@ -352,33 +416,37 @@ export class CraftingComponent extends ParentAuctionComponent{
 					this.shoppingCart.reagents[this.reagentIndex].count = Math.round(this.shoppingCart.reagents[this.reagentIndex].count * 100) / 100;
 				}
 			} else {
-				if(r.useCraftedBy) {
-					for(let i = 0, x = parseFloat(r.count); i < x; i++) {
+				if (r.useCraftedBy) {
+					for (let i = 0, x = parseFloat(r.count); i < x; i++) {
 						this.addToCart(lists.recipes[lists.recipesIndex[r.createdBy]]);
 					}
 				} else {
-					this.shoppingCart.reagents.push({'itemID': r.itemID, 'name': r.name, 'count': parseFloat(r.count), 'useCraftedBy': r.useCraftedBy});
+					this.shoppingCart.reagents.push({ 'itemID': r.itemID, 'name': r.name, 'count': parseFloat(r.count), 'useCraftedBy': r.useCraftedBy });
 				}
 			}
 		});
 	}
 
-	removeFromCart(spellID): void {
+	/**
+	 * Removes a recipe and it's reagents from the shopping cart
+	 * @param {string} spellID
+	 */
+	removeFromCart(spellID: string): void {
 		console.log('Removed ' + spellID);
 		let recipeIndex = 0,
 			reagentRemoveList = [],
 			recipe = {};
 		// Fetching the recipe's index key
-		if(this.keyValueInArray(this.shoppingCart.recipes, 'spellID', spellID)) {
+		if (this.keyValueInArray(this.shoppingCart.recipes, 'spellID', spellID)) {
 			recipeIndex = this.reagentIndex;
 			recipe = this.shoppingCart.recipes[recipeIndex];
 		}
 
 		// Removing reagents
 		recipe['reagents'].forEach(r => {
-			if(this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
+			if (this.keyValueInArray(this.shoppingCart.reagents, 'itemID', r.itemID)) {
 				this.shoppingCart.reagents[this.reagentIndex].count -= (parseFloat(r.count) * recipe['quantity']);
-				if(this.shoppingCart.reagents[this.reagentIndex].count <= 0) {
+				if (this.shoppingCart.reagents[this.reagentIndex].count <= 0) {
 					this.shoppingCart.reagents.splice(this.reagentIndex, 1);
 				}
 			}
@@ -390,6 +458,9 @@ export class CraftingComponent extends ParentAuctionComponent{
 		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
 	}
 
+	/**
+	 * Clears the shopping cart
+	 */
 	clearCart(): void {
 		this.shoppingCart.reagents = [];
 		this.shoppingCart.recipes = [];
@@ -399,6 +470,9 @@ export class CraftingComponent extends ParentAuctionComponent{
 		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
 	}
 
+	/**
+	 * Calculates the cost of the shopping cart
+	 */
 	setShoppingCartCost(): void {
 		this.shoppingCart.buyout = 0;
 		this.shoppingCart.cost = 0;
@@ -407,7 +481,7 @@ export class CraftingComponent extends ParentAuctionComponent{
 			this.shoppingCart.buyout += this.getMinPrice(v.itemID) * v.quantity;
 
 			v.reagents.forEach(reagent => {
-				if(reagent.useCraftedBy) {
+				if (reagent.useCraftedBy) {
 					console.log(this.getMinPrice(reagent.itemID), reagent.count);
 					this.shoppingCart.buyout -= (this.getMinPrice(reagent.itemID) * parseFloat(reagent.count)) * v.quantity;
 				}
@@ -422,17 +496,30 @@ export class CraftingComponent extends ParentAuctionComponent{
 		this.shoppingCart.profit = this.shoppingCart.buyout - this.shoppingCart.cost;
 	}
 
-	percentOf(val1, val2) {
-		if(val1 === 0) {
+	/**
+	 * Gets the percent diff between two values
+	 * @param  {number} val1
+	 * @param  {number} val2
+	 * @return {number}
+	 */
+	percentOf(val1: number, val2: number): number {
+		if (val1 === 0) {
 			return 0;
 		}
 		return Math.round((val2 / val1) * 100);
 	}
 
-	keyValueInArray(array, key, value): boolean {
+	/**
+	 * Checks if a key exists in an array
+	 * @param  {[object]}  array [description]
+	 * @param  {string}  key   [description]
+	 * @param  {any}  value    The value we are looking for
+	 * @return {boolean}
+	 */
+	keyValueInArray(array, key: string, value): boolean {
 		let contains = false, index = 0;
 		array.forEach(o => {
-			if(o[key] === value ) {
+			if (o[key] === value) {
 				contains = true;
 				this.reagentIndex = index;
 			}
