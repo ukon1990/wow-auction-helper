@@ -33,7 +33,9 @@ export class AppComponent implements OnInit {
 
 		// Google Analytics
 		router.events.subscribe( (event: Event) => {
-			if (event instanceof NavigationEnd) {
+			if (event instanceof NavigationEnd &&
+				router.url !== '/' &&
+				window.location.hostname !== 'localhost') {
 				ga('set', 'page', router.url);
 				ga('send', 'pageview');
 			}
