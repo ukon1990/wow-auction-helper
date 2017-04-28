@@ -5,7 +5,7 @@ import { ItemService } from './services/item';
 import { calcCost, user, lists, getPet, db } from './utils/globals';
 import { IUser } from './utils/interfaces';
 
-declare const ga: Function;
+declare  const ga: Function;
 
 @Component({
 	selector: 'app-root',
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
 		this.u = user;
 
 		// Google Analytics
-		router.events.subscribe( (event: Event) => {
+		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
 				router.url !== '/' &&
 				window.location.hostname !== 'localhost') {
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
 			if (localStorage.getItem('darkMode') !== null && localStorage.getItem('darkMode') === 'false') {
 				document
 					.getElementById('custom-style')
-						.setAttribute('href', 'assets/paper.bootstrap.min.css');
+					.setAttribute('href', 'assets/paper.bootstrap.min.css');
 			}
 		} catch (err) {
 			console.log('style', err);
@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
 				localStorage.getItem('api_tsm') !== 'null') {
 				if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
 					this.auctionService.getTSMData().subscribe(result => {
-						result.forEach( r => {
+						result.forEach(r => {
 							lists.tsm[r.Id] = r;
 						});
 					}, err => {
@@ -94,14 +94,14 @@ export class AppComponent implements OnInit {
 					console.log('Loaded TSM from local DB');
 					db.table('tsm').toArray().then(
 						result => {
-							result.forEach( r => {
+							result.forEach(r => {
 								lists.tsm[r.Id] = r;
 							});
 						});
 
-						if (user.apiToUse === 'tsm') {
-							this.downloadPets();
-						}
+					if (user.apiToUse === 'tsm') {
+						this.downloadPets();
+					}
 				}
 			}
 		}
@@ -113,8 +113,8 @@ export class AppComponent implements OnInit {
 			localStorage.getItem('api_wowuction') !== null &&
 			localStorage.getItem('api_wowuction') !== undefined &&
 			localStorage.getItem('api_wowuction').length > 0 &&
-			localStorage.getItem('api_wowuction') !== 'null' ) {
-			if ( new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
+			localStorage.getItem('api_wowuction') !== 'null') {
+			if (new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
 				console.log('Downloading wowuction data');
 				this.auctionService.getWoWuctionData().subscribe(res => {
 					res.forEach(r => {
@@ -127,7 +127,7 @@ export class AppComponent implements OnInit {
 				});
 			} else {
 				console.log('Loading wowuction data from local storage');
-				db.table('wowuction').toArray().then( r => {
+				db.table('wowuction').toArray().then(r => {
 					r.forEach(w => {
 						lists.wowuction[w.id] = w;
 					});
@@ -149,12 +149,12 @@ export class AppComponent implements OnInit {
 	}
 
 	downloadPets() {
-		this.downloadingText = 'Downloading pets';
 		db.table('pets').toArray().then(pets => {
 			if (pets.length > 0) {
 				this.buildPetArray(pets);
 				this.downloadItems();
 			} else {
+				this.downloadingText = 'Downloading pets';
 				this.itemService.getPets()
 					.subscribe(p => {
 						this.buildPetArray(p);
@@ -241,17 +241,17 @@ export class AppComponent implements OnInit {
 			console.log('Downloading auctions');
 			if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
 				this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
-				.subscribe(a => {
-					this.downloadingText = '';
-					this.buildAuctionArray(a.auctions);
-				});
+					.subscribe(a => {
+						this.downloadingText = '';
+						this.buildAuctionArray(a.auctions);
+					});
 			} else {
-			this.downloadingText = 'Loading auctions from local storage';
+				this.downloadingText = 'Loading auctions from local storage';
 				console.log('No new auction data available so loaded from local storage.');
 				db.table('auctions').toArray().then(
 					result => {
 						this.downloadingText = '';
-						if(result.length > 0) {
+						if (result.length > 0) {
 							this.buildAuctionArray(result);;
 						} else {
 							localStorage.setItem('timestamp_auctions', '0');
@@ -302,7 +302,7 @@ export class AppComponent implements OnInit {
 					o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
 					o['regionSaleAvg'] = lists.tsm[o.item].RegionSaleAvg;
 					o['vendorSell'] = lists.tsm[o.item].VendorSell;
-				} catch(err) {
+				} catch (err) {
 					console.log(err);
 				}
 
@@ -367,18 +367,18 @@ export class AppComponent implements OnInit {
 	attemptDownloadOfMissingRecipes(list): void {
 		let recipes = {};
 		list.forEach(re => {
-			if(re !== null) {
+			if (re !== null) {
 				recipes[re.spellID] = re.spellID;
 			}
 		});
 
-		for(let i in lists.items) {
-			if(lists.items[i].itemSource.sourceType === 'CREATED_BY_SPELL' &&
+		for (let i in lists.items) {
+			if (lists.items[i].itemSource.sourceType === 'CREATED_BY_SPELL' &&
 				recipes[lists.items[i].itemSource.sourceId] === undefined) {
-					console.log('Attempting to add ' + lists.items[i].name);
-					this.itemService.getRecipe(lists.items[i].id).subscribe(shit => {
-						console.log(i);
-					});
+				console.log('Attempting to add ' + lists.items[i].name);
+				this.itemService.getRecipe(lists.items[i].id).subscribe(shit => {
+					console.log(i);
+				});
 			}
 		}
 	}
@@ -412,7 +412,7 @@ export class AppComponent implements OnInit {
 			.subscribe(
 			r => {
 				lists.items[r['id']] = r;
-		});
+			});
 	}
 
 	buildPetArray(pets) {
