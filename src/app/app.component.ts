@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
-import { calcCost, user, lists, getPet, db } from './utils/globals';
+import { calcCost, user, lists, getPet, db, copperToArray } from './utils/globals';
 import { IUser } from './utils/interfaces';
+import Push from 'push.js';
 
-declare  const ga: Function;
+declare const  ga: Function;
 
 @Component({
 	selector: 'app-root',
@@ -252,7 +253,7 @@ export class AppComponent implements OnInit {
 					result => {
 						this.downloadingText = '';
 						if (result.length > 0) {
-							this.buildAuctionArray(result);;
+							this.buildAuctionArray(result);
 						} else {
 							localStorage.setItem('timestamp_auctions', '0');
 							this.getAuctions();
@@ -263,7 +264,8 @@ export class AppComponent implements OnInit {
 	}
 
 	buildAuctionArray(arr) {
-		let list = [];
+		let list = [], undercuttedAuctions = 0, itemsBelowVendor = {quantity: 0, totalValue: 0};
+
 		lists.myAuctions = [];
 		for (let o of arr) {
 			if (o['buyout'] === 0) {
@@ -354,11 +356,36 @@ export class AppComponent implements OnInit {
 					lists.myAuctions.push(o);
 				}
 			}
-
-
-			this.addToContextList(o);
+			// Gathering data for auctions below vendor price
+			if (lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
+				itemsBelowVendor.quantity++;
+				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
+			}
+			// TODO: this.addToContextList(o);
 		}
-		console.log(JSON.stringify(this.allItemSources));
+
+		if (itemsBelowVendor.quantity > 0) {
+			this.notification(
+				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
+				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`);
+		}
+
+		if (this.u.character !== undefined) {
+			// Notifying the user if they have been undercutted or not
+			lists.myAuctions.forEach(a => {
+				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== user.character) {
+					undercuttedAuctions++;
+					console.log(`${lists.auctions[a.item].owner} !== ${user.character}`);
+				}
+
+			});
+			if (undercuttedAuctions > 0) {
+				this.notification(
+					'You have been undercutted!',
+					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`);
+			}
+		}
+
 		lists.auctions = list;
 		this.getCraftingCosts();
 		lists.isDownloading = false;
@@ -431,6 +458,7 @@ export class AppComponent implements OnInit {
 			oldTime = this.timeSinceLastModified;
 		// Checking if there is a new update available
 		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
+			this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
 			this.getAuctions();
 		}
 
@@ -539,5 +567,17 @@ export class AppComponent implements OnInit {
 				this.allItemSources[o.context] = o.context + ' - ' + o.item + ' - ' + o.name;
 				break;
 		}
+	}
+
+	notification(title: string, message: string) {
+		Push.create(title, {
+			body: message,
+			icon: 'assets/icons/logo_32.svg',
+			timeout: 10000,
+			onClick: function() {
+				window.focus();
+				this.close();
+			}
+		});
 	}
 }
