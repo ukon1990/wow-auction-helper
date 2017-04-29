@@ -493,10 +493,20 @@ export class AppComponent implements OnInit {
 	}
 
 	getCraftingCosts(): void {
+		let potentialProfit = 0;
 		console.log('starting crafting cost calc');
 		for (let c of lists.recipes) {
 			calcCost(c);
+			if (c.profit > 0) {
+				potentialProfit += c.profit;
+			}
 		}
+		/* TODO: Implement later
+		if (potentialProfit > 0) {
+			this.notification(
+				`Potential profit in crafting`,
+				`Potential profit: ${copperToArray(potentialProfit)}`);
+		}*/
 		console.log('Done calculating crafting costs');
 	}
 

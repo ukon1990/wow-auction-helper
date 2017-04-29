@@ -16,6 +16,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 
 import { AuctionService } from './services/auctions';
 import { ItemService } from './services/item';
+import { WatchlistComponent } from './components/watchlist/watchlist.component';
 
 @NgModule({
 	declarations: [
@@ -26,7 +27,8 @@ import { ItemService } from './services/item';
 		MyAuctionsComponent,
 		TradeVendorComponent,
 		AboutComponent,
-		SettingsComponent
+		SettingsComponent,
+		WatchlistComponent
 	],
 	imports: [
 		BrowserModule,
@@ -49,6 +51,9 @@ import { ItemService } from './services/item';
 			}, {
 				path: 'trade-vendor',
 				component: TradeVendorComponent
+			}, {
+				path: 'watchlist',
+				component: WatchlistComponent
 			}, {
 				path: 'about',
 				component: AboutComponent
