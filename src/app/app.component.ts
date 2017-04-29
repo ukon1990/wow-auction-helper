@@ -31,7 +31,6 @@ export class AppComponent implements OnInit {
 		private itemService: ItemService,
 		private router: Router) {
 		this.u = user;
-
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
@@ -358,12 +357,13 @@ export class AppComponent implements OnInit {
 			}
 			// Gathering data for auctions below vendor price
 			if (lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
+				console.log(true);
 				itemsBelowVendor.quantity++;
 				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
 			}
 			// TODO: this.addToContextList(o);
 		}
-
+		console.log('Items below vendor',itemsBelowVendor.quantity);
 		if (itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
@@ -580,6 +580,7 @@ export class AppComponent implements OnInit {
 	}
 
 	notification(title: string, message: string) {
+		console.log(title, message);
 		Push.create(title, {
 			body: message,
 			icon: 'assets/icons/logo_32.svg',

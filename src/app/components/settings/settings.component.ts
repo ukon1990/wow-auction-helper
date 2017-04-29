@@ -7,7 +7,7 @@ import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray, db } from '../../utils/globals';
 
 @Component({
-	selector: 'settings',
+	selector: 'app-settings',
 	templateUrl: 'settings.component.html',
 	providers: [RealmService, AuctionService]
 })
@@ -20,6 +20,7 @@ export class SettingsComponent implements OnInit {
 	importedSettings: string;
 	exportedSettings: string;
 	originalRealm: string;
+	userCharacters = [];
 	darkMode = true;
 
 	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService, private auctionService: AuctionService) {

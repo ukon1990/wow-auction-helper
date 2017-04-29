@@ -12,7 +12,8 @@ export let lists = {
 	recipes: [],
 	recipesIndex: [],
 	customPrices: {},
-	watchlist: {}
+	watchlist: {},
+	myRecipes: []
 };
 export let user: IUser = {
 	'region': 'eu',
