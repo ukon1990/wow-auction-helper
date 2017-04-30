@@ -15,6 +15,7 @@ import { IUser, IAuction } from '../../utils/interfaces';
 
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
 	crafts = [];
+	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
 
 	reagentIndex = 0;
@@ -42,7 +43,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		super();
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
-			'searchQuery': query !== undefined ? query.searchQuery : '',
+			'searchQuery': query.searchQuery !== undefined ? query.searchQuery : '',
+			'onlyMyRecipes': query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
 			'profession': query !== undefined ? query.profession : 'All',
 			'profit': query !== undefined && query.profit !== null ? parseFloat(query.profit) : 0,
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
@@ -53,6 +55,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		if (sc !== null && sc !== undefined && sc !== 'undefined') {
 			this.shoppingCart = JSON.parse(sc);
 		}
+		lists.myRecipes.forEach( recipeID => {
+			this.myRecipes[recipeID] = 'owned';
+		});
+
 		this.titleService.setTitle('Wah - Crafting');
 	}
 
@@ -135,6 +141,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		let isAffected = false,
 			match = false;
 		const searchQuery = this.filterForm.value['searchQuery'],
+			onlyMyRecipes = this.filterForm.value['onlyMyRecipes'],
 			profession = this.filterForm.value['profession'],
 			profit = this.filterForm.value['profit'] || 0,
 			demand = this.filterForm.value['demand'] || 0,
@@ -144,9 +151,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			'query_crafting',
 			JSON.stringify(
 				{
-					'searchQuery': searchQuery, 'profession': profession,
+					'searchQuery': searchQuery, 'onlyMyRecipes': onlyMyRecipes, 'profession': profession,
 					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
 				}));
+		console.log(onlyMyRecipes, this.myRecipes);
 
 		lists.recipes.forEach(r => {
 			isAffected = false;
@@ -166,6 +174,14 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					match = true;
 				} else {
 					match = false;
+				}
+
+				if (match && onlyMyRecipes) {
+					if (this.myRecipes[r.spellID] !== undefined) {
+						match = true;
+					} else {
+						match = false;
+					}
 				}
 
 				if (match && searchQuery.length > 0) {

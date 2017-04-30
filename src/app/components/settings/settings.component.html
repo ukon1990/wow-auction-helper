@@ -64,6 +64,20 @@
 
 			<div class="col-md-4">
 				<h3>Crafting</h3>
+				<strong>Your crafters</strong>
+				<em>
+					This allows for you to only display recipes you
+					know and also allows for notifications regarding recipes you know.
+				</em>
+				<div class="input-group input-group-sm">
+					<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [(ngModel)]="userCrafter"/>
+					<span class="input-group-addon" id="basic-addon1" (click)="addCrafter()">Add crafter</span>
+				</div>
+				<ul>
+					<li *ngIf="userCrafters.length === 0">You have no registered crafters</li>
+					<li *ngFor="let crafter of userCrafters">{{ crafter }}</li>
+				</ul>
+
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">
 						Use market value instead of buyout if buyout >=

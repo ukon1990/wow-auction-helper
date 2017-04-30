@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm';
 import { AuctionService } from '../../services/auctions';
+import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray, db } from '../../utils/globals';
@@ -20,10 +21,13 @@ export class SettingsComponent implements OnInit {
 	importedSettings: string;
 	exportedSettings: string;
 	originalRealm: string;
-	userCharacters = [];
+	userCrafters = [];
+	userCrafter: string;
+	userCraftersChanged = false;
 	darkMode = true;
 
-	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService, private auctionService: AuctionService) {
+	constructor(private ac: AppComponent, private titleService: Title,
+		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
 		this.user = user;
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
@@ -36,6 +40,7 @@ export class SettingsComponent implements OnInit {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
 		this.originalRealm = localStorage.getItem('realm');
+		this.userCrafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
 		this.titleService.setTitle('Wah - Settings');
 	}
 
@@ -57,13 +62,26 @@ export class SettingsComponent implements OnInit {
 
 	saveUserData(): void {
 		const oldTSMKey = localStorage.getItem('api_tsm') || '';
-		console.log(this.user, this.user.apiToUse);
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
 		localStorage.setItem('character', this.user.character);
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
+		localStorage.setItem('crafters', this.userCrafters.toString());
+
+		if (this.userCraftersChanged && this.userCrafters.length > 0) {
+			this.characterService.getCharacters().subscribe(recipes => {
+				if (typeof recipes.recipes === 'object') {
+					Object.keys(recipes.recipes).forEach(v => {
+						lists.myRecipes.push(recipes.recipes[v]);
+					});
+				} else {
+					lists.myRecipes = recipes.recipes;
+				}
+				localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+			});
+		}
 
 		this.customPrices.forEach(cp => {
 			if (cp.itemID !== null) {
@@ -154,6 +172,12 @@ export class SettingsComponent implements OnInit {
 
 	addCustomPrice(): void {
 
+	}
+
+	addCrafter() {
+		this.userCraftersChanged = true;
+		this.userCrafters.push(this.userCrafter);
+		this.userCrafter = '';
 	}
 
 	copperToArray = copperToArray;

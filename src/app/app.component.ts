@@ -66,6 +66,9 @@ export class AppComponent implements OnInit {
 				this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
 				this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
 				this.u.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
+				if (localStorage.getItem('crafters_recipes') !== undefined) {
+					lists.myRecipes = localStorage.getItem('crafters_recipes').split(',');
+				}
 			} catch (e) {
 				console.log('app.component init', e);
 			}

@@ -12,8 +12,11 @@ export class CharacterService {
 
 	getCharacters() {
 		return this.http
-			.get('GetCharacterProfession.php?character=stinson&realm=emerald-dream&region=eu')
-				.map(r => r.json(), error => console.log(error));
+			.get(`http://localhost/wow-api/GetCharacterProfession.php?character=${localStorage.crafters}&realm=emerald-dream&region=eu`)
+				.map(r => {
+					console.log(r.json());
+					return r.json();
+				}, error => console.log(error));
 	}
 
 }
