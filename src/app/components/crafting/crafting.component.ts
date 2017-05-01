@@ -154,7 +154,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					'searchQuery': searchQuery, 'onlyMyRecipes': onlyMyRecipes, 'profession': profession,
 					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
 				}));
-		console.log(onlyMyRecipes, this.myRecipes);
 
 		lists.recipes.forEach(r => {
 			isAffected = false;

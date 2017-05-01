@@ -70,12 +70,18 @@
 					know and also allows for notifications regarding recipes you know.
 				</em>
 				<div class="input-group input-group-sm">
+					<span *ngIf="!userCraftersChanged" class="btn btn-default input-group-addon" (click)="getCraftersRecipes()">Update crafters recipes</span>
 					<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [(ngModel)]="userCrafter"/>
-					<span class="input-group-addon" id="basic-addon1" (click)="addCrafter()">Add crafter</span>
+					<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCrafter()"></span>
 				</div>
-				<ul>
-					<li *ngIf="userCrafters.length === 0">You have no registered crafters</li>
-					<li *ngFor="let crafter of userCrafters">{{ crafter }}</li>
+				<ul class="list-group">
+					<li *ngIf="user.crafters.length === 0" class="list-group-item">
+						You have no registered crafters
+					</li>
+					<li *ngFor="let crafter of user.crafters; let i = index;" class="list-group-item">
+						{{ crafter }}<span *ngIf="userCraftersDownloading"> - downloading</span>
+						<i class="glyphicon glyphicon-trash pull-right" (click)="removeCrafter(i)"></i>
+					</li>
 				</ul>
 
 				<div class="input-group input-group-sm">
@@ -91,35 +97,35 @@
 				</div>
 				<strong>Custom item prices</strong>
 				<p>Using trade vendor panel values coming soon™</p>
-				<ul>
-					<li *ngFor="let cp of customPrices">
+				<ul class="list-group">
+					<li *ngFor="let cp of customPrices" class="list-group-item">
 						{{cp.name}}({{cp.itemID}})
 						<input type="number" [(ngModel)]="cp.price"/>
 						{{copperToArray(cp.price)}}
+						<i class="glyphicon glyphicon-trash pull-right"></i>
 					</li>
 				</ul>
+			</div>
+			<div class="col-md-4">
+				<h3>Stored data</h3>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<button class="btn btn-default" (click)="importUserData()">Import settings</button>
+					</span>
+					<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
+				</div>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
+					</span>
+					<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
+				</div>
+
+				<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
 			</div>
 		</div>
 
 		<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
 		<button class="btn btn-secondary" (click)="changeStyle()">Turn dark mode {{ darkMode ? 'off' : 'on' }}</button>
-
-		<div class="row col-md-12">
-			<h3>Stored data</h3>
-			<div class="input-group">
-				<span class="input-group-btn">
-					<button class="btn btn-default" (click)="importUserData()">Import settings</button>
-				</span>
-				<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
-			</div>
-			<div class="input-group">
-				<span class="input-group-btn">
-					<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
-				</span>
-				<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
-			</div>
-
-			<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
-		</div>
 	</div>
 </div>

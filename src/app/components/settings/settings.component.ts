@@ -21,9 +21,9 @@ export class SettingsComponent implements OnInit {
 	importedSettings: string;
 	exportedSettings: string;
 	originalRealm: string;
-	userCrafters = [];
 	userCrafter: string;
 	userCraftersChanged = false;
+	userCraftersDownloading = false;
 	darkMode = true;
 
 	constructor(private ac: AppComponent, private titleService: Title,
@@ -40,7 +40,6 @@ export class SettingsComponent implements OnInit {
 			this.darkMode = JSON.parse(localStorage.getItem('darkMode'));
 		}
 		this.originalRealm = localStorage.getItem('realm');
-		this.userCrafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
 		this.titleService.setTitle('Wah - Settings');
 	}
 
@@ -68,19 +67,10 @@ export class SettingsComponent implements OnInit {
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
-		localStorage.setItem('crafters', this.userCrafters.toString());
+		localStorage.setItem('crafters', this.user.crafters.toString());
 
-		if (this.userCraftersChanged && this.userCrafters.length > 0) {
-			this.characterService.getCharacters().subscribe(recipes => {
-				if (typeof recipes.recipes === 'object') {
-					Object.keys(recipes.recipes).forEach(v => {
-						lists.myRecipes.push(recipes.recipes[v]);
-					});
-				} else {
-					lists.myRecipes = recipes.recipes;
-				}
-				localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
-			});
+		if (this.userCraftersChanged && this.user.crafters !== undefined && this.user.crafters.length > 0) {
+			this.getCraftersRecipes();
 		}
 
 		this.customPrices.forEach(cp => {
@@ -154,6 +144,10 @@ export class SettingsComponent implements OnInit {
 		user.apiToUse = undefined;
 		localStorage.removeItem('crafting_buyout_limit');
 		user.buyoutLimit = 200;
+		localStorage.removeItem('crafters');
+		user.crafters = [];
+		localStorage.removeItem('crafters_recipes');
+		lists.myRecipes = [];
 	}
 
 	changeStyle(): void {
@@ -176,8 +170,27 @@ export class SettingsComponent implements OnInit {
 
 	addCrafter() {
 		this.userCraftersChanged = true;
-		this.userCrafters.push(this.userCrafter);
+		this.user.crafters.push(this.userCrafter);
 		this.userCrafter = '';
+	}
+
+	removeCrafter(index: number) {
+		this.user.crafters.splice(index, 1);
+	}
+
+	getCraftersRecipes(): void {
+		this.userCraftersDownloading = true;
+		this.characterService.getCharacters().subscribe(recipes => {
+			this.userCraftersDownloading = false;
+			if (typeof recipes.recipes === 'object') {
+				Object.keys(recipes.recipes).forEach(v => {
+					lists.myRecipes.push(recipes.recipes[v]);
+				});
+			} else {
+				lists.myRecipes = recipes.recipes;
+			}
+			localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+		});
 	}
 
 	copperToArray = copperToArray;

@@ -23,8 +23,9 @@ export let user: IUser = {
 	'apiWoWu': undefined,
 	'apiToUse': 'none',
 	'customPrices': [],
-	'buyoutLimit': 200
-}
+	'buyoutLimit': 200,
+	'crafters': []
+};
 
 
 lists.customPrices = {'124124': 3000000, '120945': 500000, '115524': 200000};
