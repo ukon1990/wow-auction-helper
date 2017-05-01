@@ -4,6 +4,10 @@
 	</div>
 	<div class="panel-body">
 		<div class="col-md-12">
+			<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
+			<button class="btn btn-secondary" (click)="changeStyle()">Turn dark mode {{ darkMode ? 'off' : 'on' }}</button>
+		</div>
+		<div class="col-md-12">
 			<div class="col-md-4">
 				<h3>Realm & Character</h3>
 				<p>
@@ -34,9 +38,7 @@
 					<input class="form-control col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" aria-describedby="basic-addon1"
 					/>
 				</div>
-			</div>
 
-			<div class="col-md-4">
 				<h3>API</h3>
 				<p>
 					If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
@@ -60,6 +62,22 @@
 						<!--<option value="wowuction">WoWuction</option>-->
 					</select>
 				</div>
+
+				<h3>Stored data</h3>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<button class="btn btn-default" (click)="importUserData()">Import settings</button>
+					</span>
+					<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
+				</div>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
+					</span>
+					<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
+				</div>
+
+				<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
 			</div>
 
 			<div class="col-md-4">
@@ -98,34 +116,14 @@
 				<strong>Custom item prices</strong>
 				<p>Using trade vendor panel values coming soon™</p>
 				<ul class="list-group">
-					<li *ngFor="let cp of customPrices" class="list-group-item">
-						{{cp.name}}({{cp.itemID}})
+					<li *ngFor="let cp of customPrices; let i = index;" class="list-group-item">
+						{{getItemName(cp.itemID)}}({{cp.itemID}})
 						<input type="number" [(ngModel)]="cp.price"/>
 						{{copperToArray(cp.price)}}
-						<i class="glyphicon glyphicon-trash pull-right"></i>
+						<i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i>
 					</li>
 				</ul>
 			</div>
-			<div class="col-md-4">
-				<h3>Stored data</h3>
-				<div class="input-group">
-					<span class="input-group-btn">
-						<button class="btn btn-default" (click)="importUserData()">Import settings</button>
-					</span>
-					<input type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings">
-				</div>
-				<div class="input-group">
-					<span class="input-group-btn">
-						<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
-					</span>
-					<input type="text" class="form-control" placeholder="The exported string goes here" [(ngModel)]="exportedSettings">
-				</div>
-
-				<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
-			</div>
 		</div>
-
-		<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
-		<button class="btn btn-secondary" (click)="changeStyle()">Turn dark mode {{ darkMode ? 'off' : 'on' }}</button>
 	</div>
 </div>

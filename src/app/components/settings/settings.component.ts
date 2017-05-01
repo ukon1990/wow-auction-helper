@@ -168,6 +168,10 @@ export class SettingsComponent implements OnInit {
 
 	}
 
+	removeCustomPrice(index: number): void {
+		this.customPrices.splice(index, 1);
+	}
+
 	addCrafter() {
 		this.userCraftersChanged = true;
 		this.user.crafters.push(this.userCrafter);
@@ -191,6 +195,14 @@ export class SettingsComponent implements OnInit {
 			}
 			localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
 		});
+	}
+
+	getItemName(itemID: string): string {
+		if (lists.items[itemID] === undefined) {
+			return 'undefined';
+		} else {
+			return lists.items[itemID].name;
+		}
 	}
 
 	copperToArray = copperToArray;
