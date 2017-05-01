@@ -30,8 +30,6 @@ export class AppComponent implements OnInit {
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService,
 		private router: Router) {
-		this.u = user;
-
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
@@ -59,21 +57,25 @@ export class AppComponent implements OnInit {
 		if (this.isRealmSet()) {
 			// Loading user settings
 			try {
-				this.u.region = localStorage.getItem('region') || undefined;
-				this.u.realm = localStorage.getItem('realm') || undefined;
-				this.u.character = localStorage.getItem('character') || undefined;
-				this.u.apiTsm = localStorage.getItem('api_tsm') || undefined;
-				this.u.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
-				this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
-				this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
-				this.u.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
+				user.region = localStorage.getItem('region') || undefined;
+				user.realm = localStorage.getItem('realm') || undefined;
+				user.character = localStorage.getItem('character') || undefined;
+				user.apiTsm = localStorage.getItem('api_tsm') || undefined;
+				user.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
+				user.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
+				user.apiToUse = localStorage.getItem('api_to_use') || 'none';
+				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
+				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
+				if (localStorage.getItem('crafters_recipes') !== undefined) {
+					lists.myRecipes = localStorage.getItem('crafters_recipes').split(',');
+				}
 			} catch (e) {
 				console.log('app.component init', e);
 			}
 
 			this.checkForUpdate();
 			if (
-				this.u.apiToUse === 'tsm' &&
+				user.apiToUse === 'tsm' &&
 				localStorage.getItem('api_tsm') !== null &&
 				localStorage.getItem('api_tsm') !== undefined &&
 				localStorage.getItem('api_tsm').length > 0 &&
@@ -110,7 +112,7 @@ export class AppComponent implements OnInit {
 		setInterval(() => this.checkForUpdate(), 60000);
 
 		if (
-			this.u.apiToUse === 'wowuction' &&
+			user.apiToUse === 'wowuction' &&
 			localStorage.getItem('api_wowuction') !== null &&
 			localStorage.getItem('api_wowuction') !== undefined &&
 			localStorage.getItem('api_wowuction').length > 0 &&
@@ -348,8 +350,8 @@ export class AppComponent implements OnInit {
 			}
 
 			// Storing a users auctions in a list
-			if (this.u.character !== undefined) {
-				if (o.owner === this.u.character) {
+			if (user.character !== undefined) {
+				if (o.owner === user.character) {
 					if (lists.myAuctions === undefined) {
 						lists.myAuctions = [];
 					}
@@ -358,19 +360,20 @@ export class AppComponent implements OnInit {
 			}
 			// Gathering data for auctions below vendor price
 			if (lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
+				console.log(true);
 				itemsBelowVendor.quantity++;
 				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
 			}
 			// TODO: this.addToContextList(o);
 		}
-
+		console.log('Items below vendor',itemsBelowVendor.quantity);
 		if (itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
 				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`);
 		}
 
-		if (this.u.character !== undefined) {
+		if (user.character !== undefined) {
 			// Notifying the user if they have been undercutted or not
 			lists.myAuctions.forEach(a => {
 				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== user.character) {
@@ -580,6 +583,7 @@ export class AppComponent implements OnInit {
 	}
 
 	notification(title: string, message: string) {
+		console.log(title, message);
 		Push.create(title, {
 			body: message,
 			icon: 'assets/icons/logo_32.svg',

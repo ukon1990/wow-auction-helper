@@ -32,4 +32,5 @@ export class IUser {
 	customPrices?: any;
 	apiToUse: string;
 	buyoutLimit: number;
+	crafters: any[];
 }
