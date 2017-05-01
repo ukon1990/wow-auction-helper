@@ -115,15 +115,19 @@
 				</div>
 				<strong>Custom item prices</strong>
 				<p>Using trade vendor panel values coming soon™</p>
-				<div class="input-group input-group-sm">
-					<input class="form-control col-md-2"
-						name="Item"
-						placeholder="Search for the desiered item"
-						type="text"
-						aria-describedby="basic-addon1"
-						[(ngModel)]="customPriceSearchQuery"/>
-					<span class="btn btn-default input-group-addon glyphicon glyphicon-search" id="basic-addon1" (click)="searchDB()"></span>
-				</div>
+				<form class="form-inline"(ngSubmit)="searchDB()" [formGroup]="customPriceForm">
+					<div class="input-group input-group-sm col-md-12">
+						<label class="sr-only" for="exampleInputAmount">Search for an item</label>
+						<input type="text" class="form-control"
+							name="Item"
+							placeholder="Search for the desiered item"
+							type="text"
+							aria-describedby="basic-addon1"
+							[formControl]="customPriceForm.controls['query']">
+						<i class="btn btn-default input-group-addon glyphicon glyphicon-search" id="sizing-addon1" (click)="searchDB()">
+						</i>
+					</div>
+				</form>
 				<ul class="list-group">
 					<li class="list-group-item" *ngFor="let item of customPriceQueryItems">
 						{{ item.name}}
