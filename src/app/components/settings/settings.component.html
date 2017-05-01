@@ -115,14 +115,35 @@
 				</div>
 				<strong>Custom item prices</strong>
 				<p>Using trade vendor panel values coming soon™</p>
+				<div class="input-group input-group-sm">
+					<input class="form-control col-md-2"
+						name="Item"
+						placeholder="Search for the desiered item"
+						type="text"
+						aria-describedby="basic-addon1"
+						[(ngModel)]="customPriceSearchQuery"/>
+					<span class="btn btn-default input-group-addon glyphicon glyphicon-search" id="basic-addon1" (click)="searchDB()"></span>
+				</div>
 				<ul class="list-group">
-					<li *ngFor="let cp of customPrices; let i = index;" class="list-group-item">
-						{{getItemName(cp.itemID)}}({{cp.itemID}})
-						<input type="number" [(ngModel)]="cp.price"/>
-						{{copperToArray(cp.price)}}
-						<i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i>
+					<li class="list-group-item" *ngFor="let item of customPriceQueryItems">
+						{{ item.name}}
+						<i class="glyphicon glyphicon-plus pull-right" (click)="addCustomPrice(item)"></i>
 					</li>
 				</ul>
+				<table class="table table-striped">
+					<tr>
+						<th>item</th>
+						<th>Price copper input</th>
+						<th>Value in gold</th>
+						<th>Action</th>
+					</tr>
+					<tr *ngFor="let cp of customPrices; let i = index;">
+						<td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
+						<td><input type="number" [(ngModel)]="cp.price"/></td>
+						<td>{{copperToArray(cp.price)}}</td>
+						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>

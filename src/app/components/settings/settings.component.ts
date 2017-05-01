@@ -16,6 +16,8 @@ export class SettingsComponent implements OnInit {
 	user: IUser;
 	customPrices = [];
 	newCustomPrice = {'itemID': 0};
+	customPriceSearchQuery: string;
+	customPriceQueryItems = [];
 	realmListEu = [];
 	realmListUs = [];
 	importedSettings: string;
@@ -164,8 +166,24 @@ export class SettingsComponent implements OnInit {
 		this.ac.getAuctions();
 	}
 
-	addCustomPrice(): void {
+	addCustomPrice(item: any): void {
+		this.customPrices.push({
+			'itemID': item.id,
+			'name': item.name,
+			'price': 20000});
+	}
 
+	searchDB() {
+		db.table('items')
+			.where('name')
+			.startsWithIgnoreCase(this.customPriceSearchQuery)
+			.limit(2)
+			.toArray()
+			.then(i => {
+				this.customPriceQueryItems = i;
+			}, e => {
+				console.log(e);
+			});
 	}
 
 	removeCustomPrice(index: number): void {
