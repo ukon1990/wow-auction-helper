@@ -1,0 +1,47 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Watchlist</h2>
+	</div>
+	<div class="panel-body">
+		<p>
+			You will be notified of any item on your watchlisth, that are below your defined threshold. If you don't get notifications, you might have disabeled it in your browser.
+		</p>
+		<form class="input-group" (ngSubmit)="searchDB()">
+			<span class="input-group-addon" id="basic-addon1">Item name</span>
+			<input type="text" [formControl]="filterForm.controls['searchQuery']" class="form-control" placeholder="Item name starts with" aria-describedby="basic-addon1">
+			<span class="input-group-btn">
+		        <button class="btn btn-default" type="submit">Search</button>
+	      </span>
+		</form>
+
+		<table class="table table-striped">
+			<tr>
+				<th>Item</th>
+				<th>Alert price in copper</th>
+				<th>Alert price</th>
+				<th>Action</th>
+			</tr>
+			<tr *ngFor="let item of queryItems">
+				<td>{{ item.name }}</td>
+				<td><input type="number" [(ngModel)]="item.value"/></td>
+				<td>{{ copperToArray(item.value || 0) }}</td>
+				<td><i class="glyphicon glyphicon-plus" aria-hidden="true" (click)="addToWatchlist(item)">Add</i></td>
+			</tr>
+		</table>
+
+		<table class="table table-striped">
+			<tr>
+				<th>Item</th>
+				<th>Alert price in copper</th>
+				<th>Alert price</th>
+				<th>Action</th>
+			</tr>
+			<tr *ngFor="let item of watchlist">
+				<td>{{ item.name }}</td>
+				<td><input type="number" [(ngModel)]="item.belowValue"/></td>
+				<td>{{ copperToArray(item.belowValue) }}</td>
+				<td>edit?</td>
+			</tr>
+		</table>
+	</div>
+</div>

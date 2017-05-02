@@ -1,29 +1,46 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm';
 import { AuctionService } from '../../services/auctions';
+import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToArray, db } from '../../utils/globals';
 
 @Component({
-	selector: 'settings',
+	selector: 'app-settings',
 	templateUrl: 'settings.component.html',
 	providers: [RealmService, AuctionService]
 })
 export class SettingsComponent implements OnInit {
 	user: IUser;
+	customPriceForm: FormGroup;
+	userCrafterForm: FormGroup;
 	customPrices = [];
 	newCustomPrice = {'itemID': 0};
+	customPriceSearchQuery: string;
+	customPriceQueryItems = [];
 	realmListEu = [];
 	realmListUs = [];
 	importedSettings: string;
 	exportedSettings: string;
 	originalRealm: string;
+	userCrafter: string;
+	userCraftersChanged = false;
+	userCraftersDownloading = false;
 	darkMode = true;
 
-	constructor(private ac: AppComponent, private titleService: Title, private rs: RealmService, private auctionService: AuctionService) {
+	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
+		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
 		this.user = user;
+		this.customPriceForm = formBuilder.group({
+			'query': ''
+		});
+		this.userCrafterForm = formBuilder.group({
+			'query': ''
+		});
+
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
 				'itemID': k,
@@ -56,13 +73,17 @@ export class SettingsComponent implements OnInit {
 
 	saveUserData(): void {
 		const oldTSMKey = localStorage.getItem('api_tsm') || '';
-		console.log(this.user, this.user.apiToUse);
 		localStorage.setItem('region', this.user.region);
 		localStorage.setItem('realm', this.user.realm);
 		localStorage.setItem('character', this.user.character);
 		localStorage.setItem('api_tsm', this.user.apiTsm);
 		localStorage.setItem('api_wowuction', this.user.apiWoWu);
 		localStorage.setItem('api_to_use', this.user.apiToUse);
+		localStorage.setItem('crafters', this.user.crafters.toString());
+
+		if (this.userCraftersChanged && this.user.crafters !== undefined && this.user.crafters.length > 0) {
+			this.getCraftersRecipes();
+		}
 
 		this.customPrices.forEach(cp => {
 			if (cp.itemID !== null) {
@@ -135,6 +156,10 @@ export class SettingsComponent implements OnInit {
 		user.apiToUse = undefined;
 		localStorage.removeItem('crafting_buyout_limit');
 		user.buyoutLimit = 200;
+		localStorage.removeItem('crafters');
+		user.crafters = [];
+		localStorage.removeItem('crafters_recipes');
+		lists.myRecipes = [];
 	}
 
 	changeStyle(): void {
@@ -151,8 +176,65 @@ export class SettingsComponent implements OnInit {
 		this.ac.getAuctions();
 	}
 
-	addCustomPrice(): void {
+	addCustomPrice(item: any): void {
+		this.customPrices.push({
+			'itemID': item.id,
+			'name': item.name,
+			'price': 20000});
+	}
 
+	searchDB() {
+		db.table('items')
+			.where('name')
+			.startsWithIgnoreCase(this.customPriceForm.value['query'])
+			.limit(2)
+			.toArray()
+			.then(i => {
+				this.customPriceQueryItems = i;
+			}, e => {
+				console.log(e);
+			});
+	}
+
+	removeCustomPrice(index: number): void {
+		this.customPrices.splice(index, 1);
+	}
+
+	addCrafter() {
+		this.userCraftersChanged = true;
+		this.user.crafters.push(this.userCrafterForm.value['query']);
+		this.userCrafterForm.value['query'] = '';
+	}
+
+	removeCrafter(index: number) {
+		this.user.crafters.splice(index, 1);
+	}
+
+	getMyRecipeCount(): number {
+		return lists.myRecipes.length;
+	}
+
+	getCraftersRecipes(): void {
+		this.userCraftersDownloading = true;
+		this.characterService.getCharacters().subscribe(recipes => {
+			this.userCraftersDownloading = false;
+			if (typeof recipes.recipes === 'object') {
+				Object.keys(recipes.recipes).forEach(v => {
+					lists.myRecipes.push(recipes.recipes[v]);
+				});
+			} else {
+				lists.myRecipes = recipes.recipes;
+			}
+			localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+		});
+	}
+
+	getItemName(itemID: string): string {
+		if (lists.items[itemID] === undefined) {
+			return 'undefined';
+		} else {
+			return lists.items[itemID].name;
+		}
 	}
 
 	copperToArray = copperToArray;

@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
+import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
-import { calcCost, user, lists, getPet, db } from './utils/globals';
+import { calcCost, user, lists, getPet, db, copperToArray } from './utils/globals';
 import { IUser } from './utils/interfaces';
+import Push from 'push.js';
 
-declare  const ga: Function;
+declare const  ga: Function;
 
 @Component({
 	selector: 'app-root',
@@ -27,10 +29,8 @@ export class AppComponent implements OnInit {
 	private allItemSources = [];
 
 	constructor(private auctionService: AuctionService,
-		private itemService: ItemService,
+		private itemService: ItemService, private characterService: CharacterService,
 		private router: Router) {
-		this.u = user;
-
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
@@ -58,21 +58,41 @@ export class AppComponent implements OnInit {
 		if (this.isRealmSet()) {
 			// Loading user settings
 			try {
-				this.u.region = localStorage.getItem('region') || undefined;
-				this.u.realm = localStorage.getItem('realm') || undefined;
-				this.u.character = localStorage.getItem('character') || undefined;
-				this.u.apiTsm = localStorage.getItem('api_tsm') || undefined;
-				this.u.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
-				this.u.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
-				this.u.apiToUse = localStorage.getItem('api_to_use') || 'none';
-				this.u.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
+				user.region = localStorage.getItem('region') || undefined;
+				user.realm = localStorage.getItem('realm') || undefined;
+				user.character = localStorage.getItem('character') || undefined;
+				user.apiTsm = localStorage.getItem('api_tsm') || undefined;
+				user.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
+				user.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
+				user.apiToUse = localStorage.getItem('api_to_use') || 'none';
+				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
+				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
+				if (localStorage.getItem('crafters_recipes')  !== null && localStorage.getItem('crafters_recipes') !== undefined) {
+					lists.myRecipes = localStorage.getItem('crafters_recipes').split(',');
+				} else if (user.crafters.length > 0) {
+					// Downloading the users characters recipes if crafters are set but recipes aren't
+					this.downloadingText = 'Starting to download your characters recipes';
+					this.characterService.getCharacters().subscribe(recipes => {
+						console.log(recipes);
+						if (typeof recipes.recipes === 'object') {
+							Object.keys(recipes.recipes).forEach(v => {
+								lists.myRecipes.push(recipes.recipes[v]);
+							});
+						} else {
+							lists.myRecipes = recipes.recipes;
+						}
+						localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+					}, e => {
+						console.log('Were unable to download user recipes', e);
+					});
+				}
 			} catch (e) {
 				console.log('app.component init', e);
 			}
 
 			this.checkForUpdate();
 			if (
-				this.u.apiToUse === 'tsm' &&
+				user.apiToUse === 'tsm' &&
 				localStorage.getItem('api_tsm') !== null &&
 				localStorage.getItem('api_tsm') !== undefined &&
 				localStorage.getItem('api_tsm').length > 0 &&
@@ -109,7 +129,7 @@ export class AppComponent implements OnInit {
 		setInterval(() => this.checkForUpdate(), 60000);
 
 		if (
-			this.u.apiToUse === 'wowuction' &&
+			user.apiToUse === 'wowuction' &&
 			localStorage.getItem('api_wowuction') !== null &&
 			localStorage.getItem('api_wowuction') !== undefined &&
 			localStorage.getItem('api_wowuction').length > 0 &&
@@ -252,7 +272,7 @@ export class AppComponent implements OnInit {
 					result => {
 						this.downloadingText = '';
 						if (result.length > 0) {
-							this.buildAuctionArray(result);;
+							this.buildAuctionArray(result);
 						} else {
 							localStorage.setItem('timestamp_auctions', '0');
 							this.getAuctions();
@@ -263,7 +283,8 @@ export class AppComponent implements OnInit {
 	}
 
 	buildAuctionArray(arr) {
-		let list = [];
+		let list = [], undercuttedAuctions = 0, itemsBelowVendor = {quantity: 0, totalValue: 0};
+
 		lists.myAuctions = [];
 		for (let o of arr) {
 			if (o['buyout'] === 0) {
@@ -346,19 +367,45 @@ export class AppComponent implements OnInit {
 			}
 
 			// Storing a users auctions in a list
-			if (this.u.character !== undefined) {
-				if (o.owner === this.u.character) {
+			if (user.character !== undefined) {
+				if (o.owner === user.character) {
 					if (lists.myAuctions === undefined) {
 						lists.myAuctions = [];
 					}
 					lists.myAuctions.push(o);
 				}
 			}
-
-
-			this.addToContextList(o);
+			// Gathering data for auctions below vendor price
+			if (lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
+				console.log(true);
+				itemsBelowVendor.quantity++;
+				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
+			}
+			// TODO: this.addToContextList(o);
 		}
-		console.log(JSON.stringify(this.allItemSources));
+		console.log('Items below vendor',itemsBelowVendor.quantity);
+		if (itemsBelowVendor.quantity > 0) {
+			this.notification(
+				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
+				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`);
+		}
+
+		if (user.character !== undefined) {
+			// Notifying the user if they have been undercutted or not
+			lists.myAuctions.forEach(a => {
+				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== user.character) {
+					undercuttedAuctions++;
+					console.log(`${lists.auctions[a.item].owner} !== ${user.character}`);
+				}
+
+			});
+			if (undercuttedAuctions > 0) {
+				this.notification(
+					'You have been undercutted!',
+					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`);
+			}
+		}
+
 		lists.auctions = list;
 		this.getCraftingCosts();
 		lists.isDownloading = false;
@@ -431,6 +478,7 @@ export class AppComponent implements OnInit {
 			oldTime = this.timeSinceLastModified;
 		// Checking if there is a new update available
 		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
+			this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
 			this.getAuctions();
 		}
 
@@ -465,10 +513,20 @@ export class AppComponent implements OnInit {
 	}
 
 	getCraftingCosts(): void {
+		let potentialProfit = 0;
 		console.log('starting crafting cost calc');
 		for (let c of lists.recipes) {
 			calcCost(c);
+			if (c.profit > 0) {
+				potentialProfit += c.profit;
+			}
 		}
+		/* TODO: Implement later
+		if (potentialProfit > 0) {
+			this.notification(
+				`Potential profit in crafting`,
+				`Potential profit: ${copperToArray(potentialProfit)}`);
+		}*/
 		console.log('Done calculating crafting costs');
 	}
 
@@ -539,5 +597,18 @@ export class AppComponent implements OnInit {
 				this.allItemSources[o.context] = o.context + ' - ' + o.item + ' - ' + o.name;
 				break;
 		}
+	}
+
+	notification(title: string, message: string) {
+		console.log(title, message);
+		Push.create(title, {
+			body: message,
+			icon: 'assets/icons/logo_32.svg',
+			timeout: 10000,
+			onClick: function() {
+				window.focus();
+				this.close();
+			}
+		});
 	}
 }
