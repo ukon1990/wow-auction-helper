@@ -66,6 +66,8 @@ export class FrontPageComponent implements OnInit {
 			localStorage.setItem('api_to_use', 'none');
 		}
 
+		localStorage.setItem('timestamp_news', new Date().toLocaleDateString());
+
 		this.router.navigateByUrl('/crafting');
 		location.reload();
 	}
