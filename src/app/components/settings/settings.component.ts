@@ -202,8 +202,8 @@ export class SettingsComponent implements OnInit {
 
 	addCrafter() {
 		this.userCraftersChanged = true;
-		this.user.crafters.push(this.userCrafter);
-		this.userCrafter = '';
+		this.user.crafters.push(this.userCrafterForm.value['query']);
+		this.userCrafterForm.value['query'] = '';
 	}
 
 	removeCrafter(index: number) {
