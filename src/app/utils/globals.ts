@@ -35,7 +35,7 @@ const TSM_TABLE_COLUMNS = `Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuy
 							RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,
 							RegionAvgDailySold,RegionSaleRate`,
 	WOWUCTION_TABLE_COLUMNS = 'id,mktPrice,avgDailyPosted,avgDailySold,estDemand,realm',
-	ITEM_TABLE_COLUMNS = `id,name,icon,itemClass,itemSubClass,quality,itemSpells,
+	ITEM_TABLE_COLUMNS = `id,name,icon,itemLevel,itemClass,itemSubClass,quality,itemSpells,
 							itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation`,
 	PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source',
 	AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';

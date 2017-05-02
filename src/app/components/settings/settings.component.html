@@ -8,7 +8,7 @@
 			<button class="btn btn-secondary" (click)="changeStyle()">Turn dark mode {{ darkMode ? 'off' : 'on' }}</button>
 		</div>
 		<div class="col-md-12">
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<h3>Realm & Character</h3>
 				<p>
 					Realm and region are requiered, while the character name is not.
@@ -80,18 +80,19 @@
 				<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
 			</div>
 
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<h3>Crafting</h3>
 				<strong>Your crafters</strong>
 				<em>
-					This allows for you to only display recipes you
-					know and also allows for notifications regarding recipes you know.
+					This allows for you to only display recipes you know.
 				</em>
-				<div class="input-group input-group-sm">
-					<span *ngIf="!userCraftersChanged" class="btn btn-default input-group-addon" (click)="getCraftersRecipes()">Update crafters recipes</span>
-					<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [(ngModel)]="userCrafter"/>
-					<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCrafter()"></span>
-				</div>
+				<form class="form-inline" (ngSubmit)="addCrafter()" [formGroup]="userCrafterForm">
+					<div class="input-group input-group-sm col-md-12">
+						<span *ngIf="!userCraftersChanged" class="btn btn-default input-group-addon" (click)="getCraftersRecipes()">Update crafters recipes</span>
+						<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [formControl]="userCrafterForm.controls['query']"/>
+						<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCrafter()"></span>
+					</div>
+				</form>
 				<ul class="list-group">
 					<li *ngIf="user.crafters.length === 0" class="list-group-item">
 						You have no registered crafters
@@ -114,15 +115,40 @@
 					</span>
 				</div>
 				<strong>Custom item prices</strong>
-				<p>Using trade vendor panel values coming soon™</p>
+				<p>These prices are ovrrides for cost calculation. Using trade vendor panel values coming soon™</p>
+				<form class="form-inline" (ngSubmit)="searchDB()" [formGroup]="customPriceForm">
+					<div class="input-group input-group-sm col-md-12">
+						<label class="sr-only" for="exampleInputAmount">Search for an item</label>
+						<input type="text" class="form-control"
+							name="Item"
+							placeholder="Search for the desiered item"
+							type="text"
+							aria-describedby="basic-addon1"
+							[formControl]="customPriceForm.controls['query']">
+						<i class="btn btn-default input-group-addon glyphicon glyphicon-search" id="sizing-addon1" (click)="searchDB()">
+						</i>
+					</div>
+				</form>
 				<ul class="list-group">
-					<li *ngFor="let cp of customPrices; let i = index;" class="list-group-item">
-						{{getItemName(cp.itemID)}}({{cp.itemID}})
-						<input type="number" [(ngModel)]="cp.price"/>
-						{{copperToArray(cp.price)}}
-						<i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i>
+					<li class="list-group-item" *ngFor="let item of customPriceQueryItems">
+						{{ item.name}}
+						<i class="glyphicon glyphicon-plus pull-right" (click)="addCustomPrice(item)"></i>
 					</li>
 				</ul>
+				<table class="table table-striped">
+					<tr>
+						<th>item</th>
+						<th>Price copper input</th>
+						<th>Value in gold</th>
+						<th>Action</th>
+					</tr>
+					<tr *ngFor="let cp of customPrices; let i = index;">
+						<td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
+						<td><input type="number" [(ngModel)]="cp.price"/></td>
+						<td>{{copperToArray(cp.price)}}</td>
+						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>

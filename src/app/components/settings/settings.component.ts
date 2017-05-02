@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm';
 import { AuctionService } from '../../services/auctions';
@@ -14,8 +15,12 @@ import { user, lists, copperToArray, db } from '../../utils/globals';
 })
 export class SettingsComponent implements OnInit {
 	user: IUser;
+	customPriceForm: FormGroup;
+	userCrafterForm: FormGroup;
 	customPrices = [];
 	newCustomPrice = {'itemID': 0};
+	customPriceSearchQuery: string;
+	customPriceQueryItems = [];
 	realmListEu = [];
 	realmListUs = [];
 	importedSettings: string;
@@ -26,9 +31,16 @@ export class SettingsComponent implements OnInit {
 	userCraftersDownloading = false;
 	darkMode = true;
 
-	constructor(private ac: AppComponent, private titleService: Title,
+	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
 		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
 		this.user = user;
+		this.customPriceForm = formBuilder.group({
+			'query': ''
+		});
+		this.userCrafterForm = formBuilder.group({
+			'query': ''
+		});
+
 		Object.keys(lists.customPrices).forEach(k => {
 			this.customPrices.push({
 				'itemID': k,
@@ -164,8 +176,24 @@ export class SettingsComponent implements OnInit {
 		this.ac.getAuctions();
 	}
 
-	addCustomPrice(): void {
+	addCustomPrice(item: any): void {
+		this.customPrices.push({
+			'itemID': item.id,
+			'name': item.name,
+			'price': 20000});
+	}
 
+	searchDB() {
+		db.table('items')
+			.where('name')
+			.startsWithIgnoreCase(this.customPriceForm.value['query'])
+			.limit(2)
+			.toArray()
+			.then(i => {
+				this.customPriceQueryItems = i;
+			}, e => {
+				console.log(e);
+			});
 	}
 
 	removeCustomPrice(index: number): void {
@@ -174,8 +202,8 @@ export class SettingsComponent implements OnInit {
 
 	addCrafter() {
 		this.userCraftersChanged = true;
-		this.user.crafters.push(this.userCrafter);
-		this.userCrafter = '';
+		this.user.crafters.push(this.userCrafterForm.value['query']);
+		this.userCrafterForm.value['query'] = '';
 	}
 
 	removeCrafter(index: number) {
