@@ -43,8 +43,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		super();
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
-			'searchQuery': query.searchQuery !== undefined ? query.searchQuery : '',
-			'onlyMyRecipes': query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
+			'searchQuery': query !== undefined && query.searchQuery !== undefined ? query.searchQuery : '',
+			'onlyMyRecipes': query !== undefined && query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
 			'profession': query !== undefined ? query.profession : 'All',
 			'profit': query !== undefined && query.profit !== null ? parseFloat(query.profit) : 0,
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
