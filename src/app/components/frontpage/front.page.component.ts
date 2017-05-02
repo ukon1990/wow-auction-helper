@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { user } from '../../utils/globals';
+import { user, lists } from '../../utils/globals';
 import { RealmService } from '../../services/realm';
+import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -14,9 +15,15 @@ export class FrontPageComponent implements OnInit {
 	u;
 	realmListEu = [];
 	realmListUs = [];
+	userCrafterForm: FormGroup;
+	userCrafter: string;
 
-	constructor(private router: Router, private titleService: Title, private rs: RealmService) {
+	constructor( private formBuilder: FormBuilder, private router: Router,
+			private titleService: Title, private rs: RealmService, private characterService: CharacterService) {
 		this.u = user;
+		this.userCrafterForm = formBuilder.group({
+			'query': ''
+		});
 		this.titleService.setTitle('Wah - Setup');
 	}
 
@@ -60,4 +67,32 @@ export class FrontPageComponent implements OnInit {
 		this.u.realm = realm;
 		console.log('realm: ' + realm);
 	}
+
+		addCrafter() {
+			this.u.crafters.push(this.userCrafterForm.value['query']);
+			this.userCrafterForm.value['query'] = '';
+		}
+
+		removeCrafter(index: number) {
+			this.u.crafters.splice(index, 1);
+		}
+
+		getMyRecipeCount(): number {
+			return lists.myRecipes.length;
+		}
+
+		getCraftersRecipes(): void {
+			if (this.u.crafters.length > 0) {
+				this.characterService.getCharacters().subscribe(recipes => {
+					if (typeof recipes.recipes === 'object') {
+						Object.keys(recipes.recipes).forEach(v => {
+							lists.myRecipes.push(recipes.recipes[v]);
+						});
+					} else {
+						lists.myRecipes = recipes.recipes;
+					}
+					localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+				});
+			}
+		}
 }

@@ -13,7 +13,7 @@
 		</p>
 		<ul>
 			<li>
-				The ability to make a shopping cart for materials from receipes, 
+				The ability to make a shopping cart for materials from receipes,
 				that is persistent between sessions (won't be lost if you reload)
 			</li>
 			<li>
@@ -40,24 +40,28 @@
 					Anything persistent is stored on your computer.
 				</li>
 				<li>
-					If you wish to look at the code, please feel free to do so. 
+					If you wish to look at the code, please feel free to do so.
 					The GitHub link can be found <a routerLink="/about">here</a>.
 				</li>
 				<li>
 					The only data you need to input is your realm and region, anything else is optional.
 				</li>
 			</ul>
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<h3>Requiered</h3>
+				<strong>Realm and region</strong>
+				<p>
+					To use the application and see crafting cost and auctions you need to define a realm.
+					You change this at any time in the settings later on.
+				</p>
 				<div class="form-group">
-					{{u.realm}}@{{u.region}} <br>
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="basic-addon1">Region</span>
-						<select class="form-control" 
+						<select class="form-control"
 							name="region" type="text"
 							aria-describedby="basic-addon1"
 							[(ngModel)]="u.region" required>
-							
+
 							<option value="eu">EU</option>
 							<option value="us">US</option>
 						</select>
@@ -65,30 +69,65 @@
 
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="basic-addon1">Realm</span>
-						<select class="form-control" 
+						<select class="form-control"
 							name="realm" type="text"
 							aria-describedby="basic-addon1"
 							 #realm (change)="getRealmValue(realm.value)" required>
-							
+
 							<option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
 						</select>
 					</div>
 				</div>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<h3>Optional</h3>
 				<div class="form-group">
+					<strong>Your goblin/auctioneer</strong>
+					<p>
+						This gives you easy access to seeing your auctions, and if you've been undercutted.
+						By whom you've been undercutted etc.
+						You change this at any time in the settings later on.
+					</p>
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="basic-addon1">Character</span>
-						<input class="form-control col-md-2" 
-							name="character" placeholder="Character" type="text" 
+						<input class="form-control col-md-2"
+							name="character" placeholder="Character" type="text"
 							[(ngModel)]="u.character" aria-describedby="basic-addon1"/>
 					</div>
 
+					<br>
+					<strong>Your crafters</strong>
+					<p>
+						This allows for you to only display recipes you know.
+						If your AH character is a crafter too, you should add him/her here also.
+						You add and remove them at any time in the settings later on.
+					</p>
+
+					<form class="form-inline" (ngSubmit)="addCrafter()" [formGroup]="userCrafterForm">
+						<div class="input-group input-group-sm col-md-12">
+							<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [formControl]="userCrafterForm.controls['query']"/>
+							<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCrafter()"></span>
+						</div>
+					</form>
+					<ul class="list-group">
+						<li *ngIf="u.crafters.length === 0" class="list-group-item">
+							You have no registered crafters
+						</li>
+						<li *ngFor="let crafter of u.crafters; let i = index;" class="list-group-item">
+							{{ crafter }}
+							<i class="glyphicon glyphicon-trash pull-right" (click)="removeCrafter(i)"></i>
+						</li>
+					</ul>
+
+					<strong>Your API keys</strong>
+					<p>
+						Supplying the app with an API key, allows it to display statistical data like Market value,
+						estimated demand etc.
+					</p>
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="basic-addon1">TSM api key</span>
-						<input class="form-control col-md-2" 
-							name="apiTsm" placeholder="api key" type="text" 
+						<input class="form-control col-md-2"
+							name="apiTsm" placeholder="api key" type="text"
 							[(ngModel)]="u.apiTsm" aria-describedby="basic-addon1"/>
 					</div>
 					If you don't have a TSM account you can <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>.
@@ -96,8 +135,8 @@
 					<!--
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="basic-addon1">Wowuction api key</span>
-						<input class="form-control col-md-2" 
-							name="apiWoWu" placeholder="api key" type="text" 
+						<input class="form-control col-md-2"
+							name="apiWoWu" placeholder="api key" type="text"
 							[(ngModel)]="u.apiWoWu" aria-describedby="basic-addon1"/>
 					</div>-->
 				</div>

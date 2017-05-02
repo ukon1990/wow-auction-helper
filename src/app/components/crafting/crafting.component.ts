@@ -175,7 +175,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					match = false;
 				}
 
-				if (match && onlyMyRecipes) {
+				if (this.myRecipes.length > 0 && match && onlyMyRecipes) {
 					if (this.myRecipes[r.spellID] !== undefined) {
 						match = true;
 					} else {
