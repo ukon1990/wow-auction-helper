@@ -18,6 +18,7 @@ import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
+import { NewsComponent } from './components/news/news.component';
 
 @NgModule({
 	declarations: [
@@ -29,7 +30,8 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 		TradeVendorComponent,
 		AboutComponent,
 		SettingsComponent,
-		WatchlistComponent
+		WatchlistComponent,
+		NewsComponent
 	],
 	imports: [
 		BrowserModule,
