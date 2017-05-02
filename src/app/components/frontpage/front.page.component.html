@@ -40,6 +40,9 @@
 					Anything persistent is stored on your computer.
 				</li>
 				<li>
+					Using tools like CCleaner to clean your browser cache etc, will remove all your settings. So be aware of that.
+				</li>
+				<li>
 					If you wish to look at the code, please feel free to do so.
 					The GitHub link can be found <a routerLink="/about">here</a>.
 				</li>
@@ -81,6 +84,17 @@
 			</div>
 			<div class="col-md-12">
 				<h3>Optional</h3>
+				<strong>Import existing settings</strong>
+				<form class="form-group" (ngSubmit)="importUserData()" [formGroup]="importSettingsForm">
+					<div class="input-group">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="submit">Import settings</button>
+						</span>
+						<input type="text" class="form-control" placeholder="Paste in the exported string here"  [formControl]="importSettingsForm.controls['settings']">
+					</div>
+				</form>
+
+				<br>
 				<div class="form-group">
 					<strong>Your goblin/auctioneer</strong>
 					<p>

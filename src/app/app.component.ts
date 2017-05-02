@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
+import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
 import { calcCost, user, lists, getPet, db, copperToArray } from './utils/globals';
 import { IUser } from './utils/interfaces';
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit {
 	private allItemSources = [];
 
 	constructor(private auctionService: AuctionService,
-		private itemService: ItemService,
+		private itemService: ItemService, private characterService: CharacterService,
 		private router: Router) {
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
@@ -66,8 +67,24 @@ export class AppComponent implements OnInit {
 				user.apiToUse = localStorage.getItem('api_to_use') || 'none';
 				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
 				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
-				if (localStorage.getItem('crafters_recipes') !== undefined) {
+				if (localStorage.getItem('crafters_recipes')  !== null && localStorage.getItem('crafters_recipes') !== undefined) {
 					lists.myRecipes = localStorage.getItem('crafters_recipes').split(',');
+				} else if (user.crafters.length > 0) {
+					// Downloading the users characters recipes if crafters are set but recipes aren't
+					this.downloadingText = 'Starting to download your characters recipes';
+					this.characterService.getCharacters().subscribe(recipes => {
+						console.log(recipes);
+						if (typeof recipes.recipes === 'object') {
+							Object.keys(recipes.recipes).forEach(v => {
+								lists.myRecipes.push(recipes.recipes[v]);
+							});
+						} else {
+							lists.myRecipes = recipes.recipes;
+						}
+						localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+					}, e => {
+						console.log('Were unable to download user recipes', e);
+					});
 				}
 			} catch (e) {
 				console.log('app.component init', e);

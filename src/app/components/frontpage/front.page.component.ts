@@ -16,13 +16,17 @@ export class FrontPageComponent implements OnInit {
 	realmListEu = [];
 	realmListUs = [];
 	userCrafterForm: FormGroup;
+	importSettingsForm: FormGroup;
 	userCrafter: string;
 
-	constructor( private formBuilder: FormBuilder, private router: Router,
-			private titleService: Title, private rs: RealmService, private characterService: CharacterService) {
+	constructor(private formBuilder: FormBuilder, private router: Router,
+		private titleService: Title, private rs: RealmService, private characterService: CharacterService) {
 		this.u = user;
 		this.userCrafterForm = formBuilder.group({
 			'query': ''
+		});
+		this.importSettingsForm = formBuilder.group({
+			'settings': ''
 		});
 		this.titleService.setTitle('Wah - Setup');
 	}
@@ -52,6 +56,8 @@ export class FrontPageComponent implements OnInit {
 		localStorage.setItem('character', this.u.character);
 		localStorage.setItem('api_tsm', this.u.apiTsm);
 		localStorage.setItem('api_wowuction', this.u.apiWoWu);
+		localStorage.setItem('crafters', this.u.crafters.toString());
+
 		if (this.u.apiTsm.length > 0) {
 			localStorage.setItem('api_to_use', 'tsm');
 		} else if (this.u.apiWoWu.length > 0) {
@@ -59,6 +65,7 @@ export class FrontPageComponent implements OnInit {
 		} else {
 			localStorage.setItem('api_to_use', 'none');
 		}
+
 		this.router.navigateByUrl('/crafting');
 		location.reload();
 	}
@@ -68,31 +75,20 @@ export class FrontPageComponent implements OnInit {
 		console.log('realm: ' + realm);
 	}
 
-		addCrafter() {
-			this.u.crafters.push(this.userCrafterForm.value['query']);
-			this.userCrafterForm.value['query'] = '';
-		}
+	importUserData(): void {
+		this.u = JSON.parse(this.importSettingsForm.value['settings']);
+	}
 
-		removeCrafter(index: number) {
-			this.u.crafters.splice(index, 1);
-		}
+	addCrafter() {
+		this.u.crafters.push(this.userCrafterForm.value['query']);
+		this.userCrafterForm.value['query'] = '';
+	}
 
-		getMyRecipeCount(): number {
-			return lists.myRecipes.length;
-		}
+	removeCrafter(index: number) {
+		this.u.crafters.splice(index, 1);
+	}
 
-		getCraftersRecipes(): void {
-			if (this.u.crafters.length > 0) {
-				this.characterService.getCharacters().subscribe(recipes => {
-					if (typeof recipes.recipes === 'object') {
-						Object.keys(recipes.recipes).forEach(v => {
-							lists.myRecipes.push(recipes.recipes[v]);
-						});
-					} else {
-						lists.myRecipes = recipes.recipes;
-					}
-					localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
-				});
-			}
-		}
+	getMyRecipeCount(): number {
+		return lists.myRecipes.length;
+	}
 }
