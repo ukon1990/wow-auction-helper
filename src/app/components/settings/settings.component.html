@@ -83,9 +83,9 @@
 			<div class="col-md-6">
 				<h3>Crafting</h3>
 				<strong>Your crafters</strong>
-				<em>
-					This allows for you to only display recipes you know.
-				</em>
+				<p>
+					This allows for you to only display recipes you know. You have {{ getMyRecipeCount() }} recipes registered.
+				</p>
 				<form class="form-inline" (ngSubmit)="addCrafter()" [formGroup]="userCrafterForm">
 					<div class="input-group input-group-sm col-md-12">
 						<span *ngIf="!userCraftersChanged" class="btn btn-default input-group-addon" (click)="getCraftersRecipes()">Update crafters recipes</span>

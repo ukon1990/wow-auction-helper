@@ -210,6 +210,10 @@ export class SettingsComponent implements OnInit {
 		this.user.crafters.splice(index, 1);
 	}
 
+	getMyRecipeCount(): number {
+		return lists.myRecipes.length;
+	}
+
 	getCraftersRecipes(): void {
 		this.userCraftersDownloading = true;
 		this.characterService.getCharacters().subscribe(recipes => {
