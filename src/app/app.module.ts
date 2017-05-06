@@ -15,8 +15,10 @@ import { TradeVendorComponent } from './components/trade_vendor/trade.vendor.com
 import { SettingsComponent } from './components/settings/settings.component';
 
 import { AuctionService } from './services/auctions';
+import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
+import { NewsComponent } from './components/news/news.component';
 
 @NgModule({
 	declarations: [
@@ -28,7 +30,8 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 		TradeVendorComponent,
 		AboutComponent,
 		SettingsComponent,
-		WatchlistComponent
+		WatchlistComponent,
+		NewsComponent
 	],
 	imports: [
 		BrowserModule,
@@ -65,6 +68,7 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 	],
 	providers: [
 		AuctionService,
+		CharacterService,
 		ItemService,
 		Title,
 		Location,

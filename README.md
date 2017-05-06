@@ -15,4 +15,4 @@ The webapp is created with an intention of using new technologies, and thus may 
 ## Usage
 To get started with the project, you need to have nodejs, npm and angular-cli installed.
 - You can download nodejs (with npm) here: https://nodejs.org/en/
-- You can install angular-cli in the terminal or command prompt with the following command: npm install -g angular-cli
+- You can install angular-cli in the terminal or command prompt with the following command: npm install -g @angular/cli (for Angular 4) For additional details check https://angular.io/docs/ts/latest/cli-quickstart.html

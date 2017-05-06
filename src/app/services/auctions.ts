@@ -93,7 +93,7 @@ export class AuctionService {
 	}
 
 	getLastUpdated() {
-		let url = 'http://www.wah.jonaskf.net/GetAuctions.php?region='
+		let url = 'http://wah.jonaskf.net/GetAuctions.php?region='
 			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
 		return this.http.get(url)
 			.map(response => <IAuction>function (r) {
@@ -103,7 +103,7 @@ export class AuctionService {
 	}
 
 	getUrl(apiUrl, localUrl) {
-		if(window.location.hostname === 'localhost') {
+		if (window.location.hostname === 'localhost') {
 			console.log('Using local files', localUrl);
 			return localUrl;
 		}

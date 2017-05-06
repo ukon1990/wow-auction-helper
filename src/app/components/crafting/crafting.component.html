@@ -28,6 +28,13 @@
 						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
 				</div>
 
+				<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
+					<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
+					<span class="input-group-addon">
+					   <input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
+					 </span>
+				</div>
+
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="sizing-addon3">Min profit</span>
 					<input name="profit" class="col-md-2 form-control" type="number"
