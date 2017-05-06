@@ -216,6 +216,8 @@ export class SettingsComponent implements OnInit {
 
 	getCraftersRecipes(): void {
 		this.userCraftersDownloading = true;
+		user.realm = this.user.realm;
+		user.region = this.user.region;
 		this.characterService.getCharacters().subscribe(recipes => {
 			this.userCraftersDownloading = false;
 			if (typeof recipes.recipes === 'object') {
