@@ -12,7 +12,7 @@ export class CharacterService {
 
 	getCharacters() {
 		return this.http
-			.get(`http://wah.jonaskf.net/GetCharacterProfession.php?character=${localStorage.crafters}&realm=emerald-dream&region=eu`)
+			.get(`http://wah.jonaskf.net/GetCharacterProfession.php?character=${localStorage.crafters}&realm=${user.realm}&region=${user.region}`)
 				.map(r => {
 					console.log(r.json());
 					return r.json();
