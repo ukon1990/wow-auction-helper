@@ -287,11 +287,11 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	/**
-	 * Retrieves an item.
+	 * Retrieves an auction item.
 	 * @param  {string} itemID
 	 * @return {Item}
 	 */
-	getItem(itemID: string) {
+	getAuction(itemID: string) {
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
 		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {

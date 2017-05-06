@@ -122,6 +122,8 @@
 										{{ craft.name }}</a>
 									<br> {{ craft.profession }}
 									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
+									<br>
+									quality={{ getItem(craft.itemID).quality }} iLvL={{ getItem(craft.itemID).itemLevel }}
 								</div>
 							</div>
 						</td>
@@ -152,7 +154,7 @@
 										{{ subMats.count * m.count }} x
 										<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 												target="_blank">{{subMats.name}}</a>
-										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getItem(subMats.itemID).quantity_total }} @ AH)
+										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
 										<i *ngIf="m.useCraftedBy !== undefined"
 											class="glyphicon glyphicon-piggy-bank"
 											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
