@@ -12,7 +12,7 @@ export let lists = {
 	recipes: [],
 	recipesIndex: [],
 	customPrices: {},
-	watchlist: {},
+	watchlist: {recipes: {}, items: {}},
 	myRecipes: []
 };
 export let user: IUser = {

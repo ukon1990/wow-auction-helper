@@ -25,7 +25,7 @@
 				<td>{{ item.name }}</td>
 				<td><input type="number" [(ngModel)]="item.value"/></td>
 				<td>{{ copperToArray(item.value || 0) }}</td>
-				<td><i class="glyphicon glyphicon-plus" aria-hidden="true" (click)="addToWatchlist(item)">Add</i></td>
+				<td><i class="glyphicon glyphicon-plus" aria-hidden="true" (click)="addItemToWatchlist(item)">Add</i></td>
 			</tr>
 		</table>
 
@@ -36,7 +36,7 @@
 				<th>Alert price</th>
 				<th>Action</th>
 			</tr>
-			<tr *ngFor="let item of watchlist">
+			<tr *ngFor="let item of watchlist.items">
 				<td>{{ item.name }}</td>
 				<td><input type="number" [(ngModel)]="item.belowValue"/></td>
 				<td>{{ copperToArray(item.belowValue) }}</td>

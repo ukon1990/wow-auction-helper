@@ -10,9 +10,10 @@ import dexie from 'dexie';
 	styleUrls: ['./watchlist.component.css']
 })
 export class WatchlistComponent implements OnInit {
+	copperToArray = copperToArray;
 	queryItems = [];
 	filterForm: FormGroup;
-	watchlist = [];
+	watchlist = {recipes: [], items: []};
 
 	constructor(private formBuilder: FormBuilder, private titleService: Title) {
 
@@ -24,10 +25,10 @@ export class WatchlistComponent implements OnInit {
 
 	ngOnInit() {
 		this.searchDB();
+		// this.watchlist = lists.watchlist;
 	}
 
 	searchDB() {
-		console.log(this.filterForm.value['searchQuery']);
 		db.table('items')
 			.where('name')
 			.startsWithIgnoreCase(this.filterForm.value['searchQuery'])
@@ -40,15 +41,17 @@ export class WatchlistComponent implements OnInit {
 			});
 	}
 
-	addToWatchlist(item) {
-		const watch = {id: item.id, name: item.name, compareTo: 'buyout', belowValue: item.value};
-		this.watchlist.push(watch);
-		lists.watchlist[item.id] = watch;
+	addItemToWatchlist(item) {
+		try {
+			const watch = {id: item.id, name: item.name, compareTo: 'buyout', belowValue: item.value};
+			this.watchlist.items.push(watch);
+			lists.watchlist.items[item.id] = watch;
+		} catch (error) {
+			console.log('Add item to watchlist faild:', error);
+		}
 	}
 
-	getWatchlist() {
-		return lists.watchlist;
+	getItemWatchlist() {
+		return lists.watchlist.items;
 	}
-
-	copperToArray = copperToArray;
 }
