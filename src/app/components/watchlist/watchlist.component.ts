@@ -15,7 +15,7 @@ export class WatchlistComponent implements OnInit {
 	itemSearchForm: FormGroup;
 	recipeSearchForm: FormGroup;
 	groupForm: FormGroup;
-	watchlist = { recipes: {}, items: {}, groups: [] };
+	watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
 	display = {
 		itemSearch: true,
 		toggleSearchItem: () => {
@@ -118,7 +118,7 @@ export class WatchlistComponent implements OnInit {
 	saveWatchList(): void {
 		localStorage.setItem('watchlist', JSON.stringify(this.watchlist));
 	}
-	 // {"recipes":{},"items":{},"groups":["Legion herbs","Legion ores","Legion fish","Legion leather","test remove","test remove2"]}
+	 // {"recipes":{},"items":{},"groups":["Ungrouped","Legion herbs","Legion ores","Legion fish","Legion leather","test remove","test remove2"]}
 	addGroup(): void {
 		this.watchlist.groups.push(this.groupForm.value['name']);
 		user.watchlist.groups[this.groupForm.value['name']] = this.groupForm.value['name'];

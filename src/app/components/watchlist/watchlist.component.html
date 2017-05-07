@@ -24,7 +24,7 @@
 				</tr>
 				<tr *ngFor="let group of watchlist.groups">
 					<td>{{ group }}</td>
-					<td>0 -> ?</td>
+					<td>{{ watchlist.items[group] ? watchlist.items[group].length : 0 }}</td>
 					<td>edit?</td>
 				</tr>
 			</table>
@@ -64,7 +64,6 @@
 					<td>{{ copperToArray(item.value || 0) }}</td>
 					<td>
 						<select [(ngModel)]="item.group">
-							<option selected="selected" value="Ungrouped">Ungrouped</option>
 							<option *ngFor="let group of watchlist.groups" [value]="group">
 								{{ group }}
 							</option>
@@ -77,21 +76,23 @@
 
 		<!-- Watchlist items -->
 		<div *ngFor="let group of watchlist.groups">
-			<h3>{{ group }}</h3>
-			<table class="table table-striped">
-				<tr>
-					<th>Item</th>
-					<th>Buyout</th>
-					<th>Alert price</th>
-					<th>Action</th>
-				</tr>
-				<tr *ngFor="let item of watchlist.items[group]">
-					<td>{{ item.name }}</td>
-					<td>{{ copperToArray(getBuyout(item.id)) }}</td>
-					<td>{{ copperToArray(item.belowValue) }}</td>
-					<td>edit?</td>
-				</tr>
-			</table>
+			<div *ngIf="watchlist.items[group]">
+				<h3>{{ group }}</h3>
+				<table class="table table-striped">
+					<tr>
+						<th>Item</th>
+						<th>Buyout</th>
+						<th>Alert price</th>
+						<th>Action</th>
+					</tr>
+					<tr *ngFor="let item of watchlist.items[group]">
+						<td>{{ item.name }}</td>
+						<td>{{ copperToArray(getBuyout(item.id)) }}</td>
+						<td>{{ copperToArray(item.belowValue) }}</td>
+						<td>edit?</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
