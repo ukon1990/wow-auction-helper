@@ -161,7 +161,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.removeItem('crafters_recipes');
 		lists.myRecipes = [];
 		localStorage.removeItem('watchlist');
-		user.watchlist = {recipes: {}, items: {}, groups: {}};
+		user.watchlist = {recipes: {}, items: {}, groups: []};
 	}
 
 	changeStyle(): void {

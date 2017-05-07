@@ -24,7 +24,7 @@ export let user: IUser = {
 	customPrices: [],
 	buyoutLimit: 200,
 	crafters: [],
-	watchlist: {recipes: {}, items: {}, groups: {}}
+	watchlist: {recipes: {}, items: {}, groups: []}
 };
 
 

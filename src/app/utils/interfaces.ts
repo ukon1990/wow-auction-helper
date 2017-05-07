@@ -33,5 +33,5 @@ export class IUser {
 	apiToUse: string;
 	buyoutLimit: number;
 	crafters: any[];
-	watchlist?: {recipes: object, items: object, groups: object};
+	watchlist?: {recipes: object, items: object, groups: any[]};
 }

@@ -76,19 +76,22 @@
 		</div>
 
 		<!-- Watchlist items -->
-		<table class="table table-striped">
-			<tr>
-				<th>Item</th>
-				<th>Buyout</th>
-				<th>Alert price</th>
-				<th>Action</th>
-			</tr>
-			<tr *ngFor="let item of watchlist.items">
-				<td>{{ item.name }}</td>
-				<td>{{ copperToArray(getBuyout(item.id)) }}</td>
-				<td>{{ copperToArray(item.belowValue) }}</td>
-				<td>edit?</td>
-			</tr>
-		</table>
+		<div *ngFor="let group of watchlist.groups">
+			<h3>{{ group }}</h3>
+			<table class="table table-striped">
+				<tr>
+					<th>Item</th>
+					<th>Buyout</th>
+					<th>Alert price</th>
+					<th>Action</th>
+				</tr>
+				<tr *ngFor="let item of watchlist.items[group]">
+					<td>{{ item.name }}</td>
+					<td>{{ copperToArray(getBuyout(item.id)) }}</td>
+					<td>{{ copperToArray(item.belowValue) }}</td>
+					<td>edit?</td>
+				</tr>
+			</table>
+		</div>
 	</div>
 </div>
