@@ -34,6 +34,12 @@
 							<i class="glyphicon glyphicon-trash"></i>
 							Delete
 						</span>
+						<span *ngIf="i !== watchlist.groups.length - 1" class="pull-right" (click)="moveGroup(group, 1)">
+							<i class="glyphicon glyphicon-arrow-down"></i>
+						</span>
+						<span *ngIf="i > 0" class="pull-right" (click)="moveGroup(group, -1)">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</span>
 					</td>
 				</tr>
 			</table>
@@ -90,9 +96,22 @@
 		</div>
 
 		<!-- Watchlist items -->
-		<div *ngFor="let group of watchlist.groups">
+		<div *ngFor="let group of watchlist.groups; let i = index">
 			<div *ngIf="watchlist.items[group]">
-				<h3>{{ group }}</h3>
+				<div class="col-md-10 col-sm-10">
+					<h3>
+						{{ group }}
+					</h3>
+				</div>
+
+				<div class="col-md-2 col-sm-2">
+					<span *ngIf="i !== watchlist.groups.length - 1" class="pull-right" (click)="moveGroup(group, 1)">
+						<i class="glyphicon glyphicon-arrow-down"></i>
+					</span>
+					<span *ngIf="i > 0" class="pull-right" (click)="moveGroup(group, -1)">
+						<i class="glyphicon glyphicon-arrow-up"></i>
+					</span>
+				</div>
 				<table class="table table-striped">
 					<tr>
 						<th>Item</th>

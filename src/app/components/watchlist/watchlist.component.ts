@@ -133,8 +133,8 @@ export class WatchlistComponent implements OnInit {
 	removeGroup(index: number): void {
 		if (this.watchlist.items[this.watchlist.groups[index]] &&
 			this.watchlist.items[this.watchlist.groups[index]].length > 0) {
-				this.openRemoveGroupDialog(index);
-				console.log(`There are ${this.watchlist.items[this.watchlist.groups[index]].length} items in this group!`);
+			this.openRemoveGroupDialog(index);
+			console.log(`There are ${this.watchlist.items[this.watchlist.groups[index]].length} items in this group!`);
 		} else {
 			console.log(index);
 			this.watchlist.groups.splice(index, 1);
@@ -155,5 +155,24 @@ export class WatchlistComponent implements OnInit {
 		$('#item-modal').on('hidden.bs.modal', () => {
 			// TODO: Logic!
 		});
+	}
+	moveGroup(value, positionChange) {
+		const oldIndex = this.watchlist.groups.indexOf(value);
+		if (oldIndex > -1) {
+			let newIndex = (oldIndex + positionChange);
+
+			if (newIndex < 0) {
+				newIndex = 0;
+			} else if (newIndex >= this.watchlist.groups.length) {
+				newIndex = this.watchlist.groups.length;
+			}
+
+			const arrayClone = this.watchlist.groups.slice();
+			arrayClone.splice(oldIndex, 1);
+			arrayClone.splice(newIndex, 0, value);
+
+			this.watchlist.groups = arrayClone;
+		}
+		this.saveWatchList();
 	}
 }
