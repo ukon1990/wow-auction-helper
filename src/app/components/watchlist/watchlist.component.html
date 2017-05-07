@@ -22,10 +22,19 @@
 					<th>Item count</th>
 					<th>Action</th>
 				</tr>
-				<tr *ngFor="let group of watchlist.groups">
-					<td>{{ group }}</td>
-					<td>{{ watchlist.items[group] ? watchlist.items[group].length : 0 }}</td>
-					<td>edit?</td>
+				<tr *ngFor="let group of watchlist.groups; let i = index">
+					<td>
+						{{ group }}
+					</td>
+					<td>
+						{{ watchlist.items[group] ? watchlist.items[group].length : 0 }}
+					</td>
+					<td>
+						<span class="btn btn-primary pull-right" (click)="removeGroup(i)">
+							<i class="glyphicon glyphicon-trash"></i>
+							Delete
+						</span>
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -56,6 +65,7 @@
 					<th>Item</th>
 					<th>Alert price in copper</th>
 					<th>Alert price</th>
+					<th>Group</th>
 					<th>Action</th>
 				</tr>
 				<tr *ngFor="let item of queryItems">
@@ -69,7 +79,12 @@
 							</option>
 						</select>
 					</td>
-					<td><i class="glyphicon glyphicon-plus" aria-hidden="true" (click)="addItemToWatchlist(item)">Add</i></td>
+					<td>
+						<span class="btn btn-primary pull-right" (click)="addItemToWatchlist(item)">
+							<i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
+							Add
+						</span>
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -85,14 +100,65 @@
 						<th>Alert price</th>
 						<th>Action</th>
 					</tr>
-					<tr *ngFor="let item of watchlist.items[group]">
+					<tr *ngFor="let item of watchlist.items[group]; let i = index">
 						<td>{{ item.name }}</td>
 						<td>{{ copperToArray(getBuyout(item.id)) }}</td>
 						<td>{{ copperToArray(item.belowValue) }}</td>
-						<td>edit?</td>
+						<td>
+							<span class="btn btn-primary pull-right" (click)="editItemDialog(group, index)">
+								<i class="glyphicon glyphicon-edit"></i>
+								edit
+							</span>
+						</td>
 					</tr>
 				</table>
 			</div>
 		</div>
+	</div>
+</div>
+
+
+<!-- Modal for deleting groups with items in them-->
+<div id="group-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Group deletion</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					You are attempting to delete a group with items connected to it.
+					You can either move the items to a new
+					group and delete it, or delete the items and the group.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+<!-- Modal for editing items -->
+<div id="item-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit item</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					Editing an item!
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+
 	</div>
 </div>

@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { user, lists, db, copperToArray } from '../../utils/globals';
 import dexie from 'dexie';
 
+declare var $;
 @Component({
 	selector: 'app-watchlist',
 	templateUrl: './watchlist.component.html',
@@ -92,7 +93,6 @@ export class WatchlistComponent implements OnInit {
 			}
 			this.watchlist.items[item.group].push(watch);
 			user.watchlist.items[item.id] = watch;
-			console.log(item.group, this.watchlist.items, JSON.stringify(this.watchlist.items));
 			this.saveWatchList();
 		} catch (error) {
 			console.log('Add item to watchlist faild:', error);
@@ -118,10 +118,42 @@ export class WatchlistComponent implements OnInit {
 	saveWatchList(): void {
 		localStorage.setItem('watchlist', JSON.stringify(this.watchlist));
 	}
-	 // {"recipes":{},"items":{},"groups":["Ungrouped","Legion herbs","Legion ores","Legion fish","Legion leather","test remove","test remove2"]}
+
 	addGroup(): void {
 		this.watchlist.groups.push(this.groupForm.value['name']);
 		user.watchlist.groups[this.groupForm.value['name']] = this.groupForm.value['name'];
 		this.saveWatchList();
+	}
+
+	/**
+	 * Used to remove groups, but shall not delete groups with items.
+	 * if a group has an item, it should open a dialog window.
+	 * @param {number} index The index of the group to remove.
+	 */
+	removeGroup(index: number): void {
+		if (this.watchlist.items[this.watchlist.groups[index]] &&
+			this.watchlist.items[this.watchlist.groups[index]].length > 0) {
+				this.openRemoveGroupDialog(index);
+				console.log(`There are ${this.watchlist.items[this.watchlist.groups[index]].length} items in this group!`);
+		} else {
+			console.log(index);
+			this.watchlist.groups.splice(index, 1);
+			user.watchlist.groups.splice(index, 1);
+			this.saveWatchList();
+		}
+	}
+
+	openRemoveGroupDialog(index: number): void {
+		$('#group-modal').modal('show');
+		$('#group-modal').on('hidden.bs.modal', () => {
+			// TODO: Logic!
+		});
+	}
+
+	editItemDialog(group: string, index: number): void {
+		$('#item-modal').modal('show');
+		$('#item-modal').on('hidden.bs.modal', () => {
+			// TODO: Logic!
+		});
 	}
 }
