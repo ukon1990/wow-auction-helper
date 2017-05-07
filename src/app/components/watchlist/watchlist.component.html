@@ -6,39 +6,86 @@
 		<p>
 			You will be notified of any item on your watchlisth, that are below your defined threshold. If you don't get notifications, you might have disabeled it in your browser.
 		</p>
-		<form class="input-group" (ngSubmit)="searchDB()">
-			<span class="input-group-addon" id="basic-addon1">Item name</span>
-			<input type="text" [formControl]="filterForm.controls['searchQuery']" class="form-control" placeholder="Item name starts with" aria-describedby="basic-addon1">
-			<span class="input-group-btn">
-		        <button class="btn btn-default" type="submit">Search</button>
-	      </span>
-		</form>
 
+		<!-- Item groups -->
+		<div>
+			<form class="input-group" (ngSubmit)="addGroup()">
+				<span class="input-group-addon" id="basic-addon1">Item name</span>
+				<input type="text" [formControl]="groupForm.controls['name']" class="form-control" placeholder="Group name" aria-describedby="basic-addon1">
+				<span class="input-group-btn">
+			        <button class="btn btn-default" type="submit">Add</button>
+		      </span>
+			</form>
+			<table class="table table-striped">
+				<tr>
+					<th>Item</th>
+					<th>Item count</th>
+					<th>Action</th>
+				</tr>
+				<tr *ngFor="let group of watchlist.groups">
+					<td>{{ group }}</td>
+					<td>0 -> ?</td>
+					<td>edit?</td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Item query -->
+		<div>
+			<span *ngIf="display.itemSearch; else itemSearch"
+				class="btn btn-primary"
+				(click)="display.toggleSearchItem()">
+				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>Show item search
+			</span>
+			<ng-template #itemSearch>
+				<span class="btn btn-primary"
+					(click)="display.toggleSearchItem()"><i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>Hide item search</span>
+			</ng-template>
+		</div>
+		<div *ngIf="display.itemSearch">
+			<form class="input-group" (ngSubmit)="searchItemDB()">
+				<span class="input-group-addon" id="basic-addon1">Item name</span>
+				<input type="text" [formControl]="itemSearchForm.controls['searchQuery']" class="form-control" placeholder="Item name starts with" aria-describedby="basic-addon1">
+				<span class="input-group-btn">
+			        <button class="btn btn-default" type="submit">Search</button>
+		      </span>
+			</form>
+
+			<table class="table table-striped">
+				<tr>
+					<th>Item</th>
+					<th>Alert price in copper</th>
+					<th>Alert price</th>
+					<th>Action</th>
+				</tr>
+				<tr *ngFor="let item of queryItems">
+					<td>{{ item.name }}</td>
+					<td><input type="number" [(ngModel)]="item.value"/></td>
+					<td>{{ copperToArray(item.value || 0) }}</td>
+					<td>
+						<select [(ngModel)]="item.group">
+							<option selected="selected" value="Ungrouped">Ungrouped</option>
+							<option *ngFor="let group of watchlist.groups" [value]="group">
+								{{ group }}
+							</option>
+						</select>
+					</td>
+					<td><i class="glyphicon glyphicon-plus" aria-hidden="true" (click)="addItemToWatchlist(item)">Add</i></td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Watchlist items -->
 		<table class="table table-striped">
 			<tr>
 				<th>Item</th>
-				<th>Alert price in copper</th>
-				<th>Alert price</th>
-				<th>Action</th>
-			</tr>
-			<tr *ngFor="let item of queryItems">
-				<td>{{ item.name }}</td>
-				<td><input type="number" [(ngModel)]="item.value"/></td>
-				<td>{{ copperToArray(item.value || 0) }}</td>
-				<td><i class="glyphicon glyphicon-plus" aria-hidden="true" (click)="addItemToWatchlist(item)">Add</i></td>
-			</tr>
-		</table>
-
-		<table class="table table-striped">
-			<tr>
-				<th>Item</th>
-				<th>Alert price in copper</th>
+				<th>Buyout</th>
 				<th>Alert price</th>
 				<th>Action</th>
 			</tr>
 			<tr *ngFor="let item of watchlist.items">
 				<td>{{ item.name }}</td>
-				<td><input type="number" [(ngModel)]="item.belowValue"/></td>
+				<td>{{ copperToArray(getBuyout(item.id)) }}</td>
 				<td>{{ copperToArray(item.belowValue) }}</td>
 				<td>edit?</td>
 			</tr>

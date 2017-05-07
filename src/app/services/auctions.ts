@@ -76,7 +76,7 @@ export class AuctionService {
 	// Need to ask the user how often they want this data to be updated.
 	getTSMData() {
 		// The localhost requires a json file for the realm!
-		let localUrl = '/assets/tsm-' + localStorage.getItem('realm') + '.json',
+		const localUrl = '/assets/tsm-' + localStorage.getItem('realm') + '.json',
 			apiUrl = 'http://api.tradeskillmaster.com/v1/item/'
 			+ localStorage.getItem('region') + '/'
 			+ localStorage.getItem('realm')
@@ -93,9 +93,10 @@ export class AuctionService {
 	}
 
 	getLastUpdated() {
-		let url = 'http://wah.jonaskf.net/GetAuctions.php?region='
+		const localUrl = '/assets/GetAuctionsLastModified.json',
+		apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
 			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
-		return this.http.get(url)
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <IAuction>function (r) {
 				console.log('API last updated ' + new Date(r.lastModified).toLocaleTimeString());
 				return r;

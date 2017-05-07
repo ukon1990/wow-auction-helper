@@ -86,6 +86,12 @@ export class AppComponent implements OnInit {
 						console.log('Were unable to download user recipes', e);
 					});
 				}
+
+				if (localStorage.getItem('watchlist') !== null &&
+					localStorage.getItem('watchlist') !== undefined) {
+					user.watchlist = JSON.parse(localStorage.getItem('watchlist'));
+					console.log('watchlist:',user.watchlist);
+				}
 			} catch (e) {
 				console.log('app.component init', e);
 			}
