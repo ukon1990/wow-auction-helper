@@ -16,6 +16,16 @@ export class WatchlistComponent implements OnInit {
 	itemSearchForm: FormGroup;
 	recipeSearchForm: FormGroup;
 	groupForm: FormGroup;
+	editing = {
+		item: undefined,
+		recipe: {
+			index: undefined,
+			group: undefined
+		},
+		group: {
+			index: undefined
+		}
+	};
 	watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
 	display = {
 		itemSearch: true,
@@ -144,16 +154,28 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	openRemoveGroupDialog(index: number): void {
+		this.editing.group.index = index;
 		$('#group-modal').modal('show');
 		$('#group-modal').on('hidden.bs.modal', () => {
-			// TODO: Logic!
+			this.editing.group.index = undefined;
 		});
 	}
 
 	editItemDialog(group: string, index: number): void {
+		this.editing.item = this.watchlist.items[group][index];
 		$('#item-modal').modal('show');
 		$('#item-modal').on('hidden.bs.modal', () => {
-			// TODO: Logic!
+			// changing group?
+			if (this.editing.item.group !== group) {
+				if (!this.watchlist.items[this.editing.item.group]) {
+					this.watchlist.items[this.editing.item.group] = [];
+				}
+				console.log(this.editing.item.group);
+				this.watchlist.items[this.editing.item.group].push(this.editing.item);
+				this.watchlist.items[group].splice(index, 1)
+				console.log(this.watchlist.items);
+			}
+			this.editing.item = undefined;
 		});
 	}
 	moveGroup(value, positionChange) {
