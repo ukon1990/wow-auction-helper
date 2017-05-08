@@ -4,11 +4,12 @@
 	</div>
 	<div class="panel-body">
 		<p>
-			You will be notified of any item on your watchlisth, that are below your defined threshold. If you don't get notifications, you might have disabeled it in your browser.
+			You will be notified of any item on your watchlist, that are below your defined threshold.
+			If you don't get notifications, you might have disabeled it in your browser.
 		</p>
 
 		<!-- Item groups -->
-		<div>
+		<div *ngIf="display.groups">
 			<form class="input-group" (ngSubmit)="addGroup()">
 				<span class="input-group-addon" id="basic-addon1">Item name</span>
 				<input type="text" [formControl]="groupForm.controls['name']" class="form-control" placeholder="Group name" aria-describedby="basic-addon1">
@@ -75,7 +76,12 @@
 					<th>Action</th>
 				</tr>
 				<tr *ngFor="let item of queryItems">
-					<td>{{ item.name }}</td>
+					<td>
+						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
+						<a  rel="item={{ item.itemID }}" href="#" target="_blank">
+							{{ item.name }}
+						</a><br>
+					</td>
 					<td><input type="number" [(ngModel)]="item.value"/></td>
 					<td>{{ copperToArray(item.value || 0) }}</td>
 					<td>
@@ -124,7 +130,8 @@
 							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
 							<a  rel="item={{ item.id }}" href="#" target="_blank">
 								{{ item.name }}
-							</a>
+							</a><br>
+							{{ getItemRecipes(item.id) | json }}
 						</td>
 						<td>{{ copperToArray(getBuyout(item.id)) }}</td>
 						<td>{{ copperToArray(item.belowValue) }}</td>
@@ -154,7 +161,9 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="glyphicon glyphicon-remove"></i>
+				</button>
 				<h4 class="modal-title">
 					Deleting "{{ watchlist.groups[editing.group.index] }}"
 				</h4>
@@ -175,7 +184,7 @@
 						</option>
 					</select>
 				</div>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Delete</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal" (click)="removeGroupWithItems()">Delete</button>
 			</div>
 		</div>
 
@@ -187,7 +196,9 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-dismiss="modal">
+					<i class="glyphicon glyphicon-remove"></i>
+				</button>
 				<h4 class="modal-title">
 					{{ editing.item?.name }}
 				</h4>

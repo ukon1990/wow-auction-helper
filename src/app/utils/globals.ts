@@ -8,6 +8,7 @@ export let lists = {
 	wowuction: [],
 	tsm: [],
 	items: {},
+	itemRecipes: {},
 	pets: [],
 	recipes: [],
 	recipesIndex: [],

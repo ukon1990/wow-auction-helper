@@ -251,6 +251,10 @@ export class AppComponent implements OnInit {
 					if (r !== null && r !== undefined && r['profession'] !== undefined && r['profession'] !== null) {
 						r['estDemand'] = 0;
 						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
+						if (!lists.itemRecipes[r.itemID]) {
+							lists.itemRecipes[r.itemID] = [];
+						}
+						lists.itemRecipes[r.itemID].push(r.spellID);
 					}
 				});
 				// this.attemptDownloadOfMissingRecipes(recipe.recipes);

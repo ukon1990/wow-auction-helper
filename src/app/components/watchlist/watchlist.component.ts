@@ -28,7 +28,11 @@ export class WatchlistComponent implements OnInit {
 	};
 	watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
 	display = {
-		itemSearch: true,
+		groups: false,
+		toggleGroups: () => {
+			this.display.groups = !this.display.groups;
+		},
+		itemSearch: false,
 		toggleSearchItem: () => {
 			this.display.itemSearch = !this.display.itemSearch;
 		},
@@ -109,8 +113,11 @@ export class WatchlistComponent implements OnInit {
 		}
 	}
 
-	getItemWatchlist() {
-		return user.watchlist.items;
+	getItemRecipes(itemID: string): any {
+		if (lists.itemRecipes[itemID]) {
+			return lists.itemRecipes[itemID];
+		}
+		return undefined;
 	}
 
 	/**
@@ -151,6 +158,10 @@ export class WatchlistComponent implements OnInit {
 			user.watchlist.groups.splice(index, 1);
 			this.saveWatchList();
 		}
+	}
+
+	removeGroupWithItems(): void {
+		console.log('Moving items from group');
 	}
 
 	openRemoveGroupDialog(index: number): void {
