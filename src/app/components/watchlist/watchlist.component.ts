@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { IUser } from '../../utils/interfaces';
 import { user, lists, db, copperToArray } from '../../utils/globals';
 import dexie from 'dexie';
 
@@ -13,6 +14,8 @@ declare var $;
 export class WatchlistComponent implements OnInit {
 	copperToArray = copperToArray;
 	queryItems = [];
+	myRecipes = [];
+	user: IUser;
 	itemSearchForm: FormGroup;
 	recipeSearchForm: FormGroup;
 	groupForm: FormGroup;
@@ -61,6 +64,10 @@ export class WatchlistComponent implements OnInit {
 		this.watchlist.groups = user.watchlist.groups;
 		this.watchlist.items = user.watchlist.items;
 		this.watchlist.recipes = user.watchlist.recipes;
+		this.user = user;
+		lists.myRecipes.forEach( recipeID => {
+			this.myRecipes[recipeID] = 'owned';
+		});
 	}
 
 	/**
@@ -90,6 +97,15 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	/**
+	 * Checks if an item is @ AH or not.
+	 * @param  {string}  itemID
+	 * @return {boolean}        Availability
+	 */
+	isAtAH(itemID: string): boolean {
+		return lists.auctions[itemID] !== undefined ? true : false;
+	}
+
+	/**
 	 * Adds an item to the watchlist
 	 * @param  {object} item
 	 */
@@ -113,11 +129,43 @@ export class WatchlistComponent implements OnInit {
 		}
 	}
 
+	getAuctionItem(itemID: string) {
+		if (lists.auctions[itemID] !== undefined) {
+			return lists.auctions[itemID];
+		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			return {
+				'name': lists.tsm[itemID].name,
+				'estDemand': lists.tsm[itemID].RegionSaleRate,
+				'avgDailySold': lists.tsm[itemID].RegionAvgDailySold,
+				'avgDailyPosted': Math.round(
+					(parseFloat(lists.tsm[itemID]['RegionAvgDailySold']) / parseFloat(lists.tsm[itemID]['RegionSaleRate'])) * 100) / 100 || 0,
+				'regionSaleAvg': lists.tsm[itemID].RegionSaleAvg,
+				'quantity_total': 0
+			};
+		} else {
+			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
+		}
+	}
 	getItemRecipes(itemID: string): any {
 		if (lists.itemRecipes[itemID]) {
 			return lists.itemRecipes[itemID];
 		}
 		return undefined;
+	}
+
+	getUserRecipesForItem(itemID: string) {
+		const userRecipes = [];
+		if (lists.itemRecipes[itemID]) {
+			lists.itemRecipes[itemID].forEach(r => {
+				if (this.myRecipes[r]) {
+					console.log('s');
+					userRecipes.push(
+						lists.recipes[lists.recipesIndex[r]]
+					);
+				}
+			});
+		}
+		return userRecipes;
 	}
 
 	/**

@@ -4,11 +4,18 @@
 	</div>
 	<div class="panel-body">
 		<p>
-			You will be notified of any item on your watchlist, that are below your defined threshold.
-			If you don't get notifications, you might have disabeled it in your browser.
+			You will be notified of any item on your watchlist, that are below your defined threshold. If you don't get notifications, you might have disabeled it in your browser.
 		</p>
 
 		<!-- Item groups -->
+		<div>
+			<span *ngIf="display.groups; else groups" class="btn btn-primary" (click)="display.toggleGroups()">
+				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>Show groups
+			</span>
+			<ng-template #groups>
+				<span class="btn btn-primary" (click)="display.toggleGroups()"><i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>Hide groups</span>
+			</ng-template>
+		</div>
 		<div *ngIf="display.groups">
 			<form class="input-group" (ngSubmit)="addGroup()">
 				<span class="input-group-addon" id="basic-addon1">Item name</span>
@@ -48,14 +55,11 @@
 
 		<!-- Item query -->
 		<div>
-			<span *ngIf="display.itemSearch; else itemSearch"
-				class="btn btn-primary"
-				(click)="display.toggleSearchItem()">
+			<span *ngIf="display.itemSearch; else itemSearch" class="btn btn-primary" (click)="display.toggleSearchItem()">
 				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>Show item search
 			</span>
 			<ng-template #itemSearch>
-				<span class="btn btn-primary"
-					(click)="display.toggleSearchItem()"><i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>Hide item search</span>
+				<span class="btn btn-primary" (click)="display.toggleSearchItem()"><i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>Hide item search</span>
 			</ng-template>
 		</div>
 		<div *ngIf="display.itemSearch">
@@ -78,11 +82,11 @@
 				<tr *ngFor="let item of queryItems">
 					<td>
 						<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
-						<a  rel="item={{ item.itemID }}" href="#" target="_blank">
+						<a rel="item={{ item.itemID }}" href="#" target="_blank">
 							{{ item.name }}
 						</a><br>
 					</td>
-					<td><input type="number" [(ngModel)]="item.value"/></td>
+					<td><input type="number" [(ngModel)]="item.value" /></td>
 					<td>{{ copperToArray(item.value || 0) }}</td>
 					<td>
 						<select [(ngModel)]="item.group">
@@ -117,39 +121,82 @@
 						</span>
 					</div>
 				</div>
-
-
-				<table class="table table-striped panel-body">
-					<tr>
-						<th>Item</th>
-						<th>Buyout</th>
-						<th>Alert price</th>
-						<th>Action</th>
-					</tr>
-					<tr *ngFor="let item of watchlist.items[group]; let i = index">
-						<td>
+				<div class="row">
+					<div *ngFor="let item of watchlist.items[group]; let i = index" class="col-sm-6 col-md-4">
+						<div class="thumbnail">
 							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
-							<a  rel="item={{ item.id }}" href="#" target="_blank">
-								{{ item.name }}
-							</a><br>
-							{{ getItemRecipes(item.id) | json }}
-						</td>
-						<td>{{ copperToArray(getBuyout(item.id)) }}</td>
-						<td>{{ copperToArray(item.belowValue) }}</td>
-						<td>
-							<div class="pull-right">
-								<span class="btn btn-primary" (click)="editItemDialog(group, i)">
-									<i class="glyphicon glyphicon-edit"></i>
-									Edit
-								</span>
-								<span class="btn btn-primary" (click)="removeItem(group, i)">
-									<i class="glyphicon glyphicon-trash"></i>
-									Delete
-								</span>
+							<a rel="item={{ item.id }}" href="#" target="_blank">
+	  						  {{ item.name }}
+	  					  </a>
+							<div class="caption">
+								<p>Buyout: {{ copperToArray(getBuyout(item.id)) }}</p>
+								<p>Alert value: {{ copperToArray(item.belowValue) }}</p>
+
+								<!-- Recipes connected to this item that the user has -->
+								<div *ngIf="getUserRecipesForItem(item.id).length > 0" class="">
+									<table class="table">
+										<tr>
+											<th>Materials</th>
+											<th>Profit</th>
+										</tr>
+										<tr *ngFor="let craft of getUserRecipesForItem(item.id)">
+											<td>
+												<div class="clearfix"
+													*ngFor="let m of craft.reagents"
+													[ngClass]="{'not-found': !isAtAH(m.itemID)}">
+													<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">
+														{{ m.count }} x
+														<a
+															rel="item={{ m.itemID }}"
+															href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+																target="_blank">{{m.name}}</a>
+
+														{{ copperToArray(getBuyout(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
+														<i *ngIf="m.useCraftedBy !== undefined"
+															class="glyphicon glyphicon-piggy-bank"
+															[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+															(click)="setManualCraft(m, craft)"
+															aria-hidden="true"></i>
+													</span>
+
+													<!-- For "child" recipes -->
+													<div *ngIf="m.useCraftedBy !== undefined && m.useCraftedBy">
+														<div class="clearfix"
+															*ngFor="let subMats of getSubMaterials(m)"
+															[ngClass]="{'not-found': !isAtAH(subMats.itemID)}">
+															{{ subMats.count * m.count }} x
+															<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
+																	target="_blank">{{subMats.name}}</a>
+															{{ copperToArray(getBuyout(subMats.itemID)) }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
+															<i *ngIf="m.useCraftedBy !== undefined"
+																class="glyphicon glyphicon-piggy-bank"
+																[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+																(click)="setManualCraft(m, craft)"
+																aria-hidden="true"></i>
+														</div>
+													</div>
+												</div>
+											</td>
+											<td class="hidden-xs">
+												{{ copperToArray(getBuyout(item.id) - craft.cost) }}
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="pull-right">
+									<span class="btn btn-primary" (click)="editItemDialog(group, i)">
+										<i class="glyphicon glyphicon-edit"></i>
+										Edit
+									</span>
+									<span class="btn btn-primary" (click)="removeItem(group, i)">
+										<i class="glyphicon glyphicon-trash"></i>
+										Delete
+									</span>
+								</div>
 							</div>
-						</td>
-					</tr>
-				</table>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -171,9 +218,7 @@
 			</div>
 			<div class="modal-body">
 				<p>
-					You are attempting to delete a group with items connected to it.
-					You can either move the items to a new
-					group and delete it, or delete the items and the group.
+					You are attempting to delete a group with items connected to it. You can either move the items to a new group and delete it, or delete the items and the group.
 				</p>
 			</div>
 			<div class="modal-footer">
@@ -216,7 +261,7 @@
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Alert value in copper</span>
 					<input *ngIf="editing.item" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.belowValue">
-						<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item?.belowValue) }}</span>
+					<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item?.belowValue) }}</span>
 				</div>
 
 			</div>
