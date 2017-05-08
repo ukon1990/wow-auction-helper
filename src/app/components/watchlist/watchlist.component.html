@@ -120,14 +120,25 @@
 						<th>Action</th>
 					</tr>
 					<tr *ngFor="let item of watchlist.items[group]; let i = index">
-						<td>{{ item.name }}</td>
+						<td>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
+							<a  rel="item={{ item.id }}" href="#" target="_blank">
+								{{ item.name }}
+							</a>
+						</td>
 						<td>{{ copperToArray(getBuyout(item.id)) }}</td>
 						<td>{{ copperToArray(item.belowValue) }}</td>
 						<td>
-							<span class="btn btn-primary pull-right" (click)="editItemDialog(group, i)">
-								<i class="glyphicon glyphicon-edit"></i>
-								edit
-							</span>
+							<div class="pull-right">
+								<span class="btn btn-primary" (click)="editItemDialog(group, i)">
+									<i class="glyphicon glyphicon-edit"></i>
+									Edit
+								</span>
+								<span class="btn btn-primary" (click)="removeItem(group, i)">
+									<i class="glyphicon glyphicon-trash"></i>
+									Delete
+								</span>
+							</div>
 						</td>
 					</tr>
 				</table>
@@ -156,7 +167,15 @@
 				</p>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="basic-addon1">Move to</span>
+					<select *ngIf="editing.group" type="text" placeholder="Group name" aria-describedby="basic-addon1">
+						<option *ngFor="let group of watchlist.groups" [value]="group" [selected]="group === watchlist.groups[editing.group.index]">
+							{{ group }}
+						</option>
+					</select>
+				</div>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Delete</button>
 			</div>
 		</div>
 
@@ -174,15 +193,23 @@
 				</h4>
 			</div>
 			<div class="modal-body">
-				<span class="input-group-addon" id="basic-addon1">Change group</span>
-				<select *ngIf="editing.item" type="text" placeholder="Group name" aria-describedby="basic-addon1" [(ngModel)]="editing.item.group">
-					<option *ngFor="let group of watchlist.groups" [value]="group" [selected]="group === editing.item.group">
-						{{ group }}
-					</option>
-				</select>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="basic-addon1">Change group</span>
+					<select *ngIf="editing.item" type="text" placeholder="Group name" aria-describedby="basic-addon1" [(ngModel)]="editing.item.group">
+						<option *ngFor="let group of watchlist.groups" [value]="group" [selected]="group === editing.item.group">
+							{{ group }}
+						</option>
+					</select>
+				</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="basic-addon1">Alert value in copper</span>
+					<input *ngIf="editing.item" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.belowValue">
+						<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item?.belowValue) }}</span>
+				</div>
+
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close and close</button>
 			</div>
 		</div>
 

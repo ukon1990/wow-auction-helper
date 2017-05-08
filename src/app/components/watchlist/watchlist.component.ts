@@ -8,7 +8,7 @@ declare var $;
 @Component({
 	selector: 'app-watchlist',
 	templateUrl: './watchlist.component.html',
-	styleUrls: ['./watchlist.component.css']
+	styleUrls: ['./watchlist.component.css', '../auctions/auctions.component.css']
 })
 export class WatchlistComponent implements OnInit {
 	copperToArray = copperToArray;
@@ -172,12 +172,17 @@ export class WatchlistComponent implements OnInit {
 				}
 				console.log(this.editing.item.group);
 				this.watchlist.items[this.editing.item.group].push(this.editing.item);
-				this.watchlist.items[group].splice(index, 1)
+				this.watchlist.items[group].splice(index, 1);
 				console.log(this.watchlist.items);
 			}
+			this.watchlist.items[this.editing.item.group].belowValue = this.editing.item.belowValue;
 			this.editing.item = undefined;
 		});
 	}
+	removeItem(group: string, index: number): void {
+		this.watchlist.items[group].splice(index, 1);
+	}
+
 	moveGroup(value, positionChange) {
 		const oldIndex = this.watchlist.groups.indexOf(value);
 		if (oldIndex > -1) {
@@ -196,5 +201,21 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.groups = arrayClone;
 		}
 		this.saveWatchList();
+	}
+
+	getIcon(item): string {
+		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
+		try {
+			if (lists.items[item.id] !== undefined) {
+				icon = lists.items[item.id].icon;
+			}
+		} catch (err) {console.log(err, item, item.id); }
+
+		if (icon === undefined) {
+			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+		} else {
+			url += icon + '.jpg';
+		}
+		return url;
 	}
 }
