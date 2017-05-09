@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, db, copperToArray } from '../../utils/globals';
+import { calcCost, user, lists, db, copperToArray } from '../../utils/globals';
 import dexie from 'dexie';
 
 declare var $;
@@ -26,7 +26,8 @@ export class WatchlistComponent implements OnInit {
 			group: undefined
 		},
 		group: {
-			index: undefined
+			index: undefined,
+			newIndex: undefined
 		}
 	};
 	watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
@@ -60,7 +61,6 @@ export class WatchlistComponent implements OnInit {
 
 	ngOnInit() {
 		this.searchItemDB();
-		console.log(user.watchlist);
 		this.watchlist.groups = user.watchlist.groups;
 		this.watchlist.items = user.watchlist.items;
 		this.watchlist.recipes = user.watchlist.recipes;
@@ -122,7 +122,6 @@ export class WatchlistComponent implements OnInit {
 				this.watchlist.items[item.group] = [];
 			}
 			this.watchlist.items[item.group].push(watch);
-			user.watchlist.items[item.id] = watch;
 			this.saveWatchList();
 		} catch (error) {
 			console.log('Add item to watchlist faild:', error);
@@ -158,7 +157,6 @@ export class WatchlistComponent implements OnInit {
 		if (lists.itemRecipes[itemID]) {
 			lists.itemRecipes[itemID].forEach(r => {
 				if (this.myRecipes[r]) {
-					console.log('s');
 					userRecipes.push(
 						lists.recipes[lists.recipesIndex[r]]
 					);
@@ -166,6 +164,31 @@ export class WatchlistComponent implements OnInit {
 			});
 		}
 		return userRecipes;
+	}
+
+	setManualCraft(material, recipe): void {
+		material.useCraftedBy = !material.useCraftedBy;
+		console.log(material.name + ' using manual craft ' + material.useCraftedBy);
+		this.updateCraftingCost(recipe);
+	}
+
+	updateCraftingCost(recipe) {
+		calcCost(recipe);
+		recipe.reagents.forEach(reagent => {
+			if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
+				delete reagent.createdBy;
+				delete reagent.useCraftedBy;
+			}
+		});
+	}
+
+	/**
+	 * Used for fetching the sub reagents of a recipe
+	 * @param  {object} material Reagent object
+	 * @return {object}          List of reagents
+	 */
+	getSubMaterials(material) {
+		return lists.recipes[lists.recipesIndex[material.createdBy]].reagents;
 	}
 
 	/**
@@ -181,12 +204,12 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	saveWatchList(): void {
+		user.watchlist = this.watchlist;
 		localStorage.setItem('watchlist', JSON.stringify(this.watchlist));
 	}
 
 	addGroup(): void {
 		this.watchlist.groups.push(this.groupForm.value['name']);
-		user.watchlist.groups[this.groupForm.value['name']] = this.groupForm.value['name'];
 		this.saveWatchList();
 	}
 
@@ -203,13 +226,26 @@ export class WatchlistComponent implements OnInit {
 		} else {
 			console.log(index);
 			this.watchlist.groups.splice(index, 1);
-			user.watchlist.groups.splice(index, 1);
 			this.saveWatchList();
 		}
 	}
 
-	removeGroupWithItems(): void {
-		console.log('Moving items from group');
+	removeGroupWithItems(doDelete: boolean, newIndex, oldIndex: number): void {
+		console.log(doDelete, newIndex, oldIndex);
+		newIndex = parseInt(newIndex, 10);
+		if (!doDelete) {
+			this.watchlist.items[
+				this.watchlist.groups[newIndex]]
+					.push(this.watchlist.items[
+						this.watchlist.groups[
+							oldIndex]]);
+		}
+		delete this.watchlist.items[
+			this.watchlist.groups[oldIndex]];
+
+		this.watchlist.groups.splice(oldIndex, 1);
+		console.log(this.watchlist.groups);
+		// this.saveWatchList();
 	}
 
 	openRemoveGroupDialog(index: number): void {
@@ -217,6 +253,7 @@ export class WatchlistComponent implements OnInit {
 		$('#group-modal').modal('show');
 		$('#group-modal').on('hidden.bs.modal', () => {
 			this.editing.group.index = undefined;
+			this.editing.group.newIndex = undefined;
 		});
 	}
 
@@ -224,22 +261,26 @@ export class WatchlistComponent implements OnInit {
 		this.editing.item = this.watchlist.items[group][index];
 		$('#item-modal').modal('show');
 		$('#item-modal').on('hidden.bs.modal', () => {
-			// changing group?
-			if (this.editing.item.group !== group) {
-				if (!this.watchlist.items[this.editing.item.group]) {
-					this.watchlist.items[this.editing.item.group] = [];
-				}
-				console.log(this.editing.item.group);
-				this.watchlist.items[this.editing.item.group].push(this.editing.item);
-				this.watchlist.items[group].splice(index, 1);
-				console.log(this.watchlist.items);
-			}
-			this.watchlist.items[this.editing.item.group].belowValue = this.editing.item.belowValue;
 			this.editing.item = undefined;
 		});
 	}
+
+	editItem(group: string, index: number): void {
+		// changing group?
+		if (this.editing.item.group !== group) {
+			if (!this.watchlist.items[this.editing.item.group]) {
+				this.watchlist.items[this.editing.item.group] = [];
+			}
+			this.watchlist.items[this.editing.item.group].push(this.editing.item);
+			this.watchlist.items[group].splice(index, 1);
+			console.log(this.watchlist.items);
+		}
+		this.watchlist.items[this.editing.item.group].belowValue = this.editing.item.belowValue;
+	}
+
 	removeItem(group: string, index: number): void {
 		this.watchlist.items[group].splice(index, 1);
+		this.saveWatchList();
 	}
 
 	moveGroup(value, positionChange) {

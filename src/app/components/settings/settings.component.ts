@@ -222,6 +222,7 @@ export class SettingsComponent implements OnInit {
 		user.region = this.user.region;
 		this.characterService.getCharacters().subscribe(recipes => {
 			this.userCraftersDownloading = false;
+			lists.myRecipes = [];
 			if (typeof recipes.recipes === 'object') {
 				Object.keys(recipes.recipes).forEach(v => {
 					lists.myRecipes.push(recipes.recipes[v]);
