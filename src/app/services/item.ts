@@ -37,7 +37,7 @@ export class ItemService {
 	}
 
 	getItems() {
-		let apiUrl = 'http://wah.jonaskf.net/GetItems.php',
+		const apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function(r) {
@@ -51,7 +51,7 @@ export class ItemService {
 
 	getPets() {
 		console.log('Loading pets');
-		let apiUrl = 'http://wah.jonaskf.net/GetSpecies.php',
+		const apiUrl = 'http://wah.jonaskf.net/GetSpecies.php',
 			localUrl = '/assets/GetSpecies.json';
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
@@ -64,7 +64,7 @@ export class ItemService {
 
 	getRecipe(itemID): any {
 		console.log('Downloaded recipe for item ' + itemID);
-		let localUrl = '/assets/GetRecipe.json',
+		const localUrl = '/assets/GetRecipe.json',
 			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php?itemid=' + itemID;
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
@@ -75,7 +75,7 @@ export class ItemService {
 
 	getRecipes(): any {
 		console.log('Loaded recipes');
-		let localUrl = '/assets/GetRecipe.json',
+		const localUrl = '/assets/GetRecipe.json',
 			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php';
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
@@ -85,10 +85,10 @@ export class ItemService {
 	}
 
 	recipeFromXML(r, itemID): Object {
-		let createdBySpells = $(r['_body']).find('createdBy').find('spell'),
+		const createdBySpells = $(r['_body']).find('createdBy').find('spell'),
 			recipeObject = {};
 		for (let i = 0, x = createdBySpells.length; i < x; i++) {
-			let spell = $(createdBySpells[i])[i], spellElement = $(spell)[0],
+			const spell = $(createdBySpells[i])[i], spellElement = $(spell)[0],
 				reagents = $(createdBySpells[0]).find('reagent');
 			recipeObject['spellID'] = parseInt(spell.id, 10);
 			recipeObject['itemID'] = itemID;

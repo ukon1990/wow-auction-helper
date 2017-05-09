@@ -86,6 +86,12 @@ export class AppComponent implements OnInit {
 						console.log('Were unable to download user recipes', e);
 					});
 				}
+
+				if (localStorage.getItem('watchlist') !== null &&
+					localStorage.getItem('watchlist') !== undefined) {
+					user.watchlist = JSON.parse(localStorage.getItem('watchlist'));
+					console.log('watchlist:',user.watchlist);
+				}
 			} catch (e) {
 				console.log('app.component init', e);
 			}
@@ -245,6 +251,10 @@ export class AppComponent implements OnInit {
 					if (r !== null && r !== undefined && r['profession'] !== undefined && r['profession'] !== null) {
 						r['estDemand'] = 0;
 						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
+						if (!lists.itemRecipes[r.itemID]) {
+							lists.itemRecipes[r.itemID] = [];
+						}
+						lists.itemRecipes[r.itemID].push(r.spellID);
 					}
 				});
 				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
@@ -383,11 +393,10 @@ export class AppComponent implements OnInit {
 			}
 			// TODO: this.addToContextList(o);
 		}
-		console.log('Items below vendor',itemsBelowVendor.quantity);
 		if (itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
-				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`);
+				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`, 'auctions');
 		}
 
 		if (user.character !== undefined) {
@@ -402,7 +411,7 @@ export class AppComponent implements OnInit {
 			if (undercuttedAuctions > 0) {
 				this.notification(
 					'You have been undercutted!',
-					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`);
+					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`, 'my-auctions');
 			}
 		}
 
@@ -521,13 +530,32 @@ export class AppComponent implements OnInit {
 				potentialProfit += c.profit;
 			}
 		}
-		/* TODO: Implement later
-		if (potentialProfit > 0) {
-			this.notification(
-				`Potential profit in crafting`,
-				`Potential profit: ${copperToArray(potentialProfit)}`);
-		}*/
 		console.log('Done calculating crafting costs');
+		// checking if watchlist gives any alerts
+		let watchlistAlerts = 0, tmpList = [];
+		lists.myRecipes.forEach( recipeID => {
+			tmpList[recipeID] = 'owned';
+		});
+		Object.keys(user.watchlist.items).forEach(group => {
+			user.watchlist.items[group].forEach(item => {
+				if (item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value) {
+					watchlistAlerts++;
+				} else if (lists.itemRecipes[item.id]) {
+					lists.itemRecipes[item.id].forEach(r => {
+						if (tmpList[r] &&
+							lists.recipes[lists.recipesIndex[r]].profit /
+							lists.recipes[lists.recipesIndex[r]].buyout > item.minCraftProfit / 100) {
+							watchlistAlerts++;
+						}
+					});
+				}
+			});
+		});
+		if (watchlistAlerts > 0) {
+			this.notification(
+				`Watchlist items!`,
+				`There are ${watchlistAlerts} items meet your criteria.`, 'watchlist');
+		}
 	}
 
 	/**
@@ -599,15 +627,18 @@ export class AppComponent implements OnInit {
 		}
 	}
 
-	notification(title: string, message: string) {
+	notification(title: string, message: string, page?: string) {
 		console.log(title, message);
 		Push.create(title, {
 			body: message,
-			icon: 'assets/icons/logo_32.svg',
+			icon: 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
 			timeout: 10000,
-			onClick: function() {
+			onClick: () => {
+				if (page) {
+					this.router.navigateByUrl(page);
+				}
 				window.focus();
-				this.close();
+				close();
 			}
 		});
 	}
