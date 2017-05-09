@@ -4,29 +4,35 @@
 		<div class="pull-right pull-up-buttons">
 			<span *ngIf="display.groups; else groups" class="btn btn-primary" (click)="display.toggleGroups()">
 				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
-				Hide groups
+				Groups
 			</span>
 			<ng-template #groups>
 				<span class="btn btn-primary" (click)="display.toggleGroups()">
 					<i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>
-					Show groups
+					Groups
 				</span>
 			</ng-template>
 			<span *ngIf="display.itemSearch; else itemSearch" class="btn btn-primary" (click)="display.toggleSearchItem()">
 				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
-				Hide item search
+				Item search
 			</span>
 			<ng-template #itemSearch>
 				<span class="btn btn-primary" (click)="display.toggleSearchItem()">
 					<i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>
-					Show item search
+					Item search
 				</span>
 			</ng-template>
 		</div>
 	</div>
 	<div class="panel-body">
+		<p *ngIf="watchlist.groups.length === 0">
+			Adding items here, will give you a easy glance at their
+			quantity available, current buyout and crafting cost.
+			You will also recieve notifications based on values set by you.
+		</p>
 		<p>
-			You will be notified of any item on your watchlist, that are below your defined threshold. If you don't get notifications, you might have disabeled it in your browser.
+			If you don't get notifications, you might have
+			disabeled it in your browser.
 		</p>
 
 		<!-- Item groups -->

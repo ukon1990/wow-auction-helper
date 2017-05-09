@@ -40,10 +40,12 @@ export class WatchlistComponent implements OnInit {
 		groups: false,
 		toggleGroups: () => {
 			this.display.groups = !this.display.groups;
+				this.display.itemSearch = false;
 		},
 		itemSearch: false,
 		toggleSearchItem: () => {
 			this.display.itemSearch = !this.display.itemSearch;
+				this.display.groups = false;
 		},
 		recipeSearch: false,
 		toggleSearchRecipe: () => {
