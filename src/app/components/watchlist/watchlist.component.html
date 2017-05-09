@@ -150,7 +150,7 @@
 		  					  </a>
 								<div class="caption">
 									Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs <br>
-									Buyout: {{ copperToArray(getBuyout(item.id)) }} <br>
+									<span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ copperToArray(getBuyout(item.id)) }}</span> <br>
 									<span *ngIf="user.apiToUse === 'tsm'">
 										Market value: {{ getMarketValue(item.id) }}<br>
 									</span>
@@ -167,7 +167,7 @@
 											</tr>
 											<tr *ngFor="let craft of getUserRecipesForItem(item.id)">
 												<td>
-													<div class="clearfix"
+													<div class="clearfix" [ngClass]="{'below-alert-value': (craft.profit / getBuyout(item.id)) * 100 >= item.minCraftProfit}"
 														*ngFor="let m of craft.reagents"
 														[ngClass]="{'not-found': !isAtAH(m.itemID)}">
 														<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">

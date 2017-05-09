@@ -59,7 +59,7 @@ tr.info a {
     color: #ff0000 !important;
 }
 
-.using-manual-craft, .using-manual-craft a {
+.using-manual-craft, .using-manual-craft a, .below-alert-value {
     color: green;
 }
 

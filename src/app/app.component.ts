@@ -540,6 +540,9 @@ export class AppComponent implements OnInit {
 			user.watchlist.items[group].forEach(item => {
 				if (item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value) {
 					watchlistAlerts++;
+					this.notification(item.name, `Current lowest buyout at ${
+						Math.round(100 - (item.value / lists.auctions[item.id].buyout) * 100)
+					}% of the alert value!`, 'watchlist', lists.items[item.id].icon);
 				} else if (lists.itemRecipes[item.id]) {
 					lists.itemRecipes[item.id].forEach(r => {
 						if (tmpList[r] &&
@@ -627,11 +630,11 @@ export class AppComponent implements OnInit {
 		}
 	}
 
-	notification(title: string, message: string, page?: string) {
+	notification(title: string, message: string, page?: string, icon?: string) {
 		console.log(title, message);
 		Push.create(title, {
 			body: message,
-			icon: 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
+			icon: icon ? `http://media.blizzard.com/wow/icons/56/${icon}.jpg` : 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
 			timeout: 10000,
 			onClick: () => {
 				if (page) {

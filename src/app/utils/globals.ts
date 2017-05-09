@@ -101,7 +101,7 @@ export function calcCost(c) {
 			c['profit'] = 0;
 			c['estDemand'] = 0;
 
-			if(user.apiToUse === 'tsm') {
+			if (user.apiToUse === 'tsm') {
 				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
 					lists.tsm[c.itemID]['MarketValue'] : 0;
 				c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
@@ -135,7 +135,10 @@ export function calcCost(c) {
 							matBuyout = lists.auctions[m.itemID] !== undefined ?
 								(lists.auctions[m.itemID].buyout) :
 								lists.customPrices[m.itemID] !== undefined ?
-									lists.customPrices[m.itemID] : 0;
+									lists.customPrices[m.itemID] : user.apiToUse === 'tsm' ?
+										lists.tsm[m.itemID] ?
+											lists.tsm[m.itemID].MarketValue : 0 :
+											0;
 
 							if(lists.items[m.itemID] !== undefined &&
 								lists.items[m.itemID].itemSource.sourceType === 'CREATED_BY_SPELL') {
