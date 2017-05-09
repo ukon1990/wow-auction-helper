@@ -396,7 +396,7 @@ export class AppComponent implements OnInit {
 		if (itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
-				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`);
+				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`, 'auctions');
 		}
 
 		if (user.character !== undefined) {
@@ -411,27 +411,8 @@ export class AppComponent implements OnInit {
 			if (undercuttedAuctions > 0) {
 				this.notification(
 					'You have been undercutted!',
-					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`);
+					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`, 'my-auctions');
 			}
-		}
-
-		// checking if watchlist gives any alerts
-		let watchlistAlerts = 0;
-		Object.keys(user.watchlist.items).forEach(group => {
-			user.watchlist.items[group].forEach(item => {
-				// TODO: item.criteria === 'below' &&
-				if (list[item.id].buyout <= item.value) {
-					watchlistAlerts++;
-				}
-			});
-		});
-		if (watchlistAlerts > 0) {
-			console.log('!!');
-			this.notification(
-				`Watchlist items!`,
-				`There are ${watchlistAlerts} item alerts.`);
-		} else {
-			console.log(':/');
 		}
 
 		lists.auctions = list;
@@ -549,13 +530,32 @@ export class AppComponent implements OnInit {
 				potentialProfit += c.profit;
 			}
 		}
-		/* TODO: Implement later
-		if (potentialProfit > 0) {
-			this.notification(
-				`Potential profit in crafting`,
-				`Potential profit: ${copperToArray(potentialProfit)}`);
-		}*/
 		console.log('Done calculating crafting costs');
+		// checking if watchlist gives any alerts
+		let watchlistAlerts = 0, tmpList = [];
+		lists.myRecipes.forEach( recipeID => {
+			tmpList[recipeID] = 'owned';
+		});
+		Object.keys(user.watchlist.items).forEach(group => {
+			user.watchlist.items[group].forEach(item => {
+				if (item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value) {
+					watchlistAlerts++;
+				} else if (lists.itemRecipes[item.id]) {
+					lists.itemRecipes[item.id].forEach(r => {
+						if (tmpList[r] &&
+							lists.recipes[lists.recipesIndex[r]].profit /
+							lists.recipes[lists.recipesIndex[r]].buyout > item.minCraftProfit / 100) {
+							watchlistAlerts++;
+						}
+					});
+				}
+			});
+		});
+		if (watchlistAlerts > 0) {
+			this.notification(
+				`Watchlist items!`,
+				`There are ${watchlistAlerts} items meet your criteria.`, 'watchlist');
+		}
 	}
 
 	/**
@@ -627,15 +627,18 @@ export class AppComponent implements OnInit {
 		}
 	}
 
-	notification(title: string, message: string) {
+	notification(title: string, message: string, page?: string) {
 		console.log(title, message);
 		Push.create(title, {
 			body: message,
 			icon: 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
 			timeout: 10000,
-			onClick: function() {
+			onClick: () => {
+				if (page) {
+					this.router.navigateByUrl(page);
+				}
 				window.focus();
-				this.close();
+				close();
 			}
 		});
 	}

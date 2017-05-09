@@ -124,6 +124,7 @@ export class WatchlistComponent implements OnInit {
 				compareTo: 'buyout',
 				criteria: 'below',
 				craftProfitAlert: true,
+				minCraftProfit: 10,
 				value: item.value,
 				group: item.group
 			};
@@ -260,12 +261,14 @@ export class WatchlistComponent implements OnInit {
 
 	removeGroupWithItems(doDelete: boolean, newIndex, oldIndex: number): void {
 		if (!doDelete) {
+			const newGroup = this.watchlist.groups[newIndex];
 			this.watchlist.items[
 				this.watchlist.groups[
 					oldIndex]].forEach(item => {
-						this.watchlist.items[
-							this.watchlist.groups[newIndex]]
-								.push(item);
+						if (!this.watchlist.items[newGroup]) {
+							this.watchlist.items[newGroup] = [];
+						}
+						this.watchlist.items[newGroup].push(item);
 					});
 		}
 		delete this.watchlist.items[

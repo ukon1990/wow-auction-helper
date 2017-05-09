@@ -149,13 +149,17 @@
 		  						  {{ item.name }}
 		  					  </a>
 								<div class="caption">
-									<p>Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs</p>
-									<p>Buyout: {{ copperToArray(getBuyout(item.id)) }}</p>
-									<p>Alert value: {{ copperToArray(item.value) }}</p>
+									Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs <br>
+									Buyout: {{ copperToArray(getBuyout(item.id)) }} <br>
+									<span *ngIf="user.apiToUse === 'tsm'">
+										Market value: {{ getMarketValue(item.id) }}<br>
+									</span>
+									Alert value: {{ copperToArray(item.value) }} <br>
 									<!-- TODO: Items below alert value -->
 
 									<!-- Recipes connected to this item that the user has -->
-									<div *ngIf="getUserRecipesForItem(item.id).length > 0" class="">
+									<div *ngIf="getUserRecipesForItem(item.id).length > 0">
+
 										<table class="table">
 											<tr>
 												<th>Materials</th>
