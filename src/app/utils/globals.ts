@@ -8,23 +8,24 @@ export let lists = {
 	wowuction: [],
 	tsm: [],
 	items: {},
+	itemRecipes: {},
 	pets: [],
 	recipes: [],
 	recipesIndex: [],
 	customPrices: {},
-	watchlist: {},
 	myRecipes: []
 };
 export let user: IUser = {
-	'region': 'eu',
-	'realm': 'aegwynn',
-	'character': undefined,
-	'apiTsm': undefined,
-	'apiWoWu': undefined,
-	'apiToUse': 'none',
-	'customPrices': [],
-	'buyoutLimit': 200,
-	'crafters': []
+	region: 'eu',
+	realm: 'aegwynn',
+	character: undefined,
+	apiTsm: undefined,
+	apiWoWu: undefined,
+	apiToUse: 'none',
+	customPrices: [],
+	buyoutLimit: 200,
+	crafters: [],
+	watchlist: {recipes: {}, items: {}, groups: []}
 };
 
 
