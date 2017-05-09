@@ -249,8 +249,6 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	removeGroupWithItems(doDelete: boolean, newIndex, oldIndex: number): void {
-		console.log(doDelete, newIndex, oldIndex);
-		newIndex = parseInt(newIndex, 10);
 		if (!doDelete) {
 			this.watchlist.items[
 				this.watchlist.groups[
@@ -262,7 +260,6 @@ export class WatchlistComponent implements OnInit {
 		}
 		delete this.watchlist.items[
 			this.watchlist.groups[oldIndex]];
-
 		this.watchlist.groups.splice(oldIndex, 1);
 		this.saveWatchList();
 	}
