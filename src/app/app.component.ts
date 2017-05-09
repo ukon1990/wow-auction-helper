@@ -613,7 +613,7 @@ export class AppComponent implements OnInit {
 		console.log(title, message);
 		Push.create(title, {
 			body: message,
-			icon: 'assets/icons/logo_32.svg',
+			icon: 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
 			timeout: 10000,
 			onClick: function() {
 				window.focus();

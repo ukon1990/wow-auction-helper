@@ -74,6 +74,8 @@
 			<table class="table table-striped">
 				<tr>
 					<th>Item</th>
+					<th>Buyout</th>
+					<th>Market value</th>
 					<th>Alert price in copper</th>
 					<th>Alert price</th>
 					<th>Group</th>
@@ -85,6 +87,12 @@
 						<a rel="item={{ item.itemID }}" href="#" target="_blank">
 							{{ item.name }}
 						</a><br>
+					</td>
+					<td>
+						{{  copperToArray(getBuyout(item.id))}}
+					</td>
+					<td>
+						{{ getMarketValue(item.id) }}
 					</td>
 					<td><input type="number" [(ngModel)]="item.value" /></td>
 					<td>{{ copperToArray(item.value || 0) }}</td>
@@ -253,13 +261,13 @@
 					<i class="glyphicon glyphicon-remove"></i>
 				</button>
 				<h4 class="modal-title">
-					{{ editing.item?.name }}
+					{{ editing.item.object?.name }}
 				</h4>
 			</div>
 			<div class="modal-body">
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Change group</span>
-					<select *ngIf="editing.item" type="text" placeholder="Group name" aria-describedby="basic-addon1" [(ngModel)]="editing.item.group">
+					<select *ngIf="editing.item.object" type="text" placeholder="Group name" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.group">
 						<option *ngFor="let group of watchlist.groups" [value]="group" [selected]="group === editing.item.group">
 							{{ group }}
 						</option>
@@ -267,13 +275,13 @@
 				</div>
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Alert value in copper</span>
-					<input *ngIf="editing.item" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.belowValue">
-					<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item?.belowValue) }}</span>
+					<input *ngIf="editing.item.object" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.belowValue">
+					<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item.object?.belowValue) }}</span>
 				</div>
 
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close and close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal" (click)="editItem()">Save changes</button>
 			</div>
 		</div>
 

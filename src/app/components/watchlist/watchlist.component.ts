@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { calcCost, user, lists, db, copperToArray } from '../../utils/globals';
 import dexie from 'dexie';
+import Push from 'push.js';
 
 declare var $;
 @Component({
@@ -20,7 +21,11 @@ export class WatchlistComponent implements OnInit {
 	recipeSearchForm: FormGroup;
 	groupForm: FormGroup;
 	editing = {
-		item: undefined,
+		item: {
+			object: undefined,
+			group: undefined,
+			index: undefined
+		},
 		recipe: {
 			index: undefined,
 			group: undefined
@@ -115,6 +120,7 @@ export class WatchlistComponent implements OnInit {
 				id: item.id,
 				name: item.name,
 				compareTo: 'buyout',
+				criteria: 'below',
 				belowValue: item.value,
 				group: item.group
 			};
@@ -122,6 +128,10 @@ export class WatchlistComponent implements OnInit {
 				this.watchlist.items[item.group] = [];
 			}
 			this.watchlist.items[item.group].push(watch);
+			this.notification(
+				`${watch.name} has been added`,
+				`Added to group ${watch.group} with a alert value of ${watch.belowValue}`,
+				this.getIcon(item));
 			this.saveWatchList();
 		} catch (error) {
 			console.log('Add item to watchlist faild:', error);
@@ -144,6 +154,13 @@ export class WatchlistComponent implements OnInit {
 		} else {
 			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
 		}
+	}
+
+	getMarketValue(itemID: string): string {
+		if (lists.tsm[itemID]) {
+			return copperToArray(lists.tsm[itemID].MarketValue);
+		}
+		return copperToArray(0);
 	}
 	getItemRecipes(itemID: string): any {
 		if (lists.itemRecipes[itemID]) {
@@ -258,24 +275,31 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	editItemDialog(group: string, index: number): void {
-		this.editing.item = this.watchlist.items[group][index];
+		this.editing.item.object = this.watchlist.items[group][index];
+		this.editing.item.group = group;
+		this.editing.item.index = index;
 		$('#item-modal').modal('show');
 		$('#item-modal').on('hidden.bs.modal', () => {
-			this.editing.item = undefined;
+			this.editing.item.object = undefined;
+			this.editing.item.group = undefined;
+			this.editing.item.index = undefined;
 		});
 	}
 
-	editItem(group: string, index: number): void {
+	editItem(): void {
+		const item = this.editing.item.object,
+			index = this.editing.item.index,
+			group = this.editing.item.group;
 		// changing group?
-		if (this.editing.item.group !== group) {
-			if (!this.watchlist.items[this.editing.item.group]) {
-				this.watchlist.items[this.editing.item.group] = [];
+		if (this.editing.item.object.group !== group) {
+			if (!this.watchlist.items[item.group]) {
+				this.watchlist.items[item.group] = [];
 			}
-			this.watchlist.items[this.editing.item.group].push(this.editing.item);
+			this.watchlist.items[item.group].push(item);
 			this.watchlist.items[group].splice(index, 1);
 			console.log(this.watchlist.items);
 		}
-		this.watchlist.items[this.editing.item.group].belowValue = this.editing.item.belowValue;
+		this.watchlist.items[item.group].belowValue = item.belowValue;
 	}
 
 	removeItem(group: string, index: number): void {
@@ -317,5 +341,18 @@ export class WatchlistComponent implements OnInit {
 			url += icon + '.jpg';
 		}
 		return url;
+	}
+
+	notification(title: string, message: string, icon: string) {
+		console.log(title, message);
+		Push.create(title, {
+			body: message,
+			icon: icon,
+			timeout: 3000,
+			onClick: function() {
+				window.focus();
+				this.close();
+			}
+		});
 	}
 }
