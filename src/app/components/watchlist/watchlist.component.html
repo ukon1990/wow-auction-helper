@@ -137,8 +137,10 @@
 	  						  {{ item.name }}
 	  					  </a>
 							<div class="caption">
+								<p>Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs</p>
 								<p>Buyout: {{ copperToArray(getBuyout(item.id)) }}</p>
 								<p>Alert value: {{ copperToArray(item.belowValue) }}</p>
+								<!-- TODO: Items below alert value -->
 
 								<!-- Recipes connected to this item that the user has -->
 								<div *ngIf="getUserRecipesForItem(item.id).length > 0" class="">

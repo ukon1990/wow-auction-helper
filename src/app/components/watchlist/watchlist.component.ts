@@ -37,7 +37,7 @@ export class WatchlistComponent implements OnInit {
 	};
 	watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
 	display = {
-		groups: false,
+		groups: true,
 		toggleGroups: () => {
 			this.display.groups = !this.display.groups;
 		},
@@ -121,6 +121,7 @@ export class WatchlistComponent implements OnInit {
 				name: item.name,
 				compareTo: 'buyout',
 				criteria: 'below',
+				craftProfitAlert: true,
 				belowValue: item.value,
 				group: item.group
 			};
@@ -252,17 +253,18 @@ export class WatchlistComponent implements OnInit {
 		newIndex = parseInt(newIndex, 10);
 		if (!doDelete) {
 			this.watchlist.items[
-				this.watchlist.groups[newIndex]]
-					.push(this.watchlist.items[
-						this.watchlist.groups[
-							oldIndex]]);
+				this.watchlist.groups[
+					oldIndex]].forEach(item => {
+						this.watchlist.items[
+							this.watchlist.groups[newIndex]]
+								.push(item);
+					});
 		}
 		delete this.watchlist.items[
 			this.watchlist.groups[oldIndex]];
 
 		this.watchlist.groups.splice(oldIndex, 1);
-		console.log(this.watchlist.groups);
-		// this.saveWatchList();
+		this.saveWatchList();
 	}
 
 	openRemoveGroupDialog(index: number): void {
