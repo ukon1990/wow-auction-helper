@@ -1,7 +1,21 @@
 .thumbnail {
 	padding: 1em;
 }
-
-.pull-up-1 {
+.pull-up-buttons {
+	margin-top: -1.8em;
+}
+.pull-up-bar {
 	margin-top: -1.5em;
+}
+
+
+.box {
+	position: absolute;
+	z-index: 999;
+	margin-top: 0px;
+	-webkit-transition: margin-top 1s;
+}
+
+.box.hide- {
+	margin-top: -3000px;
 }

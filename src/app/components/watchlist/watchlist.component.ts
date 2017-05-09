@@ -37,7 +37,7 @@ export class WatchlistComponent implements OnInit {
 	};
 	watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
 	display = {
-		groups: true,
+		groups: false,
 		toggleGroups: () => {
 			this.display.groups = !this.display.groups;
 		},
