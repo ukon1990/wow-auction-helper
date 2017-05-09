@@ -4,22 +4,22 @@
 		<div class="pull-right pull-up-buttons">
 			<span *ngIf="display.groups; else groups" class="btn btn-primary" (click)="display.toggleGroups()">
 				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
-				Groups
+				Edit groups
 			</span>
 			<ng-template #groups>
 				<span class="btn btn-primary" (click)="display.toggleGroups()">
 					<i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>
-					Groups
+					Edit groups
 				</span>
 			</ng-template>
 			<span *ngIf="display.itemSearch; else itemSearch" class="btn btn-primary" (click)="display.toggleSearchItem()">
 				<i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
-				Item search
+				Add items
 			</span>
 			<ng-template #itemSearch>
 				<span class="btn btn-primary" (click)="display.toggleSearchItem()">
 					<i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>
-					Item search
+					Add items
 				</span>
 			</ng-template>
 		</div>
@@ -30,9 +30,8 @@
 			quantity available, current buyout and crafting cost.
 			You will also recieve notifications based on values set by you.
 		</p>
-		<p>
-			If you don't get notifications, you might have
-			disabeled it in your browser.
+		<p *ngIf="!isNotificationsPermitted()">
+			It turns out your browser has blocked notifications. If you wish notifications, please enable it.
 		</p>
 
 		<!-- Item groups -->
@@ -152,7 +151,7 @@
 								<div class="caption">
 									<p>Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs</p>
 									<p>Buyout: {{ copperToArray(getBuyout(item.id)) }}</p>
-									<p>Alert value: {{ copperToArray(item.belowValue) }}</p>
+									<p>Alert value: {{ copperToArray(item.value) }}</p>
 									<!-- TODO: Items below alert value -->
 
 									<!-- Recipes connected to this item that the user has -->
@@ -291,8 +290,8 @@
 				</div>
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Alert value in copper</span>
-					<input *ngIf="editing.item.object" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.belowValue">
-					<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item.object?.belowValue) }}</span>
+					<input *ngIf="editing.item.object" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.value">
+					<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item.object?.value) }}</span>
 				</div>
 
 			</div>

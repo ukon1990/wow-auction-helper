@@ -124,7 +124,7 @@ export class WatchlistComponent implements OnInit {
 				compareTo: 'buyout',
 				criteria: 'below',
 				craftProfitAlert: true,
-				belowValue: item.value,
+				value: item.value,
 				group: item.group
 			};
 			if (!this.watchlist.items[item.group]) {
@@ -133,7 +133,7 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.items[item.group].push(watch);
 			this.notification(
 				`${watch.name} has been added`,
-				`Added to group ${watch.group} with a alert value of ${watch.belowValue}`,
+				`Added to group ${watch.group} with a alert value of ${watch.value}`,
 				this.getIcon(item));
 			this.saveWatchList();
 		} catch (error) {
@@ -217,10 +217,18 @@ export class WatchlistComponent implements OnInit {
 	 * @return {number}
 	 */
 	getBuyout(itemID: string): number {
-		if (!lists.auctions[itemID]) {
+		try {
+			return lists.auctions[itemID].buyout;
+		} catch (e) {
+			if (lists.customPrices[itemID] !== undefined) {
+				return lists.customPrices[itemID];
+			} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+				return lists.wowuction[itemID]['mktPrice'];
+			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+				return lists.tsm[itemID].MarketValue;
+			}
 			return 0;
 		}
-		return lists.auctions[itemID].buyout;
 	}
 
 	saveWatchList(): void {
@@ -300,7 +308,8 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.items[group].splice(index, 1);
 			console.log(this.watchlist.items);
 		}
-		this.watchlist.items[item.group].belowValue = item.belowValue;
+		this.watchlist.items[item.group].value = item.value;
+		this.saveWatchList();
 	}
 
 	removeItem(group: string, index: number): void {
@@ -342,6 +351,10 @@ export class WatchlistComponent implements OnInit {
 			url += icon + '.jpg';
 		}
 		return url;
+	}
+
+	isNotificationsPermitted(): boolean {
+		return Push.Permission.has();
 	}
 
 	notification(title: string, message: string, icon: string) {

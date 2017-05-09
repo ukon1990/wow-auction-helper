@@ -393,7 +393,6 @@ export class AppComponent implements OnInit {
 			}
 			// TODO: this.addToContextList(o);
 		}
-		console.log('Items below vendor',itemsBelowVendor.quantity);
 		if (itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
@@ -414,6 +413,25 @@ export class AppComponent implements OnInit {
 					'You have been undercutted!',
 					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`);
 			}
+		}
+
+		// checking if watchlist gives any alerts
+		let watchlistAlerts = 0;
+		Object.keys(user.watchlist.items).forEach(group => {
+			user.watchlist.items[group].forEach(item => {
+				// TODO: item.criteria === 'below' &&
+				if (list[item.id].buyout <= item.value) {
+					watchlistAlerts++;
+				}
+			});
+		});
+		if (watchlistAlerts > 0) {
+			console.log('!!');
+			this.notification(
+				`Watchlist items!`,
+				`There are ${watchlistAlerts} item alerts.`);
+		} else {
+			console.log(':/');
 		}
 
 		lists.auctions = list;
