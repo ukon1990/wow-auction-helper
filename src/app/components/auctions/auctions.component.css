@@ -17,10 +17,18 @@
     -webkit-box-shadow: #000 0 0 10px;
     box-shadow: #000 0 0 10px;
 }
+.icon-frame.frame-24 {
+    height: 24px;
+    width: 24px;
+    -moz-box-shadow: #000 0 0 10px;
+    -webkit-box-shadow: #000 0 0 10px;
+    box-shadow: #000 0 0 10px;
+}
 .icon-frame {
     display: inline-block;
     overflow: hidden;
     padding: 1px;
+	margin-right: 1em;
     background-color: #000;
     background-position: 1px 1px;
     background-size: cover;
@@ -51,7 +59,7 @@ tr.info a {
     color: #ff0000 !important;
 }
 
-.using-manual-craft, .using-manual-craft a {
+.using-manual-craft, .using-manual-craft a, .below-alert-value {
     color: green;
 }
 

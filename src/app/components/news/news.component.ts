@@ -8,7 +8,7 @@ declare var $;
 })
 export class NewsComponent implements AfterViewInit {
 	currentDate: string;
-	lastUpdateDate = '2.5.2017';
+	lastUpdateDate = '9.5.2017';
 
 	constructor() {
 		this.currentDate = new Date().toLocaleDateString();
@@ -17,6 +17,7 @@ export class NewsComponent implements AfterViewInit {
 	ngAfterViewInit() {
 		setTimeout(() => {
 			try {
+				console.log(localStorage.getItem('timestamp_news'), this.lastUpdateDate);
 				if (localStorage.getItem('realm') &&
 					localStorage.getItem('timestamp_news') !== this.lastUpdateDate) {
 					$(window).load(function() {
@@ -25,7 +26,7 @@ export class NewsComponent implements AfterViewInit {
 
 					// Binding closing functionality
 					$('#news-modal').on('hidden.bs.modal', () => {
-						localStorage.setItem('timestamp_news', this.currentDate);
+						localStorage.setItem('timestamp_news', this.lastUpdateDate);
 					});
 				}
 			} catch (e) {
