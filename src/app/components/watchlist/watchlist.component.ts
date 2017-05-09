@@ -134,7 +134,7 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.items[item.group].push(watch);
 			this.notification(
 				`${watch.name} has been added`,
-				`Added to group ${watch.group} with a alert value of ${watch.value}`,
+				`Added to group ${watch.group} with a alert value of ${copperToArray(watch.value)}`,
 				this.getIcon(item));
 			this.saveWatchList();
 		} catch (error) {
