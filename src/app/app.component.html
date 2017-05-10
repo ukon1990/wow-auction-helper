@@ -17,6 +17,8 @@
         {{ downloadingText }}
       </p>
       <ul class="nav navbar-nav">
+		  <!--TODO: Remove Disenchanting -->
+        <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/disenchanting">Disenchanting</a></li>
         <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/crafting">Crafting</a></li>
         <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/auctions">Auctions</a></li>
         <li *ngIf="isCharacterSet() && isRealmSet()" routerLinkActive="active"><a routerLink="/my-auctions">My auctions</a></li>

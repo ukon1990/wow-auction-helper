@@ -1,0 +1,12 @@
+<p>
+  disenchanting works!
+</p>
+ {{items.length}}
+<ul>
+	<li *ngFor="let item of items">
+		<a rel="item={{item.id}}" href="http://www.wowhead.com/item={{item.id}}" target="_blank">
+			{{ item.id }} - {{ item.itemLevel }} - {{ item.name }} - {{ itemQuality[item.quality] }}
+			{{ item.disenchantsTo }}
+		</a>
+	</li>
+</ul>
