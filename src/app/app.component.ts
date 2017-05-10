@@ -68,53 +68,63 @@ export class AppComponent implements OnInit {
 				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
 				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
 				user.characters = localStorage.characters ? JSON.parse(localStorage.characters) : [];
+				lists.myRecipes = localStorage.crafters_recipes ? localStorage.crafters_recipes.split(',') : [];
 
 				/**
 				 * Used for initiating the download of characters and profession data
 				 */
 				if (user.crafters && user.characters.length < 1) {
-					user.crafters.forEach(crafter => {
-						this.characterService.getCharacter(crafter, user.realm)
-							.subscribe(character => {
-								user.characters.push(character);
-								setRecipesForCharacter(character);
-								localStorage.characters = JSON.stringify(user.characters);
-							}, error => {
-								user.characters.push({
-									name: crafter,
-									realm: user.realm,
-									error: {
-										status: error.status,
-										statusText: error.statusText
-									}
-								});
-								localStorage.characters = JSON.stringify(user.characters);
-								console.log(`Faied at downloading the character ${crafter}`, error);
-							});
-					});
-				} else {
-					user.characters.forEach(character => {
-						if (character.error && character.error.status !== 404) {
-							// Try again
-							/*TODO: Reactivate later! but works!
-							this.characterService.getCharacter(character.name, character.realm)
-								.subscribe(c => {
-									character = c;
-									setRecipesForCharacter(c);
+					try {
+						user.crafters.forEach(crafter => {
+							this.characterService.getCharacter(crafter, user.realm)
+								.subscribe(character => {
+									user.characters.push(character);
+									setRecipesForCharacter(character);
 									localStorage.characters = JSON.stringify(user.characters);
+									lists.myRecipes = Array.from(new Set(lists.myRecipes));
 								}, error => {
-									character.error = {
-										status: error.status,
-										statusText: error.statusText
-									};
+									user.characters.push({
+										name: crafter,
+										realm: user.realm,
+										error: {
+											status: error.status,
+											statusText: error.statusText
+										}
+									});
 									localStorage.characters = JSON.stringify(user.characters);
-									console.log(`Faied at downloading the character ${character.name}`, error);
-								});*/
-						} else {
-							setRecipesForCharacter(character);
-						}
-						lists.myRecipes = Array.from(new Set(lists.myRecipes));
-					});
+									console.log(`Faied at downloading the character ${crafter}`, error);
+								});
+						});
+					} catch (error) {
+						console.log('Unable to loop crafters', error);
+					}
+				} else {
+					try {
+						user.characters.forEach(character => {
+							if (character.error && character.error.status !== 404) {
+								// Try again
+								this.characterService.getCharacter(character.name, character.realm)
+									.subscribe(c => {
+										character = c;
+										setRecipesForCharacter(c);
+										lists.myRecipes = Array.from(new Set(lists.myRecipes));
+										localStorage.characters = JSON.stringify(user.characters);
+									}, error => {
+										character.error = {
+											status: error.status,
+											statusText: error.statusText
+										};
+										localStorage.characters = JSON.stringify(user.characters);
+										console.log(`Faied at downloading the character ${character.name}`, error);
+									});
+							} else {
+								setRecipesForCharacter(character);
+								lists.myRecipes = Array.from(new Set(lists.myRecipes));
+							}
+						});
+					} catch (error) {
+						console.log('Unable to loop through characters', error);
+					}
 				}
 
 				if (localStorage.getItem('watchlist') !== null &&
@@ -294,29 +304,36 @@ export class AppComponent implements OnInit {
 	public getAuctions(): void {
 		lists.isDownloading = true;
 		this.downloadingText = 'Checking for new auctions';
-		console.log('Checking for new auction data');
 
+		this.downloadingText = 'Loading auctions from local storage';
+		console.log('Loading auctions from local storage.');
+		db.table('auctions').toArray().then(
+			result => {
+				this.downloadingText = '';
+				if (result.length > 0) {
+					this.buildAuctionArray(result);
+				} else {
+					localStorage.setItem('timestamp_auctions', '0');
+					this.getAuctions();
+				}
+			});
+
+		console.log('Checking for new auction data');
+		this.downloadingText = 'Checking for new auction data';
 		this.auctionService.getLastUpdated().subscribe(r => {
-			this.downloadingText = 'Downloading auctions, this might take a while';
 			console.log('Downloading auctions');
 			if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
+				this.downloadingText = 'Downloading auctions, this might take a while';
 				this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
 					.subscribe(a => {
 						this.downloadingText = '';
 						this.buildAuctionArray(a.auctions);
-					});
-			} else {
-				this.downloadingText = 'Loading auctions from local storage';
-				console.log('No new auction data available so loaded from local storage.');
-				db.table('auctions').toArray().then(
-					result => {
-						this.downloadingText = '';
-						if (result.length > 0) {
-							this.buildAuctionArray(result);
-						} else {
-							localStorage.setItem('timestamp_auctions', '0');
-							this.getAuctions();
-						}
+					}, error => {
+					this.downloadingText = 'Could not download auctions at this time';
+						setTimeout(() => {
+							this.downloadingText = '';
+						}, 5000);
+						console.log('Could not download auctions at this time', error);
 					});
 			}
 		});

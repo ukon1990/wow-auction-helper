@@ -341,7 +341,7 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	getIcon(item): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
+		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
 		try {
 			if (lists.items[item.id] !== undefined) {
 				icon = lists.items[item.id].icon;
@@ -349,7 +349,7 @@ export class WatchlistComponent implements OnInit {
 		} catch (err) {console.log(err, item, item.id); }
 
 		if (icon === undefined) {
-			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+			url += 'inv_scroll_03.jpg';
 		} else {
 			url += icon + '.jpg';
 		}

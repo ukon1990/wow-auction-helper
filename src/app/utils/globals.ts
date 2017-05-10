@@ -30,7 +30,7 @@ export let user: IUser = {
 };
 
 export const setRecipesForCharacter = (character) => {
-	if (character.professions && user.realm === character.realm.replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
+	if (character.professions && user.realm.toLowerCase() === character.realm.replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
 		character.professions.primary.forEach(primary => {
 			primary.recipes.forEach( recipe => {
 				lists.myRecipes.push(recipe);
