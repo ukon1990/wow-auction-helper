@@ -278,7 +278,7 @@ export class AppComponent implements OnInit {
 					lists.recipes = [];
 				}
 				recipe.recipes.forEach(r => {
-					if (r !== null && r !== undefined && r['profession'] !== undefined && r['profession'] !== null) {
+					if (r && r['profession']) {
 						r['estDemand'] = 0;
 						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
 						if (!lists.itemRecipes[r.itemID]) {

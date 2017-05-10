@@ -154,7 +154,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					'searchQuery': searchQuery, 'onlyMyRecipes': onlyMyRecipes, 'profession': profession,
 					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
 				}));
-
 		lists.recipes.forEach(r => {
 			isAffected = false;
 			// Checking if there are any items missing in the DB
@@ -176,7 +175,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				}
 
 				if (this.myRecipes.length > 0 && match && onlyMyRecipes) {
-					if (this.myRecipes[r.spellID] !== undefined) {
+					if (this.myRecipes[r.spellID]) {
 						match = true;
 					} else {
 						match = false;
@@ -195,7 +194,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					}
 				}
 
-				if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
+				if (match && user.apiToUse === 'tsm' && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
 					match = true;
 				} else {
 					match = false;
@@ -207,7 +206,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					match = false;
 				}
 
-				if (match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
+				if (match && user.apiToUse === 'tsm' && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
 					match = true;
 				} else {
 					match = false;
