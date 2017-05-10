@@ -215,7 +215,48 @@
 			</div>
 
 			<div  class="col-md-12"  *ngIf="tabs[tabIndex].path === 'notifications'">
-				<p>Text</p>
+				<p>Here you can turn on and off the various notifications in the application.</p>
+
+				<div class="col-md-6">
+					<strong>API independent</strong>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Auction house updates
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Items below vendor sell price
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							If {{ user.character }} is undercutted
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-6">
+					<strong>API dependent</strong>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Something
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Something else
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
