@@ -34,7 +34,8 @@ export class SettingsComponent implements OnInit {
 	tabIndex = 0;
 	tabs = [
 		{name: 'Realm, Seller & API', path: ''},
-		{name: 'Crafting', path: 'crafting'}
+		{name: 'Crafting', path: 'crafting'},
+		{name: 'Notifications', path: 'notifications'}
 	];
 
 	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
