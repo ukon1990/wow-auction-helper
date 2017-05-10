@@ -338,11 +338,12 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 */
 	getMinPrice(itemID: string): number {
 		try {
+			if (lists.customPrices[itemID]) {
+				return lists.customPrices[itemID];
+			}
 			return lists.auctions[itemID].buyout;
 		} catch (e) {
-			if (lists.customPrices[itemID] !== undefined) {
-				return lists.customPrices[itemID];
-			} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				return lists.wowuction[itemID]['mktPrice'];
 			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 				return lists.tsm[itemID].MarketValue;
