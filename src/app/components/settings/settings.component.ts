@@ -30,6 +30,11 @@ export class SettingsComponent implements OnInit {
 	userCraftersChanged = false;
 	userCraftersDownloading = false;
 	darkMode = true;
+	tabIndex = 0;
+	tabs = [
+		{name: 'Realm, Seller & API', path: 'general'},
+		{name: 'Crafting', path: 'crafting'}
+	];
 
 	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
 		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
@@ -240,6 +245,10 @@ export class SettingsComponent implements OnInit {
 		} else {
 			return lists.items[itemID].name;
 		}
+	}
+
+	selectTab(index: number) {
+		this.tabIndex = index;
 	}
 
 	copperToArray = copperToArray;

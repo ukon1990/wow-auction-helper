@@ -67,30 +67,61 @@ export class AppComponent implements OnInit {
 				user.apiToUse = localStorage.getItem('api_to_use') || 'none';
 				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
 				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
-				if (localStorage.getItem('crafters_recipes')  !== null && localStorage.getItem('crafters_recipes') !== undefined) {
-					lists.myRecipes = localStorage.getItem('crafters_recipes').split(',');
-				} else if (user.crafters.length > 0) {
-					// Downloading the users characters recipes if crafters are set but recipes aren't
-					this.downloadingText = 'Starting to download your characters recipes';
-					this.characterService.getCharacters().subscribe(recipes => {
-						console.log(recipes);
-						if (typeof recipes.recipes === 'object') {
-							Object.keys(recipes.recipes).forEach(v => {
-								lists.myRecipes.push(recipes.recipes[v]);
+				user.characters = localStorage.characters ? JSON.parse(localStorage.characters) : [];
+
+				/**
+				 * Used for initiating the download of characters and profession data
+				 */
+				console.log('Character length' + user.characters.length);
+				if (user.crafters && user.characters.length < 1) {
+					user.crafters.forEach(crafter => {
+						console.log(crafter);
+						this.characterService.getCharacter(crafter, user.realm)
+							.subscribe(character => {
+								user.characters.push(character);
+								this.setRecipesForCharacter(character);
+								localStorage.characters = JSON.stringify(user.characters);
+							}, error => {
+								user.characters.push({
+									name: crafter,
+									realm: user.realm,
+									error: {
+										status: error.status,
+										statusText: error.statusText
+									}
+								});
+								localStorage.characters = JSON.stringify(user.characters);
+								console.log(`Faied at downloading the character ${crafter}`, error);
 							});
+					});
+				} else {
+					user.characters.forEach(character => {
+						if (character.error && character.error.status !== 404) {
+							// Try again
+							/*TODO: Reactivate later! but works!
+							this.characterService.getCharacter(character.name, character.realm)
+								.subscribe(c => {
+									character = c;
+									this.setRecipesForCharacter(c);
+									localStorage.characters = JSON.stringify(user.characters);
+								}, error => {
+									character.error = {
+										status: error.status,
+										statusText: error.statusText
+									};
+									localStorage.characters = JSON.stringify(user.characters);
+									console.log(`Faied at downloading the character ${character.name}`, error);
+								});*/
 						} else {
-							lists.myRecipes = recipes.recipes;
+							this.setRecipesForCharacter(character);
 						}
-						localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
-					}, e => {
-						console.log('Were unable to download user recipes', e);
 					});
 				}
 
 				if (localStorage.getItem('watchlist') !== null &&
 					localStorage.getItem('watchlist') !== undefined) {
 					user.watchlist = JSON.parse(localStorage.getItem('watchlist'));
-					console.log('watchlist:',user.watchlist);
+					console.log('watchlist:', user.watchlist);
 				}
 			} catch (e) {
 				console.log('app.component init', e);
@@ -172,6 +203,19 @@ export class AppComponent implements OnInit {
 		if (localStorage.getItem('custom_prices') !== null) {
 			lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
 		}
+	}
+
+	setRecipesForCharacter(character) {
+		character.professions.primary.forEach(primary => {
+			primary.recipes.forEach( recipe => {
+				lists.myRecipes.push(recipe);
+			});
+		});
+		character.professions.secondary.forEach(secondary => {
+			secondary.recipes.forEach( recipe => {
+				lists.myRecipes.push(recipe);
+			});
+		});
 	}
 
 	downloadPets() {

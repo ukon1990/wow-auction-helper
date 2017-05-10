@@ -19,6 +19,7 @@ export let user: IUser = {
 	region: 'eu',
 	realm: 'aegwynn',
 	character: undefined,
+	characters: [],
 	apiTsm: undefined,
 	apiWoWu: undefined,
 	apiToUse: 'none',
@@ -122,27 +123,27 @@ export function calcCost(c) {
 					}
 					for (let m of c.reagents) {
 						try {
-							if(lists.items[m.itemID] === undefined) {
+							if (lists.items[m.itemID] === undefined) {
 								// console.log('Lacking item=' + m.name + ' id=' + m.itemID);
 								//this.getItem(m.itemID);
 							}
 
-							if(m.altered === undefined && !m.altered) {
+							if (m.altered === undefined && !m.altered) {
 								m.count = (m.count / c.minCount).toFixed(2);
 								m.altered = true;
 							}
 
-							matBuyout = lists.auctions[m.itemID] !== undefined ?
-								(lists.auctions[m.itemID].buyout) :
-								lists.customPrices[m.itemID] !== undefined ?
-									lists.customPrices[m.itemID] : user.apiToUse === 'tsm' ?
+							matBuyout = lists.customPrices[m.itemID] !== undefined ?
+								(lists.customPrices[m.itemID]) :
+								lists.auctions[m.itemID] !== undefined ?
+									lists.auctions[m.itemID].buyout : user.apiToUse === 'tsm' ?
 										lists.tsm[m.itemID] ?
 											lists.tsm[m.itemID].MarketValue : 0 :
 											0;
 
-							if(lists.items[m.itemID] !== undefined &&
+							if (lists.items[m.itemID] !== undefined &&
 								lists.items[m.itemID].itemSource.sourceType === 'CREATED_BY_SPELL') {
-								if(m.useCraftedBy === undefined) {
+								if (m.useCraftedBy === undefined) {
 									m.createdBy = lists.items[m.itemID].itemSource.sourceId;
 									m.useCraftedBy = false;
 								}
@@ -216,4 +217,12 @@ export function getPet(speciesId, itemService) {
 	}
 	return lists.pets[speciesId];
 }
-export const itemContext = ['Drop', 'World drop', 'Raid (old)', 'Normal dungeon', 'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown', 'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor', 'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop', 'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon', 'Garrison mission'];
+export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
+export const itemContext = [
+	'Drop', 'World drop', 'Raid (old)', 'Normal dungeon',
+	'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown',
+	'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor',
+	'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
+	'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop',
+	'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon',
+	'Garrison mission'];

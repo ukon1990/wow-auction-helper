@@ -27,6 +27,7 @@ export class IUser {
 	region: string;
 	realm: string;
 	character?: string;
+	characters: any[];
 	apiTsm?: string;
 	apiWoWu?: string;
 	customPrices?: any;

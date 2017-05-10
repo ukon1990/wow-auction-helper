@@ -104,10 +104,11 @@ export class AuctionService {
 	}
 
 	getUrl(apiUrl, localUrl) {
+		/* TODO: :)
 		if (window.location.hostname === 'localhost') {
 			console.log('Using local files', localUrl);
 			return localUrl;
-		}
+		}*/
 
 		return apiUrl;
 	};
