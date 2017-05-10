@@ -128,12 +128,20 @@
 				<table class="table table-striped">
 					<tr>
 						<th>item</th>
+						<!--<th>Category</th>-->
 						<th>Price copper input</th>
 						<th>Value in gold</th>
 						<th>Action</th>
 					</tr>
 					<tr *ngFor="let cp of customPrices; let i = index;">
 						<td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
+						<!--<td>
+							<select [(ngModel)]="cp.category">
+								<option value="fallback">Fallback</option>
+								<option value="vendor">Vendor</option>
+								<option value="soulbound">Soulbound</option>
+							</select>
+						</td>-->
 						<td><input type="number" [(ngModel)]="cp.price"/></td>
 						<td>{{copperToArray(cp.price)}}</td>
 						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
