@@ -219,11 +219,12 @@ export class WatchlistComponent implements OnInit {
 	 */
 	getBuyout(itemID: string): number {
 		try {
+			if (lists.customPrices[itemID]) {
+				return lists.customPrices[itemID];
+			}
 			return lists.auctions[itemID].buyout;
 		} catch (e) {
-			if (lists.customPrices[itemID] !== undefined) {
-				return lists.customPrices[itemID];
-			} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				return lists.wowuction[itemID]['mktPrice'];
 			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 				return lists.tsm[itemID].MarketValue;
@@ -341,7 +342,7 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	getIcon(item): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
+		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
 		try {
 			if (lists.items[item.id] !== undefined) {
 				icon = lists.items[item.id].icon;
@@ -349,7 +350,7 @@ export class WatchlistComponent implements OnInit {
 		} catch (err) {console.log(err, item, item.id); }
 
 		if (icon === undefined) {
-			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+			url += 'inv_scroll_03.jpg';
 		} else {
 			url += icon + '.jpg';
 		}

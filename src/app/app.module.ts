@@ -63,6 +63,9 @@ import { NewsComponent } from './components/news/news.component';
 			}, {
 				path: 'settings',
 				component: SettingsComponent
+			}, {
+				path: 'settings/:setting',
+				component: SettingsComponent
 			}
 		])
 	],

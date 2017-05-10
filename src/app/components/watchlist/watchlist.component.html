@@ -145,18 +145,21 @@
 						<div *ngFor="let item of watchlist.items[group]; let i = index" class="col-sm-6 col-md-4">
 							<div class="thumbnail">
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
-								<a rel="item={{ item.id }}" href="#" target="_blank">
+								<a rel="item={{ item.id }}"  href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ item.id }}" target="_blank">
 		  						  {{ item.name }}
 		  					  </a>
 								<div class="caption">
-									Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs <br>
-									<span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ copperToArray(getBuyout(item.id)) }}</span> <br>
-									<span *ngIf="user.apiToUse === 'tsm'">
+									<div [ngClass]="user.apiToUse === 'tsm' ? 'col-md-6' : 'col-md-12'">
+										Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs <br>
+										<span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ copperToArray(getBuyout(item.id)) }}</span> <br>
+										Alert value: {{ copperToArray(item.value) }}
+										<!-- TODO: Items below alert value <br>-->
+									</div>
+									<div class="col-md-6" *ngIf="user.apiToUse === 'tsm'">
 										Market value: {{ getMarketValue(item.id) }}<br>
-									</span>
-									Alert value: {{ copperToArray(item.value) }} <br>
-									<!-- TODO: Items below alert value -->
-
+										Regional demand: {{ getAuctionItem(item.id).estDemand }}%
+									</div>
+									<div class="row"></div>
 									<!-- Recipes connected to this item that the user has -->
 									<div *ngIf="getUserRecipesForItem(item.id).length > 0">
 

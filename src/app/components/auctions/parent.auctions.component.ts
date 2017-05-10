@@ -50,7 +50,7 @@ export abstract class ParentAuctionComponent {
 	 */
 	getIcon(auction): string {
 		const itemID = auction.item !== undefined ? auction.item : auction.itemID;
-		let url = 'http://media.blizzard.com/wow/icons/56/', icon;
+		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
 		try {
 			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
 				if (lists.pets[auction.petSpeciesId] === undefined) {
@@ -63,7 +63,7 @@ export abstract class ParentAuctionComponent {
 		} catch (err) {console.log(err, auction, itemID); }
 
 		if (icon === undefined) {
-			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+			url += 'inv_scroll_03.jpg';
 		} else {
 			url += icon + '.jpg';
 		}

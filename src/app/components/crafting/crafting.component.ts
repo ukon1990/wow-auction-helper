@@ -36,6 +36,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		'Inscription'
 	].sort();
 	craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
+	sortProfitBy = 'g';
 
 	private isInitiated = false;
 
@@ -58,7 +59,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		lists.myRecipes.forEach( recipeID => {
 			this.myRecipes[recipeID] = 'owned';
 		});
-
 		this.titleService.setTitle('Wah - Crafting');
 	}
 
@@ -154,7 +154,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					'searchQuery': searchQuery, 'onlyMyRecipes': onlyMyRecipes, 'profession': profession,
 					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
 				}));
-
 		lists.recipes.forEach(r => {
 			isAffected = false;
 			// Checking if there are any items missing in the DB
@@ -176,7 +175,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				}
 
 				if (this.myRecipes.length > 0 && match && onlyMyRecipes) {
-					if (this.myRecipes[r.spellID] !== undefined) {
+					if (this.myRecipes[r.spellID]) {
 						match = true;
 					} else {
 						match = false;
@@ -195,7 +194,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					}
 				}
 
-				if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
+				if (match && user.apiToUse === 'tsm' && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
 					match = true;
 				} else {
 					match = false;
@@ -207,7 +206,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					match = false;
 				}
 
-				if (match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
+				if (match && user.apiToUse === 'tsm' && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
 					match = true;
 				} else {
 					match = false;
@@ -272,14 +271,20 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		if (this.sortAsc) {
 			this.sortAsc = false;
 			this.crafts.sort(
-				function(a, b) {
+				(a, b) => {
+					if (sortBy === 'profit' && this.sortProfitBy === '%') {
+						return a[sortBy] / a.buyout - b[sortBy] / b.buyout;
+					}
 					return a[sortBy] - b[sortBy];
 				}
 			);
 		} else {
 			this.sortAsc = true;
 			this.crafts.sort(
-				function(a, b) {
+				(a, b) => {
+					if (sortBy === 'profit' && this.sortProfitBy === '%') {
+						return b[sortBy] / b.buyout - a[sortBy] / a.buyout;
+					}
 					return b[sortBy] - a[sortBy];
 				}
 			);
@@ -333,11 +338,12 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 */
 	getMinPrice(itemID: string): number {
 		try {
+			if (lists.customPrices[itemID]) {
+				return lists.customPrices[itemID];
+			}
 			return lists.auctions[itemID].buyout;
 		} catch (e) {
-			if (lists.customPrices[itemID] !== undefined) {
-				return lists.customPrices[itemID];
-			} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				return lists.wowuction[itemID]['mktPrice'];
 			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 				return lists.tsm[itemID].MarketValue;
@@ -386,10 +392,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 * @return {string}
 	 */
 	getIcon(itemID: string): string {
-		let url = 'http://media.blizzard.com/wow/icons/56/';
+		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/';
 		const icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
 		if (icon === undefined) {
-			url = 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg';
+			url += 'inv_scroll_03.jpg';
 		} else {
 			url += icon + '.jpg';
 		}

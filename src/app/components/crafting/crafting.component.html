@@ -4,7 +4,9 @@
 	</div>
 	<div class="panel-body">
 		<p>
-			Materials marked with red indicates that the item is not currently at AH.
+			Materials marked with red indicates that the item is not currently at AH. If any items are sold by a vendor, you can add a
+			price override in the settings -> crafting. The app can't automate it atm, as there are no good ways 
+			of checking if an item is sold by spesific vendor or not.
 		</p>
 		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
 			If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
@@ -93,9 +95,15 @@
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
 							Buyout
 						</th>
-						<th (click)="sortList('profit')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-							Profit
+						<th data-toggle="tooltip" title="You can choose to sort by profit in % or in gold.">
+							<span (click)="sortList('profit')">
+								<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+								Profit
+							</span>
+							<select [(ngModel)]="sortProfitBy">
+								<option value="g">Gold</option>
+								<option value="%">Percent</option>
+							</select>
 							</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							<span *ngIf="apiToUse === 'tsm'">Regional avg </span>

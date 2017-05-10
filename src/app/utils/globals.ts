@@ -19,6 +19,7 @@ export let user: IUser = {
 	region: 'eu',
 	realm: 'aegwynn',
 	character: undefined,
+	characters: [],
 	apiTsm: undefined,
 	apiWoWu: undefined,
 	apiToUse: 'none',
@@ -28,6 +29,20 @@ export let user: IUser = {
 	watchlist: {"recipes":{},"items":{"Legion herbs":[{"id":"124103","name":"Foxflower","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":200000,"group":"Legion herbs"},{"id":"124105","name":"Starlight Rose","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":400000,"group":"Legion herbs"},{"id":"124104","name":"Fjarnskaggl","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":150000,"group":"Legion herbs"},{"id":"124106","name":"Felwort","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":1000000,"group":"Legion herbs"},{"id":"124101","name":"Aethril","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":60000,"group":"Legion herbs"},{"id":"124102","name":"Dreamleaf","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":80000,"group":"Legion herbs"}],"Legion ores":[{"id":"123918","name":"Leystone Ore","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":80000,"group":"Legion ores"},{"id":"123919","name":"Felslate","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":200000,"group":"Legion ores"}],"Enchanting materials":[{"id":"124442","name":"Chaos Crystal","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":1000000,"group":"Enchanting materials"},{"id":"124440","name":"Arkhana","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":200000,"group":"Enchanting materials"},{"id":"124441","name":"Leylight Shard","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":600000,"group":"Enchanting materials"}],"Legion Gems":[{"id":"130220","name":"Quick Dawnlight","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000000,"group":"Legion Gems"},{"id":"130222","name":"Masterful Shadowruby","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000000,"group":"Legion Gems"},{"id":"130219","name":"Deadly Eye of Prophecy","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000000,"group":"Legion Gems"},{"id":"130221","name":"Versatile Maelstrom Sapphire","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":3000000,"group":"Legion Gems"}],"undefined":[{"id":"133607","name":"Silver Mackerel","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":50000}],"Legion fish":[{"id":"133607","name":"Silver Mackerel","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":50000,"group":"Legion fish"},{"id":"124107","name":"Cursed Queenfish","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":50000,"group":"Legion fish"},{"id":"124109","name":"Highmountain Salmon","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":100000,"group":"Legion fish"},{"id":"124108","name":"Mossgill Perch","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000,"group":"Legion fish"},{"id":"124110","name":"Stormray","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":150000,"group":"Legion fish"},{"id":"124111","name":"Runescale Koi","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":150000,"group":"Legion fish"},{"id":"124112","name":"Black Barracuda","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":100000,"group":"Legion fish"}],"Legion leather":[{"id":"124115","name":"Stormscale","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":80000,"group":"Legion leather"},{"id":"124113","name":"Stonehide Leather","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":100000,"group":"Legion leather"}],"Legion - Ring enchants":[{"id":"128541","name":"Enchant Ring - Binding of Critical Strike","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"},{"id":"128542","name":"Enchant Ring - Binding of Haste","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"},{"id":"128543","name":"Enchant Ring - Binding of Mastery","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"},{"id":"128544","name":"Enchant Ring - Binding of Versatility","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"}]},"groups":["Enchanting materials","Legion herbs","Legion ores","Legion fish","Legion leather","Legion - Ring enchants","Legion Gems"]}
 };
 
+export const setRecipesForCharacter = (character) => {
+	if (character.professions && user.realm.toLowerCase() === character.realm.replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
+		character.professions.primary.forEach(primary => {
+			primary.recipes.forEach( recipe => {
+				lists.myRecipes.push(recipe);
+			});
+		});
+		character.professions.secondary.forEach(secondary => {
+			secondary.recipes.forEach( recipe => {
+				lists.myRecipes.push(recipe);
+			});
+		});
+	}
+};
 
 lists.customPrices = {'124124': 3000000, '120945': 500000, '115524': 200000};
 
@@ -122,27 +137,27 @@ export function calcCost(c) {
 					}
 					for (let m of c.reagents) {
 						try {
-							if(lists.items[m.itemID] === undefined) {
+							if (lists.items[m.itemID] === undefined) {
 								// console.log('Lacking item=' + m.name + ' id=' + m.itemID);
 								//this.getItem(m.itemID);
 							}
 
-							if(m.altered === undefined && !m.altered) {
+							if (m.altered === undefined && !m.altered) {
 								m.count = (m.count / c.minCount).toFixed(2);
 								m.altered = true;
 							}
 
-							matBuyout = lists.auctions[m.itemID] !== undefined ?
-								(lists.auctions[m.itemID].buyout) :
-								lists.customPrices[m.itemID] !== undefined ?
-									lists.customPrices[m.itemID] : user.apiToUse === 'tsm' ?
+							matBuyout = lists.customPrices[m.itemID] !== undefined ?
+								(lists.customPrices[m.itemID]) :
+								lists.auctions[m.itemID] !== undefined ?
+									lists.auctions[m.itemID].buyout : user.apiToUse === 'tsm' ?
 										lists.tsm[m.itemID] ?
 											lists.tsm[m.itemID].MarketValue : 0 :
 											0;
 
-							if(lists.items[m.itemID] !== undefined &&
+							if (lists.items[m.itemID] !== undefined &&
 								lists.items[m.itemID].itemSource.sourceType === 'CREATED_BY_SPELL') {
-								if(m.useCraftedBy === undefined) {
+								if (m.useCraftedBy === undefined) {
 									m.createdBy = lists.items[m.itemID].itemSource.sourceId;
 									m.useCraftedBy = false;
 								}
@@ -216,4 +231,12 @@ export function getPet(speciesId, itemService) {
 	}
 	return lists.pets[speciesId];
 }
-export const itemContext = ['Drop', 'World drop', 'Raid (old)', 'Normal dungeon', 'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown', 'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor', 'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop', 'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon', 'Garrison mission'];
+export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
+export const itemContext = [
+	'Drop', 'World drop', 'Raid (old)', 'Normal dungeon',
+	'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown',
+	'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor',
+	'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
+	'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop',
+	'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon',
+	'Garrison mission'];
