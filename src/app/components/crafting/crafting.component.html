@@ -93,9 +93,15 @@
 							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
 							Buyout
 						</th>
-						<th (click)="sortList('profit')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-							Profit
+						<th data-toggle="tooltip" title="You can choose to sort by profit in % or in gold.">
+							<span (click)="sortList('profit')">
+								<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+								Profit
+							</span>
+							<select [(ngModel)]="sortProfitBy">
+								<option value="g">Gold</option>
+								<option value="%">Percent</option>
+							</select>
 							</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							<span *ngIf="apiToUse === 'tsm'">Regional avg </span>

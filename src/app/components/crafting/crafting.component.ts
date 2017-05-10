@@ -36,6 +36,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		'Inscription'
 	].sort();
 	craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
+	sortProfitBy = 'g';
 
 	private isInitiated = false;
 
@@ -58,7 +59,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		lists.myRecipes.forEach( recipeID => {
 			this.myRecipes[recipeID] = 'owned';
 		});
-
 		this.titleService.setTitle('Wah - Crafting');
 	}
 
@@ -272,14 +272,20 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		if (this.sortAsc) {
 			this.sortAsc = false;
 			this.crafts.sort(
-				function(a, b) {
+				(a, b) => {
+					if (sortBy === 'profit' && this.sortProfitBy === '%') {
+						return a[sortBy] / a.buyout - b[sortBy] / b.buyout;
+					}
 					return a[sortBy] - b[sortBy];
 				}
 			);
 		} else {
 			this.sortAsc = true;
 			this.crafts.sort(
-				function(a, b) {
+				(a, b) => {
+					if (sortBy === 'profit' && this.sortProfitBy === '%') {
+						return b[sortBy] / b.buyout - a[sortBy] / a.buyout;
+					}
 					return b[sortBy] - a[sortBy];
 				}
 			);

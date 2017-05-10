@@ -3,7 +3,7 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
-import { calcCost, user, lists, getPet, db, copperToArray } from './utils/globals';
+import { calcCost, user, lists, getPet, db, copperToArray, setRecipesForCharacter } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import Push from 'push.js';
 
@@ -72,14 +72,12 @@ export class AppComponent implements OnInit {
 				/**
 				 * Used for initiating the download of characters and profession data
 				 */
-				console.log('Character length' + user.characters.length);
 				if (user.crafters && user.characters.length < 1) {
 					user.crafters.forEach(crafter => {
-						console.log(crafter);
 						this.characterService.getCharacter(crafter, user.realm)
 							.subscribe(character => {
 								user.characters.push(character);
-								this.setRecipesForCharacter(character);
+								setRecipesForCharacter(character);
 								localStorage.characters = JSON.stringify(user.characters);
 							}, error => {
 								user.characters.push({
@@ -102,7 +100,7 @@ export class AppComponent implements OnInit {
 							this.characterService.getCharacter(character.name, character.realm)
 								.subscribe(c => {
 									character = c;
-									this.setRecipesForCharacter(c);
+									setRecipesForCharacter(c);
 									localStorage.characters = JSON.stringify(user.characters);
 								}, error => {
 									character.error = {
@@ -113,8 +111,9 @@ export class AppComponent implements OnInit {
 									console.log(`Faied at downloading the character ${character.name}`, error);
 								});*/
 						} else {
-							this.setRecipesForCharacter(character);
+							setRecipesForCharacter(character);
 						}
+						lists.myRecipes = Array.from(new Set(lists.myRecipes));
 					});
 				}
 
@@ -203,19 +202,6 @@ export class AppComponent implements OnInit {
 		if (localStorage.getItem('custom_prices') !== null) {
 			lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
 		}
-	}
-
-	setRecipesForCharacter(character) {
-		character.professions.primary.forEach(primary => {
-			primary.recipes.forEach( recipe => {
-				lists.myRecipes.push(recipe);
-			});
-		});
-		character.professions.secondary.forEach(secondary => {
-			secondary.recipes.forEach( recipe => {
-				lists.myRecipes.push(recipe);
-			});
-		});
 	}
 
 	downloadPets() {
