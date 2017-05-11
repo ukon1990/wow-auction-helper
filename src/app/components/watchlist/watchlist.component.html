@@ -144,6 +144,8 @@
 					<div class="row">
 						<div *ngFor="let item of watchlist.items[group]; let i = index" class="col-sm-6 col-md-4">
 							<div class="thumbnail">
+								<i class="glyphicon glyphicon-bell pull-right"
+									[ngClass]="{'using-manual-craft': item.alert, 'not-using-manual-craft': !item.alert}"></i>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
 								<a rel="item={{ item.id }}"  href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ item.id }}" target="_blank">
 		  						  {{ item.name }}
@@ -298,7 +300,10 @@
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Alert value in copper</span>
 					<input *ngIf="editing.item.object" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.value">
-					<span class="input-group-addon" id="basic-addon1">{{ copperToString(editing.item.object?.value) }}</span>
+					<span class="input-group-addon" id="basic-addon1">
+						{{ copperToString(editing.item.object?.value) }}
+						<input type="checkbox" [(ngModel)]="editing.item.alert">
+					</span>
 				</div>
 
 			</div>

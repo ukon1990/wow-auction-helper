@@ -24,6 +24,7 @@ export class WatchlistComponent implements OnInit {
 		item: {
 			object: undefined,
 			group: undefined,
+			alert: true,
 			index: undefined
 		},
 		recipe: {
@@ -71,6 +72,7 @@ export class WatchlistComponent implements OnInit {
 		this.watchlist.groups = user.watchlist.groups;
 		this.watchlist.items = user.watchlist.items;
 		this.watchlist.recipes = user.watchlist.recipes;
+
 		this.user = user;
 		lists.myRecipes.forEach( recipeID => {
 			this.myRecipes[recipeID] = 'owned';
@@ -123,6 +125,7 @@ export class WatchlistComponent implements OnInit {
 				name: item.name,
 				compareTo: 'buyout',
 				criteria: 'below',
+				alert: true,
 				craftProfitAlert: true,
 				minCraftProfit: 10,
 				value: item.value,
@@ -289,6 +292,7 @@ export class WatchlistComponent implements OnInit {
 
 	editItemDialog(group: string, index: number): void {
 		this.editing.item.object = this.watchlist.items[group][index];
+		this.editing.item.alert = this.watchlist.items[group][index].alert;
 		this.editing.item.group = group;
 		this.editing.item.index = index;
 		$('#item-modal').modal('show');
@@ -302,6 +306,7 @@ export class WatchlistComponent implements OnInit {
 	editItem(): void {
 		const item = this.editing.item.object,
 			index = this.editing.item.index,
+			alert = this.editing.item.alert,
 			group = this.editing.item.group;
 		// changing group?
 		if (this.editing.item.object.group !== group) {
@@ -312,7 +317,9 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.items[group].splice(index, 1);
 			console.log(this.watchlist.items);
 		}
-		this.watchlist.items[item.group].value = item.value;
+		this.watchlist.items[item.group][index].value = item.value;
+		this.watchlist.items[item.group][index].alert = alert;
+		console.log(item, this.watchlist.items[item.group]);
 		this.saveWatchList();
 	}
 
@@ -358,19 +365,34 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	isNotificationsPermitted(): boolean {
-		return Push.Permission.has();
+		if (!user.notifications.isWatchlist) {
+			return true;
+		}
+		try {
+			return Push.Permission.has();
+		} catch (error) {
+			// This might be a mobile device, in that case. Don't bother.
+			return true;
+		}
 	}
 
 	notification(title: string, message: string, icon: string) {
 		console.log(title, message);
-		Push.create(title, {
-			body: message,
-			icon: icon,
-			timeout: 3000,
-			onClick: function() {
-				window.focus();
-				this.close();
-			}
-		});
+		if (!user.notifications.isWatchlist) {
+			return;
+		}
+		try {
+			Push.create(title, {
+				body: message,
+				icon: icon,
+				timeout: 3000,
+				onClick: function() {
+					window.focus();
+					this.close();
+				}
+			});
+		} catch (error) {
+			// This might be a mobile device, in that case. Don't bother.
+		}
 	}
 }

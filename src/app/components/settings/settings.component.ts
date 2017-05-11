@@ -139,7 +139,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.api_wowuction = this.user.apiWoWu;
 		localStorage.api_to_use = this.user.apiToUse;
 		localStorage.crafters = this.user.crafters.toString();
-		localStorage.notifications = this.user.notifications.toString();
+		localStorage.notifications = JSON.stringify(this.user.notifications);
 
 		this.customPrices.forEach(cp => {
 			if (cp.itemID !== null) {
@@ -219,6 +219,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.removeItem('crafters_recipes');
 		lists.myRecipes = [];
 		localStorage.removeItem('watchlist');
+		localStorage.removeItem('notifications');
 		user.watchlist = {recipes: {}, items: {}, groups: []};
 	}
 
