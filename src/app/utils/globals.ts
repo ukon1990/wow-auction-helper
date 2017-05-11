@@ -27,7 +27,12 @@ export let user: IUser = {
 	customPrices: [],
 	buyoutLimit: 200,
 	crafters: [],
-	notifications: {},
+	notifications: {
+		isUpdateAvailable: true,
+		isBelowVendorSell: true,
+		isUndercutted: true,
+		isWatchlist: true
+	},
 	watchlist: watchlist
 };
 

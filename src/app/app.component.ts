@@ -58,17 +58,49 @@ export class AppComponent implements OnInit {
 		if (this.isRealmSet()) {
 			// Loading user settings
 			try {
-				user.region = localStorage.getItem('region') || undefined;
-				user.realm = localStorage.getItem('realm') || undefined;
-				user.character = localStorage.getItem('character') || undefined;
-				user.apiTsm = localStorage.getItem('api_tsm') || undefined;
-				user.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
-				user.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
-				user.apiToUse = localStorage.getItem('api_to_use') || 'none';
-				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
-				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
-				user.characters = localStorage.characters ? JSON.parse(localStorage.characters) : [];
-				lists.myRecipes = localStorage.crafters_recipes ? localStorage.crafters_recipes.split(',') : [];
+				if (localStorage.region) {
+					user.region = localStorage.region;
+				}
+
+				if (localStorage.realm) {
+					user.realm = localStorage.realm;
+				}
+				if (localStorage.character) {
+					user.character = localStorage.character;
+				}
+
+				if (localStorage.api_tsm) {
+					user.apiTsm = localStorage.api_tsm;
+				}
+
+				if (localStorage.api_wowuction) {
+					user.apiWoWu = localStorage.api_wowuction;
+				}
+
+				if (localStorage.custom_prices) {
+					user.customPrices = JSON.parse(localStorage.custom_prices);
+				}
+
+				if (localStorage.api_to_use) {
+					user.apiToUse = localStorage.api_to_use;
+				}
+
+				if (localStorage.crafting_buyout_limit) {
+					user.buyoutLimit = parseFloat(localStorage.crafting_buyout_limit);
+				}
+
+				if (localStorage.crafters) {
+					user.crafters = localStorage.crafters.split(',');
+				}
+				if (localStorage.characters) {
+					user.characters = JSON.parse(localStorage.characters);
+				}
+				if (localStorage.crafters_recipes) {
+					lists.myRecipes = localStorage.crafters_recipes.split(',');
+				}
+				if (localStorage.notifications) {
+					user.notifications = localStorage.notifications;
+				}
 
 				/**
 				 * Used for initiating the download of characters and profession data

@@ -222,21 +222,27 @@
 					<ul class="list-group">
 						<li class="list-group-item">
 							<span class="badge">
-								<input type="checkbox">
+								<input type="checkbox" [(ngModel)]="user.notifications.isUpdateAvailable">
 							</span>
 							Auction house updates
 						</li>
 						<li class="list-group-item">
 							<span class="badge">
-								<input type="checkbox">
+								<input type="checkbox" [(ngModel)]="user.notifications.isBelowVendorSell">
 							</span>
 							Items below vendor sell price
 						</li>
 						<li class="list-group-item">
 							<span class="badge">
-								<input type="checkbox">
+								<input type="checkbox" [(ngModel)]="user.notifications.isUndercutted">
 							</span>
 							If {{ user.character }} is undercutted
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isWatchlist">
+							</span>
+							Allow the watchlist to send notifications. <em>If you wish to turn of individual items, do that on the watchlist page</em>
 						</li>
 					</ul>
 				</div>

@@ -132,13 +132,14 @@ export class SettingsComponent implements OnInit {
 
 	saveUserData(): void {
 		const oldTSMKey = localStorage.getItem('api_tsm') || '';
-		localStorage.setItem('region', this.user.region);
-		localStorage.setItem('realm', this.user.realm);
-		localStorage.setItem('character', this.user.character);
-		localStorage.setItem('api_tsm', this.user.apiTsm);
-		localStorage.setItem('api_wowuction', this.user.apiWoWu);
-		localStorage.setItem('api_to_use', this.user.apiToUse);
-		localStorage.setItem('crafters', this.user.crafters.toString());
+		localStorage.region = this.user.region;
+		localStorage.realm = this.user.realm;
+		localStorage.character = this.user.character;
+		localStorage.api_tsm = this.user.apiTsm;
+		localStorage.api_wowuction = this.user.apiWoWu;
+		localStorage.api_to_use = this.user.apiToUse;
+		localStorage.crafters = this.user.crafters.toString();
+		localStorage.notifications = this.user.notifications.toString();
 
 		this.customPrices.forEach(cp => {
 			if (cp.itemID !== null) {
