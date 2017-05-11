@@ -100,23 +100,23 @@
 						<td>
 							{{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
 						<td>
-							Buyout: {{ copperToArray(auc.buyout) }}
+							Buyout: {{ copperToString(auc.buyout) }}
 							<span *ngIf="user.apiToUse !== 'none'">
 								({{ buyoutVersusMarketValue(auc)}}% mkt)
 							</span><br>
 
-							Bid: {{ copperToArray(auc.bid) }}
+							Bid: {{ copperToString(auc.bid) }}
 							<span *ngIf="user.apiToUse !== 'none'">
 								({{ bidVersusMarketValue(auc)}}% mkt)
 							</span>
 
 							<span *ngIf="filterForm.value['onlyVendorSellable']">
-								<br>Vendor price: {{ copperToArray(getItem(auc.item).sellPrice) }} |
+								<br>Vendor price: {{ copperToString(getItem(auc.item).sellPrice) }} |
 								{{ ((auc.buyout / getItem(auc.item).sellPrice) * 100).toFixed(2) }}%
 							</span>
 							<span *ngIf="(user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') && auc.petAuctions === undefined">
-								<br>Market value: {{ copperToArray(auc.mktPrice) }}
-								<br>Region sale avg: {{ copperToArray(auc.regionSaleAvg) }}
+								<br>Market value: {{ copperToString(auc.mktPrice) }}
+								<br>Region sale avg: {{ copperToString(auc.regionSaleAvg) }}
 							</span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
@@ -183,12 +183,12 @@
 							</div>
 						</td>
 						<td>
-							{{ copperToArray(a.buyout) }} <br>
-							{{ copperToArray(a.bid) }}
+							{{ copperToString(a.buyout) }} <br>
+							{{ copperToString(a.bid) }}
 						</td>
 						<td>
-							{{ copperToArray(a.buyout / a.quantity) }}<br>
-							{{ copperToArray(a.bid / a.quantity) }}
+							{{ copperToString(a.buyout / a.quantity) }}<br>
+							{{ copperToString(a.bid / a.quantity) }}
 						</td>
 						<td>{{ a.quantity }}</td>
 					</tr>

@@ -7,8 +7,9 @@ import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 
-import { user, itemClasses, lists, getPet } from '../../utils/globals';
+import { user, lists, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
+import { itemClasses } from '../../utils/objects';
 
 @Component({
 	selector: 'app-auctions',
