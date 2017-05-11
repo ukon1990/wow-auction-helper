@@ -1,7 +1,7 @@
 // Imports
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IUser, IAuction } from '../../utils/interfaces';
-import { user, itemClasses, lists, getPet, copperToArray, copperToString } from '../../utils/globals';
+import { user, itemClasses, lists, getPet, copperToString, copperToString } from '../../utils/globals';
 
 declare var $WowheadPower;
 declare var $wu;
@@ -20,7 +20,7 @@ export abstract class ParentAuctionComponent {
 	apiToUse = user.apiToUse;
 
 	// Imported functions to be used in the templates
-	copperToArray = copperToArray;
+	copperToString = copperToString;
 	copperToString = copperToString;
 
 	character: string;

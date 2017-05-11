@@ -6,7 +6,7 @@ import { AuctionService } from '../../services/auctions';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, copperToArray, db, setRecipesForCharacter } from '../../utils/globals';
+import { user, lists, copperToString, db, setRecipesForCharacter } from '../../utils/globals';
 
 @Component({
 	selector: 'app-settings',
@@ -328,5 +328,5 @@ export class SettingsComponent implements OnInit {
 		this.tabIndex = index;
 	}
 
-	copperToArray = copperToArray;
+	copperToString = copperToString;
 }

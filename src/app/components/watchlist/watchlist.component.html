@@ -100,13 +100,13 @@
 						</a><br>
 					</td>
 					<td>
-						{{  copperToArray(getBuyout(item.id))}}
+						{{  copperToString(getBuyout(item.id))}}
 					</td>
 					<td>
 						{{ getMarketValue(item.id) }}
 					</td>
 					<td><input type="number" [(ngModel)]="item.value" /></td>
-					<td>{{ copperToArray(item.value || 0) }}</td>
+					<td>{{ copperToString(item.value || 0) }}</td>
 					<td>
 						<select [(ngModel)]="item.group">
 							<option *ngFor="let group of watchlist.groups" [value]="group">
@@ -151,8 +151,8 @@
 								<div class="caption">
 									<div [ngClass]="user.apiToUse === 'tsm' ? 'col-md-6' : 'col-md-12'">
 										Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs <br>
-										<span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ copperToArray(getBuyout(item.id)) }}</span> <br>
-										Alert value: {{ copperToArray(item.value) }}
+										<span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ copperToString(getBuyout(item.id)) }}</span> <br>
+										Alert value: {{ copperToString(item.value) }}
 										<!-- TODO: Items below alert value <br>-->
 									</div>
 									<div class="col-md-6" *ngIf="user.apiToUse === 'tsm'">
@@ -180,7 +180,7 @@
 																href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 																	target="_blank">{{m.name}}</a>
 
-															{{ copperToArray(getBuyout(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
+															{{ copperToString(getBuyout(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
 															<i *ngIf="m.useCraftedBy !== undefined"
 																class="glyphicon glyphicon-piggy-bank"
 																[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -196,7 +196,7 @@
 																{{ subMats.count * m.count }} x
 																<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 																		target="_blank">{{subMats.name}}</a>
-																{{ copperToArray(getBuyout(subMats.itemID)) }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
+																{{ copperToString(getBuyout(subMats.itemID)) }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
 																<i *ngIf="m.useCraftedBy !== undefined"
 																	class="glyphicon glyphicon-piggy-bank"
 																	[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -207,7 +207,7 @@
 													</div>
 												</td>
 												<td class="hidden-xs">
-													{{ copperToArray(getBuyout(item.id) - craft.cost) }}
+													{{ copperToString(getBuyout(item.id) - craft.cost) }}
 												</td>
 											</tr>
 										</table>
@@ -298,7 +298,7 @@
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">Alert value in copper</span>
 					<input *ngIf="editing.item.object" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.value">
-					<span class="input-group-addon" id="basic-addon1">{{ copperToArray(editing.item.object?.value) }}</span>
+					<span class="input-group-addon" id="basic-addon1">{{ copperToString(editing.item.object?.value) }}</span>
 				</div>
 
 			</div>

@@ -135,7 +135,7 @@
 					<tr *ngFor="let cp of customPrices; let i = index;">
 						<td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
 						<td><input type="number" [(ngModel)]="cp.price"/></td>
-						<td>{{copperToArray(cp.price)}}</td>
+						<td>{{copperToString(cp.price)}}</td>
 						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
 					</tr>
 				</table>
@@ -240,7 +240,7 @@
 						</li>
 					</ul>
 				</div>
-				<div class="col-md-6">
+				<!--<div class="col-md-6">
 					<strong>API dependent</strong>
 					<ul class="list-group">
 						<li class="list-group-item">
@@ -256,7 +256,7 @@
 							Something else
 						</li>
 					</ul>
-				</div>
+				</div>-->
 			</div>
 		</div>
 	</div>

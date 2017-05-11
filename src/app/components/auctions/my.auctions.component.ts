@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { NgClass } from '@angular/common';
 import { ParentAuctionComponent } from './parent.auctions.component';
 import { IUser, IAuction } from '../../utils/interfaces';
-import { user, itemClasses, lists, getPet, copperToArray } from '../../utils/globals';
+import { user, itemClasses, lists, getPet, copperToString } from '../../utils/globals';
 
 
 

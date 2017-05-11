@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { calcCost, user, lists, db, copperToArray } from '../../utils/globals';
+import { calcCost, user, lists, db, copperToString } from '../../utils/globals';
 import dexie from 'dexie';
 import Push from 'push.js';
 
@@ -13,7 +13,7 @@ declare var $;
 	styleUrls: ['./watchlist.component.css', '../auctions/auctions.component.css']
 })
 export class WatchlistComponent implements OnInit {
-	copperToArray = copperToArray;
+	copperToString = copperToString;
 	queryItems = [];
 	myRecipes = [];
 	user: IUser;
@@ -134,7 +134,7 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.items[item.group].push(watch);
 			this.notification(
 				`${watch.name} has been added`,
-				`Added to group ${watch.group} with a alert value of ${copperToArray(watch.value)}`,
+				`Added to group ${watch.group} with a alert value of ${copperToString(watch.value)}`,
 				this.getIcon(item));
 			this.saveWatchList();
 		} catch (error) {
@@ -162,9 +162,9 @@ export class WatchlistComponent implements OnInit {
 
 	getMarketValue(itemID: string): string {
 		if (lists.tsm[itemID]) {
-			return copperToArray(lists.tsm[itemID].MarketValue);
+			return copperToString(lists.tsm[itemID].MarketValue);
 		}
-		return copperToArray(0);
+		return copperToString(0);
 	}
 	getItemRecipes(itemID: string): any {
 		if (lists.itemRecipes[itemID]) {

@@ -3,7 +3,7 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
-import { calcCost, user, lists, getPet, db, copperToArray, setRecipesForCharacter } from './utils/globals';
+import { calcCost, user, lists, getPet, db, copperToString, setRecipesForCharacter } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import Push from 'push.js';
 
@@ -443,7 +443,7 @@ export class AppComponent implements OnInit {
 		if (itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
-				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`, 'auctions');
+				`Potential profit: ${copperToString(itemsBelowVendor.totalValue)}`, 'auctions');
 		}
 
 		if (user.character !== undefined) {

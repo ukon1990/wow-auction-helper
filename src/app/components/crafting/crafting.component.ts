@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
-import { calcCost, user, itemClasses, lists, copperToArray, getPet } from '../../utils/globals';
+import { calcCost, user, itemClasses, lists, copperToString, getPet } from '../../utils/globals';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
