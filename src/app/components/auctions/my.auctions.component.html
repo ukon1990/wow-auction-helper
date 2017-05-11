@@ -5,7 +5,7 @@
 	<div class="panel-body">
 		<ul>
 			<li>{{ numberOfUndercuttedAuctions }} of {{ activeAuctions }} your auctions are undercutted.</li>
-			<li>Value of auctions: {{ copperToArray(auctionsValue) }}.</li>
+			<li>Value of auctions: {{ copperToString(auctionsValue) }}.</li>
 		</ul>
 
 		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
@@ -52,7 +52,7 @@
 						</td>
 						<td>{{ auc.quantity }}</td>
 						<td>
-							{{ copperToArray(auc.buyout) }} ({{ copperToArray(auc.buyout / auc.quantity) }} pcs)
+							{{ copperToString(auc.buyout) }} ({{ copperToString(auc.buyout / auc.quantity) }} pcs)
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							<span *ngIf="apiToUse === 'wowuctions'">
@@ -97,8 +97,8 @@
 								</div>
 							</div>
 						</td>
-						<td>{{ copperToArray(a.buyout) }}</td>
-						<td>{{ copperToArray(a.buyout / a.quantity) }}</td>
+						<td>{{ copperToString(a.buyout) }}</td>
+						<td>{{ copperToString(a.buyout / a.quantity) }}</td>
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>

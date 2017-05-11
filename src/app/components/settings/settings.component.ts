@@ -6,7 +6,7 @@ import { AuctionService } from '../../services/auctions';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, copperToArray, db, setRecipesForCharacter } from '../../utils/globals';
+import { user, lists, copperToString, db, setRecipesForCharacter } from '../../utils/globals';
 
 @Component({
 	selector: 'app-settings',
@@ -34,7 +34,8 @@ export class SettingsComponent implements OnInit {
 	tabIndex = 0;
 	tabs = [
 		{name: 'Realm, Seller & API', path: ''},
-		{name: 'Crafting', path: 'crafting'}
+		{name: 'Crafting', path: 'crafting'},
+		{name: 'Notifications', path: 'notifications'}
 	];
 
 	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
@@ -131,13 +132,14 @@ export class SettingsComponent implements OnInit {
 
 	saveUserData(): void {
 		const oldTSMKey = localStorage.getItem('api_tsm') || '';
-		localStorage.setItem('region', this.user.region);
-		localStorage.setItem('realm', this.user.realm);
-		localStorage.setItem('character', this.user.character);
-		localStorage.setItem('api_tsm', this.user.apiTsm);
-		localStorage.setItem('api_wowuction', this.user.apiWoWu);
-		localStorage.setItem('api_to_use', this.user.apiToUse);
-		localStorage.setItem('crafters', this.user.crafters.toString());
+		localStorage.region = this.user.region;
+		localStorage.realm = this.user.realm;
+		localStorage.character = this.user.character;
+		localStorage.api_tsm = this.user.apiTsm;
+		localStorage.api_wowuction = this.user.apiWoWu;
+		localStorage.api_to_use = this.user.apiToUse;
+		localStorage.crafters = this.user.crafters.toString();
+		localStorage.notifications = JSON.stringify(this.user.notifications);
 
 		this.customPrices.forEach(cp => {
 			if (cp.itemID !== null) {
@@ -217,6 +219,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.removeItem('crafters_recipes');
 		lists.myRecipes = [];
 		localStorage.removeItem('watchlist');
+		localStorage.removeItem('notifications');
 		user.watchlist = {recipes: {}, items: {}, groups: []};
 	}
 
@@ -327,5 +330,5 @@ export class SettingsComponent implements OnInit {
 		this.tabIndex = index;
 	}
 
-	copperToArray = copperToArray;
+	copperToString = copperToString;
 }

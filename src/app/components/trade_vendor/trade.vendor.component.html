@@ -44,11 +44,11 @@
 					</td>
 					<td>{{ a.quantity }}</td>
 					<td>
-						{{ copperToArray(a.value) }} <br>
-						Buyout per item: {{ copperToArray(a.buyout) }}
+						{{ copperToString(a.value) }} <br>
+						Buyout per item: {{ copperToString(a.buyout) }}
 						<div *ngIf="apiToUse !== 'none'">
-							Market value: {{ copperToArray(a.mktPrice) }}<br>
-							Region sale avg: {{ copperToArray(a.regionSaleAvg) }}
+							Market value: {{ copperToString(a.mktPrice) }}<br>
+							Region sale avg: {{ copperToString(a.regionSaleAvg) }}
 						</div>
 					</td>
 					<td *ngIf="apiToUse !== 'none'" class="hidden-xs">

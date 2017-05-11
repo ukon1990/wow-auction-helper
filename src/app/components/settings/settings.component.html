@@ -143,7 +143,7 @@
 							</select>
 						</td>-->
 						<td><input type="number" [(ngModel)]="cp.price"/></td>
-						<td>{{copperToArray(cp.price)}}</td>
+						<td>{{copperToString(cp.price)}}</td>
 						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
 					</tr>
 				</table>
@@ -220,6 +220,58 @@
 				</div>
 
 
+			</div>
+
+			<div  class="col-md-12"  *ngIf="tabs[tabIndex].path === 'notifications'">
+				<p>Here you can turn on and off the various notifications in the application.</p>
+
+				<div class="col-md-6">
+					<strong>API independent</strong>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isUpdateAvailable">
+							</span>
+							Auction house updates
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isBelowVendorSell">
+							</span>
+							Items below vendor sell price
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isUndercutted">
+							</span>
+							If {{ user.character }} is undercutted
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isWatchlist">
+							</span>
+							Allow the watchlist to send notifications.<br>
+							<em>If you wish to turn of individual items, do that on the watchlist page</em>
+						</li>
+					</ul>
+				</div>
+				<!--<div class="col-md-6">
+					<strong>API dependent</strong>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Something
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Something else
+						</li>
+					</ul>
+				</div>-->
 			</div>
 		</div>
 	</div>
