@@ -627,7 +627,9 @@ export class AppComponent implements OnInit {
 			});
 			Object.keys(user.watchlist.items).forEach(group => {
 				user.watchlist.items[group].forEach(item => {
-					if ((item.alert === undefined || item.alert) && item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value) {
+					if ((item.alert === undefined || item.alert) &&
+						(item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value ||
+						item.criteria === 'above' && lists.auctions[item.id].buyout >= item.value)) {
 						watchlistAlerts++;
 						this.notification(item.name, `Current lowest buyout at ${
 							Math.round(100 - (item.value / lists.auctions[item.id].buyout) * 100)

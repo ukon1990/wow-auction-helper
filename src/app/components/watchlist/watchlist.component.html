@@ -154,7 +154,9 @@
 									<div [ngClass]="user.apiToUse === 'tsm' ? 'col-md-6' : 'col-md-12'">
 										Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs <br>
 										<span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ copperToString(getBuyout(item.id)) }}</span> <br>
-										Alert value: {{ copperToString(item.value) }}
+										Alert value: {{ copperToString(item.value) }} <br>
+										Alert criteria: {{ item.criteria }} or equal <br>
+										Minimum crafting profit: {{ item.minCraftProfit }}%
 										<!-- TODO: Items below alert value <br>-->
 									</div>
 									<div class="col-md-6" *ngIf="user.apiToUse === 'tsm'">
@@ -305,7 +307,19 @@
 						<input type="checkbox" [(ngModel)]="editing.item.alert">
 					</span>
 				</div>
-
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="basic-addon1">Minimum crafting profit</span>
+					<input *ngIf="editing.item.object" type="number" placeholder="value in copper" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.minCraftProfit">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+				</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="basic-addon1">Change alert criteria</span>
+					<select *ngIf="editing.item.object" type="text" placeholder="Group name" aria-describedby="basic-addon1" [(ngModel)]="editing.item.object.criteria">
+						<option *ngFor="let criteria of editing.item.criterias" [value]="criteria" [selected]="criteria === editing.item.object.criteria">
+							{{ criteria }} or equal
+						</option>
+					</select>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" (click)="editItem()">Save changes</button>

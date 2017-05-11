@@ -25,7 +25,8 @@ export class WatchlistComponent implements OnInit {
 			object: undefined,
 			group: undefined,
 			alert: true,
-			index: undefined
+			index: undefined,
+			criterias: ['below', 'above']
 		},
 		recipe: {
 			index: undefined,
