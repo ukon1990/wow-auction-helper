@@ -1,7 +1,7 @@
 <!-- The app's news feed -->
 <app-news></app-news>
 <!-- The app -->
-<header class="navbar navbar-default">
+<header class="navbar navbar-default navbar-fixed-top">
    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
       aria-expanded="false">
       <span class="sr-only">Toggle navigation</span>
@@ -17,13 +17,13 @@
         {{ downloadingText }}
       </p>
       <ul class="nav navbar-nav">
-        <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/crafting">Crafting</a></li>
-        <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/auctions">Auctions</a></li>
-        <li *ngIf="isCharacterSet() && isRealmSet()" routerLinkActive="active"><a routerLink="/my-auctions">My auctions</a></li>
-        <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/watchlist">Watchlist</a></li>
-        <li *ngIf="isRealmSet()" routerLinkActive="active"><a routerLink="/trade-vendor">Trade vendors</a></li>
-        <li routerLinkActive="active"><a routerLink="/settings">Settings</a></li>
-        <li routerLinkActive="active"><a routerLink="/about">About</a></li>
+        <li *ngIf="isRealmSet()" data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/crafting">Crafting</a></li>
+        <li *ngIf="isRealmSet()" data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/auctions">Auctions</a></li>
+        <li *ngIf="isCharacterSet() && isRealmSet()" data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/my-auctions">My auctions</a></li>
+        <li *ngIf="isRealmSet()" data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/watchlist">Watchlist</a></li>
+        <li *ngIf="isRealmSet()" data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/trade-vendor">Trade vendors</a></li>
+        <li data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/settings">Settings</a></li>
+        <li data-toggle="collapse" data-target=".navbar-collapse" routerLinkActive="active"><a routerLink="/about">About</a></li>
       </ul>
     </div>
 
