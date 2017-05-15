@@ -195,22 +195,28 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					}
 				}
 
-				if (match && user.apiToUse === 'tsm' && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
-					match = true;
-				} else {
-					match = false;
-				}
-
 				if (match && (profit === 0 || profit <= this.getProfitPercent(r.profit, r.buyout))) {
 					match = true;
 				} else {
 					match = false;
 				}
 
-				if (match && user.apiToUse === 'tsm' && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
-					match = true;
-				} else {
-					match = false;
+				if (user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') {
+					try {
+						if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
+							match = true;
+						} else {
+							match = false;
+						}
+
+						if (match  && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
+							match = true;
+						} else {
+							match = false;
+						}
+					} catch (error) {
+						console.log('Filtering for api related filters failed', error);
+					}
 				}
 
 				if (match) {

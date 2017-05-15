@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService, private characterService: CharacterService,
 		private router: Router) {
+		this.getRecipes();
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
@@ -320,24 +321,6 @@ export class AppComponent implements OnInit {
 		} catch (err) {
 			console.log('Failed at loading auctions', err);
 		}
-		this.itemService.getRecipes()
-			.subscribe(recipe => {
-				let accepted = true;
-				if (lists.recipes === undefined) {
-					lists.recipes = [];
-				}
-				recipe.recipes.forEach(r => {
-					if (r && r['profession']) {
-						r['estDemand'] = 0;
-						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
-						if (!lists.itemRecipes[r.itemID]) {
-							lists.itemRecipes[r.itemID] = [];
-						}
-						lists.itemRecipes[r.itemID].push(r.spellID);
-					}
-				});
-				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
-			});
 	}
 
 	public getAuctions(): void {
@@ -653,6 +636,27 @@ export class AppComponent implements OnInit {
 		}
 	}
 
+	getRecipes(): void {
+		this.itemService.getRecipes()
+			.subscribe(recipe => {
+				if (lists.recipes === undefined) {
+					lists.recipes = [];
+				}
+				recipe.recipes.forEach(r => {
+					if (r && r['profession']) {
+						r['estDemand'] = 0;
+						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
+						if (!lists.itemRecipes[r.itemID]) {
+							lists.itemRecipes[r.itemID] = [];
+						}
+						lists.itemRecipes[r.itemID].push(r.spellID);
+					}
+				});
+				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
+			});
+	}
+
+
 	/**
 	 * Used to add item to the list of available contexts for an auction item
 	 * @param {[type]} o - Auction item
@@ -744,5 +748,9 @@ export class AppComponent implements OnInit {
 			this.notificationsWorking = false;
 			console.log(error);
 		}
+	}
+
+	isSmallWindow(): boolean {
+		return window.innerWidth < 768;
 	}
 }
