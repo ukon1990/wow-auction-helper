@@ -3,12 +3,23 @@
 		<h2 class="panel-title">Settings</h2>
 	</div>
 	<div class="panel-body">
-		<div class="col-md-12">
-			<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
-			<button class="btn btn-secondary" (click)="changeStyle()">Turn dark mode {{ darkMode ? 'off' : 'on' }}</button>
+		<div class="col-md-2">
+			<ul class="nav nav-pills nav-stacked">
+				<li class="active" *ngFor="let tab of tabs; let i = index" [ngClass]="{'active': tabIndex == i}" (click)="selectTab(i)">
+					<a >{{ tab.name }}</a>
+				</li>
+				<li>
+					<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
+				</li>
+				<li>
+					<button class="btn btn-secondary" (click)="changeStyle()">
+						Turn dark mode {{ darkMode ? 'off' : 'on' }}
+					</button>
+				</li>
+			</ul>
 		</div>
-		<div class="col-md-12">
-			<div class="col-md-6">
+		<div class="col-md-10">
+			<div class="col-md-12" *ngIf="tabs[tabIndex].path === ''">
 				<h3>Realm & Character</h3>
 				<p>
 					Realm and region are requiered, while the character name is not.
@@ -80,29 +91,8 @@
 				<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
 			</div>
 
-			<div class="col-md-6">
+			<div class="col-md-12"  *ngIf="tabs[tabIndex].path === 'crafting'">
 				<h3>Crafting</h3>
-				<strong>Your crafters</strong>
-				<p>
-					This allows for you to only display recipes you know. You have {{ getMyRecipeCount() }} recipes registered.
-				</p>
-				<form class="form-inline" (ngSubmit)="addCrafter()" [formGroup]="userCrafterForm">
-					<div class="input-group input-group-sm col-md-12">
-						<span *ngIf="!userCraftersChanged" class="btn btn-default input-group-addon" (click)="getCraftersRecipes()">Update crafters recipes</span>
-						<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [formControl]="userCrafterForm.controls['query']"/>
-						<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCrafter()"></span>
-					</div>
-				</form>
-				<ul class="list-group">
-					<li *ngIf="user.crafters.length === 0" class="list-group-item">
-						You have no registered crafters
-					</li>
-					<li *ngFor="let crafter of user.crafters; let i = index;" class="list-group-item">
-						{{ crafter }}<span *ngIf="userCraftersDownloading"> - downloading</span>
-						<i class="glyphicon glyphicon-trash pull-right" (click)="removeCrafter(i)"></i>
-					</li>
-				</ul>
-
 				<div class="input-group input-group-sm">
 					<span class="input-group-addon" id="basic-addon1">
 						Use market value instead of buyout if buyout >=
@@ -138,17 +128,150 @@
 				<table class="table table-striped">
 					<tr>
 						<th>item</th>
+						<!--<th>Category</th>-->
 						<th>Price copper input</th>
 						<th>Value in gold</th>
 						<th>Action</th>
 					</tr>
 					<tr *ngFor="let cp of customPrices; let i = index;">
 						<td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
+						<!--<td>
+							<select [(ngModel)]="cp.category">
+								<option value="fallback">Fallback</option>
+								<option value="vendor">Vendor</option>
+								<option value="soulbound">Soulbound</option>
+							</select>
+						</td>-->
 						<td><input type="number" [(ngModel)]="cp.price"/></td>
-						<td>{{copperToArray(cp.price)}}</td>
+						<td>{{copperToString(cp.price)}}</td>
 						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
 					</tr>
 				</table>
+				<strong>Your crafters</strong>
+				<p>
+					This allows for you to only display recipes you know. Your characters have {{ getMyRecipeCount() }} unique recipes registered.
+					It will automatically uses the realm that you currently have selected to get data from.
+				</p>
+				<form class="form-inline" (ngSubmit)="addCharacter()" [formGroup]="userCrafterForm">
+					<div class="input-group input-group-sm col-md-12">
+						<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [formControl]="userCrafterForm.controls['query']"/>
+						<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCharacter()"></span>
+					</div>
+				</form>
+				<div class="mt-1">
+					<div *ngIf="user.characters.length === 0" class="list-group-item">
+						You have no registered crafters
+					</div>
+					<div class="row">
+						<div *ngFor="let character of user.characters; let i = index;" class="col-sm-6 col-md-4">
+							<div class="thumbnail">
+								<img *ngIf="character.thumbnail"
+									src="https://render-eu.worldofwarcraft.com/character/{{ character.thumbnail}}"
+									alt="Character portrait of {{ character.name }}">
+								<div class="caption">
+									<h3 *ngIf="character.name">
+										{{ character.name }} @ {{ character.realm }}
+										<span *ngIf="character.downloading"> - downloading</span>
+									</h3>
+									<span *ngIf="character.lastModified; else errorMsg">
+										<strong>Last modified:</strong>
+										{{ character.lastModified | date:'d MMM HH:mm' }}
+									</span>
+									<ng-template #errorMsg>
+										<span *ngIf="character.error; else noData">
+											Status: {{ character.error.statusText }} ({{ character.error.status }})
+										</span>
+										<ng-template #noData>
+											No data available for this character yet
+										</ng-template>
+									</ng-template>
+									<div *ngIf="character.professions">
+										<strong>Primary professions</strong>
+										<ul class="list-group">
+											<li class="list-group-item" *ngFor="let primary of character.professions.primary">
+												<span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
+												{{ primary.name }} x {{ primary.recipes.length }}
+											</li>
+										</ul>
+										<strong>Secondary professions</strong>
+										<ul class="list-group">
+											<li class="list-group-item"  *ngFor="let secondary of character.professions.secondary">
+												<span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
+												{{ secondary.name }} x {{ secondary.recipes.length }}
+											</li>
+										</ul>
+									</div>
+									<p>
+										<a class="btn btn-primary" role="button"
+											(click)="getCharacter(character.name, character.realm, i)">
+											<i class="glyphicon glyphicon-refresh"
+												[ngClass]="{loading: character.downloading}"></i>
+											Update
+										</a>
+										<a class="btn btn-default" role="button" (click)="removeCharacter(i)">
+											<i class="glyphicon glyphicon-trash"> </i>
+											Delete
+										</a>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+			<div  class="col-md-12"  *ngIf="tabs[tabIndex].path === 'notifications'">
+				<p>Here you can turn on and off the various notifications in the application.</p>
+
+				<div class="col-md-6">
+					<strong>API independent</strong>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isUpdateAvailable">
+							</span>
+							Auction house updates
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isBelowVendorSell">
+							</span>
+							Items below vendor sell price
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isUndercutted">
+							</span>
+							If {{ user.character }} is undercutted
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox" [(ngModel)]="user.notifications.isWatchlist">
+							</span>
+							Allow the watchlist to send notifications.<br>
+							<em>If you wish to turn of individual items, do that on the watchlist page</em>
+						</li>
+					</ul>
+				</div>
+				<!--<div class="col-md-6">
+					<strong>API dependent</strong>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Something
+						</li>
+						<li class="list-group-item">
+							<span class="badge">
+								<input type="checkbox">
+							</span>
+							Something else
+						</li>
+					</ul>
+				</div>-->
 			</div>
 		</div>
 	</div>

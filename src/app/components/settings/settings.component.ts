@@ -6,11 +6,12 @@ import { AuctionService } from '../../services/auctions';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, copperToArray, db } from '../../utils/globals';
+import { user, lists, copperToString, db, setRecipesForCharacter } from '../../utils/globals';
 
 @Component({
 	selector: 'app-settings',
 	templateUrl: 'settings.component.html',
+	styleUrls: ['../../app.component.css'],
 	providers: [RealmService, AuctionService]
 })
 export class SettingsComponent implements OnInit {
@@ -30,6 +31,12 @@ export class SettingsComponent implements OnInit {
 	userCraftersChanged = false;
 	userCraftersDownloading = false;
 	darkMode = true;
+	tabIndex = 0;
+	tabs = [
+		{name: 'Realm, Seller & API', path: ''},
+		{name: 'Crafting', path: 'crafting'},
+		{name: 'Notifications', path: 'notifications'}
+	];
 
 	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
 		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
@@ -71,19 +78,68 @@ export class SettingsComponent implements OnInit {
 		}
 	}
 
+	getCharacter(character: string, realm: string, index?: number) {
+		if (this.user.characters[index]) {
+			this.user.characters[index].downloading = true;
+			if (user.region === 'us') {
+				this.realmListUs['realms'].forEach(r => {
+					if (r.name === realm) {
+						realm = r.slug;
+					}
+				});
+			} else if (user.region === 'eu') {
+				this.realmListEu['realms'].forEach(r => {
+					if (r.name === realm) {
+						realm = r.slug;
+					}
+				});
+			}
+		}
+
+		this.characterService.getCharacter(character, realm)
+			.subscribe(c => {
+				if (this.user.characters[index]) {
+					this.user.characters[index] = c;
+					user.characters[index] = c;
+					setRecipesForCharacter(c);
+				} else {
+					user.characters.push(c);
+					setRecipesForCharacter(c);
+				}
+				localStorage.characters = JSON.stringify(user.characters);
+				lists.myRecipes = Array.from(new Set(lists.myRecipes));
+			}, error => {
+				const updated = {
+					name: character,
+					realm: realm,
+					error: {
+						status: error.status,
+						statusText: error.statusText
+					}
+				};
+				if (!this.user.characters[index]) {
+					user.characters.push(updated);
+					this.user.characters.push(updated);
+				} else {
+					this.user.characters[index].downloading = false;
+					user.characters[index].downloading = false;
+				}
+				localStorage.characters = JSON.stringify(user.characters);
+				lists.myRecipes = Array.from(new Set(lists.myRecipes));
+				console.log(`Unable to download character ${character} @ ${realm}`, error);
+			});
+	}
+
 	saveUserData(): void {
 		const oldTSMKey = localStorage.getItem('api_tsm') || '';
-		localStorage.setItem('region', this.user.region);
-		localStorage.setItem('realm', this.user.realm);
-		localStorage.setItem('character', this.user.character);
-		localStorage.setItem('api_tsm', this.user.apiTsm);
-		localStorage.setItem('api_wowuction', this.user.apiWoWu);
-		localStorage.setItem('api_to_use', this.user.apiToUse);
-		localStorage.setItem('crafters', this.user.crafters.toString());
-
-		if (this.userCraftersChanged && this.user.crafters !== undefined && this.user.crafters.length > 0) {
-			this.getCraftersRecipes();
-		}
+		localStorage.region = this.user.region;
+		localStorage.realm = this.user.realm;
+		localStorage.character = this.user.character;
+		localStorage.api_tsm = this.user.apiTsm;
+		localStorage.api_wowuction = this.user.apiWoWu;
+		localStorage.api_to_use = this.user.apiToUse;
+		localStorage.crafters = this.user.crafters.toString();
+		localStorage.notifications = JSON.stringify(this.user.notifications);
 
 		this.customPrices.forEach(cp => {
 			if (cp.itemID !== null) {
@@ -130,6 +186,8 @@ export class SettingsComponent implements OnInit {
 				this.ac.buildAuctionArray(a);
 			});
 		}
+
+		this.updateRecipesForRealm();
 	}
 
 	importUserData(): void {
@@ -161,6 +219,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.removeItem('crafters_recipes');
 		lists.myRecipes = [];
 		localStorage.removeItem('watchlist');
+		localStorage.removeItem('notifications');
 		user.watchlist = {recipes: {}, items: {}, groups: []};
 	}
 
@@ -202,35 +261,60 @@ export class SettingsComponent implements OnInit {
 		this.customPrices.splice(index, 1);
 	}
 
-	addCrafter() {
+	addCharacter() {
+		let realmName = '',
+			exists = false;
+		const realmSlug = this.user.realm,
+			character = this.userCrafterForm.value['query'];
+
 		this.userCraftersChanged = true;
-		this.user.crafters.push(this.userCrafterForm.value['query']);
+		if (user.region === 'us') {
+			this.realmListUs['realms'].forEach(r => {
+				if (r.slug === realmSlug) {
+					realmName = r.name;
+				}
+			});
+		} else if (user.region === 'eu') {
+			this.realmListEu['realms'].forEach(r => {
+				if (r.slug === realmSlug) {
+					realmName = r.name;
+				}
+			});
+		}
+		this.user.characters.forEach(c => {
+			if (c.name.toLowerCase() === character && (c.realm === realmName || c.realm === realmSlug)) {
+				exists = true;
+			}
+		});
+		if (!exists) {
+			this.user.characters.push({
+				name: character,
+				realm: realmName,
+				downloading: true
+			});
+			this.getCharacter(
+				character,
+				realmSlug,
+				this.user.characters.length - 1);
+		}
 		this.userCrafterForm.value['query'] = '';
 	}
 
-	removeCrafter(index: number) {
-		this.user.crafters.splice(index, 1);
+	removeCharacter(index: number): void {
+		console.log('deleted');
+		this.user.characters.splice(index, 1);
+		this.updateRecipesForRealm();
+		localStorage.characters = JSON.stringify(user.characters);
 	}
 
 	getMyRecipeCount(): number {
 		return lists.myRecipes.length;
 	}
 
-	getCraftersRecipes(): void {
-		this.userCraftersDownloading = true;
-		user.realm = this.user.realm;
-		user.region = this.user.region;
-		this.characterService.getCharacters().subscribe(recipes => {
-			this.userCraftersDownloading = false;
-			lists.myRecipes = [];
-			if (typeof recipes.recipes === 'object') {
-				Object.keys(recipes.recipes).forEach(v => {
-					lists.myRecipes.push(recipes.recipes[v]);
-				});
-			} else {
-				lists.myRecipes = recipes.recipes;
-			}
-			localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
+	updateRecipesForRealm(): void {
+		lists.myRecipes = [];
+		this.user.characters.forEach(character => {
+			setRecipesForCharacter(character);
 		});
 	}
 
@@ -242,5 +326,9 @@ export class SettingsComponent implements OnInit {
 		}
 	}
 
-	copperToArray = copperToArray;
+	selectTab(index: number) {
+		this.tabIndex = index;
+	}
+
+	copperToString = copperToString;
 }

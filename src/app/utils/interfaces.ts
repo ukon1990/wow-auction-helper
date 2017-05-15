@@ -27,11 +27,13 @@ export class IUser {
 	region: string;
 	realm: string;
 	character?: string;
+	characters: any[];
 	apiTsm?: string;
 	apiWoWu?: string;
 	customPrices?: any;
 	apiToUse: string;
 	buyoutLimit: number;
 	crafters: any[];
+	notifications: any;
 	watchlist?: {recipes: object, items: object, groups: any[]};
 }

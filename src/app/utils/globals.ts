@@ -1,4 +1,5 @@
 import { IUser } from './interfaces';
+import { itemClasses, watchlist } from './objects';
 import Dexie from 'dexie';
 
 export let lists = {
@@ -19,15 +20,36 @@ export let user: IUser = {
 	region: 'eu',
 	realm: 'aegwynn',
 	character: undefined,
+	characters: [],
 	apiTsm: undefined,
 	apiWoWu: undefined,
 	apiToUse: 'none',
 	customPrices: [],
 	buyoutLimit: 200,
 	crafters: [],
-	watchlist: {"recipes":{},"items":{"Legion herbs":[{"id":"124103","name":"Foxflower","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":200000,"group":"Legion herbs"},{"id":"124105","name":"Starlight Rose","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":400000,"group":"Legion herbs"},{"id":"124104","name":"Fjarnskaggl","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":150000,"group":"Legion herbs"},{"id":"124106","name":"Felwort","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":1000000,"group":"Legion herbs"},{"id":"124101","name":"Aethril","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":60000,"group":"Legion herbs"},{"id":"124102","name":"Dreamleaf","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":80000,"group":"Legion herbs"}],"Legion ores":[{"id":"123918","name":"Leystone Ore","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":80000,"group":"Legion ores"},{"id":"123919","name":"Felslate","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":200000,"group":"Legion ores"}],"Enchanting materials":[{"id":"124442","name":"Chaos Crystal","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":1000000,"group":"Enchanting materials"},{"id":"124440","name":"Arkhana","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":200000,"group":"Enchanting materials"},{"id":"124441","name":"Leylight Shard","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":600000,"group":"Enchanting materials"}],"Legion Gems":[{"id":"130220","name":"Quick Dawnlight","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000000,"group":"Legion Gems"},{"id":"130222","name":"Masterful Shadowruby","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000000,"group":"Legion Gems"},{"id":"130219","name":"Deadly Eye of Prophecy","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000000,"group":"Legion Gems"},{"id":"130221","name":"Versatile Maelstrom Sapphire","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":3000000,"group":"Legion Gems"}],"undefined":[{"id":"133607","name":"Silver Mackerel","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":50000}],"Legion fish":[{"id":"133607","name":"Silver Mackerel","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":50000,"group":"Legion fish"},{"id":"124107","name":"Cursed Queenfish","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":50000,"group":"Legion fish"},{"id":"124109","name":"Highmountain Salmon","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":100000,"group":"Legion fish"},{"id":"124108","name":"Mossgill Perch","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":10000,"group":"Legion fish"},{"id":"124110","name":"Stormray","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":150000,"group":"Legion fish"},{"id":"124111","name":"Runescale Koi","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":150000,"group":"Legion fish"},{"id":"124112","name":"Black Barracuda","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":100000,"group":"Legion fish"}],"Legion leather":[{"id":"124115","name":"Stormscale","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":80000,"group":"Legion leather"},{"id":"124113","name":"Stonehide Leather","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":100000,"group":"Legion leather"}],"Legion - Ring enchants":[{"id":"128541","name":"Enchant Ring - Binding of Critical Strike","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"},{"id":"128542","name":"Enchant Ring - Binding of Haste","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"},{"id":"128543","name":"Enchant Ring - Binding of Mastery","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"},{"id":"128544","name":"Enchant Ring - Binding of Versatility","compareTo":"buyout","minCraftProfit":10,"criteria":"below","value":8000000,"group":"Legion Enchants"}]},"groups":["Enchanting materials","Legion herbs","Legion ores","Legion fish","Legion leather","Legion - Ring enchants","Legion Gems"]}
+	notifications: {
+		isUpdateAvailable: true,
+		isBelowVendorSell: true,
+		isUndercutted: true,
+		isWatchlist: true
+	},
+	watchlist: watchlist
 };
 
+export const setRecipesForCharacter = (character) => {
+	if (character.professions && user.realm.toLowerCase() === character.realm.replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
+		character.professions.primary.forEach(primary => {
+			primary.recipes.forEach( recipe => {
+				lists.myRecipes.push(recipe);
+			});
+		});
+		character.professions.secondary.forEach(secondary => {
+			secondary.recipes.forEach( recipe => {
+				lists.myRecipes.push(recipe);
+			});
+		});
+	}
+};
 
 lists.customPrices = {'124124': 3000000, '120945': 500000, '115524': 200000};
 
@@ -68,31 +90,6 @@ db.open()
 // Local database end
 
 
-export let itemClasses = {"classes":[{"class":17,"name":"Battle Pets","subclasses":[{"subclass":0,"name":"BattlePet"}]},{"class":0,"name":"Consumable","subclasses":[{"subclass":0,"name":"Explosives and Devices"},{"subclass":5,"name":"Food & Drink"},{"subclass":1,"name":"Potion"},{"subclass":2,"name":"Elixir"},{"subclass":3,"name":"Flask"},{"subclass":7,"name":"Bandage"},{"subclass":8,"name":"Other"},{"subclass":9,"name":"Vantus Rune"}]},{"class":1,"name":"Container","subclasses":[{"subclass":0,"name":"Bag"},{"subclass":1,"name":"Soul Bag"},{"subclass":2,"name":"Herb Bag"},{"subclass":3,"name":"Enchanting Bag"},{"subclass":4,"name":"Engineering Bag"},{"subclass":5,"name":"Gem Bag"},{"subclass":6,"name":"Mining Bag"},{"subclass":7,"name":"Leatherworking Bag"},{"subclass":8,"name":"Inscription Bag"},{"subclass":9,"name":"Tackle Box"},{"subclass":10,"name":"Cooking Bag"}]},{"class":2,"name":"Weapon","subclasses":[{"subclass":1378,"name":"Two-Handed Melee Weapon"},{"subclass":41617,"name":"One-Handed Melee Weapon"},{"subclass":41105,"name":"One-Handed Melee Weapon"},{"subclass":174067,"name":"Melee Weapon"},{"subclass":173555,"name":"Melee Weapon"},{"subclass":0,"name":"Axe"},{"subclass":1,"name":"Axe"},{"subclass":2,"name":"Bow"},{"subclass":3,"name":"Gun"},{"subclass":4,"name":"Mace"},{"subclass":5,"name":"Mace"},{"subclass":6,"name":"Polearm"},{"subclass":7,"name":"Sword"},{"subclass":8,"name":"Sword"},{"subclass":262156,"name":"Ranged Weapon"},{"subclass":9,"name":"Warglaives"},{"subclass":10,"name":"Staff"},{"subclass":11,"name":"Bear Claws"},{"subclass":12,"name":"Cat Claws"},{"subclass":13,"name":"Fist Weapon"},{"subclass":14,"name":"Miscellaneous"},{"subclass":15,"name":"Dagger"},{"subclass":16,"name":"Thrown"},{"subclass":17,"name":"Spear"},{"subclass":18,"name":"Crossbow"},{"subclass":19,"name":"Wand"},{"subclass":20,"name":"Fishing Pole"}]},{"class":3,"name":"Gem","subclasses":[{"subclass":0,"name":"Intellect"},{"subclass":1,"name":"Agility"},{"subclass":2,"name":"Strength"},{"subclass":3,"name":"Stamina"},{"subclass":4,"name":"Spirit"},{"subclass":5,"name":"Critical Strike"},{"subclass":6,"name":"Mastery"},{"subclass":7,"name":"Haste"},{"subclass":8,"name":"Versatility"},{"subclass":9,"name":"Other"},{"subclass":10,"name":"Multiple Stats"},{"subclass":11,"name":"Artifact Relic"}]},{"class":4,"name":"Armor","subclasses":[{"subclass":2,"name":"Leather"},{"subclass":3,"name":"Mail"},{"subclass":4,"name":"Plate"},{"subclass":5,"name":"Cosmetic"},{"subclass":6,"name":"Shield"},{"subclass":7,"name":"Libram"},{"subclass":8,"name":"Idol"},{"subclass":9,"name":"Totem"},{"subclass":10,"name":"Sigil"},{"subclass":11,"name":"Relic"},{"subclass":96,"name":"Shield"},{"subclass":0,"name":"Miscellaneous"},{"subclass":1,"name":"Cloth"}]},{"class":5,"name":"Reagent","subclasses":[{"subclass":0,"name":"Reagent"},{"subclass":1,"name":"Keystone"}]},{"class":6,"name":"Projectile","subclasses":[{"subclass":2,"name":"Arrow"},{"subclass":3,"name":"Bullet"}]},{"class":7,"name":"Tradeskill","subclasses":[{"subclass":10,"name":"Elemental"},{"subclass":15,"name":"Weapon Enchantment - Obsolete"},{"subclass":16,"name":"Inscription"},{"subclass":5,"name":"Cloth"},{"subclass":6,"name":"Leather"},{"subclass":7,"name":"Metal & Stone"},{"subclass":8,"name":"Cooking"},{"subclass":9,"name":"Herb"},{"subclass":12,"name":"Enchanting"},{"subclass":4,"name":"Jewelcrafting"},{"subclass":1,"name":"Parts"},{"subclass":11,"name":"Other"}]},{"class":9,"name":"Recipe","subclasses":[{"subclass":0,"name":"Book"},{"subclass":1,"name":"Leatherworking"},{"subclass":2,"name":"Tailoring"},{"subclass":3,"name":"Engineering"},{"subclass":4,"name":"Blacksmithing"},{"subclass":5,"name":"Cooking"},{"subclass":6,"name":"Alchemy"},{"subclass":7,"name":"First Aid"},{"subclass":8,"name":"Enchanting"},{"subclass":9,"name":"Fishing"},{"subclass":10,"name":"Jewelcrafting"},{"subclass":11,"name":"Inscription"}]},{"class":11,"name":"Quiver","subclasses":[{"subclass":2,"name":"Quiver"},{"subclass":3,"name":"Ammo Pouch"}]},{"class":12,"name":"Quest","subclasses":[{"subclass":0,"name":"Quest"}]},{"class":13,"name":"Key","subclasses":[{"subclass":0,"name":"Key"},{"subclass":1,"name":"Lockpick"}]},{"class":15,"name":"Miscellaneous","subclasses":[{"subclass":0,"name":"Junk"},{"subclass":1,"name":"Reagent"},{"subclass":2,"name":"Companion Pets"},{"subclass":3,"name":"Holiday"},{"subclass":4,"name":"Other"},{"subclass":5,"name":"Mount"}]},{"class":16,"name":"Glyph","subclasses":[{"subclass":1,"name":"Warrior"},{"subclass":2,"name":"Paladin"},{"subclass":3,"name":"Hunter"},{"subclass":4,"name":"Rogue"},{"subclass":5,"name":"Priest"},{"subclass":6,"name":"Death Knight"},{"subclass":7,"name":"Shaman"},{"subclass":8,"name":"Mage"},{"subclass":9,"name":"Warlock"},{"subclass":10,"name":"Monk"},{"subclass":11,"name":"Druid"},{"subclass":12,"name":"Demon Hunter"}]},{"class":18,"name":"WoW Token","subclasses":[{"subclass":0,"name":"WoW Token"}]}]};
-
-let examplePetAuction =
-	{
-		"modifiers": [
-			{ "type": 3, "value": 333 },
-			{ "type": 4, "value": 50331659 },
-			{ "type": 5, "value": 1 }
-		],
-		"petSpeciesId": 333,
-		"petBreedId": 11,
-		"petLevel": 1,
-		"petQualityId": 3
-	};
-
-let petExample = {
-	"speciesId": 258,
-	"petTypeId": 9,
-	"creatureId": 42078,
-	"name": "Mini Thor",
-	"icon": "t_roboticon",
-	"description": "Powerful artillery of the Terran army. The Thor is always the first one in and the last one out!",
-	"source": "Promotion: StarCraft II: Wings of Liberty Collector's Edition",
-};
-
 export function calcCost(c) {
 		if (c !== null) {
 			let matBuyout: number;
@@ -122,27 +119,27 @@ export function calcCost(c) {
 					}
 					for (let m of c.reagents) {
 						try {
-							if(lists.items[m.itemID] === undefined) {
+							if (lists.items[m.itemID] === undefined) {
 								// console.log('Lacking item=' + m.name + ' id=' + m.itemID);
 								//this.getItem(m.itemID);
 							}
 
-							if(m.altered === undefined && !m.altered) {
+							if (m.altered === undefined && !m.altered) {
 								m.count = (m.count / c.minCount).toFixed(2);
 								m.altered = true;
 							}
 
-							matBuyout = lists.auctions[m.itemID] !== undefined ?
-								(lists.auctions[m.itemID].buyout) :
-								lists.customPrices[m.itemID] !== undefined ?
-									lists.customPrices[m.itemID] : user.apiToUse === 'tsm' ?
+							matBuyout = lists.customPrices[m.itemID] !== undefined ?
+								(lists.customPrices[m.itemID]) :
+								lists.auctions[m.itemID] !== undefined ?
+									lists.auctions[m.itemID].buyout : user.apiToUse === 'tsm' ?
 										lists.tsm[m.itemID] ?
 											lists.tsm[m.itemID].MarketValue : 0 :
 											0;
 
-							if(lists.items[m.itemID] !== undefined &&
+							if (lists.items[m.itemID] !== undefined &&
 								lists.items[m.itemID].itemSource.sourceType === 'CREATED_BY_SPELL') {
-								if(m.useCraftedBy === undefined) {
+								if (m.useCraftedBy === undefined) {
 									m.createdBy = lists.items[m.itemID].itemSource.sourceId;
 									m.useCraftedBy = false;
 								}
@@ -177,25 +174,20 @@ export function calcCost(c) {
 		}
 	}
 
-export function copperToString(c): string {
-	//Just return a string
-	var result = [];
+/**
+ * Used for returning a string of the value formatted.
+ * @param  {number} c This is the value in copper
+ * @return {string}   Formatted string [xg xs xc]
+ */
+export function copperToString(c: number): string {
+	let result = [];
 	c = Math.round(c);
 	result[0] = c % 100;
 	c = (c - result[0]) / 100;
-	result[1] = c % 100; //Silver
-	result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //Gold
-	return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
-}
-
-export function	copperToArray(c): string {
-	//Just return a string
-	var result = [];
-	c = Math.round(c);
-	result[0] = c % 100;
-	c = (c - result[0]) / 100;
-	result[1] = c % 100; //Silver
-	result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //Gold
+	// Silver
+	result[1] = c % 100;
+	// Gold
+	result[2] = ((c - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
 }
 
@@ -216,4 +208,12 @@ export function getPet(speciesId, itemService) {
 	}
 	return lists.pets[speciesId];
 }
-export const itemContext = ['Drop', 'World drop', 'Raid (old)', 'Normal dungeon', 'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown', 'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor', 'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop', 'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon', 'Garrison mission'];
+export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
+export const itemContext = [
+	'Drop', 'World drop', 'Raid (old)', 'Normal dungeon',
+	'Raid finder', 'Heroic', 'Mythic', 'Player drop', 'Unknown',
+	'Gathering', 'Unknown', 'Drop', 'Unknown', 'Profession', 'Vendor',
+	'Vendor', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
+	'Unknown', 'Timewalking', 'Trash drop', 'Unknown', 'World drop',
+	'World drop', 'Unknown', 'Unknown', 'Unknown', 'Mythic dungeon',
+	'Garrison mission'];

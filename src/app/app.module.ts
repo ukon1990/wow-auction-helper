@@ -66,6 +66,9 @@ import { DisenchantingComponent } from './components/disenchanting/disenchanting
 				path: 'settings',
 				component: SettingsComponent
 			}, {
+				path: 'settings/:setting',
+				component: SettingsComponent
+			}, {
 				path: 'disenchanting',
 				component: DisenchantingComponent
 			}

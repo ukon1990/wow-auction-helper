@@ -21,10 +21,12 @@ export class AuctionService {
 		return this.http.get(this.getUrl(url, localUrl))
 			.map(response => <IAuction>function (r) {
 				console.log('Loaded auctions');
-				db['auctions'].clear();
-				db['auctions'].bulkAdd(r.auctions);
-				console.log('Done storing auctions in object store');
-				localStorage.setItem('timestamp_auctions',timestamp);
+				if (typeof r === 'object') {
+					db['auctions'].clear();
+					db['auctions'].bulkAdd(r.auctions);
+					console.log('Done storing auctions in object store');
+					localStorage.setItem('timestamp_auctions', timestamp);
+				}
 				return r;
 			}(response.json()), e => {
 				console.log('Unable to download "live" auctions', e);
@@ -34,7 +36,7 @@ export class AuctionService {
 	getWoWuctionData() {
 		let localUrl = '/assets/wowuction.tsv',
 			apiUrl = 'http://www.wowuction.com/'+ localStorage.getItem('region') +'/'+
-						localStorage.getItem('realm') +'/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
+						localStorage.getItem('realm') + '/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
 			url = this.getUrl(apiUrl, localUrl);
 
 		// TODO: Make it not use the local URL by storing the value temporarily with Dexie!
@@ -104,10 +106,11 @@ export class AuctionService {
 	}
 
 	getUrl(apiUrl, localUrl) {
+		/* TODO: :)
 		if (window.location.hostname === 'localhost') {
 			console.log('Using local files', localUrl);
 			return localUrl;
-		}
+		}*/
 
 		return apiUrl;
 	};

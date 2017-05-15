@@ -3,7 +3,7 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
-import { calcCost, user, lists, getPet, db, copperToArray } from './utils/globals';
+import { calcCost, user, lists, getPet, db, copperToString, setRecipesForCharacter } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import Push from 'push.js';
 
@@ -27,10 +27,12 @@ export class AppComponent implements OnInit {
 	private petObserver = {};
 	private u: IUser;
 	private allItemSources = [];
+	private notificationsWorking = true;
 
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService, private characterService: CharacterService,
 		private router: Router) {
+		this.getRecipes();
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
@@ -58,39 +60,117 @@ export class AppComponent implements OnInit {
 		if (this.isRealmSet()) {
 			// Loading user settings
 			try {
-				user.region = localStorage.getItem('region') || undefined;
-				user.realm = localStorage.getItem('realm') || undefined;
-				user.character = localStorage.getItem('character') || undefined;
-				user.apiTsm = localStorage.getItem('api_tsm') || undefined;
-				user.apiWoWu = localStorage.getItem('api_wowuction') || undefined;
-				user.customPrices = JSON.parse(localStorage.getItem('custom_prices')) || undefined;
-				user.apiToUse = localStorage.getItem('api_to_use') || 'none';
-				user.buyoutLimit = parseFloat(localStorage.getItem('crafting_buyout_limit')) || 200;
-				user.crafters = localStorage.getItem('crafters') ? localStorage.getItem('crafters').split(',') : [];
-				if (localStorage.getItem('crafters_recipes')  !== null && localStorage.getItem('crafters_recipes') !== undefined) {
-					lists.myRecipes = localStorage.getItem('crafters_recipes').split(',');
-				} else if (user.crafters.length > 0) {
-					// Downloading the users characters recipes if crafters are set but recipes aren't
-					this.downloadingText = 'Starting to download your characters recipes';
-					this.characterService.getCharacters().subscribe(recipes => {
-						console.log(recipes);
-						if (typeof recipes.recipes === 'object') {
-							Object.keys(recipes.recipes).forEach(v => {
-								lists.myRecipes.push(recipes.recipes[v]);
-							});
-						} else {
-							lists.myRecipes = recipes.recipes;
-						}
-						localStorage.setItem('crafters_recipes', lists.myRecipes.toString());
-					}, e => {
-						console.log('Were unable to download user recipes', e);
-					});
+				if (localStorage.region) {
+					user.region = localStorage.region;
 				}
 
-				if (localStorage.getItem('watchlist') !== null &&
-					localStorage.getItem('watchlist') !== undefined) {
-					user.watchlist = JSON.parse(localStorage.getItem('watchlist'));
-					console.log('watchlist:',user.watchlist);
+				if (localStorage.realm) {
+					user.realm = localStorage.realm;
+				}
+				if (localStorage.character) {
+					user.character = localStorage.character;
+				}
+
+				if (localStorage.api_tsm) {
+					user.apiTsm = localStorage.api_tsm;
+				}
+
+				if (localStorage.api_wowuction) {
+					user.apiWoWu = localStorage.api_wowuction;
+				}
+
+				if (localStorage.custom_prices) {
+					user.customPrices = JSON.parse(localStorage.custom_prices);
+				}
+
+				if (localStorage.api_to_use) {
+					user.apiToUse = localStorage.api_to_use;
+				}
+
+				if (localStorage.crafting_buyout_limit) {
+					user.buyoutLimit = parseFloat(localStorage.crafting_buyout_limit);
+				}
+
+				if (localStorage.crafters) {
+					user.crafters = localStorage.crafters.split(',');
+				}
+				if (localStorage.characters) {
+					user.characters = JSON.parse(localStorage.characters);
+				}
+				if (localStorage.crafters_recipes) {
+					lists.myRecipes = localStorage.crafters_recipes.split(',');
+				}
+				if (localStorage.notifications) {
+					user.notifications = JSON.parse(localStorage.notifications);
+				}
+
+				/**
+				 * Used for initiating the download of characters and profession data
+				 */
+				if (user.crafters && user.characters.length < 1) {
+					try {
+						user.crafters.forEach(crafter => {
+							this.characterService.getCharacter(crafter, user.realm)
+								.subscribe(character => {
+									user.characters.push(character);
+									setRecipesForCharacter(character);
+									localStorage.characters = JSON.stringify(user.characters);
+									lists.myRecipes = Array.from(new Set(lists.myRecipes));
+								}, error => {
+									user.characters.push({
+										name: crafter,
+										realm: user.realm,
+										error: {
+											status: error.status,
+											statusText: error.statusText
+										}
+									});
+									localStorage.characters = JSON.stringify(user.characters);
+									console.log(`Faied at downloading the character ${crafter}`, error);
+								});
+						});
+					} catch (error) {
+						console.log('Unable to loop crafters', error);
+					}
+				} else {
+					try {
+						user.characters.forEach(character => {
+							if (character.error && character.error.status !== 404) {
+								// Try again
+								this.characterService.getCharacter(character.name, character.realm)
+									.subscribe(c => {
+										character = c;
+										setRecipesForCharacter(c);
+										lists.myRecipes = Array.from(new Set(lists.myRecipes));
+										localStorage.characters = JSON.stringify(user.characters);
+									}, error => {
+										character.error = {
+											status: error.status,
+											statusText: error.statusText
+										};
+										localStorage.characters = JSON.stringify(user.characters);
+										console.log(`Faied at downloading the character ${character.name}`, error);
+									});
+							} else {
+								setRecipesForCharacter(character);
+								lists.myRecipes = Array.from(new Set(lists.myRecipes));
+							}
+						});
+					} catch (error) {
+						console.log('Unable to loop through characters', error);
+					}
+				}
+
+				if (localStorage.watchlist) {
+					user.watchlist = JSON.parse(localStorage.watchlist);
+					Object.keys(user.watchlist.items).forEach(k => {
+						user.watchlist.items[k].forEach(w => {
+							if (w.alert === undefined) {
+								w['alert'] = true;
+							}
+						});
+					});
+					console.log('watchlist:', user.watchlist);
 				}
 			} catch (e) {
 				console.log('app.component init', e);
@@ -241,52 +321,41 @@ export class AppComponent implements OnInit {
 		} catch (err) {
 			console.log('Failed at loading auctions', err);
 		}
-		this.itemService.getRecipes()
-			.subscribe(recipe => {
-				let accepted = true;
-				if (lists.recipes === undefined) {
-					lists.recipes = [];
-				}
-				recipe.recipes.forEach(r => {
-					if (r !== null && r !== undefined && r['profession'] !== undefined && r['profession'] !== null) {
-						r['estDemand'] = 0;
-						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
-						if (!lists.itemRecipes[r.itemID]) {
-							lists.itemRecipes[r.itemID] = [];
-						}
-						lists.itemRecipes[r.itemID].push(r.spellID);
-					}
-				});
-				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
-			});
 	}
 
 	public getAuctions(): void {
 		lists.isDownloading = true;
 		this.downloadingText = 'Checking for new auctions';
-		console.log('Checking for new auction data');
 
+		this.downloadingText = 'Loading auctions from local storage';
+		console.log('Loading auctions from local storage.');
+		db.table('auctions').toArray().then(
+			result => {
+				this.downloadingText = '';
+				if (result.length > 0) {
+					this.buildAuctionArray(result);
+				} else {
+					localStorage.setItem('timestamp_auctions', '0');
+					this.getAuctions();
+				}
+			});
+
+		console.log('Checking for new auction data');
+		this.downloadingText = 'Checking for new auction data';
 		this.auctionService.getLastUpdated().subscribe(r => {
-			this.downloadingText = 'Downloading auctions, this might take a while';
 			console.log('Downloading auctions');
 			if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
+				this.downloadingText = 'Downloading auctions, this might take a while';
 				this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
 					.subscribe(a => {
 						this.downloadingText = '';
 						this.buildAuctionArray(a.auctions);
-					});
-			} else {
-				this.downloadingText = 'Loading auctions from local storage';
-				console.log('No new auction data available so loaded from local storage.');
-				db.table('auctions').toArray().then(
-					result => {
-						this.downloadingText = '';
-						if (result.length > 0) {
-							this.buildAuctionArray(result);
-						} else {
-							localStorage.setItem('timestamp_auctions', '0');
-							this.getAuctions();
-						}
+					}, error => {
+					this.downloadingText = 'Could not download auctions at this time';
+						setTimeout(() => {
+							this.downloadingText = '';
+						}, 5000);
+						console.log('Could not download auctions at this time', error);
 					});
 			}
 		});
@@ -386,20 +455,19 @@ export class AppComponent implements OnInit {
 				}
 			}
 			// Gathering data for auctions below vendor price
-			if (lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
-				console.log(true);
+			if (user.notifications.isBelowVendorSell && lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
 				itemsBelowVendor.quantity++;
 				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
 			}
 			// TODO: this.addToContextList(o);
 		}
-		if (itemsBelowVendor.quantity > 0) {
+		if (user.notifications.isBelowVendorSell && itemsBelowVendor.quantity > 0) {
 			this.notification(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
-				`Potential profit: ${copperToArray(itemsBelowVendor.totalValue)}`, 'auctions');
+				`Potential profit: ${copperToString(itemsBelowVendor.totalValue)}`, 'auctions');
 		}
 
-		if (user.character !== undefined) {
+		if (user.notifications.isUndercutted && user.character !== undefined) {
 			// Notifying the user if they have been undercutted or not
 			lists.myAuctions.forEach(a => {
 				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== user.character) {
@@ -482,12 +550,14 @@ export class AppComponent implements OnInit {
 	setTimeSinceLastModified() {
 		this.date = new Date();
 
-		let updateTime = new Date(this.lastModified).getMinutes(),
+		const updateTime = new Date(this.lastModified).getMinutes(),
 			currentTime = this.date.getMinutes(),
 			oldTime = this.timeSinceLastModified;
 		// Checking if there is a new update available
 		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
-			this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
+			if (user.notifications.isUpdateAvailable) {
+				this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
+			}
 			this.getAuctions();
 		}
 
@@ -531,35 +601,61 @@ export class AppComponent implements OnInit {
 			}
 		}
 		console.log('Done calculating crafting costs');
-		// checking if watchlist gives any alerts
-		let watchlistAlerts = 0, tmpList = [];
-		lists.myRecipes.forEach( recipeID => {
-			tmpList[recipeID] = 'owned';
-		});
-		Object.keys(user.watchlist.items).forEach(group => {
-			user.watchlist.items[group].forEach(item => {
-				if (item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value) {
-					watchlistAlerts++;
-					this.notification(item.name, `Current lowest buyout at ${
-						Math.round(100 - (item.value / lists.auctions[item.id].buyout) * 100)
-					}% of the alert value!`, 'watchlist', lists.items[item.id].icon);
-				} else if (lists.itemRecipes[item.id]) {
-					lists.itemRecipes[item.id].forEach(r => {
-						if (tmpList[r] &&
-							lists.recipes[lists.recipesIndex[r]].profit /
-							lists.recipes[lists.recipesIndex[r]].buyout > item.minCraftProfit / 100) {
-							watchlistAlerts++;
-						}
-					});
-				}
+
+		if (user.notifications.isWatchlist) {
+			// checking if watchlist gives any alerts
+			let watchlistAlerts = 0, tmpList = [];
+			lists.myRecipes.forEach( recipeID => {
+				tmpList[recipeID] = 'owned';
 			});
-		});
-		if (watchlistAlerts > 0) {
-			this.notification(
-				`Watchlist items!`,
-				`There are ${watchlistAlerts} items meet your criteria.`, 'watchlist');
+			Object.keys(user.watchlist.items).forEach(group => {
+				user.watchlist.items[group].forEach(item => {
+					if ((item.alert === undefined || item.alert) &&
+						(item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value ||
+						item.criteria === 'above' && lists.auctions[item.id].buyout >= item.value)) {
+						watchlistAlerts++;
+						this.notification(item.name, `Current lowest buyout at ${
+							Math.round(100 - (item.value / lists.auctions[item.id].buyout) * 100)
+						}% of the alert value!`, 'watchlist', lists.items[item.id].icon);
+					} else if (lists.itemRecipes[item.id]) {
+						lists.itemRecipes[item.id].forEach(r => {
+							if (tmpList[r] &&
+								lists.recipes[lists.recipesIndex[r]].profit /
+								lists.recipes[lists.recipesIndex[r]].buyout > item.minCraftProfit / 100) {
+								watchlistAlerts++;
+							}
+						});
+					}
+				});
+			});
+			if (watchlistAlerts > 0) {
+				this.notification(
+					`Watchlist items!`,
+					`There are ${watchlistAlerts} items meet your criteria.`, 'watchlist');
+			}
 		}
 	}
+
+	getRecipes(): void {
+		this.itemService.getRecipes()
+			.subscribe(recipe => {
+				if (lists.recipes === undefined) {
+					lists.recipes = [];
+				}
+				recipe.recipes.forEach(r => {
+					if (r && r['profession']) {
+						r['estDemand'] = 0;
+						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
+						if (!lists.itemRecipes[r.itemID]) {
+							lists.itemRecipes[r.itemID] = [];
+						}
+						lists.itemRecipes[r.itemID].push(r.spellID);
+					}
+				});
+				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
+			});
+	}
+
 
 	/**
 	 * Used to add item to the list of available contexts for an auction item
@@ -632,17 +728,29 @@ export class AppComponent implements OnInit {
 
 	notification(title: string, message: string, page?: string, icon?: string) {
 		console.log(title, message);
-		Push.create(title, {
-			body: message,
-			icon: icon ? `http://media.blizzard.com/wow/icons/56/${icon}.jpg` : 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
-			timeout: 10000,
-			onClick: () => {
-				if (page) {
-					this.router.navigateByUrl(page);
+		if (!this.notificationsWorking) {
+			return;
+		}
+		try {
+			Push.create(title, {
+				body: message,
+				icon: icon ? `http://media.blizzard.com/wow/icons/56/${icon}.jpg` : 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
+				timeout: 10000,
+				onClick: () => {
+					if (page) {
+						this.router.navigateByUrl(page);
+					}
+					window.focus();
+					close();
 				}
-				window.focus();
-				close();
-			}
-		});
+			});
+		} catch (error) {
+			this.notificationsWorking = false;
+			console.log(error);
+		}
+	}
+
+	isSmallWindow(): boolean {
+		return window.innerWidth < 768;
 	}
 }
