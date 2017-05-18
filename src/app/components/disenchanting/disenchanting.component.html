@@ -1,39 +1,41 @@
 <div class="input-group">
 	<span class="input-group-addon" id="basic-addon1">Target item</span>
 	<select class="form-control" aria-describedby="basic-addon1" [(ngModel)]="selected">
-		<option *ngFor="let item of materials; let i = index"  [value]="i">{{ getItemName(item.id) }}</option>
+		<option *ngFor="let item of materials; let i = index"  [value]="i">
+			{{ getItemName(item.id) }}
+		</option>
 	</select>
 	<button type="btn btn-default input-group-addon" id="basic-addon1" name="button" (click)="applyRecipes()">
 		Apply
 	</button>
 </div>
 <p>
+	<a rel="item={{ materials[selected].id }}" href="http://www.wowhead.com/item={{ materials[selected].id }}" target="_blank">
+		{{ getItemName(materials[selected].id) }}
+	</a>
+	is currently valued at {{ copperToString(getBuyout(materials[selected].id)) }}<br>
 	Item count: {{items.length}} | {{ selected }}
 </p>
 
 <table class="table table-striped">
-  <tr>
-  	<th>Item</th>
-	<th>Cost</th>
-	<th>Buyout</th>
-	<th>Profit</th>
-  </tr>
-  <tr *ngFor="let recipe of recipes">
-  	<td>
-		<a rel="item={{recipe.itemID}}" href="http://www.wowhead.com/item={{recipe.itemID}}" target="_blank">
-			{{ recipe.name }}
-		</a>
-	</td>
-	<td>
-		{{ copperToString(recipe.cost) }}
-	</td>
-	<td>
-		{{ copperToString(getBuyout(recipe.itemID)) }}
-	</td>
-	<td>
-		{{ copperToString( getBuyout(recipe.itemID) - recipe.cost ) }}
-	</td>
-  </tr>
+	<tr>
+		<th>Item</th>
+		<th>Cost</th>
+		<th>Profit</th>
+	</tr>
+	<tr *ngFor="let recipe of recipes">
+		<td>
+			<a rel="item={{recipe.itemID}}" href="http://www.wowhead.com/item={{recipe.itemID}}" target="_blank">
+				{{ recipe.name }}
+			</a>
+		</td>
+		<td>
+			{{ copperToString(recipe.cost) }}
+		</td>
+		<td>
+			{{ copperToString( getBuyout(materials[selected].id) - recipe.cost ) }}
+		</td>
+	</tr>
 </table>
 <!--
 <ul>

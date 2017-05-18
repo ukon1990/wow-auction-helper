@@ -98,7 +98,7 @@ export class AuctionService {
 		const localUrl = '/assets/GetAuctionsLastModified.json',
 		apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
 			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
-		return this.http.get(this.getUrl(apiUrl, localUrl))
+		return this.http.get(apiUrl)
 			.map(response => <IAuction>function (r) {
 				console.log('API last updated ' + new Date(r.lastModified).toLocaleTimeString());
 				return r;
