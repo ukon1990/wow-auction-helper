@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { lists, db } from '../../utils/globals';
+import { lists, db, copperToString } from '../../utils/globals';
 
 @Component({
 	selector: 'app-disenchanting',
@@ -7,6 +7,7 @@ import { lists, db } from '../../utils/globals';
 	styleUrls: ['./disenchanting.component.css']
 })
 export class DisenchantingComponent implements OnInit {
+	copperToString = copperToString;
 	/**
 	 * Item quality:
 	 * 1 = Gray
@@ -16,6 +17,7 @@ export class DisenchantingComponent implements OnInit {
 	 * 5 = Legendary
 	 */
 	items = [];
+	recipes = [];
 	itemQuality = {
 		1: 'Gray',
 		2: 'Green',
@@ -23,11 +25,22 @@ export class DisenchantingComponent implements OnInit {
 		4: 'Epic',
 		5: 'Legendary'
 	};
+	selected = 0;
+	materials = [
+		// Legion
+		{ 'id': 124442, 'quality': 4, 'minILVL': 800, 'maxILVL': 1000, 'yield': { 'iLvL': 1, 'min': 1, 'max': 1 } },
+		{ 'id': 124441, 'quality': 3, 'minILVL': 660, 'maxILVL': 900, 'yield': { 'iLvL': 1, 'min': 1, 'max': 1 } },
+		{ 'id': 124440, 'quality': 2, 'minILVL': 680, 'maxILVL': 900, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		// Warlords
+		{ 'id': 113588, 'quality': 4, 'minILVL': 630, 'maxILVL': 799, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 111245, 'quality': 3, 'minILVL': 505, 'maxILVL': 700, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 109693, 'quality': 2, 'minILVL': 494, 'maxILVL': 700, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } }
+	];
 
 	constructor() { }
 
 	ngOnInit() {
-		this.getItems();
+		// this.getItems();
 	}
 
 	getDisenchantItem(item) {
@@ -37,6 +50,21 @@ export class DisenchantingComponent implements OnInit {
 			item.disenchantsTo = 'Kak jävel';
 		}
 		return item;
+	}
+
+	applyRecipes(): void {
+		console.log(this.selected);
+		this.recipes = [];
+		lists.recipes.forEach(recipe => {
+			if (lists.items[recipe.itemID] &&
+				lists.items[recipe.itemID].quality === this.materials[this.selected].quality &&
+				lists.items[recipe.itemID].itemLevel >= this.materials[this.selected].minILVL) {
+				this.recipes.push(recipe);
+			}
+		});
+		this.recipes.sort((a, b)  => {
+			return a.cost - b.cost;
+		});
 	}
 
 	getItems() {
@@ -58,5 +86,19 @@ export class DisenchantingComponent implements OnInit {
 			}, e => {
 				console.log(e);
 			});
+	}
+
+	getItemName(itemID: string) {
+		if (lists.items[itemID]) {
+			return lists.items[itemID].name;
+		}
+		return 'Unknown';
+	}
+
+	getBuyout(itemID): number {
+		if (lists.auctions[itemID]) {
+			return lists.auctions[itemID].buyout;
+		}
+		return 0;
 	}
 }
