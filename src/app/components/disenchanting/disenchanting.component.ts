@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { lists, db, copperToString, getIcon, isAtAH, user, getAuctionItem } from '../../utils/globals';
+import { lists, db, copperToString, getIcon, isAtAH, user, getAuctionItem, getMinPrice } from '../../utils/globals';
 
 @Component({
 	selector: 'app-disenchanting',
@@ -12,6 +12,7 @@ export class DisenchantingComponent implements OnInit {
 	isAtAH = isAtAH;
 	user = user;
 	getAuctionItem = getAuctionItem;
+	getMinPrice = getMinPrice;
 	/**
 	 * Item quality:
 	 * 1 = Gray
@@ -66,7 +67,7 @@ export class DisenchantingComponent implements OnInit {
 				lists.items[recipe.itemID].itemLevel >= this.materials[this.selected].minILVL) {
 
 				if (this.onlyProfitable &&
-					(this.getBuyout(this.materials[this.selected].id) - recipe.cost) <= 0) {
+					(this.getMinPrice(this.materials[this.selected].id + '') - recipe.cost) <= 0) {
 					return;
 				}
 				this.recipes.push(recipe);
@@ -103,12 +104,5 @@ export class DisenchantingComponent implements OnInit {
 			return lists.items[itemID].name;
 		}
 		return 'Unknown';
-	}
-
-	getBuyout(itemID): number {
-		if (lists.auctions[itemID]) {
-			return lists.auctions[itemID].buyout;
-		}
-		return 0;
 	}
 }

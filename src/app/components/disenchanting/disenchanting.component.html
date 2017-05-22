@@ -19,7 +19,7 @@
 	<a rel="item={{ materials[selected].id }}" href="http://www.wowhead.com/item={{ materials[selected].id }}" target="_blank">
 		{{ getItemName(materials[selected].id) }}
 	</a>
-	is currently valued at {{ copperToString(getBuyout(materials[selected].id)) }}<br>
+	is currently valued at {{ copperToString(getMinPrice(materials[selected].id)) }}<br>
 	Item count: {{items.length}} | {{ selected }}
 </p>
 
@@ -48,14 +48,14 @@
 						href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 						target="_blank">{{m.name}}</a>
 
-					{{ copperToString(getBuyout(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
+					{{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
 			</div>
 		</td>
 		<td>
 			{{ copperToString(recipe.cost) }}
 		</td>
 		<td>
-			{{ copperToString( getBuyout(materials[selected].id) - recipe.cost ) }}
+			{{ copperToString( getMinPrice(materials[selected].id) - recipe.cost ) }}
 		</td>
 	</tr>
 </table>

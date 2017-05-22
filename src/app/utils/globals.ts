@@ -257,6 +257,27 @@ export function getAuctionItem(itemID: string) {
 	return lists.auctions[itemID];
 }
 
+/**
+ * Finds the minimum price for an item
+ * @param  {string} itemID
+ * @return {number}
+ */
+export function getMinPrice(itemID: string): number {
+	try {
+		if (lists.customPrices[itemID]) {
+			return lists.customPrices[itemID];
+		}
+		return lists.auctions[itemID].buyout;
+	} catch (e) {
+		if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			return lists.wowuction[itemID]['mktPrice'];
+		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			return lists.tsm[itemID].MarketValue;
+		}
+		return 0;
+	}
+}
+
 export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
 export const itemContext = [
 	'Drop', 'World drop', 'Raid (old)', 'Normal dungeon',
