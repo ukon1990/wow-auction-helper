@@ -13,6 +13,8 @@ export class DisenchantingComponent implements OnInit {
 	user = user;
 	getAuctionItem = getAuctionItem;
 	getMinPrice = getMinPrice;
+
+	isCrafting = false;
 	/**
 	 * Item quality:
 	 * 1 = Gray
@@ -47,6 +49,7 @@ export class DisenchantingComponent implements OnInit {
 
 	ngOnInit() {
 		// this.getItems();
+		this.applyFilter();
 	}
 
 	getDisenchantItem(item) {
@@ -56,6 +59,14 @@ export class DisenchantingComponent implements OnInit {
 			item.disenchantsTo = 'Kak jävel';
 		}
 		return item;
+	}
+
+	applyFilter(): void {
+		if (this.isCrafting) {
+			this.applyRecipes();
+		} else {
+			this.getItems();
+		}
 	}
 
 	applyRecipes(): void {
@@ -79,6 +90,28 @@ export class DisenchantingComponent implements OnInit {
 	}
 
 	getItems() {
+		this.items = [];
+		Object.keys(lists.auctions).map(k => {
+			if (lists.items[k] && (lists.items[k].itemClass === '4' || lists.items[k].itemClass === '2') &&
+				lists.items[k].itemLevel > 1 && lists.items[k].quality < 5 && lists.items[k].quality > 1) {
+					// Checking if matching desiered target item
+					if (lists.items[k] &&
+						lists.items[k].quality === this.materials[this.selected].quality &&
+						lists.items[k].itemLevel >= this.materials[this.selected].minILVL) {
+
+						if (this.onlyProfitable &&
+							this.getMinPrice(this.materials[this.selected].id + '')  <= this.getMinPrice(k)) {
+							return;
+						}
+						this.items.push(lists.auctions[k]);
+					}
+			}
+		});
+
+		this.items.sort((a, b)  => {
+			return a.buyout - b.buyout;
+		});
+		/*
 		db.table('items')
 			.where('itemClass')
 			.equals('4')
@@ -96,7 +129,7 @@ export class DisenchantingComponent implements OnInit {
 				});
 			}, e => {
 				console.log(e);
-			});
+			});*/
 	}
 
 	getItemName(itemID: string) {
