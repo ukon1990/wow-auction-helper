@@ -208,6 +208,55 @@ export function getPet(speciesId, itemService) {
 	}
 	return lists.pets[speciesId];
 }
+
+/**
+ * Used to get the icon url for a given item or pet.
+ * @param  {Auction or Item} auction It takes a auction or Item object.
+ * @return {string}         [description]
+ */
+export function getIcon(auction): string {
+	const itemID = auction.item !== undefined ? auction.item : auction.itemID;
+	let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
+	try {
+		if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
+			if (lists.pets[auction.petSpeciesId] === undefined) {
+				// getPet(auction.petSpeciesId);
+			}
+			icon = lists.pets[auction.petSpeciesId].icon;
+		} else if (lists.items[itemID] !== undefined) {
+			icon = lists.items[itemID].icon;
+		}
+	} catch (err) {console.log(err, auction, itemID); }
+
+	if (icon === undefined) {
+		url += 'inv_scroll_03.jpg';
+	} else {
+		url += icon + '.jpg';
+	}
+	return url;
+}
+
+/**
+ * Checks if an item is @ AH or not.
+ * @param  {string}  itemID
+ * @return {boolean}        Availability
+ */
+export function isAtAH(itemID: string): boolean {
+	return lists.auctions[itemID] !== undefined ? true : false;
+}
+
+/**
+ * Gets thre auction item for an item
+ * @param  {string} itemID
+ * @return {object}
+ */
+export function getAuctionItem(itemID: string) {
+	if (lists.auctions[itemID] === undefined) {
+		return { 'quantity_total': 0 };
+	}
+	return lists.auctions[itemID];
+}
+
 export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
 export const itemContext = [
 	'Drop', 'World drop', 'Raid (old)', 'Normal dungeon',
