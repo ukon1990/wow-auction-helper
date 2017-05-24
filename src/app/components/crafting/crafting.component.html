@@ -22,56 +22,86 @@
 			</em>
 		</p>
 		<div class="row col-md-12">
-			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+			<!-- Action type selectors -->
+			<div class="list-group">
+				<a href="#" class="list-group-item active">
+					Craft
+				</a>
+				<a href="#" class="list-group-item">
+					Disenchant
+				</a>
+			</div>
+			<form class="form-inline col-md-12" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+				<!-- Regular crafting -->
+				<div *ngIf="!isDisenchating; else disenchant">
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Search</span>
+						<input class="col-md-2 form-control" type="text"
+							placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
+					</div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Search</span>
-					<input class="col-md-2 form-control" type="text"
-						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
-				</div>
+					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
+						<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
+						<span class="input-group-addon">
+						<input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
+						</span>
+					</div>
 
-				<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
-					<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
-					<span class="input-group-addon">
-					   <input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
-					 </span>
-				</div>
-
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Min profit</span>
-					<input name="profit" class="col-md-2 form-control" type="number"
-						placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">%</span>
-				</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Min profit</span>
+						<input name="profit" class="col-md-2 form-control" type="number"
+							placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
+						<span class="input-group-addon" id="sizing-addon3">%</span>
+					</div>
 
 
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Min demand</span>
-					<input class="col-md-2 form-control" type="number"
-						placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">%</span>
-				</div>
+					<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Min demand</span>
+						<input class="col-md-2 form-control" type="number"
+							placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
+						<span class="input-group-addon" id="sizing-addon3">%</span>
+					</div>
 
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Min sold</span>
-					<input class="col-md-2 form-control" type="number"
-						placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">pcs</span>
-				</div>
+					<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Min sold</span>
+						<input class="col-md-2 form-control" type="number"
+							placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
+						<span class="input-group-addon" id="sizing-addon3">pcs</span>
+					</div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Profession</span>
-					<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
-						<option value="All">All</option>
-						<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
-					</select>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Profession</span>
+						<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
+							<option value="All">All</option>
+							<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
+						</select>
+					</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Craft items</span>
+						<select name="profession" class="form-control" [formControl]="filterForm.controls['craftManually']" aria-describedby="sizing-addon3">
+							<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
+						</select>
+					</div>
 				</div>
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Craft items</span>
-					<select name="profession" class="form-control" [formControl]="filterForm.controls['craftManually']" aria-describedby="sizing-addon3">
-						<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
-					</select>
-				</div>
+				<!-- Disenchatning crafting options -->
+				<ng-template #disenchant>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">Target item</span>
+						<select class="form-control" aria-describedby="basic-addon1" ><!-- [(ngModel)]="selected" -->
+							<option *ngFor="let item of Disenchanting.materials; let i = index"  [value]="i">
+								{{ Disenchanting.getItemName(item.id) }}
+							</option>
+						</select>
+						<span class="input-group-addon" id="sizing-addon3">Only profitable</span>
+						<span class="input-group-addon">
+							<input type="checkbox" aria-label="" > <!-- [(ngModel)]="disenchanting.onlyProfitable" -->
+						</span>
+					</div>
+					<button  type="button" class="btn btn-default" id="basic-addon1" name="button" (click)="Disenchanting.applyFilter()">
+						Apply
+					</button>
+				</ng-template>
+				
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 			</form>
 		</div>
@@ -83,7 +113,7 @@
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
 			<div class="col-md-9 row">
-				<table class="table table-striped">
+				<table *ngIf="!isDisenchating; else disenchantTable" class="table table-striped">
 					<tr class="row">
 						<th>Name</th>
 						<th>Materials</th>
@@ -210,6 +240,40 @@
 						</td>
 					</tr>
 				</table>
+				<ng-template #disenchantTable>
+					<table class="table table-striped">
+						<tr>
+							<th>Item</th>
+							<th>Materials</th>
+							<th>Cost</th>
+							<th>Profit</th>
+						</tr>
+						<tr *ngFor="let recipe of Disenchanting.disenchantables">
+							<td>
+								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(recipe) +')'"></span>
+								<div class="align-left col-md-9">
+									<a rel="item={{recipe.itemID}}" href="http://www.wowhead.com/item={{recipe.itemID}}" target="_blank">
+									{{ recipe.name }}
+								</a>
+								</div>
+							</td>
+							<td>
+								<div class="clearfix" *ngFor="let m of recipe.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
+									{{ m.count }} x
+									<a rel="item={{ m.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+										target="_blank">{{m.name}}</a> {{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total
+									}} @ AH)
+								</div>
+							</td>
+							<td>
+								{{ copperToString(recipe.cost) }}
+							</td>
+							<td>
+								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - recipe.cost ) }}
+							</td>
+						</tr>
+					</table>
+				</ng-template>
 			</div>
 			<div class="col-md-3">
 				<strong>Shopping cart</strong>

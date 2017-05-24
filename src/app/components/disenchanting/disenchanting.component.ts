@@ -4,7 +4,7 @@ import { lists, db, copperToString, getIcon, isAtAH, user, getAuctionItem, getMi
 @Component({
 	selector: 'app-disenchanting',
 	templateUrl: './disenchanting.component.html',
-	styleUrls: ['./disenchanting.component.css', '../auctions/auctions.component.css']
+	styleUrls: ['./disenchanting.component.css', '../auctions/auctions.component.css', '../../app.component.css']
 })
 export class DisenchantingComponent implements OnInit {
 	copperToString = copperToString;
@@ -14,7 +14,7 @@ export class DisenchantingComponent implements OnInit {
 	getAuctionItem = getAuctionItem;
 	getMinPrice = getMinPrice;
 
-	isCrafting = false;
+	isCrafting = true;
 	/**
 	 * Item quality:
 	 * 1 = Gray
@@ -32,6 +32,12 @@ export class DisenchantingComponent implements OnInit {
 		3: 'Blue',
 		4: 'Epic',
 		5: 'Legendary'
+	};
+	bonusListMods = {
+		3408: {
+			'ilvl': -110,
+			'quality': -1
+		}
 	};
 	selected = 0;
 	materials = [
@@ -90,11 +96,16 @@ export class DisenchantingComponent implements OnInit {
 	}
 
 	getItems() {
+		console.log('The type=' + (typeof this.materials[this.selected].quality) + ' ' + this.materials[this.selected].quality);
 		this.items = [];
 		Object.keys(lists.auctions).map(k => {
 			if (lists.items[k] && (lists.items[k].itemClass === '4' || lists.items[k].itemClass === '2') &&
-				lists.items[k].itemLevel > 1 && lists.items[k].quality < 5 && lists.items[k].quality > 1) {
+				lists.items[k].itemLevel > 1) {
 					// Checking if matching desiered target item
+					if (k === '121023') {
+						console.log(lists.items[k]);
+						console.log(lists.auctions[k]);
+					}
 					if (lists.items[k] &&
 						lists.items[k].quality === this.materials[this.selected].quality &&
 						lists.items[k].itemLevel >= this.materials[this.selected].minILVL) {
@@ -103,6 +114,7 @@ export class DisenchantingComponent implements OnInit {
 							this.getMinPrice(this.materials[this.selected].id + '')  <= this.getMinPrice(k)) {
 							return;
 						}
+						console.log(lists.auctions[k]);
 						this.items.push(lists.auctions[k]);
 					}
 			}
@@ -111,25 +123,6 @@ export class DisenchantingComponent implements OnInit {
 		this.items.sort((a, b)  => {
 			return a.buyout - b.buyout;
 		});
-		/*
-		db.table('items')
-			.where('itemClass')
-			.equals('4')
-			.or('itemClass')
-			.equals('2')
-			.and((item) => {
-				item = this.getDisenchantItem(item);
-				return item.itemLevel > 1 && item.quality < 5 && item.quality > 1;
-			})
-			.toArray()
-			.then(i => {
-				this.items = i;
-				i.sort((a, b) => {
-					return a.itemLevel > b.itemLevel ? -1 : 1;
-				});
-			}, e => {
-				console.log(e);
-			});*/
 	}
 
 	getItemName(itemID: string) {

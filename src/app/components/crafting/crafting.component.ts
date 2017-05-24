@@ -6,6 +6,7 @@ import { itemClasses } from '../../utils/objects';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
+import { Disenchanting } from '../../utils/disenchanting';
 
 
 @Component({
@@ -15,6 +16,8 @@ import { IUser, IAuction } from '../../utils/interfaces';
 })
 
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
+	Disenchanting: Disenchanting;
+	isDisenchating = true;
 	crafts = [];
 	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
@@ -43,6 +46,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
 		super();
+		this.Disenchanting = new Disenchanting(true);
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 		this.filterForm = formBuilder.group({
 			'searchQuery': query !== undefined && query.searchQuery !== undefined ? query.searchQuery : '',
