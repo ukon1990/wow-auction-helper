@@ -33,9 +33,9 @@ export class Disenchanting {
 		this.isCrafting = isCrafting;
 	}
 
-	applyFilter() {
+	applyFilter(onlyMyRecipes, knownRecipes, profession) {
 		if (this.isCrafting) {
-			this.applyRecipes();
+			this.applyRecipes(onlyMyRecipes, knownRecipes, profession);
 		} else {
 			this.applyItems();
 		}
@@ -45,11 +45,19 @@ export class Disenchanting {
 		return false;
 	}
 
-	applyRecipes(): void {
-		console.log(this.selected);
+	applyRecipes(onlyMyRecipes, knownRecipes, profession): void {
+		let match: boolean;
+
 		this.disenchantables = [];
 		lists.recipes.forEach(recipe => {
-			if (lists.items[recipe.itemID] &&
+			match = true;
+			if (profession !== 'All' && profession !== recipe.profession) {
+				match = false;
+			} else if (onlyMyRecipes && !knownRecipes[recipe.spellID]) {
+				match = false;
+			}
+
+			if (match && lists.items[recipe.itemID] &&
 				lists.items[recipe.itemID].quality === this.materials[this.selected].quality &&
 				lists.items[recipe.itemID].itemLevel >= this.materials[this.selected].minILVL) {
 

@@ -93,9 +93,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		const refreshId = setInterval(() => {
 			try {
 				if (!lists.isDownloading && lists.auctions.length > 0) {
-					if (this.isDisenchating) {
-						this.Disenchanting.applyFilter();
-					}
 					this.setShoppingCartCost();
 					clearInterval(refreshId);
 				}
@@ -111,7 +108,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	setCrafts(): void {
 		if (lists.recipes !== undefined) {
 			this.crafts = lists.recipes;
-			this.numOfPages = this.crafts.length / this.limit;
+			this.numOfPages = Math.ceil(this.crafts.length / this.limit);
 
 			const refreshId = setInterval(() => {
 				try {
@@ -125,6 +122,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				}
 			}, 100);
 		}
+	}
+
+	toggleDisenchanting(bool): void {
+		this.isDisenchating = bool;
 	}
 
 	setManualCraft(material, recipe): void {
@@ -147,13 +148,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 * Filtering the craftables by user query
 	 */
 	filteRecipes(): void {
-		if (this.isDisenchating) {
-			this.Disenchanting.onlyProfitable = this.filterForm.value['DEOnlyProfitable'];
-			this.Disenchanting.selected = this.filterForm.value['selectedDEMaterial'];
-			this.Disenchanting.applyFilter();
-			return;
-		}
-
 		this.crafts = [];
 		let isAffected = false,
 			match = false;
@@ -171,110 +165,121 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					'searchQuery': searchQuery, 'onlyMyRecipes': onlyMyRecipes, 'profession': profession,
 					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
 				}));
-		lists.recipes.forEach(r => {
-			isAffected = false;
-			// Checking if there are any items missing in the DB
-			if (lists.items[r.itemID] === undefined) {
-				/*console.log('Importing item ' + r.name + '(' + r.itemID + ')');
-				this.itemService.getItem(r.itemID).subscribe(i => {
-					lists.items[r.itemID] = i;
-					console.log(r.itemID + ' added');
-				});*/
-			}
 
-			try {
-				if (profession === 'All') {
-					match = true;
-				} else if (profession === r.profession) {
-					match = true;
-				} else {
-					match = false;
+		if (this.isDisenchating) {
+			this.Disenchanting.onlyProfitable = this.filterForm.value['DEOnlyProfitable'];
+			this.Disenchanting.selected = this.filterForm.value['selectedDEMaterial'];
+			this.Disenchanting.applyFilter(onlyMyRecipes, this.myRecipes, profession);
+
+			this.currentPage = 1;
+			this.numOfPages = Math.ceil(this.Disenchanting.disenchantables.length / this.limit);
+			return;
+		} else {
+			lists.recipes.forEach(r => {
+				isAffected = false;
+				// Checking if there are any items missing in the DB
+				if (lists.items[r.itemID] === undefined) {
+					/*console.log('Importing item ' + r.name + '(' + r.itemID + ')');
+					this.itemService.getItem(r.itemID).subscribe(i => {
+						lists.items[r.itemID] = i;
+						console.log(r.itemID + ' added');
+					});*/
 				}
 
-				if (this.myRecipes.length > 0 && match && onlyMyRecipes) {
-					if (this.myRecipes[r.spellID]) {
+				try {
+					if (profession === 'All') {
+						match = true;
+					} else if (profession === r.profession) {
 						match = true;
 					} else {
 						match = false;
 					}
-				}
 
-				if (match && searchQuery.length > 0) {
-					// Matching against item name
-					if (searchQuery.length !== 0 && match) {
-						// TODO: Used to use getItemName()
-						if (r.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
+					if (this.myRecipes.length > 0 && match && onlyMyRecipes) {
+						if (this.myRecipes[r.spellID]) {
 							match = true;
 						} else {
 							match = false;
 						}
 					}
-				}
 
-				if (match && (profit === 0 || profit <= this.getProfitPercent(r.profit, r.buyout))) {
-					match = true;
-				} else {
-					match = false;
-				}
-
-				if (user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') {
-					try {
-						if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
-							match = true;
-						} else {
-							match = false;
-						}
-
-						if (match  && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
-							match = true;
-						} else {
-							match = false;
-						}
-					} catch (error) {
-						console.log('Filtering for api related filters failed', error);
-					}
-				}
-
-				if (match) {
-					r.reagents.forEach(reagent => {
-						if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
-							delete reagent.createdBy;
-							delete reagent.useCraftedBy;
-						} else if (lists.recipes[lists.recipesIndex[reagent.createdBy]] !== undefined) {
-							switch (craftManually) {
-								// ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!']
-								case this.craftManually[1]:
-									// Disable
-									reagent.useCraftedBy = false;
-									isAffected = true;
-									break;
-								case this.craftManually[2]:
-									// If cheaper
-									if (lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
-										lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < (reagent.count * this.getMinPrice(reagent.itemID))) {
-										reagent.useCraftedBy = true;
-										isAffected = true;
-									} else {
-										reagent.useCraftedBy = false;
-										isAffected = true;
-									}
-									break;
-								case this.craftManually[3]:
-									// For everything
-									reagent.useCraftedBy = true;
-									break;
+					if (match && searchQuery.length > 0) {
+						// Matching against item name
+						if (searchQuery.length !== 0 && match) {
+							// TODO: Used to use getItemName()
+							if (r.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
+								match = true;
+							} else {
+								match = false;
 							}
 						}
-					});
-					this.updateCraftingCost(r);
-					this.crafts.push(r);
+					}
+
+					if (match && (profit === 0 || profit <= this.getProfitPercent(r.profit, r.buyout))) {
+						match = true;
+					} else {
+						match = false;
+					}
+
+					if (user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') {
+						try {
+							if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
+								match = true;
+							} else {
+								match = false;
+							}
+
+							if (match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
+								match = true;
+							} else {
+								match = false;
+							}
+						} catch (error) {
+							console.log('Filtering for api related filters failed', error);
+						}
+					}
+
+					if (match) {
+						r.reagents.forEach(reagent => {
+							if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
+								delete reagent.createdBy;
+								delete reagent.useCraftedBy;
+							} else if (lists.recipes[lists.recipesIndex[reagent.createdBy]] !== undefined) {
+								switch (craftManually) {
+									// ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!']
+									case this.craftManually[1]:
+										// Disable
+										reagent.useCraftedBy = false;
+										isAffected = true;
+										break;
+									case this.craftManually[2]:
+										// If cheaper
+										if (lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
+											lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < (reagent.count * this.getMinPrice(reagent.itemID))) {
+											reagent.useCraftedBy = true;
+											isAffected = true;
+										} else {
+											reagent.useCraftedBy = false;
+											isAffected = true;
+										}
+										break;
+									case this.craftManually[3]:
+										// For everything
+										reagent.useCraftedBy = true;
+										break;
+								}
+							}
+						});
+						this.updateCraftingCost(r);
+						this.crafts.push(r);
+					}
+				} catch (err) {
+					console.log(err);
 				}
-			} catch (err) {
-				console.log(err);
-			}
-		});
-		this.currentPage = 1;
-		this.numOfPages = this.crafts.length / this.limit;
+			});
+			this.currentPage = 1;
+			this.numOfPages = Math.ceil(this.crafts.length / this.limit);
+		}
 	}
 
 	/**
@@ -335,14 +340,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		} else {
 			return { 'name': 'loading', 'estDemand': 0, 'avgDailySold': 0, 'avgDailyPosted': 0, 'quantity_total': 0 };
 		}
-	}
-
-	/**
-	 * Retrieves the number of pages
-	 */
-	getNumOfPages(): number {
-		this.numOfPages = Math.round(this.crafts.length / this.limit);
-		return this.numOfPages;
 	}
 
 	/**

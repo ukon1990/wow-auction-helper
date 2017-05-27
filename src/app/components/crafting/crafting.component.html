@@ -3,34 +3,17 @@
 		<h2 class="panel-title">Crafting</h2>
 	</div>
 	<div class="panel-body">
-		<p>
-			Materials marked with red indicates that the item is not currently at AH. If any items are sold by a vendor, you can add a
-			price override in the settings -> crafting. The app can't automate it atm, as there are no good ways 
-			of checking if an item is sold by spesific vendor or not.
-		</p>
-		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
-			If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
-			You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
-		</p>
-		<p *ngIf="apiToUse !== 'none'">
-			<em>
-				If an item is currently priced <strong>{{ buyoutLimit }}%</strong> or more than the market value.
-				The market price will be used instead of the current lowest
-				buyout price for calculating profit (buyout - cost). Manually
-				altering this can be done in the settings panel. The market value
-				will also be used if a item does not exsist on your AH.
-			</em>
-		</p>
 		<div class="row col-md-12">
 			<!-- Action type selectors -->
-			<div class="list-group">
-				<a href="#" class="list-group-item active">
-					Craft
-				</a>
-				<a href="#" class="list-group-item">
-					Disenchant
-				</a>
+			<div class="btn-group btn-group-xs col-md-12" role="group">
+				<button type="button" class="btn btn-info" (click)="toggleDisenchanting(false)" [ngClass]="{'active': !isDisenchating}">
+					Crafting
+				</button>
+				<button type="button" class="btn btn-info" (click)="toggleDisenchanting(true)" [ngClass]="{'active': isDisenchating}">
+					Disenchanting
+				</button>
 			</div>
+			
 			<form class="form-inline col-md-12" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
 				<!-- Regular crafting -->
 				<div *ngIf="!isDisenchating; else disenchant">
@@ -92,42 +75,35 @@
 								{{ Disenchanting.getItemName(item.id) }}
 							</option>
 						</select>
+					</div>
+					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="sizing-addon3">Only profitable</span>
 						<span class="input-group-addon">
 							<input type="checkbox" aria-label="" [formControl]="filterForm.controls['DEOnlyProfitable']">
 						</span>
 					</div>
-					<button  type="button" class="btn btn-default" id="basic-addon1" name="button" (click)="Disenchanting.applyFilter()">
-						Apply
-					</button>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Profession</span>
+						<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
+							<option value="All">All</option>
+							<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
+						</select>
+					</div>
+					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
+						<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
+						<span class="input-group-addon">
+						<input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
+						</span>
+					</div>
 				</ng-template>
 				
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 			</form>
 		</div>
-		<br>
-		<div *ngIf="isDisenchating">
-			<div class="well well-sm">
-				<div class="panel-heading">
-					<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
-					<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
-						{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
-					</a>
-				</div>
-				<div class="panel-body">
-					Buyout: {{ copperToString(getMinPrice(Disenchanting.materials[Disenchanting.selected].id)) }} <br>
-					<div *ngIf="user.apiTouse !== 'none'">
-						Market value: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice) }} <br>
-						Region sale avg: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).regionSaleAvg)
-						}} <br> Est demand: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).estDemand }}% <br>
-					</div>
-				</div>
-			</div>
-		</div>
 		<div class="col-md-12 row">
 			<div class="pager">
 				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
 			<div class="col-md-9 row">
@@ -296,6 +272,24 @@
 				</ng-template>
 			</div>
 			<div class="col-md-3">
+				<div class="col-sm-6 col-md-12" *ngIf="isDisenchating">
+					<div class="thumbnail row">
+						<span>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
+							<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
+								{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
+							</a>
+						</span>
+						<div class="caption">
+							Buyout: {{ copperToString(getMinPrice(Disenchanting.materials[Disenchanting.selected].id)) }} <br>
+							<div *ngIf="user.apiTouse !== 'none'">
+								Market value: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice) }} <br>
+								Region sale avg: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).regionSaleAvg)
+								}} <br> Est demand: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).estDemand }}% <br>
+							</div>
+						</div>
+					</div>
+				</div>
 				<strong>Shopping cart</strong>
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">
@@ -324,7 +318,7 @@
 		</div>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
 	</div>
