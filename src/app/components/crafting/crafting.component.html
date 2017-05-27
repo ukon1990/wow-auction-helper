@@ -87,14 +87,14 @@
 				<ng-template #disenchant>
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="basic-addon1">Target item</span>
-						<select class="form-control" aria-describedby="basic-addon1" ><!-- [(ngModel)]="selected" -->
+						<select class="form-control" aria-describedby="basic-addon1" [formControl]="filterForm.controls['selectedDEMaterial']">
 							<option *ngFor="let item of Disenchanting.materials; let i = index"  [value]="i">
 								{{ Disenchanting.getItemName(item.id) }}
 							</option>
 						</select>
 						<span class="input-group-addon" id="sizing-addon3">Only profitable</span>
 						<span class="input-group-addon">
-							<input type="checkbox" aria-label="" > <!-- [(ngModel)]="disenchanting.onlyProfitable" -->
+							<input type="checkbox" aria-label="" [formControl]="filterForm.controls['DEOnlyProfitable']">
 						</span>
 					</div>
 					<button  type="button" class="btn btn-default" id="basic-addon1" name="button" (click)="Disenchanting.applyFilter()">
@@ -106,6 +106,24 @@
 			</form>
 		</div>
 		<br>
+		<div *ngIf="isDisenchating">
+			<div class="well well-sm">
+				<div class="panel-heading">
+					<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
+					<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
+						{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
+					</a>
+				</div>
+				<div class="panel-body">
+					Buyout: {{ copperToString(getMinPrice(Disenchanting.materials[Disenchanting.selected].id)) }} <br>
+					<div *ngIf="user.apiTouse !== 'none'">
+						Market value: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice) }} <br>
+						Region sale avg: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).regionSaleAvg)
+						}} <br> Est demand: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).estDemand }}% <br>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="col-md-12 row">
 			<div class="pager">
 				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
@@ -160,8 +178,6 @@
 										{{ craft.name }}</a>
 									<br> {{ craft.profession }}
 									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
-									<br>
-									quality={{ getItem(craft.itemID).quality }} iLvL={{ getItem(craft.itemID).itemLevel }}
 								</div>
 							</div>
 						</td>
@@ -248,17 +264,21 @@
 							<th>Cost</th>
 							<th>Profit</th>
 						</tr>
-						<tr *ngFor="let recipe of Disenchanting.disenchantables">
+						<tr *ngFor="let craft of Disenchanting.disenchantables | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
 							<td>
-								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(recipe) +')'"></span>
+							<div>
+								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
 								<div class="align-left col-md-9">
-									<a rel="item={{recipe.itemID}}" href="http://www.wowhead.com/item={{recipe.itemID}}" target="_blank">
-									{{ recipe.name }}
-								</a>
+									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
+										target="_blank">
+										{{ craft.name }}</a>
+									<br> {{ craft.profession }}
+									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
 								</div>
-							</td>
+							</div>
+						</td>
 							<td>
-								<div class="clearfix" *ngFor="let m of recipe.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
+								<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
 									{{ m.count }} x
 									<a rel="item={{ m.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 										target="_blank">{{m.name}}</a> {{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total
@@ -266,10 +286,10 @@
 								</div>
 							</td>
 							<td>
-								{{ copperToString(recipe.cost) }}
+								{{ copperToString(craft.cost) }}
 							</td>
 							<td>
-								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - recipe.cost ) }}
+								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost ) }}
 							</td>
 						</tr>
 					</table>

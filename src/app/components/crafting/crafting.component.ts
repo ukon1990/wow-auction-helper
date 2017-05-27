@@ -55,7 +55,9 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			'profit': query !== undefined && query.profit !== null ? parseFloat(query.profit) : 0,
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
 			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
-			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0]
+			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0],
+			'selectedDEMaterial': 0,
+			'DEOnlyProfitable': false
 		});
 		const sc = localStorage.getItem('shopping_cart');
 		if (sc !== null && sc !== undefined && sc !== 'undefined') {
@@ -91,6 +93,9 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		const refreshId = setInterval(() => {
 			try {
 				if (!lists.isDownloading && lists.auctions.length > 0) {
+					if (this.isDisenchating) {
+						this.Disenchanting.applyFilter();
+					}
 					this.setShoppingCartCost();
 					clearInterval(refreshId);
 				}
@@ -142,6 +147,13 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 * Filtering the craftables by user query
 	 */
 	filteRecipes(): void {
+		if (this.isDisenchating) {
+			this.Disenchanting.onlyProfitable = this.filterForm.value['DEOnlyProfitable'];
+			this.Disenchanting.selected = this.filterForm.value['selectedDEMaterial'];
+			this.Disenchanting.applyFilter();
+			return;
+		}
+
 		this.crafts = [];
 		let isAffected = false,
 			match = false;
