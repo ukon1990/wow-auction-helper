@@ -3,87 +3,111 @@
 		<h2 class="panel-title">Crafting</h2>
 	</div>
 	<div class="panel-body">
-		<p>
-			Materials marked with red indicates that the item is not currently at AH. If any items are sold by a vendor, you can add a
-			price override in the settings -> crafting. The app can't automate it atm, as there are no good ways 
-			of checking if an item is sold by spesific vendor or not.
-		</p>
-		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
-			If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
-			You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
-		</p>
-		<p *ngIf="apiToUse !== 'none'">
-			<em>
-				If an item is currently priced <strong>{{ buyoutLimit }}%</strong> or more than the market value.
-				The market price will be used instead of the current lowest
-				buyout price for calculating profit (buyout - cost). Manually
-				altering this can be done in the settings panel. The market value
-				will also be used if a item does not exsist on your AH.
-			</em>
-		</p>
 		<div class="row col-md-12">
-			<form class="form-inline" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+			<!-- Action type selectors -->
+			<div class="btn-group btn-group-xs col-md-12" role="group">
+				<button type="button" class="btn btn-info" (click)="toggleDisenchanting(false)" [ngClass]="{'active': !isDisenchating}">
+					Crafting
+				</button>
+				<button type="button" class="btn btn-info" (click)="toggleDisenchanting(true)" [ngClass]="{'active': isDisenchating}">
+					Disenchanting
+				</button>
+			</div>
+			
+			<form class="form-inline col-md-12" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+				<!-- Regular crafting -->
+				<div *ngIf="!isDisenchating; else disenchant">
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Search</span>
+						<input class="col-md-2 form-control" type="text"
+							placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
+					</div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Search</span>
-					<input class="col-md-2 form-control" type="text"
-						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
-				</div>
+					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
+						<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
+						<span class="input-group-addon">
+						<input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
+						</span>
+					</div>
 
-				<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
-					<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
-					<span class="input-group-addon">
-					   <input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
-					 </span>
-				</div>
-
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Min profit</span>
-					<input name="profit" class="col-md-2 form-control" type="number"
-						placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">%</span>
-				</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Min profit</span>
+						<input name="profit" class="col-md-2 form-control" type="number"
+							placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
+						<span class="input-group-addon" id="sizing-addon3">%</span>
+					</div>
 
 
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Min demand</span>
-					<input class="col-md-2 form-control" type="number"
-						placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">%</span>
-				</div>
+					<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Min demand</span>
+						<input class="col-md-2 form-control" type="number"
+							placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
+						<span class="input-group-addon" id="sizing-addon3">%</span>
+					</div>
 
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Min sold</span>
-					<input class="col-md-2 form-control" type="number"
-						placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">pcs</span>
-				</div>
+					<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Min sold</span>
+						<input class="col-md-2 form-control" type="number"
+							placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
+						<span class="input-group-addon" id="sizing-addon3">pcs</span>
+					</div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Profession</span>
-					<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
-						<option value="All">All</option>
-						<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
-					</select>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Profession</span>
+						<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
+							<option value="All">All</option>
+							<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
+						</select>
+					</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Craft items</span>
+						<select name="profession" class="form-control" [formControl]="filterForm.controls['craftManually']" aria-describedby="sizing-addon3">
+							<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
+						</select>
+					</div>
 				</div>
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Craft items</span>
-					<select name="profession" class="form-control" [formControl]="filterForm.controls['craftManually']" aria-describedby="sizing-addon3">
-						<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
-					</select>
-				</div>
+				<!-- Disenchatning crafting options -->
+				<ng-template #disenchant>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="basic-addon1">Target item</span>
+						<select class="form-control" aria-describedby="basic-addon1" [formControl]="filterForm.controls['selectedDEMaterial']">
+							<option *ngFor="let item of Disenchanting.materials; let i = index"  [value]="i">
+								{{ Disenchanting.getItemName(item.id) }}
+							</option>
+						</select>
+					</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Only profitable</span>
+						<span class="input-group-addon">
+							<input type="checkbox" aria-label="" [formControl]="filterForm.controls['DEOnlyProfitable']">
+						</span>
+					</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" id="sizing-addon3">Profession</span>
+						<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
+							<option value="All">All</option>
+							<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
+						</select>
+					</div>
+					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
+						<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
+						<span class="input-group-addon">
+						<input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
+						</span>
+					</div>
+				</ng-template>
+				
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 			</form>
 		</div>
-		<br>
 		<div class="col-md-12 row">
 			<div class="pager">
 				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
+				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 			</div>
 			<div class="col-md-9 row">
-				<table class="table table-striped">
+				<table *ngIf="!isDisenchating; else disenchantTable" class="table table-striped">
 					<tr class="row">
 						<th>Name</th>
 						<th>Materials</th>
@@ -160,7 +184,7 @@
 										{{ subMats.count * m.count }} x
 										<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 												target="_blank">{{subMats.name}}</a>
-										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getItem(subMats.itemID).quantity_total }} @ AH)
+										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
 										<i *ngIf="m.useCraftedBy !== undefined"
 											class="glyphicon glyphicon-piggy-bank"
 											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -180,8 +204,15 @@
 							{{ copperToString(craft.buyout) }}
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
-								<br>Market value: {{ copperToString(craft.mktPrice) }}
-								<br>Region sale avg: {{ copperToString(getItem(craft.itemID).regionSaleAvg) }}
+								<br>Market value: {{
+									copperToString(
+										getApiItem(craft.itemID)
+											.mktPrice)
+									}}
+								<br>Region sale avg: {{ 
+									copperToString(
+										getApiItem(craft.itemID)
+												.regionSaleAvg) }}
 							</span>
 						</td>
 						<td>
@@ -190,12 +221,17 @@
 						</td>
 						<td *ngIf="apiToUse !== 'none'"  class="hidden-xs">
 							<span *ngIf="apiToUse === 'wowuctions'">
-								{{ getItem(craft.itemID).avgDailyPosted }} <br>
+								{{ getApiItem(craft.itemID)
+										.avgDailyPosted }} <br>
 							</span>
-							{{ getItem(craft.itemID).avgDailySold }}
+							{{ getApiItem(craft.itemID)
+									.avgDailySold }}
 						</td>
 						<td class="hidden-xs">
-							<span *ngIf="apiToUse !== 'none'" >{{ craft.estDemand }}% <br></span>
+							<span *ngIf="apiToUse !== 'none'" >{{
+									getApiItem(craft.itemID)
+										.estDemand | percent }}
+							</span>
 						</td>
 						<td>
 							<a class="glyphicon glyphicon-shopping-cart"
@@ -208,8 +244,111 @@
 						</td>
 					</tr>
 				</table>
+				<ng-template #disenchantTable>
+					<table class="table table-striped">
+						<tr>
+							<th>Item</th>
+							<th>Materials</th>
+							<th>Cost</th>
+							<th>Profit</th>
+							<th>Action</th>
+						</tr>
+						<tr *ngFor="let craft of Disenchanting.disenchantables | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+							<td>
+							<div>
+								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+								<div class="align-left col-md-9">
+									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
+										target="_blank">
+										{{ craft.name }}</a>
+									<br> {{ craft.profession }}
+									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
+								</div>
+							</div>
+						</td>
+							<td>
+								<div class="clearfix"
+									*ngFor="let m of craft.reagents"
+									[ngClass]="{'not-found': !isAtAH(m.itemID)}">
+									<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">
+										{{ m.count }} x
+										<a
+											rel="item={{ m.itemID }}"
+											href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+												target="_blank">{{m.name}}</a>
+
+										{{ copperToString(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+										<i *ngIf="m.useCraftedBy !== undefined"
+											class="glyphicon glyphicon-piggy-bank"
+											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+											(click)="setManualCraft(m, craft)"
+											aria-hidden="true"></i>
+									</span>
+
+									<!-- For "child" recipes -->
+									<div *ngIf="m.useCraftedBy !== undefined && m.useCraftedBy">
+										<div class="clearfix"
+											*ngFor="let subMats of getSubMaterials(m)"
+											[ngClass]="{'not-found': !isAtAH(subMats.itemID)}">
+											{{ subMats.count * m.count }} x
+											<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
+													target="_blank">{{subMats.name}}</a>
+											{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
+											<i *ngIf="m.useCraftedBy !== undefined"
+												class="glyphicon glyphicon-piggy-bank"
+												[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+												(click)="setManualCraft(m, craft)"
+												aria-hidden="true"></i>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td>
+								{{ copperToString(craft.cost) }}
+							</td>
+							<td>
+								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost ) }}
+							</td>
+							<td>
+								<a class="glyphicon glyphicon-shopping-cart"
+									aria-hidden="true"
+									(click)="addToCart(craft)">Add</a><br>
+								<a class="glyphicon glyphicon-exclamation-sign"
+									aria-hidden="true"
+									href="http://www.wowhead.com/item={{craft.itemID}}"
+									target="_blank">Wowhead</a><br>
+							</td>
+						</tr>
+					</table>
+				</ng-template>
 			</div>
 			<div class="col-md-3">
+				<div class="col-sm-6 col-md-12" *ngIf="isDisenchating">
+					<div class="thumbnail row">
+						<span>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
+							<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
+								{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
+							</a>
+						</span>
+						<div class="caption">
+							Buyout: {{ copperToString(getMinPrice(Disenchanting.materials[Disenchanting.selected].id)) }} <br>
+							<div *ngIf="user.apiTouse !== 'none'">
+								Market value: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice) }} <br>
+								Region sale avg: {{
+									copperToString(
+										getApiItem(
+											Disenchanting
+												.materials[Disenchanting.selected].id)
+													.regionSaleAvg)
+								}} <br> Est demand: {{
+									getApiItem(
+										Disenchanting.materials[Disenchanting.selected].id)
+											.estDemand | percent}} <br>
+							</div>
+						</div>
+					</div>
+				</div>
 				<strong>Shopping cart</strong>
 				<ul>
 					<li *ngFor="let a of shoppingCart.recipes">
@@ -232,14 +371,20 @@
 				</ul>
 				Sum buyout from AH: {{ copperToString(shoppingCart.buyout) }} <br>
 				Sum material cost from AH: {{ copperToString(shoppingCart.cost) }} <br>
-				Potential profit: {{ copperToString(shoppingCart.profit) }}<br>
+				Potential sale profit: {{ copperToString(shoppingCart.profit) }}<br>
 				<a class="btn btn-default" (click)="clearCart()">Empty shopping cart</a>
 			</div>
 		</div>
 		<div class="pager">
 			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ getNumOfPages() }}
+			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
+		<em>
+			If there are any recipes missing, please notify me @ 
+			<a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/">reddit</a> 
+			by giving me the itemID (item=12345 after wowhead link) of the target item and the spellID (spell=12345 in the wowhead link)for the recipe.
+			If you do this, Il'l add them asap.
+		</em>
 	</div>
 </div>

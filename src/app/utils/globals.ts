@@ -144,9 +144,10 @@ export function calcCost(c) {
 									m.useCraftedBy = false;
 								}
 							}
-							if(m.useCraftedBy !== undefined && m.useCraftedBy) {
-								c.cost += lists.recipes[lists.recipesIndex[m.createdBy]].cost !== 0 ?
-									m.count * lists.recipes[lists.recipesIndex[m.createdBy]].cost : 0;
+							if (m.useCraftedBy !== undefined && m.useCraftedBy) {
+								c.cost += lists.recipes[lists.recipesIndex[m.createdBy]] &&
+											lists.recipes[lists.recipesIndex[m.createdBy]].cost !== 0 ?
+												m.count * lists.recipes[lists.recipesIndex[m.createdBy]].cost : 0;
 							} else {
 								c.cost += matBuyout !== 0 ? m.count * matBuyout : 0;
 							}
@@ -208,6 +209,76 @@ export function getPet(speciesId, itemService) {
 	}
 	return lists.pets[speciesId];
 }
+
+/**
+ * Used to get the icon url for a given item or pet.
+ * @param  {Auction or Item} auction It takes a auction or Item object.
+ * @return {string}         [description]
+ */
+export function getIcon(auction): string {
+	const itemID = auction.item !== undefined ? auction.item : auction.itemID;
+	let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
+	try {
+		if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
+			if (lists.pets[auction.petSpeciesId] === undefined) {
+				// getPet(auction.petSpeciesId);
+			}
+			icon = lists.pets[auction.petSpeciesId].icon;
+		} else if (lists.items[itemID] !== undefined) {
+			icon = lists.items[itemID].icon;
+		}
+	} catch (err) {console.log(err, auction, itemID); }
+
+	if (icon === undefined) {
+		url += 'inv_scroll_03.jpg';
+	} else {
+		url += icon + '.jpg';
+	}
+	return url;
+}
+
+/**
+ * Checks if an item is @ AH or not.
+ * @param  {string}  itemID
+ * @return {boolean}        Availability
+ */
+export function isAtAH(itemID: string): boolean {
+	return lists.auctions[itemID] !== undefined ? true : false;
+}
+
+/**
+ * Gets thre auction item for an item
+ * @param  {string} itemID
+ * @return {object}
+ */
+export function getAuctionItem(itemID: string) {
+	if (lists.auctions[itemID] === undefined) {
+		return { 'quantity_total': 0 };
+	}
+	return lists.auctions[itemID];
+}
+
+/**
+ * Finds the minimum price for an item
+ * @param  {string} itemID
+ * @return {number}
+ */
+export function getMinPrice(itemID: string): number {
+	try {
+		if (lists.customPrices[itemID]) {
+			return lists.customPrices[itemID];
+		}
+		return lists.auctions[itemID].buyout;
+	} catch (e) {
+		if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			return lists.wowuction[itemID]['mktPrice'];
+		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			return lists.tsm[itemID].MarketValue;
+		}
+		return 0;
+	}
+}
+
 export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
 export const itemContext = [
 	'Drop', 'World drop', 'Raid (old)', 'Normal dungeon',

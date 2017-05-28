@@ -2,8 +2,8 @@
 <app-news></app-news>
 <!-- The app -->
 <header class="navbar navbar-default navbar-fixed-top">
-   <button type="button" class="navbar-toggle collapsed" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target="#bs-example-navbar-collapse-1"
-      aria-expanded="false">
+  <button type="button" class="navbar-toggle collapsed" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target="#bs-example-navbar-collapse-1"
+    aria-expanded="false">
       <span class="sr-only">Toggle navigation</span>
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
@@ -13,48 +13,36 @@
     <h1 class="navbar-header" style="margin: 0;"><a routerLink="/">WAH</a></h1>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <p class="navbar-right">
-        Last update: {{timeSinceLastModified}} minutes ago <br>
-        {{ downloadingText }}
+        Last update: {{timeSinceLastModified}} minutes ago <br> {{ downloadingText }}
       </p>
       <ul class="nav navbar-nav">
-        <li *ngIf="isRealmSet()"
-			[attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/crafting">Crafting</a>
-		</li>
-        <li *ngIf="isRealmSet()"
-			[attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/auctions">Auctions</a>
-		</li>
-        <li *ngIf="isCharacterSet() && isRealmSet()"
-			[attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/my-auctions">My auctions</a>
-		</li>
-        <li *ngIf="isRealmSet()"
-			[attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/watchlist">Watchlist</a>
-		</li>
-        <li *ngIf="isRealmSet()"
-			[attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/trade-vendor">Trade vendors</a>
-		</li>
-        <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/settings">Settings</a>
-		</li>
-        <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined"
-			data-target=".navbar-collapse" routerLinkActive="active">
-			<a routerLink="/about">About</a>
-		</li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/crafting">Crafting</a>
+        </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/auctions">Auctions</a>
+        </li>
+        <li *ngIf="isCharacterSet() && isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse"
+          routerLinkActive="active">
+          <a routerLink="/my-auctions">My auctions</a>
+        </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/watchlist">Watchlist</a>
+        </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/trade-vendor">Trade vendors</a>
+        </li>
+        <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/settings">Settings</a>
+        </li>
+        <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/about">About</a>
+        </li>
       </ul>
     </div>
 
   </nav>
 </header>
-<div class="col-md-12 center">
+<div class="col-md-12 center mt-5">
   <router-outlet></router-outlet>
 </div>
