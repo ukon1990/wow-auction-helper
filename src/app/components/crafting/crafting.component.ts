@@ -17,7 +17,7 @@ import { Disenchanting } from '../../utils/disenchanting';
 
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
 	Disenchanting: Disenchanting;
-	isDisenchating = true;
+	isDisenchating = false;
 	crafts = [];
 	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
@@ -48,6 +48,11 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		super();
 		this.Disenchanting = new Disenchanting(true);
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
+
+		this.isDisenchating = query.isDisenchating;
+		this.Disenchanting.onlyProfitable = query.onlyProfitable;
+		this.Disenchanting.selected = query.selectedDisenchanting || 0;
+
 		this.filterForm = formBuilder.group({
 			'searchQuery': query !== undefined && query.searchQuery !== undefined ? query.searchQuery : '',
 			'onlyMyRecipes': query !== undefined && query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
@@ -56,8 +61,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
 			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
 			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0],
-			'selectedDEMaterial': 0,
-			'DEOnlyProfitable': false
+			'selectedDEMaterial': query.selectedDisenchanting,
+			'DEOnlyProfitable': query.onlyProfitable
 		});
 		const sc = localStorage.getItem('shopping_cart');
 		if (sc !== null && sc !== undefined && sc !== 'undefined') {
@@ -102,6 +107,32 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		}, 100);
 	}
 
+	getApiItem(itemID: string) {
+		if (user.apiToUse === 'tsm' && lists.tsm[itemID]) {
+			return {
+				estDemand: lists.tsm[itemID].RegionSaleRate,
+				regionSaleAvg: lists.tsm[itemID].RegionSaleAvg,
+				avgDailySold: lists.tsm[itemID].RegionAvgDailySold,
+				avgDailyPosted: 0,
+				mktPrice: lists.tsm[itemID].MarketValue
+			};
+		} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID]) {
+			// return lists.wowuction[itemID];
+			return {
+				estDemand: lists.wowuction[itemID].estDemand,
+				avgDailySold: lists.wowuction[itemID].avgDailySold,
+				avgDailyPosted: lists.wowuction[itemID].avgDailyPosted,
+				mktPrice: lists.wowuction[itemID].mktPrice
+			};
+		}
+		return {
+			estDemand: 0,
+			avgDailySold: 0,
+			avgDailyPosted: 0,
+			mktPrice: 0
+		};
+	}
+
 	/**
 	 * Applying recipes to list. adding the item filter once auction download is completed
 	 */
@@ -126,6 +157,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	toggleDisenchanting(bool): void {
 		this.isDisenchating = bool;
+		this.filteRecipes();
 	}
 
 	setManualCraft(material, recipe): void {
@@ -158,17 +190,21 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			demand = this.filterForm.value['demand'] || 0,
 			minSold = this.filterForm.value['minSold'] || 0,
 			craftManually = this.filterForm.value['craftManually'] || 0;
+
+		this.Disenchanting.onlyProfitable = this.filterForm.value['DEOnlyProfitable'];
+		this.Disenchanting.selected = parseInt(this.filterForm.value['selectedDEMaterial'], 10);
+
 		localStorage.setItem(
 			'query_crafting',
 			JSON.stringify(
 				{
-					'searchQuery': searchQuery, 'onlyMyRecipes': onlyMyRecipes, 'profession': profession,
-					'profit': profit, 'demand': demand, 'minSold': minSold, 'craftManually': craftManually
+					searchQuery: searchQuery, onlyMyRecipes: onlyMyRecipes, profession: profession,
+					profit: profit, demand: demand, minSold: minSold, craftManually: craftManually,
+					isDisenchating: this.isDisenchating, onlyProfitable: this.Disenchanting.onlyProfitable,
+					selectedDisenchanting: this.Disenchanting.selected
 				}));
 
 		if (this.isDisenchating) {
-			this.Disenchanting.onlyProfitable = this.filterForm.value['DEOnlyProfitable'];
-			this.Disenchanting.selected = this.filterForm.value['selectedDEMaterial'];
 			this.Disenchanting.applyFilter(onlyMyRecipes, this.myRecipes, profession);
 
 			this.currentPage = 1;
@@ -223,13 +259,13 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 					if (user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') {
 						try {
-							if (match && (minSold === 0 || minSold <= this.getItem(r.itemID).avgDailySold)) {
+							if (match && (minSold === 0 || minSold <= this.getApiItem(r.itemID).avgDailySold)) {
 								match = true;
 							} else {
 								match = false;
 							}
 
-							if (match && (demand === 0 || demand <= this.getItem(r.itemID).estDemand)) {
+							if (match && (demand === 0 || demand <= this.getApiItem(r.itemID).estDemand * 100)) {
 								match = true;
 							} else {
 								match = false;

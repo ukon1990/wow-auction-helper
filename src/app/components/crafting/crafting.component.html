@@ -204,8 +204,15 @@
 							{{ copperToString(craft.buyout) }}
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
-								<br>Market value: {{ copperToString(craft.mktPrice) }}
-								<br>Region sale avg: {{ copperToString(getItem(craft.itemID).regionSaleAvg) }}
+								<br>Market value: {{
+									copperToString(
+										getApiItem(craft.itemID)
+											.mktPrice)
+									}}
+								<br>Region sale avg: {{ 
+									copperToString(
+										getApiItem(craft.itemID)
+												.regionSaleAvg) }}
 							</span>
 						</td>
 						<td>
@@ -214,12 +221,17 @@
 						</td>
 						<td *ngIf="apiToUse !== 'none'"  class="hidden-xs">
 							<span *ngIf="apiToUse === 'wowuctions'">
-								{{ getItem(craft.itemID).avgDailyPosted }} <br>
+								{{ getApiItem(craft.itemID)
+										.avgDailyPosted }} <br>
 							</span>
-							{{ getItem(craft.itemID).avgDailySold }}
+							{{ getApiItem(craft.itemID)
+									.avgDailySold }}
 						</td>
 						<td class="hidden-xs">
-							<span *ngIf="apiToUse !== 'none'" >{{ craft.estDemand }}% <br></span>
+							<span *ngIf="apiToUse !== 'none'" >{{
+									getApiItem(craft.itemID)
+										.estDemand | percent }}
+							</span>
 						</td>
 						<td>
 							<a class="glyphicon glyphicon-shopping-cart"
@@ -284,8 +296,16 @@
 							Buyout: {{ copperToString(getMinPrice(Disenchanting.materials[Disenchanting.selected].id)) }} <br>
 							<div *ngIf="user.apiTouse !== 'none'">
 								Market value: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice) }} <br>
-								Region sale avg: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).regionSaleAvg)
-								}} <br> Est demand: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).estDemand }}% <br>
+								Region sale avg: {{
+									copperToString(
+										getApiItem(
+											Disenchanting
+												.materials[Disenchanting.selected].id)
+													.regionSaleAvg)
+								}} <br> Est demand: {{
+									getApiItem(
+										Disenchanting.materials[Disenchanting.selected].id)
+											.estDemand | percent}} <br>
 							</div>
 						</div>
 					</div>
