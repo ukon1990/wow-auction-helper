@@ -604,4 +604,27 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		});
 		return contains;
 	}
+
+	checkForMissingItems(): void {
+		let missingItems = [];
+		console.log('Building missing item list');
+		lists.recipes.forEach(r => {
+			if (!lists.items[r.itemID]) {
+				missingItems[r.itemID] = r.name;
+			}
+			r.reagents.forEach(m => {
+				if (!lists.items[m.itemID]) {
+					console.log('s');
+					missingItems[m.itemID] = r.name;
+				}
+			});
+		});
+
+		/*
+		this.itemService.getItem(m.itemID).subscribe(result => {
+						console.log(result);
+					});
+		*/
+		console.log('Missing items:', missingItems);
+	}
 }

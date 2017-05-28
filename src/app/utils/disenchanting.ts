@@ -26,7 +26,28 @@ export class Disenchanting {
 		// Warlords
 		{ 'id': 113588, 'quality': 4, 'minILVL': 630, 'maxILVL': 799, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
 		{ 'id': 111245, 'quality': 3, 'minILVL': 505, 'maxILVL': 700, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
-		{ 'id': 109693, 'quality': 2, 'minILVL': 494, 'maxILVL': 700, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } }
+		{ 'id': 109693, 'quality': 2, 'minILVL': 494, 'maxILVL': 700, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		// Mists of Pandaria
+		{ 'id': 74248, 'quality': 4, 'minILVL': 420, 'maxILVL': 629, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 74247, 'quality': 3, 'minILVL': 430, 'maxILVL': 463, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 74249, 'quality': 2, 'minILVL': 364, 'maxILVL': 429, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+
+		// Cataclysm
+		{ 'id': 52722, 'quality': 4, 'minILVL': 352, 'maxILVL': 397, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 52721, 'quality': 3, 'minILVL': 318, 'maxILVL': 377, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 52719, 'quality': 2, 'minILVL': 306, 'maxILVL': 333, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 52555, 'quality': 2, 'minILVL': 278, 'maxILVL': 333, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 52718, 'quality': 2, 'minILVL': 272, 'maxILVL': 305, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		// Wrath of the Lich King
+		{ 'id': 34057, 'quality': 4, 'minILVL': 200, 'maxILVL': 277, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 34052, 'quality': 3, 'minILVL': 167, 'maxILVL': 200, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 34055, 'quality': 2, 'minILVL': 154, 'maxILVL': 182, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 34056, 'quality': 2, 'minILVL': 130, 'maxILVL': 150, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+		{ 'id': 34054, 'quality': 2, 'minILVL': 130, 'maxILVL': 182, 'yield': { 'iLvL': 600, 'min': 2, 'max': 4 } },
+
+		// The burning crusade
+
+		// Vanilla
 	];
 
 	constructor(isCrafting) {
@@ -59,7 +80,8 @@ export class Disenchanting {
 
 			if (match && lists.items[recipe.itemID] &&
 				lists.items[recipe.itemID].quality === this.materials[this.selected].quality &&
-				lists.items[recipe.itemID].itemLevel >= this.materials[this.selected].minILVL) {
+				lists.items[recipe.itemID].itemLevel >= this.materials[this.selected].minILVL &&
+				lists.items[recipe.itemID].itemLevel <= this.materials[this.selected].maxILVL) {
 
 				if (this.onlyProfitable &&
 					(getMinPrice(this.materials[this.selected].id + '') - recipe.cost) <= 0) {
@@ -88,7 +110,7 @@ export class Disenchanting {
 						lists.items[k].quality === this.materials[this.selected].quality &&
 						lists.items[k].itemLevel >= this.materials[this.selected].minILVL) {
 
-						if (this.onlyProfitable &&
+						if (this.onlyProfitable && getMinPrice(k) > 0 &&
 							getMinPrice(this.materials[this.selected].id + '')  <= getMinPrice(k)) {
 							return;
 						}

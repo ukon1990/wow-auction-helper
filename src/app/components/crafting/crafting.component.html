@@ -251,6 +251,7 @@
 							<th>Materials</th>
 							<th>Cost</th>
 							<th>Profit</th>
+							<th>Action</th>
 						</tr>
 						<tr *ngFor="let craft of Disenchanting.disenchantables | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
 							<td>
@@ -266,11 +267,40 @@
 							</div>
 						</td>
 							<td>
-								<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
-									{{ m.count }} x
-									<a rel="item={{ m.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
-										target="_blank">{{m.name}}</a> {{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total
-									}} @ AH)
+								<div class="clearfix"
+									*ngFor="let m of craft.reagents"
+									[ngClass]="{'not-found': !isAtAH(m.itemID)}">
+									<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">
+										{{ m.count }} x
+										<a
+											rel="item={{ m.itemID }}"
+											href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+												target="_blank">{{m.name}}</a>
+
+										{{ copperToString(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+										<i *ngIf="m.useCraftedBy !== undefined"
+											class="glyphicon glyphicon-piggy-bank"
+											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+											(click)="setManualCraft(m, craft)"
+											aria-hidden="true"></i>
+									</span>
+
+									<!-- For "child" recipes -->
+									<div *ngIf="m.useCraftedBy !== undefined && m.useCraftedBy">
+										<div class="clearfix"
+											*ngFor="let subMats of getSubMaterials(m)"
+											[ngClass]="{'not-found': !isAtAH(subMats.itemID)}">
+											{{ subMats.count * m.count }} x
+											<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
+													target="_blank">{{subMats.name}}</a>
+											{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
+											<i *ngIf="m.useCraftedBy !== undefined"
+												class="glyphicon glyphicon-piggy-bank"
+												[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+												(click)="setManualCraft(m, craft)"
+												aria-hidden="true"></i>
+										</div>
+									</div>
 								</div>
 							</td>
 							<td>
@@ -278,6 +308,15 @@
 							</td>
 							<td>
 								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost ) }}
+							</td>
+							<td>
+								<a class="glyphicon glyphicon-shopping-cart"
+									aria-hidden="true"
+									(click)="addToCart(craft)">Add</a><br>
+								<a class="glyphicon glyphicon-exclamation-sign"
+									aria-hidden="true"
+									href="http://www.wowhead.com/item={{craft.itemID}}"
+									target="_blank">Wowhead</a><br>
 							</td>
 						</tr>
 					</table>
@@ -332,7 +371,7 @@
 				</ul>
 				Sum buyout from AH: {{ copperToString(shoppingCart.buyout) }} <br>
 				Sum material cost from AH: {{ copperToString(shoppingCart.cost) }} <br>
-				Potential profit: {{ copperToString(shoppingCart.profit) }}<br>
+				Potential sale profit: {{ copperToString(shoppingCart.profit) }}<br>
 				<a class="btn btn-default" (click)="clearCart()">Empty shopping cart</a>
 			</div>
 		</div>
@@ -341,5 +380,11 @@
 			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
 			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
 		</div>
+		<em>
+			If there are any recipes missing, please notify me @ 
+			<a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/">reddit</a> 
+			by giving me the itemID (item=12345 after wowhead link) of the target item and the spellID (spell=12345 in the wowhead link)for the recipe.
+			If you do this, Il'l add them asap.
+		</em>
 	</div>
 </div>

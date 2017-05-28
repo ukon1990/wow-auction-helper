@@ -144,9 +144,10 @@ export function calcCost(c) {
 									m.useCraftedBy = false;
 								}
 							}
-							if(m.useCraftedBy !== undefined && m.useCraftedBy) {
-								c.cost += lists.recipes[lists.recipesIndex[m.createdBy]].cost !== 0 ?
-									m.count * lists.recipes[lists.recipesIndex[m.createdBy]].cost : 0;
+							if (m.useCraftedBy !== undefined && m.useCraftedBy) {
+								c.cost += lists.recipes[lists.recipesIndex[m.createdBy]] &&
+											lists.recipes[lists.recipesIndex[m.createdBy]].cost !== 0 ?
+												m.count * lists.recipes[lists.recipesIndex[m.createdBy]].cost : 0;
 							} else {
 								c.cost += matBuyout !== 0 ? m.count * matBuyout : 0;
 							}
