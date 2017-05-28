@@ -61,8 +61,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
 			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
 			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0],
-			'selectedDEMaterial': query.selectedDisenchanting,
-			'DEOnlyProfitable': query.onlyProfitable
+			'selectedDEMaterial': query.selectedDisenchanting ? query.selectedDisenchanting : 0,
+			'DEOnlyProfitable': query.onlyProfitable ? query.onlyProfitable : false
 		});
 		const sc = localStorage.getItem('shopping_cart');
 		if (sc !== null && sc !== undefined && sc !== 'undefined') {
@@ -276,7 +276,9 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					}
 
 					if (match) {
+						let localMatch;
 						r.reagents.forEach(reagent => {
+							localMatch = true;
 							if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
 								delete reagent.createdBy;
 								delete reagent.useCraftedBy;
@@ -292,8 +294,18 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 										// If cheaper
 										if (lists.recipes[lists.recipesIndex[reagent.createdBy]].cost > 0 &&
 											lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < (reagent.count * this.getMinPrice(reagent.itemID))) {
-											reagent.useCraftedBy = true;
-											isAffected = true;
+
+											// Verifying that it is @ AH
+											lists.recipes[lists.recipesIndex[reagent.createdBy]].reagents.forEach(r => {
+												localMatch = lists.auctions[r.itemID] && lists.auctions[r.itemID].quantity_total >= r.count;
+											});
+											if (localMatch) {
+												reagent.useCraftedBy = true;
+												isAffected = true;
+											} else {
+												reagent.useCraftedBy = false;
+												isAffected = true;
+											}
 										} else {
 											reagent.useCraftedBy = false;
 											isAffected = true;

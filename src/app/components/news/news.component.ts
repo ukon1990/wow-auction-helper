@@ -8,7 +8,7 @@ declare var $;
 })
 export class NewsComponent implements AfterViewInit {
 	currentDate: string;
-	lastUpdateDate = '9.5.2017';
+	lastUpdateDate = '29.5.2017';
 
 	constructor() {
 		this.currentDate = new Date().toLocaleDateString();

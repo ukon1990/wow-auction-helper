@@ -19,7 +19,6 @@ import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
-import { DisenchantingComponent } from './components/disenchanting/disenchanting.component';
 
 @NgModule({
 	declarations: [
@@ -32,8 +31,7 @@ import { DisenchantingComponent } from './components/disenchanting/disenchanting
 		AboutComponent,
 		SettingsComponent,
 		WatchlistComponent,
-		NewsComponent,
-		DisenchantingComponent
+		NewsComponent
 	],
 	imports: [
 		BrowserModule,
@@ -68,9 +66,6 @@ import { DisenchantingComponent } from './components/disenchanting/disenchanting
 			}, {
 				path: 'settings/:setting',
 				component: SettingsComponent
-			}, {
-				path: 'disenchanting',
-				component: DisenchantingComponent
 			}
 		])
 	],
