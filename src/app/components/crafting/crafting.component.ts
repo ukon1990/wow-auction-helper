@@ -8,7 +8,7 @@ import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { Disenchanting } from '../../utils/disenchanting';
 
-
+declare const ga: Function;
 @Component({
 	selector: 'app-crafting',
 	templateUrl: 'crafting.component.html',
@@ -205,12 +205,24 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				}));
 
 		if (this.isDisenchating) {
+			ga('send', {
+				hitType: 'event',
+				eventCategory: 'Crafting',
+				eventAction: 'Filtering',
+				eventLabel: 'Disenchanting'
+			});
 			this.Disenchanting.applyFilter(onlyMyRecipes, this.myRecipes, profession);
 
 			this.currentPage = 1;
 			this.numOfPages = Math.ceil(this.Disenchanting.disenchantables.length / this.limit);
 			return;
 		} else {
+			ga('send', {
+				hitType: 'event',
+				eventCategory: 'Crafting',
+				eventAction: 'Filtering',
+				eventLabel: 'Crafting'
+			});
 			lists.recipes.forEach(r => {
 				isAffected = false;
 				// Checking if there are any items missing in the DB
@@ -323,6 +335,12 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					}
 				} catch (err) {
 					console.log(err);
+					ga('send', {
+						hitType: 'event',
+						eventCategory: 'Crafting',
+						eventAction: 'Filter error',
+						eventLabel: err
+					});
 				}
 			});
 			this.currentPage = 1;
@@ -487,6 +505,12 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		this.addReagentToCart(recipe);
 		this.setShoppingCartCost();
 		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Crafting',
+			eventAction: 'Shopping cart',
+			eventLabel: 'Item added'
+		});
 	}
 
 	/**

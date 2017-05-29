@@ -16,7 +16,7 @@
 			
 			<form class="form-inline col-md-12" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
 				<!-- Regular crafting -->
-				<div *ngIf="!isDisenchating; else disenchant">
+				<span *ngIf="!isDisenchating; else disenchant">
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" id="sizing-addon3">Search</span>
 						<input class="col-md-2 form-control" type="text"
@@ -65,7 +65,7 @@
 							<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
 						</select>
 					</div>
-				</div>
+				</span>
 				<!-- Disenchatning crafting options -->
 				<ng-template #disenchant>
 					<div class="input-group input-group-sm">

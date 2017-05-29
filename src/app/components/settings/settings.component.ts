@@ -8,6 +8,7 @@ import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
 import { user, lists, copperToString, db, setRecipesForCharacter } from '../../utils/globals';
 
+declare const ga: Function;
 @Component({
 	selector: 'app-settings',
 	templateUrl: 'settings.component.html',
@@ -98,6 +99,12 @@ export class SettingsComponent implements OnInit {
 
 		this.characterService.getCharacter(character, realm)
 			.subscribe(c => {
+				ga('send', {
+					hitType: 'event',
+					eventCategory: 'Settings',
+					eventAction: 'Update character',
+					eventLabel: 'Success'
+				});
 				if (this.user.characters[index]) {
 					this.user.characters[index] = c;
 					user.characters[index] = c;
@@ -127,6 +134,12 @@ export class SettingsComponent implements OnInit {
 				localStorage.characters = JSON.stringify(user.characters);
 				lists.myRecipes = Array.from(new Set(lists.myRecipes));
 				console.log(`Unable to download character ${character} @ ${realm}`, error);
+				ga('send', {
+					hitType: 'event',
+					eventCategory: 'Settings',
+					eventAction: 'Update character',
+					eventLabel: `Error: ${error}`
+				});
 			});
 	}
 
@@ -197,6 +210,11 @@ export class SettingsComponent implements OnInit {
 
 	exportUserData(): void {
 		this.exportedSettings = JSON.stringify(user);
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Settings',
+			eventAction: 'User data export'
+		});
 	}
 
 	deleteUserData(): void {
@@ -221,6 +239,12 @@ export class SettingsComponent implements OnInit {
 		localStorage.removeItem('watchlist');
 		localStorage.removeItem('notifications');
 		user.watchlist = {recipes: {}, items: {}, groups: []};
+
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Settings',
+			eventAction: 'User deleted'
+		});
 	}
 
 	changeStyle(): void {
@@ -230,6 +254,12 @@ export class SettingsComponent implements OnInit {
 				.setAttribute('href',
 					(this.darkMode ? 'assets/solar.bootstrap.min.css' : 'assets/paper.bootstrap.min'));
 		localStorage.setItem('darkMode', this.darkMode.toString());
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Settings',
+			eventAction: 'Change style',
+			eventLabel: `Darkmode: ${this.darkMode}`
+		});
 		location.reload();
 	}
 
@@ -242,6 +272,13 @@ export class SettingsComponent implements OnInit {
 			'itemID': item.id,
 			'name': item.name,
 			'price': 20000});
+
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Settings',
+			eventAction: 'Custom price',
+			eventLabel: `Item: ${item.name}`
+		});
 	}
 
 	searchDB() {

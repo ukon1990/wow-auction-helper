@@ -7,6 +7,7 @@ import dexie from 'dexie';
 import Push from 'push.js';
 
 declare var $;
+declare const ga: Function;
 @Component({
 	selector: 'app-watchlist',
 	templateUrl: './watchlist.component.html',
@@ -141,8 +142,19 @@ export class WatchlistComponent implements OnInit {
 				`Added to group ${watch.group} with a alert value of ${copperToString(watch.value)}`,
 				this.getIcon(item));
 			this.saveWatchList();
+			ga('send', {
+				hitType: 'event',
+				eventCategory: 'Watchlist',
+				eventAction: 'Item added'
+			});
 		} catch (error) {
 			console.log('Add item to watchlist faild:', error);
+			ga('send', {
+				hitType: 'event',
+				eventCategory: 'Watchlist',
+				eventAction: 'Item not added',
+				eventLabel: `Error: ${error}`
+			});
 		}
 	}
 
@@ -245,6 +257,11 @@ export class WatchlistComponent implements OnInit {
 	addGroup(): void {
 		this.watchlist.groups.push(this.groupForm.value['name']);
 		this.saveWatchList();
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Watchlist',
+			eventAction: 'Group added'
+		});
 	}
 
 	/**
@@ -280,6 +297,11 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.groups[oldIndex]];
 		this.watchlist.groups.splice(oldIndex, 1);
 		this.saveWatchList();
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Watchlist',
+			eventAction: 'Group removed'
+		});
 	}
 
 	openRemoveGroupDialog(index: number): void {
