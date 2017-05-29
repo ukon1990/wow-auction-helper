@@ -168,7 +168,7 @@
 										href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 											target="_blank">{{m.name}}</a>
 
-									{{ copperToString(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+									{{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
 									<i *ngIf="m.useCraftedBy !== undefined"
 										class="glyphicon glyphicon-piggy-bank"
 										[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -277,7 +277,7 @@
 											href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 												target="_blank">{{m.name}}</a>
 
-										{{ copperToString(getMinPrice(m.itemID)) }} ({{ getItem(m.itemID).quantity_total }} @ AH)
+										{{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
 										<i *ngIf="m.useCraftedBy !== undefined"
 											class="glyphicon glyphicon-piggy-bank"
 											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -293,7 +293,7 @@
 											{{ subMats.count * m.count }} x
 											<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 													target="_blank">{{subMats.name}}</a>
-											{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
+											{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
 											<i *ngIf="m.useCraftedBy !== undefined"
 												class="glyphicon glyphicon-piggy-bank"
 												[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
