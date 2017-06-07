@@ -6,11 +6,13 @@ import { RealmService } from '../../services/realm';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 
+declare const ga: Function;
 @Component({
 	selector: 'app-selector',
 	templateUrl: 'front.page.component.html',
 	providers: [RealmService]
 })
+
 export class FrontPageComponent implements OnInit {
 	u;
 	realmListEu = [];
@@ -68,7 +70,12 @@ export class FrontPageComponent implements OnInit {
 
 		localStorage.setItem('timestamp_news', new Date().toLocaleDateString());
 
-		this.router.navigateByUrl('/crafting');
+		// this.router.navigateByUrl('/crafting');
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'User registration',
+			eventAction: 'New user registered'
+		});
 		location.reload();
 	}
 

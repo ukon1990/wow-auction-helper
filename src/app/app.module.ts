@@ -74,8 +74,7 @@ import { NewsComponent } from './components/news/news.component';
 		CharacterService,
 		ItemService,
 		Title,
-		Location,
-		{provide: LocationStrategy, useClass: HashLocationStrategy}],
+		Location],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }
