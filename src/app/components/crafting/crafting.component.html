@@ -144,7 +144,9 @@
 						</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
-					<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+					<tr class="row" *ngFor="let craft of crafts
+						| slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;
+						let i = index;">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
@@ -234,9 +236,23 @@
 							</span>
 						</td>
 						<td>
-							<a class="glyphicon glyphicon-shopping-cart"
+							<a class="glyphicon glyphicon-shopping-cart push-left"
 								aria-hidden="true"
-								(click)="addToCart(craft)">Add</a><br>
+								(click)="openMenu(i)">Add</a><br>
+							<div class="recipe-menu recipe-menu-dark"
+								[ngClass]="{'recipe-menu-open': i === selectedItemIndex}">
+								<div class="panel-body">
+									Add quantity:<br>
+									<input type="number" value="1" min="1" #quantityToAdd/><br>
+									<a class="push-left"
+										aria-hidden="true"
+										(click)="addToCart(craft, quantityToAdd.value)">
+										<i class="glyphicon glyphicon-shopping-cart"></i>
+										Add amount
+									</a>
+								</div>
+							</div>
+
 							<a class="glyphicon glyphicon-exclamation-sign"
 								aria-hidden="true"
 								href="http://www.wowhead.com/item={{craft.itemID}}"
@@ -253,19 +269,21 @@
 							<th>Profit</th>
 							<th>Action</th>
 						</tr>
-						<tr *ngFor="let craft of Disenchanting.disenchantables | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+						<tr *ngFor="
+							let craft of Disenchanting.disenchantables | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;
+							let i = index;">
 							<td>
-							<div>
-								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
-								<div class="align-left col-md-9">
-									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
-										target="_blank">
-										{{ craft.name }}</a>
-									<br> {{ craft.profession }}
-									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
+								<div>
+									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+									<div class="align-left col-md-9">
+										<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
+											target="_blank">
+											{{ craft.name }}</a>
+										<br> {{ craft.profession }}
+										({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
+									</div>
 								</div>
-							</div>
-						</td>
+							</td>
 							<td>
 								<div class="clearfix"
 									*ngFor="let m of craft.reagents"
@@ -310,9 +328,22 @@
 								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost ) }}
 							</td>
 							<td>
-								<a class="glyphicon glyphicon-shopping-cart"
+								<a class="glyphicon glyphicon-shopping-cart push-left"
 									aria-hidden="true"
-									(click)="addToCart(craft)">Add</a><br>
+									(click)="openMenu(i)">Add</a><br>
+								<div class="recipe-menu recipe-menu-dark"
+									[ngClass]="{'recipe-menu-open': i === selectedItemIndex}">
+									<div class="panel-body">
+										Add quantity:<br>
+										<input type="number" value="1" min="1" #quantityToAdd/><br>
+										<a class="push-left"
+											aria-hidden="true"
+											(click)="addToCart(craft, quantityToAdd.value)">
+											<i class="glyphicon glyphicon-shopping-cart"></i>
+											Add amount
+										</a>
+									</div>
+								</div>
 								<a class="glyphicon glyphicon-exclamation-sign"
 									aria-hidden="true"
 									href="http://www.wowhead.com/item={{craft.itemID}}"

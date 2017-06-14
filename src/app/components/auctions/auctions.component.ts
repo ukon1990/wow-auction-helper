@@ -11,6 +11,7 @@ import { user, lists, getPet } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { itemClasses } from '../../utils/objects';
 
+declare const ga: Function;
 @Component({
 	selector: 'app-auctions',
 	templateUrl: 'auctions.component.html',
@@ -104,7 +105,12 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 		this.filterForm.value['filterByCharacter'] = false;
 		this.filterForm.value['itemClass'] = '-1';
 		this.filterForm.value['itemSubClass'] = '-1';
-
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Auctions',
+			eventAction: 'Filtering',
+			eventLabel: 'Cleared filter'
+		});
 	}
 
 	/**
@@ -218,6 +224,13 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 			}
 		}
 		this.numOfPages = Math.round(this.numberOfAuctions / this.limit);
+
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Auctions',
+			eventAction: 'Filtering',
+			eventLabel: 'Applied filter'
+		});
 	}
 
 	/**

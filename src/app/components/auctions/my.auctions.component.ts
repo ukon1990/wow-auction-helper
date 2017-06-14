@@ -6,8 +6,7 @@ import { IUser, IAuction } from '../../utils/interfaces';
 import { user, lists, getPet, copperToString } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 
-
-
+declare const ga: Function;
 @Component({
 	selector: 'app-my-auctions',
 	templateUrl: 'my.auctions.component.html',

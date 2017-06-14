@@ -36,4 +36,5 @@ export class IUser {
 	crafters: any[];
 	notifications: any;
 	watchlist?: {recipes: object, items: object, groups: any[]};
+	isDarkMode?: boolean;
 }
