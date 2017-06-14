@@ -518,13 +518,13 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			this.addReagentToCart(recipe);
 			this.setShoppingCartCost();
 			localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
-			ga('send', {
-				hitType: 'event',
-				eventCategory: 'Crafting',
-				eventAction: 'Shopping cart',
-				eventLabel: 'Item added'
-			});
 		}
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Crafting',
+			eventAction: 'Shopping cart',
+			eventLabel: `${quantity} item(s) added for disenchanting = ${this.isDisenchating}`
+		});
 	}
 
 	/**
