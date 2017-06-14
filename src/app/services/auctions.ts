@@ -16,7 +16,7 @@ export class AuctionService {
 	}
 
 	getAuctions(url, timestamp) {
-		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
+		url = 'http://www.wah.jonaskf.net/GetAuctions.php?url=' + url;
 		let localUrl = '/assets/auctions.json';
 		return this.http.get(this.getUrl(url, localUrl))
 			.map(response => <IAuction>function (r) {
@@ -96,7 +96,7 @@ export class AuctionService {
 
 	getLastUpdated() {
 		const localUrl = '/assets/GetAuctionsLastModified.json',
-		apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
+		apiUrl = 'http://www.wah.jonaskf.net/GetAuctions.php?region='
 			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
 		return this.http.get(apiUrl)
 			.map(response => <IAuction>function (r) {

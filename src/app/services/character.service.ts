@@ -12,7 +12,7 @@ export class CharacterService {
 
 	getCharacters() {
 		return this.http
-			.get(`http://wah.jonaskf.net/GetCharacterProfession.php?character=${
+			.get(`http://www.wah.jonaskf.net/GetCharacterProfession.php?character=${
 					localStorage.crafters
 				}&realm=${
 					user.realm
