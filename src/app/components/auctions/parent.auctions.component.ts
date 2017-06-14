@@ -6,6 +6,7 @@ import { itemClasses } from '../../utils/objects';
 
 declare var $WowheadPower;
 declare var $wu;
+declare const ga: Function;
 
 export abstract class ParentAuctionComponent {
 	filterForm: FormGroup;
@@ -97,6 +98,12 @@ export abstract class ParentAuctionComponent {
 				return lists.items[itemID]['name'];
 			}
 		}
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Auctions',
+			eventAction: 'item not found',
+			eventLabel: `Item with ID=${auction.item} not found`
+		});
 		return 'no item data for ' + auction.item;
 	}
 
@@ -121,8 +128,14 @@ export abstract class ParentAuctionComponent {
 			this.selectedAuctions = auctions.auctions.sort(function(a, b) {
 				return a.buyout  / a.quantity - b.buyout / b.quantity;
 			});
-		this.numOfAuctionPages = Math.ceil(auctions.auctions.length / this.limit);
+			this.numOfAuctionPages = Math.ceil(auctions.auctions.length / this.limit);
 		}
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Auctions',
+			eventAction: 'Selected auction',
+			eventLabel: `Selected auction is ${lists.items[this.selectAuction[0].item].name}`
+		});
 	}
 
 	/**

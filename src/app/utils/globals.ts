@@ -33,7 +33,8 @@ export let user: IUser = {
 		isUndercutted: true,
 		isWatchlist: true
 	},
-	watchlist: watchlist
+	watchlist: watchlist,
+	isDarkMode: true
 };
 
 export const setRecipesForCharacter = (character) => {
@@ -153,14 +154,14 @@ export function calcCost(c) {
 							}
 						} catch (errr) {
 							console.log('Failed at calculating cost', errr);
-							console.log(c);
+							//console.log(c);
 						}
 					}
 				} catch (err) {
-					console.log(err);
-					console.log(c);
+					console.log('calcCost failed: ', err);
+					//console.log(c);
 				}
-				if((user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') &&
+				if ((user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') &&
 					c.mktPrice !== 0 &&
 					Math.round((c.buyout / c.mktPrice) * 100) >= user.buyoutLimit) {
 					c.profit = c.mktPrice - c.cost;

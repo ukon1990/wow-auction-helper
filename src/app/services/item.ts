@@ -39,6 +39,8 @@ export class ItemService {
 	getItems() {
 		const apiUrl = 'http://www.wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
+			
+			console.log('dada');
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function(r) {
 				db['items'].clear();

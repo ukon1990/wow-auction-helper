@@ -12,7 +12,7 @@ declare const ga: Function;
 @Component({
 	selector: 'app-crafting',
 	templateUrl: 'crafting.component.html',
-	styleUrls: ['../auctions/auctions.component.css']
+	styleUrls: ['../auctions/auctions.component.css', './crafting.component.css']
 })
 
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
@@ -21,7 +21,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	crafts = [];
 	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
-
+	selectedItemIndex = -1;
 	reagentIndex = 0;
 
 	sortAsc = false;
@@ -488,29 +488,43 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		return url;
 	}
 
+	openMenu(index: number): void {
+		if (this.selectedItemIndex === index) {
+			this.selectedItemIndex = -1;
+			return;
+		}
+		this.selectedItemIndex = index;
+	}
+
 	/**
 	 * Adds an item to a shopping cart
 	 * @param {object} recipe
 	 */
-	addToCart(recipe): void {
-		if (this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
-			this.shoppingCart.recipes.push({
-				'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID,
-				'quantity': 1, 'minCount': recipe.minCount, 'reagents': recipe.reagents
-			});
-		} else {
-			this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
+	addToCart(recipe, quantity?: number): void {
+		if (!quantity) {
+			quantity = 1;
 		}
 
-		this.addReagentToCart(recipe);
-		this.setShoppingCartCost();
-		localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
-		ga('send', {
-			hitType: 'event',
-			eventCategory: 'Crafting',
-			eventAction: 'Shopping cart',
-			eventLabel: 'Item added'
-		});
+		for (let i = 0; i < quantity; i++) {
+			if (this.shoppingCart.recipes.length === 0 || !this.keyValueInArray(this.shoppingCart.recipes, 'spellID', recipe.spellID)) {
+				this.shoppingCart.recipes.push({
+					'name': recipe.name, 'spellID': recipe.spellID, 'itemID': recipe.itemID,
+					'quantity': 1, 'minCount': recipe.minCount, 'reagents': recipe.reagents
+				});
+			} else {
+				this.shoppingCart.recipes[this.reagentIndex].quantity += 1;
+			}
+
+			this.addReagentToCart(recipe);
+			this.setShoppingCartCost();
+			localStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCart));
+			ga('send', {
+				hitType: 'event',
+				eventCategory: 'Crafting',
+				eventAction: 'Shopping cart',
+				eventLabel: 'Item added'
+			});
+		}
 	}
 
 	/**

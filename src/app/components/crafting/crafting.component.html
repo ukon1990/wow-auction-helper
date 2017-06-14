@@ -144,7 +144,9 @@
 						</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
-					<tr class="row" *ngFor="let craft of crafts | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;">
+					<tr class="row" *ngFor="let craft of crafts
+						| slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;
+						let i = index;">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
@@ -234,9 +236,23 @@
 							</span>
 						</td>
 						<td>
-							<a class="glyphicon glyphicon-shopping-cart"
+							<a class="glyphicon glyphicon-shopping-cart push-left"
 								aria-hidden="true"
-								(click)="addToCart(craft)">Add</a><br>
+								(click)="openMenu(i)">Add</a><br>
+							<div class="recipe-menu recipe-menu-dark"
+								[ngClass]="{'recipe-menu-open': i === selectedItemIndex}">
+								<div class="panel-body">
+									Add quantity:<br>
+									<input type="number" value="1" min="1" #quantityToAdd/><br>
+									<a class="push-left"
+										aria-hidden="true"
+										(click)="addToCart(craft, quantityToAdd.value)">
+										<i class="glyphicon glyphicon-shopping-cart"></i>
+										Add amount
+									</a>
+								</div>
+							</div>
+
 							<a class="glyphicon glyphicon-exclamation-sign"
 								aria-hidden="true"
 								href="http://www.wowhead.com/item={{craft.itemID}}"

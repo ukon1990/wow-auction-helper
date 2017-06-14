@@ -111,7 +111,7 @@ export class AuctionService {
 			console.log('Using local files', localUrl);
 			return localUrl;
 		}*/
-
+		console.log('url', apiUrl);
 		return apiUrl;
 	};
 }

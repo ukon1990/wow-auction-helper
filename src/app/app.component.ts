@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
@@ -15,6 +15,7 @@ declare const  ga: Function;
 	styleUrls: ['./app.component.css'],
 	providers: [AuctionService]
 })
+
 export class AppComponent implements OnInit {
 	// http://realfavicongenerator.net/
 	downloadingText = '';
@@ -46,9 +47,12 @@ export class AppComponent implements OnInit {
 		try {
 			// Just for fun :)
 			if (localStorage.getItem('darkMode') !== null && localStorage.getItem('darkMode') === 'false') {
+				user.isDarkMode = false;
 				document
 					.getElementById('custom-style')
 					.setAttribute('href', 'assets/paper.bootstrap.min.css');
+			} else {
+				user.isDarkMode = true;
 			}
 		} catch (err) {
 			console.log('style', err);
@@ -255,19 +259,24 @@ export class AppComponent implements OnInit {
 	}
 
 	downloadPets() {
-		db.table('pets').toArray().then(pets => {
-			if (pets.length > 0) {
-				this.buildPetArray(pets);
-				this.downloadItems();
-			} else {
-				this.downloadingText = 'Downloading pets';
-				this.itemService.getPets()
-					.subscribe(p => {
-						this.buildPetArray(p);
-						this.downloadItems();
-					});
-			}
-		});
+		try {
+				console.log('pets');
+			db.table('pets').toArray().then(pets => {
+				if (pets.length > 0) {
+					this.buildPetArray(pets);
+					this.downloadItems();
+				} else {
+					this.downloadingText = 'Downloading pets';
+					this.itemService.getPets()
+						.subscribe(p => {
+							this.buildPetArray(p);
+							this.downloadItems();
+						});
+				}
+			});
+		} catch (error) {
+			console.log('Failed loading pets', error);
+		}
 	}
 
 	downloadItems() {
