@@ -49,20 +49,22 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		this.Disenchanting = new Disenchanting(true);
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
 
-		this.isDisenchating = query.isDisenchating;
-		this.Disenchanting.onlyProfitable = query.onlyProfitable;
-		this.Disenchanting.selected = query.selectedDisenchanting || 0;
+		if (query !== undefined) {
+			this.isDisenchating = query.isDisenchating ? query.isDisenchating : false;
+			this.Disenchanting.onlyProfitable = query.onlyProfitable ? query.onlyProfitable : false;
+			this.Disenchanting.selected = query.selectedDisenchanting ? query.selectedDisenchanting : 0;
+		}
 
 		this.filterForm = formBuilder.group({
-			'searchQuery': query !== undefined && query.searchQuery !== undefined ? query.searchQuery : '',
-			'onlyMyRecipes': query !== undefined && query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
-			'profession': query !== undefined ? query.profession : 'All',
-			'profit': query !== undefined && query.profit !== null ? parseFloat(query.profit) : 0,
-			'demand': query !== undefined && query.demand !== null ? parseFloat(query.demand) : 0,
-			'minSold': query !== undefined && query.minSold !== null ? parseFloat(query.minSold) : 0,
-			'craftManually': query !== undefined && query.craftManually !== null ? query.craftManually : this.craftManually[0],
-			'selectedDEMaterial': query.selectedDisenchanting ? query.selectedDisenchanting : 0,
-			'DEOnlyProfitable': query.onlyProfitable ? query.onlyProfitable : false
+			'searchQuery': query && query.searchQuery !== undefined ? query.searchQuery : '',
+			'onlyMyRecipes': query && query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
+			'profession': query && query.profession ? query.profession : 'All',
+			'profit': query && query.profit !== null ? parseFloat(query.profit) : 0,
+			'demand': query && query.demand !== null ? parseFloat(query.demand) : 0,
+			'minSold': query && query.minSold !== null ? parseFloat(query.minSold) : 0,
+			'craftManually': query && query.craftManually !== null ? query.craftManually : this.craftManually[0],
+			'selectedDEMaterial': query && query.selectedDisenchanting ? query.selectedDisenchanting : 0,
+			'DEOnlyProfitable': query && query.onlyProfitable ? query.onlyProfitable : false
 		});
 		const sc = localStorage.getItem('shopping_cart');
 		if (sc !== null && sc !== undefined && sc !== 'undefined') {
