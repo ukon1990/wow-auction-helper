@@ -214,47 +214,48 @@ export class AppComponent implements OnInit {
 					}
 				}
 			}
-		}
-		setInterval(() => this.setTimeSinceLastModified(), 1000);
-		setInterval(() => this.checkForUpdate(), 60000);
 
-		if (
-			user.apiToUse === 'wowuction' &&
-			localStorage.getItem('api_wowuction') !== null &&
-			localStorage.getItem('api_wowuction') !== undefined &&
-			localStorage.getItem('api_wowuction').length > 0 &&
-			localStorage.getItem('api_wowuction') !== 'null') {
-			if (new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
-				console.log('Downloading wowuction data');
-				this.auctionService.getWoWuctionData().subscribe(res => {
-					res.forEach(r => {
-						lists.wowuction[r.id] = r;
+			setInterval(() => this.setTimeSinceLastModified(), 1000);
+			setInterval(() => this.checkForUpdate(), 60000);
+
+			if (
+				user.apiToUse === 'wowuction' &&
+				localStorage.getItem('api_wowuction') !== null &&
+				localStorage.getItem('api_wowuction') !== undefined &&
+				localStorage.getItem('api_wowuction').length > 0 &&
+				localStorage.getItem('api_wowuction') !== 'null') {
+				if (new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
+					console.log('Downloading wowuction data');
+					this.auctionService.getWoWuctionData().subscribe(res => {
+						res.forEach(r => {
+							lists.wowuction[r.id] = r;
+						});
+
+						if (user.apiToUse === 'wowuction') {
+							this.downloadPets();
+						}
 					});
+				} else {
+					console.log('Loading wowuction data from local storage');
+					db.table('wowuction').toArray().then(r => {
+						r.forEach(w => {
+							lists.wowuction[w.id] = w;
+						});
 
-					if (user.apiToUse === 'wowuction') {
-						this.downloadPets();
-					}
-				});
-			} else {
-				console.log('Loading wowuction data from local storage');
-				db.table('wowuction').toArray().then(r => {
-					r.forEach(w => {
-						lists.wowuction[w.id] = w;
+						if (user.apiToUse === 'wowuction') {
+							this.downloadPets();
+						}
 					});
-
-					if (user.apiToUse === 'wowuction') {
-						this.downloadPets();
-					}
-				});
+				}
 			}
-		}
 
-		if (user.apiToUse === 'none') {
-			this.downloadPets();
-		}
+			if (user.apiToUse === 'none') {
+				this.downloadPets();
+			}
 
-		if (localStorage.getItem('custom_prices') !== null) {
-			lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
+			if (localStorage.getItem('custom_prices') !== null) {
+				lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
+			}
 		}
 	}
 

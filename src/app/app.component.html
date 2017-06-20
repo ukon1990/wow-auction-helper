@@ -12,7 +12,7 @@
   <nav class="container-fluid">
     <h1 class="navbar-header" style="margin: 0;"><a routerLink="/">WAH</a></h1>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <p class="navbar-right">
+      <p class="navbar-right" *ngIf="timeSinceLastModified">
         Last update: {{timeSinceLastModified}} minutes ago <br> {{ downloadingText }}
       </p>
       <ul class="nav navbar-nav">
