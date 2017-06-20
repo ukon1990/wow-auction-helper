@@ -19,6 +19,7 @@ import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
+import { GoldPipe } from './pipes/gold.pipe';
 
 @NgModule({
 	declarations: [
@@ -31,7 +32,8 @@ import { NewsComponent } from './components/news/news.component';
 		AboutComponent,
 		SettingsComponent,
 		WatchlistComponent,
-		NewsComponent
+		NewsComponent,
+		GoldPipe
 	],
 	imports: [
 		BrowserModule,
