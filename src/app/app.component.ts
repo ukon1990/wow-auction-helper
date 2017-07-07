@@ -213,64 +213,66 @@ export class AppComponent implements OnInit {
 						this.downloadPets();
 					}
 				}
-			}
-		}
-		setInterval(() => this.setTimeSinceLastModified(), 1000);
-		setInterval(() => this.checkForUpdate(), 60000);
+			} else if (
+				user.apiToUse === 'wowuction' &&
+				localStorage.getItem('api_wowuction') !== null &&
+				localStorage.getItem('api_wowuction') !== undefined &&
+				localStorage.getItem('api_wowuction').length > 0 &&
+				localStorage.getItem('api_wowuction') !== 'null') {
+				if (new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
+					console.log('Downloading wowuction data');
+					this.auctionService.getWoWuctionData().subscribe(res => {
+						res.forEach(r => {
+							lists.wowuction[r.id] = r;
+						});
 
-		if (
-			user.apiToUse === 'wowuction' &&
-			localStorage.getItem('api_wowuction') !== null &&
-			localStorage.getItem('api_wowuction') !== undefined &&
-			localStorage.getItem('api_wowuction').length > 0 &&
-			localStorage.getItem('api_wowuction') !== 'null') {
-			if (new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
-				console.log('Downloading wowuction data');
-				this.auctionService.getWoWuctionData().subscribe(res => {
-					res.forEach(r => {
-						lists.wowuction[r.id] = r;
+						if (user.apiToUse === 'wowuction') {
+							this.downloadPets();
+						}
 					});
+				} else {
+					console.log('Loading wowuction data from local storage');
+					db.table('wowuction').toArray().then(r => {
+						r.forEach(w => {
+							lists.wowuction[w.id] = w;
+						});
 
-					if (user.apiToUse === 'wowuction') {
-						this.downloadPets();
-					}
-				});
+						if (user.apiToUse === 'wowuction') {
+							this.downloadPets();
+						}
+					});
+				}
 			} else {
-				console.log('Loading wowuction data from local storage');
-				db.table('wowuction').toArray().then(r => {
-					r.forEach(w => {
-						lists.wowuction[w.id] = w;
-					});
-
-					if (user.apiToUse === 'wowuction') {
-						this.downloadPets();
-					}
-				});
+				this.downloadPets();
 			}
-		}
 
-		if (user.apiToUse === 'none') {
-			this.downloadPets();
-		}
+			setInterval(() => this.setTimeSinceLastModified(), 1000);
+			setInterval(() => this.checkForUpdate(), 60000);
 
-		if (localStorage.getItem('custom_prices') !== null) {
-			lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
+			if (localStorage.getItem('custom_prices') !== null) {
+				lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
+			}
 		}
 	}
 
 	downloadPets() {
 		try {
-				console.log('pets');
+			console.log('pets');
 			db.table('pets').toArray().then(pets => {
 				if (pets.length > 0) {
 					this.buildPetArray(pets);
 					this.downloadItems();
 				} else {
 					this.downloadingText = 'Downloading pets';
+					lists.isDownloading = true;
 					this.itemService.getPets()
 						.subscribe(p => {
 							this.buildPetArray(p);
 							this.downloadItems();
+						}, error => {
+							this.downloadingText = '';
+							console.log('Unable to download pets:', error);
+							lists.isDownloading = false;
 						});
 				}
 			});
@@ -281,6 +283,7 @@ export class AppComponent implements OnInit {
 
 	downloadItems() {
 		try {
+			lists.isDownloading = true;
 			this.downloadingText = 'Downloading items';
 			// Attempting to get from local storage
 			if (
@@ -309,6 +312,7 @@ export class AppComponent implements OnInit {
 		} catch (err) {
 			this.downloadingText = 'Failed at downloading items';
 			console.log('Failed at loading items', err);
+			lists.isDownloading = false;
 		}
 	}
 
@@ -352,8 +356,8 @@ export class AppComponent implements OnInit {
 		console.log('Checking for new auction data');
 		this.downloadingText = 'Checking for new auction data';
 		this.auctionService.getLastUpdated().subscribe(r => {
-			console.log('Downloading auctions');
 			if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
+				console.log('Downloading auctions');
 				this.downloadingText = 'Downloading auctions, this might take a while';
 				this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
 					.subscribe(a => {
@@ -364,6 +368,7 @@ export class AppComponent implements OnInit {
 						setTimeout(() => {
 							this.downloadingText = '';
 						}, 5000);
+						lists.isDownloading = false;
 						console.log('Could not download auctions at this time', error);
 					});
 			}
@@ -563,7 +568,7 @@ export class AppComponent implements OnInit {
 			currentTime = this.date.getMinutes(),
 			oldTime = this.timeSinceLastModified;
 		// Checking if there is a new update available
-		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff) {
+		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff && !lists.isDownloading) {
 			if (user.notifications.isUpdateAvailable) {
 				this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
 			}
