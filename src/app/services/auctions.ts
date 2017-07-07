@@ -35,7 +35,7 @@ export class AuctionService {
 
 	getWoWuctionData() {
 		let localUrl = '/assets/wowuction.tsv',
-			apiUrl = 'http://www.wowuction.com/'+ localStorage.getItem('region') +'/'+
+			apiUrl = 'http://www.wowuction.com/'+ localStorage.getItem('region') + '/' +
 						localStorage.getItem('realm') + '/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
 			url = this.getUrl(apiUrl, localUrl);
 
@@ -105,8 +105,7 @@ export class AuctionService {
 			}(response.json()));
 	}
 
-	getUrl(apiUrl, localUrl) {
-		/* TODO: :)
+	getUrl(apiUrl, localUrl) {/*
 		if (window.location.hostname === 'localhost') {
 			console.log('Using local files', localUrl);
 			return localUrl;
