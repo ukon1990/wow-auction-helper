@@ -245,8 +245,6 @@ export class AppComponent implements OnInit {
 			} else {
 				this.downloadPets();
 			}
-
-			setInterval(() => this.setTimeSinceLastModified(), 1000);
 			setInterval(() => this.checkForUpdate(), 60000);
 
 			if (localStorage.getItem('custom_prices') !== null) {
@@ -267,6 +265,7 @@ export class AppComponent implements OnInit {
 					lists.isDownloading = true;
 					this.itemService.getPets()
 						.subscribe(p => {
+							lists.isDownloading = false;
 							this.buildPetArray(p);
 							this.downloadItems();
 						}, error => {
@@ -293,16 +292,19 @@ export class AppComponent implements OnInit {
 				// The db was empty so we're downloading
 				this.itemService.getItems()
 					.subscribe(iDL => {
+						lists.isDownloading = false;
 						this.buildItemArray(iDL);
 					});
 			} else {
 				db.table('items').toArray().then(i => {
 					if (i.length > 0) {
+						lists.isDownloading = false;
 						this.buildItemArray(i);
 					} else {
 						// The db was empty so we're downloading
 						this.itemService.getItems()
 							.subscribe(iDL => {
+								lists.isDownloading = false;
 								this.buildItemArray(iDL);
 							});
 					}
@@ -337,42 +339,44 @@ export class AppComponent implements OnInit {
 	}
 
 	public getAuctions(): void {
-		lists.isDownloading = true;
-		this.downloadingText = 'Checking for new auctions';
+		if (!lists.isDownloading) {
+			lists.isDownloading = true;
+			this.downloadingText = 'Checking for new auctions';
 
-		this.downloadingText = 'Loading auctions from local storage';
-		console.log('Loading auctions from local storage.');
-		db.table('auctions').toArray().then(
-			result => {
-				this.downloadingText = '';
-				if (result.length > 0) {
-					this.buildAuctionArray(result);
-				} else {
-					localStorage.setItem('timestamp_auctions', '0');
-					this.getAuctions();
+			this.downloadingText = 'Loading auctions from local storage';
+			console.log('Loading auctions from local storage.');
+			db.table('auctions').toArray().then(
+				result => {
+					this.downloadingText = '';
+					if (result.length > 0) {
+						this.buildAuctionArray(result);
+					} else {
+						localStorage.setItem('timestamp_auctions', '0');
+						this.getAuctions();
+					}
+				});
+
+			console.log('Checking for new auction data');
+			this.downloadingText = 'Checking for new auction data';
+			this.auctionService.getLastUpdated().subscribe(r => {
+				if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
+					console.log('Downloading auctions');
+					this.downloadingText = 'Downloading auctions, this might take a while';
+					this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
+						.subscribe(a => {
+							this.downloadingText = '';
+							this.buildAuctionArray(a.auctions);
+						}, error => {
+						this.downloadingText = 'Could not download auctions at this time';
+							setTimeout(() => {
+								this.downloadingText = '';
+							}, 5000);
+							lists.isDownloading = false;
+							console.log('Could not download auctions at this time', error);
+						});
 				}
 			});
-
-		console.log('Checking for new auction data');
-		this.downloadingText = 'Checking for new auction data';
-		this.auctionService.getLastUpdated().subscribe(r => {
-			if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
-				console.log('Downloading auctions');
-				this.downloadingText = 'Downloading auctions, this might take a while';
-				this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
-					.subscribe(a => {
-						this.downloadingText = '';
-						this.buildAuctionArray(a.auctions);
-					}, error => {
-					this.downloadingText = 'Could not download auctions at this time';
-						setTimeout(() => {
-							this.downloadingText = '';
-						}, 5000);
-						lists.isDownloading = false;
-						console.log('Could not download auctions at this time', error);
-					});
-			}
-		});
+		}
 	}
 
 	buildAuctionArray(arr) {
@@ -565,10 +569,10 @@ export class AppComponent implements OnInit {
 		this.date = new Date();
 
 		const updateTime = new Date(this.lastModified).getMinutes(),
-			currentTime = this.date.getMinutes(),
-			oldTime = this.timeSinceLastModified;
+			currentTime = this.date.getMinutes();
+
 		// Checking if there is a new update available
-		if (this.timeDiff(updateTime, currentTime) < this.oldTimeDiff && !lists.isDownloading) {
+		if (this.lastModified && this.lastModified > 0 && this.timeDiff(updateTime, currentTime) < this.oldTimeDiff && !lists.isDownloading) {
 			if (user.notifications.isUpdateAvailable) {
 				this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
 			}
@@ -576,7 +580,7 @@ export class AppComponent implements OnInit {
 		}
 
 		this.timeSinceLastModified = this.timeDiff(updateTime, currentTime);
-		this.oldTimeDiff = this.timeDiff(updateTime, currentTime);
+		this.oldTimeDiff = this.timeSinceLastModified;
 	}
 
 	timeDiff(updateTime, currentTime) {
@@ -598,10 +602,13 @@ export class AppComponent implements OnInit {
 	}
 
 	checkForUpdate() {
+		console.log('checking for update');
 		if (this.isRealmSet()) {
 			this.auctionService.getLastUpdated()
-				.subscribe(r =>
-					this.lastModified = r['lastModified']);
+				.subscribe(r => {
+					this.lastModified = r['lastModified'];
+					this.setTimeSinceLastModified();
+				});
 		}
 	}
 

@@ -90,7 +90,8 @@
 						<span class="input-group-btn">
 							<button class="btn btn-default" type="submit">Import settings</button>
 						</span>
-						<input type="text" class="form-control" placeholder="Paste in the exported string here"  [formControl]="importSettingsForm.controls['settings']">
+						<textarea type="text" class="form-control" placeholder="Paste in the exported string here" 
+							[formControl]="importSettingsForm.controls['settings']"></textarea>
 					</div>
 				</form>
 
@@ -155,7 +156,7 @@
 					</div>-->
 				</div>
 			</div><br>
-			<button class="btn btn-primary" type="submit">
+			<button class="btn btn-primary" type="submit" [disabled]="!this.isValid()">
 				Save and continue
 				<i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i>
 				</button>
