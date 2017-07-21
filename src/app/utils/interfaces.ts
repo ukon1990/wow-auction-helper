@@ -1,16 +1,16 @@
-export class IAuction {
+export interface IAuction {
 	auctions;
 }
-export class IItem {
+export interface IItem {
 }
 
-export class IPet {
+export interface IPet {
 
 }
 
 // ID represents the spellID on an item
 // API url: https://us.api.battle.net/wow/recipe/33994?locale=en_US&apikey=
-export class IRecipe {
+export interface IRecipe {
 	id: string;
 	name: string;
 	profession: string;
@@ -18,12 +18,12 @@ export class IRecipe {
 	materials: IMaterial[];
 }
 
-export class IMaterial {
+export interface IMaterial {
 	itemID: string;
 	quantity: number;
 }
 
-export class IUser {
+export interface IUser {
 	region: string;
 	realm: string;
 	character?: string;
