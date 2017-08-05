@@ -13,7 +13,7 @@ export class ItemService {
 	constructor(private http: Http) { }
 
 	getItem(itemid: string) {
-		return this.http.get('http://www.wah.jonaskf.net/GetItems.php?itemid=' + itemid)
+		return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
 			.map(response => <Object>function(r) {
 				if (r.itemID !== undefined) {
 					try {
@@ -29,7 +29,7 @@ export class ItemService {
 			error => console.log(error));
 	}
 	getPet(petSpeciesId: string) {
-		return this.http.get('http://www.wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
+		return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
 			.map(response => <Object>function(r) {
 				db.table('pets').put(r);
 				return r;
@@ -37,7 +37,7 @@ export class ItemService {
 	}
 
 	getItems() {
-		const apiUrl = 'http://www.wah.jonaskf.net/GetItems.php',
+		const apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
 			
 			console.log('dada');
@@ -53,7 +53,7 @@ export class ItemService {
 
 	getPets() {
 		console.log('Loading pets');
-		const apiUrl = 'http://www.wah.jonaskf.net/GetSpecies.php',
+		const apiUrl = 'http://wah.jonaskf.net/GetSpecies.php',
 			localUrl = '/assets/GetSpecies.json';
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
@@ -67,7 +67,7 @@ export class ItemService {
 	getRecipe(itemID): any {
 		console.log('Downloaded recipe for item ' + itemID);
 		const localUrl = '/assets/GetRecipe.json',
-			apiUrl = 'http://www.wah.jonaskf.net/GetRecipe.php?itemid=' + itemID;
+			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php?itemid=' + itemID;
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(r => {
@@ -78,7 +78,7 @@ export class ItemService {
 	getRecipes(): any {
 		console.log('Loaded recipes');
 		const localUrl = '/assets/GetRecipe.json',
-			apiUrl = 'http://www.wah.jonaskf.net/GetRecipe.php';
+			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php';
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(r => {
