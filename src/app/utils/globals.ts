@@ -137,14 +137,14 @@ export function calcCost(c) {
 										lists.tsm[m.itemID] ?
 											lists.tsm[m.itemID].MarketValue : 0 :
 											0;
-
+							/*
 							if (lists.items[m.itemID] !== undefined &&
 								lists.items[m.itemID].itemSource.sourceType === 'CREATED_BY_SPELL') {
 								if (m.useCraftedBy === undefined) {
 									m.createdBy = lists.items[m.itemID].itemSource.sourceId;
 									m.useCraftedBy = false;
 								}
-							}
+							}*/
 							if (m.useCraftedBy !== undefined && m.useCraftedBy) {
 								c.cost += lists.recipes[lists.recipesIndex[m.createdBy]] &&
 											lists.recipes[lists.recipesIndex[m.createdBy]].cost !== 0 ?
