@@ -518,7 +518,7 @@ export class AppComponent implements OnInit {
 			if (lists.items[i].itemSource.sourceType === 'CREATED_BY_SPELL' &&
 				recipes[lists.items[i].itemSource.sourceId] === undefined) {
 				console.log('Attempting to add ' + lists.items[i].name);
-				this.itemService.getRecipe(lists.items[i].id).subscribe(shit => {
+				this.itemService.getRecipeByItem(lists.items[i].id).subscribe(shit => {
 					console.log(i);
 				});
 			}

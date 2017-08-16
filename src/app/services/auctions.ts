@@ -16,7 +16,7 @@ export class AuctionService {
 	}
 
 	getAuctions(url, timestamp) {
-		url = 'http://www.wah.jonaskf.net/GetAuctions.php?url=' + url;
+		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
 		let localUrl = '/assets/auctions.json';
 		return this.http.get(this.getUrl(url, localUrl))
 			.map(response => <IAuction>function (r) {
@@ -35,7 +35,7 @@ export class AuctionService {
 
 	getWoWuctionData() {
 		let localUrl = '/assets/wowuction.tsv',
-			apiUrl = 'http://www.wowuction.com/'+ localStorage.getItem('region') + '/' +
+			apiUrl = 'http://www.wowuction.com/' + localStorage.getItem('region') + '/' +
 						localStorage.getItem('realm') + '/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
 			url = this.getUrl(apiUrl, localUrl);
 
@@ -96,7 +96,7 @@ export class AuctionService {
 
 	getLastUpdated() {
 		const localUrl = '/assets/GetAuctionsLastModified.json',
-		apiUrl = 'http://www.wah.jonaskf.net/GetAuctions.php?region='
+		apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
 			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
 		return this.http.get(apiUrl)
 			.map(response => <IAuction>function (r) {

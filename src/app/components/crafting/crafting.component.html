@@ -153,7 +153,7 @@
 								<div class="align-left col-md-9">
 									<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 										target="_blank">
-										{{ craft.name }}</a>
+										{{ getName(craft) }} <span *ngIf="craft.rank">({{ craft.rank }})</span></a>
 									<br> {{ craft.profession }}
 									({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
 								</div>
@@ -170,7 +170,7 @@
 										href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 											target="_blank">{{m.name}}</a>
 
-									{{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
+									{{ getMinPrice(m.itemID) | gold }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
 									<i *ngIf="m.useCraftedBy !== undefined"
 										class="glyphicon glyphicon-piggy-bank"
 										[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -186,7 +186,7 @@
 										{{ subMats.count * m.count }} x
 										<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 												target="_blank">{{subMats.name}}</a>
-										{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
+										{{ getMinPrice(subMats.itemID) | gold }} ({{ getAuction(subMats.itemID).quantity_total }} @ AH)
 										<i *ngIf="m.useCraftedBy !== undefined"
 											class="glyphicon glyphicon-piggy-bank"
 											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -197,28 +197,23 @@
 							</div>
 						</td>
 						<td class="hidden-xs">
-							{{ copperToString(craft.cost) }}
+							{{ craft.cost | gold }}
 						</td>
 						<td class="hidden-xs">
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								Live:
 							</span>
-							{{ copperToString(craft.buyout) }}
+							{{ craft.buyout | gold }}
 							<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
 								({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
 								<br>Market value: {{
-									copperToString(
-										getApiItem(craft.itemID)
-											.mktPrice)
+									getApiItem(craft.itemID).mktPrice | gold
 									}}
-								<br>Region sale avg: {{ 
-									copperToString(
-										getApiItem(craft.itemID)
-												.regionSaleAvg) }}
+								<br>Region sale avg: {{ getApiItem(craft.itemID).regionSaleAvg | gold }}
 							</span>
 						</td>
 						<td>
-							{{ copperToString(craft.profit) }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
+							{{ craft.profit | gold }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
 							<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'"  class="hidden-xs">
@@ -295,7 +290,7 @@
 											href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
 												target="_blank">{{m.name}}</a>
 
-										{{ copperToString(getMinPrice(m.itemID)) }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
+										{{ getMinPrice(m.itemID) | gold }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
 										<i *ngIf="m.useCraftedBy !== undefined"
 											class="glyphicon glyphicon-piggy-bank"
 											[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -311,7 +306,7 @@
 											{{ subMats.count * m.count }} x
 											<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
 													target="_blank">{{subMats.name}}</a>
-											{{ copperToString(getMinPrice(subMats.itemID)) }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
+											{{ getMinPrice(subMats.itemID) | gold }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
 											<i *ngIf="m.useCraftedBy !== undefined"
 												class="glyphicon glyphicon-piggy-bank"
 												[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
@@ -322,10 +317,10 @@
 								</div>
 							</td>
 							<td>
-								{{ copperToString(craft.cost) }}
+								{{ craft.cost | gold }}
 							</td>
 							<td>
-								{{ copperToString( getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost ) }}
+								{{ getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost | gold }}
 							</td>
 							<td>
 								<a class="glyphicon glyphicon-shopping-cart push-left"
@@ -363,15 +358,14 @@
 							</a>
 						</span>
 						<div class="caption">
-							Buyout: {{ copperToString(getMinPrice(Disenchanting.materials[Disenchanting.selected].id)) }} <br>
+							Buyout: {{ getMinPrice(Disenchanting.materials[Disenchanting.selected].id) | gold }} <br>
 							<div *ngIf="user.apiTouse !== 'none'">
-								Market value: {{ copperToString(getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice) }} <br>
+								Market value: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice | gold }} <br>
 								Region sale avg: {{
-									copperToString(
-										getApiItem(
-											Disenchanting
-												.materials[Disenchanting.selected].id)
-													.regionSaleAvg)
+									getApiItem(
+										Disenchanting
+											.materials[Disenchanting.selected].id)
+												.regionSaleAvg | gold
 								}} <br> Est demand: {{
 									getApiItem(
 										Disenchanting.materials[Disenchanting.selected].id)
@@ -395,14 +389,14 @@
 						<a rel="item={{ a.itemID }}"
 							href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
 							target="_blank">
-							{{ a.name }} x {{ a.count }} for {{ copperToString( getMinPrice(a.itemID) * a.count) }}
+							{{ a.name }} x {{ a.count }} for {{ getMinPrice(a.itemID) * a.count | gold }}
 							<i  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
 						</a>
 					</li>
 				</ul>
-				Sum buyout from AH: {{ copperToString(shoppingCart.buyout) }} <br>
-				Sum material cost from AH: {{ copperToString(shoppingCart.cost) }} <br>
-				Potential sale profit: {{ copperToString(shoppingCart.profit) }}<br>
+				Sum buyout from AH: {{ shoppingCart.buyout | gold }} <br>
+				Sum material cost from AH: {{ shoppingCart.cost | gold }} <br>
+				Potential sale profit: {{ shoppingCart.profit | gold }}<br>
 				<a class="btn btn-default" (click)="clearCart()">Empty shopping cart</a>
 			</div>
 		</div>
