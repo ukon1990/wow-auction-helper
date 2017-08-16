@@ -6,6 +6,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class GoldPipe implements PipeTransform {
 
 	transform(copper: number, args?: any): string {
+		if (!copper) {
+			return '0g 0s 0c';
+		}
 		let result = [];
 		copper = Math.round(copper);
 		result[0] = copper % 100;

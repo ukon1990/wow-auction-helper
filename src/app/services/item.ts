@@ -64,10 +64,21 @@ export class ItemService {
 			} (response.json().pets));
 	}
 
-	getRecipe(itemID): any {
+	getRecipeByItem(itemID): any {
 		console.log('Downloaded recipe for item ' + itemID);
 		const localUrl = '/assets/GetRecipe.json',
 			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php?itemid=' + itemID;
+
+		return this.http.get(this.getUrl(apiUrl, localUrl))
+			.map(r => {
+				return r.json();
+			}, error => console.log(error));
+	}
+
+	getRecipeBySpell(spellID): any {
+		console.log('Downloaded recipe for spell ' + spellID);
+		const localUrl = '/assets/GetRecipe.json',
+			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php?spellId=' + spellID;
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(r => {
@@ -80,7 +91,7 @@ export class ItemService {
 		const localUrl = '/assets/GetRecipe.json',
 			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php';
 
-		return this.http.get(this.getUrl(apiUrl, localUrl))
+		return this.http.get(this.getUrl(apiUrl, apiUrl))
 			.map(r => {
 				return r.json();
 			}, error => console.log(error));

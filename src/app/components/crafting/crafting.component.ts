@@ -107,6 +107,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				console.log(e);
 			}
 		}, 100);
+		this.checkForMissingRecipes();
 	}
 
 	getApiItem(itemID: string) {
@@ -674,9 +675,34 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 		/*
 		this.itemService.getItem(m.itemID).subscribe(result => {
-						console.log(result);
-					});
+			console.log(result);
+		});
 		*/
 		console.log('Missing items:', missingItems);
+	}
+
+	/**
+	 * Checks if there are any recipes the user know, that are missing
+	 * in the database.
+	 */
+	checkForMissingRecipes(): void {
+		if (this.myRecipes.length > 0) {
+			let missingRecipes = [], list = '';
+
+			Object.keys(this.myRecipes).forEach(k => {
+				if (!lists.recipesIndex[k] && !missingRecipes[k]) {
+					missingRecipes[k] = k;
+					list += `${k}, `;
+
+					this.itemService.getRecipeBySpell(k)
+						.subscribe(recipe => {
+							lists.recipesIndex[k] = recipe.spellID;
+							lists.recipes.push(recipe);
+						});
+				}
+			});
+
+			console.log('Missing recipes:', list);
+		}
 	}
 }
