@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
-import { calcCost, user, lists, copperToString, getPet } from '../../utils/globals';
+import { calcCost, user, lists, getPet } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
@@ -658,6 +658,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		return contains;
 	}
 
+	getName(recipe: any): any {
+		return lists.items[recipe.itemID] ? lists.items[recipe.itemID].name : recipe.name;
+	}
+
 	checkForMissingItems(): void {
 		let missingItems = [];
 		console.log('Building missing item list');
@@ -686,7 +690,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 * in the database.
 	 */
 	checkForMissingRecipes(): void {
-		if (this.myRecipes.length > 0) {
+		if (this.myRecipes.length > 0 && !lists.isDownloading) {
 			let missingRecipes = [], list = '';
 
 			Object.keys(this.myRecipes).forEach(k => {
