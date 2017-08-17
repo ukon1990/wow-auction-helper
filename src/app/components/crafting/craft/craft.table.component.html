@@ -14,18 +14,18 @@
 						Profit
 					</span>
 			<select [(ngModel)]="sortProfitBy">
-						<option value="g">Gold</option>
-						<option value="%">Percent</option>
-					</select>
+				<option value="g">Gold</option>
+				<option value="%">Percent</option>
+			</select>
 		</th>
-		<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-			<span *ngIf="apiToUse === 'tsm'">Regional avg </span>
-			<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span> sold
+		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs">
+			<span *ngIf="user.apiToUse === 'tsm'">Regional avg </span>
+			<span *ngIf="user.apiToUse === 'wowuctions'">Avg posted/</span> sold
 		</th>
-		<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
+		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
 			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-			<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
-			<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
+			<span *ngIf="user.apiToUse === 'tsm'">Region est Demand</span>
+			<span *ngIf="user.apiToUse === 'wowuctions'">est demand/</span>
 		</th>
 		<th>
 			Action
@@ -81,10 +81,10 @@
 			{{ craft.cost | gold }}
 		</td>
 		<td class="hidden-xs">
-			<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
+			<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
 				Live:
 			</span> {{ craft.buyout | gold }}
-			<span *ngIf="apiToUse === 'tsm' || apiToUse === 'wowuction'">
+			<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
 				({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
 				<br>Market value: {{
 					getApiItem(craft.itemID).mktPrice | gold
@@ -96,14 +96,14 @@
 			{{ craft.profit | gold }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
 			<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
 		</td>
-		<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-			<span *ngIf="apiToUse === 'wowuctions'">
+		<td *ngIf="user.apiToUse !== 'none'" class="hidden-xs">
+			<span *ngIf="user.apiToUse === 'wowuctions'">
 				{{ getApiItem(craft.itemID)
 						.avgDailyPosted }} <br>
 			</span> {{ getApiItem(craft.itemID) .avgDailySold }}
 		</td>
 		<td class="hidden-xs">
-			<span *ngIf="apiToUse !== 'none'">{{
+			<span *ngIf="user.apiToUse !== 'none'">{{
 					getApiItem(craft.itemID)
 						.estDemand | percent }}
 			</span>

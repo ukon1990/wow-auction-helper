@@ -733,7 +733,6 @@ export class AppComponent implements OnInit {
 	}
 
 	notification(title: string, message: string, page?: string, icon?: string) {
-		console.log(title, message);
 		if (!this.notificationsWorking) {
 			return;
 		}

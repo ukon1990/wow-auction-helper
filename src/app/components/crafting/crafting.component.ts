@@ -348,7 +348,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				}
 			});
 			this.pageEvent.pageIndex = 0;
-			console.log(this.pageEvent);
 		}
 	}
 
@@ -601,14 +600,12 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 			v.reagents.forEach(reagent => {
 				if (reagent.useCraftedBy) {
-					console.log(this.getMinPrice(reagent.itemID), reagent.count);
 					this.shoppingCart.buyout -= (this.getMinPrice(reagent.itemID) * parseFloat(reagent.count)) * v.quantity;
 				}
 			});
 		});
 
 		this.shoppingCart.reagents.forEach(v => {
-			console.log('count', v);
 			this.shoppingCart.cost += this.getMinPrice(v.itemID) * v.count;
 		});
 

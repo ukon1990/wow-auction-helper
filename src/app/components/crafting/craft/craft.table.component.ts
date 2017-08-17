@@ -21,7 +21,9 @@ export class CraftTableComponent {
 	@Input() getApiItem: Function;
 	@Input() sortList: Function;
 	@Input() pageEvent: PageEvent;
+	@Input() percentOf: Function;
 	@Input() openMenu: Function;
+	@Input() sortProfitBy: string;
 	@Output() addToCart = new EventEmitter();
 	@Output() removeFromCart = new EventEmitter();
 	constructor() {}
