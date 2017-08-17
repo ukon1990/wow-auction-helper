@@ -388,12 +388,6 @@
 					(clearCart)="clearCart($event)">
 				</app-shopping-cart>
 			</div>
-			<md-paginator class="col-md-9 row"
-				[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
-				[pageSize]="page.pageSize"
-				[pageSizeOptions]="page.pageSizeOptions"
-				(page)="changePage($event)">
-			</md-paginator>
 		</div>
 		<em class="col-md-9">
 			If there are any recipes missing, please notify me @ 

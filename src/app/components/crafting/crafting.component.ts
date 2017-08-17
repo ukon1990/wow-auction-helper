@@ -464,15 +464,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	/**
-	 * Used for changing the page
-	 * @param {number} change The value for pages to move forward or back
-	 */
-	changePage(event: PageEvent) {
-		this.pageEvent = event;
-		// this.init();
-	}
-
-	/**
 	 * Generates an icon url
 	 * @param  {string} itemID
 	 * @return {string}

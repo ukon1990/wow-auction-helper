@@ -40,6 +40,7 @@ export abstract class ParentAuctionComponent {
 		pageSizeOptions: [4, 8, 12, 16, 20, 24]
 	};
 	pageEvent: PageEvent = { pageIndex: 0, pageSize: this.page.pageSize, length: 1 };
+	pageEventSecondary: PageEvent = { pageIndex: 0, pageSize: this.page.pageSize, length: 1 };
 
 	// Objects and arrays
 	private auctionObserver = {};
@@ -138,11 +139,12 @@ export abstract class ParentAuctionComponent {
 			});
 			this.numOfAuctionPages = Math.ceil(auctions.auctions.length / this.limit);
 		}
+
 		ga('send', {
 			hitType: 'event',
 			eventCategory: 'Auctions',
 			eventAction: 'Selected auction',
-			eventLabel: `Selected auction is ${lists.items[this.selectAuction[0].item].name}`
+			eventLabel: `Selected auction is ${lists.items[auctions.item].name}`
 		});
 	}
 
@@ -156,14 +158,14 @@ export abstract class ParentAuctionComponent {
 	}
 
 	/**
-	 * Is used to change between the pages
-	 * @param {number} change The value change. Either 1 or -1
+	 * Used for changing the page
+	 * @param {PageEvent} event
 	 */
-	changePage(change: any): void {
-		if (change > 0 && this.currentPage < this.numOfPages) {
-			this.currentPage++;
-		} else if (change < 0 && this.currentPage > 1) {
-			this.currentPage--;
+	changePage(event: PageEvent, secondary?: boolean) {
+		if (secondary) {
+			this.pageEventSecondary = event;
+		} else {
+			this.pageEvent = event;
 		}
 	}
 
