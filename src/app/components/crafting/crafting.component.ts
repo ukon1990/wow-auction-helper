@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
 import { calcCost, user, lists, getPet } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
@@ -18,6 +19,7 @@ declare const ga: Function;
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
 	Disenchanting: Disenchanting;
 	isDisenchating = false;
+	disenchants = [];
 	crafts = [];
 	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
@@ -216,8 +218,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			});
 			this.Disenchanting.applyFilter(onlyMyRecipes, this.myRecipes, profession);
 
-			this.currentPage = 1;
-			this.numOfPages = Math.ceil(this.Disenchanting.disenchantables.length / this.limit);
+			this.pageEvent.pageIndex = 0;
 			return;
 		} else {
 			ga('send', {
@@ -346,8 +347,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					});
 				}
 			});
-			this.currentPage = 1;
-			this.numOfPages = Math.ceil(this.crafts.length / this.limit);
+			this.pageEvent.pageIndex = 0;
 		}
 	}
 
@@ -461,18 +461,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			return { 'quantity_total': 0 };
 		}
 		return lists.auctions[itemID];
-	}
-
-	/**
-	 * Used for changing the page
-	 * @param {number} change The value for pages to move forward or back
-	 */
-	changePage(change: number): void {
-		if (change > 0 && this.currentPage <= this.numOfPages) {
-			this.currentPage++;
-		} else if (change < 0 && this.currentPage > 1) {
-			this.currentPage--;
-		}
 	}
 
 	/**

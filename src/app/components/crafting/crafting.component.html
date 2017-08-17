@@ -101,11 +101,12 @@
 			</form>
 		</div>
 		<div class="col-md-12 row">
-			<div class="pager">
-				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-			</div>
+			<md-paginator class="col-md-9 row"
+				[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
+				[pageSize]="page.pageSize"
+				[pageSizeOptions]="page.pageSizeOptions"
+				(page)="changePage($event)">
+			</md-paginator>
 			<div class="col-md-9 row">
 				<table *ngIf="!isDisenchating; else disenchantTable" class="table table-striped">
 					<tr class="row">
@@ -144,8 +145,10 @@
 						</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
-					<tr class="row" *ngFor="let craft of crafts
-						| slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit ;
+					<tr class="row" *ngFor="let craft of crafts |
+						slice: 
+							(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
+							pageEvent.pageSize * (pageEvent.pageIndex + 1) ;
 						let i = index;">
 						<td>
 							<div>
@@ -265,7 +268,10 @@
 							<th>Action</th>
 						</tr>
 						<tr *ngFor="
-							let craft of Disenchanting.disenchantables | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;
+							let craft of Disenchanting?.disenchantables |
+								slice: 
+									(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
+									pageEvent.pageSize * (pageEvent.pageIndex + 1) ;
 							let i = index;">
 							<td>
 								<div>
@@ -374,38 +380,16 @@
 						</div>
 					</div>
 				</div>
-				<strong>Shopping cart</strong>
-				<ul>
-					<li *ngFor="let a of shoppingCart.recipes">
-						<a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-										target="_blank">{{ a.name }}</a> x
-										{{ (a.quantity / a.minCount).toFixed(2) }}
-										<span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span> <i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart(a.spellID)"></i>
-					</li>
-				</ul>
-				<strong>Reagents</strong>
-				<ul>
-					<li *ngFor="let a of shoppingCart.reagents">
-						<a rel="item={{ a.itemID }}"
-							href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-							target="_blank">
-							{{ a.name }} x {{ a.count }} for {{ getMinPrice(a.itemID) * a.count | gold }}
-							<i  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
-						</a>
-					</li>
-				</ul>
-				Sum buyout from AH: {{ shoppingCart.buyout | gold }} <br>
-				Sum material cost from AH: {{ shoppingCart.cost | gold }} <br>
-				Potential sale profit: {{ shoppingCart.profit | gold }}<br>
-				<a class="btn btn-default" (click)="clearCart()">Empty shopping cart</a>
+				<app-shopping-cart
+					[shoppingCart]="shoppingCart"
+					[user]="user"
+					[getMinPrice]="getMinPrice"
+					(removeFromCart)="removeFromCart($event)"
+					(clearCart)="clearCart($event)">
+				</app-shopping-cart>
 			</div>
 		</div>
-		<div class="pager">
-			<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-			<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-			<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-		</div>
-		<em>
+		<em class="col-md-9">
 			If there are any recipes missing, please notify me @ 
 			<a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/">reddit</a> 
 			by giving me the itemID (item=12345 after wowhead link) of the target item and the spellID (spell=12345 in the wowhead link)for the recipe.

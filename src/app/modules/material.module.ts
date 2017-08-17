@@ -6,7 +6,10 @@ import {
 	MdProgressBarModule, MdInputModule,
 	MdAutocompleteModule, MdToolbarModule,
 	MdListModule, MdTabsModule,
-	MdSidenavModule
+	MdSidenavModule, MdPaginatorModule,
+	MdSortModule, MdTableModule,
+	MdCardModule, MdProgressSpinnerModule,
+	MdSelectModule
 } from '@angular/material';
 
 @NgModule({
@@ -21,7 +24,13 @@ import {
 		MdToolbarModule,
 		MdListModule,
 		MdTabsModule,
-		MdSidenavModule
+		MdSidenavModule,
+		MdPaginatorModule,
+		MdSortModule,
+		MdTableModule,
+		MdCardModule,
+		MdProgressSpinnerModule,
+		MdSelectModule
 	],
 	imports: [
 	],

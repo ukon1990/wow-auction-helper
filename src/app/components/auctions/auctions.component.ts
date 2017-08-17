@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { PageEvent } from '@angular/material';
 import { Router } from '@angular/router';
 import { ParentAuctionComponent } from './parent.auctions.component';
 import { AuctionService } from '../../services/auctions';
@@ -101,6 +102,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	 * Used to clear the search filters
 	 */
 	clearFilters(): void {
+		this.pageEvent.pageIndex = 0;
 		this.filterForm.value['searchQuery'] = '';
 		this.filterForm.value['filterByCharacter'] = false;
 		this.filterForm.value['itemClass'] = '-1';
@@ -223,7 +225,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 				}
 			}
 		}
-		this.numOfPages = Math.round(this.numberOfAuctions / this.limit);
+		this.pageEvent.pageIndex = 0;
 
 		ga('send', {
 			hitType: 'event',
