@@ -1,6 +1,7 @@
 // Imports
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IUser, IAuction } from '../../utils/interfaces';
+import { PageEvent } from '@angular/material';
 import { user, lists, getPet, copperToString } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 
@@ -32,6 +33,13 @@ export abstract class ParentAuctionComponent {
 		'MEDIUM': '30min-2h',
 		'SHORT': '<30min'
 	};
+
+	// For md-pagignator
+	page = {
+		pageSize: 9,
+		pageSizeOptions: [6, 9, 12, 24, 36, 48]
+	};
+	pageEvent: PageEvent = { pageIndex: 0, pageSize: this.page.pageSize, length: 1 };
 
 	// Objects and arrays
 	private auctionObserver = {};
@@ -151,7 +159,7 @@ export abstract class ParentAuctionComponent {
 	 * Is used to change between the pages
 	 * @param {number} change The value change. Either 1 or -1
 	 */
-	changePage(change: number): void {
+	changePage(change: any): void {
 		if (change > 0 && this.currentPage < this.numOfPages) {
 			this.currentPage++;
 		} else if (change < 0 && this.currentPage > 1) {

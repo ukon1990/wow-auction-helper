@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
 import { calcCost, user, lists, getPet } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
@@ -467,12 +468,9 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 * Used for changing the page
 	 * @param {number} change The value for pages to move forward or back
 	 */
-	changePage(change: number): void {
-		if (change > 0 && this.currentPage <= this.numOfPages) {
-			this.currentPage++;
-		} else if (change < 0 && this.currentPage > 1) {
-			this.currentPage--;
-		}
+	changePage(event: PageEvent) {
+		this.pageEvent = event;
+		// this.init();
 	}
 
 	/**
