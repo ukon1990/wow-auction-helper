@@ -4,6 +4,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { MaterialModule } from './modules/material.module';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import 'hammerjs';
 
 import { AppComponent } from './app.component';
 import { FrontPageComponent } from './components/frontpage/front.page.component';
@@ -40,6 +43,8 @@ import { GoldPipe } from './pipes/gold.pipe';
 		FormsModule,
 		ReactiveFormsModule,
 		HttpModule,
+        HttpClientModule,
+		MaterialModule,
 		RouterModule.forRoot([
 			{
 				path: '',

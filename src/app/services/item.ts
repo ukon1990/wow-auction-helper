@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
+import 'rxjs/add/operator/toPromise';
 import { IAuction, IPet, IUser, IItem } from '../utils/interfaces';
 import { user, DB_TABLES, db } from '../utils/globals';
 import Dexie from 'dexie';
@@ -10,7 +12,7 @@ declare var $: any;
 
 @Injectable()
 export class ItemService {
-	constructor(private http: Http) { }
+	constructor(private http: Http, private httpClient: HttpClient) { }
 
 	getItem(itemid: string) {
 		return this.http.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemid)
@@ -28,6 +30,11 @@ export class ItemService {
 			} (response.json()),
 			error => console.log(error));
 	}
+
+	getItemWowDB(itemID: string) {
+		return this.httpClient.get('http://wah.jonaskf.net/GetItems.php?itemid=' + itemID + '&wowdb=1').toPromise();
+	}
+
 	getPet(petSpeciesId: string) {
 		return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
 			.map(response => <Object>function(r) {
@@ -39,7 +46,7 @@ export class ItemService {
 	getItems() {
 		const apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
-			
+
 			console.log('dada');
 		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function(r) {
