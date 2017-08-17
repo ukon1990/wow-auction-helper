@@ -19,6 +19,7 @@
 					[length]="numberOfUndercuttedAuctions"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEvent.pageIndex"
 					(page)="changePage($event)">
 				</md-paginator>
 				<table class="table table-striped row">
@@ -70,12 +71,20 @@
 						</td>
 					</tr>
 				</table>
+				<md-paginator
+					[length]="numberOfUndercuttedAuctions"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEvent.pageIndex"
+					(page)="changePage($event)">
+				</md-paginator>
 			</div>
 			<div class="col-md-4">
 				<md-paginator
 					[length]="selectedAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEventSecondary.pageIndex"
 					(page)="changePage($event, true)">
 				</md-paginator>
 				<table class="table table-striped row">
@@ -106,6 +115,13 @@
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>
+				<md-paginator
+					[length]="selectedAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEventSecondary.pageIndex"
+					(page)="changePage($event, true)">
+				</md-paginator>
 			</div>
 		</div>
 	</div>

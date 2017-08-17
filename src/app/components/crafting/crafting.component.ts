@@ -348,6 +348,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				}
 			});
 			this.pageEvent.pageIndex = 0;
+			console.log(this.pageEvent);
 		}
 	}
 

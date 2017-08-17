@@ -140,6 +140,8 @@ export abstract class ParentAuctionComponent {
 			this.numOfAuctionPages = Math.ceil(auctions.auctions.length / this.limit);
 		}
 
+		this.pageEventSecondary.pageIndex = 0;
+
 		ga('send', {
 			hitType: 'event',
 			eventCategory: 'Auctions',

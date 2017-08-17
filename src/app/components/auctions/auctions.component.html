@@ -64,6 +64,7 @@
 					[length]="filteredAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEvent.pageIndex"
 					(page)="changePage($event)">
 				</md-paginator>
 				<table class="table table-striped row">
@@ -154,12 +155,20 @@
 						</td>
 					</tr>
 				</table>
+				<md-paginator
+					[length]="filteredAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEvent.pageIndex"
+					(page)="changePage($event)">
+				</md-paginator>
 			</div>
 			<div class="col-md-4">
 				<md-paginator
 					[length]="selectedAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEventSecondary.pageIndex"
 					(page)="changePage($event, true)">
 				</md-paginator>
 				<table class="table table-striped row">
@@ -172,7 +181,7 @@
 					<tr class="row" *ngFor="let a of selectedAuctions |
 						slice: 
 							(pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
-							pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1) ;">
+							pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1);">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
@@ -196,6 +205,13 @@
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>
+				<md-paginator
+					[length]="selectedAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEventSecondary.pageIndex"
+					(page)="changePage($event, true)">
+				</md-paginator>
 			</div>
 		</div>
 	</div>

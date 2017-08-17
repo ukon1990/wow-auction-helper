@@ -13,6 +13,7 @@ import { FrontPageComponent } from './components/frontpage/front.page.component'
 import { AuctionComponent } from './components/auctions/auctions.component';
 import { CraftingComponent } from './components/crafting/crafting.component';
 import { ShoppingCartComponent } from './components/crafting/shopping.cart.component';
+import { CraftTableComponent } from './components/crafting/craft/craft.table.component';
 import { MyAuctionsComponent } from './components/auctions/my.auctions.component';
 import { AboutComponent } from './components/about/about.component';
 import { TradeVendorComponent } from './components/trade_vendor/trade.vendor.component';
@@ -38,6 +39,7 @@ import { GoldPipe } from './pipes/gold.pipe';
 		WatchlistComponent,
 		NewsComponent,
 		ShoppingCartComponent,
+		CraftTableComponent,
 		GoldPipe
 	],
 	imports: [
