@@ -60,6 +60,7 @@ export class Disenchanting {
 		} else {
 			this.applyItems();
 		}
+		return this.disenchantables;
 	}
 
 	isDisenchantable(itemID: string): boolean {
@@ -93,6 +94,11 @@ export class Disenchanting {
 		this.disenchantables.sort((a, b)  => {
 			return a.cost - b.cost;
 		});
+	}
+
+	getLength(): number {
+		console.log('DE length', this.disenchantables);
+		return this.disenchantables.length;
 	}
 
 	applyItems() {

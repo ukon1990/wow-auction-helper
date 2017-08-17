@@ -36,8 +36,8 @@ export abstract class ParentAuctionComponent {
 
 	// For md-pagignator
 	page = {
-		pageSize: 9,
-		pageSizeOptions: [6, 9, 12, 24, 36, 48]
+		pageSize: 8,
+		pageSizeOptions: [4, 8, 12, 16, 20, 24]
 	};
 	pageEvent: PageEvent = { pageIndex: 0, pageSize: this.page.pageSize, length: 1 };
 

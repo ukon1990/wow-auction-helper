@@ -19,6 +19,7 @@ declare const ga: Function;
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
 	Disenchanting: Disenchanting;
 	isDisenchating = false;
+	disenchants = [];
 	crafts = [];
 	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
@@ -217,8 +218,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			});
 			this.Disenchanting.applyFilter(onlyMyRecipes, this.myRecipes, profession);
 
-			this.currentPage = 1;
-			this.numOfPages = Math.ceil(this.Disenchanting.disenchantables.length / this.limit);
+			this.pageEvent.pageIndex = 0;
 			return;
 		} else {
 			ga('send', {
@@ -347,8 +347,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					});
 				}
 			});
-			this.currentPage = 1;
-			this.numOfPages = Math.ceil(this.crafts.length / this.limit);
+			this.pageEvent.pageIndex = 0;
 		}
 	}
 
