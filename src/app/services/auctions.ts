@@ -17,7 +17,7 @@ export class AuctionService {
 
 	getAuctions(url, timestamp) {
 		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
-		let localUrl = '/assets/auctions.json';
+		const localUrl = '/assets/auctions.json';
 		return this.http.get(this.getUrl(url, localUrl))
 			.map(response => <IAuction>function (r) {
 				console.log('Loaded auctions');
@@ -34,7 +34,7 @@ export class AuctionService {
 	}
 
 	getWoWuctionData() {
-		let localUrl = '/assets/wowuction.tsv',
+		const localUrl = '/assets/wowuction.tsv',
 			apiUrl = 'http://www.wowuction.com/' + localStorage.getItem('region') + '/' +
 						localStorage.getItem('realm') + '/alliance/Tools/RealmDataExportGetFileStatic?token=' + localStorage.getItem('api_wowuction'),
 			url = this.getUrl(apiUrl, localUrl);
@@ -43,8 +43,8 @@ export class AuctionService {
 		return this.http.get(url)
 			.map(res => function (r: string) {
 				db['wowuction'].clear();
-				let list = [],
-					obj = {},
+				const list = [];
+				let	obj = {},
 					tempObj = {},
 					isFirst = true;
 				// 5 == itemID, 7 == market price,
@@ -105,12 +105,11 @@ export class AuctionService {
 			}(response.json()));
 	}
 
-	getUrl(apiUrl, localUrl) {/*
+	getUrl(apiUrl, localUrl) {
 		if (window.location.hostname === 'localhost') {
-			console.log('Using local files', localUrl);
-			return localUrl;
-		}*/
-		console.log('url', apiUrl);
-		return apiUrl;
+			console.log('Using local files');
+		}
+
+		return window.location.hostname === 'localhost' ? localUrl : apiUrl;
 	};
 }

@@ -98,7 +98,7 @@ export class ItemService {
 		const localUrl = '/assets/GetRecipe.json',
 			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php';
 
-		return this.http.get(this.getUrl(apiUrl, apiUrl))
+		return this.http.get(this.getUrl(apiUrl, localUrl))
 			.map(r => {
 				return r.json();
 			}, error => console.log(error));
@@ -134,6 +134,6 @@ export class ItemService {
 			console.log('Using local files');
 		}
 
-		return window.location.hostname === 'localhost_' ? localUrl : apiUrl;
+		return window.location.hostname === 'localhost' ? localUrl : apiUrl;
 	};
 }
