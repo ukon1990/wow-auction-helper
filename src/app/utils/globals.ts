@@ -91,7 +91,7 @@ db.open()
 // Local database end
 
 
-export function calcCost(c) {
+export function calcCost(c, isSoldByVendor?: boolean) {
 		if (c !== null) {
 			let matBuyout: number;
 			c['cost'] = 0;
@@ -137,14 +137,14 @@ export function calcCost(c) {
 										lists.tsm[m.itemID] ?
 											lists.tsm[m.itemID].MarketValue : 0 :
 											0;
-
+							/*
 							if (lists.items[m.itemID] !== undefined &&
 								lists.items[m.itemID].itemSource.sourceType === 'CREATED_BY_SPELL') {
 								if (m.useCraftedBy === undefined) {
 									m.createdBy = lists.items[m.itemID].itemSource.sourceId;
 									m.useCraftedBy = false;
 								}
-							}
+							}*/
 							if (m.useCraftedBy !== undefined && m.useCraftedBy) {
 								c.cost += lists.recipes[lists.recipesIndex[m.createdBy]] &&
 											lists.recipes[lists.recipesIndex[m.createdBy]].cost !== 0 ?
@@ -174,6 +174,21 @@ export function calcCost(c) {
 				console.log(c);
 			}
 		}
+	}
+
+	function getCorrectBuyValue(item: any, isSoldByVendor): number {
+		let cost = 0;
+		if (lists.customPrices[item.itemID] !== undefined) {
+			cost = (lists.customPrices[item.itemID]);
+		} else if (lists.auctions[item.itemID] !== undefined) {
+			cost = lists.items[item.itemID].buyPrice;
+			// (isSoldByVendor ? lists.items[item.itemID].buyPrice :
+			// lists.auctions[item.itemID].buyout)
+		} else if (user.apiToUse === 'tsm' && lists.tsm[item.itemID]) {
+			cost = lists.tsm[item.itemID].MarketValue;
+		}
+
+		return  cost;
 	}
 
 /**

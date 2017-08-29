@@ -13,11 +13,12 @@
 			</ul>
 		</div>
 		<div class="col-md-10">
-			<div class="pager">
-				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-			</div>
+			<md-paginator
+				[length]="vendors[vendorIndex].materials.length"
+				[pageSize]="page.pageSize"
+				[pageSizeOptions]="page.pageSizeOptions"
+				(page)="changePage($event, true)">
+			</md-paginator>
 			<table class="table table-striped row">
 				<tr class="row">
 					<th>Item</th>
@@ -30,7 +31,10 @@
 						Region avg demand
 					</th>
 				</tr>
-				<tr class="row" *ngFor="let a of vendors[vendorIndex].materials | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;">
+				<tr class="row" *ngFor="let a of vendors[vendorIndex].materials |
+					slice: 
+						(pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
+						pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1) ;">
 					<td>
 						<div>
 							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
@@ -59,12 +63,6 @@
 					</td>
 				</tr>
 			</table>
-
-			<div class="pager">
-				<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-				<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-				<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-			</div>
 		</div>
 	</div>
 </div>

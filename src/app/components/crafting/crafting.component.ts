@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
-import { calcCost, user, lists, copperToString, getPet } from '../../utils/globals';
+import { calcCost, user, lists, getPet } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
@@ -18,6 +19,7 @@ declare const ga: Function;
 export class CraftingComponent extends ParentAuctionComponent implements OnInit {
 	Disenchanting: Disenchanting;
 	isDisenchating = false;
+	disenchants = [];
 	crafts = [];
 	myRecipes = [];
 	shoppingCart = { 'recipes': [], 'reagents': [], 'cost': 0, 'buyout': 0, 'profit': 0 };
@@ -107,6 +109,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				console.log(e);
 			}
 		}, 100);
+		this.checkForMissingRecipes();
 	}
 
 	getApiItem(itemID: string) {
@@ -215,8 +218,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			});
 			this.Disenchanting.applyFilter(onlyMyRecipes, this.myRecipes, profession);
 
-			this.currentPage = 1;
-			this.numOfPages = Math.ceil(this.Disenchanting.disenchantables.length / this.limit);
+			this.pageEvent.pageIndex = 0;
 			return;
 		} else {
 			ga('send', {
@@ -345,8 +347,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 					});
 				}
 			});
-			this.currentPage = 1;
-			this.numOfPages = Math.ceil(this.crafts.length / this.limit);
+			this.pageEvent.pageIndex = 0;
 		}
 	}
 
@@ -460,18 +461,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			return { 'quantity_total': 0 };
 		}
 		return lists.auctions[itemID];
-	}
-
-	/**
-	 * Used for changing the page
-	 * @param {number} change The value for pages to move forward or back
-	 */
-	changePage(change: number): void {
-		if (change > 0 && this.currentPage <= this.numOfPages) {
-			this.currentPage++;
-		} else if (change < 0 && this.currentPage > 1) {
-			this.currentPage--;
-		}
 	}
 
 	/**
@@ -611,14 +600,12 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 			v.reagents.forEach(reagent => {
 				if (reagent.useCraftedBy) {
-					console.log(this.getMinPrice(reagent.itemID), reagent.count);
 					this.shoppingCart.buyout -= (this.getMinPrice(reagent.itemID) * parseFloat(reagent.count)) * v.quantity;
 				}
 			});
 		});
 
 		this.shoppingCart.reagents.forEach(v => {
-			console.log('count', v);
 			this.shoppingCart.cost += this.getMinPrice(v.itemID) * v.count;
 		});
 
@@ -657,6 +644,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		return contains;
 	}
 
+	getName(recipe: any): any {
+		return lists.items[recipe.itemID] ? lists.items[recipe.itemID].name : recipe.name;
+	}
+
 	checkForMissingItems(): void {
 		let missingItems = [];
 		console.log('Building missing item list');
@@ -674,9 +665,34 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 		/*
 		this.itemService.getItem(m.itemID).subscribe(result => {
-						console.log(result);
-					});
+			console.log(result);
+		});
 		*/
 		console.log('Missing items:', missingItems);
+	}
+
+	/**
+	 * Checks if there are any recipes the user know, that are missing
+	 * in the database.
+	 */
+	checkForMissingRecipes(): void {
+		if (this.myRecipes.length > 0 && !lists.isDownloading) {
+			let missingRecipes = [], list = '';
+
+			Object.keys(this.myRecipes).forEach(k => {
+				if (!lists.recipesIndex[k] && !missingRecipes[k]) {
+					missingRecipes[k] = k;
+					list += `${k}, `;
+
+					this.itemService.getRecipeBySpell(k)
+						.subscribe(recipe => {
+							lists.recipesIndex[k] = recipe.spellID;
+							lists.recipes.push(recipe);
+						});
+				}
+			});
+
+			console.log('Missing recipes:', list);
+		}
 	}
 }

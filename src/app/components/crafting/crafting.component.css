@@ -21,3 +21,9 @@
 .recipe-menu-dark {
 	background-color: #d8f6fb;
 }
+
+.glyphicon.glyphicon-remove {
+    position: absolute !important;
+    right: 0 !important;
+    padding: 0.5em !important;
+}

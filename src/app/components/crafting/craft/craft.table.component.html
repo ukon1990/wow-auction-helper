@@ -1,0 +1,128 @@
+<table class="table table-striped">
+	<tr class="row">
+		<th>Name</th>
+		<th>Materials</th>
+		<th class="hidden-xs" (click)="sortList('cost')">
+			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i> Cost
+		</th>
+		<th class="hidden-xs" (click)="sortList('buyout')">
+			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i> Buyout
+		</th>
+		<th data-toggle="tooltip" title="You can choose to sort by profit in % or in gold.">
+			<span (click)="sortList('profit')">
+						<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						Profit
+					</span>
+			<select [(ngModel)]="sortProfitBy">
+				<option value="g">Gold</option>
+				<option value="%">Percent</option>
+			</select>
+		</th>
+		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs">
+			<span *ngIf="user.apiToUse === 'tsm'">Regional avg </span>
+			<span *ngIf="user.apiToUse === 'wowuctions'">Avg posted/</span> sold
+		</th>
+		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
+			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+			<span *ngIf="user.apiToUse === 'tsm'">Region est Demand</span>
+			<span *ngIf="user.apiToUse === 'wowuctions'">est demand/</span>
+		</th>
+		<th>
+			Action
+		</th>
+	</tr>
+	<tr class="row" *ngFor="let craft of crafts |
+			slice: 
+				(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
+				pageEvent.pageSize * (pageEvent.pageIndex + 1) ;
+			let i = index;">
+		<td>
+			<div>
+				<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+				<div class="align-left col-md-9">
+					<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
+					  target="_blank">
+						{{ getName(craft) }} <span *ngIf="craft.rank">({{ craft.rank }})</span></a>
+					<br> {{ craft.profession }} ({{ getAuctionItem(craft.itemID).quantity_total }} @ AH)
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="clearfix" *ngFor="let m of craft.reagents" [ngClass]="{'not-found': !isAtAH(m.itemID)}">
+				<span *ngIf="m.useCraftedBy === undefined || !m.useCraftedBy">
+					{{ m.count }} x
+					<a
+						rel="item={{ m.itemID }}"
+						href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{m.itemID}}"
+							target="_blank">{{m.name}}</a>
+		
+					{{ getMinPrice(m.itemID) | gold }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
+					<i *ngIf="m.useCraftedBy !== undefined"
+						class="glyphicon glyphicon-piggy-bank"
+						[ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+						(click)="setManualCraft(m, craft)"
+						aria-hidden="true"></i>
+				</span>
+
+				<!-- For "child" recipes -->
+				<div *ngIf="m.useCraftedBy !== undefined && m.useCraftedBy">
+					<div class="clearfix" *ngFor="let subMats of getSubMaterials(m)" [ngClass]="{'not-found': !isAtAH(subMats.itemID)}">
+						{{ subMats.count * m.count }} x
+						<a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
+						  target="_blank">{{subMats.name}}</a> {{ getMinPrice(subMats.itemID) | gold }} ({{ getAuction(subMats.itemID).quantity_total
+						}} @ AH)
+						<i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+						  (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td class="hidden-xs">
+			{{ craft.cost | gold }}
+		</td>
+		<td class="hidden-xs">
+			<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
+				Live:
+			</span> {{ craft.buyout | gold }}
+			<span *ngIf="user.apiToUse === 'tsm' || user.apiToUse === 'wowuction'">
+				({{ percentOf(craft.mktPrice, craft.buyout) }}% mkt)
+				<br>Market value: {{
+					getApiItem(craft.itemID).mktPrice | gold
+					}}
+				<br>Region sale avg: {{ getApiItem(craft.itemID).regionSaleAvg | gold }}
+			</span>
+		</td>
+		<td>
+			{{ craft.profit | gold }} <br> {{ getProfitPercent(craft.profit, craft.buyout) }} %
+			<span class="visible-xs glyphicon glyphicon-shopping-cart" aria-hidden="true" (click)="addToCart(craft)"></span>
+		</td>
+		<td *ngIf="user.apiToUse !== 'none'" class="hidden-xs">
+			<span *ngIf="user.apiToUse === 'wowuctions'">
+				{{ getApiItem(craft.itemID)
+						.avgDailyPosted }} <br>
+			</span> {{ getApiItem(craft.itemID) .avgDailySold }}
+		</td>
+		<td class="hidden-xs">
+			<span *ngIf="user.apiToUse !== 'none'">{{
+					getApiItem(craft.itemID)
+						.estDemand | percent }}
+			</span>
+		</td>
+		<td>
+			<a class="glyphicon glyphicon-shopping-cart push-left" aria-hidden="true" (click)="openMenu(i)">Add</a><br>
+			<div class="recipe-menu recipe-menu-dark" [ngClass]="{'recipe-menu-open': i === selectedItemIndex}">
+				<i aria-hidden="true" class="glyphicon glyphicon-remove" (click)="openMenu(i)"></i>
+				<div class="panel-body">
+					Add quantity:<br>
+					<input type="number" value="1" min="1" #quantityToAdd/><br>
+					<a class="push-left" aria-hidden="true" (click)="addToCart.emit(craft, quantityToAdd.value)">
+						<i class="glyphicon glyphicon-shopping-cart"></i>
+						Add amount
+					</a>
+				</div>
+			</div>
+
+			<a class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" href="http://www.wowhead.com/item={{craft.itemID}}" target="_blank">Wowhead</a><br>
+		</td>
+	</tr>
+</table>

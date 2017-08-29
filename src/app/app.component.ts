@@ -323,13 +323,8 @@ export class AppComponent implements OnInit {
 			lists.items = [];
 		}
 
-		let index = 0;
 		for (let i of arr) {
 			lists.items[i['id']] = i;
-			if (i['itemSource']['sourceType'] === 'CREATED_BY_SPELL') {
-				// TODO: Logic for adding new recipes
-			}
-			index++;
 		}
 		try {
 			this.getAuctions();
@@ -513,16 +508,6 @@ export class AppComponent implements OnInit {
 				recipes[re.spellID] = re.spellID;
 			}
 		});
-
-		for (let i in lists.items) {
-			if (lists.items[i].itemSource.sourceType === 'CREATED_BY_SPELL' &&
-				recipes[lists.items[i].itemSource.sourceId] === undefined) {
-				console.log('Attempting to add ' + lists.items[i].name);
-				this.itemService.getRecipe(lists.items[i].id).subscribe(shit => {
-					console.log(i);
-				});
-			}
-		}
 	}
 
 	getItemName(auction): string {
@@ -748,7 +733,6 @@ export class AppComponent implements OnInit {
 	}
 
 	notification(title: string, message: string, page?: string, icon?: string) {
-		console.log(title, message);
 		if (!this.notificationsWorking) {
 			return;
 		}

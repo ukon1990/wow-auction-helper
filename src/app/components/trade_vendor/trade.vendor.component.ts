@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
 import { lists } from '../../utils/globals';
 
+declare const ga: Function;
 @Component({
 	selector: 'trade-vendor',
 	templateUrl: 'trade.vendor.component.html',
 	styleUrls: ['../auctions/auctions.component.css']
 })
-export class TradeVendorComponent extends ParentAuctionComponent {
+export class TradeVendorComponent extends ParentAuctionComponent implements OnInit {
 	vendors = [{
 		'itemID': 124124,
 		'name': 'Blood of Sargeras',
@@ -334,7 +336,13 @@ export class TradeVendorComponent extends ParentAuctionComponent {
 	selectVendor(index: number) {
 		this.vendorIndex = index;
 		this.currentPage = 1;
-		this.numOfPages = Math.round(this.vendors[index].materials.length / this.limit);
+
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'Trade vendor',
+			eventAction: 'Selected vendor',
+			eventLabel: `Selected the ${this.vendors[this.vendorIndex].name} vendor`
+		});
 	}
 
 	setValues(): void {
@@ -342,7 +350,7 @@ export class TradeVendorComponent extends ParentAuctionComponent {
 			v.materials.forEach(m => {
 				m.value = lists.auctions[m.itemID] !== undefined ? lists.auctions[m.itemID].buyout * m.quantity : 0;
 				m.buyout = lists.auctions[m.itemID] !== undefined ? lists.auctions[m.itemID].buyout : 0;
-				if(this.apiToUse !== 'none') {
+				if (this.apiToUse !== 'none') {
 					m.estDemand = lists.auctions[m.itemID] !== undefined ? lists.auctions[m.itemID].estDemand : 0;
 					m.regionSaleAvg = lists.auctions[m.itemID] !== undefined ? lists.auctions[m.itemID].regionSaleAvg : 0;
 					m.mktPrice = lists.auctions[m.itemID] !== undefined ? lists.auctions[m.itemID].mktPrice : 0;

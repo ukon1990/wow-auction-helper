@@ -60,11 +60,13 @@
 		<br>
 		<div class="col-md-12 row">
 			<div class="col-md-8">
-				<div class="pager">
-					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-				</div>
+				<md-paginator
+					[length]="filteredAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEvent.pageIndex"
+					(page)="changePage($event)">
+				</md-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
 						<th>Name</th>
@@ -86,7 +88,10 @@
 						<th class="hidden-xs">Action</th>
 					</tr>
 					<!-- TODO: optimize price value fetch -->
-					<tr class="row" *ngFor="let auc of filteredAuctions | slice:(currentPage - 1)*limit : ((currentPage - 1)*limit) + limit;">
+					<tr class="row" *ngFor="let auc of filteredAuctions |
+						slice: 
+							(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
+							pageEvent.pageSize * (pageEvent.pageIndex + 1) ;">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'"></span>
@@ -150,18 +155,22 @@
 						</td>
 					</tr>
 				</table>
-				<div class="pager">
-					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changePage(-1)"></button>
-					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentPage" /> of {{ numOfPages }}
-					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changePage(1)"></button>
-				</div>
+				<md-paginator
+					[length]="filteredAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEvent.pageIndex"
+					(page)="changePage($event)">
+				</md-paginator>
 			</div>
 			<div class="col-md-4">
-				<div class="pager">
-					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changeAuctionPage(-1)"></button>
-					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentAuctionPage" /> of {{ numOfAuctionPages }}
-					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changeAuctionPage(1)"></button>
-				</div>
+				<md-paginator
+					[length]="selectedAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEventSecondary.pageIndex"
+					(page)="changePage($event, true)">
+				</md-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
 						<th>Item</th>
@@ -169,7 +178,10 @@
 						<th>Per item</th>
 						<th>Size</th>
 					</tr>
-					<tr class="row" *ngFor="let a of selectedAuctions  | slice:(currentAuctionPage - 1)*limit : ((currentAuctionPage - 1)*limit) + limit;">
+					<tr class="row" *ngFor="let a of selectedAuctions |
+						slice: 
+							(pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
+							pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1);">
 						<td>
 							<div>
 								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
@@ -193,11 +205,13 @@
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>
-				<div class="pager">
-					<button class="btn btn-default glyphicon glyphicon-arrow-left" (click)="changeAuctionPage(-1)"></button>
-					<input style="width:5em;" type="number" min="1" [(ngModel)]="currentAuctionPage" /> of {{ numOfAuctionPages }}
-					<button class="btn btn-default glyphicon glyphicon-arrow-right" (click)="changeAuctionPage(1)"></button>
-				</div>
+				<md-paginator
+					[length]="selectedAuctions.length"
+					[pageSize]="page.pageSize"
+					[pageSizeOptions]="page.pageSizeOptions"
+					[pageIndex]="pageEventSecondary.pageIndex"
+					(page)="changePage($event, true)">
+				</md-paginator>
 			</div>
 		</div>
 	</div>
