@@ -469,7 +469,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 * @return {string}
 	 */
 	getIcon(itemID: string): string {
-		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/';
+		let url = 'https://render-eu.worldofwarcraft.com/icons/56/';
 		const icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
 		if (icon === undefined) {
 			url += 'inv_scroll_03.jpg';
