@@ -2,8 +2,9 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { PageEvent } from '@angular/material';
-import { user, lists, getPet, copperToString } from '../../utils/globals';
+import { user, lists, getPet, copperToString, getIcon } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
+import { Item } from '../../utils/item';
 
 declare var $WowheadPower;
 declare var $wu;
@@ -23,7 +24,7 @@ export abstract class ParentAuctionComponent {
 	apiToUse = user.apiToUse;
 
 	// Imported functions to be used in the templates
-	copperToString = copperToString;
+	getIcon = Item.getIcon;
 
 	character: string;
 	selectedAuctions = [];
@@ -53,32 +54,6 @@ export abstract class ParentAuctionComponent {
 		this.character = user.character;
 	}
 
-	/**
-	 * Used to get the icon url for a given item or pet.
-	 * @param  {Auction or Item} auction It takes a auction or Item object.
-	 * @return {string}         [description]
-	 */
-	getIcon(auction): string {
-		const itemID = auction.item !== undefined ? auction.item : auction.itemID;
-		let url = 'https://render-eu.worldofwarcraft.com/icons/56/', icon;
-		try {
-			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
-				if (lists.pets[auction.petSpeciesId] === undefined) {
-					// getPet(auction.petSpeciesId);
-				}
-				icon = lists.pets[auction.petSpeciesId].icon;
-			} else if (lists.items[itemID] !== undefined) {
-				icon = lists.items[itemID].icon;
-			}
-		} catch (err) {console.log(err, auction, itemID); }
-
-		if (icon === undefined) {
-			url += 'inv_scroll_03.jpg';
-		} else {
-			url += icon + '.jpg';
-		}
-		return url;
-	}
 
 	/**
 	 * Fetches a item from the memory
