@@ -30,20 +30,4 @@ export class Item {
 			return BASE_URL + icon + '.jpg';
 		}
 	}
-
-	/**
-	 * Generates an icon url
-	 * @param  {string} itemID
-	 * @return {string}
-	 */
-	/*getIcon(itemID: string): string {
-		let url = 'https://render-eu.worldofwarcraft.com/icons/56/';
-		const icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
-		if (icon === undefined) {
-			url += 'inv_scroll_03.jpg';
-		} else {
-			url += icon + '.jpg';
-		}
-		return url;
-	}*/
 }
