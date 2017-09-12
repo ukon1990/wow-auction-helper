@@ -14,12 +14,9 @@ export class Item {
 			BASE_URL = 'https://render-eu.worldofwarcraft.com/icons/56/';
 		let icon;
 		try {
-			if (item.petSpeciesId !== undefined && lists.pets !== undefined) {
-				if (lists.pets[item.petSpeciesId] === undefined) {
-					// getPet(auction.petSpeciesId);
-				}
+			if (item.petSpeciesId && lists.pets) {
 				icon = lists.pets[item.petSpeciesId].icon;
-			} else if (lists.items[itemID] !== undefined) {
+			} else if (lists.items[itemID]) {
 				icon = lists.items[itemID].icon;
 			}
 		} catch (err) {console.log(err, item, itemID); }
