@@ -17,17 +17,59 @@ beforeEach(() => {
 });
 
 describe('sort', () => {
-	it('should sort strings descending', () => {
-		sorter.addKey('name');
+	it('should sort strings ascending', () => {
+		sorter.addKey('name', false);
 		sorter.sort(arr);
 
-		expect(arr).toBe([
+		expect(arr).toEqual([
+			{id: 2, name: 'Aisha'},
+			{id: 1, name: 'Arch'},
+			{id: 4, name: 'Banana'},
+			{id: 5, name: 'Jonas'},
+			{id: 6, name: 'Mint'},
+			{id: 3, name: 'Yoghurt'}
+		]);
+	});
+
+	it('should sort strings descending', () => {
+		sorter.addKey('name', true);
+		sorter.sort(arr);
+
+		expect(arr).toEqual([
+			{id: 3, name: 'Yoghurt'},
+			{id: 6, name: 'Mint'},
+			{id: 5, name: 'Jonas'},
+			{id: 4, name: 'Banana'},
+			{id: 1, name: 'Arch'},
+			{id: 2, name: 'Aisha'}
+		]);
+	});
+
+	it('should sort numbers ascending', () => {
+		sorter.addKey('id', false);
+		sorter.sort(arr);
+
+		expect(arr).toEqual([
 			{id: 1, name: 'Arch'},
 			{id: 2, name: 'Aisha'},
 			{id: 3, name: 'Yoghurt'},
 			{id: 4, name: 'Banana'},
 			{id: 5, name: 'Jonas'},
 			{id: 6, name: 'Mint'}
+		]);
+	});
+
+	it('should sort numbers descending', () => {
+		sorter.addKey('id', true);
+		sorter.sort(arr);
+
+		expect(arr).toEqual([
+			{id: 6, name: 'Mint'},
+			{id: 5, name: 'Jonas'},
+			{id: 4, name: 'Banana'},
+			{id: 3, name: 'Yoghurt'},
+			{id: 2, name: 'Aisha'},
+			{id: 1, name: 'Arch'}
 		]);
 	});
 });

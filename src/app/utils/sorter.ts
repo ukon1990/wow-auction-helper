@@ -1,8 +1,13 @@
 export class Sorter {
 	keys: Key[] = [];
 
-	addKey(key: string): void {
-		this.keys[0] = new Key(key);
+	addKey(key: string, descending?: boolean): void {
+		if (this.findKeyIndex(key) > -1) {
+			this.keys[this.findKeyIndex(key)].desc = !this.keys[this.findKeyIndex(key)].desc;
+		} else {
+			this.keys = [];
+			this.keys.push(new Key(key, descending));
+		}
 	}
 
 	sort(arr: any[]): void {
@@ -10,14 +15,28 @@ export class Sorter {
 			for (let i = this.keys.length - 1; i >= 0; i--) {
 				if (a[this.keys[i].key] === b[this.keys[i].key]) {
 					continue;
-				} else if (this.keys[i].desc) {
-					// Logic
+				}
+
+				if (this.keys[i].desc) {
+					if (this.isString(a, i)) {
+						return b[this.keys[i].key].localeCompare(a[this.keys[i].key]);
+					} else {
+						return a[this.keys[i].key] < b[this.keys[i].key] ? 1 : -1;
+					}
 				} else {
-					// Logic
+					if (this.isString(a, i)) {
+						return a[this.keys[i].key].localeCompare(b[this.keys[i].key]);
+					} else {
+						return a[this.keys[i].key] > b[this.keys[i].key] ? 1 : -1;
+					}
 				}
 			}
 			return 0;
 		});
+	}
+
+	private isString(object: Object, index): boolean {
+		return typeof object[this.keys[index].key] === 'string';
 	}
 
 	removeKey(key: string): void {
@@ -25,7 +44,12 @@ export class Sorter {
 	}
 
 	findKeyIndex(key: string): number {
-		return 1;
+		this.keys.forEach( (k, i) => {
+			if (key === k.key) {
+				return i;
+			}
+		});
+		return -1;
 	}
 }
 
