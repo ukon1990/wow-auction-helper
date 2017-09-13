@@ -97,6 +97,7 @@ export function calcCost(c, isSoldByVendor?: boolean) {
 			c['cost'] = 0;
 			c['buyout'] = 0;
 			c['profit'] = 0;
+			c['profitPercent'] = 0;
 			c['estDemand'] = 0;
 
 			if (user.apiToUse === 'tsm') {
@@ -165,8 +166,10 @@ export function calcCost(c, isSoldByVendor?: boolean) {
 					c.mktPrice !== 0 &&
 					Math.round((c.buyout / c.mktPrice) * 100) >= user.buyoutLimit) {
 					c.profit = c.mktPrice - c.cost;
+					c.profitPercent = c.profit / c.mktPrice;
 				} else {
 					c.profit = c.buyout - c.cost;
+					c.profitPercent = c.profit / c.buyout;
 				}
 
 			} catch (e) {

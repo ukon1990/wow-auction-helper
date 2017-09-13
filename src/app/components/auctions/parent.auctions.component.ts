@@ -5,6 +5,7 @@ import { PageEvent } from '@angular/material';
 import { user, lists, getPet, copperToString, getIcon } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { Item } from '../../utils/item';
+import { Sorter } from '../../utils/sorter';
 
 declare var $WowheadPower;
 declare var $wu;
@@ -22,6 +23,7 @@ export abstract class ParentAuctionComponent {
 	currentAuctionPage = 1;
 	numOfAuctionPages: number = this.numberOfAuctions / this.limit;
 	apiToUse = user.apiToUse;
+	sorter: Sorter;
 
 	// Imported functions to be used in the templates
 	getIcon = Item.getIcon;
@@ -52,6 +54,7 @@ export abstract class ParentAuctionComponent {
 	constructor() {
 		this.user = user;
 		this.character = user.character;
+		this.sorter = new Sorter();
 	}
 
 
@@ -157,10 +160,4 @@ export abstract class ParentAuctionComponent {
 			this.currentAuctionPage--;
 		}
 	}
-
-	/**
-	 * Used for sorting the list. This is implemented in the child class
-	 * @param  {string} sortBy A string for the field to sort by
-	 */
-	abstract sortList(sortBy: string): void;
 }

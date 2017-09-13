@@ -20,7 +20,6 @@ export class CraftTableComponent {
 	@Input() getMinPrice: Function;
 	@Input() getAuctionItem: Function;
 	@Input() getApiItem: Function;
-	@Input() sortList: Function;
 	@Input() pageEvent: PageEvent;
 	@Input() percentOf: Function;
 	@Input() openMenu: Function;
@@ -36,5 +35,10 @@ export class CraftTableComponent {
 
 	isAtAH(itemID: string): boolean {
 		return lists.auctions[itemID] !== undefined ? true : false;
+	}
+
+	sort(key: string): void {
+		this.sorter.addKey(key);
+		this.sorter.sort(this.crafts);
 	}
 }

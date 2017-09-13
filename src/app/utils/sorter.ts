@@ -1,12 +1,12 @@
 export class Sorter {
 	keys: Key[] = [];
 
-	addKey(key: string, descending?: boolean): void {
+	addKey(key: string): void {
 		if (this.findKeyIndex(key) > -1) {
-			this.keys[this.findKeyIndex(key)].desc = !this.keys[this.findKeyIndex(key)].desc;
+			this.getKey(key).desc = !this.getKey(key).desc;
 		} else {
 			this.keys = [];
-			this.keys.push(new Key(key, descending));
+			this.keys.push(new Key(key, true));
 		}
 	}
 
@@ -44,19 +44,19 @@ export class Sorter {
 	}
 
 	findKeyIndex(key: string): number {
-		this.keys.forEach( (k, i) => {
-			if (key === k.key) {
+		for (let i = 0, x = this.keys.length; i < x; i++) {
+			if (key === this.keys[i].key) {
 				return i;
 			}
-		});
+		}
 		return -1;
+	}
+
+	getKey(key: string): Key {
+		return this.keys[this.findKeyIndex(key)];
 	}
 }
 
-class Key {
-	constructor(public key: string, public desc?: boolean) {
-		if (!desc) {
-			desc = true;
-		}
-	}
+export class Key {
+	constructor(public key: string, public desc: boolean) {}
 }

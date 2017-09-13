@@ -18,7 +18,8 @@ beforeEach(() => {
 
 describe('sort', () => {
 	it('should sort strings ascending', () => {
-		sorter.addKey('name', false);
+		sorter.addKey('name');
+		sorter.addKey('name');
 		sorter.sort(arr);
 
 		expect(arr).toEqual([
@@ -32,7 +33,7 @@ describe('sort', () => {
 	});
 
 	it('should sort strings descending', () => {
-		sorter.addKey('name', true);
+		sorter.addKey('name');
 		sorter.sort(arr);
 
 		expect(arr).toEqual([
@@ -46,7 +47,8 @@ describe('sort', () => {
 	});
 
 	it('should sort numbers ascending', () => {
-		sorter.addKey('id', false);
+		sorter.addKey('id');
+		sorter.addKey('id');
 		sorter.sort(arr);
 
 		expect(arr).toEqual([
@@ -60,7 +62,7 @@ describe('sort', () => {
 	});
 
 	it('should sort numbers descending', () => {
-		sorter.addKey('id', true);
+		sorter.addKey('id');
 		sorter.sort(arr);
 
 		expect(arr).toEqual([

@@ -361,34 +361,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	/**
-	 * Used for sorting the list.
-	 * @param  {string} sortBy A string for the field to sort by
-	 */
-	sortList(sortBy: string): void {
-		if (this.sortAsc) {
-			this.sortAsc = false;
-			this.crafts.sort(
-				(a, b) => {
-					if (sortBy === 'profit' && this.sortProfitBy === '%') {
-						return a[sortBy] / a.buyout - b[sortBy] / b.buyout;
-					}
-					return a[sortBy] - b[sortBy];
-				}
-			);
-		} else {
-			this.sortAsc = true;
-			this.crafts.sort(
-				(a, b) => {
-					if (sortBy === 'profit' && this.sortProfitBy === '%') {
-						return b[sortBy] / b.buyout - a[sortBy] / a.buyout;
-					}
-					return b[sortBy] - a[sortBy];
-				}
-			);
-		}
-	}
-
-	/**
 	 * Retrieves an auction item.
 	 * @param  {string} itemID
 	 * @return {Item}

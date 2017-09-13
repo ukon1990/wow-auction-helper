@@ -1,29 +1,38 @@
 <table class="table table-striped">
 	<tr class="row">
-		<th>Name</th>
-		<th>Materials</th>
-		<th class="hidden-xs" (click)="sortList('cost')">
-			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i> Cost
+		<th (click)="sort('name')">
+			<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
+			Name
 		</th>
-		<th class="hidden-xs" (click)="sortList('buyout')">
-			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i> Buyout
+		<th>Materials</th>
+		<th class="hidden-xs" (click)="sort('cost')">
+			<app-sort-icon [key]="sorter.getKey('cost')"></app-sort-icon>
+			Cost
+		</th>
+		<th class="hidden-xs" (click)="sort('buyout')">
+			<app-sort-icon [key]="sorter.getKey('buyout')"></app-sort-icon>
+			Buyout
 		</th>
 		<th data-toggle="tooltip" title="You can choose to sort by profit in % or in gold.">
-			<span (click)="sortList('profit')">
-						<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
-						Profit
-					</span>
+			<span
+				(click)="sort(sortProfitBy === '%' ? 'profitPercent' : 'profit')">
+				<app-sort-icon
+					[key]="sorter.getKey(sortProfitBy === '%' ? 'profitPercent' : 'profit')"></app-sort-icon>
+				Profit
+			</span>
 			<select [(ngModel)]="sortProfitBy">
-				<option value="g">Gold</option>
-				<option value="%">Percent</option>
+				<option value="g">g</option>
+				<option value="%">%</option>
 			</select>
 		</th>
 		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs">
-			<span *ngIf="user.apiToUse === 'tsm'">Regional avg </span>
+			<span *ngIf="user.apiToUse === 'tsm'" (click)="sort('avgDailySold')">
+					<app-sort-icon [key]="sorter.getKey('avgDailySold')"></app-sort-icon>
+					Regional avg </span>
 			<span *ngIf="user.apiToUse === 'wowuctions'">Avg posted/</span> sold
 		</th>
-		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
-			<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+		<th *ngIf="user.apiToUse !== 'none'" class="hidden-xs"  (click)="sort('estDemand')">
+				<app-sort-icon [key]="sorter.getKey('estDemand')"></app-sort-icon>
 			<span *ngIf="user.apiToUse === 'tsm'">Region est Demand</span>
 			<span *ngIf="user.apiToUse === 'wowuctions'">est demand/</span>
 		</th>

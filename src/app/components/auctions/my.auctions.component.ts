@@ -55,33 +55,8 @@ export class MyAuctionsComponent extends ParentAuctionComponent {
 		return lists.myAuctions;
 	}
 
-	/**
-	 * Used for sorting the list.
-	 * @param  {string} sortBy A string for the field to sort by
-	 */
-	sortList(sortBy: string): void {
-		if (this.buyOutAsc) {
-			this.buyOutAsc = false;
-			lists.myAuctions.sort(
-				function (a, b) {
-					if (sortBy === 'buyout' || sortBy === 'bid') {
-						return a[sortBy] / a['quantity'] < b[sortBy] / a['quantity'] ? 1 : -1;
-					} else {
-						return a[sortBy] < b[sortBy] ? 1 : -1;
-					}
-				}
-			);
-		} else {
-			this.buyOutAsc = true;
-			lists.myAuctions.sort(
-				function (a, b) {
-					if (sortBy === 'buyout' || sortBy === 'bid') {
-						return a[sortBy] / a['quantity'] > b[sortBy] / a['quantity'] ? 1 : -1;
-					} else {
-						return a[sortBy] > b[sortBy] ? 1 : -1;
-					}
-				}
-			);
-		}
+	sort(key: string): void {
+		this.sorter.addKey(key);
+		this.sorter.sort(lists.myAuctions);
 	}
 }

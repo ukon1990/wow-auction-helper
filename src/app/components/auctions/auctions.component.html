@@ -69,10 +69,16 @@
 				</md-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
-						<th>Name</th>
-						<th>@AH</th>
-						<th (click)="sortList('buyout')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						<th (click)="sort('name')">
+							<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
+							Name
+						</th>
+						<th (click)="sort('quantity_total')">
+							<app-sort-icon [key]="sorter.getKey('quantity_total')"></app-sort-icon>
+							@AH
+						</th>
+						<th (click)="sort('buyout')">
+								<app-sort-icon [key]="sorter.getKey('buyout')"></app-sort-icon>
 							Price
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
@@ -80,8 +86,8 @@
 							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
 							sold
 						</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sort('estDemand')">
+								<app-sort-icon [key]="sorter.getKey('estDemand')"></app-sort-icon>
 							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
 							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>

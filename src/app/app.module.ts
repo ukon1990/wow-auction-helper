@@ -25,6 +25,7 @@ import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
+import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 
 @NgModule({
 	declarations: [
@@ -40,7 +41,8 @@ import { GoldPipe } from './pipes/gold.pipe';
 		NewsComponent,
 		ShoppingCartComponent,
 		CraftTableComponent,
-		GoldPipe
+		GoldPipe,
+		SortIconComponent
 	],
 	imports: [
 		BrowserModule,
