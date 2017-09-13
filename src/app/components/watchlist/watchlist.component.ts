@@ -372,7 +372,7 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	getIcon(item): string {
-		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
+		let url = 'https://render-eu.worldofwarcraft.com/icons/56/', icon;
 		try {
 			if (lists.items[item.id] !== undefined) {
 				icon = lists.items[item.id].icon;

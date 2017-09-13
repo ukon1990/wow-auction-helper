@@ -38,7 +38,7 @@ describe('CraftingComponent', () => {
 
 	it('should be able to calculate', () => {
 		const recipe = {cost: 0};
-		component.calculateCosts(recipe);
+		// component.calculateCosts(recipe);
 		expect(recipe.cost).toEqual(5000);
 	});
 });

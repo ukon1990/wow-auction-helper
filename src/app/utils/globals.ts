@@ -52,7 +52,7 @@ export const setRecipesForCharacter = (character) => {
 	}
 };
 
-lists.customPrices = {'124124': 3000000, '120945': 500000, '115524': 200000};
+lists.customPrices = {'124124': 3000000, '120945': 500000, '115524': 200000, '151568': 3000000};
 
 // Local database start
 const TSM_TABLE_COLUMNS = `Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,

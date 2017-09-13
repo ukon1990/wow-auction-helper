@@ -60,7 +60,7 @@ export abstract class ParentAuctionComponent {
 	 */
 	getIcon(auction): string {
 		const itemID = auction.item !== undefined ? auction.item : auction.itemID;
-		let url = 'http://blzmedia-a.akamaihd.net/wow/icons/56/', icon;
+		let url = 'https://render-eu.worldofwarcraft.com/icons/56/', icon;
 		try {
 			if (auction.petSpeciesId !== undefined && lists.pets !== undefined) {
 				if (lists.pets[auction.petSpeciesId] === undefined) {
