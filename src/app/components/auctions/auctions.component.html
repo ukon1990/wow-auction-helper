@@ -69,10 +69,16 @@
 				</md-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
-						<th>Name</th>
-						<th>@AH</th>
-						<th (click)="sortList('buyout')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						<th (click)="sort('name')">
+							<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
+							Name
+						</th>
+						<th (click)="sort('quantity_total')">
+							<app-sort-icon [key]="sorter.getKey('quantity_total')"></app-sort-icon>
+							@AH
+						</th>
+						<th (click)="sort('buyout')">
+								<app-sort-icon [key]="sorter.getKey('buyout')"></app-sort-icon>
 							Price
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
@@ -80,8 +86,8 @@
 							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
 							sold
 						</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sort('estDemand')">
+								<app-sort-icon [key]="sorter.getKey('estDemand')"></app-sort-icon>
 							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
 							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>
@@ -105,23 +111,23 @@
 						<td>
 							{{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
 						<td>
-							Buyout: {{ copperToString(auc.buyout) }}
+							Buyout: {{ auc.buyout | gold }}
 							<span *ngIf="user.apiToUse !== 'none'">
 								({{ buyoutVersusMarketValue(auc)}}% mkt)
 							</span><br>
 
-							Bid: {{ copperToString(auc.bid) }}
+							Bid: {{ auc.bid | gold }}
 							<span *ngIf="user.apiToUse !== 'none'">
 								({{ bidVersusMarketValue(auc)}}% mkt)
 							</span>
 
 							<span *ngIf="filterForm.value['onlyVendorSellable']">
-								<br>Vendor price: {{ copperToString(getItem(auc.item).sellPrice) }} |
+								<br>Vendor price: {{ getItem(auc.item).sellPrice | gold }} |
 								{{ ((auc.buyout / getItem(auc.item).sellPrice) * 100).toFixed(2) }}%
 							</span>
 							<span *ngIf="(user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') && auc.petAuctions === undefined">
-								<br>Market value: {{ copperToString(auc.mktPrice) }}
-								<br>Region sale avg: {{ copperToString(auc.regionSaleAvg) }}
+								<br>Market value: {{ auc.mktPrice | gold }}
+								<br>Region sale avg: {{ auc.regionSaleAvg | gold }}
 							</span>
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
@@ -195,12 +201,12 @@
 							</div>
 						</td>
 						<td>
-							{{ copperToString(a.buyout) }} <br>
-							{{ copperToString(a.bid) }}
+							{{ a.buyout | gold }} <br>
+							{{ a.bid | gold }}
 						</td>
 						<td>
-							{{ copperToString(a.buyout / a.quantity) }}<br>
-							{{ copperToString(a.bid / a.quantity) }}
+							{{ a.buyout / a.quantity | gold }}<br>
+							{{ a.bid / a.quantity | gold }}
 						</td>
 						<td>{{ a.quantity }}</td>
 					</tr>

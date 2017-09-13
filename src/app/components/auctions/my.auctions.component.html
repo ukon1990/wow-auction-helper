@@ -5,7 +5,7 @@
 	<div class="panel-body">
 		<ul>
 			<li>{{ numberOfUndercuttedAuctions }} of {{ activeAuctions }} your auctions are undercutted.</li>
-			<li>Value of auctions: {{ copperToString(auctionsValue) }}.</li>
+			<li>Value of auctions: {{ auctionsValue | gold }}.</li>
 		</ul>
 
 		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
@@ -24,10 +24,16 @@
 				</md-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
-						<th>Name</th>
-						<th>Size</th>
-						<th (click)="sortList('buyout')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						<th (click)="sort('name')">
+							<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
+							Name
+						</th>
+						<th (click)="sort('quantity')">
+								<app-sort-icon [key]="sorter.getKey('quantity')"></app-sort-icon>
+							Size
+						</th>
+						<th (click)="sort('buyout')">
+							<app-sort-icon [key]="sorter.getKey('buyout')"></app-sort-icon>
 							Buyout
 						</th>
 						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
@@ -35,8 +41,8 @@
 							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
 							sold
 						</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sortList('estDemand')">
-							<i class="glyphicon glyphicon-sort" aria-hidden="true"></i>
+						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sort('estDemand')">
+								<app-sort-icon [key]="sorter.getKey('estDemand')"></app-sort-icon>
 							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
 							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>
@@ -58,7 +64,7 @@
 						</td>
 						<td>{{ auc.quantity }}</td>
 						<td>
-							{{ copperToString(auc.buyout) }} ({{ copperToString(auc.buyout / auc.quantity) }} pcs)
+							{{ auc.buyout | gold }} ({{ auc.buyout / auc.quantity | gold }} pcs)
 						</td>
 						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
 							<span *ngIf="apiToUse === 'wowuctions'">
@@ -110,8 +116,8 @@
 								</div>
 							</div>
 						</td>
-						<td>{{ copperToString(a.buyout) }}</td>
-						<td>{{ copperToString(a.buyout / a.quantity) }}</td>
+						<td>{{ a.buyout | gold }}</td>
+						<td>{{ a.buyout / a.quantity | gold }}</td>
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>

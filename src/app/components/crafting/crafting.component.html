@@ -120,7 +120,6 @@
 					[getMinPrice]="getMinPrice"
 					[percentOf]="percentOf"
 					[getAuctionItem]="getAuctionItem"
-					[sortList]="sortList"
 					[sortProfitBy]="sortProfitBy"
 					[openMenu]="openMenu"
 					(addToCart)="addToCart($event)"
@@ -143,7 +142,7 @@
 							let i = index;">
 							<td>
 								<div>
-									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft) +')'"></span>
 									<div class="align-left col-md-9">
 										<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 											target="_blank">
@@ -226,7 +225,7 @@
 				<div class="col-sm-6 col-md-12" *ngIf="isDisenchating">
 					<div class="thumbnail row">
 						<span>
-							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected]) +')'"></span>
 							<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
 								{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
 							</a>
