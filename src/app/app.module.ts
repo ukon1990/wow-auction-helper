@@ -26,6 +26,7 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
 import { SortIconComponent } from './components/sort-icon/sort-icon.component';
+import { ProspectingComponent } from './components/prospecting/prospecting.component';
 
 @NgModule({
 	declarations: [
@@ -42,14 +43,15 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 		ShoppingCartComponent,
 		CraftTableComponent,
 		GoldPipe,
-		SortIconComponent
+		SortIconComponent,
+		ProspectingComponent
 	],
 	imports: [
 		BrowserModule,
 		FormsModule,
 		ReactiveFormsModule,
 		HttpModule,
-        HttpClientModule,
+		HttpClientModule,
 		MaterialModule,
 		RouterModule.forRoot([
 			{
@@ -70,6 +72,9 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 			}, {
 				path: 'watchlist',
 				component: WatchlistComponent
+			}, {
+				path: 'prospecting',
+				component: ProspectingComponent
 			}, {
 				path: 'about',
 				component: AboutComponent

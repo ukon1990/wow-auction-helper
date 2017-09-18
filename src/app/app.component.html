@@ -32,6 +32,9 @@
         <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
           <a routerLink="/trade-vendor">Trade vendors</a>
         </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/prospecting">Prospecting</a>
+        </li>
         <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
           <a routerLink="/settings">Settings</a>
         </li>
