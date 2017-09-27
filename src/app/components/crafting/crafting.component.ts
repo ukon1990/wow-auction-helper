@@ -651,4 +651,9 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			console.log('Missing recipes:', list);
 		}
 	}
+
+	recieveName(name: string): void {
+		this.filterForm.controls['searchQuery'].setValue(name);
+		this.filteRecipes();
+	}
 }

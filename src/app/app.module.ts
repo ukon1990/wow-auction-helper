@@ -26,7 +26,9 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
 import { SortIconComponent } from './components/sort-icon/sort-icon.component';
-import { ProspectingComponent } from './components/prospecting/prospecting.component';
+import { ShuffleComponent } from './components/shuffle/shuffle.component';
+import { HeaderComponent } from './components/header/header.component';
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 
 @NgModule({
 	declarations: [
@@ -44,7 +46,9 @@ import { ProspectingComponent } from './components/prospecting/prospecting.compo
 		CraftTableComponent,
 		GoldPipe,
 		SortIconComponent,
-		ProspectingComponent
+		ShuffleComponent,
+		HeaderComponent,
+		AutocompleteComponent
 	],
 	imports: [
 		BrowserModule,
@@ -73,8 +77,8 @@ import { ProspectingComponent } from './components/prospecting/prospecting.compo
 				path: 'watchlist',
 				component: WatchlistComponent
 			}, {
-				path: 'prospecting',
-				component: ProspectingComponent
+				path: 'shuffle',
+				component: ShuffleComponent
 			}, {
 				path: 'about',
 				component: AboutComponent

@@ -9,6 +9,7 @@ export let lists = {
 	wowuction: [],
 	tsm: [],
 	items: {},
+	itemsArray: [],
 	itemRecipes: {},
 	pets: [],
 	recipes: [],
