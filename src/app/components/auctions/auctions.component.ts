@@ -76,7 +76,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	exportData(): void {
 		db.table('auctions').toArray().then(a => {
 			a.forEach(i => {
-				i['name'] = lists.items[i['item']].name;
+				i['name'] = i['petSpeciesId'] ? lists.pets[i['petSpeciesId']].name : lists.items[i['item']].name;
 			});
 			this.exportFile.download('auctions', a, this.exportFile.FILETYPES.EXCEL);
 		});
