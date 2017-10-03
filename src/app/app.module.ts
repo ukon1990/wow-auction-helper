@@ -25,6 +25,7 @@ import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
+import { FileService } from './services/file.service';
 
 @NgModule({
 	declarations: [
@@ -47,7 +48,7 @@ import { GoldPipe } from './pipes/gold.pipe';
 		FormsModule,
 		ReactiveFormsModule,
 		HttpModule,
-        HttpClientModule,
+		HttpClientModule,
 		MaterialModule,
 		RouterModule.forRoot([
 			{
@@ -83,6 +84,7 @@ import { GoldPipe } from './pipes/gold.pipe';
 	providers: [
 		AuctionService,
 		CharacterService,
+		FileService,
 		ItemService,
 		Title,
 		Location],

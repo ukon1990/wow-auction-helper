@@ -7,31 +7,44 @@ import * as XLSX from 'xlsx';
 @Injectable()
 export class FileService {
 
-	private readonly FILETYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-	private readonly EXTENSIONS = {EXCEL: '.xlsx', TSV: '.tsv'};
+	public readonly FILETYPES = {
+		EXCEL: {
+			extension: 'xlsx',
+			type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+		}, TSV: {
+			extension: 'tsv',
+			type: 'application/tsv;charset=UTF-8'
+		}, JSON: {
+			extension: 'json',
+			type: 'application/json;charset=UTF-8'
+		}
+};
 
 	constructor() { }
 
-	download(filename: string, data: Object[], options?: Options): void {
-		const worksheet: XLSX.WorkSheet = XLSX.utils
-			.json_to_sheet(
-				data),
-			workbook: XLSX.WorkBook = {
-				Sheets: {
-					data: worksheet
+	download(filename: string, data: Object[], filetype: Object): void {
+		console.log(filename, data, filetype);
+		if (filetype === this.FILETYPES.EXCEL) {
+			const worksheet: XLSX.WorkSheet = XLSX.utils
+				.json_to_sheet(
+					data),
+				workbook: XLSX.WorkBook = {
+					Sheets: {
+						data: worksheet
+					},
+					SheetNames: ['data']
 				},
-				SheetNames: ['data']
-			},
-			buffer: Uint8Array = XLSX.write(
-				workbook,
-				{ bookType: 'xlsx', type: 'buffer' });
-		this.generateFile(buffer, filename);
+				buffer: Uint8Array = XLSX.write(
+					workbook,
+					{ bookType: 'xlsx', type: 'buffer' });
+			this.generateFile(buffer, filename, filetype);
+		}
 	}
 
-	private generateFile(buffer: Uint8Array, filename: string): void {
+	private generateFile(buffer: Uint8Array, filename: string, filetype: Object): void {
 		const dato = new Date();
 		const data: Blob = new Blob([buffer], {
-			type: this.EXTENSIONS.EXCEL
+			type: filetype['type']
 		});
 		FileSaver.saveAs(
 			data,
@@ -41,13 +54,8 @@ export class FileService {
 				dato.toLocaleDateString()
 			}_${
 				dato.toLocaleTimeString()
-			}${
-				this.EXTENSIONS.EXCEL
+			}.${
+				filetype['extension']
 			}`);
 	}
-}
-
-class Options {
-	extension?: string;
-	columns?: string;
 }
