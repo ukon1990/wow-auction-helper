@@ -28,10 +28,10 @@
         </li>
         <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
           <a routerLink="/trade-vendor">Trade vendors</a>
-        </li>
+        </li><!--
         <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
           <a routerLink="/shuffle">Shuffle</a>
-        </li>
+        </li>-->
         <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
           <a routerLink="/settings">Settings</a>
         </li>
