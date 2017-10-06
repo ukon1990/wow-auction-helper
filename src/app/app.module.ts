@@ -46,10 +46,11 @@ import { AutocompleteComponent } from './components/autocomplete/autocomplete.co
 		NewsComponent,
 		ShoppingCartComponent,
 		CraftTableComponent,
-		ExportComponent
+		ExportComponent,
 		SortIconComponent,
 		ShuffleComponent,
 		HeaderComponent,
+		GoldPipe,
 		AutocompleteComponent
 	],
 	imports: [

@@ -1,6 +1,6 @@
 <button class="btn btn-default mat-elevation-z5"
   mdTooltip="Last ned alle rader som ikke er skjult, i Excel format."
-  data-toggle="modal" data-target="#export-modal" ><!-- (click)="setEksporteringsNavn()" -->
+  data-toggle="modal" data-target="#export-modal" (click)="setColumnList()">
     Export
 </button>
 
@@ -14,7 +14,13 @@
         </button>
       </div>
       <div class="modal-body">
-
+        <ul class="list-group">
+          <li *ngFor="let column of columns; let i = index"
+            class="list-group-item">
+            {{ column }}
+            <button (click)="removeColumn(i)">x</button>
+          </li>
+        </ul>
       </div>
       <div class="modal-footer">
         <button type="button"
@@ -26,7 +32,7 @@
         </button>
         <button type="button"
           class="btn btn-secondary mat-elevation-z5"
-          data-dismiss="modal">Avbryt</button>
+          data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
