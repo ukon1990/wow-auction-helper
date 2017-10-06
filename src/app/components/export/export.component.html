@@ -14,13 +14,17 @@
         </button>
       </div>
       <div class="modal-body">
-        <ul class="list-group">
-          <li *ngFor="let column of columns; let i = index"
-            class="list-group-item">
-            {{ column }}
-            <button (click)="removeColumn(i)">x</button>
-          </li>
-        </ul>
+        <p>
+          Choose what columns you wish to be exported. This is the raw data from the blizzard API.
+          <br>
+          <button class="btn btn-sm btn-secondary" (click)="setColumnList()">Restore columns</button>
+        </p>
+        <div *ngFor="let column of columns; let i = index"
+          class="col-md-4 float-left mat-elevation-z2">
+          {{ column }}
+          <button class="bt btn-sm btn-secondary float-right" (click)="removeColumn(i)">x</button>
+        </div>
+        <div class="clearfix"></div>
       </div>
       <div class="modal-footer">
         <button type="button"

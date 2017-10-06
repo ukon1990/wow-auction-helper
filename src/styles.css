@@ -6,9 +6,14 @@
 }
 
 
-.align-left{
-    float:left;
+.align-left, .float-left{
+    float:left !important;
 }
+
+.float-right {
+    float: right !important;
+}
+
 
 /* From blizzard */
 .item-detail .frame-56 {

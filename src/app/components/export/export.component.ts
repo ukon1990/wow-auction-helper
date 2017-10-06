@@ -17,6 +17,9 @@ export class ExportComponent {
 	constructor(private fileService: FileService) {
 	}
 
+	/**
+	 * Generates a list of all the columns
+	 */
 	setColumnList(): void {
 		const tmpCol = {};
 		if (this.auctionList) {
@@ -42,7 +45,7 @@ export class ExportComponent {
 	}
 
 	export(): void {
-		let tmpList = [], tmpObject = {};
+		let tmpList = [];
 		if (this.auctionList) {
 			tmpList = this.allAuctions;
 			ga('send', {
@@ -52,7 +55,7 @@ export class ExportComponent {
 				eventLabel: 'Exporting all auctions'
 			});
 		} else {
-			tmpList.concat(this.list);
+			tmpList = this.list;
 			ga('send', {
 				hitType: 'event',
 				eventCategory: 'Crafting',
@@ -61,16 +64,21 @@ export class ExportComponent {
 			});
 		}
 		this.fileService.download('auctions',
-			tmpList.map( o => {
-				tmpObject = {};
-				Object.keys(o).forEach(k => {
-					if (this.columns[k]) {
-						tmpObject[k] = o[k];
-					}
-				});
-				return tmpObject;
-			}),
+			this.filterList(tmpList),
 			this.fileService.FILETYPES.EXCEL);
 	}
 
+	/**
+	 * Used to only keep the wanted columns in the export
+	 * @param list
+	 */
+	private filterList(list: any[]): any[] {
+		return list.map( o => {
+			const obj = {};
+			this.columns.forEach(c => {
+				obj[c] = o[c];
+			});
+			return obj;
+		});
+	}
 }
