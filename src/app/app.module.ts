@@ -26,6 +26,7 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
 import { FileService } from './services/file.service';
+import { ExportComponent } from './components/export/export.component';
 
 @NgModule({
 	declarations: [
@@ -41,7 +42,8 @@ import { FileService } from './services/file.service';
 		NewsComponent,
 		ShoppingCartComponent,
 		CraftTableComponent,
-		GoldPipe
+		GoldPipe,
+		ExportComponent
 	],
 	imports: [
 		BrowserModule,

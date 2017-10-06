@@ -8,6 +8,7 @@ import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { Disenchanting } from '../../utils/disenchanting';
+import { FileService } from '../../services/file.service';
 
 declare const ga: Function;
 @Component({
@@ -46,7 +47,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	private isInitiated = false;
 
-	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
+	constructor(private itemService: ItemService,
+			private titleService: Title,
+			private formBuilder: FormBuilder,
+			private exportFile: FileService) {
 		super();
 		this.Disenchanting = new Disenchanting(true);
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
@@ -349,6 +353,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			});
 			this.pageEvent.pageIndex = 0;
 		}
+	}
+
+	exportData(): void {
+		this.exportFile.download('auctions', this.crafts, this.exportFile.FILETYPES.EXCEL);
 	}
 
 	/**

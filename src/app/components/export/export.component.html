@@ -1,0 +1,33 @@
+<button class="btn btn-default mat-elevation-z5"
+  mdTooltip="Last ned alle rader som ikke er skjult, i Excel format."
+  data-toggle="modal" data-target="#export-modal" ><!-- (click)="setEksporteringsNavn()" -->
+    Export
+</button>
+
+<div id="export-modal" class="modal">
+  <div class="modal-dialog" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Export data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+          class="btn btn-primary mat-elevation-z5"
+          data-dismiss="modal"
+          (click)="export()">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          Export
+        </button>
+        <button type="button"
+          class="btn btn-secondary mat-elevation-z5"
+          data-dismiss="modal">Avbryt</button>
+      </div>
+    </div>
+  </div>
+</div>
