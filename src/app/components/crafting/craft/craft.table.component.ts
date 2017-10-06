@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { PageEvent } from '@angular/material';
 import { IUser } from '../../../utils/interfaces';
 import { lists } from '../../../utils/globals';
+import { Sorter } from '../../../utils/sorter';
 
 @Component({
 	selector: 'app-craft-table',
@@ -19,16 +20,25 @@ export class CraftTableComponent {
 	@Input() getMinPrice: Function;
 	@Input() getAuctionItem: Function;
 	@Input() getApiItem: Function;
-	@Input() sortList: Function;
 	@Input() pageEvent: PageEvent;
 	@Input() percentOf: Function;
 	@Input() openMenu: Function;
 	@Input() sortProfitBy: string;
 	@Output() addToCart = new EventEmitter();
 	@Output() removeFromCart = new EventEmitter();
-	constructor() {}
+
+	sorter: Sorter;
+
+	constructor() {
+		this.sorter = new Sorter();
+	}
 
 	isAtAH(itemID: string): boolean {
 		return lists.auctions[itemID] !== undefined ? true : false;
+	}
+
+	sort(key: string): void {
+		this.sorter.addKey(key);
+		this.sorter.sort(this.crafts);
 	}
 }

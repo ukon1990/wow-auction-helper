@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default mat-elevation-z6">
 	<div class="panel-heading">
 		<h2 class="panel-title">Crafting</h2>
 	</div>
@@ -18,9 +18,7 @@
 				<!-- Regular crafting -->
 				<span *ngIf="!isDisenchating; else disenchant">
 					<div class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Search</span>
-						<input class="col-md-2 form-control" type="text"
-							placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
+						<app-autocomplete title="Recipename" type="recipe" (name)="recieveName($event)"></app-autocomplete>
 					</div>
 
 					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
@@ -121,7 +119,6 @@
 					[getMinPrice]="getMinPrice"
 					[percentOf]="percentOf"
 					[getAuctionItem]="getAuctionItem"
-					[sortList]="sortList"
 					[sortProfitBy]="sortProfitBy"
 					[openMenu]="openMenu"
 					(addToCart)="addToCart($event)"
@@ -144,7 +141,7 @@
 							let i = index;">
 							<td>
 								<div>
-									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft) +')'"></span>
 									<div class="align-left col-md-9">
 										<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 											target="_blank">
@@ -227,7 +224,7 @@
 				<div class="col-sm-6 col-md-12" *ngIf="isDisenchating">
 					<div class="thumbnail row">
 						<span>
-							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected]) +')'"></span>
 							<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
 								{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
 							</a>

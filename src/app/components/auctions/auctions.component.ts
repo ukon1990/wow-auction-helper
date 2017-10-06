@@ -243,6 +243,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 			eventAction: 'Filtering',
 			eventLabel: 'Applied filter'
 		});
+		this.sorter.sort(this.filteredAuctions);
 	}
 
 	/**
@@ -311,5 +312,10 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 		}
 		return Math.round(
 			(auction.bid / auction.mktPrice) * 100);
+	}
+
+	sort(key: string): void {
+		this.sorter.addKey(key);
+		this.sorter.sort(this.filteredAuctions);
 	}
 }

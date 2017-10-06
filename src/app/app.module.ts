@@ -27,6 +27,10 @@ import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
 import { FileService } from './services/file.service';
 import { ExportComponent } from './components/export/export.component';
+import { SortIconComponent } from './components/sort-icon/sort-icon.component';
+import { ShuffleComponent } from './components/shuffle/shuffle.component';
+import { HeaderComponent } from './components/header/header.component';
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 
 @NgModule({
 	declarations: [
@@ -42,8 +46,11 @@ import { ExportComponent } from './components/export/export.component';
 		NewsComponent,
 		ShoppingCartComponent,
 		CraftTableComponent,
-		GoldPipe,
 		ExportComponent
+		SortIconComponent,
+		ShuffleComponent,
+		HeaderComponent,
+		AutocompleteComponent
 	],
 	imports: [
 		BrowserModule,
@@ -71,6 +78,9 @@ import { ExportComponent } from './components/export/export.component';
 			}, {
 				path: 'watchlist',
 				component: WatchlistComponent
+			}, {
+				path: 'shuffle',
+				component: ShuffleComponent
 			}, {
 				path: 'about',
 				component: AboutComponent

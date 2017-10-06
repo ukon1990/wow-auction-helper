@@ -369,34 +369,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	/**
-	 * Used for sorting the list.
-	 * @param  {string} sortBy A string for the field to sort by
-	 */
-	sortList(sortBy: string): void {
-		if (this.sortAsc) {
-			this.sortAsc = false;
-			this.crafts.sort(
-				(a, b) => {
-					if (sortBy === 'profit' && this.sortProfitBy === '%') {
-						return a[sortBy] / a.buyout - b[sortBy] / b.buyout;
-					}
-					return a[sortBy] - b[sortBy];
-				}
-			);
-		} else {
-			this.sortAsc = true;
-			this.crafts.sort(
-				(a, b) => {
-					if (sortBy === 'profit' && this.sortProfitBy === '%') {
-						return b[sortBy] / b.buyout - a[sortBy] / a.buyout;
-					}
-					return b[sortBy] - a[sortBy];
-				}
-			);
-		}
-	}
-
-	/**
 	 * Retrieves an auction item.
 	 * @param  {string} itemID
 	 * @return {Item}
@@ -469,22 +441,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			return { 'quantity_total': 0 };
 		}
 		return lists.auctions[itemID];
-	}
-
-	/**
-	 * Generates an icon url
-	 * @param  {string} itemID
-	 * @return {string}
-	 */
-	getIcon(itemID: string): string {
-		let url = 'https://render-eu.worldofwarcraft.com/icons/56/';
-		const icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
-		if (icon === undefined) {
-			url += 'inv_scroll_03.jpg';
-		} else {
-			url += icon + '.jpg';
-		}
-		return url;
 	}
 
 	openMenu(index: number): void {
@@ -702,5 +658,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 			console.log('Missing recipes:', list);
 		}
+	}
+
+	recieveName(name: string): void {
+		this.filterForm.controls['searchQuery'].setValue(name);
+		this.filteRecipes();
 	}
 }

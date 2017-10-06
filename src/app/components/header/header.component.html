@@ -1,0 +1,45 @@
+<header class="navbar navbar-default navbar-fixed-top mat-elevation-z8">
+  <button type="button" class="navbar-toggle collapsed" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target="#bs-example-navbar-collapse-1"
+    aria-expanded="false">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+  <nav class="container-fluid">
+    <h1 class="navbar-header" style="margin: 0;"><a routerLink="/">WAH</a></h1>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <p class="navbar-right" *ngIf="timeSinceLastModified">
+        Last update: {{timeSinceLastModified}} minutes ago <br> {{ downloadingText }}
+      </p>
+      <ul class="nav navbar-nav">
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/crafting">Crafting</a>
+        </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/auctions">Auctions</a>
+        </li>
+        <li *ngIf="isCharacterSet() && isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse"
+          routerLinkActive="active">
+          <a routerLink="/my-auctions">My auctions</a>
+        </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/watchlist">Watchlist</a>
+        </li>
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/trade-vendor">Trade vendors</a>
+        </li><!--
+        <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/shuffle">Shuffle</a>
+        </li>-->
+        <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/settings">Settings</a>
+        </li>
+        <li [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
+          <a routerLink="/about">About</a>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+</header>
