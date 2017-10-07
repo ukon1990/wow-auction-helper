@@ -36,25 +36,25 @@ export class ItemService {
 	}
 
 	getPet(petSpeciesId: string) {
-		return this.http.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
+		return this.httpClient.get('http://wah.jonaskf.net/GetSpecies.php?speciesId=' + petSpeciesId)
 			.map(response => <Object>function(r) {
 				db.table('pets').put(r);
 				return r;
-			} (response.json()));
+			} (response));
 	}
 
 	getItems() {
 		const apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
 
-		return this.http.get(this.getUrl(apiUrl, localUrl))
+		return this.httpClient.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function(r) {
 				db['items'].clear();
 				db['items'].bulkAdd(r);
 				localStorage.setItem('timestamp_items', new Date().toDateString());
 				console.log('Item download completed');
 				return r;
-			} (response.json().items));
+			} (response['items']));
 	}
 
 	getPets() {
