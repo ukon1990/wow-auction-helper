@@ -18,9 +18,7 @@
 				<!-- Regular crafting -->
 				<span *ngIf="!isDisenchating; else disenchant">
 					<div class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Search</span>
-						<input class="col-md-2 form-control" type="text"
-							placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
+						<app-autocomplete title="Recipename" type="recipe" (name)="recieveName($event)"></app-autocomplete>
 					</div>
 
 					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
@@ -98,6 +96,7 @@
 				</ng-template>
 				
 				<button class="btn btn-primary" type="submit">Apply filter</button>
+				<app-export [list]="crafts"></app-export>
 			</form>
 		</div>
 		<div class="col-md-12 row">

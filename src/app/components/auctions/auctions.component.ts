@@ -8,9 +8,10 @@ import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 
-import { user, lists, getPet } from '../../utils/globals';
+import { user, lists, getPet, db } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { itemClasses } from '../../utils/objects';
+import { FileService } from '../../services/file.service';
 
 declare const ga: Function;
 @Component({
@@ -34,7 +35,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	constructor(
 		private router: Router, private titleService: Title,
 		private auctionService: AuctionService, private itemService: ItemService,
-		private formBuilder: FormBuilder) {
+		private formBuilder: FormBuilder, public exportFile: FileService) {
 		super();
 		this.filteredAuctions = lists.auctions;
 		this.itemClasses = itemClasses;

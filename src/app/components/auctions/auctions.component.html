@@ -55,6 +55,7 @@
 
 				<button class="btn btn-primary" type="submit">Apply filter</button>
 				<button class="btn btn-default" type="button" (click)="clearFilters()">Clear filter</button>
+				<app-export [list]="filteredAuctions" auctionList="true"></app-export>
 			</form>
 		</div>
 		<br>

@@ -25,7 +25,12 @@ import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
+import { FileService } from './services/file.service';
+import { ExportComponent } from './components/export/export.component';
 import { SortIconComponent } from './components/sort-icon/sort-icon.component';
+import { ShuffleComponent } from './components/shuffle/shuffle.component';
+import { HeaderComponent } from './components/header/header.component';
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 
 @NgModule({
 	declarations: [
@@ -41,15 +46,19 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 		NewsComponent,
 		ShoppingCartComponent,
 		CraftTableComponent,
+		ExportComponent,
+		SortIconComponent,
+		ShuffleComponent,
+		HeaderComponent,
 		GoldPipe,
-		SortIconComponent
+		AutocompleteComponent
 	],
 	imports: [
 		BrowserModule,
 		FormsModule,
 		ReactiveFormsModule,
 		HttpModule,
-        HttpClientModule,
+		HttpClientModule,
 		MaterialModule,
 		RouterModule.forRoot([
 			{
@@ -71,6 +80,9 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 				path: 'watchlist',
 				component: WatchlistComponent
 			}, {
+				path: 'shuffle',
+				component: ShuffleComponent
+			}, {
 				path: 'about',
 				component: AboutComponent
 			}, {
@@ -85,6 +97,7 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 	providers: [
 		AuctionService,
 		CharacterService,
+		FileService,
 		ItemService,
 		Title,
 		Location],
