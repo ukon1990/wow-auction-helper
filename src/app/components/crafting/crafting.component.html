@@ -14,55 +14,43 @@
 				</button>
 			</div>
 			
-			<form class="form-inline col-md-12" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+			<form class="form-inline col-md-12" (ngSubmit)="filterRecipes()" [formGroup]="filterForm">
 				<!-- Regular crafting -->
 				<span *ngIf="!isDisenchating; else disenchant">
-					<div class="input-group input-group-sm">
-						<app-autocomplete title="Recipename" type="recipe" (name)="recieveName($event)"></app-autocomplete>
-					</div>
+					<mat-form-field>
+						<input matInput placeholder="Name" [formControl]="filterForm.controls['searchQuery']">
+					</mat-form-field>
 
-					<div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
-						<span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
-						<span class="input-group-addon">
-						<input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
-						</span>
-					</div>
+					<mat-checkbox [formControl]="filterForm.controls['onlyMyRecipes']" *ngIf="myRecipes.length > 0">Only known recipes</mat-checkbox>
 
-					<div class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Min profit</span>
-						<input name="profit" class="col-md-2 form-control" type="number"
-							placeholder="Minimum profit (default 0)" [formControl]="filterForm.controls['profit']" aria-describedby="sizing-addon3"/>
-						<span class="input-group-addon" id="sizing-addon3">%</span>
-					</div>
+					<mat-form-field>
+						<input matInput placeholder="Minimum profit %" [formControl]="filterForm.controls['profit']">
+					</mat-form-field>
 
+					<mat-form-field *ngIf="apiToUse !== 'none'">
+						<input matInput placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']">
+					</mat-form-field>
 
-					<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Min demand</span>
-						<input class="col-md-2 form-control" type="number"
-							placeholder="Minimum demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
-						<span class="input-group-addon" id="sizing-addon3">%</span>
-					</div>
+					<mat-form-field *ngIf="apiToUse !== 'none'">
+						<input matInput placeholder="Minimum sold pcs (default 0)" [formControl]="filterForm.controls['minSold']">
+					</mat-form-field>
 
-					<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Min sold</span>
-						<input class="col-md-2 form-control" type="number"
-							placeholder="Minimum sold (default 0)" [formControl]="filterForm.controls['minSold']" aria-describedby="sizing-addon3"/>
-						<span class="input-group-addon" id="sizing-addon3">pcs</span>
-					</div>
+					<mat-form-field>
+						<mat-select placeholder="Profession" [formControl]="filterForm.controls['profession']">
+							<mat-option value="All">All</mat-option>
+							<mat-option *ngFor="let i of professions" [value]="i">
+								{{ i }}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
 
-					<div class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Profession</span>
-						<select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
-							<option value="All">All</option>
-							<option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
-						</select>
-					</div>
-					<div class="input-group input-group-sm">
-						<span class="input-group-addon" id="sizing-addon3">Craft items</span>
-						<select name="profession" class="form-control" [formControl]="filterForm.controls['craftManually']" aria-describedby="sizing-addon3">
-							<option *ngFor="let i of craftManually" value="{{ i }}">{{ i }}</option>
-						</select>
-					</div>
+					<mat-form-field>
+						<mat-select placeholder="Craft items" [formControl]="filterForm.controls['craftManually']">
+							<mat-option *ngFor="let i of craftManually" [value]="i">
+								{{ i }}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
 				</span>
 				<!-- Disenchatning crafting options -->
 				<ng-template #disenchant>
@@ -96,17 +84,18 @@
 				</ng-template>
 				
 				<button class="btn btn-primary" type="submit">Apply filter</button>
+				<button class="btn btn-default" type="button" (click)="resetFilters()">Reset</button>
 				<app-export [list]="crafts"></app-export>
 			</form>
 		</div>
 		<div class="col-md-12 row">
-			<md-paginator class="col-md-9 row"
+			<mat-paginator class="col-md-9 row"
 				[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
 				[pageSize]="page.pageSize"
 				[pageSizeOptions]="page.pageSizeOptions"
 				[pageIndex]="pageEvent.pageIndex"
 				(page)="changePage($event)">
-			</md-paginator>
+			</mat-paginator>
 			<div class="col-md-9 row">
 				<app-craft-table *ngIf="!isDisenchating; else disenchantTable"
 					[pageEvent]="pageEvent"
@@ -255,13 +244,13 @@
 				</app-shopping-cart>
 			</div>
 		</div>
-		<md-paginator class="col-md-9 row"
+		<mat-paginator class="col-md-9 row"
 			[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
 			[pageSize]="page.pageSize"
 			[pageSizeOptions]="page.pageSizeOptions"
 			[pageIndex]="pageEvent.pageIndex"
 			(page)="changePage($event)">
-		</md-paginator>
+		</mat-paginator>
 		<em class="col-md-9">
 			If there are any recipes missing, please notify me @ 
 			<a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/">reddit</a> 
