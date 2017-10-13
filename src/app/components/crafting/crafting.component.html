@@ -21,7 +21,9 @@
 						<input matInput placeholder="Name" [formControl]="filterForm.controls['searchQuery']">
 					</mat-form-field>
 
-					<mat-checkbox [formControl]="filterForm.controls['onlyMyRecipes']" *ngIf="myRecipes.length > 0">Only known recipes</mat-checkbox>
+					<mat-checkbox [formControl]="filterForm.controls['onlyMyRecipes']" *ngIf="myRecipes.length > 0">
+						Only known recipes
+					</mat-checkbox>
 
 					<mat-form-field>
 						<input matInput placeholder="Minimum profit %" [formControl]="filterForm.controls['profit']">
