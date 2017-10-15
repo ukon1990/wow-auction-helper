@@ -108,7 +108,7 @@ button.mat-elevation-z7,
 button.mat-elevation-z8,
 button.mat-elevation-z9,
 button.mat-elevation-z10{
-    transition: box-shadow 0.5s;
+    transition: box-shadow 0.5s !important;
 }
 button.mat-elevation-z1:hover,
 button.mat-elevation-z2:hover,
@@ -120,6 +120,6 @@ button.mat-elevation-z7:hover,
 button.mat-elevation-z8:hover,
 button.mat-elevation-z9:hover,
 button.mat-elevation-z10:hover {
-    box-shadow: 0 0px 0px 0px rgba(0,0,0,.2), 0 0px 0px 0 rgba(0,0,0,.14), 0 0px 0px 0 rgba(0,0,0,.12);
-    transition: box-shadow 0.5s;
+    box-shadow: 0 0px 0px 0px rgba(0,0,0,.2), 0 0px 0px 0 rgba(0,0,0,.14), 0 0px 0px 0 rgba(0,0,0,.12) !important;
+    transition: box-shadow 0.5s !important;
 }
