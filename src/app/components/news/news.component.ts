@@ -8,7 +8,7 @@ declare var $;
 })
 export class NewsComponent implements AfterViewInit {
 	currentDate: string;
-	lastUpdateDate = '14.6.2017';
+	lastUpdateDate = '15.10.2017';
 
 	constructor() {
 		this.currentDate = new Date().toLocaleDateString();
@@ -20,9 +20,7 @@ export class NewsComponent implements AfterViewInit {
 				console.log(localStorage.getItem('timestamp_news'), this.lastUpdateDate);
 				if (localStorage.getItem('realm') &&
 					localStorage.getItem('timestamp_news') !== this.lastUpdateDate) {
-					$(window).load(function() {
-						$('#news-modal').modal('show');
-					});
+					$('#news-modal').modal('show');
 
 					// Binding closing functionality
 					$('#news-modal').on('hidden.bs.modal', () => {
