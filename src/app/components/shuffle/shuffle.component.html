@@ -1,0 +1,16 @@
+<div class="panel panel-default mat-elevation-z6">
+	<div class="panel-heading">
+		<h2 class="panel-title">Shuffle</h2>
+	</div>
+	<div class="panel-body">
+		<app-autocomplete class="col-md-12" (name)="recieveName($event)"></app-autocomplete>
+
+		<!--
+		<input [(ngModel)]="itemSearchQuery" placeholder="itemname"/>
+		<ul>
+			<li *ngFor="let item of itemSearch() | slice:0:10">
+				{{ getItemName(item) }}
+			</li>
+		</ul>-->
+	</div>
+</div>

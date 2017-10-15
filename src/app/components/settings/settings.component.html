@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default mat-elevation-z6">
 	<div class="panel-heading">
 		<h2 class="panel-title">Settings</h2>
 	</div>
@@ -9,10 +9,10 @@
 					<a >{{ tab.name }}</a>
 				</li>
 				<li>
-					<button class="btn btn-default" (click)="saveUserData()">Save all changes</button>
+					<button class="btn btn-primary mat-elevation-z5" (click)="saveUserData()">Save all changes</button>
 				</li>
 				<li>
-					<button class="btn btn-secondary" (click)="changeStyle()">
+					<button class="btn btn-default mat-elevation-z5" (click)="changeStyle()">
 						Turn dark mode {{ darkMode ? 'off' : 'on' }}
 					</button>
 				</li>
@@ -77,20 +77,20 @@
 				<h3>Stored data</h3>
 				<div class="input-group">
 					<span class="input-group-btn">
-						<button class="btn btn-default" (click)="importUserData()">Import settings</button>
+						<button class="btn btn-default mat-elevation-z5" (click)="importUserData()">Import settings</button>
 					</span>
 					<textarea type="text" class="form-control" placeholder="Paste in the exported string here"
 						[(ngModel)]="importedSettings"></textarea>
 				</div>
 				<div class="input-group">
 					<span class="input-group-btn">
-						<button class="btn btn-default" (click)="exportUserData()">Export settings</button>
+						<button class="btn btn-default mat-elevation-z5" (click)="exportUserData()">Export settings</button>
 					</span>
 					<textarea type="text" class="form-control" placeholder="Copy the exported string from here"
 						[(ngModel)]="exportedSettings"></textarea>
 				</div>
 
-				<button class="btn btn-default" (click)="deleteUserData()">Delete settings</button>
+				<button class="btn btn-default mat-elevation-z5" (click)="deleteUserData()">Delete settings</button>
 			</div>
 
 			<div class="col-md-12"  *ngIf="tabs[tabIndex].path === 'crafting'">
@@ -110,15 +110,18 @@
 				<p>These prices are ovrrides for cost calculation. Using trade vendor panel values coming soon™</p>
 				<form class="form-inline" (ngSubmit)="searchDB()" [formGroup]="customPriceForm">
 					<div class="input-group input-group-sm col-md-12">
-						<label class="sr-only" for="exampleInputAmount">Search for an item</label>
+						<label class="sr-only" for="Item">Search for an item</label>
 						<input type="text" class="form-control"
 							name="Item"
 							placeholder="Search for the desiered item"
 							type="text"
 							aria-describedby="basic-addon1"
 							[formControl]="customPriceForm.controls['query']">
-						<i class="btn btn-default input-group-addon glyphicon glyphicon-search" id="sizing-addon1" (click)="searchDB()">
-						</i>
+						<button id="sizing-addon1" class="input-group-addon btn btn-default mat-elevation-z5" (click)="searchDB()">
+							Search
+							<i class="glyphicon glyphicon-search">
+							</i>
+						</button>
 					</div>
 				</form>
 				<ul class="list-group">

@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default mat-elevation-z6">
 	<div class="panel-heading">
 		<h2 class="panel-title">Trade vendors</h2>
 	</div>
@@ -13,12 +13,12 @@
 			</ul>
 		</div>
 		<div class="col-md-10">
-			<md-paginator
+			<mat-paginator
 				[length]="vendors[vendorIndex].materials.length"
 				[pageSize]="page.pageSize"
 				[pageSizeOptions]="page.pageSizeOptions"
 				(page)="changePage($event, true)">
-			</md-paginator>
+			</mat-paginator>
 			<table class="table table-striped row">
 				<tr class="row">
 					<th>Item</th>
@@ -48,11 +48,11 @@
 					</td>
 					<td>{{ a.quantity }}</td>
 					<td>
-						{{ copperToString(a.value) }} <br>
-						Buyout per item: {{ copperToString(a.buyout) }}
+						{{ a.value | gold }} <br>
+						Buyout per item: {{ a.buyout | gold }}
 						<div *ngIf="apiToUse !== 'none'">
-							Market value: {{ copperToString(a.mktPrice) }}<br>
-							Region sale avg: {{ copperToString(a.regionSaleAvg) }}
+							Market value: {{ a.mktPrice | gold }}<br>
+							Region sale avg: {{ a.regionSaleAvg | gold }}
 						</div>
 					</td>
 					<td *ngIf="apiToUse !== 'none'" class="hidden-xs">

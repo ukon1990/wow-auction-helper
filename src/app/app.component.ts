@@ -299,6 +299,7 @@ export class AppComponent implements OnInit {
 				db.table('items').toArray().then(i => {
 					if (i.length > 0) {
 						lists.isDownloading = false;
+						lists.itemsArray = i;
 						this.buildItemArray(i);
 					} else {
 						// The db was empty so we're downloading

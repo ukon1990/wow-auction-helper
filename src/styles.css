@@ -4,3 +4,122 @@
 .mat-paginator {
     background-color: transparent !important;
 }
+
+
+.align-left, .float-left{
+    float:left !important;
+}
+
+.float-right {
+    float: right !important;
+}
+
+
+/* From blizzard */
+.item-detail .frame-56 {
+    position: absolute;
+    overflow: hidden;
+    left: 0;
+    top: 5px;
+}
+.icon-frame.frame-36 {
+    height: 36px;
+    width: 36px;
+    -moz-box-shadow: #000 0 0 10px;
+    -webkit-box-shadow: #000 0 0 10px;
+    box-shadow: #000 0 0 10px;
+}
+.icon-frame.frame-24 {
+    height: 24px;
+    width: 24px;
+    -moz-box-shadow: #000 0 0 10px;
+    -webkit-box-shadow: #000 0 0 10px;
+    box-shadow: #000 0 0 10px;
+}
+.icon-frame {
+    display: inline-block;
+    overflow: hidden;
+    padding: 1px;
+	margin-right: 1em;
+    background-color: #000;
+    background-position: 1px 1px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px solid #434445;
+    border-bottom-color: #2f3032;
+    border-top-color: #b1b2b4;
+}
+
+#my-auctions {
+    position: absolute;
+    min-height: 10em;
+    min-width: 10em;
+    top: 0;
+}
+
+.undercut {
+    background-color: #fddddd !important;
+}
+
+tr.info a {
+    color: white !important;
+}
+
+.not-found, .not-found a {
+    color: #ff0000 !important;
+}
+
+.using-manual-craft, .using-manual-craft a, .below-alert-value {
+    color: green;
+}
+
+.not-using-manual-craft, .not-using-manual-craft a {
+    color: orangered;
+}
+
+.cdk-overlay-pane {
+    width: auto !important;
+}
+
+
+/**
+ TODO: Make light theme version
+*/
+.mat-input-infix {
+    background-color: #073642;
+}
+.mat-input-placeholder {
+    color: #839496 !important;
+}
+.mat-form-field-ripple {
+    background-color: #839496 !important;
+}
+
+button.mat-elevation-z1,
+button.mat-elevation-z2,
+button.mat-elevation-z3,
+button.mat-elevation-z4,
+button.mat-elevation-z5,
+button.mat-elevation-z6,
+button.mat-elevation-z7,
+button.mat-elevation-z8,
+button.mat-elevation-z9,
+button.mat-elevation-z10{
+    transition: box-shadow 0.5s !important;
+}
+button.mat-elevation-z1:hover,
+button.mat-elevation-z2:hover,
+button.mat-elevation-z3:hover,
+button.mat-elevation-z4:hover,
+button.mat-elevation-z5:hover,
+button.mat-elevation-z6:hover,
+button.mat-elevation-z7:hover,
+button.mat-elevation-z8:hover,
+button.mat-elevation-z9:hover,
+button.mat-elevation-z10:hover {
+    box-shadow: 0 0px 0px 0px rgba(0,0,0,.2), 0 0px 0px 0 rgba(0,0,0,.14), 0 0px 0px 0 rgba(0,0,0,.12) !important;
+    transition: box-shadow 0.5s !important;
+}

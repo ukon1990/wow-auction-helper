@@ -8,9 +8,10 @@ import { AuctionService } from '../../services/auctions';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 
-import { user, lists, getPet } from '../../utils/globals';
+import { user, lists, getPet, db } from '../../utils/globals';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { itemClasses } from '../../utils/objects';
+import { FileService } from '../../services/file.service';
 
 declare const ga: Function;
 @Component({
@@ -34,7 +35,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	constructor(
 		private router: Router, private titleService: Title,
 		private auctionService: AuctionService, private itemService: ItemService,
-		private formBuilder: FormBuilder) {
+		private formBuilder: FormBuilder, public exportFile: FileService) {
 		super();
 		this.filteredAuctions = lists.auctions;
 		this.itemClasses = itemClasses;
@@ -101,12 +102,15 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	/**
 	 * Used to clear the search filters
 	 */
-	clearFilters(): void {
+	resetFilters(): void {
 		this.pageEvent.pageIndex = 0;
+		this.filterForm.reset();
 		this.filterForm.value['searchQuery'] = '';
 		this.filterForm.value['filterByCharacter'] = false;
 		this.filterForm.value['itemClass'] = '-1';
 		this.filterForm.value['itemSubClass'] = '-1';
+
+		this.filterAuctions();
 		ga('send', {
 			hitType: 'event',
 			eventCategory: 'Auctions',
@@ -233,6 +237,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 			eventAction: 'Filtering',
 			eventLabel: 'Applied filter'
 		});
+		this.sorter.sort(this.filteredAuctions);
 	}
 
 	/**
@@ -301,5 +306,10 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 		}
 		return Math.round(
 			(auction.bid / auction.mktPrice) * 100);
+	}
+
+	sort(key: string): void {
+		this.sorter.addKey(key);
+		this.sorter.sort(this.filteredAuctions);
 	}
 }

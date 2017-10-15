@@ -25,6 +25,12 @@ import { ItemService } from './services/item';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
+import { FileService } from './services/file.service';
+import { ExportComponent } from './components/export/export.component';
+import { SortIconComponent } from './components/sort-icon/sort-icon.component';
+import { ShuffleComponent } from './components/shuffle/shuffle.component';
+import { HeaderComponent } from './components/header/header.component';
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 
 @NgModule({
 	declarations: [
@@ -40,14 +46,19 @@ import { GoldPipe } from './pipes/gold.pipe';
 		NewsComponent,
 		ShoppingCartComponent,
 		CraftTableComponent,
-		GoldPipe
+		ExportComponent,
+		SortIconComponent,
+		ShuffleComponent,
+		HeaderComponent,
+		GoldPipe,
+		AutocompleteComponent
 	],
 	imports: [
 		BrowserModule,
 		FormsModule,
 		ReactiveFormsModule,
 		HttpModule,
-        HttpClientModule,
+		HttpClientModule,
 		MaterialModule,
 		RouterModule.forRoot([
 			{
@@ -69,6 +80,9 @@ import { GoldPipe } from './pipes/gold.pipe';
 				path: 'watchlist',
 				component: WatchlistComponent
 			}, {
+				path: 'shuffle',
+				component: ShuffleComponent
+			}, {
 				path: 'about',
 				component: AboutComponent
 			}, {
@@ -83,6 +97,7 @@ import { GoldPipe } from './pipes/gold.pipe';
 	providers: [
 		AuctionService,
 		CharacterService,
+		FileService,
 		ItemService,
 		Title,
 		Location],

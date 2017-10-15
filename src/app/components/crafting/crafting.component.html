@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default mat-elevation-z6">
 	<div class="panel-heading">
 		<h2 class="panel-title">Crafting</h2>
 	</div>
@@ -97,17 +97,19 @@
 					</div>
 				</ng-template>
 				
-				<button class="btn btn-primary" type="submit">Apply filter</button>
+				<button class="btn btn-primary mat-elevation-z5" type="submit">Apply filter</button>
+				<button class="btn btn-default mat-elevation-z5" type="button" (click)="resetFilters()">Reset</button>
+				<app-export [list]="crafts"></app-export>
 			</form>
 		</div>
 		<div class="col-md-12 row">
-			<md-paginator class="col-md-9 row"
+			<mat-paginator class="col-md-9 row"
 				[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
 				[pageSize]="page.pageSize"
 				[pageSizeOptions]="page.pageSizeOptions"
 				[pageIndex]="pageEvent.pageIndex"
 				(page)="changePage($event)">
-			</md-paginator>
+			</mat-paginator>
 			<div class="col-md-9 row">
 				<app-craft-table *ngIf="!isDisenchating; else disenchantTable"
 					[pageEvent]="pageEvent"
@@ -120,7 +122,6 @@
 					[getMinPrice]="getMinPrice"
 					[percentOf]="percentOf"
 					[getAuctionItem]="getAuctionItem"
-					[sortList]="sortList"
 					[sortProfitBy]="sortProfitBy"
 					[openMenu]="openMenu"
 					(addToCart)="addToCart($event)"
@@ -143,7 +144,7 @@
 							let i = index;">
 							<td>
 								<div>
-									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft.itemID) +')'"></span>
+									<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(craft) +')'"></span>
 									<div class="align-left col-md-9">
 										<a rel="item={{ craft.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ craft.itemID }}"
 											target="_blank">
@@ -226,7 +227,7 @@
 				<div class="col-sm-6 col-md-12" *ngIf="isDisenchating">
 					<div class="thumbnail row">
 						<span>
-							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected].id) +')'"></span>
+							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected]) +')'"></span>
 							<a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}" target="_blank">
 								{{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
 							</a>
@@ -257,13 +258,13 @@
 				</app-shopping-cart>
 			</div>
 		</div>
-		<md-paginator class="col-md-9 row"
+		<mat-paginator class="col-md-9 row"
 			[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
 			[pageSize]="page.pageSize"
 			[pageSizeOptions]="page.pageSizeOptions"
 			[pageIndex]="pageEvent.pageIndex"
 			(page)="changePage($event)">
-		</md-paginator>
+		</mat-paginator>
 		<em class="col-md-9">
 			If there are any recipes missing, please notify me @ 
 			<a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/">reddit</a> 

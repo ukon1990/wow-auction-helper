@@ -8,6 +8,7 @@ import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { Disenchanting } from '../../utils/disenchanting';
+import { FileService } from '../../services/file.service';
 
 declare const ga: Function;
 @Component({
@@ -46,7 +47,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	private isInitiated = false;
 
-	constructor(private itemService: ItemService, private titleService: Title, private formBuilder: FormBuilder) {
+	constructor(private itemService: ItemService,
+			private titleService: Title,
+			private formBuilder: FormBuilder,
+			private exportFile: FileService) {
 		super();
 		this.Disenchanting = new Disenchanting(true);
 		const query = localStorage.getItem('query_crafting') === null ? undefined : JSON.parse(localStorage.getItem('query_crafting'));
@@ -150,7 +154,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				try {
 					if (!lists.isDownloading && lists.auctions.length > 0 && !this.isInitiated) {
 						this.isInitiated = true;
-						this.filteRecipes();
+						this.filterRecipes();
 						clearInterval(refreshId);
 					}
 				} catch (e) {
@@ -162,7 +166,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	toggleDisenchanting(bool): void {
 		this.isDisenchating = bool;
-		this.filteRecipes();
+		this.filterRecipes();
 	}
 
 	setManualCraft(material, recipe): void {
@@ -184,7 +188,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	/**
 	 * Filtering the craftables by user query
 	 */
-	filteRecipes(): void {
+	filterRecipes(): void {
 		this.crafts = [];
 		let isAffected = false,
 			match = false;
@@ -351,6 +355,27 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 		}
 	}
 
+	resetFilters(): void {
+		this.filterForm.reset();
+
+		this.filterForm.controls['profession'].setValue('All');
+		this.filterForm.controls['craftManually'].setValue(0);
+		this.filterForm.controls['searchQuery'].setValue('');
+		this.filterForm.controls['onlyMyRecipes'].setValue(false);
+		this.filterForm.controls['profit'].setValue(0);
+		this.filterForm.controls['demand'].setValue(0);
+		this.filterForm.controls['minSold'].setValue(0);
+		this.filterForm.controls['craftManually'].setValue(0);
+		this.filterForm.controls['DEOnlyProfitable'].setValue(false);
+		this.filterForm.controls['selectedDEMaterial'].setValue(0);
+
+		this.filterRecipes();
+	}
+
+	exportData(): void {
+		this.exportFile.download('auctions', this.crafts, this.exportFile.FILETYPES.EXCEL);
+	}
+
 	/**
 	 * Used for fetching the sub reagents of a recipe
 	 * @param  {object} material Reagent object
@@ -358,34 +383,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 */
 	getSubMaterials(material) {
 		return lists.recipes[lists.recipesIndex[material.createdBy]].reagents;
-	}
-
-	/**
-	 * Used for sorting the list.
-	 * @param  {string} sortBy A string for the field to sort by
-	 */
-	sortList(sortBy: string): void {
-		if (this.sortAsc) {
-			this.sortAsc = false;
-			this.crafts.sort(
-				(a, b) => {
-					if (sortBy === 'profit' && this.sortProfitBy === '%') {
-						return a[sortBy] / a.buyout - b[sortBy] / b.buyout;
-					}
-					return a[sortBy] - b[sortBy];
-				}
-			);
-		} else {
-			this.sortAsc = true;
-			this.crafts.sort(
-				(a, b) => {
-					if (sortBy === 'profit' && this.sortProfitBy === '%') {
-						return b[sortBy] / b.buyout - a[sortBy] / a.buyout;
-					}
-					return b[sortBy] - a[sortBy];
-				}
-			);
-		}
 	}
 
 	/**
@@ -461,22 +458,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			return { 'quantity_total': 0 };
 		}
 		return lists.auctions[itemID];
-	}
-
-	/**
-	 * Generates an icon url
-	 * @param  {string} itemID
-	 * @return {string}
-	 */
-	getIcon(itemID: string): string {
-		let url = 'https://render-eu.worldofwarcraft.com/icons/56/';
-		const icon = lists.items[itemID] === undefined ? undefined : lists.items[itemID].icon;
-		if (icon === undefined) {
-			url += 'inv_scroll_03.jpg';
-		} else {
-			url += icon + '.jpg';
-		}
-		return url;
 	}
 
 	openMenu(index: number): void {
@@ -694,5 +675,10 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 			console.log('Missing recipes:', list);
 		}
+	}
+
+	recieveName(name: string): void {
+		this.filterForm.controls['searchQuery'].setValue(name);
+		this.filterRecipes();
 	}
 }
