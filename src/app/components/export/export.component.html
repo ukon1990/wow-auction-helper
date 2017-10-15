@@ -9,21 +9,25 @@
   <div class="modal-dialog" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Export data</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <i class="fa fa-times" aria-hidden="true"></i>
-        </button>
+        <h5 class="modal-title">
+          Export data
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </button>
+        </h5>
       </div>
       <div class="modal-body">
         <p>
           Choose what columns you wish to be exported. This is the raw data from the blizzard API.
           <br>
-          <button class="btn btn-sm btn-secondary" (click)="setColumnList()">Restore columns</button>
+          <button class="btn btn-sm btn-default mat-elevation-z2" (click)="setColumnList()">Restore columns</button>
         </p>
         <div *ngFor="let column of columns; let i = index"
           class="col-md-4 float-left mat-elevation-z2">
           {{ column }}
-          <button class="bt btn-sm btn-secondary float-right" (click)="removeColumn(i)">x</button>
+          <button class="btn btn-sm btn-default float-right" (click)="removeColumn(i)">
+              <i class="fa fa-eye-slash" aria-hidden="true"></i>
+          </button>
         </div>
         <div class="clearfix"></div>
       </div>
@@ -36,7 +40,7 @@
           Export
         </button>
         <button type="button"
-          class="btn btn-secondary mat-elevation-z5"
+          class="btn btn-default mat-elevation-z5"
           data-dismiss="modal">Cancel</button>
       </div>
     </div>
