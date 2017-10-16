@@ -92,15 +92,13 @@ export class ItemService {
 			}, error => console.log(error));
 	}
 
-	getRecipes(): any {
+	getRecipes(): Promise<any> {
 		console.log('Loaded recipes');
 		const localUrl = '/assets/GetRecipe.json',
 			apiUrl = 'http://wah.jonaskf.net/GetRecipe.php';
 
-		return this.http.get(this.getUrl(apiUrl, localUrl))
-			.map(r => {
-				return r.json();
-			}, error => console.log(error));
+		return this.httpClient.get(
+			this.getUrl(apiUrl, localUrl)).toPromise();
 	}
 
 	recipeFromXML(r, itemID): Object {

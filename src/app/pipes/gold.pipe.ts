@@ -9,7 +9,7 @@ export class GoldPipe implements PipeTransform {
 		if (!copper) {
 			return '0g 0s 0c';
 		}
-		let result = [];
+		const result = [];
 		copper = Math.round(copper);
 		result[0] = copper % 100;
 		copper = (copper - result[0]) / 100;

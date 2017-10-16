@@ -3,9 +3,12 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
-import { calcCost, user, lists, getPet, db, copperToString, setRecipesForCharacter } from './utils/globals';
+import { user, lists, getPet, db, setRecipesForCharacter } from './utils/globals';
 import { IUser } from './utils/interfaces';
+import { GoldPipe } from './pipes/gold.pipe';
 import Push from 'push.js';
+import { Notification } from './utils/notification';
+import Crafting from './utils/crafting';
 
 declare const  ga: Function;
 
@@ -28,12 +31,10 @@ export class AppComponent implements OnInit {
 	private petObserver = {};
 	private u: IUser;
 	private allItemSources = [];
-	private notificationsWorking = true;
 
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService, private characterService: CharacterService,
 		private router: Router) {
-		this.getRecipes();
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&
@@ -59,7 +60,9 @@ export class AppComponent implements OnInit {
 		}
 	}
 
-	ngOnInit() {
+	async ngOnInit() {
+
+		await Crafting.getRecipes(this.itemService);
 		this.date = new Date();
 		if (this.isRealmSet()) {
 			// Loading user settings
@@ -324,7 +327,7 @@ export class AppComponent implements OnInit {
 			lists.items = [];
 		}
 
-		for (let i of arr) {
+		for (const i of arr) {
 			lists.items[i['id']] = i;
 		}
 		try {
@@ -376,10 +379,11 @@ export class AppComponent implements OnInit {
 	}
 
 	buildAuctionArray(arr) {
-		let list = [], undercuttedAuctions = 0, itemsBelowVendor = {quantity: 0, totalValue: 0};
+		let undercuttedAuctions = 0;
+		const list = [], itemsBelowVendor = {quantity: 0, totalValue: 0};
 
 		lists.myAuctions = [];
-		for (let o of arr) {
+		for (const o of arr) {
 			if (o['buyout'] === 0) {
 				continue;
 			}
@@ -476,9 +480,9 @@ export class AppComponent implements OnInit {
 			// TODO: this.addToContextList(o);
 		}
 		if (user.notifications.isBelowVendorSell && itemsBelowVendor.quantity > 0) {
-			this.notification(
+			Notification.send(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
-				`Potential profit: ${copperToString(itemsBelowVendor.totalValue)}`, 'auctions');
+				`Potential profit: ${new GoldPipe().transform(itemsBelowVendor.totalValue)}`, this.router, 'auctions');
 		}
 
 		if (user.notifications.isUndercutted && user.character !== undefined) {
@@ -491,19 +495,19 @@ export class AppComponent implements OnInit {
 
 			});
 			if (undercuttedAuctions > 0) {
-				this.notification(
+				Notification.send(
 					'You have been undercutted!',
-					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`, 'my-auctions');
+					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`, this.router, 'my-auctions');
 			}
 		}
 
 		lists.auctions = list;
-		this.getCraftingCosts();
+		Crafting.getCraftingCosts(this.router);
 		lists.isDownloading = false;
 	}
 
 	attemptDownloadOfMissingRecipes(list): void {
-		let recipes = {};
+		const recipes = {};
 		list.forEach(re => {
 			if (re !== null) {
 				recipes[re.spellID] = re.spellID;
@@ -529,7 +533,7 @@ export class AppComponent implements OnInit {
 
 	getSize(list): number {
 		let count = 0;
-		for (let c of list) {
+		for (const c of list) {
 			count++;
 		}
 		return count;
@@ -544,7 +548,7 @@ export class AppComponent implements OnInit {
 	}
 
 	buildPetArray(pets) {
-		let list = [];
+		const list = [];
 		pets.forEach(p => {
 			list[p.speciesId] = p;
 		});
@@ -560,7 +564,7 @@ export class AppComponent implements OnInit {
 		// Checking if there is a new update available
 		if (this.lastModified && this.lastModified > 0 && this.timeDiff(updateTime, currentTime) < this.oldTimeDiff && !lists.isDownloading) {
 			if (user.notifications.isUpdateAvailable) {
-				this.notification('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`);
+				Notification.send('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`, this.router);
 			}
 			this.getAuctions();
 		}
@@ -597,72 +601,6 @@ export class AppComponent implements OnInit {
 				});
 		}
 	}
-
-	getCraftingCosts(): void {
-		let potentialProfit = 0;
-		console.log('starting crafting cost calc');
-		for (let c of lists.recipes) {
-			calcCost(c);
-			if (c.profit > 0) {
-				potentialProfit += c.profit;
-			}
-		}
-		console.log('Done calculating crafting costs');
-
-		if (user.notifications.isWatchlist) {
-			// checking if watchlist gives any alerts
-			let watchlistAlerts = 0, tmpList = [];
-			lists.myRecipes.forEach( recipeID => {
-				tmpList[recipeID] = 'owned';
-			});
-			Object.keys(user.watchlist.items).forEach(group => {
-				user.watchlist.items[group].forEach(item => {
-					if ((item.alert === undefined || item.alert) &&
-						(item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value ||
-						item.criteria === 'above' && lists.auctions[item.id].buyout >= item.value)) {
-						watchlistAlerts++;
-						this.notification(item.name, `Current lowest buyout at ${
-							Math.round(100 - (item.value / lists.auctions[item.id].buyout) * 100)
-						}% of the alert value!`, 'watchlist', lists.items[item.id].icon);
-					} else if (lists.itemRecipes[item.id]) {
-						lists.itemRecipes[item.id].forEach(r => {
-							if (tmpList[r] &&
-								lists.recipes[lists.recipesIndex[r]].profit /
-								lists.recipes[lists.recipesIndex[r]].buyout > item.minCraftProfit / 100) {
-								watchlistAlerts++;
-							}
-						});
-					}
-				});
-			});
-			if (watchlistAlerts > 0) {
-				this.notification(
-					`Watchlist items!`,
-					`There are ${watchlistAlerts} items meet your criteria.`, 'watchlist');
-			}
-		}
-	}
-
-	getRecipes(): void {
-		this.itemService.getRecipes()
-			.subscribe(recipe => {
-				if (lists.recipes === undefined) {
-					lists.recipes = [];
-				}
-				recipe.recipes.forEach(r => {
-					if (r && r['profession']) {
-						r['estDemand'] = 0;
-						lists.recipesIndex[r.spellID] = lists.recipes.push(r) - 1;
-						if (!lists.itemRecipes[r.itemID]) {
-							lists.itemRecipes[r.itemID] = [];
-						}
-						lists.itemRecipes[r.itemID].push(r.spellID);
-					}
-				});
-				// this.attemptDownloadOfMissingRecipes(recipe.recipes);
-			});
-	}
-
 
 	/**
 	 * Used to add item to the list of available contexts for an auction item
@@ -730,29 +668,6 @@ export class AppComponent implements OnInit {
 			default:
 				this.allItemSources[o.context] = o.context + ' - ' + o.item + ' - ' + o.name;
 				break;
-		}
-	}
-
-	notification(title: string, message: string, page?: string, icon?: string) {
-		if (!this.notificationsWorking) {
-			return;
-		}
-		try {
-			Push.create(title, {
-				body: message,
-				icon: icon ? `http://media.blizzard.com/wow/icons/56/${icon}.jpg` : 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
-				timeout: 10000,
-				onClick: () => {
-					if (page) {
-						this.router.navigateByUrl(page);
-					}
-					window.focus();
-					close();
-				}
-			});
-		} catch (error) {
-			this.notificationsWorking = false;
-			console.log(error);
 		}
 	}
 

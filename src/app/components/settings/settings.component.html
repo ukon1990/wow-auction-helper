@@ -148,7 +148,7 @@
 							</select>
 						</td>-->
 						<td><input type="number" [(ngModel)]="cp.price"/></td>
-						<td>{{copperToString(cp.price)}}</td>
+						<td>{{ cp.price | gold }}</td>
 						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
 					</tr>
 				</table>

@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { NgClass } from '@angular/common';
 import { ParentAuctionComponent } from './parent.auctions.component';
 import { IUser, IAuction } from '../../utils/interfaces';
-import { user, lists, getPet, copperToString } from '../../utils/globals';
+import { user, lists, getPet } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 
 declare const ga: Function;

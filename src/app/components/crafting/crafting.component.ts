@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
-import { calcCost, user, lists, getPet } from '../../utils/globals';
+import { user, lists, getPet } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { Disenchanting } from '../../utils/disenchanting';
 import { FileService } from '../../services/file.service';
+import Crafting from '../../utils/crafting';
 
 declare const ga: Function;
 @Component({
@@ -176,7 +177,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	updateCraftingCost(recipe) {
-		calcCost(recipe);
+		Crafting.calcCost(recipe);
 		recipe.reagents.forEach(reagent => {
 			if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
 				delete reagent.createdBy;
@@ -316,8 +317,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 											lists.recipes[lists.recipesIndex[reagent.createdBy]].cost < (reagent.count * this.getMinPrice(reagent.itemID))) {
 
 											// Verifying that it is @ AH
-											lists.recipes[lists.recipesIndex[reagent.createdBy]].reagents.forEach(r => {
-												localMatch = lists.auctions[r.itemID] && lists.auctions[r.itemID].quantity_total >= r.count;
+											lists.recipes[lists.recipesIndex[reagent.createdBy]].reagents.forEach( re => {
+												localMatch = lists.auctions[re.itemID] && lists.auctions[re.itemID].quantity_total >= re.count;
 											});
 											if (localMatch) {
 												reagent.useCraftedBy = true;
@@ -532,8 +533,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 */
 	removeFromCart(spellID: string): void {
 		console.log('Removed ' + spellID);
+		const reagentRemoveList = [];
 		let recipeIndex = 0,
-			reagentRemoveList = [],
 			recipe = {};
 		// Fetching the recipe's index key
 		if (this.keyValueInArray(this.shoppingCart.recipes, 'spellID', spellID)) {
@@ -630,7 +631,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	checkForMissingItems(): void {
-		let missingItems = [];
+		const missingItems = [];
 		console.log('Building missing item list');
 		lists.recipes.forEach(r => {
 			if (!lists.items[r.itemID]) {
@@ -658,7 +659,8 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	 */
 	checkForMissingRecipes(): void {
 		if (this.myRecipes.length > 0 && !lists.isDownloading) {
-			let missingRecipes = [], list = '';
+			const missingRecipes = [];
+			let list = '';
 
 			Object.keys(this.myRecipes).forEach(k => {
 				if (!lists.recipesIndex[k] && !missingRecipes[k]) {

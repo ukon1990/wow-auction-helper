@@ -2,7 +2,7 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { PageEvent } from '@angular/material';
-import { user, lists, getPet, copperToString, getIcon } from '../../utils/globals';
+import { user, lists, getPet, getIcon } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { Item } from '../../utils/item';
 import { Sorter } from '../../utils/sorter';

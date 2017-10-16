@@ -6,7 +6,9 @@ import { AuctionService } from '../../services/auctions';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, copperToString, db, setRecipesForCharacter } from '../../utils/globals';
+import { user, lists, db, setRecipesForCharacter } from '../../utils/globals';
+import Crafting from '../../utils/crafting';
+import { Router } from '@angular/router';
 
 declare const ga: Function;
 @Component({
@@ -39,7 +41,7 @@ export class SettingsComponent implements OnInit {
 		{name: 'Notifications', path: 'notifications'}
 	];
 
-	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
+	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder, private router: Router,
 		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
 		this.user = user;
 		this.customPriceForm = formBuilder.group({
@@ -162,7 +164,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.setItem('custom_prices', JSON.stringify(lists.customPrices));
 
 		if (localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
-			this.ac.getCraftingCosts();
+			Crafting.getCraftingCosts(this.router);
 			localStorage.setItem('crafting_buyout_limit', this.user.buyoutLimit.toString());
 		}
 
@@ -366,6 +368,4 @@ export class SettingsComponent implements OnInit {
 	selectTab(index: number) {
 		this.tabIndex = index;
 	}
-
-	copperToString = copperToString;
 }

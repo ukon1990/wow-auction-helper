@@ -7,7 +7,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import { AppModule } from '../../app.module';
 
 import { CraftingComponent } from './crafting.component';
-import { calcCost, user, lists, getPet, db } from '../../utils/globals';
+import { user, lists, getPet, db } from '../../utils/globals';
 import { testObjects } from '../../utils/testdata';
 
 
