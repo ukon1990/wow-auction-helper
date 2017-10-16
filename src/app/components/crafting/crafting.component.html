@@ -14,7 +14,7 @@
 				</button>
 			</div>
 			
-			<form class="form-inline col-md-12" (ngSubmit)="filteRecipes()" [formGroup]="filterForm">
+			<form class="form-inline col-md-12" (ngSubmit)="filterRecipes()" [formGroup]="filterForm">
 				<!-- Regular crafting -->
 				<span *ngIf="!isDisenchating; else disenchant">
 					<div class="input-group input-group-sm">
