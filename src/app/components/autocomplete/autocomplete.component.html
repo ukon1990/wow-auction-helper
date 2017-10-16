@@ -1,11 +1,11 @@
 <form>
-  <md-form-field class="full-width">
-    <input mdInput placeholder="{{ title }}" aria-label="Item" [mdAutocomplete]="auto" [formControl]="itemCtrl">
-    <md-autocomplete #auto="mdAutocomplete">
-      <md-option *ngFor="let item of filteredStates | async" [value]="item.name">
+  <mat-form-field class="full-width">
+    <input matInput placeholder="{{ title }}" aria-label="Item" [matAutocomplete]="auto" [formControl]="itemCtrl">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let item of filteredStates | async" [value]="item.name">
           <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
         <span>{{ item.name }}</span>
-      </md-option>
-    </md-autocomplete>
-  </md-form-field>
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
 </form>

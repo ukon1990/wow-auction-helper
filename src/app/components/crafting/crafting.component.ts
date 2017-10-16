@@ -154,7 +154,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				try {
 					if (!lists.isDownloading && lists.auctions.length > 0 && !this.isInitiated) {
 						this.isInitiated = true;
-						this.filteRecipes();
+						this.filterRecipes();
 						clearInterval(refreshId);
 					}
 				} catch (e) {
@@ -166,7 +166,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	toggleDisenchanting(bool): void {
 		this.isDisenchating = bool;
-		this.filteRecipes();
+		this.filterRecipes();
 	}
 
 	setManualCraft(material, recipe): void {
@@ -188,7 +188,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	/**
 	 * Filtering the craftables by user query
 	 */
-	filteRecipes(): void {
+	filterRecipes(): void {
 		this.crafts = [];
 		let isAffected = false,
 			match = false;
@@ -353,6 +353,23 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			});
 			this.pageEvent.pageIndex = 0;
 		}
+	}
+
+	resetFilters(): void {
+		this.filterForm.reset();
+
+		this.filterForm.controls['profession'].setValue('All');
+		this.filterForm.controls['craftManually'].setValue(0);
+		this.filterForm.controls['searchQuery'].setValue('');
+		this.filterForm.controls['onlyMyRecipes'].setValue(false);
+		this.filterForm.controls['profit'].setValue(0);
+		this.filterForm.controls['demand'].setValue(0);
+		this.filterForm.controls['minSold'].setValue(0);
+		this.filterForm.controls['craftManually'].setValue(0);
+		this.filterForm.controls['DEOnlyProfitable'].setValue(false);
+		this.filterForm.controls['selectedDEMaterial'].setValue(0);
+
+		this.filterRecipes();
 	}
 
 	exportData(): void {
@@ -662,6 +679,6 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 
 	recieveName(name: string): void {
 		this.filterForm.controls['searchQuery'].setValue(name);
-		this.filteRecipes();
+		this.filterRecipes();
 	}
 }

@@ -53,21 +53,21 @@
 					 </span>
 				</div>
 
-				<button class="btn btn-primary" type="submit">Apply filter</button>
-				<button class="btn btn-default" type="button" (click)="clearFilters()">Clear filter</button>
+				<button class="btn btn-primary mat-elevation-z5" type="submit">Apply filter</button>
+				<button class="btn btn-default mat-elevation-z5" type="button" (click)="resetFilters()">Reset</button>
 				<app-export [list]="filteredAuctions" auctionList="true"></app-export>
 			</form>
 		</div>
 		<br>
 		<div class="col-md-12 row">
 			<div class="col-md-8">
-				<md-paginator
+				<mat-paginator
 					[length]="filteredAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
 					[pageIndex]="pageEvent.pageIndex"
 					(page)="changePage($event)">
-				</md-paginator>
+				</mat-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
 						<th (click)="sort('name')">
@@ -162,22 +162,22 @@
 						</td>
 					</tr>
 				</table>
-				<md-paginator
+				<mat-paginator
 					[length]="filteredAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
 					[pageIndex]="pageEvent.pageIndex"
 					(page)="changePage($event)">
-				</md-paginator>
+				</mat-paginator>
 			</div>
 			<div class="col-md-4">
-				<md-paginator
+				<mat-paginator
 					[length]="selectedAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
 					[pageIndex]="pageEventSecondary.pageIndex"
 					(page)="changePage($event, true)">
-				</md-paginator>
+				</mat-paginator>
 				<table class="table table-striped row">
 					<tr class="row">
 						<th>Item</th>
@@ -212,13 +212,13 @@
 						<td>{{ a.quantity }}</td>
 					</tr>
 				</table>
-				<md-paginator
+				<mat-paginator
 					[length]="selectedAuctions.length"
 					[pageSize]="page.pageSize"
 					[pageSizeOptions]="page.pageSizeOptions"
 					[pageIndex]="pageEventSecondary.pageIndex"
 					(page)="changePage($event, true)">
-				</md-paginator>
+				</mat-paginator>
 			</div>
 		</div>
 	</div>

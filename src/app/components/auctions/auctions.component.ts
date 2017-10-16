@@ -102,12 +102,15 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	/**
 	 * Used to clear the search filters
 	 */
-	clearFilters(): void {
+	resetFilters(): void {
 		this.pageEvent.pageIndex = 0;
+		this.filterForm.reset();
 		this.filterForm.value['searchQuery'] = '';
 		this.filterForm.value['filterByCharacter'] = false;
 		this.filterForm.value['itemClass'] = '-1';
 		this.filterForm.value['itemSubClass'] = '-1';
+
+		this.filterAuctions();
 		ga('send', {
 			hitType: 'event',
 			eventCategory: 'Auctions',
