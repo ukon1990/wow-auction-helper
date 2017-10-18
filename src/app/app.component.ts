@@ -3,12 +3,15 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item';
-import { user, lists, getPet, db, setRecipesForCharacter } from './utils/globals';
+import { user, lists, db, setRecipesForCharacter } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import { GoldPipe } from './pipes/gold.pipe';
 import Push from 'push.js';
 import { Notification } from './utils/notification';
 import Crafting from './utils/crafting';
+import Pets from './utils/pets';
+import Auctions from './utils/auctions';
+import { Item } from './utils/item';
 
 declare const  ga: Function;
 
@@ -62,7 +65,6 @@ export class AppComponent implements OnInit {
 
 	async ngOnInit() {
 
-		await Crafting.getRecipes(this.itemService);
 		this.date = new Date();
 		if (this.isRealmSet()) {
 			// Loading user settings
@@ -201,7 +203,7 @@ export class AppComponent implements OnInit {
 					console.log('TSM done');
 
 					if (user.apiToUse === 'tsm') {
-						this.downloadPets();
+						// TODO: this.downloadPets();
 					}
 				} else {
 					console.log('Loaded TSM from local DB');
@@ -213,7 +215,7 @@ export class AppComponent implements OnInit {
 						});
 
 					if (user.apiToUse === 'tsm') {
-						this.downloadPets();
+						// TODO: this.downloadPets();
 					}
 				}
 			} else if (
@@ -230,7 +232,7 @@ export class AppComponent implements OnInit {
 						});
 
 						if (user.apiToUse === 'wowuction') {
-							this.downloadPets();
+							// TODO: this.downloadPets();
 						}
 					});
 				} else {
@@ -241,269 +243,25 @@ export class AppComponent implements OnInit {
 						});
 
 						if (user.apiToUse === 'wowuction') {
-							this.downloadPets();
+							// TODO: this.downloadPets();
 						}
 					});
 				}
 			} else {
-				this.downloadPets();
+				// TODO: this.downloadPets();
 			}
+
+			await Crafting.download(this.itemService);
+			await Pets.download(this.itemService);
+			await Item.download(this.itemService);
+			await Auctions.checkForUpdates(this.auctionService);
+			await Auctions.download(this.auctionService, this.router);
 			setInterval(() => this.checkForUpdate(), 60000);
 
 			if (localStorage.getItem('custom_prices') !== null) {
 				lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
 			}
 		}
-	}
-
-	downloadPets() {
-		try {
-			console.log('pets');
-			db.table('pets').toArray().then(pets => {
-				if (pets.length > 0) {
-					this.buildPetArray(pets);
-					this.downloadItems();
-				} else {
-					this.downloadingText = 'Downloading pets';
-					lists.isDownloading = true;
-					this.itemService.getPets()
-						.subscribe(p => {
-							lists.isDownloading = false;
-							this.buildPetArray(p);
-							this.downloadItems();
-						}, error => {
-							this.downloadingText = '';
-							console.log('Unable to download pets:', error);
-							lists.isDownloading = false;
-						});
-				}
-			});
-		} catch (error) {
-			console.log('Failed loading pets', error);
-		}
-	}
-
-	downloadItems() {
-		try {
-			lists.isDownloading = true;
-			this.downloadingText = 'Downloading items';
-			// Attempting to get from local storage
-			if (
-				localStorage.getItem('timestamp_items') === null ||
-				localStorage.getItem('timestamp_items') === undefined ||
-				localStorage.getItem('timestamp_items') !== new Date().toDateString()) {
-				// The db was empty so we're downloading
-				this.itemService.getItems()
-					.subscribe(iDL => {
-						lists.isDownloading = false;
-						this.buildItemArray(iDL);
-					});
-			} else {
-				db.table('items').toArray().then(i => {
-					if (i.length > 0) {
-						lists.isDownloading = false;
-						lists.itemsArray = i;
-						this.buildItemArray(i);
-					} else {
-						// The db was empty so we're downloading
-						this.itemService.getItems()
-							.subscribe(iDL => {
-								lists.isDownloading = false;
-								this.buildItemArray(iDL);
-							});
-					}
-				});
-			}
-
-		} catch (err) {
-			this.downloadingText = 'Failed at downloading items';
-			console.log('Failed at loading items', err);
-			lists.isDownloading = false;
-		}
-	}
-
-	buildItemArray(arr) {
-		if (lists.items === undefined) {
-			lists.items = [];
-		}
-
-		for (const i of arr) {
-			lists.items[i['id']] = i;
-		}
-		try {
-			this.getAuctions();
-		} catch (err) {
-			console.log('Failed at loading auctions', err);
-		}
-	}
-
-	public getAuctions(): void {
-		if (!lists.isDownloading) {
-			lists.isDownloading = true;
-			this.downloadingText = 'Checking for new auctions';
-
-			this.downloadingText = 'Loading auctions from local storage';
-			console.log('Loading auctions from local storage.');
-			db.table('auctions').toArray().then(
-				result => {
-					this.downloadingText = '';
-					if (result.length > 0) {
-						this.buildAuctionArray(result);
-					} else {
-						localStorage.setItem('timestamp_auctions', '0');
-						this.getAuctions();
-					}
-				});
-
-			console.log('Checking for new auction data');
-			this.downloadingText = 'Checking for new auction data';
-			this.auctionService.getLastUpdated().subscribe(r => {
-				if (parseInt(localStorage.getItem('timestamp_auctions'), 10) !== r['lastModified']) {
-					console.log('Downloading auctions');
-					this.downloadingText = 'Downloading auctions, this might take a while';
-					this.auctionObserver = this.auctionService.getAuctions(r['url'].replace('\\', ''), r['lastModified'])
-						.subscribe(a => {
-							this.downloadingText = '';
-							this.buildAuctionArray(a.auctions);
-						}, error => {
-						this.downloadingText = 'Could not download auctions at this time';
-							setTimeout(() => {
-								this.downloadingText = '';
-							}, 5000);
-							lists.isDownloading = false;
-							console.log('Could not download auctions at this time', error);
-						});
-				}
-			});
-		}
-	}
-
-	buildAuctionArray(arr) {
-		let undercuttedAuctions = 0;
-		const list = [], itemsBelowVendor = {quantity: 0, totalValue: 0};
-
-		lists.myAuctions = [];
-		for (const o of arr) {
-			if (o['buyout'] === 0) {
-				continue;
-			}
-
-			// TODO: this.numberOfAuctions++;
-			if (lists.items[o.item] === undefined) {
-				lists.items[o.item] = { 'id': o.item, 'name': 'Loading', 'icon': '' };
-				o['name'] = 'Loading';
-				this.getItem(o.item);
-			} else {
-				o['name'] = lists.items[o.item].name;
-			}
-			try {
-				if (o.petSpeciesId !== undefined) {
-					if (lists.pets[o.petSpeciesId] === null || lists.pets[o.petSpeciesId] === undefined) {
-						getPet(o.petSpeciesId, this.itemService);
-					}
-					o['name'] = this.getItemName(o);
-				}
-			} catch (e) { console.log(e); }
-
-			if (user.apiToUse === 'wowuction' && lists.wowuction[o.item] !== undefined) {
-				o['estDemand'] = Math.round(lists.wowuction[o.item]['estDemand'] * 100) || 0;
-				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['avgDailySold']) || 0;
-				o['avgDailyPosted'] = parseFloat(lists.wowuction[o.item]['avgDailyPosted']) || 0;
-				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
-
-			} else if (user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
-				try {
-					o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
-					o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
-					o['avgDailyPosted'] = Math.round(
-						(parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) / parseFloat(lists.tsm[o.item]['RegionSaleRate'])) * 100) / 100 || 0;
-					o['mktPrice'] = lists.tsm[o.item]['MarketValue'] || 0;
-					o['regionSaleAvg'] = lists.tsm[o.item].RegionSaleAvg;
-					o['vendorSell'] = lists.tsm[o.item].VendorSell;
-				} catch (err) {
-					console.log(err);
-				}
-
-			} else {
-				o['estDemand'] = 0;
-				o['avgDailySold'] = 0;
-				o['avgDailyPosted'] = 0;
-				o['mktPrice'] = 0;
-			}
-
-			if (list[o.item] !== undefined) {
-
-				list[o.item]['auctions'].push({
-					'item': o.item, 'name': o.name, 'petSpeciesId': o.petSpeciesId,
-					'owner': o.owner, 'ownerRealm': o.ownerRealm,
-					'buyout': o.buyout, 'quantity': o.quantity,
-					'bid': o.bid
-				});
-				list[o.item]['quantity_total'] += o['quantity'];
-
-				if (list[o.item]['buyout'] > o['buyout'] / o['quantity']) {
-
-					list[o.item]['buyout'] = o['buyout'] / o['quantity'];
-					list[o.item]['bid'] = o['bid'] / o['quantity'];
-					list[o.item]['owner'] = o['owner'];
-				} else if (list[o.item]['buyout'] / list[o.item]['auctions'][list[o.item]['auc']] ===
-					o['buyout'] / o['quantity'] &&
-					list[o.item]['owner'] !== o['owner']) {
-					list[o.item]['owner'] += ', ' + o['owner'];
-				}
-			} else {
-				o['quantity_total'] = o['quantity'];
-				list[o.item] = o;
-				list[o.item]['auctions'] = [];
-				list[o.item]['auctions'].push({
-					'item': o.item, 'name': o.name, 'petSpeciesId': o.petSpeciesId,
-					'owner': o.owner, 'ownerRealm': o.ownerRealm,
-					'buyout': o.buyout, 'quantity': o.quantity,
-					'bid': o.bid
-				});
-			}
-
-			// Storing a users auctions in a list
-			if (user.character !== undefined) {
-				if (o.owner === user.character) {
-					if (lists.myAuctions === undefined) {
-						lists.myAuctions = [];
-					}
-					lists.myAuctions.push(o);
-				}
-			}
-			// Gathering data for auctions below vendor price
-			if (user.notifications.isBelowVendorSell && lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
-				itemsBelowVendor.quantity++;
-				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
-			}
-			// TODO: this.addToContextList(o);
-		}
-		if (user.notifications.isBelowVendorSell && itemsBelowVendor.quantity > 0) {
-			Notification.send(
-				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
-				`Potential profit: ${new GoldPipe().transform(itemsBelowVendor.totalValue)}`, this.router, 'auctions');
-		}
-
-		if (user.notifications.isUndercutted && user.character !== undefined) {
-			// Notifying the user if they have been undercutted or not
-			lists.myAuctions.forEach(a => {
-				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== user.character) {
-					undercuttedAuctions++;
-					console.log(`${lists.auctions[a.item].owner} !== ${user.character}`);
-				}
-
-			});
-			if (undercuttedAuctions > 0) {
-				Notification.send(
-					'You have been undercutted!',
-					`${undercuttedAuctions} of your ${lists.myAuctions.length} auctions have been undercutted.`, this.router, 'my-auctions');
-			}
-		}
-
-		lists.auctions = list;
-		Crafting.getCraftingCosts(this.router);
-		lists.isDownloading = false;
 	}
 
 	attemptDownloadOfMissingRecipes(list): void {
@@ -515,21 +273,6 @@ export class AppComponent implements OnInit {
 		});
 	}
 
-	getItemName(auction): string {
-		const itemID = auction.item;
-		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = getPet(auction.petSpeciesId, this.itemService).name + ' @' + auction.petLevel;
-			return auction['name'];
-		} else {
-			if (lists.items[itemID] !== undefined) {
-				if (lists.items[itemID]['name'] === 'Loading') {
-					this.getItem(itemID);
-				}
-				return lists.items[itemID]['name'];
-			}
-		}
-		return 'no item data';
-	}
 
 	getSize(list): number {
 		let count = 0;
@@ -547,14 +290,6 @@ export class AppComponent implements OnInit {
 			});
 	}
 
-	buildPetArray(pets) {
-		const list = [];
-		pets.forEach(p => {
-			list[p.speciesId] = p;
-		});
-		lists.pets = list;
-	}
-
 	setTimeSinceLastModified() {
 		this.date = new Date();
 
@@ -566,7 +301,7 @@ export class AppComponent implements OnInit {
 			if (user.notifications.isUpdateAvailable) {
 				Notification.send('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`, this.router);
 			}
-			this.getAuctions();
+			Auctions.download(this.auctionService, this.router);
 		}
 
 		this.timeSinceLastModified = this.timeDiff(updateTime, currentTime);
@@ -595,7 +330,7 @@ export class AppComponent implements OnInit {
 		console.log('checking for update');
 		if (this.isRealmSet()) {
 			this.auctionService.getLastUpdated()
-				.subscribe(r => {
+				.then(r => {
 					this.lastModified = r['lastModified'];
 					this.setTimeSinceLastModified();
 				});

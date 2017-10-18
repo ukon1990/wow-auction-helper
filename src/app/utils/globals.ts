@@ -106,24 +106,6 @@ function getCorrectBuyValue(item: any, isSoldByVendor): number {
 	return cost;
 }
 
-export function getPet(speciesId, itemService) {
-	if (lists.pets[speciesId] === undefined) {
-		lists.pets[speciesId] = {
-			'speciesId': speciesId,
-			'petTypeId': 0,
-			'creatureId': 54730,
-			'name': 'Loading',
-			'icon': 'spell_shadow_summonimp',
-		};
-		itemService.getPet(speciesId).subscribe(
-			r => {
-				lists.pets[speciesId] = r;
-			}
-		);
-	}
-	return lists.pets[speciesId];
-}
-
 /**
  * Used to get the icon url for a given item or pet.
  * @param  {Auction or Item} auction It takes a auction or Item object.

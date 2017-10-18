@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/toPromise';
 import { IAuction, IPet, IUser, IItem } from '../utils/interfaces';
 import { user, DB_TABLES, db } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 
 declare var $: any;
 
@@ -43,7 +43,7 @@ export class ItemService {
 			} (response));
 	}
 
-	getItems() {
+	getItems(): Promise<any> {
 		const apiUrl = 'http://wah.jonaskf.net/GetItems.php',
 			localUrl = '/assets/GetItems.json';
 
@@ -54,20 +54,20 @@ export class ItemService {
 				localStorage.setItem('timestamp_items', new Date().toDateString());
 				console.log('Item download completed');
 				return r;
-			} (response['items']));
+			} (response['items'])).toPromise();
 	}
 
-	getPets() {
+	getPets(): Promise<any> {
 		console.log('Loading pets');
 		const apiUrl = 'http://wah.jonaskf.net/GetSpecies.php',
 			localUrl = '/assets/GetSpecies.json';
 
-		return this.http.get(this.getUrl(apiUrl, localUrl))
+		return this.httpClient.get(this.getUrl(apiUrl, localUrl))
 			.map(response => <Object>function(r) {
 				console.log('Loaded pets');
 				db.table('pets').bulkPut(r);
 				return r;
-			} (response.json().pets));
+			} (response['pets'])).toPromise();
 	}
 
 	getRecipeByItem(itemID): any {

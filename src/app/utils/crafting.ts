@@ -5,7 +5,7 @@ import { ItemService } from '../services/item';
 
 export default class Crafting {
 
-	public static getRecipes(itemService: ItemService): Promise<any> {
+	public static download(itemService: ItemService): Promise<any> {
 		return itemService.getRecipes()
 			.then(recipe => {
 				if (lists.recipes === undefined) {

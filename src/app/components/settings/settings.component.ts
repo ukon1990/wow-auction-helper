@@ -9,6 +9,8 @@ import { IUser } from '../../utils/interfaces';
 import { user, lists, db, setRecipesForCharacter } from '../../utils/globals';
 import Crafting from '../../utils/crafting';
 import { Router } from '@angular/router';
+import Auctions from '../../utils/auctions';
+import { ItemService } from '../../services/item';
 
 declare const ga: Function;
 @Component({
@@ -41,8 +43,10 @@ export class SettingsComponent implements OnInit {
 		{name: 'Notifications', path: 'notifications'}
 	];
 
-	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder, private router: Router,
-		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
+	constructor(private ac: AppComponent, private titleService: Title,
+		private formBuilder: FormBuilder, private router: Router,
+		private rs: RealmService, private auctionService: AuctionService,
+		private characterService: CharacterService, private itemService: ItemService) {
 		this.user = user;
 		this.customPriceForm = formBuilder.group({
 			'query': ''
@@ -180,7 +184,7 @@ export class SettingsComponent implements OnInit {
 				});
 				// Downloading the auctions
 				localStorage.setItem('timestamp_auctions', '0');
-				this.downloadAuctions();
+				Auctions.download(this.auctionService, this.router);
 			}, err => {
 				console.log(err);
 			});
@@ -190,7 +194,7 @@ export class SettingsComponent implements OnInit {
 				result.forEach( r => {
 					lists.tsm[r.Id] = r;
 					db.table('auctions').toArray().then(a => {
-						this.ac.buildAuctionArray(a);
+						Auctions.buildAuctionArray(a, this.router);
 					});
 				});
 			}, err => {
@@ -198,7 +202,7 @@ export class SettingsComponent implements OnInit {
 			});
 		} else {
 			db.table('auctions').toArray().then(a => {
-				this.ac.buildAuctionArray(a);
+				Auctions.buildAuctionArray(a, this.router);
 			});
 		}
 
@@ -263,10 +267,6 @@ export class SettingsComponent implements OnInit {
 			eventLabel: `Darkmode: ${this.darkMode}`
 		});
 		location.reload();
-	}
-
-	downloadAuctions() {
-		this.ac.getAuctions();
 	}
 
 	addCustomPrice(item: any): void {
