@@ -19,9 +19,9 @@ import { AboutComponent } from './components/about/about.component';
 import { TradeVendorComponent } from './components/trade_vendor/trade.vendor.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
-import { AuctionService } from './services/auctions';
+import { AuctionService } from './services/auctions.service';
 import { CharacterService } from './services/character.service';
-import { ItemService } from './services/item';
+import { ItemService } from './services/item.service';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { NewsComponent } from './components/news/news.component';
 import { GoldPipe } from './pipes/gold.pipe';
@@ -31,6 +31,7 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 import { ShuffleComponent } from './components/shuffle/shuffle.component';
 import { HeaderComponent } from './components/header/header.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
+import { RealmService } from './services/realm.service';
 
 @NgModule({
 	declarations: [
@@ -99,6 +100,7 @@ import { AutocompleteComponent } from './components/autocomplete/autocomplete.co
 		CharacterService,
 		FileService,
 		ItemService,
+		RealmService,
 		Title,
 		Location],
 	bootstrap: [AppComponent]

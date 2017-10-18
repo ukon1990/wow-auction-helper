@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AppComponent } from '../../app.component';
-import { RealmService } from '../../services/realm';
-import { AuctionService } from '../../services/auctions';
+import { RealmService } from '../../services/realm.service';
+import { AuctionService } from '../../services/auctions.service';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
@@ -10,14 +10,13 @@ import { user, lists, db, setRecipesForCharacter } from '../../utils/globals';
 import Crafting from '../../utils/crafting';
 import { Router } from '@angular/router';
 import Auctions from '../../utils/auctions';
-import { ItemService } from '../../services/item';
+import { ItemService } from '../../services/item.service';
 
 declare const ga: Function;
 @Component({
 	selector: 'app-settings',
 	templateUrl: 'settings.component.html',
-	styleUrls: ['../../app.component.css'],
-	providers: [RealmService, AuctionService]
+	styleUrls: ['../../app.component.css']
 })
 export class SettingsComponent implements OnInit {
 	user: IUser;

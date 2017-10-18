@@ -2,8 +2,8 @@ import { lists, user, db } from './globals';
 import Crafting from './crafting';
 import { Notification } from './notification';
 import { Router } from '@angular/router';
-import { AuctionService } from '../services/auctions';
-import { ItemService } from '../services/item';
+import { AuctionService } from '../services/auctions.service';
+import { ItemService } from '../services/item.service';
 import { GoldPipe } from '../pipes/gold.pipe';
 import Pets from '../utils/pets';
 

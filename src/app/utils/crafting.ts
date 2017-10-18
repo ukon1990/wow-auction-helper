@@ -1,7 +1,7 @@
 import { lists, user } from './globals';
 import { Notification } from './notification';
 import { Router } from '@angular/router';
-import { ItemService } from '../services/item';
+import { ItemService } from '../services/item.service';
 
 export default class Crafting {
 

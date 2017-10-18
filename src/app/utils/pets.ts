@@ -1,5 +1,6 @@
 import { db, lists } from './globals';
-import { ItemService } from '../services/item';
+import { ItemService } from '../services/item.service';
+
 export default class Pets {
 		public static download(itemService: ItemService): Promise<any> {
 		console.log('pets');

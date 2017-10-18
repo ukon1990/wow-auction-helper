@@ -1,5 +1,5 @@
 import { lists, db } from './globals';
-import { ItemService } from '../services/item';
+import { ItemService } from '../services/item.service';
 import Dexie from 'dexie';
 
 export class Item {

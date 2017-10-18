@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
 import { user, lists } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
-import { ItemService } from '../../services/item';
+import { ItemService } from '../../services/item.service';
 import { Title } from '@angular/platform-browser';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { Disenchanting } from '../../utils/disenchanting';

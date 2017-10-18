@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { Router } from '@angular/router';
 import { ParentAuctionComponent } from './parent.auctions.component';
-import { AuctionService } from '../../services/auctions';
-import { ItemService } from '../../services/item';
+import { AuctionService } from '../../services/auctions.service';
+import { ItemService } from '../../services/item.service';
 import { Title } from '@angular/platform-browser';
 
 import { user, lists, db } from '../../utils/globals';

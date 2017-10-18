@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
-import { AuctionService } from './services/auctions';
+import { AuctionService } from './services/auctions.service';
 import { CharacterService } from './services/character.service';
-import { ItemService } from './services/item';
+import { ItemService } from './services/item.service';
 import { user, lists, db, setRecipesForCharacter } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import { GoldPipe } from './pipes/gold.pipe';
