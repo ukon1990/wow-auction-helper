@@ -1,7 +1,7 @@
 import { db, lists } from './globals';
 import { ItemService } from '../services/item';
 export default class Pets {
-	public static download(itemService: ItemService): Promise<any> {
+		public static download(itemService: ItemService): Promise<any> {
 		console.log('pets');
 		return itemService.getPets()
 			.then(p => {
@@ -24,6 +24,10 @@ export default class Pets {
 
 			}
 		});*/
+	}
+
+	public static getPet(speciesId: number): any {
+		return lists.pets[speciesId];
 	}
 
 	private static buildPetArray(pets) {

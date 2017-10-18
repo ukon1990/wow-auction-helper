@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
-import { user, lists, getPet } from '../../utils/globals';
+import { user, lists } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { ItemService } from '../../services/item';
 import { Title } from '@angular/platform-browser';

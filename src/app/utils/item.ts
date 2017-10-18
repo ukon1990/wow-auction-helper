@@ -51,7 +51,6 @@ export class Item {
 						lists.isDownloading = false;
 						lists.itemsArray = i;
 						this.buildItemArray(i);
-						return new Promise( r => {});
 					} else {
 						// The db was empty so we're downloading
 						return itemService.getItems()
