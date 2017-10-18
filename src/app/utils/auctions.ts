@@ -29,46 +29,27 @@ export default class {
 
 	public static download(auctionService: AuctionService, router: Router): Promise<any> {
 		lists.isDownloading = true;
-		/* TODO: Check for potential issues
-		db.table('auctions').toArray().then(
-			result => {
-				// this.downloadingText = '';
-				if (result.length > 0) {
-					this.buildAuctionArray(result, router);
-				} else {
-					localStorage.setItem('timestamp_auctions', '0');
-					this.getAuctions(auctionService, router);
-				}
-			});*/
 		console.log('Downloading auctions');
 		if (!this.updateAvailable) {
-			return auctionService.getAuctions(this.url, this.lastModified)
-			.then(a => {
-				// this.downloadingText = '';
-				this.buildAuctionArray(a.auctions, router);
-			}).catch(error => {
-				// this.downloadingText = 'Could not download auctions at this time';
-				setTimeout(() => {
-					// this.downloadingText = '';
-				}, 5000);
-				lists.isDownloading = false;
-				console.log('Could not download auctions at this time', error);
-			});
-			/*
-			return new Promise(resolve => {
-				resolve([]);
-			});*/
+			return db.table('auctions').toArray().then(
+				result => {
+					if (result.length > 0) {
+						this.buildAuctionArray(result, router);
+					} else {
+						localStorage.setItem('timestamp_auctions', '0');
+						return this.downloadFromAPI(auctionService, router);
+					}
+				});
 		}
 
+		return this.downloadFromAPI(auctionService, router);
+	}
+
+	private static downloadFromAPI(auctionService: AuctionService, router: Router): Promise<any> {
 		return auctionService.getAuctions(this.url, this.lastModified)
 			.then(a => {
-				// this.downloadingText = '';
 				this.buildAuctionArray(a.auctions, router);
 			}).catch(error => {
-				// this.downloadingText = 'Could not download auctions at this time';
-				setTimeout(() => {
-					// this.downloadingText = '';
-				}, 5000);
 				lists.isDownloading = false;
 				console.log('Could not download auctions at this time', error);
 			});
