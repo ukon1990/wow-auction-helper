@@ -38,28 +38,28 @@ export class Item {
 			localStorage.getItem('timestamp_items') === null ||
 			localStorage.getItem('timestamp_items') === undefined ||
 			localStorage.getItem('timestamp_items') !== new Date().toDateString()) {
+			console.log('Downloading fresh item Data to local DB');
 			// The db was empty so we're downloading
 			return itemService.getItems()
 				.then(iDL => {
 					lists.isDownloading = false;
 					this.buildItemArray(iDL);
-				});
+				}).catch(error => console.error('Failed at downloading items', error));
 		} else {
-			return new Promise( resolve => {
-				return db.table('items').toArray().then(i => {
-					if (i.length > 0) {
-						lists.isDownloading = false;
-						lists.itemsArray = i;
-						this.buildItemArray(i);
-					} else {
-						// The db was empty so we're downloading
-						return itemService.getItems()
-							.then(iDL => {
-								lists.isDownloading = false;
-								this.buildItemArray(iDL);
-							});
-					}
-				});
+			console.log('Loading items from local DB');
+			return db.table('items').toArray().then(i => {
+				if (i.length > 0) {
+					lists.isDownloading = false;
+					lists.itemsArray = i;
+					this.buildItemArray(i);
+				} else {
+					// The db was empty so we're downloading
+					return itemService.getItems()
+						.then(iDL => {
+							lists.isDownloading = false;
+							this.buildItemArray(iDL);
+						});
+				}
 			});
 		}
 	}

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AuctionService } from '../services/auctions.service';
 import { ItemService } from '../services/item.service';
 import { GoldPipe } from '../pipes/gold.pipe';
-import Pets from '../utils/pets';
+import Pets from './pets';
 
 export default class {
 	private static url: string;
@@ -13,8 +13,8 @@ export default class {
 	private static updateAvailable: boolean;
 
 	public static checkForUpdates(auctionService: AuctionService): Promise<any> {
+		console.log('Checking for auction updates');
 		return auctionService.getLastUpdated().then(r => {
-			console.log('Checking for auction updates');
 			this.lastModified = r['lastModified'];
 			this.url = r['url'].replace('\\', '');
 
@@ -23,6 +23,7 @@ export default class {
 			} else {
 				this.updateAvailable = false;
 			}
+			console.log(`Update available: ${this.updateAvailable}`);
 		});
 	}
 
@@ -204,7 +205,7 @@ export default class {
 	private static getItemName(auction): string {
 		const itemID = auction.item;
 		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = Pets.getPet(auction.petSpeciesIde).name + ' @' + auction.petLevel;
+			auction['name'] = Pets.getPet(auction.petSpeciesId).name + ' @' + auction.petLevel;
 			return auction['name'];
 		} else {
 			if (lists.items[itemID] !== undefined) {

@@ -8,10 +8,8 @@ export default class Pets {
 			.then(p => {
 				lists.isDownloading = false;
 				this.buildPetArray(p);
-			}, error => {
-				// this.downloadingText = '';
-				console.log('Unable to download pets:', error);
-				lists.isDownloading = false;
+			}).catch(error => {
+				console.error('Failed at downloading pets', error);
 			});
 
 		/*
@@ -28,7 +26,10 @@ export default class Pets {
 	}
 
 	public static getPet(speciesId: number): any {
-		return lists.pets[speciesId];
+		if (lists.pets[speciesId]) {
+			return lists.pets[speciesId];
+		}
+		return {name: 'Unknown pet'};
 	}
 
 	private static buildPetArray(pets) {
