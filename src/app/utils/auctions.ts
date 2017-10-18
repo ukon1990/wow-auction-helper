@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuctionService } from '../services/auctions';
 import { ItemService } from '../services/item';
 import { GoldPipe } from '../pipes/gold.pipe';
+import Pets from '../utils/pets';
 
 export default class {
 	private static url: string;
@@ -40,9 +41,22 @@ export default class {
 			});*/
 		console.log('Downloading auctions');
 		if (!this.updateAvailable) {
+			return auctionService.getAuctions(this.url, this.lastModified)
+			.then(a => {
+				// this.downloadingText = '';
+				this.buildAuctionArray(a.auctions, router);
+			}).catch(error => {
+				// this.downloadingText = 'Could not download auctions at this time';
+				setTimeout(() => {
+					// this.downloadingText = '';
+				}, 5000);
+				lists.isDownloading = false;
+				console.log('Could not download auctions at this time', error);
+			});
+			/*
 			return new Promise(resolve => {
 				resolve([]);
-			});
+			});*/
 		}
 
 		return auctionService.getAuctions(this.url, this.lastModified)
@@ -190,7 +204,7 @@ export default class {
 	private static getItemName(auction): string {
 		const itemID = auction.item;
 		if (auction.petSpeciesId !== undefined) {
-			auction['name'] = 'hei'; // getPet(auction.petSpeciesId, this.itemService).name + ' @' + auction.petLevel;
+			auction['name'] = Pets.getPet(auction.petSpeciesIde).name + ' @' + auction.petLevel;
 			return auction['name'];
 		} else {
 			if (lists.items[itemID] !== undefined) {
