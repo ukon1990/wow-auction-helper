@@ -1,0 +1,13 @@
+.dl-dropdown {
+    top: 2em;
+    right: 1em;
+    width: auto;
+    background-color: pink;
+
+    display: none;
+    position: absolute;
+}
+
+.dl-dropdown.show {
+    display: block;
+}

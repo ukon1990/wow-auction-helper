@@ -32,6 +32,7 @@ import { ShuffleComponent } from './components/shuffle/shuffle.component';
 import { HeaderComponent } from './components/header/header.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { RealmService } from './services/realm.service';
+import { DownloadsComponent } from './components/downloads/downloads.component';
 
 @NgModule({
 	declarations: [
@@ -52,7 +53,8 @@ import { RealmService } from './services/realm.service';
 		ShuffleComponent,
 		HeaderComponent,
 		GoldPipe,
-		AutocompleteComponent
+		AutocompleteComponent,
+		DownloadsComponent
 	],
 	imports: [
 		BrowserModule,
