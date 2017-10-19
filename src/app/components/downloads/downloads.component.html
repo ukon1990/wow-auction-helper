@@ -10,10 +10,20 @@
   </div>
 </div>
 
-<div class="dl-dropdown col-md-12" [ngClass]="{'show': showDropdown}">
-  Items last updated: [date] <button class="btn btn-sm btn-default">Download now</button><br>
-  Pets last updated: [date] <button class="btn btn-sm btn-default">Download now</button><br>
-  Recipes last updated: [date] <button class="btn btn-sm btn-default">Download now</button><br>
-  Auctions last updated: [date] <button class="btn btn-sm btn-default">Download now</button><br>
-  TSM last updated: [date]
+<div class="dl-dropdown p-1 row" [ngClass]="{'show': showDropdown}">
+  <div class="col-md-12">
+      Items last updated: [date] <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      Pets last updated: [date] <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      Recipes last updated: [date] <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      Auctions last updated: [date] <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      TSM last updated: [date] <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
 </div>

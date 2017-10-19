@@ -1,7 +1,6 @@
 .dl-dropdown {
     top: 2em;
-    right: 1em;
-    width: auto;
+    right: 50px; /*TODO: To EM?*/
     background-color: pink;
 
     display: none;
