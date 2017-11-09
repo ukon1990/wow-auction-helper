@@ -1,6 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+.navbar-right {
+    padding-right: 2em;
+    margin-top: 1em;
+}
+
 .mat-paginator {
     background-color: transparent !important;
 }
