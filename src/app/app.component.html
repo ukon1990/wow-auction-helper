@@ -1,13 +1,7 @@
 <!-- The app's news feed -->
 <app-news></app-news>
 <!-- The app -->
-<app-header
-  [isRealmSet]="isRealmSet"
-  [exists]="exists"
-  [isCharacterSet]="isCharacterSet"
-  [isSmallWindow]="isSmallWindow"
-  [downloadingText]="downloadingText"
-  [timeSinceLastModified]="timeSinceLastModified">
+<app-header>
 </app-header>
 <div class="col-md-12 center mt-5">
   <router-outlet></router-outlet>

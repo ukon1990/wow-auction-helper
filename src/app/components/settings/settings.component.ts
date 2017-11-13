@@ -11,6 +11,7 @@ import Crafting from '../../utils/crafting';
 import { Router } from '@angular/router';
 import Auctions from '../../utils/auctions';
 import { ItemService } from '../../services/item.service';
+import { DownloadsComponent } from 'app/components/downloads/downloads.component';
 
 declare const ga: Function;
 @Component({
@@ -42,7 +43,7 @@ export class SettingsComponent implements OnInit {
 		{name: 'Notifications', path: 'notifications'}
 	];
 
-	constructor(private ac: AppComponent, private titleService: Title,
+	constructor(private downloadComponent: DownloadsComponent, private titleService: Title,
 		private formBuilder: FormBuilder, private router: Router,
 		private rs: RealmService, private auctionService: AuctionService,
 		private characterService: CharacterService, private itemService: ItemService) {
@@ -176,7 +177,7 @@ export class SettingsComponent implements OnInit {
 				this.originalRealm + ' and new realm is ' +
 				this.user.realm + '. Downloading new auction data.');
 
-			this.ac.downloadingText = 'Downloading TSM data for the new realm';
+			this.downloadComponent.downloadingText = 'Downloading TSM data for the new realm';
 			this.auctionService.getTSMData().subscribe(result => {
 				result.forEach( r => {
 					lists.tsm[r.Id] = r;
@@ -188,7 +189,7 @@ export class SettingsComponent implements OnInit {
 				console.log(err);
 			});
 		} else if (oldTSMKey !== localStorage.getItem('api_tsm')) {
-			this.ac.downloadingText = 'Downloading TSM data for the new realm';
+			this.downloadComponent.downloadingText = 'Downloading TSM data for the new realm';
 			this.auctionService.getTSMData().subscribe(result => {
 				result.forEach( r => {
 					lists.tsm[r.Id] = r;
