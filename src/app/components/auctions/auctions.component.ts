@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { Router } from '@angular/router';
 import { ParentAuctionComponent } from './parent.auctions.component';
-import { AuctionService } from '../../services/auctions';
-import { ItemService } from '../../services/item';
+import { AuctionService } from '../../services/auctions.service';
+import { ItemService } from '../../services/item.service';
 import { Title } from '@angular/platform-browser';
 
-import { user, lists, getPet, db } from '../../utils/globals';
+import { user, lists, db } from '../../utils/globals';
+import Pets from '../../utils/pets';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { itemClasses } from '../../utils/objects';
 import { FileService } from '../../services/file.service';
@@ -78,8 +79,8 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	 * @param  {string} speciesId Retrieves a pet
 	 * @return {Pet}              Returns a pet object
 	 */
-	getPet(speciesId: string) {
-		return getPet(speciesId, this.itemService);
+	getPet(speciesId: number) {
+		return Pets.getPet(speciesId);
 	};
 
 	/**
@@ -129,8 +130,8 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 			onlyVendorSellable = this.filterForm.value['onlyVendorSellable'],
 			searchQuery = this.filterForm.value['searchQuery'];
 
-		let scanList,
-			petsAdded = {};
+		let scanList;
+		const petsAdded = {};
 
 		this.filter = {
 			'itemClass': this.filterForm.value['itemClass'],
@@ -163,13 +164,13 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 			scanList = lists.auctions;
 		}
 
-		for (let id in scanList) {
+		for (const id in scanList) {
 			if (scanList.hasOwnProperty(id)) {
 				let  match = true;
 				// Assigning auc ID to pets
 				if (scanList[id].item === 82800) {
 					try {
-						let auctionsForPet = [];
+						const auctionsForPet = [];
 						lists.auctions[82800].auctions.forEach(r => {
 							if (r.petSpeciesId !== undefined && r.petSpeciesId === scanList[id].petSpeciesId) {
 								auctionsForPet.push(r);

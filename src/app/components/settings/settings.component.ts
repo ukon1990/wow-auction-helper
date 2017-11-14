@@ -1,19 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AppComponent } from '../../app.component';
-import { RealmService } from '../../services/realm';
-import { AuctionService } from '../../services/auctions';
+import { RealmService } from '../../services/realm.service';
+import { AuctionService } from '../../services/auctions.service';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, copperToString, db, setRecipesForCharacter } from '../../utils/globals';
+import { user, lists, db, setRecipesForCharacter } from '../../utils/globals';
+import Crafting from '../../utils/crafting';
+import { Router } from '@angular/router';
+import Auctions from '../../utils/auctions';
+import { ItemService } from '../../services/item.service';
+import { DownloadsComponent } from 'app/components/downloads/downloads.component';
 
 declare const ga: Function;
 @Component({
 	selector: 'app-settings',
 	templateUrl: 'settings.component.html',
-	styleUrls: ['../../app.component.css'],
-	providers: [RealmService, AuctionService]
+	styleUrls: ['../../app.component.css']
 })
 export class SettingsComponent implements OnInit {
 	user: IUser;
@@ -39,8 +43,10 @@ export class SettingsComponent implements OnInit {
 		{name: 'Notifications', path: 'notifications'}
 	];
 
-	constructor(private ac: AppComponent, private titleService: Title, private formBuilder: FormBuilder,
-		private rs: RealmService, private auctionService: AuctionService, private characterService: CharacterService) {
+	constructor(private downloadComponent: DownloadsComponent, private titleService: Title,
+		private formBuilder: FormBuilder, private router: Router,
+		private rs: RealmService, private auctionService: AuctionService,
+		private characterService: CharacterService, private itemService: ItemService) {
 		this.user = user;
 		this.customPriceForm = formBuilder.group({
 			'query': ''
@@ -162,7 +168,7 @@ export class SettingsComponent implements OnInit {
 		localStorage.setItem('custom_prices', JSON.stringify(lists.customPrices));
 
 		if (localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
-			this.ac.getCraftingCosts();
+			Crafting.getCraftingCosts(this.router);
 			localStorage.setItem('crafting_buyout_limit', this.user.buyoutLimit.toString());
 		}
 
@@ -171,24 +177,24 @@ export class SettingsComponent implements OnInit {
 				this.originalRealm + ' and new realm is ' +
 				this.user.realm + '. Downloading new auction data.');
 
-			this.ac.downloadingText = 'Downloading TSM data for the new realm';
+			this.downloadComponent.downloadingText = 'Downloading TSM data for the new realm';
 			this.auctionService.getTSMData().subscribe(result => {
 				result.forEach( r => {
 					lists.tsm[r.Id] = r;
 				});
 				// Downloading the auctions
 				localStorage.setItem('timestamp_auctions', '0');
-				this.downloadAuctions();
+				Auctions.download(this.auctionService, this.router);
 			}, err => {
 				console.log(err);
 			});
 		} else if (oldTSMKey !== localStorage.getItem('api_tsm')) {
-			this.ac.downloadingText = 'Downloading TSM data for the new realm';
+			this.downloadComponent.downloadingText = 'Downloading TSM data for the new realm';
 			this.auctionService.getTSMData().subscribe(result => {
 				result.forEach( r => {
 					lists.tsm[r.Id] = r;
 					db.table('auctions').toArray().then(a => {
-						this.ac.buildAuctionArray(a);
+						Auctions.buildAuctionArray(a, this.router);
 					});
 				});
 			}, err => {
@@ -196,7 +202,7 @@ export class SettingsComponent implements OnInit {
 			});
 		} else {
 			db.table('auctions').toArray().then(a => {
-				this.ac.buildAuctionArray(a);
+				Auctions.buildAuctionArray(a, this.router);
 			});
 		}
 
@@ -261,10 +267,6 @@ export class SettingsComponent implements OnInit {
 			eventLabel: `Darkmode: ${this.darkMode}`
 		});
 		location.reload();
-	}
-
-	downloadAuctions() {
-		this.ac.getAuctions();
 	}
 
 	addCustomPrice(item: any): void {
@@ -366,6 +368,4 @@ export class SettingsComponent implements OnInit {
 	selectTab(index: number) {
 		this.tabIndex = index;
 	}
-
-	copperToString = copperToString;
 }

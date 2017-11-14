@@ -1,21 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { IAuction } from '../utils/interfaces';
 import { user, DB_TABLES, db } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 
 declare var $;
 @Injectable()
 export class AuctionService {
 	private user;
-	constructor(private http: Http) {
+	constructor(private http: HttpClient) {
 		this.user = user;
 	}
 
-	getAuctions(url, timestamp) {
+	getAuctions(url, timestamp): Promise<any> {
 		url = 'http://wah.jonaskf.net/GetAuctions.php?url=' + url;
 		const localUrl = '/assets/auctions.json';
 		return this.http.get(this.getUrl(url, localUrl))
@@ -23,14 +25,14 @@ export class AuctionService {
 				console.log('Loaded auctions');
 				if (typeof r === 'object') {
 					db['auctions'].clear();
-					db['auctions'].bulkAdd(r.auctions);
+					db['auctions'].bulkAdd(r['auctions']);
 					console.log('Done storing auctions in object store');
 					localStorage.setItem('timestamp_auctions', timestamp);
 				}
 				return r;
-			}(response.json()), e => {
+			}(response), e => {
 				console.log('Unable to download "live" auctions', e);
-			});
+			}).toPromise();
 	}
 
 	getWoWuctionData() {
@@ -85,31 +87,27 @@ export class AuctionService {
 			+ '?fields=' + DB_TABLES.TSM_TABLE_COLUMNS + '&format=json&apiKey=' + localStorage.getItem('api_tsm');
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
-		.map(response => <any>function (r) {
-			console.log('Loaded TSM');
-			db['tsm'].clear();
-			db['tsm'].bulkAdd(r);
-			localStorage.setItem('timestamp_tsm', new Date().toDateString());
-			return r;
-		}(response.json()));
+			.map(response => <any>function (r) {
+				console.log('Loaded TSM');
+				db['tsm'].clear();
+				db['tsm'].bulkAdd(r);
+				localStorage.setItem('timestamp_tsm', new Date().toDateString());
+				return r;
+			}(response));
 	}
 
-	getLastUpdated() {
+	getLastUpdated(): Promise<any> {
 		const localUrl = '/assets/GetAuctionsLastModified.json',
-		apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
-			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
-		return this.http.get(this.getUrl(apiUrl, localUrl))
-			.map(response => <IAuction>function (r) {
-				console.log('API last updated ' + new Date(r.lastModified).toLocaleTimeString());
-				return r;
-			}(response.json()));
+			apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
+				+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
+		console.log('Getting last modified for auctions');
+		return this.http.get(this.getUrl(apiUrl, localUrl)).toPromise();
 	}
 
 	getUrl(apiUrl, localUrl) {
 		if (window.location.hostname === 'localhost') {
 			console.log('Using local files');
 		}
-
-		return window.location.hostname === 'localhost' ? localUrl : apiUrl;
+		return window.location.hostname === '_localhost' ? localUrl : apiUrl;
 	};
 }

@@ -1,0 +1,29 @@
+<div (click)="showDropdown = !showDropdown">
+  <span class="float-left">
+    Last update: {{ timeSinceLastModified }}  minutes ago
+  </span>
+  <div class="float-right">
+    <i class="fa fa-chevron-down" *ngIf="showDropdown; else hideDropdown" aria-hidden="true"></i>
+    <ng-template #hideDropdown>
+        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+    </ng-template>
+  </div>
+</div>
+
+<div class="dl-dropdown p-1 row mat-elevation-z5" [ngClass]="{'show': showDropdown}">
+  <div class="col-md-12">
+      Items last updated: {{ getTimestamp('items') | date}} <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      Pets last updated: {{ pageLoadTimestamp | date }} <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      Recipes last updated: {{ pageLoadTimestamp | date }} <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      Auctions last updated: {{ getTimestamp('auctions') | date }} <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+  <div class="col-md-12">
+      TSM last updated: {{ getTimestamp('tsm') | date }} <button class="btn btn-sm btn-default float-right">Download now</button>
+  </div>
+</div>

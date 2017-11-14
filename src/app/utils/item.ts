@@ -1,4 +1,6 @@
-import { lists } from './globals';
+import { lists, db } from './globals';
+import { ItemService } from '../services/item.service';
+import Dexie from 'dexie';
 
 export class Item {
 
@@ -25,6 +27,50 @@ export class Item {
 			return BASE_URL + 'inv_scroll_03.jpg';
 		} else {
 			return BASE_URL + icon + '.jpg';
+		}
+	}
+
+	public static download(itemService: ItemService): Promise<any> {
+		lists.isDownloading = true;
+		// this.downloadingText = 'Downloading items';
+		// Attempting to get from local storage
+		if (
+			localStorage.getItem('timestamp_items') === null ||
+			localStorage.getItem('timestamp_items') === undefined ||
+			localStorage.getItem('timestamp_items') !== new Date().toDateString()) {
+			console.log('Downloading fresh item Data to local DB');
+			// The db was empty so we're downloading
+			return itemService.getItems()
+				.then(iDL => {
+					lists.isDownloading = false;
+					this.buildItemArray(iDL);
+				}).catch(error => console.error('Failed at downloading items', error));
+		} else {
+			console.log('Loading items from local DB');
+			return db.table('items').toArray().then(i => {
+				if (i.length > 0) {
+					lists.isDownloading = false;
+					lists.itemsArray = i;
+					this.buildItemArray(i);
+				} else {
+					// The db was empty so we're downloading
+					return itemService.getItems()
+						.then(iDL => {
+							lists.isDownloading = false;
+							this.buildItemArray(iDL);
+						});
+				}
+			});
+		}
+	}
+
+	public static buildItemArray(arr) {
+		if (lists.items === undefined) {
+			lists.items = [];
+		}
+
+		for (const i of arr) {
+			lists.items[i['id']] = i;
 		}
 	}
 }

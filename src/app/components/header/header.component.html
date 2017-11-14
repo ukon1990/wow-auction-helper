@@ -9,9 +9,8 @@
   <nav class="container-fluid">
     <h1 class="navbar-header" style="margin: 0;"><a routerLink="/">WAH</a></h1>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <p class="navbar-right" *ngIf="timeSinceLastModified">
-        Last update: {{timeSinceLastModified}} minutes ago <br> {{ downloadingText }}
-      </p>
+      <app-downloads class="navbar-right"></app-downloads>
+
       <ul class="nav navbar-nav">
         <li *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
           <a routerLink="/crafting">Crafting</a>
@@ -40,6 +39,5 @@
         </li>
       </ul>
     </div>
-
   </nav>
 </header>

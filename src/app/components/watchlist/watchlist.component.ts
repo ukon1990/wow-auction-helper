@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { calcCost, user, lists, db, copperToString } from '../../utils/globals';
+import { user, lists, db } from '../../utils/globals';
 import dexie from 'dexie';
 import Push from 'push.js';
+import { GoldPipe } from '../../pipes/gold.pipe';
+import Crafting from '../../utils/crafting';
 
 declare var $;
 declare const ga: Function;
@@ -14,13 +16,13 @@ declare const ga: Function;
 	styleUrls: ['./watchlist.component.css', '../auctions/auctions.component.css']
 })
 export class WatchlistComponent implements OnInit {
-	copperToString = copperToString;
 	queryItems = [];
 	myRecipes = [];
 	user: IUser;
 	itemSearchForm: FormGroup;
 	recipeSearchForm: FormGroup;
 	groupForm: FormGroup;
+	pipe: GoldPipe;
 	editing = {
 		item: {
 			object: undefined,
@@ -57,6 +59,7 @@ export class WatchlistComponent implements OnInit {
 	};
 
 	constructor(private formBuilder: FormBuilder, private titleService: Title) {
+		this.pipe = new GoldPipe();
 		this.groupForm = formBuilder.group({
 			'name': ''
 		});
@@ -139,7 +142,7 @@ export class WatchlistComponent implements OnInit {
 			this.watchlist.items[item.group].push(watch);
 			this.notification(
 				`${watch.name} has been added`,
-				`Added to group ${watch.group} with a alert value of ${copperToString(watch.value)}`,
+				`Added to group ${watch.group} with a alert value of ${this.pipe.transform(watch.value)}`,
 				this.getIcon(item));
 			this.saveWatchList();
 			ga('send', {
@@ -176,11 +179,11 @@ export class WatchlistComponent implements OnInit {
 		}
 	}
 
-	getMarketValue(itemID: string): string {
+	getMarketValue(itemID: string): number {
 		if (lists.tsm[itemID]) {
-			return copperToString(lists.tsm[itemID].MarketValue);
+			return lists.tsm[itemID].MarketValue;
 		}
-		return copperToString(0);
+		return 0;
 	}
 	getItemRecipes(itemID: string): any {
 		if (lists.itemRecipes[itemID]) {
@@ -210,7 +213,7 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	updateCraftingCost(recipe) {
-		calcCost(recipe);
+		Crafting.calcCost(recipe);
 		recipe.reagents.forEach(reagent => {
 			if (reagent.createdBy !== undefined && lists.recipes[lists.recipesIndex[reagent.createdBy]] === undefined) {
 				delete reagent.createdBy;
