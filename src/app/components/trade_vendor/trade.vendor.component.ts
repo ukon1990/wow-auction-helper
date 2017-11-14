@@ -330,19 +330,10 @@ export class TradeVendorComponent extends ParentAuctionComponent implements OnIn
 				} catch (e) { console.log(e); }
 			}, 100);
 		}
-		this.selectVendor(0);
 	}
 
-	selectVendor(index: number) {
-		this.vendorIndex = index;
-		this.currentPage = 1;
-
-		ga('send', {
-			hitType: 'event',
-			eventCategory: 'Trade vendor',
-			eventAction: 'Selected vendor',
-			eventLabel: `Selected the ${this.vendors[this.vendorIndex].name} vendor`
-		});
+	selectVendor(): void {
+		this.pageEventSecondary.pageIndex = 0;
 	}
 
 	setValues(): void {

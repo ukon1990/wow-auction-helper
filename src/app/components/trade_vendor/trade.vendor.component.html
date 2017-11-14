@@ -1,68 +1,59 @@
-<div class="panel panel-default mat-elevation-z6">
-	<div class="panel-heading">
-		<h2 class="panel-title">Trade vendors</h2>
-	</div>
-	<div class="panel-body">
-		<div class="col-md-2">
-			<ul class="nav nav-pills nav-stacked">
-				<li class="active" *ngFor="let vendor of vendors; let i = index" [ngClass]="{'active': vendorIndex == i}" (click)="selectVendor(i)">
-					<a rel="item={{ vendor.itemID }}" target="_blank">
-						{{ vendor.name }}
-					</a>
-				</li>
-			</ul>
-		</div>
-		<div class="col-md-10">
-			<mat-paginator
-				[length]="vendors[vendorIndex].materials.length"
-				[pageSize]="page.pageSize"
-				[pageSizeOptions]="page.pageSizeOptions"
-				(page)="changePage($event, true)">
-			</mat-paginator>
-			<table class="table table-striped row">
-				<tr class="row">
-					<th>Item</th>
-					<th>Quantity</th>
-					<th>Value</th>
-					<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-						Region avg sold
-					</th>
-					<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-						Region avg demand
-					</th>
-				</tr>
-				<tr class="row" *ngFor="let a of vendors[vendorIndex].materials |
-					slice: 
-						(pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
-						pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1) ;">
-					<td>
-						<div>
-							<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
-							<div class="align-left col-md-offset-1">
-								<a
-									rel="item={{ a.itemID }}"
-									href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-									target="_blank">{{ getItem(a.itemID).name }}<i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i></a><br>
-							</div>
-						</div>
-					</td>
-					<td>{{ a.quantity }}</td>
-					<td>
-						{{ a.value | gold }} <br>
-						Buyout per item: {{ a.buyout | gold }}
-						<div *ngIf="apiToUse !== 'none'">
-							Market value: {{ a.mktPrice | gold }}<br>
-							Region sale avg: {{ a.regionSaleAvg | gold }}
-						</div>
-					</td>
-					<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-						{{a.avgSold}}
-					</td>
-					<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-						{{a.estDemand}}%
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">Trade vendors</h2>
+  </div>
+  <div class="panel-body">
+    <mat-tab-group class="col-md-12" (selectedIndexChange)="selectVendor()">
+      <mat-tab *ngFor="let vendor of vendors; let i = index" [label]="vendor.name">
+        <mat-paginator [length]="vendors[i].materials.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions"
+          (page)="changePage($event, true)">
+        </mat-paginator>
+        <table class="table table-striped">
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Value</th>
+            <th *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              Region avg sold
+            </th>
+            <th *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              Region avg demand
+            </th>
+          </tr>
+          <tr *ngFor="let a of vendors[i].materials |
+            slice: 
+              (pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
+              pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1) ;">
+            <td>
+              <div>
+                <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
+                <div class="align-left col-md-offset-1">
+                  <a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
+                    target="_blank">{{ getItem(a.itemID).name }}
+                    <i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
+                  </a>
+                  <br>
+                </div>
+              </div>
+            </td>
+            <td>{{ a.quantity }}</td>
+            <td>
+              {{ a.value | gold }}
+              <br> Buyout per item: {{ a.buyout | gold }}
+              <div *ngIf="apiToUse !== 'none'">
+                Market value: {{ a.mktPrice | gold }}
+                <br> Region sale avg: {{ a.regionSaleAvg | gold }}
+              </div>
+            </td>
+            <td *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              {{a.avgSold}}
+            </td>
+            <td *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              {{a.estDemand}}%
+            </td>
+          </tr>
+        </table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
 </div>
