@@ -5,7 +5,7 @@
     </button>
     <a routerLink="/" class="navbar-brand" style="margin: 0;">WAH</a>
     <div class="collapse navbar-collapse" id="navbar">
-      <app-downloads class="navbar-right nav-item"></app-downloads>
+      <app-downloads class="navbar-right nav-item" *ngIf="isRealmSet()"></app-downloads>
 
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item" *ngIf="isRealmSet()" [attr.data-toggle]="isSmallWindow() ? 'collapse' : undefined" data-target=".navbar-collapse" routerLinkActive="active">
