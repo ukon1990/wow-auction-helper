@@ -2,8 +2,9 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 .navbar-right {
-    padding-right: 2em;
-    margin-top: 1em;
+    right: 2em;
+    position: absolute;
+    color: rgba(255,255,255,.5);
 }
 
 .mat-paginator {
@@ -11,14 +12,9 @@
 }
 
 
-.align-left, .float-left{
+.align-left {
     float:left !important;
 }
-
-.float-right {
-    float: right !important;
-}
-
 
 /* From blizzard */
 .item-detail .frame-56 {
@@ -85,14 +81,12 @@ tr.info a {
     color: orangered;
 }
 
+/**
+ TODO: Make light theme version
 .cdk-overlay-pane {
     width: auto !important;
 }
 
-
-/**
- TODO: Make light theme version
-*/
 .mat-input-infix {
     background-color: #073642;
 }
@@ -102,7 +96,7 @@ tr.info a {
 .mat-form-field-ripple {
     background-color: #839496 !important;
 }
-
+*/
 button.mat-elevation-z1,
 button.mat-elevation-z2,
 button.mat-elevation-z3,

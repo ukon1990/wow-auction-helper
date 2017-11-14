@@ -1,12 +1,15 @@
+import { Error } from './../utils/error';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {Http} from '@angular/http';
 
 @Injectable()
 export class RealmService {
-	constructor(private http: Http) { }
+  constructor(private http: HttpClient) { }
 
-	getRealms() {
-		return this.http.get('/assets/realmList.json')
-		.map(response => response.json(), error => console.log(error));
-	}
+  getRealms(): Promise<any> {
+    return this.http
+      .get('/assets/realmList.json')
+      .toPromise()
+      .catch(e => Error.handle('Was unable to download realms', e));
+  }
 }

@@ -33,6 +33,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { RealmService } from './services/realm.service';
 import { DownloadsComponent } from './components/downloads/downloads.component';
+import { CharactersComponent } from './components/settings/characters/characters.component';
+import { CharacterComponent } from './components/settings/characters/character/character.component';
 
 @NgModule({
 	declarations: [
@@ -54,7 +56,9 @@ import { DownloadsComponent } from './components/downloads/downloads.component';
 		HeaderComponent,
 		GoldPipe,
 		AutocompleteComponent,
-		DownloadsComponent
+		DownloadsComponent,
+		CharactersComponent,
+		CharacterComponent
 	],
 	imports: [
 		BrowserModule,

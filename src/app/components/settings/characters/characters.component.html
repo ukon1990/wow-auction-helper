@@ -1,0 +1,36 @@
+<strong>Your characters</strong>
+<!-- Form -->
+<form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="characterForm">
+  <mat-form-field class="col-md-2">
+    <mat-select placeholder="Region" formControlName="region">
+      <mat-option *ngFor="let r of getRegions()" [value]="r">
+        {{ r }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="col-md-3">
+    <mat-select placeholder="Realm" formControlName="realm">
+      <mat-option *ngFor="let r of regions?.eu.realms" [value]="r.slug">
+        {{ r.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="col-md-6">
+    <input matInput placeholder="Character" formControlName="name">
+  </mat-form-field>
+  <button class="btn btn-sm btn-secondary mat-elevation-z5 col-md-1" type="submit">Add</button>
+</form>
+
+<!-- Character overview -->
+<div class="mt-1">
+  <div *ngIf="characters.length === 0; else overview" class="list-group-item">
+    You have no registered crafters
+  </div>
+  <ng-template #overview>
+    <div class="row">
+      <div *ngFor="let character of characters; let i = index;" class="col-sm-6 col-md-4">
+        <app-character [character]="character" [index]="i"></app-character>
+      </div>
+    </div>
+  </ng-template>
+</div>
