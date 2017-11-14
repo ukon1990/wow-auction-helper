@@ -105,7 +105,7 @@ export class SettingsComponent implements OnInit {
     }
 
     this.characterService.getCharacter(character, realm)
-      .subscribe(c => {
+      .then(c => {
         ga('send', {
           hitType: 'event',
           eventCategory: 'Settings',

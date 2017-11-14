@@ -1,4 +1,4 @@
-<div class="panel panel-default mat-elevation-z6">
+<div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">My auctions</h2>
 	</div>
@@ -13,7 +13,7 @@
 				You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
 		</p>
 
-		<div class="col-md-12 row">
+		<div class="row">
 			<div class="col-md-8">
 				<mat-paginator
 					[length]="numberOfUndercuttedAuctions"
@@ -22,8 +22,8 @@
 					[pageIndex]="pageEvent.pageIndex"
 					(page)="changePage($event)">
 				</mat-paginator>
-				<table class="table table-striped row">
-					<tr class="row">
+				<table class="table table-striped">
+					<tr>
 						<th (click)="sort('name')">
 							<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
 							Name
@@ -47,7 +47,7 @@
 							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
 						</th>
 					</tr>
-					<tr class="row" *ngFor="let auc of getAuctions() |
+					<tr *ngFor="let auc of getAuctions() |
 						slice: 
 							(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
 							pageEvent.pageSize * (pageEvent.pageIndex + 1);"
@@ -94,13 +94,13 @@
 					(page)="changePage($event, true)">
 				</mat-paginator>
 				<table class="table table-striped row">
-					<tr class="row">
+					<tr>
 						<th>Item</th>
 						<th>Auction</th>
 						<th>Per item</th>
 						<th>Size</th>
 					</tr>
-					<tr class="row" *ngFor="let a of selectedAuctions |
+					<tr *ngFor="let a of selectedAuctions |
 						slice: 
 							(pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
 							pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1);">

@@ -91,7 +91,7 @@ export class DownloadsComponent implements OnInit {
 					try {
 						user.crafters.forEach(crafter => {
 							this.characterService.getCharacter(crafter, user.realm)
-								.subscribe(character => {
+								.then(character => {
 									user.characters.push(character);
 									setRecipesForCharacter(character);
 									localStorage.characters = JSON.stringify(user.characters);
@@ -118,7 +118,7 @@ export class DownloadsComponent implements OnInit {
 							if (character.error && character.error.status !== 404) {
 								// Try again
 								this.characterService.getCharacter(character.name, character.realm)
-									.subscribe(c => {
+									.then(c => {
 										character = c;
 										setRecipesForCharacter(c);
 										lists.myRecipes = Array.from(new Set(lists.myRecipes));

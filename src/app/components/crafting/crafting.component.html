@@ -1,9 +1,9 @@
-<div class="panel panel-default mat-elevation-z6">
+<div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">Crafting</h2>
 	</div>
 	<div class="panel-body">
-		<div class="row col-md-12">
+		<div class="col-md-12">
 			<!-- Action type selectors -->
 			<div class="btn-group btn-group-xs col-md-12" role="group">
 				<button type="button" class="btn btn-info" (click)="toggleDisenchanting(false)" [ngClass]="{'active': !isDisenchating}">
@@ -102,15 +102,15 @@
 				<app-export [list]="crafts"></app-export>
 			</form>
 		</div>
-		<div class="col-md-12 row">
-			<mat-paginator class="col-md-9 row"
+		<div class="row col-md-12">
+			<mat-paginator class="col-md-9"
 				[length]="isDisenchating ? Disenchanting?.disenchantables?.length : crafts?.length"
 				[pageSize]="page.pageSize"
 				[pageSizeOptions]="page.pageSizeOptions"
 				[pageIndex]="pageEvent.pageIndex"
 				(page)="changePage($event)">
 			</mat-paginator>
-			<div class="col-md-9 row">
+			<div class="col-md-9">
 				<app-craft-table *ngIf="!isDisenchating; else disenchantTable"
 					[pageEvent]="pageEvent"
 					[user]="user"

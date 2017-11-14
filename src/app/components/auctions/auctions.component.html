@@ -1,225 +1,207 @@
-<div class="panel panel-default mat-elevation-z6">
-	<div class="panel-heading">
-		<h2 class="panel-title">Auctions</h2>
-	</div>
-	<div class="panel-body">
-		<p>All auctions with no buyout price is ignored.</p>
-		<p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
-			If you want information indicating the demand of an item, then it's recommended that you either add a TSM API.
-			You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
-		</p>
-		<div class="row col-md-12">
-			<form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">Auctions</h2>
+  </div>
+  <div class="panel-body">
+    <p>All auctions with no buyout price is ignored.</p>
+    <p *ngIf="apiToUse === 'none'" class="alert alert-info" role="alert">
+      If you want information indicating the demand of an item, then it's recommended that you either add a TSM API. You can get
+      a TSM key
+      <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
+    </p>
+    <div class="row col-md-12">
+      <form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Search</span>
-					<input class="col-md-2 form-control" type="text"
-						placeholder="Item name" [formControl]="filterForm.controls['searchQuery']" aria-describedby="sizing-addon3"/>
-				</div>
+        <mat-form-field class="col-lg-2">
+          <input matInput placeholder="Item name" formControlName="searchQuery">
+        </mat-form-field>
 
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Demand</span>
-					<input class="col-md-2 form-control" type="number"
-						placeholder="Demand (default 0)" [formControl]="filterForm.controls['demand']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">%</span>
-				</div>
+        <div *ngIf="apiToUse !== 'none'" class="col-lg-4 row">
+          <mat-form-field class="col-lg-6">
+            <input matInput type="number" placeholder="Demand % (default 0)" formControlName="demand">
+          </mat-form-field>
+          <mat-form-field class="col-lg-6">
+            <input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value" formControlName="mktPrice">
+          </mat-form-field>
+        </div>
 
-				<div *ngIf="apiToUse !== 'none'" class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Buyout lower than</span>
-					<input class="col-md-2 form-control" type="number"
-						placeholder="Market value (default 0)" [formControl]="filterForm.controls['mktPrice']" aria-describedby="sizing-addon3"/>
-					<span class="input-group-addon" id="sizing-addon3">% of Market value</span>
-				</div>
+        <mat-form-field class="col-lg-2">
+          <mat-select placeholder="Item class" formControlName="itemClass">
+            <mat-option value="-1">
+              All
+            </mat-option>
+            <mat-option *ngFor="let class of itemClasses.classes; let i = index;" [value]="i">
+              {{ class.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Item type</span>
-					<select class="form-control" [formControl]="filterForm.controls['itemClass']" aria-describedby="sizing-addon3">
-						<option value="-1">All</option>
-						<option *ngFor="let i of itemClasses.classes; let p = index;" value="{{ p }}">{{ i.name }}</option>
-					</select>
-				</div>
+        <mat-form-field *ngIf="itemClasses.classes[filterForm.value['itemClass']]" class="col-lg-2">
+          <mat-select placeholder="Item sub class" formControlName="itemSubClass">
+            <mat-option value="-1">
+              All
+            </mat-option>
+            <mat-option *ngFor="let class of itemClasses.classes[filterForm.value['itemClass']].subclasses; let i = index;" [value]="i">
+              {{ class.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <mat-checkbox class="col-lg-2" formControlName="onlyVendorSellable"
+          matTooltip="Only display items below the vendor sell price">
+            Below vendor price
+        </mat-checkbox>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Sub type</span>
-					<select class="form-control" [formControl]="filterForm.controls['itemSubClass']" aria-describedby="sizing-addon3">
-						<option value="-1">All</option>
-						<option *ngFor="let i of itemClasses.classes[filterForm.value['itemClass']]?.subclasses; let p = index;" value="{{ p }}" >{{ i.name }}</option>
-					</select>
-				</div>
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon3">Only items below vendor sell</span>
-					<span class="input-group-addon">
-					   <input type="checkbox" [formControl]="filterForm.controls['onlyVendorSellable']" aria-label="sizing-addon3">
-					 </span>
-				</div>
-
-				<button class="btn btn-primary mat-elevation-z5" type="submit">Apply filter</button>
-				<button class="btn btn-default mat-elevation-z5" type="button" (click)="resetFilters()">Reset</button>
-				<app-export [list]="filteredAuctions" auctionList="true"></app-export>
-			</form>
-		</div>
-		<br>
-		<div class="col-md-12 row">
-			<div class="col-md-8">
-				<mat-paginator
-					[length]="filteredAuctions.length"
-					[pageSize]="page.pageSize"
-					[pageSizeOptions]="page.pageSizeOptions"
-					[pageIndex]="pageEvent.pageIndex"
-					(page)="changePage($event)">
-				</mat-paginator>
-				<table class="table table-striped row">
-					<tr class="row">
-						<th (click)="sort('name')">
-							<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
-							Name
-						</th>
-						<th (click)="sort('quantity_total')">
-							<app-sort-icon [key]="sorter.getKey('quantity_total')"></app-sort-icon>
-							@AH
-						</th>
-						<th (click)="sort('buyout')">
-								<app-sort-icon [key]="sorter.getKey('buyout')"></app-sort-icon>
-							Price
-						</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							<span *ngIf="apiToUse === 'tsm'">Regional avg </span>
-							<span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
-							sold
-						</th>
-						<th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sort('estDemand')">
-								<app-sort-icon [key]="sorter.getKey('estDemand')"></app-sort-icon>
-							<span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
-							<span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
-						</th>
-						<th class="hidden-xs">Action</th>
-					</tr>
-					<!-- TODO: optimize price value fetch -->
-					<tr class="row" *ngFor="let auc of filteredAuctions |
+        <button class="btn btn-primary mat-elevation-z5" type="submit">Apply filter</button>
+        <button class="btn btn-default mat-elevation-z5" type="button" (click)="resetFilters()">Reset</button>
+        <app-export [list]="filteredAuctions" auctionList="true"></app-export>
+      </form>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-8">
+        <mat-paginator [length]="filteredAuctions.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions" [pageIndex]="pageEvent.pageIndex"
+          (page)="changePage($event)">
+        </mat-paginator>
+        <table class="table table-striped">
+          <tr>
+            <th (click)="sort('name')">
+              <app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
+              Name
+            </th>
+            <th (click)="sort('quantity_total')">
+              <app-sort-icon [key]="sorter.getKey('quantity_total')"></app-sort-icon>
+              @AH
+            </th>
+            <th (click)="sort('buyout')">
+              <app-sort-icon [key]="sorter.getKey('buyout')"></app-sort-icon>
+              Price
+            </th>
+            <th *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              <span *ngIf="apiToUse === 'tsm'">Regional avg </span>
+              <span *ngIf="apiToUse === 'wowuctions'">Avg posted/</span>
+              sold
+            </th>
+            <th *ngIf="apiToUse !== 'none'" class="hidden-xs" (click)="sort('estDemand')">
+              <app-sort-icon [key]="sorter.getKey('estDemand')"></app-sort-icon>
+              <span *ngIf="apiToUse === 'tsm'">Region est Demand</span>
+              <span *ngIf="apiToUse === 'wowuctions'">est demand/</span>
+            </th>
+            <th class="hidden-xs">Action</th>
+          </tr>
+          <!-- TODO: optimize price value fetch -->
+          <tr *ngFor="let auc of filteredAuctions |
 						slice: 
 							(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
 							pageEvent.pageSize * (pageEvent.pageIndex + 1) ;">
-						<td>
-							<div>
-								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'"></span>
-								<div class="align-left col-md-9">
-									<a rel="{{ auc.petSpeciesId !== undefined ? 'npc=' + getPet(auc.petSpeciesId).creatureId : 'item=' + auc.item }}" (click)="selectAuction(auc)"
-										target="_blank">{{ auc.name }} <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a><br>
-									{{ auc.owner }} @ {{ auc.ownerRealm }}
-								</div>
-							</div>
-						</td>
-						<td>
-							{{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
-						<td>
-							Buyout: {{ auc.buyout | gold }}
-							<span *ngIf="user.apiToUse !== 'none'">
-								({{ buyoutVersusMarketValue(auc)}}% mkt)
-							</span><br>
+            <td>
+              <div>
+                <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(auc) +')'"></span>
+                <div class="align-left col-md-9">
+                  <a rel="{{ auc.petSpeciesId !== undefined ? 'npc=' + getPet(auc.petSpeciesId).creatureId : 'item=' + auc.item }}" (click)="selectAuction(auc)"
+                    target="_blank">{{ auc.name }}
+                    <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
+                  </a>
+                  <br> {{ auc.owner }} @ {{ auc.ownerRealm }}
+                </div>
+              </div>
+            </td>
+            <td>
+              {{ this.filter.itemClass === '0' ? auc.petAuctions.length : auc.quantity_total }} pcs</td>
+            <td>
+              Buyout: {{ auc.buyout | gold }}
+              <span *ngIf="user.apiToUse !== 'none'">
+                ({{ buyoutVersusMarketValue(auc)}}% mkt)
+              </span>
+              <br> Bid: {{ auc.bid | gold }}
+              <span *ngIf="user.apiToUse !== 'none'">
+                ({{ bidVersusMarketValue(auc)}}% mkt)
+              </span>
 
-							Bid: {{ auc.bid | gold }}
-							<span *ngIf="user.apiToUse !== 'none'">
-								({{ bidVersusMarketValue(auc)}}% mkt)
-							</span>
-
-							<span *ngIf="filterForm.value['onlyVendorSellable']">
-								<br>Vendor price: {{ getItem(auc.item).sellPrice | gold }} |
-								{{ ((auc.buyout / getItem(auc.item).sellPrice) * 100).toFixed(2) }}%
-							</span>
-							<span *ngIf="(user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') && auc.petAuctions === undefined">
-								<br>Market value: {{ auc.mktPrice | gold }}
-								<br>Region sale avg: {{ auc.regionSaleAvg | gold }}
-							</span>
-						</td>
-						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							<span *ngIf="auc.petAuctions !== undefined; else show">
-								Not available for battle pets
-							</span>
-							<ng-template #show>
-								<span *ngIf="apiToUse === 'wowuctions'">
-									{{ auc.avgDailyPosted }} <br>
-								</span>
-								 {{ auc.avgDailySold }}
-							</ng-template>
-						</td>
-						<td *ngIf="apiToUse !== 'none'" class="hidden-xs">
-							<span *ngIf="auc.petAuctions !== undefined; else showDemand">
-								Not available for battle pets
-							</span>
-							<ng-template #showDemand>
-								{{ auc.estDemand }}%
-							</ng-template>
-						</td>
-						<td class="hidden-xs">
-							<a class="glyphicon glyphicon-shopping-cart"
-								aria-hidden="true"
-								href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ auc.item }}"
-								target="_blank">Buy</a><br>
-							<a class="glyphicon glyphicon-exclamation-sign"
-								aria-hidden="true"
-								href="http://www.wowhead.com/item={{auc.item}}"
-								target="_blank">Wowhead</a><br>
-						</td>
-					</tr>
-				</table>
-				<mat-paginator
-					[length]="filteredAuctions.length"
-					[pageSize]="page.pageSize"
-					[pageSizeOptions]="page.pageSizeOptions"
-					[pageIndex]="pageEvent.pageIndex"
-					(page)="changePage($event)">
-				</mat-paginator>
-			</div>
-			<div class="col-md-4">
-				<mat-paginator
-					[length]="selectedAuctions.length"
-					[pageSize]="page.pageSize"
-					[pageSizeOptions]="page.pageSizeOptions"
-					[pageIndex]="pageEventSecondary.pageIndex"
-					(page)="changePage($event, true)">
-				</mat-paginator>
-				<table class="table table-striped row">
-					<tr class="row">
-						<th>Item</th>
-						<th>Auction</th>
-						<th>Per item</th>
-						<th>Size</th>
-					</tr>
-					<tr class="row" *ngFor="let a of selectedAuctions |
+              <span *ngIf="filterForm.value['onlyVendorSellable']">
+                <br>Vendor price: {{ getItem(auc.item).sellPrice | gold }} | {{ ((auc.buyout / getItem(auc.item).sellPrice) *
+                100).toFixed(2) }}%
+              </span>
+              <span *ngIf="(user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') && auc.petAuctions === undefined">
+                <br>Market value: {{ auc.mktPrice | gold }}
+                <br>Region sale avg: {{ auc.regionSaleAvg | gold }}
+              </span>
+            </td>
+            <td *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              <span *ngIf="auc.petAuctions !== undefined; else show">
+                Not available for battle pets
+              </span>
+              <ng-template #show>
+                <span *ngIf="apiToUse === 'wowuctions'">
+                  {{ auc.avgDailyPosted }}
+                  <br>
+                </span>
+                {{ auc.avgDailySold }}
+              </ng-template>
+            </td>
+            <td *ngIf="apiToUse !== 'none'" class="hidden-xs">
+              <span *ngIf="auc.petAuctions !== undefined; else showDemand">
+                Not available for battle pets
+              </span>
+              <ng-template #showDemand>
+                {{ auc.estDemand }}%
+              </ng-template>
+            </td>
+            <td class="hidden-xs">
+              <a class="glyphicon glyphicon-shopping-cart" aria-hidden="true" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ auc.item }}"
+                target="_blank">Buy</a>
+              <br>
+              <a class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" href="http://www.wowhead.com/item={{auc.item}}" target="_blank">Wowhead</a>
+              <br>
+            </td>
+          </tr>
+        </table>
+        <mat-paginator [length]="filteredAuctions.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions" [pageIndex]="pageEvent.pageIndex"
+          (page)="changePage($event)">
+        </mat-paginator>
+      </div>
+      <div class="col-md-4">
+        <mat-paginator [length]="selectedAuctions.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions" [pageIndex]="pageEventSecondary.pageIndex"
+          (page)="changePage($event, true)">
+        </mat-paginator>
+        <table class="table table-striped row">
+          <tr>
+            <th>Item</th>
+            <th>Auction</th>
+            <th>Per item</th>
+            <th>Size</th>
+          </tr>
+          <tr *ngFor="let a of selectedAuctions |
 						slice: 
 							(pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1)) - pageEventSecondary.pageSize:
 							pageEventSecondary.pageSize * (pageEventSecondary.pageIndex + 1);">
-						<td>
-							<div>
-								<span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
-								<div class="align-left col-md-offset-1">
-									<a
-										rel="item={{ a.item }}"
-										href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.item }}&n={{ a.name.replace('@'+a.petLevel, '') }}"
-										target="_blank">{{ a.name }}<i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i></a><br>
-									{{ a.owner }}  @ {{ a.ownerRealm }}
-								</div>
-							</div>
-						</td>
-						<td>
-							{{ a.buyout | gold }} <br>
-							{{ a.bid | gold }}
-						</td>
-						<td>
-							{{ a.buyout / a.quantity | gold }}<br>
-							{{ a.bid / a.quantity | gold }}
-						</td>
-						<td>{{ a.quantity }}</td>
-					</tr>
-				</table>
-				<mat-paginator
-					[length]="selectedAuctions.length"
-					[pageSize]="page.pageSize"
-					[pageSizeOptions]="page.pageSizeOptions"
-					[pageIndex]="pageEventSecondary.pageIndex"
-					(page)="changePage($event, true)">
-				</mat-paginator>
-			</div>
-		</div>
-	</div>
+            <td>
+              <div>
+                <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-36 align-left" [style.background-image]="'url('+ getIcon(a) +')'"></span>
+                <div class="align-left col-md-offset-1">
+                  <a rel="item={{ a.item }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.item }}&n={{ a.name.replace('@'+a.petLevel, '') }}"
+                    target="_blank">{{ a.name }}
+                    <i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
+                  </a>
+                  <br> {{ a.owner }} @ {{ a.ownerRealm }}
+                </div>
+              </div>
+            </td>
+            <td>
+              {{ a.buyout | gold }}
+              <br> {{ a.bid | gold }}
+            </td>
+            <td>
+              {{ a.buyout / a.quantity | gold }}
+              <br> {{ a.bid / a.quantity | gold }}
+            </td>
+            <td>{{ a.quantity }}</td>
+          </tr>
+        </table>
+        <mat-paginator [length]="selectedAuctions.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions" [pageIndex]="pageEventSecondary.pageIndex"
+          (page)="changePage($event, true)">
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
 </div>
