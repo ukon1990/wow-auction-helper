@@ -87,19 +87,19 @@ export class AuctionService {
 			+ '?fields=' + DB_TABLES.TSM_TABLE_COLUMNS + '&format=json&apiKey=' + localStorage.getItem('api_tsm');
 
 		return this.http.get(this.getUrl(apiUrl, localUrl))
-		.map(response => <any>function (r) {
-			console.log('Loaded TSM');
-			db['tsm'].clear();
-			db['tsm'].bulkAdd(r);
-			localStorage.setItem('timestamp_tsm', new Date().toDateString());
-			return r;
-		}(response));
+			.map(response => <any>function (r) {
+				console.log('Loaded TSM');
+				db['tsm'].clear();
+				db['tsm'].bulkAdd(r);
+				localStorage.setItem('timestamp_tsm', new Date().toDateString());
+				return r;
+			}(response));
 	}
 
 	getLastUpdated(): Promise<any> {
 		const localUrl = '/assets/GetAuctionsLastModified.json',
-		apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
-			+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
+			apiUrl = 'http://wah.jonaskf.net/GetAuctions.php?region='
+				+ localStorage.getItem('region') + '&realm=' + localStorage.getItem('realm') + '&lastModified';
 		console.log('Getting last modified for auctions');
 		return this.http.get(this.getUrl(apiUrl, localUrl)).toPromise();
 	}
