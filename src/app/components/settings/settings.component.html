@@ -1,283 +1,264 @@
-<div class="panel panel-default mat-elevation-z6">
-	<div class="panel-heading">
-		<h2 class="panel-title">Settings</h2>
-	</div>
-	<div class="panel-body">
-		<div class="col-md-2">
-			<ul class="nav nav-pills nav-stacked">
-				<li class="active" *ngFor="let tab of tabs; let i = index" [ngClass]="{'active': tabIndex == i}" (click)="selectTab(i)">
-					<a >{{ tab.name }}</a>
-				</li>
-				<li>
-					<button class="btn btn-primary mat-elevation-z5" (click)="saveUserData()">Save all changes</button>
-				</li>
-				<li>
-					<button class="btn btn-default mat-elevation-z5" (click)="changeStyle()">
-						Turn dark mode {{ darkMode ? 'off' : 'on' }}
-					</button>
-				</li>
-			</ul>
-		</div>
-		<div class="col-md-10">
-			<div class="col-md-12" *ngIf="tabs[tabIndex].path === ''">
-				<h3>Realm & Character</h3>
-				<p>
-					Realm and region are requiered, while the character name is not.
-					However, you will not be able to see if you have been undercutted if you don't.
-				</p>
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">Region</span>
-					<select class="form-control" name="region" type="text" [(ngModel)]="user.region" aria-describedby="basic-addon1">
-						<option value="eu">EU</option>
-						<option value="us">US</option>
-					</select>
-				</div>
+<div class="panel panel-default">
+  <div class="row col-md-12">
+    <div class="col-lg-9">
+      <h2>Settings</h2>
+    </div>
+    <div class="col-lg-3">
+      <button class="btn btn-primary mat-elevation-z5 float-right" (click)="saveUserData()">
+        Save all changes
+      </button>
+      <button class="btn btn-default mat-elevation-z5 float-right mr-2" (click)="changeStyle()">
+        Turn dark mode {{ darkMode ? 'off' : 'on' }}
+      </button>
+    </div>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="Realm, Seller & API">
+      <p>
+        Realm and region are requiered, while the character name is not. However, you will not be able to see if you have been undercutted
+        if you don't.
+      </p>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="basic-addon1">Region</span>
+        <select class="form-control" name="region" type="text" [(ngModel)]="user.region" aria-describedby="basic-addon1">
+          <option value="eu">EU</option>
+          <option value="us">US</option>
+        </select>
+      </div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">Realm</span>
-					<select class="form-control"
-						name="realm" type="text"
-						aria-describedby="basic-addon1"
-							[(ngModel)]="user.realm" required>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="basic-addon1">Realm</span>
+        <select class="form-control" name="realm" type="text" aria-describedby="basic-addon1" [(ngModel)]="user.realm" required>
 
-						<option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
-					</select>
-				</div>
+          <option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
+        </select>
+      </div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">Character</span>
-					<input class="form-control col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" aria-describedby="basic-addon1"
-					/>
-				</div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="basic-addon1">Character</span>
+        <input class="form-control col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" aria-describedby="basic-addon1"
+        />
+      </div>
 
-				<h3>API</h3>
-				<p>
-					If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
-					You can get a TSM key <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
-				</p>
-				<!--<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">WoWuction key</span>
-					<input class="form-control" name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu" aria-describedby="basic-addon1"/>
-				</div>-->
+      <h3>API</h3>
+      <p>
+        If you want information indicating the demand of an item, then it's recommended that you either add a TSM or WoWuction API.
+        You can get a TSM key
+        <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
+      </p>
+      <!--<div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">WoWuction key</span>
+            <input class="form-control" name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu" aria-describedby="basic-addon1"/>
+          </div>-->
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">TSM key</span>
-					<input class="form-control" name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm" aria-describedby="basic-addon1"/>
-				</div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="basic-addon1">TSM key</span>
+        <input class="form-control" name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm" aria-describedby="basic-addon1"
+        />
+      </div>
 
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">API to use:</span>
-					<select class="form-control" aria-describedby="basic-addon1" [(ngModel)]="user.apiToUse">
-						<option value="none">None</option>
-						<option value="tsm">TSM</option>
-						<!--<option value="wowuction">WoWuction</option>-->
-					</select>
-				</div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="basic-addon1">API to use:</span>
+        <select class="form-control" aria-describedby="basic-addon1" [(ngModel)]="user.apiToUse">
+          <option value="none">None</option>
+          <option value="tsm">TSM</option>
+          <!--<option value="wowuction">WoWuction</option>-->
+        </select>
+      </div>
 
-				<h3>Stored data</h3>
-				<div class="input-group">
-					<span class="input-group-btn">
-						<button class="btn btn-default mat-elevation-z5" (click)="importUserData()">Import settings</button>
-					</span>
-					<textarea type="text" class="form-control" placeholder="Paste in the exported string here"
-						[(ngModel)]="importedSettings"></textarea>
-				</div>
-				<div class="input-group">
-					<span class="input-group-btn">
-						<button class="btn btn-default mat-elevation-z5" (click)="exportUserData()">Export settings</button>
-					</span>
-					<textarea type="text" class="form-control" placeholder="Copy the exported string from here"
-						[(ngModel)]="exportedSettings"></textarea>
-				</div>
+      <h3>Stored data</h3>
+      <div class="input-group">
+        <span class="input-group-btn">
+          <button class="btn btn-default mat-elevation-z5" (click)="importUserData()">Import settings</button>
+        </span>
+        <textarea type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings"></textarea>
+      </div>
+      <div class="input-group">
+        <span class="input-group-btn">
+          <button class="btn btn-default mat-elevation-z5" (click)="exportUserData()">Export settings</button>
+        </span>
+        <textarea type="text" class="form-control" placeholder="Copy the exported string from here" [(ngModel)]="exportedSettings"></textarea>
+      </div>
 
-				<button class="btn btn-default mat-elevation-z5" (click)="deleteUserData()">Delete settings</button>
-			</div>
+      <button class="btn btn-default mat-elevation-z5" (click)="deleteUserData()">Delete settings</button>
+    </mat-tab>
+    <mat-tab label="Crafting">
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="basic-addon1">
+          Use market value instead of buyout if buyout >=
+        </span>
+        <input class="form-control" placeholder="API key" type="number" [(ngModel)]="user.buyoutLimit" aria-describedby="basic-addon1"
+        />
+        <span class="input-group-addon" id="basic-addon1">
+          % of the market value.
+        </span>
+      </div>
+      <strong>Custom item prices</strong>
+      <p>These prices are ovrrides for cost calculation. Using trade vendor panel values coming soon™</p>
+      <form class="form-inline" (ngSubmit)="searchDB()" [formGroup]="customPriceForm">
+        <div class="input-group input-group-sm col-md-12">
+          <label class="sr-only" for="Item">Search for an item</label>
+          <input type="text" class="form-control" name="Item" placeholder="Search for the desiered item" type="text" aria-describedby="basic-addon1"
+            [formControl]="customPriceForm.controls['query']">
+          <button id="sizing-addon1" class="input-group-addon btn btn-default mat-elevation-z5" (click)="searchDB()">
+            Search
+            <i class="glyphicon glyphicon-search">
+            </i>
+          </button>
+        </div>
+      </form>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let item of customPriceQueryItems">
+          {{ item.name}}
+          <i class="glyphicon glyphicon-plus pull-right" (click)="addCustomPrice(item)"></i>
+        </li>
+      </ul>
+      <table class="table table-striped">
+        <tr>
+          <th>item</th>
+          <!--<th>Category</th>-->
+          <th>Price copper input</th>
+          <th>Value in gold</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let cp of customPrices; let i = index;">
+          <td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
+          <!--<td>
+                <select [(ngModel)]="cp.category">
+                  <option value="fallback">Fallback</option>
+                  <option value="vendor">Vendor</option>
+                  <option value="soulbound">Soulbound</option>
+                </select>
+              </td>-->
+          <td>
+            <input type="number" [(ngModel)]="cp.price" />
+          </td>
+          <td>{{ cp.price | gold }}</td>
+          <td>
+            <i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i>
+          </td>
+        </tr>
+      </table>
+      <strong>Your crafters</strong>
+      <p>
+        This allows for you to only display recipes you know. Your characters have {{ getMyRecipeCount() }} unique recipes registered.
+        It will automatically uses the realm that you currently have selected to get data from.
+      </p>
+      <form class="form-inline" (ngSubmit)="addCharacter()" [formGroup]="userCrafterForm">
+        <div class="input-group input-group-sm col-md-12">
+          <input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1"
+            [formControl]="userCrafterForm.controls['query']" />
+          <span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCharacter()"></span>
+        </div>
+      </form>
+      <div class="mt-1">
+        <div *ngIf="user.characters.length === 0" class="list-group-item">
+          You have no registered crafters
+        </div>
+        <div class="row">
+          <div *ngFor="let character of user.characters; let i = index;" class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+              <img *ngIf="character.thumbnail" src="https://render-eu.worldofwarcraft.com/character/{{ character.thumbnail}}" alt="Character portrait of {{ character.name }}">
+              <div class="caption">
+                <h3 *ngIf="character.name">
+                  {{ character.name }} @ {{ character.realm }}
+                  <span *ngIf="character.downloading"> - downloading</span>
+                </h3>
+                <span *ngIf="character.lastModified; else errorMsg">
+                  <strong>Last modified:</strong>
+                  {{ character.lastModified | date:'d MMM HH:mm' }}
+                </span>
+                <ng-template #errorMsg>
+                  <span *ngIf="character.error; else noData">
+                    Status: {{ character.error.statusText }} ({{ character.error.status }})
+                  </span>
+                  <ng-template #noData>
+                    No data available for this character yet
+                  </ng-template>
+                </ng-template>
+                <div *ngIf="character.professions">
+                  <strong>Primary professions</strong>
+                  <ul class="list-group">
+                    <li class="list-group-item" *ngFor="let primary of character.professions.primary">
+                      <span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
+                      {{ primary.name }} x {{ primary.recipes.length }}
+                    </li>
+                  </ul>
+                  <strong>Secondary professions</strong>
+                  <ul class="list-group">
+                    <li class="list-group-item" *ngFor="let secondary of character.professions.secondary">
+                      <span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
+                      {{ secondary.name }} x {{ secondary.recipes.length }}
+                    </li>
+                  </ul>
+                </div>
+                <p>
+                  <a class="btn btn-primary" role="button" (click)="getCharacter(character.name, character.realm, i)">
+                    <i class="glyphicon glyphicon-refresh" [ngClass]="{loading: character.downloading}"></i>
+                    Update
+                  </a>
+                  <a class="btn btn-default" role="button" (click)="removeCharacter(i)">
+                    <i class="glyphicon glyphicon-trash"> </i>
+                    Delete
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Notifications">
+      <p>Here you can turn on and off the various notifications in the application.</p>
 
-			<div class="col-md-12"  *ngIf="tabs[tabIndex].path === 'crafting'">
-				<h3>Crafting</h3>
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="basic-addon1">
-						Use market value instead of buyout if buyout >=
-					</span>
-					<input class="form-control"
-						placeholder="API key" type="number"
-						[(ngModel)]="user.buyoutLimit" aria-describedby="basic-addon1"/>
-					<span class="input-group-addon" id="basic-addon1">
-						% of the market value.
-					</span>
-				</div>
-				<strong>Custom item prices</strong>
-				<p>These prices are ovrrides for cost calculation. Using trade vendor panel values coming soon™</p>
-				<form class="form-inline" (ngSubmit)="searchDB()" [formGroup]="customPriceForm">
-					<div class="input-group input-group-sm col-md-12">
-						<label class="sr-only" for="Item">Search for an item</label>
-						<input type="text" class="form-control"
-							name="Item"
-							placeholder="Search for the desiered item"
-							type="text"
-							aria-describedby="basic-addon1"
-							[formControl]="customPriceForm.controls['query']">
-						<button id="sizing-addon1" class="input-group-addon btn btn-default mat-elevation-z5" (click)="searchDB()">
-							Search
-							<i class="glyphicon glyphicon-search">
-							</i>
-						</button>
-					</div>
-				</form>
-				<ul class="list-group">
-					<li class="list-group-item" *ngFor="let item of customPriceQueryItems">
-						{{ item.name}}
-						<i class="glyphicon glyphicon-plus pull-right" (click)="addCustomPrice(item)"></i>
-					</li>
-				</ul>
-				<table class="table table-striped">
-					<tr>
-						<th>item</th>
-						<!--<th>Category</th>-->
-						<th>Price copper input</th>
-						<th>Value in gold</th>
-						<th>Action</th>
-					</tr>
-					<tr *ngFor="let cp of customPrices; let i = index;">
-						<td>{{getItemName(cp.itemID)}} ({{cp.itemID}})</td>
-						<!--<td>
-							<select [(ngModel)]="cp.category">
-								<option value="fallback">Fallback</option>
-								<option value="vendor">Vendor</option>
-								<option value="soulbound">Soulbound</option>
-							</select>
-						</td>-->
-						<td><input type="number" [(ngModel)]="cp.price"/></td>
-						<td>{{ cp.price | gold }}</td>
-						<td><i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i></td>
-					</tr>
-				</table>
-				<strong>Your crafters</strong>
-				<p>
-					This allows for you to only display recipes you know. Your characters have {{ getMyRecipeCount() }} unique recipes registered.
-					It will automatically uses the realm that you currently have selected to get data from.
-				</p>
-				<form class="form-inline" (ngSubmit)="addCharacter()" [formGroup]="userCrafterForm">
-					<div class="input-group input-group-sm col-md-12">
-						<input class="form-control col-md-2" name="character" placeholder="Crafting character" type="text" aria-describedby="basic-addon1" [formControl]="userCrafterForm.controls['query']"/>
-						<span class="btn btn-default input-group-addon glyphicon glyphicon-plus" id="basic-addon1" (click)="addCharacter()"></span>
-					</div>
-				</form>
-				<div class="mt-1">
-					<div *ngIf="user.characters.length === 0" class="list-group-item">
-						You have no registered crafters
-					</div>
-					<div class="row">
-						<div *ngFor="let character of user.characters; let i = index;" class="col-sm-6 col-md-4">
-							<div class="thumbnail">
-								<img *ngIf="character.thumbnail"
-									src="https://render-eu.worldofwarcraft.com/character/{{ character.thumbnail}}"
-									alt="Character portrait of {{ character.name }}">
-								<div class="caption">
-									<h3 *ngIf="character.name">
-										{{ character.name }} @ {{ character.realm }}
-										<span *ngIf="character.downloading"> - downloading</span>
-									</h3>
-									<span *ngIf="character.lastModified; else errorMsg">
-										<strong>Last modified:</strong>
-										{{ character.lastModified | date:'d MMM HH:mm' }}
-									</span>
-									<ng-template #errorMsg>
-										<span *ngIf="character.error; else noData">
-											Status: {{ character.error.statusText }} ({{ character.error.status }})
-										</span>
-										<ng-template #noData>
-											No data available for this character yet
-										</ng-template>
-									</ng-template>
-									<div *ngIf="character.professions">
-										<strong>Primary professions</strong>
-										<ul class="list-group">
-											<li class="list-group-item" *ngFor="let primary of character.professions.primary">
-												<span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
-												{{ primary.name }} x {{ primary.recipes.length }}
-											</li>
-										</ul>
-										<strong>Secondary professions</strong>
-										<ul class="list-group">
-											<li class="list-group-item"  *ngFor="let secondary of character.professions.secondary">
-												<span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
-												{{ secondary.name }} x {{ secondary.recipes.length }}
-											</li>
-										</ul>
-									</div>
-									<p>
-										<a class="btn btn-primary" role="button"
-											(click)="getCharacter(character.name, character.realm, i)">
-											<i class="glyphicon glyphicon-refresh"
-												[ngClass]="{loading: character.downloading}"></i>
-											Update
-										</a>
-										<a class="btn btn-default" role="button" (click)="removeCharacter(i)">
-											<i class="glyphicon glyphicon-trash"> </i>
-											Delete
-										</a>
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-
-			</div>
-
-			<div  class="col-md-12"  *ngIf="tabs[tabIndex].path === 'notifications'">
-				<p>Here you can turn on and off the various notifications in the application.</p>
-
-				<div class="col-md-6">
-					<strong>API independent</strong>
-					<ul class="list-group">
-						<li class="list-group-item">
-							<span class="badge">
-								<input type="checkbox" [(ngModel)]="user.notifications.isUpdateAvailable">
-							</span>
-							Auction house updates
-						</li>
-						<li class="list-group-item">
-							<span class="badge">
-								<input type="checkbox" [(ngModel)]="user.notifications.isBelowVendorSell">
-							</span>
-							Items below vendor sell price
-						</li>
-						<li class="list-group-item">
-							<span class="badge">
-								<input type="checkbox" [(ngModel)]="user.notifications.isUndercutted">
-							</span>
-							If {{ user.character }} is undercutted
-						</li>
-						<li class="list-group-item">
-							<span class="badge">
-								<input type="checkbox" [(ngModel)]="user.notifications.isWatchlist">
-							</span>
-							Allow the watchlist to send notifications.<br>
-							<em>If you wish to turn of individual items, do that on the watchlist page</em>
-						</li>
-					</ul>
-				</div>
-				<!--<div class="col-md-6">
-					<strong>API dependent</strong>
-					<ul class="list-group">
-						<li class="list-group-item">
-							<span class="badge">
-								<input type="checkbox">
-							</span>
-							Something
-						</li>
-						<li class="list-group-item">
-							<span class="badge">
-								<input type="checkbox">
-							</span>
-							Something else
-						</li>
-					</ul>
-				</div>-->
-			</div>
-		</div>
-	</div>
+      <div class="col-md-6">
+        <strong>API independent</strong>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <span class="badge">
+              <input type="checkbox" [(ngModel)]="user.notifications.isUpdateAvailable">
+            </span>
+            Auction house updates
+          </li>
+          <li class="list-group-item">
+            <span class="badge">
+              <input type="checkbox" [(ngModel)]="user.notifications.isBelowVendorSell">
+            </span>
+            Items below vendor sell price
+          </li>
+          <li class="list-group-item">
+            <span class="badge">
+              <input type="checkbox" [(ngModel)]="user.notifications.isUndercutted">
+            </span>
+            If {{ user.character }} is undercutted
+          </li>
+          <li class="list-group-item">
+            <span class="badge">
+              <input type="checkbox" [(ngModel)]="user.notifications.isWatchlist">
+            </span>
+            Allow the watchlist to send notifications.
+            <br>
+            <em>If you wish to turn of individual items, do that on the watchlist page</em>
+          </li>
+        </ul>
+      </div>
+      <!--<div class="col-md-6">
+                  <strong>API dependent</strong>
+                  <ul class="list-group">
+                    <li class="list-group-item">
+                      <span class="badge">
+                        <input type="checkbox">
+                      </span>
+                      Something
+                    </li>
+                    <li class="list-group-item">
+                      <span class="badge">
+                        <input type="checkbox">
+                      </span>
+                      Something else
+                    </li>
+                  </ul>
+                </div>-->
+    </mat-tab>
+  </mat-tab-group>
 </div>

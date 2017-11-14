@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { AppComponent } from '../../app.component';
 import { RealmService } from '../../services/realm.service';
 import { AuctionService } from '../../services/auctions.service';
 import { CharacterService } from '../../services/character.service';
@@ -17,7 +16,8 @@ declare const ga: Function;
 @Component({
   selector: 'app-settings',
   templateUrl: 'settings.component.html',
-  styleUrls: ['../../app.component.css']
+  styleUrls: ['../../app.component.css'],
+  providers: [DownloadsComponent]
 })
 export class SettingsComponent implements OnInit {
   user: IUser;

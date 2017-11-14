@@ -3,7 +3,7 @@
     <h2 class="panel-title">Trade vendors</h2>
   </div>
   <div class="panel-body">
-    <mat-tab-group class="col-md-12" (selectedIndexChange)="selectVendor()">
+    <mat-tab-group class="col-md-12" (selectedIndexChange)="resetPageIndex()">
       <mat-tab *ngFor="let vendor of vendors; let i = index" [label]="vendor.name">
         <mat-paginator [length]="vendors[i].materials.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions"
           (page)="changePage($event, true)">

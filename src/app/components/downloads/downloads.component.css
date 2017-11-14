@@ -1,9 +1,9 @@
 .dl-dropdown {
     padding-bottom: 1em;
     padding-top: 1em;
-    top: 3.7em;
-    right: 50px; /*TODO: To EM?*/
-    background-color: pink;
+    top: 2.4em;
+    right: 0;
+    background-color: #737373;
     width: 30em;
     display: none;
     position: absolute;
