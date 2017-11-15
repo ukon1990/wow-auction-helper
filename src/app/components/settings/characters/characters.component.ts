@@ -10,6 +10,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 export class CharactersComponent implements AfterViewInit {
   regions: Object;
   characters: Array<any> = new Array<any>();
+  downloading: boolean;
   characterForm: FormGroup;
 
   constructor(private characterService: CharacterService,
@@ -31,6 +32,7 @@ export class CharactersComponent implements AfterViewInit {
   }
 
   getCharacter(): void {
+    this.downloading = true;
     this.characterService
       .getCharacter(
         this.characterForm.value.name,
@@ -40,7 +42,8 @@ export class CharactersComponent implements AfterViewInit {
       .then(c => {
         this.characters.push(c);
         localStorage['characters'] = JSON.stringify(this.characters);
-      });
+        this.downloading = false;
+      }).catch(() => this.downloading = false);
   }
 
   getRegions(): string[] {

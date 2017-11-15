@@ -18,7 +18,13 @@
   <mat-form-field class="col-md-6">
     <input matInput placeholder="Character" formControlName="name">
   </mat-form-field>
-  <button class="btn btn-sm btn-secondary mat-elevation-z5 col-md-1" type="submit">Add</button>
+  <button class="btn btn-sm btn-secondary mat-elevation-z5 col-md-1" type="submit">
+    <i class="fa fa-plus" aria-hidden="true" *ngIf="!downloading; else dl"></i>
+    <ng-template #dl>
+        <i class="fa fa-spinner loading" aria-hidden="true"></i>
+    </ng-template>
+    Add
+  </button>
 </form>
 
 <!-- Character overview -->

@@ -41,10 +41,13 @@
     </div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button class="btn btn-primary" (click)="getCharacter(character.name, character.realm, index)">
-      <i class="glyphicon glyphicon-refresh" [ngClass]="{loading: character.downloading}"></i>
+    <button class="btn btn-primary" type="button" (click)="getCharacter(character.name, character.realm, index)">
+      <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{loading: character.downloading}"></i>
       Update
     </button>
-    <button mat-button class="btn btn-secondary" (click)="removeCharacter(index)">Remove</button>
+    <button class="btn btn-secondary" type="button" (click)="removeCharacter(index)">
+      <i class="fa fa-trash" aria-hidden="true"></i>
+      Remove
+    </button>
   </mat-card-actions>
 </mat-card>

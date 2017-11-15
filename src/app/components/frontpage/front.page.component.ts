@@ -14,14 +14,19 @@ declare const ga: Function;
 
 export class FrontPageComponent implements OnInit {
   u;
-  realmListEu = [];
-  realmListUs = [];
+  regions: Object;
+  userForm: FormGroup;
   userCrafterForm: FormGroup;
   importSettingsForm: FormGroup;
   userCrafter: string;
 
   constructor(private formBuilder: FormBuilder, private router: Router,
     private titleService: Title, private rs: RealmService, private characterService: CharacterService) {
+    this.userForm = this.formBuilder.group({
+      region: '',
+      realm: '',
+      name: ''
+    });
     this.userCrafterForm = formBuilder.group({
       'query': ''
     });
@@ -34,23 +39,17 @@ export class FrontPageComponent implements OnInit {
   ngOnInit(): void {
     this.rs.getRealms().then(
       r => {
-        this.realmListEu = r.region.eu;
-        this.realmListUs = r.region.us;
+        this.regions = r.region;
       });
     if (localStorage.getItem('realm') !== null && localStorage.getItem('region') !== null) {
       this.router.navigateByUrl('/crafting');
     }
-    this.u = user;
   }
 
-  getRealms() {
-    if (this.u.region === 'us') {
-      return this.realmListUs['realms'] || [];
-    } else {
-      return this.realmListEu['realms'] || [];
-    }
+  getRegions(): string[] {
+    return this.regions ? Object.keys(this.regions) : [];
   }
-
+/*
   nextPage() {
     if (this.isValid()) {
       localStorage.setItem('region', this.u.region);
@@ -86,10 +85,10 @@ export class FrontPageComponent implements OnInit {
       });
       location.reload();
     }
-  }
+  }*/
 
   isValid() {
-    return this.u.region && this.u.region.length > 0 && this.u.realm && this.u.realm.length > 0;
+    return this.userForm.value.region && this.userForm.value.region.length > 0 && this.userForm.value.realm && this.userForm.value.realm.length > 0;
   }
 
   getRealmValue(realm): void {
