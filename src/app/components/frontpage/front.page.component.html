@@ -6,6 +6,7 @@
     <mat-horizontal-stepper>
       <mat-step>
         <ng-template matStepLabel>About and disclaimer</ng-template>
+        <h2>WoW aucthion helper webapplication</h2>
         <p>
           This is a webapplication, that shows the user the potential profit of certain receipes in-game. It is aimed at helping the
           user earn gold in World of Warcraft.
@@ -53,7 +54,6 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Realm, Region or settings import</ng-template>
-        <h2>WoW aucthion helper webapplication</h2>
         <p>
           To use the application and see crafting cost and auctions you need to define a realm. You change this at any time in the
           settings later on.
@@ -102,40 +102,27 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Characters and API</ng-template>
-        <form class="form-group" (ngSubmit)="registerUser()" [formGroup]="userForm">
-          <strong>Your API keys</strong>
-          <p>
-            Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
-          </p>
-          <mat-form-field class="row col-md-12">
-              <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
+        <strong>Your API keys</strong>
+        <p>
+          Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
+        </p>
+        <form class="form-inline" (ngSubmit)="registerUser()" [formGroup]="userForm">
+          <mat-form-field class="col-md-12">
+            <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
           </mat-form-field>
           If you don't have a TSM account you can
           <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
           <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
         </form>
 
-        <app-characters
-          [region]="userForm.value.region"
-          [realm]="userForm.value.realm">
+        <br>
+        <app-characters [region]="userForm.value.region" [realm]="userForm.value.realm">
         </app-characters>
-        <!--
-          <strong>Your API keys</strong>
-          <p>
-            Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
-          </p>
-          <div class="input-group input-group-sm">
-            <span class="input-group-addon" id="basic-addon1">TSM api key</span>
-            <input class="form-control col-md-2" name="apiTsm" placeholder="api key" type="text" [(ngModel)]="u.apiTsm" aria-describedby="basic-addon1"
-            />
-          </div>
-          If you don't have a TSM account you can
-          <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
-          <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
-          -->
+
         <div class="clearfix col-md-12 mt-2 mb-2">
           <button matStepperPrevious class="btn btn-secondary float-left mat-elevation-z5">Back</button>
-          <button matStepperNext class="btn btn-primary float-right mat-elevation-z5" [disabled]="!this.isValid()" type="submit">
+          <button matStepperNext class="btn btn-primary float-right mat-elevation-z5"
+            [disabled]="!this.isValid()" type="submit" (click)="registerUser()">
             <i class="fa fa-floppy-o" aria-hidden="true"></i>
             Save and continue
           </button>
