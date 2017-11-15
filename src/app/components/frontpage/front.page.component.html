@@ -58,7 +58,7 @@
           To use the application and see crafting cost and auctions you need to define a realm. You change this at any time in the
           settings later on.
         </p>
-        <form class="form-group" (ngSubmit)="nextPage()" [formGroup]="userForm">
+        <form class="form-group" (ngSubmit)="registerUser()" [formGroup]="userForm">
           <mat-form-field class="col-md-2">
             <mat-select placeholder="Region" formControlName="region" requiered>
               <mat-option *ngFor="let r of getRegions()" [value]="r">
@@ -102,6 +102,19 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Characters and API</ng-template>
+        <form class="form-group" (ngSubmit)="registerUser()" [formGroup]="userForm">
+          <strong>Your API keys</strong>
+          <p>
+            Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
+          </p>
+          <mat-form-field class="row col-md-12">
+              <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
+          </mat-form-field>
+          If you don't have a TSM account you can
+          <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
+          <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
+        </form>
+
         <app-characters
           [region]="userForm.value.region"
           [realm]="userForm.value.realm">
@@ -122,21 +135,13 @@
           -->
         <div class="clearfix col-md-12 mt-2 mb-2">
           <button matStepperPrevious class="btn btn-secondary float-left mat-elevation-z5">Back</button>
-          <button matStepperNext class="btn btn-primary float-right mat-elevation-z5" [disabled]="!this.isValid()">
-            <i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i>
+          <button matStepperNext class="btn btn-primary float-right mat-elevation-z5" [disabled]="!this.isValid()" type="submit">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i>
             Save and continue
           </button>
         </div>
       </mat-step>
     </mat-horizontal-stepper>
-    <!--
-    <form class="form-group" (ngSubmit)="nextPage()" [formGroup]="userForm">
-
-      <br>
-      <button class="btn btn-primary" type="submit">
-        Save and continue
-      </button>
-    </form>-->
 
   </div>
 </div>
