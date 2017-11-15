@@ -102,7 +102,10 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Characters and API</ng-template>
-        <app-characters></app-characters>
+        <app-characters
+          [region]="userForm.value.region"
+          [realm]="userForm.value.realm">
+        </app-characters>
         <!--
           <strong>Your API keys</strong>
           <p>

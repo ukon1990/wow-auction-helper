@@ -1,13 +1,16 @@
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { RealmService } from './../../../services/realm.service';
 import { CharacterService } from './../../../services/character.service';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'app-characters',
   templateUrl: './characters.component.html'
 })
-export class CharactersComponent implements AfterViewInit {
+export class CharactersComponent implements AfterViewInit, OnChanges {
+  @Input() region: string;
+  @Input() realm: string;
+
   regions: Object;
   characters: Array<any> = new Array<any>();
   downloading: boolean;
@@ -21,6 +24,9 @@ export class CharactersComponent implements AfterViewInit {
         realm: '',
         name: ''
       });
+      if (localStorage['characters']) {
+        this.characters = JSON.parse(localStorage['characters']);
+      }
     }
 
   ngAfterViewInit() {
@@ -29,6 +35,16 @@ export class CharactersComponent implements AfterViewInit {
         console.log(r);
         this.regions = r.region;
       });
+  }
+
+  ngOnChanges(change): void {
+    if (change.region && change.region.currentValue) {
+      this.characterForm.controls.region.setValue(change.region.currentValue);
+    }
+
+    if (change.realm && change.realm.currentValue) {
+      this.characterForm.controls.realm.setValue(change.realm.currentValue);
+    }
   }
 
   getCharacter(): void {

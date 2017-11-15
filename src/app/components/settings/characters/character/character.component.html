@@ -23,21 +23,25 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div *ngIf="character.professions">
-      <strong>Primary professions</strong>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let primary of character.professions.primary">
-          <span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
-          {{ primary.name }} x {{ primary.recipes.length }}
-        </li>
-      </ul>
-      <strong>Secondary professions</strong>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let secondary of character.professions.secondary">
-          <span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
-          {{ secondary.name }} x {{ secondary.recipes.length }}
-        </li>
-      </ul>
+    <div *ngIf="character.professions" class="row">
+      <div class="col-md-6">
+        <strong>Primary professions</strong>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let primary of character.professions.primary">
+            <span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
+            {{ primary.name }} x {{ primary.recipes.length }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <strong>Secondary professions</strong>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let secondary of character.professions.secondary">
+            <span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
+            {{ secondary.name }} x {{ secondary.recipes.length }}
+          </li>
+        </ul>
+      </div>
     </div>
   </mat-card-content>
   <mat-card-actions>
