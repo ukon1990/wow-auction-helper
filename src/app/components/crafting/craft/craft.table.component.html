@@ -1,5 +1,5 @@
 <table class="table table-striped">
-	<tr class="row">
+	<tr>
 		<th (click)="sort('name')">
 			<app-sort-icon [key]="sorter.getKey('name')"></app-sort-icon>
 			Name
@@ -40,7 +40,7 @@
 			Action
 		</th>
 	</tr>
-	<tr class="row" *ngFor="let craft of crafts |
+	<tr *ngFor="let craft of crafts |
 			slice: 
 				(pageEvent.pageSize * (pageEvent.pageIndex + 1)) - pageEvent.pageSize:
 				pageEvent.pageSize * (pageEvent.pageIndex + 1) ;
