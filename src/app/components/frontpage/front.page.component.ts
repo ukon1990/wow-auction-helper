@@ -25,7 +25,8 @@ export class FrontPageComponent implements OnInit {
     this.userForm = this.formBuilder.group({
       region: '',
       realm: '',
-      name: ''
+      name: '',
+      tsmKey: ''
     });
     this.userCrafterForm = formBuilder.group({
       'query': ''
@@ -41,7 +42,7 @@ export class FrontPageComponent implements OnInit {
       r => {
         this.regions = r.region;
       });
-    if (localStorage.getItem('realm') !== null && localStorage.getItem('region') !== null) {
+    if (localStorage['realm'] && localStorage['region']) {
       this.router.navigateByUrl('/crafting');
     }
   }
@@ -49,43 +50,30 @@ export class FrontPageComponent implements OnInit {
   getRegions(): string[] {
     return this.regions ? Object.keys(this.regions) : [];
   }
-/*
-  nextPage() {
+
+  registerUser(): void {
     if (this.isValid()) {
-      localStorage.setItem('region', this.u.region);
+      localStorage['region'] = this.userForm.value.region;
+      localStorage['realm'] = this.userForm.value.realm;
 
-      localStorage.setItem('realm', this.u.realm);
-
-      localStorage.setItem('character',
-        this.u.character && this.u.character.length > 0 ? this.u.character : '');
-
-      localStorage.setItem('api_tsm',
-        this.u.apiTsm && this.u.apiTsm.length > 0 ? this.u.apiTsm : '');
-
-      localStorage.setItem('api_wowuction',
-        this.u.apiWoWu && this.u.apiWoWu.length > 0 ? this.u.apiWoWu : '');
-
-      localStorage.setItem('crafters', this.u.crafters.toString());
-
-      if (this.u.apiTsm && this.u.apiTsm.length > 0) {
-        localStorage.setItem('api_to_use', 'tsm');
-      } else if (this.u.apiWoWu && this.u.apiWoWu.length > 0) {
-        localStorage.setItem('api_to_use', 'wowuction');
+      if (this.userForm.value.tsmKey.length > 0) {
+        localStorage['api_tsm'] = this.userForm.value.tsmKey;
+        localStorage['api_to_use'] = 'tsm';
       } else {
-        localStorage.setItem('api_to_use', 'none');
+        localStorage['api_to_use'] = 'none';
       }
 
-      localStorage.setItem('timestamp_news', new Date().toLocaleDateString());
+      localStorage['timestamp_news'] = new Date().toLocaleDateString();
 
-      // this.router.navigateByUrl('/crafting');
       ga('send', {
         hitType: 'event',
         eventCategory: 'User registration',
         eventAction: 'New user registered'
       });
-      location.reload();
+
+      this.router.navigateByUrl('/crafting');
     }
-  }*/
+  }
 
   isValid() {
     return this.userForm.value.region && this.userForm.value.region.length > 0 && this.userForm.value.realm && this.userForm.value.realm.length > 0;
