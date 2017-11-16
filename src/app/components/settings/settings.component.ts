@@ -178,7 +178,6 @@ export class SettingsComponent implements OnInit {
         this.originalRealm + ' and new realm is ' +
         this.user.realm + '. Downloading new auction data.');
 
-      this.downloadComponent.downloadingText = 'Downloading TSM data for the new realm';
       this.auctionService.getTSMData().subscribe(result => {
         result.forEach(r => {
           lists.tsm[r.Id] = r;
@@ -190,7 +189,6 @@ export class SettingsComponent implements OnInit {
         console.log(err);
       });
     } else if (oldTSMKey !== localStorage.getItem('api_tsm')) {
-      this.downloadComponent.downloadingText = 'Downloading TSM data for the new realm';
       this.auctionService.getTSMData().subscribe(result => {
         result.forEach(r => {
           lists.tsm[r.Id] = r;

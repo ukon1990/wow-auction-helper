@@ -17,7 +17,14 @@ import { CharacterService } from 'app/services/character.service';
   styleUrls: ['./downloads.component.css']
 })
 export class DownloadsComponent implements OnInit {
-  downloadingText = '';
+  downloading = {
+    items: false,
+    api: false,
+    auctions: false,
+    recipes: false,
+    pets: false
+  };
+
   private lastModified: number;
   timeSinceLastModified: number;
   private oldTimeDiff: number;
@@ -221,12 +228,16 @@ export class DownloadsComponent implements OnInit {
       } else {
         // TODO: this.downloadPets();
       }
+      
+      await this.donloadRecipes();
 
-      await Crafting.download(this.itemService);
-      await Pets.download(this.itemService);
-      await Item.download(this.itemService);
+      await this.downloadPets();
+
+      await this.downloadItems();
+
       await Auctions.checkForUpdates(this.auctionService);
-      await Auctions.download(this.auctionService, this.router);
+
+      await this.downloadAuctions();
       setInterval(() => this.checkForUpdate(), 60000);
 
       if (localStorage.getItem('custom_prices') !== null) {
@@ -288,15 +299,24 @@ export class DownloadsComponent implements OnInit {
   }
 
   donloadRecipes(): void {
-    Crafting.download(this.itemService);
+    this.downloading.recipes = true;
+    Crafting.download(this.itemService)
+      .then(r => this.downloading.recipes = false)
+      .catch(r => this.downloading.recipes = false);
   }
 
   downloadPets(): void {
-    Pets.download(this.itemService);
+    this.downloading.pets = true;
+    Pets.download(this.itemService)
+      .then(r => this.downloading.pets = false)
+      .catch(r => this.downloading.pets = false);
   }
 
   downloadItems(): void {
-    Item.download(this.itemService);
+    this.downloading.items = true;
+    Item.download(this.itemService)
+      .then(r => this.downloading.items = false)
+      .catch(r => this.downloading.items = false);
   }
 
   checkForUpdates(): void {
@@ -304,6 +324,14 @@ export class DownloadsComponent implements OnInit {
   }
 
   downloadAuctions(): void {
-    Auctions.download(this.auctionService, this.router);
+    this.downloading.auctions = true;
+    Auctions.download(this.auctionService, this.router)
+      .then(r => this.downloading.auctions = false)
+      .catch(r => this.downloading.auctions = false);
+  }
+
+  isDownloading(): boolean {
+    return this.downloading.api || this.downloading.auctions || this.downloading.items
+      || this.downloading.pets || this.downloading.recipes;
   }
 }
