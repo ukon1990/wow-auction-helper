@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DownloadsComponent } from './downloads.component';
+import { AppModule } from 'app';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('DownloadsComponent', () => {
   let component: DownloadsComponent;
@@ -8,7 +10,10 @@ describe('DownloadsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DownloadsComponent ]
+      imports: [AppModule],
+      providers: [
+        {provide: APP_BASE_HREF, useValue: '/'}
+      ]
     })
     .compileComponents();
   }));

@@ -5,11 +5,13 @@ import { user, DB_TABLES, API_KEY, db, lists } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
+import { User } from 'app/models/user';
 
 @Injectable()
 export class CharacterService {
+  public static user: User;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getCharacters() {
     return this.http

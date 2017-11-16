@@ -1,6 +1,7 @@
 import { IUser } from './interfaces';
 import { itemClasses, watchlist } from './objects';
 import Dexie from 'dexie';
+import { User } from 'app/models/user';
 
 export let lists = {
 	isDownloading: true,
@@ -17,7 +18,7 @@ export let lists = {
 	customPrices: {},
 	myRecipes: []
 };
-export let user: IUser = {
+export let user: User = {
 	region: 'eu',
 	realm: 'aegwynn',
 	character: undefined,

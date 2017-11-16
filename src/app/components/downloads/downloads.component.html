@@ -23,7 +23,7 @@
   </div>
   <div class="row col-md-12">
     <div class="col-md-12">
-      Pets last updated: {{ pageLoadTimestamp | date:'M/d/yy hh:mm' }}
+      Pets last updated: {{ tempTimestamps.pets | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right" (click)="downloadPets()">
         <i class="fa fa-spinner loading" *ngIf="downloading.pets" aria-hidden="true"></i>
         Download now
@@ -32,7 +32,7 @@
   </div>
   <div class="row col-md-12">
     <div class="col-md-12">
-      Recipes last updated: {{ pageLoadTimestamp | date:'M/d/yy hh:mm' }}
+      Recipes last updated: {{ tempTimestamps.recipes | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right" (click)="donloadRecipes()">
         <i class="fa fa-spinner loading" *ngIf="downloading.recipes" aria-hidden="true"></i>
         Download now

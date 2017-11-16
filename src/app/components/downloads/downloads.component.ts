@@ -17,6 +17,11 @@ import { CharacterService } from 'app/services/character.service';
   styleUrls: ['./downloads.component.css']
 })
 export class DownloadsComponent implements OnInit {
+  tempTimestamps = {
+    pets: new Date(),
+    recipes: new Date()
+  };
+
   downloading = {
     items: false,
     api: false,
@@ -33,7 +38,6 @@ export class DownloadsComponent implements OnInit {
   private petObserver = {};
   private u: IUser;
   private date: Date;
-  pageLoadTimestamp: Date = new Date();
   showDropdown: boolean;
   constructor(private auctionService: AuctionService,
     private itemService: ItemService, private characterService: CharacterService,
@@ -163,7 +167,6 @@ export class DownloadsComponent implements OnInit {
         console.log('app.component init', e);
       }
 
-      this.checkForUpdate();
       if (
         user.apiToUse === 'tsm' &&
         localStorage.getItem('api_tsm') !== null &&
@@ -301,15 +304,19 @@ export class DownloadsComponent implements OnInit {
   donloadRecipes(): void {
     this.downloading.recipes = true;
     Crafting.download(this.itemService)
-      .then(r => this.downloading.recipes = false)
-      .catch(r => this.downloading.recipes = false);
+      .then(r => {
+        this.downloading.recipes = false;
+        this.tempTimestamps.recipes = new Date();
+      }).catch(r => this.downloading.recipes = false);
   }
 
   downloadPets(): void {
     this.downloading.pets = true;
     Pets.download(this.itemService)
-      .then(r => this.downloading.pets = false)
-      .catch(r => this.downloading.pets = false);
+      .then(r => {
+        this.downloading.pets = false;
+        this.tempTimestamps.pets = new Date();
+      }).catch(r => this.downloading.pets = false);
   }
 
   downloadItems(): void {
