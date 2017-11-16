@@ -4,12 +4,12 @@ import { CharacterService } from "app/services/character.service";
 export class User {
   region: string;
 	realm: string;
-	character?: string;
+	character: string = '';
 	characters: any[];
 	apiWoWu?: string;
 	apiTsm?: string;
 	customPrices?: any;
-	apiToUse: string;
+	apiToUse: string = 'none';
 	buyoutLimit: number = 200;
 	crafters: any[];
 	notifications: Notification = {
@@ -49,7 +49,7 @@ export class User {
           localStorage['api_wowuction'] = user[key];
           break;
         case 'customPrices':
-          localStorage['custom_prices'] = user[key];
+          localStorage['custom_prices'] = JSON.stringify(user[key]);
           break;
         case 'apiToUse':
           localStorage['api_to_use'] = user[key];
@@ -58,10 +58,10 @@ export class User {
           localStorage['crafting_buyout_limit'] = user[key];
           break;
         case 'characters':
-          localStorage['characters'] = user[key];
+          localStorage['characters'] = JSON.stringify(user[key]);
           break;
         case 'notifications':
-          localStorage['notifications'] = user[key];
+          localStorage['notifications'] = JSON.stringify(user[key]);
           break;
       }
     });
