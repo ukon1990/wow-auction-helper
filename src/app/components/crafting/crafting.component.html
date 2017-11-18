@@ -5,24 +5,23 @@
   <div class="panel-body">
     <div class="col-md-12">
       <!-- Action type selectors -->
-      <div class="btn-group btn-group-xs col-md-12" role="group">
-        <button type="button" class="btn btn-info" (click)="toggleDisenchanting(false)" [ngClass]="{'active': !isDisenchating}">
+      <div class="btn-group btn-group-sm col-md-12" role="group">
+        <button type="button" class="btn btn-sm btn-info" (click)="toggleDisenchanting(false)" [ngClass]="{'active': !isDisenchating}">
           Crafting
         </button>
-        <button type="button" class="btn btn-info" (click)="toggleDisenchanting(true)" [ngClass]="{'active': isDisenchating}">
+        <button type="button" class="btn btn-sm btn-info" (click)="toggleDisenchanting(true)" [ngClass]="{'active': isDisenchating}">
           Disenchanting
         </button>
       </div>
 
       <form class="form-inline" (ngSubmit)="filterRecipes()" [formGroup]="filterForm">
         <!-- Regular crafting -->
-        <div *ngIf="!isDisenchating; else disenchant" class="row col-md-12">
+        <div *ngIf="!isDisenchating; else disenchant" class="row col-md-10">
           <mat-form-field class="col-md-2">
             <input matInput placeholder="Item name" formControlName="searchQuery">
           </mat-form-field>
 
-          <mat-checkbox *ngIf="myRecipes.length > 0" class="col-md-2"
-            formControlName="onlyMyRecipes">
+          <mat-checkbox *ngIf="myRecipes.length > 0" class="col-md-2" formControlName="onlyMyRecipes">
             Only known recipes
           </mat-checkbox>
 
@@ -49,7 +48,11 @@
           </mat-form-field>
 
           <mat-form-field class="col-md-2">
-            <mat-select placeholder="Profession" formControlName="craftManually">
+            <mat-select placeholder="Craft materials"
+              matTooltip="
+                Calculates profit/ROI with the assumption, that you will craft 
+                any sub-material you can. Given that it matches your criteria"
+              formControlName="craftManually">
               <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let i of craftManually" [value]="i">
                 {{ i }}
@@ -59,38 +62,41 @@
         </div>
         <!-- Disenchatning crafting options -->
         <ng-template #disenchant>
-          <div class="input-group input-group-sm">
-            <span class="input-group-addon" id="basic-addon1">Target item</span>
-            <select class="form-control" aria-describedby="basic-addon1" [formControl]="filterForm.controls['selectedDEMaterial']">
-              <option *ngFor="let item of Disenchanting.materials; let i = index" [value]="i">
-                {{ Disenchanting.getItemName(item.id) }}
-              </option>
-            </select>
-          </div>
-          <div class="input-group input-group-sm">
-            <span class="input-group-addon" id="sizing-addon3">Only profitable</span>
-            <span class="input-group-addon">
-              <input type="checkbox" aria-label="" [formControl]="filterForm.controls['DEOnlyProfitable']">
-            </span>
-          </div>
-          <div class="input-group input-group-sm">
-            <span class="input-group-addon" id="sizing-addon3">Profession</span>
-            <select name="profession" class="form-control" [formControl]="filterForm.controls['profession']" aria-describedby="sizing-addon3">
-              <option value="All">All</option>
-              <option *ngFor="let i of professions" value="{{ i }}">{{ i }}</option>
-            </select>
-          </div>
-          <div class="input-group input-group-sm" *ngIf="myRecipes.length > 0">
-            <span class="input-group-addon" id="sizing-addon3">Only known recipes</span>
-            <span class="input-group-addon">
-              <input type="checkbox" [formControl]="filterForm.controls['onlyMyRecipes']" aria-label="sizing-addon3">
-            </span>
+          <div class="col-md-10 row">
+            <mat-form-field class="col-md-2">
+              <mat-select placeholder="Target item" formControlName="selectedDEMaterial">
+                <mat-option *ngFor="let item of Disenchanting.materials; let i = index" [value]="i">
+                  {{ Disenchanting.getItemName(item.id) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-checkbox class="col-md-2" formControlName="DEOnlyProfitable">
+              Only profitable
+            </mat-checkbox>
+
+            <mat-form-field class="col-md-2">
+              <mat-select placeholder="Profession" formControlName="profession">
+                <mat-option value="All">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let i of professions" [value]="i">
+                  {{ i }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-checkbox class="col-md-2" *ngIf="myRecipes.length > 0" formControlName="onlyMyRecipes">
+              Only known recipes
+            </mat-checkbox>
           </div>
         </ng-template>
 
-        <button class="btn btn-primary mat-elevation-z5 mr-2" type="submit">Apply filter</button>
-        <button class="btn btn-default mat-elevation-z5 mr-2" type="button" (click)="resetFilters()">Reset</button>
-        <app-export [list]="crafts"></app-export>
+        <div class="col-md-2">
+          <button class="btn btn-primary mat-elevation-z5 mr-2" type="submit">Apply filter</button>
+          <button class="btn btn-default mat-elevation-z5 mr-2" type="button" (click)="resetFilters()">Reset</button>
+          <app-export [list]="crafts"></app-export>
+        </div>
       </form>
     </div>
     <div class="row col-md-12">
