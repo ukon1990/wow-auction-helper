@@ -3,22 +3,22 @@
     <h2 class="panel-title">Watchlist</h2>
     <div class="pull-right pull-up-buttons">
       <button *ngIf="display.groups; else groups" class="btn btn-primary mat-elevation-z5" (click)="display.toggleGroups()">
-        <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
+        <i class="fa fa-eye" aria-hidden="true"></i>
         Edit groups
       </button>
       <ng-template #groups>
         <button class="btn btn-primary mat-elevation-z5" (click)="display.toggleGroups()">
-          <i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>
+          <i class="fa fa-eye-slash" aria-hidden="true"></i>
           Edit groups
         </button>
       </ng-template>
       <button *ngIf="display.itemSearch; else itemSearch" class="btn btn-primary mat-elevation-z5" (click)="display.toggleSearchItem()">
-        <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
+        <i class="fa fa-eye" aria-hidden="true"></i>
         Add items
       </button>
       <ng-template #itemSearch>
         <button class="btn btn-primary mat-elevation-z5" (click)="display.toggleSearchItem()">
-          <i class="glyphicon glyphicon-eye-close" aria-hidden="true"></i>
+          <i class="fa fa-eye-slash" aria-hidden="true"></i>
           Add items
         </button>
       </ng-template>
@@ -57,14 +57,14 @@
           </td>
           <td>
             <button class="btn btn-primary mat-elevation-z5 pull-right" (click)="removeGroup(i)">
-              <i class="glyphicon glyphicon-trash"></i>
+              <i class="fa fa-trash"></i>
               Delete
             </button>
             <span *ngIf="i !== watchlist.groups.length - 1" class="pull-right" (click)="moveGroup(group, 1)">
-              <i class="glyphicon glyphicon-arrow-down"></i>
+              <i class="fa fa-arrow-down"></i>
             </span>
             <span *ngIf="i > 0" class="pull-right" (click)="moveGroup(group, -1)">
-              <i class="glyphicon glyphicon-arrow-up"></i>
+              <i class="fa fa-arrow-up"></i>
             </span>
           </td>
         </tr>
@@ -119,7 +119,7 @@
           </td>
           <td>
             <button class="btn btn-primary mat-elevation-z5 pull-right" (click)="addItemToWatchlist(item)">
-              <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
+              <i class="fa fa-plus" aria-hidden="true"></i>
               Add
             </button>
           </td>
@@ -137,10 +137,10 @@
             </h3>
             <div class="pull-right pull-up-bar">
               <span *ngIf="i !== watchlist.groups.length - 1" class="pull-right" (click)="moveGroup(group, 1)">
-                <i class="glyphicon glyphicon-arrow-down"></i>
+                <i class="fa fa-arrow-down"></i>
               </span>
               <span *ngIf="i > 0" class="pull-right" (click)="moveGroup(group, -1)">
-                <i class="glyphicon glyphicon-arrow-up"></i>
+                <i class="fa fa-arrow-up"></i>
               </span>
             </div>
           </div>
@@ -149,7 +149,7 @@
               <mat-card class="mb-2 mt-2">
                 <mat-card-header>
                   <mat-card-title>
-                    <i class="glyphicon glyphicon-bell pull-right" [ngClass]="{'using-manual-craft': item.alert, 'not-using-manual-craft': !item.alert}"></i>
+                    <i class="fa fa-bell pull-right" [ngClass]="{'using-manual-craft': item.alert, 'not-using-manual-craft': !item.alert}"></i>
                     <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24 align-left" [style.background-image]="'url('+ getIcon(item) +')'"></span>
                     <a rel="item={{ item.id }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ item.id }}"
                       target="_blank">
@@ -190,7 +190,7 @@
                                 target="_blank">{{m.name}}</a>
 
                               {{ getBuyout(m.itemID) | gold }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
-                              <i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+                              <i *ngIf="m.useCraftedBy !== undefined" class="fa fa-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
                                 (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
                             </span>
 
@@ -201,7 +201,7 @@
                                 <a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
                                   target="_blank">{{subMats.name}}</a>
                                 {{ getBuyout(subMats.itemID) | gold }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
-                                <i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+                                <i *ngIf="m.useCraftedBy !== undefined" class="fa fa-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
                                   (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
                               </div>
                             </div>
@@ -216,11 +216,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <button class="btn btn-primary mat-elevation-z5" (click)="editItemDialog(group, i)">
-                      <i class="glyphicon glyphicon-edit"></i>
+                      <i class="fa fa-pencil-square-o"></i>
                       Edit
                     </button>
                   <button class="btn btn-default mat-elevation-z5" (click)="removeItem(group, i)">
-                      <i class="glyphicon glyphicon-trash"></i>
+                      <i class="fa fa-trash"></i>
                       Delete
                   </button>
                 </mat-card-actions>
@@ -241,7 +241,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">
-          <i class="glyphicon glyphicon-remove"></i>
+          <i class="fa fa-trash"></i>
         </button>
         <h4 class="modal-title">
           Deleting "{{ watchlist.groups[editing.group.index] }}"
@@ -280,7 +280,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">
-          <i class="glyphicon glyphicon-remove"></i>
+          <i class="fa fa-trash"></i>
         </button>
         <h4 class="modal-title">
           {{ editing.item.object?.name }}

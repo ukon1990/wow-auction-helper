@@ -22,7 +22,7 @@
 	background-color: #d8f6fb;
 }
 
-.glyphicon.glyphicon-remove {
+.fa.fa-trash {
     position: absolute !important;
     right: 0 !important;
     padding: 0.5em !important;

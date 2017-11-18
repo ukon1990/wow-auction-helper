@@ -11,7 +11,7 @@
       <a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
         target="_blank">{{ a.name }}</a> x {{ (a.quantity / a.minCount).toFixed(2) }}
       <span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span>
-      <i class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart.emit(a.spellID)"></i>
+      <i class="fa fa-trash" aria-hidden="true" (click)="removeFromCart.emit(a.spellID)"></i>
     </div>
 
     <strong>Reagents</strong>

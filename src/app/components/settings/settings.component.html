@@ -102,7 +102,7 @@
             [formControl]="customPriceForm.controls['query']">
           <button id="sizing-addon1" class="input-group-addon btn btn-default mat-elevation-z5" (click)="searchDB()">
             Search
-            <i class="glyphicon glyphicon-search">
+            <i class="fa fa-search">
             </i>
           </button>
         </div>
@@ -110,7 +110,7 @@
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let item of customPriceQueryItems">
           {{ item.name}}
-          <i class="glyphicon glyphicon-plus pull-right" (click)="addCustomPrice(item)"></i>
+          <i class="fa fa-plus pull-right" (click)="addCustomPrice(item)"></i>
         </li>
       </ul>
       <table class="table table-striped">
@@ -135,7 +135,7 @@
           </td>
           <td>{{ cp.price | gold }}</td>
           <td>
-            <i class="glyphicon glyphicon-trash pull-right" (click)="removeCustomPrice(i)"></i>
+            <i class="fa fa-trash pull-right" (click)="removeCustomPrice(i)"></i>
           </td>
         </tr>
       </table>

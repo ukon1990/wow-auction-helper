@@ -64,7 +64,7 @@
             target="_blank">{{m.name}}</a>
 
           {{ getMinPrice(m.itemID) | gold }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
-          <i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+          <i *ngIf="m.useCraftedBy !== undefined" class="fa fa-university" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
             (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
         </span>
 
@@ -75,7 +75,7 @@
             <a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
               target="_blank">{{subMats.name}}</a> {{ getMinPrice(subMats.itemID) | gold }} ({{ getAuction(subMats.itemID).quantity_total }}
             @ AH)
-            <i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+            <i *ngIf="m.useCraftedBy !== undefined" class="fa fa-university" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
               (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
           </div>
         </div>
@@ -112,7 +112,7 @@
       <a class="fa fa-shopping-cart push-left" aria-hidden="true" (click)="openMenu(i)">Add</a>
       <br>
       <div class="recipe-menu recipe-menu-dark" [ngClass]="{'recipe-menu-open': i === selectedItemIndex}">
-        <i aria-hidden="true" class="glyphicon glyphicon-remove" (click)="openMenu(i)"></i>
+        <i aria-hidden="true" class="fa fa-trash" (click)="openMenu(i)"></i>
         <div class="panel-body">
           Add quantity:
           <br>

@@ -137,7 +137,7 @@
                       target="_blank">{{m.name}}</a>
 
                     {{ getMinPrice(m.itemID) | gold }} ({{ getAuctionItem(m.itemID).quantity_total }} @ AH)
-                    <i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+                    <i *ngIf="m.useCraftedBy !== undefined" class="fa fa-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
                       (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
                   </span>
 
@@ -148,7 +148,7 @@
                       <a rel="item={{ subMats.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{subMats.itemID}}"
                         target="_blank">{{subMats.name}}</a>
                       {{ getMinPrice(subMats.itemID) | gold }} ({{ getAuctionItem(subMats.itemID).quantity_total }} @ AH)
-                      <i *ngIf="m.useCraftedBy !== undefined" class="glyphicon glyphicon-piggy-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
+                      <i *ngIf="m.useCraftedBy !== undefined" class="fa fa-bank" [ngClass]="{'using-manual-craft': m.useCraftedBy, 'not-using-manual-craft': !m.useCraftedBy}"
                         (click)="setManualCraft(m, craft)" aria-hidden="true"></i>
                     </div>
                   </div>

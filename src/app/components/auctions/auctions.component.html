@@ -9,54 +9,50 @@
       a TSM key
       <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
     </p>
-    <div class="row col-md-12">
-      <form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
+    <form class="form-inline" (ngSubmit)="filterAuctions()" [formGroup]="filterForm">
+      <mat-form-field>
+        <input matInput placeholder="Item name" formControlName="searchQuery">
+      </mat-form-field>
 
-        <mat-form-field class="col-lg-2">
-          <input matInput placeholder="Item name" formControlName="searchQuery">
+      <div *ngIf="apiToUse !== 'none'" class="ml-2 mr-2">
+        <mat-form-field>
+          <input matInput type="number" placeholder="Demand % (default 0)" formControlName="demand">
         </mat-form-field>
-
-        <div *ngIf="apiToUse !== 'none'" class="col-lg-4 row">
-          <mat-form-field class="col-lg-6">
-            <input matInput type="number" placeholder="Demand % (default 0)" formControlName="demand">
-          </mat-form-field>
-          <mat-form-field class="col-lg-6">
-            <input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value" formControlName="mktPrice">
-          </mat-form-field>
-        </div>
-
-        <mat-form-field class="col-lg-2">
-          <mat-select placeholder="Item class" formControlName="itemClass">
-            <mat-option value="-1">
-              All
-            </mat-option>
-            <mat-option *ngFor="let class of itemClasses.classes; let i = index;" [value]="i">
-              {{ class.name }}
-            </mat-option>
-          </mat-select>
+        <mat-form-field>
+          <input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value" formControlName="mktPrice">
         </mat-form-field>
+      </div>
 
-        <mat-form-field *ngIf="itemClasses.classes[filterForm.value['itemClass']]" class="col-lg-2">
-          <mat-select placeholder="Item sub class" formControlName="itemSubClass">
-            <mat-option value="-1">
-              All
-            </mat-option>
-            <mat-option *ngFor="let class of itemClasses.classes[filterForm.value['itemClass']].subclasses; let i = index;" [value]="i">
-              {{ class.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        
-        <mat-checkbox class="col-lg-2" formControlName="onlyVendorSellable"
-          matTooltip="Only display items below the vendor sell price">
-            Below vendor price
-        </mat-checkbox>
+      <mat-form-field class="ml-2 mr-2">
+        <mat-select placeholder="Item class" formControlName="itemClass">
+          <mat-option value="-1">
+            All
+          </mat-option>
+          <mat-option *ngFor="let class of itemClasses.classes; let i = index;" [value]="i">
+            {{ class.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <button class="btn btn-primary mat-elevation-z5" type="submit">Apply filter</button>
-        <button class="btn btn-default mat-elevation-z5" type="button" (click)="resetFilters()">Reset</button>
-        <app-export [list]="filteredAuctions" auctionList="true"></app-export>
-      </form>
-    </div>
+      <mat-form-field *ngIf="itemClasses.classes[filterForm.value['itemClass']]" class="ml-2 mr-2">
+        <mat-select placeholder="Item sub class" formControlName="itemSubClass">
+          <mat-option value="-1">
+            All
+          </mat-option>
+          <mat-option *ngFor="let class of itemClasses.classes[filterForm.value['itemClass']].subclasses; let i = index;" [value]="i">
+            {{ class.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-checkbox class="ml-2 mr-2" formControlName="onlyVendorSellable" matTooltip="Only display items below the vendor sell price">
+        Below vendor price
+      </mat-checkbox>
+
+      <button class="btn btn-primary mat-elevation-z5 ml-2 mr-2" type="submit">Apply filter</button>
+      <button class="btn btn-default mat-elevation-z5 ml-2 mr-2" type="button" (click)="resetFilters()">Reset</button>
+      <app-export class="ml-2 mr-2" [list]="filteredAuctions" auctionList="true"></app-export>
+    </form>
     <br>
     <div class="row">
       <div class="col-md-8">
@@ -100,7 +96,7 @@
                 <div class="align-left col-md-9">
                   <a rel="{{ auc.petSpeciesId !== undefined ? 'npc=' + getPet(auc.petSpeciesId).creatureId : 'item=' + auc.item }}" (click)="selectAuction(auc)"
                     target="_blank">{{ auc.name }}
-                    <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
+                    <i class="fa fa-eye" aria-hidden="true"></i>
                   </a>
                   <br> {{ auc.owner }} @ {{ auc.ownerRealm }}
                 </div>
