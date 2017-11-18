@@ -98,6 +98,10 @@ tr.info a {
     color: orangered;
 }
 
+.shopping-cart-header {
+    margin-left: -0.5em;
+}
+
 /**
  TODO: Make light theme version
 .cdk-overlay-pane {

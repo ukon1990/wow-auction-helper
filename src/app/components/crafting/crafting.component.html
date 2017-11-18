@@ -17,28 +17,28 @@
       <form class="form-inline" (ngSubmit)="filterRecipes()" [formGroup]="filterForm">
         <!-- Regular crafting -->
         <div *ngIf="!isDisenchating; else disenchant" class="row col-md-10">
-          <mat-form-field class="col-md-2">
+          <mat-form-field>
             <input matInput placeholder="Item name" formControlName="searchQuery">
           </mat-form-field>
 
-          <mat-checkbox *ngIf="myRecipes.length > 0" class="col-md-2" formControlName="onlyMyRecipes">
+          <mat-checkbox class="ml-2 mr-2 mt-3" *ngIf="myRecipes.length > 0" formControlName="onlyMyRecipes">
             Only known recipes
           </mat-checkbox>
 
-          <mat-form-field class="col-md-2" *ngIf="myRecipes.length > 0">
+          <mat-form-field *ngIf="myRecipes.length > 0">
             <input matInput type="number" placeholder="Min profit (%)" formControlName="profit">
           </mat-form-field>
 
-          <div *ngIf="apiToUse !== 'none'" class="col-md-3 row">
-            <mat-form-field class="col-md-6">
+          <div *ngIf="apiToUse !== 'none'">
+            <mat-form-field>
               <input matInput type="number" placeholder="Min demand (%)" matTooltip="Minimum demand (default 0)" formControlName="demand">
             </mat-form-field>
-            <mat-form-field class="col-md-6">
+            <mat-form-field>
               <input matInput type="number" placeholder="Min sold pcs" matTooltip="Minimum sold (default 0)" formControlName="minSold">
             </mat-form-field>
           </div>
 
-          <mat-form-field class="col-md-2">
+          <mat-form-field>
             <mat-select placeholder="Profession" formControlName="profession">
               <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let i of professions" [value]="i">
@@ -47,12 +47,10 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field class="col-md-2">
-            <mat-select placeholder="Craft materials"
-              matTooltip="
+          <mat-form-field>
+            <mat-select placeholder="Craft materials" matTooltip="
                 Calculates profit/ROI with the assumption, that you will craft 
-                any sub-material you can. Given that it matches your criteria"
-              formControlName="craftManually">
+                any sub-material you can. Given that it matches your criteria" formControlName="craftManually">
               <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let i of craftManually" [value]="i">
                 {{ i }}
@@ -62,41 +60,37 @@
         </div>
         <!-- Disenchatning crafting options -->
         <ng-template #disenchant>
-          <div class="col-md-10 row">
-            <mat-form-field class="col-md-2">
-              <mat-select placeholder="Target item" formControlName="selectedDEMaterial">
-                <mat-option *ngFor="let item of Disenchanting.materials; let i = index" [value]="i">
-                  {{ Disenchanting.getItemName(item.id) }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+          <mat-form-field class="ml-2 mr-2">
+            <mat-select placeholder="Target item" formControlName="selectedDEMaterial">
+              <mat-option *ngFor="let item of Disenchanting.materials; let i = index" [value]="i">
+                {{ Disenchanting.getItemName(item.id) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-            <mat-checkbox class="col-md-2" formControlName="DEOnlyProfitable">
-              Only profitable
-            </mat-checkbox>
+          <mat-checkbox class="ml-2 mr-2 mt-3" formControlName="DEOnlyProfitable">
+            Only profitable
+          </mat-checkbox>
 
-            <mat-form-field class="col-md-2">
-              <mat-select placeholder="Profession" formControlName="profession">
-                <mat-option value="All">
-                  All
-                </mat-option>
-                <mat-option *ngFor="let i of professions" [value]="i">
-                  {{ i }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+          <mat-form-field class="ml-2 mr-2">
+            <mat-select placeholder="Profession" formControlName="profession">
+              <mat-option value="All">
+                All
+              </mat-option>
+              <mat-option *ngFor="let i of professions" [value]="i">
+                {{ i }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-            <mat-checkbox class="col-md-2" *ngIf="myRecipes.length > 0" formControlName="onlyMyRecipes">
-              Only known recipes
-            </mat-checkbox>
-          </div>
+          <mat-checkbox class="ml-2 mr-2 mt-3" *ngIf="myRecipes.length > 0" formControlName="onlyMyRecipes">
+            Only known recipes
+          </mat-checkbox>
         </ng-template>
 
-        <div class="col-md-2">
-          <button class="btn btn-primary mat-elevation-z5 mr-2" type="submit">Apply filter</button>
-          <button class="btn btn-default mat-elevation-z5 mr-2" type="button" (click)="resetFilters()">Reset</button>
-          <app-export [list]="crafts"></app-export>
-        </div>
+        <button class="btn btn-primary mat-elevation-z5 mr-2" type="submit">Apply filter</button>
+        <button class="btn btn-default mat-elevation-z5 mr-2" type="button" (click)="resetFilters()">Reset</button>
+        <app-export [list]="crafts"></app-export>
       </form>
     </div>
     <div class="row col-md-12">
@@ -189,28 +183,29 @@
         </ng-template>
       </div>
       <div class="col-md-3">
-        <div class="col-sm-6 col-md-12" *ngIf="isDisenchating">
-          <div class="thumbnail row">
-            <span>
+        <mat-card *ngIf="isDisenchating" class="mb-2">
+          <mat-card-header>
+            <mat-card-title>
               <span xmlns="http://www.w3.org/1999/xhtml" class="icon-frame frame-24" [style.background-image]="'url('+ getIcon(Disenchanting.materials[Disenchanting.selected]) +')'"></span>
               <a rel="item={{ Disenchanting.materials[Disenchanting.selected].id }}" href="http://www.wowhead.com/item={{ Disenchanting.materials[Disenchanting.selected].id }}"
                 target="_blank">
                 {{ Disenchanting.getItemName(Disenchanting.materials[Disenchanting.selected].id) }}
               </a>
-            </span>
-            <div class="caption">
-              Buyout: {{ getMinPrice(Disenchanting.materials[Disenchanting.selected].id) | gold }}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            Buyout: {{ getMinPrice(Disenchanting.materials[Disenchanting.selected].id) | gold }}
+            <br>
+            <div *ngIf="user.apiTouse !== 'none'">
+              Market value: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice | gold }}
+              <br> Region sale avg: {{ getApiItem( Disenchanting .materials[Disenchanting.selected].id) .regionSaleAvg | gold
+              }}
+              <br> Est demand: {{ getApiItem( Disenchanting.materials[Disenchanting.selected].id) .estDemand | percent}}
               <br>
-              <div *ngIf="user.apiTouse !== 'none'">
-                Market value: {{ getAuctionItem(Disenchanting.materials[Disenchanting.selected].id).mktPrice | gold }}
-                <br> Region sale avg: {{ getApiItem( Disenchanting .materials[Disenchanting.selected].id) .regionSaleAvg | gold
-                }}
-                <br> Est demand: {{ getApiItem( Disenchanting.materials[Disenchanting.selected].id) .estDemand | percent}}
-                <br>
-              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
+
         <app-shopping-cart [shoppingCart]="shoppingCart" [user]="user" [getMinPrice]="getMinPrice" (removeFromCart)="removeFromCart($event)"
           (clearCart)="clearCart()">
         </app-shopping-cart>

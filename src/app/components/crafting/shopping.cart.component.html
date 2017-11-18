@@ -1,24 +1,33 @@
-<strong>Shopping cart</strong>
-<ul>
-    <li *ngFor="let a of shoppingCart.recipes">
-        <a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-                        target="_blank">{{ a.name }}</a> x
-                        {{ (a.quantity / a.minCount).toFixed(2) }}
-                        <span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span> <i  class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart.emit(a.spellID)"></i>
-    </li>
-</ul>
-<strong>Reagents</strong>
-<ul>
-    <li *ngFor="let a of shoppingCart.reagents">
-        <a rel="item={{ a.itemID }}"
-            href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-            target="_blank">
-            {{ a.name }} x {{ a.count }} for {{ getMinPrice(a.itemID) * a.count | gold }}
-            <i  class="fa fa-shopping-cart" aria-hidden="true"></i>
-        </a>
-    </li>
-</ul>
-Sum buyout from AH: {{ shoppingCart.buyout | gold }} <br>
-Sum material cost from AH: {{ shoppingCart.cost | gold }} <br>
-Potential sale profit: {{ shoppingCart.profit | gold }}<br>
-<button class="btn btn-default mat-elevation-z5" (click)="clearCart.emit()">Empty shopping cart</button>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <strong class="shopping-cart-header">
+          Shopping cart
+      </strong>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="mb-2" *ngFor="let a of shoppingCart.recipes">
+      <a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
+        target="_blank">{{ a.name }}</a> x {{ (a.quantity / a.minCount).toFixed(2) }}
+      <span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span>
+      <i class="glyphicon glyphicon-remove" aria-hidden="true" (click)="removeFromCart.emit(a.spellID)"></i>
+    </div>
+
+    <strong>Reagents</strong>
+    <div class="mb-2" *ngFor="let a of shoppingCart.reagents">
+      <a rel="item={{ a.itemID }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
+        target="_blank">
+        {{ a.name }} x {{ a.count }} for {{ getMinPrice(a.itemID) * a.count | gold }}
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+      </a>
+    </div>
+    Sum buyout from AH: {{ shoppingCart.buyout | gold }}
+    <br> Sum material cost from AH: {{ shoppingCart.cost | gold }}
+    <br> Potential sale profit: {{ shoppingCart.profit | gold }}
+    <br>
+  </mat-card-content>
+  <mat-card-actions>
+    <button class="btn btn-default mat-elevation-z5" (click)="clearCart.emit()">Empty shopping cart</button>
+  </mat-card-actions>
+</mat-card>
