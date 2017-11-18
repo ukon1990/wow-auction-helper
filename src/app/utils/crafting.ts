@@ -1,7 +1,8 @@
-import { lists, user } from './globals';
+import { lists } from './globals';
 import { Notification } from './notification';
 import { Router } from '@angular/router';
 import { ItemService } from '../services/item.service';
+import { CharacterService } from 'app/services/character.service';
 
 export default class Crafting {
 
@@ -37,15 +38,15 @@ export default class Crafting {
 		}
 		console.log('Done calculating crafting costs');
 
-		if (user.notifications.isWatchlist) {
+		if (CharacterService.user.notifications.isWatchlist) {
 			// checking if watchlist gives any alerts
 			let watchlistAlerts = 0;
 			const tmpList = [];
 			lists.myRecipes.forEach(recipeID => {
 				tmpList[recipeID] = 'owned';
 			});
-			Object.keys(user.watchlist.items).forEach(group => {
-				user.watchlist.items[group].forEach(item => {
+			Object.keys(CharacterService.user.watchlist.items).forEach(group => {
+				CharacterService.user.watchlist.items[group].forEach(item => {
 					if ((item.alert === undefined || item.alert) &&
 						(item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value ||
 							item.criteria === 'above' && lists.auctions[item.id].buyout >= item.value)) {
@@ -81,12 +82,12 @@ export default class Crafting {
 			c['profitPercent'] = 0;
 			c['estDemand'] = 0;
 
-			if (user.apiToUse === 'tsm') {
+			if (CharacterService.user.apiToUse === 'tsm') {
 				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
 					lists.tsm[c.itemID]['MarketValue'] : 0;
 				c['estDemand'] = lists.tsm[c.itemID] !== undefined ?
 					Math.round(lists.tsm[c.itemID]['RegionSaleRate'] * 100) : 0;
-			} else if (user.apiToUse === 'wowuction') {
+			} else if (CharacterService.user.apiToUse === 'wowuction') {
 				c['mktPrice'] = lists.tsm[c.itemID] !== undefined ?
 					lists.wowuction[c.itemID]['mktPrice'] : 0;
 				c['estDemand'] = lists.wowuction[c.itemID] !== undefined ?
@@ -114,7 +115,7 @@ export default class Crafting {
 							matBuyout = lists.customPrices[m.itemID] !== undefined ?
 								(lists.customPrices[m.itemID]) :
 								lists.auctions[m.itemID] !== undefined ?
-									lists.auctions[m.itemID].buyout : user.apiToUse === 'tsm' ?
+									lists.auctions[m.itemID].buyout : CharacterService.user.apiToUse === 'tsm' ?
 										lists.tsm[m.itemID] ?
 											lists.tsm[m.itemID].MarketValue : 0 :
 										0;
@@ -140,9 +141,9 @@ export default class Crafting {
 				} catch (err) {
 					console.error('calcCost failed: ', err);
 				}
-				if ((user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') &&
+				if ((CharacterService.user.apiToUse === 'tsm' || CharacterService.user.apiToUse === 'wowuction') &&
 					c.mktPrice !== 0 &&
-					Math.round((c.buyout / c.mktPrice) * 100) >= user.buyoutLimit) {
+					Math.round((c.buyout / c.mktPrice) * 100) >= CharacterService.user.buyoutLimit) {
 					c.profit = c.mktPrice - c.cost;
 					c.profitPercent = c.profit / c.mktPrice;
 				} else {

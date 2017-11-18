@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { user, lists } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import { RealmService } from '../../services/realm.service';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';

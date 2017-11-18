@@ -1,11 +1,13 @@
 import { Notification } from "app/models/notification";
 import { CharacterService } from "app/services/character.service";
+import { lists } from "app/utils/globals";
+import { Watchlist } from "app/models/watchlist";
 
 export class User {
   region: string;
 	realm: string;
 	character: string = '';
-	characters: any[];
+	characters: any[] = [];
 	apiWoWu?: string;
 	apiTsm?: string;
 	customPrices?: any;
@@ -18,7 +20,7 @@ export class User {
 		isUndercutted: true,
 		isWatchlist: true
   };
-	watchlist?: {recipes: object, items: object, groups: any[]};
+	watchlist: Watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
 	isDarkMode?: boolean;
 
   /**
@@ -30,7 +32,7 @@ export class User {
     this.save(CharacterService.user);
   }
 
-  private static save(user: User): void {
+  public static save(user: User): void {
     Object.keys(user).forEach(key => {
       switch(key) {
         case 'region':
@@ -103,6 +105,44 @@ export class User {
           break;
       }
     });
+
+    user.characters.forEach(character => {
+      this.setRecipesForCharacter(character);
+      lists.myRecipes = Array.from(new Set(lists.myRecipes));
+    });
     return user;
   }
+
+  public static delete(): void {
+    delete localStorage['region'];
+    delete localStorage['realm'];
+    delete localStorage['character'];
+    delete localStorage['api_tsm'];
+    delete localStorage['api_wowuction'];
+    delete localStorage['api_to_use'];
+    delete localStorage['crafting_buyout_limit'];
+    delete localStorage['crafters'];
+    delete localStorage['crafters_recipes'];
+    delete localStorage['watchlist'];
+    delete localStorage['notifications'];
+    lists.myRecipes = [];
+    CharacterService.user = new User();
+  }
+
+  public static setRecipesForCharacter(character): void {
+    if (character.professions &&
+      CharacterService.user.realm.toLowerCase() === character.realm
+        .replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
+      character.professions.primary.forEach(primary => {
+        primary.recipes.forEach(recipe => {
+          lists.myRecipes.push(recipe);
+        });
+      });
+      character.professions.secondary.forEach(secondary => {
+        secondary.recipes.forEach(recipe => {
+          lists.myRecipes.push(recipe);
+        });
+      });
+    }
+  };
 }

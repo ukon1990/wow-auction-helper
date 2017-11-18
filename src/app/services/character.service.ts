@@ -1,7 +1,7 @@
 import { Error } from './../utils/error';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { user, DB_TABLES, API_KEY, db, lists } from '../utils/globals';
+import { DB_TABLES, API_KEY, db, lists } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
@@ -9,7 +9,7 @@ import { User } from 'app/models/user';
 
 @Injectable()
 export class CharacterService {
-  public static user: User;
+  public static user: User = User.restore();
 
   constructor(private http: HttpClient) {}
 
@@ -18,9 +18,9 @@ export class CharacterService {
       .get(`http://wah.jonaskf.net/GetCharacterProfession.php?character=${
       localStorage.crafters
       }&realm=${
-      user.realm
+      CharacterService.user.realm
       }&region=${
-      user.region
+        CharacterService.user.region
       }`)
       .map(r => {
         console.log(r);
@@ -31,7 +31,7 @@ export class CharacterService {
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
     return this.http
       .get(`https://${
-      region ? region : user.region
+      region ? region : CharacterService.user.region
       }.api.battle.net/wow/character/${
       realm
       }/${character}?fields=professions&locale=en_US&apikey=${

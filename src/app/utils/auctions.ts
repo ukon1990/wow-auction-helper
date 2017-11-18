@@ -1,4 +1,4 @@
-import { lists, user, db } from './globals';
+import { lists, db } from './globals';
 import Crafting from './crafting';
 import { Notification } from './notification';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { AuctionService } from '../services/auctions.service';
 import { ItemService } from '../services/item.service';
 import { GoldPipe } from '../pipes/gold.pipe';
 import Pets from './pets';
+import { CharacterService } from 'app/services/character.service';
 
 export default class {
 	private static url: string;
@@ -82,13 +83,13 @@ export default class {
 				}
 			} catch (e) { console.log(e); }
 
-			if (user.apiToUse === 'wowuction' && lists.wowuction[o.item] !== undefined) {
+			if (CharacterService.user.apiToUse === 'wowuction' && lists.wowuction[o.item] !== undefined) {
 				o['estDemand'] = Math.round(lists.wowuction[o.item]['estDemand'] * 100) || 0;
 				o['avgDailySold'] = parseFloat(lists.wowuction[o.item]['avgDailySold']) || 0;
 				o['avgDailyPosted'] = parseFloat(lists.wowuction[o.item]['avgDailyPosted']) || 0;
 				o['mktPrice'] = lists.wowuction[o.item]['mktPrice'] || 0;
 
-			} else if (user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
+			} else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[o.item] !== undefined) {
 				try {
 					o['estDemand'] = Math.round(lists.tsm[o.item]['RegionSaleRate'] * 100) || 0;
 					o['avgDailySold'] = parseFloat(lists.tsm[o.item]['RegionAvgDailySold']) || 0;
@@ -141,8 +142,8 @@ export default class {
 			}
 
 			// Storing a users auctions in a list
-			if (user.character !== undefined) {
-				if (o.owner === user.character) {
+			if (CharacterService.user.character !== undefined) {
+				if (o.owner === CharacterService.user.character) {
 					if (lists.myAuctions === undefined) {
 						lists.myAuctions = [];
 					}
@@ -150,24 +151,24 @@ export default class {
 				}
 			}
 			// Gathering data for auctions below vendor price
-			if (user.notifications.isBelowVendorSell && lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
+			if (CharacterService.user.notifications.isBelowVendorSell && lists.items[o.item] !== undefined && o.buyout < lists.items[o.item].sellPrice) {
 				itemsBelowVendor.quantity++;
 				itemsBelowVendor.totalValue += (lists.items[o.item].sellPrice - o.buyout) * o.quantity;
 			}
 			// TODO: this.addToContextList(o);
 		}
-		if (user.notifications.isBelowVendorSell && itemsBelowVendor.quantity > 0) {
+		if (CharacterService.user.notifications.isBelowVendorSell && itemsBelowVendor.quantity > 0) {
 			Notification.send(
 				`${itemsBelowVendor.quantity} items have been found below vendor sell!`,
 				`Potential profit: ${new GoldPipe().transform(itemsBelowVendor.totalValue)}`, router, 'auctions');
 		}
 
-		if (user.notifications.isUndercutted && user.character !== undefined) {
+		if (CharacterService.user.notifications.isUndercutted && CharacterService.user.character !== undefined) {
 			// Notifying the user if they have been undercutted or not
 			lists.myAuctions.forEach(a => {
-				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== user.character) {
+				if (lists.auctions[a.item] !== undefined && lists.auctions[a.item].owner !== CharacterService.user.character) {
 					undercuttedAuctions++;
-					console.log(`${lists.auctions[a.item].owner} !== ${user.character}`);
+					console.log(`${lists.auctions[a.item].owner} !== ${CharacterService.user.character}`);
 				}
 
 			});

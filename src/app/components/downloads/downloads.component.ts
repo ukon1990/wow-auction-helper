@@ -6,10 +6,11 @@ import Auctions from 'app/utils/auctions';
 import { ItemService } from 'app/services/item.service';
 import { AuctionService } from 'app/services/auctions.service';
 import { Router } from '@angular/router';
-import { user, lists, db, setRecipesForCharacter } from 'app/utils/globals';
+import { lists, db } from 'app/utils/globals';
 import { Notification } from 'app/utils/notification';
 import { IUser } from 'app/utils/interfaces';
 import { CharacterService } from 'app/services/character.service';
+import { User } from 'app/models/user';
 
 @Component({
   selector: 'app-downloads',
@@ -36,7 +37,6 @@ export class DownloadsComponent implements OnInit {
   private auctionObserver = {};
   private itemObserver = {};
   private petObserver = {};
-  private u: IUser;
   private date: Date;
   showDropdown: boolean;
   constructor(private auctionService: AuctionService,
@@ -51,124 +51,24 @@ export class DownloadsComponent implements OnInit {
 			 */
       // Loading user settings
       try {
-        if (localStorage.region) {
-          user.region = localStorage.region;
-        }
-
-        if (localStorage.realm) {
-          user.realm = localStorage.realm;
-        }
-        if (localStorage.character) {
-          user.character = localStorage.character;
-        }
-
-        if (localStorage.api_tsm) {
-          user.apiTsm = localStorage.api_tsm;
-        }
-
-        if (localStorage.api_wowuction) {
-          user.apiWoWu = localStorage.api_wowuction;
-        }
-
-        if (localStorage.custom_prices) {
-          user.customPrices = JSON.parse(localStorage.custom_prices);
-        }
-
-        if (localStorage.api_to_use) {
-          user.apiToUse = localStorage.api_to_use;
-        }
-
-        if (localStorage.crafting_buyout_limit) {
-          user.buyoutLimit = parseFloat(localStorage.crafting_buyout_limit);
-        }
-
-        if (localStorage.crafters) {
-          user.crafters = localStorage.crafters.split(',');
-        }
-        if (localStorage.characters) {
-          user.characters = JSON.parse(localStorage.characters);
-        }
-        if (localStorage.crafters_recipes) {
-          lists.myRecipes = localStorage.crafters_recipes.split(',');
-        }
-        if (localStorage.notifications) {
-          user.notifications = JSON.parse(localStorage.notifications);
-        }
-
-				/**
-				 * Used for initiating the download of characters and profession data
-				 */
-        if (user.crafters && user.characters.length < 1) {
-          try {
-            user.crafters.forEach(crafter => {
-              this.characterService.getCharacter(crafter, user.realm)
-                .then(character => {
-                  user.characters.push(character);
-                  setRecipesForCharacter(character);
-                  localStorage.characters = JSON.stringify(user.characters);
-                  lists.myRecipes = Array.from(new Set(lists.myRecipes));
-                }, error => {
-                  user.characters.push({
-                    name: crafter,
-                    realm: user.realm,
-                    error: {
-                      status: error.status,
-                      statusText: error.statusText
-                    }
-                  });
-                  localStorage.characters = JSON.stringify(user.characters);
-                  console.log(`Faied at downloading the character ${crafter}`, error);
-                });
-            });
-          } catch (error) {
-            console.log('Unable to loop crafters', error);
-          }
-        } else {
-          try {
-            user.characters.forEach(character => {
-              if (character.error && character.error.status !== 404) {
-                // Try again
-                this.characterService.getCharacter(character.name, character.realm)
-                  .then(c => {
-                    character = c;
-                    setRecipesForCharacter(c);
-                    lists.myRecipes = Array.from(new Set(lists.myRecipes));
-                    localStorage.characters = JSON.stringify(user.characters);
-                  }, error => {
-                    character.error = {
-                      status: error.status,
-                      statusText: error.statusText
-                    };
-                    localStorage.characters = JSON.stringify(user.characters);
-                    console.log(`Faied at downloading the character ${character.name}`, error);
-                  });
-              } else {
-                setRecipesForCharacter(character);
-                lists.myRecipes = Array.from(new Set(lists.myRecipes));
-              }
-            });
-          } catch (error) {
-            console.log('Unable to loop through characters', error);
-          }
-        }
 
         if (localStorage.watchlist) {
-          user.watchlist = JSON.parse(localStorage.watchlist);
-          Object.keys(user.watchlist.items).forEach(k => {
-            user.watchlist.items[k].forEach(w => {
+          CharacterService.user.watchlist = JSON.parse(localStorage.watchlist);
+          Object.keys(CharacterService.user.watchlist.items).forEach(k => {
+            CharacterService.user.watchlist.items[k].forEach(w => {
               if (w.alert === undefined) {
                 w['alert'] = true;
               }
             });
           });
-          console.log('watchlist:', user.watchlist);
+          console.log('watchlist:', CharacterService.user.watchlist);
         }
       } catch (e) {
         console.log('app.component init', e);
       }
 
       if (
-        user.apiToUse === 'tsm' &&
+        CharacterService.user.apiToUse === 'tsm' &&
         localStorage.getItem('api_tsm') !== null &&
         localStorage.getItem('api_tsm') !== undefined &&
         localStorage.getItem('api_tsm').length > 0 &&
@@ -183,7 +83,7 @@ export class DownloadsComponent implements OnInit {
           });
           console.log('TSM done');
 
-          if (user.apiToUse === 'tsm') {
+          if (CharacterService.user.apiToUse === 'tsm') {
             // TODO: this.downloadPets();
           }
         } else {
@@ -195,12 +95,12 @@ export class DownloadsComponent implements OnInit {
               });
             });
 
-          if (user.apiToUse === 'tsm') {
+          if (CharacterService.user.apiToUse === 'tsm') {
             // TODO: this.downloadPets();
           }
         }
       } else if (
-        user.apiToUse === 'wowuction' &&
+        CharacterService.user.apiToUse === 'wowuction' &&
         localStorage.getItem('api_wowuction') !== null &&
         localStorage.getItem('api_wowuction') !== undefined &&
         localStorage.getItem('api_wowuction').length > 0 &&
@@ -212,7 +112,7 @@ export class DownloadsComponent implements OnInit {
               lists.wowuction[r.id] = r;
             });
 
-            if (user.apiToUse === 'wowuction') {
+            if (CharacterService.user.apiToUse === 'wowuction') {
               // TODO: this.downloadPets();
             }
           });
@@ -223,7 +123,7 @@ export class DownloadsComponent implements OnInit {
               lists.wowuction[w.id] = w;
             });
 
-            if (user.apiToUse === 'wowuction') {
+            if (CharacterService.user.apiToUse === 'wowuction') {
               // TODO: this.downloadPets();
             }
           });
@@ -269,8 +169,13 @@ export class DownloadsComponent implements OnInit {
 
     // Checking if there is a new update available
     if (this.lastModified && this.lastModified > 0 && this.timeDiff(updateTime, currentTime) < this.oldTimeDiff && !lists.isDownloading) {
-      if (user.notifications.isUpdateAvailable) {
-        Notification.send('New auction data is available!', `Downloading new auctions for ${user.realm}@${user.region}.`, this.router);
+      if (CharacterService.user.notifications.isUpdateAvailable) {
+        Notification.send(
+          'New auction data is available!',
+          `Downloading new auctions for ${
+            CharacterService.user.realm}@${
+              CharacterService.user.region}.`,
+              this.router);
       }
       Auctions.download(this.auctionService, this.router);
     }
@@ -294,7 +199,7 @@ export class DownloadsComponent implements OnInit {
   }
 
   isCharacterSet(): boolean {
-    return this.isRealmSet() && this.exists(user.character);
+    return this.isRealmSet() && this.exists(CharacterService.user.character);
   }
 
   getTimestamp(type: string): any {

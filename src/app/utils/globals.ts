@@ -2,6 +2,7 @@ import { IUser } from './interfaces';
 import { itemClasses, watchlist } from './objects';
 import Dexie from 'dexie';
 import { User } from 'app/models/user';
+import { CharacterService } from 'app/services/character.service';
 
 export let lists = {
 	isDownloading: true,
@@ -17,41 +18,6 @@ export let lists = {
 	recipesIndex: [],
 	customPrices: {},
 	myRecipes: []
-};
-export let user: User = {
-	region: 'eu',
-	realm: 'aegwynn',
-	character: undefined,
-	characters: [],
-	apiTsm: undefined,
-	apiWoWu: undefined,
-	apiToUse: 'none',
-	customPrices: [],
-	buyoutLimit: 200,
-	crafters: [],
-	notifications: {
-		isUpdateAvailable: true,
-		isBelowVendorSell: true,
-		isUndercutted: true,
-		isWatchlist: true
-	},
-	watchlist: watchlist,
-	isDarkMode: true
-};
-
-export const setRecipesForCharacter = (character) => {
-	if (character.professions && user.realm.toLowerCase() === character.realm.replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
-		character.professions.primary.forEach(primary => {
-			primary.recipes.forEach(recipe => {
-				lists.myRecipes.push(recipe);
-			});
-		});
-		character.professions.secondary.forEach(secondary => {
-			secondary.recipes.forEach(recipe => {
-				lists.myRecipes.push(recipe);
-			});
-		});
-	}
 };
 
 lists.customPrices = { '124124': 3000000, '120945': 500000, '115524': 200000, '151568': 3000000 };
@@ -100,7 +66,7 @@ function getCorrectBuyValue(item: any, isSoldByVendor): number {
 		cost = lists.items[item.itemID].buyPrice;
 		// (isSoldByVendor ? lists.items[item.itemID].buyPrice :
 		// lists.auctions[item.itemID].buyout)
-	} else if (user.apiToUse === 'tsm' && lists.tsm[item.itemID]) {
+	} else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[item.itemID]) {
 		cost = lists.tsm[item.itemID].MarketValue;
 	}
 
@@ -167,9 +133,9 @@ export function getMinPrice(itemID: string): number {
 		}
 		return lists.auctions[itemID].buyout;
 	} catch (e) {
-		if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+		if (CharacterService.user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 			return lists.wowuction[itemID]['mktPrice'];
-		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+		} else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 			return lists.tsm[itemID].MarketValue;
 		}
 		return 0;

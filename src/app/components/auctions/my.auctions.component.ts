@@ -3,8 +3,9 @@ import { Title } from '@angular/platform-browser';
 import { NgClass } from '@angular/common';
 import { ParentAuctionComponent } from './parent.auctions.component';
 import { IUser, IAuction } from '../../utils/interfaces';
-import { user, lists } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
+import { CharacterService } from 'app/services/character.service';
 
 declare const ga: Function;
 @Component({
@@ -47,7 +48,7 @@ export class MyAuctionsComponent extends ParentAuctionComponent {
 			lists.myAuctions.forEach(
 				a => {
 					this.auctionsValue += a.buyout;
-					if (this.getAuctionOwner(a.item) !== user.character) {
+					if (this.getAuctionOwner(a.item) !== CharacterService.user.character) {
 						this.numberOfUndercuttedAuctions++;
 					}
 				});

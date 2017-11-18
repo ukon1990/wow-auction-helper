@@ -14,7 +14,7 @@
             href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
             target="_blank">
             {{ a.name }} x {{ a.count }} for {{ getMinPrice(a.itemID) * a.count | gold }}
-            <i  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
+            <i  class="fa fa-shopping-cart" aria-hidden="true"></i>
         </a>
     </li>
 </ul>

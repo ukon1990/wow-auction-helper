@@ -5,12 +5,13 @@ import { AuctionService } from '../../services/auctions.service';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, db, setRecipesForCharacter } from '../../utils/globals';
+import { lists, db } from '../../utils/globals';
 import Crafting from '../../utils/crafting';
 import { Router } from '@angular/router';
 import Auctions from '../../utils/auctions';
 import { ItemService } from '../../services/item.service';
 import { DownloadsComponent } from 'app/components/downloads/downloads.component';
+import { User } from 'app/models/user';
 
 declare const ga: Function;
 @Component({
@@ -47,7 +48,7 @@ export class SettingsComponent implements OnInit {
     private formBuilder: FormBuilder, private router: Router,
     private rs: RealmService, private auctionService: AuctionService,
     private characterService: CharacterService, private itemService: ItemService) {
-    this.user = user;
+    this.user = CharacterService.user;
     this.customPriceForm = formBuilder.group({
       'query': ''
     });
@@ -86,80 +87,8 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  getCharacter(character: string, realm: string, index?: number) {
-    if (this.user.characters[index]) {
-      this.user.characters[index].downloading = true;
-      if (user.region === 'us') {
-        this.realmListUs['realms'].forEach(r => {
-          if (r.name === realm) {
-            realm = r.slug;
-          }
-        });
-      } else if (user.region === 'eu') {
-        this.realmListEu['realms'].forEach(r => {
-          if (r.name === realm) {
-            realm = r.slug;
-          }
-        });
-      }
-    }
-
-    this.characterService.getCharacter(character, realm)
-      .then(c => {
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'Settings',
-          eventAction: 'Update character',
-          eventLabel: 'Success'
-        });
-        if (this.user.characters[index]) {
-          this.user.characters[index] = c;
-          user.characters[index] = c;
-          setRecipesForCharacter(c);
-        } else {
-          user.characters.push(c);
-          setRecipesForCharacter(c);
-        }
-        localStorage.characters = JSON.stringify(user.characters);
-        lists.myRecipes = Array.from(new Set(lists.myRecipes));
-      }, error => {
-        const updated = {
-          name: character,
-          realm: realm,
-          error: {
-            status: error.status,
-            statusText: error.statusText
-          }
-        };
-        if (!this.user.characters[index]) {
-          user.characters.push(updated);
-          this.user.characters.push(updated);
-        } else {
-          this.user.characters[index].downloading = false;
-          user.characters[index].downloading = false;
-        }
-        localStorage.characters = JSON.stringify(user.characters);
-        lists.myRecipes = Array.from(new Set(lists.myRecipes));
-        console.log(`Unable to download character ${character} @ ${realm}`, error);
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'Settings',
-          eventAction: 'Update character',
-          eventLabel: `Error: ${error}`
-        });
-      });
-  }
-
   saveUserData(): void {
     const oldTSMKey = localStorage.getItem('api_tsm') || '';
-    localStorage.region = this.user.region;
-    localStorage.realm = this.user.realm;
-    localStorage.character = this.user.character;
-    localStorage.api_tsm = this.user.apiTsm;
-    localStorage.api_wowuction = this.user.apiWoWu;
-    localStorage.api_to_use = this.user.apiToUse;
-    localStorage.crafters = this.user.crafters.toString();
-    localStorage.notifications = JSON.stringify(this.user.notifications);
 
     this.customPrices.forEach(cp => {
       if (cp.itemID !== null) {
@@ -206,15 +135,17 @@ export class SettingsComponent implements OnInit {
     }
 
     this.updateRecipesForRealm();
+    User.save(this.user as User);
   }
 
   importUserData(): void {
-    this.user = JSON.parse(this.importedSettings);
-    this.saveUserData();
+    User.import(this.importedSettings);
+    this.user = CharacterService.user;
+    this.importedSettings = '';
   }
 
   exportUserData(): void {
-    this.exportedSettings = JSON.stringify(user);
+    this.exportedSettings = JSON.stringify(this.user);
     ga('send', {
       hitType: 'event',
       eventCategory: 'Settings',
@@ -223,27 +154,7 @@ export class SettingsComponent implements OnInit {
   }
 
   deleteUserData(): void {
-    localStorage.removeItem('region');
-    user.region = undefined;
-    localStorage.removeItem('realm');
-    user.realm = undefined;
-    localStorage.removeItem('character');
-    user.character = undefined;
-    localStorage.removeItem('api_tsm');
-    user.apiTsm = undefined;
-    localStorage.removeItem('api_wowuction');
-    user.apiWoWu = undefined;
-    localStorage.removeItem('api_to_use');
-    user.apiToUse = undefined;
-    localStorage.removeItem('crafting_buyout_limit');
-    user.buyoutLimit = 200;
-    localStorage.removeItem('crafters');
-    user.crafters = [];
-    localStorage.removeItem('crafters_recipes');
-    lists.myRecipes = [];
-    localStorage.removeItem('watchlist');
-    localStorage.removeItem('notifications');
-    user.watchlist = { recipes: {}, items: {}, groups: [] };
+    User.delete();
 
     ga('send', {
       hitType: 'event',
@@ -300,52 +211,6 @@ export class SettingsComponent implements OnInit {
     this.customPrices.splice(index, 1);
   }
 
-  addCharacter() {
-    let realmName = '',
-      exists = false;
-    const realmSlug = this.user.realm,
-      character = this.userCrafterForm.value['query'];
-
-    this.userCraftersChanged = true;
-    if (user.region === 'us') {
-      this.realmListUs['realms'].forEach(r => {
-        if (r.slug === realmSlug) {
-          realmName = r.name;
-        }
-      });
-    } else if (user.region === 'eu') {
-      this.realmListEu['realms'].forEach(r => {
-        if (r.slug === realmSlug) {
-          realmName = r.name;
-        }
-      });
-    }
-    this.user.characters.forEach(c => {
-      if (c.name.toLowerCase() === character && (c.realm === realmName || c.realm === realmSlug)) {
-        exists = true;
-      }
-    });
-    if (!exists) {
-      this.user.characters.push({
-        name: character,
-        realm: realmName,
-        downloading: true
-      });
-      this.getCharacter(
-        character,
-        realmSlug,
-        this.user.characters.length - 1);
-    }
-    this.userCrafterForm.value['query'] = '';
-  }
-
-  removeCharacter(index: number): void {
-    console.log('deleted');
-    this.user.characters.splice(index, 1);
-    this.updateRecipesForRealm();
-    localStorage.characters = JSON.stringify(user.characters);
-  }
-
   getMyRecipeCount(): number {
     return lists.myRecipes.length;
   }
@@ -353,7 +218,7 @@ export class SettingsComponent implements OnInit {
   updateRecipesForRealm(): void {
     lists.myRecipes = [];
     this.user.characters.forEach(character => {
-      setRecipesForCharacter(character);
+      User.setRecipesForCharacter(character);
     });
   }
 

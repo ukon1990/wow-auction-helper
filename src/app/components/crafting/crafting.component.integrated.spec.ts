@@ -7,8 +7,10 @@ import { APP_BASE_HREF } from '@angular/common';
 import { AppModule } from '../../app.module';
 
 import { CraftingComponent } from './crafting.component';
-import { user, lists, db } from '../../utils/globals';
+import { lists, db } from '../../utils/globals';
 import { testObjects } from '../../utils/testdata';
+import { CharacterService } from 'app/services/character.service';
+import { User } from 'app/models/user';
 
 
 // TODO: DO them tests!
@@ -27,6 +29,7 @@ describe('CraftingComponent', () => {
 	}));
 
 	beforeEach(() => {
+		CharacterService.user = User.restore();
 		fixture = TestBed.createComponent(CraftingComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();

@@ -148,10 +148,10 @@
               </ng-template>
             </td>
             <td class="hidden-xs">
-              <a class="glyphicon glyphicon-shopping-cart" aria-hidden="true" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ auc.item }}"
+              <a class="fa fa-shopping-cart" aria-hidden="true" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ auc.item }}"
                 target="_blank">Buy</a>
               <br>
-              <a class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" href="http://www.wowhead.com/item={{auc.item}}" target="_blank">Wowhead</a>
+              <a class="fa fa-link" aria-hidden="true" href="http://www.wowhead.com/item={{auc.item}}" target="_blank">Wowhead</a>
               <br>
             </td>
           </tr>
@@ -164,7 +164,7 @@
         <mat-paginator [length]="selectedAuctions.length" [pageSize]="page.pageSize" [pageSizeOptions]="page.pageSizeOptions" [pageIndex]="pageEventSecondary.pageIndex"
           (page)="changePage($event, true)">
         </mat-paginator>
-        <table class="table table-striped row">
+        <table class="table table-striped">
           <tr>
             <th>Item</th>
             <th>Auction</th>
@@ -181,7 +181,7 @@
                 <div class="align-left col-md-offset-1">
                   <a rel="item={{ a.item }}" href="https://{{ user.region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.item }}&n={{ a.name.replace('@'+a.petLevel, '') }}"
                     target="_blank">{{ a.name }}
-                    <i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i>
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                   </a>
                   <br> {{ a.owner }} @ {{ a.ownerRealm }}
                 </div>

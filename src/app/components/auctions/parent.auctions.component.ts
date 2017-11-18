@@ -2,10 +2,12 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { PageEvent } from '@angular/material';
-import { user, lists, getIcon } from '../../utils/globals';
+import { lists, getIcon } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { Item } from '../../utils/item';
 import { Sorter } from '../../utils/sorter';
+import { CharacterService } from 'app/services/character.service';
+import { User } from 'app/models/user';
 
 declare var $WowheadPower;
 declare var $wu;
@@ -16,13 +18,12 @@ export abstract class ParentAuctionComponent {
 	searchQuery = '';
 	numberOfAuctions = 0;
 	currentPage = 1;
-	user: IUser;
 	limit = 8; // per page
 	index = 0;
 	numOfPages: number = this.numberOfAuctions / this.limit;
 	currentAuctionPage = 1;
 	numOfAuctionPages: number = this.numberOfAuctions / this.limit;
-	apiToUse = user.apiToUse;
+	apiToUse = CharacterService.user.apiToUse;
 	sorter: Sorter;
 
 	// Imported functions to be used in the templates
@@ -52,11 +53,13 @@ export abstract class ParentAuctionComponent {
 
 
 	constructor() {
-		this.user = user;
-		this.character = user.character;
+		this.character = CharacterService.user.character;
 		this.sorter = new Sorter();
 	}
 
+	user(): User {
+		return CharacterService.user;
+	}
 
 	/**
 	 * Fetches a item from the memory

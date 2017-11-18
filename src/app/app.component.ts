@@ -3,7 +3,7 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions.service';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item.service';
-import { user, lists, db, setRecipesForCharacter } from './utils/globals';
+import { lists, db } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import { GoldPipe } from './pipes/gold.pipe';
 import Push from 'push.js';
@@ -42,12 +42,12 @@ export class AppComponent implements OnInit {
 		try {
 			// Just for fun :)
 			if (localStorage.getItem('darkMode') !== null && localStorage.getItem('darkMode') === 'false') {
-				user.isDarkMode = false;
+				CharacterService.user.isDarkMode = false;
 				document
 					.getElementById('custom-style')
 					.setAttribute('href', 'assets/paper.bootstrap.min.css');
 			} else {
-				user.isDarkMode = true;
+				CharacterService.user.isDarkMode = true;
 			}
 		} catch (err) {
 			console.log('style', err);
@@ -84,7 +84,7 @@ export class AppComponent implements OnInit {
 	}
 
 	isCharacterSet(): boolean {
-		return this.isRealmSet() && this.exists(user.character);
+		return this.isRealmSet() && this.exists(CharacterService.user.character);
 	}
 
 	/**

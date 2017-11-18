@@ -161,7 +161,7 @@
                 {{ getMinPrice(Disenchanting.materials[Disenchanting.selected].id) - craft.cost | gold }}
               </td>
               <td>
-                <a class="glyphicon glyphicon-shopping-cart push-left" aria-hidden="true" (click)="openMenu(i)">Add</a>
+                <a class="fa fa-shopping-cart push-left" aria-hidden="true" (click)="openMenu(i)">Add</a>
                 <br>
                 <div class="recipe-menu recipe-menu-dark" [ngClass]="{'recipe-menu-open': i === selectedItemIndex}">
                   <div class="panel-body">
@@ -170,12 +170,12 @@
                     <input type="number" value="1" min="1" #quantityToAdd/>
                     <br>
                     <a class="push-left" aria-hidden="true" (click)="addToCart(craft, quantityToAdd.value)">
-                      <i class="glyphicon glyphicon-shopping-cart"></i>
+                      <i class="fa fa-shopping-cart"></i>
                       Add amount
                     </a>
                   </div>
                 </div>
-                <a class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" href="http://www.wowhead.com/item={{craft.itemID}}" target="_blank">Wowhead</a>
+                <a class="fa fa-link" aria-hidden="true" href="http://www.wowhead.com/item={{craft.itemID}}" target="_blank">Wowhead</a>
                 <br>
               </td>
             </tr>

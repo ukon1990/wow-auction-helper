@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { ParentAuctionComponent } from '../auctions/parent.auctions.component';
-import { user, lists } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import { itemClasses } from '../../utils/objects';
 import { ItemService } from '../../services/item.service';
 import { Title } from '@angular/platform-browser';
@@ -10,6 +10,7 @@ import { IUser, IAuction } from '../../utils/interfaces';
 import { Disenchanting } from '../../utils/disenchanting';
 import { FileService } from '../../services/file.service';
 import Crafting from '../../utils/crafting';
+import { CharacterService } from 'app/services/character.service';
 
 declare const ga: Function;
 @Component({
@@ -29,7 +30,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	reagentIndex = 0;
 
 	sortAsc = false;
-	buyoutLimit = user.buyoutLimit;
+	buyoutLimit = CharacterService.user.buyoutLimit;
 	professions = [
 		'First Aid',
 		'Blacksmithing',
@@ -118,7 +119,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	}
 
 	getApiItem(itemID: string) {
-		if (user.apiToUse === 'tsm' && lists.tsm[itemID]) {
+		if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[itemID]) {
 			return {
 				estDemand: lists.tsm[itemID].RegionSaleRate,
 				regionSaleAvg: lists.tsm[itemID].RegionSaleAvg,
@@ -126,7 +127,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 				avgDailyPosted: 0,
 				mktPrice: lists.tsm[itemID].MarketValue
 			};
-		} else if (user.apiToUse === 'wowuction' && lists.wowuction[itemID]) {
+		} else if (CharacterService.user.apiToUse === 'wowuction' && lists.wowuction[itemID]) {
 			// return lists.wowuction[itemID];
 			return {
 				estDemand: lists.wowuction[itemID].estDemand,
@@ -278,7 +279,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 						match = false;
 					}
 
-					if (user.apiToUse === 'tsm' || user.apiToUse === 'wowuction') {
+					if (CharacterService.user.apiToUse === 'tsm' || CharacterService.user.apiToUse === 'wowuction') {
 						try {
 							if (match && (minSold === 0 || minSold <= this.getApiItem(r.itemID).avgDailySold)) {
 								match = true;
@@ -394,7 +395,7 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 	getAuction(itemID: string) {
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
-		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+		} else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 			return {
 				'name': lists.tsm[itemID].name,
 				'estDemand': lists.tsm[itemID].RegionSaleRate,
@@ -430,9 +431,9 @@ export class CraftingComponent extends ParentAuctionComponent implements OnInit 
 			}
 			return lists.auctions[itemID].buyout;
 		} catch (e) {
-			if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			if (CharacterService.user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				return lists.wowuction[itemID]['mktPrice'];
-			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			} else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 				return lists.tsm[itemID].MarketValue;
 			}
 			return 0;

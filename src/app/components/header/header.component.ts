@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { user } from 'app/utils/globals';
+import { CharacterService } from 'app/services/character.service';
 
 @Component({
 	selector: 'app-header',
@@ -16,7 +16,7 @@ export class HeaderComponent {
 	}
 
 	isCharacterSet(): boolean {
-		return user && this.isRealmSet() && this.exists(user.character);
+		return CharacterService.user && this.isRealmSet() && this.exists(CharacterService.user.character);
 	}
 
 	isSmallWindow(): boolean {

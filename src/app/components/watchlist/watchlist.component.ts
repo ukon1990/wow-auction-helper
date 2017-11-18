@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { user, lists, db } from '../../utils/globals';
+import { lists, db } from '../../utils/globals';
 import dexie from 'dexie';
 import Push from 'push.js';
 import { GoldPipe } from '../../pipes/gold.pipe';
 import Crafting from '../../utils/crafting';
+import { User } from 'app/models/user';
+import { CharacterService } from 'app/services/character.service';
 
 declare var $;
 declare const ga: Function;
@@ -18,7 +20,6 @@ declare const ga: Function;
 export class WatchlistComponent implements OnInit {
 	queryItems = [];
 	myRecipes = [];
-	user: IUser;
 	itemSearchForm: FormGroup;
 	recipeSearchForm: FormGroup;
 	groupForm: FormGroup;
@@ -74,14 +75,17 @@ export class WatchlistComponent implements OnInit {
 
 	ngOnInit() {
 		this.searchItemDB();
-		this.watchlist.groups = user.watchlist.groups;
-		this.watchlist.items = user.watchlist.items;
-		this.watchlist.recipes = user.watchlist.recipes;
+		this.watchlist.groups = this.user().watchlist.groups;
+		this.watchlist.items = this.user().watchlist.items;
+		this.watchlist.recipes = this.user().watchlist.recipes;
 
-		this.user = user;
 		lists.myRecipes.forEach( recipeID => {
 			this.myRecipes[recipeID] = 'owned';
 		});
+	}
+
+	user(): User {
+		return CharacterService.user;
 	}
 
 	/**
@@ -164,7 +168,7 @@ export class WatchlistComponent implements OnInit {
 	getAuctionItem(itemID: string) {
 		if (lists.auctions[itemID] !== undefined) {
 			return lists.auctions[itemID];
-		} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+		} else if (this.user().apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 			return {
 				'name': lists.tsm[itemID].name,
 				'estDemand': lists.tsm[itemID].RegionSaleRate,
@@ -243,9 +247,9 @@ export class WatchlistComponent implements OnInit {
 			}
 			return lists.auctions[itemID].buyout;
 		} catch (e) {
-			if (user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+			if (this.user().apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
 				return lists.wowuction[itemID]['mktPrice'];
-			} else if (user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+			} else if (this.user().apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
 				return lists.tsm[itemID].MarketValue;
 			}
 			return 0;
@@ -253,7 +257,7 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	saveWatchList(): void {
-		user.watchlist = this.watchlist;
+		this.user().watchlist = this.watchlist;
 		localStorage.setItem('watchlist', JSON.stringify(this.watchlist));
 	}
 
@@ -391,7 +395,7 @@ export class WatchlistComponent implements OnInit {
 	}
 
 	isNotificationsPermitted(): boolean {
-		if (!user.notifications.isWatchlist) {
+		if (!this.user().notifications.isWatchlist) {
 			return true;
 		}
 		try {
@@ -404,7 +408,7 @@ export class WatchlistComponent implements OnInit {
 
 	notification(title: string, message: string, icon: string) {
 		console.log(title, message);
-		if (!user.notifications.isWatchlist) {
+		if (!this.user().notifications.isWatchlist) {
 			return;
 		}
 		try {

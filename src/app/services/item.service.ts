@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 import { IAuction, IPet, IUser, IItem } from '../utils/interfaces';
-import { user, DB_TABLES, db } from '../utils/globals';
+import { DB_TABLES, db } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';

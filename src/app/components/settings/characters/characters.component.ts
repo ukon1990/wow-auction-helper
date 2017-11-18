@@ -2,6 +2,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { RealmService } from './../../../services/realm.service';
 import { CharacterService } from './../../../services/character.service';
 import { Component, Input, OnInit, AfterViewInit, OnChanges } from '@angular/core';
+import { User } from 'app/models/user';
 
 @Component({
   selector: 'app-characters',
@@ -64,5 +65,12 @@ export class CharactersComponent implements AfterViewInit, OnChanges {
 
   getRegions(): string[] {
     return this.regions ? Object.keys(this.regions) : [];
+  }
+
+  removeCharacter(index: number): void {
+    console.log('deleted');
+    CharacterService.user.characters.splice(index, 1);
+    // User.updateRecipesForRealm();
+    localStorage.characters = JSON.stringify(CharacterService.user.characters);
   }
 }
