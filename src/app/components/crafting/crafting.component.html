@@ -17,7 +17,7 @@
       <form class="form-inline" (ngSubmit)="filterRecipes()" [formGroup]="filterForm">
         <!-- Regular crafting -->
         <div *ngIf="!isDisenchating; else disenchant" class="row col-md-10">
-          <mat-form-field>
+          <mat-form-field class="ml-2 mr-2">
             <input matInput placeholder="Item name" formControlName="searchQuery">
           </mat-form-field>
 
@@ -25,11 +25,11 @@
             Only known recipes
           </mat-checkbox>
 
-          <mat-form-field *ngIf="myRecipes.length > 0">
+          <mat-form-field *ngIf="myRecipes.length > 0" class="ml-2 mr-2">
             <input matInput type="number" placeholder="Min profit (%)" formControlName="profit">
           </mat-form-field>
 
-          <div *ngIf="apiToUse !== 'none'">
+          <div *ngIf="apiToUse !== 'none'" class="ml-2 mr-2">
             <mat-form-field>
               <input matInput type="number" placeholder="Min demand (%)" matTooltip="Minimum demand (default 0)" formControlName="demand">
             </mat-form-field>
@@ -38,7 +38,7 @@
             </mat-form-field>
           </div>
 
-          <mat-form-field>
+          <mat-form-field class="ml-2 mr-2">
             <mat-select placeholder="Profession" formControlName="profession">
               <mat-option value="All">All</mat-option>
               <mat-option *ngFor="let i of professions" [value]="i">
@@ -47,7 +47,7 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field>
+          <mat-form-field class="ml-2 mr-2">
             <mat-select placeholder="Craft materials" matTooltip="
                 Calculates profit/ROI with the assumption, that you will craft 
                 any sub-material you can. Given that it matches your criteria" formControlName="craftManually">
@@ -68,7 +68,7 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-checkbox class="ml-2 mr-2 mt-3" formControlName="DEOnlyProfitable">
+          <mat-checkbox class="ml-2 mr-2" formControlName="DEOnlyProfitable">
             Only profitable
           </mat-checkbox>
 
@@ -83,7 +83,7 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-checkbox class="ml-2 mr-2 mt-3" *ngIf="myRecipes.length > 0" formControlName="onlyMyRecipes">
+          <mat-checkbox class="ml-2 mr-2" *ngIf="myRecipes.length > 0" formControlName="onlyMyRecipes">
             Only known recipes
           </mat-checkbox>
         </ng-template>
