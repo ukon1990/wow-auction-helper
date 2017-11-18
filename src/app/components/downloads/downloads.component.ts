@@ -41,7 +41,7 @@ export class DownloadsComponent implements OnInit {
   showDropdown: boolean;
   constructor(private auctionService: AuctionService,
     private itemService: ItemService, private characterService: CharacterService,
-    private router: Router) { }
+    private router: Router) {}
 
   async ngOnInit() {
     this.date = new Date();

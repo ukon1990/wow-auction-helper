@@ -69,7 +69,7 @@ export class User {
     });
   }
 
-  public static restore(): User {
+  public static restore(): void {
     let user: User = new User();
     Object.keys(localStorage).forEach(key => {
       switch(key) {
@@ -106,11 +106,13 @@ export class User {
       }
     });
 
+    CharacterService.user = user;
+
     user.characters.forEach(character => {
+      console.log(character, CharacterService.user);
       this.setRecipesForCharacter(character);
       lists.myRecipes = Array.from(new Set(lists.myRecipes));
     });
-    return user;
   }
 
   public static delete(): void {
@@ -130,7 +132,7 @@ export class User {
   }
 
   public static setRecipesForCharacter(character): void {
-    if (character.professions &&
+    if (character && character.professions &&
       CharacterService.user.realm.toLowerCase() === character.realm
         .replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
       character.professions.primary.forEach(primary => {

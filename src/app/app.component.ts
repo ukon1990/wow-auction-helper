@@ -12,6 +12,7 @@ import Crafting from './utils/crafting';
 import Pets from './utils/pets';
 import Auctions from './utils/auctions';
 import { Item } from './utils/item';
+import { User } from 'app/models/user';
 
 declare const  ga: Function;
 
@@ -29,6 +30,9 @@ export class AppComponent implements OnInit {
 	constructor(private auctionService: AuctionService,
 		private itemService: ItemService, private characterService: CharacterService,
 		private router: Router) {
+
+		User.restore();
+
 		// Google Analytics
 		router.events.subscribe((event: Event) => {
 			if (event instanceof NavigationEnd &&

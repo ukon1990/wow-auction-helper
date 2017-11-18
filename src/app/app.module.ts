@@ -111,4 +111,4 @@ import { CharacterComponent } from './components/settings/characters/character/c
 		Location],
 	bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -30,19 +30,19 @@ describe('User', () => {
     it('Should accept work only if just region and realm are set', () => {
       localStorage['realm'] = 'test-realm';
       localStorage['region'] = 'eu';
-      CharacterService.user = User.restore();
+      User.restore();
       expect(CharacterService.user.realm).toEqual('test-realm');
       expect(CharacterService.user.region).toEqual('eu');
     });
   
     it('Has default values', () => {
-      CharacterService.user = User.restore();
+      User.restore();
       expect(CharacterService.user.buyoutLimit).toEqual(200);
     });
   
     it('Can override default values', () => {
       localStorage['crafting_buyout_limit'] = '300';
-      CharacterService.user = User.restore();
+      User.restore();
       expect(CharacterService.user.buyoutLimit).toEqual(300);
     });
   });

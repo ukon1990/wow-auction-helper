@@ -9,7 +9,7 @@ import { User } from 'app/models/user';
 
 @Injectable()
 export class CharacterService {
-  public static user: User = User.restore();
+  public static user: User;
 
   constructor(private http: HttpClient) {}
 

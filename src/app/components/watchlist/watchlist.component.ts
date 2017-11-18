@@ -9,6 +9,7 @@ import { GoldPipe } from '../../pipes/gold.pipe';
 import Crafting from '../../utils/crafting';
 import { User } from 'app/models/user';
 import { CharacterService } from 'app/services/character.service';
+import { watchlist } from 'app/utils/objects';
 
 declare var $;
 declare const ga: Function;
@@ -78,6 +79,12 @@ export class WatchlistComponent implements OnInit {
 		this.watchlist.groups = this.user().watchlist.groups;
 		this.watchlist.items = this.user().watchlist.items;
 		this.watchlist.recipes = this.user().watchlist.recipes;
+
+		if (Object.keys(this.watchlist.groups).length === 0 && Object.keys(this.watchlist.items).length === 0) {
+			// Using the default watchlist
+			this.watchlist.items = watchlist.items;
+			this.watchlist.groups = watchlist.groups;
+		}
 
 		lists.myRecipes.forEach( recipeID => {
 			this.myRecipes[recipeID] = 'owned';

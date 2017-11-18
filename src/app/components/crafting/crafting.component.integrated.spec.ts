@@ -29,7 +29,7 @@ describe('CraftingComponent', () => {
 	}));
 
 	beforeEach(() => {
-		CharacterService.user = User.restore();
+		User.restore();
 		fixture = TestBed.createComponent(CraftingComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
