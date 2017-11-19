@@ -77,6 +77,10 @@ export class User {
           break;
       }
     });
+
+    if (user.realm && user.region) {
+      this.updateRecipesForRealm();  
+    } 
   }
 
   public static restore(): void {

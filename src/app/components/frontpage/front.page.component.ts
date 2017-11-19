@@ -5,6 +5,7 @@ import { lists } from '../../utils/globals';
 import { RealmService } from '../../services/realm.service';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
+import { User } from 'app/models/user';
 
 declare const ga: Function;
 @Component({
@@ -86,7 +87,14 @@ export class FrontPageComponent implements OnInit {
   }
 
   importUserData(): void {
-    this.u = JSON.parse(this.importSettingsForm.value['settings']);
+    User.import(this.importSettingsForm.value['settings']);
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'User registration',
+      eventAction: 'Imported existing setup'
+    });
+
+    this.router.navigateByUrl('/crafting');
   }
 
   addCrafter() {

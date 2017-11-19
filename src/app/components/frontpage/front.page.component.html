@@ -93,13 +93,17 @@
                 Settings JSON string
               </mat-panel-description>
             </mat-expansion-panel-header>
+          
             <form class="form-group" (ngSubmit)="importUserData()" [formGroup]="importSettingsForm">
-              <div class="input-group">
-                <span class="input-group-btn">
-                  <button class="btn btn-default mat-elevation-z5" type="submit">Import settings</button>
-                </span>
-                <textarea type="text" class="form-control" placeholder="Paste in the exported string here" [formControl]="importSettingsForm.controls['settings']"></textarea>
-              </div>
+              <div class="row col-md-12 mb-2">
+                  <button class="btn btn-sm btn-default mat-elevation-z5 col-md-1" (click)="importUserData()">Import settings</button>
+                  <mat-form-field class="col-md-11">
+                    <textarea matInput type="text"
+                      placeholder="Paste in the exported string here"
+                      formControlName="settings">
+                    </textarea>
+                  </mat-form-field>
+                </div>
             </form>
           </mat-expansion-panel>
         </mat-accordion>
