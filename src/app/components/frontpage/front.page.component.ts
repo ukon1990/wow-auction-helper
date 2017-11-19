@@ -14,7 +14,7 @@ declare const ga: Function;
 
 export class FrontPageComponent implements OnInit {
   u;
-  regions: Object;
+  regions: any;
   userForm: FormGroup;
   userCrafterForm: FormGroup;
   importSettingsForm: FormGroup;

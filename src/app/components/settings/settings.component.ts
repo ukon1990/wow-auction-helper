@@ -30,7 +30,7 @@ export class SettingsComponent implements OnInit {
   newCustomPrice = { 'itemID': 0 };
   customPriceSearchQuery: string;
   customPriceQueryItems = [];
-  regions: Object;
+  regions: any;
   importedSettings: string;
   exportedSettings: string;
   originalRealm: string;

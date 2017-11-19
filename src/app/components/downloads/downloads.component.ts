@@ -98,7 +98,7 @@ export class DownloadsComponent implements OnInit {
     }
   }
 
-  getDownloading(): Object {
+  getDownloading(): any {
     return DownloadsComponent.downloading;
   }
 

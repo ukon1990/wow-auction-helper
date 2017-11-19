@@ -6,7 +6,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class CharacterComponent {
   @Input() index: number;
-  @Input() character: Object;
+  @Input() character: any;
   @Output() remove: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
 }

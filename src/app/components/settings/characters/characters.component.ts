@@ -12,7 +12,7 @@ export class CharactersComponent implements AfterViewInit, OnChanges {
   @Input() region: string;
   @Input() realm: string;
 
-  regions: Object;
+  regions: any;
   downloading: boolean;
   characterForm: FormGroup;
 
