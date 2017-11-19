@@ -9,8 +9,4 @@ export class CharacterComponent {
   @Input() character: Object;
   @Output() remove: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
-
-  delete(): void {
-    delete this.character;
-  }
 }

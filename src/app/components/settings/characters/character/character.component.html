@@ -45,11 +45,11 @@
     </div>
   </mat-card-content>
   <mat-card-actions>
-    <button class="btn btn-primary" type="button" (click)="update.emit('')">
+    <button class="btn btn-primary mat-elevation-z5" type="button" (click)="update.emit('')">
       <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{loading: character.downloading}"></i>
       Update
     </button>
-    <button class="btn btn-secondary" type="button" (click)="remove.emit('')">
+    <button class="btn btn-secondary mat-elevation-z5" type="button" (click)="remove.emit('')">
       <i class="fa fa-trash" aria-hidden="true"></i>
       Remove
     </button>

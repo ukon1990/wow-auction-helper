@@ -13,22 +13,18 @@ export class CharactersComponent implements AfterViewInit, OnChanges {
   @Input() realm: string;
 
   regions: Object;
-  characters: Array<any> = new Array<any>();
   downloading: boolean;
   characterForm: FormGroup;
 
   constructor(private characterService: CharacterService,
     private realmService: RealmService, private formBuilder: FormBuilder
-    ) {
-      this.characterForm = this.formBuilder.group({
-        region: '',
-        realm: '',
-        name: ''
-      });
-      if (localStorage['characters']) {
-        this.characters = JSON.parse(localStorage['characters']);
-      }
-    }
+  ) {
+    this.characterForm = this.formBuilder.group({
+      region: '',
+      realm: '',
+      name: ''
+    });
+  }
 
   ngAfterViewInit() {
     this.realmService.getRealms()
@@ -52,25 +48,27 @@ export class CharactersComponent implements AfterViewInit, OnChanges {
     this.downloading = true;
     this.characterService
       .getCharacter(
-        this.characterForm.value.name,
-        this.characterForm.value.realm,
-        this.characterForm.value.region
+      this.characterForm.value.name,
+      this.characterForm.value.realm,
+      this.characterForm.value.region
       )
       .then(c => {
-        this.characters.push(c);
-        localStorage['characters'] = JSON.stringify(this.characters);
+        this.characterForm.controls.name.setValue('');
+        CharacterService.user.characters.push(c);
+        localStorage['characters'] = JSON.stringify(CharacterService.user.characters);
         this.downloading = false;
       }).catch(() => this.downloading = false);
   }
 
   updateCharacter(index: number): void {
-    this.characters[index]['downloading'] = true;
+    CharacterService.user.characters[index]['downloading'] = true;
     this.characterService.getCharacter(
-      this.characters[index].name,
-      this.characters[index].realm
-     ).then(c => {
-        this.characters[index] = c;
-      });
+      CharacterService.user.characters[index].name,
+      CharacterService.user.characters[index].realm
+    ).then(c => {
+      CharacterService.user.characters[index] = c;
+      localStorage['characters'] = JSON.stringify(CharacterService.user.characters);
+    });
   }
 
   getRegions(): string[] {
@@ -79,11 +77,11 @@ export class CharactersComponent implements AfterViewInit, OnChanges {
 
   removeCharacter(index: number): void {
     CharacterService.user.characters.splice(index, 1);
-    // User.updateRecipesForRealm();
-    localStorage.characters = JSON.stringify(CharacterService.user.characters);
+    localStorage['characters'] = JSON.stringify(CharacterService.user.characters);
+    User.updateRecipesForRealm();
   }
 
-  accept(event): void {
-    console.log('Accepted');
+  getCharacters(): any[] {
+    return CharacterService.user.characters;
   }
 }

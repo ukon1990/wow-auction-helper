@@ -108,12 +108,7 @@ export class User {
     });
 
     CharacterService.user = user;
-
-    user.characters.forEach(character => {
-      console.log(character, CharacterService.user);
-      this.setRecipesForCharacter(character);
-      lists.myRecipes = Array.from(new Set(lists.myRecipes));
-    });
+    this.updateRecipesForRealm();    
   }
 
   public static delete(): void {
@@ -130,6 +125,17 @@ export class User {
     delete localStorage['notifications'];
     lists.myRecipes = [];
     CharacterService.user = new User();
+  }
+
+  /**
+   * Grouping the current recipes for a user
+   */
+  public static updateRecipesForRealm(): void {
+    lists.myRecipes.length = 0;
+    CharacterService.user.characters.forEach(character => {
+      this.setRecipesForCharacter(character);
+      lists.myRecipes = Array.from(new Set(lists.myRecipes));
+    });
   }
 
   public static setRecipesForCharacter(character): void {
