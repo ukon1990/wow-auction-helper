@@ -12,7 +12,7 @@
 </div>
 
 <div class="dl-dropdown p-1 row mat-elevation-z5" [ngClass]="{'show': showDropdown}">
-  <div class="row col-md-12">
+  <div class="row col-md-12 mb-2">
     <div class="col-md-8">
       Items last updated: {{ getTimestamp('items') | date:'M/d/yy hh:mm' }}
     </div>
@@ -21,7 +21,7 @@
       Download now
     </button>
   </div>
-  <div class="row col-md-12">
+  <div class="row col-md-12 mb-2">
     <div class="col-md-8">
       Pets last updated: {{ tempTimestamps.pets | date:'M/d/yy hh:mm' }}
     </div>
@@ -30,7 +30,7 @@
       Download now
     </button>
   </div>
-  <div class="row col-md-12">
+  <div class="row col-md-12 mb-2">
     <div class="col-md-8">
       Recipes last updated: {{ tempTimestamps.recipes | date:'M/d/yy hh:mm' }}
     </div>
@@ -39,7 +39,7 @@
       Download now
     </button>
   </div>
-  <div class="row col-md-12">
+  <div class="row col-md-12 mb-2">
     <div class="col-md-8">
       Auctions last updated: {{ getTimestamp('auctions') | date:'M/d/yy hh:mm' }}
     </div>
@@ -48,7 +48,7 @@
       Download now
     </button>
   </div>
-  <div class="row col-md-12">
+  <div class="row col-md-12 mb-2" *ngIf="useTSM()">
     <div class="col-md-8">
       TSM last updated: {{ getTimestamp('tsm') | date:'M/d/yy hh:mm' }}
     </div>

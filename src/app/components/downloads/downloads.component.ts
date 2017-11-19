@@ -62,15 +62,15 @@ export class DownloadsComponent implements OnInit {
         console.log('app.component init', e);
       }
       if (
-        CharacterService.user.apiToUse === 'tsm' &&
+        this.useTSM() &&
         localStorage.getItem('api_tsm') !== null &&
         localStorage.getItem('api_tsm') !== undefined &&
         localStorage.getItem('api_tsm').length > 0 &&
         localStorage.getItem('api_tsm') !== 'null') {
-        if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString() && CharacterService.user.apiToUse === 'tsm') {
+        if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
           await this.downloadTSM(false);
           console.log('TSM done');
-        } else if(CharacterService.user.apiToUse === 'tsm') {
+        } else if(this.useTSM()) {
           await db.table('tsm').toArray().then(
             result => {
               result.forEach(r => {
@@ -96,6 +96,10 @@ export class DownloadsComponent implements OnInit {
         lists.customPrices = JSON.parse(localStorage.getItem('custom_prices'));
       }
     }
+  }
+
+  useTSM(): boolean {
+    return CharacterService.user.apiToUse === 'tsm';
   }
 
   getDownloading(): any {

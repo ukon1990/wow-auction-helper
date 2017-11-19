@@ -11,7 +11,7 @@ export class Notification {
 		try {
 			Push.create(title, {
 				body: message,
-				icon: icon ? `http://media.blizzard.com/wow/icons/56/${icon}.jpg` : 'http://media.blizzard.com/wow/icons/56/inv_scroll_03.jpg',
+				icon: icon ? `https://render-eu.worldofwarcraft.com/icons/56/${icon}.jpg` : 'https://render-eu.worldofwarcraft.com/icons/56/inv_scroll_03.jpg',
 				timeout: 10000,
 				onClick: () => {
 					if (page) {

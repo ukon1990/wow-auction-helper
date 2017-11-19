@@ -117,14 +117,27 @@ export class SettingsComponent implements OnInit {
       console.log('The realm is chagned. The old realm was ' +
         this.characterForm.value.realm + ' and new realm is ' +
         CharacterService.user.realm + '. Downloading new auction data.');
-      await Auctions.downloadTSM(this.auctionService);
-      await Auctions.download(this.auctionService, this.router);
 
-    } else if (oldTSMKey !== localStorage.getItem('api_tsm')) {
-      await Auctions.downloadTSM(this.auctionService);
+      DownloadsComponent.downloading.api = true;
+      await Auctions.downloadTSM(this.auctionService)
+        .then(r => DownloadsComponent.downloading.api = false)
+        .catch(e => DownloadsComponent.downloading.api = false);
+      
+      DownloadsComponent.downloading.auctions = true;
+      await Auctions.download(this.auctionService, this.router)
+        .then(r => DownloadsComponent.downloading.auctions = false)
+        .catch(e => DownloadsComponent.downloading.auctions = false);
+
+    } else if (CharacterService.user.apiTsm !== localStorage.getItem('api_tsm')) {
+      DownloadsComponent.downloading.api = true;
+      await Auctions.downloadTSM(this.auctionService)
+        .then(r => DownloadsComponent.downloading.api = false)
+        .catch(e => DownloadsComponent.downloading.api = false);
+
       await db.table('auctions').toArray().then(a => {
         Auctions.buildAuctionArray(a, this.router);
       });
+
     } else {
       db.table('auctions').toArray().then(a => {
         Auctions.buildAuctionArray(a, this.router);
