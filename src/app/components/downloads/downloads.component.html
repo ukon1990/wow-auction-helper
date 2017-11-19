@@ -13,48 +13,48 @@
 
 <div class="dl-dropdown p-1 row mat-elevation-z5" [ngClass]="{'show': showDropdown}">
   <div class="row col-md-12">
-    <div class="col-md-12">
+    <div class="col-md-8">
       Items last updated: {{ getTimestamp('items') | date:'M/d/yy hh:mm' }}
-      <button class="btn btn-sm btn-default float-right" (click)="downloadItems()">
-        <i class="fa fa-spinner loading" *ngIf="getDownloading().items" aria-hidden="true"></i>
-        Download now
-      </button>
     </div>
+    <button class="btn btn-sm btn-default col-md-4" (click)="downloadItems()">
+      <i class="fa fa-spinner loading" *ngIf="getDownloading().items" aria-hidden="true"></i>
+      Download now
+    </button>
   </div>
   <div class="row col-md-12">
-    <div class="col-md-12">
+    <div class="col-md-8">
       Pets last updated: {{ tempTimestamps.pets | date:'M/d/yy hh:mm' }}
-      <button class="btn btn-sm btn-default float-right" (click)="downloadPets()">
-        <i class="fa fa-spinner loading" *ngIf="getDownloading().pets" aria-hidden="true"></i>
-        Download now
-      </button>
     </div>
+    <button class="btn btn-sm btn-default col-md-4" (click)="downloadPets()">
+      <i class="fa fa-spinner loading" *ngIf="getDownloading().pets" aria-hidden="true"></i>
+      Download now
+    </button>
   </div>
   <div class="row col-md-12">
-    <div class="col-md-12">
+    <div class="col-md-8">
       Recipes last updated: {{ tempTimestamps.recipes | date:'M/d/yy hh:mm' }}
-      <button class="btn btn-sm btn-default float-right" (click)="donloadRecipes()">
-        <i class="fa fa-spinner loading" *ngIf="getDownloading().recipes" aria-hidden="true"></i>
-        Download now
-      </button>
     </div>
+    <button class="btn btn-sm btn-default col-md-4" (click)="donloadRecipes()">
+      <i class="fa fa-spinner loading" *ngIf="getDownloading().recipes" aria-hidden="true"></i>
+      Download now
+    </button>
   </div>
   <div class="row col-md-12">
-    <div class="col-md-12">
+    <div class="col-md-8">
       Auctions last updated: {{ getTimestamp('auctions') | date:'M/d/yy hh:mm' }}
-      <button class="btn btn-sm btn-default float-right" (click)="downloadAuctions()">
-        <i class="fa fa-spinner loading" *ngIf="getDownloading().auctions" aria-hidden="true"></i>
-        Download now
-      </button>
     </div>
+    <button class="btn btn-sm btn-default col-md-4" (click)="downloadAuctions()">
+      <i class="fa fa-spinner loading" *ngIf="getDownloading().auctions" aria-hidden="true"></i>
+      Download now
+    </button>
   </div>
   <div class="row col-md-12">
-    <div class="col-md-12">
+    <div class="col-md-8">
       TSM last updated: {{ getTimestamp('tsm') | date:'M/d/yy hh:mm' }}
-      <button class="btn btn-sm btn-default float-right" (click)="downloadTSM(true)">
-        <i class="fa fa-spinner loading" *ngIf="getDownloading().api" aria-hidden="true"></i>
-        Download now
-      </button>
     </div>
+    <button class="btn btn-sm btn-default col-md-4" (click)="downloadTSM(true)">
+      <i class="fa fa-spinner loading" *ngIf="getDownloading().api" aria-hidden="true"></i>
+      Download now
+    </button>
   </div>
 </div>

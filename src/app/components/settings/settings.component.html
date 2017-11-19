@@ -57,20 +57,28 @@
       </form>
 
       <h3>Stored data</h3>
-      <div class="input-group">
-        <span class="input-group-btn">
-          <button class="btn btn-default mat-elevation-z5" (click)="importUserData()">Import settings</button>
-        </span>
-        <textarea type="text" class="form-control" placeholder="Paste in the exported string here" [(ngModel)]="importedSettings"></textarea>
+      <div class="row col-md-12 mb-2">
+        <button class="btn btn-sm btn-default mat-elevation-z5 col-md-1" (click)="importUserData()">Import settings</button>
+        <mat-input-container class="col-md-11">
+          <textarea matInput type="text"
+            placeholder="Paste in the exported string here"
+            [(ngModel)]="importedSettings">
+          </textarea>
+        </mat-input-container>
       </div>
-      <div class="input-group">
-        <span class="input-group-btn">
-          <button class="btn btn-default mat-elevation-z5" (click)="exportUserData()">Export settings</button>
-        </span>
-        <textarea type="text" class="form-control" placeholder="Copy the exported string from here" [(ngModel)]="exportedSettings"></textarea>
+      <div class="row col-md-12 mb-2">
+        <button class="btn btn-default mat-elevation-z5 col-md-1" (click)="exportUserData()">Export settings</button>
+        <mat-input-container class="col-md-11">
+          <textarea matInput type="text"
+            placeholder="Copy the exported string from here"
+            [(ngModel)]="exportedSettings">
+          </textarea>
+        </mat-input-container>
       </div>
 
-      <button class="btn btn-default mat-elevation-z5" (click)="deleteUserData()">Delete settings</button>
+      <div class="row col-md-12 mb-2">
+        <button class="btn btn-default mat-elevation-z5 col-md-1" (click)="deleteUserData()">Delete settings</button>
+      </div>
     </mat-tab>
     <mat-tab label="Crafting">
       <form class="form-inline" [formGroup]="characterForm">
@@ -136,30 +144,24 @@
         <form [formGroup]="characterForm.controls.notifications">
             <ul class="list-group">
                 <li class="list-group-item">
-                  <span class="badge">
-                    <input type="checkbox" formControlName="isUpdateAvailable">
-                  </span>
-                  Auction house updates
+                  <mat-checkbox formControlName="isUpdateAvailable">
+                    Auction house updates
+                  </mat-checkbox>
                 </li>
                 <li class="list-group-item">
-                  <span class="badge">
-                    <input type="checkbox" formControlName="isBelowVendorSell">
-                  </span>
-                  Items below vendor sell price
+                  <mat-checkbox formControlName="isBelowVendorSell">
+                    Items below vendor sell price
+                  </mat-checkbox>
                 </li>
                 <li class="list-group-item">
-                  <span class="badge">
-                    <input type="checkbox" formControlName="isUndercutted">
-                  </span>
-                  If any of your characters on the current realm is undercutted
+                  <mat-checkbox formControlName="isUndercutted">
+                      If any of your characters on the current realm is undercutted
+                  </mat-checkbox>
                 </li>
                 <li class="list-group-item">
-                  <span class="badge">
-                    <input type="checkbox" formControlName="isWatchlist">
-                  </span>
-                  Allow the watchlist to send notifications.
-                  <br>
-                  <em>If you wish to turn of individual items, do that on the watchlist page</em>
+                  <mat-checkbox formControlName="isWatchlist">
+                    Allow the watchlist to send notifications.
+                  </mat-checkbox>
                 </li>
               </ul>
         </form>
