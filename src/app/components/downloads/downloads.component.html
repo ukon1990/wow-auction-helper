@@ -51,7 +51,7 @@
   <div class="row col-md-12">
     <div class="col-md-12">
       TSM last updated: {{ getTimestamp('tsm') | date:'M/d/yy hh:mm' }}
-      <button class="btn btn-sm btn-default float-right">
+      <button class="btn btn-sm btn-default float-right" (click)="downloadTSM(true)">
         <i class="fa fa-spinner loading" *ngIf="getDownloading().api" aria-hidden="true"></i>
         Download now
       </button>

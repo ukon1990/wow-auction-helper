@@ -68,7 +68,7 @@ export class DownloadsComponent implements OnInit {
         localStorage.getItem('api_tsm').length > 0 &&
         localStorage.getItem('api_tsm') !== 'null') {
         if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString() && CharacterService.user.apiToUse === 'tsm') {
-          await Auctions.downloadTSM(this.auctionService);
+          await this.downloadTSM(false);
           console.log('TSM done');
         } else if(CharacterService.user.apiToUse === 'tsm') {
           await db.table('tsm').toArray().then(
@@ -193,6 +193,20 @@ export class DownloadsComponent implements OnInit {
     Auctions.download(this.auctionService, this.router)
       .then(r => DownloadsComponent.downloading.auctions = false)
       .catch(r => DownloadsComponent.downloading.auctions = false);
+  }
+
+  downloadTSM(rebuildAuctions: boolean): void {
+    DownloadsComponent.downloading.api = true;
+    Auctions.downloadTSM(this.auctionService)
+      .then(tsm => {
+        DownloadsComponent.downloading.api = false;
+        if (rebuildAuctions) {
+          db.table('auctions').toArray().then(a => {
+            Auctions.buildAuctionArray(a, this.router);
+          });
+        }
+      })
+      .catch(e => DownloadsComponent.downloading.api = false);
   }
 
   isDownloading(): boolean {
