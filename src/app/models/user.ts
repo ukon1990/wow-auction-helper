@@ -22,7 +22,7 @@ export class User {
 		isWatchlist: true
   };
 	watchlist: Watchlist = watchlist;
-	isDarkMode?: boolean;
+	isDarkMode: boolean = true;
 
   /**
    * 

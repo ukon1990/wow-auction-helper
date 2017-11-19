@@ -1,0 +1,68 @@
+/*
+ * A custom theme for bootstrap 4, with a darker color scheme, based off solaris bootstrap 3 theme
+ * Modified for WAH by Jonas Munthe Flønes
+*/
+
+/* Background colors */
+body,
+.mat-card,
+.dl-dropdown,
+.mat-select-content,
+.mat-select-panel-done-animating,
+.list-group-item{
+    background-color: #002b36 !important;;
+}
+.mat-form-field-underline,
+.mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: #839496 !important;
+}
+.table-striped>tbody>tr:nth-of-type(odd){
+    background-color: #073642;
+}
+
+.table>thead>tr>th,
+.table>tbody>tr>th,
+.table>tfoot>tr>th,
+.table>thead>tr>td,
+.table>tbody>tr>td,
+.table>tfoot>tr>td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #073642;
+}
+
+/* Text color */
+body,
+.mat-card,
+.dl-dropdown,
+.mat-form-field-placeholder,
+.mat-select-value,
+.mat-option,
+.mat-paginator,
+.mat-paginator-page-size
+.mat-select-trigger,
+.mat-select-arrow,
+.mat-select-disabled .mat-select-value,
+.mat-tab-label, .mat-tab-link,
+.mat-card-subtitle {
+    color: #839496 !important;
+}
+a {
+    color: #2aa198;
+}
+
+.mat-primary
+.mat-option.mat-selected:not(.mat-option-disabled) {
+    color: orange !important;;
+}
+  
+
+/* Borders */
+.mat-icon-button .mat-paginator-decrement,
+.mat-icon-button .mat-paginator-increment,
+.mat-paginator-decrement, .mat-paginator-increment,
+.mat-checkbox-frame {
+    border-color: #839496 !important;
+}
