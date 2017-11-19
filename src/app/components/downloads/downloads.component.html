@@ -43,7 +43,7 @@
     <div class="col-md-8">
       Auctions last updated: {{ getTimestamp('auctions') | date:'M/d/yy hh:mm' }}
     </div>
-    <button class="btn btn-sm btn-default col-md-4" (click)="downloadAuctions()">
+    <button class="btn btn-sm btn-default col-md-4" (click)="downloadAuctions(true)">
       <i class="fa fa-spinner loading" *ngIf="getDownloading().auctions" aria-hidden="true"></i>
       Download now
     </button>

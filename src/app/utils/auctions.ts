@@ -28,10 +28,10 @@ export default class {
     });
   }
 
-  public static download(auctionService: AuctionService, router: Router): Promise<any> {
+  public static download(auctionService: AuctionService, router: Router, forceUpdate?: boolean): Promise<any> {
     lists.isDownloading = true;
     console.log('Downloading auctions');
-    if (!this.updateAvailable) {
+    if (forceUpdate || !this.updateAvailable) {
       return db.table('auctions').toArray().then(
         result => {
           if (result.length > 0) {

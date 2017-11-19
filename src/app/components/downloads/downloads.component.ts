@@ -89,7 +89,7 @@ export class DownloadsComponent implements OnInit {
 
       await Auctions.checkForUpdates(this.auctionService);
 
-      await this.downloadAuctions();
+      await this.downloadAuctions(false);
       setInterval(() => this.checkForUpdate(), 60000);
 
       if (localStorage.getItem('custom_prices') !== null) {
@@ -192,9 +192,12 @@ export class DownloadsComponent implements OnInit {
     Auctions.checkForUpdates(this.auctionService);
   }
 
-  downloadAuctions(): void {
+  downloadAuctions(forceUpdate?: boolean): void {
+    if (forceUpdate === undefined) {
+      forceUpdate = false;
+    }
     DownloadsComponent.downloading.auctions = true;
-    Auctions.download(this.auctionService, this.router)
+    Auctions.download(this.auctionService, this.router, forceUpdate)
       .then(r => DownloadsComponent.downloading.auctions = false)
       .catch(r => DownloadsComponent.downloading.auctions = false);
   }
