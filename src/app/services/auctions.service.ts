@@ -82,7 +82,7 @@ export class AuctionService {
   }
 
   // Need to ask the user how often they want this data to be updated.
-  getTSMData() {
+  getTSMData(): Promise<any> {
     // The localhost requires a json file for the realm!
     const localUrl = '/assets/tsm-emerald-dream.json',
       apiUrl = 'http://api.tradeskillmaster.com/v1/item/'
@@ -97,7 +97,7 @@ export class AuctionService {
         db['tsm'].bulkAdd(r);
         localStorage.setItem('timestamp_tsm', new Date().toDateString());
         return r;
-      }(response));
+      }(response)).toPromise();
   }
 
   getLastUpdated(): Promise<any> {

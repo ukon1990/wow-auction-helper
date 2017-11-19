@@ -12,6 +12,8 @@ import Auctions from '../../utils/auctions';
 import { ItemService } from '../../services/item.service';
 import { DownloadsComponent } from 'app/components/downloads/downloads.component';
 import { User } from 'app/models/user';
+import { Notification } from 'app/models/notification';
+import { watchlist } from 'app/utils/objects';
 
 declare const ga: Function;
 @Component({
@@ -21,15 +23,14 @@ declare const ga: Function;
   providers: [DownloadsComponent]
 })
 export class SettingsComponent implements OnInit {
-  user: IUser;
+  characterForm: FormGroup;
   customPriceForm: FormGroup;
   userCrafterForm: FormGroup;
   customPrices = [];
   newCustomPrice = { 'itemID': 0 };
   customPriceSearchQuery: string;
   customPriceQueryItems = [];
-  realmListEu = [];
-  realmListUs = [];
+  regions: Object;
   importedSettings: string;
   exportedSettings: string;
   originalRealm: string;
@@ -48,7 +49,18 @@ export class SettingsComponent implements OnInit {
     private formBuilder: FormBuilder, private router: Router,
     private rs: RealmService, private auctionService: AuctionService,
     private characterService: CharacterService, private itemService: ItemService) {
-    this.user = CharacterService.user;
+    this.characterForm = this.formBuilder.group({
+      region: CharacterService.user.region ? CharacterService.user.region : '',
+      realm: CharacterService.user.realm ? CharacterService.user.realm : '',
+      name: CharacterService.user.character ? CharacterService.user.character : '',
+      buyoutLimit: CharacterService.user.buyoutLimit ? CharacterService.user.buyoutLimit : 0,
+      apiTsm: CharacterService.user.apiTsm ? CharacterService.user.apiTsm : '',
+      apiToUse: CharacterService.user.apiToUse ? CharacterService.user.apiToUse : '',
+      customPrices: CharacterService.user.customPrices ? CharacterService.user.customPrices : {},
+      notifications: CharacterService.user.notifications ? CharacterService.user.notifications : new Notification(),
+      watchlist: CharacterService.user.watchlist ? CharacterService.user.watchlist : watchlist,
+      isDarkMode: CharacterService.user.isDarkMode ? CharacterService.user.isDarkMode : false
+    });
     this.customPriceForm = formBuilder.group({
       'query': ''
     });
@@ -74,20 +86,15 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.rs.getRealms().then(
       r => {
-        this.realmListEu = r.region.eu;
-        this.realmListUs = r.region.us;
+        this.regions = r.region;
       });
   }
 
-  getRealms() {
-    if (this.user.region === 'us') {
-      return this.realmListUs['realms'] || [];
-    } else {
-      return this.realmListEu['realms'] || [];
-    }
+  getRegions(): string[] {
+    return this.regions ? Object.keys(this.regions) : [];
   }
 
-  saveUserData(): void {
+  async saveUserData() {
     const oldTSMKey = localStorage.getItem('api_tsm') || '';
 
     this.customPrices.forEach(cp => {
@@ -97,36 +104,21 @@ export class SettingsComponent implements OnInit {
     });
     localStorage.setItem('custom_prices', JSON.stringify(lists.customPrices));
 
-    if (localStorage.getItem('crafting_buyout_limit') !== this.user.buyoutLimit.toString()) {
+    if (localStorage.getItem('crafting_buyout_limit') !== this.characterForm.value.buyoutLimit.toString()) {
       Crafting.getCraftingCosts(this.router);
-      localStorage.setItem('crafting_buyout_limit', this.user.buyoutLimit.toString());
     }
 
-    if (this.originalRealm !== this.user.realm) {
+    if (this.characterForm.value.realm !== CharacterService.user.realm) {
       console.log('The realm is chagned. The old realm was ' +
-        this.originalRealm + ' and new realm is ' +
-        this.user.realm + '. Downloading new auction data.');
+        this.characterForm.value.realm + ' and new realm is ' +
+        CharacterService.user.realm + '. Downloading new auction data.');
+      await Auctions.downloadTSM(this.auctionService);
+      await Auctions.download(this.auctionService, this.router);
 
-      this.auctionService.getTSMData().subscribe(result => {
-        result.forEach(r => {
-          lists.tsm[r.Id] = r;
-        });
-        // Downloading the auctions
-        localStorage.setItem('timestamp_auctions', '0');
-        Auctions.download(this.auctionService, this.router);
-      }, err => {
-        console.log(err);
-      });
     } else if (oldTSMKey !== localStorage.getItem('api_tsm')) {
-      this.auctionService.getTSMData().subscribe(result => {
-        result.forEach(r => {
-          lists.tsm[r.Id] = r;
-          db.table('auctions').toArray().then(a => {
-            Auctions.buildAuctionArray(a, this.router);
-          });
-        });
-      }, err => {
-        console.log(err);
+      await Auctions.downloadTSM(this.auctionService);
+      await db.table('auctions').toArray().then(a => {
+        Auctions.buildAuctionArray(a, this.router);
       });
     } else {
       db.table('auctions').toArray().then(a => {
@@ -134,18 +126,17 @@ export class SettingsComponent implements OnInit {
       });
     }
 
-    this.updateRecipesForRealm();
-    User.save(this.user as User);
+    // User.save(this.user as User);
+    User.updateRecipesForRealm();
   }
 
   importUserData(): void {
     User.import(this.importedSettings);
-    this.user = CharacterService.user;
     this.importedSettings = '';
   }
 
   exportUserData(): void {
-    this.exportedSettings = JSON.stringify(this.user);
+    this.exportedSettings = JSON.stringify(CharacterService.user);
     ga('send', {
       hitType: 'event',
       eventCategory: 'Settings',
@@ -213,13 +204,6 @@ export class SettingsComponent implements OnInit {
 
   getMyRecipeCount(): number {
     return lists.myRecipes.length;
-  }
-
-  updateRecipesForRealm(): void {
-    lists.myRecipes = [];
-    this.user.characters.forEach(character => {
-      User.setRecipesForCharacter(character);
-    });
   }
 
   getItemName(itemID: string): string {

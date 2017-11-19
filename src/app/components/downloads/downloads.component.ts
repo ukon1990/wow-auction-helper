@@ -23,7 +23,7 @@ export class DownloadsComponent implements OnInit {
     recipes: new Date()
   };
 
-  downloading = {
+  public static downloading = {
     items: false,
     api: false,
     auctions: false,
@@ -46,12 +46,7 @@ export class DownloadsComponent implements OnInit {
   async ngOnInit() {
     this.date = new Date();
     if (this.isRealmSet()) {
-			/**
-			 * Ohh, this is so bad.. Need to clean this up O_o
-			 */
-      // Loading user settings
       try {
-
         if (localStorage.watchlist) {
           CharacterService.user.watchlist = JSON.parse(localStorage.watchlist);
           Object.keys(CharacterService.user.watchlist.items).forEach(k => {
@@ -66,70 +61,24 @@ export class DownloadsComponent implements OnInit {
       } catch (e) {
         console.log('app.component init', e);
       }
-
       if (
         CharacterService.user.apiToUse === 'tsm' &&
         localStorage.getItem('api_tsm') !== null &&
         localStorage.getItem('api_tsm') !== undefined &&
         localStorage.getItem('api_tsm').length > 0 &&
         localStorage.getItem('api_tsm') !== 'null') {
-        if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString()) {
-          this.auctionService.getTSMData().subscribe(result => {
-            result.forEach(r => {
-              lists.tsm[r.Id] = r;
-            });
-          }, err => {
-            console.log(err);
-          });
+        if (new Date(localStorage.getItem('timestamp_tsm')).toDateString() !== new Date().toDateString() && CharacterService.user.apiToUse === 'tsm') {
+          await Auctions.downloadTSM(this.auctionService);
           console.log('TSM done');
-
-          if (CharacterService.user.apiToUse === 'tsm') {
-            // TODO: this.downloadPets();
-          }
-        } else {
-          console.log('Loaded TSM from local DB');
-          db.table('tsm').toArray().then(
+        } else if(CharacterService.user.apiToUse === 'tsm') {
+          await db.table('tsm').toArray().then(
             result => {
               result.forEach(r => {
                 lists.tsm[r.Id] = r;
               });
             });
-
-          if (CharacterService.user.apiToUse === 'tsm') {
-            // TODO: this.downloadPets();
-          }
+        console.log('Loaded TSM from local DB');
         }
-      } else if (
-        CharacterService.user.apiToUse === 'wowuction' &&
-        localStorage.getItem('api_wowuction') !== null &&
-        localStorage.getItem('api_wowuction') !== undefined &&
-        localStorage.getItem('api_wowuction').length > 0 &&
-        localStorage.getItem('api_wowuction') !== 'null') {
-        if (new Date(localStorage.getItem('timestamp_wowuction')).toDateString() !== new Date().toDateString()) {
-          console.log('Downloading wowuction data');
-          this.auctionService.getWoWuctionData().subscribe(res => {
-            res.forEach(r => {
-              lists.wowuction[r.id] = r;
-            });
-
-            if (CharacterService.user.apiToUse === 'wowuction') {
-              // TODO: this.downloadPets();
-            }
-          });
-        } else {
-          console.log('Loading wowuction data from local storage');
-          db.table('wowuction').toArray().then(r => {
-            r.forEach(w => {
-              lists.wowuction[w.id] = w;
-            });
-
-            if (CharacterService.user.apiToUse === 'wowuction') {
-              // TODO: this.downloadPets();
-            }
-          });
-        }
-      } else {
-        // TODO: this.downloadPets();
       }
       
       await this.donloadRecipes();
@@ -207,28 +156,28 @@ export class DownloadsComponent implements OnInit {
   }
 
   donloadRecipes(): void {
-    this.downloading.recipes = true;
+    DownloadsComponent.downloading.recipes = true;
     Crafting.download(this.itemService)
       .then(r => {
-        this.downloading.recipes = false;
+        DownloadsComponent.downloading.recipes = false;
         this.tempTimestamps.recipes = new Date();
-      }).catch(r => this.downloading.recipes = false);
+      }).catch(r => DownloadsComponent.downloading.recipes = false);
   }
 
   downloadPets(): void {
-    this.downloading.pets = true;
+    DownloadsComponent.downloading.pets = true;
     Pets.download(this.itemService)
       .then(r => {
-        this.downloading.pets = false;
+        DownloadsComponent.downloading.pets = false;
         this.tempTimestamps.pets = new Date();
-      }).catch(r => this.downloading.pets = false);
+      }).catch(r => DownloadsComponent.downloading.pets = false);
   }
 
   downloadItems(): void {
-    this.downloading.items = true;
+    DownloadsComponent.downloading.items = true;
     Item.download(this.itemService)
-      .then(r => this.downloading.items = false)
-      .catch(r => this.downloading.items = false);
+      .then(r => DownloadsComponent.downloading.items = false)
+      .catch(r => DownloadsComponent.downloading.items = false);
   }
 
   checkForUpdates(): void {
@@ -236,14 +185,14 @@ export class DownloadsComponent implements OnInit {
   }
 
   downloadAuctions(): void {
-    this.downloading.auctions = true;
+    DownloadsComponent.downloading.auctions = true;
     Auctions.download(this.auctionService, this.router)
-      .then(r => this.downloading.auctions = false)
-      .catch(r => this.downloading.auctions = false);
+      .then(r => DownloadsComponent.downloading.auctions = false)
+      .catch(r => DownloadsComponent.downloading.auctions = false);
   }
 
   isDownloading(): boolean {
-    return this.downloading.api || this.downloading.auctions || this.downloading.items
-      || this.downloading.pets || this.downloading.recipes;
+    return DownloadsComponent.downloading.api || DownloadsComponent.downloading.auctions || DownloadsComponent.downloading.items
+      || DownloadsComponent.downloading.pets || DownloadsComponent.downloading.recipes;
   }
 }

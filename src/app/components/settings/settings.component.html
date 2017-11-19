@@ -18,27 +18,25 @@
         Realm and region are requiered, while the character name is not. However, you will not be able to see if you have been undercutted
         if you don't.
       </p>
-      <div class="input-group input-group-sm">
-        <span class="input-group-addon" id="basic-addon1">Region</span>
-        <select class="form-control" name="region" type="text" [(ngModel)]="user.region" aria-describedby="basic-addon1">
-          <option value="eu">EU</option>
-          <option value="us">US</option>
-        </select>
-      </div>
-
-      <div class="input-group input-group-sm">
-        <span class="input-group-addon" id="basic-addon1">Realm</span>
-        <select class="form-control" name="realm" type="text" aria-describedby="basic-addon1" [(ngModel)]="user.realm" required>
-
-          <option *ngFor="let r of getRealms()" [value]="r.slug">{{r.name}}</option>
-        </select>
-      </div>
-
-      <div class="input-group input-group-sm">
-        <span class="input-group-addon" id="basic-addon1">Character</span>
-        <input class="form-control col-md-2" name="character" placeholder="Character" type="text" [(ngModel)]="user.character" aria-describedby="basic-addon1"
-        />
-      </div>
+      <form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="characterForm">
+        <mat-form-field class="col-md-2">
+          <mat-select placeholder="Region" formControlName="region">
+            <mat-option *ngFor="let r of getRegions()" [value]="r">
+              {{ r }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="col-md-3">
+          <mat-select placeholder="Realm" formControlName="realm">
+            <mat-option *ngFor="let r of regions?.eu.realms" [value]="r.slug">
+              {{ r.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="col-md-6">
+          <input matInput placeholder="Character" formControlName="name">
+        </mat-form-field>
+      </form>
 
       <h3>API</h3>
       <p>

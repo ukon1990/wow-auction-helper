@@ -29,8 +29,7 @@ export class User {
    * @param object JSON string exported from the application
    */
   public static import(object: string) {
-    CharacterService.user = JSON.parse(object) as User;
-    this.save(CharacterService.user);
+    this.save(JSON.parse(object) as User);
   }
 
   public static save(user: User): void {
@@ -38,33 +37,43 @@ export class User {
       switch(key) {
         case 'region':
           localStorage['region'] = user[key];
+          CharacterService.user.region = user[key];
           break;
         case 'realm':
           localStorage['realm'] = user[key];
+          CharacterService.user.realm = user[key];
           break;
         case 'character':
           localStorage['character'] = user[key];
+          CharacterService.user.character = user[key];
           break;
         case 'apiTsm':
           localStorage['api_tsm'] = user[key];
+          CharacterService.user.apiTsm = user[key];
           break;
         case 'apiWoWu':
           localStorage['api_wowuction'] = user[key];
+          CharacterService.user.apiWoWu = user[key];
           break;
         case 'customPrices':
           localStorage['custom_prices'] = JSON.stringify(user[key]);
+          CharacterService.user.customPrices = user[key];
           break;
         case 'apiToUse':
           localStorage['api_to_use'] = user[key];
+          CharacterService.user.apiToUse = user[key];
           break;
         case 'buyoutLimit':
           localStorage['crafting_buyout_limit'] = user[key];
+          CharacterService.user.buyoutLimit = user[key];
           break;
         case 'characters':
           localStorage['characters'] = JSON.stringify(user[key]);
+          CharacterService.user.characters = user[key];
           break;
         case 'notifications':
           localStorage['notifications'] = JSON.stringify(user[key]);
+          CharacterService.user.notifications = user[key];
           break;
       }
     });
