@@ -2,6 +2,7 @@ import { Notification } from "app/models/notification";
 import { CharacterService } from "app/services/character.service";
 import { lists } from "app/utils/globals";
 import { Watchlist } from "app/models/watchlist";
+import { watchlist } from "app/utils/objects";
 
 export class User {
   region: string;
@@ -20,7 +21,7 @@ export class User {
 		isUndercutted: true,
 		isWatchlist: true
   };
-	watchlist: Watchlist = { recipes: {}, items: {}, groups: ['Ungrouped'] };
+	watchlist: Watchlist = watchlist;
 	isDarkMode?: boolean;
 
   /**

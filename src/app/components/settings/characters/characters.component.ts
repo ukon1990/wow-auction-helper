@@ -63,14 +63,27 @@ export class CharactersComponent implements AfterViewInit, OnChanges {
       }).catch(() => this.downloading = false);
   }
 
+  updateCharacter(index: number): void {
+    this.characters[index]['downloading'] = true;
+    this.characterService.getCharacter(
+      this.characters[index].name,
+      this.characters[index].realm
+     ).then(c => {
+        this.characters[index] = c;
+      });
+  }
+
   getRegions(): string[] {
     return this.regions ? Object.keys(this.regions) : [];
   }
 
   removeCharacter(index: number): void {
-    console.log('deleted');
     CharacterService.user.characters.splice(index, 1);
     // User.updateRecipesForRealm();
     localStorage.characters = JSON.stringify(CharacterService.user.characters);
+  }
+
+  accept(event): void {
+    console.log('Accepted');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-character',
@@ -7,12 +7,10 @@ import { Component, OnInit, Input } from '@angular/core';
 export class CharacterComponent {
   @Input() index: number;
   @Input() character: Object;
+  @Output() remove: EventEmitter<any> = new EventEmitter();
+  @Output() update: EventEmitter<any> = new EventEmitter();
 
-
-  removeCharacter(index: number): void {
-    console.log('deleted');
-    /*this.user.characters.splice(index, 1);
-    this.updateRecipesForRealm();
-    localStorage.characters = JSON.stringify(this.user.characters);*/
+  delete(): void {
+    delete this.character;
   }
 }

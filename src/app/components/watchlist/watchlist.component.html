@@ -160,18 +160,18 @@
                 <mat-card-content>
                   <div class="row">
                     <div [ngClass]="user.apiToUse === 'tsm' ? 'col-md-6' : 'col-md-12'">
-                        Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs
-                        <br>
-                        <span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ getBuyout(item.id) | gold }}</span>
-                        <br> Alert value: {{ item.value | gold }}
-                        <br> Alert criteria: {{ item.criteria }} or equal
-                        <br> Minimum crafting profit: {{ item.minCraftProfit }}%
-                        <!-- TODO: Items below alert value <br>-->
-                      </div>
-                      <div class="col-md-6" *ngIf="user.apiToUse === 'tsm'">
-                        Market value: {{ getMarketValue(item.id) }}
-                        <br> Regional demand: {{ getAuctionItem(item.id).estDemand }}%
-                      </div>
+                      Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs
+                      <br>
+                      <span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ getBuyout(item.id) | gold }}</span>
+                      <br> Alert value: {{ item.value | gold }}
+                      <br> Alert criteria: {{ item.criteria }} or equal
+                      <br> Minimum crafting profit: {{ item.minCraftProfit }}%
+                      <!-- TODO: Items below alert value <br>-->
+                    </div>
+                    <div class="col-md-6" *ngIf="user.apiToUse === 'tsm'">
+                      Market value: {{ getMarketValue(item.id) }}
+                      <br> Regional demand: {{ getAuctionItem(item.id).estDemand }}%
+                    </div>
                   </div>
                   <!-- Recipes connected to this item that the user has -->
                   <div *ngIf="getUserRecipesForItem(item.id).length > 0">
@@ -216,12 +216,12 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <button class="btn btn-primary mat-elevation-z5" (click)="editItemDialog(group, i)">
-                      <i class="fa fa-pencil-square-o"></i>
-                      Edit
-                    </button>
+                    <i class="fa fa-pencil-square-o"></i>
+                    Edit
+                  </button>
                   <button class="btn btn-default mat-elevation-z5" (click)="removeItem(group, i)">
-                      <i class="fa fa-trash"></i>
-                      Delete
+                    <i class="fa fa-trash"></i>
+                    Delete
                   </button>
                 </mat-card-actions>
               </mat-card>
@@ -240,12 +240,12 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
-          <i class="fa fa-trash"></i>
-        </button>
-        <h4 class="modal-title">
+        <h5 class="modal-title">
           Deleting "{{ watchlist.groups[editing.group.index] }}"
-        </h4>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
       <div class="modal-body">
         <p>
@@ -279,12 +279,12 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
-          <i class="fa fa-trash"></i>
-        </button>
-        <h4 class="modal-title">
+        <h5 class="modal-title">
           {{ editing.item.object?.name }}
-        </h4>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
       <div class="modal-body">
         <div class="input-group input-group-sm">

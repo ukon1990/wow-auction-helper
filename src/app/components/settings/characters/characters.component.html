@@ -39,7 +39,8 @@
   <ng-template #overview>
     <div class="row col-md-12">
       <div *ngFor="let character of characters; let i = index;" class="col-sm-6 col-md-4 mt-2 mb-2">
-        <app-character [character]="character" [index]="i"></app-character>
+        <app-character [character]="character" [index]="i"
+          (update)="updateCharacter(i)"></app-character>
       </div>
     </div>
   </ng-template>
