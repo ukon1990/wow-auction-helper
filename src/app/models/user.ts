@@ -117,7 +117,9 @@ export class User {
     });
 
     CharacterService.user = user;
-    this.updateRecipesForRealm();    
+    if (user.realm && user.region) {
+      this.updateRecipesForRealm();  
+    }  
   }
 
   public static delete(): void {
