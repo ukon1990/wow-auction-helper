@@ -12,7 +12,8 @@ body,
 .list-group-item,
 .mat-stepper-horizontal,
 .mat-stepper-vertical,
-.mat-expansion-panel {
+.mat-expansion-panel,
+.modal-content {
     background-color: #002b36 !important;;
 }
 .mat-form-field-underline,
@@ -57,7 +58,8 @@ body,
 .mat-expansion-panel,
 .mat-expansion-panel-header-title,
 .mat-expansion-indicator::after,
-.mat-expansion-panel-header-description {
+.mat-expansion-panel-header-description,
+.fa {
     color: #839496 !important;
 }
 a {

@@ -55,6 +55,7 @@ export class FrontPageComponent implements OnInit {
     if (this.isValid()) {
       localStorage['region'] = this.userForm.value.region;
       localStorage['realm'] = this.userForm.value.realm;
+      localStorage['character'] = this.userForm.value.name;
 
       if (this.userForm.value.tsmKey.length > 0) {
         localStorage['api_tsm'] = this.userForm.value.tsmKey;

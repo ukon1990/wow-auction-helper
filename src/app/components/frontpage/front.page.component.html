@@ -28,6 +28,10 @@
         <h3>Disclaimer</h3>
         <ul>
           <li>
+            As I have a limited time on my hands, the following browsers are the ones I support: 
+            <em>Chrome (latest version) and Firefox Quantum (latest version).</em>
+          </li>
+          <li>
             The application will use much data, so do not use it on the mobile network. If you are on a high populated realm, each auction
             download can be up to 25 MB. Low populated realms can be as low as 5 MB.
           </li>
@@ -35,7 +39,8 @@
             All calculations are done on the client (your computer).
           </li>
           <li>
-            No personal data sent from your computer. Anything persistent is stored on your computer.
+            No personal data sent from your computer. Anything persistent is stored on your computer. 
+            The application does use Google Analytics, in order for me to see what that is most used and what to fous on.
           </li>
           <li>
             Using tools like CCleaner to clean your browser cache etc, will remove all your settings. So be aware of that.
@@ -72,6 +77,9 @@
                 {{ r.name }}
               </mat-option>
             </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+            <input matInput placeholder="Auctioning character (optional)" formControlName="name">
           </mat-form-field>
         </form>
 
@@ -110,7 +118,7 @@
           <mat-form-field class="col-md-12">
             <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
           </mat-form-field>
-          If you don't have a TSM account you can
+          If you don't have a TSM account you can 
           <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
           <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
         </form>

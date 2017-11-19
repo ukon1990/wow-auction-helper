@@ -35,9 +35,9 @@ export class Item {
 		// this.downloadingText = 'Downloading items';
 		// Attempting to get from local storage
 		if (
-			localStorage.getItem('timestamp_items') === null ||
-			localStorage.getItem('timestamp_items') === undefined ||
-			localStorage.getItem('timestamp_items') !== new Date().toDateString()) {
+			localStorage['timestamp_items'] === null ||
+			localStorage['timestamp_items'] === undefined ||
+			localStorage['timestamp_items'] !== new Date().toDateString()) {
 			console.log('Downloading fresh item Data to local DB');
 			// The db was empty so we're downloading
 			return itemService.getItems()
