@@ -97,12 +97,12 @@
         </mat-accordion>
         <div class="clearfix col-md-12 mt-2 mb-2">
           <button matStepperPrevious class="btn btn-secondary float-left mat-elevation-z5">Back</button>
-          <button matStepperNext class="btn btn-primary float-right mat-elevation-z5">Next</button>
+          <button matStepperNext class="btn btn-primary float-right mat-elevation-z5" [disabled]="!this.isValid()">Next</button>
         </div>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Characters and API</ng-template>
-        <strong>Your API keys</strong>
+        <strong>Your API key (optional)</strong>
         <p>
           Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
         </p>
