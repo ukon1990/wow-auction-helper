@@ -57,7 +57,12 @@ export class SettingsComponent implements OnInit {
       apiTsm: CharacterService.user.apiTsm ? CharacterService.user.apiTsm : '',
       apiToUse: CharacterService.user.apiToUse ? CharacterService.user.apiToUse : '',
       customPrices: CharacterService.user.customPrices ? CharacterService.user.customPrices : {},
-      notifications: CharacterService.user.notifications ? CharacterService.user.notifications : new Notification(),
+      notifications: this.formBuilder.group({
+        isUpdateAvailable: CharacterService.user.notifications.isUpdateAvailable ? CharacterService.user.notifications.isUpdateAvailable : true,
+        isBelowVendorSell: CharacterService.user.notifications.isBelowVendorSell ? CharacterService.user.notifications.isBelowVendorSell : true,
+        isUndercutted: CharacterService.user.notifications.isUndercutted ? CharacterService.user.notifications.isUndercutted : true,
+        isWatchlist: CharacterService.user.notifications.isWatchlist ? CharacterService.user.notifications.isWatchlist : true
+      }),
       watchlist: CharacterService.user.watchlist ? CharacterService.user.watchlist : watchlist,
       isDarkMode: CharacterService.user.isDarkMode ? CharacterService.user.isDarkMode : false
     });
@@ -126,7 +131,7 @@ export class SettingsComponent implements OnInit {
       });
     }
 
-    // User.save(this.user as User);
+    User.save(this.characterForm.value as User);
     User.updateRecipesForRealm();
   }
 

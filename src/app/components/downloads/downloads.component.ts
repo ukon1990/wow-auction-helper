@@ -98,6 +98,10 @@ export class DownloadsComponent implements OnInit {
     }
   }
 
+  getDownloading(): Object {
+    return DownloadsComponent.downloading;
+  }
+
 
   checkForUpdate() {
     console.log('checking for update');

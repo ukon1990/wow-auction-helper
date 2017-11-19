@@ -18,7 +18,7 @@
         Realm and region are requiered, while the character name is not. However, you will not be able to see if you have been undercutted
         if you don't.
       </p>
-      <form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="characterForm">
+      <form class="form-inline" [formGroup]="characterForm">
         <mat-form-field class="col-md-2">
           <mat-select placeholder="Region" formControlName="region">
             <mat-option *ngFor="let r of getRegions()" [value]="r">
@@ -44,25 +44,17 @@
         You can get a TSM key
         <a href="https://www.tradeskillmaster.com/user" target="_blank">here</a>.
       </p>
-      <!--<div class="input-group input-group-sm">
-            <span class="input-group-addon" id="basic-addon1">WoWuction key</span>
-            <input class="form-control" name="wowuction" placeholder="API key" type="text" [(ngModel)]="user.apiWoWu" aria-describedby="basic-addon1"/>
-          </div>-->
-
-      <div class="input-group input-group-sm">
-        <span class="input-group-addon" id="basic-addon1">TSM key</span>
-        <input class="form-control" name="tsm" placeholder="API key" type="text" [(ngModel)]="user.apiTsm" aria-describedby="basic-addon1"
-        />
-      </div>
-
-      <div class="input-group input-group-sm">
-        <span class="input-group-addon" id="basic-addon1">API to use:</span>
-        <select class="form-control" aria-describedby="basic-addon1" [(ngModel)]="user.apiToUse">
-          <option value="none">None</option>
-          <option value="tsm">TSM</option>
-          <!--<option value="wowuction">WoWuction</option>-->
-        </select>
-      </div>
+      <form class="form-inline" [formGroup]="characterForm">
+        <mat-form-field class="col-md-6">
+          <input matInput placeholder="API Key" formControlName="apiTsm">
+        </mat-form-field>
+        <mat-form-field class="col-md-2">
+          <mat-select placeholder="API to use" formControlName="apiToUse">
+            <mat-option value="none">None</mat-option>
+            <mat-option value="tsm">TSM</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
 
       <h3>Stored data</h3>
       <div class="input-group">
@@ -81,16 +73,13 @@
       <button class="btn btn-default mat-elevation-z5" (click)="deleteUserData()">Delete settings</button>
     </mat-tab>
     <mat-tab label="Crafting">
-      <div class="input-group input-group-sm">
-        <span class="input-group-addon" id="basic-addon1">
-          Use market value instead of buyout if buyout >=
-        </span>
-        <input class="form-control" placeholder="API key" type="number" [(ngModel)]="user.buyoutLimit" aria-describedby="basic-addon1"
-        />
-        <span class="input-group-addon" id="basic-addon1">
-          % of the market value.
-        </span>
-      </div>
+      <form class="form-inline" [formGroup]="characterForm">
+        <mat-form-field class="col-md-6">
+          <input matInput placeholder="Use MV if buyout >= {{ characterForm.value.buyoutLimit }}% of MV" formControlName="buyoutLimit"
+            matTooltip="Use market value instead of buyout if buyout >= x% of the market value">
+        </mat-form-field>
+      </form>
+
       <strong>Custom item prices</strong>
       <p>These prices are ovrrides for cost calculation. Using trade vendor panel values coming soon™</p>
       <form class="form-inline" (ngSubmit)="searchDB()" [formGroup]="customPriceForm">
@@ -137,59 +126,44 @@
           </td>
         </tr>
       </table>
-      <app-characters [region]="user.region" [realm]="user.realm"></app-characters>
+      <app-characters [region]="characterForm.value.region" [realm]="characterForm.value.realm"></app-characters>
     </mat-tab>
     <mat-tab label="Notifications">
       <p>Here you can turn on and off the various notifications in the application.</p>
 
       <div class="col-md-6">
         <strong>API independent</strong>
-        <ul class="list-group">
-          <li class="list-group-item">
-            <span class="badge">
-              <input type="checkbox" [(ngModel)]="user.notifications.isUpdateAvailable">
-            </span>
-            Auction house updates
-          </li>
-          <li class="list-group-item">
-            <span class="badge">
-              <input type="checkbox" [(ngModel)]="user.notifications.isBelowVendorSell">
-            </span>
-            Items below vendor sell price
-          </li>
-          <li class="list-group-item">
-            <span class="badge">
-              <input type="checkbox" [(ngModel)]="user.notifications.isUndercutted">
-            </span>
-            If {{ user.character }} is undercutted
-          </li>
-          <li class="list-group-item">
-            <span class="badge">
-              <input type="checkbox" [(ngModel)]="user.notifications.isWatchlist">
-            </span>
-            Allow the watchlist to send notifications.
-            <br>
-            <em>If you wish to turn of individual items, do that on the watchlist page</em>
-          </li>
-        </ul>
+        <form [formGroup]="characterForm.controls.notifications">
+            <ul class="list-group">
+                <li class="list-group-item">
+                  <span class="badge">
+                    <input type="checkbox" formControlName="isUpdateAvailable">
+                  </span>
+                  Auction house updates
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">
+                    <input type="checkbox" formControlName="isBelowVendorSell">
+                  </span>
+                  Items below vendor sell price
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">
+                    <input type="checkbox" formControlName="isUndercutted">
+                  </span>
+                  If any of your characters on the current realm is undercutted
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">
+                    <input type="checkbox" formControlName="isWatchlist">
+                  </span>
+                  Allow the watchlist to send notifications.
+                  <br>
+                  <em>If you wish to turn of individual items, do that on the watchlist page</em>
+                </li>
+              </ul>
+        </form>
       </div>
-      <!--<div class="col-md-6">
-                  <strong>API dependent</strong>
-                  <ul class="list-group">
-                    <li class="list-group-item">
-                      <span class="badge">
-                        <input type="checkbox">
-                      </span>
-                      Something
-                    </li>
-                    <li class="list-group-item">
-                      <span class="badge">
-                        <input type="checkbox">
-                      </span>
-                      Something else
-                    </li>
-                  </ul>
-                </div>-->
     </mat-tab>
   </mat-tab-group>
 </div>

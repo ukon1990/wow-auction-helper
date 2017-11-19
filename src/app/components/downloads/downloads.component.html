@@ -16,7 +16,7 @@
     <div class="col-md-12">
       Items last updated: {{ getTimestamp('items') | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right" (click)="downloadItems()">
-        <i class="fa fa-spinner loading" *ngIf="downloading.items" aria-hidden="true"></i>
+        <i class="fa fa-spinner loading" *ngIf="getDownloading().items" aria-hidden="true"></i>
         Download now
       </button>
     </div>
@@ -25,7 +25,7 @@
     <div class="col-md-12">
       Pets last updated: {{ tempTimestamps.pets | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right" (click)="downloadPets()">
-        <i class="fa fa-spinner loading" *ngIf="downloading.pets" aria-hidden="true"></i>
+        <i class="fa fa-spinner loading" *ngIf="getDownloading().pets" aria-hidden="true"></i>
         Download now
       </button>
     </div>
@@ -34,7 +34,7 @@
     <div class="col-md-12">
       Recipes last updated: {{ tempTimestamps.recipes | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right" (click)="donloadRecipes()">
-        <i class="fa fa-spinner loading" *ngIf="downloading.recipes" aria-hidden="true"></i>
+        <i class="fa fa-spinner loading" *ngIf="getDownloading().recipes" aria-hidden="true"></i>
         Download now
       </button>
     </div>
@@ -43,7 +43,7 @@
     <div class="col-md-12">
       Auctions last updated: {{ getTimestamp('auctions') | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right" (click)="downloadAuctions()">
-        <i class="fa fa-spinner loading" *ngIf="downloading.auctions" aria-hidden="true"></i>
+        <i class="fa fa-spinner loading" *ngIf="getDownloading().auctions" aria-hidden="true"></i>
         Download now
       </button>
     </div>
@@ -52,7 +52,7 @@
     <div class="col-md-12">
       TSM last updated: {{ getTimestamp('tsm') | date:'M/d/yy hh:mm' }}
       <button class="btn btn-sm btn-default float-right">
-        <i class="fa fa-spinner loading" *ngIf="downloading.api" aria-hidden="true"></i>
+        <i class="fa fa-spinner loading" *ngIf="getDownloading().api" aria-hidden="true"></i>
         Download now
       </button>
     </div>
