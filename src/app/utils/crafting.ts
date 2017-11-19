@@ -51,9 +51,6 @@ export default class Crafting {
 						(item.criteria === 'below' && lists.auctions[item.id].buyout <= item.value ||
 							item.criteria === 'above' && lists.auctions[item.id].buyout >= item.value)) {
 						watchlistAlerts++;
-						Notification.send(item.name, `Current lowest buyout at ${
-							Math.round(100 - (item.value / lists.auctions[item.id].buyout) * 100)
-							}% of the alert value!`, router, 'watchlist', lists.items[item.id].icon);
 					} else if (lists.itemRecipes[item.id]) {
 						lists.itemRecipes[item.id].forEach(r => {
 							if (tmpList[r] &&
