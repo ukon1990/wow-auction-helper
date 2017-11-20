@@ -124,6 +124,7 @@ export class AuctionComponent extends ParentAuctionComponent implements OnInit{
 	 * Used to filter the auctions by the users parameters
 	 */
 	filterAuctions(): void {
+		console.log(lists.auctions);
 		// From form
 		const demand = this.filterForm.value['demand'],
 			mktPrice = this.filterForm.value['mktPrice'] || 0,

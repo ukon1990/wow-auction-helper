@@ -34,8 +34,8 @@ export abstract class ParentAuctionComponent {
 	auctionDuration = {
 		'VERY_LONG': '12h+',
 		'LONG': '2-12h',
-		'MEDIUM': '30min-2h',
-		'SHORT': '<30min'
+		'MEDIUM': '30m-2h',
+		'SHORT': '<30m'
 	};
 
 	// For md-pagignator

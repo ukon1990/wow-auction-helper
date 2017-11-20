@@ -98,7 +98,7 @@
                     target="_blank">{{ auc.name }}
                     <i class="fa fa-eye" aria-hidden="true"></i>
                   </a>
-                  <br> {{ auc.owner }} @ {{ auc.ownerRealm }}
+                  <br> {{ auc.owner }} @ {{ auc.ownerRealm }} ({{ auctionDuration[auc.timeLeft] }})
                 </div>
               </div>
             </td>
@@ -179,7 +179,7 @@
                     target="_blank">{{ a.name }}
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                   </a>
-                  <br> {{ a.owner }} @ {{ a.ownerRealm }}
+                  <br> {{ a.owner }} @ {{ a.ownerRealm }} ({{ auctionDuration[a.timeLeft] }})
                 </div>
               </div>
             </td>
