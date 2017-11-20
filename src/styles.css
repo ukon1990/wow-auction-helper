@@ -148,3 +148,11 @@ button.mat-elevation-z10:hover {
 .mat-step-icon .mat-icon {
     display: none;
 }
+
+.panel-heading {
+    padding:.5em;
+}
+
+.watchlist-nav-arrows {
+    margin-top: .5em;
+}

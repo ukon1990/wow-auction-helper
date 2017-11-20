@@ -131,11 +131,8 @@
     <div *ngIf="!display.groups && !display.itemSearch">
       <div *ngFor="let group of watchlist.groups; let i = index">
         <div *ngIf="watchlist.items[group]" class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              {{ group }}
-            </h3>
-            <div class="pull-right pull-up-bar">
+          <div class="panel-heading mat-elevation-z3">
+            <div class="watchlist-nav-arrows float-right">
               <span *ngIf="i !== watchlist.groups.length - 1" class="pull-right" (click)="moveGroup(group, 1)">
                 <i class="fa fa-arrow-down"></i>
               </span>
@@ -143,6 +140,9 @@
                 <i class="fa fa-arrow-up"></i>
               </span>
             </div>
+            <h3 class="panel-title">
+              {{ group }}
+            </h3>
           </div>
           <div class="row">
             <div *ngFor="let item of watchlist.items[group]; let i = index" class="col-sm-6 col-md-4">
@@ -159,7 +159,7 @@
                 </mat-card-header>
                 <mat-card-content>
                   <div class="row">
-                    <div [ngClass]="user.apiToUse === 'tsm' ? 'col-md-6' : 'col-md-12'">
+                    <div [ngClass]="user().apiToUse === 'tsm' ? 'col-md-6' : 'col-md-12'">
                       Available: {{ getAuctionItem(item.id).quantity_total | number }} pcs
                       <br>
                       <span [ngClass]="{'below-alert-value': item.value > getBuyout(item.id)}">Buyout: {{ getBuyout(item.id) | gold }}</span>
@@ -168,8 +168,8 @@
                       <br> Minimum crafting profit: {{ item.minCraftProfit }}%
                       <!-- TODO: Items below alert value <br>-->
                     </div>
-                    <div class="col-md-6" *ngIf="user.apiToUse === 'tsm'">
-                      Market value: {{ getMarketValue(item.id) }}
+                    <div class="col-md-6" *ngIf="user().apiToUse === 'tsm'">
+                      Market value: {{ getMarketValue(item.id) | gold }}
                       <br> Regional demand: {{ getAuctionItem(item.id).estDemand }}%
                     </div>
                   </div>

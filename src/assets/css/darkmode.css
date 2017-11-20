@@ -19,10 +19,11 @@ body,
 .mat-form-field-underline,
 .mat-tab-group.mat-primary .mat-ink-bar,
 .mat-tab-nav-bar.mat-primary .mat-ink-bar,
-.mat-step-header .mat-step-icon {
+.mat-step-header .mat-step-icon{
     background-color: #839496 !important;
 }
-.table-striped>tbody>tr:nth-of-type(odd){
+.table-striped>tbody>tr:nth-of-type(odd),
+.panel-heading {
     background-color: #073642;
 }
 
