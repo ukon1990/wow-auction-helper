@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FileService } from '../../services/file.service';
-import { db, lists } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import 'rxjs/add/operator/map';
+import { db } from 'app/utils/database';
 
 declare const ga: Function;
 @Component({

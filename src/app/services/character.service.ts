@@ -1,7 +1,7 @@
 import { Error } from './../utils/error';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DB_TABLES, API_KEY, db, lists } from '../utils/globals';
+import { API_KEY, lists } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';

@@ -5,7 +5,7 @@ import { AuctionService } from '../../services/auctions.service';
 import { CharacterService } from '../../services/character.service';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { lists, db } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import Crafting from '../../utils/crafting';
 import { Router } from '@angular/router';
 import Auctions from '../../utils/auctions';
@@ -14,6 +14,7 @@ import { DownloadsComponent } from 'app/components/downloads/downloads.component
 import { User } from 'app/models/user';
 import { Notification } from 'app/models/notification';
 import { watchlist } from 'app/utils/objects';
+import { db } from 'app/utils/database';
 
 declare const ga: Function;
 @Component({

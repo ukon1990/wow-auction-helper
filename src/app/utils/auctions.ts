@@ -1,4 +1,4 @@
-import { lists, db } from './globals';
+import { lists } from './globals';
 import Crafting from './crafting';
 import { Notification } from './notification';
 import { Router } from '@angular/router';
@@ -7,8 +7,9 @@ import { ItemService } from '../services/item.service';
 import { GoldPipe } from '../pipes/gold.pipe';
 import Pets from './pets';
 import { CharacterService } from 'app/services/character.service';
+import { db } from 'app/utils/database';
 
-export default class {
+export default class Auction {
   private static url: string;
   private static lastModified: number;
   private static updateAvailable: boolean;
@@ -206,5 +207,48 @@ export default class {
       }
     }
     return 'no item data';
+  }
+
+
+  /**
+   * Checks if an item is @ AH or not.
+   * @param  {string}  itemID
+   * @return {boolean}        Availability
+   */
+  public static isAtAH(itemID: string): boolean {
+    return lists.auctions[itemID] !== undefined ? true : false;
+  }
+
+  /**
+   * Gets thre auction item for an item
+   * @param  {string} itemID
+   * @return {object}
+   */
+  public static getAuctionItem(itemID: string) {
+    if (lists.auctions[itemID] === undefined) {
+      return { 'quantity_total': 0 };
+    }
+    return lists.auctions[itemID];
+  }
+
+  /**
+   * Finds the minimum price for an item
+   * @param  {string} itemID
+   * @return {number}
+   */
+  public static getMinPrice(itemID: string): number {
+    try {
+      if (lists.customPrices[itemID]) {
+        return lists.customPrices[itemID];
+      }
+      return lists.auctions[itemID].buyout;
+    } catch (e) {
+      if (CharacterService.user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
+        return lists.wowuction[itemID]['mktPrice'];
+      } else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
+        return lists.tsm[itemID].MarketValue;
+      }
+      return 0;
+    }
   }
 }

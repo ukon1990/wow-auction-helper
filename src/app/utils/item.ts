@@ -1,6 +1,7 @@
-import { lists, db } from './globals';
+import { lists } from './globals';
 import { ItemService } from '../services/item.service';
 import Dexie from 'dexie';
+import { db } from 'app/utils/database';
 
 export class Item {
 

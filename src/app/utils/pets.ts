@@ -1,4 +1,4 @@
-import { db, lists } from './globals';
+import { lists } from './globals';
 import { ItemService } from '../services/item.service';
 
 export default class Pets {

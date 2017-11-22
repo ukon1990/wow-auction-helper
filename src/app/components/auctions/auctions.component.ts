@@ -8,7 +8,7 @@ import { AuctionService } from '../../services/auctions.service';
 import { ItemService } from '../../services/item.service';
 import { Title } from '@angular/platform-browser';
 
-import { lists, db } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import Pets from '../../utils/pets';
 import { IUser, IAuction } from '../../utils/interfaces';
 import { itemClasses } from '../../utils/objects';

@@ -3,7 +3,7 @@ import { Router, NavigationEnd, Event } from '@angular/router';
 import { AuctionService } from './services/auctions.service';
 import { CharacterService } from './services/character.service';
 import { ItemService } from './services/item.service';
-import { lists, db } from './utils/globals';
+import { lists } from './utils/globals';
 import { IUser } from './utils/interfaces';
 import { GoldPipe } from './pipes/gold.pipe';
 import Push from 'push.js';

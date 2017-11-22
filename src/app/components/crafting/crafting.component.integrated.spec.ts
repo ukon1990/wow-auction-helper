@@ -7,7 +7,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import { AppModule } from '../../app.module';
 
 import { CraftingComponent } from './crafting.component';
-import { lists, db } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import { testObjects } from '../../utils/testdata';
 import { CharacterService } from 'app/services/character.service';
 import { User } from 'app/models/user';

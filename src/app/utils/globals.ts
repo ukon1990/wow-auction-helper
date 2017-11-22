@@ -1,6 +1,5 @@
 import { IUser } from './interfaces';
 import { itemClasses, watchlist } from './objects';
-import Dexie from 'dexie';
 import { User } from 'app/models/user';
 import { CharacterService } from 'app/services/character.service';
 
@@ -22,40 +21,7 @@ export let lists = {
 
 lists.customPrices = { '124124': 3000000, '120945': 500000, '115524': 200000, '151568': 3000000 };
 
-// Local database start
-const TSM_TABLE_COLUMNS = `Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,
-							RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,
-							RegionAvgDailySold,RegionSaleRate`,
-	WOWUCTION_TABLE_COLUMNS = 'id,mktPrice,avgDailyPosted,avgDailySold,estDemand,realm',
-	ITEM_TABLE_COLUMNS = `id,name,icon,itemLevel,itemClass,itemSubClass,quality,itemSpells,
-							itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation`,
-	PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source',
-	AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
-export const DB_TABLES = { TSM_TABLE_COLUMNS, WOWUCTION_TABLE_COLUMNS, ITEM_TABLE_COLUMNS, PET_TABLE_COLUMNS, AUCTIONS_TABLE_COLUMNS };
 
-export const db = new Dexie('wah-db');
-db.version(2).stores({
-	auctions: AUCTIONS_TABLE_COLUMNS,
-	wowuction: WOWUCTION_TABLE_COLUMNS,
-	tsm: TSM_TABLE_COLUMNS,
-	items: ITEM_TABLE_COLUMNS,
-	pets: PET_TABLE_COLUMNS
-}).upgrade(() => {
-	console.log('Upgraded db');
-});
-db.version(1).stores({
-	auctions: AUCTIONS_TABLE_COLUMNS,
-	wowuction: WOWUCTION_TABLE_COLUMNS,
-	tsm: TSM_TABLE_COLUMNS,
-	items: `id,name,icon,itemClass,itemSubClass,quality,itemSpells,itemSource`,
-	pets: PET_TABLE_COLUMNS
-});
-db.open()
-	.then(() => {
-		console.log('wah-db successfully started');
-	}).catch(error => {
-		console.log('Unable to start indexedDB', error);
-	});
 // Local database end
 
 function getCorrectBuyValue(item: any, isSoldByVendor): number {
@@ -100,47 +66,6 @@ export function getIcon(auction): string {
 	return url;
 }
 
-/**
- * Checks if an item is @ AH or not.
- * @param  {string}  itemID
- * @return {boolean}        Availability
- */
-export function isAtAH(itemID: string): boolean {
-	return lists.auctions[itemID] !== undefined ? true : false;
-}
-
-/**
- * Gets thre auction item for an item
- * @param  {string} itemID
- * @return {object}
- */
-export function getAuctionItem(itemID: string) {
-	if (lists.auctions[itemID] === undefined) {
-		return { 'quantity_total': 0 };
-	}
-	return lists.auctions[itemID];
-}
-
-/**
- * Finds the minimum price for an item
- * @param  {string} itemID
- * @return {number}
- */
-export function getMinPrice(itemID: string): number {
-	try {
-		if (lists.customPrices[itemID]) {
-			return lists.customPrices[itemID];
-		}
-		return lists.auctions[itemID].buyout;
-	} catch (e) {
-		if (CharacterService.user.apiToUse === 'wowuction' && lists.wowuction[itemID] !== undefined) {
-			return lists.wowuction[itemID]['mktPrice'];
-		} else if (CharacterService.user.apiToUse === 'tsm' && lists.tsm[itemID] !== undefined) {
-			return lists.tsm[itemID].MarketValue;
-		}
-		return 0;
-	}
-}
 
 export const API_KEY = '9crkk73wt4ck6nmsuzycww4ruq2z4t95';
 export const itemContext = [

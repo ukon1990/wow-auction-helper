@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { IUser } from '../../utils/interfaces';
-import { lists, db } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import dexie from 'dexie';
 import Push from 'push.js';
 import { GoldPipe } from '../../pipes/gold.pipe';
@@ -10,6 +10,7 @@ import Crafting from '../../utils/crafting';
 import { User } from 'app/models/user';
 import { CharacterService } from 'app/services/character.service';
 import { watchlist } from 'app/utils/objects';
+import { db } from 'app/utils/database';
 
 declare var $;
 declare const ga: Function;

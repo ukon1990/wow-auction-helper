@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 import { IAuction, IPet, IUser, IItem } from '../utils/interfaces';
-import { DB_TABLES, db } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+import { db } from 'app/utils/database';
 
 declare var $: any;
 

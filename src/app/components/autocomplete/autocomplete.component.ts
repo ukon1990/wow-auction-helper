@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
-import { lists, db } from '../../utils/globals';
+import { lists } from '../../utils/globals';
 import { Item } from '../../utils/item';
 
 @Component({

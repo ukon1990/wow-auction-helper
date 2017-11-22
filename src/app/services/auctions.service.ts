@@ -3,13 +3,13 @@ import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 import { IAuction } from '../utils/interfaces';
-import { DB_TABLES, db } from '../utils/globals';
 import Dexie from 'dexie';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import { User } from 'app/models/user';
 import { CharacterService } from 'app/services/character.service';
+import { db, DB_TABLES } from 'app/utils/database';
 
 declare var $;
 @Injectable()

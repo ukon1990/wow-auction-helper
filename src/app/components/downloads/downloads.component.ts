@@ -6,11 +6,12 @@ import Auctions from 'app/utils/auctions';
 import { ItemService } from 'app/services/item.service';
 import { AuctionService } from 'app/services/auctions.service';
 import { Router } from '@angular/router';
-import { lists, db } from 'app/utils/globals';
+import { lists } from 'app/utils/globals';
 import { Notification } from 'app/utils/notification';
 import { IUser } from 'app/utils/interfaces';
 import { CharacterService } from 'app/services/character.service';
 import { User } from 'app/models/user';
+import { db } from 'app/utils/database';
 
 @Component({
   selector: 'app-downloads',
