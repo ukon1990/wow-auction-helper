@@ -13,7 +13,7 @@ beforeEach(() => {
   SharedService.auctionItems[12].buyout = 30;
   SharedService.recipes.push({
     spellID: 1,
-    itemID: 1,
+    itemID: 10,
     name: 'test recipe',
     profession: 'Software developer',
     minCount: 1,
@@ -32,16 +32,33 @@ describe('Crafting', () => {
       });
       Crafting.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(30);
+      expect(SharedService.recipes[0].roi).toEqual(-10);
     });
+
     it('for several reagents', () => {
-      // logic
+      SharedService.recipes[0].reagents.push({
+        itemID: 11,
+        name: '',
+        count: 3
+      });
+      SharedService.recipes[0].reagents.push({
+        itemID: 12,
+        name: '',
+        count: 10
+      });
+      Crafting.calculateCost();
+      expect(SharedService.recipes[0].cost).toEqual(330);
+      expect(SharedService.recipes[0].roi).toEqual(-310);
     });
+
     it('if some items aren\'t at AH', () => {
       // logic
     });
+
     it('if some items aren\'t at AH and use market value instead.', () => {
       // logic
     });
+
     it('if some items aren\'t at AH and use avg sold for value instead.', () => {
       // logic
     });
