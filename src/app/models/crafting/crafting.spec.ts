@@ -2,8 +2,11 @@ import { async, TestBed } from '@angular/core/testing';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../auction/auction-item';
 import { Crafting } from './crafting';
+import { User } from '../user/user';
 
 beforeEach(() => {
+  User.restore();
+
   SharedService.recipes.length = 0;
   SharedService.auctionItems[10] = new AuctionItem();
   SharedService.auctionItems[10].buyout = 20;
@@ -52,15 +55,34 @@ describe('Crafting', () => {
     });
 
     it('if some items aren\'t at AH', () => {
-      // logic
+      SharedService.recipes[0].reagents.push({
+        itemID: 1,
+        name: '',
+        count: 3
+      });
+      SharedService.recipes[0].reagents.push({
+        itemID: 12,
+        name: '',
+        count: 10
+      });
+      Crafting.calculateCost();
+      expect(SharedService.recipes[0].cost).toEqual(300);
+      expect(SharedService.recipes[0].roi).toEqual(-280);
     });
 
     it('if some items aren\'t at AH and use market value instead.', () => {
       // logic
+      SharedService.user.apiToUse = 'tsm';
+    });
+
+    it('The item is above set limit, so use market value instead.', () => {
+      // Buyout is 200% of MV
+      SharedService.user.buyoutLimit = 200;
+      SharedService.user.apiToUse = 'tsm';
     });
 
     it('if some items aren\'t at AH and use avg sold for value instead.', () => {
-      // logic
+      SharedService.user.apiToUse = 'tsm';
     });
   });
 });

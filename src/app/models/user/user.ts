@@ -13,6 +13,7 @@ export class User {
   apiTsm?: string;
   customPrices?: any;
   apiToUse = 'none';
+  // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
   crafters: any[];
   notifications: Notification = {

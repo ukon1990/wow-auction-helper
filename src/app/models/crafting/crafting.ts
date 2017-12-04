@@ -10,7 +10,12 @@ export class Crafting {
     recipe.cost = 0;
     recipe.roi = 0;
     recipe.reagents.forEach(r => {
-      recipe.cost += (SharedService.auctionItems[r.itemID].buyout * r.count);
+
+      if (SharedService.auctionItems[r.itemID]) {
+        recipe.cost += SharedService.auctionItems[r.itemID].buyout * r.count;
+      } else {
+        recipe.cost += 0;
+      }
     });
     recipe.roi = SharedService.auctionItems[recipe.itemID].buyout - recipe.cost;
   }
