@@ -3,6 +3,7 @@ import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../auction/auction-item';
 import { Crafting } from './crafting';
 import { User } from '../user/user';
+import { TSM } from '../auction/tsm';
 
 beforeEach(() => {
   User.restore();
@@ -14,6 +15,10 @@ beforeEach(() => {
   SharedService.auctionItems[11].buyout = 10;
   SharedService.auctionItems[12] = new AuctionItem();
   SharedService.auctionItems[12].buyout = 30;
+  SharedService.auctionItems[20] = new AuctionItem();
+  SharedService.auctionItems[20].buyout = 10;
+  SharedService.tsm[20] = new TSM();
+  SharedService.tsm[20].MarketValue = 100;
   SharedService.recipes.push({
     spellID: 1,
     itemID: 10,
@@ -79,6 +84,19 @@ describe('Crafting', () => {
       // Buyout is 200% of MV
       SharedService.user.buyoutLimit = 200;
       SharedService.user.apiToUse = 'tsm';
+
+      SharedService.recipes[0].reagents.push({
+        itemID: 20,
+        name: '',
+        count: 3
+      });
+      SharedService.recipes[0].reagents.push({
+        itemID: 12,
+        name: '',
+        count: 10
+      });
+      Crafting.calculateCost();
+      expect(SharedService.recipes[0].cost).toEqual(600);
     });
 
     it('if some items aren\'t at AH and use avg sold for value instead.', () => {
