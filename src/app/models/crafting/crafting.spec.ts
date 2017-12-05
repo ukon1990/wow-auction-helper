@@ -103,4 +103,6 @@ describe('Crafting', () => {
       SharedService.user.apiToUse = 'tsm';
     });
   });
+
+  describe('Disenchant crafting', () => {});
 });
