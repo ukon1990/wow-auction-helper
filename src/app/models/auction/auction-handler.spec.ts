@@ -2,10 +2,11 @@
 import { async, TestBed } from '@angular/core/testing';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from './auction-item';
+import { AuctionHandler } from './auction-handler';
 
 beforeEach(() => {
   // SharedService.tsm[]
-  AuctionItem.organize([
+  AuctionHandler.organize([
     {
       'auc': 261623576, 'item': 151566, 'owner': 'Dahilla', 'ownerRealm': 'Draenor',
       'bid': 279800, 'buyout': 279800, 'quantity': 1, 'timeLeft': 'VERY_LONG', 'rand': 0,
@@ -54,7 +55,14 @@ beforeEach(() => {
 describe('Auctions', () => {
   describe('Organizing auctions', () => {
     it('Should be able to organize auctions', () => {
-      expect(SharedService.auctionItems[151566]).toBeTruthy();
+      expect(SharedService.auctionItems[151566].auctions.length).toBeGreaterThan(0);
+    });
+
+    it('Should be able to organize auctions', () => {
+      const auc = SharedService.auctionItems[151566].auctions;
+      console.log(auc);
+      expect(auc[0])
+        .toBeLessThanOrEqual(auc[auc.length - 1]);
     });
   });
 });
