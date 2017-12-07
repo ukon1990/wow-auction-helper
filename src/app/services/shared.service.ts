@@ -5,6 +5,7 @@ import { Recipe } from '../models/crafting/recipe';
 import { Item } from '../models/item/item';
 import { TSM } from '../models/auction/tsm';
 import { Auction } from '../models/auction/auction';
+import { Realm } from '../models/realm';
 
 @Injectable()
 export class SharedService {
@@ -14,6 +15,7 @@ export class SharedService {
   public static tsm: Map<number, TSM> = new Map<number, TSM>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
   public static items: Map<number, Item> = new Map<number, Item>();
+  public static realms: Map<string, Realm> = new Map<string, Realm>();
   public static downloading = {
     auctions: false,
     tsmAuctions: false,

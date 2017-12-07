@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { User } from './models/user/user';
+import { SharedService } from './services/shared.service';
 
 @Component({
   selector: 'wah-root',
@@ -6,4 +9,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+  constructor(private _router: Router) {
+    User.restore();
+
+    if (SharedService.user.realm || SharedService.user.region) {
+      this._router.navigateByUrl('setup');
+    }
+  }
 }

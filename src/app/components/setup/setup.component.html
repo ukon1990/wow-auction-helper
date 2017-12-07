@@ -1,0 +1,45 @@
+<mat-horizontal-stepper>
+  <mat-step>
+    <form [formGroup]="_characterForm">
+      <ng-template matStepLabel>Fill out your name</ng-template>
+      <mat-form-field>
+        <mat-select placeholder="Region" formControlName="region">
+          <mat-option value="eu">
+            Europe
+          </mat-option>
+          <mat-option value="us">
+            America
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select placeholder="Realm" formControlName="realm">
+          <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
+            {{ slug }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+        
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <form [formGroup]="_characterForm">
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      ssss
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>
