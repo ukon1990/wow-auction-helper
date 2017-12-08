@@ -10,9 +10,13 @@ export class RealmService {
   constructor(private _http: HttpClient) {}
 
   getRealms(region?: string): void {
-    this._http.get(Endpoints.getBattleNetApi('realm/status?'))
+    console.log('getRealms');
+    this._http.get(Endpoints.getBattleNetApi('realm/status?', region))
       .toPromise()
       .then(r => {
+        Object.keys(SharedService.realms).forEach(key => {
+          delete SharedService.realms[key];
+        });
         r['realms'].forEach( (realm: Realm) => {
           SharedService.realms[realm.slug] = realm;
         });

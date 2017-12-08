@@ -2,24 +2,41 @@
   <mat-step>
     <form [formGroup]="_characterForm">
       <ng-template matStepLabel>Fill out your name</ng-template>
-      <mat-form-field>
-        <mat-select placeholder="Region" formControlName="region">
-          <mat-option value="eu">
-            Europe
-          </mat-option>
-          <mat-option value="us">
-            America
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select placeholder="Realm" formControlName="realm">
-          <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
-            {{ slug }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-        
+      <mat-card class="col-md-4">
+        <mat-card-title>
+          Select your realm and region
+        </mat-card-title>
+        <mat-card-content>
+          <mat-form-field>
+            <mat-select placeholder="Region" formControlName="region">
+              <mat-option value="eu" (click)="getRealms()">
+                Europe
+              </mat-option>
+              <mat-option value="us" (click)="getRealms()">
+                America
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Realm" formControlName="realm">
+              <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
+                {{ getRealmWithkey(slug).name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+
+        <mat-card-content *ngIf="getRealmWithkey().name">
+          This is a {{ getRealmWithkey(slug).population }} population realm, with 
+          <span *ngIf="getRealmWithkey().queue; else noQueue">queue</span>
+          <ng-template #noQueue>
+            <span>without queue</span>
+          </ng-template>.
+          <span *ngIf="getRealmWithkey().connected_realms.length > 1" >It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span> 
+          It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
+        </mat-card-content>
+      </mat-card>
+
       <div>
         <button mat-button matStepperNext>Next</button>
       </div>

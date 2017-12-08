@@ -8,5 +8,5 @@ export class Realm {
   battlegroup: string;
   locale: string; // de_DE, en_GB
   timezone: string; // Europe/Paris
-  connected_realms: Array<string>;
+  connected_realms: Array<string> = new Array<string>();
 }

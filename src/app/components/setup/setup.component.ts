@@ -4,6 +4,7 @@ import { RealmService } from '../../services/realm.service';
 import { startWith } from 'rxjs/operators/startWith';
 import { map } from 'rxjs/operators/map';
 import { SharedService } from '../../services/shared.service';
+import { Realm } from '../../models/realm';
 
 @Component({
   selector: 'wah-setup',
@@ -18,17 +19,27 @@ export class SetupComponent implements OnInit {
       region: ['', Validators.required],
       realm: ['', Validators.required]
     });
-
-    this._characterForm.controls.region.valueChanges.pipe(
-      startWith(''),
-      map(region => this._realmService.getRealms(region))
-    );
   }
 
   ngOnInit() {
   }
 
   getRealmsKeys() {
-    return Object.keys(SharedService.realms);
+    return SharedService.realms ? Object.keys(SharedService.realms) : [];
+  }
+
+  getRealmWithkey(slug?: string): Realm {
+    if (!slug) {
+      slug = this._characterForm.value.realm;
+    }
+    return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
+  }
+
+  getRealms(): void {
+    setTimeout(() => {
+      console.log('valg', this._characterForm.value.region);
+      this._realmService
+        .getRealms(this._characterForm.value.region);
+    }, 100);
   }
 }
