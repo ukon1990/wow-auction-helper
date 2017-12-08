@@ -12,6 +12,7 @@ export class AppComponent {
 
   constructor(private _router: Router) {
     User.restore();
+    console.log(SharedService.user);
 
     if (SharedService.user.realm || SharedService.user.region) {
       this._router.navigateByUrl('setup');

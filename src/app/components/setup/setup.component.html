@@ -1,7 +1,14 @@
 <mat-horizontal-stepper>
   <mat-step>
+    <ng-template matStepLabel>Disclaimer and information</ng-template>
+    
+    <div>
+      <button mat-button matStepperNext>Lets get started <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </mat-step>
+  <mat-step>
     <form [formGroup]="_characterForm">
-      <ng-template matStepLabel>Fill out your name</ng-template>
+      <ng-template matStepLabel>Realm and characters</ng-template>
       <mat-card class="col-md-4">
         <mat-card-title>
           Select your realm and region
@@ -38,25 +45,18 @@
       </mat-card>
 
       <div>
-        <button mat-button matStepperNext>Next</button>
+        <button mat-button matStepperNext>Next <i class="fas fa-arrow-right"></i></button>
       </div>
     </form>
   </mat-step>
   <mat-step>
     <form [formGroup]="_characterForm">
-      <ng-template matStepLabel>Fill out your address</ng-template>
-      ssss
+      <ng-template matStepLabel>API and settings (optional)</ng-template>
+      
       <div>
         <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Next</button>
+        <button mat-button matStepperNext>Complete setup</button>
       </div>
     </form>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Done</ng-template>
-    You are now done.
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-    </div>
   </mat-step>
 </mat-horizontal-stepper>
