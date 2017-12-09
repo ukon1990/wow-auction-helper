@@ -6,7 +6,8 @@ import { environment } from './environments/environment';
 
 import { Observable } from 'rxjs/Observable';
 import { startWith } from 'rxjs/operators/startWith';
-import { map } from 'rxjs/operators/map';
+
+import 'rxjs/add/operator/map';
 import { filter } from 'rxjs/operators/filter';
 
 if (environment.production) {

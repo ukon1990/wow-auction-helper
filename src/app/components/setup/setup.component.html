@@ -1,14 +1,81 @@
 <mat-horizontal-stepper>
   <mat-step>
     <ng-template matStepLabel>Disclaimer and information</ng-template>
-    
+    <div class="row">
+      <div id="carouselControls" class="carousel slide col-md-6" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item" *ngFor="let img of imagesForRoll; let i = index" [ngClass]="{'active': i === 0}">
+            <img class="d-block w-100" [src]="img.src" [alt]="img.alt">
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="col-md-6">
+        <h2>WoW aucthion helper webapplication</h2>
+        <p>
+          This is a webapplication, that shows the user the potential profit of certain receipes in-game. It is aimed at helping the
+          user earn gold in World of Warcraft.
+          <br> Some of it's features include:
+        </p>
+        <ul>
+          <li>
+            The ability to make a shopping cart for materials from receipes, that is persistent between sessions (won't be lost if you
+            reload)
+          </li>
+          <li>
+            A clean overview of the current auctions (as live as available).
+          </li>
+          <li>
+            Displaying the users current auctions, with indication for what auctions are undercutted, and wich aren't. (requires character
+            name set)
+          </li>
+        </ul>
+        <h3>Disclaimer</h3>
+        <ul>
+          <li>
+            As I have a limited time on my hands, the following browsers are the ones I support:
+            <em>Chrome (latest version) and Firefox Quantum (latest version).</em>
+          </li>
+          <li>
+            The application will use much data, so do not use it on the mobile network. If you are on a high populated realm, each auction
+            download can be up to 25 MB. Low populated realms can be as low as 5 MB.
+          </li>
+          <li>
+            All calculations are done on the client (your computer).
+          </li>
+          <li>
+            No personal data sent from your computer. Anything persistent is stored on your computer. The application does use Google
+            Analytics, in order for me to see what that is most used and what to fous on.
+          </li>
+          <li>
+            Using tools like CCleaner to clean your browser cache etc, will remove all your settings. So be aware of that.
+          </li>
+          <li>
+            If you wish to look at the code, please feel free to do so. The GitHub link can be found
+            <a routerLink="/about">here</a>.
+          </li>
+          <li>
+            The only data you need to input is your realm and region, anything else is optional.
+          </li>
+        </ul>
+      </div>
+    </div>
     <div>
-      <button mat-button matStepperNext>Lets get started <i class="fas fa-arrow-right"></i></button>
+      <button mat-button matStepperNext>Lets get started
+        <i class="fas fa-arrow-right"></i>
+      </button>
     </div>
   </mat-step>
   <mat-step>
     <form [formGroup]="_characterForm">
-      <ng-template matStepLabel>Realm and characters</ng-template>
+      <ng-template matStepLabel>Realm and region</ng-template>
       <mat-card class="col-md-4">
         <mat-card-title>
           Select your realm and region
@@ -34,28 +101,57 @@
         </mat-card-content>
 
         <mat-card-content *ngIf="getRealmWithkey().name">
-          This is a {{ getRealmWithkey(slug).population }} population realm, with 
+          This is a {{ getRealmWithkey(slug).population }} population realm, with
           <span *ngIf="getRealmWithkey().queue; else noQueue">queue</span>
           <ng-template #noQueue>
             <span>without queue</span>
           </ng-template>.
-          <span *ngIf="getRealmWithkey().connected_realms.length > 1" >It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span> 
+          <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
           It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
         </mat-card-content>
       </mat-card>
-
       <div>
-        <button mat-button matStepperNext>Next <i class="fas fa-arrow-right"></i></button>
+        <button mat-button matStepperNext [disabled]="!isValid()">
+          Add crafters/characters
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <button mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+          Finish setup
+          <i class="fas fa-arrow-right"></i>
+        </button>
       </div>
     </form>
   </mat-step>
   <mat-step>
     <form [formGroup]="_characterForm">
-      <ng-template matStepLabel>API and settings (optional)</ng-template>
-      
+      <ng-template matStepLabel>Characters (optional)</ng-template>
+      <mat-card>
+        <mat-card-content>
+          <wah-characters [region]="_characterForm.value.region" [realm]="_characterForm.value.realm"></wah-characters>
+        </mat-card-content>
+      </mat-card>
       <div>
         <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Complete setup</button>
+        <button mat-button matStepperNext [disabled]="!isValid()">
+          Add TSM key and/or modify settings
+        </button>
+        <button mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+          Finish setup
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step>
+    <form [formGroup]="_characterForm">
+      <ng-template matStepLabel>API and settings (optional)</ng-template>
+      ss
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+          Complete setup
+        </button>
       </div>
     </form>
   </mat-step>

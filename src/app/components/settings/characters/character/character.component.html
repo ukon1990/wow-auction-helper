@@ -1,0 +1,57 @@
+<mat-card class="example-card">
+    <mat-card-header>
+      <div mat-card-avatar *ngIf="character.thumbnail"
+        [style.background-image]="'url(https://render-eu.worldofwarcraft.com/character/' + character.thumbnail + ')'"
+        [style.background-size]="'cover'"></div>
+      <mat-card-title *ngIf="character.name">
+        {{ character.name }} @ {{ character.realm }}
+        <span *ngIf="character.downloading"> - downloading</span>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span *ngIf="character.lastModified; else errorMsg">
+          <strong>Last modified:</strong>
+          {{ character.lastModified | date:'d MMM HH:mm' }}
+        </span>
+        <ng-template #errorMsg>
+          <span *ngIf="character.error; else noData">
+            Status: {{ character.error.statusText }} ({{ character.error.status }})
+          </span>
+          <ng-template #noData>
+            No data available for this character yet
+          </ng-template>
+        </ng-template>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="character.professions" class="row">
+        <div class="col-md-6">
+          <strong>Primary professions</strong>
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let primary of character.professions.primary">
+              <span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
+              {{ primary.name }} x {{ primary.recipes.length }}
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <strong>Secondary professions</strong>
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let secondary of character.professions.secondary">
+              <span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
+              {{ secondary.name }} x {{ secondary.recipes.length }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button class="btn btn-primary mat-elevation-z5" type="button" (click)="update.emit('')">
+        <i class="fas fa-sync" aria-hidden="true" [ngClass]="{loading: character.downloading}"></i>
+        Update
+      </button>
+      <button class="btn btn-secondary mat-elevation-z5" type="button" (click)="remove.emit('')">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+        Remove
+      </button>
+    </mat-card-actions>
+  </mat-card>

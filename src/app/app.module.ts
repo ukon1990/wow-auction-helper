@@ -9,12 +9,20 @@ import { AppComponent } from './app.component';
 import { MaterialModule } from './modules/material.module';
 import { SetupComponent } from './components/setup/setup.component';
 import { RealmService } from './services/realm.service';
+import { CharactersComponent } from './components/settings/characters/characters.component';
+import { CharacterComponent } from './components/settings/characters/character/character.component';
+import { CharacterService } from './services/character.service';
+import { AuctionsService } from './services/auctions.service';
+import { DatabaseService } from './services/database.service';
+import { ItemService } from './services/item.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    SetupComponent
+    SetupComponent,
+    CharactersComponent,
+    CharacterComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +33,11 @@ import { RealmService } from './services/realm.service';
     HttpClientModule
   ],
   providers: [
-    RealmService
+    RealmService,
+    CharacterService,
+    AuctionsService,
+    DatabaseService,
+    ItemService
   ],
   bootstrap: [AppComponent]
 })

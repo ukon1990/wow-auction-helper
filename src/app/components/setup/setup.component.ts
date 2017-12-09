@@ -13,6 +13,15 @@ import { Realm } from '../../models/realm';
 })
 export class SetupComponent implements OnInit {
   _characterForm: FormGroup;
+  imagesForRoll = [
+    {
+      src: 'https://i.ytimg.com/vi/BldfMdBK8bs/maxresdefault.jpg',
+      alt: 'Homer'
+    }, {
+      src: 'http://www.dagsavisen.no/polopoly_fs/1.301032.1442908298!/image/image.jpg_gen/derivatives/169_1600/image.jpg',
+      alt: 'Skomaker andersen'
+    }
+  ];
 
   constructor(private _formBuilder: FormBuilder, private _realmService: RealmService) {
     this._characterForm = this._formBuilder.group({
@@ -41,5 +50,13 @@ export class SetupComponent implements OnInit {
       this._realmService
         .getRealms(this._characterForm.value.region);
     }, 100);
+  }
+
+  isValid(): boolean {
+    return this._characterForm.status === 'VALID';
+  }
+
+  completeSetup(): void {
+    // logic
   }
 }
