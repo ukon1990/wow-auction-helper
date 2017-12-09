@@ -33,7 +33,7 @@
   </div>
   <ng-template #overview>
     <div class="row col-md-12">
-      <div *ngFor="let character of getCharacters(); let i = index;" class="col-sm-6 col-md-4 mt-2 mb-2">
+      <div *ngFor="let character of getCharacters(); let i = index;" class="col-md-12 col-lg-4 mt-2 mb-2">
         <wah-character [character]="character" [index]="i" (update)="updateCharacter(i)" (remove)="removeCharacter(i)"></wah-character>
       </div>
     </div>

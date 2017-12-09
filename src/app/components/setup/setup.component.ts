@@ -68,7 +68,7 @@ export class SetupComponent implements OnInit {
         eventCategory: 'User registration',
         eventAction: 'Imported existing setup'
       });*/
-  
+
       this._router.navigateByUrl('/crafting');
     }
   }
