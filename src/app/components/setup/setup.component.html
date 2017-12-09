@@ -134,29 +134,30 @@
           </mat-card-header>
           <mat-card-content>
             <mat-form-field class="col-md-10 float-left">
-              <textarea matInput placeholder="Paste the string here"></textarea>
+              <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
             </mat-form-field>
-            <button class="float-right" mat-button matStepperPrevious>
+            <button class="float-right" mat-button matStepperPrevious
+              (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
               <i class="fas fa-upload"></i>
               Restore
             </button>
           </mat-card-content>
         </mat-card>
       </div>
-
-      <button class="float-left" mat-button matStepperPrevious>
-        <i class="fas fa-arrow-left"></i>
-        Back
-      </button>
-      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
-        Add crafters/characters
-        <i class="fas fa-arrow-right"></i>
-      </button>
-      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
-        Finish setup
-        <i class="fas fa-arrow-right"></i>
-      </button>
     </form>
+
+    <button class="float-left" mat-button matStepperPrevious>
+      <i class="fas fa-arrow-left"></i>
+      Back
+    </button>
+    <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
+      Add crafters/characters
+      <i class="fas fa-arrow-right"></i>
+    </button>
+    <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+      Finish setup
+      <i class="fas fa-arrow-right"></i>
+    </button>
   </mat-step>
   <mat-step>
     <form [formGroup]="_characterForm">
@@ -183,16 +184,25 @@
   <mat-step>
     <form [formGroup]="_characterForm">
       <ng-template matStepLabel>API and settings (optional)</ng-template>
-      ss
-      <div>
-        <button class="float-left" mat-button matStepperPrevious>
-          <i class="fas fa-arrow-left"></i>
-          Back
-        </button>
-        <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
-          Complete setup
-        </button>
-      </div>
+      <strong>Your API key (optional)</strong>
+      <p>
+        Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
+      </p>
+      <mat-form-field class="col-md-12">
+        <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
+      </mat-form-field>
+      If you don't have a TSM account you can
+      <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
+      <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
     </form>
+    <div>
+      <button class="float-left" mat-button matStepperPrevious>
+        <i class="fas fa-arrow-left"></i>
+        Back
+      </button>
+      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+        Complete setup
+      </button>
+    </div>
   </mat-step>
 </mat-horizontal-stepper>

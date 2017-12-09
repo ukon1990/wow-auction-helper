@@ -5,6 +5,8 @@ import { startWith } from 'rxjs/operators/startWith';
 import { map } from 'rxjs/operators/map';
 import { SharedService } from '../../services/shared.service';
 import { Realm } from '../../models/realm';
+import { Router } from '@angular/router';
+import { User } from '../../models/user/user';
 
 @Component({
   selector: 'wah-setup',
@@ -23,10 +25,12 @@ export class SetupComponent implements OnInit {
     }
   ];
 
-  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService) {
+  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router) {
     this._characterForm = this._formBuilder.group({
       region: ['', Validators.required],
-      realm: ['', Validators.required]
+      realm: ['', Validators.required],
+      tsmKey: '',
+      importString: ''
     });
   }
 
@@ -56,7 +60,42 @@ export class SetupComponent implements OnInit {
     return this._characterForm.status === 'VALID';
   }
 
+  importUserData(): void {
+    if (this._characterForm.value.importString.length > 0) {
+      User.import(this._characterForm.value.importString);
+      /*ga('send', {
+        hitType: 'event',
+        eventCategory: 'User registration',
+        eventAction: 'Imported existing setup'
+      });*/
+  
+      this._router.navigateByUrl('/crafting');
+    }
+  }
+
   completeSetup(): void {
-    // logic
+    if (this.isValid()) {
+      localStorage['region'] = this._characterForm.value.region;
+      localStorage['realm'] = this._characterForm.value.realm;
+      localStorage['character'] = this._characterForm.value.name;
+
+      if (this._characterForm.value.tsmKey.length > 0) {
+        localStorage['api_tsm'] = this._characterForm.value.tsmKey;
+        localStorage['api_to_use'] = 'tsm';
+      } else {
+        localStorage['api_to_use'] = 'none';
+      }
+
+      localStorage['timestamp_news'] = new Date().toLocaleDateString();
+
+      /*
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'User registration',
+        eventAction: 'New user registered'
+      });*/
+
+      this._router.navigateByUrl('/crafting');
+    }
   }
 }
