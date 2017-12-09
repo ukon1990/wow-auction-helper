@@ -40,8 +40,12 @@
         <h3>Disclaimer</h3>
         <ul>
           <li>
-            As I have a limited time on my hands, the following browsers are the ones I support:
-            <em>Chrome (latest version) and Firefox Quantum (latest version).</em>
+            As I have a limited time on my hands, the following browsers are the ones I support(and run e2e tests on):
+            <em>
+              <i class="fab fa-chrome"></i>
+              Chrome (latest version) and 
+              <i class="fab fa-firefox"></i>
+              Firefox Quantum (latest version).</em>
           </li>
           <li>
             The application will use much data, so do not use it on the mobile network. If you are on a high populated realm, each auction
@@ -68,7 +72,7 @@
       </div>
     </div>
     <div>
-      <button mat-button matStepperNext>Lets get started
+      <button class="float-right" mat-button matStepperNext>Lets get started
         <i class="fas fa-arrow-right"></i>
       </button>
     </div>
@@ -111,11 +115,15 @@
         </mat-card-content>
       </mat-card>
       <div>
-        <button mat-button matStepperNext [disabled]="!isValid()">
+        <button class="float-left" mat-button matStepperPrevious>
+          <i class="fas fa-arrow-left"></i>
+          Back
+        </button>
+        <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
           Add crafters/characters
           <i class="fas fa-arrow-right"></i>
         </button>
-        <button mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+        <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
           Finish setup
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -131,11 +139,14 @@
         </mat-card-content>
       </mat-card>
       <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext [disabled]="!isValid()">
+        <button class="float-left" mat-button matStepperPrevious>
+          <i class="fas fa-arrow-left"></i>
+          Back
+        </button>
+        <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
           Add TSM key and/or modify settings
         </button>
-        <button mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+        <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
           Finish setup
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -148,8 +159,11 @@
       <ng-template matStepLabel>API and settings (optional)</ng-template>
       ss
       <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+        <button class="float-left" mat-button matStepperPrevious>
+          <i class="fas fa-arrow-left"></i>
+          Back
+        </button>
+        <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
           Complete setup
         </button>
       </div>
