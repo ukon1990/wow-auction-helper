@@ -12,10 +12,14 @@ export class AppComponent {
 
   constructor(private _router: Router) {
     User.restore();
-    console.log(SharedService.user);
 
-    if (SharedService.user.realm || SharedService.user.region) {
+    if (!SharedService.user.realm || !SharedService.user.region) {
       this._router.navigateByUrl('setup');
     }
+    console.log(this.isDarkmode());
+  }
+
+  isDarkmode(): boolean {
+    return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 }

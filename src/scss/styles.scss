@@ -3,6 +3,18 @@
 
 @import 'bootstrap/bootstrap.scss';
 
+#main {
+	height: 100vh;
+}
+
+.mt-6 {
+	margin-top: 3.53rem;
+}
+.character-bg {
+	background-size: cover !important;
+  background-position: center !important;
+}
+
 .loading {
 	background-size: cover;
 	animation-name: rotate;

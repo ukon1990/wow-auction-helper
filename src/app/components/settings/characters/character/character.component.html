@@ -1,57 +1,57 @@
-<mat-card class="example-card">
-    <mat-card-header>
-      <div mat-card-avatar *ngIf="character.thumbnail"
-        [style.background-image]="'url(https://render-eu.worldofwarcraft.com/character/' + character.thumbnail + ')'"
-        [style.background-size]="'cover'"></div>
-      <mat-card-title *ngIf="character.name">
-        {{ character.name }} @ {{ character.realm }}
-        <span *ngIf="character.downloading"> - downloading</span>
-      </mat-card-title>
-      <mat-card-subtitle>
-        <span *ngIf="character.lastModified; else errorMsg">
-          <strong>Last modified:</strong>
-          {{ character.lastModified | date:'d MMM HH:mm' }}
+<mat-card class="character-bg" [style.background-image]="getBackgroundImage()">
+  <mat-card-header>
+    <div mat-card-avatar *ngIf="character.thumbnail" [style.background-image]="getAvatar()"
+      [style.background-size]="'cover'"></div>
+    <mat-card-title *ngIf="character.name">
+      {{ character.name }} @ {{ character.realm }}
+      <span *ngIf="character.downloading"> - downloading</span>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span *ngIf="character.lastModified; else errorMsg">
+        <strong>Last modified:</strong>
+        {{ character.lastModified | date:'d MMM HH:mm' }}
+      </span>
+      <ng-template #errorMsg>
+        <span *ngIf="character.error; else noData">
+          Status: {{ character.error.statusText }} ({{ character.error.status }})
         </span>
-        <ng-template #errorMsg>
-          <span *ngIf="character.error; else noData">
-            Status: {{ character.error.statusText }} ({{ character.error.status }})
-          </span>
-          <ng-template #noData>
-            No data available for this character yet
-          </ng-template>
+        <ng-template #noData>
+          No data available for this character yet
         </ng-template>
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div *ngIf="character.professions" class="row">
-        <div class="col-md-6">
-          <strong>Primary professions</strong>
-          <ul class="list-group">
-            <li class="list-group-item" *ngFor="let primary of character.professions.primary">
-              <span class="badge">{{ primary.rank }}/{{ primary.max }}</span>
-              {{ primary.name }} x {{ primary.recipes.length }}
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-6">
-          <strong>Secondary professions</strong>
-          <ul class="list-group">
-            <li class="list-group-item" *ngFor="let secondary of character.professions.secondary">
-              <span class="badge">{{ secondary.rank }}/{{ secondary.max }}</span>
-              {{ secondary.name }} x {{ secondary.recipes.length }}
-            </li>
-          </ul>
-        </div>
+      </ng-template>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="character.professions" class="row">
+      <div class="col-md-6">
+        <strong>Primary professions</strong>
+
+        <mat-list role="list">
+          <mat-list-item role="listitem" *ngFor="let primary of character.professions.primary">
+            <h4 mat-line>{{ primary.name }} ({{ primary.rank }}/{{ primary.max }})</h4>
+            <p mat-line>You know {{ primary.recipes.length }} recipes </p>
+          </mat-list-item>
+        </mat-list>
       </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button class="btn btn-primary mat-elevation-z5" type="button" (click)="update.emit('')">
-        <i class="fas fa-sync" aria-hidden="true" [ngClass]="{loading: character.downloading}"></i>
-        Update
-      </button>
-      <button class="btn btn-secondary mat-elevation-z5" type="button" (click)="remove.emit('')">
-        <i class="fa fa-trash" aria-hidden="true"></i>
-        Remove
-      </button>
-    </mat-card-actions>
-  </mat-card>
+      <div class="col-md-6">
+        <strong>Secondary professions</strong>
+        <mat-list role="list">
+          <mat-list-item role="listitem" *ngFor="let secondary of character.professions.secondary">
+            <h4 mat-line>{{ secondary.name }} ({{ secondary.rank }}/{{ secondary.max }})</h4>
+            <p mat-line>You know {{ secondary.recipes.length }} recipes </p>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button type="button" (click)="remove.emit('')">
+      <i class="fa fa-trash" aria-hidden="true"></i>
+      Remove
+    </button>
+    <button mat-button type="button" (click)="update.emit('')">
+      <i class="fas fa-sync" aria-hidden="true" [ngClass]="{loading: character.downloading}"></i>
+      Update
+    </button>
+  </mat-card-actions>
+</mat-card>

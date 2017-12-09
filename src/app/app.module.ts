@@ -15,6 +15,7 @@ import { CharacterService } from './services/character.service';
 import { AuctionsService } from './services/auctions.service';
 import { DatabaseService } from './services/database.service';
 import { ItemService } from './services/item.service';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ItemService } from './services/item.service';
     AppComponent,
     SetupComponent,
     CharactersComponent,
-    CharacterComponent
+    CharacterComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

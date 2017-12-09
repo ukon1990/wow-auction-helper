@@ -31,4 +31,21 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 // `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
 .unicorn-dark-theme {
   @include angular-material-theme($dark-theme);
+  background: #424242;
+  color: white;
+}
+
+.mat-button {
+  margin: .25em !important;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+  transition: box-shadow .5s;
+
+  &:hover {
+    box-shadow: 0px 0px 0px 0px;
+    transition: box-shadow .5s;
+  }
+}
+
+.mat-step-icon .mat-icon {
+  display: none;
 }

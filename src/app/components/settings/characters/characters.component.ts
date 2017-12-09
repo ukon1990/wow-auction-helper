@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { SharedService } from '../../../services/shared.service';
 import { RealmService } from '../../../services/realm.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -11,7 +11,7 @@ import { Realm } from '../../../models/realm';
   templateUrl: './characters.component.html',
   styleUrls: ['./characters.component.scss']
 })
-export class CharactersComponent implements AfterViewInit, OnChanges {
+export class CharactersComponent implements OnChanges {
   @Input() region: string;
   @Input() realm: string;
 
