@@ -1,5 +1,7 @@
 import { Recipe } from './recipe';
 import { SharedService } from '../../services/shared.service';
+import { Item } from '../item/item';
+import { AuctionItem } from '../auction/auction-item';
 
 export class Crafting {
   public static calculateCost(): void {
@@ -18,7 +20,7 @@ export class Crafting {
         recipe.cost += this.getCost(r.itemID, r.count);
       }
     });
-    recipe.roi = SharedService.auctionItems[recipe.itemID].buyout - recipe.cost;
+    recipe.roi = this.getROI(recipe.cost, SharedService.auctionItems[recipe.itemID]);
   }
 
   private static getCost(itemId: number, count: number): number {
@@ -41,5 +43,12 @@ export class Crafting {
       return true;
     }
     return false;
+  }
+
+  private static getROI(cost: number, item?: AuctionItem) {
+    if (!item) {
+      return 0;
+    }
+    return item.buyout - cost;
   }
 }

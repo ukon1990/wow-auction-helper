@@ -2,6 +2,7 @@ import { User } from './../user/user';
 import { SharedService } from './../../services/shared.service';
 import { Auction } from './auction';
 import { AuctionItem } from './auction-item';
+import { Crafting } from '../crafting/crafting';
 export class AuctionHandler {
   /**
     * Organizes the auctions into groups of auctions per item
@@ -32,6 +33,8 @@ export class AuctionHandler {
         SharedService.auctionItems[a.item].auctions.push(a);
       }
     });
+
+    Crafting.calculateCost();
   }
 
   private static auctionToAuctionItem(auction: Auction): AuctionItem {

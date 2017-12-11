@@ -17,6 +17,12 @@ import { DatabaseService } from './services/database.service';
 import { ItemService } from './services/item.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SharedService } from './services/shared.service';
+import { MenuComponent } from './components/navbar/menu/menu.component';
+import { DataTableComponent } from './components/data-table/data-table.component';
+import { CraftingComponent } from './components/crafting/crafting.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { CraftingService } from './services/crafting.service';
+import { GoldPipe } from './pipes/gold.pipe';
 
 
 @NgModule({
@@ -25,7 +31,12 @@ import { SharedService } from './services/shared.service';
     SetupComponent,
     CharactersComponent,
     CharacterComponent,
-    NavbarComponent
+    NavbarComponent,
+    MenuComponent,
+    DataTableComponent,
+    CraftingComponent,
+    SettingsComponent,
+    GoldPipe
   ],
   imports: [
     BrowserModule,
@@ -41,7 +52,8 @@ import { SharedService } from './services/shared.service';
     AuctionsService,
     DatabaseService,
     ItemService,
-    SharedService
+    SharedService,
+    CraftingService
   ],
   bootstrap: [AppComponent]
 })

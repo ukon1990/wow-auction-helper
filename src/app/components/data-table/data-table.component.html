@@ -1,0 +1,32 @@
+<mat-paginator [length]="data.length"
+  [pageSize]="10"
+  [pageSizeOptions]="[5, 10, 25, 100]"
+  (page)="pageEvent = $event">
+</mat-paginator>
+<table class="table table-hover table-bordered table-striped table-sm">
+  <thead>
+    <tr>
+      <td *ngFor="let c of columns">
+        {{ c.title }}
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let d of data | slice:getFromValue():getToValue()">
+      <td *ngFor="let c of columns">
+        <span *ngIf="d[c.key]">
+          <span *ngIf="c.dataType === 'gold'; else default">{{ d[c.key] | gold}}</span>
+          <ng-template #default>
+              {{ d[c.key] }}
+          </ng-template>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<mat-paginator [length]="data.length"
+  [pageSize]="10"
+  [pageSizeOptions]="[5, 10, 25, 100]"
+  (page)="pageEvent = $event">
+</mat-paginator>

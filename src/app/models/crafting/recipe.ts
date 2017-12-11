@@ -5,6 +5,7 @@ export class Recipe {
   itemID: number;
   name: string;
   profession: string;
+  rank?: number;
   minCount: number;
   maxCount: number;
   reagents: Array<Reagent>;
