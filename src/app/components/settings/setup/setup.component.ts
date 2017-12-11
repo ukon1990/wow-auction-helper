@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RealmService } from '../../services/realm.service';
+import { RealmService } from '../../../services/realm.service';
 import { startWith } from 'rxjs/operators/startWith';
 import { map } from 'rxjs/operators/map';
-import { SharedService } from '../../services/shared.service';
-import { Realm } from '../../models/realm';
+import { SharedService } from '../../../services/shared.service';
+import { Realm } from '../../../models/realm';
 import { Router } from '@angular/router';
-import { User } from '../../models/user/user';
+import { User } from '../../../models/user/user';
 
 @Component({
   selector: 'wah-setup',

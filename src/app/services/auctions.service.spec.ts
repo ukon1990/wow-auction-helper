@@ -1,11 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { AuctionsService } from './auctions.service';
+import { TestModule } from '../modules/test.module';
 
 describe('AuctionsService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AuctionsService]
+      imports: [TestModule]
     });
   });
 

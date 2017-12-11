@@ -1,11 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { RealmService } from './realm.service';
+import { TestModule } from '../modules/test.module';
 
 describe('RealmService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [RealmService]
+      imports: [TestModule]
     });
   });
 

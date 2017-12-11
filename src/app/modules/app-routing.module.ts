@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SetupComponent } from '../components/setup/setup.component';
+import { SetupComponent } from '../components/settings/setup/setup.component';
 
 const routes: Routes = [
   { path: 'setup', component: SetupComponent }
