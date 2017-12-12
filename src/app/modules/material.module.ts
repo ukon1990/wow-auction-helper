@@ -10,7 +10,7 @@ import {
     MatSortModule, MatTableModule,
     MatCardModule, MatProgressSpinnerModule,
     MatSelectModule, MatStepperModule,
-    MatExpansionModule
+    MatExpansionModule, MatTooltipModule
 } from '@angular/material';
 
 @NgModule({
@@ -33,7 +33,8 @@ import {
         MatProgressSpinnerModule,
         MatSelectModule,
         MatStepperModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatTooltipModule
     ],
     imports: [
     ],

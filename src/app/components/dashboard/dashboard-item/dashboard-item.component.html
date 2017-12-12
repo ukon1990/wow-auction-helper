@@ -1,8 +1,18 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>{{ title }}</mat-card-title>
+    <div class="action-icon" (click)="logic()">
+      <i *ngIf="!detailView; else closeIcon" matTooltip="Open detailview"
+        class="far fa-window-restore"></i>
+      <ng-template #closeIcon>
+        <i class="fas fa-times" matTooltip="Close detailview"></i>
+      </ng-template>
+    </div>
+    <mat-card-title>
+      {{ title }}
+    </mat-card-title>
   </mat-card-header>
   <mat-card-content>
     Yolo
   </mat-card-content>
 </mat-card>
+<div *ngIf="detailView" class="backdrop"></div>

@@ -8,9 +8,15 @@ import { Component, OnInit, Input } from '@angular/core';
 export class DashboardItemComponent implements OnInit {
   @Input() data;
   @Input() title;
+
+  detailView: boolean;
   constructor() { }
 
   ngOnInit() {
   }
 
+  logic(): void {
+    console.log('Click');
+    this.detailView = !this.detailView;
+  }
 }
