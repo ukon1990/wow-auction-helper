@@ -25,6 +25,7 @@ import { CraftingService } from './services/crafting.service';
 import { GoldPipe } from './pipes/gold.pipe';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { IsRegisteredService } from './Is-registered.service';
+import { DashboardItemComponent } from './components/dashboard/dashboard-item/dashboard-item.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { IsRegisteredService } from './Is-registered.service';
     CraftingComponent,
     SettingsComponent,
     GoldPipe,
-    DashboardComponent
+    DashboardComponent,
+    DashboardItemComponent
   ],
   imports: [
     BrowserModule,
