@@ -23,6 +23,8 @@ import { CraftingComponent } from './components/crafting/crafting.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { CraftingService } from './services/crafting.service';
 import { GoldPipe } from './pipes/gold.pipe';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { IsRegisteredService } from './Is-registered.service';
 
 
 @NgModule({
@@ -36,7 +38,8 @@ import { GoldPipe } from './pipes/gold.pipe';
     DataTableComponent,
     CraftingComponent,
     SettingsComponent,
-    GoldPipe
+    GoldPipe,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ import { GoldPipe } from './pipes/gold.pipe';
     DatabaseService,
     ItemService,
     SharedService,
-    CraftingService
+    CraftingService,
+    IsRegisteredService
   ],
   bootstrap: [AppComponent]
 })
