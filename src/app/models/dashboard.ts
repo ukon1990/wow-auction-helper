@@ -2,6 +2,12 @@ import { ColumnDescription } from './column-description';
 import { SharedService } from '../services/shared.service';
 
 export class Dashboard {
+  public static readonly TYPES = {
+    TOP_SELLERS_BY_VOLUME: 'TOP_SELLERS_BY_VOLUME',
+    TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
+    MOST_AVAILABLE_ITEMS: 'MOST_AVAILABLE_ITEMS',
+    MOST_PROFITABLE_CRAFTS: 'MOST_PROFITABLE_CRAFTS'
+  };
 
   title: string;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
@@ -9,20 +15,36 @@ export class Dashboard {
 
   constructor(title: string, type: string) {
     this.title = title;
+
+    switch (type) {
+      case Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY:
+        this.setItemsGroupedBySellerWithHighLiquidity();
+        break;
+      case Dashboard.TYPES.MOST_AVAILABLE_ITEMS:
+        this.setItemsGroupedByAvailablility();
+        break;
+      case Dashboard.TYPES.MOST_PROFITABLE_CRAFTS:
+        this.setMostProfitableProfessions();
+        break;
+    }
   }
 
-  setMostProfitableProfessions(): void {
+  private setMostProfitableProfessions(): void {
     this.data.length = 0;
     this.data = SharedService.recipes
       .sort( (a, b) => a.roi - b.roi)
       .slice(0, 30);
   }
 
-  setSellersGroupedSortedByQuantity(): void {
+  private setSellersGroupedSortedByQuantity(): void {
     this.data.length = 0;
   }
 
-  setItemsGroupedByAvailablility(): void {
+  private setItemsGroupedByAvailablility(): void {
+    this.data.length = 0;
+  }
+
+  private setItemsGroupedBySellerWithHighLiquidity(): void {
     this.data.length = 0;
   }
 }

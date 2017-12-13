@@ -9,7 +9,7 @@ describe('CharacterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [TestModule]
+      imports: [ TestModule ]
     })
     .compileComponents();
   }));
