@@ -21,4 +21,9 @@ export class CraftingService {
       })
       .catch(e => console.error('Recipe download failed', e));
   }
+
+  updateRecipe(spellID: number) {
+    this._http.get(`http://localhost/GetRecipe.php?spellId=${spellID}`)
+      .toPromise();
+  }
 }
