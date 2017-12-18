@@ -31,8 +31,15 @@ export class Dashboard {
 
   private setMostProfitableProfessions(): void {
     this.data.length = 0;
+    console.log('dada', SharedService.recipes);
     this.data = SharedService.recipes
-      .sort( (a, b) => a.roi - b.roi)
+      .sort( (a, b) => {
+        if (a && b) {
+          return a.roi - b.roi;
+        } else {
+          return -1;
+        }
+      })
       .slice(0, 30);
   }
 

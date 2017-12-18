@@ -1,5 +1,6 @@
 
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Character } from '../../../../models/character/character';
 
 @Component({
   selector: 'wah-character',
@@ -7,7 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class CharacterComponent {
   @Input() index: number;
-  @Input() character: any;
+  @Input() character: Character;
   @Output() remove: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
 

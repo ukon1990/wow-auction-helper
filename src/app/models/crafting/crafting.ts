@@ -10,6 +10,10 @@ export class Crafting {
   }
 
   private static costForRecipe(recipe: Recipe): void {
+    if (recipe === null || recipe === undefined) {
+      return;
+    }
+
     recipe.cost = 0;
     recipe.roi = 0;
     recipe.reagents.forEach(r => {

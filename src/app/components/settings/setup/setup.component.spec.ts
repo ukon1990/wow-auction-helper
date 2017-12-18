@@ -9,7 +9,7 @@ describe('SetupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TestModule ]
+      imports: [ TestModule ]
     })
     .compileComponents();
   }));
