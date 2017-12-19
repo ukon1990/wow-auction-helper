@@ -31,7 +31,7 @@ export class Dashboard {
 
   private setMostProfitableProfessions(): void {
     this.data.length = 0;
-    console.log('dada', SharedService.recipes);
+    console.log('dada', SharedService.recipes);/*
     this.data = SharedService.recipes
       .sort( (a, b) => {
         if (a && b) {
@@ -40,7 +40,7 @@ export class Dashboard {
           return -1;
         }
       })
-      .slice(0, 30);
+      .slice(0, 30);*/
   }
 
   private setSellersGroupedSortedByQuantity(): void {

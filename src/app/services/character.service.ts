@@ -15,7 +15,7 @@ export class CharacterService {
       .get(Endpoints.getBattleNetApi(
         `character/${
           realm
-        }/${character}?fields=professions,statistics,pets,petSlots,mounts`))
+        }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region))
       .map(c => {
         console.log(c);
         return c;

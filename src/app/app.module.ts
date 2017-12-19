@@ -26,6 +26,8 @@ import { GoldPipe } from './pipes/gold.pipe';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { IsRegisteredService } from './Is-registered.service';
 import { DashboardItemComponent } from './components/dashboard/dashboard-item/dashboard-item.component';
+import { AuctionsComponent } from './components/auctions/auctions.component';
+import { UpdateComponent } from './components/update/update.component';
 
 
 @NgModule({
@@ -41,7 +43,9 @@ import { DashboardItemComponent } from './components/dashboard/dashboard-item/da
     SettingsComponent,
     GoldPipe,
     DashboardComponent,
-    DashboardItemComponent
+    DashboardItemComponent,
+    AuctionsComponent,
+    UpdateComponent
   ],
   imports: [
     BrowserModule,

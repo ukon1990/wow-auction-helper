@@ -10,7 +10,8 @@ import {
     MatSortModule, MatTableModule,
     MatCardModule, MatProgressSpinnerModule,
     MatSelectModule, MatStepperModule,
-    MatExpansionModule, MatTooltipModule
+    MatExpansionModule, MatTooltipModule,
+    MatSlideToggleModule
 } from '@angular/material';
 
 @NgModule({
@@ -34,7 +35,8 @@ import {
         MatSelectModule,
         MatStepperModule,
         MatExpansionModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatSlideToggleModule
     ],
     imports: [
     ],

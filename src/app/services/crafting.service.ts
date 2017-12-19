@@ -12,9 +12,16 @@ export class CraftingService {
 
   getRecipes(): void {
     console.log('Downloading recipes');
-    this._http.get('assets/mock/recipes.json')
+    this._http.get('http://wah.jonaskf.net/GetRecipe.php') // assets/mock/recipes.json
       .toPromise()
       .then(recipes => {
+        let p;
+        recipes['recipes'].forEach( (r, i) => {
+          if (!r) {
+            console.log(':( ' + i, p, r);
+          }
+          p = r;
+        });
         SharedService.recipes = recipes['recipes'];
         console.log('Recipe download is completed');
         console.log(recipes);
@@ -22,8 +29,8 @@ export class CraftingService {
       .catch(e => console.error('Recipe download failed', e));
   }
 
-  updateRecipe(spellID: number) {
-    this._http.get(`http://localhost/GetRecipe.php?spellId=${spellID}`)
-      .toPromise();
+  updateRecipe(spellID: number): Promise<Recipe> {
+    return this._http.get(`http://localhost/GetRecipe.php?spellId=${spellID}`)
+      .toPromise() as Promise<Recipe>;
   }
 }

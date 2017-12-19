@@ -33,10 +33,16 @@ export class User {
     this.save(JSON.parse(object) as User);
   }
 
-  public static save(user: User): void {
+  public static save(user?: User): void {
     if (!SharedService.user) {
       SharedService.user = new User();
     }
+
+    if (!user) {
+      user = SharedService.user;
+      console.log(user);
+    }
+
     Object.keys(user).forEach(key => {
       switch (key) {
         case 'region':
@@ -79,6 +85,10 @@ export class User {
           localStorage['notifications'] = JSON.stringify(user[key]);
           SharedService.user.notifications = user[key];
           break;
+        case 'isDarkMode':
+          localStorage['isDarkMode'] = JSON.stringify(user[key]);
+          SharedService.user.isDarkMode = user[key];
+          break;
       }
     });
 
@@ -120,6 +130,9 @@ export class User {
           break;
         case 'notifications':
           user.notifications = JSON.parse(localStorage[key]);
+          break;
+        case 'isDarkMode':
+          user.isDarkMode = JSON.parse(localStorage[key]);
           break;
       }
     });
