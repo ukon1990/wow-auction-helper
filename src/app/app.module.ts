@@ -28,6 +28,7 @@ import { IsRegisteredService } from './Is-registered.service';
 import { DashboardItemComponent } from './components/dashboard/dashboard-item/dashboard-item.component';
 import { AuctionsComponent } from './components/auctions/auctions.component';
 import { UpdateComponent } from './components/update/update.component';
+import { DownloadComponent } from './components/navbar/download/download.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { UpdateComponent } from './components/update/update.component';
     DashboardComponent,
     DashboardItemComponent,
     AuctionsComponent,
-    UpdateComponent
+    UpdateComponent,
+    DownloadComponent
   ],
   imports: [
     BrowserModule,

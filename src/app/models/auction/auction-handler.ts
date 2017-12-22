@@ -32,8 +32,7 @@ export class AuctionHandler {
           auc.vendorSell = tsmItem.VendorSell;
         }
       } else {
-        SharedService.auctionItemsMap[a.item].quantityTotal += a.quantity;
-        SharedService.auctionItemsMap[a.item].auctions.push(a);
+        AuctionHandler.updateAuctionItem(a);
       }
     });
 
@@ -50,13 +49,24 @@ export class AuctionHandler {
       SharedService.items[itemID].name : 'Name missing';
   }
 
+  private static updateAuctionItem(auction: Auction): void {
+    const ai = SharedService.auctionItemsMap[auction.item];
+    if (ai.buyout === 0 || (ai.buyout > auction.buyout && auction.buyout > 0)) {
+      ai.owner = auction.owner;
+      ai.buyout = auction.buyout / auction.quantity;
+      ai.bid = auction.bid / auction.quantity;
+    }
+    ai.quantityTotal += auction.quantity;
+    ai.auctions.push(auction);
+  }
+
   private static newAuctionItem(auction: Auction): AuctionItem {
     const tmpAuc = new AuctionItem();
     tmpAuc.itemID = auction.item;
     tmpAuc.name = AuctionHandler.getItemName(auction.item);
     tmpAuc.owner = auction.owner;
-    tmpAuc.buyout = auction.buyout;
-    tmpAuc.bid = auction.bid;
+    tmpAuc.buyout = auction.buyout / auction.quantity;
+    tmpAuc.bid = auction.bid / auction.quantity;
     tmpAuc.quantityTotal += auction.quantity;
     return tmpAuc;
   }

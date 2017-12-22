@@ -14,7 +14,8 @@ export class CraftingComponent implements OnInit {
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'profession', title: 'Profession', dataType: ''},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
-    {key: 'roi', title: 'ROI', dataType: 'gold'}
+    {key: 'roi', title: 'ROI', dataType: 'gold'},
+    {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
   ];
 
   constructor() { }

@@ -7,9 +7,9 @@ import { Item } from '../models/item/item';
 export class ItemService {
   constructor(private _http: HttpClient) { }
 
-  getItems(): void {
+  getItems(): Promise<any> {
     console.log('Downloading items');
-    this._http.get('assets/mock/items.json')
+    return this._http.get('assets/mock/items.json')
       .toPromise()
       .then(items => {
         items['items'].forEach(i => {

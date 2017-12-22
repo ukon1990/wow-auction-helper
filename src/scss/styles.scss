@@ -31,3 +31,8 @@
 		transform: rotate(360deg);
 	}
 }
+
+.navbar-dark .dropdown-menu.show {
+    background: #343a40 !important;
+    color: white !important;
+}

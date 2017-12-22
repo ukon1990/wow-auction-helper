@@ -1,7 +1,7 @@
 <mat-paginator [length]="data.length"
-  [pageSize]="10"
-  [pageSizeOptions]="[5, 10, 25, 100]"
-  (page)="pageEvent = $event">
+  [pageSize]="pageRows[1]"
+  [pageSizeOptions]="pageRows"
+  (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
@@ -16,9 +16,16 @@
       <td *ngFor="let c of columns;">
         <span *ngIf="d[c.key]" [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
-            <a href="#" rel="item={{ d.itemID }}">{{ d[c.key] }}</a>
+            <a href="#" rel="item={{ d.itemID }}">{{ d[c.key] }} <span *ngIf="isCrafting && d.rank"> - {{ d.rank }}</span></a>
           </span>
           <span *ngSwitchCase="'gold'">{{ d[c.key] | gold}}</span>
+          <span *ngSwitchCase="'action'">
+            <ul>
+              <li *ngFor="let action of d.actions">
+                {{ action }}
+              </li>
+            </ul>
+          </span>
           <span *ngSwitchDefault>{{ d[c.key] }}</span>
         </span>
       </td>
@@ -27,7 +34,7 @@
 </table>
 
 <mat-paginator [length]="data.length"
-  [pageSize]="10"
-  [pageSizeOptions]="[5, 10, 25, 100]"
-  (page)="pageEvent = $event">
+  [pageSize]="pageRows[1]"
+  [pageSizeOptions]="pageRows"
+  (page)="pageChange($event)">
 </mat-paginator>

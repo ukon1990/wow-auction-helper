@@ -10,9 +10,9 @@ export class CraftingService {
 
   getRecipe(spellID: number): void {}
 
-  getRecipes(): void {
+  getRecipes(): Promise<any> {
     console.log('Downloading recipes');
-    this._http.get('http://wah.jonaskf.net/GetRecipe.php?v=3') // assets/mock/recipes.json
+    return this._http.get('http://wah.jonaskf.net/GetRecipe.php?v=3') // assets/mock/recipes.json
       .toPromise()
       .then(recipes => {
         SharedService.recipes = recipes['recipes'];

@@ -9,9 +9,9 @@ export class AuctionsService {
 
   constructor(private _http: HttpClient) { }
 
-  getAuctions(): void {
+  getAuctions(): Promise<any> {
     console.log('Downloading auctions');
-    this._http.get('assets/mock/auctions.json')
+    return this._http.get('assets/mock/auctions.json')
       .toPromise()
       .then(a => {
         AuctionHandler.organize(a['auctions']);

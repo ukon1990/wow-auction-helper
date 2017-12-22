@@ -18,12 +18,6 @@ export class AppComponent {
     private _auctionsService: AuctionsService,
     private _itemService: ItemService) {
     User.restore();
-
-    if (SharedService.user.realm || SharedService.user.region) {
-      this._itemService.getItems();
-      this._craftingService.getRecipes();
-      this._auctionsService.getAuctions();
-    }
   }
 
   isDarkmode(): boolean {
