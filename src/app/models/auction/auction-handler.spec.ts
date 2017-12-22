@@ -65,11 +65,11 @@ beforeEach(() => {
 describe('Auctions', () => {
   describe('Organizing auctions', () => {
     it('Should be able to organize auctions', () => {
-      expect(SharedService.auctionItems[151566].auctions.length).toBeGreaterThan(0);
+      expect(SharedService.auctionItemsMap[151566].auctions.length).toBeGreaterThan(0);
     });
 
     it('Should be able to organize auctions', () => {
-      const auc = SharedService.auctionItems[151566].auctions;
+      const auc = SharedService.auctionItemsMap[151566].auctions;
       expect(auc[0].buyout)
         .toBe(279800);
       expect(auc[auc.length - 1].buyout)
@@ -79,7 +79,7 @@ describe('Auctions', () => {
 
   describe('API data', () => {
     it('Should set market value, saleAvg, saleRate and avg daily sold', () => {
-      const item = SharedService.auctionItems[151566];
+      const item = SharedService.auctionItemsMap[151566];
       expect(item.mktPrice).toBe(67384010);
       expect(item.avgDailySold).toBe(0.02);
       expect(item.regionSaleAvg).toBe(21403126);

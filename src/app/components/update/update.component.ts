@@ -82,7 +82,7 @@ export class UpdateComponent implements OnInit {
       } else {
         this.updateRecipes(i);
       }
-    }, 500);
+    }, 100);
   }
 
   getRecipeCount(): number {

@@ -6,11 +6,13 @@ import { SettingsComponent } from '../components/settings/settings.component';
 import { IsRegisteredService } from '../Is-registered.service';
 import { DashboardComponent } from '../components/dashboard/dashboard.component';
 import { UpdateComponent } from '../components/update/update.component';
+import { AuctionsComponent } from '../components/auctions/auctions.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, canActivate: [ IsRegisteredService ]},
   { path: 'setup', component: SetupComponent },
   { path: 'crafting', component: CraftingComponent, canActivate: [ IsRegisteredService ] },
+  { path: 'auctions', component: AuctionsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] },
   { path: 'settings', component: SettingsComponent, canActivate:  [ IsRegisteredService ] }
 ];

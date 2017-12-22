@@ -17,7 +17,6 @@ export class CharacterService {
           realm
         }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region))
       .map(c => {
-        console.log(c);
         return c;
       }, error => {
         console.error('Failed at downloading character', error);

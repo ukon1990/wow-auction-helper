@@ -50,7 +50,6 @@ export class SetupComponent implements OnInit {
 
   getRealms(): void {
     setTimeout(() => {
-      console.log('valg', this._characterForm.value.region);
       this._realmService
         .getRealms(this._characterForm.value.region);
     }, 100);

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { SharedService } from '../../services/shared.service';
+import { AuctionItem } from '../../models/auction/auction-item';
+import { ColumnDescription } from '../../models/column-description';
 
 @Component({
   selector: 'wah-auctions',
@@ -6,10 +9,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./auctions.component.scss']
 })
 export class AuctionsComponent implements OnInit {
+  columns: Array<ColumnDescription> = [
+    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'owner', title: 'Owner', dataType: ''},
+    {key: 'quantityTotal', title: 'Stock', dataType: ''},
+    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    {key: 'bid', title: 'Bid', dataType: 'gold'}
+  ];
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  getAuctions(): Array<AuctionItem> {
+    return SharedService.auctionItems;
   }
 
 }

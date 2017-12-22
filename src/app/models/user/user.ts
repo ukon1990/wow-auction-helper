@@ -40,7 +40,6 @@ export class User {
 
     if (!user) {
       user = SharedService.user;
-      console.log(user);
     }
 
     Object.keys(user).forEach(key => {

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, OnChanges } from '@angular/core';
 import { PageEvent } from '@angular/material';
 import { ColumnDescription } from '../../models/column-description';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'wah-data-table',
@@ -36,5 +37,9 @@ export class DataTableComponent implements OnInit, OnChanges {
       return 10;
     }
     return this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1);
+  }
+
+  isDarkMode(): boolean {
+    return SharedService.user.isDarkMode;
   }
 }

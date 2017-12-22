@@ -9,14 +9,14 @@ beforeEach(() => {
   User.restore();
 
   SharedService.recipes.length = 0;
-  SharedService.auctionItems[10] = new AuctionItem();
-  SharedService.auctionItems[10].buyout = 20;
-  SharedService.auctionItems[11] = new AuctionItem();
-  SharedService.auctionItems[11].buyout = 10;
-  SharedService.auctionItems[12] = new AuctionItem();
-  SharedService.auctionItems[12].buyout = 30;
-  SharedService.auctionItems[20] = new AuctionItem();
-  SharedService.auctionItems[20].buyout = 10;
+  SharedService.auctionItemsMap[10] = new AuctionItem();
+  SharedService.auctionItemsMap[10].buyout = 20;
+  SharedService.auctionItemsMap[11] = new AuctionItem();
+  SharedService.auctionItemsMap[11].buyout = 10;
+  SharedService.auctionItemsMap[12] = new AuctionItem();
+  SharedService.auctionItemsMap[12].buyout = 30;
+  SharedService.auctionItemsMap[20] = new AuctionItem();
+  SharedService.auctionItemsMap[20].buyout = 10;
   SharedService.tsm[20] = new TSM();
   SharedService.tsm[20].MarketValue = 100;
   SharedService.recipes.push({
@@ -36,7 +36,8 @@ describe('Crafting', () => {
       SharedService.recipes[0].reagents.push({
         itemID: 11,
         name: '',
-        count: 3
+        count: 3,
+        dropped: false
       });
       Crafting.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(30);
@@ -47,12 +48,14 @@ describe('Crafting', () => {
       SharedService.recipes[0].reagents.push({
         itemID: 11,
         name: '',
-        count: 3
+        count: 3,
+        dropped: false
       });
       SharedService.recipes[0].reagents.push({
         itemID: 12,
         name: '',
-        count: 10
+        count: 10,
+        dropped: false
       });
       Crafting.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(330);
@@ -63,12 +66,14 @@ describe('Crafting', () => {
       SharedService.recipes[0].reagents.push({
         itemID: 1,
         name: '',
-        count: 3
+        count: 3,
+        dropped: false
       });
       SharedService.recipes[0].reagents.push({
         itemID: 12,
         name: '',
-        count: 10
+        count: 10,
+        dropped: false
       });
       Crafting.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(300);
@@ -88,12 +93,14 @@ describe('Crafting', () => {
       SharedService.recipes[0].reagents.push({
         itemID: 20,
         name: '',
-        count: 3
+        count: 3,
+        dropped: false
       });
       SharedService.recipes[0].reagents.push({
         itemID: 12,
         name: '',
-        count: 10
+        count: 10,
+        dropped: false
       });
       Crafting.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(600);

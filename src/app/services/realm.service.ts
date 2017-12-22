@@ -10,7 +10,6 @@ export class RealmService {
   constructor(private _http: HttpClient) {}
 
   getRealms(region?: string): void {
-    console.log('getRealms');
     this._http.get(Endpoints.getBattleNetApi('realm/status?', region))
       .toPromise()
       .then(r => {

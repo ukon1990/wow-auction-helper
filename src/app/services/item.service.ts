@@ -15,7 +15,6 @@ export class ItemService {
         items['items'].forEach(i => {
           SharedService.items[i.id] = i;
         });
-        console.log(SharedService.items);
         console.log('Items download is completed');
       })
       .catch(e => console.error('Items download failed', e));

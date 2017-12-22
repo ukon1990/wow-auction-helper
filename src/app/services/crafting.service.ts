@@ -12,19 +12,11 @@ export class CraftingService {
 
   getRecipes(): void {
     console.log('Downloading recipes');
-    this._http.get('http://wah.jonaskf.net/GetRecipe.php') // assets/mock/recipes.json
+    this._http.get('http://wah.jonaskf.net/GetRecipe.php?v=3') // assets/mock/recipes.json
       .toPromise()
       .then(recipes => {
-        let p;
-        recipes['recipes'].forEach( (r, i) => {
-          if (!r) {
-            console.log(':( ' + i, p, r);
-          }
-          p = r;
-        });
         SharedService.recipes = recipes['recipes'];
         console.log('Recipe download is completed');
-        console.log(recipes);
       })
       .catch(e => console.error('Recipe download failed', e));
   }

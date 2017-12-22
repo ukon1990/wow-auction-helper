@@ -3,7 +3,7 @@
   [pageSizeOptions]="[5, 10, 25, 100]"
   (page)="pageEvent = $event">
 </mat-paginator>
-<table class="table table-hover table-bordered table-striped table-sm">
+<table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
     <tr>
       <td *ngFor="let c of columns">
