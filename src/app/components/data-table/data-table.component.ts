@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, OnChanges } from '@angular/core';
+import { Component, AfterViewInit, Input, Output, OnChanges } from '@angular/core';
 import { PageEvent } from '@angular/material';
 import { ColumnDescription } from '../../models/column-description';
 import { SharedService } from '../../services/shared.service';
@@ -8,7 +8,7 @@ import { SharedService } from '../../services/shared.service';
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss']
 })
-export class DataTableComponent implements OnInit, OnChanges {
+export class DataTableComponent implements AfterViewInit, OnChanges {
 
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;
@@ -16,7 +16,7 @@ export class DataTableComponent implements OnInit, OnChanges {
 
   constructor() { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
   }
 
   ngOnChanges(change) {

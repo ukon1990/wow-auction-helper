@@ -13,12 +13,13 @@
   </thead>
   <tbody>
     <tr *ngFor="let d of data | slice:getFromValue():getToValue()">
-      <td *ngFor="let c of columns">
-        <span *ngIf="d[c.key]">
-          <span *ngIf="c.dataType === 'gold'; else default">{{ d[c.key] | gold}}</span>
-          <ng-template #default>
-              {{ d[c.key] }}
-          </ng-template>
+      <td *ngFor="let c of columns;">
+        <span *ngIf="d[c.key]" [ngSwitch]="c.dataType">
+          <span *ngSwitchCase="'name'">
+            <a href="#" rel="item={{ d.itemID }}">{{ d[c.key] }}</a>
+          </span>
+          <span *ngSwitchCase="'gold'">{{ d[c.key] | gold}}</span>
+          <span *ngSwitchDefault>{{ d[c.key] }}</span>
         </span>
       </td>
     </tr>

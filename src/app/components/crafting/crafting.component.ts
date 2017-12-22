@@ -11,7 +11,7 @@ import { ColumnDescription } from '../../models/column-description';
 export class CraftingComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
-    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'profession', title: 'Profession', dataType: ''},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'}

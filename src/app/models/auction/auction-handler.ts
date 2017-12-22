@@ -11,6 +11,7 @@ export class AuctionHandler {
     * @param auctions A raw auction array
     */
   public static organize(auctions: Array<Auction>): void {
+    console.log('organiserer');
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
       return a.buyout - b.buyout;
@@ -36,6 +37,7 @@ export class AuctionHandler {
       }
     });
 
+    console.log('ferdig med organisering');
     Crafting.calculateCost();
   }
 
@@ -50,6 +52,7 @@ export class AuctionHandler {
 
   private static newAuctionItem(auction: Auction): AuctionItem {
     const tmpAuc = new AuctionItem();
+    tmpAuc.itemID = auction.item;
     tmpAuc.name = AuctionHandler.getItemName(auction.item);
     tmpAuc.owner = auction.owner;
     tmpAuc.buyout = auction.buyout;

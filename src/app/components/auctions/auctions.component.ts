@@ -10,7 +10,7 @@ import { ColumnDescription } from '../../models/column-description';
 })
 export class AuctionsComponent implements OnInit {
   columns: Array<ColumnDescription> = [
-    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'owner', title: 'Owner', dataType: ''},
     {key: 'quantityTotal', title: 'Stock', dataType: ''},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
