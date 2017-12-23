@@ -29,6 +29,7 @@ import { DashboardItemComponent } from './components/dashboard/dashboard-item/da
 import { AuctionsComponent } from './components/auctions/auctions.component';
 import { UpdateComponent } from './components/update/update.component';
 import { DownloadComponent } from './components/navbar/download/download.component';
+import { MaterialsComponent } from './components/data-table/materials/materials.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { DownloadComponent } from './components/navbar/download/download.compone
     DashboardItemComponent,
     AuctionsComponent,
     UpdateComponent,
-    DownloadComponent
+    DownloadComponent,
+    MaterialsComponent
   ],
   imports: [
     BrowserModule,

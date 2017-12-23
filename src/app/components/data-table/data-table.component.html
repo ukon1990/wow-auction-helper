@@ -1,5 +1,5 @@
 <mat-paginator [length]="data.length"
-  [pageSize]="pageRows[1]"
+  [pageSize]="pageRows[0]"
   [pageSizeOptions]="pageRows"
   (page)="pageChange($event)">
 </mat-paginator>
@@ -18,6 +18,7 @@
           <span *ngSwitchCase="'name'">
             <a href="#" rel="item={{ d.itemID }}">{{ d[c.key] }} <span *ngIf="isCrafting && d.rank"> - {{ d.rank }}</span></a>
           </span>
+          <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
           <span *ngSwitchCase="'gold'">{{ d[c.key] | gold}}</span>
           <span *ngSwitchCase="'action'">
             <ul>
@@ -34,7 +35,7 @@
 </table>
 
 <mat-paginator [length]="data.length"
-  [pageSize]="pageRows[1]"
+  [pageSize]="pageRows[0]"
   [pageSizeOptions]="pageRows"
   (page)="pageChange($event)">
 </mat-paginator>

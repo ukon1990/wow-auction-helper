@@ -43,7 +43,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   getToValue(): number {
     if (!this.pageEvent || !this.pageEvent.pageSize) {
-      return this.pageRows[1];
+      return this.pageRows[0];
     }
     return this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1);
   }
