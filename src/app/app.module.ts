@@ -30,6 +30,7 @@ import { AuctionsComponent } from './components/auctions/auctions.component';
 import { UpdateComponent } from './components/update/update.component';
 import { DownloadComponent } from './components/navbar/download/download.component';
 import { MaterialsComponent } from './components/data-table/materials/materials.component';
+import { ShoppingCartComponent } from './components/navbar/shopping-cart/shopping-cart.component';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import { MaterialsComponent } from './components/data-table/materials/materials.
     AuctionsComponent,
     UpdateComponent,
     DownloadComponent,
-    MaterialsComponent
+    MaterialsComponent,
+    ShoppingCartComponent
   ],
   imports: [
     BrowserModule,

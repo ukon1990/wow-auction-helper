@@ -1,1 +1,1 @@
-<span *ngFor="let r of reagents"> <a href="" rel="item={{ r.itemID }}">{{ r.name }}</a> x {{ r.count }} <br></span>
+<span *ngFor="let r of reagents"> <a href="" rel="item={{ r.itemID }}">{{ r.name }}</a> x {{ r.count }} for {{ getItemValue(r.itemID) | gold }} a pcs<br></span>

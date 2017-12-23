@@ -24,6 +24,7 @@ export class Character {
   };
   pets?: Pet[];
   petSlots?: PetSlot[];
+  downloading?: boolean;
 }
 
 class Profession {

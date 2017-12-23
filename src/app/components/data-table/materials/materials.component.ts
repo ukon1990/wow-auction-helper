@@ -15,8 +15,15 @@ export class MaterialsComponent implements OnInit {
   ngOnInit() {
   }
 
-  getAuctionItem(itemID: number) {
-    // s
+  getItemValue(itemID: number) {
+    if (SharedService.user.customPrices[itemID]) {
+      return SharedService.user.customPrices[itemID];
+    } else if (this.isAtAH(itemID)) {
+      return SharedService.auctionItemsMap[itemID].buyout;
+    } else if (SharedService.user.apiToUse === 'tsm' && SharedService.tsm[itemID]) {
+      return SharedService.tsm[itemID].MarketValue;
+    }
+    return 0;
   }
 
   isAtAH(itemID: number): boolean {
