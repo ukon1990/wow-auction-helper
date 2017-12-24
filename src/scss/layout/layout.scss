@@ -13,8 +13,8 @@
     overflow-y: auto;
     max-height: 25em;
 
-    & .mat-list {
-      height: 45px;
+    .mat-list-item {
+      height: 45px !important;
     }
   }
 }

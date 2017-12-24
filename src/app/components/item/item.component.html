@@ -11,8 +11,10 @@
         <div class="col-md-6">
           <strong>Stock:</strong> {{ getAuctionItem().quantityTotal }} pcs<br>
           <div class="clearfix">
-              <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}<br>
-              <strong>Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}<br>
+            <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold }}<br>
+            <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}<br>
+            <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}<br>
+            <strong>Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}<br>
           </div>
           <div *ngIf="wowDBItem && wowDBItem?.DroppedBy" class="dropped-by">
             <strong>Dropped by:</strong>
