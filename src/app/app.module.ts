@@ -31,6 +31,8 @@ import { UpdateComponent } from './components/update/update.component';
 import { DownloadComponent } from './components/navbar/download/download.component';
 import { MaterialsComponent } from './components/data-table/materials/materials.component';
 import { ShoppingCartComponent } from './components/navbar/shopping-cart/shopping-cart.component';
+import { ItemComponent } from './components/item/item.component';
+import { WowdbService } from './services/wowdb.service';
 
 
 @NgModule({
@@ -51,7 +53,8 @@ import { ShoppingCartComponent } from './components/navbar/shopping-cart/shoppin
     UpdateComponent,
     DownloadComponent,
     MaterialsComponent,
-    ShoppingCartComponent
+    ShoppingCartComponent,
+    ItemComponent
   ],
   imports: [
     BrowserModule,
@@ -69,7 +72,8 @@ import { ShoppingCartComponent } from './components/navbar/shopping-cart/shoppin
     ItemService,
     SharedService,
     CraftingService,
-    IsRegisteredService
+    IsRegisteredService,
+    WowdbService
   ],
   bootstrap: [AppComponent]
 })

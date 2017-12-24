@@ -20,6 +20,7 @@ export class DownloadComponent implements OnInit {
     if (SharedService.user.realm || SharedService.user.region) {
       await this._itemService.getItems();
       await this._craftingService.getRecipes();
+      await this._auctionsService.getTsmAuctions();
       await this._auctionsService.getAuctions();
     }
   }

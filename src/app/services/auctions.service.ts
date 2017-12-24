@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { AuctionHandler } from '../models/auction/auction-handler';
 import { Dashboard } from '../models/dashboard';
+import { TSM } from '../models/auction/tsm';
 
 @Injectable()
 export class AuctionsService {
@@ -15,7 +16,7 @@ export class AuctionsService {
       .toPromise()
       .then(a => {
         AuctionHandler.organize(a['auctions']);
-        console.log(SharedService.auctions);
+        console.log(SharedService.auctionItems);
         console.log('Auction download is completed');
 
         // Dashboard stuff
@@ -37,5 +38,14 @@ export class AuctionsService {
             Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
       })
       .catch(e => console.error('Auction download failed', e));
+  }
+
+  getTsmAuctions(): Promise<any> {
+    return this._http.get('assets/mock/tsm.json')
+      .toPromise()
+      .then(tsm => (<TSM[]>tsm).forEach(a => {
+        SharedService.tsm[a.Id] = a;
+      }))
+      .catch(e => console.error('Unable to download TSM data', e));
   }
 }

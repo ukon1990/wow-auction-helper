@@ -2,6 +2,9 @@ import { Component, AfterViewInit, Input, Output, OnChanges } from '@angular/cor
 import { PageEvent } from '@angular/material';
 import { ColumnDescription } from '../../models/column-description';
 import { SharedService } from '../../services/shared.service';
+import { AuctionItem } from '../../models/auction/auction-item';
+import { Auction } from '../../models/auction/auction';
+import { Recipe } from '../../models/crafting/recipe';
 
 declare const $WowheadPower;
 @Component({
@@ -26,6 +29,14 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   ngOnChanges(change) {
     if (change && change.data) {
       // this.pageEvent.length = change.data.currentValue.length;
+    }
+  }
+
+  setSelectedItem(item: any): void {
+    if (item.item) {
+      SharedService.selectedItemId = item.item;
+    } else {
+      SharedService.selectedItemId = item.itemID;
     }
   }
 

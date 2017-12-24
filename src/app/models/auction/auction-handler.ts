@@ -11,7 +11,6 @@ export class AuctionHandler {
     * @param auctions A raw auction array
     */
   public static organize(auctions: Array<Auction>): void {
-    console.log('organiserer');
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
       return a.buyout - b.buyout;
@@ -26,6 +25,7 @@ export class AuctionHandler {
         if (this.useTSM() && SharedService.tsm[a.item]) {
           const auc = SharedService.auctionItemsMap[a.item],
             tsmItem = SharedService.tsm[a.item];
+          auc.regionSaleRate = tsmItem.RegionSaleRate;
           auc.mktPrice = tsmItem.MarketValue;
           auc.avgDailySold = tsmItem.RegionAvgDailySold;
           auc.regionSaleAvg = tsmItem.RegionSaleAvg;
@@ -35,8 +35,6 @@ export class AuctionHandler {
         AuctionHandler.updateAuctionItem(a);
       }
     });
-
-    console.log('ferdig med organisering');
     Crafting.calculateCost();
   }
 

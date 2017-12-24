@@ -1,0 +1,29 @@
+.wowhead-tooltip {
+  z-index: 1000;
+}
+#item-view  .mat-card{
+  z-index: 1999;
+  width: 80%;
+  right: 10%;
+  left: 10%;
+  top: 5vh;
+  max-height: 80vh;
+  position: absolute;
+  & .dropped-by .mat-list {
+    overflow-y: auto;
+    max-height: 25em;
+
+    & .mat-list {
+      height: 45px;
+    }
+  }
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.70);
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: 1900;
+  top: 0;
+}

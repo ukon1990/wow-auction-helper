@@ -15,6 +15,7 @@ export class AuctionsComponent implements OnInit {
     {key: 'quantityTotal', title: 'Stock', dataType: ''},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: 'bid', title: 'Bid', dataType: 'gold'},
+    {key: 'regionSaleRate', title: 'Demand', dataType: ''},
     {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
   ];
 

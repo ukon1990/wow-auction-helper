@@ -9,7 +9,7 @@ export class AuctionItem {
   owner: string;
   ownerRealm: string;
   auctions: Auction[] = new Array<Auction>();
-  estDemand = 0;
+  regionSaleRate = 0;
   avgDailySold = 0;
   avgDailyPosted = 0;
   regionSaleAvg = 0;

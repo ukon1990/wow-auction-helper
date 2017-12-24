@@ -1,0 +1,44 @@
+<div id="item-view" *ngIf="getItem()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ getItem().name }}
+      </mat-card-title>
+      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row" *ngIf="getAuctionItem()">
+        <div class="col-md-6">
+          <strong>Stock:</strong> {{ getAuctionItem().quantityTotal }} pcs<br>
+          <div class="clearfix">
+              <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}<br>
+              <strong>Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}<br>
+          </div>
+          <div *ngIf="wowDBItem && wowDBItem?.DroppedBy" class="dropped-by">
+            <strong>Dropped by:</strong>
+            <mat-list>
+              <mat-list-item *ngFor="let item of wowDBItem.DroppedBy">
+                  <h3 matLine> {{ item.Name }}</h3>
+                  <p matLine>
+                    <a href="http://www.wowdb.com/npcs/{{ item.ID }}" target="_blank" class="float-left mr-1">
+                      WoWDB <i class="fas fa-external-link-square-alt"></i>
+                    </a>
+                    <a href="http://www.wowhead.com/npc={{ item.ID }}" target="_blank" class="float-left">
+                      WoWHead <i class="fas fa-external-link-square-alt"></i>
+                    </a>
+                  </p>
+              </mat-list-item>
+            </mat-list>
+               
+          </div>
+        </div>
+        <div class="col-md-6">
+          <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions"></wah-data-table>
+        </div>
+      </div>   
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="getItem()" class="backdrop" (click)="close()">
+</div>

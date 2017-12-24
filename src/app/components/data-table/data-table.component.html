@@ -14,18 +14,22 @@
   <tbody>
     <tr *ngFor="let d of data | slice:getFromValue():getToValue()">
       <td *ngFor="let c of columns;">
-        <span *ngIf="d[c.key]" [ngSwitch]="c.dataType">
+        <span [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
             <a href="#" rel="item={{ d.itemID }}">{{ d[c.key] }} <span *ngIf="isCrafting && d.rank"> - {{ d.rank }}</span></a>
           </span>
           <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
           <span *ngSwitchCase="'gold'">{{ d[c.key] | gold}}</span>
           <span *ngSwitchCase="'action'">
-            <ul>
-              <li *ngFor="let action of d.actions">
-                {{ action }}
-              </li>
-            </ul>
+            <button *ngIf="d.itemID" mat-raised-button (click)="setSelectedItem(d)">
+              select
+            </button>
+            <button *ngIf="d.itemID" mat-raised-button>
+              Buy
+            </button>
+            <button mat-raised-button>
+                Go to WoWhead
+              </button>
           </span>
           <span *ngSwitchDefault>{{ d[c.key] }}</span>
         </span>

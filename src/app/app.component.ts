@@ -23,4 +23,8 @@ export class AppComponent {
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
   }
+
+  isItemSelected(): boolean  {
+    return SharedService.selectedItemId ? true : false;
+  }
 }
