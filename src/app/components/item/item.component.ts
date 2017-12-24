@@ -11,6 +11,7 @@ import { WowdbService } from '../../services/wowdb.service';
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements OnInit {
+  // TODO: https://github.com/d3/d3 with item price range
   wowDBItem: any;
   columns: Array<ColumnDescription> = [
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},

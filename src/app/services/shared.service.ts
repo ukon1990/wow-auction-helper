@@ -19,7 +19,7 @@ export class SharedService {
   public static recipes: Array<Recipe> = new Array<Recipe>();
   public static items: Map<number, Item> = new Map<number, Item>();
   public static realms: Map<string, Realm> = new Map<string, Realm>();
-  public static selectedItemId = 124120;
+  public static selectedItemId: number;
 
   public static dashboards: Array<Dashboard> = new Array<Dashboard>();
 

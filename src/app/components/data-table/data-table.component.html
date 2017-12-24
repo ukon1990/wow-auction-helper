@@ -20,6 +20,7 @@
           </span>
           <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
           <span *ngSwitchCase="'gold'">{{ d[c.key] | gold}}</span>
+          <span *ngSwitchCase="'percent'">{{ d[c.key] | percent }}</span>
           <span *ngSwitchCase="'action'">
             <button *ngIf="d.itemID" mat-raised-button (click)="setSelectedItem(d)">
               select
