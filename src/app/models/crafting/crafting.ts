@@ -17,6 +17,14 @@ export class Crafting {
     try {
       recipe.cost = 0;
       recipe.roi = 0;
+      if (SharedService.auctionItemsMap[recipe.itemID]) {
+        recipe.mktPrice = SharedService.auctionItemsMap[recipe.itemID].mktPrice;
+        recipe.buyout = SharedService.auctionItemsMap[recipe.itemID].buyout;
+        recipe.avgDailySold = SharedService.auctionItemsMap[recipe.itemID].avgDailySold;
+        recipe.regionSaleRate = SharedService.auctionItemsMap[recipe.itemID].regionSaleRate;
+        recipe.quantityTotal = SharedService.auctionItemsMap[recipe.itemID].quantityTotal;
+        recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
+      }
       recipe.reagents.forEach(r => {
 
         if (!SharedService.auctionItemsMap[r.itemID] && SharedService.tsm[r.itemID]) {

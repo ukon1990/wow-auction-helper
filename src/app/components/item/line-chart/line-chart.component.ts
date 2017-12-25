@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 import { Auction } from '../../../models/auction/auction';
+import { SharedService } from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-line-chart',
@@ -53,7 +54,7 @@ export class LineChartComponent implements OnInit {
     g.append('g')
       .call(d3.axisLeft(y))
       .append('text')
-      .attr('fill', '#000')
+      .attr('fill', this.getColor())
       .attr('transform', 'rotate(-90)')
       .attr('y', 6)
       .attr('dy', '0.71em')
@@ -63,11 +64,14 @@ export class LineChartComponent implements OnInit {
     g.append('path')
       .datum(this.data)
       .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
+      .attr('stroke', this.getColor())
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', 1.5)
       .attr('d', line);
   }
 
+  getColor(): string {
+    return SharedService.user.isDarkMode ? 'white' : 'black';
+  }
 }

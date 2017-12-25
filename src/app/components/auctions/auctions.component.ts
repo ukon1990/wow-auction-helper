@@ -12,9 +12,11 @@ export class AuctionsComponent implements OnInit {
   columns: Array<ColumnDescription> = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'owner', title: 'Owner', dataType: ''},
-    {key: 'quantityTotal', title: 'Stock', dataType: ''},
+    {key: 'quantityTotal', title: 'Stock', dataType: 'number'},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: 'bid', title: 'Bid', dataType: 'gold'},
+    {key: 'mktPrice', title: 'Market value', dataType: 'gold'},
+    {key: 'avgDailySold', title: 'Daily sold', dataType: 'number'},
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
     {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
   ];

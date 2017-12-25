@@ -19,6 +19,16 @@ export class ItemComponent implements OnInit {
     {key: 'quantity', title: 'Size', dataType: ''},
     {key: 'owner', title: 'Owner', dataType: ''}
   ];
+  /*
+    <td>NPC</td>
+    <td>WoWDB</td>
+    <td>WoWHead</td>
+  */
+  npcColumns: Array<ColumnDescription> = [
+    {key: 'Name', title: 'NPC', dataType: ''},
+    {key: 'ID', title: 'WoWDB', dataType: 'wdb-link'},
+    {key: 'ID', title: 'WoWHead', dataType: 'whead-link'}
+  ];
 
   constructor(private _wowDBService: WowdbService) {
   }
@@ -31,6 +41,10 @@ export class ItemComponent implements OnInit {
     if (this.auctionItemExists()) {
       this.getAuctionItem().auctions.sort((a, b) => a.buyout / a.quantity - b.buyout / b.quantity);
     }
+  }
+
+  isDarkMode(): boolean {
+    return SharedService.user.isDarkMode;
   }
 
   /* istanbul ignore next */

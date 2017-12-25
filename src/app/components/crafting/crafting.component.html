@@ -1,5 +1,44 @@
-<p>
-  crafting works!
-</p>
-Filtering menu inc <br>
+{{ this.searchForm.value | json }}
+<form [formGroup]="searchForm" (ngSubmit)="filter()">
+  <mat-form-field>
+    <input matInput placeholder="Name" formControlName="searchQuery" type="text">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select placeholder="Profession" formControlName="profession">
+      <mat-option value="All">All</mat-option>
+      <mat-option *ngFor="let i of professions" [value]="i">
+        {{ i }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="onlyMyRecipes">Only known recipes</mat-checkbox>
+
+  <mat-form-field>
+    <input matInput placeholder="Minimum ROI" formControlName="profit" type="number" matTooltip="Minimum return on investment">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Sale rate" formControlName="demand" type="number">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Minimum avg daily sold" formControlName="minSold" type="number">
+  </mat-form-field>
+
+  <mat-checkbox formControlName="craftManually">Craft manually</mat-checkbox>
+
+  <mat-form-field>
+    <mat-select placeholder="Craft materials" matTooltip="
+            Calculates profit/ROI with the assumption, that you will craft 
+            any sub-material you can. Given that it matches your criteria" formControlName="craftManually">
+      <mat-option value="All">All</mat-option>
+      <mat-option *ngFor="let i of craftManually" [value]="i">
+        {{ i }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button type="submit" mat-raised-button>Filter</button>
+</form>
 <wah-data-table [data]="getRecipes()" [columns]="columns" [isCrafting]="true"></wah-data-table>
