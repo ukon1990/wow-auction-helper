@@ -18,6 +18,7 @@ export class AuctionsComponent implements OnInit {
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
     {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
   ];
+  name: string;
 
   constructor() { }
 
@@ -25,7 +26,18 @@ export class AuctionsComponent implements OnInit {
   }
 
   getAuctions(): Array<AuctionItem> {
-    return SharedService.auctionItems;
+    return SharedService.auctionItems.filter(i => this.isMatch(i));
+  }
+
+  isMatch(auctionItem: AuctionItem): boolean {
+    if (!this.name || this.name.length === 0) {
+      return true;
+    }
+
+    return auctionItem.name
+      .toLowerCase()
+      .indexOf(
+        this.name.toLowerCase()) > -1;
   }
 
 }

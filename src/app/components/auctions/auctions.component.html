@@ -1,5 +1,4 @@
-<p>
-  crafting works!
-</p>
-Filtering menu inc <br>
+<mat-form-field class="row col-md-12">
+  <input matInput placeholder="Item name" [(ngModel)]="name">
+</mat-form-field>
 <wah-data-table [data]="getAuctions()" [columns]="columns"></wah-data-table>

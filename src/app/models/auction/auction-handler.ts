@@ -48,6 +48,9 @@ export class AuctionHandler {
   }
 
   private static updateAuctionItem(auction: Auction): void {
+    if (auction.buyout === 0) {
+      return;
+    }
     const ai = SharedService.auctionItemsMap[auction.item];
     if (ai.buyout === 0 || (ai.buyout > auction.buyout && auction.buyout > 0)) {
       ai.owner = auction.owner;

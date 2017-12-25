@@ -16,7 +16,6 @@ export class AuctionsService {
       .toPromise()
       .then(a => {
         AuctionHandler.organize(a['auctions']);
-        console.log(SharedService.auctionItems);
         console.log('Auction download is completed');
 
         // Dashboard stuff

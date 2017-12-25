@@ -8,36 +8,53 @@
     <mat-card-content>
       <div class="row" *ngIf="getAuctionItem()">
         <div class="col-md-6">
-          <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout }}<br>
-          <strong>Stock:</strong> {{ getAuctionItem().quantityTotal }} pcs<br>
+          <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}}
+          <br>
+          <strong>Stock:</strong> {{ getAuctionItem().quantityTotal }} pcs
+          <br>
           <div class="clearfix">
-            <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold }}<br>
-            <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}<br>
-            <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}<br>
-            <strong>Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}<br>
+            <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold }}
+            <br>
+            <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}
+            <br>
+            <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}
+            <br>
+            <strong>Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}
+            <br>
           </div>
-          <div *ngIf="wowDBItem && wowDBItem?.DroppedBy" class="dropped-by">
-            <strong>Dropped by:</strong>
-            <mat-list>
-              <mat-list-item *ngFor="let item of wowDBItem.DroppedBy">
-                  <h3 matLine> {{ item.Name }}</h3>
-                  <p matLine>
-                    <a href="http://www.wowdb.com/npcs/{{ item.ID }}" target="_blank" class="float-left mr-1">
-                      WoWDB <i class="fas fa-external-link-square-alt"></i>
-                    </a>
-                    <a href="http://www.wowhead.com/npc={{ item.ID }}" target="_blank" class="float-left">
-                      WoWHead <i class="fas fa-external-link-square-alt"></i>
-                    </a>
-                  </p>
-              </mat-list-item>
-            </mat-list>
-               
-          </div>
+
+          <wah-line-chart *ngIf="getAuctionItem()" [data]="getAuctionItem().auctions">
+          </wah-line-chart>
         </div>
         <div class="col-md-6">
-          <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions"></wah-data-table>
+          <mat-tab-group>
+            <mat-tab label="Auctions" *ngIf="getAuctionItem()">
+              <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Dropped by" *ngIf="wowDBItem && wowDBItem?.DroppedBy">
+
+              <div class="dropped-by">
+                <mat-list>
+                  <mat-list-item *ngFor="let item of wowDBItem.DroppedBy">
+                    <h3 matLine> {{ item.Name }}</h3>
+                    <p matLine>
+                      <a href="http://www.wowdb.com/npcs/{{ item.ID }}" target="_blank" class="float-left mr-1">
+                        WoWDB
+                        <i class="fas fa-external-link-square-alt"></i>
+                      </a>
+                      <a href="http://www.wowhead.com/npc={{ item.ID }}" target="_blank" class="float-left">
+                        WoWHead
+                        <i class="fas fa-external-link-square-alt"></i>
+                      </a>
+                    </p>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
         </div>
-      </div>   
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

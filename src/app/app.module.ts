@@ -33,6 +33,7 @@ import { MaterialsComponent } from './components/data-table/materials/materials.
 import { ShoppingCartComponent } from './components/navbar/shopping-cart/shopping-cart.component';
 import { ItemComponent } from './components/item/item.component';
 import { WowdbService } from './services/wowdb.service';
+import { LineChartComponent } from './components/item/line-chart/line-chart.component';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { WowdbService } from './services/wowdb.service';
     DownloadComponent,
     MaterialsComponent,
     ShoppingCartComponent,
-    ItemComponent
+    ItemComponent,
+    LineChartComponent
   ],
   imports: [
     BrowserModule,
