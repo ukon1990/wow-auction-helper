@@ -61,7 +61,6 @@ export class ItemComponent implements OnInit {
 
   close(): void {
     SharedService.selectedItemId = undefined;
-    console.log('closed?');
   }
 
   auctionItemExists(): boolean {

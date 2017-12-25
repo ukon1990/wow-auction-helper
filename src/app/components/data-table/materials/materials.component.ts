@@ -29,4 +29,8 @@ export class MaterialsComponent implements OnInit {
   isAtAH(itemID: number): boolean {
     return SharedService.auctionItemsMap[itemID] ? true : false;
   }
+
+  setSelectedItem(reagent: Reagent): void {
+    SharedService.selectedItemId = reagent.itemID;
+  }
 }

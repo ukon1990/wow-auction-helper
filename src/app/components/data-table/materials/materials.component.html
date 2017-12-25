@@ -1,8 +1,8 @@
-<span *ngFor="let r of reagents">
-    {{ r.count }} x 
-    <a href="" rel="item={{ r.itemID }}">
-        {{ r.name }}
-    </a> 
-    {{ getItemValue(r.itemID) | gold }} per item
-    <br>
-</span>
+<div class="row col-md-12" *ngFor="let r of reagents">
+  {{ r.count }} x
+  <a href="" rel="item={{ r.itemID }}">
+    {{ r.name }}
+  </a>
+  {{ getItemValue(r.itemID) | gold }} per item
+  <span class="ml-auto" (click)="setSelectedItem(r)"><i class="fas fa-eye" ></i></span>
+</div>

@@ -1,4 +1,3 @@
-{{ this.searchForm.value | json }}
 <form [formGroup]="searchForm" (ngSubmit)="filter()">
   <mat-form-field>
     <input matInput placeholder="Name" formControlName="searchQuery" type="text">

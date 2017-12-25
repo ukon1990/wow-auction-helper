@@ -40,20 +40,12 @@
           <span *ngSwitchCase="'percent'">{{ d[c.key] | percent }}</span>
           <span *ngSwitchCase="'number'">{{ d[c.key] | number }}</span>
           <span *ngSwitchCase="'action'">
-            <button *ngIf="d.itemID" mat-raised-button (click)="setSelectedItem(d)" matTooltip="View item details">
+            <button *ngIf="d.itemID" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
               <i class="fas fa-eye"></i>
             </button>
-            <button *ngIf="d.itemID" mat-raised-button matTooltip="Go to Web AH and buy">
+            <button *ngIf="d.itemID" mat-icon-button matTooltip="Go to Web AH and buy">
               <i class="fas fa-shopping-cart"></i>
             </button>
-            <a href="http://www.wowdb.com/items/{{ d.itemID }}" target="_blank" mat-raised-button>
-              WoWDB
-              <i class="fas fa-external-link-square-alt"></i>
-            </a>
-            <a href="http://www.wowhead.com/item={{ d.itemID }}" target="_blank" mat-raised-button>
-              WoWHead
-              <i class="fas fa-external-link-square-alt"></i>
-            </a>
           </span>
           <span *ngSwitchDefault>{{ d[c.key] }}</span>
         </span>
