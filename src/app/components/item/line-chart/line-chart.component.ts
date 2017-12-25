@@ -30,7 +30,7 @@ export class LineChartComponent implements OnInit {
         return x(i);
       })
       .y((d) => {
-        return y(d.buyout / d.quantity / 1000);
+        return y(d.buyout / d.quantity / 10000);
       });
 
     x.domain(
@@ -41,7 +41,7 @@ export class LineChartComponent implements OnInit {
     y.domain(
       d3.extent(
         this.data, (d) => {
-          return d.buyout / d.quantity / 1000;
+          return d.buyout / d.quantity / 10000;
         }));
 
     g.append('g')
