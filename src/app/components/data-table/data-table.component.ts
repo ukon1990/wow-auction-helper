@@ -5,8 +5,10 @@ import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
 import { Auction } from '../../models/auction/auction';
 import { Recipe } from '../../models/crafting/recipe';
+import { User } from '../../models/user/user';
+import * as $WowheadPower from '../../../assets/js/power';
+import { SafeResourceUrl } from '@angular/platform-browser/src/security/dom_sanitization_service';
 
-declare const $WowheadPower;
 @Component({
   selector: 'wah-data-table',
   templateUrl: './data-table.component.html',
@@ -19,6 +21,12 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() data: Array<any>;
   pageEvent: PageEvent;
   pageRows: Array<number> = [10, 20, 40, 80, 100];
+  auctionDuration = {
+    'VERY_LONG': '12h+',
+    'LONG': '2-12h',
+    'MEDIUM': '30m-2h',
+    'SHORT': '<30m'
+  };
 
   constructor() { }
 
@@ -60,8 +68,18 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   /* istanbul ignore next */
+  getUser(): User {
+    return SharedService.user;
+  }
+
+  /* istanbul ignore next */
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
+  }
+
+  getIcon(): SafeResourceUrl {
+    // background-image: url("https://render-eu.worldofwarcraft.com/icons/56/inv_herbalism_70_dreamleaf.jpg");
+    return null;
   }
 
   /* istanbul ignore next */

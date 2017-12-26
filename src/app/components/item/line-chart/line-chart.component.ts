@@ -13,6 +13,7 @@ export class LineChartComponent implements OnInit {
 
   constructor() { }
 
+  /* istanbul ignore next */
   ngOnInit() {
     const svg = d3.select('svg'),
       margin = { top: 20, right: 20, bottom: 30, left: 50 },
@@ -71,6 +72,7 @@ export class LineChartComponent implements OnInit {
       .attr('d', line);
   }
 
+  /* istanbul ignore next */
   getColor(): string {
     return SharedService.user.isDarkMode ? 'white' : 'black';
   }

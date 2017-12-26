@@ -1,4 +1,4 @@
-<form [formGroup]="searchForm" (ngSubmit)="filter()">
+<form [formGroup]="searchForm">
   <mat-form-field>
     <input matInput placeholder="Name" formControlName="searchQuery" type="text">
   </mat-form-field>
@@ -38,6 +38,6 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <button type="submit" mat-raised-button>Filter</button>
+  <button type="button" (click)="searchForm.reset()" mat-raised-button>Reset</button>
 </form>
 <wah-data-table [data]="getRecipes()" [columns]="columns" [isCrafting]="true"></wah-data-table>

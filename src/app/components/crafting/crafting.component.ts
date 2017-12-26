@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Recipe } from '../../models/crafting/recipe';
 import { SharedService } from '../../services/shared.service';
 import { ColumnDescription } from '../../models/column-description';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'wah-crafting',
   templateUrl: './crafting.component.html',
   styleUrls: ['./crafting.component.scss']
 })
-export class CraftingComponent implements OnInit {
+export class CraftingComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
+  formChanges: Subscription;
   filtered: Array<Recipe> = new Array<Recipe>();
   professions = [
     'First Aid',
@@ -26,17 +29,7 @@ export class CraftingComponent implements OnInit {
     'Inscription'
   ].sort();
   craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
-  columns: Array<ColumnDescription> = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'reagents', title: 'Materials', dataType: 'materials' },
-    { key: 'cost', title: 'Cost', dataType: 'gold' },
-    { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-    { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-    { key: 'roi', title: 'ROI', dataType: 'gold' },
-    { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
-    { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
-  ];
+  columns: Array<ColumnDescription> = [];
 
   constructor(private _formBuilder: FormBuilder) {
     const query = localStorage.getItem('query_crafting') === null ?
@@ -56,41 +49,67 @@ export class CraftingComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.addColumns();
+    this.formChanges = this.searchForm.valueChanges.subscribe(() => {
+      localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
+    });
+  }
+
+  ngOnDestroy() {
+    this.formChanges.unsubscribe();
+  }
+
+  addColumns(): void {
+    this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
+    this.columns.push({ key: 'reagents', title: 'Materials', dataType: 'materials' });
+    this.columns.push({ key: 'cost', title: 'Cost', dataType: 'gold' });
+    this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
+
+    if (SharedService.user.apiToUse === 'tsm') {
+      this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
+    }
+
+    this.columns.push({ key: 'roi', title: 'ROI', dataType: 'gold' });
+    if (SharedService.user.apiToUse === 'tsm') {
+      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
+      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
+      this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
+    }
   }
 
   getRecipes(): Array<Recipe> {
-    if (this.filtered.length > 0) {
-      return this.filtered;
-    }
-    return SharedService.recipes;
+    return this.filter();
   }
 
-  filter(): void {
-    localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
-    this.filtered = SharedService.recipes.filter(i => this.isMatch(i));
+  filter(): Array<Recipe> {
+    return SharedService.recipes.filter(i => this.isMatch(i));
   }
 
   isMatch(recipe: Recipe): boolean {
     let match = true;
 
-    if (this.searchForm.value.searchQuery.length > 0 &&
+    if (this.searchForm.value.searchQuery !== null && this.searchForm.value.searchQuery.length > 0 &&
       recipe.name.toLowerCase().indexOf(this.searchForm.value.searchQuery.toLowerCase()) === -1) {
       match = false;
     }
 
-    if (match && this.searchForm.value.profit !== 0 && recipe.roi < this.searchForm.value.profit * 10000) {
+    if (match && this.searchForm.value.profit !== null &&
+      this.searchForm.value.profit !== 0 && recipe.roi < this.searchForm.value.profit * 10000) {
       match = false;
     }
 
-    if (match && this.searchForm.value.demand !== 0 && recipe.regionSaleRate < this.searchForm.value.demand / 100) {
+    if (match && this.searchForm.value.demand !== null &&
+      this.searchForm.value.demand !== 0 && recipe.regionSaleRate < this.searchForm.value.demand / 100) {
       match = false;
     }
 
-    if (match && this.searchForm.value.minSold !== 0 && recipe.avgDailySold < this.searchForm.value.minSold) {
+    if (match && this.searchForm.value.minSold !== null &&
+      this.searchForm.value.minSold !== 0 && recipe.avgDailySold < this.searchForm.value.minSold) {
       match = false;
     }
 
-    if (match && this.searchForm.value.profession !== 'All' && this.searchForm.value.profession !== recipe.profession) {
+    if (match && this.searchForm.value.profession !== null &&
+      this.searchForm.value.profession !== 'All' && this.searchForm.value.profession !== recipe.profession) {
       match = false;
     }
 

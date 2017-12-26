@@ -28,4 +28,8 @@ export class DownloadComponent implements OnInit {
   getDownloading() {
     return SharedService.downloading;
   }
+
+  isDownloading(): boolean {
+    return SharedService.isDownloading();
+  }
 }

@@ -40,18 +40,26 @@
         </div>
       </div>
     </mat-card-content>
-    <mat-card-footer>
-      <mat-card-actions>
-        <a href="http://www.wowdb.com/items/{{ getItem().itemID }}" target="_blank" class="float-right" mat-raised-button>
+    <mat-card-actions>
+        <button (click)="openInNewTab('http://www.wowdb.com/items/' + getItem().id)" mat-raised-button>
           WoWDB
           <i class="fas fa-external-link-square-alt"></i>
-        </a>
-        <a href="http://www.wowhead.com/item={{ getItem().itemID }}" target="_blank" class="float-right" mat-raised-button>
+        </button>
+        <button (click)="openInNewTab('http://www.wowhead.com/item=' + getItem().id)" mat-raised-button>
           WoWHead
           <i class="fas fa-external-link-square-alt"></i>
-        </a>
+        </button>
+        <button mat-icon-button matTooltip="Add to shopping list">
+          Add to shopping list
+          <i class="fas fa-cart-plus"></i>
+        </button>
+        <button
+          (click)="openInNewTab('https://' + getUser().region + '.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId=' + getItem().id)"
+          mat-raised-button>
+          Go to Web AH
+          <i class="fas fa-shopping-cart"></i>
+        </button>
       </mat-card-actions>
-    </mat-card-footer>
   </mat-card>
 </div>
 
