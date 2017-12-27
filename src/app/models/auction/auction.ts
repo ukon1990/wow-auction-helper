@@ -39,4 +39,15 @@ export class Auction {
   context: number;
   rand: number;
   seed: number;
+  bonusLists?: Array<Bonus>;
+  modifiers?: Array<Modifiers>;
+}
+
+class Bonus {
+  bonusListId: number;
+}
+
+class Modifiers {
+  type: number;
+  value: number;
 }

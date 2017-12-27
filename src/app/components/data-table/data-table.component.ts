@@ -30,7 +30,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   constructor() { }
 
   ngAfterViewInit() {
-    this.initWoWhead();
   }
 
   ngOnChanges(change) {
