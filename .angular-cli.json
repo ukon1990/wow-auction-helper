@@ -22,9 +22,7 @@
         "styles": [
           "scss/styles.scss"
         ],
-        "scripts": [
-          "./src/assets/js/power.js"
-        ],
+        "scripts": [],
         "environmentSource": "environments/environment.ts",
         "environments": {
           "dev": "environments/environment.ts",

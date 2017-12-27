@@ -6,8 +6,7 @@ import { AuctionItem } from '../../models/auction/auction-item';
 import { Auction } from '../../models/auction/auction';
 import { Recipe } from '../../models/crafting/recipe';
 import { User } from '../../models/user/user';
-import * as $WowheadPower from '../../../assets/js/power';
-import { SafeResourceUrl } from '@angular/platform-browser/src/security/dom_sanitization_service';
+import { SafeResourceUrl } from '@angular/platform-browser/';
 
 @Component({
   selector: 'wah-data-table',
@@ -57,7 +56,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   pageChange(event: PageEvent): void {
     this.pageEvent = event;
-    this.initWoWhead(100);
   }
 
   getToValue(): number {
@@ -80,14 +78,5 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   getIcon(): SafeResourceUrl {
     // background-image: url("https://render-eu.worldofwarcraft.com/icons/56/inv_herbalism_70_dreamleaf.jpg");
     return null;
-  }
-
-  /* istanbul ignore next */
-  private initWoWhead(time?: number): void {
-    if ($WowheadPower) {
-      setTimeout(() => {
-        $WowheadPower.init();
-      }, time ? time : 1000);
-    }
   }
 }
