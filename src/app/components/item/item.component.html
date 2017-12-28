@@ -1,6 +1,7 @@
 <div id="item-view" *ngIf="getItem()">
   <mat-card>
     <mat-card-header>
+      <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id"></wah-icon>
       <mat-card-title>
         {{ getItem().name }}
       </mat-card-title>

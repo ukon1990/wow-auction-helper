@@ -39,10 +39,6 @@ export class ItemComponent implements OnInit {
     this._wowDBService.getItem(SharedService.selectedItemId)
       .then(i => this.wowDBItem = i)
       .catch(e => console.error('Could not get the item from WOW DB', e));
-
-    if (this.auctionItemExists()) {
-      this.getAuctionItem().auctions.sort((a, b) => a.buyout / a.quantity - b.buyout / b.quantity);
-    }
   }
 
   openInNewTab(url) {

@@ -15,10 +15,10 @@ export class MaterialsComponent implements OnInit {
   ngOnInit() {
   }
 
-  getItemValue(itemID: number) {
+  getItemValue(itemID: number, count: number) {
     if (SharedService.user.customPrices[itemID]) {
       return SharedService.user.customPrices[itemID];
-    } else if (this.isAtAH(itemID)) {
+    } else if (this.isEnoughAtAH(itemID, count)) {
       return SharedService.auctionItemsMap[itemID].buyout;
     } else if (SharedService.user.apiToUse === 'tsm' && SharedService.tsm[itemID]) {
       return SharedService.tsm[itemID].MarketValue;
@@ -26,8 +26,15 @@ export class MaterialsComponent implements OnInit {
     return 0;
   }
 
-  isAtAH(itemID: number): boolean {
-    return SharedService.auctionItemsMap[itemID] ? true : false;
+  isEnoughAtAH(itemID: number, count): boolean {
+    if (this.getAtAHCount(itemID) >= count) {
+      return true;
+    }
+    return false;
+  }
+
+  getAtAHCount(itemID: number): number {
+    return SharedService.auctionItemsMap[itemID] ? SharedService.auctionItemsMap[itemID].quantityTotal : 0;
   }
 
   setSelectedItem(reagent: Reagent): void {

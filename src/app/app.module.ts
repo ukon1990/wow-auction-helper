@@ -34,6 +34,7 @@ import { ShoppingCartComponent } from './components/navbar/shopping-cart/shoppin
 import { ItemComponent } from './components/item/item.component';
 import { WowdbService } from './services/wowdb.service';
 import { LineChartComponent } from './components/item/line-chart/line-chart.component';
+import { IconComponent } from './components/item/icon/icon.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { LineChartComponent } from './components/item/line-chart/line-chart.comp
     MaterialsComponent,
     ShoppingCartComponent,
     ItemComponent,
-    LineChartComponent
+    LineChartComponent,
+    IconComponent
   ],
   imports: [
     BrowserModule,

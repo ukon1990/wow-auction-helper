@@ -13,7 +13,7 @@ export class AuctionHandler {
   public static organize(auctions: Array<Auction>): void {
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
-      return a.buyout - b.buyout;
+      return a.buyout / a.quantity - b.buyout / b.quantity;
     });
 
     SharedService.auctions = auctions;

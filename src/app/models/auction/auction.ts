@@ -39,6 +39,10 @@ export class Auction {
   context: number;
   rand: number;
   seed: number;
+  petSpeciesId?: number;
+  petBreedId?: number;
+  petLevel?: number;
+  petQualityId?: number;
   bonusLists?: Array<Bonus>;
   modifiers?: Array<Modifiers>;
 }

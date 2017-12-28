@@ -6,7 +6,6 @@ import { AuctionItem } from '../../models/auction/auction-item';
 import { Auction } from '../../models/auction/auction';
 import { Recipe } from '../../models/crafting/recipe';
 import { User } from '../../models/user/user';
-import { SafeResourceUrl } from '@angular/platform-browser/';
 
 @Component({
   selector: 'wah-data-table',
@@ -15,6 +14,7 @@ import { SafeResourceUrl } from '@angular/platform-browser/';
 })
 export class DataTableComponent implements AfterViewInit, OnChanges {
 
+  @Input() id: number;
   @Input() isCrafting: boolean;
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;
@@ -72,10 +72,5 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   /* istanbul ignore next */
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
-  }
-
-  getIcon(): SafeResourceUrl {
-    // background-image: url("https://render-eu.worldofwarcraft.com/icons/56/inv_herbalism_70_dreamleaf.jpg");
-    return null;
   }
 }
