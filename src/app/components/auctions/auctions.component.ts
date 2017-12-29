@@ -74,7 +74,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
     if (auctionItem.mktPrice === 0) {
       return false;
     }
-    return Math.round((auctionItem.mktPrice / auctionItem.buyout) * 100) <= this.form.value.mktPrice;
+    return Math.round((auctionItem.buyout / auctionItem.mktPrice) * 100) <= this.form.value.mktPrice;
   }
 
   isSaleRateMatch(auctionItem: AuctionItem): boolean {
