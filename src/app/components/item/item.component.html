@@ -9,11 +9,12 @@
     <mat-card-content>
       <div class="row" *ngIf="getAuctionItem()">
         <div class="col-md-6">
-          <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}}
+          <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}} 
+          <span *ngIf="isUsingAPI()">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }})</span>
           <br>
           <strong>Stock:</strong> {{ getAuctionItem().quantityTotal | number }} pcs
           <br>
-          <div class="clearfix">
+          <div *ngIf="isUsingAPI()" class="clearfix">
             <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold | number }}
             <br>
             <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}

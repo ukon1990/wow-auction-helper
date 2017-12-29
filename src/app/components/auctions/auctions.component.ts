@@ -31,12 +31,13 @@ export class AuctionsComponent implements OnInit, OnDestroy {
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
 
     this.form = formBuilder.group({
-      'name': filter && filter.name ? filter.name : '',
-      'itemClass': filter  ? filter.itemClass : -1,
-      'itemSubClass': filter ? filter.itemSubClass : -1,
-      'mktPrice': filter && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
-      'saleRate': filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
-      'onlyVendorSellable': filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false
+      name: filter && filter.name ? filter.name : '',
+      itemClass: filter  ? filter.itemClass : -1,
+      itemSubClass: filter ? filter.itemSubClass : -1,
+      mktPrice: filter && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
+      saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
+      avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : 0,
+      onlyVendorSellable: filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false
     });
   }
 
@@ -60,7 +61,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
     return this.isNameMatch(auctionItem) &&
       this.isItemClassMatch(auctionItem) &&
       this.isSaleRateMatch(auctionItem) &&
-      this.isBelowMarketValue(auctionItem);
+      this.isBelowMarketValue(auctionItem) &&
+      this.isDailySoldMatch(auctionItem);
   }
 
   isNameMatch(auctionItem: AuctionItem): boolean {
@@ -82,6 +84,13 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   isSaleRateMatch(auctionItem: AuctionItem): boolean {
     if (this.form.value.saleRate && this.form.value.saleRate > 0) {
       return auctionItem.regionSaleRate >= this.form.value.saleRate / 100;
+    }
+    return true;
+  }
+
+  isDailySoldMatch(auctionItem: AuctionItem): boolean {
+    if (this.form.value.avgDailySold && this.form.value.avgDailySold > 0) {
+      return auctionItem.avgDailySold >= this.form.value.avgDailySold;
     }
     return true;
   }

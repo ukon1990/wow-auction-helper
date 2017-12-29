@@ -25,8 +25,8 @@
           <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
           <span *ngSwitchCase="'gold'">
             {{ d[c.key] | gold}}
-            <span *ngIf="c.key === 'buyout'">
-              ({{ d.buyout / d.mktPrice| percent }} of MV)
+            <span *ngIf="c.key === 'buyout' && d.mktPrice">
+              ({{ d.buyout / d.mktPrice | percent }} of MV)
             </span>
           </span>
           <span *ngSwitchCase="'gold-per-item'">

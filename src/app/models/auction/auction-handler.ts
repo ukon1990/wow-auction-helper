@@ -48,9 +48,10 @@ export class AuctionHandler {
   }
 
   private static updateAuctionItem(auction: Auction): void {
+    /* TODO: Should this, or should it not be excluded?
     if (auction.buyout === 0) {
       return;
-    }
+    }*/
     const ai = SharedService.auctionItemsMap[auction.item];
     if (ai.buyout === 0 || (ai.buyout > auction.buyout && auction.buyout > 0)) {
       ai.owner = auction.owner;
@@ -69,6 +70,7 @@ export class AuctionHandler {
     tmpAuc.buyout = auction.buyout / auction.quantity;
     tmpAuc.bid = auction.bid / auction.quantity;
     tmpAuc.quantityTotal += auction.quantity;
+    tmpAuc.auctions.push(auction);
     return tmpAuc;
   }
 

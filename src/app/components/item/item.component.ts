@@ -59,6 +59,10 @@ export class ItemComponent implements OnInit {
     return SharedService.user;
   }
 
+  isUsingAPI(): boolean {
+    return this.getUser().apiToUse !== 'none';
+  }
+
 
 
   /* istanbul ignore next */
