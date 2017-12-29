@@ -71,7 +71,9 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   }
 
   isBelowMarketValue(auctionItem: AuctionItem): boolean {
-    if (auctionItem.mktPrice === 0) {
+    if (this.form.value.mktPrice === null || this.form.value.mktPrice === 0) {
+      return true;
+    } else if (auctionItem.mktPrice === 0) {
       return false;
     }
     return Math.round((auctionItem.buyout / auctionItem.mktPrice) * 100) <= this.form.value.mktPrice;
