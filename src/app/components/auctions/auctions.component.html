@@ -1,4 +1,44 @@
-<mat-form-field class="row col-md-12">
-  <input matInput placeholder="Item name" [(ngModel)]="name">
-</mat-form-field>
+{{ form.value | json }}
+<form class="form-inline" [formGroup]="form">
+  <mat-form-field>
+    <input matInput placeholder="Item name" formControlName="name">
+  </mat-form-field>
+
+  <div *ngIf="isUsinAPI()" class="ml-2 mr-2">
+    <mat-form-field>
+      <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value" formControlName="mktPrice">
+    </mat-form-field>
+  </div>
+
+  <mat-form-field class="ml-2 mr-2">
+    <mat-select placeholder="Item class" formControlName="itemClass">
+      <mat-option value="-1">
+        All
+      </mat-option>
+      <mat-option *ngFor="let class of itemClasses.classes; let i = index;" [value]="i">
+        {{ class.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="itemClasses.classes[form.value.itemClass]" class="ml-2 mr-2">
+    <mat-select placeholder="Item sub class" formControlName="itemSubClass">
+      <mat-option value="-1">
+        All
+      </mat-option>
+      <mat-option *ngFor="let class of itemClasses.classes[form.value['itemClass']].subclasses; let i = index;" [value]="i">
+        {{ class.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox class="ml-2 mr-2" formControlName="onlyVendorSellable" matTooltip="Only display items below the vendor sell price">
+    Below vendor price
+  </mat-checkbox>
+
+  <button class="btn btn-default mat-elevation-z5 ml-2 mr-2" type="button" (click)="form.reset()">Reset</button>
+</form>
 <wah-data-table id="itemID" [data]="getAuctions()" [columns]="columns"></wah-data-table>
