@@ -35,6 +35,7 @@ import { ItemComponent } from './components/item/item.component';
 import { WowdbService } from './services/wowdb.service';
 import { LineChartComponent } from './components/item/line-chart/line-chart.component';
 import { IconComponent } from './components/item/icon/icon.component';
+import { ResetCalcComponent } from './components/item/reset-calc/reset-calc.component';
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { IconComponent } from './components/item/icon/icon.component';
     ShoppingCartComponent,
     ItemComponent,
     LineChartComponent,
-    IconComponent
+    IconComponent,
+    ResetCalcComponent
   ],
   imports: [
     BrowserModule,

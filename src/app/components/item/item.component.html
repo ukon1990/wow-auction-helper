@@ -11,10 +11,10 @@
         <div class="col-md-6">
           <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}}
           <br>
-          <strong>Stock:</strong> {{ getAuctionItem().quantityTotal }} pcs
+          <strong>Stock:</strong> {{ getAuctionItem().quantityTotal | number }} pcs
           <br>
           <div class="clearfix">
-            <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold }}
+            <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold | number }}
             <br>
             <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}
             <br>
@@ -29,13 +29,16 @@
         </div>
         <div class="col-md-6">
           <mat-tab-group>
-            <mat-tab label="Auctions" *ngIf="getAuctionItem()">
+            <mat-tab label="Auctions ({{ getAuctionItem().quantityTotal | number }})" *ngIf="getAuctionItem()">
               <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">
               </wah-data-table>
             </mat-tab>
             <mat-tab label="Dropped by" *ngIf="wowDBItem && wowDBItem?.DroppedBy">
               <wah-data-table [columns]="npcColumns" [data]="wowDBItem.DroppedBy">
               </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Reset cost calc" *ngIf="getAuctionItem()">
+              <wah-reset-calc [auctionItem]="getAuctionItem()"></wah-reset-calc>
             </mat-tab>
           </mat-tab-group>
         </div>

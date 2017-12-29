@@ -13,8 +13,8 @@
       <td *ngFor="let c of columns;">
         <span [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
-            <wah-icon *ngIf="id" class="float-left" size="36" [id]="d[id]"></wah-icon>
             <a rel="item={{ d.itemID }}" (click)="setSelectedItem(d)">
+              <wah-icon *ngIf="id" class="float-left" size="36" [id]="d[id]"></wah-icon>
               {{ d[c.key] }}
             </a>
             <span *ngIf="isCrafting">
@@ -25,6 +25,9 @@
           <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
           <span *ngSwitchCase="'gold'">
             {{ d[c.key] | gold}}
+          </span>
+          <span *ngSwitchCase="'gold-per-item'">
+              {{ d[c.key] / d.quantity | gold}}
           </span>
           <span *ngSwitchCase="'wdb-link'">
             <a href="http://www.wowdb.com/npcs/{{ d[c.key] }}" target="_blank">

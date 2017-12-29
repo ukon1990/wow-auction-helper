@@ -14,9 +14,13 @@ import { User } from '../../models/user/user';
 export class ItemComponent implements OnInit {
   // TODO: https://github.com/d3/d3 with item price range
   wowDBItem: any;
+  targetBuyoutValue: number;
+
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
+    {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
     {key: 'bid', title: 'Bid', dataType: 'gold'},
     {key: 'quantity', title: 'Size', dataType: ''},
     {key: 'owner', title: 'Owner', dataType: ''}
@@ -54,6 +58,8 @@ export class ItemComponent implements OnInit {
   getUser(): User {
     return SharedService.user;
   }
+
+
 
   /* istanbul ignore next */
   getAuctionItem(): AuctionItem {
