@@ -15,6 +15,7 @@ import { User } from '../../models/user/user';
 export class DataTableComponent implements AfterViewInit, OnChanges {
 
   @Input() id: number;
+  @Input() iconSize: number;
   @Input() isCrafting: boolean;
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;

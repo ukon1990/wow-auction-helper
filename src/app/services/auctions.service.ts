@@ -17,24 +17,6 @@ export class AuctionsService {
       .then(a => {
         AuctionHandler.organize(a['auctions']);
         console.log('Auction download is completed');
-
-        // Dashboard stuff
-        SharedService.dashboards
-          .push(
-          new Dashboard(
-            'Most profitable crafts',
-            Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
-
-        SharedService.dashboards
-          .push(
-          new Dashboard(
-            'Items with highest availability',
-            Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
-        SharedService.dashboards
-          .push(
-          new Dashboard(
-            'Selles with highest volume',
-            Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
       })
       .catch(e => console.error('Auction download failed', e));
   }

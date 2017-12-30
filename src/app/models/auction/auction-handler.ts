@@ -43,10 +43,7 @@ export class AuctionHandler {
     Crafting.calculateCost();
 
     // Dashboard
-    SharedService.dashboards.push(new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
-    SharedService.dashboards.push(new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
-    SharedService.dashboards.push(new Dashboard('Most profitable crafts', Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
-    SharedService.dashboards.push(new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
+    Dashboard.addDashboards();
   }
 
   private static auctionPriceHandler(): AuctionItem {

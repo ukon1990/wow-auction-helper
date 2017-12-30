@@ -3,12 +3,11 @@
 }
 .full-screen {
   z-index: 501 !important;
-  width: 80% !important;
-  right: 10% !important;
-  left: 10% !important;
-  top: 5vh !important;
+  right: 5em !important;
+  left: 5em !important;
+  bottom: 5em !important;
   max-height: 80vh !important;
-  position: fixed;
+  position: fixed !important;
   & .dropped-by .mat-list {
     overflow-y: auto;
     max-height: 25em;

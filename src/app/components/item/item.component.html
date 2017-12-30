@@ -13,7 +13,7 @@
     </mat-card-header>
     <mat-card-content>
       <div class="row" *ngIf="getAuctionItem()">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}} 
           <span *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }})</span>
           <br>
@@ -33,7 +33,7 @@
           <wah-line-chart *ngIf="getAuctionItem()" [data]="getAuctionItem().auctions">
           </wah-line-chart>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8">
           <mat-tab-group>
             <mat-tab label="Auctions ({{ getAuctionItem().quantityTotal | number }})" *ngIf="getAuctionItem()">
               <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">

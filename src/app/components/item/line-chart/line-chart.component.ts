@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
@@ -8,14 +8,14 @@ import { SharedService } from '../../../services/shared.service';
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements OnInit {
+export class LineChartComponent implements AfterViewInit {
   @Input() data: Array<Auction>;
-
+  @ViewChild('svgElement') svgElement: ElementRef;
   constructor() { }
 
   /* istanbul ignore next */
-  ngOnInit() {
-    
+  ngAfterViewInit() {
+    console.log(this.svgElement);
     const svg = d3.select('svg'),
       margin = { top: 20, right: 20, bottom: 30, left: 50 },
       width = +svg.attr('width') - margin.left - margin.right,
@@ -76,5 +76,10 @@ export class LineChartComponent implements OnInit {
   /* istanbul ignore next */
   getColor(): string {
     return SharedService.user.isDarkMode ? 'white' : 'black';
+  }
+
+  /* istanbul ignore next */
+  getWidth(): number {
+    return this.svgElement.nativeElement.parentElement.offsetWidth;
   }
 }
