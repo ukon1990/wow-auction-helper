@@ -36,6 +36,7 @@ import { WowdbService } from './services/wowdb.service';
 import { LineChartComponent } from './components/item/line-chart/line-chart.component';
 import { IconComponent } from './components/item/icon/icon.component';
 import { ResetCalcComponent } from './components/item/reset-calc/reset-calc.component';
+import { PetsService } from './services/pets.service';
 
 
 @NgModule({
@@ -79,7 +80,8 @@ import { ResetCalcComponent } from './components/item/reset-calc/reset-calc.comp
     SharedService,
     CraftingService,
     IsRegisteredService,
-    WowdbService
+    WowdbService,
+    PetsService
   ],
   bootstrap: [AppComponent]
 })

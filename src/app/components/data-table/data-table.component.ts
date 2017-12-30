@@ -32,20 +32,32 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit() {
   }
 
+  /* istanbul ignore next */
   ngOnChanges(change) {
-    if (change && change.data) {
+    if (change && change.data && this.pageEvent) {
       // this.pageEvent.length = change.data.currentValue.length;
+      // this.pageEvent.pageIndex = 0;
     }
   }
 
+  /* istanbul ignore next */
   setSelectedItem(item: any): void {
     if (item.item) {
       SharedService.selectedItemId = item.item;
     } else {
       SharedService.selectedItemId = item.itemID;
     }
+    this.setSelectedPet(item);
   }
 
+  /* istanbul ignore next */
+  setSelectedPet(item: any) {
+    if (item.petSpeciesId) {
+      SharedService.selectedPetSpeciesId = item.petSpeciesId;
+    }
+  }
+
+  /* istanbul ignore next */
   getFromValue(): number {
     if (!this.pageEvent || !this.pageEvent.pageSize) {
       return 0;
@@ -57,6 +69,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     this.pageEvent = event;
   }
 
+  /* istanbul ignore next */
   getToValue(): number {
     if (!this.pageEvent || !this.pageEvent.pageSize) {
       return this.pageRows[0];

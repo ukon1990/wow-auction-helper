@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Dashboard } from '../../../models/dashboard';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -6,17 +7,15 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./dashboard-item.component.scss']
 })
 export class DashboardItemComponent implements OnInit {
-  @Input() data;
-  @Input() title;
+  @Input() dashboard: Dashboard;
 
-  detailView: boolean;
+  detailView = false;
   constructor() { }
 
   ngOnInit() {
   }
 
   logic(): void {
-    console.log('Click');
     this.detailView = !this.detailView;
   }
 }

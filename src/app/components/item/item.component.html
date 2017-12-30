@@ -1,20 +1,25 @@
-<div id="item-view" *ngIf="getItem()">
+<div class="full-screen" *ngIf="getItem()">
   <mat-card>
     <mat-card-header>
-      <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id"></wah-icon>
+      <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getAuctionItem().petSpeciesId"></wah-icon>
       <mat-card-title>
-        {{ getItem().name }}
+        <span *ngIf="getAuctionItem(); else itemName">
+          {{ getAuctionItem().name }}
+        </span>
+        <ng-template #itemName>
+          {{ wowDBItem.Name }}
+        </ng-template>
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="row" *ngIf="getAuctionItem()">
         <div class="col-md-6">
           <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}} 
-          <span *ngIf="isUsingAPI()">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }})</span>
+          <span *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }})</span>
           <br>
           <strong>Stock:</strong> {{ getAuctionItem().quantityTotal | number }} pcs
           <br>
-          <div *ngIf="isUsingAPI()" class="clearfix">
+          <div *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId" class="clearfix">
             <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold | number }}
             <br>
             <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}
@@ -32,6 +37,10 @@
           <mat-tab-group>
             <mat-tab label="Auctions ({{ getAuctionItem().quantityTotal | number }})" *ngIf="getAuctionItem()">
               <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Created by" *ngIf="itemHasRecipes()">
+              <wah-data-table [columns]="recipeColumns" [data]="getRecipesForItem()" [isCrafting]="true">
               </wah-data-table>
             </mat-tab>
             <mat-tab label="Dropped by" *ngIf="wowDBItem && wowDBItem?.DroppedBy">

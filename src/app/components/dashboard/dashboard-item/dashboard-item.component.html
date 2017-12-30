@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ngClass]="{'full-screen': detailView}">
   <mat-card-header>
     <div class="action-icon" (click)="logic()">
       <i *ngIf="!detailView; else closeIcon" matTooltip="Open detailview"
@@ -8,11 +8,11 @@
       </ng-template>
     </div>
     <mat-card-title>
-      {{ title }}
+      {{ dashboard.title }}
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    Yolo
+    <wah-data-table [columns]="dashboard.columns" [data]="dashboard.data"></wah-data-table>
   </mat-card-content>
 </mat-card>
-<div *ngIf="detailView" class="backdrop"></div>
+<div *ngIf="detailView" class="backdrop" (click)="logic()"></div>

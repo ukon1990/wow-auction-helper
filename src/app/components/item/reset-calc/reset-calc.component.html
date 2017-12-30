@@ -6,9 +6,9 @@
     <strong>Cost: </strong> {{ resetPrice.cost | gold }}
   </div>
   <div class="col-md-12">
-    <strong>Potential ROI: </strong> {{ resetPrice.roi | gold }}
+    <strong>Potential ROI: </strong> {{ resetPrice.roi | gold }} ({{ 1 + (resetPrice.roi / resetPrice.cost) | percent }})
   </div>
   <div class="col-md-12">
-    You need to buy {{ resetPrice.numOfAuctions | number }} auctions.
+    You need to buy {{ resetPrice.numOfAuctions | number }} auctions ({{ resetPrice.numOfItems }}).
   </div>
 </div>

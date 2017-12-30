@@ -35,6 +35,9 @@ export class SetupComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (SharedService.user.realm && SharedService.user.region) {
+      this._router.navigateByUrl('dashboard');
+    }
   }
 
   getRealmsKeys() {

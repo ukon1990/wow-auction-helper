@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Dashboard } from '../../models/dashboard';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'wah-dashboard',
@@ -12,4 +14,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
   }
 
+  getDashboards(): Array<Dashboard> {
+    return SharedService.dashboards;
+  }
 }

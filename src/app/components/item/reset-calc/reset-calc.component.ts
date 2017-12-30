@@ -23,7 +23,6 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.formChanges = this.form.valueChanges.subscribe(() => {
-      console.log('shit', this.form.value);
       this.calculate();
     });
   }

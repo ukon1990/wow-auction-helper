@@ -3,6 +3,7 @@ import { SharedService } from './../../services/shared.service';
 import { Auction } from './auction';
 import { AuctionItem } from './auction-item';
 import { Crafting } from '../crafting/crafting';
+import { Dashboard } from '../dashboard';
 
 export class AuctionHandler {
   /**
@@ -18,7 +19,10 @@ export class AuctionHandler {
 
     SharedService.auctions = auctions;
     auctions.forEach(a => {
-      if (!SharedService.auctionItemsMap[a.item]) {
+      if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}`]) {
+        SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}`] = this.newAuctionItem(a);
+        SharedService.auctionItems.push(SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}`]);
+      } else if (!SharedService.auctionItemsMap[a.item]) {
         SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
 
@@ -35,16 +39,27 @@ export class AuctionHandler {
         AuctionHandler.updateAuctionItem(a);
       }
     });
+
     Crafting.calculateCost();
+
+    // Dashboard
+    SharedService.dashboards.push(new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
+    SharedService.dashboards.push(new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
+    SharedService.dashboards.push(new Dashboard('Most profitable crafts', Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
+    SharedService.dashboards.push(new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
   }
 
   private static auctionPriceHandler(): AuctionItem {
     return null;
   }
 
-  private static getItemName(itemID: number): string {
-    return SharedService.items[itemID] ?
-      SharedService.items[itemID].name : 'Name missing';
+  private static getItemName(auction: Auction): string {
+    if (auction.petSpeciesId) {
+      return SharedService.pets[auction.petSpeciesId] ?
+        SharedService.pets[auction.petSpeciesId].name : 'Pet name missing';
+    }
+    return SharedService.items[auction.item] ?
+      SharedService.items[auction.item].name : 'Item name missing';
   }
 
   private static updateAuctionItem(auction: Auction): void {
@@ -52,7 +67,8 @@ export class AuctionHandler {
     if (auction.buyout === 0) {
       return;
     }*/
-    const ai = SharedService.auctionItemsMap[auction.item];
+    const id = auction.petSpeciesId ? `${auction.item}-${auction.petSpeciesId}` : auction.item,
+      ai = SharedService.auctionItemsMap[id];
     if (ai.buyout === 0 || (ai.buyout > auction.buyout && auction.buyout > 0)) {
       ai.owner = auction.owner;
       ai.buyout = auction.buyout / auction.quantity;
@@ -65,7 +81,8 @@ export class AuctionHandler {
   private static newAuctionItem(auction: Auction): AuctionItem {
     const tmpAuc = new AuctionItem();
     tmpAuc.itemID = auction.item;
-    tmpAuc.name = AuctionHandler.getItemName(auction.item);
+    tmpAuc.petSpeciesId = auction.petSpeciesId;
+    tmpAuc.name = AuctionHandler.getItemName(auction);
     tmpAuc.owner = auction.owner;
     tmpAuc.buyout = auction.buyout / auction.quantity;
     tmpAuc.bid = auction.bid / auction.quantity;

@@ -1,13 +1,13 @@
 .wowhead-tooltip {
-  z-index: 500 !important;
+  z-index: 502 !important;
 }
-#item-view  .mat-card{
-  z-index: 501;
-  width: 80%;
-  right: 10%;
-  left: 10%;
-  top: 5vh;
-  max-height: 80vh;
+.full-screen {
+  z-index: 501 !important;
+  width: 80% !important;
+  right: 10% !important;
+  left: 10% !important;
+  top: 5vh !important;
+  max-height: 80vh !important;
   position: fixed;
   & .dropped-by .mat-list {
     overflow-y: auto;
@@ -34,9 +34,10 @@ mat-spinner {
 
 .backdrop {
   background-color: rgba(0, 0, 0, 0.70);
-  width: 100%;
-  height: 100vh;
   position: fixed;
   z-index: 500;
   top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

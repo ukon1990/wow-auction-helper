@@ -10,14 +10,27 @@ import { SharedService } from '../../../services/shared.service';
 export class IconComponent {
 
   @Input() id: number;
+  @Input() petSpeciesId: number;
   @Input() size: number;
+
+  defaultIcon = 'inv_scroll_03';
 
   constructor(private _sanitizer: DomSanitizer) { }
 
-  getIcon(): SafeResourceUrl {
+  getIconStyle(): SafeResourceUrl {
     return this._sanitizer.bypassSecurityTrustStyle(
       `url('https://render-eu.worldofwarcraft.com/icons/56/${
-      SharedService.items[this.id] ? SharedService.items[this.id].icon : 'inv_scroll_03'
-    }.jpg')`);
+        this.getIcon()
+      }.jpg')`);
+  }
+
+  getIcon(): string {
+    if (this.petSpeciesId) {
+      return SharedService.pets[this.petSpeciesId] ?
+        SharedService.pets[this.petSpeciesId].icon : this.defaultIcon;
+    } else {
+      return SharedService.items[this.id] ?
+        SharedService.items[this.id].icon : this.defaultIcon;
+    }
   }
 }

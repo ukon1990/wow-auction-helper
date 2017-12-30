@@ -7,6 +7,7 @@ import { TSM } from '../models/auction/tsm';
 import { Auction } from '../models/auction/auction';
 import { Realm } from '../models/realm';
 import { Dashboard } from '../models/dashboard';
+import { Pet } from '../models/pet';
 
 @Injectable()
 export class SharedService {
@@ -17,9 +18,12 @@ export class SharedService {
   public static auctions: Array<Auction> = new Array<Auction>();
   public static tsm: Map<number, TSM> = new Map<number, TSM>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
+  public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
   public static items: Map<number, Item> = new Map<number, Item>();
+  public static pets: Map<number, Pet> = new Map<number, Pet>();
   public static realms: Map<string, Realm> = new Map<string, Realm>();
   public static selectedItemId: number;
+  public static selectedPetSpeciesId: number;
 
   public static dashboards: Array<Dashboard> = new Array<Dashboard>();
 

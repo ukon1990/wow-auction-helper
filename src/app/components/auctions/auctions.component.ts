@@ -100,7 +100,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
     if (this.form.value.itemClass === null || this.form.value.itemClass === '-1') {
       return true;
-    } else if ((parseInt(itemClass, 10) === itemClasses.classes[this.form.value.itemClass].class)) {
+    } else if (itemClasses.classes[this.form.value.itemClass] &&
+        parseInt(itemClass, 10) === itemClasses.classes[this.form.value.itemClass].class) {
       return this.isItemSubclassMatch(auctionItem, itemClasses.classes[this.form.value.itemClass]);
     }
     return false;

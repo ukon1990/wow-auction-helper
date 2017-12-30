@@ -5,6 +5,10 @@ import { AuctionItem } from '../auction/auction-item';
 
 export class Crafting {
   public static calculateCost(): void {
+    Object.keys(SharedService.itemRecipeMap).forEach(key => {
+      SharedService.itemRecipeMap[key].length = 0;
+    });
+
     SharedService.recipes
       .forEach(r => this.costForRecipe(r));
   }
@@ -37,6 +41,11 @@ export class Crafting {
     } catch (e) {
       console.error('Calc issue with recipe', e, recipe);
     }
+
+    if (!SharedService.itemRecipeMap[recipe.itemID]) {
+      SharedService.itemRecipeMap[recipe.itemID] = new Array<Recipe>();
+    }
+    SharedService.itemRecipeMap[recipe.itemID].push(recipe);
   }
 
   private static getCost(itemId: number, count: number): number {

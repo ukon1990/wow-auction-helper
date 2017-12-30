@@ -15,6 +15,7 @@ export class LineChartComponent implements OnInit {
 
   /* istanbul ignore next */
   ngOnInit() {
+    
     const svg = d3.select('svg'),
       margin = { top: 20, right: 20, bottom: 30, left: 50 },
       width = +svg.attr('width') - margin.left - margin.right,
@@ -63,7 +64,7 @@ export class LineChartComponent implements OnInit {
       .text('Buyout');
 
     g.append('path')
-      .datum(this.data)
+      .datum(this.data.filter(d => d.buyout > 0))
       .attr('fill', 'none')
       .attr('stroke', this.getColor())
       .attr('stroke-linejoin', 'round')

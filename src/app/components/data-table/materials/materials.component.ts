@@ -18,7 +18,7 @@ export class MaterialsComponent implements OnInit {
   getItemValue(itemID: number, count: number) {
     if (SharedService.user.customPrices[itemID]) {
       return SharedService.user.customPrices[itemID];
-    } else if (this.isEnoughAtAH(itemID, count)) {
+    } else if (this.getAtAHCount(itemID) > 0) {
       return SharedService.auctionItemsMap[itemID].buyout;
     } else if (SharedService.user.apiToUse === 'tsm' && SharedService.tsm[itemID]) {
       return SharedService.tsm[itemID].MarketValue;

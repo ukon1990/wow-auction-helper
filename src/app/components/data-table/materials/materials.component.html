@@ -1,6 +1,6 @@
 <div class="row col-md-12" *ngFor="let r of reagents" matTooltip="There are currently {{ getAtAHCount(r.itemID) | number }} at the auction house">
   <wah-icon mat-card-avatar *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-  <a rel="item={{ r.itemID }}" [ngClass]="{'not-fount': isEnoughAtAH(r.itemID, r.count) }">
+  <a rel="item={{ r.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
     {{ r.count }} x {{ r.name }} {{ getItemValue(r.itemID) | gold }} per item
   </a>
   <span class="ml-auto" (click)="setSelectedItem(r)" matTooltip="Get details about {{ r.name }}">

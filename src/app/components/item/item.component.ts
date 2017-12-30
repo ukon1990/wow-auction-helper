@@ -5,6 +5,7 @@ import { AuctionItem } from '../../models/auction/auction-item';
 import { ColumnDescription } from '../../models/column-description';
 import { WowdbService } from '../../services/wowdb.service';
 import { User } from '../../models/user/user';
+import { Recipe } from '../../models/crafting/recipe';
 
 @Component({
   selector: 'wah-item',
@@ -24,6 +25,13 @@ export class ItemComponent implements OnInit {
     {key: 'bid', title: 'Bid', dataType: 'gold'},
     {key: 'quantity', title: 'Size', dataType: ''},
     {key: 'owner', title: 'Owner', dataType: ''}
+  ];
+
+  recipeColumns: Array<ColumnDescription> = [
+    { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'reagents', title: 'Materials', dataType: 'materials' },
+    { key: 'cost', title: 'Cost', dataType: 'gold' },
+    { key: 'roi', title: 'ROI', dataType: 'gold' }
   ];
 
   npcColumns: Array<ColumnDescription> = [
@@ -63,12 +71,27 @@ export class ItemComponent implements OnInit {
     return this.getUser().apiToUse !== 'none';
   }
 
+  itemHasRecipes(): boolean {
+    return SharedService.itemRecipeMap[SharedService.selectedItemId] ? true : false;
+  }
+
+  getRecipesForItem(): Array<Recipe> {
+    return SharedService.itemRecipeMap[SharedService.selectedItemId];
+  }
+
 
 
   /* istanbul ignore next */
   getAuctionItem(): AuctionItem {
     return this.auctionItemExists() ?
-      SharedService.auctionItemsMap[SharedService.selectedItemId] : undefined;
+      SharedService.auctionItemsMap[this.getAuctionId()] : undefined;
+  }
+
+  getAuctionId(): any {
+    if (SharedService.selectedPetSpeciesId) {
+      return `${SharedService.selectedItemId}-${SharedService.selectedPetSpeciesId}`;
+    }
+    return SharedService.selectedItemId;
   }
 
   /* istanbul ignore next */
@@ -80,6 +103,7 @@ export class ItemComponent implements OnInit {
   /* istanbul ignore next */
   close(): void {
     SharedService.selectedItemId = undefined;
+    SharedService.selectedPetSpeciesId = undefined;
   }
 
   /* istanbul ignore next */

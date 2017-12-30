@@ -1,4 +1,4 @@
-<mat-paginator [length]="data.length" [pageSize]="pageRows[0]" [pageSizeOptions]="pageRows" (page)="pageChange($event)">
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageRows[0]" [pageSizeOptions]="pageRows" (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
@@ -14,7 +14,9 @@
         <span [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
             <a rel="item={{ d.itemID }}" (click)="setSelectedItem(d)">
-              <wah-icon *ngIf="id" class="float-left" size="36" [id]="d[id]"></wah-icon>
+              <wah-icon *ngIf="id" class="float-left" size="36"
+                [id]="d[id]"
+                [petSpeciesId]="d?.petSpeciesId"></wah-icon>
               {{ d[c.key] }}
             </a>
             <span *ngIf="isCrafting">
@@ -67,5 +69,5 @@
   </tbody>
 </table>
 
-<mat-paginator [length]="data.length" [pageSize]="pageRows[0]" [pageSizeOptions]="pageRows" (page)="pageChange($event)">
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageRows[0]" [pageSizeOptions]="pageRows" (page)="pageChange($event)">
 </mat-paginator>

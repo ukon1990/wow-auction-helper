@@ -2,7 +2,7 @@ import { Auction } from './auction';
 
 export class AuctionItem {
   itemID: number;
-  petSpeciesId: number;
+  petSpeciesId?: number;
   name = 'Unavailable';
   buyout = 0;
   bid = 0;

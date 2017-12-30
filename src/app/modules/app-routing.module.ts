@@ -9,8 +9,8 @@ import { UpdateComponent } from '../components/update/update.component';
 import { AuctionsComponent } from '../components/auctions/auctions.component';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent, canActivate: [ IsRegisteredService ]},
-  { path: 'setup', component: SetupComponent },
+  { path: '', component: SetupComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [ IsRegisteredService ]},
   { path: 'crafting', component: CraftingComponent, canActivate: [ IsRegisteredService ] },
   { path: 'auctions', component: AuctionsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] },
