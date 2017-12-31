@@ -6,6 +6,7 @@ import { AuctionItem } from '../../models/auction/auction-item';
 import { Auction } from '../../models/auction/auction';
 import { Recipe } from '../../models/crafting/recipe';
 import { User } from '../../models/user/user';
+import { Sorter } from '../../models/sorter';
 
 @Component({
   selector: 'wah-data-table',
@@ -21,6 +22,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() data: Array<any>;
   pageEvent: PageEvent;
   pageRows: Array<number> = [10, 20, 40, 80, 100];
+  sorter: Sorter;
   auctionDuration = {
     'VERY_LONG': '12h+',
     'LONG': '2-12h',
@@ -28,16 +30,20 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     'SHORT': '<30m'
   };
 
-  constructor() { }
+  constructor() {
+    this.sorter = new Sorter();
+  }
 
   ngAfterViewInit() {
   }
 
   /* istanbul ignore next */
   ngOnChanges(change) {
-    if (change && change.data && this.pageEvent) {
+    if (change && change.data && change.data.currentValue) {
       // this.pageEvent.length = change.data.currentValue.length;
       // this.pageEvent.pageIndex = 0;
+
+      this.sorter.sort(this.data);
     }
   }
 
@@ -86,5 +92,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   /* istanbul ignore next */
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
+  }
+
+  sort(key: string): void {
+    this.sorter.addKey(key);
+    this.sorter.sort(this.data);
   }
 }

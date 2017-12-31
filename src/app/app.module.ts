@@ -37,6 +37,7 @@ import { LineChartComponent } from './components/item/line-chart/line-chart.comp
 import { IconComponent } from './components/item/icon/icon.component';
 import { ResetCalcComponent } from './components/item/reset-calc/reset-calc.component';
 import { PetsService } from './services/pets.service';
+import { SortIconComponent } from './components/sort-icon/sort-icon.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { PetsService } from './services/pets.service';
     ItemComponent,
     LineChartComponent,
     IconComponent,
-    ResetCalcComponent
+    ResetCalcComponent,
+    SortIconComponent
   ],
   imports: [
     BrowserModule,

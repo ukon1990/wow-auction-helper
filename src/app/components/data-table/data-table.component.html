@@ -3,7 +3,8 @@
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
     <tr>
-      <td *ngFor="let c of columns">
+      <td *ngFor="let c of columns" (click)="sort(c.key)">
+        <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
         {{ c.title }}
       </td>
     </tr>
