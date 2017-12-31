@@ -22,7 +22,8 @@ export class Dashboard {
         this.columns = [
           { key: 'owner', title: 'Name', dataType: 'name' },
           { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
-          { key: 'volume', title: 'Volume', dataType: 'number' }
+          { key: 'volume', title: 'Volume', dataType: 'number' },
+          { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
         ];
         this.setItemsGroupedBySellerWithHighLiquidity();
         break;
@@ -30,7 +31,8 @@ export class Dashboard {
         this.columns = [
           { key: 'owner', title: 'Name', dataType: 'name' },
           { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
-          { key: 'volume', title: 'Volume', dataType: 'number' }
+          { key: 'volume', title: 'Volume', dataType: 'number' },
+          { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
         ];
         this.setSellersGroupedSortedByQuantity();
         break;
@@ -108,12 +110,17 @@ export class Dashboard {
     SharedService.auctions.forEach(a => {
       if (!tmpMap[a.owner]) {
         tmpMap[a.owner] = {
-          owner: a.owner, liquidity: a.buyout, volume: a.quantity, auctions: [a]
+          owner: a.owner,
+          liquidity: a.buyout,
+          volume: a.quantity,
+          numOfAuctions: 1,
+          auctions: [a]
         };
         tmp.push(tmpMap[a.owner]);
       } else {
         tmpMap[a.owner].liquidity += a.buyout;
         tmpMap[a.owner].volume += a.quantity;
+        tmpMap[a.owner].numOfAuctions++;
         tmpMap[a.owner].auctions.push(a);
       }
     });
