@@ -11,14 +11,17 @@ export class CharacterService {
   constructor(private _http: HttpClient) { }
 
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
+    SharedService.downloading.characterData = true;
     return this._http
       .get(Endpoints.getBattleNetApi(
         `character/${
           realm
         }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region))
       .map(c => {
+        SharedService.downloading.characterData = false;
         return c;
       }, error => {
+        SharedService.downloading.characterData = false;
         console.error('Failed at downloading character', error);
         return {};
       }).toPromise();

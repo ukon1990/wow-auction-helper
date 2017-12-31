@@ -15,17 +15,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   form: FormGroup;
   formChanges: Subscription;
   itemClasses = itemClasses;
-  columns: Array<ColumnDescription> = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'owner', title: 'Owner', dataType: '' },
-    { key: 'quantityTotal', title: 'Stock', dataType: 'number' },
-    { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-    { key: 'bid', title: 'Bid', dataType: 'gold' },
-    { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-    { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
-    { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
-  ];
+  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
 
   constructor(private formBuilder: FormBuilder) {
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
@@ -43,14 +33,29 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formChanges = this.form.valueChanges.subscribe((change) => {
-
-
       localStorage['query_auctions'] = JSON.stringify(this.form.value);
     });
+    this.addColumns();
   }
 
   ngOnDestroy(): void {
     this.formChanges.unsubscribe();
+  }
+
+
+  addColumns(): void {
+    this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
+    this.columns.push({ key: 'owner', title: 'Owner', dataType: '' });
+    this.columns.push({ key: 'quantityTotal', title: 'Stock', dataType: 'number' });
+    this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
+    this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold' });
+
+    if (SharedService.user.apiToUse === 'tsm') {
+      this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
+      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
+      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
+    }
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
   }
 
   getAuctions(): Array<AuctionItem> {

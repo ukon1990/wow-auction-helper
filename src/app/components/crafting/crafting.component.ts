@@ -73,8 +73,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
     if (SharedService.user.apiToUse === 'tsm') {
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
-      this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
     }
+
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
   }
 
   getRecipes(): Array<Recipe> {

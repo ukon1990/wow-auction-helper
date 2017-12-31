@@ -8,10 +8,12 @@ import { Auction } from '../models/auction/auction';
 import { Realm } from '../models/realm';
 import { Dashboard } from '../models/dashboard';
 import { Pet } from '../models/pet';
+import { AuctionResponse } from '../models/auction/auctions-response';
 
 @Injectable()
 export class SharedService {
   public static user: User;
+  public static auctionResponse: AuctionResponse = {lastModified: localStorage['timestamp_auctions'], url: undefined};
 
   public static auctionItemsMap: Map<number, AuctionItem> = new Map<number, AuctionItem>();
   public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();

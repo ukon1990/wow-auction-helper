@@ -1,23 +1,29 @@
 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <mat-spinner *ngIf="isDownloading()" class="float-left"></mat-spinner>  Download
+  <mat-spinner *ngIf="isDownloading()" class="float-left mr-2"></mat-spinner> {{ timeSinceUpdate }} minutes ago
 </a>
 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
   <li class="nav-link">
-    <mat-spinner *ngIf="getDownloading().items" class="float-left"></mat-spinner> Items: xx:xx:xx
+    <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner> 
+    Items: xx:xx:xx
   </li>
   <li class="nav-link">
-    <mat-spinner *ngIf="getDownloading().recipes" class="float-left"></mat-spinner> Recipes: xx:xx:xx
+    <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner> 
+    Recipes: xx:xx:xx
   </li>
   <li class="nav-link">
-    <mat-spinner *ngIf="getDownloading().pets" class="float-left"></mat-spinner> Pets: xx:xx:xx
+    <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner> 
+    Pets: xx:xx:xx
   </li>
   <li class="nav-link">
-    <mat-spinner *ngIf="getDownloading().auctions" class="float-left"></mat-spinner> Auctions: xx:xx:xx
+    <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner> 
+    Auctions: xx:xx:xx
   </li>
   <li class="nav-link">
-    <mat-spinner *ngIf="getDownloading().tsmAuctions" class="float-left"></mat-spinner> TSM data: xx:xx:xx
+    <mat-spinner *ngIf="getDownloading().tsmAuctions" class="float-left mr-2"></mat-spinner> 
+    TSM data: xx:xx:xx
   </li>
   <li class="nav-link">
-    <mat-spinner *ngIf="getDownloading().characterData" class="float-left"></mat-spinner> Character data: xx:xx:xx
+    <mat-spinner *ngIf="getDownloading().characterData" class="float-left mr-2"></mat-spinner> 
+    Character data: xx:xx:xx
   </li>
 </div>

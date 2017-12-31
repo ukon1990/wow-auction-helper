@@ -1,10 +1,10 @@
 <div class="full-screen" *ngIf="getItem()">
   <mat-card>
     <mat-card-header>
-      <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getAuctionItem().petSpeciesId"></wah-icon>
+      <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getAuctionItem()?.petSpeciesId"></wah-icon>
       <mat-card-title>
-        <span *ngIf="getAuctionItem(); else itemName">
-          {{ getAuctionItem().name }}
+        <span *ngIf="getItem(); else itemName">
+          {{ getItem().name }}
         </span>
         <ng-template #itemName>
           {{ wowDBItem.Name }}
