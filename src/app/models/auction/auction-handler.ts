@@ -13,7 +13,7 @@ export class AuctionHandler {
     * @param auctions A raw auction array
     */
   public static organize(auctions: Array<Auction>): void {
-    SharedService.userAuctions.organizeCharacters();
+    SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
 
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
@@ -42,7 +42,7 @@ export class AuctionHandler {
         AuctionHandler.updateAuctionItem(a);
       }
 
-      SharedService.userAuctions.addAuction(a);
+      SharedService.userAuctions.addAuction(a, SharedService.auctionItemsMap);
     });
     console.log(SharedService.userAuctions);
 

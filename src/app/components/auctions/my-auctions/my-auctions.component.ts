@@ -30,8 +30,8 @@ export class MyAuctionsComponent implements OnInit {
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
   }
 
-  getUserAuctions(): Array<Auction> {
-    return SharedService.userAuctions.auctions;
+  getUserAuctions(): UserAuctions {
+    return SharedService.userAuctions;
   }
 
   getUserAuctionsCharacters(): Array<UserAuctionCharacter> {
