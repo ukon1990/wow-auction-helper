@@ -42,6 +42,9 @@ import { AboutComponent } from './components/about/about.component';
 import { MyAuctionsComponent } from './components/auctions/my-auctions/my-auctions.component';
 import { TradeVendorsComponent } from './components/trade-vendors/trade-vendors.component';
 import { WatchlistComponent } from './components/watchlist/watchlist.component';
+import { GeneralSettingsComponent } from './components/settings/general-settings/general-settings.component';
+import { NotificationSettingsComponent } from './components/settings/notification-settings/notification-settings.component';
+import { CraftingSettingsComponent } from './components/settings/crafting-settings/crafting-settings.component';
 
 
 @NgModule({
@@ -71,7 +74,10 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
     AboutComponent,
     MyAuctionsComponent,
     TradeVendorsComponent,
-    WatchlistComponent
+    WatchlistComponent,
+    GeneralSettingsComponent,
+    NotificationSettingsComponent,
+    CraftingSettingsComponent
   ],
   imports: [
     BrowserModule,

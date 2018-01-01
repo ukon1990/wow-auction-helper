@@ -1,0 +1,108 @@
+<form [formGroup]="_characterForm">
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Select your realm and region
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field>
+            <mat-select placeholder="Region" formControlName="region">
+              <mat-option value="eu" (click)="getRealms()">
+                Europe
+              </mat-option>
+              <mat-option value="us" (click)="getRealms()">
+                America
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Realm" formControlName="realm">
+              <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
+                {{ getRealmWithkey(slug).name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+
+        <mat-card-content *ngIf="getRealmWithkey().name">
+          This is a {{ getRealmWithkey(slug).population }} population realm, with
+          <span *ngIf="getRealmWithkey().queue; else noQueue">queue</span>
+          <ng-template #noQueue>
+            <span>without queue</span>
+          </ng-template>.
+          <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
+          It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button>
+            <i class="fas fa-save"></i> Save
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <div class="col-md-8">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Your API key (optional)</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p>
+              Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
+            </p>
+            <mat-form-field class="col-md-12">
+              <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
+            </mat-form-field>
+            If you don't have a TSM account you can
+            <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
+            <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button>
+            <i class="fas fa-save"></i> Save
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Import previous settings
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field class="col-md-10">
+            <textarea matInput formControlName="importString" placeholder="Paste the string here"></textarea>
+          </mat-form-field>
+          <button class="col-md-2" mat-button (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+            <i class="fas fa-upload"></i>
+            Restore
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-md-6">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Import previous settings
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field class="col-md-10">
+            <textarea matInput formControlName="importString" placeholder="Paste the string here"></textarea>
+          </mat-form-field>
+          <button class="col-md-2" mat-button (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+            <i class="fas fa-upload"></i>
+            Restore
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>
