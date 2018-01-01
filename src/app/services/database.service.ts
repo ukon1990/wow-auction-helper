@@ -94,8 +94,13 @@ export class DatabaseService {
         (<TSM[]>tsm).forEach(a => {
           SharedService.tsm[a.Id] = a;
         });
+        SharedService.downloading.tsmAuctions = false;
+        console.log('Restored TSM data from local DB');
       })
-      .catch(e => console.error('Could not restore TSM data', e));
+      .catch(e => {
+        console.error('Could not restore TSM data', e);
+        SharedService.downloading.tsmAuctions = false;
+      });
   }
 
   clearDB(): void {

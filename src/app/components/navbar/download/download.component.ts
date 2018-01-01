@@ -5,6 +5,8 @@ import { CraftingService } from '../../../services/crafting.service';
 import { AuctionsService } from '../../../services/auctions.service';
 import { PetsService } from '../../../services/pets.service';
 import { DatabaseService } from '../../../services/database.service';
+import { TSM } from '../../../models/auction/tsm';
+import { AuctionHandler } from '../../../models/auction/auction-handler';
 
 @Component({
   selector: 'wah-download',
@@ -28,7 +30,20 @@ export class DownloadComponent implements OnInit {
       await this._petService.getPets();
       await this._craftingService.getRecipes();
       if (SharedService.user.apiToUse === 'tsm') {
-        await this._auctionsService.getTsmAuctions();
+        if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
+          await this._auctionsService.getTsmAuctions();
+        } else {
+          await this._dbService.getTSMItems()
+            .then(r => {
+              if (Object.keys(SharedService.tsm).length === 0) {
+                this._auctionsService.getTsmAuctions();
+              }
+            })
+            .catch(e => {
+              console.error('Could not restore TSM data', e);
+              this._auctionsService.getTsmAuctions();
+            });
+        }
       }
       await this._dbService.getAllAuctions()
         .then(r => {
@@ -45,14 +60,58 @@ export class DownloadComponent implements OnInit {
 
       this.timeSinceUpdate = this.milliSecondsToMinutes();
 
-      setInterval(() => this.setLastUpdateAvailableTime(), 30000);
+      setInterval(() => this.setLastUpdateAvailableTime(), 10000);
     }
   }
 
+  /* istanbul ignore next */
+  isUsingTSM(): boolean {
+    return SharedService.user.apiToUse === 'tsm';
+  }
+
+  /* istanbul ignore next */
+  isDarkmode(): boolean {
+    return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  /* istanbul ignore next */
+  async downloadA(type: string) {
+    switch (type) {
+      case 'tsm':
+        await this._auctionsService.getTsmAuctions();
+        AuctionHandler.organize(SharedService.auctions);
+        break;
+      case 'auctions':
+        this._auctionsService.getAuctions();
+        break;
+      case 'items':
+        this._itemService.getItems();
+        break;
+      case 'pets':
+        this._petService.getPets();
+        break;
+      case 'recipes':
+        this._craftingService.getRecipes();
+        break;
+    }
+  }
+
+  /* istanbul ignore next */
+  getAuctionsLastModified(): number {
+    return SharedService.auctionResponse.lastModified;
+  }
+
+  /* istanbul ignore next */
+  getTime(param: string): string {
+    return localStorage[param];
+  }
+
+  /* istanbul ignore next */
   getDownloading() {
     return SharedService.downloading;
   }
 
+  /* istanbul ignore next */
   isDownloading(): boolean {
     return SharedService.isDownloading();
   }

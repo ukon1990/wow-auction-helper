@@ -55,16 +55,28 @@ export class AuctionsService {
   }
 
   getTsmAuctions(): Promise<any> {
-    return this._http.get('assets/mock/tsm.json')
+    console.log('Downloading TSM data');
+    SharedService.downloading.tsmAuctions = true;
+    return this._http.get(`http://api.tradeskillmaster.com/v1/item/${
+      SharedService.user.region
+      }/${
+      SharedService.user.realm
+      }?format=json&apiKey=${
+      SharedService.user.apiTsm
+      }`) // 'assets/mock/tsm.json'
       .toPromise()
       .then(tsm => {
         localStorage['timestamp_tsm'] = new Date().toDateString();
         (<TSM[]>tsm).forEach(a => {
           SharedService.tsm[a.Id] = a;
         });
+        SharedService.downloading.tsmAuctions = false;
+        console.log('TSM data download is complete');
         this._dbService.addTSMItems(tsm as Array<TSM>);
-      }
-      )
-      .catch(e => console.error('Unable to download TSM data', e));
+      })
+      .catch(e => {
+        console.error('Unable to download TSM data', e);
+        SharedService.downloading.tsmAuctions = false;
+      });
   }
 }

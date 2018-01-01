@@ -1,4 +1,4 @@
-import { TradeVendor } from './trade-vendor';
+import { TradeVendor, TradeVendorItem } from './trade-vendor';
 import { SharedService } from '../../services/shared.service';
 
 export class TradeVendors {
@@ -23,10 +23,28 @@ export class TradeVendors {
       vendor.items.sort(function (a, b) {
         return b.value - a.value;
       });
-      console.log(vendor);
+
+      SharedService.tradeVendorMap[vendor.itemID] = vendor;
     });
   }
 }
+
+const primalSargerite: TradeVendor = {
+  itemID: 151568,
+  name: 'Primal Sargerite',
+  items: [
+    new TradeVendorItem(151718, 0.1),
+    new TradeVendorItem(151719, 0.1),
+    new TradeVendorItem(151720, 0.1),
+    new TradeVendorItem(151721, 0.1),
+    new TradeVendorItem(151722, 0.1),
+    new TradeVendorItem(151579, 0.1),
+    new TradeVendorItem(151564, 1),
+    new TradeVendorItem(151565, 1),
+    new TradeVendorItem(151566, 1),
+    new TradeVendorItem(151567, 1)
+  ]
+};
 
 const bloodOfSargeras: TradeVendor = {
   'itemID': 124124,
@@ -329,5 +347,5 @@ const primalSpirit: TradeVendor = {
 };
 
 export const TRADE_VENDORS = [
-  bloodOfSargeras, primalSpirit
+  primalSargerite, bloodOfSargeras, primalSpirit
 ];

@@ -19,12 +19,12 @@ export class TradeVendorsComponent implements OnInit {
     this.columns.push({ key: 'value', title: 'Value', dataType: 'gold' });
     this.columns.push({ key: 'quantity', title: 'Bloods/item', dataType: 'number' });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
-    this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold' });
 
     if (SharedService.user.apiToUse === 'tsm') {
       this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
+      this.columns.push({ key: '', title: 'Actions', dataType: 'action' });
     }
   }
 

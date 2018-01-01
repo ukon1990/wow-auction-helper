@@ -13,6 +13,8 @@ export class AuctionHandler {
     * @param auctions A raw auction array
     */
   public static organize(auctions: Array<Auction>): void {
+    SharedService.userAuctions.organizeCharacters();
+
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
       return a.buyout / a.quantity - b.buyout / b.quantity;
@@ -39,7 +41,10 @@ export class AuctionHandler {
       } else {
         AuctionHandler.updateAuctionItem(a);
       }
+
+      SharedService.userAuctions.addAuction(a);
     });
+    console.log(SharedService.userAuctions);
 
     Crafting.calculateCost();
 
@@ -48,6 +53,7 @@ export class AuctionHandler {
 
     // Trade vendors
     TradeVendors.setValues();
+
   }
 
   private static auctionPriceHandler(): AuctionItem {

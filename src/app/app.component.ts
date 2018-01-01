@@ -20,10 +20,12 @@ export class AppComponent {
     User.restore();
   }
 
+  /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 
+  /* istanbul ignore next */
   isItemSelected(): boolean  {
     return SharedService.selectedItemId ? true : false;
   }

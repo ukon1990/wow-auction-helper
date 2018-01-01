@@ -1,6 +1,7 @@
 import { Notification } from './notification';
 import { Watchlist } from './watchlist';
 import { SharedService } from '../../services/shared.service';
+import { Character } from '../character/character';
 
 
 
@@ -8,7 +9,7 @@ export class User {
   region: string;
   realm: string;
   character = '';
-  characters: any[] = [];
+  characters: Array<Character> = new Array<Character>();
   apiWoWu?: string;
   apiTsm?: string;
   customPrices?: any;

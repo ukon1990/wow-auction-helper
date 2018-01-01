@@ -9,22 +9,32 @@ import { Realm } from '../models/realm';
 import { Dashboard } from '../models/dashboard';
 import { Pet } from '../models/pet';
 import { AuctionResponse } from '../models/auction/auctions-response';
+import { TradeVendor } from '../models/item/trade-vendor';
+import { UserAuctions, UserAuctionCharacter } from '../models/auction/user-auctions';
 
 @Injectable()
 export class SharedService {
   public static user: User;
   public static auctionResponse: AuctionResponse = {lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
+  public static userAuctions: UserAuctions = new UserAuctions();
+
   public static auctionItemsMap: Map<number, AuctionItem> = new Map<number, AuctionItem>();
   public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();
   public static auctions: Array<Auction> = new Array<Auction>();
   public static tsm: Map<number, TSM> = new Map<number, TSM>();
+
   public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
+
   public static items: Map<number, Item> = new Map<number, Item>();
+  public static tradeVendorMap: Map<number, TradeVendor> = new Map<number, TradeVendor>();
+
   public static pets: Map<number, Pet> = new Map<number, Pet>();
+
   public static realms: Map<string, Realm> = new Map<string, Realm>();
+
   public static selectedItemId: number;
   public static selectedPetSpeciesId: number;
 

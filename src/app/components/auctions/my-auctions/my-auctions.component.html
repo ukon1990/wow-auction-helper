@@ -1,3 +1,8 @@
-<p>
-  my-auctions works!
-</p>
+<mat-tab-group>
+  <mat-tab label="All">
+    
+  </mat-tab>
+  <ng-container *ngFor="let c of getUserAuctionsCharacters()">
+    <mat-tab *ngIf="c.auctions.length > 0" [label]="c.name"></mat-tab>
+  </ng-container>
+</mat-tab-group>

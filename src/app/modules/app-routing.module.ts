@@ -10,7 +10,7 @@ import { AuctionsComponent } from '../components/auctions/auctions.component';
 import { AboutComponent } from '../components/about/about.component';
 import { MyAuctionsComponent } from '../components/auctions/my-auctions/my-auctions.component';
 import { TradeVendorsComponent } from '../components/trade-vendors/trade-vendors.component';
-import { Watchlist } from '../models/user/watchlist';
+import { WatchlistComponent } from '../components/watchlist/watchlist.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: 'crafting', component: CraftingComponent, canActivate: [ IsRegisteredService ] },
   { path: 'auctions', component: AuctionsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'watchlist', component: Watchlist, canActivate: [ IsRegisteredService ] },
+  { path: 'watchlist', component: WatchlistComponent, canActivate: [ IsRegisteredService ] },
   { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'settings', component: SettingsComponent, canActivate:  [ IsRegisteredService ] },
   { path: 'about', component: AboutComponent },

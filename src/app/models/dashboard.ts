@@ -58,6 +58,8 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
+    SharedService.dashboards.length = 0;
+
     SharedService.dashboards.push(
       new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
     SharedService.dashboards.push(
