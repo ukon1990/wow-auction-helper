@@ -4,6 +4,7 @@ import { Auction } from './auction';
 import { AuctionItem } from './auction-item';
 import { Crafting } from '../crafting/crafting';
 import { Dashboard } from '../dashboard';
+import { TradeVendors } from '../item/trade-vendors';
 
 export class AuctionHandler {
   /**
@@ -44,6 +45,9 @@ export class AuctionHandler {
 
     // Dashboard
     Dashboard.addDashboards();
+
+    // Trade vendors
+    TradeVendors.setValues();
   }
 
   private static auctionPriceHandler(): AuctionItem {

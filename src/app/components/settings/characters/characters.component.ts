@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, OnChanges } from '@angular/core';
 import { SharedService } from '../../../services/shared.service';
 import { RealmService } from '../../../services/realm.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -11,7 +11,7 @@ import { Realm } from '../../../models/realm';
   templateUrl: './characters.component.html',
   styleUrls: ['./characters.component.scss']
 })
-export class CharactersComponent implements OnChanges {
+export class CharactersComponent implements OnChanges, AfterViewInit {
   @Input() region: string;
   @Input() realm: string;
 
@@ -23,14 +23,25 @@ export class CharactersComponent implements OnChanges {
     private _realmService: RealmService, private formBuilder: FormBuilder
   ) {
     this._characterForm = this.formBuilder.group({
-      realm: '',
+      region: SharedService.user.region,
+      realm: SharedService.user.realm,
       name: ''
     });
+  }
+
+  ngAfterViewInit(): void {
+    if (!SharedService.realms[this._characterForm.value.region]) {
+      this.getRealms();
+    }
   }
 
   ngOnChanges(change): void {
     if (change.realm && change.realm.currentValue) {
       this._characterForm.controls.realm.setValue(change.realm.currentValue);
+    }
+
+    if (change.region && change.region.currentValue) {
+      this._characterForm.controls.region.setValue(change.region.currentValue);
     }
   }
 

@@ -18,9 +18,13 @@
     <input matInput placeholder="Character" formControlName="name">
   </mat-form-field>
   <button class="btn btn-sm btn-secondary mat-elevation-z5 col-md-1" type="submit">
-    <i class="fa fa-plus" aria-hidden="true" *ngIf="!downloading; else dl"></i>
+    <span *ngIf="!downloading; else dl">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+    </span>
     <ng-template #dl>
-        <i class="fas fa-sync loading"></i>
+        <span>
+          <i class="fas fa-sync loading"></i>
+        </span>
     </ng-template>
     Add
   </button>

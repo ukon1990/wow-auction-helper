@@ -18,8 +18,8 @@ const routes: Routes = [
   { path: 'crafting', component: CraftingComponent, canActivate: [ IsRegisteredService ] },
   { path: 'auctions', component: AuctionsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'trade-vendors', component: TradeVendorsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'watchlist', component: Watchlist, canActivate: [ IsRegisteredService ] },
+  { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'settings', component: SettingsComponent, canActivate:  [ IsRegisteredService ] },
   { path: 'about', component: AboutComponent },
   { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] }

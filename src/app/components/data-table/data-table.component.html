@@ -23,7 +23,7 @@
               <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
                 [id]="d[id]"
                 [petSpeciesId]="d?.petSpeciesId"></wah-icon>
-              {{ d[c.key] }}
+              {{ d[c.key] ? d[c.key] : getItem(d.itemID)?.name }}
             </a>
             <span *ngIf="isCrafting">
               <br>
@@ -70,6 +70,7 @@
               <i class="fas fa-cart-plus"></i>
             </button>
             <a *ngIf="d.itemID"
+              target="_blank"
               href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ d.itemID }}"
               mat-icon-button matTooltip="Go to Web AH and buy">
               <i class="fas fa-shopping-cart"></i>

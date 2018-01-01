@@ -1,5 +1,6 @@
 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <mat-spinner *ngIf="isDownloading()" class="float-left mr-2"></mat-spinner> {{ timeSinceUpdate }} minutes ago
+  <mat-spinner *ngIf="isDownloading()" class="float-left mr-2">
+  </mat-spinner> Last update {{ timeSinceUpdate }} minutes ago
 </a>
 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
   <li class="nav-link">
