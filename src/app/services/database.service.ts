@@ -4,6 +4,7 @@ import { Item } from '../models/item/item';
 import { Auction } from '../models/auction/auction';
 import { AuctionHandler } from '../models/auction/auction-handler';
 import { SharedService } from './shared.service';
+import { TSM } from '../models/auction/tsm';
 /**
  * A Class for handeling the indexedDB
  */
@@ -59,7 +60,7 @@ export class DatabaseService {
     this.db.table('auctions').clear();
     this.db.table('auctions')
       .bulkPut(auctions)
-      .then(r => console.log('Successfully added items to local DB'))
+      .then(r => console.log('Successfully added auctions to local DB'))
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
@@ -77,8 +78,27 @@ export class DatabaseService {
       });
   }
 
+  addTSMItems(tsm: Array<TSM>): void {
+    this.db.table('tsm').clear();
+    this.db.table('tsm')
+      .bulkPut(tsm)
+      .then(r => console.log('Successfully added tsm data to local DB'))
+      .catch(e => console.error('Could not add tsm data to local DB', e));
+  }
+
+  getTSMItems(): Dexie.Promise<any> {
+    SharedService.downloading.tsmAuctions = true;
+    return this.db.table('tsm')
+      .toArray()
+      .then(tsm => {
+        (<TSM[]>tsm).forEach(a => {
+          SharedService.tsm[a.Id] = a;
+        });
+      })
+      .catch(e => console.error('Could not restore TSM data', e));
+  }
+
   clearDB(): void {
-    // logic inc
   }
 
   setDbVersions(): void {

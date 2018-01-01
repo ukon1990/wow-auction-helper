@@ -27,7 +27,9 @@ export class DownloadComponent implements OnInit {
       await this._itemService.getItems();
       await this._petService.getPets();
       await this._craftingService.getRecipes();
-      await this._auctionsService.getTsmAuctions();
+      if (SharedService.user.apiToUse === 'tsm') {
+        await this._auctionsService.getTsmAuctions();
+      }
       await this._dbService.getAllAuctions()
         .then(r => {
           if (SharedService.auctions.length === 0) {

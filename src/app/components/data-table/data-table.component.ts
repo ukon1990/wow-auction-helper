@@ -21,8 +21,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() isCrafting: boolean;
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;
-  pageEvent: PageEvent;
   pageRows: Array<number> = [10, 20, 40, 80, 100];
+  pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
   sorter: Sorter;
   auctionDuration = {
     'VERY_LONG': '12h+',
@@ -73,6 +73,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
   }
 
+  /* istanbul ignore next */
   pageChange(event: PageEvent): void {
     this.pageEvent = event;
   }

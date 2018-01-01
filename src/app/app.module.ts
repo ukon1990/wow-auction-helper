@@ -38,6 +38,10 @@ import { IconComponent } from './components/item/icon/icon.component';
 import { ResetCalcComponent } from './components/item/reset-calc/reset-calc.component';
 import { PetsService } from './services/pets.service';
 import { SortIconComponent } from './components/sort-icon/sort-icon.component';
+import { AboutComponent } from './components/about/about.component';
+import { MyAuctionsComponent } from './components/auctions/my-auctions/my-auctions.component';
+import { TradeVendorsComponent } from './components/trade-vendors/trade-vendors.component';
+import { WatchlistComponent } from './components/watchlist/watchlist.component';
 
 
 @NgModule({
@@ -63,7 +67,11 @@ import { SortIconComponent } from './components/sort-icon/sort-icon.component';
     LineChartComponent,
     IconComponent,
     ResetCalcComponent,
-    SortIconComponent
+    SortIconComponent,
+    AboutComponent,
+    MyAuctionsComponent,
+    TradeVendorsComponent,
+    WatchlistComponent
   ],
   imports: [
     BrowserModule,

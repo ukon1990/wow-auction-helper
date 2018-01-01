@@ -62,6 +62,7 @@ export class AuctionsService {
         (<TSM[]>tsm).forEach(a => {
           SharedService.tsm[a.Id] = a;
         });
+        this._dbService.addTSMItems(tsm as Array<TSM>);
       }
       )
       .catch(e => console.error('Unable to download TSM data', e));
