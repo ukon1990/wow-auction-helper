@@ -1,3 +1,6 @@
+import { AuctionItem } from './auction/auction-item';
+import { SharedService } from '../services/shared.service';
+
 export class Sorter {
   keys: Key[] = [];
 
@@ -13,21 +16,21 @@ export class Sorter {
   sort(arr: any[]): void {
     arr.sort((a, b) => {
       for (let i = this.keys.length - 1; i >= 0; i--) {
-        if (a[this.keys[i].key] === b[this.keys[i].key]) {
+        if (this.getItemToSort(this.keys[i].key, a) === this.getItemToSort(this.keys[i].key, b)) {
           continue;
         }
 
         if (this.keys[i].desc) {
           if (this.isString(a, i)) {
-            return b[this.keys[i].key].localeCompare(a[this.keys[i].key]);
+            return this.getItemToSort(this.keys[i].key, b).localeCompare(this.getItemToSort(this.keys[i].key, a));
           } else {
-            return a[this.keys[i].key] < b[this.keys[i].key] ? 1 : -1;
+            return this.getItemToSort(this.keys[i].key, a) < this.getItemToSort(this.keys[i].key, b) ? 1 : -1;
           }
         } else {
           if (this.isString(a, i)) {
-            return a[this.keys[i].key].localeCompare(b[this.keys[i].key]);
+            return this.getItemToSort(this.keys[i].key, a).localeCompare(this.getItemToSort(this.keys[i].key, b));
           } else {
-            return a[this.keys[i].key] > b[this.keys[i].key] ? 1 : -1;
+            return this.getItemToSort(this.keys[i].key, a) > this.getItemToSort(this.keys[i].key, b) ? 1 : -1;
           }
         }
       }
@@ -35,8 +38,13 @@ export class Sorter {
     });
   }
 
-  private isString(object: Object, index): boolean {
-    return typeof object[this.keys[index].key] === 'string';
+  getItemToSort(key: string, item: any): any {
+    return item[key] ?
+      item[key] : (SharedService.auctionItemsMap[item.item ? item.item : item.itemID])[key];
+  }
+
+  private isString(object: any, index): boolean {
+    return typeof this.getItemToSort(this.keys[index].key, object) === 'string';
   }
 
   removeKey(key: string): void {

@@ -92,8 +92,31 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   /* istanbul ignore next */
-  getItem(itemID): Item {
+  getItemName(name: string, item: any): string {
+    const id = this.getItemID(item);
+    if (name) {
+      return name;
+    }
+
+    if (this.getItem(id)) {
+      return this.getItem(item[this.id]).name;
+    }
+
+    return '';
+  }
+
+  /* istanbul ignore next */
+  getItem(itemID: number): Item {
     return SharedService.items[itemID] ? SharedService.items[itemID] : new Item();
+  }
+
+  getItemID(item: any): number {
+    return item[this.id] ? item[this.id] : item.itemID;
+  }
+
+  /* istanbul ignore next */
+  getAuctionItem(item: any): AuctionItem {
+    return SharedService.auctionItemsMap[this.getItemID(item)] || new AuctionItem();
   }
 
   /* istanbul ignore next */

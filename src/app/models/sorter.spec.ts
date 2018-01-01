@@ -1,5 +1,7 @@
 import { async, TestBed } from '@angular/core/testing';
 import { Sorter } from './sorter';
+import { SharedService } from '../services/shared.service';
+import { AuctionItem } from './auction/auction-item';
 
 let sorter: Sorter,
   arr = [];
@@ -73,5 +75,25 @@ describe('sort', () => {
       { id: 2, name: 'Aisha' },
       { id: 1, name: 'Arch' }
     ]);
+  });
+
+  it('getItemToSort returns the desired value if the key was found on the item', () => {
+    SharedService.auctionItemsMap[1] = new AuctionItem();
+    SharedService.auctionItemsMap[1].id = 1;
+    SharedService.auctionItemsMap[1].buyout = 10;
+
+    sorter.addKey('buyout');
+
+    expect(sorter.getItemToSort('buyout', { item: 1 })).toBe(10);
+  });
+
+  it('getItemToSort tries to get auction item if the item did not contain the key', () => {
+    SharedService.auctionItemsMap[1] = new AuctionItem();
+    SharedService.auctionItemsMap[1].id = 1;
+    SharedService.auctionItemsMap[1].buyout = 10;
+
+    sorter.addKey('buyout');
+
+    expect(sorter.getItemToSort('buyout', { item: 1 })).toBe(10);
   });
 });

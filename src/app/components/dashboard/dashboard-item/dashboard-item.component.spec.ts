@@ -17,6 +17,7 @@ describe('DashboardItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardItemComponent);
     component = fixture.componentInstance;
+    component.dashboard.columns = [];
     fixture.detectChanges();
   });
 

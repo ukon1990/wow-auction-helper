@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MyAuctionsComponent } from './my-auctions.component';
+import { TestModule } from '../../../modules/test.module';
 
 describe('MyAuctionsComponent', () => {
   let component: MyAuctionsComponent;
@@ -8,7 +9,7 @@ describe('MyAuctionsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MyAuctionsComponent ]
+      imports: [ TestModule ]
     })
     .compileComponents();
   }));

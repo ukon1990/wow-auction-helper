@@ -1,8 +1,10 @@
 <mat-tab-group>
   <mat-tab label="All">
-    
+    <wah-data-table id="item" [data]="getUserAuctions()" [columns]="columns"></wah-data-table>
   </mat-tab>
   <ng-container *ngFor="let c of getUserAuctionsCharacters()">
-    <mat-tab *ngIf="c.auctions.length > 0" [label]="c.name"></mat-tab>
+    <mat-tab *ngIf="c.auctions.length > 0" [label]="c.name">
+      <wah-data-table id="item" [data]="c.auctions" [columns]="columns"></wah-data-table>
+    </mat-tab>
   </ng-container>
 </mat-tab-group>
