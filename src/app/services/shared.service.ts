@@ -13,12 +13,13 @@ import { AuctionResponse } from '../models/auction/auctions-response';
 @Injectable()
 export class SharedService {
   public static user: User;
-  public static auctionResponse: AuctionResponse = {lastModified: localStorage['timestamp_auctions'], url: undefined};
+  public static auctionResponse: AuctionResponse = {lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static auctionItemsMap: Map<number, AuctionItem> = new Map<number, AuctionItem>();
   public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();
   public static auctions: Array<Auction> = new Array<Auction>();
   public static tsm: Map<number, TSM> = new Map<number, TSM>();
+  public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
   public static items: Map<number, Item> = new Map<number, Item>();

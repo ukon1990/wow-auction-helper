@@ -12,7 +12,10 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-checkbox formControlName="onlyMyRecipes">Only known recipes</mat-checkbox>
+  <mat-checkbox formControlName="onlyKnownRecipes"
+    matTooltip="Displays only those recipes your character for this realm knows">
+    Only known recipes
+  </mat-checkbox>
 
   <mat-form-field>
     <input matInput placeholder="Minimum ROI" formControlName="profit" type="number" matTooltip="Minimum return on investment">

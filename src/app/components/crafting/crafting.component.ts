@@ -37,7 +37,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
-      onlyMyRecipes: query && query.onlyMyRecipes !== undefined ? query.onlyMyRecipes : true,
+      onlyKnownRecipes: query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true,
       profession: query && query.profession ? query.profession : 'All',
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
@@ -83,38 +83,41 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   filter(): Array<Recipe> {
-    return SharedService.recipes.filter(i => this.isMatch(i));
+    return SharedService.recipes
+    .filter(recipe =>
+      this.isKnownRecipe(recipe)
+      && this.isNameMatch(recipe)
+      && this.isProfitMatch(recipe)
+      && this.isSaleRateMatch(recipe)
+      && this.isProfessionMatch(recipe));
   }
 
-  isMatch(recipe: Recipe): boolean {
-    let match = true;
-
-    if (this.searchForm.value.searchQuery !== null && this.searchForm.value.searchQuery.length > 0 &&
-      recipe.name.toLowerCase().indexOf(this.searchForm.value.searchQuery.toLowerCase()) === -1) {
-      match = false;
-    }
-
-    if (match && this.searchForm.value.profit !== null &&
-      this.searchForm.value.profit !== 0 && recipe.roi < this.searchForm.value.profit * 10000) {
-      match = false;
-    }
-
-    if (match && this.searchForm.value.demand !== null &&
-      this.searchForm.value.demand !== 0 && recipe.regionSaleRate < this.searchForm.value.demand / 100) {
-      match = false;
-    }
-
-    if (match && this.searchForm.value.minSold !== null &&
-      this.searchForm.value.minSold !== 0 && recipe.avgDailySold < this.searchForm.value.minSold) {
-      match = false;
-    }
-
-    if (match && this.searchForm.value.profession !== null &&
-      this.searchForm.value.profession !== 'All' && this.searchForm.value.profession !== recipe.profession) {
-      match = false;
-    }
-
-    return match;
+  isKnownRecipe(recipe: Recipe): boolean {
+    return this.searchForm.value.onlyKnownRecipes && SharedService.recipesForUser[recipe.spellID];
   }
 
+  isNameMatch(recipe: Recipe): boolean {
+    return this.searchForm.value.searchQuery === null || this.searchForm.value.searchQuery.length === 0 ||
+    recipe.name.toLowerCase().indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1;
+  }
+
+  isProfitMatch(recipe: Recipe): boolean {
+    return this.searchForm.value.profit === null || this.searchForm.value.profit === 0 ||
+    recipe.buyout > 0 && recipe.cost > 0 && this.searchForm.value.profit <= recipe.roi / recipe.cost * 100;
+  }
+
+  isSaleRateMatch(recipe: Recipe): boolean {
+    return this.searchForm.value.demand === null || this.searchForm.value.demand === 0 ||
+    recipe.regionSaleRate >= this.searchForm.value.demand / 100;
+  }
+
+  isMinSoldMatch(recipe: Recipe): boolean {
+    return this.searchForm.value.minSold === null || this.searchForm.value.minSold === 0 ||
+    this.searchForm.value.minSold <= recipe.avgDailySold;
+  }
+
+  isProfessionMatch(recipe: Recipe): boolean {
+    return this.searchForm.value.profession === null || this.searchForm.value.profession === 'All' ||
+      this.searchForm.value.profession === recipe.profession;
+  }
 }

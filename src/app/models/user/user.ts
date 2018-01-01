@@ -162,10 +162,9 @@ export class User {
    * Grouping the current recipes for a user
    */
   public static updateRecipesForRealm(): void {
-    // lists.myRecipes.length = 0;
+    SharedService.recipesForUser = new Map<number, Array<string>>();
     SharedService.user.characters.forEach(character => {
       this.setRecipesForCharacter(character);
-      // lists.myRecipes = Array.from(new Set(lists.myRecipes));
     });
   }
 
@@ -175,14 +174,21 @@ export class User {
         .replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
       character.professions.primary.forEach(primary => {
         primary.recipes.forEach(recipe => {
-          // lists.myRecipes.push(recipe);
+          User.addRecipe(recipe, character.name);
         });
       });
       character.professions.secondary.forEach(secondary => {
         secondary.recipes.forEach(recipe => {
-          // lists.myRecipes.push(recipe);
+          User.addRecipe(recipe, character.name);
         });
       });
     }
+  }
+
+  private static addRecipe(spellId: number, characterName: string): void {
+    if (!SharedService.recipesForUser[spellId]) {
+      SharedService.recipesForUser[spellId] = new Array<string>();
+    }
+    SharedService.recipesForUser[spellId].push(characterName);
   }
 }

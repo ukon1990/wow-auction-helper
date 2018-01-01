@@ -22,6 +22,9 @@
             </a>
             <span *ngIf="isCrafting">
               <br>
+              <span *ngIf="getItem(d.itemID).name !== d.name">
+                {{ getItem(d.itemID).name }} <br>
+              </span>
               {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span>
             </span>
           </span>
@@ -31,6 +34,10 @@
             <span *ngIf="c.key === 'buyout' && d.mktPrice">
               ({{ d.buyout / d.mktPrice | percent }} of MV)
             </span>
+
+            <span *ngIf="c.key === 'roi' && d.cost">
+                ({{ d.roi / d.cost | percent }})
+              </span>
           </span>
           <span *ngSwitchCase="'gold-per-item'">
               {{ d[c.key] / d.quantity | gold}}

@@ -7,6 +7,7 @@ import { Auction } from '../../models/auction/auction';
 import { Recipe } from '../../models/crafting/recipe';
 import { User } from '../../models/user/user';
 import { Sorter } from '../../models/sorter';
+import { Item } from '../../models/item/item';
 
 @Component({
   selector: 'wah-data-table',
@@ -87,6 +88,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   /* istanbul ignore next */
   getUser(): User {
     return SharedService.user;
+  }
+
+  /* istanbul ignore next */
+  getItem(itemID): Item {
+    return SharedService.items[itemID] ? SharedService.items[itemID] : new Item();
   }
 
   /* istanbul ignore next */
