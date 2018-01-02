@@ -22,8 +22,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
     this.form = formBuilder.group({
       name: filter && filter.name ? filter.name : '',
-      itemClass: filter  ? filter.itemClass : -1,
-      itemSubClass: filter ? filter.itemSubClass : -1,
+      itemClass: filter  ? filter.itemClass : '-1',
+      itemSubClass: filter ? filter.itemSubClass : '-1',
       mktPrice: filter && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
       saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
       avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : 0,
@@ -52,6 +52,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
     if (SharedService.user.apiToUse === 'tsm') {
       this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
+      this.columns.push({ key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold'});
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
     }
@@ -71,30 +72,30 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   }
 
   isNameMatch(auctionItem: AuctionItem): boolean {
-    if (this.form.value.name === null) {
+    if (this.form.value.name === null || this.form.value.name.length === 0) {
       return true;
     }
     return auctionItem.name.toLowerCase().indexOf(this.form.value.name.toLowerCase()) > -1;
   }
 
   isBelowMarketValue(auctionItem: AuctionItem): boolean {
-    if (this.form.value.mktPrice === null || this.form.value.mktPrice === 0) {
+    if (this.isUsinAPI() || this.form.value.mktPrice === null || this.form.value.mktPrice === 0) {
       return true;
-    } else if (auctionItem.mktPrice === 0) {
+    } else if (this.isUsinAPI() && auctionItem.mktPrice === 0) {
       return false;
     }
     return Math.round((auctionItem.buyout / auctionItem.mktPrice) * 100) <= this.form.value.mktPrice;
   }
 
   isSaleRateMatch(auctionItem: AuctionItem): boolean {
-    if (this.form.value.saleRate && this.form.value.saleRate > 0) {
+    if (this.isUsinAPI() && this.form.value.saleRate && this.form.value.saleRate > 0) {
       return auctionItem.regionSaleRate >= this.form.value.saleRate / 100;
     }
     return true;
   }
 
   isDailySoldMatch(auctionItem: AuctionItem): boolean {
-    if (this.form.value.avgDailySold && this.form.value.avgDailySold > 0) {
+    if (this.isUsinAPI() && this.form.value.avgDailySold && this.form.value.avgDailySold > 0) {
       return auctionItem.avgDailySold >= this.form.value.avgDailySold;
     }
     return true;
@@ -103,7 +104,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   isItemClassMatch(auctionItem: AuctionItem): boolean {
     const itemClass = SharedService.items[auctionItem.itemID] ? SharedService.items[auctionItem.itemID].itemClass : -1;
 
-    if (this.form.value.itemClass === null || this.form.value.itemClass === '-1') {
+    if (this.form.value.itemClass === null || this.form.value.itemClass === '-1' || this.form.value.itemClass === -1) {
       return true;
     } else if (itemClasses.classes[this.form.value.itemClass] &&
         parseInt(itemClass, 10) === itemClasses.classes[this.form.value.itemClass].class) {
@@ -115,7 +116,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   isItemSubclassMatch(auctionItem: AuctionItem, subClasses: any): boolean {
     const subClass = SharedService.items[auctionItem.itemID] ? SharedService.items[auctionItem.itemID].itemSubClass : -1;
 
-    if (this.form.value.itemSubClass === null || this.form.value.itemSubClass === '-1' || this.form.value.itemSubClass === undefined) {
+    if (this.form.value.itemSubClass === null || this.form.value.itemSubClass === -1 ||
+        this.form.value.itemSubClass === '-1' || this.form.value.itemSubClass === undefined) {
       return true;
     } else {
       return subClass > -1 ?

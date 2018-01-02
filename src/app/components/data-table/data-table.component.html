@@ -19,7 +19,10 @@
       <td *ngFor="let c of columns;">
         <span [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
-            <a rel="item={{ id ? d[id] : d.itemID  }}" (click)="setSelectedItem(d)">
+            <a rel="{{
+                d.petSpeciesId ?
+                ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
+              }}" (click)="setSelectedItem(d)">
               <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
                 [id]="d[id]"
                 [petSpeciesId]="d?.petSpeciesId"></wah-icon>
@@ -73,7 +76,7 @@
             <button mat-icon-button matTooltip="Add to shopping cart">
               <i class="fas fa-cart-plus"></i>
             </button>
-            <a *ngIf="d.itemID"
+            <a *ngIf="getItemID(d)"
               target="_blank"
               href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ getItemID(d) }}"
               mat-icon-button matTooltip="Go to Web AH and buy">

@@ -13,6 +13,9 @@ export class AuctionHandler {
     * @param auctions A raw auction array
     */
   public static organize(auctions: Array<Auction>): void {
+    SharedService.auctionItems.length = 0;
+    SharedService.auctionItemsMap.clear();
+
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
 
     // Sorting by buyout, before we do the grouping for less processing.
@@ -28,32 +31,20 @@ export class AuctionHandler {
       } else if (!SharedService.auctionItemsMap[a.item]) {
         SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
-
-        if (this.useTSM() && SharedService.tsm[a.item]) {
-          const auc = SharedService.auctionItemsMap[a.item],
-            tsmItem = SharedService.tsm[a.item];
-          auc.regionSaleRate = tsmItem.RegionSaleRate;
-          auc.mktPrice = tsmItem.MarketValue;
-          auc.avgDailySold = tsmItem.RegionAvgDailySold;
-          auc.regionSaleAvg = tsmItem.RegionSaleAvg;
-          auc.vendorSell = tsmItem.VendorSell;
-        }
       } else {
         AuctionHandler.updateAuctionItem(a);
       }
 
       SharedService.userAuctions.addAuction(a, SharedService.auctionItemsMap);
     });
-    console.log(SharedService.userAuctions);
 
     Crafting.calculateCost();
-
-    // Dashboard
-    Dashboard.addDashboards();
 
     // Trade vendors
     TradeVendors.setValues();
 
+    // Dashboard -> Needs to be done after trade vendors
+    Dashboard.addDashboards();
   }
 
   private static auctionPriceHandler(): AuctionItem {
@@ -94,7 +85,16 @@ export class AuctionHandler {
     tmpAuc.buyout = auction.buyout / auction.quantity;
     tmpAuc.bid = auction.bid / auction.quantity;
     tmpAuc.quantityTotal += auction.quantity;
+    tmpAuc.vendorSell = SharedService.items[tmpAuc.itemID] ? SharedService.items[tmpAuc.itemID].sellPrice : 0;
     tmpAuc.auctions.push(auction);
+
+    if (this.useTSM() && SharedService.tsm[auction.item]) {
+      const tsmItem = SharedService.tsm[auction.item];
+      tmpAuc.regionSaleRate = tsmItem.RegionSaleRate;
+      tmpAuc.mktPrice = tsmItem.MarketValue;
+      tmpAuc.avgDailySold = tsmItem.RegionAvgDailySold;
+      tmpAuc.regionSaleAvg = tsmItem.RegionSaleAvg;
+    }
     return tmpAuc;
   }
 

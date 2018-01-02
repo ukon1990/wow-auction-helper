@@ -19,6 +19,12 @@ export class NavbarComponent implements OnInit {
     User.save();
   }
 
+  isRegisteredUser(): boolean {
+    if (SharedService.user.realm && SharedService.user.region) {
+      return true;
+    }
+    return false;
+  }
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
   }

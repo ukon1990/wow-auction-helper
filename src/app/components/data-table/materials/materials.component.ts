@@ -16,7 +16,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   getItemValue(itemID: number, count: number) {
-    if (SharedService.user.customPrices[itemID]) {
+    if (SharedService.user.customPrices && SharedService.user.customPrices[itemID]) {
       return SharedService.user.customPrices[itemID];
     } else if (this.getAtAHCount(itemID) > 0) {
       return SharedService.auctionItemsMap[itemID].buyout;

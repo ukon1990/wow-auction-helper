@@ -105,6 +105,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     return '';
   }
 
+  getPetId(pet: any): number {
+    return SharedService.pets[pet.petSpeciesId].creatureId;
+  }
+
   /* istanbul ignore next */
   getItem(itemID: number): Item {
     return SharedService.items[itemID] ? SharedService.items[itemID] : new Item();

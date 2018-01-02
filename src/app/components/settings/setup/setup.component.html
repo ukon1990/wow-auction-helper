@@ -154,7 +154,7 @@
       Add crafters/characters
       <i class="fas fa-arrow-right"></i>
     </button>
-    <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+    <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
       Finish setup
       <i class="fas fa-arrow-right"></i>
     </button>
@@ -174,7 +174,7 @@
       <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
         Add TSM key and/or modify settings
       </button>
-      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+      <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
         Finish setup
         <i class="fas fa-arrow-right"></i>
       </button>
@@ -200,7 +200,7 @@
         <i class="fas fa-arrow-left"></i>
         Back
       </button>
-      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" (click)="completeSetup()">
+      <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
         Complete setup
       </button>
     </div>

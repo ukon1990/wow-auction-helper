@@ -7,48 +7,53 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
           <a class="nav-link" routerLink="dashboard" routerLinkActive="active">
             Dashboard
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
           <a class="nav-link" routerLink="crafting" routerLinkActive="active">
             Crafting
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
           <a class="nav-link" routerLink="auctions" routerLinkActive="active">
             Auctions
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
             <a class="nav-link" routerLink="my-auctions" routerLinkActive="active">
               My auctions
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
             <a class="nav-link" routerLink="watchlist" routerLinkActive="active">
               Watchlist
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
             <a class="nav-link" routerLink="trade-vendor" routerLinkActive="active">
               Trade vendors
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isRegisteredUser()">
             <a class="nav-link" routerLink="settings" routerLinkActive="active">
               Settings
             </a>
         </li>
+        <li class="nav-item" *ngIf="!isRegisteredUser()">
+            <a class="nav-link" routerLink="" routerLinkActive="active">
+              Setup
+            </a>
+          </li>
         <li class="nav-item">
             <a class="nav-link" routerLink="about" routerLinkActive="active">
               About
             </a>
         </li>
       </ul>
-      <ul class="navbar-nav">
+      <ul class="navbar-nav" *ngIf="isRegisteredUser()">
         <li class="nav-item dropdown">
           <wah-download></wah-download>
         </li>

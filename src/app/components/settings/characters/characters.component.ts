@@ -5,6 +5,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { CharacterService } from '../../../services/character.service';
 import { User } from '../../../models/user/user';
 import { Realm } from '../../../models/realm';
+import { AuctionHandler } from '../../../models/auction/auction-handler';
 
 @Component({
   selector: 'wah-characters',
@@ -58,6 +59,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
         SharedService.user.characters.push(c);
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
         this.downloading = false;
+
+        if (SharedService.user.region && SharedService.user.realm) {
+          AuctionHandler.organize(SharedService.auctions);
+        }
       }).catch(() => this.downloading = false);
   }
 
@@ -69,6 +74,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     ).then(c => {
       SharedService.user.characters[index] = c;
       localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+
+      if (SharedService.user.region && SharedService.user.realm) {
+        AuctionHandler.organize(SharedService.auctions);
+      }
     });
   }
 

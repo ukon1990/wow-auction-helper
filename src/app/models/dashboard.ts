@@ -6,7 +6,13 @@ export class Dashboard {
     TOP_SELLERS_BY_VOLUME: 'TOP_SELLERS_BY_VOLUME',
     TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
     MOST_AVAILABLE_ITEMS: 'MOST_AVAILABLE_ITEMS',
-    MOST_PROFITABLE_CRAFTS: 'MOST_PROFITABLE_CRAFTS'
+    MOST_PROFITABLE_CRAFTS: 'MOST_PROFITABLE_CRAFTS',
+    POTENTIAL_DEALS: 'POTENTIAL_DEALS',
+    CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'CHEAP_BIDS_WITH_LOW_TIME_LEFT',
+    CHEAPER_THAN_VENDOR_SELL: 'CHEAPER_THAN_VENDOR_SELL',
+    TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
+    // The users pets, that maybe could be sold for something
+    POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
   };
 
   idParam: string;
@@ -41,7 +47,8 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'quantityTotal', title: 'Stock', dataType: 'number' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' }
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
         this.setItemsGroupedByAvailablility();
         break;
@@ -50,9 +57,63 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'roi', title: 'ROI', dataType: 'gold' }
+          { key: 'roi', title: 'ROI', dataType: 'gold' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
         this.setMostProfitableProfessions();
+        break;
+      case Dashboard.TYPES.POTENTIAL_DEALS:
+        this.idParam = 'itemID';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'bid', title: 'Bid', dataType: 'gold' },
+          { key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold'},
+          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
+          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        ];
+        this.setPotentialDeals();
+        break;
+
+      case Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT:
+        this.idParam = 'item';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
+          { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
+          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
+          { key: 'quantity', title: 'Size', dataType: 'number' },
+          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
+          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        ];
+        this.setCheapBidsWithLowTimeLeft();
+        break;
+
+      case Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
+        this.idParam = 'itemID';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
+          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
+          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        ];
+        this.setCheaperThanVendorSell();
+        break;
+      case Dashboard.TYPES.TRADE_VENDOR_VALUES:
+        this.idParam = 'itemID';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'bestValueName', title: 'Target', dataType: 'name' },
+          { key: 'value', title: 'Value', dataType: 'gold' }
+        ];
+        this.setTradeVendorValues();
         break;
     }
   }
@@ -61,13 +122,78 @@ export class Dashboard {
     SharedService.dashboards.length = 0;
 
     SharedService.dashboards.push(
-      new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
-    SharedService.dashboards.push(
-      new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
-    SharedService.dashboards.push(
       new Dashboard('Most profitable crafts', Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
     SharedService.dashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
+    if (SharedService.user.apiToUse !== 'none') {
+      SharedService.dashboards.push(
+        new Dashboard('Potential deals', Dashboard.TYPES.POTENTIAL_DEALS));
+    }
+    SharedService.dashboards.push(
+      new Dashboard('Potential 30 minute bid deals', Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT));
+    SharedService.dashboards.push(
+      new Dashboard('Buyout below vendor sell price', Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL));
+    SharedService.dashboards.push(
+      new Dashboard('Trade vendor currency in gold', Dashboard.TYPES.TRADE_VENDOR_VALUES));
+
+    // Sellers
+    SharedService.dashboards.push(
+      new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
+    SharedService.dashboards.push(
+      new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
+  }
+
+  private setTradeVendorValues(): void {
+    this.data.length = 0;
+    Object.keys(SharedService.tradeVendorMap)
+      .forEach(key => {
+        this.data.push({
+          itemID: SharedService.tradeVendorMap[key].items[0].itemID,
+          name: SharedService.tradeVendorMap[key].name,
+          bestValueName: SharedService
+            .items[SharedService.tradeVendorMap[key].items[0].itemID].name,
+          value: SharedService.tradeVendorMap[key].items[0].value
+        });
+      });
+      this.data.sort((a, b) => b.value - a.value);
+  }
+  private setCheaperThanVendorSell(): void {
+    this.data.length = 0;
+    this.data = SharedService.auctionItems.filter(ai =>
+      ai.buyout !== 0 && ai.buyout < ai.vendorSell
+      ).sort((a, b) =>
+        a.buyout / a.vendorSell - b.buyout / b.vendorSell);
+  }
+
+  private setCheapBidsWithLowTimeLeft(): void {
+    this.data.length = 0;
+    this.data = SharedService.auctions.filter(a => {
+      let match = true;
+      if (a.timeLeft !== 'SHORT') {
+        match = false;
+      }
+
+      if (match && (a.buyout === 0 || (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout > 0.9)) {
+        match = false;
+      }
+
+      if (match && SharedService.user.apiToUse !== 'none' &&
+        SharedService.auctionItemsMap[a.item].avgDailySold < 1 && SharedService.auctionItemsMap[a.item].regionSaleRate < 0.30) {
+        match = false;
+      }
+      return match;
+    }).sort((a, b) =>
+      (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
+      (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout
+      );
+  }
+
+  private setPotentialDeals(): void {
+    this.data.length = 0;
+    this.data = SharedService.auctionItems.filter(ai =>
+      ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 &&
+      ai.buyout / ai.mktPrice < 0.15 && ai.buyout / ai.regionSaleAvg < 0.15)
+      .sort((a, b) => a.buyout / a.mktPrice - b.buyout / b.mktPrice);
   }
 
   private setMostProfitableProfessions(): void {
@@ -82,28 +208,28 @@ export class Dashboard {
         }
         return true;
       })
-      .slice(0, 30);
+      .slice(0, 100);
   }
 
   private setSellersGroupedSortedByQuantity(): void {
     this.data.length = 0;
     this.data = this.getListOfOwners()
       .sort((a, b) => b.volume - a.volume)
-      .slice(0, 30);
+      .slice(0, 100);
   }
 
   private setItemsGroupedByAvailablility(): void {
     this.data.length = 0;
     this.data = SharedService.auctionItems.
       sort((a, b) => b.quantityTotal - a.quantityTotal)
-      .slice(0, 30);
+      .slice(0, 100);
   }
 
   private setItemsGroupedBySellerWithHighLiquidity(): void {
     this.data.length = 0;
     this.data = this.getListOfOwners()
       .sort((a, b) => b.liquidity - a.liquidity)
-      .slice(0, 30);
+      .slice(0, 100);
   }
 
   private getListOfOwners(): any[] {

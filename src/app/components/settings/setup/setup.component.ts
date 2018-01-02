@@ -97,7 +97,8 @@ export class SetupComponent implements OnInit {
         eventAction: 'New user registered'
       });*/
 
-      this._router.navigateByUrl('/crafting');
+      User.restore();
+      this._router.navigateByUrl('/dashboard');
     }
   }
 }

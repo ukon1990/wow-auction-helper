@@ -6,6 +6,7 @@ import { ColumnDescription } from '../../models/column-description';
 import { WowdbService } from '../../services/wowdb.service';
 import { User } from '../../models/user/user';
 import { Recipe } from '../../models/crafting/recipe';
+import { Pet } from '../../models/pet';
 
 @Component({
   selector: 'wah-item',
@@ -98,6 +99,12 @@ export class ItemComponent implements OnInit {
   getItem(): Item {
     return SharedService.items[SharedService.selectedItemId] ?
       SharedService.items[SharedService.selectedItemId] : undefined;
+  }
+
+  /* istanbul ignore next */
+  getPet(): Pet {
+    return  SharedService.items[SharedService.selectedPetSpeciesId] ?
+      SharedService.pets[SharedService.selectedPetSpeciesId] : undefined;
   }
 
   /* istanbul ignore next */

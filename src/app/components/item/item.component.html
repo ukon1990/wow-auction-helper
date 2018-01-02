@@ -3,8 +3,8 @@
     <mat-card-header>
       <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getAuctionItem()?.petSpeciesId"></wah-icon>
       <mat-card-title>
-        <span *ngIf="getItem(); else itemName">
-          {{ getItem().name }}
+        <span *ngIf="getPet() || getItem(); else itemName">
+          {{ getPet() ? getPet().name : getItem().name }}
         </span>
         <ng-template #itemName>
           {{ wowDBItem.Name }}

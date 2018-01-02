@@ -12,14 +12,14 @@
       </ng-template>
     </div>
     <mat-card-title>
-      {{ dashboard.title }}
+      {{ dashboard.title }} ({{ dashboard.data.length }})
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <wah-data-table
       [id]="dashboard?.idParam"
       iconSize="22"
-      [columns]="dashboard.columns"
+      [columns]="detailView ? dashboard.columns : dashboard.columns.slice(0,4)"
       [data]="detailView ? dashboard.data : dashboard.data.slice(0,5)"></wah-data-table>
   </mat-card-content>
 </mat-card>
