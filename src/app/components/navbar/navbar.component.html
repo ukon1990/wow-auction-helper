@@ -23,34 +23,43 @@
           </a>
         </li>
         <li class="nav-item" *ngIf="isRegisteredUser()">
-            <a class="nav-link" routerLink="my-auctions" routerLinkActive="active">
-              My auctions
-            </a>
+          <a class="nav-link" routerLink="my-auctions" routerLinkActive="active">
+            My auctions
+          </a>
         </li>
-        <li class="nav-item" *ngIf="isRegisteredUser()">
-            <a class="nav-link" routerLink="watchlist" routerLinkActive="active">
-              Watchlist
+        <ul class="navbar-nav" *ngIf="isRegisteredUser()">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Tools
             </a>
-        </li>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li class="nav-item" *ngIf="isRegisteredUser()">
+                <a class="nav-link" routerLink="watchlist" routerLinkActive="active">
+                  Watchlist
+                </a>
+              </li>
+              <li class="nav-item" *ngIf="isRegisteredUser()">
+                <a class="nav-link" routerLink="trade-vendor" routerLinkActive="active">
+                  Trade vendors
+                </a>
+              </li>
+            </div>
+          </li>
+        </ul>
         <li class="nav-item" *ngIf="isRegisteredUser()">
-            <a class="nav-link" routerLink="trade-vendor" routerLinkActive="active">
-              Trade vendors
-            </a>
-        </li>
-        <li class="nav-item" *ngIf="isRegisteredUser()">
-            <a class="nav-link" routerLink="settings" routerLinkActive="active">
-              Settings
-            </a>
+          <a class="nav-link" routerLink="settings" routerLinkActive="active">
+            Settings
+          </a>
         </li>
         <li class="nav-item" *ngIf="!isRegisteredUser()">
-            <a class="nav-link" routerLink="" routerLinkActive="active">
-              Setup
-            </a>
-          </li>
+          <a class="nav-link" routerLink="" routerLinkActive="active">
+            Setup
+          </a>
+        </li>
         <li class="nav-item">
-            <a class="nav-link" routerLink="about" routerLinkActive="active">
-              About
-            </a>
+          <a class="nav-link" routerLink="about" routerLinkActive="active">
+            About
+          </a>
         </li>
       </ul>
       <ul class="navbar-nav" *ngIf="isRegisteredUser()">

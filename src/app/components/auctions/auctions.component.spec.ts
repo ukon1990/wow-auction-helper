@@ -20,6 +20,7 @@ describe('AuctionsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AuctionsComponent);
     component = fixture.componentInstance;
+    SharedService.user.apiToUse = 'tsm';
     fixture.detectChanges();
   });
 
@@ -63,13 +64,13 @@ describe('AuctionsComponent', () => {
     it('Should be able true if the itemClass is a match', () => {
       const ai = new AuctionItem();
       SharedService.items[25] = new Item();
-      SharedService.items[25].itemClass = '1';
+      SharedService.items[25].itemClass = '0';
       ai.itemID = 25;
 
       console.log(SharedService.items);
-      component.form.controls['itemClass'].setValue(1);
-      expect(SharedService.items[25].itemClass).toEqual('1');
-      expect(component.form.value['itemClass']).toEqual(1);
+      component.form.controls['itemClass'].setValue('1');
+      expect(SharedService.items[25].itemClass).toEqual('0');
+      expect(component.form.value['itemClass']).toEqual('1');
       expect(component.isItemClassMatch(ai)).toBeTruthy();
     });
   });

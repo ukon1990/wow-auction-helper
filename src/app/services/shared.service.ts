@@ -38,7 +38,8 @@ export class SharedService {
   public static selectedItemId: number;
   public static selectedPetSpeciesId: number;
 
-  public static dashboards: Array<Dashboard> = new Array<Dashboard>();
+  public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();
+  public static sellerDashboards: Array<Dashboard> = new Array<Dashboard>();
 
   public static downloading = {
     auctions: false,

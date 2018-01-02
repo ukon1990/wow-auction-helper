@@ -14,7 +14,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
   }
 
-  getDashboards(): Array<Dashboard> {
-    return SharedService.dashboards;
+  getItemDashboards(): Array<Dashboard> {
+    return SharedService.itemDashboards;
+  }
+  getSellerDashboards(): Array<Dashboard> {
+    return SharedService.sellerDashboards;
   }
 }

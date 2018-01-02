@@ -1,5 +1,6 @@
 import { ColumnDescription } from './column-description';
 import { SharedService } from '../services/shared.service';
+import { Item } from './item/item';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -7,6 +8,7 @@ export class Dashboard {
     TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
     MOST_AVAILABLE_ITEMS: 'MOST_AVAILABLE_ITEMS',
     MOST_PROFITABLE_CRAFTS: 'MOST_PROFITABLE_CRAFTS',
+    MOST_PROFITABLE_KNOWN_CRAFTS: 'MOST_PROFITABLE_KNOWN_CRAFTS',
     POTENTIAL_DEALS: 'POTENTIAL_DEALS',
     CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'CHEAP_BIDS_WITH_LOW_TIME_LEFT',
     CHEAPER_THAN_VENDOR_SELL: 'CHEAPER_THAN_VENDOR_SELL',
@@ -60,7 +62,17 @@ export class Dashboard {
           { key: 'roi', title: 'ROI', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
-        this.setMostProfitableProfessions();
+        this.setMostProfitableProfessions(false);
+        break;
+      case Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS:
+        this.idParam = 'itemID';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'roi', title: 'ROI', dataType: 'gold' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        ];
+        this.setMostProfitableProfessions(true);
         break;
       case Dashboard.TYPES.POTENTIAL_DEALS:
         this.idParam = 'itemID';
@@ -68,7 +80,7 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'bid', title: 'Bid', dataType: 'gold' },
-          { key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold'},
+          { key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold' },
           { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
           { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
           { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
@@ -119,27 +131,30 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
-    SharedService.dashboards.length = 0;
+    SharedService.itemDashboards.length = 0;
+    SharedService.sellerDashboards.length = 0;
 
-    SharedService.dashboards.push(
+    SharedService.itemDashboards.push(
       new Dashboard('Most profitable crafts', Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
-    SharedService.dashboards.push(
+    SharedService.itemDashboards.push(
+      new Dashboard('Most profitable known crafts', Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS));
+    SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
     if (SharedService.user.apiToUse !== 'none') {
-      SharedService.dashboards.push(
+      SharedService.itemDashboards.push(
         new Dashboard('Potential deals', Dashboard.TYPES.POTENTIAL_DEALS));
     }
-    SharedService.dashboards.push(
+    SharedService.itemDashboards.push(
       new Dashboard('Potential 30 minute bid deals', Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT));
-    SharedService.dashboards.push(
+    SharedService.itemDashboards.push(
       new Dashboard('Buyout below vendor sell price', Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL));
-    SharedService.dashboards.push(
+    SharedService.itemDashboards.push(
       new Dashboard('Trade vendor currency in gold', Dashboard.TYPES.TRADE_VENDOR_VALUES));
 
     // Sellers
-    SharedService.dashboards.push(
+    SharedService.sellerDashboards.push(
       new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
-    SharedService.dashboards.push(
+    SharedService.sellerDashboards.push(
       new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
   }
 
@@ -150,19 +165,24 @@ export class Dashboard {
         this.data.push({
           itemID: SharedService.tradeVendorMap[key].items[0].itemID,
           name: SharedService.tradeVendorMap[key].name,
-          bestValueName: SharedService
-            .items[SharedService.tradeVendorMap[key].items[0].itemID].name,
+          bestValueName: this.getItem(key).name,
           value: SharedService.tradeVendorMap[key].items[0].value
         });
       });
-      this.data.sort((a, b) => b.value - a.value);
+    this.data.sort((a, b) => b.value - a.value);
   }
+  private getItem(itemID: any) {
+    const item = SharedService
+      .items[SharedService.tradeVendorMap[itemID].items[0].itemID];
+    return item ? item : new Item();
+  }
+
   private setCheaperThanVendorSell(): void {
     this.data.length = 0;
     this.data = SharedService.auctionItems.filter(ai =>
       ai.buyout !== 0 && ai.buyout < ai.vendorSell
-      ).sort((a, b) =>
-        a.buyout / a.vendorSell - b.buyout / b.vendorSell);
+    ).sort((a, b) =>
+      a.buyout / a.vendorSell - b.buyout / b.vendorSell);
   }
 
   private setCheapBidsWithLowTimeLeft(): void {
@@ -196,13 +216,16 @@ export class Dashboard {
       .sort((a, b) => a.buyout / a.mktPrice - b.buyout / b.mktPrice);
   }
 
-  private setMostProfitableProfessions(): void {
+  private setMostProfitableProfessions(onlyKnown: boolean): void {
     this.data.length = 0;
     this.data = SharedService.recipes
       .sort((a, b) => {
         return b.roi - a.roi;
       })
       .filter(recipe => {
+        if (onlyKnown && !SharedService.recipesForUser[recipe.spellID]) {
+          return false;
+        }
         if (SharedService.user.apiToUse !== 'none') {
           return recipe.avgDailySold > 1 && recipe.regionSaleRate > 0.10;
         }

@@ -110,6 +110,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
         parseInt(itemClass, 10) === itemClasses.classes[this.form.value.itemClass].class) {
       return this.isItemSubclassMatch(auctionItem, itemClasses.classes[this.form.value.itemClass]);
     }
+
     return false;
   }
 

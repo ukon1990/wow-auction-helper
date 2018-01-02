@@ -89,6 +89,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       && this.isNameMatch(recipe)
       && this.isProfitMatch(recipe)
       && this.isSaleRateMatch(recipe)
+      && this.isMinSoldMatch(recipe)
       && this.isProfessionMatch(recipe));
   }
 

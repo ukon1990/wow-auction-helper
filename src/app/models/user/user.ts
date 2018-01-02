@@ -1,7 +1,7 @@
 import { Notification } from './notification';
-import { Watchlist } from './watchlist';
 import { SharedService } from '../../services/shared.service';
 import { Character } from '../character/character';
+import { Watchlist } from '../watchlist/watchlist';
 
 
 

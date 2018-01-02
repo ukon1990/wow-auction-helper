@@ -14,7 +14,10 @@ export class AuctionHandler {
     */
   public static organize(auctions: Array<Auction>): void {
     SharedService.auctionItems.length = 0;
-    SharedService.auctionItemsMap.clear();
+    Object.keys(SharedService.auctionItemsMap)
+      .forEach(key => {
+        delete SharedService.auctionItemsMap[key];
+      });
 
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
 

@@ -1,6 +1,17 @@
 <h2>Dashboard</h2>
-<div class="row">
-  <div class="col-md-6 mb-3" *ngFor="let d of getDashboards()">
-    <wah-dashboard-item [dashboard]="d"></wah-dashboard-item>
-  </div>
-</div>
+<mat-tab-group>
+  <mat-tab label="Items">
+    <div class="row col-md-12">
+      <div class="col-md-6 mb-3" *ngFor="let d of getItemDashboards()">
+        <wah-dashboard-item [dashboard]="d"></wah-dashboard-item>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Sellers">
+    <div class="row col-md-12">
+      <div class="col-md-6 mb-3" *ngFor="let d of getSellerDashboards()">
+        <wah-dashboard-item [dashboard]="d"></wah-dashboard-item>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
