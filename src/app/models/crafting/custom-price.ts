@@ -1,5 +1,46 @@
-class CustomPrice {
+import { SharedService } from '../../services/shared.service';
+import { Item } from '../item/item';
+
+export class CustomPrices {
+  public static add(item: Item): void {
+    if (!SharedService.customPricesMap[item.id]) {
+      const customPrice = new CustomPrice(item);
+      SharedService.customPricesMap[item.id] = customPrice;
+      SharedService.user.customPrices.push(customPrice);
+      CustomPrices.save();
+    }
+  }
+
+  public static remove(customPrice: CustomPrice, index: number): void {
+    SharedService.user.customPrices.splice(index, 1);
+    delete SharedService.customPricesMap[customPrice.itemID];
+    CustomPrices.save();
+  }
+
+  public static createMap(customPrices: Array<CustomPrice>): void {
+    customPrices.forEach(c =>
+      SharedService.customPricesMap[c.itemID] = c);
+  }
+
+  public static convertFromOldVersion(customPrice: any): void {
+    // {"115524":200000,"120945":500000,"124124":3000000,"151568":3000000}
+  }
+
+  public static save(): void {
+    localStorage['custom_prices'] = JSON.stringify(SharedService.user.customPrices);
+  }
+}
+
+export class CustomPrice {
   itemID: number;
   name: string;
   price: number;
+
+  constructor(item?: Item) {
+    if (item) {
+      this.itemID = parseInt(item.id, 10);
+      this.name = item.name;
+      this.price = 0;
+    }
+  }
 }

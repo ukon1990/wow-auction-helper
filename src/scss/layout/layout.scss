@@ -57,3 +57,16 @@ mat-spinner {
   height: 22px !important;
   width: 22px !important;
 }
+
+td span mat-form-field div.mat-input-wrapper.mat-form-field-wrapper {
+  padding: 0;
+
+  div div.mat-input-infix.mat-form-field-infix {
+    border: 0;
+    padding: 0;
+  }
+
+  div.mat-input-underline {
+    top: 1.25em
+  }
+}

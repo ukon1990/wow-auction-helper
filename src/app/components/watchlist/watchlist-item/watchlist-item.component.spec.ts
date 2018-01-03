@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WatchlistItemComponent } from './watchlist-item.component';
 import { TestModule } from '../../../modules/test.module';
+import { WatchlistItem } from '../../../models/watchlist/watchlist';
 
 describe('WatchlistItemComponent', () => {
   let component: WatchlistItemComponent;
@@ -17,6 +18,7 @@ describe('WatchlistItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WatchlistItemComponent);
     component = fixture.componentInstance;
+    component.item = new WatchlistItem();
     fixture.detectChanges();
   });
 

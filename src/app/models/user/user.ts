@@ -2,6 +2,7 @@ import { Notification } from './notification';
 import { SharedService } from '../../services/shared.service';
 import { Character } from '../character/character';
 import { Watchlist } from '../watchlist/watchlist';
+import { CustomPrice } from '../crafting/custom-price';
 
 
 
@@ -12,7 +13,7 @@ export class User {
   characters: Array<Character> = new Array<Character>();
   apiWoWu?: string;
   apiTsm?: string;
-  customPrices?: any; // {"115524":200000,"120945":500000,"124124":3000000,"151568":3000000}
+  customPrices: Array<CustomPrice> = new Array<CustomPrice>();
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;

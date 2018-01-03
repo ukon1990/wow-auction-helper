@@ -31,7 +31,7 @@ export class Crafting {
       }
       recipe.reagents.forEach(r => {
         if (SharedService.user.customPrices && SharedService.user.customPrices[r.itemID]) {
-          recipe.cost += SharedService.user.customPrices[r.itemID] * r.count;
+          recipe.cost += SharedService.customPricesMap[r.itemID].price * r.count;
         } else if (SharedService.tradeVendorItemMap[r.itemID]) {
           recipe.cost += SharedService.tradeVendorItemMap[r.itemID].value * r.count;
         } else if (!SharedService.auctionItemsMap[r.itemID] && SharedService.tsm[r.itemID]) {

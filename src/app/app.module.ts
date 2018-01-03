@@ -55,6 +55,7 @@ import { AboutDataComponent } from './components/about/about-data/about-data.com
 import { AboutWhatIsComponent } from './components/about/about-what-is/about-what-is.component';
 import { DashboardItemsComponent } from './components/dashboard/dashboard-items/dashboard-items.component';
 import { DashboardSellersComponent } from './components/dashboard/dashboard-sellers/dashboard-sellers.component';
+import { CustomPricesComponent } from './components/settings/crafting-settings/custom-prices/custom-prices.component';
 
 
 @NgModule({
@@ -95,7 +96,8 @@ import { DashboardSellersComponent } from './components/dashboard/dashboard-sell
     AboutDataComponent,
     AboutWhatIsComponent,
     DashboardItemsComponent,
-    DashboardSellersComponent
+    DashboardSellersComponent,
+    CustomPricesComponent
   ],
   imports: [
     BrowserModule,

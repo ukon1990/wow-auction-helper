@@ -16,8 +16,8 @@ export class MaterialsComponent implements OnInit {
   }
 
   getItemValue(itemID: number, count: number) {
-    if (SharedService.user.customPrices && SharedService.user.customPrices[itemID]) {
-      return SharedService.user.customPrices[itemID];
+    if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
+      return SharedService.customPricesMap[itemID].price;
     } else if (SharedService.tradeVendorItemMap[itemID]) {
       return SharedService.tradeVendorItemMap[itemID].value;
     } else if (this.getAtAHCount(itemID) > 0) {

@@ -69,6 +69,11 @@
             {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
           </span>
           <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
+          <span *ngSwitchCase="'input-number'">
+            <mat-form-field class="example-full-width">
+              <input matInput type="number" [(ngModel)]="d[c.key]">
+            </mat-form-field>
+          </span>
           <span *ngSwitchCase="'action'">
             <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
               <i class="fas fa-eye"></i>

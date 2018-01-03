@@ -11,10 +11,12 @@ import { Pet } from '../models/pet';
 import { AuctionResponse } from '../models/auction/auctions-response';
 import { TradeVendor, TradeVendorItem, TradeVendorItemValue } from '../models/item/trade-vendor';
 import { UserAuctions, UserAuctionCharacter } from '../models/auction/user-auctions';
+import { CustomPrice } from '../models/crafting/custom-price';
 
 @Injectable()
 export class SharedService {
   public static user: User;
+  public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static auctionResponse: AuctionResponse = {lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static userAuctions: UserAuctions = new UserAuctions();
