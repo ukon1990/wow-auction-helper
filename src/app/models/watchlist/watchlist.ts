@@ -47,6 +47,10 @@ export class Watchlist {
     }
   }
 
+  isTargetMatch(item: WatchlistItem): boolean {
+    return true;
+  }
+
   addGroup(name: string): void {
     if (this.groupsMap[name]) {
       return;

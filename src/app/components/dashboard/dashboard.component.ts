@@ -7,17 +7,6 @@ import { SharedService } from '../../services/shared.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-  getItemDashboards(): Array<Dashboard> {
-    return SharedService.itemDashboards;
-  }
-  getSellerDashboards(): Array<Dashboard> {
-    return SharedService.sellerDashboards;
-  }
 }

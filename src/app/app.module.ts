@@ -48,6 +48,13 @@ import { GeneralSettingsComponent } from './components/settings/general-settings
 import { NotificationSettingsComponent } from './components/settings/notification-settings/notification-settings.component';
 import { CraftingSettingsComponent } from './components/settings/crafting-settings/crafting-settings.component';
 import { WatchlistItemComponent } from './components/watchlist/watchlist-item/watchlist-item.component';
+import { WatchlistManagerComponent } from './components/watchlist/watchlist-manager/watchlist-manager.component';
+import { AboutCraftingComponent } from './components/about/about-crafting/about-crafting.component';
+import { AboutPrivacyComponent } from './components/about/about-privacy/about-privacy.component';
+import { AboutDataComponent } from './components/about/about-data/about-data.component';
+import { AboutWhatIsComponent } from './components/about/about-what-is/about-what-is.component';
+import { DashboardItemsComponent } from './components/dashboard/dashboard-items/dashboard-items.component';
+import { DashboardSellersComponent } from './components/dashboard/dashboard-sellers/dashboard-sellers.component';
 
 
 @NgModule({
@@ -81,7 +88,14 @@ import { WatchlistItemComponent } from './components/watchlist/watchlist-item/wa
     GeneralSettingsComponent,
     NotificationSettingsComponent,
     CraftingSettingsComponent,
-    WatchlistItemComponent
+    WatchlistItemComponent,
+    WatchlistManagerComponent,
+    AboutCraftingComponent,
+    AboutPrivacyComponent,
+    AboutDataComponent,
+    AboutWhatIsComponent,
+    DashboardItemsComponent,
+    DashboardSellersComponent
   ],
   imports: [
     BrowserModule,
