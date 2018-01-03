@@ -40,7 +40,12 @@ export class Sorter {
 
   getItemToSort(key: string, item: any): any {
     return item[key] ?
-      item[key] : (SharedService.auctionItemsMap[item.item ? item.item : item.itemID])[key];
+      item[key] : this.getAuctionItem(item) ?
+        this.getAuctionItem(item)[key] : false;
+  }
+
+  private getAuctionItem(item: any): any {
+    return SharedService.auctionItemsMap[item.item ? item.item : item.itemID];
   }
 
   private isString(object: any, index): boolean {

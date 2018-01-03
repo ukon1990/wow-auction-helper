@@ -5,8 +5,8 @@
 
   <mat-form-field>
     <mat-select placeholder="Profession" formControlName="profession">
-      <mat-option value="All">All</mat-option>
-      <mat-option *ngFor="let i of professions" [value]="i">
+      <mat-option value="All" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
+      <mat-option *ngFor="let i of professions" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         {{ i }}
       </mat-option>
     </mat-select>
@@ -32,11 +32,11 @@
   <mat-checkbox formControlName="craftManually">Craft manually</mat-checkbox>
 
   <mat-form-field>
-    <mat-select placeholder="Intermediate crafting" matTooltip="
+    <mat-select [ngClass]="{'unicorn-dark-theme': isDarkmode()}"placeholder="Intermediate crafting" matTooltip="
             Calculates profit/ROI with the assumption, that you will craft 
             any sub-material you can. Given that it matches your criteria" formControlName="craftManually">
-      <mat-option value="All">All</mat-option>
-      <mat-option *ngFor="let i of craftManually" [value]="i">
+      <mat-option value="All" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
+      <mat-option *ngFor="let i of craftManually" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         {{ i }}
       </mat-option>
     </mat-select>

@@ -1,13 +1,11 @@
-<p>
-  watchlist works!
-</p>
-s
-<aside>ads
-  asd
-  ads
-  ads
-  asd
-  ads
-  das
-  asd
-</aside>
+<mat-tab-group>
+  <ng-container *ngFor="let group of getWatchlist().groups">
+    <mat-tab [label]="group.name">
+      <div class="row col-md-12">
+        <div *ngFor="let item of group.items" class="col-md-4 mb-3">
+          <wah-watchlist-item [item]="item"></wah-watchlist-item>
+        </div>
+      </div>
+    </mat-tab>
+  </ng-container>
+</mat-tab-group>

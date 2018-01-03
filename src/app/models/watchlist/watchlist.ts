@@ -19,6 +19,12 @@ export class Watchlist {
     ABOVE: 'above'
   };
 
+  readonly TARGET_TYPES = {
+    PERCENT: 'percent',
+    GOLD: 'gold',
+    QUANTITY: 'quantity'
+  };
+
   groups: Array<WatchlistGroup> = new Array<WatchlistGroup>();
   groupsMap: Map<string, WatchlistGroup> = new Map<string, WatchlistGroup>();
 
@@ -41,9 +47,17 @@ export class Watchlist {
     }
   }
 
-  addGroup(group: WatchlistGroup): void {
-    this.groupsMap[group.name] = group;
-    this.groups.push(group);
+  addGroup(name: string): void {
+    if (this.groupsMap[name]) {
+      return;
+    }
+    this.groupsMap[name] = new WatchlistGroup(name);
+    this.groups.push(this.groupsMap[name]);
+  }
+
+  moveItem(fromGroup: WatchlistGroup, toGroup: WatchlistGroup, index: number): void {
+    toGroup.items.push(fromGroup.items[index]);
+    this.removeItem(fromGroup, index);
   }
 
   addItem(group: WatchlistGroup, watchlistItem: WatchlistItem): void {
@@ -80,6 +94,7 @@ export class WatchlistItem {
   name: string;
   compareTo: string;
   target: number;
+  targetType: string;
   criteria: string;
   value = 0;
 }

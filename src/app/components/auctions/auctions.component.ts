@@ -126,7 +126,13 @@ export class AuctionsComponent implements OnInit, OnDestroy {
     }
   }
 
+  /* istanbul ignore next */
   isUsinAPI(): boolean {
     return SharedService.user.apiToUse !== 'none';
+  }
+
+  /* istanbul ignore next */
+  isDarkmode(): boolean {
+    return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 }

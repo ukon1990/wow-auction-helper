@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { Angulartics2Module } from 'angulartics2';
+import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 
 import { AppRoutingModule } from './modules/app-routing.module';
 
@@ -45,6 +47,7 @@ import { WatchlistComponent } from './components/watchlist/watchlist.component';
 import { GeneralSettingsComponent } from './components/settings/general-settings/general-settings.component';
 import { NotificationSettingsComponent } from './components/settings/notification-settings/notification-settings.component';
 import { CraftingSettingsComponent } from './components/settings/crafting-settings/crafting-settings.component';
+import { WatchlistItemComponent } from './components/watchlist/watchlist-item/watchlist-item.component';
 
 
 @NgModule({
@@ -77,7 +80,8 @@ import { CraftingSettingsComponent } from './components/settings/crafting-settin
     WatchlistComponent,
     GeneralSettingsComponent,
     NotificationSettingsComponent,
-    CraftingSettingsComponent
+    CraftingSettingsComponent,
+    WatchlistItemComponent
   ],
   imports: [
     BrowserModule,
@@ -85,7 +89,8 @@ import { CraftingSettingsComponent } from './components/settings/crafting-settin
     MaterialModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics])
   ],
   providers: [
     RealmService,

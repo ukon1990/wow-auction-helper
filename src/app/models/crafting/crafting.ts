@@ -30,9 +30,12 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
-
-        if (!SharedService.auctionItemsMap[r.itemID] && SharedService.tsm[r.itemID]) {
-          recipe.cost += 0;
+        if (SharedService.user.customPrices && SharedService.user.customPrices[r.itemID]) {
+          recipe.cost += SharedService.user.customPrices[r.itemID] * r.count;
+        } else if (SharedService.tradeVendorItemMap[r.itemID]) {
+          recipe.cost += SharedService.tradeVendorItemMap[r.itemID].value * r.count;
+        } else if (!SharedService.auctionItemsMap[r.itemID] && SharedService.tsm[r.itemID]) {
+          recipe.cost = 0;
         } else {
           recipe.cost += this.getCost(r.itemID, r.count);
         }

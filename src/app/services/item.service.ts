@@ -28,6 +28,7 @@ export class ItemService {
     return this._http.get(`${Endpoints.WAH_API}GetItems.php`)
       .toPromise()
       .then(items => {
+        SharedService.itemsUnmapped = items['items'];
         localStorage['timestamp_items'] = new Date().toDateString();
         SharedService.downloading.items = false;
         items['items'].forEach(i => {

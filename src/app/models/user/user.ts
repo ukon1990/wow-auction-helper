@@ -12,7 +12,7 @@ export class User {
   characters: Array<Character> = new Array<Character>();
   apiWoWu?: string;
   apiTsm?: string;
-  customPrices?: any;
+  customPrices?: any; // {"115524":200000,"120945":500000,"124124":3000000,"151568":3000000}
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;

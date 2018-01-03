@@ -41,10 +41,10 @@ export class AuctionHandler {
       SharedService.userAuctions.addAuction(a, SharedService.auctionItemsMap);
     });
 
-    Crafting.calculateCost();
-
-    // Trade vendors
+    // Trade vendors has to be done before crafting calc
     TradeVendors.setValues();
+
+    Crafting.calculateCost();
 
     // Dashboard -> Needs to be done after trade vendors
     Dashboard.addDashboards();

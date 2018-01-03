@@ -160,22 +160,13 @@ export class Dashboard {
 
   private setTradeVendorValues(): void {
     this.data.length = 0;
-    Object.keys(SharedService.tradeVendorMap)
+    Object.keys(SharedService.tradeVendorItemMap)
       .forEach(key => {
-        this.data.push({
-          itemID: SharedService.tradeVendorMap[key].items[0].itemID,
-          name: SharedService.tradeVendorMap[key].name,
-          bestValueName: this.getItem(key).name,
-          value: SharedService.tradeVendorMap[key].items[0].value
-        });
+        this.data.push(SharedService.tradeVendorItemMap[key]);
       });
     this.data.sort((a, b) => b.value - a.value);
   }
-  private getItem(itemID: any) {
-    const item = SharedService
-      .items[SharedService.tradeVendorMap[itemID].items[0].itemID];
-    return item ? item : new Item();
-  }
+
 
   private setCheaperThanVendorSell(): void {
     this.data.length = 0;

@@ -98,8 +98,13 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   isNameMatch(recipe: Recipe): boolean {
-    return this.searchForm.value.searchQuery === null || this.searchForm.value.searchQuery.length === 0 ||
-    recipe.name.toLowerCase().indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1;
+    return this.searchForm.value.searchQuery === null ||
+      this.searchForm.value.searchQuery.length === 0 ||
+      recipe.name.toLowerCase()
+        .indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1 ||
+      (SharedService.items[recipe.itemID] &&
+        SharedService.items[recipe.itemID].name.toLowerCase()
+        .indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1);
   }
 
   isProfitMatch(recipe: Recipe): boolean {
@@ -120,5 +125,11 @@ export class CraftingComponent implements OnInit, OnDestroy {
   isProfessionMatch(recipe: Recipe): boolean {
     return this.searchForm.value.profession === null || this.searchForm.value.profession === 'All' ||
       this.searchForm.value.profession === recipe.profession;
+  }
+
+
+  /* istanbul ignore next */
+  isDarkmode(): boolean {
+    return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 }

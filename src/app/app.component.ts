@@ -5,6 +5,7 @@ import { SharedService } from './services/shared.service';
 import { CraftingService } from './services/crafting.service';
 import { AuctionsService } from './services/auctions.service';
 import { ItemService } from './services/item.service';
+import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 
 @Component({
   selector: 'wah-root',
@@ -16,7 +17,8 @@ export class AppComponent implements OnInit {
   constructor(private _router: Router,
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
-    private _itemService: ItemService) {
+    private _itemService: ItemService,
+    angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics) {
     User.restore();
   }
 

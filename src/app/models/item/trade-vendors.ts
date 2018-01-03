@@ -1,5 +1,6 @@
 import { TradeVendor, TradeVendorItem } from './trade-vendor';
 import { SharedService } from '../../services/shared.service';
+import { Item } from './item';
 
 export class TradeVendors {
   public static setValues(): void {
@@ -26,6 +27,23 @@ export class TradeVendors {
 
       SharedService.tradeVendorMap[vendor.itemID] = vendor;
     });
+
+    Object.keys(SharedService.tradeVendorMap)
+    .forEach(key => {
+      const item = {
+        itemID: SharedService.tradeVendorMap[key].items[0].itemID,
+        name: SharedService.tradeVendorMap[key].name,
+        bestValueName: TradeVendors.getItem(key).name,
+        value: SharedService.tradeVendorMap[key].items[0].value,
+        tradeVendor: SharedService.tradeVendorMap[key]
+      };
+      SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
+    });
+  }
+  private static getItem(itemID: any) {
+    const item = SharedService
+      .items[SharedService.tradeVendorMap[itemID].items[0].itemID];
+    return item ? item : new Item();
   }
 }
 

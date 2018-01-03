@@ -9,7 +9,7 @@ import { Realm } from '../models/realm';
 import { Dashboard } from '../models/dashboard';
 import { Pet } from '../models/pet';
 import { AuctionResponse } from '../models/auction/auctions-response';
-import { TradeVendor } from '../models/item/trade-vendor';
+import { TradeVendor, TradeVendorItem, TradeVendorItemValue } from '../models/item/trade-vendor';
 import { UserAuctions, UserAuctionCharacter } from '../models/auction/user-auctions';
 
 @Injectable()
@@ -29,6 +29,8 @@ export class SharedService {
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
 
   public static items: Map<number, Item> = new Map<number, Item>();
+  public static itemsUnmapped: Array<Item> = new Array<Item>();
+  public static tradeVendorItemMap: Map<number, TradeVendorItemValue> = new Map<number, TradeVendorItemValue>();
   public static tradeVendorMap: Map<number, TradeVendor> = new Map<number, TradeVendor>();
 
   public static pets: Map<number, Pet> = new Map<number, Pet>();

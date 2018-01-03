@@ -19,3 +19,12 @@ export class TradeVendorItem {
     this.quantity = quantity;
   }
 }
+
+export class TradeVendorItemValue {
+  itemID: number;
+  name: string;
+  bestValueName: string;
+  value: number;
+  tradeVendor?: TradeVendor;
+}
+

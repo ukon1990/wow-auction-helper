@@ -2,8 +2,21 @@ import { async, TestBed } from '@angular/core/testing';
 import { SharedService } from '../../services/shared.service';
 import { Watchlist, WatchlistItem, WatchlistGroup } from './watchlist';
 
-beforeEach(() => {
 
+let wl = new Watchlist(),
+  group,
+  item = new WatchlistItem();
+
+beforeEach(() => {
+  wl =  new Watchlist();
+  group = 'Enchants';
+  item = new WatchlistItem();
+  item.itemID = 130221;
+  item.name = 'Versatile Maelstrom Sapphire';
+  item.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
+  item.target = 10;
+  item.criteria = wl.CRITERIAS.BELOW;
+  item.value = 0;
 });
 
 afterEach(() => {
@@ -14,9 +27,6 @@ afterEach(() => {
 
 describe('Watchlist', () => {
   it('Can restore from localStorage', () => {
-    const wl = new Watchlist(),
-      group = new WatchlistGroup('Enchants');
-
     wl.addGroup(group);
     console.log(wl, group, localStorage['watchlist']);
     wl.save();
@@ -26,9 +36,6 @@ describe('Watchlist', () => {
   });
 
   it('Can add item to group', () => {
-    const wl = new Watchlist(),
-      group = new WatchlistGroup('Enchants'),
-      item = new WatchlistItem();
     item.itemID = 130221;
     item.name = 'Versatile Maelstrom Sapphire';
     item.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
@@ -44,26 +51,22 @@ describe('Watchlist', () => {
   });
 
   it('Can remove item from a group', () => {
-    const wl = new Watchlist(),
-    group = new WatchlistGroup('Enchants'),
-    item = new WatchlistItem();
-    item.itemID = 130221;
-    item.name = 'Versatile Maelstrom Sapphire';
-    item.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
-    item.target = 10;
-    item.criteria = wl.CRITERIAS.BELOW;
-    item.value = 0;
-
     wl.addGroup(group);
     wl.addItem(wl.groupsMap['Enchants'], item);
     wl.addItem(wl.groupsMap['Enchants'], item);
     wl.addItem(wl.groupsMap['Enchants'], item);
-    expect(wl.groupsMap['Enchants'].items.length).toEqual(3);
     wl.removeItem(wl.groupsMap['Enchants'], 1);
     expect(wl.groupsMap['Enchants'].items.length).toEqual(2);
   });
 
   it('Can move item from a group to another', () => {
-
+    wl.addGroup(group);
+    wl.addGroup('Random');
+    wl.addItem(wl.groupsMap['Enchants'], item);
+    wl.addItem(wl.groupsMap['Enchants'], item);
+    wl.addItem(wl.groupsMap['Enchants'], item);
+    wl.moveItem(wl.groupsMap['Enchants'], wl.groupsMap['Random'], 1);
+    expect(wl.groupsMap['Enchants'].items.length).toEqual(2);
+    expect(wl.groupsMap['Random'].items.length).toEqual(1);
   });
 });
