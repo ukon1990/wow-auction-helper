@@ -1,8 +1,31 @@
-<mat-tab-group>
-  <mat-tab label="What is WAH?"></mat-tab>
-  <mat-tab label="Why should I add my TSM key?"></mat-tab>
-  <mat-tab label="Privacy"></mat-tab>
-  <mat-tab label="Crafting">
-    <wah-about-crafting></wah-about-crafting>
-  </mat-tab>
-</mat-tab-group>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link
+     routerLink="what-is"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     What is WAH?
+  </a>
+  <a mat-tab-link
+     routerLink="where-is-the-data-from"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Where is the data from?
+  </a>
+  <a mat-tab-link
+     routerLink="crafting"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Crafting
+  </a>
+  <a mat-tab-link
+     routerLink="privacy"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Privacy
+  </a>
+</nav>
+
+<router-outlet></router-outlet>
+
+
+
