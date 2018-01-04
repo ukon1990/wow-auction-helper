@@ -1,0 +1,33 @@
+<div class="full-screen" *ngIf="getSeller()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ getSeller().name }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-md-4">
+          Character details? +
+          some data + heatmap
+        </div>
+        <div class="col-md-8">
+          <mat-tab-group>
+            <mat-tab label="Auctions ({{ getSeller().auctions.length | number }})">
+              <wah-data-table id="item" iconSize="22" [columns]="columns" [data]="getSeller().auctions">
+              </wah-data-table>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button>
+        In case of buttons
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<div *ngIf="getSeller()" class="backdrop" (click)="close()">
+</div>

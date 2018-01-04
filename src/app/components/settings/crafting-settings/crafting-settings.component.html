@@ -1,4 +1,6 @@
-Custom item price
-<br> Use trade venodor price for stuffs
-<br> Set custom prices for items (also from item panel?)
+<mat-form-field>
+    <input type="number"
+        placeholder="Use MV if buyout >= {{ buyoutController.value?.buyoutLimit | percent }}% of MV"
+        [formControl]="buyoutController" matInput>
+</mat-form-field>
 <wah-custom-prices></wah-custom-prices>

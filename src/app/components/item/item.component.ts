@@ -7,6 +7,7 @@ import { WowdbService } from '../../services/wowdb.service';
 import { User } from '../../models/user/user';
 import { Recipe } from '../../models/crafting/recipe';
 import { Pet } from '../../models/pet';
+import { AuctionPet } from '../../models/auction/auction-pet';
 
 @Component({
   selector: 'wah-item',
@@ -25,7 +26,7 @@ export class ItemComponent implements OnInit {
     {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
     {key: 'bid', title: 'Bid', dataType: 'gold'},
     {key: 'quantity', title: 'Size', dataType: ''},
-    {key: 'owner', title: 'Owner', dataType: ''}
+    {key: 'owner', title: 'Owner', dataType: 'seller'}
   ];
 
   recipeColumns: Array<ColumnDescription> = [
@@ -89,8 +90,8 @@ export class ItemComponent implements OnInit {
   }
 
   getAuctionId(): any {
-    if (SharedService.selectedPetSpeciesId) {
-      return `${SharedService.selectedItemId}-${SharedService.selectedPetSpeciesId}`;
+    if (SharedService.selectedPetSpeciesId !== undefined) {
+      return SharedService.selectedPetSpeciesId.auctionId;
     }
     return SharedService.selectedItemId;
   }
@@ -103,8 +104,15 @@ export class ItemComponent implements OnInit {
 
   /* istanbul ignore next */
   getPet(): Pet {
-    return  SharedService.items[SharedService.selectedPetSpeciesId] ?
-      SharedService.pets[SharedService.selectedPetSpeciesId] : undefined;
+    if (!SharedService.selectedPetSpeciesId) {
+      return undefined;
+    }
+    return SharedService.pets[SharedService.selectedPetSpeciesId.petSpeciesId];
+  }
+
+  /* istanbul ignore next */
+  getSelectedPet(): AuctionPet {
+    return SharedService.selectedPetSpeciesId;
   }
 
   /* istanbul ignore next */

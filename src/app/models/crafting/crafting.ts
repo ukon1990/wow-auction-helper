@@ -2,8 +2,22 @@ import { Recipe } from './recipe';
 import { SharedService } from '../../services/shared.service';
 import { Item } from '../item/item';
 import { AuctionItem } from '../auction/auction-item';
+import { CraftingService } from '../../services/crafting.service';
 
 export class Crafting {
+
+  public static checkForMissingRecipes(craftingService: CraftingService): void {
+    Object.keys(SharedService.recipesForUser).forEach(key => {
+      try {
+        if (!SharedService.recipesMap[key]) {
+          craftingService.getRecipe(parseInt(key, 10));
+        }
+      } catch (e) {
+        console.error('checkForMissingRecipes failed', e);
+      }
+    });
+  }
+
   public static calculateCost(): void {
     Object.keys(SharedService.itemRecipeMap).forEach(key => {
       SharedService.itemRecipeMap[key].length = 0;
@@ -30,7 +44,7 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
-        if (SharedService.user.customPrices && SharedService.user.customPrices[r.itemID]) {
+        if (SharedService.customPricesMap && SharedService.customPricesMap[r.itemID]) {
           recipe.cost += SharedService.customPricesMap[r.itemID].price * r.count;
         } else if (SharedService.tradeVendorItemMap[r.itemID]) {
           recipe.cost += SharedService.tradeVendorItemMap[r.itemID].value * r.count;

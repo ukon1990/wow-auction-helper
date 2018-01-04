@@ -5,6 +5,7 @@ import { ColumnDescription } from '../../models/column-description';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { itemClasses } from '../../models/item/item-classes';
 import { Subscription } from 'rxjs/Subscription';
+import { Filters } from '../../models/filtering';
 
 @Component({
   selector: 'wah-auctions',
@@ -64,66 +65,11 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   }
 
   isMatch(auctionItem: AuctionItem): boolean {
-    return this.isNameMatch(auctionItem) &&
-      this.isItemClassMatch(auctionItem) &&
-      this.isSaleRateMatch(auctionItem) &&
-      this.isBelowMarketValue(auctionItem) &&
-      this.isDailySoldMatch(auctionItem);
-  }
-
-  isNameMatch(auctionItem: AuctionItem): boolean {
-    if (this.form.value.name === null || this.form.value.name.length === 0) {
-      return true;
-    }
-    return auctionItem.name.toLowerCase().indexOf(this.form.value.name.toLowerCase()) > -1;
-  }
-
-  isBelowMarketValue(auctionItem: AuctionItem): boolean {
-    if (this.isUsinAPI() || this.form.value.mktPrice === null || this.form.value.mktPrice === 0) {
-      return true;
-    } else if (this.isUsinAPI() && auctionItem.mktPrice === 0) {
-      return false;
-    }
-    return Math.round((auctionItem.buyout / auctionItem.mktPrice) * 100) <= this.form.value.mktPrice;
-  }
-
-  isSaleRateMatch(auctionItem: AuctionItem): boolean {
-    if (this.isUsinAPI() && this.form.value.saleRate && this.form.value.saleRate > 0) {
-      return auctionItem.regionSaleRate >= this.form.value.saleRate / 100;
-    }
-    return true;
-  }
-
-  isDailySoldMatch(auctionItem: AuctionItem): boolean {
-    if (this.isUsinAPI() && this.form.value.avgDailySold && this.form.value.avgDailySold > 0) {
-      return auctionItem.avgDailySold >= this.form.value.avgDailySold;
-    }
-    return true;
-  }
-
-  isItemClassMatch(auctionItem: AuctionItem): boolean {
-    const itemClass = SharedService.items[auctionItem.itemID] ? SharedService.items[auctionItem.itemID].itemClass : -1;
-
-    if (this.form.value.itemClass === null || this.form.value.itemClass === '-1' || this.form.value.itemClass === -1) {
-      return true;
-    } else if (itemClasses.classes[this.form.value.itemClass] &&
-        parseInt(itemClass, 10) === itemClasses.classes[this.form.value.itemClass].class) {
-      return this.isItemSubclassMatch(auctionItem, itemClasses.classes[this.form.value.itemClass]);
-    }
-
-    return false;
-  }
-
-  isItemSubclassMatch(auctionItem: AuctionItem, subClasses: any): boolean {
-    const subClass = SharedService.items[auctionItem.itemID] ? SharedService.items[auctionItem.itemID].itemSubClass : -1;
-
-    if (this.form.value.itemSubClass === null || this.form.value.itemSubClass === -1 ||
-        this.form.value.itemSubClass === '-1' || this.form.value.itemSubClass === undefined) {
-      return true;
-    } else {
-      return subClass > -1 ?
-        subClasses.subclasses[this.form.value.itemSubClass].subclass === parseInt(subClass, 10) : false;
-    }
+    return Filters.isNameMatch(auctionItem.itemID, this.form) &&
+      Filters.isItemClassMatch(auctionItem.itemID, this.form) &&
+      Filters.isSaleRateMatch(auctionItem.itemID, this.form) &&
+      Filters.isBelowMarketValue(auctionItem.itemID, this.form) &&
+      Filters.isDailySoldMatch(auctionItem.itemID, this.form);
   }
 
   /* istanbul ignore next */

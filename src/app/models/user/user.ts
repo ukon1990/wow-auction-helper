@@ -2,7 +2,9 @@ import { Notification } from './notification';
 import { SharedService } from '../../services/shared.service';
 import { Character } from '../character/character';
 import { Watchlist } from '../watchlist/watchlist';
-import { CustomPrice } from '../crafting/custom-price';
+import { CustomPrice, CustomPrices } from '../crafting/custom-price';
+import { CraftingService } from '../../services/crafting.service';
+import { Recipe } from '../crafting/recipe';
 
 
 
@@ -119,6 +121,7 @@ export class User {
           break;
         case 'custom_prices':
           user.customPrices = JSON.parse(localStorage[key]);
+          CustomPrices.createMap(user.customPrices);
           break;
         case 'api_to_use':
           user.apiToUse = localStorage[key];

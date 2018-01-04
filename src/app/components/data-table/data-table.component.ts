@@ -8,6 +8,9 @@ import { Recipe } from '../../models/crafting/recipe';
 import { User } from '../../models/user/user';
 import { Sorter } from '../../models/sorter';
 import { Item } from '../../models/item/item';
+import { Seller } from '../../models/seller';
+import { AuctionPet } from '../../models/auction/auction-pet';
+import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
 
 @Component({
   selector: 'wah-data-table',
@@ -16,7 +19,7 @@ import { Item } from '../../models/item/item';
 })
 export class DataTableComponent implements AfterViewInit, OnChanges {
 
-  @Input() id: number;
+  @Input() id: any;
   @Input() iconSize: number;
   @Input() isCrafting: boolean;
   @Input() columns: Array<ColumnDescription>;
@@ -24,6 +27,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
   sorter: Sorter;
+  previousLength = 0;
   auctionDuration = {
     'VERY_LONG': '12h+',
     'LONG': '2-12h',
@@ -42,10 +46,27 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   ngOnChanges(change) {
     if (change && change.data && change.data.currentValue) {
       // this.pageEvent.length = change.data.currentValue.length;
-      // this.pageEvent.pageIndex = 0;
-
+      if (this.previousLength !== change.data.currentValue.length) {
+        this.pageEvent.pageIndex = 0;
+      }
+      this.previousLength = change.data.currentValue.length;
       this.sorter.sort(this.data);
     }
+  }
+
+  select(item): void {
+    if (this.id === 'name') {
+      this.setSelectedSeller(item);
+    } else {
+      this.setSelectedItem(item);
+    }
+  }
+
+  /* istanbul ignore next */
+  setSelectedSeller(seller: Seller) {
+    SharedService.selectedSeller = seller.name;
+    SharedService.selectedItemId = undefined;
+    SharedService.selectedPetSpeciesId = undefined;
   }
 
   /* istanbul ignore next */
@@ -56,12 +77,14 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       SharedService.selectedItemId = item.itemID;
     }
     this.setSelectedPet(item);
+    SharedService.selectedSeller = undefined;
   }
 
   /* istanbul ignore next */
-  setSelectedPet(item: any) {
-    if (item.petSpeciesId) {
-      SharedService.selectedPetSpeciesId = item.petSpeciesId;
+  setSelectedPet(pet: any) {
+    if (pet.petSpeciesId) {
+      SharedService.selectedPetSpeciesId =
+        new AuctionPet(pet.petSpeciesId, pet.petLevel, pet.petQualityId);
     }
   }
 
@@ -71,6 +94,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       return 0;
     }
     return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
+  }
+
+  customPrices(): CustomPrices {
+    return CustomPrices;
   }
 
   /* istanbul ignore next */

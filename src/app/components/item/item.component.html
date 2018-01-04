@@ -1,7 +1,10 @@
 <div class="full-screen" *ngIf="getItem()">
   <mat-card>
     <mat-card-header>
-      <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getAuctionItem()?.petSpeciesId"></wah-icon>
+      <wah-icon mat-card-avatar
+        *ngIf="getItem().id" class="float-left"
+        size="36" [id]="getItem().id"
+        [petSpeciesId]="getSelectedPet()?.petSpeciesId"></wah-icon>
       <mat-card-title>
         <span *ngIf="getPet() || getItem(); else itemName">
           {{ getPet() ? getPet().name : getItem().name }}
@@ -10,6 +13,10 @@
           {{ wowDBItem.Name }}
         </ng-template>
       </mat-card-title>
+      <mat-card-subtitle *ngIf="getSelectedPet()">
+        <span class="mr-auto"><strong>Level:</strong> {{ getSelectedPet().petLevel }}</span>
+        <span class="mr-auto"><strong>Quality:</strong> {{ getSelectedPet().petQualityId }}</span>
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <div class="row" *ngIf="getAuctionItem()">

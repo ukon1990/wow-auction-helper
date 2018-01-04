@@ -4,6 +4,7 @@ import { Item } from './item/item';
 
 export class Dashboard {
   public static readonly TYPES = {
+    TOP_SELLERS_BY_AUCTIONS: 'TOP_SELLERS_BY_AUCTIONS',
     TOP_SELLERS_BY_VOLUME: 'TOP_SELLERS_BY_VOLUME',
     TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
     MOST_AVAILABLE_ITEMS: 'MOST_AVAILABLE_ITEMS',
@@ -24,25 +25,32 @@ export class Dashboard {
 
   constructor(title: string, type: string) {
     this.title = title;
+    this.idParam = 'name';
+    const sellerColumns = [
+      { key: 'name', title: 'Name', dataType: 'name' },
+      { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
+      { key: 'volume', title: 'Volume', dataType: 'number' },
+      { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
+    ],
+    crafterColumns = [
+      { key: 'name', title: 'Name', dataType: 'name' },
+      { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+      { key: 'roi', title: 'ROI', dataType: 'gold' },
+      { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+    ];
 
     switch (type) {
+      case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS:
+        this.columns = sellerColumns;
+        this.groupSellersByAuctions();
+        break;
       case Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY:
-        this.columns = [
-          { key: 'owner', title: 'Name', dataType: 'name' },
-          { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
-          { key: 'volume', title: 'Volume', dataType: 'number' },
-          { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
-        ];
-        this.setItemsGroupedBySellerWithHighLiquidity();
+        this.columns = sellerColumns;
+        this.groupSellerByLiquidity();
         break;
       case Dashboard.TYPES.TOP_SELLERS_BY_VOLUME:
-        this.columns = [
-          { key: 'owner', title: 'Name', dataType: 'name' },
-          { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
-          { key: 'volume', title: 'Volume', dataType: 'number' },
-          { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
-        ];
-        this.setSellersGroupedSortedByQuantity();
+        this.columns = sellerColumns;
+        this.groupSellersByVolume();
         break;
       case Dashboard.TYPES.MOST_AVAILABLE_ITEMS:
         this.idParam = 'itemID';
@@ -52,27 +60,17 @@ export class Dashboard {
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
-        this.setItemsGroupedByAvailablility();
+        this.groupItemsByAvailability();
         break;
       case Dashboard.TYPES.MOST_PROFITABLE_CRAFTS:
         this.idParam = 'itemID';
-        this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'roi', title: 'ROI', dataType: 'gold' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
-        ];
-        this.setMostProfitableProfessions(false);
+        this.columns = crafterColumns;
+        this.sortCraftsByRoi(false);
         break;
       case Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS:
         this.idParam = 'itemID';
-        this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'roi', title: 'ROI', dataType: 'gold' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
-        ];
-        this.setMostProfitableProfessions(true);
+        this.columns = crafterColumns;
+        this.sortCraftsByRoi(true);
         break;
       case Dashboard.TYPES.POTENTIAL_DEALS:
         this.idParam = 'itemID';
@@ -134,6 +132,7 @@ export class Dashboard {
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
 
+    // Items
     SharedService.itemDashboards.push(
       new Dashboard('Most profitable crafts', Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
     SharedService.itemDashboards.push(
@@ -156,6 +155,9 @@ export class Dashboard {
       new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
     SharedService.sellerDashboards.push(
       new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
+
+    SharedService.sellerDashboards.push(
+      new Dashboard('Top sellers by active auctions', Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS));
   }
 
   private setTradeVendorValues(): void {
@@ -207,7 +209,7 @@ export class Dashboard {
       .sort((a, b) => a.buyout / a.mktPrice - b.buyout / b.mktPrice);
   }
 
-  private setMostProfitableProfessions(onlyKnown: boolean): void {
+  private sortCraftsByRoi(onlyKnown: boolean): void {
     this.data.length = 0;
     this.data = SharedService.recipes
       .sort((a, b) => {
@@ -225,47 +227,30 @@ export class Dashboard {
       .slice(0, 100);
   }
 
-  private setSellersGroupedSortedByQuantity(): void {
+  private groupSellersByAuctions(): void {
     this.data.length = 0;
-    this.data = this.getListOfOwners()
+    this.data = SharedService.sellers
+      .sort((a, b) => b.auctions.length - a.auctions.length)
+      .slice(0, 100);
+  }
+  private groupSellersByVolume(): void {
+    this.data.length = 0;
+    this.data = SharedService.sellers
       .sort((a, b) => b.volume - a.volume)
       .slice(0, 100);
   }
 
-  private setItemsGroupedByAvailablility(): void {
+  private groupItemsByAvailability(): void {
     this.data.length = 0;
     this.data = SharedService.auctionItems.
       sort((a, b) => b.quantityTotal - a.quantityTotal)
       .slice(0, 100);
   }
 
-  private setItemsGroupedBySellerWithHighLiquidity(): void {
+  private groupSellerByLiquidity(): void {
     this.data.length = 0;
-    this.data = this.getListOfOwners()
+    this.data = SharedService.sellers
       .sort((a, b) => b.liquidity - a.liquidity)
       .slice(0, 100);
-  }
-
-  private getListOfOwners(): any[] {
-    const tmpMap = new Map<string, any>(),
-      tmp = [];
-    SharedService.auctions.forEach(a => {
-      if (!tmpMap[a.owner]) {
-        tmpMap[a.owner] = {
-          owner: a.owner,
-          liquidity: a.buyout,
-          volume: a.quantity,
-          numOfAuctions: 1,
-          auctions: [a]
-        };
-        tmp.push(tmpMap[a.owner]);
-      } else {
-        tmpMap[a.owner].liquidity += a.buyout;
-        tmpMap[a.owner].volume += a.quantity;
-        tmpMap[a.owner].numOfAuctions++;
-        tmpMap[a.owner].auctions.push(a);
-      }
-    });
-    return tmp;
   }
 }

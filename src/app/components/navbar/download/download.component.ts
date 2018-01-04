@@ -7,6 +7,7 @@ import { PetsService } from '../../../services/pets.service';
 import { DatabaseService } from '../../../services/database.service';
 import { TSM } from '../../../models/auction/tsm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
+import { Crafting } from '../../../models/crafting/crafting';
 
 @Component({
   selector: 'wah-download',
@@ -28,7 +29,8 @@ export class DownloadComponent implements OnInit {
     if (SharedService.user.realm || SharedService.user.region) {
       await this._itemService.getItems();
       await this._petService.getPets();
-      await this._craftingService.getRecipes();
+      await this._craftingService.getRecipes()
+        .then(r => Crafting.checkForMissingRecipes(this._craftingService));
       if (SharedService.user.apiToUse === 'tsm') {
         if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
           await this._auctionsService.getTsmAuctions();

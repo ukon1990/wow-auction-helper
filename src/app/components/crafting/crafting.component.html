@@ -12,10 +12,31 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-checkbox formControlName="onlyKnownRecipes"
-    matTooltip="Displays only those recipes your character for this realm knows">
+  <mat-checkbox formControlName="onlyKnownRecipes" matTooltip="Displays only those recipes your character for this realm knows">
     Only known recipes
   </mat-checkbox>
+
+  <mat-form-field class="ml-2 mr-2">
+    <mat-select placeholder="Item class" formControlName="itemClass">
+      <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        All
+      </mat-option>
+      <mat-option *ngFor="let class of itemClasses.classes; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ class.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]" class="ml-2 mr-2">
+    <mat-select placeholder="Item sub class" formControlName="itemSubClass">
+      <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        All
+      </mat-option>
+      <mat-option *ngFor="let class of itemClasses.classes[searchForm.value['itemClass']].subclasses; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ class.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <mat-form-field>
     <input matInput placeholder="Minimum ROI %" formControlName="profit" type="number" matTooltip="Minimum return on investment">
@@ -32,7 +53,7 @@
   <mat-checkbox formControlName="craftManually">Craft manually</mat-checkbox>
 
   <mat-form-field>
-    <mat-select [ngClass]="{'unicorn-dark-theme': isDarkmode()}"placeholder="Intermediate crafting" matTooltip="
+    <mat-select [ngClass]="{'unicorn-dark-theme': isDarkmode()}" placeholder="Intermediate crafting" matTooltip="
             Calculates profit/ROI with the assumption, that you will craft 
             any sub-material you can. Given that it matches your criteria" formControlName="craftManually">
       <mat-option value="All" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>

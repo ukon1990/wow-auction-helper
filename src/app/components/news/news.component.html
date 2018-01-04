@@ -1,0 +1,186 @@
+<div class="full-screen" *ngIf="showNews">
+  <mat-card class="mb-3">
+    <mat-card-header>
+      <mat-card-title>
+        Welcome back!
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        New functionality have been added since your last visit, among them youl'l find the following:
+      </p>
+      <div class="scrollable">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              7.January 2018
+            </mat-card-title>
+            <mat-card-subtitle>
+              Version 2 released
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>
+              There is finally a new propper release out again. I've recently been rewriting the application. This as I have more experience
+              as a developer now, than I did a year ago (when I started). I hope that you find the new functionality, and
+              the improved reliability of the application to your liking.
+            </p>
+            <mat-accordion>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    General changes
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-list dense>
+                  <mat-list-item>
+                    The "Change theme" button in the settings, has been moved to the top right of the menu. 
+                    And no longer require a reload of the page.
+                  </mat-list-item>
+                  <mat-list-item>
+                    If you click on the eye in a table or the name of an item, youl'l get more information about that item. 
+                    Such as every auction and what recipes it's crafted by and what mobs drops the item.
+                  </mat-list-item>
+                  <mat-list-item>
+                    If you click on the eye in a table of sellers or the name of a seller, youl'l get information such as what auctions they 
+                    currently have up.
+                  </mat-list-item>
+                </mat-list>
+              </mat-expansion-panel>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Dashboards
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    New feature
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                This feature gives you information such as:
+                <mat-list dense>
+                  <mat-list-item>
+                    The most profitable crafts overall, and the most profitable ones your registered characters know
+                  </mat-list-item>
+                  <mat-list-item>
+                    30 minute deals, showing what items are running out within 30 minutes that also have a bid lower than 90% of the lowest buyout.
+                    If you got a TSM key, it will also filter away items that usually sell less than 1 item per day and with
+                    a estimated sales rate lower than 30%.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Display all items that are cheaper than the vendor sell price. Basically, easy gold.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Each trade vendor currency's top valued item are available at a glance.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Sellers sorted by quantity of auctions, items and their auctions worth in gold.
+                  </mat-list-item>
+                </mat-list>
+              </mat-expansion-panel>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Crafting
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-list dense>
+                  <mat-list-item>
+                    The trade vendor value for eg. Bloods are now used, unless you have defined a custom price for a those items.
+                  </mat-list-item>
+                  <mat-list-item>
+                    The shopping cart has been removed from the crafting section. It is instead available around the whole application in the
+                    top right corner.
+                  </mat-list-item>
+                  <mat-list-item>
+                    You no longer need to hit "filter". The app filters as you type.
+                  </mat-list-item>
+                </mat-list>
+              </mat-expansion-panel>
+              <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Auctions
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <mat-list dense>
+                    <mat-list-item>
+                      Pets are now better handeled, and the right-hand table has been removed.
+                    </mat-list-item>
+                    <mat-list-item>
+                      Filtering are now handeled as you go, ergo you no longer have to manually hit enter/filter.
+                    </mat-list-item>
+                    <mat-list-item>
+                      That right-hand table has been removed in favor of the item details panel.
+                    </mat-list-item>
+                  </mat-list>
+                </mat-expansion-panel>
+            </mat-accordion>
+          </mat-card-content>
+        </mat-card>
+        <!-- 19.november 2017 -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              19.november 2017
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <strong>Downloads</strong>
+            <ul>
+              <li class="list-group-item-text">
+                There is now a dropdown menu that allows you to see when each data type were downloaded.
+              </li>
+              <li class="list-group-item-text">
+                Each download can be triggered manually, if you wish to. lets say update the TSM data.
+              </li>
+            </ul>
+
+            <strong>User registration and settings</strong>
+            <ul>
+              <li class="list-group-item-text">
+                The character and crafter selection is now revamped. It will now allow you to choose realm for each character added(finally?).
+              </li>
+              <li class="list-group-item-text">
+                The added character data are downloaded as soon as you add them, so you can see if it was successful or not.
+              </li>
+            </ul>
+
+            <strong>Other updates</strong>
+            <ul>
+              <li class="list-group-item-text">
+                Upgraded to Angular 5
+              </li>
+              <li class="list-group-item-text">
+                Started using more of Angular Material for some parts of the application
+              </li>
+              <li class="list-group-item-text">
+                Upgraded to Bootstrap 4
+              </li>
+              <li class="list-group-item-text">
+                Both the dark and light themes have been changed
+              </li>
+              <li class="list-group-item-text">
+                Remade the setup page for new users.
+              </li>
+              <li class="list-group-item-text">
+                Some much needed clean up of the codebase. More is coming..
+              </li>
+              <li class="list-group-item-text">
+                Several fixes that could have caused issues for some users
+              </li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+    <mat-card-footer>
+      This message will only be displayed upon feature updates and not bug fixes. If you find any bugs or wish to give feedback
+      on the app, please do so on in the
+      <a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/" target="_blank">
+        reddit thread</a>. As always, any feedback is appreciated!
+    </mat-card-footer>
+  </mat-card>
+</div>
+
+<div *ngIf="showNews" class="backdrop" (click)="close()">
+</div>

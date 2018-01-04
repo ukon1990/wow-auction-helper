@@ -1,4 +1,6 @@
+<wah-news [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-news>
 <wah-item *ngIf="isItemSelected()" [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-item>
+<wah-seller *ngIf="isSellerSelected" [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-seller>
 
 <wah-navbar [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-navbar>
 <div id="main" class="mt-6 container-fluid" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">

@@ -34,4 +34,9 @@ export class AppComponent implements OnInit {
   isItemSelected(): boolean  {
     return SharedService.selectedItemId ? true : false;
   }
+
+  /* istanbul ignore next */
+  isSellerSelected(): boolean  {
+    return SharedService.selectedSeller ? true : false;
+  }
 }

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { SharedService } from '../../../services/shared.service';
+import { User } from '../../../models/user/user';
 
 @Component({
   selector: 'wah-crafting-settings',
@@ -6,5 +9,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./crafting-settings.component.scss']
 })
 export class CraftingSettingsComponent {
+  buyoutController: FormControl = new FormControl();
 
+  constructor() {
+    this.buyoutController.valueChanges
+      .subscribe(() => {
+        SharedService.user.buyoutLimit = this.buyoutController.value;
+        User.save();
+      });
+  }
 }

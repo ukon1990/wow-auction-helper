@@ -56,6 +56,9 @@ import { AboutWhatIsComponent } from './components/about/about-what-is/about-wha
 import { DashboardItemsComponent } from './components/dashboard/dashboard-items/dashboard-items.component';
 import { DashboardSellersComponent } from './components/dashboard/dashboard-sellers/dashboard-sellers.component';
 import { CustomPricesComponent } from './components/settings/crafting-settings/custom-prices/custom-prices.component';
+import { SellersComponent } from './components/sellers/sellers.component';
+import { SellerComponent } from './components/sellers/seller/seller.component';
+import { NewsComponent } from './components/news/news.component';
 
 
 @NgModule({
@@ -97,7 +100,10 @@ import { CustomPricesComponent } from './components/settings/crafting-settings/c
     AboutWhatIsComponent,
     DashboardItemsComponent,
     DashboardSellersComponent,
-    CustomPricesComponent
+    CustomPricesComponent,
+    SellersComponent,
+    SellerComponent,
+    NewsComponent
   ],
   imports: [
     BrowserModule,

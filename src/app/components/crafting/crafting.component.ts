@@ -5,6 +5,8 @@ import { ColumnDescription } from '../../models/column-description';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { itemClasses } from '../../models/item/item-classes';
+import { Filters } from '../../models/filtering';
 
 @Component({
   selector: 'wah-crafting',
@@ -15,6 +17,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   formChanges: Subscription;
   filtered: Array<Recipe> = new Array<Recipe>();
+  itemClasses = itemClasses;
   professions = [
     'First Aid',
     'Blacksmithing',
@@ -43,6 +46,10 @@ export class CraftingComponent implements OnInit, OnDestroy {
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
       craftManually: query && query.craftManually !== null ? query.craftManually : this.craftManually[0],
+      itemClass: query  ? query.itemClass : '-1',
+      itemSubClass: query ? query.itemSubClass : '-1',
+
+      // Disenchanting
       selectedDEMaterial: query && query.selectedDisenchanting ? query.selectedDisenchanting : 0,
       DEOnlyProfitable: query && query.onlyProfitable ? query.onlyProfitable : false
     });
@@ -90,7 +97,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
       && this.isProfitMatch(recipe)
       && this.isSaleRateMatch(recipe)
       && this.isMinSoldMatch(recipe)
-      && this.isProfessionMatch(recipe));
+      && this.isProfessionMatch(recipe)
+      && Filters.isItemClassMatch(recipe.itemID, this.searchForm));
   }
 
   isKnownRecipe(recipe: Recipe): boolean {

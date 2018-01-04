@@ -50,7 +50,7 @@
       Remove
     </button>
     <button mat-button type="button" (click)="update.emit('')">
-      <i class="fas fa-sync" aria-hidden="true" [ngClass]="{loading: character.downloading}"></i>
+      <i class="fas fa-sync" aria-hidden="true" [ngClass]="{'loading': character.downloading}"></i>
       Update
     </button>
   </mat-card-actions>

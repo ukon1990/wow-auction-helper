@@ -10,7 +10,13 @@ export class CraftingService {
 
   constructor(private _http: HttpClient, private _itemService: ItemService) { }
 
-  getRecipe(spellID: number): void {}
+  getRecipe(spellID: number): void {
+    this.updateRecipe(spellID)
+      .then(r => {
+        this.handleRecipe(r);
+        console.log('Added missing recipe', `${r.spellID} - ${r.name}`);
+      });
+  }
 
   getRecipes(): Promise<any> {
     console.log('Downloading recipes');
@@ -24,14 +30,7 @@ export class CraftingService {
 
         // Adding items if there are any missing
         SharedService.recipes.forEach(r => {
-          if (r.itemID > 0 && !SharedService.items[r.itemID]) {
-            this._itemService.addItem(r.itemID);
-          }
-          r.reagents.forEach(reagent => {
-            if (reagent.itemID > 0 && !SharedService.items[reagent.itemID]) {
-              this._itemService.addItem(reagent.itemID);
-            }
-          });
+          this.handleRecipe(r);
         });
       })
       .catch(e => {
@@ -43,5 +42,17 @@ export class CraftingService {
   updateRecipe(spellID: number): Promise<Recipe> {
     return this._http.get(`http://localhost/GetRecipe.php?spellId=${spellID}`)
       .toPromise() as Promise<Recipe>;
+  }
+
+  private handleRecipe(r: Recipe): void {
+    if (r.itemID > 0 && !SharedService.items[r.itemID]) {
+      this._itemService.addItem(r.itemID);
+    }
+    r.reagents.forEach(reagent => {
+      if (reagent.itemID > 0 && !SharedService.items[reagent.itemID]) {
+        this._itemService.addItem(reagent.itemID);
+      }
+    });
+    SharedService.recipesMap[r.spellID] = r;
   }
 }

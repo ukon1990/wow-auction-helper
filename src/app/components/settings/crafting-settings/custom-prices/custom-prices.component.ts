@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { startWith } from 'rxjs/operators/startWith';
@@ -20,6 +20,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   filteredItems: Observable<any>;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   saveInterval: any;
+  @Input() itemID: number;
 
   constructor(private _formBuilder: FormBuilder) {
     this.filteredItems = this.itemSearchForm.valueChanges
@@ -30,21 +31,25 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
     this.columns.push({ key: 'price', title: 'Price', dataType: 'gold' });
     this.columns.push({ key: 'price', title: 'Price in copper', dataType: 'input-number' });
-    this.columns.push({ key: '', title: 'Actions', dataType: 'actions', actions: ['custom-price-save'] });
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['custom-price-delete'] });
   }
 
   ngOnInit(): void {
-    this.saveInterval = setInterval(() => {
-      if (JSON.stringify(SharedService.user.customPrices) !== localStorage['custom_prices']) {
-        console.log('Saving change to custom price and recalculating costs');
-        CustomPrices.save();
-        Crafting.calculateCost();
-      }
-    }, 500);
+    if (!this.itemID) {
+      this.saveInterval = setInterval(() => {
+        if (JSON.stringify(SharedService.user.customPrices) !== localStorage['custom_prices']) {
+          console.log('Saving change to custom price and recalculating costs');
+          CustomPrices.save();
+          Crafting.calculateCost();
+        }
+      }, 500);
+    }
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.saveInterval);
+    if (!this.itemID) {
+      clearInterval(this.saveInterval);
+    }
   }
 
   getCustomPrices(): Array<CustomPrice> {

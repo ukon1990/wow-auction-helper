@@ -8,6 +8,8 @@ export class AuctionItem {
   bid = 0;
   owner: string;
   ownerRealm: string;
+  petLevel?: number;
+  petQualityId?: number;
   auctions: Auction[] = new Array<Auction>();
   regionSaleRate = 0;
   avgDailySold = 0;

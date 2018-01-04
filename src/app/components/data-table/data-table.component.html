@@ -8,7 +8,7 @@
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
     <tr>
-      <td *ngFor="let c of columns" (click)="sort(c.key)">
+      <td *ngFor="let c of columns; let i = index" (click)="sort(c.key)">
         <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
         {{ c.title }}
       </td>
@@ -22,7 +22,7 @@
             <a rel="{{
                 d.petSpeciesId ?
                 ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
-              }}" (click)="setSelectedItem(d)">
+              }}" (click)="select(d)">
               <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
                 [id]="d[id]"
                 [petSpeciesId]="d?.petSpeciesId"></wah-icon>
@@ -35,6 +35,9 @@
               </span>
               {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span>
             </span>
+          </span>
+          <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
+            {{ d[c.key] }}
           </span>
           <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
           <span *ngSwitchCase="'gold'">
@@ -75,18 +78,23 @@
             </mat-form-field>
           </span>
           <span *ngSwitchCase="'action'">
+
             <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
               <i class="fas fa-eye"></i>
             </button>
-            <button mat-icon-button matTooltip="Add to shopping cart">
+            <button mat-icon-button matTooltip="Add to shopping cart" *ngIf="c.actions[0] !== 'custom-price-delete'">
               <i class="fas fa-cart-plus"></i>
             </button>
-            <a *ngIf="getItemID(d)"
+            <a *ngIf="getItemID(d) && c.actions[0] !== 'custom-price-delete'"
               target="_blank"
               href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ getItemID(d) }}"
               mat-icon-button matTooltip="Go to Web AH and buy">
               <i class="fas fa-shopping-cart"></i>
             </a>
+            <button *ngIf="c.actions[0] === 'custom-price-delete'" mat-icon-button
+              (click)="customPrices().remove(d, index)" matTooltip="Remove from custom price list">
+              <i class="fas fa-trash-alt"></i>
+            </button>
           </span>
           <span *ngSwitchDefault>{{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
         </span>

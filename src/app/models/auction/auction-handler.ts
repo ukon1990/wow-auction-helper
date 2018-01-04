@@ -5,6 +5,8 @@ import { AuctionItem } from './auction-item';
 import { Crafting } from '../crafting/crafting';
 import { Dashboard } from '../dashboard';
 import { TradeVendors } from '../item/trade-vendors';
+import { Seller } from '../seller';
+import { AuctionPet } from './auction-pet';
 
 export class AuctionHandler {
   /**
@@ -28,9 +30,10 @@ export class AuctionHandler {
 
     SharedService.auctions = auctions;
     auctions.forEach(a => {
-      if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}`]) {
-        SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}`] = this.newAuctionItem(a);
-        SharedService.auctionItems.push(SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}`]);
+      if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`]) {
+        const petId = `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
+        SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
+        SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
       } else if (!SharedService.auctionItemsMap[a.item]) {
         SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
@@ -46,6 +49,9 @@ export class AuctionHandler {
 
     Crafting.calculateCost();
 
+    // Grouping auctions by seller
+    Seller.organize();
+
     // Dashboard -> Needs to be done after trade vendors
     Dashboard.addDashboards();
   }
@@ -56,8 +62,10 @@ export class AuctionHandler {
 
   private static getItemName(auction: Auction): string {
     if (auction.petSpeciesId) {
-      return SharedService.pets[auction.petSpeciesId] ?
-        SharedService.pets[auction.petSpeciesId].name : 'Pet name missing';
+      if (SharedService.pets[auction.petSpeciesId]) {
+        return `${SharedService.pets[auction.petSpeciesId].name} - Level ${auction.petLevel} - Quality ${auction.petQualityId}`;
+      }
+      return 'Pet name missing';
     }
     return SharedService.items[auction.item] ?
       SharedService.items[auction.item].name : 'Item name missing';
@@ -68,7 +76,8 @@ export class AuctionHandler {
     if (auction.buyout === 0) {
       return;
     }*/
-    const id = auction.petSpeciesId ? `${auction.item}-${auction.petSpeciesId}` : auction.item,
+    const id = auction.petSpeciesId ?
+      new AuctionPet(auction.petSpeciesId, auction.petLevel, auction.petQualityId).auctionId : auction.item,
       ai = SharedService.auctionItemsMap[id];
     if (ai.buyout === 0 || (ai.buyout > auction.buyout && auction.buyout > 0)) {
       ai.owner = auction.owner;
@@ -83,6 +92,8 @@ export class AuctionHandler {
     const tmpAuc = new AuctionItem();
     tmpAuc.itemID = auction.item;
     tmpAuc.petSpeciesId = auction.petSpeciesId;
+    tmpAuc.petLevel = auction.petLevel;
+    tmpAuc.petQualityId = auction.petQualityId;
     tmpAuc.name = AuctionHandler.getItemName(auction);
     tmpAuc.owner = auction.owner;
     tmpAuc.buyout = auction.buyout / auction.quantity;

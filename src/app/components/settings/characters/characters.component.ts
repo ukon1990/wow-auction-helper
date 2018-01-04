@@ -6,6 +6,8 @@ import { CharacterService } from '../../../services/character.service';
 import { User } from '../../../models/user/user';
 import { Realm } from '../../../models/realm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
+import { Crafting } from '../../../models/crafting/crafting';
+import { CraftingService } from '../../../services/crafting.service';
 
 @Component({
   selector: 'wah-characters',
@@ -21,7 +23,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   _characterForm: FormGroup;
 
   constructor(private _characterService: CharacterService,
-    private _realmService: RealmService, private formBuilder: FormBuilder
+    private _realmService: RealmService, private _craftingService: CraftingService,
+    private formBuilder: FormBuilder
   ) {
     this._characterForm = this.formBuilder.group({
       region: SharedService.user.region,
@@ -74,6 +77,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     ).then(c => {
       SharedService.user.characters[index] = c;
       localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+      User.setRecipesForCharacter(c);
+      Crafting.checkForMissingRecipes(this._craftingService);
 
       if (SharedService.user.region && SharedService.user.realm) {
         AuctionHandler.organize(SharedService.auctions);
