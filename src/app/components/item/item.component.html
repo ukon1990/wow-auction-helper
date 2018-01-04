@@ -22,7 +22,7 @@
       <div class="row" *ngIf="getAuctionItem()">
         <div class="col-md-4">
           <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}} 
-          <span *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }})</span>
+          <span *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }} MV)</span>
           <br>
           <strong>Stock:</strong> {{ getAuctionItem().quantityTotal | number }} pcs
           <br>

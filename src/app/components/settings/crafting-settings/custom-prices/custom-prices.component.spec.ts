@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CustomPricesComponent } from './custom-prices.component';
+import { TestModule } from '../../../../modules/test.module';
 
 describe('CustomPricesComponent', () => {
   let component: CustomPricesComponent;
@@ -8,7 +9,7 @@ describe('CustomPricesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomPricesComponent ]
+      imports: [ TestModule ]
     })
     .compileComponents();
   }));

@@ -12,6 +12,7 @@ export class CraftingSettingsComponent {
   buyoutController: FormControl = new FormControl();
 
   constructor() {
+    this.buyoutController.setValue(SharedService.user.buyoutLimit);
     this.buyoutController.valueChanges
       .subscribe(() => {
         SharedService.user.buyoutLimit = this.buyoutController.value;

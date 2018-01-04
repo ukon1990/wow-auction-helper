@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Reagent } from '../../../models/crafting/reagent';
 import { SharedService } from '../../../services/shared.service';
+import { Crafting } from '../../../models/crafting/crafting';
 
 @Component({
   selector: 'wah-materials',
@@ -15,17 +16,8 @@ export class MaterialsComponent implements OnInit {
   ngOnInit() {
   }
 
-  getItemValue(itemID: number, count: number) {
-    if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
-      return SharedService.customPricesMap[itemID].price;
-    } else if (SharedService.tradeVendorItemMap[itemID]) {
-      return SharedService.tradeVendorItemMap[itemID].value;
-    } else if (this.getAtAHCount(itemID) > 0) {
-      return SharedService.auctionItemsMap[itemID].buyout;
-    } else if (SharedService.user.apiToUse === 'tsm' && SharedService.tsm[itemID]) {
-      return SharedService.tsm[itemID].MarketValue;
-    }
-    return 0;
+  getItemValue(itemID: number) {
+    return Crafting.getCost(itemID, 1);
   }
 
   isEnoughAtAH(itemID: number, count): boolean {
@@ -41,5 +33,11 @@ export class MaterialsComponent implements OnInit {
 
   setSelectedItem(reagent: Reagent): void {
     SharedService.selectedItemId = reagent.itemID;
+  }
+
+  getRecipeForItem(itemID: number): Array<Reagent> {
+    return SharedService.itemRecipeMap[itemID] ?
+      SharedService.itemRecipeMap[itemID]
+        .sort( (a, b) => a.cost - b.cost)[0] : undefined;
   }
 }

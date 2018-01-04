@@ -44,15 +44,7 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
-        if (SharedService.customPricesMap && SharedService.customPricesMap[r.itemID]) {
-          recipe.cost += SharedService.customPricesMap[r.itemID].price * r.count;
-        } else if (SharedService.tradeVendorItemMap[r.itemID]) {
-          recipe.cost += SharedService.tradeVendorItemMap[r.itemID].value * r.count;
-        } else if (!SharedService.auctionItemsMap[r.itemID] && SharedService.tsm[r.itemID]) {
-          recipe.cost = 0;
-        } else {
-          recipe.cost += this.getCost(r.itemID, r.count);
-        }
+        recipe.cost += this.getCost(r.itemID, r.count);
       });
       recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);
     } catch (e) {
@@ -65,15 +57,25 @@ export class Crafting {
     SharedService.itemRecipeMap[recipe.itemID].push(recipe);
   }
 
-  private static getCost(itemId: number, count: number): number {
-    if (this.useMktPrice(itemId)) {
+  public static getCost(itemID: number, count: number): number {
+    if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
+      return SharedService.customPricesMap[itemID].price * count;
+    } else if (SharedService.tradeVendorItemMap[itemID]) {
+      return SharedService.tradeVendorItemMap[itemID].value * count;
+    } else if (this.useMktPrice(itemID)) {
       // Using the tsm list, so that we can get mktPrice if an item is not @ AH
-      return SharedService.tsm[itemId].MarketValue * count;
-    } else if (!SharedService.auctionItemsMap[itemId]) {
+      return SharedService.tsm[itemID].MarketValue * count;
+    } else if (!SharedService.auctionItemsMap[itemID]) {
       return 0;
     }
-    return SharedService.auctionItemsMap[itemId].buyout * count;
+    return SharedService.auctionItemsMap[itemID].buyout * count;
   }
+
+  /*
+  public static getReagentCraftCost(itemID: number, count: number): number {
+    return
+  }*/
+
 
   private static useMktPrice(itemId: number): boolean {
     if (SharedService.user.apiToUse !== 'none' &&

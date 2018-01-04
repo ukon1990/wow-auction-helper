@@ -8,14 +8,14 @@
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
     <tr>
-      <td *ngFor="let c of columns; let i = index" (click)="sort(c.key)">
+      <td *ngFor="let c of columns" (click)="sort(c.key)">
         <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
         {{ c.title }}
       </td>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let d of data | slice:getFromValue():getToValue()">
+    <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index">
       <td *ngFor="let c of columns;">
         <span [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
@@ -92,7 +92,7 @@
               <i class="fas fa-shopping-cart"></i>
             </a>
             <button *ngIf="c.actions[0] === 'custom-price-delete'" mat-icon-button
-              (click)="customPrices().remove(d, index)" matTooltip="Remove from custom price list">
+              (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
               <i class="fas fa-trash-alt"></i>
             </button>
           </span>
