@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { itemClasses } from '../../models/item/item-classes';
 import { Filters } from '../../models/filtering';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-crafting',
@@ -29,12 +30,14 @@ export class CraftingComponent implements OnInit, OnDestroy {
     'Engineering',
     'Enchanting',
     'Jewelcrafting',
-    'Inscription'
+    'Inscription',
+    'none'
   ].sort();
-  craftManually = ['Choose manually', 'None', 'Only if it\'s cheaper', 'Do it for everything!'];
+
   columns: Array<ColumnDescription> = [];
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private _title: Title) {
+    this._title.setTitle('WAH - Crafting');
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
 
@@ -45,7 +48,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
-      craftManually: query && query.craftManually !== null ? query.craftManually : this.craftManually[0],
+      intermediate: query && query.intermediate !== null ? query.intermediate : true,
       itemClass: query  ? query.itemClass : '-1',
       itemSubClass: query ? query.itemSubClass : '-1',
 

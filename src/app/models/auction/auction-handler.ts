@@ -96,6 +96,7 @@ export class AuctionHandler {
     tmpAuc.petQualityId = auction.petQualityId;
     tmpAuc.name = AuctionHandler.getItemName(auction);
     tmpAuc.owner = auction.owner;
+    tmpAuc.ownerRealm = auction.ownerRealm;
     tmpAuc.buyout = auction.buyout / auction.quantity;
     tmpAuc.bid = auction.bid / auction.quantity;
     tmpAuc.quantityTotal += auction.quantity;

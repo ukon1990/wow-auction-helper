@@ -1,3 +1,30 @@
-<p>
-  about-data works!
-</p>
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Items and pets
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    All item and pet data are gathered from Blizzard's own data API, and stored in my database as they do not support fetching
+    more than one item at a time. This database is updated as new items are found in either recipes or at the auction house.
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Crafting recipes
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    The crafting recipes are provided by
+    <a href="http://www.wowdb.com/" target="_blank">WoWDB</a>, and stored in my database. Missing recipes are dynamically added to the database as you and other users characters
+    get new recipes.
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Statistical data (TSM)
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    If you wish statistical data, like Market value, avg sale price, sale rate etc you need to register a TSM API key in the
+    <a routerLink="settings/crafting">settings</a>. Instructions on how to get a key, can be found there.
+  </mat-expansion-panel>
+</mat-accordion>

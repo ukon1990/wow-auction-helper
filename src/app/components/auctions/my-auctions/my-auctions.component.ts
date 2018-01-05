@@ -3,6 +3,7 @@ import { UserAuctions, UserAuctionCharacter } from '../../../models/auction/user
 import { SharedService } from '../../../services/shared.service';
 import { Auction } from '../../../models/auction/auction';
 import { ColumnDescription } from '../../../models/column-description';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-my-auctions',
@@ -11,7 +12,9 @@ import { ColumnDescription } from '../../../models/column-description';
 })
 export class MyAuctionsComponent implements OnInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
-  constructor() { }
+  constructor(private _title: Title) {
+    this._title.setTitle('WAH - My auctions');
+  }
 
   ngOnInit() {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });

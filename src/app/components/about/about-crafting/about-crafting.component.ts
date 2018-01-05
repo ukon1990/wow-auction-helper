@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SharedService } from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-about-crafting',
@@ -6,4 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./about-crafting.component.scss']
 })
 export class AboutCraftingComponent {
+  getBuyoutLimit(): number {
+    return SharedService.user.buyoutLimit;
+  }
 }

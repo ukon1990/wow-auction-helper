@@ -22,6 +22,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() id: any;
   @Input() iconSize: number;
   @Input() isCrafting: boolean;
+  @Input() showOwner: boolean;
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;
   pageRows: Array<number> = [10, 20, 40, 80, 100];
@@ -62,6 +63,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  isUsersAuction(auction: any): boolean {
+    if (this.showOwner) {
+      const a = SharedService.auctionItemsMap[auction.item ? auction.item : auction.itemID];
+      return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
+        SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? true : false;
+    }
+    return false;
+  }
+
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
     SharedService.selectedSeller = seller.name;
@@ -94,6 +104,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       return 0;
     }
     return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
+  }
+
+  getCraftersForRecipe(recipe: Recipe) {
+    return SharedService.recipesForUser[recipe.spellID] ? SharedService.recipesForUser[recipe.spellID].toString() : '';
   }
 
   customPrices(): CustomPrices {

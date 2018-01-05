@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { itemClasses } from '../../models/item/item-classes';
 import { Subscription } from 'rxjs/Subscription';
 import { Filters } from '../../models/filtering';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-auctions',
@@ -18,7 +19,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   itemClasses = itemClasses;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private _title: Title) {
+    this._title.setTitle('WAH - Auctions');
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
 
     this.form = formBuilder.group({

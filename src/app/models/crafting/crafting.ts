@@ -56,6 +56,11 @@ export class Crafting {
     }
     SharedService.itemRecipeMap[recipe.itemID].push(recipe);
 
+    // The user should see item combination items as "known"
+    if (recipe.profession === 'none') {
+      SharedService.recipesForUser[recipe.spellID] = ['Item'];
+    }
+
     // For intermediate crafting
     if (SharedService.recipesForUser[recipe.spellID]) {
       if (!SharedService.recipesMapPerItemKnown[recipe.itemID] || SharedService.recipesMapPerItemKnown[recipe.itemID].cost > recipe.cost) {

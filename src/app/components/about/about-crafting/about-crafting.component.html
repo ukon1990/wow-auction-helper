@@ -2,9 +2,35 @@
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Personal data
+        Reagent cost selection priority
       </mat-panel-title>
     </mat-expansion-panel-header>
-    shait
+    <p>
+      When a reagents cost is calculated, there are several scenarios to take into consideration. 
+      Is there a custom price? does one of the trade vendors yield a value for the item, does it exist at the AH? 
+      Is it priced above your defined max buyout versus market value percentage? and more.
+    </p>
+
+    <p>So when it comes to giving an item a price value, they are prioritized as follows:</p>
+    <mat-list dense>
+      <mat-list-item>Custom price</mat-list-item>
+      <mat-list-item>Trade vendor</mat-list-item>
+      <mat-list-item>(TSM) Market value, if buyout is {{ getBuyoutLimit }}% or higher than the MV</mat-list-item>
+      <mat-list-item>The currently lowest buyout, if the item is at the AH</mat-list-item>
+      <mat-list-item>(TSM) Market value</mat-list-item>
+      <mat-list-item>0</mat-list-item>
+    </mat-list>
+    <p>
+      The above values are then multiplied by the reagent count. 
+      In the reagent list however, the unit price is displayed instead.</p>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Why add characters?
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    Adding characters allows you to only display recipes, that you know. 
+    This will thus filter away those rank 1, 2 and 3 versions you no longer have.
   </mat-expansion-panel>
 </mat-accordion>

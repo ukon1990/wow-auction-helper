@@ -19,35 +19,9 @@
       </div>
       <div class="col-md-6">
         <h2>WoW aucthion helper webapplication</h2>
-        <p>
-          This is a webapplication, that shows the user the potential profit of certain receipes in-game. It is aimed at helping the
-          user earn gold in World of Warcraft.
-          <br> Some of it's features include:
-        </p>
-        <ul>
-          <li>
-            The ability to make a shopping cart for materials from receipes, that is persistent between sessions (won't be lost if you
-            reload)
-          </li>
-          <li>
-            A clean overview of the current auctions (as live as possible).
-          </li>
-          <li>
-            Displaying the users current auctions, with indication for what auctions are undercutted, and wich aren't. (requires character
-            name set)
-          </li>
-        </ul>
+        <wah-about-what-is></wah-about-what-is>
         <h3>Privacy</h3>
-        <ul>
-          <li>
-            The application uses
-            <i class="fab fa-google"></i>oogle Analytics. This so that I can get an impression of how many uses the application, what features are
-            most used.
-          </li>
-          <li>
-            No personal data sent from your computer. Anything persistent is stored in your browser.
-          </li>
-        </ul>
+        <wah-about-privacy></wah-about-privacy>
         <h3>Disclaimer</h3>
         <ul>
           <li>
@@ -136,8 +110,7 @@
             <mat-form-field class="col-md-10 float-left">
               <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
             </mat-form-field>
-            <button class="float-right" mat-button matStepperPrevious
-              (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+            <button class="float-right" mat-button matStepperPrevious (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
               <i class="fas fa-upload"></i>
               Restore
             </button>

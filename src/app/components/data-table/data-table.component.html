@@ -15,7 +15,8 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index">
+    <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index"
+      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
       <td *ngFor="let c of columns;">
         <span [ngSwitch]="c.dataType">
           <span *ngSwitchCase="'name'">
@@ -33,7 +34,8 @@
               <span *ngIf="getItem(d.itemID).name !== d.name">
                 {{ getItem(d.itemID).name }} <br>
               </span>
-              {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span>
+              {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
+              Known by: {{ getCraftersForRecipe(d) }}
             </span>
           </span>
           <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">

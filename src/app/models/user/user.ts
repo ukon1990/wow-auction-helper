@@ -19,6 +19,7 @@ export class User {
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
+  useIntermediateCrafting: true;
   crafters: any[];
   notifications: Notification = {
     isUpdateAvailable: true,
@@ -84,6 +85,10 @@ export class User {
           localStorage['characters'] = JSON.stringify(user[key]);
           SharedService.user.characters = user[key];
           break;
+        case 'useIntermediateCrafting':
+          localStorage['use_intermediate_crafting'] = JSON.stringify(user[key]);
+          SharedService.user.useIntermediateCrafting = user[key];
+          break;
         case 'notifications':
           localStorage['notifications'] = JSON.stringify(user[key]);
           SharedService.user.notifications = user[key];
@@ -131,6 +136,9 @@ export class User {
           break;
         case 'characters':
           user.characters = JSON.parse(localStorage[key]);
+          break;
+        case 'use_intermediate_crafting':
+          SharedService.user.useIntermediateCrafting = JSON.parse(localStorage[key]);
           break;
         case 'notifications':
           user.notifications = JSON.parse(localStorage[key]);
