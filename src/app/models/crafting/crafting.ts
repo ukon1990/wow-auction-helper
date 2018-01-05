@@ -55,6 +55,13 @@ export class Crafting {
       SharedService.itemRecipeMap[recipe.itemID] = new Array<Recipe>();
     }
     SharedService.itemRecipeMap[recipe.itemID].push(recipe);
+
+    // For intermediate crafting
+    if (SharedService.recipesForUser[recipe.spellID]) {
+      if (!SharedService.recipesMapPerItemKnown[recipe.itemID] || SharedService.recipesMapPerItemKnown[recipe.itemID].cost > recipe.cost) {
+        SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
+      }
+    }
   }
 
   public static getCost(itemID: number, count: number): number {

@@ -33,6 +33,7 @@ export class SharedService {
   public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
   public static recipesMap: Map<number, Recipe> = new Map<number, Recipe>();
+  public static recipesMapPerItemKnown: Map<number, Recipe> = new Map<number, Recipe>();
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
 
   public static items: Map<number, Item> = new Map<number, Item>();

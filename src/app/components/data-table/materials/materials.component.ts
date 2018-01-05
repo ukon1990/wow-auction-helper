@@ -36,8 +36,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   getRecipeForItem(itemID: number): Array<Reagent> {
-    return SharedService.itemRecipeMap[itemID] ?
-      SharedService.itemRecipeMap[itemID]
-        .sort( (a, b) => a.cost - b.cost)[0] : undefined;
+    return SharedService.recipesMapPerItemKnown[itemID] ?
+      SharedService.recipesMapPerItemKnown[itemID] : false;
   }
 }
