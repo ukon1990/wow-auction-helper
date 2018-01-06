@@ -9,8 +9,8 @@ export class RealmService {
 
   constructor(private _http: HttpClient) {}
 
-  getRealms(region?: string): void {
-    this._http.get(Endpoints.getBattleNetApi('realm/status?', region))
+  getRealms(region?: string): Promise<any> {
+    return this._http.get(Endpoints.getBattleNetApi('realm/status?', region))
       .toPromise()
       .then(r => {
         Object.keys(SharedService.realms).forEach(key => {

@@ -14,6 +14,7 @@ import { User } from '../../../models/user/user';
   styleUrls: ['./setup.component.scss']
 })
 export class SetupComponent implements OnInit {
+  isDownloadingRealm: boolean;
   _characterForm: FormGroup;
   imagesForRoll = [
     {
@@ -52,9 +53,16 @@ export class SetupComponent implements OnInit {
   }
 
   getRealms(): void {
+    this.isDownloadingRealm = true;
     setTimeout(() => {
       this._realmService
-        .getRealms(this._characterForm.value.region);
+        .getRealms(this._characterForm.value.region)
+          .then(r => {
+            this.isDownloadingRealm = false;
+          })
+          .catch(e => {
+            this.isDownloadingRealm = false;
+          });
     }, 100);
   }
 

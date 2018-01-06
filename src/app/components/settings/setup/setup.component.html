@@ -87,6 +87,9 @@
                   {{ getRealmWithkey(slug).name }}
                 </mat-option>
               </mat-select>
+              <div *ngIf="isDownloadingRealm" class="float-left ml-1 loading">
+                <i class="fas fa-sync" aria-hidden="true"></i>
+              </div>
             </mat-form-field>
           </mat-card-content>
 
