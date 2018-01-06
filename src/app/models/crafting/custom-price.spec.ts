@@ -13,8 +13,14 @@ describe('CustomPrices', () => {
         const cpArr = new Array<CustomPrice>();
         const oldCP = { '115524': 200000, '120945': 500000, '124124': 3000000, '151568': 3000000 };
         cpArr.push(cp);
+        cpArr.push(cp);
+        cpArr.push(cp);
         expect(cp instanceof CustomPrice).toBeTruthy();
         expect(oldCP instanceof CustomPrice).toBeFalsy();
-        // CustomPrices.convertFromOldVersion();
+        expect(cpArr instanceof Array).toBeTruthy();
+        expect(oldCP instanceof Array).toBeFalsy();
+        const newOne = CustomPrices.convertFromOldVersion(JSON.stringify(oldCP));
+        expect(newOne[0].itemID).toBe(115524);
+        expect(newOne[0].price).toBe(200000);
     });
 });

@@ -24,7 +24,7 @@ export class TradeVendorsComponent implements OnInit {
       this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
-      this.columns.push({ key: '', title: 'Actions', dataType: 'action' });
+      this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: [] });
     }
   }
 

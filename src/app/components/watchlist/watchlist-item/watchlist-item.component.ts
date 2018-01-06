@@ -19,7 +19,7 @@ export class WatchlistItemComponent implements OnInit {
     return `${recipe.name}${recipe.rank ? ' - ' + recipe.rank : ''}`;
   }
   /* istanbul ignore next */
-  getRecipesForItem(itemID: string): Array<Recipe> {
+  getRecipesForItem(itemID: any): Array<Recipe> {
     return SharedService.itemRecipeMap[itemID] ?
       SharedService.itemRecipeMap[itemID].reverse() : undefined;
   }

@@ -161,7 +161,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   /* istanbul ignore next */
   getAuctionItem(item: any): AuctionItem {
-    return SharedService.auctionItemsMap[this.getItemID(item)] || new AuctionItem();
+    return SharedService.auctionItemsMap[this.getItemID(item)] ?
+      SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
   }
 
   /* istanbul ignore next */

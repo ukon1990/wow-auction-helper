@@ -22,8 +22,12 @@ export class CustomPrices {
       SharedService.customPricesMap[c.itemID] = c);
   }
 
-  public static convertFromOldVersion(customPrice: any): void {
-    // {"115524":200000,"120945":500000,"124124":3000000,"151568":3000000}
+  public static convertFromOldVersion(customPrice: any): Array<CustomPrice> {
+    const cp = new Array<CustomPrice>();
+    Object.keys(customPrice).forEach(key => {
+      cp.push({itemID: parseInt(key, 10), name: undefined, price: customPrice[key]});
+    });
+    return cp;
   }
 
   public static save(): void {

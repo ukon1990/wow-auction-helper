@@ -41,7 +41,7 @@
           <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
             {{ d[c.key] }}
           </span>
-          <wah-materials *ngSwitchCase="'materials'" [reagents]="d[c.key]"></wah-materials>
+          <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
           <span *ngSwitchCase="'gold'">
             {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
             <span *ngIf="c.key === 'buyout' && d.mktPrice">

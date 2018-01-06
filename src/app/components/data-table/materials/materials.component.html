@@ -1,12 +1,12 @@
-<div class="row col-md-12 mt-2 mb-2" *ngFor="let r of reagents" matTooltip="There are currently {{ getAtAHCount(r.itemID) | number }} at the auction house">
+<div class="row col-md-12 mt-2 mb-2" *ngFor="let r of recipe.reagents" matTooltip="There are currently {{ getAtAHCount(r.itemID) | number }} at the auction house">
 
   <!-- Intermidiate craft -->
-  <mat-card *ngIf="getRecipeForItem(r.itemID); else regular" class="row col-md-12">
+  <mat-card *ngIf="getRecipeForItem(r.itemID) && useIntermediateCrafting(); else regular" class="row col-md-12">
     <mat-card-header>
       <mat-card-title>
         <a class="col-md-12" rel="item={{ r.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
           <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-          {{ r.count }} x {{ getRecipeForItem(r.itemID).name }} - {{ getRecipeForItem(r.itemID).cost | gold }}
+          {{ r.count / recipe.minCount | number : '1.2' }} x {{ getRecipeForItem(r.itemID).name }} - {{ getRecipeForItem(r.itemID).cost / recipe.minCount| gold }}
         </a>
       </mat-card-title>
     </mat-card-header>
@@ -30,14 +30,14 @@
   <ng-template #regular>
     <a rel="item={{ r.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
       <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-      {{ r.count }} x {{ r.name }}
+      {{ r.count / recipe.minCount | number : '1.2' }} x {{ r.name }}
     </a>
 
     <span class="ml-auto" (click)="setSelectedItem(r)" matTooltip="Get details about {{ r.name }}">
       <i class="fas fa-eye"></i>
     </span>
     <div class="col-md-12 row">
-      <span class="ml-5">{{ getItemValue(r.itemID) | gold }}</span>
+      <span class="ml-5">{{ getItemValue(r.itemID) / recipe.minCount | gold }}</span>
     </div>
   </ng-template>
 </div>

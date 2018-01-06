@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { itemClasses } from '../../models/item/item-classes';
 import { Filters } from '../../models/filtering';
 import { Title } from '@angular/platform-browser';
+import { User } from '../../models/user/user';
+import { Crafting } from '../../models/crafting/crafting';
 
 @Component({
   selector: 'wah-crafting',
@@ -48,7 +50,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
-      intermediate: query && query.intermediate !== null ? query.intermediate : true,
+      intermediate: query && SharedService.user.useIntermediateCrafting !== null ?
+        SharedService.user.useIntermediateCrafting : true,
       itemClass: query  ? query.itemClass : '-1',
       itemSubClass: query ? query.itemSubClass : '-1',
 
@@ -93,6 +96,12 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   filter(): Array<Recipe> {
+    if (SharedService.user.useIntermediateCrafting !== this.searchForm.value.intermediate) {
+      // We need to update those crafting costs as we changed our strategy
+      SharedService.user.useIntermediateCrafting = this.searchForm.value.intermediate;
+      User.save();
+      Crafting.calculateCost();
+    }
     return SharedService.recipes
     .filter(recipe =>
       this.isKnownRecipe(recipe)

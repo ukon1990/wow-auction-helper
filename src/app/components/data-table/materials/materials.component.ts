@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Reagent } from '../../../models/crafting/reagent';
 import { SharedService } from '../../../services/shared.service';
 import { Crafting } from '../../../models/crafting/crafting';
+import { Recipe } from '../../../models/crafting/recipe';
 
 @Component({
   selector: 'wah-materials',
@@ -9,7 +10,7 @@ import { Crafting } from '../../../models/crafting/crafting';
   styleUrls: ['./materials.component.scss']
 })
 export class MaterialsComponent implements OnInit {
-  @Input() reagents: Array<Reagent>;
+  @Input() recipe: Recipe;
 
   constructor() { }
 
@@ -17,14 +18,19 @@ export class MaterialsComponent implements OnInit {
   }
 
   getItemValue(itemID: number) {
-    return Crafting.getCost(itemID, 1);
+    return Crafting.getCost(itemID, 1, 1);
   }
+
 
   isEnoughAtAH(itemID: number, count): boolean {
     if (this.getAtAHCount(itemID) >= count) {
       return true;
     }
     return false;
+  }
+
+  useIntermediateCrafting(): boolean {
+    return SharedService.user && SharedService.user.useIntermediateCrafting;
   }
 
   getAtAHCount(itemID: number): number {
@@ -36,7 +42,10 @@ export class MaterialsComponent implements OnInit {
   }
 
   getRecipeForItem(itemID: number): Array<Reagent> {
-    return SharedService.recipesMapPerItemKnown[itemID] ?
-      SharedService.recipesMapPerItemKnown[itemID] : false;
+    if (SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
+        SharedService.recipesMapPerItemKnown[itemID].cost < SharedService.auctionItemsMap[itemID].buyout) {
+      return SharedService.recipesMapPerItemKnown[itemID];
+    }
+    return undefined;
   }
 }

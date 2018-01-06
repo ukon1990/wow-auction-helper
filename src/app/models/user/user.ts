@@ -125,7 +125,13 @@ export class User {
           user.apiWoWu = localStorage[key];
           break;
         case 'custom_prices':
-          user.customPrices = JSON.parse(localStorage[key]);
+          const cp = JSON.parse(localStorage[key]);
+          if (cp instanceof Array) {
+            user.customPrices = cp;
+          } else {
+            user.customPrices = CustomPrices.convertFromOldVersion(cp);
+          }
+
           CustomPrices.createMap(user.customPrices);
           break;
         case 'api_to_use':
@@ -138,7 +144,7 @@ export class User {
           user.characters = JSON.parse(localStorage[key]);
           break;
         case 'use_intermediate_crafting':
-          SharedService.user.useIntermediateCrafting = JSON.parse(localStorage[key]);
+          user.useIntermediateCrafting = JSON.parse(localStorage[key]);
           break;
         case 'notifications':
           user.notifications = JSON.parse(localStorage[key]);
