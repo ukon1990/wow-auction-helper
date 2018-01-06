@@ -26,4 +26,21 @@ export class CharacterService {
         return {};
       }).toPromise();
   }
+
+  getCharacterMinimal(character: string, realm: string): Promise<any> {
+    SharedService.downloading.characterData = true;
+    return this._http
+      .get(Endpoints.getBattleNetApi(
+        `character/${
+          realm
+        }/${character}`))
+      .map(c => {
+        SharedService.downloading.characterData = false;
+        return c;
+      }, error => {
+        SharedService.downloading.characterData = false;
+        console.error('Failed at downloading character', error);
+        return {};
+      }).toPromise();
+  }
 }

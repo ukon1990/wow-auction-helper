@@ -47,7 +47,7 @@ export class SharedService {
 
   public static selectedItemId: number;
   public static selectedPetSpeciesId: AuctionPet;
-  public static selectedSeller: string;
+  public static selectedSeller: Seller;
 
 
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();

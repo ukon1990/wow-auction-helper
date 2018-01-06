@@ -3,7 +3,7 @@
     <div mat-card-avatar *ngIf="character.thumbnail" [style.background-image]="getAvatar()"
       [style.background-size]="'cover'"></div>
     <mat-card-title *ngIf="character.name">
-      {{ character.name }} @ {{ character.realm }}
+        {{ character.level }} {{ character.name }} @ {{ character.realm }}
       <span *ngIf="character.downloading"> - downloading</span>
     </mat-card-title>
     <mat-card-subtitle>
@@ -44,7 +44,7 @@
       </div>
     </div>
   </mat-card-content>
-  <mat-card-actions>
+  <mat-card-actions *ngIf="!isSeller">
     <button mat-button type="button" (click)="remove.emit('')">
       <i class="fa fa-trash" aria-hidden="true"></i>
       Remove

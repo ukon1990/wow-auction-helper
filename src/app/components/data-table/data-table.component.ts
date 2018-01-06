@@ -74,7 +74,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
-    SharedService.selectedSeller = seller.name;
+    SharedService.selectedSeller = SharedService.sellersMap[seller.name];
     SharedService.selectedItemId = undefined;
     SharedService.selectedPetSpeciesId = undefined;
   }

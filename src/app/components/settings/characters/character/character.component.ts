@@ -9,6 +9,7 @@ import { Character } from '../../../../models/character/character';
 export class CharacterComponent {
   @Input() index: number;
   @Input() character: Character;
+  @Input() isSeller: boolean;
   @Output() remove: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
 
