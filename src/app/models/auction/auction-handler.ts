@@ -44,16 +44,18 @@ export class AuctionHandler {
       SharedService.userAuctions.addAuction(a, SharedService.auctionItemsMap);
     });
 
-    // Trade vendors has to be done before crafting calc
-    TradeVendors.setValues();
+    setTimeout(() => {
+      // Trade vendors has to be done before crafting calc
+      TradeVendors.setValues();
 
-    Crafting.calculateCost();
+      Crafting.calculateCost();
 
-    // Grouping auctions by seller
-    Seller.organize();
+      // Grouping auctions by seller
+      Seller.organize();
 
-    // Dashboard -> Needs to be done after trade vendors
-    Dashboard.addDashboards();
+      // Dashboard -> Needs to be done after trade vendors
+      Dashboard.addDashboards();
+    }, 100);
   }
 
   private static auctionPriceHandler(): AuctionItem {

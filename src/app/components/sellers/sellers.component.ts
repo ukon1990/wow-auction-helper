@@ -4,6 +4,7 @@ import { SharedService } from '../../services/shared.service';
 import { ColumnDescription } from '../../models/column-description';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-sellers',
@@ -21,13 +22,14 @@ export class SellersComponent implements OnInit {
     { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
   ];
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private _title: Title) {
     this.searchForm = this._formBuilder.group({
       name: '',
       liquidity: 0,
       volume: 0,
       numOfAuctions: 0
     });
+    this._title.setTitle('WAH - Sellers');
   }
 
   ngOnInit() {
