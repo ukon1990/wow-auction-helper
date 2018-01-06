@@ -22,14 +22,25 @@ export class SellerComponent implements OnInit {
     { key: 'quantity', title: 'Size', dataType: '' },
     { key: 'owner', title: 'Owner', dataType: '' }
   ];
+  columnsSeller: Array<ColumnDescription> = [
+    { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
+    { key: 'volume', title: 'Volume', dataType: 'number' },
+    { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
+  ];
   constructor(private _characterService: CharacterService) { }
 
   /* istanbul ignore next */
   ngOnInit() {
     if (SharedService.selectedSeller) {
       this._characterService.getCharacter(SharedService.selectedSeller.name, SharedService.selectedSeller.realm)
-        .then(c => this.character = c)
-        .catch(e => console.error('Could not download seller', e));
+        .then(c => {
+          this.character = c;
+          SharedService.downloading.characterData = false;
+        })
+        .catch(e => {
+          console.error('Could not download seller', e);
+          SharedService.downloading.characterData = false;
+        });
       return;
     }
   }
