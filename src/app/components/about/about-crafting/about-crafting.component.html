@@ -2,13 +2,22 @@
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
+        Why does the material price, not change
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    It might seem a bit odd at first glance, the price for a material, will always display per unit. 
+    And the price source will be determined by the priority explained below. This will also count for the intermideate craft and it's materials.
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
         Reagent cost selection priority
       </mat-panel-title>
     </mat-expansion-panel-header>
     <p>
-      When a reagents cost is calculated, there are several scenarios to take into consideration. 
-      Is there a custom price? does one of the trade vendors yield a value for the item, does it exist at the AH? 
-      Is it priced above your defined max buyout versus market value percentage? and more.
+      When a reagents cost is calculated, there are several scenarios to take into consideration. Is there a custom price? does
+      one of the trade vendors yield a value for the item, does it exist at the AH? Is it priced above your defined max buyout
+      versus market value percentage? and more.
     </p>
 
     <p>So when it comes to giving an item a price value, they are prioritized as follows:</p>
@@ -21,8 +30,7 @@
       <mat-list-item>0</mat-list-item>
     </mat-list>
     <p>
-      The above values are then multiplied by the reagent count. 
-      In the reagent list however, the unit price is displayed instead.</p>
+      The above values are then multiplied by the reagent count. In the reagent list however, the unit price is displayed instead.</p>
   </mat-expansion-panel>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -30,7 +38,15 @@
         Why add characters?
       </mat-panel-title>
     </mat-expansion-panel-header>
-    Adding characters allows you to only display recipes, that you know. 
-    This will thus filter away those rank 1, 2 and 3 versions you no longer have.
+    Adding characters allows you to only display recipes, that you know. This will thus filter away those rank 1, 2 and 3 versions
+    you no longer have.
   </mat-expansion-panel>
+  <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Proc rates?
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      There is added proc rate for some crafts, but you can add more and alter the default ones in the <a routerLink="/settings/crafting">crafting section</a> in the settings.
+    </mat-expansion-panel>
 </mat-accordion>

@@ -18,7 +18,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   getItemValue(itemID: number) {
-    return Crafting.getCost(itemID, 1, 1);
+    return Crafting.getCost(itemID, 1);
   }
 
 

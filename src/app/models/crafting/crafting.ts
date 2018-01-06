@@ -44,7 +44,7 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
-        recipe.cost += this.getCost(r.itemID, r.count, recipe.minCount);
+        recipe.cost += this.getCost(r.itemID, r.count) / recipe.minCount;
       });
       recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);
     } catch (e) {
@@ -69,18 +69,18 @@ export class Crafting {
     }
   }
 
-  public static getCost(itemID: number, count: number, minCount: number): number {
+  public static getCost(itemID: number, count: number): number {
     if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
-      return (SharedService.customPricesMap[itemID].price * count) / minCount;
+      return (SharedService.customPricesMap[itemID].price * count);
     } else if (SharedService.tradeVendorItemMap[itemID]) {
-      return (SharedService.tradeVendorItemMap[itemID].value * count) / minCount;
-    } else if (this.useMktPrice(itemID)) {
+      return (SharedService.tradeVendorItemMap[itemID].value * count);
+    } else if (SharedService.auctionItemsMap[itemID] && !Crafting.isBelowMktBuyoutValue(itemID)) {
+      return SharedService.auctionItemsMap[itemID].buyout * count;
+    } else if (Crafting.existsInTSM(itemID)) {
       // Using the tsm list, so that we can get mktPrice if an item is not @ AH
-      return (SharedService.tsm[itemID].MarketValue * count) / minCount;
-    } else if (!SharedService.auctionItemsMap[itemID]) {
-      return 0;
+      return (SharedService.tsm[itemID].MarketValue * count);
     }
-    return (SharedService.auctionItemsMap[itemID].buyout * count) / minCount;
+    return 0;
   }
 
   /*
@@ -88,17 +88,14 @@ export class Crafting {
     return
   }*/
 
+  private static existsInTSM(itemID: number): boolean {
+    return SharedService.user.apiToUse !== 'none' && SharedService.tsm[itemID];
+  }
 
-  private static useMktPrice(itemId: number): boolean {
-    if (SharedService.user.apiToUse !== 'none' &&
-      SharedService.tsm[itemId] &&
-      (!SharedService.auctionItemsMap[itemId] ||
-      SharedService.auctionItemsMap[itemId].buyout /
-      SharedService.tsm[itemId].MarketValue <=
-      SharedService.user.buyoutLimit)) {
-      return true;
-    }
-    return false;
+  private static isBelowMktBuyoutValue(itemID: number): boolean {
+    return Crafting.existsInTSM(itemID) && SharedService.auctionItemsMap[itemID].buyout /
+      SharedService.tsm[itemID].MarketValue >=
+      SharedService.user.buyoutLimit;
   }
 
   private static getROI(cost: number, item?: AuctionItem) {

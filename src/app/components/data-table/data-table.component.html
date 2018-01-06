@@ -36,6 +36,7 @@
               </span>
               {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
               Known by: {{ getCraftersForRecipe(d) }}
+              {{ d.minCount }} / {{ d.maxCount }}
             </span>
           </span>
           <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">

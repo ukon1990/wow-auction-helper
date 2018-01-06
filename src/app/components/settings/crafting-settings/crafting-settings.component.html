@@ -1,6 +1,13 @@
 <mat-form-field>
-    <input type="number"
-        placeholder="Use MV if buyout >= {{ buyoutController.value?.buyoutLimit | percent }}% of MV"
-        [formControl]="buyoutController" matInput>
+  <input type="number" placeholder="Use MV if buyout >= {{ buyoutController.value?.buyoutLimit | percent }}% of MV" [formControl]="buyoutController"
+    matInput>
 </mat-form-field>
-<wah-custom-prices></wah-custom-prices>
+
+<mat-tab-group>
+  <mat-tab label="Custom prices">
+    <wah-custom-prices></wah-custom-prices>
+  </mat-tab>
+  <mat-tab label="Custom proc rates">
+    Coming soon™
+  </mat-tab>
+</mat-tab-group>
