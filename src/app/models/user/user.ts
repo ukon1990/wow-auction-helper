@@ -5,6 +5,7 @@ import { Watchlist } from '../watchlist/watchlist';
 import { CustomPrice, CustomPrices } from '../crafting/custom-price';
 import { CraftingService } from '../../services/crafting.service';
 import { Recipe } from '../crafting/recipe';
+import { customPricesDefault } from '../crafting/default-custom-prices';
 
 
 
@@ -15,7 +16,7 @@ export class User {
   characters: Array<Character> = new Array<Character>();
   apiWoWu?: string;
   apiTsm?: string;
-  customPrices: Array<CustomPrice> = new Array<CustomPrice>();
+  customPrices: Array<CustomPrice> = customPricesDefault;
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;

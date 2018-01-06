@@ -13,14 +13,14 @@ export class AuctionsService {
 
   constructor(private _http: HttpClient, private _dbService: DatabaseService, private _itemService: ItemService) { }
 
-  getLastModifiedTime(): Promise<any> {
+  getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
     return this._http.get(Endpoints.getBattleNetApi(`auction/data/${SharedService.user.realm}`))
       .toPromise()
       .then(r => {
         SharedService.auctionResponse = r['files'][0];
-        if (previousLastModified !== SharedService.auctionResponse.lastModified) {
+        if (force || previousLastModified !== SharedService.auctionResponse.lastModified) {
           this.getAuctions()
             .then(res => console.log('Updating auctions')).catch();
         }

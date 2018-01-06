@@ -4,6 +4,7 @@ import { SharedService } from '../../../services/shared.service';
 import { Realm } from '../../../models/realm';
 import { User } from '../../../models/user/user';
 import { RealmService } from '../../../services/realm.service';
+import { AuctionsService } from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -13,19 +14,42 @@ import { RealmService } from '../../../services/realm.service';
 export class GeneralSettingsComponent implements OnInit {
   _characterForm: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService) {
+  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _auctionService: AuctionsService) {
     this._characterForm = this._formBuilder.group({
-      region: ['', Validators.required],
-      realm: ['', Validators.required],
-      tsmKey: '',
+      region: [ SharedService.user.region, Validators.required],
+      realm: [ SharedService.user.realm, Validators.required],
+      tsmKey: SharedService.user.apiTsm,
       importString: ''
     });
   }
 
   ngOnInit() {
+    if (!SharedService.realms || Object.keys(SharedService.realms).length === 0) {
+      this.getRealms();
+    }
   }
 
-  saveChanges(): void {}
+  async saveRealmAndRegion() {
+    SharedService.user.region = this._characterForm.value.region;
+    SharedService.user.realm = this._characterForm.value.realm;
+    User.save();
+
+    await this._auctionService.getLastModifiedTime(true);
+    if (SharedService.user.apiToUse !== 'none') {
+      await this._auctionService.getTsmAuctions();
+    }
+  }
+
+  saveTSMKey(): void {
+    SharedService.user.apiTsm = this._characterForm.value.tsmKey;
+    if (SharedService.user.apiTsm.length > 0) {
+      SharedService.user.apiToUse = 'tsm';
+      this._auctionService.getTsmAuctions();
+    } else {
+      SharedService.user.apiToUse = 'none';
+    }
+    User.save();
+  }
 
   getRealmsKeys() {
     return SharedService.realms ? Object.keys(SharedService.realms) : [];

@@ -37,7 +37,7 @@
           It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button>
+          <button mat-button (click)="saveRealmAndRegion()">
             <i class="fas fa-save"></i> Save
           </button>
         </mat-card-actions>
@@ -60,7 +60,7 @@
             <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button>
+          <button mat-button (click)="saveTSMKey()">
             <i class="fas fa-save"></i> Save
           </button>
         </mat-card-actions>
