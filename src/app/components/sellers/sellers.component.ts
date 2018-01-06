@@ -37,6 +37,22 @@ export class SellersComponent implements OnInit {
     return SharedService.sellers.filter(i => this.isMatch(i));
   }
   isMatch(seller: Seller): boolean {
-    return seller.name.toLowerCase().indexOf(this.searchForm.value.name) > -1;
+    return this.isNameMatch(seller) && this.isLiquidityMatch(seller) &&
+      this.isVolumeMatch(seller) && this.isNumOfAuctionsMatch(seller);
+  }
+
+  isNameMatch(seller: Seller): boolean {
+    return this.searchForm.value.name === null || seller.name.toLowerCase().indexOf(this.searchForm.value.name) > -1;
+  }
+
+  isLiquidityMatch(seller: Seller): boolean {
+    return this.searchForm.value.liquidity === null || seller.liquidity >= this.searchForm.value.liquidity * 10000;
+  }
+
+  isVolumeMatch(seller: Seller): boolean {
+    return this.searchForm.value.volume === null || seller.volume >= this.searchForm.value.volume;
+  }
+  isNumOfAuctionsMatch(seller: Seller): boolean {
+    return this.searchForm.value.numOfAuctions === null || seller.numOfAuctions >= this.searchForm.value.numOfAuctions;
   }
 }
