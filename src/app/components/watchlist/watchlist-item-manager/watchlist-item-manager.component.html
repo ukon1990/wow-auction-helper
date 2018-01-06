@@ -1,16 +1,15 @@
-<div class="full-screen">
+<div class="full-screen" *ngIf="item && item.itemID && group">
   <mat-card>
     <mat-card-header>
       <mat-card-title>
-        ssss
+        <wah-icon size="22" [id]="item.itemID"></wah-icon>
+        <a rel="item={{ item.itemID }}">
+          {{ item.name }}
+        </a>
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <form [formGroup]="form">
-        <mat-form-field>
-          <input matInput placeholder="Name" formControlName="name" type="text" disabled>
-        </mat-form-field>
-
         <mat-form-field>
           <mat-select placeholder="Compare to" formControlName="compareTo">
             <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
@@ -59,5 +58,5 @@
   </mat-card>
 </div>
 
-<div class="backdrop" (click)="close.emit('')">
+<div class="backdrop" (click)="close.emit('')" *ngIf="item && group">
 </div>

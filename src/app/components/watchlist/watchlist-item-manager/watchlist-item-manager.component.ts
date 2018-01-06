@@ -59,11 +59,11 @@ export class WatchlistItemManagerComponent implements OnInit {
     this.item.minCraftingProfit = this.form.value.minCraftingProfit;
     this.item.value = this.form.value.value;
 
+    console.log(this.item, this.form.value);
     if (this.group !== this.form.value.group) {
+      console.log('Moved?');
       SharedService.user.watchlist.moveItem(this.group, this.form.value.group, this.index);
     }
-
-    console.log(this.item, this.form.value);
     // SharedService.user.watchlist.save();
     this.close.emit('');
   }

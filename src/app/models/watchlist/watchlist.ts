@@ -90,7 +90,7 @@ export class Watchlist {
   }
 
   removeItem(group: WatchlistGroup, index: number): void {
-    this.groupsMap[group.name].items.splice(index, 1);
+    group.items.splice(index, 1);
     this.save();
   }
 
@@ -101,7 +101,7 @@ export class Watchlist {
 
   mapOldVersionToNew(item: any): WatchlistItem {
     return {
-      itemID: item.id,
+      itemID: parseInt(item.id, 10),
       name: item.name,
       compareTo: item.compareTo,
       value: item.value,
