@@ -9,17 +9,27 @@
   </mat-card-header>
   <mat-card-content>
     <div class="row col-md-12">
-      <div class="col-md-12">
-        <strong>Compare to: </strong> {{ item.compareTo }}
+      <div class="col-md-6">
+        <div class="row">
+          <strong class="mr-1">Available:</strong> {{ getAuctionItem(item.itemID).quantityTotal | number }}
+        </div>
+        <div class="row">
+          <strong class="mr-1">Buyout:</strong> {{ getAuctionItem(item.itemID).buyout | gold }}
+        </div>
+        <div class="row" *ngIf="getAuctionItem(item.itemID).mktPrice > 0">
+          <strong class="mr-1">Market value:</strong> {{ getAuctionItem(item.itemID).mktPrice | gold }}
+        </div>
+        <div class="row" *ngIf="getAuctionItem(item.itemID).regionSaleRate > 0">
+          <strong class="mr-1">Regional sale rate:</strong> {{ getAuctionItem(item.itemID).regionSaleRate | percent }}
+        </div>
       </div>
-      <div class="col-md-12">
-        <strong>Target: </strong> {{ item.target }}
-      </div>
-      <div class="col-md-12">
-        <strong>Target type: </strong> {{ item.targetType }}
-      </div>
-      <div class="col-md-12">
-        <strong>Criteria: </strong> {{ item.criteria }}
+      <div class="col-md-6">
+        <div class="row">
+          <strong class="mr-1">Alert value:</strong> {{ item.value | gold }}
+        </div>
+        <div class="row">
+          <strong class="mr-1">Alert criteria:</strong> {{ item.criteria }}
+        </div>
       </div>
     </div>
     <mat-tab-group *ngIf="getRecipesForItem(item.itemID)">
@@ -36,4 +46,18 @@
       </mat-tab>
     </mat-tab-group>
   </mat-card-content>
+  <mat-card-actions>
+    <button type="button" mat-raised-button (click)="edit.emit('')">
+      <div class="float-left mr-1">
+        <i class="far fa-edit"></i>
+      </div>
+      Edit
+    </button>
+    <button type="button" mat-raised-button (click)="delete.emit('')">
+      <div class="float-left mr-1">
+        <i class="far fa-trash-alt"></i>
+      </div>
+      Delete
+    </button>
+  </mat-card-actions>
 </mat-card>

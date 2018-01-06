@@ -59,6 +59,7 @@ import { CustomPricesComponent } from './components/settings/crafting-settings/c
 import { SellersComponent } from './components/sellers/sellers.component';
 import { SellerComponent } from './components/sellers/seller/seller.component';
 import { NewsComponent } from './components/news/news.component';
+import { WatchlistItemManagerComponent } from './components/watchlist/watchlist-item-manager/watchlist-item-manager.component';
 
 
 @NgModule({
@@ -103,7 +104,8 @@ import { NewsComponent } from './components/news/news.component';
     CustomPricesComponent,
     SellersComponent,
     SellerComponent,
-    NewsComponent
+    NewsComponent,
+    WatchlistItemManagerComponent
   ],
   imports: [
     BrowserModule,

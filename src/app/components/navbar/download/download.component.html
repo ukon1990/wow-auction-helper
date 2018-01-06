@@ -26,7 +26,7 @@
             <td>Items</td>
             <td></td>
             <td>
-              <button mat-icon-button (click)="downloadA('items')"
+              <button mat-icon-button (click)="download('items')"
                 [disabled]="getDownloading().items"
                 matTooltip="Re-download item data">
                 <i class="fas fa-download"></i>
@@ -40,7 +40,7 @@
             <td>Recipes</td>
             <td></td>
             <td>
-              <button mat-icon-button (click)="downloadA('recipes')"
+              <button mat-icon-button (click)="download('recipes')"
                 [disabled]="getDownloading().recipes"
                 matTooltip="Re-download recipe data">
                 <i class="fas fa-download"></i>
@@ -54,7 +54,7 @@
             <td>Pets</td>
             <td></td>
             <td>
-              <button mat-icon-button (click)="downloadA('pets')"
+              <button mat-icon-button (click)="download('pets')"
                 [disabled]="getDownloading().pets"
                 matTooltip="Re-download pet data">
                 <i class="fas fa-download"></i>
@@ -68,7 +68,7 @@
             <td>Auctions</td>
             <td>{{ getAuctionsLastModified() | date: 'HH:mm M/d/yy' }}</td>
             <td>
-              <button mat-icon-button (click)="downloadA('auctions')"
+              <button mat-icon-button (click)="download('auctions')"
                 [disabled]="getDownloading().auctions"
                 matTooltip="Re-download auction data">
                 <i class="fas fa-download"></i>
@@ -82,7 +82,7 @@
             <td>TSM</td>
             <td>{{ getTime('timestamp_tsm') | date: 'M/d/yy' }}</td>
             <td>
-              <button mat-icon-button (click)="downloadA('tsm')"
+              <button mat-icon-button (click)="download('tsm')"
                 [disabled]="getDownloading().tsmAuctions"
                 matTooltip="Re-download TSM data">
                 <i class="fas fa-download"></i>

@@ -45,11 +45,11 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="!isSeller">
-    <button mat-button type="button" (click)="remove.emit('')">
+    <button mat-raised-button type="button" (click)="remove.emit('')">
       <i class="fa fa-trash" aria-hidden="true"></i>
       Remove
     </button>
-    <button mat-button type="button" (click)="update.emit('')">
+    <button mat-raised-button type="button" (click)="update.emit('')">
       <div class="float-left mr-1" [ngClass]="{'loading': character.downloading}">
         <i class="fas fa-sync" aria-hidden="true"></i>
       </div>

@@ -77,14 +77,14 @@ export class DownloadComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  async downloadA(type: string) {
+  async download(type: string) {
     switch (type) {
       case 'tsm':
         await this._auctionsService.getTsmAuctions();
         AuctionHandler.organize(SharedService.auctions);
         break;
       case 'auctions':
-        this._auctionsService.getAuctions();
+        this._auctionsService.getLastModifiedTime(true);
         break;
       case 'items':
         this._itemService.getItems();

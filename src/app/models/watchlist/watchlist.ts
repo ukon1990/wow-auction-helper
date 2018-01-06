@@ -1,6 +1,7 @@
 import { Recipe } from '../crafting/recipe';
 import { Item } from '../item/item';
 import { itemClasses } from '../item/item-classes';
+import { SharedService } from '../../services/shared.service';
 
 export class Watchlist {
   private storageName = 'watchlist';
@@ -33,8 +34,23 @@ export class Watchlist {
   }
 
   restore(): void {
+    let shouldSave = false;
     if (localStorage[this.storageName] !== undefined) {
       const wl: any = JSON.parse(localStorage[this.storageName]);
+      if (wl.items) {
+        wl.groups = [];
+        Object.keys(wl.items).forEach(group => {
+          const g = new WatchlistGroup(group);
+          wl.items[group].forEach(item => {
+            if (item) {
+              g.items.push(this.mapOldVersionToNew(item));
+            }
+          });
+          wl.groups.push(g);
+        });
+        shouldSave = true;
+      }
+      console.log(wl);
       if (wl.groups) {
         this.groups = wl.groups;
         this.groups.forEach(g => {
@@ -44,6 +60,10 @@ export class Watchlist {
           this.groupsMap[g.name].items.push(g);
         });
       }
+    }
+
+    if (shouldSave) {
+      this.save();
     }
   }
 
@@ -78,6 +98,19 @@ export class Watchlist {
     localStorage[this.storageName] = JSON.stringify(
       {groups: this.groups});
   }
+
+  mapOldVersionToNew(item: any): WatchlistItem {
+    return {
+      itemID: item.id,
+      name: item.name,
+      compareTo: item.compareTo,
+      value: item.value,
+      target: undefined,
+      targetType: this.TARGET_TYPES.GOLD,
+      criteria: item.criteria,
+      minCraftingProfit: item.minCraftingProfit
+    };
+  }
 }
 
 export class WatchlistGroup {
@@ -100,5 +133,18 @@ export class WatchlistItem {
   target: number;
   targetType: string;
   criteria: string;
+  minCraftingProfit: number;
   value = 0;
+
+  constructor(itemID?: number) {
+    if (itemID && SharedService.items[itemID]) {
+      const wl = SharedService.user.watchlist;
+      this.itemID = itemID;
+      this.name = SharedService.items[itemID].name;
+      this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
+      this.targetType = wl.TARGET_TYPES.GOLD;
+      this.criteria = wl.CRITERIAS.BELOW;
+      this.minCraftingProfit = 0;
+    }
+  }
 }

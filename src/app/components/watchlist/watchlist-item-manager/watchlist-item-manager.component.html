@@ -1,0 +1,63 @@
+<div class="full-screen">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        ssss
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form">
+        <mat-form-field>
+          <input matInput placeholder="Name" formControlName="name" type="text" disabled>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Compare to" formControlName="compareTo">
+            <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+              {{ i }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Criteria" formControlName="criteria">
+            <mat-option *ngFor="let i of criterias" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+              {{ i }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Target type" formControlName="targetType">
+            <mat-option *ngFor="let i of targetTypes" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+              {{ i }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Value" formControlName="value" type="number">
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Group" formControlName="group">
+            <mat-option *ngFor="let group of groups" [value]="group" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+              {{ group.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button type="button" mat-raised-button (click)="save()">
+        <div class="float-left mr-1">
+          <i class="far fa-edit"></i>
+        </div>
+        Save
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<div class="backdrop" (click)="close.emit('')">
+</div>
