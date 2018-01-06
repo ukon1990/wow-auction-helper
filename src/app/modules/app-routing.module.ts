@@ -21,6 +21,7 @@ import { AboutDataComponent } from '../components/about/about-data/about-data.co
 import { AboutWhatIsComponent } from '../components/about/about-what-is/about-what-is.component';
 import { DashboardItemsComponent } from '../components/dashboard/dashboard-items/dashboard-items.component';
 import { DashboardSellersComponent } from '../components/dashboard/dashboard-sellers/dashboard-sellers.component';
+import { SellersComponent } from '../components/sellers/sellers.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -39,6 +40,7 @@ const routes: Routes = [
   { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'watchlist', component: WatchlistComponent, canActivate: [ IsRegisteredService ] },
   { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [ IsRegisteredService ] },
+  { path: 'sellers', component: SellersComponent, canActivate: [ IsRegisteredService ] },
   {
     path: 'settings',
     component: SettingsComponent,
