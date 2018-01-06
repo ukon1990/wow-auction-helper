@@ -29,6 +29,11 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
+  hasRealmChange(): boolean {
+    return SharedService.user.realm !== this._characterForm.value.realm ||
+      SharedService.user.region !== this._characterForm.value.region;
+  }
+
   async saveRealmAndRegion() {
     SharedService.user.region = this._characterForm.value.region;
     SharedService.user.realm = this._characterForm.value.realm;
@@ -38,6 +43,10 @@ export class GeneralSettingsComponent implements OnInit {
     if (SharedService.user.apiToUse !== 'none') {
       await this._auctionService.getTsmAuctions();
     }
+  }
+
+  hasTSMKeyChanged(): boolean {
+    return SharedService.user.apiTsm !== this._characterForm.value.tsmKey;
   }
 
   saveTSMKey(): void {
