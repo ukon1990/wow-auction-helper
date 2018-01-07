@@ -94,7 +94,7 @@ export class Crafting {
 
   private static isBelowMktBuyoutValue(itemID: number): boolean {
     return Crafting.existsInTSM(itemID) && SharedService.auctionItemsMap[itemID].buyout /
-      SharedService.tsm[itemID].MarketValue >=
+      SharedService.tsm[itemID].MarketValue * 100 >=
       SharedService.user.buyoutLimit;
   }
 

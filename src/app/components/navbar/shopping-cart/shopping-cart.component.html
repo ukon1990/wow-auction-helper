@@ -25,7 +25,7 @@
       <strong class="row col-md-12">Reagents needed:</strong>
       <wah-data-table [id]="'itemID'"
         [iconSize]="22"
-        [columns]="columnsRecipes"
+        [columns]="columns"
         [data]="getShoppingCart().reagents"></wah-data-table>
       Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
       <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}

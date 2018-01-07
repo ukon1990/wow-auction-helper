@@ -91,19 +91,22 @@ describe('Crafting', () => {
       SharedService.user.apiToUse = 'tsm';
 
       SharedService.recipes[0].reagents.push({
-        itemID: 20,
+        itemID: 20, // 10
         name: '',
-        count: 3,
+        count: 3, // sum=30
         dropped: false
       });
       SharedService.recipes[0].reagents.push({
-        itemID: 12,
+        itemID: 12, // 30
         name: '',
-        count: 10,
+        count: 10, // sum=300
         dropped: false
       });
+
+      // 100
+      SharedService.tsm[20].MarketValue = 15;
       Crafting.calculateCost();
-      expect(SharedService.recipes[0].cost).toEqual(600);
+      expect(SharedService.recipes[0].cost).toEqual(180);
     });
 
     it('if some items aren\'t at AH and use avg sold for value instead.', () => {

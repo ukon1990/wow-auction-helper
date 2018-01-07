@@ -152,6 +152,10 @@ export class ShoppingCart {
       JSON.stringify({ recipes: this.recipes, reagents: this.reagents, items: this.items });
   }
 
+  removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
+    console.log('Not really deleting');
+  }
+
   useIntermediateCrafting(): boolean {
     return SharedService.user && SharedService.user.useIntermediateCrafting;
   }

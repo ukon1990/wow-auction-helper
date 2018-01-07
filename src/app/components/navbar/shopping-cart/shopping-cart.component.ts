@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../../services/shared.service';
-import { ShoppingCart } from '../../../models/shopping-cart';
+import { ShoppingCart, ShoppingCartRecipe } from '../../../models/shopping-cart';
 import { User } from '../../../models/user/user';
 import { Recipe } from '../../../models/crafting/recipe';
 import { ColumnDescription } from '../../../models/column-description';
@@ -15,7 +15,13 @@ export class ShoppingCartComponent implements OnInit {
   show: boolean;
   columnsRecipes: Array<ColumnDescription> = [
     { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'quantity', title: 'Quantity', dataType: 'number' },
+    { key: 'quantity', title: 'Qty', dataType: 'number' },
+    { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+    { key: '', title: '', dataType: 'cart-delete' }
+  ];
+  columns: Array<ColumnDescription> = [
+    { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'quantity', title: 'Qty', dataType: 'number' },
     { key: 'buyout', title: 'Buyout', dataType: 'gold' }
   ];
 
@@ -31,6 +37,10 @@ export class ShoppingCartComponent implements OnInit {
 
   getShoppingCart(): ShoppingCart {
     return SharedService.shoppingCart;
+  }
+
+  removeRecipeFromCart(recipe: ShoppingCartRecipe, index: number): void {
+    this.getShoppingCart().removeRecipe(recipe, index);
   }
 
   getUser(): User {

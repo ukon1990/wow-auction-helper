@@ -80,7 +80,6 @@
             </mat-form-field>
           </span>
           <span *ngSwitchCase="'action'">
-
             <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
               <i class="fas fa-eye"></i>
             </button>
@@ -95,6 +94,12 @@
             </a>
             <button *ngIf="c.actions[0] === 'custom-price-delete'" mat-icon-button
               (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </span>
+          <span *ngSwitchCase="'cart-delete'">
+            <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipeFromCart(d, i)"
+              matTooltip="View item details">
               <i class="fas fa-trash-alt"></i>
             </button>
           </span>

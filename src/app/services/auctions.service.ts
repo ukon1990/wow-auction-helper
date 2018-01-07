@@ -7,6 +7,7 @@ import { TSM } from '../models/auction/tsm';
 import { Endpoints } from './endpoints';
 import { DatabaseService } from './database.service';
 import { ItemService } from './item.service';
+import { Notifications } from '../models/user/notification';
 
 @Injectable()
 export class AuctionsService {
@@ -22,7 +23,13 @@ export class AuctionsService {
         SharedService.auctionResponse = r['files'][0];
         if (force || previousLastModified !== SharedService.auctionResponse.lastModified) {
           this.getAuctions()
-            .then(res => console.log('Updating auctions')).catch();
+            .then(res => {
+              console.log('Updating auctions');
+              Notifications.send(
+                'WAH - Auction data just got updated',
+                `${SharedService.userAuctions.undercuttedAuctions} of your auctions were undercutted.`
+              );
+          }).catch();
         }
       })
       .catch(e => console.error('Could not get last update time', e));
