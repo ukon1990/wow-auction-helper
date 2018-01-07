@@ -14,12 +14,14 @@ import { UserAuctions, UserAuctionCharacter } from '../models/auction/user-aucti
 import { CustomPrice } from '../models/crafting/custom-price';
 import { Seller } from '../models/seller';
 import { AuctionPet } from '../models/auction/auction-pet';
+import { ShoppingCart } from '../models/shopping-cart';
 
 @Injectable()
 export class SharedService {
   public static user: User;
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static auctionResponse: AuctionResponse = {lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
+  public static shoppingCart: ShoppingCart = new ShoppingCart();
 
   public static userAuctions: UserAuctions = new UserAuctions();
   public static sellersMap: Map<string, Seller> = new Map<string, Seller>();

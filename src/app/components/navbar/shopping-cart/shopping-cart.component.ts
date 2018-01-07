@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../../services/shared.service';
+import { ShoppingCart } from '../../../models/shopping-cart';
+import { User } from '../../../models/user/user';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -8,13 +10,24 @@ import { SharedService } from '../../../services/shared.service';
 })
 export class ShoppingCartComponent implements OnInit {
 
+  show: boolean;
+
   constructor() { }
 
   ngOnInit() {
   }
 
-  getShoppingCart() {
-    // return SharedService.sho
+  getShoppingCart(): ShoppingCart {
+    return SharedService.shoppingCart;
   }
 
+  getUser(): User {
+    return SharedService.user;
+  }
+
+  setShow(): void {
+    setTimeout(() => {
+      this.show = true;
+    }, 1);
+  }
 }

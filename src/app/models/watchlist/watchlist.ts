@@ -61,7 +61,6 @@ export class Watchlist {
           this.groupsMap[g.name].items.push(g);
         });
       }
-      console.log(JSON.stringify(this.groups));
     } else {
       this.groups = defaultWatchlist;
     }
