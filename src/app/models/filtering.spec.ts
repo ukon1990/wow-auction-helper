@@ -28,6 +28,8 @@ describe('Filters', () => {
     it('When an auction item is below set value, false shall be returned', () => {
       const ai = new AuctionItem();
       ai.regionSaleRate = 0.08;
+      ai.itemID = 25;
+      SharedService.auctionItemsMap[ai.itemID] = ai;
       component.form.controls['saleRate'].setValue(9);
       expect(Filters.isSaleRateMatch(ai.itemID, component.form)).toBeFalsy();
     });
@@ -35,6 +37,8 @@ describe('Filters', () => {
     it('When an auction item is equal set value, true shall be returned', () => {
       const ai = new AuctionItem();
       ai.regionSaleRate = 0.09;
+      ai.itemID = 25;
+      SharedService.auctionItemsMap[ai.itemID] = ai;
       component.form.controls['saleRate'].setValue(9);
       expect(Filters.isSaleRateMatch(ai.itemID, component.form)).toBeTruthy();
     });
@@ -42,6 +46,8 @@ describe('Filters', () => {
     it('When an auction item is above set value, true shall be returned', () => {
       const ai = new AuctionItem();
       ai.regionSaleRate = 0.10;
+      ai.itemID = 25;
+      SharedService.auctionItemsMap[ai.itemID] = ai;
       component.form.controls['saleRate'].setValue(9);
       expect(Filters.isSaleRateMatch(ai.itemID, component.form)).toBeTruthy();
     });
@@ -53,6 +59,7 @@ describe('Filters', () => {
       SharedService.items[25] = new Item();
       SharedService.items[25].itemClass = '1';
       ai.itemID = 25;
+      SharedService.auctionItemsMap[ai.itemID] = ai;
 
       component.form.controls['itemClass'].setValue(null);
       expect(Filters.isItemClassMatch(ai.itemID, component.form)).toBeTruthy();
@@ -66,6 +73,7 @@ describe('Filters', () => {
       SharedService.items[25] = new Item();
       SharedService.items[25].itemClass = '0';
       ai.itemID = 25;
+      SharedService.auctionItemsMap[ai.itemID] = ai;
 
       console.log(SharedService.items);
       component.form.controls['itemClass'].setValue('1');

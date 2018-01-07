@@ -19,7 +19,7 @@ describe('CustomPrices', () => {
         expect(oldCP instanceof CustomPrice).toBeFalsy();
         expect(cpArr instanceof Array).toBeTruthy();
         expect(oldCP instanceof Array).toBeFalsy();
-        const newOne = CustomPrices.convertFromOldVersion(JSON.stringify(oldCP));
+        const newOne = CustomPrices.convertFromOldVersion(oldCP);
         expect(newOne[0].itemID).toBe(115524);
         expect(newOne[0].price).toBe(200000);
     });

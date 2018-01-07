@@ -63,7 +63,7 @@ const leyShatter: Recipe = {
 let cart: ShoppingCart;
 
 beforeEach(() => {
-  User.restore();
+  SharedService.user = new User();
   SharedService.user.useIntermediateCrafting = false;
   cart = new ShoppingCart();
   SharedService.recipesMapPerItemKnown[leyShatter.itemID] = leyShatter;
