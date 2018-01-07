@@ -2,7 +2,7 @@
   <mat-card-header>
     <mat-card-title>
       <wah-icon size="22" [id]="item.itemID"></wah-icon>
-      <a rel="item={{ item.itemID }}">
+      <a rel="item={{ item.itemID }}" [ngClass]="{'user-auction-lowest': isTargetMatch(item)}">
         {{ item.name }}
       </a>
     </mat-card-title>

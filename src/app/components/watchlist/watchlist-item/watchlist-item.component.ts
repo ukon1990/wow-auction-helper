@@ -20,6 +20,10 @@ export class WatchlistItemComponent implements OnInit {
   ngOnInit() {
   }
 
+  isTargetMatch(item: WatchlistItem): boolean {
+    return SharedService.user.watchlist.isTargetMatch(item);
+  }
+
   getAuctionItem(itemID: number): AuctionItem {
     return SharedService.auctionItemsMap[itemID] ?
     SharedService.auctionItemsMap[itemID] : new AuctionItem();

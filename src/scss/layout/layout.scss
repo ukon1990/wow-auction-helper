@@ -64,15 +64,28 @@ mat-spinner {
   width: 22px !important;
 }
 
-td span mat-form-field div.mat-input-wrapper.mat-form-field-wrapper {
-  padding: 0;
+td {
 
-  div div.mat-input-infix.mat-form-field-infix {
-    border: 0;
+  a.mat-icon-button,
+  button.mat-icon-button {
+    height: auto !important;
+    line-height: unset !important;
+  }
+
+  span mat-form-field div.mat-input-wrapper.mat-form-field-wrapper {
     padding: 0;
+  
+    div div.mat-input-infix.mat-form-field-infix {
+      border: 0;
+      padding: 0;
+    }
+  
+    div.mat-input-underline {
+      top: 1.25em
+    }
   }
+}
 
-  div.mat-input-underline {
-    top: 1.25em
-  }
+.user-auction-lowest {
+  color: #25d591 !important;
 }

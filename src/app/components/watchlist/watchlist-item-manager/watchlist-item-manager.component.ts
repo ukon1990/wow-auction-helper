@@ -61,7 +61,6 @@ export class WatchlistItemManagerComponent implements OnInit {
 
     console.log(this.item, this.form.value);
     if (this.group !== this.form.value.group) {
-      console.log('Moved?');
       SharedService.user.watchlist.moveItem(this.group, this.form.value.group, this.index);
     }
     // SharedService.user.watchlist.save();

@@ -68,7 +68,31 @@ export class Watchlist {
   }
 
   isTargetMatch(item: WatchlistItem): boolean {
-    return true;
+    if (!SharedService.auctionItems[item.itemID]) {
+      return false;
+    }
+
+    switch (item.criteria) {
+      case this.CRITERIAS.BELOW:
+        return this.getTypeValue(item) < item.value;
+      case this.CRITERIAS.EQUAL:
+        return this.getTypeValue(item) === item.value;
+      case this.CRITERIAS.ABOVE:
+        return this.getTypeValue(item) > item.value;
+    }
+    return false;
+  }
+
+  private getTypeValue(item: WatchlistItem): number {
+    switch (item.targetType) {
+      case this.TARGET_TYPES.QUANTITY:
+      case this.TARGET_TYPES.GOLD:
+        console.log(SharedService.auctionItems[item.itemID][item.compareTo]);
+        return SharedService.auctionItems[item.itemID][item.compareTo];
+      case this.TARGET_TYPES.PERCENT:
+        return SharedService.auctionItems[item.itemID][item.compareTo] /
+          SharedService.auctionItems[item.itemID].buyout * 100;
+    }
   }
 
   addGroup(name: string): void {
@@ -96,7 +120,7 @@ export class Watchlist {
 
   save(): void {
     localStorage[this.storageName] = JSON.stringify(
-      {groups: this.groups});
+      { groups: this.groups });
   }
 
   mapOldVersionToNew(item: any): WatchlistItem {
