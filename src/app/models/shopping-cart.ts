@@ -26,7 +26,13 @@ export class ShoppingCart {
           this.recipesMap[recipe.spellID].quantity++;
           recipe.reagents.forEach(r => {
             if (this.reagentsMap[r.itemID]) {
-              this.reagentsMap[r.itemID].quantity++;
+              if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
+                SharedService.recipesMapPerItemKnown[r.itemID].reagents.forEach(ir => {
+                  this.reagentsMap[ir.itemID].quantity += ir.count / recipe.minCount;
+                });
+              } else {
+                this.reagentsMap[r.itemID].quantity += r.count;
+              }
             } else {
               this.reagentsMap[r.itemID] = new ShoppingCartReagent(r.itemID, r.count);
               this.reagents.push(this.reagentsMap[r.itemID]);
@@ -35,15 +41,16 @@ export class ShoppingCart {
         } else {
           this.recipesMap[recipe.spellID] = new ShoppingCartRecipe(recipe.spellID, recipe.itemID);
           this.recipes.push(this.recipesMap[recipe.spellID]);
+          console.log(JSON.stringify(recipe));
           recipe.reagents.forEach(r => {
-            if (this.reagentsMap[r.itemID]) {
-              this.reagentsMap[r.itemID].quantity++;
+            if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
+              console.log(JSON.stringify(SharedService.recipesMapPerItemKnown[r.itemID]));
+              SharedService.recipesMapPerItemKnown[r.itemID].reagents.forEach(ir => {
+                this.addReagent(ir.itemID, ir.count * r.count / recipe.minCount, recipe);
+              });
             } else {
-              this.reagentsMap[r.itemID] = new ShoppingCartReagent(r.itemID, r.count);
-              this.reagents.push(this.reagentsMap[r.itemID]);
+              this.addReagent(r.itemID, r.count / recipe.minCount, recipe);
             }
-            this.recipesMap[recipe.spellID]
-              .reagents.push(new ShoppingCartReagent(r.itemID, r.count));
           });
         }
       } else if (item) {
@@ -56,6 +63,22 @@ export class ShoppingCart {
     }
     this.calculateCartCost();
     this.save();
+  }
+
+  addReagent(itemID: number, count: number, recipe: Recipe): void {
+    if (this.reagentsMap[itemID]) {
+      this.reagentsMap[itemID].quantity += count;
+    } else {
+      this.reagentsMap[itemID] = new ShoppingCartReagent(itemID, count);
+      this.reagents.push(this.reagentsMap[itemID]);
+    }
+    this.recipesMap[recipe.spellID]
+      .reagents.push(new ShoppingCartReagent(itemID, count));
+  }
+
+  getRecipeForItem(itemID: number): boolean {
+    return SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
+      SharedService.recipesMapPerItemKnown[itemID].cost < SharedService.auctionItemsMap[itemID].buyout;
   }
 
   calculateCartCost(): void {
@@ -77,37 +100,40 @@ export class ShoppingCart {
 
 
   restore(): void {
-    const lsObject = JSON.parse(localStorage['shopping_cart']);
 
-    if (!lsObject) {
-      return;
-    }
-
-    if (lsObject.cost) {
-      delete localStorage['shopping_cart'];
-    } else {
-      if (lsObject.reagents) {
-        this.reagents = lsObject.reagents;
-        this.reagents.forEach(r => {
-          this.reagentsMap[r.itemID] = r;
-        });
+    let lsObject;
+    if (localStorage['shopping_cart']) {
+      lsObject = JSON.parse(localStorage['shopping_cart']);
+      if (!lsObject) {
+        return;
       }
 
-      if (lsObject.recipes) {
-        this.recipes = lsObject.recipes;
-        this.recipes.forEach(r => {
-          this.recipesMap[r.spellID] = r;
-        });
-      }
+      if (lsObject.cost) {
+        delete localStorage['shopping_cart'];
+      } else {
+        if (lsObject.reagents) {
+          this.reagents = lsObject.reagents;
+          this.reagents.forEach(r => {
+            this.reagentsMap[r.itemID] = r;
+          });
+        }
 
-      if (lsObject.items) {
-        this.items = lsObject.items;
-        this.items.forEach(i => {
-          this.itemsMap[i.itemID] = i;
-        });
-      }
+        if (lsObject.recipes) {
+          this.recipes = lsObject.recipes;
+          this.recipes.forEach(r => {
+            this.recipesMap[r.spellID] = r;
+          });
+        }
 
-      this.calculateCartCost();
+        if (lsObject.items) {
+          this.items = lsObject.items;
+          this.items.forEach(i => {
+            this.itemsMap[i.itemID] = i;
+          });
+        }
+
+        this.calculateCartCost();
+      }
     }
   }
 
@@ -124,6 +150,10 @@ export class ShoppingCart {
   save(): void {
     localStorage['shopping_cart'] =
       JSON.stringify({ recipes: this.recipes, reagents: this.reagents, items: this.items });
+  }
+
+  useIntermediateCrafting(): boolean {
+    return SharedService.user && SharedService.user.useIntermediateCrafting;
   }
 }
 

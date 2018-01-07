@@ -4,6 +4,7 @@ import { MaterialsComponent } from './materials.component';
 import { TestModule } from '../../../modules/test.module';
 import { SharedService } from '../../../services/shared.service';
 import { AuctionItem } from '../../../models/auction/auction-item';
+import { Recipe } from '../../../models/crafting/recipe';
 
 describe('MaterialsComponent', () => {
   let component: MaterialsComponent;
@@ -19,6 +20,7 @@ describe('MaterialsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MaterialsComponent);
     component = fixture.componentInstance;
+    component.recipe = new Recipe();
     fixture.detectChanges();
   });
 

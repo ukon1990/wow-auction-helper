@@ -20,7 +20,7 @@ export class User {
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
-  useIntermediateCrafting: true;
+  useIntermediateCrafting = true;
   crafters: any[];
   notifications: Notification = {
     isUpdateAvailable: true,
