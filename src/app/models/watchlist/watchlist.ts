@@ -68,7 +68,7 @@ export class Watchlist {
   }
 
   isTargetMatch(item: WatchlistItem): boolean {
-    if (!SharedService.auctionItems[item.itemID]) {
+    if (!SharedService.auctionItemsMap[item.itemID]) {
       return false;
     }
 
@@ -86,13 +86,14 @@ export class Watchlist {
   private getTypeValue(item: WatchlistItem): number {
     switch (item.targetType) {
       case this.TARGET_TYPES.QUANTITY:
+        return SharedService.auctionItemsMap[item.itemID][item.compareTo];
       case this.TARGET_TYPES.GOLD:
-        console.log(SharedService.auctionItems[item.itemID][item.compareTo]);
-        return SharedService.auctionItems[item.itemID][item.compareTo];
+        return SharedService.auctionItemsMap[item.itemID][item.compareTo];
       case this.TARGET_TYPES.PERCENT:
-        return SharedService.auctionItems[item.itemID][item.compareTo] /
-          SharedService.auctionItems[item.itemID].buyout * 100;
+        return  (1 - (SharedService.auctionItemsMap[item.itemID].buyout /
+        SharedService.auctionItemsMap[item.itemID][item.compareTo])) * 100;
     }
+    return 0;
   }
 
   addGroup(name: string): void {

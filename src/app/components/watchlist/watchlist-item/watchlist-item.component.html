@@ -25,10 +25,18 @@
       </div>
       <div class="col-md-6">
         <div class="row">
-          <strong class="mr-1">Alert value:</strong> {{ item.value | gold }}
+          <strong class="mr-1">Alert value:</strong>
+          <span [ngSwitch]="item.targetType">
+            <span *ngSwitchCase="'gold'">{{ item.value | gold }}</span>
+            <span *ngSwitchCase="'percent'">{{ item.value }}%</span>
+            <span *ngSwitchDefault>{{ item.value }}</span>
+          </span>
         </div>
         <div class="row">
           <strong class="mr-1">Alert criteria:</strong> {{ item.criteria }}
+        </div>
+        <div class="row">
+          <strong class="mr-1">Alert compare to:</strong> {{ item.compareTo }}
         </div>
       </div>
     </div>

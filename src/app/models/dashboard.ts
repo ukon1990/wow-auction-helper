@@ -14,6 +14,7 @@ export class Dashboard {
     CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'CHEAP_BIDS_WITH_LOW_TIME_LEFT',
     CHEAPER_THAN_VENDOR_SELL: 'CHEAPER_THAN_VENDOR_SELL',
     TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
+    WATCH_LIST: 'WATCH_LIST',
     // The users pets, that maybe could be sold for something
     POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
   };
@@ -32,12 +33,12 @@ export class Dashboard {
       { key: 'volume', title: 'Volume', dataType: 'number' },
       { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
     ],
-    crafterColumns = [
-      { key: 'name', title: 'Name', dataType: 'name' },
-      { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-      { key: 'roi', title: 'ROI', dataType: 'gold' },
-      { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
-    ];
+      crafterColumns = [
+        { key: 'name', title: 'Name', dataType: 'name' },
+        { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+        { key: 'roi', title: 'ROI', dataType: 'gold' },
+        { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+      ];
 
     switch (type) {
       case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS:
@@ -103,6 +104,21 @@ export class Dashboard {
         this.setCheapBidsWithLowTimeLeft();
         break;
 
+
+      case Dashboard.TYPES.WATCH_LIST:
+        this.idParam = 'itemID';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
+          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
+          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        ];
+        this.setWatchListAlerts();
+        break;
+
       case Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
         this.idParam = 'itemID';
         this.columns = [
@@ -138,6 +154,8 @@ export class Dashboard {
     SharedService.itemDashboards.push(
       new Dashboard('Most profitable known crafts', Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS));
     SharedService.itemDashboards.push(
+      new Dashboard('Watchlist alerts', Dashboard.TYPES.WATCH_LIST));
+    SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
     if (SharedService.user.apiToUse !== 'none') {
       SharedService.itemDashboards.push(
@@ -169,6 +187,16 @@ export class Dashboard {
     this.data.sort((a, b) => b.value - a.value);
   }
 
+  private setWatchListAlerts(): void {
+    this.data.length = 0;
+    SharedService.user.watchlist.groups.forEach(group => {
+      group.items.forEach(item => {
+        if (SharedService.user.watchlist.isTargetMatch(item)) {
+          this.data.push(item);
+        }
+      });
+    });
+  }
 
   private setCheaperThanVendorSell(): void {
     this.data.length = 0;
