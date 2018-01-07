@@ -72,6 +72,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     return false;
   }
 
+  addEntryToCart(entry: any): void {
+    if (entry.spellID) {
+      SharedService.shoppingCart.addEntry(1, entry, undefined);
+    } else {
+      SharedService.shoppingCart.addEntry(1, undefined, entry);
+    }
+  }
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
     SharedService.selectedSeller = SharedService.sellersMap[seller.name];

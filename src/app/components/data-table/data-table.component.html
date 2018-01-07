@@ -43,7 +43,7 @@
           </span>
           <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
           <span *ngSwitchCase="'gold'">
-            {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
+            {{ (d[c.key] ? d[c.key] : 66) | gold}}
             <span *ngIf="c.key === 'buyout' && d.mktPrice">
               ({{ d.buyout / d.mktPrice | percent }} of MV)
             </span>
@@ -84,7 +84,7 @@
             <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
               <i class="fas fa-eye"></i>
             </button>
-            <button mat-icon-button matTooltip="Add to shopping cart" *ngIf="c.actions[0] !== 'custom-price-delete'">
+            <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart" *ngIf="c.actions[0] !== 'custom-price-delete'">
               <i class="fas fa-cart-plus"></i>
             </button>
             <a *ngIf="getItemID(d) && c.actions[0] !== 'custom-price-delete'"

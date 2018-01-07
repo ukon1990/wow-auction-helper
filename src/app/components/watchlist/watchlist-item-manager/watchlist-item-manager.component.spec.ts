@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WatchlistItemManagerComponent } from './watchlist-item-manager.component';
+import { TestModule } from '../../../modules/test.module';
 
 describe('WatchlistItemManagerComponent', () => {
   let component: WatchlistItemManagerComponent;
@@ -8,7 +9,7 @@ describe('WatchlistItemManagerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WatchlistItemManagerComponent ]
+      imports: [ TestModule ]
     })
     .compileComponents();
   }));

@@ -5,7 +5,7 @@
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
-  {{ getShoppingCart().reagents.length + getShoppingCart().items.length | number }}
+  {{ getShoppingCart().recipes.length + getShoppingCart().items.length | number }}
 </a>
 <div class="dropdown-menu" aria-labelledby="shoppingCart" [ngClass]="{'show': show}" (click)="setShow()">
   <mat-card>
@@ -17,22 +17,9 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <!--
-          <div class="mb-2" *ngFor="let a of getShoppingCart().recipes">
-            <a rel="item={{ a.itemID }}" href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-              target="_blank">{{ a.name }}</a> x {{ (a.quantity / a.minCount).toFixed(2) }}
-            <span *ngIf="a.minCount != 1">({{ a.quantity }} pcs)</span>
-            <i class="fa fa-trash" aria-hidden="true" (click)="removeFromCart.emit(a.spellID)"></i>
-          </div>
-      
-          <strong>Reagents</strong>
-          <div class="mb-2" *ngFor="let a of getShoppingCart().reagents">
-            <a rel="item={{ a.itemID }}" href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ a.itemID }}"
-              target="_blank">
-              {{ a.name }} x {{ a.count }} for {{ getMinPrice(a.itemID) * a.count | gold }}
-              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-            </a>
-          </div>-->
+      <wah-data-table [id]="'itemID'" [iconSize]="22" [columns]="columnsRecipes" [data]="getShoppingCart().recipes"></wah-data-table>
+
+      <wah-data-table [id]="'itemID'" [iconSize]="22" [columns]="columnsRecipes" [data]="getShoppingCart().recipes"></wah-data-table>
       Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
       <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
       <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
