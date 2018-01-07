@@ -94,8 +94,8 @@ export class Watchlist {
       case this.TARGET_TYPES.GOLD:
         return SharedService.auctionItemsMap[item.itemID][item.compareTo];
       case this.TARGET_TYPES.PERCENT:
-        return  (1 - (SharedService.auctionItemsMap[item.itemID].buyout /
-        SharedService.auctionItemsMap[item.itemID][item.compareTo])) * 100;
+        return  SharedService.auctionItemsMap[item.itemID].buyout /
+        SharedService.auctionItemsMap[item.itemID][item.compareTo] * 100;
     }
     return 0;
   }
