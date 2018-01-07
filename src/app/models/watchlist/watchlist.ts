@@ -2,6 +2,7 @@ import { Recipe } from '../crafting/recipe';
 import { Item } from '../item/item';
 import { itemClasses } from '../item/item-classes';
 import { SharedService } from '../../services/shared.service';
+import { defaultWatchlist } from './default-watchlist';
 
 export class Watchlist {
   private storageName = 'watchlist';
@@ -60,6 +61,9 @@ export class Watchlist {
           this.groupsMap[g.name].items.push(g);
         });
       }
+      console.log(JSON.stringify(this.groups));
+    } else {
+      this.groups = defaultWatchlist;
     }
 
     if (shouldSave) {
@@ -130,10 +134,10 @@ export class Watchlist {
       name: item.name,
       compareTo: item.compareTo,
       value: item.value,
-      target: undefined,
+      target: 0,
       targetType: this.TARGET_TYPES.GOLD,
       criteria: item.criteria,
-      minCraftingProfit: item.minCraftingProfit
+      minCraftingProfit: item.minCraftingProfit ? item.minCraftingProfit : 0
     };
   }
 }
@@ -155,13 +159,14 @@ export class WatchlistItem {
   itemID: number;
   name: string;
   compareTo: string;
-  target: number;
+  target?: number;
   targetType: string;
   criteria: string;
   minCraftingProfit: number;
   value = 0;
 
-  constructor(itemID?: number) {
+  constructor(itemID?: any) {
+    itemID = parseInt(itemID, 10);
     if (itemID && SharedService.items[itemID]) {
       const wl = SharedService.user.watchlist;
       this.itemID = itemID;

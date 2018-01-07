@@ -1,12 +1,26 @@
+<p>
+  The items you manage here, will be visible in the dashboard if they trigger an "alarm".
+</p>
 <mat-tab-group selectedIndex="1">
   <mat-tab label="Manage groups">
     <wah-watchlist-manager></wah-watchlist-manager>
   </mat-tab>
   <ng-container *ngFor="let group of getWatchlist().groups">
     <mat-tab [label]="group.name">
+      <form class="row col-md-12">
+        <mat-form-field class="row col-md-12">
+          <input matInput placeholder="The name of the item to add to custom prices" aria-label="State" [matAutocomplete]="auto" [formControl]="itemSearchForm">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let item of filteredItems | async" [value]="item.id" [ngClass]="{'unicorn-dark-theme': isDarkmode()}" (click)="add(group, item)">
+              <wah-icon size="36" [id]="item.id"></wah-icon>
+              <span>{{ item.name }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
       <wah-watchlist-item-manager *ngIf="selectedItem" [group]="selectedGroup" [item]="selectedItem" [index]="selectedIndex" (close)="close()"></wah-watchlist-item-manager>
       <div class="row col-md-12">
-        <div *ngFor="let item of group.items; let i = index" class="col-md-4 mb-3">
+        <div *ngFor="let item of group.items; let i = index" class="col-md-6 col-lg-4 mb-3">
           <wah-watchlist-item [item]="item" (edit)="edit(group, item, i)" (delete)="delete(group, item, i)"></wah-watchlist-item>
         </div>
       </div>
