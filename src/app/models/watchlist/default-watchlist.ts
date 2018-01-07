@@ -178,19 +178,6 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'targetType': 'gold',
     'criteria': 'below',
     'minCraftingProfit': 0
-  }],
-  'name': 'undefined'
-},
-{
-  'items': [{
-    'itemID': 133607,
-    'name': 'Silver Mackerel',
-    'compareTo': 'buyout',
-    'value': 50000,
-    'target': 0,
-    'targetType': 'gold',
-    'criteria': 'below',
-    'minCraftingProfit': 0
   },
   {
     'itemID': 124107,
