@@ -17,16 +17,22 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <wah-data-table [id]="'itemID'" [iconSize]="22" [columns]="columnsRecipes" [data]="getShoppingCart().recipes"></wah-data-table>
+      <wah-data-table [id]="'itemID'"
+        [iconSize]="22"
+        [columns]="columnsRecipes"
+        [data]="getShoppingCart().recipes"></wah-data-table>
 
-      <wah-data-table [id]="'itemID'" [iconSize]="22" [columns]="columnsRecipes" [data]="getShoppingCart().recipes"></wah-data-table>
+      <wah-data-table [id]="'itemID'"
+        [iconSize]="22"
+        [columns]="columnsRecipes"
+        [data]="getShoppingCart().reagents"></wah-data-table>
       Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
       <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
       <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
       <br>
     </mat-card-content>
     <mat-card-actions>
-      <button class="btn btn-default mat-elevation-z5">Empty shopping cart</button>
+      <button class="btn btn-default mat-elevation-z5" (click)="getShoppingCart().clear()">Empty shopping cart</button>
     </mat-card-actions>
   </mat-card>
 </div>

@@ -43,7 +43,7 @@
           </span>
           <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
           <span *ngSwitchCase="'gold'">
-            {{ (d[c.key] ? d[c.key] : 66) | gold}}
+            {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
             <span *ngIf="c.key === 'buyout' && d.mktPrice">
               ({{ d.buyout / d.mktPrice | percent }} of MV)
             </span>

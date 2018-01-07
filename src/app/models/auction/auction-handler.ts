@@ -55,6 +55,8 @@ export class AuctionHandler {
 
       // Dashboard -> Needs to be done after trade vendors
       Dashboard.addDashboards();
+
+      SharedService.shoppingCart.restore();
     }, 100);
   }
 

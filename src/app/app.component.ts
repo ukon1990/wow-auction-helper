@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
     private _itemService: ItemService,
     angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics) {
     User.restore();
+    SharedService.shoppingCart.restore();
   }
 
   ngOnInit(): void {
