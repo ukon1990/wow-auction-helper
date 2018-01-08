@@ -1,6 +1,8 @@
 import { ColumnDescription } from './column-description';
 import { SharedService } from '../services/shared.service';
 import { Item } from './item/item';
+import { Notification } from './user/notification';
+import { GoldPipe } from '../pipes/gold.pipe';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -196,14 +198,30 @@ export class Dashboard {
         }
       });
     });
+    if (this.data.length > 0) {
+      SharedService.notifications.unshift(
+        new Notification('Watchlist', `${this.data.length} of your items were matched`));
+    }
   }
 
   private setCheaperThanVendorSell(): void {
+    let value = 0;
     this.data.length = 0;
-    this.data = SharedService.auctionItems.filter(ai =>
-      ai.buyout !== 0 && ai.buyout < ai.vendorSell
-    ).sort((a, b) =>
-      a.buyout / a.vendorSell - b.buyout / b.vendorSell);
+    this.data = SharedService.auctionItems.filter(ai => {
+      if (ai.buyout !== 0 && ai.buyout < ai.vendorSell) {
+        value += ai.vendorSell - ai.buyout;
+        return true;
+      }
+      return false;
+    }).sort((a, b) =>
+    (b.vendorSell - b.buyout) - (a.vendorSell - a.buyout));
+
+    if (this.data.length > 0) {
+      const gp = new GoldPipe();
+      SharedService.notifications.unshift(
+        new Notification('Items below vendor sell',
+          `${this.data.length} items can give you a profit of ${gp.transform(value)}`));
+    }
   }
 
   private setCheapBidsWithLowTimeLeft(): void {

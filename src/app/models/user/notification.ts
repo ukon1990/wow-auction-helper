@@ -1,6 +1,18 @@
 import Push from 'push.js';
 
 export class Notification {
+  title: string;
+  message: string;
+  timestamp: Date;
+
+  constructor(title: string, message: string) {
+    this.title = title;
+    this.message = message;
+    this.timestamp = new Date();
+  }
+}
+
+export class NotificationSettings {
   isUpdateAvailable = true;
   isBelowVendorSell = true;
   isUndercutted = true;

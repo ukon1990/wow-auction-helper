@@ -99,7 +99,7 @@
           </span>
           <span *ngSwitchCase="'cart-delete'">
             <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipeFromCart(d, i)"
-              matTooltip="View item details">
+              matTooltip="Remove item from the shopping cart">
               <i class="fas fa-trash-alt"></i>
             </button>
           </span>

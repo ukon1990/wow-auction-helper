@@ -7,6 +7,7 @@ import { Dashboard } from '../dashboard';
 import { TradeVendors } from '../item/trade-vendors';
 import { Seller } from '../seller';
 import { AuctionPet } from './auction-pet';
+import { Notifications } from '../user/notification';
 
 export class AuctionHandler {
   /**
@@ -56,7 +57,7 @@ export class AuctionHandler {
       // Dashboard -> Needs to be done after trade vendors
       Dashboard.addDashboards();
 
-      SharedService.shoppingCart.restore();
+      SharedService.user.shoppingCart.restore();
     }, 100);
   }
 

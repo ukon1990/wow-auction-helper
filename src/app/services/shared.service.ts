@@ -15,13 +15,14 @@ import { CustomPrice } from '../models/crafting/custom-price';
 import { Seller } from '../models/seller';
 import { AuctionPet } from '../models/auction/auction-pet';
 import { ShoppingCart } from '../models/shopping-cart';
+import { Notification } from '../models/user/notification';
 
 @Injectable()
 export class SharedService {
   public static user: User;
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
-  public static auctionResponse: AuctionResponse = {lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
-  public static shoppingCart: ShoppingCart = new ShoppingCart();
+  public static auctionResponse: AuctionResponse = {
+    lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static userAuctions: UserAuctions = new UserAuctions();
   public static sellersMap: Map<string, Seller> = new Map<string, Seller>();
@@ -55,6 +56,8 @@ export class SharedService {
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();
   public static sellerDashboards: Array<Dashboard> = new Array<Dashboard>();
 
+  public static notifications: Array<Notification> = new Array<Notification>();
+
   public static downloading = {
     auctions: false,
     tsmAuctions: false,
@@ -64,6 +67,7 @@ export class SharedService {
     characterData: false
   };
 
+  /* istanbul ignore next */
   public static isDownloading(): boolean {
     return SharedService.downloading.auctions ||
       SharedService.downloading.tsmAuctions ||

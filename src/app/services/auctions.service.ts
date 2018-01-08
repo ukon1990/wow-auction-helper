@@ -25,10 +25,12 @@ export class AuctionsService {
           this.getAuctions()
             .then(res => {
               console.log('Updating auctions');
-              Notifications.send(
-                'WAH - Auction data just got updated',
-                `${SharedService.userAuctions.undercuttedAuctions} of your auctions were undercutted.`
-              );
+              if (SharedService.user.notifications.isUndercutted) {
+                Notifications.send(
+                  'WAH - Auction data just got updated',
+                  `${SharedService.userAuctions.undercuttedAuctions} of your auctions were undercutted.`
+                );
+              }
           }).catch();
         }
       })

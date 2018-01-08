@@ -1,4 +1,4 @@
-import { Notification } from './notification';
+import { NotificationSettings } from './notification';
 import { SharedService } from '../../services/shared.service';
 import { Character } from '../character/character';
 import { Watchlist } from '../watchlist/watchlist';
@@ -6,6 +6,7 @@ import { CustomPrice, CustomPrices } from '../crafting/custom-price';
 import { CraftingService } from '../../services/crafting.service';
 import { Recipe } from '../crafting/recipe';
 import { customPricesDefault } from '../crafting/default-custom-prices';
+import { ShoppingCart } from '../shopping-cart';
 
 
 
@@ -22,13 +23,14 @@ export class User {
   buyoutLimit = 200;
   useIntermediateCrafting = true;
   crafters: any[];
-  notifications: Notification = {
+  notifications: NotificationSettings = {
     isUpdateAvailable: true,
     isBelowVendorSell: true,
     isUndercutted: true,
     isWatchlist: true
   };
   watchlist: Watchlist = new Watchlist();
+  shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
 
   /**

@@ -1,4 +1,9 @@
-Auction house updates <br>
-Items below vendor sell price <br>
-If any of your characters on the current realm is undercutted <br>
-Allow the watchlist to send notifications.
+Only send notifications:
+<form [formGroup]="form"><!--
+  <mat-checkbox formControlName="isUpdateAvailable">Whenever the AH updates</mat-checkbox>-->
+  <mat-checkbox formControlName="isUndercutted">If I'm undercutted</mat-checkbox><!--
+  <mat-checkbox formControlName="isWatchlist">If there are one or more matches to my watchlists</mat-checkbox>
+  <mat-checkbox formControlName="isBelowVendorSell">Items are below vendor sell price</mat-checkbox>-->
+</form>
+
+Test notification: <button (click)="sendTest()" mat-raised-button>Send</button>

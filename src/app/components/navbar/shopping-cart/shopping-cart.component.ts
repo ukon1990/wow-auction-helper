@@ -36,7 +36,7 @@ export class ShoppingCartComponent implements OnInit {
   }
 
   getShoppingCart(): ShoppingCart {
-    return SharedService.shoppingCart;
+    return SharedService.user.shoppingCart;
   }
 
   removeRecipeFromCart(recipe: ShoppingCartRecipe, index: number): void {

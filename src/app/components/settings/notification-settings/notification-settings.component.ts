@@ -1,15 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SharedService } from '../../../services/shared.service';
+import { Notifications } from '../../../models/user/notification';
+import { Subscription } from 'rxjs/Subscription';
+import { User } from '../../../models/user/user';
 
 @Component({
   selector: 'wah-notification-settings',
   templateUrl: './notification-settings.component.html',
   styleUrls: ['./notification-settings.component.scss']
 })
-export class NotificationSettingsComponent implements OnInit {
+export class NotificationSettingsComponent implements OnInit, OnDestroy {
 
-  constructor() { }
+  form: FormGroup;
+  formChanges: Subscription;
 
-  ngOnInit() {
+  constructor(private _formBuilder: FormBuilder) {
+    this.form = this._formBuilder.group({
+      isUpdateAvailable: SharedService.user.notifications.isUpdateAvailable,
+      isBelowVendorSell: SharedService.user.notifications.isBelowVendorSell,
+      isUndercutted: SharedService.user.notifications.isUndercutted,
+      isWatchlist: SharedService.user.notifications.isWatchlist
+    });
+  }
+
+  ngOnInit(): void {
+    this.formChanges = this.form.valueChanges.subscribe( (change) => {
+      SharedService.user.notifications.isUndercutted = change.isUndercutted;
+      User.save();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.formChanges.unsubscribe();
+  }
+
+  sendTest(): void {
+    Notifications.send('This is a test', 'This is a test');
   }
 
 }

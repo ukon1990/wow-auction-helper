@@ -74,9 +74,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   addEntryToCart(entry: any): void {
     if (entry.spellID) {
-      SharedService.shoppingCart.addEntry(1, entry, undefined);
+      SharedService.user.shoppingCart.addEntry(1, entry, undefined);
     } else {
-      SharedService.shoppingCart.addEntry(1, undefined, entry);
+      SharedService.user.shoppingCart.addEntry(1, undefined, entry);
     }
   }
   /* istanbul ignore next */
