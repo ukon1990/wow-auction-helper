@@ -19,7 +19,16 @@ export class ShoppingCart {
   buyout: 0;
   profit: 0;
 
-  addEntry(quantity: number, recipe?: Recipe, item?: AuctionItem): void {
+  // TODO: Add shopping cart cost calc strategies
+
+  addEntry(quantity: number, recipe?: Recipe, item?: AuctionItem, asSubmat?: boolean): void {
+    // If sub material, re-run this function for that recipe instead!
+    // Already exists?
+      // > Add +1 to the recipe
+      // > Add the requiered reagents
+
+    // If not, lets add it
+
     for (let i = 0; i < quantity; i++) {
       if (recipe) {
         if (this.recipesMap[recipe.spellID]) {
@@ -27,9 +36,8 @@ export class ShoppingCart {
           recipe.reagents.forEach(r => {
             if (this.reagentsMap[r.itemID]) {
               if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
-                SharedService.recipesMapPerItemKnown[r.itemID].reagents.forEach(ir => {
-                  this.reagentsMap[ir.itemID].quantity += ir.count / recipe.minCount;
-                });
+                const iC = SharedService.recipesMapPerItemKnown[r.itemID];
+                this.addEntry(r.count / iC.minCount, iC, undefined, true);
               } else {
                 this.reagentsMap[r.itemID].quantity += r.count;
               }
@@ -44,10 +52,8 @@ export class ShoppingCart {
           console.log(JSON.stringify(recipe));
           recipe.reagents.forEach(r => {
             if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
-              console.log(JSON.stringify(SharedService.recipesMapPerItemKnown[r.itemID]));
-              SharedService.recipesMapPerItemKnown[r.itemID].reagents.forEach(ir => {
-                this.addReagent(ir.itemID, ir.count * r.count / recipe.minCount, recipe);
-              });
+              const iC = SharedService.recipesMapPerItemKnown[r.itemID];
+              this.addEntry(r.count / iC.minCount, iC, undefined, true);
             } else {
               this.addReagent(r.itemID, r.count / recipe.minCount, recipe);
             }
@@ -61,8 +67,10 @@ export class ShoppingCart {
         }
       }
     }
-    this.calculateCartCost();
-    this.save();
+    if (!asSubmat) {
+      this.calculateCartCost();
+      this.save();
+    }
   }
 
   addReagent(itemID: number, count: number, recipe: Recipe): void {

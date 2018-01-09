@@ -63,23 +63,23 @@ const leyShatter: Recipe = {
 let cart: ShoppingCart;
 
 beforeEach(() => {
+  cart = new ShoppingCart();
   SharedService.user = new User();
   SharedService.user.useIntermediateCrafting = false;
-  cart = new ShoppingCart();
   SharedService.recipesMapPerItemKnown[leyShatter.itemID] = leyShatter;
 });
 
 describe('Adding recipes to the list, should workas expected', () => {
+  this.cart.addEntry(1, bindingOfHaste);
+  expect(this.cart.reagents[1].quantity).toBe(35);
   cart.addEntry(1, bindingOfHaste);
-  expect(cart.reagents[1].quantity).toBe(35);
-  cart.addEntry(1, bindingOfHaste);
-  expect(cart.reagents[1].quantity).toBe(70);
+  expect(this.cart.reagents[1].quantity).toBe(70);
 });
 
 describe('Adding recipes to the list with intermediate craft, should workas expected', () => {
   SharedService.user.useIntermediateCrafting = true;
-  cart.addEntry(1, bindingOfHaste);
-  expect(cart.reagents[1].quantity).toBe(11.667);
-  cart.addEntry(1, bindingOfHaste);
-  expect(cart.reagents[1].quantity).toBe(23.334);
+  this.cart.addEntry(1, bindingOfHaste);
+  expect(this.cart.reagents[1].quantity).toBe(11.667);
+  this.cart.addEntry(1, bindingOfHaste);
+  expect(this.cart.reagents[1].quantity).toBe(23.334);
 });
