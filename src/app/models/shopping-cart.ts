@@ -91,7 +91,7 @@ export class ShoppingCart {
 
     this.reagents.forEach(reagent => {
       if (SharedService.auctionItemsMap[reagent.itemID]) {
-        this.cost += SharedService.auctionItemsMap[reagent.itemID] * reagent.quantity;
+        this.cost += SharedService.auctionItemsMap[reagent.itemID].buyout * reagent.quantity;
       }
     });
 
@@ -169,6 +169,7 @@ export class ShoppingCart {
 
     this.recipes.splice(index, 1);
     delete this.recipesMap[recipe.spellID];
+    this.calculateCartCost();
     this.save();
   }
 

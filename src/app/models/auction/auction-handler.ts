@@ -58,6 +58,7 @@ export class AuctionHandler {
       Dashboard.addDashboards();
 
       SharedService.user.shoppingCart.restore();
+      SharedService.user.shoppingCart.calculateCartCost();
     }, 100);
   }
 
