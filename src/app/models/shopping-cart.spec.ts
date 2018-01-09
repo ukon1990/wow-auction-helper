@@ -6,6 +6,7 @@ import { User } from './user/user';
 import { Recipe } from './crafting/recipe';
 import { ShoppingCart } from './shopping-cart';
 import { SharedService } from '../services/shared.service';
+import { AuctionItem } from './auction/auction-item';
 
 const bindingOfHaste: Recipe = {
   'spellID': 191014,
@@ -60,26 +61,40 @@ const leyShatter: Recipe = {
   'regionSaleAvg': 169459
 };
 
-let cart: ShoppingCart;
+describe('ShoppingCart', () => {
+  beforeEach(() => {
+    SharedService.user = new User();
+    SharedService.user.useIntermediateCrafting = false;
+    SharedService.recipesMapPerItemKnown[leyShatter.itemID] = leyShatter;
+    SharedService.auctionItemsMap[124440] = new AuctionItem();
+    SharedService.auctionItemsMap[124442] = new AuctionItem();
+  });
 
-beforeEach(() => {
-  cart = new ShoppingCart();
-  SharedService.user = new User();
-  SharedService.user.useIntermediateCrafting = false;
-  SharedService.recipesMapPerItemKnown[leyShatter.itemID] = leyShatter;
-});
+  it('Adding recipes to the list, should workas expected', () => {
+    const cart: ShoppingCart = new ShoppingCart();
+    SharedService.user.useIntermediateCrafting = false;
+    cart.addEntry(1, bindingOfHaste);
+    expect(cart.reagents[1].quantity).toBe(35);
+    cart.addEntry(1, bindingOfHaste);
+    expect(cart.reagents[1].quantity).toBe(70);
+  });
 
-describe('Adding recipes to the list, should workas expected', () => {
-  this.cart.addEntry(1, bindingOfHaste);
-  expect(this.cart.reagents[1].quantity).toBe(35);
-  cart.addEntry(1, bindingOfHaste);
-  expect(this.cart.reagents[1].quantity).toBe(70);
-});
+  it('Adding recipes to the list with intermediate craft, should workas expected', () => {
+    const cart: ShoppingCart = new ShoppingCart();
+    SharedService.user.useIntermediateCrafting = true;
+    cart.addEntry(1, bindingOfHaste);
+    expect(cart.reagents[1].quantity).toBe(11.667);
+    cart.addEntry(1, bindingOfHaste);
+    expect(cart.reagents[1].quantity).toBe(23.334);
+  });
 
-describe('Adding recipes to the list with intermediate craft, should workas expected', () => {
-  SharedService.user.useIntermediateCrafting = true;
-  this.cart.addEntry(1, bindingOfHaste);
-  expect(this.cart.reagents[1].quantity).toBe(11.667);
-  this.cart.addEntry(1, bindingOfHaste);
-  expect(this.cart.reagents[1].quantity).toBe(23.334);
+  it('Can remove recipe', () => {
+    const cart: ShoppingCart = new ShoppingCart();
+    SharedService.user.useIntermediateCrafting = true;
+    cart.addEntry(1, bindingOfHaste);
+    cart.addEntry(1, bindingOfHaste);
+    cart.removeRecipe(cart.recipesMap[bindingOfHaste.spellID], 0);
+    expect(cart.recipes.length).toBe(0);
+    expect(cart.reagents.length).toBe(0);
+  });
 });

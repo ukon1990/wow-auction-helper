@@ -33,6 +33,9 @@ export class WatchlistComponent implements OnInit {
 
   /* istanbul ignore next */
   getWatchlist(): Watchlist {
+    if (!SharedService.user.watchlist) {
+      SharedService.user.watchlist = new Watchlist();
+    }
     return SharedService.user.watchlist;
   }
 

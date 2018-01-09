@@ -15,20 +15,13 @@ export class ShoppingCart {
   items: Array<ShoppingCartItem> = new Array<ShoppingCartItem>();
   itemsMap: Map<number, ShoppingCartItem> = new Map<number, ShoppingCartItem>();
 
-  cost: 0;
-  buyout: 0;
-  profit: 0;
+  cost = 0;
+  buyout = 0;
+  profit = 0;
 
   // TODO: Add shopping cart cost calc strategies
 
   addEntry(quantity: number, recipe?: Recipe, item?: AuctionItem, asSubmat?: boolean): void {
-    // If sub material, re-run this function for that recipe instead!
-    // Already exists?
-      // > Add +1 to the recipe
-      // > Add the requiered reagents
-
-    // If not, lets add it
-
     for (let i = 0; i < quantity; i++) {
       if (recipe) {
         if (this.recipesMap[recipe.spellID]) {
@@ -49,7 +42,6 @@ export class ShoppingCart {
         } else {
           this.recipesMap[recipe.spellID] = new ShoppingCartRecipe(recipe.spellID, recipe.itemID);
           this.recipes.push(this.recipesMap[recipe.spellID]);
-          console.log(JSON.stringify(recipe));
           recipe.reagents.forEach(r => {
             if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
               const iC = SharedService.recipesMapPerItemKnown[r.itemID];
@@ -68,6 +60,7 @@ export class ShoppingCart {
       }
     }
     if (!asSubmat) {
+      console.log('Yo!', SharedService.user);
       this.calculateCartCost();
       this.save();
     }
@@ -90,7 +83,6 @@ export class ShoppingCart {
   }
 
   calculateCartCost(): void {
-    this.buyout = 0;
     this.cost = 0;
     this.profit = 0;
 
@@ -98,12 +90,19 @@ export class ShoppingCart {
       return;
     }
 
-    this.recipes.forEach(recipe => {
-      const r = SharedService.recipesMap[recipe.spellID];
-      this.buyout += r.buyout * recipe.quantity;
-      this.cost += r.cost * recipe.quantity;
-      this.profit += r.roi * recipe.quantity;
+    this.reagents.forEach(reagent => {
+      if (SharedService.auctionItemsMap[reagent.itemID]) {
+        this.cost += SharedService.auctionItemsMap[reagent.itemID] * reagent.quantity;
+      }
     });
+
+    this.recipes.forEach(recipe => {
+      if (SharedService.recipesMap[recipe.itemID]) {
+        this.buyout += SharedService.recipesMap[recipe.itemID].buyout * recipe.quantity;
+      }
+    });
+
+    this.profit = this.buyout - this.cost;
   }
 
 
@@ -161,7 +160,9 @@ export class ShoppingCart {
   }
 
   removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
-    console.log('Not really deleting');
+    this.recipes.splice(index, 1);
+    delete this.recipesMap[recipe.spellID];
+    
   }
 
   useIntermediateCrafting(): boolean {
