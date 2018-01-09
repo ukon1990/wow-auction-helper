@@ -83,7 +83,7 @@
             <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
               <i class="fas fa-eye"></i>
             </button>
-            <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart" *ngIf="c.actions[0] !== 'custom-price-delete'">
+            <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart" *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete'">
               <i class="fas fa-cart-plus"></i>
             </button>
             <a *ngIf="getItemID(d) && c.actions[0] !== 'custom-price-delete'"

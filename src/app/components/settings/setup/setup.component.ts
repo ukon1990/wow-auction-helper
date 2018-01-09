@@ -18,11 +18,35 @@ export class SetupComponent implements OnInit {
   _characterForm: FormGroup;
   imagesForRoll = [
     {
-      src: 'https://i.ytimg.com/vi/BldfMdBK8bs/maxresdefault.jpg',
-      alt: 'Homer'
+      src: 'assets/img/auctions-default.jpg',
+      alt: 'Default auctions window'
     }, {
-      src: 'http://www.dagsavisen.no/polopoly_fs/1.301032.1442908298!/image/image.jpg_gen/derivatives/169_1600/image.jpg',
-      alt: 'Skomaker andersen'
+      src: 'assets/img/auctions.jpg',
+      alt: 'Searching for auctions'
+    }, {
+      src: 'assets/img/cart-darkmode.jpg',
+      alt: 'Shopping cart in darkmode'
+    }, {
+      src: 'assets/img/cart-lightmode.jpg',
+      alt: 'Shopping cart in light mode'
+    }, {
+      src: 'assets/img/crafting.jpg',
+      alt: 'The crafting window'
+    }, {
+      src: 'assets/img/dashboard.jpg',
+      alt: 'The dashboard'
+    }, {
+      src: 'assets/img/download.jpg',
+      alt: 'Data download panel'
+    }, {
+      src: 'assets/img/my-auctions.jpg',
+      alt: 'My auctions panel'
+    }, {
+      src: 'assets/img/trade-vendors.jpg',
+      alt: 'Trade vendors window'
+    }, {
+      src: 'assets/img/watchlist-groups.jpg',
+      alt: 'Watchlist'
     }
   ];
 
