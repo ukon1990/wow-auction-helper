@@ -28,7 +28,7 @@ export class ShoppingCart {
           this.recipesMap[recipe.spellID].quantity++;
           recipe.reagents.forEach(r => {
             if (this.reagentsMap[r.itemID]) {
-              if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
+              if (this.useIntermediate(r.itemID)) {
                 const iC = SharedService.recipesMapPerItemKnown[r.itemID];
                 this.addEntry(r.count / iC.minCount, iC, undefined, true);
               } else {
@@ -43,7 +43,7 @@ export class ShoppingCart {
           this.recipesMap[recipe.spellID] = new ShoppingCartRecipe(recipe.spellID, recipe.itemID);
           this.recipes.push(this.recipesMap[recipe.spellID]);
           recipe.reagents.forEach(r => {
-            if (this.useIntermediateCrafting() && this.getRecipeForItem(r.itemID)) {
+            if (this.useIntermediate(r.itemID)) {
               const iC = SharedService.recipesMapPerItemKnown[r.itemID];
               this.addEntry(r.count / iC.minCount, iC, undefined, true);
             } else {
@@ -60,7 +60,6 @@ export class ShoppingCart {
       }
     }
     if (!asSubmat) {
-      console.log('Yo!', SharedService.user);
       this.calculateCartCost();
       this.save();
     }
@@ -159,13 +158,34 @@ export class ShoppingCart {
       JSON.stringify({ recipes: this.recipes, reagents: this.reagents, items: this.items });
   }
 
-  removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
-    this.recipes.splice(index, 1);
-    delete this.recipesMap[recipe.spellID];
-    
+  private useIntermediate(itemID: number) {
+    return this.useIntermediateCrafting() && this.getRecipeForItem(itemID) ? true : false;
   }
 
-  useIntermediateCrafting(): boolean {
+  removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
+    recipe.reagents.forEach(r => {
+      this.removeReagent(recipe, r);
+    });
+
+    this.recipes.splice(index, 1);
+    delete this.recipesMap[recipe.spellID];
+    this.save();
+  }
+
+  removeReagent(recipe: ShoppingCartRecipe, reagent: ShoppingCartReagent): void {
+    const minCount = SharedService.recipesMap[recipe.spellID].minCount;
+    this.reagents.forEach((r, i) => {
+      if (r.itemID === reagent.itemID) {
+        r.quantity -= (reagent.quantity * recipe.quantity) / minCount;
+          if (r.quantity >= 0) {
+            this.reagents.splice(i, 1);
+            delete this.reagentsMap[reagent.itemID];
+          }
+      }
+    });
+  }
+
+  private useIntermediateCrafting(): boolean {
     return SharedService.user && SharedService.user.useIntermediateCrafting;
   }
 }

@@ -11,6 +11,7 @@ import { Item } from '../../models/item/item';
 import { Seller } from '../../models/seller';
 import { AuctionPet } from '../../models/auction/auction-pet';
 import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
+import { ShoppingCartRecipe } from '../../models/shopping-cart';
 
 @Component({
   selector: 'wah-data-table',
@@ -170,6 +171,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   getAuctionItem(item: any): AuctionItem {
     return SharedService.auctionItemsMap[this.getItemID(item)] ?
       SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
+  }
+
+  removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
+    SharedService.user.shoppingCart.removeRecipe(recipe, index);
   }
 
   /* istanbul ignore next */
