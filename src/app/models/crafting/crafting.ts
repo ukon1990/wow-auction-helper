@@ -44,7 +44,17 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
-        recipe.cost += this.getCost(r.itemID, r.count) / recipe.minCount;
+        if (SharedService.user.useIntermediateCrafting &&
+          SharedService.recipesMapPerItemKnown[r.itemID]) {
+          const re = SharedService.recipesMapPerItemKnown[r.itemID];
+          if (re.reagents.length > 0) {
+            re.reagents.forEach(rea => {
+              recipe.cost += this.getCost(rea.itemID, rea.count) / re.minCount * r.count;
+            });
+          }
+        } else {
+          recipe.cost += this.getCost(r.itemID, r.count) / recipe.minCount;
+        }
       });
       recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);
     } catch (e) {

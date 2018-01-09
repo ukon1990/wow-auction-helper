@@ -16,12 +16,14 @@ export class ShoppingCartComponent implements OnInit {
   columnsRecipes: Array<ColumnDescription> = [
     { key: 'name', title: 'Name', dataType: 'name' },
     { key: 'quantity', title: 'Qty', dataType: 'number' },
+    { key: 'intermediateCount', title: 's', dataType: 'number' },
     { key: 'buyout', title: 'Buyout', dataType: 'gold' },
     { key: '', title: '', dataType: 'cart-delete' }
   ];
   columns: Array<ColumnDescription> = [
     { key: 'name', title: 'Name', dataType: 'name' },
     { key: 'quantity', title: 'Qty', dataType: 'number' },
+    { key: 'intermediateCount', title: 's', dataType: 'number' },
     { key: 'buyout', title: 'Buyout', dataType: 'gold' }
   ];
 

@@ -31,6 +31,8 @@ export class ShoppingCart {
               if (this.useIntermediate(r.itemID)) {
                 const iC = SharedService.recipesMapPerItemKnown[r.itemID];
                 this.addEntry(r.count / iC.minCount, iC, undefined, true);
+                this.recipesMap[recipe.spellID].intermediate += r.count / recipe.minCount;
+                this.recipesMap[iC.spellID].intermediateCount += quantity * r.count / recipe.minCount;
               } else {
                 this.reagentsMap[r.itemID].quantity += r.count;
               }
@@ -46,8 +48,10 @@ export class ShoppingCart {
             if (this.useIntermediate(r.itemID)) {
               const iC = SharedService.recipesMapPerItemKnown[r.itemID];
               this.addEntry(r.count / iC.minCount, iC, undefined, true);
+
+              this.recipesMap[iC.spellID].intermediateCount += quantity * r.count / recipe.minCount;
             } else {
-              this.addReagent(r.itemID, r.count / recipe.minCount, recipe);
+              this.addReagent(r.itemID, r.count / recipe.minCount, recipe, asSubmat);
             }
           });
         }
@@ -65,7 +69,7 @@ export class ShoppingCart {
     }
   }
 
-  addReagent(itemID: number, count: number, recipe: Recipe): void {
+  addReagent(itemID: number, count: number, recipe: Recipe, asSubmat?: boolean): void {
     if (this.reagentsMap[itemID]) {
       this.reagentsMap[itemID].quantity += count;
     } else {
@@ -82,6 +86,7 @@ export class ShoppingCart {
   }
 
   calculateCartCost(): void {
+    this.buyout = 0;
     this.cost = 0;
     this.profit = 0;
 
@@ -96,8 +101,8 @@ export class ShoppingCart {
     });
 
     this.recipes.forEach(recipe => {
-      if (SharedService.recipesMap[recipe.itemID]) {
-        this.buyout += SharedService.recipesMap[recipe.itemID].buyout * recipe.quantity;
+      if (SharedService.recipesMap[recipe.spellID]) {
+        this.buyout += SharedService.recipesMap[recipe.spellID].buyout * (recipe.quantity - recipe.intermediateCount);
       }
     });
 
@@ -194,18 +199,19 @@ export class ShoppingCart {
 export class ShoppingCartRecipe {
   spellID: number;
   itemID: number;
-  quantity: number;
+  quantity = 1;
+  intermediateCount = 0;
   reagents: Array<ShoppingCartReagent> = Array<ShoppingCartReagent>();
 
   constructor(spellID: number, itemID: number) {
     this.spellID = spellID;
     this.itemID = itemID;
-    this.quantity = 1;
   }
 }
 
 export class ShoppingCartReagent {
   itemID: number;
+  intermediateCount = 0;
   quantity: number;
 
   constructor(itemID: number, quantity: number) {
