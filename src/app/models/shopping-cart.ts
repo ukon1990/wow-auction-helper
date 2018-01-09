@@ -81,8 +81,9 @@ export class ShoppingCart {
   }
 
   getRecipeForItem(itemID: number): boolean {
-    return SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
-      SharedService.recipesMapPerItemKnown[itemID].cost < SharedService.auctionItemsMap[itemID].buyout;
+    return (SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
+      SharedService.recipesMapPerItemKnown[itemID].cost < SharedService.auctionItemsMap[itemID].buyout) ||
+      SharedService.recipesMapPerItemKnown[itemID] && !SharedService.auctionItemsMap[itemID];
   }
 
   calculateCartCost(): void {
@@ -101,7 +102,7 @@ export class ShoppingCart {
     });
 
     this.recipes.forEach(recipe => {
-      if (SharedService.recipesMap[recipe.spellID]) {
+      if (SharedService.recipesMap[recipe.spellID] && SharedService.recipesMap[recipe.spellID].buyout) {
         this.buyout += SharedService.recipesMap[recipe.spellID].buyout * (recipe.quantity - recipe.intermediateCount);
       }
     });

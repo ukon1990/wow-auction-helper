@@ -42,7 +42,9 @@ export class MaterialsComponent implements OnInit {
   }
 
   getRecipeForItem(itemID: number): Array<Reagent> {
-    if (SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
+    if (SharedService.recipesMapPerItemKnown[itemID] && !SharedService.auctionItemsMap[itemID]) {
+      return SharedService.recipesMapPerItemKnown[itemID];
+    } else if (SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
         SharedService.recipesMapPerItemKnown[itemID].cost < SharedService.auctionItemsMap[itemID].buyout) {
       return SharedService.recipesMapPerItemKnown[itemID];
     }
