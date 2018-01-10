@@ -37,6 +37,10 @@ export class MyAuctionsComponent implements OnInit {
     return SharedService.userAuctions;
   }
 
+  hasUserCharacters(): boolean {
+    return SharedService.user.characters.length > 0;
+  }
+
   getUserAuctionsCharacters(): Array<UserAuctionCharacter> {
     return SharedService.userAuctions.characters ? SharedService.userAuctions.characters : [];
   }

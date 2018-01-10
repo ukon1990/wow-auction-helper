@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group *ngIf="hasUserCharacters(); else noChars">
   <mat-tab label="All">
     <div class="row col-md-12">
       {{ getUserAuctions().undercuttedAuctions | number }} of your acutions are undercutted. <br>
@@ -16,3 +16,7 @@
     </mat-tab>
   </ng-container>
 </mat-tab-group>
+
+<ng-template #noChars>
+ <p>It seems like you have no characters added. Do add characters in the <a routerLink="/settings/characters">characters settings section</a>, in order to use this feature.</p>
+</ng-template>
