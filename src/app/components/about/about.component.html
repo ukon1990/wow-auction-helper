@@ -31,9 +31,12 @@
      [active]="rla.isActive">
      Privacy
   </a>
+  <a mat-tab-link
+     routerLink="technology"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Technology
+  </a>
 </nav>
 
 <router-outlet></router-outlet>
-
-
-

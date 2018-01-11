@@ -1,6 +1,5 @@
 const express = require('express'),
   router = express.Router(),
-  app = express(),
   petsRoutes = require('./pets');
 
 // Error handling

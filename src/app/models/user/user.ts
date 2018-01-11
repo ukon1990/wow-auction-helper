@@ -109,7 +109,31 @@ export class User {
   }
 
   public static restore(): void {
+    SharedService.user = User.getSettings();
+    if (SharedService.user.realm && SharedService.user.region) {
+      this.updateRecipesForRealm();
+    }
+  }
+
+  public static delete(): void {
+    delete localStorage['region'];
+    delete localStorage['realm'];
+    delete localStorage['character'];
+    delete localStorage['api_tsm'];
+    delete localStorage['api_wowuction'];
+    delete localStorage['api_to_use'];
+    delete localStorage['crafting_buyout_limit'];
+    delete localStorage['crafters'];
+    delete localStorage['crafters_recipes'];
+    delete localStorage['watchlist'];
+    delete localStorage['notifications'];
+    // lists.myRecipes = [];
+    SharedService.user = new User();
+  }
+
+  public static getSettings(): User {
     const user: User = new User();
+
     Object.keys(localStorage).forEach(key => {
       switch (key) {
         case 'region':
@@ -157,27 +181,7 @@ export class User {
           break;
       }
     });
-
-    SharedService.user = user;
-    if (user.realm && user.region) {
-      this.updateRecipesForRealm();
-    }
-  }
-
-  public static delete(): void {
-    delete localStorage['region'];
-    delete localStorage['realm'];
-    delete localStorage['character'];
-    delete localStorage['api_tsm'];
-    delete localStorage['api_wowuction'];
-    delete localStorage['api_to_use'];
-    delete localStorage['crafting_buyout_limit'];
-    delete localStorage['crafters'];
-    delete localStorage['crafters_recipes'];
-    delete localStorage['watchlist'];
-    delete localStorage['notifications'];
-    // lists.myRecipes = [];
-    SharedService.user = new User();
+    return user;
   }
 
   /**

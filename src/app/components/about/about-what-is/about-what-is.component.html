@@ -1,18 +1,41 @@
 <p>
-  This is a webapplication, that shows the user the potential profit of certain receipes in-game. It is aimed at helping the
-  user earn gold in World of Warcraft.
-  <br> Some of it's features include:
+  This is a web application, developed with the intention of helping the user earn gold. Be it by crafting, snatching up bargans, resetting a market,
+  Or maybe just checking out the trade vendors.
 </p>
-<ul>
-  <li>
-    The ability to make a shopping cart for materials from receipes, that is persistent between sessions (won't be lost if you
-    reload)
-  </li>
-  <li>
-    A clean overview of the current auctions (as live as possible).
-  </li>
-  <li>
-    Displaying the users current auctions, with indication for what auctions are undercutted, and wich aren't. (requires character
-    name set)
-  </li>
-</ul>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Dashboard
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <p>
+      The dashboard contains several panels. Each of these panels is supposed, to
+      give some useful information.
+    </p>
+    <p>
+      You can define rules in the <a routerLink="/watchlist">watchlist</a> page, for that dashboard.
+      By default, there comes a couple groups and items with rules defined. You might want to tweak these for your realm.
+      Only the items that meet your criterias are visible on the dashboard page.
+    </p>
+    <p>
+      More panels may be added in the future.
+    </p>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Displaying across your characters
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <p>
+      In the my auctions section, you can see all of the auctions on this realm for the registered characters.
+    </p>
+
+    <p>
+      You can add more characters in <a routerLink="/settings/characters">character settings</a>.
+    </p>
+  </mat-expansion-panel>
+</mat-accordion>

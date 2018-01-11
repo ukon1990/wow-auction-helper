@@ -6,6 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node ./server/server.js",
+    "start-dev": "supervisor ./server/server.js",
     "build": "ng build",
     "test-build": "ng lint && ng test --browser ChromeHeadless --single-run && ng e2e && ng build --prod",
     "test": "ng test --browser ChromeHeadless",
@@ -26,6 +27,7 @@
     "@angular/platform-browser-dynamic": "^5.1.0",
     "@angular/router": "^5.1.0",
     "angulartics2": "^4.5.0",
+    "aws-sdk": "^2.179.0",
     "body-parser": "^1.18.2",
     "core-js": "^2.5.3",
     "d3": "^4.12.0",
@@ -56,6 +58,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.1.2",
+    "supervisor": "^0.12.0",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
     "typescript": "~2.4.2"

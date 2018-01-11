@@ -67,7 +67,7 @@
       </mat-card>
     </div>
   </div>
-  <!--
+
   <div class="row">
     <div class="col-md-6">
       <mat-card>
@@ -80,7 +80,8 @@
           <mat-form-field class="col-md-10">
             <textarea matInput formControlName="importString" placeholder="Paste the string here"></textarea>
           </mat-form-field>
-          <button class="col-md-2" mat-button (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+          <button class="col-md-2" mat-button (click)="importUser()"
+            [disabled]="!isImportStringNotEmpty()">
             <i class="fas fa-upload"></i>
             Restore
           </button>
@@ -91,19 +92,19 @@
       <mat-card>
         <mat-card-header>
           <mat-card-title>
-            Import previous settings
+            Export your settings
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <mat-form-field class="col-md-10">
-            <textarea matInput formControlName="importString" placeholder="Paste the string here"></textarea>
+            <textarea matInput formControlName="exportString" placeholder="The export string will appear here."></textarea>
           </mat-form-field>
-          <button class="col-md-2" mat-button (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+          <button class="col-md-2" mat-button (click)="exportData()">
             <i class="fas fa-upload"></i>
-            Restore
+            Export
           </button>
         </mat-card-content>
       </mat-card>
     </div>
-  </div>-->
+  </div>
 </form>

@@ -60,6 +60,7 @@ import { SellersComponent } from './components/sellers/sellers.component';
 import { SellerComponent } from './components/sellers/seller/seller.component';
 import { NewsComponent } from './components/news/news.component';
 import { WatchlistItemManagerComponent } from './components/watchlist/watchlist-item-manager/watchlist-item-manager.component';
+import { TechnologyComponent } from './components/about/technology/technology.component';
 
 
 @NgModule({
@@ -105,7 +106,8 @@ import { WatchlistItemManagerComponent } from './components/watchlist/watchlist-
     SellersComponent,
     SellerComponent,
     NewsComponent,
-    WatchlistItemManagerComponent
+    WatchlistItemManagerComponent,
+    TechnologyComponent
   ],
   imports: [
     BrowserModule,

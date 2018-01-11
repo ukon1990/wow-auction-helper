@@ -5,6 +5,7 @@ import { Realm } from '../../../models/realm';
 import { User } from '../../../models/user/user';
 import { RealmService } from '../../../services/realm.service';
 import { AuctionsService } from '../../../services/auctions.service';
+import { Angulartics2 } from "angulartics2";
 
 @Component({
   selector: 'wah-general-settings',
@@ -14,12 +15,16 @@ import { AuctionsService } from '../../../services/auctions.service';
 export class GeneralSettingsComponent implements OnInit {
   _characterForm: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _auctionService: AuctionsService) {
+  constructor(private _formBuilder: FormBuilder,
+    private angulartics2: Angulartics2,
+    private _realmService: RealmService,
+    private _auctionService: AuctionsService) {
     this._characterForm = this._formBuilder.group({
       region: [ SharedService.user.region, Validators.required],
       realm: [ SharedService.user.realm, Validators.required],
       tsmKey: SharedService.user.apiTsm,
-      importString: ''
+      importString: '',
+      exportString: ''
     });
   }
 
@@ -82,14 +87,25 @@ export class GeneralSettingsComponent implements OnInit {
     return this._characterForm.status === 'VALID';
   }
 
-  importUserData(): void {
-    if (this._characterForm.value.importString.length > 0) {
+  exportData(): void {
+    this._characterForm.controls['exportString']
+      .setValue(
+        JSON.stringify(User.getSettings()));
+  }
+  importUser(): void {
+    if (this.isImportStringNotEmpty()) {
       User.import(this._characterForm.value.importString);
-      /*ga('send', {
-        hitType: 'event',
-        eventCategory: 'User registration',
-        eventAction: 'Imported existing setup'
-      });*/
+
+      this.angulartics2.eventTrack.next({
+        action: 'Imported existing setup',
+        properties: { category: 'User registration' },
+      });
+
+      this.saveRealmAndRegion();
     }
+  }
+
+  isImportStringNotEmpty(): boolean {
+    return this._characterForm.value.importString.length > 0;
   }
 }

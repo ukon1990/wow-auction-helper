@@ -1,10 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TestModule } from '../../../modules/test.module';
-import { AboutWhatIsComponent } from './about-what-is.component';
+import { TechnologyComponent } from './technology.component';
 
-describe('AboutWhatIsComponent', () => {
-  let component: AboutWhatIsComponent;
-  let fixture: ComponentFixture<AboutWhatIsComponent>;
+describe('TechnologyComponent', () => {
+  let component: TechnologyComponent;
+  let fixture: ComponentFixture<TechnologyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,7 +14,7 @@ describe('AboutWhatIsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AboutWhatIsComponent);
+    fixture = TestBed.createComponent(TechnologyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

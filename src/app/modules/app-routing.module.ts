@@ -22,6 +22,7 @@ import { AboutWhatIsComponent } from '../components/about/about-what-is/about-wh
 import { DashboardItemsComponent } from '../components/dashboard/dashboard-items/dashboard-items.component';
 import { DashboardSellersComponent } from '../components/dashboard/dashboard-sellers/dashboard-sellers.component';
 import { SellersComponent } from '../components/sellers/sellers.component';
+import { TechnologyComponent } from "../components/about/technology/technology.component";
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -61,7 +62,8 @@ const routes: Routes = [
       { path: 'what-is', component: AboutWhatIsComponent },
       { path: 'crafting', component: AboutCraftingComponent },
       { path: 'where-is-the-data-from', component: AboutDataComponent },
-      { path: 'privacy', component: AboutPrivacyComponent }
+      { path: 'privacy', component: AboutPrivacyComponent },
+      { path: 'technology', component: TechnologyComponent }
     ]
   },
   { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] }
