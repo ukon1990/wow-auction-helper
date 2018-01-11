@@ -52,11 +52,14 @@ export class ItemComponent implements OnInit {
 
   /* istanbul ignore next */
   ngOnInit() {
-    if (SharedService.selectedItemId) {
+    if (!SharedService.selectedItemId) {
       return;
     }
     this._wowDBService.getItem(SharedService.selectedItemId)
-      .then(i => this.wowDBItem = i)
+      .then(i => {
+        this.wowDBItem = i;
+        console.log(i);
+      })
       .catch(e => console.error('Could not get the item from WOW DB', e));
   }
 

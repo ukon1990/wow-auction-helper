@@ -19,7 +19,7 @@ export class DashboardItemComponent implements OnInit {
   logic(): void {
     this.detailView = !this.detailView;
     this.angulartics2.eventTrack.next({
-      action: 'Dashboard-item opened/closed',
+      action: `${this.dashboard.title} opened/closed`,
       properties: { category: 'Dashboard' },
     });
   }
