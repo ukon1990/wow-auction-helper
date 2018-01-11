@@ -8,6 +8,7 @@ import { Item } from '../../../../models/item/item';
 import { CustomPrice, CustomPrices } from '../../../../models/crafting/custom-price';
 import { ColumnDescription } from '../../../../models/column-description';
 import { Crafting } from '../../../../models/crafting/crafting';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-custom-prices',
@@ -22,7 +23,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   saveInterval: any;
   @Input() itemID: number;
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     this.filteredItems = this.itemSearchForm.valueChanges
       .pipe(
         startWith(''),
@@ -50,6 +51,14 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
     if (!this.itemID) {
       clearInterval(this.saveInterval);
     }
+  }
+
+  add(item: Item): void {
+    CustomPrices.add(item);
+    this.angulartics2.eventTrack.next({
+      action: 'Added custom price',
+      properties: { category: 'Custom price' },
+    });
   }
 
   getCustomPrices(): Array<CustomPrice> {

@@ -4,6 +4,7 @@ import { ShoppingCart, ShoppingCartRecipe } from '../../../models/shopping-cart'
 import { User } from '../../../models/user/user';
 import { Recipe } from '../../../models/crafting/recipe';
 import { ColumnDescription } from '../../../models/column-description';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -25,7 +26,7 @@ export class ShoppingCartComponent implements OnInit {
     { key: 'buyout', title: 'Buyout', dataType: 'gold' }
   ];
 
-  constructor() { }
+  constructor(private angulartics2: Angulartics2) { }
 
   ngOnInit() {
   }
@@ -41,6 +42,14 @@ export class ShoppingCartComponent implements OnInit {
 
   removeRecipeFromCart(recipe: ShoppingCartRecipe, index: number): void {
     this.getShoppingCart().removeRecipe(recipe, index);
+  }
+
+  clearShoppingCart(): void {
+    this.getShoppingCart().clear();
+    this.angulartics2.eventTrack.next({
+      action: 'Cleared cart',
+      properties: { category: 'Shopping cart' },
+    });
   }
 
   getUser(): User {

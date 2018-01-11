@@ -70,8 +70,8 @@
           WoWHead
           <i class="fas fa-external-link-square-alt"></i>
         </button>
-        <button mat-raised-button matTooltip="Add to shopping list">
-          Add to shopping list
+        <button mat-raised-button matTooltip="Add to shopping list" *ngIf="userHasRecipeForItem()" (click)="addEntryToCart()">
+          Add cheapest known recipe to shopping list
           <i class="fas fa-cart-plus"></i>
         </button>
         <button

@@ -8,6 +8,7 @@ import { DatabaseService } from '../../../services/database.service';
 import { TSM } from '../../../models/auction/tsm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Crafting } from '../../../models/crafting/crafting';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-download',
@@ -23,7 +24,8 @@ export class DownloadComponent implements OnInit {
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
     private _petService: PetsService,
-    private _dbService: DatabaseService) { }
+    private _dbService: DatabaseService,
+    private angulartics2: Angulartics2) { }
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
@@ -78,6 +80,10 @@ export class DownloadComponent implements OnInit {
 
   /* istanbul ignore next */
   async download(type: string) {
+    this.angulartics2.eventTrack.next({
+      action: type,
+      properties: { category: 'Manual download' },
+    });
     switch (type) {
       case 'tsm':
         await this._auctionsService.getTsmAuctions();

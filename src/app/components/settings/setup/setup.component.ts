@@ -7,6 +7,7 @@ import { SharedService } from '../../../services/shared.service';
 import { Realm } from '../../../models/realm';
 import { Router } from '@angular/router';
 import { User } from '../../../models/user/user';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-setup',
@@ -50,7 +51,8 @@ export class SetupComponent implements OnInit {
     }
   ];
 
-  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router) {
+  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router,
+    private angulartics2: Angulartics2) {
     this._characterForm = this._formBuilder.group({
       region: ['', Validators.required],
       realm: ['', Validators.required],
@@ -97,13 +99,13 @@ export class SetupComponent implements OnInit {
   importUserData(): void {
     if (this._characterForm.value.importString.length > 0) {
       User.import(this._characterForm.value.importString);
-      /*ga('send', {
-        hitType: 'event',
-        eventCategory: 'User registration',
-        eventAction: 'Imported existing setup'
-      });*/
+
 
       this._router.navigateByUrl('/crafting');
+      this.angulartics2.eventTrack.next({
+        action: 'Imported existing setup',
+        properties: { category: 'User registration' },
+      });
     }
   }
 
@@ -122,15 +124,12 @@ export class SetupComponent implements OnInit {
 
       localStorage['timestamp_news'] = new Date().toLocaleDateString();
 
-      /*
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'User registration',
-        eventAction: 'New user registered'
-      });*/
-
       User.restore();
       this._router.navigateByUrl('/dashboard');
+      this.angulartics2.eventTrack.next({
+        action: 'New user registered',
+        properties: { category: 'User registration' },
+      });
     }
   }
 }

@@ -4,6 +4,7 @@ import { Watchlist } from '../../../models/watchlist/watchlist';
 import { SharedService } from '../../../services/shared.service';
 import { ColumnDescription } from '../../../models/column-description';
 import { Item } from '../../../models/item/item';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-watchlist-manager',
@@ -16,7 +17,7 @@ export class WatchlistManagerComponent implements OnInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   saveInterval: any;
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
   }
 
@@ -27,6 +28,10 @@ export class WatchlistManagerComponent implements OnInit {
     if (this.groupNameForm.value) {
       SharedService.user.watchlist.addGroup(this.groupNameForm.value);
       this.groupNameForm.setValue('');
+      this.angulartics2.eventTrack.next({
+        action: 'Added new group',
+        properties: { category: 'Watchlist' },
+      });
     }
   }
 

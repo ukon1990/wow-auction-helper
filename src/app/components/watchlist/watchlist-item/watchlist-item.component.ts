@@ -38,4 +38,10 @@ export class WatchlistItemComponent implements OnInit {
     return SharedService.itemRecipeMap[itemID] ?
       SharedService.itemRecipeMap[itemID].reverse() : undefined;
   }
+
+    /* istanbul ignore next */
+  setSelectedItem(item: any): void {
+      SharedService.selectedItemId = item.itemID;
+      SharedService.selectedSeller = undefined;
+    }
 }

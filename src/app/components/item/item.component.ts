@@ -8,6 +8,7 @@ import { User } from '../../models/user/user';
 import { Recipe } from '../../models/crafting/recipe';
 import { Pet } from '../../models/pet';
 import { AuctionPet } from '../../models/auction/auction-pet';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-item',
@@ -42,7 +43,11 @@ export class ItemComponent implements OnInit {
     {key: 'ID', title: 'WoWHead', dataType: 'whead-link'}
   ];
 
-  constructor(private _wowDBService: WowdbService) {
+  constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
+    this.angulartics2.eventTrack.next({
+      action: 'Item detail view',
+      properties: { category: 'Item' },
+    });
   }
 
   /* istanbul ignore next */
@@ -81,7 +86,16 @@ export class ItemComponent implements OnInit {
     return SharedService.itemRecipeMap[SharedService.selectedItemId];
   }
 
-
+  userHasRecipeForItem(): boolean {
+    return SharedService.recipesMapPerItemKnown[SharedService.selectedItemId] ? true : false;
+  }
+  addEntryToCart(): void {
+    if (!this.userHasRecipeForItem()) {
+      return;
+    }
+    SharedService.user.shoppingCart
+      .addEntry(1, SharedService.recipesMapPerItemKnown[SharedService.selectedItemId]);
+  }
 
   /* istanbul ignore next */
   getAuctionItem(): AuctionItem {

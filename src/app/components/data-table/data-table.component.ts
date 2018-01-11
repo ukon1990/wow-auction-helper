@@ -12,6 +12,7 @@ import { Seller } from '../../models/seller';
 import { AuctionPet } from '../../models/auction/auction-pet';
 import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
 import { ShoppingCartRecipe } from '../../models/shopping-cart';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-data-table',
@@ -37,7 +38,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     'SHORT': '<30m'
   };
 
-  constructor() {
+  constructor(private angulartics2: Angulartics2) {
     this.sorter = new Sorter();
   }
 
@@ -76,8 +77,16 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   addEntryToCart(entry: any): void {
     if (entry.spellID) {
       SharedService.user.shoppingCart.addEntry(1, entry, undefined);
+      this.angulartics2.eventTrack.next({
+        action: 'Added recipe',
+        properties: { category: 'Shopping cart' },
+      });
     } else {
       SharedService.user.shoppingCart.addEntry(1, undefined, entry);
+      this.angulartics2.eventTrack.next({
+        action: 'Added item',
+        properties: { category: 'Shopping cart' },
+      });
     }
   }
   /* istanbul ignore next */
@@ -175,6 +184,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
     SharedService.user.shoppingCart.removeRecipe(recipe, index);
+    this.angulartics2.eventTrack.next({
+      action: 'Removed recipe',
+      properties: { category: 'Shopping cart' },
+    });
   }
 
   /* istanbul ignore next */

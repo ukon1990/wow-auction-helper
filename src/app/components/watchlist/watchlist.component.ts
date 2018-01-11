@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators/map';
 import { Observable } from 'rxjs/Observable';
 import { startWith } from 'rxjs/operators/startWith';
 import { Item } from '../../models/item/item';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-watchlist',
@@ -20,7 +21,7 @@ export class WatchlistComponent implements OnInit {
   selectedGroup: WatchlistGroup;
   selectedIndex: number;
 
-  constructor() {
+  constructor(private angulartics2: Angulartics2) {
     this.filteredItems = this.itemSearchForm.valueChanges
       .pipe(
       startWith(''),
@@ -50,16 +51,31 @@ export class WatchlistComponent implements OnInit {
     SharedService.user.watchlist.addItem(group, wlItem);
     this.edit(group, wlItem, SharedService.user.watchlist.groups.length - 1);
     this.itemSearchForm.setValue('');
+
+    this.angulartics2.eventTrack.next({
+      action: 'Added new item',
+      properties: { category: 'Watchlist' },
+    });
   }
 
   edit(group: WatchlistGroup, item: WatchlistItem, index: number): void {
     this.selectedGroup = group;
     this.selectedItem = item;
     this.selectedIndex = index;
+
+    this.angulartics2.eventTrack.next({
+      action: 'Edited item',
+      properties: { category: 'Watchlist' },
+    });
   }
 
   delete(group: WatchlistGroup, watchlistItem: WatchlistItem, index: number): void {
     SharedService.user.watchlist.removeItem(group, index);
+
+    this.angulartics2.eventTrack.next({
+      action: 'Removed item',
+      properties: { category: 'Watchlist' },
+    });
   }
 
   /**

@@ -1,6 +1,6 @@
 <mat-card *ngIf="item">
   <mat-card-header>
-    <mat-card-title>
+    <mat-card-title (click)="setSelectedItem(item)">
       <wah-icon size="22" [id]="item.itemID"></wah-icon>
       <a rel="item={{ item.itemID }}" [ngClass]="{'user-auction-lowest': isTargetMatch(item)}">
         {{ item.name }}

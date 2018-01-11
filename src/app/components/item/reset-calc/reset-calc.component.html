@@ -5,10 +5,13 @@
   <div class="col-md-12">
     <strong>Cost: </strong> {{ resetPrice.cost | gold }}
   </div>
+  <div class="col-md-12" matTooltip="This basically is, the minimum avg price you can handle to sell for.">
+    <strong>Avg cost per item: </strong> {{ resetPrice.cost / resetPrice.numOfItems | gold }}
+  </div>
   <div class="col-md-12">
     <strong>Potential ROI: </strong> {{ resetPrice.roi | gold }} ({{ 1 + (resetPrice.roi / resetPrice.cost) | percent }})
   </div>
   <div class="col-md-12">
-    You need to buy {{ resetPrice.numOfAuctions | number }} auctions ({{ resetPrice.numOfItems }} items).
+    You need to buy {{ resetPrice.numOfAuctions | number }} auctions ({{ resetPrice.numOfItems | number }} items).
   </div>
 </div>

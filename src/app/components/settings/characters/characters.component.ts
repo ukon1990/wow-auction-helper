@@ -8,6 +8,7 @@ import { Realm } from '../../../models/realm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Crafting } from '../../../models/crafting/crafting';
 import { CraftingService } from '../../../services/crafting.service';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-characters',
@@ -24,7 +25,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   constructor(private _characterService: CharacterService,
     private _realmService: RealmService, private _craftingService: CraftingService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder, private angulartics2: Angulartics2
   ) {
     this._characterForm = this.formBuilder.group({
       region: SharedService.user.region,
@@ -51,6 +52,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   getCharacter(): void {
     this.downloading = true;
+    this.angulartics2.eventTrack.next({
+      action: 'Added',
+      properties: { category: 'Characters' },
+    });
     this._characterService
       .getCharacter(
       this._characterForm.value.name,
@@ -71,6 +76,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   updateCharacter(index: number): void {
     SharedService.user.characters[index]['downloading'] = true;
+    this.angulartics2.eventTrack.next({
+      action: 'Updated',
+      properties: { category: 'Characters' },
+    });
     this._characterService.getCharacter(
       SharedService.user.characters[index].name,
       SharedService.user.characters[index].realm
@@ -108,6 +117,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     SharedService.user.characters.splice(index, 1);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
     User.updateRecipesForRealm();
+    this.angulartics2.eventTrack.next({
+      action: 'Removed',
+      properties: { category: 'Characters' },
+    });
   }
 
   getCharacters(): any[] {

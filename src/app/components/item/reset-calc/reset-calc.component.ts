@@ -3,6 +3,7 @@ import { Auction } from '../../../models/auction/auction';
 import { AuctionItem } from '../../../models/auction/auction-item';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
+import { Angulartics2 } from 'angulartics2/angulartics2';
 
 @Component({
   selector: 'wah-reset-calc',
@@ -21,9 +22,13 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
 
   formChanges: Subscription;
 
-  constructor() {
+  constructor(private angulartics2: Angulartics2) {
     this.formChanges = this.form.valueChanges.subscribe(() => {
       this.calculate();
+      this.angulartics2.eventTrack.next({
+        action: 'Calculated',
+        properties: { category: 'Reset calc' },
+      });
     });
   }
 
