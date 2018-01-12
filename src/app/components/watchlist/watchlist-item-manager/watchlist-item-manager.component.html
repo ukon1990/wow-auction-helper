@@ -9,17 +9,20 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="row">
-        <div class="col-md-3">
+      <div class="row mb-2">
+        <div class="mr-2">
         <strong class="mr-1">Available:</strong> {{ getAuctionItem(item.itemID).quantityTotal | number }}
         </div>
-        <div class="col-md-3">
+        <div class="mr-2">
           <strong class="mr-1">Buyout:</strong> {{ getAuctionItem(item.itemID).buyout | gold }}
         </div>
-        <div class="col-md-3" *ngIf="getAuctionItem(item.itemID).mktPrice > 0">
+        <div class="mr-2" *ngIf="getAuctionItem(item.itemID).mktPrice > 0">
           <strong class="mr-1">Market value:</strong> {{ getAuctionItem(item.itemID).mktPrice | gold }}
         </div>
-        <div class="col-md-3" *ngIf="getAuctionItem(item.itemID).regionSaleRate > 0">
+        <div class="mr-2" *ngIf="getAuctionItem(item.itemID).regionSaleAvg > 0">
+          <strong class="mr-1">Regional avg sale price:</strong> {{ getAuctionItem(item.itemID).regionSaleAvg | gold }}
+        </div>
+        <div class="mr-2" *ngIf="getAuctionItem(item.itemID).regionSaleRate > 0">
           <strong class="mr-1">Regional sale rate:</strong> {{ getAuctionItem(item.itemID).regionSaleRate | percent }}
         </div>
       </div>
