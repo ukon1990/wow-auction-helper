@@ -86,7 +86,7 @@ export class Watchlist {
     return false;
   }
 
-  private getTypeValue(item: WatchlistItem): number {
+  getTypeValue(item: WatchlistItem): number {
     switch (item.targetType) {
       case this.TARGET_TYPES.QUANTITY:
         return SharedService.auctionItemsMap[item.itemID][item.compareTo];

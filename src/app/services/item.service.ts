@@ -17,6 +17,7 @@ export class ItemService {
         SharedService.items[(item as Item)[0].id] = (item as Item)[0];
         if (SharedService.auctionItemsMap[(item as Item)[0].id]) {
           SharedService.auctionItemsMap[(item as Item)[0].id].name = (item as Item)[0].name;
+            SharedService.auctionItemsMap[(item as Item)[0].id].vendorSell = (item as Item)[0].sellPrice;
         }
       }).catch(e =>
         console.error('Could not get item with ID ' + itemID, e));
@@ -40,5 +41,10 @@ export class ItemService {
         SharedService.downloading.items = false;
         console.error('Items download failed', e);
       });
+  }
+
+  updateItem(itemID: number): Promise<any> {
+    return this._http.get(`http://localhost/UpdateItem.php?itemid=${itemID}`)
+      .toPromise() as Promise<any>;
   }
 }

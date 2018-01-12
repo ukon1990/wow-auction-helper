@@ -23,6 +23,7 @@ export class Dashboard {
 
   idParam: string;
   title: string;
+  tsmShoppingString: string;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   data: Array<any> = new Array<any>();
 
@@ -191,14 +192,22 @@ export class Dashboard {
 
   private setWatchListAlerts(): void {
     this.data.length = 0;
+    this.tsmShoppingString = '';
+    const pipe = new GoldPipe();
+
     SharedService.user.watchlist.groups.forEach(group => {
       group.items.forEach(item => {
         if (SharedService.user.watchlist.isTargetMatch(item)) {
           this.data.push(item);
+          // TODO: !!
+          // this.tsmShoppingString += `${item.name}/1c/${pipe.transform(item.value)};`;
         }
       });
     });
     if (this.data.length > 0) {
+      if (this.tsmShoppingString.endsWith(';')) {
+        this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+      }
       SharedService.notifications.unshift(
         new Notification('Watchlist', `${this.data.length} of your items were matched`));
     }
@@ -206,10 +215,13 @@ export class Dashboard {
 
   private setCheaperThanVendorSell(): void {
     let value = 0;
+    const pipe = new GoldPipe();
     this.data.length = 0;
+    this.tsmShoppingString = '';
     this.data = SharedService.auctionItems.filter(ai => {
       if (ai.buyout !== 0 && ai.buyout < ai.vendorSell) {
         value += ai.vendorSell - ai.buyout;
+        this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.vendorSell)};`;
         return true;
       }
       return false;
@@ -217,10 +229,13 @@ export class Dashboard {
     (b.vendorSell - b.buyout) - (a.vendorSell - a.buyout));
 
     if (this.data.length > 0) {
-      const gp = new GoldPipe();
+      if (this.tsmShoppingString.endsWith(';')) {
+        this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+      }
+
       SharedService.notifications.unshift(
         new Notification('Items below vendor sell',
-          `${this.data.length} items can give you a profit of ${gp.transform(value)}`));
+          `${this.data.length} items can give you a profit of ${pipe.transform(value)}`));
     }
   }
 
