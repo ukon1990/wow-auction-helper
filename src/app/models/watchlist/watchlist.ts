@@ -99,6 +99,28 @@ export class Watchlist {
     return 0;
   }
 
+  getTypeValueInGold(item: WatchlistItem): number {
+    switch (item.targetType) {
+      case this.TARGET_TYPES.GOLD:
+        return SharedService.auctionItemsMap[item.itemID][item.compareTo];
+      case this.TARGET_TYPES.PERCENT:
+        return SharedService.auctionItemsMap[item.itemID][item.compareTo] * item.value / 100;
+    }
+    return 0;
+  }
+
+  getTSMStringValues(item: WatchlistItem): any {
+    switch (item.criteria) {
+      case this.CRITERIAS.BELOW:
+        return {left: 1, right: this.getTypeValueInGold(item)};
+      case this.CRITERIAS.EQUAL:
+      return {left: this.getTypeValueInGold(item), right: this.getTypeValueInGold(item)};
+      case this.CRITERIAS.ABOVE:
+      return {left: this.getTypeValueInGold(item), right: 9999999999999999999999};
+    }
+    return {left: 0, right: 0};
+  }
+
   addGroup(name: string): void {
     if (this.groupsMap[name]) {
       return;

@@ -198,9 +198,11 @@ export class Dashboard {
     SharedService.user.watchlist.groups.forEach(group => {
       group.items.forEach(item => {
         if (SharedService.user.watchlist.isTargetMatch(item)) {
+          const wlVal = SharedService.user.watchlist.getTSMStringValues(item);
           this.data.push(item);
-          // TODO: !!
-          // this.tsmShoppingString += `${item.name}/1c/${pipe.transform(item.value)};`;
+          if (wlVal.left > 1 && wlVal.right > 0) {
+            this.tsmShoppingString += `${item.name}/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
+          }
         }
       });
     });
@@ -263,11 +265,22 @@ export class Dashboard {
   }
 
   private setPotentialDeals(): void {
+    const pipe = new GoldPipe();
     this.data.length = 0;
-    this.data = SharedService.auctionItems.filter(ai =>
-      ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 &&
-      ai.buyout / ai.mktPrice < 0.15 && ai.buyout / ai.regionSaleAvg < 0.15)
+    this.tsmShoppingString = '';
+
+    this.data = SharedService.auctionItems.filter(ai => {
+      if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15 && ai.buyout / ai.regionSaleAvg < 0.15) {
+        this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.buyout / ai.mktPrice * 0.75)};`;
+        return true;
+      }
+      return false;
+    })
       .sort((a, b) => a.buyout / a.mktPrice - b.buyout / b.mktPrice);
+
+      if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
+        this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+      }
   }
 
   private sortCraftsByRoi(onlyKnown: boolean): void {
