@@ -9,6 +9,20 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
+      <div class="row">
+        <div class="col-md-3">
+        <strong class="mr-1">Available:</strong> {{ getAuctionItem(item.itemID).quantityTotal | number }}
+        </div>
+        <div class="col-md-3">
+          <strong class="mr-1">Buyout:</strong> {{ getAuctionItem(item.itemID).buyout | gold }}
+        </div>
+        <div class="col-md-3" *ngIf="getAuctionItem(item.itemID).mktPrice > 0">
+          <strong class="mr-1">Market value:</strong> {{ getAuctionItem(item.itemID).mktPrice | gold }}
+        </div>
+        <div class="col-md-3" *ngIf="getAuctionItem(item.itemID).regionSaleRate > 0">
+          <strong class="mr-1">Regional sale rate:</strong> {{ getAuctionItem(item.itemID).regionSaleRate | percent }}
+        </div>
+      </div>
       <form [formGroup]="form">
         <mat-form-field>
           <mat-select placeholder="Compare buyout to" formControlName="compareTo">
@@ -46,6 +60,11 @@
           </mat-select>
         </mat-form-field>
       </form>
+
+      <mat-form-field class="row col-md-12" *ngIf="getAuctionItem()">
+        <textarea matInput placeholder="TSM shopping string"
+          value="{{ item.name }}/exact/{{ getTSMString().left | gold }}/{{ getTSMString().right | gold }}"></textarea>
+      </mat-form-field>
     </mat-card-content>
     <mat-card-actions>
       <button type="button" mat-raised-button (click)="save()">

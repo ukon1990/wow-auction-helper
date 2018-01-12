@@ -102,7 +102,7 @@ export class Watchlist {
   getTypeValueInGold(item: WatchlistItem): number {
     switch (item.targetType) {
       case this.TARGET_TYPES.GOLD:
-        return SharedService.auctionItemsMap[item.itemID][item.compareTo];
+        return item.value;
       case this.TARGET_TYPES.PERCENT:
         return SharedService.auctionItemsMap[item.itemID][item.compareTo] * item.value / 100;
     }
@@ -116,7 +116,7 @@ export class Watchlist {
       case this.CRITERIAS.EQUAL:
       return {left: this.getTypeValueInGold(item), right: this.getTypeValueInGold(item)};
       case this.CRITERIAS.ABOVE:
-      return {left: this.getTypeValueInGold(item), right: 9999999999999999999999};
+      return {left: this.getTypeValueInGold(item), right: 99999999999};
     }
     return {left: 0, right: 0};
   }

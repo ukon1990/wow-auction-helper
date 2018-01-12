@@ -2,6 +2,7 @@ import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { WatchlistItem, WatchlistGroup } from '../../../models/watchlist/watchlist';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedService } from '../../../services/shared.service';
+import { AuctionItem } from '../../../models/auction/auction-item';
 
 @Component({
   selector: 'wah-watchlist-item-manager',
@@ -70,5 +71,23 @@ export class WatchlistItemManagerComponent implements OnInit {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  getAuctionItem(): boolean {
+    return SharedService.auctionItemsMap[this.item.itemID] ?
+      SharedService.auctionItemsMap[this.item.itemID] : undefined;
+  }
+
+  getTSMString(): any {
+    return SharedService.user.watchlist.getTSMStringValues({
+      itemID: this.item.itemID,
+      name: this.item.name,
+      compareTo: this.form.value.compareTo,
+      target: this.form.value.target,
+      targetType: this.form.value.targetType,
+      criteria: this.form.value.criteria,
+      minCraftingProfit: this.form.value.minCraftingProfit,
+      value: this.form.value.value
+    });
   }
 }

@@ -39,10 +39,6 @@ export class WatchlistItemComponent implements OnInit {
       SharedService.itemRecipeMap[itemID].reverse() : undefined;
   }
 
-  getTSMString(item: WatchlistItem): any {
-    return SharedService.user.watchlist.getTSMStringValues(item);
-  }
-
     /* istanbul ignore next */
   setSelectedItem(item: any): void {
     SharedService.selectedItemId = item.itemID;
