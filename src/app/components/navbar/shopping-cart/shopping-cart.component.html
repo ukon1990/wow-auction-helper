@@ -31,6 +31,10 @@
       <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
       <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
       <br>
+      <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0" class="row col-md-12">
+        <textarea matInput placeholder="TSM shopping string"
+          [value]="getShoppingCart().tsmShoppingString"></textarea>
+      </mat-form-field>
     </mat-card-content>
     <mat-card-actions>
       <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>

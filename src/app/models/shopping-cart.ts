@@ -3,11 +3,15 @@ import { Reagent } from './crafting/reagent';
 import { AuctionItem } from './auction/auction-item';
 import { Item } from './item/item';
 import { SharedService } from '../services/shared.service';
+import { GoldPipe } from '../pipes/gold.pipe';
 
 /**
  * Local storage value: shopping_cart
  */
 export class ShoppingCart {
+  private pipe: GoldPipe = new GoldPipe();
+
+  tsmShoppingString = '';
   recipes: Array<ShoppingCartRecipe> = new Array<ShoppingCartRecipe>();
   recipesMap: Map<number, ShoppingCartRecipe> = new Map<number, ShoppingCartRecipe>();
   reagents: Array<ShoppingCartReagent> = new Array<ShoppingCartReagent>();
@@ -108,6 +112,8 @@ export class ShoppingCart {
     });
 
     this.profit = this.buyout - this.cost;
+
+    this.setShoppingString();
   }
 
 
@@ -157,6 +163,7 @@ export class ShoppingCart {
     this.items = new Array<ShoppingCartItem>();
     this.itemsMap = new Map<number, ShoppingCartItem>();
     this.save();
+    this.setShoppingString();
   }
 
   save(): void {
@@ -194,6 +201,21 @@ export class ShoppingCart {
 
   private useIntermediateCrafting(): boolean {
     return SharedService.user && SharedService.user.useIntermediateCrafting;
+  }
+
+  private setShoppingString(): void {
+    this.tsmShoppingString = '';
+    let item: AuctionItem;
+    this.reagents.forEach(r => {
+      item = SharedService.auctionItemsMap[r.itemID];
+      if (item) {
+        this.tsmShoppingString += `${item.name}/exact/x${Math.ceil(r.quantity)};`;
+      }
+    });
+
+    if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
+      this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+    }
   }
 }
 

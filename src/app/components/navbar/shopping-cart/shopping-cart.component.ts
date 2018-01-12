@@ -5,6 +5,8 @@ import { User } from '../../../models/user/user';
 import { Recipe } from '../../../models/crafting/recipe';
 import { ColumnDescription } from '../../../models/column-description';
 import { Angulartics2 } from 'angulartics2/angulartics2';
+import { AuctionItem } from '../../../models/auction/auction-item';
+import { GoldPipe } from '../../../pipes/gold.pipe';
 
 @Component({
   selector: 'wah-shopping-cart',

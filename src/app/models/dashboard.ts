@@ -200,7 +200,7 @@ export class Dashboard {
         if (SharedService.user.watchlist.isTargetMatch(item)) {
           const wlVal = SharedService.user.watchlist.getTSMStringValues(item);
           this.data.push(item);
-          if (wlVal.left > 1 && wlVal.right > 0) {
+          if (wlVal.left > 0 && wlVal.right > 0) {
             this.tsmShoppingString += `${item.name}/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
           }
         }
