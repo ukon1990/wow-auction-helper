@@ -271,7 +271,7 @@ export class Dashboard {
 
     this.data = SharedService.auctionItems.filter(ai => {
       if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15 && ai.buyout / ai.regionSaleAvg < 0.15) {
-        this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.buyout / ai.mktPrice * 0.75)};`;
+        this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.mktPrice * 0.149)};`;
         return true;
       }
       return false;

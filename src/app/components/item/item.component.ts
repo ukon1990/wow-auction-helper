@@ -59,11 +59,8 @@ export class ItemComponent implements OnInit {
     this._wowDBService.getItem(SharedService.selectedItemId)
       .then(i => {
         this.wowDBItem = i;
-        console.log(i);
       })
       .catch(e => console.error('Could not get the item from WOW DB', e));
-
-      console.log('Prices', SharedService.tsm[SharedService.selectedItemId].VendorSell, SharedService.items[SharedService.selectedItemId]);
   }
 
   openInNewTab(url) {
