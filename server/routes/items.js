@@ -2,6 +2,7 @@ const express = require('express'),
   router = express.Router()
   AWS = require('aws-sdk'),
   url = require('url'),
+  request = require('request'),
   secrets = require('../secrets/secrets');
 
 
