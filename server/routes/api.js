@@ -1,5 +1,6 @@
 const express = require('express'),
   router = express.Router(),
+  request = require('request'),
   petsRoutes = require('./pets');
 
 // Error handling
@@ -17,6 +18,22 @@ let response = {
 };
 
 // Pets
-// app.use('/pets', petsRoutes);
+router.get('/pet', (req, res, next) => {
+  res.send('pets');
+});
+
+router.get('/auction', (req, res, next) => {
+  const url = req.query.url;
+	res.setHeader('content-type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (url) {
+    request(url).pipe(res);
+  } else {
+    return {
+      realms: [],
+      auctions: []
+    }
+  }
+});
 
 module.exports = router;

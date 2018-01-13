@@ -17,7 +17,7 @@ export class Endpoints {
         SharedService.auctionResponse.url
       }`;
   }
-
+ // http://localhost:3000/api/auction?
   public static getBattleNetApi(query: string, region?: string): string {
     // 'assets/mock/auctions.json'
     return `https://${
