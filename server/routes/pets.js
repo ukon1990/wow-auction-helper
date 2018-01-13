@@ -1,9 +1,8 @@
 const express = require('express'),
   router = express.Router()
-  mysql = require('mysql'),
+  AWS = require('aws-sdk'),
   url = require('url'),
   secrets = require('../secrets/secrets');
-let connection = mysql.createConnection(secrets.databaseConn);
 
 
 // Error handling
@@ -21,29 +20,15 @@ let response = {
 };
 
 router.get('/:id', (req, res) => {
-  connection = startConnection();
   res.setHeader('content-type', 'application/json');
-  connection.query('SELECT * from pets where speciesId = ' + req.params.id, function (err, rows, fields) {
-    if (!err) {
-      res.json(rows[0]);
-    } else {
-      console.log('The following error occured while querying DB:.', err);
-    }
-  });
-
-  connection.end();
+  res.send('Single pet');
+  // AWS.DynamoDB
 });
 
 router.get('*', (req, res) => {
-  connection = startConnection();
   res.setHeader('content-type', 'application/json');
-  connection.query('SELECT * from pets', (err, rows, fields) => {
-    if (!err) {
-      res.json({ 'pets': rows });
-    } else {
-      console.log('The following error occured while querying DB:.', err);
-    }
-  });
-
-  connection.end();
+  // Get all pets
+  res.send('All pets');
 });
+
+module.exports = router;

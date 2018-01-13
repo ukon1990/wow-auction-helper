@@ -27,7 +27,7 @@
     "@angular/platform-browser-dynamic": "^5.1.0",
     "@angular/router": "^5.1.0",
     "angulartics2": "^4.5.0",
-    "aws-sdk": "^2.179.0",
+    "aws-sdk": "^2.181.0",
     "body-parser": "^1.18.2",
     "core-js": "^2.5.3",
     "d3": "^4.12.0",

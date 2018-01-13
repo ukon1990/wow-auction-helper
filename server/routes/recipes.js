@@ -1,7 +1,9 @@
+
 const express = require('express'),
   router = express.Router()
   AWS = require('aws-sdk'),
   url = require('url'),
+  request = require('request'),
   secrets = require('../secrets/secrets');
 
 
@@ -19,18 +21,18 @@ let response = {
   message: null
 };
 
+router.get('/:spellID', (req, res) => {
+  res.setHeader('content-type', 'application/json');
+  request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
+    res.send(body.slice(1, body.length - 1));
+  });
+  // AWS.DynamoDB.
+});
+
 router.get('*', (req, res) => {
-  const url = req.query.url;
-	res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  if (url) {
-    request(url).pipe(res);
-  } else {
-    return {
-      realms: [],
-      auctions: []
-    }
-  }
+  res.setHeader('content-type', 'application/json');
+  // Get all pets
+  res.send('All recipes');
 });
 
 module.exports = router;

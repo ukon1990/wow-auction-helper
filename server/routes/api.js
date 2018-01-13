@@ -1,7 +1,10 @@
 const express = require('express'),
   router = express.Router(),
   request = require('request'),
-  petsRoutes = require('./pets');
+  auctionRouter = require('./auctions'),
+  petRouter = require('./pets'),
+  recipeRouter = require('./recipes'),
+  itemRouter = require('./items');
 
 // Error handling
 const sendError = (err, res) => {
@@ -18,22 +21,15 @@ let response = {
 };
 
 // Pets
-router.get('/pet', (req, res, next) => {
-  res.send('pets');
-});
+router.use('/pet', petRouter);
 
-router.get('/auction', (req, res, next) => {
-  const url = req.query.url;
-	res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  if (url) {
-    request(url).pipe(res);
-  } else {
-    return {
-      realms: [],
-      auctions: []
-    }
-  }
-});
+// Recipes
+router.use('/recipe', recipeRouter);
+
+// Items
+router.use('/item', itemRouter);
+
+// Auctions
+router.use('/auction', auctionRouter);
 
 module.exports = router;

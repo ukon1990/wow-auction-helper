@@ -19,18 +19,16 @@ let response = {
   message: null
 };
 
+router.get('/:id', (req, res) => {
+  res.setHeader('content-type', 'application/json');
+  res.send('Single item');
+  // AWS.DynamoDB.
+});
+
 router.get('*', (req, res) => {
-  const url = req.query.url;
-	res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  if (url) {
-    request(url).pipe(res);
-  } else {
-    return {
-      realms: [],
-      auctions: []
-    }
-  }
+  res.setHeader('content-type', 'application/json');
+  // Get all pets
+  res.send('All items');
 });
 
 module.exports = router;
