@@ -5,12 +5,32 @@
         Welcome back!
       </mat-card-title>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content class="overflow">
       <p>
         New functionality have been added since your last visit, among them youl'l find the following:
       </p>
       <div class="scrollable">
-        <mat-card>
+        <mat-card class="mb-2">
+            <mat-card-header>
+              <mat-card-title>
+                19.January 2018
+              </mat-card-title>
+              <mat-card-subtitle>
+                Version 2
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-list dense>
+                <mat-list-item>
+                  Custom proc rates have now ben added, with default values set for rank 3 flasks(1.47) and potions(1.5). Go to the settings to alter or add to these.
+                </mat-list-item>
+                <mat-list-item>
+                  In the items details panel, you can now also see what recipes use the item as well in the "Material for" tab.
+                </mat-list-item>
+              </mat-list>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="mb-2">
           <mat-card-header>
             <mat-card-title>
               10.January 2018
@@ -118,7 +138,7 @@
           </mat-card-content>
         </mat-card>
         <!-- 19.november 2017 -->
-        <mat-card>
+        <mat-card class="mb-2">
           <mat-card-header>
             <mat-card-title>
               19.november 2017
@@ -174,10 +194,12 @@
       </div>
     </mat-card-content>
     <mat-card-footer>
-      This message will only be displayed upon feature updates and not bug fixes. If you find any bugs or wish to give feedback
-      on the app, please do so on in the
-      <a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/" target="_blank">
-        reddit thread</a>. As always, any feedback is appreciated!
+      <div class="col-md-12">
+          This message will only be displayed upon feature updates and not bug fixes. If you find any bugs or wish to give feedback
+          on the app, please do so on in the
+          <a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/" target="_blank">
+            reddit thread</a>. As always, any feedback is appreciated!
+      </div>
     </mat-card-footer>
   </mat-card>
 </div>

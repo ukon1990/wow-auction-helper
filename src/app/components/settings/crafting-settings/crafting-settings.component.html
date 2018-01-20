@@ -3,11 +3,22 @@
     matInput>
 </mat-form-field>
 
-<mat-tab-group>
-  <mat-tab label="Custom prices">
-    <wah-custom-prices></wah-custom-prices>
-  </mat-tab>
-  <mat-tab label="Custom proc rates">
-    Coming soon™
-  </mat-tab>
-</mat-tab-group>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link
+     routerLink="custom-prices"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Custom prices
+  </a>
+  <a mat-tab-link
+     routerLink="custom-proc"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Custom proc rates
+  </a>
+</nav>
+
+<router-outlet></router-outlet>
+
+
+

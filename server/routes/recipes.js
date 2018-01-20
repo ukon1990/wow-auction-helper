@@ -33,6 +33,18 @@ router.get('/:spellID', (req, res) => {
   // AWS.DynamoDB.
 });
 
+router.get('/update/:spellID', (req, res) => {
+  res.setHeader('content-type', 'application/json');
+  request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
+    const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
+    //res.send(recipe);
+    getProfession(recipe, function (r) {
+      res.send(r);
+    });
+  });
+  // AWS.DynamoDB.
+});
+
 router.get('*', (req, res) => {
   res.setHeader('content-type', 'application/json');
   // Get all pets

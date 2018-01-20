@@ -11,9 +11,7 @@ export class Endpoints {
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public static getAuctionDownloadUrl(): string {
-    return `${
-        Endpoints.WAH_API
-      }GetAuctions.php?url=${
+    return `http://wowauctionshelper-env.dvsgifqqkj.eu-west-1.elasticbeanstalk.com/api/auction?url=${
         SharedService.auctionResponse.url
       }`;
   }

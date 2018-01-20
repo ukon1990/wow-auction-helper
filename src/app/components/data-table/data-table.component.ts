@@ -13,6 +13,7 @@ import { AuctionPet } from '../../models/auction/auction-pet';
 import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
 import { ShoppingCartRecipe } from '../../models/shopping-cart';
 import { Angulartics2 } from 'angulartics2/angulartics2';
+import { CustomProcs } from '../../models/crafting/custom-proc';
 
 @Component({
   selector: 'wah-data-table',
@@ -27,6 +28,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() showOwner: boolean;
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;
+  @Input() numOfRows: number;
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
   sorter: Sorter;
@@ -43,6 +45,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit() {
+    if (this.numOfRows) {
+      this.pageEvent.pageSize = this.numOfRows;
+    }
   }
 
   /* istanbul ignore next */
@@ -129,6 +134,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   customPrices(): CustomPrices {
     return CustomPrices;
+  }
+
+  customProcs(): CustomProcs {
+    return CustomProcs;
   }
 
   /* istanbul ignore next */

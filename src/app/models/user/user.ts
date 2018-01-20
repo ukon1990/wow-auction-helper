@@ -7,6 +7,7 @@ import { CraftingService } from '../../services/crafting.service';
 import { Recipe } from '../crafting/recipe';
 import { customPricesDefault } from '../crafting/default-custom-prices';
 import { ShoppingCart } from '../shopping-cart';
+import { CustomProc, CustomProcs } from '../crafting/custom-proc';
 
 
 
@@ -18,6 +19,7 @@ export class User {
   apiWoWu?: string;
   apiTsm?: string;
   customPrices: Array<CustomPrice> = customPricesDefault;
+  customProcs: Array<CustomProc> = new Array<CustomProc>();
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
@@ -75,6 +77,10 @@ export class User {
         case 'customPrices':
           localStorage['custom_prices'] = JSON.stringify(user[key]);
           SharedService.user.customPrices = user[key];
+          break;
+        case 'customProcs':
+          localStorage['custom_procs'] = JSON.stringify(user[key]);
+          SharedService.user.customProcs = user[key];
           break;
         case 'apiToUse':
           localStorage['api_to_use'] = user[key];
@@ -160,6 +166,11 @@ export class User {
           }
 
           CustomPrices.createMap(user.customPrices);
+          break;
+        case 'custom_procs':
+          user.customProcs = JSON.parse(localStorage[key]);
+
+          CustomProcs.createMap(user.customProcs);
           break;
         case 'api_to_use':
           user.apiToUse = localStorage[key];

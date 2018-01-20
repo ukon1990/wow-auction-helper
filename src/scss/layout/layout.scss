@@ -15,6 +15,14 @@
   top: 5em !important;
   max-height: 80vh !important;
   position: fixed !important;
+
+  & > mat-card {
+    max-height: 80vh;
+    .mat-card-content .mat-tab-body {
+      overflow-y: scroll;
+      max-height: 50vh;
+    }
+  }
   & .dropped-by .mat-list {
     overflow-y: auto;
     max-height: 25em;

@@ -25,7 +25,7 @@
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="row" *ngIf="getAuctionItem(); else inCaseNotFound">
+      <div class="row col-md-12" *ngIf="getAuctionItem(); else inCaseNotFound">
         <div class="col-md-4">
           <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}}
           <span *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }} MV)</span>
@@ -54,6 +54,10 @@
             </mat-tab>
             <mat-tab label="Created by" *ngIf="itemHasRecipes()">
               <wah-data-table [columns]="recipeColumns" [data]="getRecipesForItem()" [isCrafting]="true">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Material for {{ materialFor.length }}" *ngIf="materialFor.length > 0">
+              <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor" [isCrafting]="false">
               </wah-data-table>
             </mat-tab>
             <mat-tab label="Dropped by" *ngIf="wowDBItem && wowDBItem?.DroppedBy">

@@ -1,8 +1,10 @@
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
+// import { Chart } from 'chart.js';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
 
+  // Replace with : http://www.chartjs.org/samples/latest/
 @Component({
   selector: 'wah-line-chart',
   templateUrl: './line-chart.component.html',
@@ -11,6 +13,7 @@ import { SharedService } from '../../../services/shared.service';
 export class LineChartComponent implements AfterViewInit {
   @Input() data: Array<Auction>;
   @ViewChild('svgElement') svgElement: ElementRef;
+
   constructor() { }
 
   /* istanbul ignore next */

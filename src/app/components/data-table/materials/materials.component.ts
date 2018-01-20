@@ -3,6 +3,7 @@ import { Reagent } from '../../../models/crafting/reagent';
 import { SharedService } from '../../../services/shared.service';
 import { Crafting } from '../../../models/crafting/crafting';
 import { Recipe } from '../../../models/crafting/recipe';
+import { CustomProc, CustomProcs } from '../../../models/crafting/custom-proc';
 
 @Component({
   selector: 'wah-materials',
@@ -49,5 +50,9 @@ export class MaterialsComponent implements OnInit {
       return SharedService.recipesMapPerItemKnown[itemID];
     }
     return undefined;
+  }
+
+  getMinCount(recipe: Recipe): number {
+    return CustomProcs.get(recipe);
   }
 }

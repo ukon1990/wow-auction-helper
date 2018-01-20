@@ -22,7 +22,9 @@ import { AboutWhatIsComponent } from '../components/about/about-what-is/about-wh
 import { DashboardItemsComponent } from '../components/dashboard/dashboard-items/dashboard-items.component';
 import { DashboardSellersComponent } from '../components/dashboard/dashboard-sellers/dashboard-sellers.component';
 import { SellersComponent } from '../components/sellers/sellers.component';
-import { TechnologyComponent } from "../components/about/technology/technology.component";
+import { TechnologyComponent } from '../components/about/technology/technology.component';
+import { CustomProcComponent } from '../components/settings/crafting-settings/custom-proc/custom-proc.component';
+import { CustomPricesComponent } from '../components/settings/crafting-settings/custom-prices/custom-prices.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -49,7 +51,11 @@ const routes: Routes = [
     children: [
       { path: '', component: GeneralSettingsComponent },
       { path: 'general', component: GeneralSettingsComponent },
-      { path: 'crafting', component: CraftingSettingsComponent },
+      { path: 'crafting', component: CraftingSettingsComponent, children: [
+        { path: '', component: CustomPricesComponent },
+        { path: 'custom-prices', component: CustomPricesComponent },
+        { path: 'custom-proc', component: CustomProcComponent }
+      ]},
       { path: 'characters', component: CharactersComponent },
       { path: 'notifications', component: NotificationSettingsComponent }
     ]

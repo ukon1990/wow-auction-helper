@@ -19,6 +19,7 @@ export class ItemComponent implements OnInit {
   // TODO: https://github.com/d3/d3 with item price range
   wowDBItem: any;
   targetBuyoutValue: number;
+  materialFor: Array<Recipe> = new Array<Recipe>();
 
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
@@ -33,6 +34,15 @@ export class ItemComponent implements OnInit {
   recipeColumns: Array<ColumnDescription> = [
     { key: 'name', title: 'Name', dataType: 'name' },
     { key: 'reagents', title: 'Materials', dataType: 'materials' },
+    { key: 'cost', title: 'Cost', dataType: 'gold' },
+    { key: 'roi', title: 'ROI', dataType: 'gold' },
+    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+  ];
+
+  recipeColumnsSimple: Array<ColumnDescription> = [
+    { key: 'rank', title: 'Rank', dataType: '' },
+    { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'profession', title: 'Source', dataType: '' },
     { key: 'cost', title: 'Cost', dataType: 'gold' },
     { key: 'roi', title: 'ROI', dataType: 'gold' },
     { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
@@ -61,6 +71,18 @@ export class ItemComponent implements OnInit {
         this.wowDBItem = i;
       })
       .catch(e => console.error('Could not get the item from WOW DB', e));
+
+    this.setMaterialFor();
+  }
+
+  setMaterialFor(): void {
+    SharedService.recipes.forEach(recipe => {
+      recipe.reagents.forEach(reagent => {
+        if (reagent.itemID === SharedService.selectedItemId) {
+          this.materialFor.push(recipe);
+        }
+      });
+    });
   }
 
   openInNewTab(url) {

@@ -4,6 +4,7 @@ import { AuctionItem } from './auction/auction-item';
 import { Item } from './item/item';
 import { SharedService } from '../services/shared.service';
 import { GoldPipe } from '../pipes/gold.pipe';
+import { CustomProcs } from './crafting/custom-proc';
 
 /**
  * Local storage value: shopping_cart
@@ -34,9 +35,9 @@ export class ShoppingCart {
             if (this.reagentsMap[r.itemID]) {
               if (this.useIntermediate(r.itemID)) {
                 const iC = SharedService.recipesMapPerItemKnown[r.itemID];
-                this.addEntry(r.count / iC.minCount, iC, undefined, true);
-                this.recipesMap[recipe.spellID].intermediate += r.count / recipe.minCount;
-                this.recipesMap[iC.spellID].intermediateCount += quantity * r.count / recipe.minCount;
+                this.addEntry(r.count / CustomProcs.get(iC), iC, undefined, true);
+                this.recipesMap[recipe.spellID].intermediate += r.count / CustomProcs.get(recipe);
+                this.recipesMap[iC.spellID].intermediateCount += quantity * r.count / CustomProcs.get(recipe);
               } else {
                 this.reagentsMap[r.itemID].quantity += r.count;
               }
@@ -51,11 +52,11 @@ export class ShoppingCart {
           recipe.reagents.forEach(r => {
             if (this.useIntermediate(r.itemID)) {
               const iC = SharedService.recipesMapPerItemKnown[r.itemID];
-              this.addEntry(r.count / iC.minCount, iC, undefined, true);
+              this.addEntry(r.count / CustomProcs.get(iC), iC, undefined, true);
 
-              this.recipesMap[iC.spellID].intermediateCount += quantity * r.count / recipe.minCount;
+              this.recipesMap[iC.spellID].intermediateCount += quantity * r.count / CustomProcs.get(recipe);
             } else {
-              this.addReagent(r.itemID, r.count / recipe.minCount, recipe, asSubmat);
+              this.addReagent(r.itemID, r.count / CustomProcs.get(recipe), recipe, asSubmat);
             }
           });
         }
@@ -187,7 +188,7 @@ export class ShoppingCart {
   }
 
   removeReagent(recipe: ShoppingCartRecipe, reagent: ShoppingCartReagent): void {
-    const minCount = SharedService.recipesMap[recipe.spellID].minCount;
+    const minCount = CustomProcs.get(SharedService.recipesMap[recipe.spellID]);
     this.reagents.forEach((r, i) => {
       if (r.itemID === reagent.itemID) {
         r.quantity -= (reagent.quantity * recipe.quantity) / minCount;

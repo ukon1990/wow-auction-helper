@@ -3,6 +3,7 @@ import { SharedService } from '../../services/shared.service';
 import { Item } from '../item/item';
 import { AuctionItem } from '../auction/auction-item';
 import { CraftingService } from '../../services/crafting.service';
+import { CustomProcs } from './custom-proc';
 
 export class Crafting {
 
@@ -49,11 +50,11 @@ export class Crafting {
           const re = SharedService.recipesMapPerItemKnown[r.itemID];
           if (re.reagents.length > 0) {
             re.reagents.forEach(rea => {
-              recipe.cost += this.getCost(rea.itemID, rea.count) / re.minCount * r.count;
+              recipe.cost += this.getCost(rea.itemID, rea.count) / CustomProcs.get(re) * r.count;
             });
           }
         } else {
-          recipe.cost += this.getCost(r.itemID, r.count) / recipe.minCount;
+          recipe.cost += this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
         }
       });
       recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);

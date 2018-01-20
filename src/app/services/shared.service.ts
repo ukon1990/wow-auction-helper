@@ -16,11 +16,13 @@ import { Seller } from '../models/seller';
 import { AuctionPet } from '../models/auction/auction-pet';
 import { ShoppingCart } from '../models/shopping-cart';
 import { Notification } from '../models/user/notification';
+import { CustomProc } from '../models/crafting/custom-proc';
 
 @Injectable()
 export class SharedService {
   public static user: User;
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
+  public static customProcsMap: Map<number, CustomProc> = new Map<number, CustomProc>();
   public static auctionResponse: AuctionResponse = {
     lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
