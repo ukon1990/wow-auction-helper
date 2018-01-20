@@ -1,6 +1,6 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import * as d3 from 'd3';
+import { Chart } from 'chart.js';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
