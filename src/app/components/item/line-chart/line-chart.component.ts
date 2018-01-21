@@ -26,10 +26,15 @@ export class LineChartComponent implements AfterViewInit {
         labels: this.data.filter(d => d.buyout > 0).map((d, i) => i + 1),
         datasets: [{
           label: 'Auctions by buyout/item',
-          data: this.data.filter(d => d.buyout > 0).map(d => d.buyout / d.quantity / 10000)
+          data: this.data.filter(d => d.buyout > 0).map(d => d.buyout / d.quantity / 10000),
+          backgroundColor: this.getColor(),
+          borderColor: this.getColor(),
+          steppedLine: false,
+          fill: true
         }]
       },
       options: {
+        responsive: true,
         scales: {
           yAxes: [{
             ticks: {
