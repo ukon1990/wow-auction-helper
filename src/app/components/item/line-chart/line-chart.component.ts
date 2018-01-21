@@ -12,8 +12,6 @@ declare let $: Function;
 })
 export class LineChartComponent implements AfterViewInit {
   @Input() data: Array<Auction>;
-  // @ViewChild('svgElement') svgElement: ElementRef;
-  @ViewChild('canvas') canvas: ElementRef;
 
   constructor() { }
 
