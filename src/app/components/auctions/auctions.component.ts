@@ -71,7 +71,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
       Filters.isItemClassMatch(auctionItem.itemID, this.form) &&
       Filters.isSaleRateMatch(auctionItem.itemID, this.form) &&
       Filters.isBelowMarketValue(auctionItem.itemID, this.form) &&
-      Filters.isDailySoldMatch(auctionItem.itemID, this.form);
+      Filters.isDailySoldMatch(auctionItem.itemID, this.form) &&
+      Filters.isBelowVendorPrice(auctionItem.itemID, this.form);
   }
 
   /* istanbul ignore next */

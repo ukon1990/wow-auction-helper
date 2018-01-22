@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Watchlist } from '../../../models/watchlist/watchlist';
 import { SharedService } from '../../../services/shared.service';
@@ -11,7 +11,7 @@ import { Angulartics2 } from 'angulartics2/angulartics2';
   templateUrl: './watchlist-manager.component.html',
   styleUrls: ['./watchlist-manager.component.scss']
 })
-export class WatchlistManagerComponent implements OnInit {
+export class WatchlistManagerComponent implements OnInit, OnDestroy {
 
   groupNameForm: FormControl = new FormControl();
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
@@ -20,13 +20,20 @@ export class WatchlistManagerComponent implements OnInit {
   exportString: FormControl = new FormControl();
 
   constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
-    this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
+    this.columns.push({ key: 'name', title: 'Name', dataType: 'input-text' });
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['watchlist-group-delete'] });
 
     this.importString.setValue('');
   }
 
   ngOnInit() {
+    this.saveInterval = setInterval(() => {
+      SharedService.user.watchlist.save();
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.saveInterval);
   }
 
   addGroup(): void {

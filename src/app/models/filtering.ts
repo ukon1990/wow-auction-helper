@@ -12,7 +12,7 @@ export class Filters {
   }
 
   public static isBelowMarketValue(itemID: number, form: FormGroup): boolean {
-    if (Filters.isUsingAPI() || form.value.mktPrice === null || form.value.mktPrice === 0) {
+    if (Filters.isUsingAPI() && (form.value.mktPrice === null || form.value.mktPrice === 0)) {
       return true;
     } else if (Filters.isUsingAPI() && SharedService.auctionItemsMap[itemID].mktPrice === 0) {
       return false;
@@ -20,6 +20,15 @@ export class Filters {
     return Math.round((
       SharedService.auctionItemsMap[itemID].buyout / SharedService.auctionItemsMap[itemID].mktPrice
       ) * 100) <= form.value.mktPrice;
+  }
+
+  public static isBelowVendorPrice(itemID: number, form: FormGroup): boolean {
+    if (form.value.onlyVendorSellable) {
+      return SharedService.auctionItemsMap[itemID].vendorSell > 0 &&
+        SharedService.auctionItemsMap[itemID].buyout <= SharedService.auctionItemsMap[itemID].vendorSell &&
+        SharedService.auctionItemsMap[itemID].bid <= SharedService.auctionItemsMap[itemID].vendorSell;
+    }
+    return true;
   }
 
   public static isSaleRateMatch(itemID: number, form: FormGroup): boolean {
