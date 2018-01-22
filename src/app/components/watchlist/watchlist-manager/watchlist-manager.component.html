@@ -5,4 +5,30 @@
   <button type="submit" mat-raised-button>Create group</button>
 </form>
 <wah-data-table [columns]="columns" [data]="getWatchlist().groups"></wah-data-table>
-<em>Deletion of groups is coming in a future update.</em>
+
+<p>
+  If you wish to share your setup, feel free to do so by exporting your watchlist groups. Importing a watchlist setup will replace the current one.
+</p>
+<mat-tab-group>
+  <mat-tab label="Export">
+      <mat-form-field class="col-md-10">
+          <textarea matInput [formControl]="exportString" placeholder="The export string will appear here."></textarea>
+        </mat-form-field>
+        <button class="col-md-2" mat-button (click)="export()">
+          <i class="fas fa-upload"></i>
+          Export
+        </button>
+  </mat-tab>
+  <mat-tab label="Import">
+    <p>
+      This does overwrite your existing watchlists.
+    </p>
+    <mat-form-field class="col-md-10">
+      <textarea matInput [formControl]="importString" placeholder="Paste the string here"></textarea>
+    </mat-form-field>
+    <button class="col-md-2" mat-button (click)="import()" [disabled]="importString.value === null || importString.value.length === 0">
+      <i class="fas fa-upload"></i>
+      Import
+    </button>
+  </mat-tab>
+</mat-tab-group>

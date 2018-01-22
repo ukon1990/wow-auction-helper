@@ -14,6 +14,7 @@ import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
 import { ShoppingCartRecipe } from '../../models/shopping-cart';
 import { Angulartics2 } from 'angulartics2/angulartics2';
 import { CustomProcs } from '../../models/crafting/custom-proc';
+import { Watchlist, WatchlistGroup } from '../../models/watchlist/watchlist';
 
 @Component({
   selector: 'wah-data-table',
@@ -189,6 +190,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   getAuctionItem(item: any): AuctionItem {
     return SharedService.auctionItemsMap[this.getItemID(item)] ?
       SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
+  }
+
+  removeGroup(index: number): void {
+    SharedService.user.watchlist.removeGroup(index);
+
+    this.angulartics2.eventTrack.next({
+      action: 'Removed group',
+      properties: { category: 'Watchlist' },
+    });
   }
 
   removeRecipe(recipe: ShoppingCartRecipe, index: number): void {

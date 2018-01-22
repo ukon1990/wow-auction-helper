@@ -38,29 +38,7 @@ export class Watchlist {
     let shouldSave = false;
     if (localStorage[this.storageName] !== undefined) {
       const wl: any = JSON.parse(localStorage[this.storageName]);
-      if (wl.items) {
-        wl.groups = [];
-        Object.keys(wl.items).forEach(group => {
-          const g = new WatchlistGroup(group);
-          wl.items[group].forEach(item => {
-            if (item) {
-              g.items.push(this.mapOldVersionToNew(item));
-            }
-          });
-          wl.groups.push(g);
-        });
-        shouldSave = true;
-      }
-      console.log(wl);
-      if (wl.groups) {
-        this.groups = wl.groups;
-        this.groups.forEach(g => {
-          if (!this.groupsMap[g.name]) {
-            this.groupsMap[g.name] = new WatchlistGroup(g.name);
-          }
-          this.groupsMap[g.name].items.push(g);
-        });
-      }
+      shouldSave = this.restoreFrom(wl);
     } else {
       this.groups = defaultWatchlist;
     }
@@ -68,6 +46,34 @@ export class Watchlist {
     if (shouldSave) {
       this.save();
     }
+  }
+
+  restoreFrom(wl: any): boolean {
+    let shouldSave = false;
+    if (wl.items) {
+      wl.groups = [];
+      Object.keys(wl.items).forEach(group => {
+        const g = new WatchlistGroup(group);
+        wl.items[group].forEach(item => {
+          if (item) {
+            g.items.push(this.mapOldVersionToNew(item));
+          }
+        });
+        wl.groups.push(g);
+      });
+      shouldSave = true;
+    }
+    console.log(wl);
+    if (wl.groups) {
+      this.groups = wl.groups;
+      this.groups.forEach(g => {
+        if (!this.groupsMap[g.name]) {
+          this.groupsMap[g.name] = new WatchlistGroup(g.name);
+        }
+        this.groupsMap[g.name].items.push(g);
+      });
+    }
+    return shouldSave;
   }
 
   isTargetMatch(item: WatchlistItem): boolean {
@@ -141,6 +147,11 @@ export class Watchlist {
 
   removeItem(group: WatchlistGroup, index: number): void {
     group.items.splice(index, 1);
+    this.save();
+  }
+
+  removeGroup(index: number): void {
+    this.groups.splice(index, 1);
     this.save();
   }
 

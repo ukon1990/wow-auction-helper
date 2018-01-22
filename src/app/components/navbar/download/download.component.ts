@@ -9,6 +9,8 @@ import { TSM } from '../../../models/auction/tsm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Crafting } from '../../../models/crafting/crafting';
 import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Realm } from '../../../models/realm';
+import { RealmService } from '../../../services/realm.service';
 
 @Component({
   selector: 'wah-download',
@@ -20,6 +22,7 @@ export class DownloadComponent implements OnInit {
   lastCheckedMin;
   timeSinceUpdate = 0;
   constructor(
+    private _realmService: RealmService,
     private _itemService: ItemService,
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
@@ -29,6 +32,7 @@ export class DownloadComponent implements OnInit {
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
+      await this._realmService.getRealms();
       await this._itemService.getItems();
       await this._petService.getPets();
       await this._craftingService.getRecipes()
@@ -76,6 +80,10 @@ export class DownloadComponent implements OnInit {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  getUserRealm(): Realm {
+    return SharedService.realms[SharedService.user.realm];
   }
 
   /* istanbul ignore next */

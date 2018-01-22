@@ -16,9 +16,14 @@ export class WatchlistManagerComponent implements OnInit {
   groupNameForm: FormControl = new FormControl();
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   saveInterval: any;
+  importString: FormControl = new FormControl();
+  exportString: FormControl = new FormControl();
 
   constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['watchlist-group-delete'] });
+
+    this.importString.setValue('');
   }
 
   ngOnInit() {
@@ -38,5 +43,18 @@ export class WatchlistManagerComponent implements OnInit {
   /* istanbul ignore next */
   getWatchlist(): Watchlist {
     return SharedService.user.watchlist;
+  }
+
+  export(): void {
+    this.exportString.setValue(JSON.stringify({ groups: this.getWatchlist().groups }));
+  }
+
+  import(): void {
+    try {
+      SharedService.user.watchlist.restoreFrom(JSON.parse(this.importString.value));
+      this.importString.setValue('');
+    } catch (e) {
+      console.error('Could not import', e);
+    }
   }
 }
