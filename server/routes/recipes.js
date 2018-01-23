@@ -1,10 +1,11 @@
 
 const express = require('express'),
   router = express.Router()
-AWS = require('aws-sdk'),
-  url = require('url'),
+url = require('url'),
   request = require('request'),
-  secrets = require('../secrets/secrets');
+  secrets = require('../secrets/secrets'),
+  mysql = require('mysql'),
+  connection = mysql.createConnection(secrets.databaseConn);
 
 
 // Error handling
@@ -23,17 +24,43 @@ let response = {
 
 router.get('/:spellID', (req, res) => {
   res.setHeader('content-type', 'application/json');
-  request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
-    const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
-    //res.send(recipe);
-    getProfession(recipe, function (r) {
-      res.send(r);
-    });
+  connection = startConnection();
+
+  connection.query(`SELECT json from recipes WHERE id = ${req.params.spellID}`, (err, rows, fields) => {
+    if (!err && rows.length > 0) {
+      connection.end();
+      rows.forEach(r => {
+        try {
+          res.json(JSON.parse(r.json));
+        } catch (err) {
+          console.log(err, r.json);
+        }
+      });
+    } else {
+      request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
+        const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
+        //res.send(recipe);
+        getProfession(recipe, function (r) {
+          console.log(`Adding new recipe (${r.name})`);
+          const query = `INSERT INTO recipes VALUES(${
+            req.params.spellID}, '${
+            JSON.stringify(recipe)}', CURRENT_TIMESTAMP);`;
+          console.log(query);
+          connection.query(query, (err, r, body) => {
+            if (!err) {
+              connection.end();
+            } else {
+              throw err;
+            }
+            });
+            res.send(r);
+        });
+      });
+    }
   });
-  // AWS.DynamoDB.
 });
 
-router.get('/update/:spellID', (req, res) => {
+router.patch('/:spellID', (req, res) => {
   res.setHeader('content-type', 'application/json');
   request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
     const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
@@ -42,13 +69,29 @@ router.get('/update/:spellID', (req, res) => {
       res.send(r);
     });
   });
-  // AWS.DynamoDB.
 });
 
 router.get('*', (req, res) => {
   res.setHeader('content-type', 'application/json');
-  // Get all pets
-  res.send('All recipes');
+  connection = startConnection();
+  res.setHeader('content-type', 'application/json');
+  connection.query('SELECT json from recipes', (err, rows, fields) => {
+    if (!err) {
+      let recipes = [];
+      rows.forEach(r => {
+        try {
+          recipes.push(JSON.parse(r.json.replace(/""/g, '')));
+        } catch (err) {
+          console.log(err, r.json);
+        }
+      });
+      res.json({ 'recipes': recipes });
+    } else {
+      console.log('The following error occured while querying DB:.', err);
+    }
+  });
+
+  connection.end();
 });
 
 function convertWoWDBToRecipe(wowDBRecipe) {
@@ -96,5 +139,8 @@ function proscessReagents(recipe, nextIndex, callback) {
   }
 }
 
+function startConnection() {
+  return mysql.createConnection(secrets.databaseConn);
+}
 
 module.exports = router;
