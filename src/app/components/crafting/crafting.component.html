@@ -21,8 +21,8 @@
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
-      <mat-option *ngFor="let class of itemClasses.classes; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-        {{ class.name }}
+      <mat-option *ngFor="let c of itemClasses.classes; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ c.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -32,8 +32,8 @@
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
-      <mat-option *ngFor="let class of itemClasses.classes[searchForm.value['itemClass']].subclasses; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-        {{ class.name }}
+      <mat-option *ngFor="let c of itemClasses.classes[searchForm.value['itemClass']].subclasses; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ c.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>

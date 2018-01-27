@@ -19,14 +19,14 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
     this.form = this._formBuilder.group({
       isUpdateAvailable: SharedService.user.notifications.isUpdateAvailable,
       isBelowVendorSell: SharedService.user.notifications.isBelowVendorSell,
-      isUndercutted: SharedService.user.notifications.isUndercutted,
+      isUndercut: SharedService.user.notifications.isUndercut,
       isWatchlist: SharedService.user.notifications.isWatchlist
     });
   }
 
   ngOnInit(): void {
     this.formChanges = this.form.valueChanges.subscribe( (change) => {
-      SharedService.user.notifications.isUndercutted = change.isUndercutted;
+      SharedService.user.notifications.isUndercut = change.isUndercut;
       User.save();
     });
   }

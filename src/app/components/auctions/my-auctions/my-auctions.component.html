@@ -1,16 +1,16 @@
 <mat-tab-group *ngIf="hasUserCharacters(); else noChars">
   <mat-tab label="All">
     <div class="row col-md-12">
-      {{ getUserAuctions().undercuttedAuctions | number }} of your acutions are undercutted. <br>
-      Your aucions are up for a total of {{ getUserAuctions().auctionWorth | gold }}
+      {{ getUserAuctions().undercutAuctions | number }} of your auctions are undercut. <br>
+      Your auctions are up for a total of {{ getUserAuctions().auctionWorth | gold }}
     </div>
-    <wah-data-table id="item" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns"></wah-data-table>
+    <wah-data-table [id]="'item'" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns"></wah-data-table>
   </mat-tab>
   <ng-container *ngFor="let c of getUserAuctionsCharacters()">
     <mat-tab *ngIf="c.auctions.length > 0" label="{{ c.name }} ({{ c.auctions.length | number }})">
       <div class="row col-md-12">
-        {{ c.undercuttedAuctions | number }} of your acutions are undercutted. <br>
-        Your aucions are up for a total of {{ c.auctionWorth | gold }}
+        {{ c.undercutAuctions | number }} of your auctions are undercut. <br>
+        Your auctions are up for a total of {{ c.auctionWorth | gold }}
       </div>
       <wah-data-table id="item" [showOwner]="true" [data]="c.auctions" [columns]="columns"></wah-data-table>
     </mat-tab>

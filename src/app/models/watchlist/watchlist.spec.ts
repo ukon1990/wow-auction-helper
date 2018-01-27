@@ -15,7 +15,7 @@ beforeEach(() => {
   item.name = 'Versatile Maelstrom Sapphire';
   item.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
   item.target = 10;
-  item.criteria = wl.CRITERIAS.BELOW;
+  item.criteria = wl.CRITERIA.BELOW;
   item.value = 0;
 });
 
@@ -40,7 +40,7 @@ describe('Watchlist', () => {
     item.name = 'Versatile Maelstrom Sapphire';
     item.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
     item.target = 10;
-    item.criteria = wl.CRITERIAS.BELOW;
+    item.criteria = wl.CRITERIA.BELOW;
     item.value = 0;
 
     wl.addGroup(group);

@@ -15,7 +15,7 @@ export class Notification {
 export class NotificationSettings {
   isUpdateAvailable = true;
   isBelowVendorSell = true;
-  isUndercutted = true;
+  isUndercut = true;
   isWatchlist = true;
 }
 

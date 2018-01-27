@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CustomProcComponent } from './custom-proc.component';
+import {TestModule} from '../../../../modules/test.module';
 
 describe('CustomProcComponent', () => {
   let component: CustomProcComponent;
@@ -8,7 +9,7 @@ describe('CustomProcComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomProcComponent ]
+      imports: [ TestModule ]
     })
     .compileComponents();
   }));

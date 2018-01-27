@@ -34,7 +34,7 @@
             <span>without queue</span>
           </ng-template>.
           <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
-          It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
+          It is using the timezone "{{ getRealmWithkey(slug).timezone }}".
         </mat-card-content>
         <mat-card-actions>
           <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange()">
