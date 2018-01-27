@@ -8,7 +8,7 @@ export class Filters {
     if (form.value.name === null || form.value.name.length === 0) {
       return true;
     }
-    return SharedService.items[itemID].name.toLowerCase().indexOf(form.value.name.toLowerCase()) > -1;
+    return Filters.getItemName(itemID).toLowerCase().indexOf(form.value.name.toLowerCase()) > -1;
   }
 
   public static isBelowMarketValue(itemID: number, form: FormGroup): boolean {
@@ -76,5 +76,11 @@ export class Filters {
 
   public static isUsingAPI(): boolean {
     return SharedService.user.apiToUse !== 'none';
+  }
+
+  /* istanbul ignore next */
+  private static getItemName(itemID): string {
+    return SharedService.auctionItemsMap[itemID] ?
+      SharedService.auctionItemsMap[itemID].name : SharedService.items[itemID].name;
   }
 }

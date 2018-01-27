@@ -6,14 +6,14 @@
         <mat-option *ngFor="let item of filteredItems | async" [value]="item.id"
           (click)="add(item)"
           [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-          <wah-icon size="36" [id]="item.id"></wah-icon>
+          <wah-icon [size]="36" [id]="item.id"></wah-icon>
           <span>{{ item.name }}</span>
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
   </form>
   
-  <wah-data-table id="itemID" iconSize="22" [columns]="columns" [data]="getCustomPrices()"></wah-data-table>
+  <wah-data-table [id]="'itemID'" iconSize="22" [columns]="columns" [data]="getCustomPrices()"></wah-data-table>
 </div>
 
 <ng-template #miniMode>

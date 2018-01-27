@@ -15,7 +15,7 @@ export class Watchlist {
     REGIONAL_SALE_RATE: 'regionSaleRate',
     QUANTITY_TOTAL: 'quantityTotal'
   };
-  readonly CRITERIAS = {
+  readonly CRITERIA = {
     BELOW: 'below',
     EQUAL: 'equal',
     ABOVE: 'above'
@@ -82,11 +82,11 @@ export class Watchlist {
     }
 
     switch (item.criteria) {
-      case this.CRITERIAS.BELOW:
+      case this.CRITERIA.BELOW:
         return this.getTypeValue(item) < item.value;
-      case this.CRITERIAS.EQUAL:
+      case this.CRITERIA.EQUAL:
         return this.getTypeValue(item) === item.value;
-      case this.CRITERIAS.ABOVE:
+      case this.CRITERIA.ABOVE:
         return this.getTypeValue(item) > item.value;
     }
     return false;
@@ -117,11 +117,11 @@ export class Watchlist {
 
   getTSMStringValues(item: WatchlistItem): any {
     switch (item.criteria) {
-      case this.CRITERIAS.BELOW:
+      case this.CRITERIA.BELOW:
         return {left: 1, right: this.getTypeValueInGold(item)};
-      case this.CRITERIAS.EQUAL:
+      case this.CRITERIA.EQUAL:
       return {left: this.getTypeValueInGold(item), right: this.getTypeValueInGold(item)};
-      case this.CRITERIAS.ABOVE:
+      case this.CRITERIA.ABOVE:
       return {left: this.getTypeValueInGold(item), right: 99999999999};
     }
     return {left: 0, right: 0};
@@ -205,7 +205,7 @@ export class WatchlistItem {
       this.name = SharedService.items[itemID].name;
       this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
       this.targetType = wl.TARGET_TYPES.GOLD;
-      this.criteria = wl.CRITERIAS.BELOW;
+      this.criteria = wl.CRITERIA.BELOW;
       this.minCraftingProfit = 0;
     }
   }

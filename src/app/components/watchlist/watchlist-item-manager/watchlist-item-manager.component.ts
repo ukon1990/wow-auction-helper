@@ -17,14 +17,14 @@ export class WatchlistItemManagerComponent implements OnInit {
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
 
   form: FormGroup;
-  criterias = new Array<string>();
+  criteria = new Array<string>();
   comparableVariables = new Array<string>();
   targetTypes = new Array<string>();
   groups = new Array<WatchlistGroup>();
 
   constructor(private _formBuilder: FormBuilder) {
-    Object.keys(SharedService.user.watchlist.CRITERIAS).forEach(key => {
-      this.criterias.push(SharedService.user.watchlist.CRITERIAS[key]);
+    Object.keys(SharedService.user.watchlist.CRITERIA).forEach(key => {
+      this.criteria.push(SharedService.user.watchlist.CRITERIA[key]);
     });
 
     Object.keys(SharedService.user.watchlist.COMPARABLE_VARIABLES).forEach(key => {

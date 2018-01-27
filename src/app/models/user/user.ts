@@ -28,7 +28,7 @@ export class User {
   notifications: NotificationSettings = {
     isUpdateAvailable: true,
     isBelowVendorSell: true,
-    isUndercutted: true,
+    isUndercut: true,
     isWatchlist: true
   };
   watchlist: Watchlist = new Watchlist();

@@ -3,7 +3,7 @@
   </mat-spinner> 
   <span [ngClass]="{'old-data': timeSinceUpdate > 60}">
     <div class="float-left mr-1" *ngIf="timeSinceUpdate > 60"
-      matTooltip="The auction data is older thna 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
+      matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
       <i class="fas fa-exclamation-circle"></i>
     </div>
     Last update was {{ timeSinceUpdate }} minutes ago

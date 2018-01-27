@@ -7,7 +7,7 @@
           <div *ngIf="!character && !isDownloadingCharacter()">
             This character is below level 10 or can not be found for some other reason
           </div>
-          <wah-data-table id="item" iconSize="22" [columns]="columnsSeller" [data]="[getSeller()]">
+          <wah-data-table [id]="'item'" iconSize="22" [columns]="columnsSeller" [data]="[getSeller()]">
             </wah-data-table>
         </div>
         <div class="col-md-8">
@@ -16,7 +16,7 @@
                 <wah-seller-chart [seller]="SharedService.selectedSeller"></wah-seller-chart>
             </mat-tab>-->
             <mat-tab label="Auctions ({{ getSeller().auctions.length | number }})">
-              <wah-data-table id="item" iconSize="22" [columns]="columns" [data]="getSeller().auctions">
+              <wah-data-table [id]="'item'" iconSize="22" [columns]="columns" [data]="getSeller().auctions">
               </wah-data-table>
             </mat-tab>
           </mat-tab-group>
