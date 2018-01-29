@@ -8,6 +8,7 @@ import { Recipe } from '../crafting/recipe';
 import { customPricesDefault } from '../crafting/default-custom-prices';
 import { ShoppingCart } from '../shopping-cart';
 import { CustomProc, CustomProcs } from '../crafting/custom-proc';
+import { customProcsDefault } from '../crafting/default-custom-procs';
 
 
 
@@ -19,7 +20,7 @@ export class User {
   apiWoWu?: string;
   apiTsm?: string;
   customPrices: Array<CustomPrice> = customPricesDefault;
-  customProcs: Array<CustomProc> = new Array<CustomProc>();
+  customProcs: Array<CustomProc> = customProcsDefault;
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;

@@ -9,6 +9,7 @@ import { CustomPrice, CustomPrices } from '../../../../models/crafting/custom-pr
 import { ColumnDescription } from '../../../../models/column-description';
 import { Crafting } from '../../../../models/crafting/crafting';
 import { Angulartics2 } from 'angulartics2/angulartics2';
+import { customPricesDefault } from '../../../../models/crafting/default-custom-prices';
 
 @Component({
   selector: 'wah-custom-prices',
@@ -81,5 +82,9 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  resetToDefault(): void {
+    SharedService.user.customPrices = customPricesDefault;
   }
 }
