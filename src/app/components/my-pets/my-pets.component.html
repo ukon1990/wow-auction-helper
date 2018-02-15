@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-4" *ngFor="let pet of petSpecies">
+    <mat-card>
+      <mat-card-header>
+        <wah-icon [petSpeciesId]="pet.stats.speciesId" mat-card-avatar></wah-icon>
+        <mat-card-title>
+          {{ pet.name }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ pet.stats.level }} - {{ pet.creatureName }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

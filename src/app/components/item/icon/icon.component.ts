@@ -11,7 +11,7 @@ export class IconComponent {
 
   @Input() id: number;
   @Input() petSpeciesId: number;
-  @Input() size: number;
+  @Input() size = 32;
 
   defaultIcon = 'inv_scroll_03';
 

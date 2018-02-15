@@ -63,6 +63,7 @@ import { WatchlistItemManagerComponent } from './components/watchlist/watchlist-
 import { TechnologyComponent } from './components/about/technology/technology.component';
 import { CustomProcComponent } from './components/settings/crafting-settings/custom-proc/custom-proc.component';
 import { SellerChartComponent } from './components/sellers/seller-chart/seller-chart.component';
+import { MyPetsComponent } from './components/my-pets/my-pets.component';
 
 
 @NgModule({
@@ -111,7 +112,8 @@ import { SellerChartComponent } from './components/sellers/seller-chart/seller-c
     WatchlistItemManagerComponent,
     TechnologyComponent,
     CustomProcComponent,
-    SellerChartComponent
+    SellerChartComponent,
+    MyPetsComponent
   ],
   imports: [
     BrowserModule,

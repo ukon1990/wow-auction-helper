@@ -25,6 +25,7 @@ import { SellersComponent } from '../components/sellers/sellers.component';
 import { TechnologyComponent } from '../components/about/technology/technology.component';
 import { CustomProcComponent } from '../components/settings/crafting-settings/custom-proc/custom-proc.component';
 import { CustomPricesComponent } from '../components/settings/crafting-settings/custom-prices/custom-prices.component';
+import { MyPetsComponent } from '../components/my-pets/my-pets.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -43,6 +44,12 @@ const routes: Routes = [
   { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [ IsRegisteredService ] },
   { path: 'watchlist', component: WatchlistComponent, canActivate: [ IsRegisteredService ] },
   { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [ IsRegisteredService ] },
+  { path: 'tools', canActivate: [ IsRegisteredService ], children: [
+    { path: 'trade-vendor', component: TradeVendorsComponent },
+    { path: 'watchlist', component: WatchlistComponent },
+    { path: 'sellers', component: SellersComponent },
+    { path: 'my-pets', component: MyPetsComponent },
+  ] },
   { path: 'sellers', component: SellersComponent, canActivate: [ IsRegisteredService ] },
   {
     path: 'settings',

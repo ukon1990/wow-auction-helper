@@ -22,7 +22,7 @@ export class Character {
     numNotCollected: number;
     mounts: Mount;
   };
-  pets?: Pet[];
+  pets?: UserPets;
   petSlots?: PetSlot[];
   downloading?: boolean;
 }
@@ -50,8 +50,39 @@ class CharacterStatistic {
   money: false;
 }
 
-class Mount {}
+class Mount { }
 
-class Pet {}
+class UserPets {
+  numCollected = 0;
+  numNotCollected = 0;
+  collected: Array<CollectedPet>;
+}
 
-class PetSlot {}
+export class CollectedPet {
+  name: string;
+  spellId: number;
+  creatureId: number;
+  itemId: number;
+  qualityId: number;
+  icon: string;
+  stats: PetStats;
+  battlePetGuid: string;
+  isFavorite: boolean;
+  isFirstAbilitySlotSelected: boolean;
+  isSecondAbilitySlotSelected: boolean;
+  isThirdAbilitySlotSelected: boolean;
+  creatureName: string;
+  canBattle: boolean;
+}
+
+class PetStats {
+  speciesId: number;
+  breedId: number;
+  petQualityId: number;
+  level: number;
+  health: number;
+  power: number;
+  speed: number;
+}
+
+class PetSlot { }

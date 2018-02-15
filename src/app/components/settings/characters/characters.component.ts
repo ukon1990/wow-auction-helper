@@ -86,7 +86,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     ).then(c => {
       SharedService.user.characters[index] = c;
       localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-      User.setRecipesForCharacter(c);
+      User.updateRecipesForRealm();
       Crafting.checkForMissingRecipes(this._craftingService);
 
       if (SharedService.user.region && SharedService.user.realm) {
