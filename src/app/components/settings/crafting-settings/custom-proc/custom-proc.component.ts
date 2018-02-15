@@ -11,6 +11,7 @@ import { Crafting } from '../../../../models/crafting/crafting';
 import { Angulartics2 } from 'angulartics2/angulartics2';
 import { CustomProc, CustomProcs } from '../../../../models/crafting/custom-proc';
 import { Recipe } from '../../../../models/crafting/recipe';
+import { customProcsDefault } from '../../../../models/crafting/default-custom-procs';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -83,5 +84,9 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  resetToDefault(): void {
+    SharedService.user.customProcs = customProcsDefault;
   }
 }

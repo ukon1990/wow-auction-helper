@@ -17,6 +17,7 @@ export class Dashboard {
     CHEAPER_THAN_VENDOR_SELL: 'CHEAPER_THAN_VENDOR_SELL',
     TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
     WATCH_LIST: 'WATCH_LIST',
+    WATCH_LIST_CRAFTS: 'WATCH_LIST_CRAFTS',
     // The users pets, that maybe could be sold for something
     POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
   };
@@ -38,6 +39,7 @@ export class Dashboard {
     ],
       crafterColumns = [
         { key: 'name', title: 'Name', dataType: 'name' },
+        { key: 'rank', title: 'Rank', dataType: '' },
         { key: 'buyout', title: 'Buyout', dataType: 'gold' },
         { key: 'roi', title: 'ROI', dataType: 'gold' },
         { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
@@ -122,6 +124,12 @@ export class Dashboard {
         this.setWatchListAlerts();
         break;
 
+        case Dashboard.TYPES.WATCH_LIST_CRAFTS:
+          this.idParam = 'itemID';
+          this.columns = crafterColumns;
+          this.setWatchListCraftingAlerts();
+          break;
+
       case Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
         this.idParam = 'itemID';
         this.columns = [
@@ -158,6 +166,8 @@ export class Dashboard {
       new Dashboard('Most profitable known crafts', Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS));
     SharedService.itemDashboards.push(
       new Dashboard('Watchlist alerts', Dashboard.TYPES.WATCH_LIST));
+    SharedService.itemDashboards.push(
+      new Dashboard('Watchlist craft alerts', Dashboard.TYPES.WATCH_LIST_CRAFTS));
     SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
     if (SharedService.user.apiToUse !== 'none') {
@@ -212,6 +222,24 @@ export class Dashboard {
       }
       SharedService.notifications.unshift(
         new Notification('Watchlist', `${this.data.length} of your items were matched`));
+    }
+  }
+
+  private setWatchListCraftingAlerts(): void {
+    this.data.length = 0;
+    this.tsmShoppingString = '';
+    const pipe = new GoldPipe();
+
+    SharedService.user.watchlist.groups.forEach(group => {
+      group.items.forEach(item => {
+        if (SharedService.recipesMapPerItemKnown[item.itemID] && SharedService.recipesMapPerItemKnown[item.itemID].roi > 0) {
+          this.data.push(SharedService.recipesMapPerItemKnown[item.itemID]);
+        }
+      });
+    });
+    if (this.data.length > 0) {
+      SharedService.notifications.unshift(
+        new Notification('Watchlist', `${this.data.length} of your items were matched by crafting ROI`));
     }
   }
 

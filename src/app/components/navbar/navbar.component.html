@@ -34,17 +34,22 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <li class="nav-item" *ngIf="isRegisteredUser()">
-                <a class="nav-link" routerLink="watchlist" routerLinkActive="active">
+                <a class="nav-link" routerLink="tools/watchlist" routerLinkActive="active">
                   Watchlist
                 </a>
               </li>
               <li class="nav-item" *ngIf="isRegisteredUser()">
-                <a class="nav-link" routerLink="trade-vendor" routerLinkActive="active">
+                <a class="nav-link" routerLink="tools/trade-vendor" routerLinkActive="active">
                   Trade vendors
                 </a>
-              </li>
+              </li><!--
               <li class="nav-item" *ngIf="isRegisteredUser()">
-                <a class="nav-link" routerLink="sellers" routerLinkActive="active">
+                <a class="nav-link" routerLink="tools/my-pets" routerLinkActive="active">
+                  My pets
+                </a>
+              </li>-->
+              <li class="nav-item" *ngIf="isRegisteredUser()">
+                <a class="nav-link" routerLink="tools/sellers" routerLinkActive="active">
                   Sellers
                 </a>
               </li>

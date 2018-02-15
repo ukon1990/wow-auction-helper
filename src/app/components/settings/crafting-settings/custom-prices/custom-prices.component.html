@@ -14,6 +14,7 @@
   </form>
   
   <wah-data-table [id]="'itemID'" iconSize="22" [columns]="columns" [data]="getCustomPrices()"></wah-data-table>
+  <button (click)="resetToDefault()" mat-raised-button>Restore default</button>
 </div>
 
 <ng-template #miniMode>
