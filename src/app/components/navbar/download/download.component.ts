@@ -56,7 +56,7 @@ export class DownloadComponent implements OnInit {
       await this._dbService.getAllAuctions()
         .then(r => {
           if (SharedService.auctions.length === 0) {
-            this._auctionsService.getLastModifiedTime();
+            this._auctionsService.getLastModifiedTime(true);
           }
         })
         .catch(e => {

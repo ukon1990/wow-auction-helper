@@ -3,6 +3,7 @@ import { Item } from '../item/item';
 import { itemClasses } from '../item/item-classes';
 import { SharedService } from '../../services/shared.service';
 import { defaultWatchlist } from './default-watchlist';
+import { Dashboard } from '../dashboard';
 
 export class Watchlist {
   private storageName = 'watchlist';
@@ -158,6 +159,7 @@ export class Watchlist {
   save(): void {
     localStorage[this.storageName] = JSON.stringify(
       { groups: this.groups });
+    Dashboard.addDashboards();
   }
 
   mapOldVersionToNew(item: any): WatchlistItem {
