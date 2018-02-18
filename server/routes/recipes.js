@@ -24,6 +24,7 @@ let response = {
 
 router.get('/:spellID', (req, res) => {
   res.setHeader('content-type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   connection = startConnection();
 
   connection.query(`SELECT json from recipes WHERE id = ${req.params.spellID}`, (err, rows, fields) => {
@@ -43,8 +44,10 @@ router.get('/:spellID', (req, res) => {
         getProfession(recipe, function (r) {
           console.log(`Adding new recipe (${r.name})`);
           const query = `INSERT INTO recipes VALUES(${
-            req.params.spellID}, '${
-            JSON.stringify(recipe)}', CURRENT_TIMESTAMP);`;
+              req.params.spellID
+            }, "${
+              safeifyString(JSON.stringify(recipe))
+            }", CURRENT_TIMESTAMP);`;
           console.log(query);
           connection.query(query, (err, r, body) => {
             if (!err) {
@@ -52,8 +55,8 @@ router.get('/:spellID', (req, res) => {
             } else {
               throw err;
             }
-            });
-            res.send(r);
+          });
+          res.send(r);
         });
       });
     }
@@ -62,10 +65,33 @@ router.get('/:spellID', (req, res) => {
 
 router.patch('/:spellID', (req, res) => {
   res.setHeader('content-type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
   request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
     const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
     //res.send(recipe);
     getProfession(recipe, function (r) {
+      // console.log('Updating recipe', r.name, r.spellID);
+      const query = `
+        UPDATE recipes SET json = "${
+          safeifyString(JSON.stringify(recipe))
+        }", timestamp = CURRENT_TIMESTAMP 
+        WHERE id = ${
+        req.params.spellID
+        };`;
+        console.log('SQL:', query);
+      try {
+        connection = startConnection();
+        connection.query(query, (err, r, body) => {
+          if (err) {
+            throw err;
+          }
+        })
+        connection.end();
+      } catch (e) {
+        console.error(`Could not update ${req.params.spellID} - ${query}`, e);
+      }
+
       res.send(r);
     });
   });
@@ -73,16 +99,17 @@ router.patch('/:spellID', (req, res) => {
 
 router.get('*', (req, res) => {
   res.setHeader('content-type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
   connection = startConnection();
-  res.setHeader('content-type', 'application/json');
-  connection.query('SELECT json from recipes', (err, rows, fields) => {
+  connection.query('SELECT id, json from recipes', (err, rows, fields) => {
     if (!err) {
       let recipes = [];
       rows.forEach(r => {
         try {
-          recipes.push(JSON.parse(r.json.replace(/""/g, '')));
+          recipes.push(JSON.parse(r.json));
         } catch (err) {
-          console.log(err, r.json);
+          console.error(`Could not parse json (${r.id})`, r.json, err);
         }
       });
       res.json({ 'recipes': recipes });
@@ -107,6 +134,10 @@ function convertWoWDBToRecipe(wowDBRecipe) {
       reagents: convertReagents(wowDBRecipe.Reagents)
     };
   return recipe;
+}
+
+function safeifyString(str) {
+  return str.replace(/[\']/g, '\'').replace(/[\"]/g, '\\"').replace(/[\\"]/g, '\\"');
 }
 
 function convertReagents(reagents) {
