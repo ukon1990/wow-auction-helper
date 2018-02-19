@@ -29,39 +29,43 @@ router.get('/:spellID', (req, res) => {
   connection = startConnection();
 
   connection.query(`SELECT json from recipes WHERE id = ${req.params.spellID}`, (err, rows, fields) => {
-    if (!err && rows.length > 0) {
-      connection.end();
-      rows.forEach(r => {
-        try {
-          res.json(JSON.parse(r.json));
-        } catch (err) {
-          console.log(err, r.json);
-        }
-      });
-    } else {
-      request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
-        const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
-        //res.send(recipe);
-        getProfession(recipe, function (r) {
-          if (recipe.itemID > 0) {
-            console.log(`Adding new recipe (${r.name})`);
-            const query = `INSERT INTO recipes VALUES(${
-                req.params.spellID
-              }, "${
-                safeifyString(JSON.stringify(recipe))
-              }", CURRENT_TIMESTAMP);`;
-            console.log(query);
-            connection.query(query, (err, r, body) => {
-              if (!err) {
-                connection.end();
-              } else {
-                throw err;
-              }
-            });
+    try {
+      if (!err && rows.length > 0) {
+        connection.end();
+        rows.forEach(r => {
+          try {
+            res.json(JSON.parse(r.json));
+          } catch (err) {
+            console.log(err, r.json);
           }
-          res.send(r);
         });
-      });
+      } else {
+        request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
+          const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
+          //res.send(recipe);
+          getProfession(recipe, function (r) {
+            if (recipe.itemID > 0) {
+              console.log(`Adding new recipe (${r.name})`);
+              const query = `INSERT INTO recipes VALUES(${
+                  req.params.spellID
+                }, "${
+                  safeifyString(JSON.stringify(recipe))
+                }", CURRENT_TIMESTAMP);`;
+              console.log(query);
+              connection.query(query, (err, r, body) => {
+                if (!err) {
+                  connection.end();
+                } else {
+                  throw err;
+                }
+              });
+            }
+            res.send(r);
+          });
+        });
+      }
+    } catch(e) {
+      console.error(`Getting a recipe failed for the spellID ${req.params.spellID}`, e);
     }
   });
 });
