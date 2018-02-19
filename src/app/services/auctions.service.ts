@@ -66,7 +66,7 @@ export class AuctionsService {
   getTsmAuctions(): Promise<any> {
     console.log('Downloading TSM data');
     SharedService.downloading.tsmAuctions = true;
-    return this._http.get(`http://api.tradeskillmaster.com/v1/item/${
+    return this._http.get(`${Endpoints.TSM_API}/${
       SharedService.user.region
       }/${
       SharedService.user.realm

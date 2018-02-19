@@ -5,7 +5,8 @@ url = require('url'),
   request = require('request'),
   secrets = require('../secrets/secrets'),
   mysql = require('mysql'),
-  connection = mysql.createConnection(secrets.databaseConn);
+  connection = mysql.createConnection(secrets.databaseConn),
+  inTesting = true;
 
 
 // Error handling
@@ -42,20 +43,22 @@ router.get('/:spellID', (req, res) => {
         const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
         //res.send(recipe);
         getProfession(recipe, function (r) {
-          console.log(`Adding new recipe (${r.name})`);
-          const query = `INSERT INTO recipes VALUES(${
-              req.params.spellID
-            }, "${
-              safeifyString(JSON.stringify(recipe))
-            }", CURRENT_TIMESTAMP);`;
-          console.log(query);
-          connection.query(query, (err, r, body) => {
-            if (!err) {
-              connection.end();
-            } else {
-              throw err;
-            }
-          });
+          if (recipe.itemID > 0) {
+            console.log(`Adding new recipe (${r.name})`);
+            const query = `INSERT INTO recipes VALUES(${
+                req.params.spellID
+              }, "${
+                safeifyString(JSON.stringify(recipe))
+              }", CURRENT_TIMESTAMP);`;
+            console.log(query);
+            connection.query(query, (err, r, body) => {
+              if (!err) {
+                connection.end();
+              } else {
+                throw err;
+              }
+            });
+          }
           res.send(r);
         });
       });
@@ -68,32 +71,38 @@ router.patch('/:spellID', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
-    const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
-    //res.send(recipe);
-    getProfession(recipe, function (r) {
-      // console.log('Updating recipe', r.name, r.spellID);
-      const query = `
-        UPDATE recipes SET json = "${
-          safeifyString(JSON.stringify(recipe))
-        }", timestamp = CURRENT_TIMESTAMP 
-        WHERE id = ${
-        req.params.spellID
-        };`;
-        console.log('SQL:', query);
-      try {
-        connection = startConnection();
-        connection.query(query, (err, r, body) => {
-          if (err) {
-            throw err;
-          }
-        })
-        connection.end();
-      } catch (e) {
-        console.error(`Could not update ${req.params.spellID} - ${query}`, e);
+    try {
+      const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
+      //res.send(recipe);
+      getProfession(recipe, function (r) {
+      if (recipe.itemID > 0) {
+        const query = `
+          UPDATE recipes SET json = "${
+            safeifyString(JSON.stringify(recipe))
+          }", timestamp = CURRENT_TIMESTAMP
+          WHERE id = ${
+          req.params.spellID
+          };`;
+          console.log('SQL:', query);
+        try {
+          connection = startConnection();
+          connection.query(query, (err, r, body) => {
+            if (err) {
+              throw err;
+            }
+          })
+          connection.end();
+        } catch (e) {
+          console.error(`Could not update ${req.params.spellID} - ${query}`, e);
+        }
       }
-
-      res.send(r);
-    });
+        console.log('Updating recipe', r.name, r.spellID);
+        res.send(r);
+      });
+    } catch (e) {
+      console.log('Fail', req.params.spellID, body);
+      forceStopIfTest(err);
+    }
   });
 });
 
@@ -102,7 +111,7 @@ router.get('*', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   connection = startConnection();
-  connection.query('SELECT id, json from recipes', (err, rows, fields) => {
+  connection.query(`SELECT id, json from recipes not like '%itemID":0%';`, (err, rows, fields) => {
     if (!err) {
       let recipes = [];
       rows.forEach(r => {
@@ -137,7 +146,7 @@ function convertWoWDBToRecipe(wowDBRecipe) {
 }
 
 function safeifyString(str) {
-  return str.replace(/[\']/g, '\'').replace(/[\"]/g, '\\"').replace(/[\\"]/g, '\\"');
+  return str.replace(/[\']/g, '\'').replace(/[\"]/g, '\\"').replace(/\\\\\"/g, '\\\\\\"');
 }
 
 function convertReagents(reagents) {
@@ -150,7 +159,12 @@ function convertReagents(reagents) {
 
 function getProfession(recipe, callback) {
   request.get(`https://eu.api.battle.net/wow/recipe/${recipe.spellID}?locale=en_GB&apiKey=${secrets.apikey}`, (err, r, body) => {
-    recipe.profession = JSON.parse(body).profession;
+    try {
+      recipe.profession = JSON.parse(body).profession;
+    } catch (e) {
+      console.error(`Could not find a profession for ${recipe.spellId} - ${recipe.name}`, body, e);
+      forceStopIfTest(err);
+    }
     proscessReagents(recipe, 0, callback);
   });
 }
@@ -160,18 +174,29 @@ function proscessReagents(recipe, nextIndex, callback) {
     callback(recipe);
   } else {
     request.get(`http://wowdb.com/api/item/${recipe.reagents[nextIndex].itemID}`, (err, r, body) => {
-      const item = JSON.parse(body.slice(1, body.length - 1));
+      try {
+        const item = JSON.parse(body.slice(1, body.length - 1));
 
-      recipe.reagents[nextIndex].name = item.Name;
-      recipe.reagents[nextIndex].dropped = item && item.DroppedBy && item.DroppedBy.length > 0;
+        recipe.reagents[nextIndex].name = item.Name;
+        recipe.reagents[nextIndex].dropped = item && item.DroppedBy && item.DroppedBy.length > 0;
 
-      proscessReagents(recipe, nextIndex + 1, callback);
+        proscessReagents(recipe, nextIndex + 1, callback);
+      } catch (e) {
+        console.error(`Could not get item ${recipe.reagents[nextIndex].itemID}`, body, e);
+        forceStopIfTest(err);
+      }
     });
   }
 }
 
 function startConnection() {
   return mysql.createConnection(secrets.databaseConn);
+}
+
+function forceStopIfTest(error) {
+  if (inTesting) {
+    throw error;
+  }
 }
 
 module.exports = router;

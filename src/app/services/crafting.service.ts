@@ -40,7 +40,7 @@ export class CraftingService {
   }
 
   updateRecipe(spellID: number): Promise<Recipe> {
-    return this._http.get(`http://localhost/GetRecipe.php?spellId=${spellID}`)
+    return this._http.patch(`${Endpoints.WAH_LOCAL_API}recipe/${spellID}`, null)
       .toPromise() as Promise<Recipe>;
   }
 

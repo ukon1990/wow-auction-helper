@@ -8,6 +8,10 @@
   z-index: 502 !important;
 }
 
+.cdk-overlay-container {
+  z-index: 1030 !important;
+}
+
 .full-screen {
   z-index: 501 !important;
   right: 5em !important;
@@ -35,7 +39,7 @@
 mat-spinner {
   width: 20px !important;;
   height: 20px !important;;
-  
+
   svg {
     width: 20px !important;;
     height: 20px !important;;
@@ -82,12 +86,12 @@ td {
 
   span mat-form-field div.mat-input-wrapper.mat-form-field-wrapper {
     padding: 0;
-  
+
     div div.mat-input-infix.mat-form-field-infix {
       border: 0;
       padding: 0;
     }
-  
+
     div.mat-input-underline {
       top: 1.25em
     }

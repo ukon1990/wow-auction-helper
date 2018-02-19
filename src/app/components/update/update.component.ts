@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../services/shared.service';
 import { CraftingService } from '../../services/crafting.service';
 import { Recipe } from '../../models/crafting/recipe';
-import { ItemService } from "../../services/item.service";
+import { ItemService } from '../../services/item.service';
 
 @Component({
   selector: 'wah-update',
