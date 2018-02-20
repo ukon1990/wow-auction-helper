@@ -79,7 +79,8 @@ const routes: Routes = [
       { path: 'technology', component: TechnologyComponent }
     ]
   },
-  { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] }
+  { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
