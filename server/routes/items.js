@@ -49,38 +49,7 @@ router.get('/:id', (req, res) => {
               item.icon = icon;
 
               console.log(`Adding new item (${item.name})`, item);
-              const query = `INSERT INTO items VALUES(${
-                item.id
-                },"${
-                safeifyString(item.name)
-                }", "${
-                item.icon
-                }", ${
-                item.itemLevel
-                }, ${
-                item.itemClass
-                }, ${
-                item.itemSubClass
-                }, ${
-                item.quality
-                }, "${
-                item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
-                }", "${
-                item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
-                }", ${
-                item.buyPrice
-                }, ${
-                item.sellPrice
-                }, ${
-                item.itemBind
-                }, ${
-                item.minFactionId
-                }, ${
-                item.minReputation
-                }, ${
-                item.isDropped
-                }
-                ,CURRENT_TIMESTAMP);`;
+              const query = insertItem(item);
               console.log('SQL', query);
               res.send(item);
               /*
@@ -154,6 +123,41 @@ function convertWoWDBToItem(item) {
     isDropped: item.DroppedBy ? item.DroppedBy.length > 0 : false
   };
   return i;
+}
+
+function insertItem(item) {
+  return `INSERT INTO items VALUES(${
+    item.id
+    },"${
+    safeifyString(item.name)
+    }", "${
+    item.icon
+    }", ${
+    item.itemLevel
+    }, ${
+    item.itemClass
+    }, ${
+    item.itemSubClass
+    }, ${
+    item.quality
+    }, "${
+    item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
+    }", "${
+    item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
+    }", ${
+    item.buyPrice
+    }, ${
+    item.sellPrice
+    }, ${
+    item.itemBind
+    }, ${
+    item.minFactionId
+    }, ${
+    item.minReputation
+    }, ${
+    item.isDropped
+    }
+    ,CURRENT_TIMESTAMP);`;
 }
 
 function safeifyString(str) {
