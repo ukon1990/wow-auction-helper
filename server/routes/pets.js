@@ -1,6 +1,6 @@
 const express = require('express'),
   router = express.Router()
-  AWS = require('aws-sdk'),
+AWS = require('aws-sdk'),
   url = require('url'),
   secrets = require('../secrets/secrets');
 
@@ -33,27 +33,27 @@ router.get('/:id', (req, res) => {
         } else {
           request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
             const pet = reducePet(body),
-              query =`
+              query = `
               INSERT INTO pets (speciesId, petTypeId, creatureId,
                 name, icon, description, source)
                 VALUES (
-                  ${ pet.speciesId },
-                  ${ pet.petTypeId },
-                  ${ pet.creatureId },
-                  "${ safeifyString(pet.name) }",
-                  "${ pet.icon }",
-                  "${ safeifyString(pet.description) }",
-                  "${ safeifyString(pet.source) }");`;
-                  
+                  ${ pet.speciesId},
+                  ${ pet.petTypeId},
+                  ${ pet.creatureId},
+                  "${ safeifyString(pet.name)}",
+                  "${ pet.icon}",
+                  "${ safeifyString(pet.description)}",
+                  "${ safeifyString(pet.source)}");`;
+
             res.json(pet);
             console.log(`Adding new pet to the DB: ${req.params.id}`, query);
 
             connection.query(query,
               (err, rows, fields) => {
                 if (err) {
-                  console.error(`Could not add the species with the id ${ req.params.id }`);
+                  console.error(`Could not add the species with the id ${req.params.id}`, err.sqlMessage);
                 } else {
-                  console.log(`Successfully added pet with speciesID ${ req.params.id }`);
+                  console.log(`Successfully added pet with speciesID ${req.params.id}`);
                 }
               });
             connection.end();
@@ -73,7 +73,32 @@ router.get('/:id', (req, res) => {
 
 router.patch('/:id', (req, res) => {
   res.setHeader('content-type', 'application/json');
-  res.send({name: 'coming soon™'});
+  request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
+    const pet = reducePet(body),
+      query = `
+        UPDATE pets 
+          SET
+            petTypeId = ${ pet.petTypeId},
+            creatureId = ${ pet.creatureId},
+            name = "${ safeifyString(pet.name)}",
+            icon = "${ pet.icon}",
+            description = "${ safeifyString(pet.description)}",
+            source = "${ safeifyString(pet.source)}"
+          WHERE speciesId = ${ pet.speciesId };`;
+
+    res.json(pet);
+    console.log(`Updating pet with speciesID: ${req.params.id}`, query);
+
+    connection.query(query,
+      (err, rows, fields) => {
+        if (err) {
+          console.error(`Could not update the pet with the speciesId ${req.params.id}`, err.sqlMessage);
+        } else {
+          console.log(`Successfully updated pet with speciesId ${req.params.id}`);
+        }
+      });
+    connection.end();
+  });
 });
 
 router.get('*', (req, res) => {
