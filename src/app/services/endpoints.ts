@@ -1,5 +1,6 @@
 import { SharedService } from './shared.service';
 import { Keys } from './keys';
+import { environment } from '../../environments/environment';
 
 export class Endpoints {
   public static readonly TSM_API = 'http://api.tradeskillmaster.com/v1/item';
@@ -15,7 +16,7 @@ export class Endpoints {
 
 
   public static getUrl(path: string): string {
-    return Endpoints.WAH_LOCAL_API + path;
+    return environment.production ? '/api/' + path : Endpoints.WAH_LOCAL_API + path;
   }
 
   public static getAuctionDownloadUrl(): string {
