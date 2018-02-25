@@ -26,57 +26,77 @@ router.get('/:id', (req, res) => {
   try {
     connection = startConnection();
     connection.query('SELECT * from items where id = ' + req.params.id, function (err, rows, fields) {
-      connection.end();
       res.setHeader('content-type', 'application/json');
       try {
-        const dis = false;
-        if (!err && rows.length > 0 && dis) {
-          item.forEach(r => {
+        if (!err && rows.length > 0) {
+          connection.end();
+          rows.forEach(r => {
             try {
               r.itemSource = JSON.parse(r.itemSource);
               r.itemSpells = []; // TODO: Fix some issues regarding this json in the DB - JSON.parse(r.itemSpells);
             } catch (err) {
-              console.log(err);
+              console.error(err);
             }
           });
-          res.json(item[0]);
+          res.json(rows[0]);
         } else {
           request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
             const icon = JSON.parse(body).icon;
-            console.log('Dat icon', icon);
             request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
               let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
               item.icon = icon;
 
-              console.log(`Adding new item (${item.name})`, item);
-              const query = insertItem(item);
-              console.log('SQL', query);
-              res.send(item);
-              /*
+              const query = insertItemQueryQuery(item);
+              console.log(`Adding new item (${item.name})`, query);
               connection.query(query, (err, r, body) => {
-                if (!err) {
-                  connection.end();
-                } else {
-                  throw err;
+                if (err) {
+                  console.error('SQL error in items', err);
                 }
-              });*/
+                connection.end();
+              });
+              res.send(item);
             });
           });
         }
       } catch (e) {
         console.error(`Could not get the item with the ID ${req.params.id}`, e);
+        connection.end();
         res.json({});
       }
     });
   } catch (err) {
     res.json({});
-    console.log(err);
+    console.error(err);
   }
 });
 
 router.patch('/:id', (req, res) => {
-  // TODO: Implement
-  res.send({ message: 'Not implemented' });
+  res.setHeader('content-type', 'application/json');
+
+  try {
+    connection = startConnection();
+    request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
+      const icon = JSON.parse(body).icon;
+      request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
+        let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
+        item.icon = icon;
+
+        const query = updateItemQuery(item);
+        console.log(`Updated the item: (${item.name})`, query);
+        connection.query(query, (err, r, body) => {
+          if (err) {
+            console.error('SQL error in items', err);
+          }
+          connection.end();
+        });
+        res.send(item);
+      });
+    });
+  } catch (err) {
+    connection.end();
+    res.json({});
+    console.error(`Could not update item with ID ${req.params.id}`, err);
+  }
 });
 
 router.get('*', (req, res) => {
@@ -125,7 +145,7 @@ function convertWoWDBToItem(item) {
   return i;
 }
 
-function insertItem(item) {
+function insertItemQueryQueryQuery(item) {
   return `INSERT INTO items VALUES(${
     item.id
     },"${
@@ -158,6 +178,28 @@ function insertItem(item) {
     item.isDropped
     }
     ,CURRENT_TIMESTAMP);`;
+}
+
+function updateItemQuery(item) {
+  // itemSource = <{itemSource: }>,
+  return `UPDATE items
+    SET
+      name = "${ safeifyString(item.name) }",
+      icon = "${ item.icon }",
+      itemLevel = ${ item.itemLevel},
+      itemClass = ${ item.itemClass },
+      itemSubClass = ${ item.itemSubClass },
+      quality = ${ item.quality },
+      itemSpells = "${
+        item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]' }",
+      buyPrice = ${ item.buyPrice },
+      sellPrice = ${ item.sellPrice },
+      itemBind = ${ item.itemBind },
+      minFactionId = ${ item.minFactionId },
+      minReputation = ${ item.minReputation },
+      isDropped = ${ item.isDropped },
+      timestamp = CURRENT_TIMESTAMP
+    WHERE id = ${item.id};`;
 }
 
 function safeifyString(str) {
