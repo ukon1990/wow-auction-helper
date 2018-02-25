@@ -11,17 +11,17 @@ export class CraftingService {
   constructor(private _http: HttpClient, private _itemService: ItemService) { }
 
   getRecipe(spellID: number): void {
-    this.updateRecipe(spellID)
-      .then(r => {
-        this.handleRecipe(r);
-        console.log('Added missing recipe', `${r.spellID} - ${r.name}`);
-      });
+    this._http.get(Endpoints.getUrl(`recipe/${spellID}`))
+      .toPromise()
+        .then(r =>
+          this.handleRecipe(r as Recipe))
+        .catch(e => console.error(`Could not get recipe ${spellID}`, e));
   }
 
   getRecipes(): Promise<any> {
     console.log('Downloading recipes');
     SharedService.downloading.recipes = true;
-    return this._http.get(`${Endpoints.WAH_API}GetRecipe.php`) // assets/mock/recipes.json
+    return this._http.get(Endpoints.getUrl(`recipe`))
       .toPromise()
       .then(recipes => {
         SharedService.downloading.recipes = false;
@@ -40,7 +40,7 @@ export class CraftingService {
   }
 
   updateRecipe(spellID: number): Promise<Recipe> {
-    return this._http.patch(`${Endpoints.WAH_LOCAL_API}recipe/${spellID}`, null)
+    return this._http.patch(Endpoints.getUrl(`recipe/${spellID}`), null)
       .toPromise() as Promise<Recipe>;
   }
 

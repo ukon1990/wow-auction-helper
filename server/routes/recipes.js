@@ -1,12 +1,12 @@
 
 const express = require('express'),
-  router = express.Router()
-url = require('url'),
+  router = express.Router(),
+  headers  = require('./headers'),
+  url = require('url'),
   request = require('request'),
   secrets = require('../secrets/secrets'),
   mysql = require('mysql'),
-  connection = mysql.createConnection(secrets.databaseConn),
-  inTesting = true;
+  inTesting = false;
 
 
 // Error handling
@@ -24,14 +24,18 @@ let response = {
 };
 
 router.get('/:spellID', (req, res) => {
-  res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  connection = startConnection();
+  res = headers.setHeaders(res);
 
+  const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`SELECT json from recipes WHERE id = ${req.params.spellID}`, (err, rows, fields) => {
     try {
       if (!err && rows.length > 0) {
-        connection.end();
+        try {
+          connection.end();
+        } catch (e) {
+          console.error('Could not call end()', e);
+        }
+
         rows.forEach(r => {
           try {
             res.json(JSON.parse(r.json));
@@ -71,8 +75,7 @@ router.get('/:spellID', (req, res) => {
 });
 
 router.patch('/:spellID', (req, res) => {
-  res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res = headers.setHeaders(res);
 
   request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
     try {
@@ -89,7 +92,7 @@ router.patch('/:spellID', (req, res) => {
           };`;
           console.log('SQL:', query);
         try {
-          connection = startConnection();
+          const connection = mysql.createConnection(secrets.databaseConn);
           connection.query(query, (err, r, body) => {
             if (err) {
               throw err;
@@ -111,11 +114,10 @@ router.patch('/:spellID', (req, res) => {
 });
 
 router.get('*', (req, res) => {
-  res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res = headers.setHeaders(res);
 
-  connection = startConnection();
-  connection.query(`SELECT id, json from recipes not like '%itemID":0%';`, (err, rows, fields) => {
+  const connection = mysql.createConnection(secrets.databaseConn);
+  connection.query(`SELECT id, json from recipes WHERE json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
     if (!err) {
       let recipes = [];
       rows.forEach(r => {

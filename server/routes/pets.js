@@ -1,9 +1,9 @@
 const express = require('express'),
-  router = express.Router()
-AWS = require('aws-sdk'),
+  router = express.Router(),
   url = require('url'),
-  secrets = require('../secrets/secrets');
-
+  headers  = require('./headers'),
+  secrets = require('../secrets/secrets'),
+  mysql = require('mysql');
 
 // Error handling
 const sendError = (err, res) => {
@@ -20,12 +20,11 @@ let response = {
 };
 
 router.get('/:id', (req, res) => {
-  res.setHeader('content-type', 'application/json');
+  res = headers.setHeaders(res);
 
   try {
-    connection = startConnection();
+    const connection = mysql.createConnection(secrets.databaseConn);
     connection.query('SELECT * from pets where speciesId = ' + req.params.id, function (err, rows, fields) {
-      res.setHeader('content-type', 'application/json');
       try {
         if (!err && rows.length > 0) {
           connection.end();
@@ -72,7 +71,8 @@ router.get('/:id', (req, res) => {
 });
 
 router.patch('/:id', (req, res) => {
-  res.setHeader('content-type', 'application/json');
+  res = headers.setHeaders(res);
+
   request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
     const pet = reducePet(body),
       query = `
@@ -89,6 +89,7 @@ router.patch('/:id', (req, res) => {
     res.json(pet);
     console.log(`Updating pet with speciesID: ${req.params.id}`, query);
 
+    const connection = mysql.createConnection(secrets.databaseConn);
     connection.query(query,
       (err, rows, fields) => {
         if (err) {
@@ -102,9 +103,10 @@ router.patch('/:id', (req, res) => {
 });
 
 router.get('*', (req, res) => {
-  res.setHeader('content-type', 'application/json');
+  res = headers.setHeaders(res);
+
   // Get all pets
-  connection = startConnection();
+  const connection = mysql.createConnection(secrets.databaseConn);
   connection.query('SELECT * from pets', function (err, rows, fields) {
     connection.end();
     res.setHeader('content-type', 'application/json');

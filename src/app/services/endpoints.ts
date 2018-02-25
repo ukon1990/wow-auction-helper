@@ -13,12 +13,13 @@ export class Endpoints {
   public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
+
+  public static getUrl(path: string): string {
+    return Endpoints.WAH_LOCAL_API + path;
+  }
+
   public static getAuctionDownloadUrl(): string {
-    return `${
-        Endpoints.WAH_NODE_API
-      }auction?url=${
-        SharedService.auctionResponse.url
-      }`;
+    return Endpoints.getUrl(`auction?url=${ SharedService.auctionResponse.url }`);
   }
  // http://localhost:3000/api/auction?
   public static getBattleNetApi(query: string, region?: string): string {

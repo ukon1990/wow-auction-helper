@@ -11,7 +11,7 @@ export class PetsService {
 
   getPets(): Promise<any> {
     SharedService.downloading.pets = true;
-    return this._http.get(`${Endpoints.WAH_API}GetSpecies.php`)
+    return this._http.get(Endpoints.getUrl(`pet`))
       .toPromise()
       .then(pets => {
         SharedService.downloading.pets = false;
@@ -21,7 +21,32 @@ export class PetsService {
       })
       .catch(e => {
         SharedService.downloading.pets = false;
-        console.error('Failed at downloading pets', e);
+        console.error('Failed at downloading pet', e);
+      });
+  }
+
+  getPet(speciesId): Promise<any> {
+    SharedService.downloading.pets = true;
+    return this._http.get(Endpoints.getUrl(`pet/${speciesId}`))
+      .toPromise()
+      .then(pet => {
+        SharedService.downloading.pets = false;
+        SharedService.pets[(pet as Pet).speciesId] = pet;
+      })
+      .catch(e => {
+        SharedService.downloading.pets = false;
+        console.error('Failed at downloading pet', e);
+      });
+  }
+
+  updatePet(speciesId): Promise<any> {
+    return this._http.patch(Endpoints.getUrl(`pet/${speciesId}`), null)
+      .toPromise()
+      .then(pet => {
+        SharedService.pets[(pet as Pet).speciesId] = pet;
+      })
+      .catch(e => {
+        console.error('Failed at downloading pet', e);
       });
   }
 }

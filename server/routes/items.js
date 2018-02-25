@@ -1,10 +1,10 @@
 const express = require('express'),
-  router = express.Router()
-AWS = require('aws-sdk'),
+  router = express.Router(),
+  headers = require('./headers'),
   url = require('url'),
   request = require('request'),
-  secrets = require('../secrets/secrets');
-
+  secrets = require('../secrets/secrets'),
+  mysql = require('mysql');
 
 // Error handling
 const sendError = (err, res) => {
@@ -21,10 +21,10 @@ let response = {
 };
 
 router.get('/:id', (req, res) => {
-  res.setHeader('content-type', 'application/json');
+  res = headers.setHeaders(res);
 
   try {
-    connection = startConnection();
+    const connection = mysql.createConnection(secrets.databaseConn);
     connection.query('SELECT * from items where id = ' + req.params.id, function (err, rows, fields) {
       res.setHeader('content-type', 'application/json');
       try {
@@ -71,17 +71,17 @@ router.get('/:id', (req, res) => {
 });
 
 router.patch('/:id', (req, res) => {
-  res.setHeader('content-type', 'application/json');
+  res = headers.setHeaders(res);
 
   try {
-    connection = startConnection();
     request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
       const icon = JSON.parse(body).icon;
       request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
         let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
         item.icon = icon;
 
-        const query = updateItemQuery(item);
+        const query = updateItemQuery(item),
+          connection = mysql.createConnection(secrets.databaseConn);
         console.log(`Updated the item: (${item.name})`, query);
         connection.query(query, (err, r, body) => {
           if (err) {
@@ -100,9 +100,10 @@ router.patch('/:id', (req, res) => {
 });
 
 router.get('*', (req, res) => {
-  res.setHeader('content-type', 'application/json');
+  res = headers.setHeaders(res);
+
   // Get all pets
-  connection = startConnection();
+  const connection = mysql.createConnection(secrets.databaseConn);
   connection.query('SELECT * from items', function (err, rows, fields) {
     connection.end();
     res.setHeader('content-type', 'application/json');
@@ -184,20 +185,20 @@ function updateItemQuery(item) {
   // itemSource = <{itemSource: }>,
   return `UPDATE items
     SET
-      name = "${ safeifyString(item.name) }",
-      icon = "${ item.icon }",
+      name = "${ safeifyString(item.name)}",
+      icon = "${ item.icon}",
       itemLevel = ${ item.itemLevel},
-      itemClass = ${ item.itemClass },
-      itemSubClass = ${ item.itemSubClass },
-      quality = ${ item.quality },
+      itemClass = ${ item.itemClass},
+      itemSubClass = ${ item.itemSubClass},
+      quality = ${ item.quality},
       itemSpells = "${
-        item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]' }",
-      buyPrice = ${ item.buyPrice },
-      sellPrice = ${ item.sellPrice },
-      itemBind = ${ item.itemBind },
-      minFactionId = ${ item.minFactionId },
-      minReputation = ${ item.minReputation },
-      isDropped = ${ item.isDropped },
+    item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'}",
+      buyPrice = ${ item.buyPrice},
+      sellPrice = ${ item.sellPrice},
+      itemBind = ${ item.itemBind},
+      minFactionId = ${ item.minFactionId},
+      minReputation = ${ item.minReputation},
+      isDropped = ${ item.isDropped},
       timestamp = CURRENT_TIMESTAMP
     WHERE id = ${item.id};`;
 }

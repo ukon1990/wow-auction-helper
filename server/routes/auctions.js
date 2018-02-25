@@ -1,9 +1,10 @@
 const express = require('express'),
-  router = express.Router()
-  AWS = require('aws-sdk'),
+  router = express.Router(),
+  headers  = require('./headers'),
   url = require('url'),
-  secrets = require('../secrets/secrets');
-
+  request = require('request'),
+  secrets = require('../secrets/secrets'),
+  mysql = require('mysql');
 
 // Error handling
 const sendError = (err, res) => {
@@ -21,8 +22,8 @@ let response = {
 
 router.get('*', (req, res) => {
   const url = req.query.url;
-	res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res = headers.setHeaders(res);
+
   if (url) {
     request(url).pipe(res);
   } else {

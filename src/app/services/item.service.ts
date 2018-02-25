@@ -10,7 +10,7 @@ export class ItemService {
 
   addItem(itemID: number): void {
     console.log('Attempting to add item data for ' + itemID);
-    this._http.get(`${Endpoints.WAH_API}GetItems.php?itemid=${itemID}`)
+    this._http.get(Endpoints.getUrl(`item/${itemID}`))
       .toPromise()
       .then((item) => {
         console.log('downloaded item', item);
@@ -26,7 +26,7 @@ export class ItemService {
   getItems(): Promise<any> {
     console.log('Downloading items');
     SharedService.downloading.items = true;
-    return this._http.get(`${Endpoints.WAH_API}GetItems.php`)
+    return this._http.get(Endpoints.getUrl(`item`))
       .toPromise()
       .then(items => {
         SharedService.itemsUnmapped = items['items'];
@@ -44,7 +44,7 @@ export class ItemService {
   }
 
   updateItem(itemID: number): Promise<any> {
-    return this._http.get(`http://localhost/UpdateItem.php?itemid=${itemID}`)
+    return this._http.patch(Endpoints.getUrl(`item/${itemID}`), null)
       .toPromise() as Promise<any>;
   }
 }
