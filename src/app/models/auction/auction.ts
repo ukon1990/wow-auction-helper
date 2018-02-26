@@ -45,6 +45,8 @@ export class Auction {
   petQualityId?: number;
   bonusLists?: Array<Bonus>;
   modifiers?: Array<Modifiers>;
+
+  roi?: number;
 }
 
 class Bonus {

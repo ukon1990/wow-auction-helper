@@ -100,6 +100,7 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
           { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
+          { key: 'roi', title: 'ROI', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: 'quantity', title: 'Size', dataType: 'number' },
           { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
@@ -114,14 +115,15 @@ export class Dashboard {
         this.idParam = 'item';
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
           { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
+          { key: 'roi', title: 'ROI', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: 'quantity', title: 'Size', dataType: 'number' },
           { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
           { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
           { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
+          { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
         this.setCheapBids();
@@ -290,7 +292,7 @@ export class Dashboard {
 
   private setCheapBidsWithLowTimeLeft(): void {
     this.data.length = 0;
-    this.data = SharedService.auctions.filter(a => {
+    SharedService.auctions.forEach(a => {
       let match = true;
       if (a.timeLeft !== 'SHORT') {
         match = false;
@@ -304,16 +306,20 @@ export class Dashboard {
         SharedService.auctionItemsMap[a.item].avgDailySold < 1 && SharedService.auctionItemsMap[a.item].regionSaleRate < 0.30) {
         match = false;
       }
-      return match;
-    }).sort((a, b) =>
+
+      if (match) {
+        a.roi = SharedService.auctionItemsMap[a.item].buyout - (a.bid / a.quantity);
+        this.data.push(a);
+      }
+    });
+    this.data.sort((a, b) =>
       (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
-      (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout
-      );
+      (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
   }
 
   private setCheapBids(): void {
     this.data.length = 0;
-    this.data = SharedService.auctions.filter(a => {
+    SharedService.auctions.forEach(a => {
       let match = true;
 
       if (match && (a.buyout === 0 || (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout > 0.9)) {
@@ -324,8 +330,14 @@ export class Dashboard {
         SharedService.auctionItemsMap[a.item].avgDailySold < 1 && SharedService.auctionItemsMap[a.item].regionSaleRate < 0.30) {
         match = false;
       }
-      return match;
-    }).sort((a, b) =>
+
+      if (match) {
+        a.roi = SharedService.auctionItemsMap[a.item].buyout - (a.bid / a.quantity);
+        this.data.push(a);
+      }
+    });
+
+    this.data.sort((a, b) =>
       (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
       (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
   }
