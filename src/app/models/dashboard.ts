@@ -14,6 +14,7 @@ export class Dashboard {
     MOST_PROFITABLE_KNOWN_CRAFTS: 'MOST_PROFITABLE_KNOWN_CRAFTS',
     POTENTIAL_DEALS: 'POTENTIAL_DEALS',
     CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'CHEAP_BIDS_WITH_LOW_TIME_LEFT',
+    CHEAP_BIDS: 'CHEAP_BIDS',
     CHEAPER_THAN_VENDOR_SELL: 'CHEAPER_THAN_VENDOR_SELL',
     TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
     WATCH_LIST: 'WATCH_LIST',
@@ -97,8 +98,8 @@ export class Dashboard {
         this.idParam = 'item';
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
+          { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: 'quantity', title: 'Size', dataType: 'number' },
           { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
@@ -109,6 +110,22 @@ export class Dashboard {
         this.setCheapBidsWithLowTimeLeft();
         break;
 
+      case Dashboard.TYPES.CHEAP_BIDS:
+        this.idParam = 'item';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
+          { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
+          { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
+          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
+          { key: 'quantity', title: 'Size', dataType: 'number' },
+          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
+          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
+          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        ];
+        this.setCheapBids();
+        break;
 
       case Dashboard.TYPES.WATCH_LIST:
         this.idParam = 'itemID';
@@ -174,6 +191,8 @@ export class Dashboard {
       SharedService.itemDashboards.push(
         new Dashboard('Potential deals', Dashboard.TYPES.POTENTIAL_DEALS));
     }
+    SharedService.itemDashboards.push(
+      new Dashboard('Potential bid deals', Dashboard.TYPES.CHEAP_BIDS));
     SharedService.itemDashboards.push(
       new Dashboard('Potential 30 minute bid deals', Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT));
     SharedService.itemDashboards.push(
@@ -290,6 +309,25 @@ export class Dashboard {
       (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
       (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout
       );
+  }
+
+  private setCheapBids(): void {
+    this.data.length = 0;
+    this.data = SharedService.auctions.filter(a => {
+      let match = true;
+
+      if (match && (a.buyout === 0 || (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout > 0.9)) {
+        match = false;
+      }
+
+      if (match && SharedService.user.apiToUse !== 'none' &&
+        SharedService.auctionItemsMap[a.item].avgDailySold < 1 && SharedService.auctionItemsMap[a.item].regionSaleRate < 0.30) {
+        match = false;
+      }
+      return match;
+    }).sort((a, b) =>
+      (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
+      (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
   }
 
   private setPotentialDeals(): void {

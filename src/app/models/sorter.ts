@@ -2,6 +2,13 @@ import { AuctionItem } from './auction/auction-item';
 import { SharedService } from '../services/shared.service';
 
 export class Sorter {
+  readonly auctionDuration = {
+    'VERY_LONG': 4,
+    'LONG': 3,
+    'MEDIUM': 2,
+    'SHORT': 1
+  };
+
   keys: Key[] = [];
 
   addKey(key: string): void {
@@ -39,6 +46,10 @@ export class Sorter {
   }
 
   getItemToSort(key: string, item: any): any {
+    if (key === 'timeLeft') {
+      return this.auctionDuration[item[key]];
+    }
+
     return item[key] ?
       item[key] : this.getAuctionItem(item) ?
         this.getAuctionItem(item)[key] : false;
