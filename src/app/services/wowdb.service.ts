@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WoWDBItem } from '../models/item/wowdb';
+import { Endpoints } from './endpoints';
 
 @Injectable()
 export class WowdbService {
 
   constructor(private _http: HttpClient) { }
 
-  getItem(itemID): Promise<WoWDBItem> {
-    return this._http.get(`http://www.wah.jonaskf.net/GetWowDB.php?itemID=${itemID}`)
+  getItem(itemID): Promise<WoWDBItem> {// `http://www.wah.jonaskf.net/GetWowDB.php?itemID=${itemID}`
+    return this._http.get(Endpoints.getUrl(`item/wowdb/${ itemID }`))
       .toPromise();
   }
 }

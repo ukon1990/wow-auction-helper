@@ -20,6 +20,19 @@ let response = {
   message: null
 };
 
+router.get('/wowdb/:id', (req, res) => {
+  res = headers.setHeaders(res);
+
+  try {
+    request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
+      res.send(convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1))));
+    });
+  } catch (err) {
+    res.json({});
+    console.error(err);
+  }
+});
+
 router.get('/:id', (req, res) => {
   res = headers.setHeaders(res);
 
