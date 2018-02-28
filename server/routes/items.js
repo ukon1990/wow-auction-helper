@@ -59,7 +59,7 @@ router.get('/:id', (req, res) => {
               let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
               item.icon = icon;
 
-              const query = insertItemQueryQuery(item);
+              const query = insertItemQuery(item);
               console.log(`Adding new item (${item.name})`, query);
               connection.query(query, (err, r, body) => {
                 if (err) {
@@ -159,7 +159,7 @@ function convertWoWDBToItem(item) {
   return i;
 }
 
-function insertItemQueryQueryQuery(item) {
+function insertItemQuery(item) {
   return `INSERT INTO items VALUES(${
     item.id
     },"${
