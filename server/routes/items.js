@@ -60,7 +60,7 @@ router.get('/:id', (req, res) => {
               item.icon = icon;
 
               const query = insertItemQuery(item);
-              console.log(`Adding new item (${item.name})`, query);
+              console.log(`${new Date().toString()} - Adding new item (${item.name}) - SQL: ${ query }`);
               connection.query(query, (err, r, body) => {
                 if (err) {
                   console.error('SQL error in items', err);
@@ -95,7 +95,7 @@ router.patch('/:id', (req, res) => {
 
         const query = updateItemQuery(item),
           connection = mysql.createConnection(secrets.databaseConn);
-        console.log(`Updated the item: (${item.name})`, query);
+        console.log(`${new Date().toString()} - Updated the item: (${item.name}) - SQL: ${ query }`);
         connection.query(query, (err, r, body) => {
           if (err) {
             console.error('SQL error in items', err);
@@ -126,14 +126,14 @@ router.get('*', (req, res) => {
           r.itemSource = r.itemSource === '[]' ? [] : JSON.parse(r.itemSource.replace(/[\n]/g, ''));
           r.itemSpells = r.itemSpells === '[]' ? [] : []; // TODO: Fix some issues regarding this json in the DB - r.itemSpells
         } catch (err) {
-          console.log(err, r.id);
+          console.error(err, r.id);
         }
       });
       res.json({
         'items': rows
       });
     } else {
-      console.log('The following error occured while querying DB:', err);
+      console.error(`${new Date().toString()} - The following error occured while querying DB`, err);
     }
   });
 });

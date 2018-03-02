@@ -40,7 +40,7 @@ router.get('/:spellID', (req, res) => {
           try {
             res.json(JSON.parse(r.json));
           } catch (err) {
-            console.log(err, r.json);
+            console.error(err, r.json);
           }
         });
       } else {
@@ -49,13 +49,12 @@ router.get('/:spellID', (req, res) => {
           //res.send(recipe);
           getProfession(recipe, function (r) {
             if (recipe.itemID > 0) {
-              console.log(`Adding new recipe (${r.name})`);
               const query = `INSERT INTO recipes VALUES(${
                   req.params.spellID
                 }, "${
                   safeifyString(JSON.stringify(recipe))
                 }", CURRENT_TIMESTAMP);`;
-              console.log(query);
+              console.log(`${new Date().toString()} - Adding new recipe (${r.name}) - SQL: ${ query }`);
               connection.query(query, (err, r, body) => {
                 if (!err) {
                   connection.end();
@@ -69,7 +68,7 @@ router.get('/:spellID', (req, res) => {
         });
       }
     } catch(e) {
-      console.error(`Getting a recipe failed for the spellID ${req.params.spellID}`, e);
+      console.error(`${new Date().toString()} - Getting a recipe failed for the spellID ${req.params.spellID}`, e);
     }
   });
 });
@@ -100,14 +99,14 @@ router.patch('/:spellID', (req, res) => {
           })
           connection.end();
         } catch (e) {
-          console.error(`Could not update ${req.params.spellID} - ${query}`, e);
+          console.error(`${new Date().toString()} - Could not update ${req.params.spellID} - SQL: ${query}`, e);
         }
       }
-        console.log('Updating recipe', r.name, r.spellID);
+        console.log(`${new Date().toString()} - Updating recipe ${r.name}(${r.spellID}) - SQL: ${ query }`);
         res.send(r);
       });
     } catch (e) {
-      console.log('Fail', req.params.spellID, body);
+      console.error('Fail', req.params.spellID, body);
       forceStopIfTest(err);
     }
   });
@@ -124,12 +123,12 @@ router.get('*', (req, res) => {
         try {
           recipes.push(JSON.parse(r.json));
         } catch (err) {
-          console.error(`Could not parse json (${r.id})`, r.json, err);
+          console.error(`${new Date().toString()} - Could not parse json (${r.id})`, r.json, err);
         }
       });
       res.json({ 'recipes': recipes });
     } else {
-      console.log('The following error occured while querying DB:.', err);
+      console.log(`${new Date().toString()} - The following error occured while querying DB:`, err);
     }
   });
 

@@ -45,7 +45,7 @@ router.get('/:id', (req, res) => {
                   "${ safeifyString(pet.source)}");`;
 
             res.json(pet);
-            console.log(`Adding new pet to the DB: ${req.params.id}`, query);
+            console.log(`${new Date().toString()} - Adding new pet to the DB: ${req.params.id} - SQL: ${query}`);
 
             connection.query(query,
               (err, rows, fields) => {
@@ -87,7 +87,7 @@ router.patch('/:id', (req, res) => {
           WHERE speciesId = ${ pet.speciesId };`;
 
     res.json(pet);
-    console.log(`Updating pet with speciesID: ${req.params.id}`, query);
+    console.log(`${new Date().toString()} - Updating pet with speciesID: ${req.params.id} - SQL: ${ query }`);
 
     const connection = mysql.createConnection(secrets.databaseConn);
     connection.query(query,
