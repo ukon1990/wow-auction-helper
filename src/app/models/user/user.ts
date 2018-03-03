@@ -193,6 +193,10 @@ export class User {
           break;
       }
     });
+
+    if (user.customProcs.length === 0) {
+      user.customProcs = customProcsDefault;
+    }
     return user;
   }
 

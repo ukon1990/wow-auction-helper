@@ -12,7 +12,7 @@ import { Seller } from '../../models/seller';
 import { AuctionPet } from '../../models/auction/auction-pet';
 import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
 import { ShoppingCartRecipe } from '../../models/shopping-cart';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 import { CustomProcs } from '../../models/crafting/custom-proc';
 import { Watchlist, WatchlistGroup } from '../../models/watchlist/watchlist';
 

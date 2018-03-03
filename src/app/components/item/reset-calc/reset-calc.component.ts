@@ -3,7 +3,7 @@ import { Auction } from '../../../models/auction/auction';
 import { AuctionItem } from '../../../models/auction/auction-item';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-reset-calc',

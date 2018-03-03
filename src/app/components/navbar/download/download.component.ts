@@ -8,7 +8,7 @@ import { DatabaseService } from '../../../services/database.service';
 import { TSM } from '../../../models/auction/tsm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Crafting } from '../../../models/crafting/crafting';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 import { Realm } from '../../../models/realm';
 import { RealmService } from '../../../services/realm.service';
 

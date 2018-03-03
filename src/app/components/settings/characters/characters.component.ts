@@ -8,7 +8,7 @@ import { Realm } from '../../../models/realm';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Crafting } from '../../../models/crafting/crafting';
 import { CraftingService } from '../../../services/crafting.service';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-characters',

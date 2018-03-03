@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators/map';
 import { Observable } from 'rxjs/Observable';
 import { startWith } from 'rxjs/operators/startWith';
 import { Item } from '../../models/item/item';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-watchlist',

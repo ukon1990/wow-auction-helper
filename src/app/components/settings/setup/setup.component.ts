@@ -7,7 +7,7 @@ import { SharedService } from '../../../services/shared.service';
 import { Realm } from '../../../models/realm';
 import { Router } from '@angular/router';
 import { User } from '../../../models/user/user';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-setup',

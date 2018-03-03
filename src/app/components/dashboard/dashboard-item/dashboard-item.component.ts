@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Dashboard } from '../../../models/dashboard';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-dashboard-item',

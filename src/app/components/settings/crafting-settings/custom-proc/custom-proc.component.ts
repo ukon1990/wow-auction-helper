@@ -8,7 +8,7 @@ import { Item } from '../../../../models/item/item';
 import { CustomPrice, CustomPrices } from '../../../../models/crafting/custom-price';
 import { ColumnDescription } from '../../../../models/column-description';
 import { Crafting } from '../../../../models/crafting/crafting';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 import { CustomProc, CustomProcs } from '../../../../models/crafting/custom-proc';
 import { Recipe } from '../../../../models/crafting/recipe';
 import { customProcsDefault } from '../../../../models/crafting/default-custom-procs';

@@ -8,7 +8,7 @@ import { User } from '../../models/user/user';
 import { Recipe } from '../../models/crafting/recipe';
 import { Pet } from '../../models/pet';
 import { AuctionPet } from '../../models/auction/auction-pet';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-item',

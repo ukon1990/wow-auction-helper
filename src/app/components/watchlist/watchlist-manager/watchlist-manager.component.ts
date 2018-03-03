@@ -4,7 +4,7 @@ import { Watchlist } from '../../../models/watchlist/watchlist';
 import { SharedService } from '../../../services/shared.service';
 import { ColumnDescription } from '../../../models/column-description';
 import { Item } from '../../../models/item/item';
-import { Angulartics2 } from 'angulartics2/angulartics2';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-watchlist-manager',
