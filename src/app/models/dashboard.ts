@@ -28,6 +28,7 @@ export class Dashboard {
   tsmShoppingString: string;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   data: Array<any> = new Array<any>();
+  message: string;
 
   constructor(title: string, type: string) {
     this.title = title;
@@ -266,13 +267,16 @@ export class Dashboard {
   }
 
   private setCheaperThanVendorSell(): void {
-    let value = 0;
+    let value = 0, mvValue = 0;
     const pipe = new GoldPipe();
     this.data.length = 0;
     this.tsmShoppingString = '';
     this.data = SharedService.auctionItems.filter(ai => {
       if (ai.buyout !== 0 && ai.buyout < ai.vendorSell) {
         value += ai.vendorSell - ai.buyout;
+        if (SharedService.user.apiToUse !== 'none') {
+          mvValue += ai.mktPrice - ai.vendorSell;
+        }
         this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.vendorSell)};`;
         return true;
       }
@@ -285,6 +289,12 @@ export class Dashboard {
         this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
       }
 
+      this.message = `Profit if vendored: ${pipe.transform(value)}`;
+
+      if (SharedService.user.apiToUse !== 'none') {
+        this.message += `. Profit if resold at MV: ${pipe.transform(mvValue)}`;
+      }
+
       SharedService.notifications.unshift(
         new Notification('Items below vendor sell',
           `${this.data.length} items can give you a profit of ${pipe.transform(value)}`));
@@ -292,6 +302,8 @@ export class Dashboard {
   }
 
   private setCheapBidsWithLowTimeLeft(): void {
+    let sumROI = 0;
+    const pipe = new GoldPipe();
     this.data.length = 0;
     SharedService.auctions.forEach(a => {
       let match = true;
@@ -310,15 +322,22 @@ export class Dashboard {
 
       if (match) {
         a.roi = SharedService.auctionItemsMap[a.item].buyout - (a.bid / a.quantity);
+        sumROI += a.roi * a.quantity;
         this.data.push(a);
       }
     });
     this.data.sort((a, b) =>
       (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
       (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
+
+    if (this.data.length > 0) {
+      this.message = `Sum potential ROI: ${ pipe.transform(sumROI) }`;
+    }
   }
 
   private setCheapBids(): void {
+    let sumROI = 0;
+    const pipe: GoldPipe = new GoldPipe();
     this.data.length = 0;
     SharedService.auctions.forEach(a => {
       let match = true;
@@ -334,6 +353,7 @@ export class Dashboard {
 
       if (match) {
         a.roi = SharedService.auctionItemsMap[a.item].buyout - (a.bid / a.quantity);
+        sumROI += a.roi * a.quantity;
         this.data.push(a);
       }
     });
@@ -341,6 +361,10 @@ export class Dashboard {
     this.data.sort((a, b) =>
       (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
       (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
+
+    if (this.data.length > 0) {
+      this.message = `Sum potential ROI: ${ pipe.transform(sumROI) }`;
+    }
   }
 
   private setPotentialDeals(): void {
@@ -354,15 +378,17 @@ export class Dashboard {
         return true;
       }
       return false;
-    })
-      .sort((a, b) => a.buyout / a.mktPrice - b.buyout / b.mktPrice);
+    }).sort((a, b) =>
+      a.buyout / a.mktPrice - b.buyout / b.mktPrice);
 
-      if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
-        this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
-      }
+    if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
+      this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+    }
   }
 
   private sortCraftsByRoi(onlyKnown: boolean): void {
+    let sumROI = 0;
+    const pipe: GoldPipe = new GoldPipe();
     this.data.length = 0;
     this.data = SharedService.recipes
       .sort((a, b) => {
@@ -376,10 +402,16 @@ export class Dashboard {
           return false;
         }
         if (SharedService.user.apiToUse !== 'none') {
-          return recipe.avgDailySold > 1 && recipe.regionSaleRate > 0.10;
+          if (recipe.avgDailySold < 1 || recipe.regionSaleRate <= 0.10) {
+            return false;
+          }
         }
+        sumROI += recipe.roi;
         return true;
       });
+    if (this.data.length > 0) {
+      this.message = `Crafting 1 of each may yeild a ROI of ${pipe.transform(sumROI)}`;
+    }
   }
 
   private groupSellersByAuctions(): void {
