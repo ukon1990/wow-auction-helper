@@ -9,9 +9,9 @@ export class Dashboard {
     TOP_SELLERS_BY_AUCTIONS: 'TOP_SELLERS_BY_AUCTIONS',
     TOP_SELLERS_BY_VOLUME: 'TOP_SELLERS_BY_VOLUME',
     TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
-    MOST_AVAILABLE_ITEMS: 'MOST_AVAILABLE_ITEMS',
-    MOST_PROFITABLE_CRAFTS: 'MOST_PROFITABLE_CRAFTS',
-    MOST_PROFITABLE_KNOWN_CRAFTS: 'MOST_PROFITABLE_KNOWN_CRAFTS',
+    MOST_AVAILABLE_ITEMS: 'AVAILABLE_ITEMS',
+    PROFITABLE_CRAFTS: 'PROFITABLE_CRAFTS',
+    PROFITABLE_KNOWN_CRAFTS: 'MOST_PROFITABLE_KNOWN_CRAFTS',
     POTENTIAL_DEALS: 'POTENTIAL_DEALS',
     CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'CHEAP_BIDS_WITH_LOW_TIME_LEFT',
     CHEAP_BIDS: 'CHEAP_BIDS',
@@ -67,16 +67,19 @@ export class Dashboard {
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
+        this.addAPIColumnsAtPosition(3);
         this.groupItemsByAvailability();
         break;
-      case Dashboard.TYPES.MOST_PROFITABLE_CRAFTS:
+      case Dashboard.TYPES.PROFITABLE_CRAFTS:
         this.idParam = 'itemID';
         this.columns = crafterColumns;
+        this.addAPIColumnsAtPosition(4);
         this.sortCraftsByRoi(false);
         break;
-      case Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS:
+      case Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS:
         this.idParam = 'itemID';
         this.columns = crafterColumns;
+        this.addAPIColumnsAtPosition(4);
         this.sortCraftsByRoi(true);
         break;
       case Dashboard.TYPES.POTENTIAL_DEALS:
@@ -86,11 +89,9 @@ export class Dashboard {
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'bid', title: 'Bid', dataType: 'gold' },
           { key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold' },
-          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
+        this.addAPIColumnsAtPosition(4);
         this.setPotentialDeals();
         break;
 
@@ -103,11 +104,9 @@ export class Dashboard {
           { key: 'roi', title: 'ROI', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: 'quantity', title: 'Size', dataType: 'number' },
-          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
+        this.addAPIColumnsAtPosition(5);
         this.setCheapBidsWithLowTimeLeft();
         break;
 
@@ -120,12 +119,10 @@ export class Dashboard {
           { key: 'roi', title: 'ROI', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: 'quantity', title: 'Size', dataType: 'number' },
-          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
           { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
+        this.addAPIColumnsAtPosition(5);
         this.setCheapBids();
         break;
 
@@ -135,11 +132,9 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
-          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
+        this.addAPIColumnsAtPosition(3);
         this.setWatchListAlerts();
         break;
 
@@ -155,11 +150,9 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
-          { key: 'mktPrice', title: 'Market value', dataType: 'gold' },
-          { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
-          { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
+        this.addAPIColumnsAtPosition(3);
         this.setCheaperThanVendorSell();
         break;
       case Dashboard.TYPES.TRADE_VENDOR_VALUES:
@@ -180,9 +173,9 @@ export class Dashboard {
 
     // Items
     SharedService.itemDashboards.push(
-      new Dashboard('Most profitable crafts', Dashboard.TYPES.MOST_PROFITABLE_CRAFTS));
+      new Dashboard('Profitable crafts', Dashboard.TYPES.PROFITABLE_CRAFTS));
     SharedService.itemDashboards.push(
-      new Dashboard('Most profitable known crafts', Dashboard.TYPES.MOST_PROFITABLE_KNOWN_CRAFTS));
+      new Dashboard('Profitable known crafts', Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS));
     SharedService.itemDashboards.push(
       new Dashboard('Watchlist alerts', Dashboard.TYPES.WATCH_LIST));
     SharedService.itemDashboards.push(
@@ -210,6 +203,14 @@ export class Dashboard {
 
     SharedService.sellerDashboards.push(
       new Dashboard('Top sellers by active auctions', Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS));
+  }
+
+  private addAPIColumnsAtPosition(index: number): void {
+    if (SharedService.user.apiToUse !== 'none') {
+      this.columns.splice(index, 0, { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
+      this.columns.splice(index, 0, { key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
+      this.columns.splice(index, 0, { key: 'mktPrice', title: 'Market value', dataType: 'gold' });
+    }
   }
 
   private setTradeVendorValues(): void {
@@ -368,6 +369,9 @@ export class Dashboard {
         return b.roi - a.roi;
       })
       .filter(recipe => {
+        if (recipe.roi <= 0) {
+          return false;
+        }
         if (onlyKnown && !SharedService.recipesForUser[recipe.spellID]) {
           return false;
         }
@@ -375,8 +379,7 @@ export class Dashboard {
           return recipe.avgDailySold > 1 && recipe.regionSaleRate > 0.10;
         }
         return true;
-      })
-      .slice(0, 100);
+      });
   }
 
   private groupSellersByAuctions(): void {
