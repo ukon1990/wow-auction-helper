@@ -33,6 +33,17 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
   @include angular-material-theme($dark-theme);
   background: #424242;
   color: white;
+
+  wah-character {
+    .mat-raised-button {
+      color: white !important;
+    }
+  }
+}
+wah-character {
+  .mat-raised-button {
+    color: black !important;
+  }
 }
 
 .mat-button {
