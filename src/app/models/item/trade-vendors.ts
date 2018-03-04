@@ -57,10 +57,10 @@ const primalSargerite: TradeVendor = {
     new TradeVendorItem(151721, 0.1),
     new TradeVendorItem(151722, 0.1),
     new TradeVendorItem(151579, 0.1),
-    new TradeVendorItem(151564, 1),
-    new TradeVendorItem(151565, 1),
-    new TradeVendorItem(151566, 1),
-    new TradeVendorItem(151567, 1)
+    new TradeVendorItem(151564, 10),
+    new TradeVendorItem(151565, 10),
+    new TradeVendorItem(151566, 10),
+    new TradeVendorItem(151567, 10)
   ]
 };
 
