@@ -144,7 +144,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   isProfessionMatch(recipe: Recipe): boolean {
     return this.searchForm.value.profession === null || this.searchForm.value.profession === 'All' ||
-      this.searchForm.value.profession === recipe.profession;
+      this.searchForm.value.profession === recipe.profession || !recipe.profession && this.searchForm.value.profession === 'none';
   }
 
 

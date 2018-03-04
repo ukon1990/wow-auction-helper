@@ -5,7 +5,7 @@
 
   <div *ngIf="isUsinAPI()" class="ml-2 mr-2">
     <mat-form-field>
-      <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate">
+      <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate" matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
     </mat-form-field>
     <mat-form-field>
       <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
