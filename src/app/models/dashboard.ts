@@ -142,6 +142,7 @@ export class Dashboard {
         case Dashboard.TYPES.WATCH_LIST_CRAFTS:
           this.idParam = 'itemID';
           this.columns = crafterColumns;
+          this.addAPIColumnsAtPosition(4);
           this.setWatchListCraftingAlerts();
           break;
 
@@ -261,6 +262,7 @@ export class Dashboard {
       });
     });
     if (this.data.length > 0) {
+      this.sortByROI();
       SharedService.notifications.unshift(
         new Notification('Watchlist', `${this.data.length} of your items were matched by crafting ROI`));
     }
@@ -321,16 +323,14 @@ export class Dashboard {
       }
 
       if (match) {
-        a.roi = SharedService.auctionItemsMap[a.item].buyout - (a.bid / a.quantity);
-        sumROI += a.roi * a.quantity;
+        a.roi = SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid;
+        sumROI += a.roi;
         this.data.push(a);
       }
     });
-    this.data.sort((a, b) =>
-      (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
-      (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
 
     if (this.data.length > 0) {
+      this.sortByROI();
       this.message = `Sum potential ROI: ${ pipe.transform(sumROI) }`;
     }
   }
@@ -352,17 +352,14 @@ export class Dashboard {
       }
 
       if (match) {
-        a.roi = SharedService.auctionItemsMap[a.item].buyout - (a.bid / a.quantity);
-        sumROI += a.roi * a.quantity;
+        a.roi = SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid;
+        sumROI += a.roi;
         this.data.push(a);
       }
     });
 
-    this.data.sort((a, b) =>
-      (b.bid / b.quantity) / SharedService.auctionItemsMap[a.item].buyout -
-      (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout);
-
     if (this.data.length > 0) {
+      this.sortByROI();
       this.message = `Sum potential ROI: ${ pipe.transform(sumROI) }`;
     }
   }
@@ -439,5 +436,10 @@ export class Dashboard {
     this.data = SharedService.sellers
       .sort((a, b) => b.liquidity - a.liquidity)
       .slice(0, 100);
+  }
+
+  private sortByROI(): void {
+    this.data.sort( (a, b) =>
+      b.roi - a.roi);
   }
 }
