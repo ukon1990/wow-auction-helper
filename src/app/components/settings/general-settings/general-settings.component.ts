@@ -39,15 +39,11 @@ export class GeneralSettingsComponent implements OnInit {
       SharedService.user.region !== this._characterForm.value.region;
   }
 
-  async saveRealmAndRegion() {
-    SharedService.user.region = this._characterForm.value.region;
-    SharedService.user.realm = this._characterForm.value.realm;
-    User.save();
-
-    if (SharedService.user.apiToUse !== 'none') {
-      await this._auctionService.getTsmAuctions();
-    }
-    await this._auctionService.getLastModifiedTime(true);
+  saveRealmAndRegion() {
+    RealmService.changeRealm(
+      this._auctionService,
+      this._characterForm.value.realm,
+      this._characterForm.value.region);
   }
 
   hasTSMKeyChanged(): boolean {
