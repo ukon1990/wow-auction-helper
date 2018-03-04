@@ -18,6 +18,12 @@ export class Seller {
   }
 
   public static organize(): void {
+    Object.keys(SharedService.sellersMap)
+    .forEach(key => {
+      delete SharedService.sellersMap[key];
+    });
+    SharedService.sellers.length = 0;
+
     SharedService.auctions.forEach(a => {
       if (!SharedService.sellersMap[a.owner]) {
         SharedService.sellersMap[a.owner] = new Seller(a.owner, a.ownerRealm, a.buyout, a.quantity, a);
