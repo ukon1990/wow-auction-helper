@@ -212,8 +212,7 @@ export class User {
 
   public static setRecipesForCharacter(character): void {
     if (character && character.professions &&
-      SharedService.user.realm.toLowerCase() === character.realm
-        .replace(/[.*+?^${}()|[\]\\ ']/g, '-').toLowerCase()) {
+      SharedService.user.realm.toLowerCase() === User.slugifyString(character.realm)) {
       character.professions.primary.forEach(primary => {
         primary.recipes.forEach(recipe => {
           User.addRecipe(recipe, character.name);
@@ -232,5 +231,9 @@ export class User {
       SharedService.recipesForUser[spellId] = new Array<string>();
     }
     SharedService.recipesForUser[spellId].push(characterName);
+  }
+
+  public static slugifyString(realm: string): string {
+    return realm.replace(/[']/g, '').replace(/[.*+?^${}()|[\]\\ ]/g, '-').toLowerCase();
   }
 }

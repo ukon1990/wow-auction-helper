@@ -46,4 +46,25 @@ describe('User', () => {
       expect(SharedService.user.buyoutLimit).toEqual(300);
     });
   });
+
+  fdescribe('slugification of realm', () => {
+    it('realm with spaces', () => {
+      expect(User.slugifyString(`Emerald dream`)).toEqual('emerald-dream');
+    });
+
+
+    it('realm with only one word', () => {
+      expect(User.slugifyString(`Draenor`)).toEqual('draenor');
+    });
+
+
+    it('realm with single quotes', () => {
+      expect(User.slugifyString(`Ember'ahlo`)).toEqual('emberahlo');
+    });
+
+
+    it('realm with spaces and single quote', () => {
+      expect(User.slugifyString(`Emera'ld dream`)).toEqual('emerald-dream');
+    });
+  });
 });
