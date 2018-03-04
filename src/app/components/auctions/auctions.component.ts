@@ -48,7 +48,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
   addColumns(): void {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
-    this.columns.push({ key: 'owner', title: 'Owner', dataType: '' });
+    this.columns.push({ key: 'owner', title: 'Owner', dataType: 'seller' });
     this.columns.push({ key: 'quantityTotal', title: 'Stock', dataType: 'number' });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
     this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold' });
