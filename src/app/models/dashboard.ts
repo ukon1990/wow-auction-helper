@@ -395,7 +395,7 @@ export class Dashboard {
         return b.roi - a.roi;
       })
       .filter(recipe => {
-        if (recipe.roi <= 0) {
+        if (recipe.roi <= 0 || recipe.cost <= 0) {
           return false;
         }
         if (onlyKnown  && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {

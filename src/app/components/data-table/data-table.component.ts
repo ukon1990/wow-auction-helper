@@ -220,4 +220,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     this.sorter.addKey(key);
     this.sorter.sort(this.data);
   }
+
+  getSource(recipe: Recipe): string {
+    return recipe.profession ? recipe.profession : 'On use';
+  }
 }

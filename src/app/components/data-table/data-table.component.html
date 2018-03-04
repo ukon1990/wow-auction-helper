@@ -19,7 +19,7 @@
       [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
       <td *ngFor="let c of columns;">
         <span [ngSwitch]="c.dataType">
-          <span *ngSwitchCase="'name'">
+          <span *ngSwitchCase="'name'" [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''">
             <a rel="{{
                 d.petSpeciesId ?
                 ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
