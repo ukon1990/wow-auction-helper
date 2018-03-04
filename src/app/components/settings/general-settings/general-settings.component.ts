@@ -44,10 +44,10 @@ export class GeneralSettingsComponent implements OnInit {
     SharedService.user.realm = this._characterForm.value.realm;
     User.save();
 
-    await this._auctionService.getLastModifiedTime(true);
     if (SharedService.user.apiToUse !== 'none') {
       await this._auctionService.getTsmAuctions();
     }
+    await this._auctionService.getLastModifiedTime(true);
   }
 
   hasTSMKeyChanged(): boolean {
