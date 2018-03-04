@@ -90,10 +90,10 @@
           </mat-card-content>
 
           <mat-card-content *ngIf="getRealmWithkey().name">
-            This is a {{ getRealmWithkey(slug).population }} population realm, with
-            <span *ngIf="getRealmWithkey().queue; else noQueue">queue</span>
+            This is a {{ getRealmWithkey(slug).population }} population realm, 
+            <span *ngIf="getRealmWithkey().queue; else noQueue">with queue.</span>
             <ng-template #noQueue>
-              <span>without queue</span>
+              <span>without queue.</span>
             </ng-template>.
             <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
             It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
