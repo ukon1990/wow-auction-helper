@@ -45,6 +45,7 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
+        // If this is a intermediate craft
         if (SharedService.user.useIntermediateCrafting &&
           SharedService.recipesMapPerItemKnown[r.itemID]) {
           const re = SharedService.recipesMapPerItemKnown[r.itemID];
