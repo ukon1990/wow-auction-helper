@@ -395,7 +395,7 @@ export class Dashboard {
         if (recipe.roi <= 0) {
           return false;
         }
-        if (onlyKnown && !SharedService.recipesForUser[recipe.spellID]) {
+        if (onlyKnown  && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
           return false;
         }
         if (SharedService.user.apiToUse !== 'none') {
