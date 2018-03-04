@@ -29,6 +29,7 @@ export class Dashboard {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   data: Array<any> = new Array<any>();
   message: string;
+  isCrafting = false;
 
   constructor(title: string, type: string) {
     this.title = title;
@@ -80,6 +81,7 @@ export class Dashboard {
       case Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS:
         this.idParam = 'itemID';
         this.columns = crafterColumns;
+        this.isCrafting = true;
         this.addAPIColumnsAtPosition(4);
         this.sortCraftsByRoi(true);
         break;
@@ -142,6 +144,7 @@ export class Dashboard {
         case Dashboard.TYPES.WATCH_LIST_CRAFTS:
           this.idParam = 'itemID';
           this.columns = crafterColumns;
+          this.isCrafting = true;
           this.addAPIColumnsAtPosition(4);
           this.setWatchListCraftingAlerts();
           break;

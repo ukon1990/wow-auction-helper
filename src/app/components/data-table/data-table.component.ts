@@ -30,6 +30,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() columns: Array<ColumnDescription>;
   @Input() data: Array<any>;
   @Input() numOfRows: number;
+  @Input() hideCraftingDetails: boolean;
+
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
   sorter: Sorter;

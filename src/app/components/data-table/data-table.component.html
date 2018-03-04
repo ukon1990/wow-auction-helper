@@ -31,11 +31,13 @@
             </a>
             <span *ngIf="isCrafting">
               <br>
-              <span *ngIf="getItem(d.itemID).name !== d.name">
+              <span *ngIf="getItem(d.itemID).name !== d.name && !hideCraftingDetails">
                 {{ getItem(d.itemID).name }} <br>
               </span>
-              {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
-              Known by: {{ getCraftersForRecipe(d) }}
+              <span *ngIf="!hideCraftingDetails">
+                {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
+                Known by: {{ getCraftersForRecipe(d) }}
+              </span>
             </span>
           </span>
           <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
