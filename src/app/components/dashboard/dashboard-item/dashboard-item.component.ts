@@ -17,7 +17,7 @@ export class DashboardItemComponent implements OnInit {
   ngOnInit() {
   }
 
-  logic(): void {
+  openClose(): void {
     this.detailView = !this.detailView;
     this.angulartics2.eventTrack.next({
       action: `${this.dashboard.title} opened/closed`,
@@ -25,7 +25,7 @@ export class DashboardItemComponent implements OnInit {
     });
   }
 
-  isItemDetailsVisible(): boolean {
-    return SharedService.items[SharedService.selectedItemId] ? true : false;
+  isOtherDetailPanelOpen(): boolean {
+    return SharedService.items[SharedService.selectedItemId] || SharedService.selectedSeller ? true : false;
   }
 }

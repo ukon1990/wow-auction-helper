@@ -35,7 +35,7 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
   color: white;
 
   wah-character {
-    .mat-raised-button {
+    .mat-raised-button{
       color: white !important;
     }
   }
@@ -43,6 +43,10 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 wah-character {
   .mat-raised-button {
     color: black !important;
+  }
+
+  .mat-card-subtitle {
+    color: white !important;
   }
 }
 
