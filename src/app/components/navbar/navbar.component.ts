@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { SharedService } from '../../services/shared.service';
 import { User } from '../../models/user/user';
 
@@ -9,7 +10,13 @@ import { User } from '../../models/user/user';
 })
 export class NavbarComponent implements OnInit {
 
-  constructor() { }
+  showMenu = false;
+
+  constructor(private router: Router) {
+    this.router.events.subscribe(change => {
+      this.showMenu = false;
+    });
+  }
 
   ngOnInit() {
   }
@@ -28,5 +35,4 @@ export class NavbarComponent implements OnInit {
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
   }
-
 }
