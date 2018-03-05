@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Dashboard } from '../../../models/dashboard';
 import { Angulartics2 } from 'angulartics2';
+import { SharedService } from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -22,5 +23,9 @@ export class DashboardItemComponent implements OnInit {
       action: `${this.dashboard.title} opened/closed`,
       properties: { category: 'Dashboard' },
     });
+  }
+
+  isItemDetailsVisible(): boolean {
+    return SharedService.items[SharedService.selectedItemId] ? true : false;
   }
 }

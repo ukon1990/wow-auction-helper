@@ -25,11 +25,11 @@ export class ItemComponent implements OnInit {
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    {key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true},
     {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
-    {key: 'bid', title: 'Bid', dataType: 'gold'},
+    {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
     {key: 'quantity', title: 'Size', dataType: ''},
-    {key: 'owner', title: 'Owner', dataType: 'seller'}
+    {key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true}
   ];
 
   recipeColumns: Array<ColumnDescription> = [
@@ -37,7 +37,7 @@ export class ItemComponent implements OnInit {
     { key: 'reagents', title: 'Materials', dataType: 'materials' },
     { key: 'cost', title: 'Cost', dataType: 'gold' },
     { key: 'roi', title: 'ROI', dataType: 'gold' },
-    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
   ];
 
   recipeColumnsSimple: Array<ColumnDescription> = [
