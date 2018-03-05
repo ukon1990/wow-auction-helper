@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { User } from './models/user/user';
 import { SharedService } from './services/shared.service';
 import { CraftingService } from './services/crafting.service';
@@ -26,15 +26,30 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    if (this.isStandalone() && localStorage['current_path']) {
+      this._router.navigateByUrl(localStorage['current_path']);
+    }
   }
 
   ngAfterViewInit(): void {
-    if (window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches) {
+    if (this.isStandalone()) {
       this.angulartics2.eventTrack.next({
         action: 'Standalone startup',
         properties: { category: `Standalone device: ${window.navigator.platform}, ${window.navigator.vendor}` },
       });
+
+      this._router.events.subscribe(s => {
+        try {
+          localStorage['current_path'] = s['url'];
+        } catch (e) {
+          console.error('Could not save router change', e);
+        }
+      });
     }
+  }
+
+  isStandalone(): boolean {
+    return window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches;
   }
 
   /* istanbul ignore next */
