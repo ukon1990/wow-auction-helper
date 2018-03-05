@@ -68,6 +68,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
         this.downloading = false;
 
+        Realm.gatherRealms();
+
         if (SharedService.user.region && SharedService.user.realm) {
           AuctionHandler.organize(SharedService.auctions);
         }
