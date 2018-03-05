@@ -34,6 +34,7 @@ export class RealmService {
         r['realms'].forEach( (realm: Realm) => {
           SharedService.realms[realm.slug] = realm;
         });
+        Realm.gatherRealms();
 
       })
       .catch(e => console.error('Could not download realms', e));
