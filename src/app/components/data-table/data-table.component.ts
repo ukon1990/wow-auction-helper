@@ -224,4 +224,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   getSource(recipe: Recipe): string {
     return recipe.profession ? recipe.profession : 'On use';
   }
+
+  displayColumn(column: ColumnDescription): boolean {
+    if (this.isMobile() && column.hideOnMobile) {
+      return false;
+    }
+    return true;
+  }
+
+  isMobile(): boolean {
+    return window.matchMedia('(max-width: 767px)').matches;
+  }
 }

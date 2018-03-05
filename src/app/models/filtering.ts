@@ -16,10 +16,12 @@ export class Filters {
       return true;
     } else if (Filters.isUsingAPI() && SharedService.auctionItemsMap[itemID].mktPrice === 0) {
       return false;
+    } else if (Filters.isUsingAPI()) {
+      return Math.round((
+        SharedService.auctionItemsMap[itemID].buyout / SharedService.auctionItemsMap[itemID].mktPrice
+        ) * 100) <= form.value.mktPrice;
     }
-    return Math.round((
-      SharedService.auctionItemsMap[itemID].buyout / SharedService.auctionItemsMap[itemID].mktPrice
-      ) * 100) <= form.value.mktPrice;
+    return true;
   }
 
   public static isBelowVendorPrice(itemID: number, form: FormGroup): boolean {

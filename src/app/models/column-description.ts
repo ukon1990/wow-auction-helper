@@ -3,4 +3,5 @@ export class ColumnDescription {
   dataType: string;
   key?: string;
   actions?: Array<string>;
+  hideOnMobile?: boolean = false;
 }

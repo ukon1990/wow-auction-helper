@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Item } from '../../models/item/item';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
@@ -17,6 +17,7 @@ import { Angulartics2 } from 'angulartics2';
 })
 export class ItemComponent implements OnInit {
   // TODO: https://github.com/d3/d3 with item price range
+  @ViewChild('tabs') tabs;
   wowDBItem: any;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
@@ -86,7 +87,14 @@ export class ItemComponent implements OnInit {
   }
 
   openInNewTab(url) {
-    window.open(url, '_blank');
+    // window.open(url, '_blank');
+    let a = document.createElement('a');
+    a.setAttribute("href", url);
+    a.setAttribute("target", "_blank");
+
+    var dispatch = document.createEvent("HTMLEvents");
+    dispatch.initEvent("click", true, true);
+    a.dispatchEvent(dispatch);
   }
 
   /* istanbul ignore next */
@@ -163,5 +171,9 @@ export class ItemComponent implements OnInit {
   /* istanbul ignore next */
   auctionItemExists(): boolean {
     return SharedService.auctionItemsMap[SharedService.selectedItemId] ? true : false;
+  }
+
+  isMobile(): boolean {
+    return window.matchMedia('(max-width: 767px)').matches;
   }
 }

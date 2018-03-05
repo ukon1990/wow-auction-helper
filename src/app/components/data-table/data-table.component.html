@@ -8,121 +8,127 @@
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
     <tr>
-      <td *ngFor="let c of columns" (click)="sort(c.key)">
-        <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
-        {{ c.title }}
-      </td>
+      <ng-container *ngFor="let c of columns">
+        <td (click)="sort(c.key)" *ngIf="displayColumn(c)">
+          <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
+          {{ c.title }}
+        </td>
+      </ng-container>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index"
       [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
-      <td *ngFor="let c of columns;">
-        <span [ngSwitch]="c.dataType">
-          <span *ngSwitchCase="'name'" [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''">
-            <a rel="{{
-                d.petSpeciesId ?
-                ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
-              }}" (click)="select(d)">
-              <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
-                [id]="d[id]"
-                [petSpeciesId]="d?.petSpeciesId"></wah-icon>
-              {{ getItemName(d[c.key], d) }}
-            </a>
-            <span *ngIf="isCrafting">
-              <br>
-              <span *ngIf="getItem(d.itemID).name !== d.name && !hideCraftingDetails">
-                {{ getItem(d.itemID).name }} <br>
-              </span>
-              <span *ngIf="!hideCraftingDetails">
-                {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
-                Known by: {{ getCraftersForRecipe(d) }}
+      <ng-container *ngFor="let c of columns;">
+        <td [class]="c.cssClass" *ngIf="displayColumn(c)">
+          <span [ngSwitch]="c.dataType">
+            <span *ngSwitchCase="'name'" [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''">
+              <a rel="{{
+                  d.petSpeciesId ?
+                  ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
+                }}" (click)="select(d)">
+                <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
+                  [id]="d[id]"
+                  [petSpeciesId]="d?.petSpeciesId"></wah-icon>
+                {{ getItemName(d[c.key], d) }}
+              </a>
+              <span *ngIf="isCrafting">
+                <br>
+                <span *ngIf="getItem(d.itemID).name !== d.name && !hideCraftingDetails">
+                  {{ getItem(d.itemID).name }} <br>
+                </span>
+                <span *ngIf="!hideCraftingDetails">
+                  {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
+                  <span *ngIf="getCraftersForRecipe(d)">
+                    Known by: {{ getCraftersForRecipe(d) }}
+                  </span>
+                </span>
               </span>
             </span>
-          </span>
-          <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
-            {{ d[c.key] }}
-          </span>
-          <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
-          <span *ngSwitchCase="'gold'">
-            {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
-            <span *ngIf="c.key === 'buyout' && d.mktPrice">
-              ({{ d.buyout / d.mktPrice | percent }} of MV)
+            <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
+              {{ d[c.key] }}
             </span>
+            <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
+            <span *ngSwitchCase="'gold'">
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
+              <span *ngIf="c.key === 'buyout' && d.mktPrice">
+                ({{ d.buyout / d.mktPrice | percent }} of MV)
+              </span>
 
-            <span *ngIf="c.key === 'roi' && d.cost">
-                ({{ d.roi / d.cost | percent }})
-              </span>
-          </span>
-          <span *ngSwitchCase="'gold-per-item'">
-              {{ d[c.key] / d.quantity | gold}}
-          </span>
-          <span *ngSwitchCase="'wdb-link'">
-            <a href="http://www.wowdb.com/npcs/{{ d[c.key] }}" target="_blank">
-              Open
-              <i class="fas fa-external-link-square-alt"></i>
-            </a>
-          </span>
-          <span *ngSwitchCase="'whead-link'">
-            <a href="http://www.wowhead.com/npc={{ d[c.key] }}" target="_blank">
-              Open
-              <i class="fas fa-external-link-square-alt"></i>
-            </a>
-          </span>
-          <span *ngSwitchCase="'percent'">
-            {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
-          </span>
-          <span *ngSwitchCase="'number'">
-            {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
-          </span>
-          <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
-          <span *ngSwitchCase="'input-number'">
-            <mat-form-field class="row col-md-12">
-              <input matInput type="number" [(ngModel)]="d[c.key]">
-            </mat-form-field>
-          </span>
-          <span *ngSwitchCase="'input-text'">
-            <mat-form-field class="row col-md-12">
-              <input matInput type="text" [(ngModel)]="d[c.key]">
-            </mat-form-field>
-          </span>
-          <span *ngSwitchCase="'action'">
-            <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart"
-              *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
-              <i class="fas fa-cart-plus"></i>
-            </button>
-            <a *ngIf="getItemID(d) && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'"
-              target="_blank"
-              href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ getItemID(d) }}"
-              mat-icon-button matTooltip="Go to Web AH and buy">
-              <i class="fas fa-shopping-cart"></i>
-            </a>
-            <button *ngIf="c.actions[0] === 'watchlist-group-delete'" mat-icon-button
-              matTooltip="Removes the watchlistgroup and it's items"
-              (click)="removeGroup(i)">
+              <span *ngIf="c.key === 'roi' && d.cost">
+                  ({{ d.roi / d.cost | percent }})
+                </span>
+            </span>
+            <span *ngSwitchCase="'gold-per-item'">
+                {{ d[c.key] / d.quantity | gold}}
+            </span>
+            <span *ngSwitchCase="'wdb-link'">
+              <a href="http://www.wowdb.com/npcs/{{ d[c.key] }}" target="_blank">
+                Open
+                <i class="fas fa-external-link-square-alt"></i>
+              </a>
+            </span>
+            <span *ngSwitchCase="'whead-link'">
+              <a href="http://www.wowhead.com/npc={{ d[c.key] }}" target="_blank">
+                Open
+                <i class="fas fa-external-link-square-alt"></i>
+              </a>
+            </span>
+            <span *ngSwitchCase="'percent'">
+              {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
+            </span>
+            <span *ngSwitchCase="'number'">
+              {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
+            </span>
+            <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
+            <span *ngSwitchCase="'input-number'">
+              <mat-form-field class="row col-md-12">
+                <input matInput type="number" [(ngModel)]="d[c.key]">
+              </mat-form-field>
+            </span>
+            <span *ngSwitchCase="'input-text'">
+              <mat-form-field class="row col-md-12">
+                <input matInput type="text" [(ngModel)]="d[c.key]">
+              </mat-form-field>
+            </span>
+            <span *ngSwitchCase="'action'">
+              <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart"
+                *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
+                <i class="fas fa-cart-plus"></i>
+              </button>
+              <a *ngIf="getItemID(d) && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'"
+                target="_blank"
+                href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ getItemID(d) }}"
+                mat-icon-button matTooltip="Go to Web AH and buy">
+                <i class="fas fa-shopping-cart"></i>
+              </a>
+              <button *ngIf="c.actions[0] === 'watchlist-group-delete'" mat-icon-button
+                matTooltip="Removes the watchlistgroup and it's items"
+                (click)="removeGroup(i)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              <button *ngIf="c.actions[0] === 'custom-price-delete'" mat-icon-button
+                (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
                 <i class="fas fa-trash-alt"></i>
               </button>
-            <button *ngIf="c.actions[0] === 'custom-price-delete'" mat-icon-button
-              (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
+              <button *ngIf="c.actions[0] === 'custom-procs-delete'" mat-icon-button
+              (click)="customProcs().remove(d, i)" matTooltip="Remove from custom procs list">
               <i class="fas fa-trash-alt"></i>
             </button>
-            <button *ngIf="c.actions[0] === 'custom-procs-delete'" mat-icon-button
-            (click)="customProcs().remove(d, i)" matTooltip="Remove from custom procs list">
-            <i class="fas fa-trash-alt"></i>
-          </button>
+            </span>
+            <span *ngSwitchCase="'cart-delete'">
+              <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)"
+                matTooltip="Remove item from the shopping cart">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </span>
+            <span *ngSwitchDefault>{{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
           </span>
-          <span *ngSwitchCase="'cart-delete'">
-            <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)"
-              matTooltip="Remove item from the shopping cart">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </span>
-          <span *ngSwitchDefault>{{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
-        </span>
-      </td>
+        </td>
+      </ng-container>
     </tr>
   </tbody>
 </table>

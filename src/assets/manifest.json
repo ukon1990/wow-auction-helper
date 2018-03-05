@@ -3,6 +3,7 @@
   "short_name": "WAH",
   "lang": "nb",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "icons": [

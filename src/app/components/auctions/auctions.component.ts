@@ -48,18 +48,18 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
   addColumns(): void {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
-    this.columns.push({ key: 'owner', title: 'Owner', dataType: 'seller' });
+    this.columns.push({ key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true});
     this.columns.push({ key: 'quantityTotal', title: 'Stock', dataType: 'number' });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
-    this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold' });
+    this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true });
 
     if (SharedService.user.apiToUse === 'tsm') {
-      this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
-      this.columns.push({ key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold'});
-      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
-      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
+      this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true });
+      this.columns.push({ key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
+      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
+      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
     }
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
   getAuctions(): Array<AuctionItem> {

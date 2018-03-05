@@ -2,5 +2,20 @@
   .slim-sm {
     width: auto !important;
     padding: 0 !important;
-  }  
+  }
+
+  .full-screen,
+  .full-screen.mat-card,
+  div.full-screen {
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    top: 3em !important;
+    max-height: none !important;
+
+    & > mat-card {
+      max-height: none !important;
+      bottom: 0 !important;
+    }
+  }
 }

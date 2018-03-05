@@ -1,9 +1,9 @@
-<form [formGroup]="searchForm">
-  <mat-form-field>
+<form [formGroup]="searchForm" class="row">
+  <mat-form-field class="col">
     <input matInput placeholder="Name" formControlName="searchQuery" type="text">
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="col">
     <mat-select placeholder="Profession" formControlName="profession">
       <mat-option value="All" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
       <mat-option *ngFor="let i of professions" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
@@ -12,11 +12,14 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-checkbox formControlName="onlyKnownRecipes" matTooltip="Displays only those recipes your character for this realm knows">
-    Only known recipes
-  </mat-checkbox>
+  <div class="col">
+    <mat-checkbox
+      formControlName="onlyKnownRecipes" matTooltip="Displays only those recipes your character for this realm knows">
+      Only known recipes
+    </mat-checkbox>
+  </div>
 
-  <mat-form-field class="ml-2 mr-2">
+  <mat-form-field class="ml-2 mr-2 col">
     <mat-select placeholder="Item class" formControlName="itemClass">
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
@@ -27,7 +30,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]" class="ml-2 mr-2">
+  <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]" class="ml-2 mr-2 col">
     <mat-select placeholder="Item sub class" formControlName="itemSubClass">
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
@@ -38,20 +41,24 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="col">
     <input matInput placeholder="Minimum ROI %" formControlName="profit" type="number" matTooltip="Minimum return on investment">
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="col">
     <input matInput placeholder="Sale rate % (default 0)" formControlName="demand" type="number" matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="col">
     <input matInput placeholder="Minimum avg daily sold" formControlName="minSold" type="number">
   </mat-form-field>
 
-  <mat-checkbox formControlName="intermediate">Intermediate crafting</mat-checkbox>
+  <div class="col">
+    <mat-checkbox formControlName="intermediate">Intermediate crafting</mat-checkbox>
+  </div>
 
-  <button type="button" (click)="searchForm.reset()" mat-raised-button>Reset</button>
+  <div class="col">
+    <button type="button" (click)="searchForm.reset()" mat-raised-button>Reset</button>
+  </div>
 </form>
 <wah-data-table id="itemID" [data]="getRecipes()" [columns]="columns" [isCrafting]="true"></wah-data-table>

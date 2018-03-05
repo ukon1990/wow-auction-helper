@@ -74,21 +74,21 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   addColumns(): void {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
-    this.columns.push({ key: 'reagents', title: 'Materials', dataType: 'materials' });
-    this.columns.push({ key: 'cost', title: 'Cost', dataType: 'gold' });
+    this.columns.push({ key: 'reagents', title: 'Materials', dataType: 'materials', hideOnMobile: true });
+    this.columns.push({ key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
 
     if (SharedService.user.apiToUse === 'tsm') {
-      this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
+      this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true });
     }
 
     this.columns.push({ key: 'roi', title: 'ROI', dataType: 'gold' });
     if (SharedService.user.apiToUse === 'tsm') {
-      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
-      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
+      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
+      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
     }
 
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] });
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
   getRecipes(): Array<Recipe> {
