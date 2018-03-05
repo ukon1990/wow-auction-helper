@@ -21,6 +21,7 @@ export class DownloadComponent implements OnInit {
   checkingForUpdates: boolean;
   lastCheckedMin;
   timeSinceUpdate = 0;
+
   constructor(
     private _realmService: RealmService,
     private _itemService: ItemService,

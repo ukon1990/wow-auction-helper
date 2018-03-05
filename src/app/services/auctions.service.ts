@@ -8,11 +8,16 @@ import { Endpoints } from './endpoints';
 import { DatabaseService } from './database.service';
 import { ItemService } from './item.service';
 import { Notifications } from '../models/user/notification';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class AuctionsService {
 
-  constructor(private _http: HttpClient, private _dbService: DatabaseService, private _itemService: ItemService) { }
+  constructor(
+    private _http: HttpClient,
+    public snackBar: MatSnackBar,
+    private _dbService: DatabaseService,
+    private _itemService: ItemService) { }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
@@ -40,6 +45,7 @@ export class AuctionsService {
   getAuctions(): Promise<any> {
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
+    this.openSnackbar(`Downloading auctions for ${ SharedService.user.realm }`);
     return this._http.get(Endpoints.getAuctionDownloadUrl())
       .toPromise()
       .then(a => {
@@ -56,16 +62,19 @@ export class AuctionsService {
           }
         });
         console.log('Auction download is completed');
+        this.openSnackbar(`Auction download is completed`);
       })
       .catch(e => {
         SharedService.downloading.auctions = false;
         console.error('Auction download failed', e);
+        this.openSnackbar(`Auction download failed`);
       });
   }
 
   getTsmAuctions(): Promise<any> {
     console.log('Downloading TSM data');
     SharedService.downloading.tsmAuctions = true;
+    this.openSnackbar('Downloading TSM data');
     return this._http.get(`${Endpoints.TSM_API}/${
       SharedService.user.region
       }/${
@@ -82,10 +91,16 @@ export class AuctionsService {
         SharedService.downloading.tsmAuctions = false;
         console.log('TSM data download is complete');
         this._dbService.addTSMItems(tsm as Array<TSM>);
+        this.openSnackbar('Completed TSM download');
       })
       .catch(e => {
+        this.openSnackbar(`Completed TSM download. One reason that this could happen, is if you have used all your requests.`);
         console.error('Unable to download TSM data', e);
         SharedService.downloading.tsmAuctions = false;
       });
+  }
+
+  private openSnackbar(message: string): void {
+    this.snackBar.open(message, 'Ok', { duration: 3000 });
   }
 }
