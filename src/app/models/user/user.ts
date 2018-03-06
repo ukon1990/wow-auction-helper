@@ -107,11 +107,11 @@ export class User {
         case 'isDarkMode':
           localStorage['isDarkMode'] = JSON.stringify(user[key]);
           SharedService.user.isDarkMode = user[key];
-          break;
+          break;/*
         case 'watchlist':
-          localStorage['watchlist'] = JSON.stringify(user[key]);
+          localStorage[key] = JSON.stringify({ groups: SharedService.user.watchlist.groups });
           SharedService.user.watchlist = user[key];
-          break;
+          break;*/
       }
     });
 
@@ -195,10 +195,10 @@ export class User {
           break;
         case 'isDarkMode':
           user.isDarkMode = JSON.parse(localStorage[key]);
-          break;
+          break; /*
         case 'watchlist':
-          user.watchlist = JSON.parse(localStorage[key]);
-          break;
+          (new Watchlist()).restoreFrom(JSON.parse(localStorage[key]));
+          break;*/
       }
     });
 
