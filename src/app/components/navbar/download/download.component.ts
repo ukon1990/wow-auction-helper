@@ -11,6 +11,7 @@ import { Crafting } from '../../../models/crafting/crafting';
 import { Angulartics2 } from 'angulartics2';
 import { Realm } from '../../../models/realm';
 import { RealmService } from '../../../services/realm.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'wah-download',
@@ -21,6 +22,8 @@ export class DownloadComponent implements OnInit {
   checkingForUpdates: boolean;
   lastCheckedMin;
   timeSinceUpdate = 0;
+  realmControl: FormControl = new FormControl();
+
   constructor(
     private _realmService: RealmService,
     private _itemService: ItemService,
@@ -28,7 +31,11 @@ export class DownloadComponent implements OnInit {
     private _auctionsService: AuctionsService,
     private _petService: PetsService,
     private _dbService: DatabaseService,
-    private angulartics2: Angulartics2) { }
+    private angulartics2: Angulartics2) {
+      this.realmControl.valueChanges.subscribe(realm => {
+        console.log('realm change', realm);
+      });
+    }
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
@@ -125,6 +132,10 @@ export class DownloadComponent implements OnInit {
   /* istanbul ignore next */
   getDownloading() {
     return SharedService.downloading;
+  }
+
+  getUserRealms(): Array<Realm> {
+    return SharedService.userRealms ? SharedService.userRealms : [];
   }
 
   /* istanbul ignore next */

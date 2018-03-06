@@ -21,6 +21,7 @@ import { CustomProc } from '../models/crafting/custom-proc';
 @Injectable()
 export class SharedService {
   public static user: User;
+
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static customProcsMap: Map<number, CustomProc> = new Map<number, CustomProc>();
   public static auctionResponse: AuctionResponse = {
@@ -49,6 +50,7 @@ export class SharedService {
   public static pets: Map<number, Pet> = new Map<number, Pet>();
 
   public static realms: Map<string, Realm> = new Map<string, Realm>();
+  public static userRealms: Array<Realm> = new Array<Realm>();
 
   public static selectedItemId: number;
   public static selectedPetSpeciesId: AuctionPet;

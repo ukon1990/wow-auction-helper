@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {
     MatButtonModule, MatCheckboxModule,
     MatProgressBarModule, MatInputModule,
@@ -36,7 +37,8 @@ import {
         MatStepperModule,
         MatExpansionModule,
         MatTooltipModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatSnackBarModule
     ],
     imports: [
     ],

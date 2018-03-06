@@ -113,6 +113,19 @@
       <table *ngIf="getUserRealm()" class="table table-hover table-bordered table-striped table-sm"
         [ngClass]="{'table-dark': isDarkmode()}">
         <tbody>
+          <!--
+          <tr>
+            <td>Current realm</td>
+            <td>
+              <mat-form-field>
+                <mat-select placeholder="Realm" [formControl]="realmControl">
+                  <mat-option *ngFor="let realm of getUserRealms()" [value]="slug">
+                    {{ realm.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </tr>-->
           <tr>
             <td>Connected to</td>
             <td>
