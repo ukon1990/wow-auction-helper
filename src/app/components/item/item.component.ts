@@ -87,14 +87,17 @@ export class ItemComponent implements OnInit {
   }
 
   openInNewTab(url) {
-    // window.open(url, '_blank');
-    let a = document.createElement('a');
-    a.setAttribute("href", url);
-    a.setAttribute("target", "_blank");
+    if (window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches) {
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('target', '_blank');
 
-    var dispatch = document.createEvent("HTMLEvents");
-    dispatch.initEvent("click", true, true);
-    a.dispatchEvent(dispatch);
+      const dispatch = document.createEvent('HTMLEvents');
+      dispatch.initEvent('click', true, true);
+      a.dispatchEvent(dispatch);
+    } else {
+      window.open(url, '_blank');
+    }
   }
 
   /* istanbul ignore next */
