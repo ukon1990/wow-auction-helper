@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { Chart } from 'chart.js';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
@@ -10,16 +10,11 @@ declare let $: Function;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements AfterViewInit, OnChanges {
+export class LineChartComponent implements OnChanges {
   @Input() data: Array<Auction>;
   viewIsInit = false;
 
   constructor() { }
-
-  /* istanbul ignore next */
-  ngAfterViewInit() {
-    this.viewIsInit = true;
-  }
 
   ngOnChanges(): void {
     setTimeout(() => {
