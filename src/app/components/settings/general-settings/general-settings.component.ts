@@ -95,7 +95,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   exportAsFile(): void {
-    FileService.saveJSONToFile(User.getSettings(true), 'wah-settings.json');
+    FileService.saveJSONToFile(User.getSettings(true), `wah-settings-${ SharedService.user.realm }.json`);
 
     this.angulartics2.eventTrack.next({
       action: 'Exported settings to file',
