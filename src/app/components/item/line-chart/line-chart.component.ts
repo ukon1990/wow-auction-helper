@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { Chart } from 'chart.js';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
@@ -10,44 +10,50 @@ declare let $: Function;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements AfterViewInit {
+export class LineChartComponent implements AfterViewInit, OnChanges {
   @Input() data: Array<Auction>;
+  viewIsInit = false;
 
   constructor() { }
 
   /* istanbul ignore next */
   ngAfterViewInit() {
+    this.viewIsInit = true;
+  }
 
-    const myChart = new Chart('line-chart', {
-      type: 'line',
-      data: {
-        labels: this.data.filter(d => d.buyout > 0).map((d, i) => i + 1),
-        datasets: [{
-          label: 'Auctions by buyout/item',
-          data: this.data.filter(d => d.buyout > 0).map(d => d.buyout / d.quantity / 10000),
-          backgroundColor: this.getColor(),
-          borderColor: this.getColor(),
-          steppedLine: false,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
+  ngOnChanges(): void {
+    setTimeout(() => {
+      const myChart = new Chart('line-chart', {
+        type: 'line',
+        data: {
+          labels: this.data.filter(d => d.buyout > 0).map((d, i) => i + 1),
+          datasets: [{
+            label: 'Auctions by buyout/item',
+            data: this.data.filter(d => d.buyout > 0).map(d => d.buyout / d.quantity / 10000),
+            backgroundColor: this.getColor(),
+            borderColor: this.getColor(),
+            steppedLine: false,
+            fill: true
           }]
         },
-        legend: {
-          labels: {
-            // This more specific font property overrides the global property
-            fontColor: this.getColor()
+        options: {
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          },
+          legend: {
+            labels: {
+              // This more specific font property overrides the global property
+              fontColor: this.getColor()
+            }
           }
         }
-      }
-    });
+      });
+    }, 100);
   }
 
   /* istanbul ignore next */
