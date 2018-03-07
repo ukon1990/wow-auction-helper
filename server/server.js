@@ -52,6 +52,9 @@ app.get('*', (req, res) => {
             } else {
                 res.redirect(`/api/pet`);
             }
+        } else if (url.indexOf('.php') !== -1 || url.toLowerCase().indexOf('phpmyadmin') !== -1) {
+            console.log(`What what ${ new Date().toString() }`);
+            res.redirect('https://www.youtube.com/watch?v=fbGkxcY7YFU');
         }
     }
 });
