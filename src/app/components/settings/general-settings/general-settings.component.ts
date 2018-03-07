@@ -5,7 +5,8 @@ import { Realm } from '../../../models/realm';
 import { User } from '../../../models/user/user';
 import { RealmService } from '../../../services/realm.service';
 import { AuctionsService } from '../../../services/auctions.service';
-import { Angulartics2 } from "angulartics2";
+import { Angulartics2 } from 'angulartics2';
+import { FileService } from '../../../services/file.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -86,19 +87,60 @@ export class GeneralSettingsComponent implements OnInit {
   exportData(): void {
     this._characterForm.controls['exportString']
       .setValue(
-        JSON.stringify(User.getSettings()));
+        JSON.stringify(User.getSettings(true)));
+    this.angulartics2.eventTrack.next({
+      action: 'Exported settings to string',
+      properties: { category: 'General settings' },
+    });
   }
+
+  exportAsFile(): void {
+    FileService.saveJSONToFile(User.getSettings(true), 'wah-settings.json');
+
+    this.angulartics2.eventTrack.next({
+      action: 'Exported settings to file',
+      properties: { category: 'General settings' },
+    });
+  }
+
   importUser(): void {
     if (this.isImportStringNotEmpty()) {
+      SharedService.user.watchlist
+        .attemptRestoreFromString(this._characterForm.value.importString);
       User.import(this._characterForm.value.importString);
 
       this.angulartics2.eventTrack.next({
         action: 'Imported existing setup',
-        properties: { category: 'User registration' },
+        properties: { category: 'General settings' },
       });
 
       this.saveRealmAndRegion();
     }
+  }
+
+  importFromFile(fileEvent): void {
+    console.log('File', fileEvent);
+    const files = fileEvent.target.files;
+    const reader = new FileReader();
+    reader.onload = () => {
+      console.log(JSON.parse(reader.result));
+      try {
+        SharedService.user.watchlist
+          .attemptRestoreFromString(reader.result);
+
+        User.import(reader.result);
+
+        this.angulartics2.eventTrack.next({
+          action: 'Imported existing setup from file',
+          properties: { category: 'General settings' },
+        });
+
+        this.saveRealmAndRegion();
+      } catch (e) {
+        console.error('Could not import from file', e);
+      }
+    };
+    reader.readAsText(files[0]);
   }
 
   isImportStringNotEmpty(): boolean {

@@ -65,6 +65,11 @@ export class SetupComponent implements OnInit {
     if (SharedService.user.realm && SharedService.user.region) {
       this._router.navigateByUrl('dashboard');
     }
+
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      console.log('Not https!');
+      location.href = window.location.href.replace('http', 'https');
+    }
   }
 
   getRealmsKeys() {
@@ -99,14 +104,41 @@ export class SetupComponent implements OnInit {
   importUserData(): void {
     if (this._characterForm.value.importString.length > 0) {
       User.import(this._characterForm.value.importString);
-
-
-      this._router.navigateByUrl('/crafting');
-      this.angulartics2.eventTrack.next({
-        action: 'Imported existing setup',
-        properties: { category: 'User registration' },
-      });
+      this.redirectUserFromRestore();
     }
+  }
+
+  importFromFile(fileEvent): void {
+    console.log('File', fileEvent);
+    const files = fileEvent.target.files;
+    const reader = new FileReader();
+    reader.onload = () => {
+      console.log(JSON.parse(reader.result));
+      try {
+        SharedService.user.watchlist
+          .attemptRestoreFromString(reader.result);
+
+        User.import(reader.result);
+
+        this.angulartics2.eventTrack.next({
+          action: 'Imported existing setup from file',
+          properties: { category: 'User registration' },
+        });
+
+        this.redirectUserFromRestore();
+      } catch (e) {
+        console.error('Could not import from file', e);
+      }
+    };
+    reader.readAsText(files[0]);
+  }
+
+  redirectUserFromRestore(): void {
+    this._router.navigateByUrl('/crafting');
+    this.angulartics2.eventTrack.next({
+      action: 'Imported existing setup',
+      properties: { category: 'User registration' },
+    });
   }
 
   completeSetup(): void {

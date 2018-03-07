@@ -107,10 +107,10 @@ export class User {
         case 'isDarkMode':
           localStorage['isDarkMode'] = JSON.stringify(user[key]);
           SharedService.user.isDarkMode = user[key];
-          break;/*
+          break; /*
         case 'watchlist':
           localStorage[key] = JSON.stringify({ groups: SharedService.user.watchlist.groups });
-          SharedService.user.watchlist = user[key];
+          SharedService.user.watchlist = new Watchlist();
           break;*/
       }
     });
@@ -143,7 +143,7 @@ export class User {
     SharedService.user = new User();
   }
 
-  public static getSettings(): User {
+  public static getSettings(isExport?: boolean): User {
     const user: User = new User();
 
     Object.keys(localStorage).forEach(key => {
@@ -195,10 +195,12 @@ export class User {
           break;
         case 'isDarkMode':
           user.isDarkMode = JSON.parse(localStorage[key]);
-          break; /*
+          break;
         case 'watchlist':
-          (new Watchlist()).restoreFrom(JSON.parse(localStorage[key]));
-          break;*/
+          if (isExport) {
+            user.watchlist = JSON.parse(localStorage[key]);
+          }
+          break;
       }
     });
 

@@ -72,21 +72,25 @@
     <div class="col-md-6">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>
-            Import previous settings
-          </mat-card-title>
+        <mat-card-title>
+          Import previous settings
+        </mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <mat-form-field class="col-md-10">
             <textarea matInput formControlName="importString" placeholder="Paste the string here"></textarea>
           </mat-form-field>
-          <button class="col-md-2" mat-button (click)="importUser()"
-            [disabled]="!isImportStringNotEmpty()">
+          <button class="col-md-2" mat-button (click)="importUser()" [disabled]="!isImportStringNotEmpty()">
             <i class="fas fa-upload"></i>
             Restore
           </button>
+          <button mat-button (click)="fileInput.click()">
+            <i class="fas fa-upload"></i>
+            Select a settings file to import
+            <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
+          </button>
         </mat-card-content>
-      </mat-card>
+        </mat-card>
     </div>
     <div class="col-md-6">
       <mat-card>
@@ -100,8 +104,12 @@
             <textarea matInput formControlName="exportString" placeholder="The export string will appear here."></textarea>
           </mat-form-field>
           <button class="col-md-2" mat-button (click)="exportData()">
-            <i class="fas fa-upload"></i>
-            Export
+            <i class="fas fa-download"></i>
+            Export as string
+          </button>
+          <button mat-button (click)="exportAsFile()">
+            <i class="fas fa-download"></i>
+            Export as file
           </button>
         </mat-card-content>
       </mat-card>

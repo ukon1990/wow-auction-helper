@@ -156,6 +156,14 @@ export class Watchlist {
     this.save();
   }
 
+  attemptRestoreFromString(stringObj): void {
+    const tmpObj = JSON.parse(stringObj);
+    if (tmpObj['watchlist']) {
+      SharedService.user.watchlist.restoreFrom(tmpObj['watchlist']);
+      SharedService.user.watchlist.save();
+    }
+  }
+
   save(): void {
     localStorage[this.storageName] = JSON.stringify(
       { groups: this.groups });
