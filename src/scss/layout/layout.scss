@@ -111,3 +111,13 @@ wah-character {
     color: white !important;
   }
 }
+
+.action-icon {
+  position: absolute;
+  top: .5em;
+  right: .5em;
+
+  button.btn {
+    min-width: auto !important;
+  }
+}

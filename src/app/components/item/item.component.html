@@ -1,6 +1,11 @@
 <div class="full-screen" *ngIf="getItem()">
   <mat-card>
     <mat-card-header>
+      <div class="action-icon mat-elevation-z5" (click)="close()" matTooltip="Click to open/close the full window.">
+        <button mat-raised-button class="btn btn-sm">
+          <i class="fas fa-times" matTooltip="Close detail view"></i>
+        </button>
+      </div>
       <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getSelectedPet()?.petSpeciesId"></wah-icon>
       <mat-card-title>
         <span *ngIf="getPet() || getItem(); else itemName">
@@ -49,7 +54,6 @@
         <div class="col-md-8">
           <mat-tab-group #tabs>
             <mat-tab *ngIf="getAuctionItem() && isMobile()" label="Auction price chart">
-              {{ tabs.selectedIndex }}
               <wah-line-chart [data]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === 0">
               </wah-line-chart>
             </mat-tab>
