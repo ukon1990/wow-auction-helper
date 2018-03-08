@@ -1,10 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-const http = require('http');
-const app = express();
-
-const api = require('./routes/api');
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    path = require('path'),
+    http = require('http'),
+    app = express(),
+    proxy = require("express-http-proxy"),
+    api = require('./routes/api');
 
 // Parsers
 app.use(bodyParser.json());
@@ -18,10 +18,6 @@ app.use(express.static(path.join(__dirname, 'dist'), {
 
 // API location
 app.use('/api', api);
-
-app.get('/GetItems.php?itemid', (req, res) => {
-    return res.redirect('http://app.example.io');
-})
 
 // Send all other requests to the Angular app
 app.get('*', (req, res) => {
