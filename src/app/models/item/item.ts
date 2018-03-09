@@ -5,8 +5,8 @@ export class Item {
     name: string;
     icon: string;
     itemLevel: number;
-    itemClass: string;
-    itemSubClass: string;
+    itemClass: number;
+    itemSubClass: number;
     quality: number;
     itemSpells: ItemSpells[];
     buyPrice: number;

@@ -23,10 +23,10 @@
   position: fixed !important;
 
   & > mat-card {
-    max-height: 80vh;
+    height: 80vh;
     .mat-card-content .mat-tab-body {
       overflow-y: scroll;
-      max-height: 50vh;
+      /*max-height: 50vh;*/
     }
   }
   & .dropped-by .mat-list {

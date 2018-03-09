@@ -12,9 +12,9 @@
         </div>
         <div class="col-md-8">
           <mat-tab-group>
-            <!--<mat-tab label="Item class chart">
-                <wah-seller-chart [seller]="SharedService.selectedSeller"></wah-seller-chart>
-            </mat-tab>-->
+            <mat-tab label="Item class chart">
+                <wah-seller-chart [seller]="getSeller()"></wah-seller-chart>
+            </mat-tab>
             <mat-tab label="Auctions ({{ getSeller().auctions.length | number }})">
               <wah-data-table [id]="'item'" iconSize="22" [columns]="columns" [data]="getSeller().auctions">
               </wah-data-table>
