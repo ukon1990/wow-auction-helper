@@ -1,5 +1,10 @@
 <div class="full-screen" *ngIf="getSeller()">
   <mat-card>
+    <div class="action-icon mat-elevation-z5" (click)="close()" matTooltip="Click to open/close the full window.">
+      <button mat-raised-button class="btn btn-sm">
+        <i class="fas fa-times" matTooltip="Close detail view"></i>
+      </button>
+    </div>
     <mat-card-content>
       <div class="row">
         <div class="col-md-4">
