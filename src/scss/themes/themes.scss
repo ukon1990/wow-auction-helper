@@ -39,6 +39,9 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
       color: white !important;
     }
   }
+  .list-group-item {
+    background-color: transparent;
+  }
 }
 wah-character {
   .mat-raised-button {
