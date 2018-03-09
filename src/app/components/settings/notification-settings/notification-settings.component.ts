@@ -40,6 +40,6 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
   }
 
   isHttps(): boolean {
-    return location.protocol !== 'https:';
+    return location.protocol === 'https:';
   }
 }
