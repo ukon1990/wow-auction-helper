@@ -33,7 +33,9 @@
     "chart.js": "^2.7.1",
     "core-js": "^2.5.3",
     "dexie": "^2.0.1",
+    "distinct-colors": "^1.0.4",
     "express": "^4.16.2",
+    "express-http-proxy": "^1.1.0",
     "file-saver": "^1.3.3",
     "hammerjs": "^2.0.8",
     "mysql": "^2.15.0",
@@ -41,8 +43,7 @@
     "request": "^2.83.0",
     "rxjs": "^5.5.2",
     "xlsx": "^0.11.8",
-    "zone.js": "^0.8.18",
-    "express-http-proxy": "^1.1.0"
+    "zone.js": "^0.8.18"
   },
   "devDependencies": {
     "@angular/cli": "^1.7.2",

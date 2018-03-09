@@ -23,7 +23,9 @@
       "styles": [
         "scss/styles.scss"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/distinct-colors/dist/distinct-colors.min.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

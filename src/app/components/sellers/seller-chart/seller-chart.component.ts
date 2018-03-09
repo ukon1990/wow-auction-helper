@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, Input, OnChanges } from '@angular/core';
 import { Chart } from 'chart.js';
+import * as distinctColors from 'distinct-colors';
 import { Seller } from '../../../models/seller';
 import { itemClasses } from '../../../models/item/item-classes';
 import { Auction } from '../../../models/auction/auction';
@@ -38,10 +39,10 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: this.itemClasses.map(c => c.quantity)
+          data: this.itemClasses.map(c => c.quantity),
+          backgroundColor: distinctColors({ count: this.itemClasses.length })
         }],
-        labels: this.itemClasses.map(c => `${ c.name } x ${c.quantity}`),
-        backgroundColor: ['red', 'green', 'yellow', 'blue', 'purple']
+        labels: this.itemClasses.map(c => `${ c.name } x ${c.quantity}`)
       }
       // options: options
     });
@@ -56,30 +57,40 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
       if (!item) {
         return;
       }
-      if (this.itemClassesMap[item.itemClass]) {
-        this.itemClassesMap[item.itemClass].quantity++;
-        this.itemClassesMap[item.itemClass].auctions.push(auction);
+      if (this.itemClassesMap[this.getClassIDForItem(item)]) {
+        this.itemClassesMap[this.getClassIDForItem(item)].quantity++;
+        this.itemClassesMap[this.getClassIDForItem(item)].auctions.push(auction);
       } else {
         const i = new AuctionClassGroup(item);
-        this.itemClassesMap[item.itemClass] = i;
+        this.itemClassesMap[this.getClassIDForItem(item)] = i;
         this.itemClasses.push(i);
       }
     });
     itemClasses.classes.forEach(c => {
-      if (this.itemClassesMap[c.class]) {
-        this.itemClassesMap[c.class].name = c.name;
-      }
+      c.subclasses.forEach(sc => {
+        const id = `${ c.class }-${ sc.subclass }`;
+
+        if (this.itemClassesMap[id]) {
+          this.itemClassesMap[id].name = `${ sc.name } - ${c.name}`;
+        }
+      });
     });
+  }
+
+  getClassIDForItem(item: Item): string {
+    return `${ item.itemClass }-${ item.itemSubClass }`;
   }
 }
 
 class AuctionClassGroup {
-  id: number;
+  itemClass: number;
+  itemSubClass: number;
   name = '';
   auctions: Array<Auction> = new Array<Auction>();
   quantity = 1;
 
   constructor(item: Item) {
-    this.id = item.itemClass;
+    this.itemClass = item.itemClass;
+    this.itemSubClass = item.itemSubClass;
   }
 }
