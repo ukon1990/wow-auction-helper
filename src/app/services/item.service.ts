@@ -33,6 +33,10 @@ export class ItemService {
         localStorage['timestamp_items'] = new Date().toDateString();
         SharedService.downloading.items = false;
         items['items'].forEach(i => {
+          if (i.itemClass === 8) {
+            i.itemClass = 0;
+            i.itemSubClass = 6;
+          }
           SharedService.items[i.id] = i;
         });
         console.log('Items download is completed');
