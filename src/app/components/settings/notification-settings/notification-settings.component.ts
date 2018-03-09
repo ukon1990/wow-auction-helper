@@ -39,4 +39,7 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
     Notifications.send('This is a test', 'This is a test');
   }
 
+  isHttps(): boolean {
+    return location.protocol !== 'https:';
+  }
 }

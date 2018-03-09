@@ -23,21 +23,21 @@ export class Sorter {
   sort(arr: any[]): void {
     arr.sort((a, b) => {
       for (let i = this.keys.length - 1; i >= 0; i--) {
-        if (this.getItemToSort(this.keys[i].key, a) === this.getItemToSort(this.keys[i].key, b)) {
+        if (this.getItemToSort(this.keys[i], a) === this.getItemToSort(this.keys[i], b)) {
           continue;
         }
 
         if (this.keys[i].desc) {
           if (this.isString(a, i)) {
-            return this.getItemToSort(this.keys[i].key, b).localeCompare(this.getItemToSort(this.keys[i].key, a));
+            return this.getItemToSort(this.keys[i], b).localeCompare(this.getItemToSort(this.keys[i], a));
           } else {
-            return this.getItemToSort(this.keys[i].key, a) < this.getItemToSort(this.keys[i].key, b) ? 1 : -1;
+            return this.getItemToSort(this.keys[i], a) < this.getItemToSort(this.keys[i], b) ? 1 : -1;
           }
         } else {
           if (this.isString(a, i)) {
-            return this.getItemToSort(this.keys[i].key, a).localeCompare(this.getItemToSort(this.keys[i].key, b));
+            return this.getItemToSort(this.keys[i], a).localeCompare(this.getItemToSort(this.keys[i], b));
           } else {
-            return this.getItemToSort(this.keys[i].key, a) > this.getItemToSort(this.keys[i].key, b) ? 1 : -1;
+            return this.getItemToSort(this.keys[i], a) > this.getItemToSort(this.keys[i], b) ? 1 : -1;
           }
         }
       }
@@ -45,14 +45,18 @@ export class Sorter {
     });
   }
 
-  getItemToSort(key: string, item: any): any {
-    if (key === 'timeLeft') {
-      return this.auctionDuration[item[key]];
+  getItemToSort(key: Key, item: any): any {
+    if (key.key === 'timeLeft') {
+      return this.auctionDuration[item[key.key]];
+    } else if (key.byPercent){
+      return item[key.key] ?
+        item[key.key] : this.getAuctionItem(item) ?
+          this.getAuctionItem(item)[key.key] / this.getAuctionItem(item)[key.percentOf] : false;
+    } else {
+      return item[key.key] ?
+        item[key.key] : this.getAuctionItem(item) ?
+          this.getAuctionItem(item)[key.key] : false;
     }
-
-    return item[key] ?
-      item[key] : this.getAuctionItem(item) ?
-        this.getAuctionItem(item)[key] : false;
   }
 
   private getAuctionItem(item: any): any {
@@ -60,7 +64,7 @@ export class Sorter {
   }
 
   private isString(object: any, index): boolean {
-    return typeof this.getItemToSort(this.keys[index].key, object) === 'string';
+    return typeof this.getItemToSort(this.keys[index], object) === 'string';
   }
 
   removeKey(key: string): void {
@@ -82,5 +86,5 @@ export class Sorter {
 }
 
 export class Key {
-  constructor(public key: string, public desc: boolean) { }
+  constructor(public key: string, public desc: boolean, public byPercent?: boolean, public percentOf?: string) { }
 }
