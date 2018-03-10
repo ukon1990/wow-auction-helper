@@ -3,6 +3,7 @@ import { SharedService } from '../services/shared.service';
 import { Item } from './item/item';
 import { Notification } from './user/notification';
 import { GoldPipe } from '../pipes/gold.pipe';
+import { WatchlistItem } from './watchlist/watchlist';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -134,6 +135,7 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'criteria', title: 'Criteria', dataType: '' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
@@ -235,8 +237,9 @@ export class Dashboard {
     SharedService.user.watchlist.groups.forEach(group => {
       group.items.forEach(item => {
         if (SharedService.user.watchlist.isTargetMatch(item)) {
-          const wlVal = SharedService.user.watchlist.getTSMStringValues(item);
-          this.data.push(item);
+          const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
+            obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item) };
+          this.data.push(obj);
           if (wlVal.left > 0 && wlVal.right > 0) {
             this.tsmShoppingString += `${item.name}/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
           }
@@ -250,6 +253,35 @@ export class Dashboard {
       SharedService.notifications.unshift(
         new Notification('Watchlist', `${this.data.length} of your items were matched`));
     }
+  }
+
+  private getWatchlistString(item: WatchlistItem): string {
+    const p = new GoldPipe();
+    let criteria, value;
+    switch (item.criteria) {
+      case 'below':
+        criteria = '<=';
+        break;
+      case 'equal':
+        criteria = '=';
+        break;
+      case 'above':
+        criteria = '>=';
+        break;
+    }
+
+    switch (item.targetType) {
+      case 'gold':
+       value = p.transform(item.value);
+        break;
+      case 'quantity':
+        value = `${ item.value } pcs`;
+        break;
+      case 'percent':
+        value = `${ item.value }%`;
+        break;
+    }
+    return `${ criteria } ${ value }`;
   }
 
   private setWatchListCraftingAlerts(): void {
