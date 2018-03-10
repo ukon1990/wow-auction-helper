@@ -238,7 +238,7 @@ export class Dashboard {
       group.items.forEach(item => {
         if (SharedService.user.watchlist.isTargetMatch(item)) {
           const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
-            obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item) };
+            obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal) };
           this.data.push(obj);
           if (wlVal.left > 0 && wlVal.right > 0) {
             this.tsmShoppingString += `${item.name}/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
@@ -255,30 +255,29 @@ export class Dashboard {
     }
   }
 
-  private getWatchlistString(item: WatchlistItem): string {
+  private getWatchlistString(item: WatchlistItem, watchlistValue: any): string {
     const p = new GoldPipe();
     let criteria, value;
     switch (item.criteria) {
       case 'below':
-        criteria = '<=';
+        criteria = '<';
         break;
       case 'equal':
         criteria = '=';
         break;
       case 'above':
-        criteria = '>=';
+        criteria = '>';
         break;
     }
 
     switch (item.targetType) {
-      case 'gold':
-       value = p.transform(item.value);
-        break;
       case 'quantity':
         value = `${ item.value } pcs`;
         break;
+        case 'gold':
       case 'percent':
-        value = `${ item.value }%`;
+        value = `${ p.transform(
+          watchlistValue.left === 1 ? watchlistValue.right : watchlistValue.left ) }`;
         break;
     }
     return `${ criteria } ${ value }`;
