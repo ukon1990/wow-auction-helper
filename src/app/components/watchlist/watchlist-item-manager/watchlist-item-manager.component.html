@@ -28,7 +28,7 @@
       </div>
       <form [formGroup]="form">
         <mat-form-field>
-          <mat-select placeholder="Compare buyout to" formControlName="compareTo">
+          <mat-select placeholder="Compare buyout/quantity to" formControlName="compareTo">
             <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
             </mat-option>

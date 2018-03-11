@@ -4,6 +4,7 @@ import { AuctionItem } from '../../../models/auction/auction-item';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { Angulartics2 } from 'angulartics2';
+import { GoldPipe } from '../../../pipes/gold.pipe';
 
 @Component({
   selector: 'wah-reset-calc',
@@ -12,6 +13,7 @@ import { Angulartics2 } from 'angulartics2';
 })
 export class ResetCalcComponent implements OnInit, OnDestroy {
   @Input() auctionItem: AuctionItem;
+  pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
   resetPrice = {
     numOfAuctions: 0,
@@ -64,4 +66,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
     this.resetPrice.roi = (this.form.value * 10000) * this.resetPrice.numOfItems - this.resetPrice.cost;
   }
 
+  getShoppingString(): string {
+    return `${this.auctionItem.name}/${this.pipe.transform(1)}/${this.pipe.transform(this.form.value * 10000)}`;
+  }
 }
