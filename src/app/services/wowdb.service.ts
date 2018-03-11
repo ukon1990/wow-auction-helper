@@ -8,7 +8,7 @@ export class WowdbService {
 
   constructor(private _http: HttpClient) { }
 
-  getItem(itemID): Promise<WoWDBItem> {// `http://www.wah.jonaskf.net/GetWowDB.php?itemID=${itemID}`
+  getItem(itemID): Promise<WoWDBItem> {
     return this._http.get(Endpoints.getUrl(`item/wowdb/${ itemID }`))
       .toPromise();
   }
