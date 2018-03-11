@@ -11,12 +11,13 @@ export class Sorter {
 
   keys: Key[] = [];
 
-  addKey(key: string): void {
+  addKey(key: string, divideByQuantity?: boolean): void {
     if (this.findKeyIndex(key) > -1) {
       this.getKey(key).desc = !this.getKey(key).desc;
     } else {
       this.keys = [];
-      this.keys.push(new Key(key, true));
+      this.keys.push(
+        new Key(key, true, divideByQuantity ? divideByQuantity : false));
     }
   }
 
@@ -48,14 +49,20 @@ export class Sorter {
   getItemToSort(key: Key, item: any): any {
     if (key.key === 'timeLeft') {
       return this.auctionDuration[item[key.key]];
-    } else if (key.byPercent){
+    } else if (key.byPercent) {
       return item[key.key] ?
         item[key.key] : this.getAuctionItem(item) ?
           this.getAuctionItem(item)[key.key] / this.getAuctionItem(item)[key.percentOf] : false;
     } else {
-      return item[key.key] ?
-        item[key.key] : this.getAuctionItem(item) ?
-          this.getAuctionItem(item)[key.key] : false;
+      if (key.divideByQuantity) {
+        return item[key.key] ?
+          item[key.key] / item.quantity : this.getAuctionItem(item) ?
+            this.getAuctionItem(item)[key.key] / this.getAuctionItem(item).quantity : false;
+      } else {
+        return item[key.key] ?
+          item[key.key] : this.getAuctionItem(item) ?
+            this.getAuctionItem(item)[key.key] : false;
+      }
     }
   }
 
@@ -86,5 +93,8 @@ export class Sorter {
 }
 
 export class Key {
-  constructor(public key: string, public desc: boolean, public byPercent?: boolean, public percentOf?: string) { }
+  constructor(
+    public key: string, public desc: boolean, public divideByQuantity: boolean,
+    public byPercent?: boolean, public percentOf?: string
+  ) { }
 }
