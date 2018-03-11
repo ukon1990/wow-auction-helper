@@ -56,6 +56,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
 
   add(item: Item): void {
     CustomPrices.add(item);
+    this.itemSearchForm.setValue('');
     this.angulartics2.eventTrack.next({
       action: 'Added custom price',
       properties: { category: 'Custom price' },

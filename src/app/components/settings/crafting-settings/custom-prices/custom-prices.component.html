@@ -3,7 +3,7 @@
     <mat-form-field class="row col-md-12">
       <input matInput placeholder="The name of the item to add to custom prices" aria-label="State" [matAutocomplete]="auto" [formControl]="itemSearchForm">
       <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let item of filteredItems | async" [value]="item.id"
+        <mat-option *ngFor="let item of filteredItems | async" [value]="item.name"
           (click)="add(item)"
           [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
           <wah-icon [size]="36" [id]="item.id"></wah-icon>
