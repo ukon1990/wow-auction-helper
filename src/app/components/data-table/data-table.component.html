@@ -9,7 +9,7 @@
   <thead>
     <tr>
       <ng-container *ngFor="let c of columns">
-        <td (click)="sort(c.key)" *ngIf="displayColumn(c)">
+        <td (click)="sort(c)" *ngIf="displayColumn(c)">
           <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
           {{ c.title }}
         </td>
