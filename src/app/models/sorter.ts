@@ -13,6 +13,7 @@ export class Sorter {
 
   addKey(key: string, divideByQuantity?: boolean): void {
     if (this.findKeyIndex(key) > -1) {
+      this.getKey(key).divideByQuantity = divideByQuantity ? divideByQuantity : false;
       this.getKey(key).desc = !this.getKey(key).desc;
     } else {
       this.keys = [];
