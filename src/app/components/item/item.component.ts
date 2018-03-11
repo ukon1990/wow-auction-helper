@@ -87,7 +87,8 @@ export class ItemComponent implements OnInit {
   }
 
   openInNewTab(url) {
-    if (window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches) {
+    if (navigator.platform !== 'Win32' &&
+      (window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches)) {
       const a = document.createElement('a');
       a.setAttribute('href', url);
       a.setAttribute('target', '_blank');
