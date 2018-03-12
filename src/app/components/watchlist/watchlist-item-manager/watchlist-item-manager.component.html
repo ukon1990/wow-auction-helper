@@ -9,7 +9,7 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="row mb-2">
+      <div class="row col-md-12 mb-2">
         <div class="mr-2">
         <strong class="mr-1">Available:</strong> {{ getAuctionItem(item.itemID).quantityTotal | number }}
         </div>
@@ -27,7 +27,7 @@
         </div>
       </div>
       <form [formGroup]="form">
-        <mat-form-field>
+        <mat-form-field class="row col">
           <mat-select placeholder="Compare buyout/quantity to" formControlName="compareTo">
             <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
@@ -35,7 +35,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="row col">
           <mat-select placeholder="Criteria" formControlName="criteria">
             <mat-option *ngFor="let i of criteria" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
@@ -43,7 +43,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="row col">
           <mat-select placeholder="Target type" formControlName="targetType">
             <mat-option *ngFor="let i of targetTypes" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
@@ -51,11 +51,11 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="row col">
           <input matInput placeholder="Value {{ form.value.value | gold }}" formControlName="value" type="number">
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="row col">
           <mat-select placeholder="Group" formControlName="group">
             <mat-option *ngFor="let group of groups" [value]="group" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ group.name }}

@@ -12,9 +12,11 @@
     bottom: 0 !important;
     top: 3em !important;
     max-height: none !important;
+    height: 100%;
 
     & > mat-card {
-      height: 100%;
+      overflow-y: scroll;
+      height: calc(100% - 3em);
       max-height: none !important;
       bottom: 0 !important;
     }

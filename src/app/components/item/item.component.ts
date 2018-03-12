@@ -9,6 +9,7 @@ import { Recipe } from '../../models/crafting/recipe';
 import { Pet } from '../../models/pet';
 import { AuctionPet } from '../../models/auction/auction-pet';
 import { Angulartics2 } from 'angulartics2';
+import { Endpoints } from '../../services/endpoints';
 
 @Component({
   selector: 'wah-item',
@@ -164,6 +165,10 @@ export class ItemComponent implements OnInit {
   /* istanbul ignore next */
   getSelectedPet(): AuctionPet {
     return SharedService.selectedPetSpeciesId;
+  }
+
+  getTUJUrl(): string {
+    return `${Endpoints.getUndermineUrl()}item/${this.getItem().id}`;
   }
 
   /* istanbul ignore next */
