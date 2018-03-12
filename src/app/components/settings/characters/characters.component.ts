@@ -9,6 +9,7 @@ import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Crafting } from '../../../models/crafting/crafting';
 import { CraftingService } from '../../../services/crafting.service';
 import { Angulartics2 } from 'angulartics2';
+import { Character } from '../../../models/character/character';
 
 @Component({
   selector: 'wah-characters',
@@ -30,7 +31,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     this._characterForm = this.formBuilder.group({
       region: SharedService.user.region,
       realm: SharedService.user.realm,
-      name: ''
+      name: '',
+      characterBelowLevelTen: false
     });
   }
 
@@ -52,8 +54,24 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   getCharacter(): void {
     this.downloading = true;
+
+    if (this._characterForm.value.characterBelowLevelTen) {
+      const character = new Character();
+      character.name = this._characterForm.value.name;
+      character.realm = SharedService.realms[this._characterForm.value.realm].name;
+      character.thumbnail = '';
+      character.level = 0;
+
+      this.angulartics2.eventTrack.next({
+        action: 'Added a lower than level 10 character',
+        properties: { category: 'Characters' },
+      });
+      this.processCharacter(character);
+      return;
+    }
+
     this.angulartics2.eventTrack.next({
-      action: 'Added',
+      action: 'Added character',
       properties: { category: 'Characters' },
     });
     this._characterService
@@ -63,17 +81,21 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
       this.region ? this.region : SharedService.user.region
       )
       .then(c => {
-        this._characterForm.controls.name.setValue('');
-        SharedService.user.characters.push(c);
-        localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-        this.downloading = false;
-
-        Realm.gatherRealms();
-
-        if (SharedService.user.region && SharedService.user.realm) {
-          AuctionHandler.organize(SharedService.auctions);
-        }
+        this.processCharacter(c);
       }).catch(() => this.downloading = false);
+  }
+
+  processCharacter(character: Character): void {
+    this._characterForm.controls.name.setValue('');
+    SharedService.user.characters.push(character);
+    localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+
+    this.downloading = false;
+    Realm.gatherRealms();
+
+    if (SharedService.user.region && SharedService.user.realm) {
+      AuctionHandler.organize(SharedService.auctions);
+    }
   }
 
   updateCharacter(index: number): void {
@@ -119,8 +141,14 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     SharedService.user.characters.splice(index, 1);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
     User.updateRecipesForRealm();
+    Realm.gatherRealms();
+
+    if (SharedService.user.region && SharedService.user.realm) {
+      AuctionHandler.organize(SharedService.auctions);
+    }
+
     this.angulartics2.eventTrack.next({
-      action: 'Removed',
+      action: 'Removed character',
       properties: { category: 'Characters' },
     });
   }

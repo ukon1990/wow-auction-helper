@@ -14,9 +14,18 @@ export class Endpoints {
   public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
-
   public static getUrl(path: string): string {
     return environment.production ? '/api/' + path : Endpoints.WAH_LOCAL_API + path;
+  }
+
+  public static getUndermineUrl(): string {
+    if (!SharedService.user) {
+      return '';
+    }
+
+    return `https://theunderminejournal.com/#${
+      SharedService.user.region}/${
+        SharedService.realms[SharedService.user.realm].slug}/`;
   }
 
   public static getAuctionDownloadUrl(): string {
