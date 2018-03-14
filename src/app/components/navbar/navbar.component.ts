@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SharedService } from '../../services/shared.service';
 import { User } from '../../models/user/user';
+import { UserAuctions } from '../../models/auction/user-auctions';
 
 @Component({
   selector: 'wah-navbar',
@@ -34,5 +35,9 @@ export class NavbarComponent implements OnInit {
   }
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
+  }
+
+  getUserAuctions(): UserAuctions {
+    return SharedService.userAuctions;
   }
 }
