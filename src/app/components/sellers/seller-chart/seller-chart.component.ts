@@ -6,6 +6,7 @@ import { itemClasses } from '../../../models/item/item-classes';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
 import { Item } from '../../../models/item/item';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'wah-seller-chart',
@@ -18,8 +19,20 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
   itemClassesMap: Map<number, AuctionClassGroup>;
   labels: Array<string> = new Array<string>();
   chart: Chart;
+  chartTypeForm: FormControl = new FormControl();
+  storageName = 'seller-chart';
+  colors;
 
-  constructor() { }
+  constructor() {
+    this.chartTypeForm.setValue(
+      localStorage[this.storageName] ? localStorage[this.storageName] : 'doughnut');
+    this.chartTypeForm.valueChanges.subscribe(type => {
+      setTimeout(() => {
+        this.save();
+        this.setChart(this.itemClasses);
+      }, 100);
+    });
+  }
 
   ngAfterViewInit(): void {
     this.setData();
@@ -28,6 +41,7 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(): void {
     setTimeout(() => {
+      this.colors = distinctColors({ count: this.itemClasses.length });
       this.setData();
       console.log(this.itemClassesMap);
       this.setChart(this.itemClasses);
@@ -35,12 +49,15 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
   }
 
   setChart(data: Array<any>): void {
-    this.chart = new Chart('donut-chart', {
-      type: 'doughnut',
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.chart = new Chart('chart', {
+      type: this.chartTypeForm.value,
       data: {
         datasets: [{
           data: this.itemClasses.map(c => c.quantity),
-          backgroundColor: distinctColors({ count: this.itemClasses.length })
+          backgroundColor: this.colors
         }],
         labels: this.itemClasses.map(c => `${ c.name } x ${c.quantity}`)
       }
@@ -79,6 +96,10 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
 
   getClassIDForItem(item: Item): string {
     return `${ item.itemClass }-${ item.itemSubClass }`;
+  }
+
+  save(): void {
+    localStorage[this.storageName] = this.chartTypeForm.value;
   }
 }
 
