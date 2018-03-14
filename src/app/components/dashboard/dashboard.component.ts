@@ -9,4 +9,11 @@ import { SharedService } from '../../services/shared.service';
 })
 export class DashboardComponent {
 
+  getSellersCount(): number {
+    return SharedService.sellerDashboards.length;
+  }
+
+  getitemCount(): number {
+    return SharedService.itemDashboards.length;
+  }
 }

@@ -12,7 +12,7 @@ import { AuctionResponse } from '../models/auction/auctions-response';
 import { TradeVendor, TradeVendorItem, TradeVendorItemValue } from '../models/item/trade-vendor';
 import { UserAuctions, UserAuctionCharacter } from '../models/auction/user-auctions';
 import { CustomPrice } from '../models/crafting/custom-price';
-import { Seller } from '../models/seller';
+import { Seller, ItemClassGroup } from '../models/seller';
 import { AuctionPet } from '../models/auction/auction-pet';
 import { ShoppingCart } from '../models/shopping-cart';
 import { Notification } from '../models/user/notification';
@@ -28,6 +28,8 @@ export class SharedService {
     lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static userAuctions: UserAuctions = new UserAuctions();
+  public static sellersByItemClassesMap = new Map<number, ItemClassGroup>();
+  public static sellersByItemClass = new Array<ItemClassGroup>();
   public static sellersMap: Map<string, Seller> = new Map<string, Seller>();
   public static sellers: Array<Seller> = new Array<Seller>();
 

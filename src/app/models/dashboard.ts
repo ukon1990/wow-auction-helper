@@ -4,9 +4,12 @@ import { Item } from './item/item';
 import { Notification } from './user/notification';
 import { GoldPipe } from '../pipes/gold.pipe';
 import { WatchlistItem } from './watchlist/watchlist';
+import { itemClasses } from './item/item-classes';
+import { Seller } from './seller';
 
 export class Dashboard {
   public static readonly TYPES = {
+    TOP_SELLERS_BY_AUCTIONS_FOR_CLASS: 'TOP_SELLERS_BY_AUCTIONS_FOR_CLASS',
     TOP_SELLERS_BY_AUCTIONS: 'TOP_SELLERS_BY_AUCTIONS',
     TOP_SELLERS_BY_VOLUME: 'TOP_SELLERS_BY_VOLUME',
     TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
@@ -32,7 +35,7 @@ export class Dashboard {
   message: string;
   isCrafting = false;
 
-  constructor(title: string, type: string) {
+  constructor(title: string, type: string, array?: Array<any>) {
     this.title = title;
     this.idParam = 'name';
     const sellerColumns = [
@@ -52,7 +55,11 @@ export class Dashboard {
     switch (type) {
       case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS:
         this.columns = sellerColumns;
-        this.groupSellersByAuctions();
+        this.groupSellersByAuctions(SharedService.sellers);
+        break;
+      case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS:
+        this.columns = sellerColumns;
+        this.groupSellersByAuctions(array);
         break;
       case Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY:
         this.columns = sellerColumns;
@@ -210,6 +217,12 @@ export class Dashboard {
 
     SharedService.sellerDashboards.push(
       new Dashboard('Top sellers by active auctions', Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS));
+
+      SharedService.sellersByItemClass.forEach(c => {
+        SharedService.sellerDashboards.push(
+          new Dashboard(`Sellers with the most auctions for the item class ${c.name}`,
+          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers));
+      });
   }
 
   private addAPIColumnsAtPosition(index: number): void {
@@ -445,9 +458,9 @@ export class Dashboard {
     }
   }
 
-  private groupSellersByAuctions(): void {
+  private groupSellersByAuctions(sellers: Array<Seller>): void {
     this.data.length = 0;
-    this.data = SharedService.sellers
+    this.data = sellers
       .sort((a, b) => b.auctions.length - a.auctions.length)
       .slice(0, 100);
   }

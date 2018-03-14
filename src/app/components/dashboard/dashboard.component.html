@@ -4,13 +4,13 @@
        routerLink="items"
        routerLinkActive #rla="routerLinkActive"
        [active]="rla.isActive">
-       Items
+       Items ({{ getitemCount() | number }})
     </a>
     <a mat-tab-link
        routerLink="sellers"
        routerLinkActive #rla="routerLinkActive"
        [active]="rla.isActive">
-       Sellers
+       Sellers ({{ getSellersCount() | number }})
     </a>
   </nav>
   
