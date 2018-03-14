@@ -11,17 +11,32 @@ export class UserAuctions {
 
   constructor() {}
 
-  addAuction(auction: Auction, auctionItemsMap: Map<number, AuctionItem>): void {
+  addAuction(auction: Auction): void {
     if (this.charactersMap[auction.ownerRealm] && this.charactersMap[auction.ownerRealm][auction.owner]) {
-      if (auctionItemsMap[auction.item].buyout < auction.buyout) {
-        this.undercutAuctions++;
-        this.charactersMap[auction.ownerRealm][auction.owner].undercutAuctions++;
-      }
       this.auctionWorth += auction.buyout;
       this.charactersMap[auction.ownerRealm][auction.owner].auctionWorth += auction.buyout;
       this.auctions.push(auction);
       this.charactersMap[auction.ownerRealm][auction.owner].auctions.push(auction);
     }
+  }
+
+  countUndercuttedAuctions(auctionItemsMap: Map<number, AuctionItem>): void {
+    let tmpAuctionItem: AuctionItem;
+    this.characters.forEach(c => {
+      c.auctions.forEach(a => {
+        tmpAuctionItem = auctionItemsMap[a.item];
+        // Checking if the character is undercutted
+        if (tmpAuctionItem.owner !== c.name &&
+            a.buyout / a.quantity > tmpAuctionItem.buyout) {
+          c.undercutAuctions++;
+        }
+
+        // Checking if the user is undercutted
+        if (!this.charactersMap[tmpAuctionItem.owner] && a.buyout / a.quantity > tmpAuctionItem.buyout) {
+          this.undercutAuctions++;
+        }
+      });
+    });
   }
 
   organizeCharacters(characters: Array<Character>): void {
