@@ -30,12 +30,6 @@ export class AuctionsService {
           this.getAuctions()
             .then(res => {
               console.log('Updating auctions');
-              if (SharedService.user.notifications.isUndercut) {
-                Notifications.send(
-                  'WAH - Auction data just got updated',
-                  `${SharedService.userAuctions.undercutAuctions} of your auctions were undercut.`
-                );
-              }
           }).catch();
         }
       })
@@ -63,6 +57,13 @@ export class AuctionsService {
         });
         console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
+
+        if (SharedService.user.notifications.isUndercut) {
+          Notifications.send(
+            'WAH - Auction data just got updated',
+            `${SharedService.userAuctions.undercutAuctions} of your auctions were undercut.`
+          );
+        }
       })
       .catch(e => {
         SharedService.downloading.auctions = false;

@@ -45,9 +45,10 @@ export class AuctionHandler {
       SharedService.userAuctions.addAuction(a);
     });
 
+    // Checking if we have been undercutted etc
+    SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
+
     setTimeout(() => {
-      // Checking if we have been undercutted etc
-      SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
 
       // Trade vendors has to be done before crafting calc
       TradeVendors.setValues();
