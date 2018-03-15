@@ -4,7 +4,7 @@ export class Recipe {
   spellID: number;
   itemID: number;
   name: string;
-  profession: string;
+  profession?: string;
   rank?: string;
   minCount: number;
   maxCount: number;
