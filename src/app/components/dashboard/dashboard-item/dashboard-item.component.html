@@ -13,7 +13,7 @@
       </button>
     </div>
     <mat-card-title>
-      {{ dashboard.title }} ({{ dashboard.data.length }})
+      {{ dashboard.title }} ({{ dashboard.data.length | number }})
     </mat-card-title>
     <mat-card-subtitle *ngIf="dashboard.message">
       {{ dashboard.message }}

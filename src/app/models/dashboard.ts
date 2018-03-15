@@ -55,11 +55,11 @@ export class Dashboard {
     switch (type) {
       case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS:
         this.columns = sellerColumns;
-        this.groupSellersByAuctions(SharedService.sellers);
+        this.groupSellersByAuctions();
         break;
       case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS:
         this.columns = sellerColumns;
-        this.groupSellersByAuctions(array);
+        this.groupSellersByVolume(array);
         break;
       case Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY:
         this.columns = sellerColumns;
@@ -67,7 +67,7 @@ export class Dashboard {
         break;
       case Dashboard.TYPES.TOP_SELLERS_BY_VOLUME:
         this.columns = sellerColumns;
-        this.groupSellersByVolume();
+        this.groupSellersByVolume(SharedService.sellers);
         break;
       case Dashboard.TYPES.MOST_AVAILABLE_ITEMS:
         this.idParam = 'itemID';
@@ -182,8 +182,8 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
-    SharedService.itemDashboards.length = 0;
-    SharedService.sellerDashboards.length = 0;
+    SharedService.itemDashboards = new Array<Dashboard>();
+    SharedService.sellerDashboards = new Array<Dashboard>();
 
     // Items
     SharedService.itemDashboards.push(
@@ -218,11 +218,11 @@ export class Dashboard {
     SharedService.sellerDashboards.push(
       new Dashboard('Top sellers by active auctions', Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS));
 
-      SharedService.sellersByItemClass.forEach(c => {
-        SharedService.sellerDashboards.push(
-          new Dashboard(`Sellers with the most auctions for the item class ${c.name}`,
+    SharedService.sellersByItemClass.forEach(c => {
+      SharedService.sellerDashboards.push(
+        new Dashboard(`Top sellers by volume for the item class ${c.name}`,
           Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers));
-      });
+    });
   }
 
   private addAPIColumnsAtPosition(index: number): void {
@@ -458,31 +458,27 @@ export class Dashboard {
     }
   }
 
-  private groupSellersByAuctions(sellers: Array<Seller>): void {
+  private groupSellersByAuctions(): void {
     this.data.length = 0;
-    this.data = sellers
-      .sort((a, b) => b.auctions.length - a.auctions.length)
-      .slice(0, 100);
+    SharedService.sellers.forEach(s => this.data.push(s));
+    this.data.sort((a, b) => b.auctions.length - a.auctions.length);
   }
-  private groupSellersByVolume(): void {
+  private groupSellersByVolume(sellers: Array<Seller>): void {
     this.data.length = 0;
-    this.data = SharedService.sellers
-      .sort((a, b) => b.volume - a.volume)
-      .slice(0, 100);
+    sellers.forEach(s => this.data.push(s));
+    this.data.sort((a, b) => b.volume - a.volume);
   }
 
   private groupItemsByAvailability(): void {
     this.data.length = 0;
     this.data = SharedService.auctionItems.
-      sort((a, b) => b.quantityTotal - a.quantityTotal)
-      .slice(0, 100);
+      sort((a, b) => b.quantityTotal - a.quantityTotal);
   }
 
   private groupSellerByLiquidity(): void {
     this.data.length = 0;
-    this.data = SharedService.sellers
-      .sort((a, b) => b.liquidity - a.liquidity)
-      .slice(0, 100);
+    SharedService.sellers.forEach(s => this.data.push(s));
+    this.data.sort((a, b) => b.liquidity - a.liquidity);
   }
 
   private sortByROI(): void {

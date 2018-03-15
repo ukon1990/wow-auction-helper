@@ -1,21 +1,17 @@
 <h2>Dashboard</h2>
 <nav mat-tab-nav-bar>
-    <a mat-tab-link
-       routerLink="items"
-       routerLinkActive #rla="routerLinkActive"
-       [active]="rla.isActive">
-       Items ({{ getitemCount() | number }})
-    </a>
-    <a mat-tab-link
-       routerLink="sellers"
-       routerLinkActive #rla="routerLinkActive"
-       [active]="rla.isActive">
-       Sellers ({{ getSellersCount() | number }})
-    </a>
-  </nav>
-  
-  <router-outlet></router-outlet>
-  
-  
-  
-  
+  <a mat-tab-link
+      routerLink="items"
+      routerLinkActive #rla="routerLinkActive"
+      [active]="rla.isActive">
+      Items ({{ getitemCount() | number }})
+  </a>
+  <a mat-tab-link
+      routerLink="sellers"
+      routerLinkActive #rla="routerLinkActive"
+      [active]="rla.isActive">
+      Sellers ({{ getSellersCount() | number }})
+  </a>
+</nav>
+
+<router-outlet></router-outlet>

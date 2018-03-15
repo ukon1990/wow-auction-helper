@@ -23,10 +23,15 @@ export class Seller {
   public static organize(): void {
     let id;
     Object.keys(SharedService.sellersMap)
-    .forEach(key => {
-      delete SharedService.sellersMap[key];
-    });
+      .forEach(key => {
+        delete SharedService.sellersMap[key];
+      });
+      Object.keys(SharedService.sellersByItemClassesMap)
+      .forEach(key => {
+        delete SharedService.sellersByItemClassesMap[key];
+      });
     SharedService.sellers.length = 0;
+    SharedService.sellersByItemClass.length = 0;
 
     SharedService.auctions.forEach(a => {
       id = SharedService.items[a.item].itemClass;
@@ -56,8 +61,6 @@ export class Seller {
         SharedService.sellersByItemClass.push(SharedService.sellersByItemClassesMap[c.class]);
       }
     });
-
-    console.log('Mapped shit', SharedService.sellersByItemClassesMap);
   }
 }
 
