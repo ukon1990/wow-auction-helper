@@ -114,7 +114,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   isKnownRecipe(recipe: Recipe): boolean {
-    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.spellID];
+    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.spellID] || !recipe.profession;
   }
 
   isNameMatch(recipe: Recipe): boolean {
