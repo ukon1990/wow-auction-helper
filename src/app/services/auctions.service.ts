@@ -95,9 +95,12 @@ export class AuctionsService {
         this.openSnackbar('Completed TSM download');
       })
       .catch(e => {
-        this.openSnackbar(`Completed TSM download. One reason that this could happen, is if you have used all your requests.`);
+        this.openSnackbar(`Could not completed TSM download. One reason that this could happen, is if you have used all your requests.`);
         console.error('Unable to download TSM data', e);
         SharedService.downloading.tsmAuctions = false;
+        this._dbService.getTSMItems().then(r => {
+          this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
+        }).catch(e => {});
       });
   }
 
