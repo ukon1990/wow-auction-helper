@@ -75,6 +75,7 @@ export class ItemClassGroup {
   auctions = new Array<Auction>();
 
   constructor(auction: Auction) {
+    this.id = SharedService.items[auction.item].itemClass;
     this.add(auction);
   }
 
