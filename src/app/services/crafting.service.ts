@@ -45,10 +45,17 @@ export class CraftingService {
   }
 
   private handleRecipe(r: Recipe): void {
+    const possiblyBuggedRecipe = !r.profession && r.name.indexOf('Create ') !== -1;
     if (r.itemID > 0 && !SharedService.items[r.itemID]) {
       this._itemService.addItem(r.itemID);
     }
     r.reagents.forEach(reagent => {
+      // TODO: Make a permanent fix for this in the backend.
+      // As "Create ..." recipes need 10, but the api claims 9 etc, we need to +1 this.
+      if (possiblyBuggedRecipe) {
+        reagent.count++;
+      }
+
       if (reagent.itemID > 0 && !SharedService.items[reagent.itemID]) {
         this._itemService.addItem(reagent.itemID);
       }
