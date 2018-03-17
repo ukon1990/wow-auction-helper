@@ -26,8 +26,8 @@
           <strong class="mr-1">Regional sale rate:</strong> {{ getAuctionItem(item.itemID).regionSaleRate | percent }}
         </div>
       </div>
-      <form [formGroup]="form">
-        <mat-form-field class="row col">
+      <form [formGroup]="form" class="row">
+        <mat-form-field class="col-md-2">
           <mat-select placeholder="Compare buyout/quantity to" formControlName="compareTo">
             <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
@@ -35,7 +35,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="row col">
+        <mat-form-field class="col-md-2">
           <mat-select placeholder="Criteria" formControlName="criteria">
             <mat-option *ngFor="let i of criteria" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
@@ -43,7 +43,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="row col">
+        <mat-form-field class="col-md-2">
           <mat-select placeholder="Target type" formControlName="targetType">
             <mat-option *ngFor="let i of targetTypes" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
@@ -51,11 +51,11 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="row col">
+        <mat-form-field class="col-md-2">
           <input matInput placeholder="Value {{ form.value.value | gold }}" formControlName="value" type="number">
         </mat-form-field>
 
-        <mat-form-field class="row col">
+        <mat-form-field class="col-md-2">
           <mat-select placeholder="Group" formControlName="group">
             <mat-option *ngFor="let group of groups" [value]="group" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ group.name }}

@@ -18,7 +18,7 @@
           </mat-autocomplete>
         </mat-form-field>
       </form>
-      <wah-watchlist-item-manager *ngIf="selectedItem && selectedIndex === 0" [group]="selectedGroup" [item]="selectedItem" [index]="selectedIndex" (close)="close()"></wah-watchlist-item-manager>
+      <wah-watchlist-item-manager *ngIf="selectedItem" [group]="selectedGroup" [item]="selectedItem" [index]="selectedIndex" (close)="close()"></wah-watchlist-item-manager>
       <div class="slim-sm row col-md-12">
         <div *ngFor="let item of group.items; let i = index" class="col-md-6 col-lg-4 mb-3">
           <wah-watchlist-item [item]="item" (edit)="edit(group, item, i)" (delete)="delete(group, item, i)"></wah-watchlist-item>

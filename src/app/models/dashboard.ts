@@ -254,7 +254,7 @@ export class Dashboard {
             obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal) };
           this.data.push(obj);
           if (wlVal.left > 0 && wlVal.right > 0) {
-            this.tsmShoppingString += `${item.name}/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
+            this.tsmShoppingString += `${item.name}/exact/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
           }
         }
       });
@@ -326,7 +326,7 @@ export class Dashboard {
         if (SharedService.user.apiToUse !== 'none') {
           mvValue += ai.mktPrice - ai.vendorSell;
         }
-        this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.vendorSell)};`;
+        this.tsmShoppingString += `${ai.name}/exact/1c/${pipe.transform(ai.vendorSell)};`;
         return true;
       }
       return false;
@@ -418,7 +418,7 @@ export class Dashboard {
 
     this.data = SharedService.auctionItems.filter(ai => {
       if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15 && ai.buyout / ai.regionSaleAvg < 0.15) {
-        this.tsmShoppingString += `${ai.name}/1c/${pipe.transform(ai.mktPrice * 0.149)};`;
+        this.tsmShoppingString += `${ai.name}/exact/1c/${pipe.transform(ai.mktPrice * 0.149)};`;
         return true;
       }
       return false;
