@@ -10,39 +10,128 @@
         New functionality have been added since your last visit, among them you will find the following:
       </p>
       <div class="scrollable">
-          <mat-card class="mb-2">
-            <mat-card-header>
-              <mat-card-title>
-                7.March 2018
-              </mat-card-title>
-              <mat-card-subtitle>
-                Version 2
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <mat-list dense>
-                <mat-list-item>
-                  <p>
-                    You can now choose to export your settings to file instead of a string.
-                    You can then use that file to import it in another browser, or if you wish to keep a backup of your settings.
-                  </p>
-                </mat-list-item>
-                <mat-list-item>
-                  <p>
-                    This website now has HTTPS. If you haven't already, download your settings, go 
-                    to <a href="https://wah.jonaskf.net" target="_blank"> https://wah.jonaskf.net </a> and import your settings there. 
-                    This is requiered for notifications to work in Chrome etc.
-                  </p>
-                </mat-list-item>
-                <mat-list-item>
-                  <p>
-                    There has also been several minor fixes since the previous notification. Among them is a change on the server. 
-                    The application has now been completly moved from my old hosting service to a new one. And the new backend is completed.
-                  </p>
-                </mat-list-item>
-              </mat-list>
-            </mat-card-content>
-          </mat-card>
+      <mat-card class="mb-2">
+          <mat-card-header>
+            <mat-card-title>
+              8. - 17.March 2018
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            There as been several bug fixes and improvements the between 8. and 17.March. Here you have a list of some of them.
+            <mat-accordion>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  Professions & my auctions
+                </mat-expansion-panel-header>
+                <mat-list dense>
+                  <mat-list-item>
+                    "On use" type crafts are now available as a known recipe in the crafting section.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Some of these "on use" recipes also have had their reagent count corrected in-app, 
+                    as blizzard gives one to little in the requiered reagent count.
+                  </mat-list-item>
+                  <mat-list-item>
+                    My auction's now display a percentage of how many of your auctions, were undercutted at the last auction house data dump.
+                  </mat-list-item>
+                </mat-list>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    Dashboards & Sellers
+                </mat-expansion-panel-header>
+                <mat-list dense>
+                  <mat-list-item>
+                    The seller detail panel now contains a couple charts that you can select amongst. These display items per sub class (Gem, Potion etc).
+                  </mat-list-item>
+                  <mat-list-item>
+                    There are now seller dashboards per item class (not sub class).
+                  </mat-list-item>
+                  <mat-list-item>
+                    The watchlist dashboard, will now display the criteria for it being displayed. E.g "< 3g 99s 10c" or "< 10 pcs".
+                  </mat-list-item>
+                </mat-list>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Bug fixes
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-list dense>
+                  <mat-list-item>
+                    The number of undercutted auctions has been corrected. This also affects the notification.
+                  </mat-list-item>
+                  <mat-list-item>
+                    You can now edit watchlist items again. I apologize for it nor working the past couple days.
+                  </mat-list-item>
+                  <mat-list-item>
+                    If you use up all your TSM requests, the app should now fall back to the previously fetched TSM list. 
+                    This will only occur if you change realms to often and too fast.
+                  </mat-list-item>
+                  <mat-list-item>
+                    The sorting of sellers will now be correct
+                  </mat-list-item>
+                  <mat-list-item>
+                    If you click on the eye in a table of sellers or the name of a seller, you will get information such as what auctions they
+                    currently have up.
+                  </mat-list-item>
+                  <mat-list-item>
+                    The custom proc, custom price and watchlist item add dropdown has been fixed, 
+                    so that it will not cause an error upon selecting an item (about 10 days ago or so)
+                  </mat-list-item>
+                  <mat-list-item>
+                    Not really a bug, but you can now add characters lower than level 10. In case you've got a sub level 10 seller.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Realms containing ' etc, will no longer cause issues when it comes to known recipes.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Character portraits will now appear correctly regardless of region.
+                  </mat-list-item>
+                  <mat-list-item>
+                    and more.
+                  </mat-list-item>
+                </mat-list>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="mb-2">
+          <mat-card-header>
+            <mat-card-title>
+              7.March 2018
+            </mat-card-title>
+            <mat-card-subtitle>
+              Version 2
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list dense>
+              <mat-list-item>
+                <p>
+                  You can now choose to export your settings to file instead of a string.
+                  You can then use that file to import it in another browser, or if you wish to keep a backup of your settings.
+                </p>
+              </mat-list-item>
+              <mat-list-item>
+                <p>
+                  This website now has HTTPS. If you haven't already, download your settings, go 
+                  to <a href="https://wah.jonaskf.net" target="_blank"> https://wah.jonaskf.net </a> and import your settings there. 
+                  This is requiered for notifications to work in Chrome etc.
+                </p>
+              </mat-list-item>
+              <mat-list-item>
+                <p>
+                  There has also been several minor fixes since the previous notification. Among them is a change on the server. 
+                  The application has now been completly moved from my old hosting service to a new one. And the new backend is completed.
+                </p>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
         <mat-card class="mb-2">
           <mat-card-header>
             <mat-card-title>
