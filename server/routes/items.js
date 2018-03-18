@@ -5,7 +5,8 @@ const express = require('express'),
   request = require('request'),
   requestPromise = require('request-promise'),
   secrets = require('../secrets/secrets'),
-  mysql = require('mysql');
+  mysql = require('mysql'),
+  PromiseThrottle = require('promise-throttle');
 
 // Error handling
 const sendError = (err, res) => {
@@ -47,24 +48,33 @@ async function setMissingLocales(req, res) {
   // Limit to 9 per second
   return new Promise((reso, rej) => {
     const connection = mysql.createConnection(secrets.databaseConn);
-    connection.query('select id from items where id not in (select id from item_name_locale) limit 5;', async (err, rows, fields) => {
+    connection.query('select id from items where id not in (select id from item_name_locale);', async (err, rows, fields) => {
       if (!err) {
+        var promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 5,           // up to 1 request per second 
+          promiseImplementation: Promise  // the Promise library you are using 
+        });
+
         const list = [];
-        const itemIDs = rows.map(row => {
-          return new Promise((resolve, reject) => {
-            getItemLocale(row.id, req, res)
-            .then(r => {
-              list.push(r);
-              resolve(r);
-            })
-            .catch(e => {
-              console.error(e);
-              reject({});
-            });
-          });
+        const itemIDs = [];
+        rows.forEach(row => {
+          itemIDs.push(
+            promiseThrottle.add(() => {
+              return new Promise((resolve, reject) => {
+                getItemLocale(row.id, req, res)
+                  .then(r => {
+                    list.push(r);
+                    resolve(r);
+                  })
+                  .catch(e => {
+                    console.error(e);
+                    reject({});
+                  });
+              })
+            }));
         });
         await Promise.all(itemIDs)
-          .then(r => {})
+          .then(r => { })
           .catch(e => console.error(e));
         reso(list);
       } else {

@@ -39,6 +39,7 @@
     "file-saver": "^1.3.3",
     "hammerjs": "^2.0.8",
     "mysql": "^2.15.0",
+    "promise-throttle": "^0.4.0",
     "push.js": "^1.0.5",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
