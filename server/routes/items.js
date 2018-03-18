@@ -3,6 +3,7 @@ const express = require('express'),
   headers = require('./headers'),
   url = require('url'),
   request = require('request'),
+  requestPromise = require('request-promise'),
   secrets = require('../secrets/secrets'),
   mysql = require('mysql');
 
@@ -32,6 +33,39 @@ router.get('/wowdb/:id', (req, res) => {
     console.error(err);
   }
 });
+
+router.get('/locale', (req, res) => {
+  res = headers.setHeaders(res);
+
+  shit(req, res);
+});
+
+async function shit(req, res) {
+  let list = {};
+  const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
+    .map(locale => requestPromise.get(`https://eu.api.battle.net/wow/item/25?locale=${locale}&apikey=${secrets.apikey}`, (e, r, b) => {
+      list[locale] = JSON.parse(b).name;
+    }));/*,
+    usPromises = ['en_US', 'es_MX', 'pt_BR']
+      .map(async locale => {} )*/
+
+  
+  await Promise.all(euPromises).then(r => {
+  }).catch(e => console.error(e));
+  console.log('List', list);
+  res.send(list);
+}
+
+async function test() {
+  const promises = [250, 500, 1000].map(ms => wait(ms));
+  console.log('resolved to', await Promise.race(promises));
+}
+
+async function wait(ms) {
+  await new Promise(resolve => setTimeout(() => resolve(), ms));
+  console.log('waited', ms);
+  return ms;
+}
 
 router.get('/:id', (req, res) => {
   res = headers.setHeaders(res);
