@@ -43,11 +43,13 @@ router.get('/locale', (req, res) => {
 async function shit(req, res) {
   let list = {};
   const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
-    .map(locale => requestPromise.get(`https://eu.api.battle.net/wow/item/25?locale=${locale}&apikey=${secrets.apikey}`, (e, r, b) => {
-      list[locale] = JSON.parse(b).name;
-    }));/*,
+      .map(locale => requestPromise.get(`https://eu.api.battle.net/wow/item/25?locale=${locale}&apikey=${secrets.apikey}`, (e, r, b) => {
+        list[locale] = JSON.parse(b).name;
+      })),
     usPromises = ['en_US', 'es_MX', 'pt_BR']
-      .map(async locale => {} )*/
+      .map(locale => requestPromise.get(`https://us.api.battle.net/wow/item/25?locale=${locale}&apikey=${secrets.apikey}`, (e, r, b) => {
+        list[locale] = JSON.parse(b).name;
+      }));
 
   
   await Promise.all(euPromises).then(r => {
