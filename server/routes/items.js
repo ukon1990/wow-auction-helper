@@ -5,7 +5,7 @@ const express = require('express'),
   request = require('request'),
   requestPromise = require('request-promise'),
   secrets = require('../secrets/secrets'),
-  getLocale = require('../locales'),
+  locale = require('../locales'),
   mysql = require('mysql'),
   PromiseThrottle = require('promise-throttle');
 
@@ -65,7 +65,7 @@ router.get('/:id', (req, res) => {
           });
           res.json(rows[0]);
         } else {
-          request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=${ getLocale(req) }&apikey=${secrets.apikey}`, (err, re, body) => {
+          request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=${ locale.getLocale(req) }&apikey=${secrets.apikey}`, (err, re, body) => {
             const icon = JSON.parse(body).icon;
             request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
               let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
@@ -138,7 +138,7 @@ router.get('*', (req, res) => {
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT i.id, ${ getLocale(req) }, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+    SELECT i.id, ${ locale.getLocale(req) }, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
     FROM items as i, item_name_locale as l
     WHERE i.id = l.id;`,
     (err, rows, fields) => {

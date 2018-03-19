@@ -3,7 +3,7 @@ const express = require('express'),
   url = require('url'),
   headers  = require('./headers'),
   secrets = require('../secrets/secrets'),
-  getLocale = require('../locales'),
+  locale = require('../locales'),
   requestPromise = require('request-promise'),
   PromiseThrottle = require('promise-throttle'),
   mysql = require('mysql');
@@ -123,7 +123,7 @@ router.get('*', (req, res) => {
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req) } as name, canBattle, icon, description, source 
+    SELECT p.speciesId, petTypeId, creatureId, ${ locale.getLocale(req) } as name, icon, description, source 
     FROM pets as p, pet_name_locale as l 
     WHERE l.speciesId = p.speciesId;`, function (err, rows, fields) {
     connection.end();

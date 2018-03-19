@@ -5,7 +5,7 @@ const express = require('express'),
   url = require('url'),
   request = require('request'),
   secrets = require('../secrets/secrets'),
-  getLocale = require('../locales'),
+  locale = require('../locales'),
   mysql = require('mysql'),
   requestPromise = require('request-promise'),
   PromiseThrottle = require('promise-throttle'),
@@ -130,7 +130,7 @@ router.get('*', (req, res) => {
 
   const connection = mysql.createConnection(secrets.databaseConn);
   // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
-  connection.query(`SELECT l.id, json, ${ getLocale(req) } as name from  recipes as r, recipe_name_locale as l where r.id = l.id and json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
+  connection.query(`SELECT l.id, json, ${ locale.getLocale(req) } as name from  recipes as r, recipe_name_locale as l where r.id = l.id and json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
     if (!err) {
       let recipes = [];
       rows.forEach(r => {
