@@ -21,6 +21,31 @@ export class AppComponent implements OnInit, AfterViewInit {
     private _itemService: ItemService,
     private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
     private angulartics2: Angulartics2) {
+    if (!localStorage['locale']) {
+      switch (navigator.language) {
+        case 'it':
+          localStorage['locale'] = 'it_IT';
+          break;
+        case 'pt':
+          localStorage['locale'] = 'pt_PT';
+          break;
+        case 'es':
+          localStorage['locale'] = 'es_ES';
+          break;
+        case 'ru':
+          localStorage['locale'] = 'ru_RU';
+          break;
+        case 'fr':
+          localStorage['locale'] = 'fr_FR';
+          break;
+        case 'de':
+          localStorage['locale'] = 'de_DE';
+          break;
+        default:
+          localStorage['locale'] = 'en_GB';
+          break;
+      }
+    }
     User.restore();
     SharedService.user.shoppingCart.restore();
   }

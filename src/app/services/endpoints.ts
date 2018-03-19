@@ -15,7 +15,8 @@ export class Endpoints {
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public static getUrl(path: string): string {
-    return environment.production ? '/api/' + path : Endpoints.WAH_LOCAL_API + path;
+    return environment.production ?
+      `/api/${path}?locale=${ localStorage['locale'] }` : `${ Endpoints.WAH_LOCAL_API }${ path }?locale=${ localStorage['locale'] }`;
   }
 
   public static getUndermineUrl(): string {
