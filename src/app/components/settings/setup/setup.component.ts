@@ -17,6 +17,7 @@ import { Angulartics2 } from 'angulartics2';
 export class SetupComponent implements OnInit {
   isDownloadingRealm: boolean;
   _characterForm: FormGroup;
+  locales = SharedService.locales;
   imagesForRoll = [
     {
       src: 'assets/img/auctions-default.jpg',
@@ -57,7 +58,12 @@ export class SetupComponent implements OnInit {
       region: ['', Validators.required],
       realm: ['', Validators.required],
       tsmKey: '',
-      importString: ''
+      importString: '',
+      locale: localStorage['locale']
+    });
+
+    this._characterForm.controls.locale.valueChanges.subscribe(locale => {
+      localStorage['locale'] = locale;
     });
   }
 

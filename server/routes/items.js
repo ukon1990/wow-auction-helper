@@ -141,9 +141,10 @@ router.get('*', (req, res) => {
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT i.id, ${ locale.getLocale(req) } as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
-    FROM items as i, item_name_locale as l
-    WHERE i.id = l.id;`,
+    SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+    FROM items as i
+    LEFT OUTER JOIN item_name_locale as l 
+    ON i.id = l.id;`,
     (err, rows, fields) => {
     connection.end();
     res.setHeader('content-type', 'application/json');

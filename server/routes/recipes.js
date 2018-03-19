@@ -130,13 +130,19 @@ router.get('*', (req, res) => {
 
   const connection = mysql.createConnection(secrets.databaseConn);
   // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
-  connection.query(`SELECT l.id, json, ${ locale.getLocale(req) } as name from  recipes as r, recipe_name_locale as l where r.id = l.id and json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
+  connection.query(`
+    SELECT l.id, json, ${ locale.getLocale(req) } as name from  recipes as r
+    LEFT OUTER JOIN recipe_name_locale as l
+    ON r.id = l.id
+    WHERE json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
     if (!err) {
       let recipes = [];
       rows.forEach(r => {
         try {
           recipe = JSON.parse(r.json);
-          recipe.name = r.name;
+          if (r.name) {
+            recipe.name = r.name;
+          }
           recipes.push(recipe);
         } catch (err) {
           console.error(`${new Date().toString()} - Could not parse json (${r.id})`, r.json, err);
