@@ -15,6 +15,7 @@ import { FileService } from '../../../services/file.service';
 })
 export class GeneralSettingsComponent implements OnInit {
   _characterForm: FormGroup;
+  locales = SharedService.locales;
 
   constructor(private _formBuilder: FormBuilder,
     private angulartics2: Angulartics2,
