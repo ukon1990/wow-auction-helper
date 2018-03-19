@@ -44,108 +44,6 @@ router.get('/locale', (req, res) => {
     .catch(e => console.error(`Could not get locale for x`, e));
 });
 
-async function setMissingLocales(req, res) {
-  // Limit to 9 per second
-  return new Promise((reso, rej) => {
-    const connection = mysql.createConnection(secrets.databaseConn);
-    connection.query('select id from items where id not in (select id from item_name_locale);', async (err, rows, fields) => {
-      if (!err) {
-        var promiseThrottle = new PromiseThrottle({
-          requestsPerSecond: 5,           // up to 1 request per second 
-          promiseImplementation: Promise  // the Promise library you are using 
-        });
-
-        const list = [];
-        const itemIDs = [];
-        rows.forEach(row => {
-          itemIDs.push(
-            promiseThrottle.add(() => {
-              return new Promise((resolve, reject) => {
-                getItemLocale(row.id, req, res)
-                  .then(r => {
-                    list.push(r);
-                    resolve(r);
-                  })
-                  .catch(e => {
-                    console.error(e);
-                    reject({});
-                  });
-              })
-            }));
-        });
-        await Promise.all(itemIDs)
-          .then(r => { })
-          .catch(e => console.error(e));
-        reso(list);
-      } else {
-        rej({});
-      }
-    });
-  });
-}
-
-async function getItemLocale(itemID, req, res) {
-  let item = {id: itemID};
-  const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
-      .map(locale => requestPromise.get(`https://eu.api.battle.net/wow/item/${itemID}?locale=${locale}&apikey=${secrets.apikey}`, (e, r, b) => {
-        item[locale] = JSON.parse(b).name;
-      })),
-    usPromises = ['en_US', 'es_MX', 'pt_BR']
-      .map(locale => requestPromise.get(`https://us.api.battle.net/wow/item/25?locale=${locale}&apikey=${secrets.apikey}`, (e, r, b) => {
-        item[locale] = JSON.parse(b).name;
-      }));
-
-  
-  await Promise.all(euPromises).then(r => {
-  }).catch(e => {
-    console.error(e);
-  });
-
-  try {
-    const connection = mysql.createConnection(secrets.databaseConn),
-      sql = `INSERT INTO item_name_locale
-      (id,
-        en_GB,
-        en_US,
-        de_DE,
-        es_ES,
-        es_MX,
-        fr_FR,
-        it_IT,
-        pl_PL,
-        pt_PT,
-        pt_BR,
-        ru_RU)
-      VALUES
-      (${item['id']},
-        "${safeifyString(item['en_GB'])}",
-        "${safeifyString(item['en_US'])}",
-        "${safeifyString(item['de_DE'])}",
-        "${safeifyString(item['es_ES'])}",
-        "${safeifyString(item['es_MX'])}",
-        "${safeifyString(item['fr_FR'])}",
-        "${safeifyString(item['it_IT'])}",
-        "${safeifyString(item['pl_PL'])}",
-        "${safeifyString(item['pt_PT'])}",
-        "${safeifyString(item['pt_BR'])}",
-        "${safeifyString(item['ru_RU'])}");`;
-
-    connection.query(sql, (err, rows, fields) => {
-        if (!err) {
-          console.log(`Locale added to db for ${item.en_GB}`);
-        } else {
-          console.error(`Locale not added to db for ${item.en_GB}`, err);
-        }
-        connection.end();
-      });
-    //
-  } catch (e) {
-    //
-  }
-
-  return item;
-}
-
 router.get('/:id', (req, res) => {
   res = headers.setHeaders(res);
 
@@ -226,11 +124,16 @@ router.patch('/:id', (req, res) => {
 });
 
 router.get('*', (req, res) => {
+  const locale = req.query.locale ?req.query.locale : 'en_GB';
   res = headers.setHeaders(res);
 
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
-  connection.query('SELECT * from items', function (err, rows, fields) {
+  connection.query(`
+    SELECT i.id, ${locale}, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+    FROM items as i, item_name_locale as l
+    WHERE i.id = l.id;`,
+    (err, rows, fields) => {
     connection.end();
     res.setHeader('content-type', 'application/json');
     if (!err) {
@@ -341,6 +244,116 @@ function forceStopIfTest(error) {
   if (inTesting) {
     throw error;
   }
+}
+
+async function setMissingLocales(req, res) {
+  // Limit to 9 per second
+  return new Promise((reso, rej) => {
+    const connection = mysql.createConnection(secrets.databaseConn);
+    connection.query('select id from items where id not in (select id from item_name_locale);', async (err, rows, fields) => {
+      if (!err) {
+        var promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 1,
+          promiseImplementation: Promise
+        });
+
+        const list = [];
+        const itemIDs = [];
+        rows.forEach(row => {
+          itemIDs.push(
+            promiseThrottle.add(() => {
+              return new Promise((resolve, reject) => {
+                getItemLocale(row.id, req, res)
+                  .then(r => {
+                    list.push(r);
+                    resolve(r);
+                  })
+                  .catch(e => {
+                    console.error(e);
+                    reject({});
+                  });
+              })
+            }));
+        });
+        await Promise.all(itemIDs)
+          .then(r => { })
+          .catch(e => console.error(e));
+        reso(list);
+      } else {
+        rej({});
+      }
+    });
+  });
+}
+
+async function getItemLocale(itemID, req, res) {
+  let item = {id: itemID};
+  const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
+      .map(locale => requestPromise.get(`https://eu.api.battle.net/wow/item/${itemID}?locale=${locale}&apikey=${secrets.apikey}`, (r, e, b) => {
+        try {
+          item[locale] = JSON.parse(b).name;
+        } catch(e) {
+          item[locale] = '404';
+        }
+      })),
+    usPromises = ['en_US', 'es_MX', 'pt_BR']
+      .map(locale => requestPromise.get(`https://us.api.battle.net/wow/item/${itemID}?locale=${locale}&apikey=${secrets.apikey}`, (r, e, b) => {
+        try {
+          item[locale] = JSON.parse(b).name;
+        } catch(e) {
+          item[locale] = '404';
+        }
+      }));
+
+  
+  await Promise.all(euPromises).then(r => {
+  }).catch(e => {
+    //console.error(e);
+  });
+
+  try {
+    const connection = mysql.createConnection(secrets.databaseConn),
+      sql = `INSERT INTO item_name_locale
+      (id,
+        en_GB,
+        en_US,
+        de_DE,
+        es_ES,
+        es_MX,
+        fr_FR,
+        it_IT,
+        pl_PL,
+        pt_PT,
+        pt_BR,
+        ru_RU)
+      VALUES
+      (${item['id']},
+        "${safeifyString(item['en_GB'])}",
+        "${safeifyString(item['en_US'])}",
+        "${safeifyString(item['de_DE'])}",
+        "${safeifyString(item['es_ES'])}",
+        "${safeifyString(item['es_MX'])}",
+        "${safeifyString(item['fr_FR'])}",
+        "${safeifyString(item['it_IT'])}",
+        "${safeifyString(item['pl_PL'])}",
+        "${safeifyString(item['pt_PT'])}",
+        "${safeifyString(item['pt_BR'])}",
+        "${safeifyString(item['ru_RU'])}");`;
+
+    connection.query(sql, (err, rows, fields) => {
+        if (!err) {
+          console.log(`Locale added to db for ${item.en_GB}`);
+        } else {
+          console.error(`Locale not added to db for ${item.en_GB}`, err);
+        }
+        connection.end();
+      });
+    //
+  } catch (e) {
+    //
+  }
+
+  return item;
 }
 
 module.exports = router;
