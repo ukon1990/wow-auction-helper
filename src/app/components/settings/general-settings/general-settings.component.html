@@ -1,6 +1,6 @@
 <form [formGroup]="_characterForm">
   <div class="row mb-3">
-    <div class="col-md-4">
+    <div class="col-md-6">
       <mat-card>
         <mat-card-header>
           <mat-card-title>
@@ -8,23 +8,34 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <mat-form-field>
-            <mat-select placeholder="Region" formControlName="region">
-              <mat-option value="eu" (click)="getRealms()">
-                Europe
-              </mat-option>
-              <mat-option value="us" (click)="getRealms()">
-                America
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-select placeholder="Realm" formControlName="realm">
-              <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
-                {{ getRealmWithkey(slug).name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class="row">
+            <mat-form-field class="col-md-4">
+              <mat-select placeholder="Region" formControlName="region">
+                <mat-option value="eu" (click)="getRealms()">
+                  Europe
+                </mat-option>
+                <mat-option value="us" (click)="getRealms()">
+                  America
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4">
+              <mat-select placeholder="Realm" formControlName="realm">
+                <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
+                  {{ getRealmWithkey(slug).name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <mat-form-field class="col-md-4">
+              <mat-select placeholder="Item/Recipe locale" formControlName="locale">
+                <mat-option *ngFor="let locale of locales" [value]="locale.locale">
+                  {{ locale.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </mat-card-content>
 
         <mat-card-content *ngIf="getRealmWithkey().name">
@@ -37,13 +48,13 @@
           It is using the timezone "{{ getRealmWithkey(slug).timezone }}".
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange()">
+          <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange() && !changedLocales">
             <i class="fas fa-save"></i> Save
           </button>
         </mat-card-actions>
       </mat-card>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-6">
       <mat-card>
         <mat-card-header>
           <mat-card-title>Your API key (optional)</mat-card-title>
