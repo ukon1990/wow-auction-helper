@@ -5,7 +5,10 @@ const express = require('express'),
   url = require('url'),
   request = require('request'),
   secrets = require('../secrets/secrets'),
+  getLocale = require('../locales'),
   mysql = require('mysql'),
+  requestPromise = require('request-promise'),
+  PromiseThrottle = require('promise-throttle'),
   inTesting = false;
 
 
@@ -22,6 +25,15 @@ let response = {
   data: [],
   message: null
 };
+
+router.get('/locale', (req, res) => {
+  res = headers.setHeaders(res);
+  const list = [];
+
+  setMissingLocales(req, res)
+    .then(r => res.send(r))
+    .catch(e => console.error(`Could not get locale for x`, e));
+});
 
 router.get('/:spellID', (req, res) => {
   res = headers.setHeaders(res);
@@ -114,14 +126,18 @@ router.patch('/:spellID', (req, res) => {
 
 router.get('*', (req, res) => {
   res = headers.setHeaders(res);
+  let recipe;
 
   const connection = mysql.createConnection(secrets.databaseConn);
-  connection.query(`SELECT id, json from recipes WHERE json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
+  // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
+  connection.query(`SELECT l.id, json, ${ getLocale(req) } as name from  recipes as r, recipe_name_locale as l where r.id = l.id and json NOT LIKE '%itemID":0%';`, (err, rows, fields) => {
     if (!err) {
       let recipes = [];
       rows.forEach(r => {
         try {
-          recipes.push(JSON.parse(r.json));
+          recipe = JSON.parse(r.json);
+          recipe.name = r.name;
+          recipes.push(recipe);
         } catch (err) {
           console.error(`${new Date().toString()} - Could not parse json (${r.id})`, r.json, err);
         }
@@ -202,6 +218,116 @@ function forceStopIfTest(error) {
   if (inTesting) {
     throw error;
   }
+}
+
+async function setMissingLocales(req, res) {
+  // Limit to 9 per second
+  return new Promise((reso, rej) => {
+    const connection = mysql.createConnection(secrets.databaseConn);
+    connection.query('select id from recipes where id not in (select id from recipe_name_locale);', async (err, rows, fields) => {
+      if (!err) {
+        var promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 1,
+          promiseImplementation: Promise
+        });
+
+        const list = [];
+        const spellIDs = [];
+        rows.forEach(row => {
+          spellIDs.push(
+            promiseThrottle.add(() => {
+              return new Promise((resolve, reject) => {
+                getRecipeLocale(row.id, req, res)
+                  .then(r => {
+                    list.push(r);
+                    resolve(r);
+                  })
+                  .catch(e => {
+                    console.error(e);
+                    reject({});
+                  });
+              })
+            }));
+        });
+        await Promise.all(spellIDs)
+          .then(r => { })
+          .catch(e => console.error(e));
+        reso(list);
+      } else {
+        rej({});
+      }
+    });
+  });
+}
+
+async function getRecipeLocale(spellID, req, res) {
+  let recipe = {id: spellID};
+  const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
+      .map(locale => requestPromise.get(`https://eu.api.battle.net/wow/spell/${spellID}?locale=${locale}&apikey=${ secrets.apikey }`, (r, e, b) => {
+        try {
+          recipe[locale] = JSON.parse(b).name;
+        } catch(e) {
+          recipe[locale] = '404';
+        }
+      })),
+    usPromises = ['en_US', 'es_MX', 'pt_BR']
+      .map(locale => requestPromise.get(`https://us.api.battle.net/wow/spell/${spellID}?locale=${locale}&apikey=${ secrets.apikey }`, (r, e, b) => {
+        try {
+          recipe[locale] = JSON.parse(b).name;
+        } catch(e) {
+          recipe[locale] = '404';
+        }
+      }));
+
+  
+  await Promise.all(euPromises).then(r => {
+  }).catch(e => {
+    //console.error(e);
+  });
+
+  try {
+    const connection = mysql.createConnection(secrets.databaseConn),
+      sql = `INSERT INTO recipe_name_locale
+      (id,
+        en_GB,
+        en_US,
+        de_DE,
+        es_ES,
+        es_MX,
+        fr_FR,
+        it_IT,
+        pl_PL,
+        pt_PT,
+        pt_BR,
+        ru_RU)
+      VALUES
+      (${recipe['id']},
+        "${safeifyString(recipe['en_GB'])}",
+        "${safeifyString(recipe['en_US'])}",
+        "${safeifyString(recipe['de_DE'])}",
+        "${safeifyString(recipe['es_ES'])}",
+        "${safeifyString(recipe['es_MX'])}",
+        "${safeifyString(recipe['fr_FR'])}",
+        "${safeifyString(recipe['it_IT'])}",
+        "${safeifyString(recipe['pl_PL'])}",
+        "${safeifyString(recipe['pt_PT'])}",
+        "${safeifyString(recipe['pt_BR'])}",
+        "${safeifyString(recipe['ru_RU'])}");`;
+
+    connection.query(sql, (err, rows, fields) => {
+        if (!err) {
+          console.log(`Locale added to db for ${recipe.en_GB}`);
+        } else {
+          console.error(`Locale not added to db for ${recipe.en_GB}`, err);
+        }
+        connection.end();
+      });
+    //
+  } catch (e) {
+    //
+  }
+
+  return recipe;
 }
 
 module.exports = router;

@@ -5,6 +5,7 @@ const express = require('express'),
   request = require('request'),
   requestPromise = require('request-promise'),
   secrets = require('../secrets/secrets'),
+  getLocale = require('../locales'),
   mysql = require('mysql'),
   PromiseThrottle = require('promise-throttle');
 
@@ -64,7 +65,7 @@ router.get('/:id', (req, res) => {
           });
           res.json(rows[0]);
         } else {
-          request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
+          request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=${ getLocale(req) }&apikey=${secrets.apikey}`, (err, re, body) => {
             const icon = JSON.parse(body).icon;
             request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
               let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
@@ -76,8 +77,16 @@ router.get('/:id', (req, res) => {
                 if (err) {
                   console.error('SQL error in items', err);
                 }
+
+                getRecipeLocale(req.params.id, req, res)
+                .then( r =>
+                  console.log(`Got locales for item ${ req.params.id }`))
+                .catch( e =>
+                  console.error(`Could not get locales for item ${ req.params.id }`));
                 connection.end();
               });
+
+              item.name = JSON.parse(body).name;
               res.send(item);
             });
           });
@@ -124,13 +133,12 @@ router.patch('/:id', (req, res) => {
 });
 
 router.get('*', (req, res) => {
-  const locale = req.query.locale ?req.query.locale : 'en_GB';
   res = headers.setHeaders(res);
 
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT i.id, ${locale}, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+    SELECT i.id, ${ getLocale(req) }, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
     FROM items as i, item_name_locale as l
     WHERE i.id = l.id;`,
     (err, rows, fields) => {
