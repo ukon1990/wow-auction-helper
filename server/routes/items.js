@@ -50,7 +50,10 @@ router.get('/:id', (req, res) => {
 
   try {
     const connection = mysql.createConnection(secrets.databaseConn);
-    connection.query('SELECT * from items where id = ' + req.params.id, function (err, rows, fields) {
+    connection.query(`
+      SELECT i.id, ${ locale.getLocale(req) } as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+      FROM items as i, item_name_locale as l
+      WHERE i.id = ${ req.params.id } AND l.id = ${ req.params.id };`, function (err, rows, fields) {
       res.setHeader('content-type', 'application/json');
       try {
         if (!err && rows.length > 0) {
@@ -138,7 +141,7 @@ router.get('*', (req, res) => {
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT i.id, ${ locale.getLocale(req) }, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+    SELECT i.id, ${ locale.getLocale(req) } as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
     FROM items as i, item_name_locale as l
     WHERE i.id = l.id;`,
     (err, rows, fields) => {
