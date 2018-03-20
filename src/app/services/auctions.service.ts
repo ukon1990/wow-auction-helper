@@ -60,10 +60,14 @@ export class AuctionsService {
         this.openSnackbar(`Auction download is completed`);
 
         if (SharedService.user.notifications.isUndercut) {
-          Notifications.send(
-            'WAH - Auction data just got updated',
-            `${SharedService.userAuctions.undercutAuctions} of your auctions were undercut.`
-          );
+          try {
+            Notifications.send(
+              'WAH - Auction data just got updated',
+              `${SharedService.userAuctions.undercutAuctions} of your auctions were undercut.`
+            );
+          } catch (e) {
+            console.error('Could not send notification', e);
+          }
         }
       })
       .catch(e => {

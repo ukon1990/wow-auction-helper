@@ -31,7 +31,7 @@ router.get('/wowuction/:region/:realm/:key', (req, res) => {
     }`,
     testUrl = 'http://localhost:3000/wowu.tsv';
 
-  request.get(testUrl, (err, re, body) => {
+  request.get(wowUctionURL, (err, re, body) => {
     res = headers.setHeaders(res);
     const list = [];
     let obj = {},

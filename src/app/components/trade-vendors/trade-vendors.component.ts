@@ -21,12 +21,12 @@ export class TradeVendorsComponent implements OnInit {
     this.columns.push({ key: 'quantity', title: 'Currency/item', dataType: 'number' });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
 
-    if (SharedService.user.apiToUse === 'tsm') {
+    if (SharedService.user.apiToUse !== 'none') {
       this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold' });
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number' });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
-      this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: [] });
     }
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: [] });
   }
 
   getTradeVendors(): Array<TradeVendor> {

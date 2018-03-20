@@ -173,12 +173,42 @@
       <p>
         Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
       </p>
-      <mat-form-field class="col-md-12">
-        <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
-      </mat-form-field>
-      If you don't have a TSM account you can
-      <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
-      <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
+      <p>
+        Both TSM and WoWUction gives the realms market value. TSM gives give regional sale rate, regional daily sold and regional
+        avg sale price. WoWUction gives the realms avg daily sold, posted and the estimated demand. You can only have one active at a given time. 
+        But you may provide, both keys but wowuction will be used if both are provided. You can change this in the settings late.
+      </p>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            TSM
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field class="col-md-12">
+              <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
+            </mat-form-field>
+            If you don't have a TSM account you can
+            <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
+            <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="mt-2">
+        <mat-card-header>
+          <mat-card-title>
+            WowUction
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field class="col-md-12">
+            <input matInput placeholder="WoWUction API key" formControlName="wowUctionKey">
+          </mat-form-field>
+          If you don't have an account over at
+          <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have done that, go to "Resources -> Data Export" and copy the
+          text after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
+        </mat-card-content>
+      </mat-card>
     </form>
     <div>
       <button class="float-left" mat-button matStepperPrevious>

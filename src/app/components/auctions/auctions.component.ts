@@ -53,9 +53,13 @@ export class AuctionsComponent implements OnInit, OnDestroy {
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
     this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true });
 
-    if (SharedService.user.apiToUse === 'tsm') {
+    if (SharedService.user.apiToUse !== 'none') {
       this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true });
-      this.columns.push({ key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
+      if (SharedService.user.apiToUse === 'tsm') {
+        this.columns.push({ key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
+      } else {
+        this.columns.push({ key: 'avgDailyPosted', title: 'Avg daily posted', dataType: 'number', hideOnMobile: true});
+      }
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
     }

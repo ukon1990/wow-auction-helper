@@ -92,6 +92,7 @@ export class SharedService {
   public static isDownloading(): boolean {
     return SharedService.downloading.auctions ||
       SharedService.downloading.tsmAuctions ||
+      SharedService.downloading.wowUctionAuctions ||
       SharedService.downloading.items ||
       SharedService.downloading.pets ||
       SharedService.downloading.recipes ||

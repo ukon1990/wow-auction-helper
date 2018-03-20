@@ -27,7 +27,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-  
+
             <mat-form-field class="col-md-4">
               <mat-select placeholder="Item language" formControlName="locale">
                 <mat-option *ngFor="let locale of locales" [value]="locale.locale">
@@ -39,7 +39,7 @@
         </mat-card-content>
 
         <mat-card-content *ngIf="getRealmWithkey().name">
-          This is a {{ getRealmWithkey(slug).population }} population realm, 
+          This is a {{ getRealmWithkey(slug).population }} population realm,
           <span *ngIf="getRealmWithkey().queue; else noQueue">with queue.</span>
           <ng-template #noQueue>
             <span>without queue.</span>
@@ -53,20 +53,25 @@
           </button>
         </mat-card-actions>
       </mat-card>
-    </div>
-    <div class="col-md-6">
-      <mat-card>
+
+      <mat-card class="mt-2">
         <mat-card-header>
           <mat-card-title>Your API key (optional)</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <p>
-            Supplying the app with an API key, allows it to display statistical data like Market value, regional sale rate and av regional daily sold.
+            Supplying the app with an API key, allows it to display statistical data like Market value, regional sale rate and av regional
+            daily sold.
+          </p>
+          <p>
+            Both TSM and WoWUction gives the realms market value. TSM gives give regional sale rate, regional daily sold and regional
+            avg sale price. WoWUction gives the realms avg daily sold, posted and the estimated demand.
           </p>
           <mat-card>
             <mat-card-header>
               <mat-card-title>
-                TSM <span *ngIf="isUsingTSM()">(In use)</span>
+                TSM
+                <span *ngIf="isUsingTSM()">(In use)</span>
               </mat-card-title>
             </mat-card-header>
             <mat-card-content>
@@ -87,15 +92,17 @@
           <mat-card class="mt-2">
             <mat-card-header>
               <mat-card-title>
-                WowUction <span *ngIf="isUsingWoWUction()">(In use)</span>
+                WowUction
+                <span *ngIf="isUsingWoWUction()">(In use)</span>
               </mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <mat-form-field class="col-md-12">
                 <input matInput placeholder="WoWUction API key" formControlName="wowUctionKey">
               </mat-form-field>
-              If you don't have an account over at <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one.
-              Once you have done that, go to "Resources -> Data Export" and copy the text after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
+              If you don't have an account over at
+              <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have done that, go to "Resources -> Data Export" and copy the
+              text after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
             </mat-card-content>
             <mat-card-actions>
               <button mat-button (click)="saveWoWuction()">
@@ -106,15 +113,12 @@
         </mat-card-content>
       </mat-card>
     </div>
-  </div>
-
-  <div class="row">
     <div class="col-md-6">
       <mat-card>
         <mat-card-header>
-        <mat-card-title>
-          Import previous settings
-        </mat-card-title>
+          <mat-card-title>
+            Import previous settings
+          </mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <mat-form-field class="col-md-10">
@@ -130,10 +134,9 @@
             <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
           </button>
         </mat-card-content>
-        </mat-card>
-    </div>
-    <div class="col-md-6">
-      <mat-card>
+      </mat-card>
+
+      <mat-card class="mt-2">
         <mat-card-header>
           <mat-card-title>
             Export your settings

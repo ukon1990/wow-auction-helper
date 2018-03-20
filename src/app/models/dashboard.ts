@@ -99,10 +99,9 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'bid', title: 'Bid', dataType: 'gold' },
-          { key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
         ];
-        this.addAPIColumnsAtPosition(4);
+        this.addAPIColumnsAtPosition(3);
         this.setPotentialDeals();
         break;
 
@@ -417,7 +416,7 @@ export class Dashboard {
     this.tsmShoppingString = '';
 
     this.data = SharedService.auctionItems.filter(ai => {
-      if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15 && ai.buyout / ai.regionSaleAvg < 0.15) {
+      if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15) {
         this.tsmShoppingString += `${ai.name}/exact/1c/${pipe.transform(ai.mktPrice * 0.149)};`;
         return true;
       }
