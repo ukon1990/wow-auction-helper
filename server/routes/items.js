@@ -51,8 +51,10 @@ router.get('/:id', (req, res) => {
   try {
     const connection = mysql.createConnection(secrets.databaseConn);
     connection.query(`
-      SELECT i.id, ${ locale.getLocale(req) } as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+      SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
       FROM items as i, item_name_locale as l
+      LEFT OUTER JOIN item_name_locale as l 
+      ON i.id = l.id
       WHERE i.id = ${ req.params.id } AND l.id = ${ req.params.id };`, function (err, rows, fields) {
       res.setHeader('content-type', 'application/json');
       try {
@@ -82,14 +84,16 @@ router.get('/:id', (req, res) => {
                 }
 
                 getRecipeLocale(req.params.id, req, res)
-                .then( r =>
-                  console.log(`Got locales for item ${ req.params.id }`))
-                .catch( e =>
-                  console.error(`Could not get locales for item ${ req.params.id }`));
+                  .then( r =>
+                    console.log(`Got locales for item ${ req.params.id }`))
+                  .catch( e =>
+                    console.error(`Could not get locales for item ${ req.params.id }`));
                 connection.end();
               });
 
-              item.name = JSON.parse(body).name;
+              if (JSON.parse(body).name) {
+                item.name = JSON.parse(body).name;
+              }
               res.send(item);
             });
           });

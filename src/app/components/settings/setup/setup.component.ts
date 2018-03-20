@@ -49,6 +49,9 @@ export class SetupComponent implements OnInit {
     }, {
       src: 'assets/img/watchlist-groups.jpg',
       alt: 'Watchlist'
+    }, {
+      src: 'assets/img/locale-support.jpg',
+      alt: 'Support for different locales'
     }
   ];
 

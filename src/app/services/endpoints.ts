@@ -16,7 +16,7 @@ export class Endpoints {
 
   public static getUrl(path: string): string {
     return environment.production ?
-      `/api/${path}?locale=${ localStorage['locale'] }` : `${ Endpoints.WAH_LOCAL_API }${ path }?locale=${ localStorage['locale'] }`;
+      `/api/${path}` : `${ Endpoints.WAH_LOCAL_API }${ path }`;
   }
 
   public static getUndermineUrl(): string {

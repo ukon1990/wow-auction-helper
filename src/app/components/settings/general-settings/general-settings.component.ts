@@ -65,6 +65,17 @@ export class GeneralSettingsComponent implements OnInit {
       await this.itemService.getItems();
       await this.petsService.getPets();
       await this.craftingService.getRecipes();
+
+      // Updating the watchlist names
+      SharedService.user.watchlist.groups.forEach(g => {
+        g.items.forEach(i => {
+          if (SharedService.items[i.itemID]) {
+            i.name = SharedService.items[i.itemID].name;
+          }
+        });
+      });
+      SharedService.user.watchlist.save();
+
       this.changedLocales = false;
 
       if (!this.changedRealm) {

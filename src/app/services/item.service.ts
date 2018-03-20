@@ -10,7 +10,7 @@ export class ItemService {
 
   addItem(itemID: number): void {
     console.log('Attempting to add item data for ' + itemID);
-    this._http.get(Endpoints.getUrl(`item/${itemID}`))
+    this._http.get(Endpoints.getUrl(`item/${itemID}?locale=${ localStorage['locale'] }`))
       .toPromise()
       .then((item) => {
         console.log('downloaded item', item);
@@ -26,13 +26,18 @@ export class ItemService {
   getItems(): Promise<any> {
     console.log('Downloading items');
     SharedService.downloading.items = true;
-    return this._http.get(Endpoints.getUrl(`item`))
+    return this._http.get(Endpoints.getUrl(`item?locale=${ localStorage['locale'] }`))
       .toPromise()
       .then(items => {
         SharedService.itemsUnmapped = items['items'];
         localStorage['timestamp_items'] = new Date().toDateString();
         SharedService.downloading.items = false;
         items['items'].forEach(i => {
+          // Making sure that the tradevendor item names are updated in case of locale change
+          if (SharedService.tradeVendorMap[i.id]) {
+            SharedService.tradeVendorMap[i.id].name = i.name;
+          }
+
           if (i.itemClass === 8) {
             i.itemClass = 0;
             i.itemSubClass = 6;

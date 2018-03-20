@@ -11,7 +11,7 @@ export class CraftingService {
   constructor(private _http: HttpClient, private _itemService: ItemService) { }
 
   getRecipe(spellID: number): void {
-    this._http.get(Endpoints.getUrl(`recipe/${spellID}`))
+    this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${ localStorage['locale'] }`))
       .toPromise()
         .then(r =>
           this.handleRecipe(r as Recipe))
@@ -21,7 +21,7 @@ export class CraftingService {
   getRecipes(): Promise<any> {
     console.log('Downloading recipes');
     SharedService.downloading.recipes = true;
-    return this._http.get(Endpoints.getUrl(`recipe`))
+    return this._http.get(Endpoints.getUrl(`recipe?locale=${ localStorage['locale'] }`))
       .toPromise()
       .then(recipes => {
         SharedService.downloading.recipes = false;
