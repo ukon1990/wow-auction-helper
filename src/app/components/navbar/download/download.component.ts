@@ -59,6 +59,21 @@ export class DownloadComponent implements OnInit {
               this._auctionsService.getTsmAuctions();
             });
         }
+      } else if (SharedService.user.apiToUse === 'wowuction') {
+        if (new Date().toDateString() !== localStorage['timestamp_wowuction']) {
+          await this._auctionsService.getWoWUctionAuctions();
+        } else {
+          await this._dbService.getWoWUctionItems()
+            .then(r => {
+              if (Object.keys(SharedService.wowUction).length === 0) {
+                this._auctionsService.getWoWUctionAuctions();
+              }
+            })
+            .catch(e => {
+              console.error('Could not restore WoWUction data', e);
+              this._auctionsService.getWoWUctionAuctions();
+            });
+        }
       }
       await this._dbService.getAllAuctions()
         .then(r => {
@@ -85,6 +100,11 @@ export class DownloadComponent implements OnInit {
   }
 
   /* istanbul ignore next */
+  isUsingWowUction(): boolean {
+    return SharedService.user.apiToUse === 'wowuction';
+  }
+
+  /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
   }
@@ -100,6 +120,10 @@ export class DownloadComponent implements OnInit {
       properties: { category: 'Manual download' },
     });
     switch (type) {
+      case 'wowuction':
+        await this._auctionsService.getWoWUctionAuctions();
+        AuctionHandler.organize(SharedService.auctions);
+        break;
       case 'tsm':
         await this._auctionsService.getTsmAuctions();
         AuctionHandler.organize(SharedService.auctions);

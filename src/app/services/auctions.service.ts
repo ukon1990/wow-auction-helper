@@ -9,6 +9,7 @@ import { DatabaseService } from './database.service';
 import { ItemService } from './item.service';
 import { Notifications } from '../models/user/notification';
 import { MatSnackBar } from '@angular/material';
+import { WoWUction } from '../models/auction/wowuction';
 
 @Injectable()
 export class AuctionsService {
@@ -100,7 +101,40 @@ export class AuctionsService {
         SharedService.downloading.tsmAuctions = false;
         this._dbService.getTSMItems().then(r => {
           this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
-        }).catch(e => {});
+        }).catch(error => console.error('Could not restore TSM auctions from local DB', error));
+      });
+  }
+
+  getWoWUctionAuctions(): Promise<any> {
+    console.log('Downloading WoWUction data');
+    SharedService.downloading.wowUctionAuctions = true;
+    this.openSnackbar('Downloading WoWUction data');
+    return this._http.get(`${Endpoints.getUrl('auction/wowuction')}/${
+      SharedService.user.region
+      }/${
+      SharedService.user.realm
+      }/${
+      SharedService.user.apiWoWu
+      }`)
+      .toPromise()
+      .then(wowu => {
+        localStorage['timestamp_wowuction'] = new Date().toDateString();
+        (<WoWUction[]>wowu).forEach(a => {
+          SharedService.wowUction[a.id] = a;
+        });
+        SharedService.downloading.wowUctionAuctions = false;
+        console.log('WoWUction data download is complete');
+        this._dbService.addWoWUctionItems(wowu as Array<WoWUction>);
+        this.openSnackbar('Completed WoWUction download');
+      })
+      .catch(e => {
+        this.openSnackbar(
+          `Could not completed WoWUction download. One reason that this could happen, is if you have used all your requests.`);
+        console.error('Unable to download WoWUction data', e);
+        SharedService.downloading.wowUctionAuctions = false;
+        this._dbService.getWoWUctionItems().then(r => {
+          this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
+        }).catch(error => console.error('Could not restore WoWUction auctions from local DB', error));
       });
   }
 

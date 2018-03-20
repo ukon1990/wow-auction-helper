@@ -5,6 +5,7 @@ import { Auction } from '../models/auction/auction';
 import { AuctionHandler } from '../models/auction/auction-handler';
 import { SharedService } from './shared.service';
 import { TSM } from '../models/auction/tsm';
+import { WoWUction } from '../models/auction/wowuction';
 /**
  * A Class for handeling the indexedDB
  */
@@ -15,7 +16,7 @@ export class DatabaseService {
   readonly TSM_TABLE_COLUMNS = 'Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,'
     + 'RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,'
     + 'RegionAvgDailySold,RegionSaleRate';
-  readonly WOWUCTION_TABLE_COLUMNS = 'id,mktPrice,avgDailyPosted,avgDailySold,estDemand,realm';
+  readonly WOWUCTION_TABLE_COLUMNS = 'id,mktPrice,avgDailyPosted,avgDailySold,estDemand,dailyPriceChange';
   readonly ITEM_TABLE_COLUMNS = 'id,name,icon,itemLevel,itemClass,itemSubClass,quality,itemSpells'
     + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation';
   readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
@@ -78,6 +79,31 @@ export class DatabaseService {
       });
   }
 
+  addWoWUctionItems(wowuction: Array<WoWUction>): void {
+    this.db.table('wowuction').clear();
+    this.db.table('wowuction')
+      .bulkPut(wowuction)
+      .then(r => console.log('Successfully added WoWUction data to local DB'))
+      .catch(e => console.error('Could not add WoWUction data to local DB', e));
+  }
+
+  getWoWUctionItems(): Dexie.Promise<any> {
+    SharedService.downloading.wowUctionAuctions = true;
+    return this.db.table('wowuction')
+      .toArray()
+      .then(wowuction => {
+        (<WoWUction[]>wowuction).forEach(a => {
+          SharedService.wowUction[a.id] = a;
+        });
+        SharedService.downloading.wowUctionAuctions = false;
+        console.log('Restored WoWUction data from local DB');
+      })
+      .catch(e => {
+        console.error('Could not restore WoWUction data', e);
+        SharedService.downloading.wowUctionAuctions = false;
+      });
+  }
+
   addTSMItems(tsm: Array<TSM>): void {
     this.db.table('tsm').clear();
     this.db.table('tsm')
@@ -110,6 +136,16 @@ export class DatabaseService {
     this.db.version(2).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS
+    }).upgrade(() => {
+      console.log('Upgraded db');
+    });
+
+    this.db.version(2).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: 'id,mktPrice,avgDailyPosted,avgDailySold,estDemand,realm',
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS

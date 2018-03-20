@@ -8,6 +8,7 @@ import { TradeVendors } from '../item/trade-vendors';
 import { Seller } from '../seller';
 import { AuctionPet } from './auction-pet';
 import { Notifications } from '../user/notification';
+import { WoWUction } from './wowuction';
 
 export class AuctionHandler {
   /**
@@ -119,11 +120,22 @@ export class AuctionHandler {
       tmpAuc.mktPrice = tsmItem.MarketValue;
       tmpAuc.avgDailySold = tsmItem.RegionAvgDailySold;
       tmpAuc.regionSaleAvg = tsmItem.RegionSaleAvg;
+
+    } else if (this.useWoWUction() && SharedService.wowUction[auction.item]) {
+      const wowuItem: WoWUction = SharedService.wowUction[auction.item];
+      tmpAuc.regionSaleRate = wowuItem.estDemand;
+      tmpAuc.mktPrice = wowuItem.mktPrice;
+      tmpAuc.avgDailySold = wowuItem.avgDailySold;
+      tmpAuc.avgDailyPosted = wowuItem.avgDailyPosted;
     }
     return tmpAuc;
   }
 
   private static useTSM(): boolean {
     return SharedService.user.apiToUse === 'tsm';
+  }
+
+  private static useWoWUction(): boolean {
+    return SharedService.user.apiToUse === 'wowuction';
   }
 }

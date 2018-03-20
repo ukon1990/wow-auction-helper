@@ -17,6 +17,7 @@ import { AuctionPet } from '../models/auction/auction-pet';
 import { ShoppingCart } from '../models/shopping-cart';
 import { Notification } from '../models/user/notification';
 import { CustomProc } from '../models/crafting/custom-proc';
+import { WoWUction } from '../models/auction/wowuction';
 
 @Injectable()
 export class SharedService {
@@ -49,6 +50,7 @@ export class SharedService {
   public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();
   public static auctions: Array<Auction> = new Array<Auction>();
   public static tsm: Map<number, TSM> = new Map<number, TSM>();
+  public static wowUction: Map<number, WoWUction> = new Map<number, WoWUction>();
 
   public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
@@ -79,6 +81,7 @@ export class SharedService {
   public static downloading = {
     auctions: false,
     tsmAuctions: false,
+    wowUctionAuctions: false,
     items: false,
     pets: false,
     recipes: false,

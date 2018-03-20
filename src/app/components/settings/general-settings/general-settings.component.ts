@@ -34,6 +34,7 @@ export class GeneralSettingsComponent implements OnInit {
       region: [ SharedService.user.region, Validators.required],
       realm: [ SharedService.user.realm, Validators.required],
       tsmKey: SharedService.user.apiTsm,
+      wowUctionKey: SharedService.user.apiWoWu,
       importString: '',
       exportString: '',
       locale: localStorage['locale']
@@ -94,6 +95,29 @@ export class GeneralSettingsComponent implements OnInit {
 
   hasTSMKeyChanged(): boolean {
     return SharedService.user.apiTsm !== this._characterForm.value.tsmKey;
+  }
+
+  hasWoWUctionKeyChanged(): boolean {
+    return SharedService.user.apiWoWu !== this._characterForm.value.wowUctionKey;
+  }
+
+  saveWoWuction(): void {
+    SharedService.user.apiWoWu = this._characterForm.value.wowUctionKey;
+    if (SharedService.user.apiWoWu.length > 0) {
+      SharedService.user.apiToUse = 'wowuction';
+      this._auctionService.getWoWUctionAuctions();
+    } else {
+      SharedService.user.apiToUse = 'none';
+    }
+    User.save();
+  }
+
+  isUsingWoWUction(): boolean {
+    return SharedService.user.apiToUse === 'wowuction';
+  }
+
+  isUsingTSM(): boolean {
+    return SharedService.user.apiToUse === 'tsm';
   }
 
   saveTSMKey(): void {

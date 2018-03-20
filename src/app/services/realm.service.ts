@@ -18,8 +18,10 @@ export class RealmService {
     SharedService.user.realm = realm;
     User.save();
 
-    if (SharedService.user.apiToUse !== 'none') {
+    if (SharedService.user.apiToUse === 'tsm') {
       await auctionService.getTsmAuctions();
+    } else if (SharedService.user.apiToUse === 'wowuction') {
+      await auctionService.getWoWUctionAuctions();
     }
     await auctionService.getLastModifiedTime(true);
   }

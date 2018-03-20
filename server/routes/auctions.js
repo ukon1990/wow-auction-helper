@@ -21,15 +21,17 @@ let response = {
 };
 
 router.get('/wowuction/:region/:realm/:key', (req, res) => {
-  const key = req.query.key;
-  // http://localhost:3000/wuc.tsv
-  request.get(`http://www.wowuction.com/${
-        req.params.region
-      }/${
-        req.params.realm
-      }/alliance/Tools/RealmDataExportGetFileStatic?token=${
-        req.params.key
-      }`, (err, re, body) => {
+  const key = req.query.key,
+    wowUctionURL = `http://www.wowuction.com/${
+      req.params.region
+    }/${
+      req.params.realm
+    }/alliance/Tools/RealmDataExportGetFileStatic?token=${
+      req.params.key
+    }`,
+    testUrl = 'http://localhost:3000/wowu.tsv';
+
+  request.get(testUrl, (err, re, body) => {
     res = headers.setHeaders(res);
     const list = [];
     let obj = {},

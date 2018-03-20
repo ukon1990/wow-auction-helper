@@ -61,6 +61,7 @@ export class SetupComponent implements OnInit {
       region: ['', Validators.required],
       realm: ['', Validators.required],
       tsmKey: '',
+      wowUctionKey: '',
       importString: '',
       locale: localStorage['locale']
     });
@@ -156,8 +157,9 @@ export class SetupComponent implements OnInit {
       localStorage['realm'] = this._characterForm.value.realm;
       localStorage['character'] = this._characterForm.value.name;
 
+      localStorage['api_tsm'] = this._characterForm.value.tsmKey;
+      localStorage['api_wowuction'] = this._characterForm.value.wowUctionKey;
       if (this._characterForm.value.tsmKey.length > 0) {
-        localStorage['api_tsm'] = this._characterForm.value.tsmKey;
         localStorage['api_to_use'] = 'tsm';
       } else {
         localStorage['api_to_use'] = 'none';

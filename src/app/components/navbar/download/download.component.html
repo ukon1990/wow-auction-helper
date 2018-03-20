@@ -82,6 +82,22 @@
               </button>
             </td>
           </tr>
+
+          <tr *ngIf="isUsingWowUction()">
+            <td>
+              <mat-spinner *ngIf="getDownloading().wowUctionAuctions"class="float-left mr-2"></mat-spinner>
+            </td>
+            <td>WoWUction</td>
+            <td>{{ getTime('timestamp_wowuction') | date: 'M/d/yy' }}</td>
+            <td>
+              <!-- [disabled]="getDownloading().tsmAuctions" -->
+              <button mat-icon-button (click)="download('wowuction')"
+                matTooltip="Re-download WoWUction data">
+                <i class="fas fa-download"></i>
+              </button>
+            </td>
+          </tr>
+
           <tr *ngIf="isUsingTSM()">
             <td>
               <mat-spinner *ngIf="getDownloading().tsmAuctions"class="float-left mr-2"></mat-spinner>
