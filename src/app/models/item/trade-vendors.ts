@@ -52,6 +52,22 @@ export class TradeVendors {
   }
 }
 
+const frozenOrb: TradeVendor = {
+  itemID: 43102,
+  name: 'Frozen Orb',
+  items: [
+    new TradeVendorItem(36908, 1),
+    new TradeVendorItem(47556, 6),
+    new TradeVendorItem(45087, 4),
+    new TradeVendorItem(35622, 1),
+    new TradeVendorItem(35623, 1),
+    new TradeVendorItem(35624, 1),
+    new TradeVendorItem(35625, 1),
+    new TradeVendorItem(35627, 1),
+    new TradeVendorItem(36860, 1)
+  ]
+};
+
 const primalSargerite: TradeVendor = {
   itemID: 151568,
   name: 'Primal Sargerite',
@@ -370,5 +386,5 @@ const primalSpirit: TradeVendor = {
 };
 
 export const TRADE_VENDORS = [
-  primalSargerite, bloodOfSargeras, primalSpirit
+  primalSargerite, bloodOfSargeras, primalSpirit, frozenOrb
 ];

@@ -9,7 +9,7 @@
       <wah-icon mat-card-avatar *ngIf="getItem().id" class="float-left" size="36" [id]="getItem().id" [petSpeciesId]="getSelectedPet()?.petSpeciesId"></wah-icon>
       <mat-card-title>
         <span *ngIf="getPet() || getItem(); else itemName">
-          <a rel="{{
+          <a rel="domain={{ locale }},{{
               getPet() ?
               ('npc=' + getPet().creatureId) : ('item=' + getItem().id)
             }}">
@@ -17,7 +17,7 @@
           </a>
         </span>
         <ng-template #itemName>
-          <a rel="{{ 'item=' + wowDBItem.ID }}">
+          <a rel="domain={{ locale }},{{ 'item=' + wowDBItem.ID }}">
             {{ wowDBItem.Name }}
           </a>
         </ng-template>

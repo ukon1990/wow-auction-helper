@@ -51,9 +51,9 @@ router.get('/:id', (req, res) => {
   try {
     const connection = mysql.createConnection(secrets.databaseConn);
     connection.query(`
-      SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+      SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped
       FROM items as i, item_name_locale as l
-      LEFT OUTER JOIN item_name_locale as l 
+      LEFT OUTER JOIN item_name_locale as l
       ON i.id = l.id
       WHERE i.id = ${ req.params.id } AND l.id = ${ req.params.id };`, function (err, rows, fields) {
       res.setHeader('content-type', 'application/json');
@@ -83,7 +83,7 @@ router.get('/:id', (req, res) => {
                   console.error('SQL error in items', err);
                 }
 
-                getRecipeLocale(req.params.id, req, res)
+                getItemLocale(req.params.id, req, res)
                   .then( r =>
                     console.log(`Got locales for item ${ req.params.id }`))
                   .catch( e =>
@@ -145,9 +145,9 @@ router.get('*', (req, res) => {
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped 
+    SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped
     FROM items as i
-    LEFT OUTER JOIN item_name_locale as l 
+    LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id;`,
     (err, rows, fields) => {
     connection.end();
@@ -321,7 +321,7 @@ async function getItemLocale(itemID, req, res) {
         }
       }));
 
-  
+
   await Promise.all(euPromises).then(r => {
   }).catch(e => {
     //console.error(e);

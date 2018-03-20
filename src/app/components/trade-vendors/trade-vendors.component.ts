@@ -17,7 +17,7 @@ export class TradeVendorsComponent implements OnInit {
   ngOnInit() {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
     this.columns.push({ key: 'value', title: 'Value', dataType: 'gold' });
-    this.columns.push({ key: 'quantity', title: 'Bloods/item', dataType: 'number' });
+    this.columns.push({ key: 'quantity', title: 'Currency/item', dataType: 'number' });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
 
     if (SharedService.user.apiToUse === 'tsm') {

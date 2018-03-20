@@ -23,7 +23,7 @@
         <td [class]="c.cssClass" *ngIf="displayColumn(c)">
           <span [ngSwitch]="c.dataType">
             <span *ngSwitchCase="'name'" [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''">
-              <a rel="{{
+              <a rel="domain={{ locale }},{{
                   d.petSpeciesId ?
                   ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
                 }}" (click)="select(d)">

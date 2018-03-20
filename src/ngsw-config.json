@@ -3,6 +3,7 @@
   "assetGroups": [{
     "name": "WAH - Crafting & Auctioning tool",
     "installMode": "prefetch",
+    "updateMode": "prefetch",
     "resources": {
       "files": [
         "/favicon.ico",

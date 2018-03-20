@@ -22,6 +22,7 @@ export class ItemComponent implements OnInit {
   wowDBItem: any;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
+  locale = localStorage['locale'].split('-')[0];
 
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
