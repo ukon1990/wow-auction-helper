@@ -84,7 +84,7 @@ export class Crafting {
   public static getCost(itemID: number, count: number): number {
     if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
       return (SharedService.customPricesMap[itemID].price * count);
-    } else if (SharedService.tradeVendorItemMap[itemID] && SharedService.tradeVendorItemMap[itemID].useForCrafting) {
+    } else if (SharedService.tradeVendorItemMap[itemID] && SharedService.tradeVendorMap[itemID].useForCrafting) {
       return (SharedService.tradeVendorItemMap[itemID].value * count);
     } else if (SharedService.auctionItemsMap[itemID] && !Crafting.isBelowMktBuyoutValue(itemID)) {
       return SharedService.auctionItemsMap[itemID].buyout * count;
