@@ -8,7 +8,7 @@ declare var $;
 })
 export class NewsComponent implements AfterViewInit {
   currentDate: string;
-  lastUpdateDate = '17.03.2018';
+  lastUpdateDate = '20.03.2018';
   showNews: boolean;
 
   constructor() {

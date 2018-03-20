@@ -11,7 +11,7 @@ export class PetsService {
 
   getPets(): Promise<any> {
     SharedService.downloading.pets = true;
-    return this._http.get(Endpoints.getUrl(`pet`))
+    return this._http.get(Endpoints.getUrl(`pet?locale=${ localStorage['locale'] }`))
       .toPromise()
       .then(pets => {
         SharedService.downloading.pets = false;
@@ -27,7 +27,7 @@ export class PetsService {
 
   getPet(speciesId): Promise<any> {
     SharedService.downloading.pets = true;
-    return this._http.get(Endpoints.getUrl(`pet/${speciesId}`))
+    return this._http.get(Endpoints.getUrl(`pet/${speciesId}?locale=${ localStorage['locale'] }`))
       .toPromise()
       .then(pet => {
         SharedService.downloading.pets = false;

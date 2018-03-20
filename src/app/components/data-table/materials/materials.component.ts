@@ -22,6 +22,9 @@ export class MaterialsComponent implements OnInit {
     return Crafting.getCost(itemID, 1);
   }
 
+  getItemName(itemID): string {
+    return SharedService.items[itemID] ? SharedService.items[itemID].name : '';
+  }
 
   isEnoughAtAH(itemID: number, count): boolean {
     if (this.getAtAHCount(itemID) >= count) {

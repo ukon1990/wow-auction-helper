@@ -7,6 +7,10 @@ import { RealmService } from '../../../services/realm.service';
 import { AuctionsService } from '../../../services/auctions.service';
 import { Angulartics2 } from 'angulartics2';
 import { FileService } from '../../../services/file.service';
+import { ItemService } from '../../../services/item.service';
+import { CraftingService } from '../../../services/crafting.service';
+import { PetsService } from '../../../services/pets.service';
+import { AuctionHandler } from '../../../models/auction/auction-handler';
 
 @Component({
   selector: 'wah-general-settings',
@@ -15,17 +19,32 @@ import { FileService } from '../../../services/file.service';
 })
 export class GeneralSettingsComponent implements OnInit {
   _characterForm: FormGroup;
+  locales = SharedService.locales;
+  changedLocales = false;
+  changedRealm = false;
 
   constructor(private _formBuilder: FormBuilder,
     private angulartics2: Angulartics2,
     private _realmService: RealmService,
+    private itemService: ItemService,
+    private craftingService: CraftingService,
+    private petsService: PetsService,
     private _auctionService: AuctionsService) {
     this._characterForm = this._formBuilder.group({
       region: [ SharedService.user.region, Validators.required],
       realm: [ SharedService.user.realm, Validators.required],
       tsmKey: SharedService.user.apiTsm,
       importString: '',
-      exportString: ''
+      exportString: '',
+      locale: localStorage['locale']
+    });
+
+    this._characterForm.controls.realm.valueChanges.subscribe(realm => {
+      this.changedRealm = true;
+    });
+
+    this._characterForm.controls.locale.valueChanges.subscribe(locale => {
+      this.changedLocales = true;
     });
   }
 
@@ -40,11 +59,37 @@ export class GeneralSettingsComponent implements OnInit {
       SharedService.user.region !== this._characterForm.value.region;
   }
 
-  saveRealmAndRegion() {
-    RealmService.changeRealm(
-      this._auctionService,
-      this._characterForm.value.realm,
-      this._characterForm.value.region);
+  async saveRealmAndRegion() {
+    if (this.changedLocales) {
+      localStorage['locale'] = this._characterForm.value.locale;
+      await this.itemService.getItems();
+      await this.petsService.getPets();
+      await this.craftingService.getRecipes();
+
+      // Updating the watchlist names
+      SharedService.user.watchlist.groups.forEach(g => {
+        g.items.forEach(i => {
+          if (SharedService.items[i.itemID]) {
+            i.name = SharedService.items[i.itemID].name;
+          }
+        });
+      });
+      SharedService.user.watchlist.save();
+
+      this.changedLocales = false;
+
+      if (!this.changedRealm) {
+        AuctionHandler.organize(SharedService.auctions);
+      }
+    }
+
+    if (this.changedRealm) {
+      await RealmService.changeRealm(
+        this._auctionService,
+        this._characterForm.value.realm,
+        this._characterForm.value.region);
+      this.changedRealm = false;
+    }
   }
 
   hasTSMKeyChanged(): boolean {

@@ -5,6 +5,11 @@ import { Item } from './item';
 export class TradeVendors {
   public static setValues(): void {
     TRADE_VENDORS.forEach(vendor => {
+      // Re-setting the item name in case of locale is not English
+      if (SharedService.items[vendor.itemID]) {
+        vendor.name = SharedService.items[vendor.itemID].name;
+      }
+
       vendor.items.forEach(item => {
         item.value = SharedService.auctionItemsMap[item.itemID] !== undefined ?
           SharedService.auctionItemsMap[item.itemID].buyout * item.quantity : 0;

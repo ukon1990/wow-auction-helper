@@ -15,7 +15,22 @@
         New functionality have been added since your last visit, among them you will find the following:
       </p>
       <div class="scrollable">
-      <mat-card class="mb-2">
+        <mat-card class="mb-2">
+          <mat-card-header>
+            <mat-card-title>
+              20.March 2018
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            This update, is just about locale support. You can now select any of 
+            the european and american locales that are provided by blizzard. By default, it will set this based on your browsers language.
+            
+            But you can change this at any time in the settings.
+
+            <img class="col-md-12"  src="assets/img/locale-support.jpg" alt="Support for locales can be found in the settings">
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="mb-2">
           <mat-card-header>
             <mat-card-title>
               8. - 17.March 2018
@@ -33,8 +48,8 @@
                     "On use" type crafts are now available as a known recipe in the crafting section.
                   </mat-list-item>
                   <mat-list-item>
-                    Some of these "on use" recipes also have had their reagent count corrected in-app, 
-                    as blizzard gives one to little in the requiered reagent count.
+                    Some of these "on use" recipes also have had their reagent count corrected in-app, as blizzard gives one to little in the
+                    requiered reagent count.
                   </mat-list-item>
                   <mat-list-item>
                     My auction's now display a percentage of how many of your auctions, were undercutted at the last auction house data dump.
@@ -44,67 +59,70 @@
 
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
-                    Dashboards & Sellers
+                  Dashboards & Sellers
                 </mat-expansion-panel-header>
                 <mat-list dense>
                   <mat-list-item>
-                    The seller detail panel now contains a couple charts that you can select amongst. These display items per sub class (Gem, Potion etc).
+                    The seller detail panel now contains a couple charts that you can select amongst. These display items per sub class (Gem,
+                    Potion etc).
                   </mat-list-item>
                   <mat-list-item>
                     There are now seller dashboards per item class (not sub class).
                   </mat-list-item>
                   <mat-list-item>
-                    The watchlist dashboard, will now display the criteria for it being displayed. E.g "< 3g 99s 10c" or "< 10 pcs".
-                  </mat-list-item>
-                </mat-list>
-              </mat-expansion-panel>
+                    The watchlist dashboard, will now display the criteria for it being displayed. E.g "
+                    < 3g 99s 10c
+                      " or "< 10 pcs ".
+                </mat-list-item>
+              </mat-list>
+            </mat-expansion-panel>
 
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    Bug fixes
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <mat-list dense>
-                  <mat-list-item>
-                    The number of undercutted auctions has been corrected. This also affects the notification.
-                  </mat-list-item>
-                  <mat-list-item>
-                    You can now edit watchlist items again. I apologize for it nor working the past couple days.
-                  </mat-list-item>
-                  <mat-list-item>
-                    If you use up all your TSM requests, the app should now fall back to the previously fetched TSM list. 
-                    This will only occur if you change realms to often and too fast.
-                  </mat-list-item>
-                  <mat-list-item>
-                    The sorting of sellers will now be correct
-                  </mat-list-item>
-                  <mat-list-item>
-                    If you click on the eye in a table of sellers or the name of a seller, you will get information such as what auctions they
-                    currently have up.
-                  </mat-list-item>
-                  <mat-list-item>
-                    The custom proc, custom price and watchlist item add dropdown has been fixed, 
-                    so that it will not cause an error upon selecting an item (about 10 days ago or so)
-                  </mat-list-item>
-                  <mat-list-item>
-                    Not really a bug, but you can now add characters lower than level 10. In case you've got a sub level 10 seller.
-                  </mat-list-item>
-                  <mat-list-item>
-                    Realms containing ' etc, will no longer cause issues when it comes to known recipes.
-                  </mat-list-item>
-                  <mat-list-item>
-                    Character portraits will now appear correctly regardless of region.
-                  </mat-list-item>
-                  <mat-list-item>
-                    and more.
-                  </mat-list-item>
-                </mat-list>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </mat-card-content>
-        </mat-card>
-        <mat-card class="mb-2">
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Bug fixes
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-list dense>
+                <mat-list-item>
+                  The number of undercutted auctions has been corrected. This also affects the notification.
+                </mat-list-item>
+                <mat-list-item>
+                  You can now edit watchlist items again. I apologize for it nor working the past couple days.
+                </mat-list-item>
+                <mat-list-item>
+                  If you use up all your TSM requests, the app should now fall back to the previously fetched TSM list. 
+                  This will only occur if you change realms to often and too fast.
+                </mat-list-item>
+                <mat-list-item>
+                  The sorting of sellers will now be correct
+                </mat-list-item>
+                <mat-list-item>
+                  If you click on the eye in a table of sellers or the name of a seller, you will get information such as what auctions they
+                  currently have up.
+                </mat-list-item>
+                <mat-list-item>
+                  The custom proc, custom price and watchlist item add dropdown has been fixed, 
+                  so that it will not cause an error upon selecting an item (about 10 days ago or so)
+                </mat-list-item>
+                <mat-list-item>
+                  Not really a bug, but you can now add characters lower than level 10. In case you've got a sub level 10 seller.
+                </mat-list-item>
+                <mat-list-item>
+                  Realms containing ' etc, will no longer cause issues when it comes to known recipes.
+                </mat-list-item>
+                <mat-list-item>
+                  Character portraits will now appear correctly regardless of region.
+                </mat-list-item>
+                <mat-list-item>
+                  and more.
+                </mat-list-item>
+              </mat-list>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </mat-card-content>
+      </mat-card>
+        <mat-card class="mb-2 ">
           <mat-card-header>
             <mat-card-title>
               7.March 2018
@@ -124,7 +142,7 @@
               <mat-list-item>
                 <p>
                   This website now has HTTPS. If you haven't already, download your settings, go 
-                  to <a href="https://wah.jonaskf.net" target="_blank"> https://wah.jonaskf.net </a> and import your settings there. 
+                  to <a href="https://wah.jonaskf.net " target="_blank "> https://wah.jonaskf.net </a> and import your settings there. 
                   This is requiered for notifications to work in Chrome etc.
                 </p>
               </mat-list-item>
@@ -137,7 +155,7 @@
             </mat-list>
           </mat-card-content>
         </mat-card>
-        <mat-card class="mb-2">
+        <mat-card class="mb-2 ">
           <mat-card-header>
             <mat-card-title>
               15.February 2018
@@ -161,7 +179,7 @@
             </mat-list>
           </mat-card-content>
         </mat-card>
-        <mat-card class="mb-2">
+        <mat-card class="mb-2 ">
           <mat-card-header>
             <mat-card-title>
               22.January 2018
@@ -187,7 +205,7 @@
             </mat-list>
           </mat-card-content>
         </mat-card>
-        <mat-card class="mb-2">
+        <mat-card class="mb-2 ">
           <mat-card-header>
             <mat-card-title>
               19.January 2018
@@ -203,12 +221,12 @@
                 to alter or add to these.
               </mat-list-item>
               <mat-list-item>
-                In the items details panel, you can now also see what recipes use the item as well in the "Material for" tab.
+                In the items details panel, you can now also see what recipes use the item as well in the "Material for " tab.
               </mat-list-item>
             </mat-list>
           </mat-card-content>
         </mat-card>
-        <mat-card class="mb-2">
+        <mat-card class="mb-2 ">
           <mat-card-header>
             <mat-card-title>
               10.January 2018
@@ -232,7 +250,7 @@
                 </mat-expansion-panel-header>
                 <mat-list dense>
                   <mat-list-item>
-                    The "Change theme" button in the settings, has been moved to the top right of the menu. And no longer require a reload of
+                    The "Change theme " button in the settings, has been moved to the top right of the menu. And no longer require a reload of
                     the page.
                   </mat-list-item>
                   <mat-list-item>
@@ -290,7 +308,7 @@
                     top right corner.
                   </mat-list-item>
                   <mat-list-item>
-                    You no longer need to hit "filter". The app filters as you type.
+                    You no longer need to hit "filter ". The app filters as you type.
                   </mat-list-item>
                 </mat-list>
               </mat-expansion-panel>
@@ -316,7 +334,7 @@
           </mat-card-content>
         </mat-card>
         <!-- 19.november 2017 -->
-        <mat-card class="mb-2">
+        <mat-card class="mb-2 ">
           <mat-card-header>
             <mat-card-title>
               19.november 2017
@@ -325,45 +343,45 @@
           <mat-card-content>
             <strong>Downloads</strong>
             <ul>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 There is now a dropdown menu that allows you to see when each data type were downloaded.
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Each download can be triggered manually, if you wish to. lets say update the TSM data.
               </li>
             </ul>
 
             <strong>User registration and settings</strong>
             <ul>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 The character and crafting selection is now revamped. It will now allow you to choose realm for each character added(finally?).
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 The added character data are downloaded as soon as you add them, so you can see if it was successful or not.
               </li>
             </ul>
 
             <strong>Other updates</strong>
             <ul>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Upgraded to Angular 5
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Started using more of Angular Material for some parts of the application
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Upgraded to Bootstrap 4
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Both the dark and light themes have been changed
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Remade the setup page for new users.
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Some much needed clean up of the codebase. More is coming..
               </li>
-              <li class="list-group-item-text">
+              <li class="list-group-item-text ">
                 Several fixes that could have caused issues for some users
               </li>
             </ul>
@@ -372,15 +390,16 @@
       </div>
     </mat-card-content>
     <mat-card-footer>
-      <div class="col-md-12">
+      <div class="col-md-12 ">
         This message will only be displayed upon feature updates and not bug fixes. If you find any bugs or wish to give feedback
         on the app, please do so on in the
-        <a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/" target="_blank">
+        <a href="https://www.reddit.com/r/woweconomy/comments/61m0jj/professioncrafting_auctioning_toolwebapp/
+                      " target="_blank ">
           Reddit thread</a>. As always, any feedback is appreciated!
       </div>
     </mat-card-footer>
   </mat-card>
 </div>
 
-<div *ngIf="showNews" class="backdrop" (click)="close()">
+<div *ngIf="showNews " class="backdrop " (click)="close() ">
 </div>

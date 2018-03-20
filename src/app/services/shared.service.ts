@@ -21,6 +21,18 @@ import { CustomProc } from '../models/crafting/custom-proc';
 @Injectable()
 export class SharedService {
   public static user: User;
+  public static locales = [
+    {locale: 'en_GB', name: 'English (GB)'},
+    {locale: 'en_US', name: 'English (US)'},
+    {locale: 'de_DE', name: 'Deutsche'},
+    {locale: 'es_ES', name: 'Español (España)'},
+    {locale: 'es_MX', name: 'Español (Méjico)'},
+    {locale: 'fr_FR', name: 'Français'},
+    {locale: 'it_IT', name: 'Italiano'},
+    {locale: 'pt_PT', name: 'Português (Portugal)'},
+    {locale: 'pt_BR', name: 'Português (Brasil)'},
+    {locale: 'ru_RU', name: 'русский'}
+  ];
 
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static customProcsMap: Map<number, CustomProc> = new Map<number, CustomProc>();
