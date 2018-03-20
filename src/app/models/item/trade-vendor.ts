@@ -1,6 +1,7 @@
 export class TradeVendor {
   itemID: number;
   name: string;
+  useForCrafting = true;
   items: Array<TradeVendorItem>;
 }
 
@@ -27,4 +28,3 @@ export class TradeVendorItemValue {
   value: number;
   tradeVendor?: TradeVendor;
 }
-

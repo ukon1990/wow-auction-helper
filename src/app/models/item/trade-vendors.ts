@@ -52,9 +52,31 @@ export class TradeVendors {
   }
 }
 
+const spiritOfHarmony: TradeVendor = {
+  itemID: 76061,
+  name: 'Spirit of Harmony',
+  useForCrafting: false,
+  items: [
+    new TradeVendorItem(72094, 0.2),
+    new TradeVendorItem(72103, 0.2),
+    new TradeVendorItem(72238, 0.5),
+    new TradeVendorItem(74247, 1),
+    new TradeVendorItem(76734, 1),
+    new TradeVendorItem(72093, 0.05),
+    new TradeVendorItem(79101, 0.05),
+    new TradeVendorItem(74250, 0.2),
+    new TradeVendorItem(79255, 1),
+    new TradeVendorItem(72120, 0.05),
+    new TradeVendorItem(72988, 0.05),
+    new TradeVendorItem(74249, 0.05),
+    new TradeVendorItem(72092, 0.05)
+  ]
+};
+
 const frozenOrb: TradeVendor = {
   itemID: 43102,
   name: 'Frozen Orb',
+  useForCrafting: false,
   items: [
     new TradeVendorItem(36908, 1),
     new TradeVendorItem(47556, 6),
@@ -71,6 +93,7 @@ const frozenOrb: TradeVendor = {
 const primalSargerite: TradeVendor = {
   itemID: 151568,
   name: 'Primal Sargerite',
+  useForCrafting: true,
   items: [
     new TradeVendorItem(151718, 0.1),
     new TradeVendorItem(151719, 0.1),
@@ -88,6 +111,7 @@ const primalSargerite: TradeVendor = {
 const bloodOfSargeras: TradeVendor = {
   'itemID': 124124,
   'name': 'Blood of Sargeras',
+  useForCrafting: true,
   'items': [{
     'itemID': 142117,
     'quantity': 10,
@@ -319,6 +343,7 @@ const bloodOfSargeras: TradeVendor = {
 const primalSpirit: TradeVendor = {
   'itemID': 120945,
   'name': 'Primal spirit',
+  useForCrafting: true,
   'items': [{
     'itemID': 113264,
     'quantity': 0.15,
@@ -386,5 +411,5 @@ const primalSpirit: TradeVendor = {
 };
 
 export const TRADE_VENDORS = [
-  primalSargerite, bloodOfSargeras, primalSpirit, frozenOrb
+  primalSargerite, bloodOfSargeras, primalSpirit, frozenOrb, spiritOfHarmony
 ];

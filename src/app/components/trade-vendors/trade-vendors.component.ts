@@ -11,6 +11,7 @@ import { SharedService } from '../../services/shared.service';
 })
 export class TradeVendorsComponent implements OnInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+  locale = localStorage['locale'].split('-')[0];
 
   constructor() { }
 
