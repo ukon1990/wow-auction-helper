@@ -1,5 +1,10 @@
 <mat-tab-group>
   <mat-tab *ngFor="let tv of getTradeVendors()" [label]="tv.name">
     <wah-data-table [columns]="columns" [data]="tv.items" id="itemID"></wah-data-table>
+    <p>
+      The max value for
+       <a rel="domain={{ locale }},item={{ tv.itemID }}" (click)="select(tv)">{{ tv.name }}</a> 
+       {{ tv.useForCrafting ? 'will' : 'will not' }} be used as the material price for crafting.
+    </p>
   </mat-tab>
 </mat-tab-group>

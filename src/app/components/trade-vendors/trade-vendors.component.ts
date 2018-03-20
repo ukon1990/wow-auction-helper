@@ -32,4 +32,8 @@ export class TradeVendorsComponent implements OnInit {
   getTradeVendors(): Array<TradeVendor> {
     return TRADE_VENDORS;
   }
+
+  select(tv: TradeVendor): void {
+    SharedService.selectedItemId = tv.itemID;
+  }
 }
