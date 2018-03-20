@@ -161,6 +161,8 @@ export class SetupComponent implements OnInit {
       localStorage['api_wowuction'] = this._characterForm.value.wowUctionKey;
       if (this._characterForm.value.tsmKey.length > 0) {
         localStorage['api_to_use'] = 'tsm';
+      } else if (this._characterForm.value.wowUctionKey.length > 0) {
+        localStorage['api_to_use'] = 'wowuction';
       } else {
         localStorage['api_to_use'] = 'none';
       }
