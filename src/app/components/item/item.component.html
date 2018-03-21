@@ -40,11 +40,17 @@
           <div *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId" class="clearfix">
             <strong>Avg daily sold:</strong> {{ getAuctionItem().avgDailySold | number }}
             <br>
-            <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}
+            <span *ngIf="isUsingWoWUction()">
+              <strong>Avg daily posted:</strong> {{ getAuctionItem().avgDailyPosted | number }}
+            </span>
+            <span *ngIf="isUsingTSM()">
+              <strong>Avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}
+            </span>
             <br>
             <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}
             <br>
-            <strong>Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}
+            <strong *ngIf="isUsingTSM()">Regional sale rate:</strong><strong *ngIf="isUsingWoWUction()">Sale rate:</strong> 
+            {{ getAuctionItem().regionSaleRate | percent }}
             <br>
           </div>
 

@@ -150,6 +150,16 @@ export class ItemComponent implements OnInit {
   }
 
   /* istanbul ignore next */
+  isUsingTSM(): boolean {
+    return SharedService.user.apiToUse === 'tsm';
+  }
+
+  /* istanbul ignore next */
+  isUsingWoWUction(): boolean {
+    return SharedService.user.apiToUse === 'wowuction';
+  }
+
+  /* istanbul ignore next */
   getItem(): Item {
     return SharedService.items[SharedService.selectedItemId] ?
       SharedService.items[SharedService.selectedItemId] : undefined;
