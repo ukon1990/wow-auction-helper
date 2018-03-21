@@ -38,6 +38,7 @@ export class AuctionsService {
   }
 
   getAuctions(): Promise<any> {
+    const missingItems = [];
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${ SharedService.user.realm }`);
@@ -53,9 +54,16 @@ export class AuctionsService {
         SharedService.auctionItems.forEach(ai => {
           if (!SharedService.items[ai.itemID]) {
             console.log('Did not find ' + ai.itemID);
-            this._itemService.addItem(ai.itemID);
+            missingItems.push(ai.itemID);
           }
         });
+        if (missingItems.length < 10) {
+          missingItems.forEach(i => {
+            this._itemService.addItem(i);
+          });
+        } else {
+          this._itemService.getItems();
+        }
         console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
 

@@ -52,7 +52,7 @@ router.get('/:id', (req, res) => {
     const connection = mysql.createConnection(secrets.databaseConn);
     connection.query(`
       SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped
-      FROM items as i, item_name_locale as l
+      FROM items as i
       LEFT OUTER JOIN item_name_locale as l
       ON i.id = l.id
       WHERE i.id = ${ req.params.id } AND l.id = ${ req.params.id };`, function (err, rows, fields) {
