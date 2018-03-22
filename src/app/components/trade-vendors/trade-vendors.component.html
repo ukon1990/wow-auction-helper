@@ -6,5 +6,8 @@
        <a rel="domain={{ locale }},item={{ tv.itemID }}" (click)="select(tv)">{{ tv.name }}</a> 
        {{ tv.useForCrafting ? 'will' : 'will not' }} be used as the material price for crafting.
     </p>
+    <p *ngIf="!tv.useForCrafting">
+      The current lowest buyout per item is {{ getAuctionItem(tv).buyout | gold }}, with a market value of {{ getAuctionItem(tv).mktPrice | gold }}.
+    </p>
   </mat-tab>
 </mat-tab-group>

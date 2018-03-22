@@ -3,6 +3,7 @@ import { TradeVendor } from '../../models/item/trade-vendor';
 import { TRADE_VENDORS } from '../../models/item/trade-vendors';
 import { ColumnDescription } from '../../models/column-description';
 import { SharedService } from '../../services/shared.service';
+import { AuctionItem } from '../../models/auction/auction-item';
 
 @Component({
   selector: 'wah-trade-vendors',
@@ -35,5 +36,10 @@ export class TradeVendorsComponent implements OnInit {
 
   select(tv: TradeVendor): void {
     SharedService.selectedItemId = tv.itemID;
+  }
+
+  getAuctionItem(tradeVendor: TradeVendor): AuctionItem {
+    return SharedService.auctionItemsMap[tradeVendor.itemID] ?
+      SharedService.auctionItemsMap[tradeVendor.itemID] : new AuctionItem();
   }
 }
