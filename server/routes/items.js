@@ -55,7 +55,7 @@ router.get('/:id', (req, res) => {
       FROM items as i
       LEFT OUTER JOIN item_name_locale as l
       ON i.id = l.id
-      WHERE i.id = ${ req.params.id } AND l.id = ${ req.params.id };`, function (err, rows, fields) {
+      WHERE i.id = ${ req.params.id };`, function (err, rows, fields) {
       res.setHeader('content-type', 'application/json');
       try {
         if (!err && rows.length > 0) {
