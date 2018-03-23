@@ -42,7 +42,7 @@ export class AuctionsService {
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${ SharedService.user.realm }`);
-    return this._http.get(Endpoints.getAuctionDownloadUrl())
+    return this._http.post(Endpoints.getUrl('auction'), { url: SharedService.auctionResponse.url })
       .toPromise()
       .then(a => {
         SharedService.downloading.auctions = false;
@@ -121,14 +121,12 @@ export class AuctionsService {
     console.log('Downloading WoWUction data');
     SharedService.downloading.wowUctionAuctions = true;
     this.openSnackbar('Downloading WoWUction data');
-    return this._http.get(`${Endpoints.getUrl('auction/wowuction')}/${
-      SharedService.user.region
-      }/${
-      SharedService.user.realm
-      }/${
-      SharedService.user.apiWoWu
-      }`)
-      .toPromise()
+    return this._http.post(`${Endpoints.getUrl('auction/wowuction')}`,
+      {
+        region: SharedService.user.region,
+        realm: SharedService.user.realm,
+        key: SharedService.user.apiWoWu
+      }).toPromise()
       .then(wowu => {
         localStorage['timestamp_wowuction'] = new Date().toDateString();
         (<WoWUction[]>wowu).forEach(a => {

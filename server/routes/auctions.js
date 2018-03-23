@@ -20,6 +20,19 @@ let response = {
   message: null
 };
 
+router.post('/wowuction', (req, res) => {
+  const wowUctionURL = `http://www.wowuction.com/${
+      req.body.region
+    }/${
+      req.body.realm
+    }/alliance/Tools/RealmDataExportGetFileStatic?token=${
+      req.body.key
+    }`;
+
+    handleWoWUction(res, wowUctionURL);
+});
+
+// TODO: Remove
 router.get('/wowuction/:region/:realm/:key', (req, res) => {
   const key = req.query.key,
     wowUctionURL = `http://www.wowuction.com/${
@@ -31,6 +44,39 @@ router.get('/wowuction/:region/:realm/:key', (req, res) => {
     }`,
     testUrl = 'http://localhost:3000/wowu.tsv';
 
+  handleWoWUction(res, wowUctionURL);
+});
+
+router.post('*', (req, res) => {
+  const url = req.body.url;
+
+  if (url && url.indexOf('.worldofwarcraft.com/auction-data') !== -1) {
+    request(url).pipe(res);
+  } else {
+    res.send({
+      realms: [],
+      auctions: []
+    });
+  }
+});
+
+// TODO: Remove
+router.get('*', (req, res) => {
+  const url = req.query.url;
+  res = headers.setHeaders(res);
+
+  if (url) {
+    request(url).pipe(res);
+  } else {
+    return {
+      realms: [],
+      auctions: []
+    }
+  }
+});
+
+
+function handleWoWUction(res, wowUctionURL) {
   request.get(wowUctionURL, (err, re, body) => {
     res = headers.setHeaders(res);
     const list = [];
@@ -58,20 +104,6 @@ router.get('/wowuction/:region/:realm/:key', (req, res) => {
     });
     res.send(list);
   });
-});
-
-router.get('*', (req, res) => {
-  const url = req.query.url;
-  res = headers.setHeaders(res);
-
-  if (url) {
-    request(url).pipe(res);
-  } else {
-    return {
-      realms: [],
-      auctions: []
-    }
-  }
-});
+}
 
 module.exports = router;

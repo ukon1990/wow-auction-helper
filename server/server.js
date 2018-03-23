@@ -8,8 +8,15 @@ const express = require('express'),
 
 // Parsers
 app.use(bodyParser.json());
+
 app.use(bodyParser.urlencoded({ extended: false}));
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+  
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist'), {
     etag: false,
@@ -49,11 +56,16 @@ app.get('*', (req, res) => {
                 res.redirect(`/api/pet`);
             }
         } else if (url.indexOf('.php') !== -1 || url.toLowerCase().indexOf('phpmyadmin') !== -1) {
-            console.log(`What what ${ new Date().toString() }`);
+            console.log(`What what for get @ ${ new Date().toString() }`);
             res.redirect('https://www.youtube.com/watch?v=fbGkxcY7YFU');
         }
     }
 });
+
+app.post('*', (req, res) => {
+    console.log(`What what for post @ ${ new Date().toString() }. Contents was ${ JSON.stringify(req.body) }`);
+    res.redirect('https://www.youtube.com/watch?v=fbGkxcY7YFU');
+})
 
 //Set Port
 const port = process.env.PORT || '3000';
