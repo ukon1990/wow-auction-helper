@@ -67,6 +67,7 @@ export class CollectedPet {
   icon: string;
   stats: PetStats;
   battlePetGuid: string;
+  count?: number;
   isFavorite: boolean;
   isFirstAbilitySlotSelected: boolean;
   isSecondAbilitySlotSelected: boolean;

@@ -9,6 +9,7 @@ import { Seller } from '../seller';
 import { AuctionPet } from './auction-pet';
 import { Notifications } from '../user/notification';
 import { WoWUction } from './wowuction';
+import { PetsService } from '../../services/pets.service';
 
 export class AuctionHandler {
   /**
@@ -16,7 +17,7 @@ export class AuctionHandler {
     * Used in the auction service.
     * @param auctions A raw auction array
     */
-  public static organize(auctions: Array<Auction>): void {
+  public static organize(auctions: Array<Auction>, petService?: PetsService): void {
     SharedService.auctionItems.length = 0;
     Object.keys(SharedService.auctionItemsMap)
       .forEach(key => {
@@ -36,6 +37,19 @@ export class AuctionHandler {
         const petId = `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
         SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
+
+        if (!SharedService.pets[a.petSpeciesId] && petService) {
+          console.log('Attempting to add pet');
+          petService.getPet(a.petSpeciesId).then(p => {
+            AuctionHandler.getItemName(a);
+            console.log('Fetched pet', SharedService.pets[a.petSpeciesId]);
+          });
+        } else {
+          if (!SharedService.pets[a.petSpeciesId].auctions) {
+            SharedService.pets[a.petSpeciesId].auctions = new Array<AuctionItem>();
+          }
+          SharedService.pets[a.petSpeciesId].auctions.push(SharedService.auctionItemsMap[petId]);
+        }
       } else if (!SharedService.auctionItemsMap[a.item]) {
         SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);

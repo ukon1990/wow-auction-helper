@@ -11,7 +11,8 @@
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        
+        <strong>You have:</strong> {{ pet.count }} <br>
+        <wah-data-table *ngIf="getPet(pet.stats.speciesId) && getPet(pet.stats.speciesId).auctions" id="itemID" [data]="getPet(pet.stats.speciesId).auctions" [columns]="columns"></wah-data-table>
       </mat-card-content>
     </mat-card>
   </div>

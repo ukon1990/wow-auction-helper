@@ -1,3 +1,5 @@
+import { AuctionItem } from './auction/auction-item';
+
 export class Pet {
   speciesId: number;
   petTypeId: number;
@@ -6,4 +8,5 @@ export class Pet {
   icon: string;
   description: string;
   source: string;
+  auctions = new Array<AuctionItem>();
 }

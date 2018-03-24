@@ -10,6 +10,7 @@ import { ItemService } from './item.service';
 import { Notifications } from '../models/user/notification';
 import { MatSnackBar } from '@angular/material';
 import { WoWUction } from '../models/auction/wowuction';
+import { PetsService } from './pets.service';
 
 @Injectable()
 export class AuctionsService {
@@ -18,7 +19,8 @@ export class AuctionsService {
     private _http: HttpClient,
     public snackBar: MatSnackBar,
     private _dbService: DatabaseService,
-    private _itemService: ItemService) { }
+    private _itemService: ItemService,
+    private petService: PetsService) { }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
@@ -47,7 +49,8 @@ export class AuctionsService {
       .then(a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = SharedService.auctionResponse.lastModified;
-        AuctionHandler.organize(a['auctions']);
+        console.log('Pet serv', this.petService);
+        AuctionHandler.organize(a['auctions'], this.petService);
         this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database

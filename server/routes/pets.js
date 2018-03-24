@@ -4,6 +4,7 @@ const express = require('express'),
   headers  = require('./headers'),
   secrets = require('../secrets/secrets'),
   locale = require('../locales'),
+  request = require('request'),
   requestPromise = require('request-promise'),
   PromiseThrottle = require('promise-throttle'),
   mysql = require('mysql');
@@ -62,7 +63,7 @@ router.get('/:id', (req, res) => {
             connection.query(query,
               (err, rows, fields) => {
                 if (err) {
-                  console.error(`Could not add the species with the id ${req.params.id}`, err.sqlMessage);
+                  console.error(`Could not add the species with the id ${req.params.id}`, err.sqlMessage, query);
                 } else {
                   console.log(`Successfully added pet with speciesID ${req.params.id}`);
                   getPetLocale(pet.speciesId, req, res)

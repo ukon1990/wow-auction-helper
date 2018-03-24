@@ -6,6 +6,7 @@ import { AuctionHandler } from '../models/auction/auction-handler';
 import { SharedService } from './shared.service';
 import { TSM } from '../models/auction/tsm';
 import { WoWUction } from '../models/auction/wowuction';
+import { PetsService } from './pets.service';
 /**
  * A Class for handeling the indexedDB
  */
@@ -65,13 +66,13 @@ export class DatabaseService {
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
-  getAllAuctions(): Dexie.Promise<any> {
+  getAllAuctions(petService?: PetsService): Dexie.Promise<any> {
     SharedService.downloading.auctions = true;
     return this.db.table('auctions')
       .toArray()
       .then(auctions => {
         SharedService.downloading.auctions = false;
-        AuctionHandler.organize(auctions);
+        AuctionHandler.organize(auctions, petService);
         console.log('Restored auction from local DB');
       }).catch(e => {
         console.error('Could not restore auctions from local DB', e);

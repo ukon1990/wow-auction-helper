@@ -75,7 +75,7 @@ export class DownloadComponent implements OnInit {
             });
         }
       }
-      await this._dbService.getAllAuctions()
+      await this._dbService.getAllAuctions(this._petService)
         .then(r => {
           if (SharedService.auctions.length === 0) {
             this._auctionsService.getLastModifiedTime(true);
