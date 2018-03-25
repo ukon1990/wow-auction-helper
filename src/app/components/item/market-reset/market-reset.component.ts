@@ -5,6 +5,8 @@ import { ColumnDescription } from '../../../models/column-description';
 import { MarketResetCost } from '../../../models/auction/market-reset-cost';
 import { Filters } from '../../../models/filtering';
 import { Auction } from '../../../models/auction/auction';
+import { AuctionItem } from '../../../models/auction/auction-item';
+import { GoldPipe } from '../../../pipes/gold.pipe';
 
 @Component({
   selector: 'wah-market-reset',
@@ -16,6 +18,15 @@ export class MarketResetComponent implements OnInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   data: Array<MarketResetCost> = new Array<MarketResetCost>();
   checkInterval;
+  tsmShoppingString = '';
+  pipe = new GoldPipe();
+
+  sum = {
+    sumCost: 0,
+    potentialProfit: 0,
+    itemsToBuy: 0,
+    auctionsToBuy: 0
+  };
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
@@ -25,6 +36,7 @@ export class MarketResetComponent implements OnInit {
       minimumProfit: 0,
       avgDailySold: 10,
       saleRate: 20,
+      targetMVPercent: 100
     });
 
     this.form.valueChanges.subscribe(() =>
@@ -51,18 +63,31 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({ key: 'targetPrice', title: 'Target price', dataType: 'gold' });
     this.columns.push({ key: 'roi', title: 'Potential profit', dataType: 'gold' });
 
+    if (SharedService.user.apiToUse !== 'none') {
+      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
+      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
+    }
+
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
   setResults() {
     let tmpItem: MarketResetCost;
-    this.data = SharedService.auctionItems.map(ai => {
+    this.sum = {
+      sumCost: 0,
+      potentialProfit: 0,
+      itemsToBuy: 0,
+      auctionsToBuy: 0
+    };
+
+    this.data.length = 0;
+    SharedService.auctionItems.forEach(ai => {
       if (Filters.isNameMatch(ai.itemID, this.form) &&
         Filters.isDailySoldMatch(ai.itemID, this.form) &&
         Filters.isSaleRateMatch(ai.itemID, this.form)) {
         tmpItem = new MarketResetCost();
         tmpItem.itemID = ai.itemID;
-        tmpItem.targetPrice = ai.mktPrice;
+        tmpItem.targetPrice = this.getTargetMVPrice(ai);
 
         ai.auctions.forEach(a => {
           if (this.isTargetPriceMatch(a, tmpItem) &&
@@ -74,14 +99,37 @@ export class MarketResetComponent implements OnInit {
             tmpItem.cost += a.buyout;
           }
         });
+
         tmpItem.avgItemCost = tmpItem.cost / tmpItem.itemCount;
         tmpItem.roi = tmpItem.targetPrice * tmpItem.itemCount - tmpItem.cost;
 
-        if (tmpItem.roi > 0 && tmpItem.roi / tmpItem.cost * 100 >= this.form.value.minimumProfit) {
-          return tmpItem;
+        if (tmpItem.cost > 0 && this.isMinimumProfitPercentMatch(tmpItem)) {
+          this.sum.auctionsToBuy += tmpItem.auctionCount;
+          this.sum.itemsToBuy += tmpItem.itemCount;
+          this.sum.sumCost += tmpItem.cost;
+          this.sum.potentialProfit += tmpItem.roi;
+          this.data.push(tmpItem);
         }
       }
     });
+
+    this.tsmShoppingString = '';
+    this.data.forEach(mrc => {
+      this.tsmShoppingString += `${ SharedService.items[mrc.itemID].name }/exact/0c/${ this.pipe.transform(mrc.targetPrice - 1 )};`;
+    });
+
+    if (this.tsmShoppingString.endsWith(';')) {
+      this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+    }
+  }
+
+  getTargetMVPrice(auctionItem: AuctionItem): number {
+    return this.form.value.targetMVPercent === null ?
+      auctionItem.mktPrice : auctionItem.mktPrice * (this.form.value.targetMVPercent / 100);
+  }
+
+  isMinimumProfitPercentMatch(mrc: MarketResetCost): boolean {
+    return this.form.value.minimumProfit === null || mrc.roi / mrc.cost * 100 >= this.form.value.minimumProfit;
   }
 
   isTargetPriceMatch(auction: Auction, mrc: MarketResetCost): boolean {
@@ -97,5 +145,9 @@ export class MarketResetComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  hasDefinedAPI(): boolean {
+    return SharedService.user.apiToUse !== 'none';
   }
 }

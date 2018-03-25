@@ -55,6 +55,11 @@
                   Sellers
                 </a>
               </li>
+              <li class="nav-item" *ngIf="isRegisteredUser()">
+                <a class="nav-link" routerLink="tools/market-reset" routerLinkActive="active">
+                  Market resetter
+                </a>
+              </li>
             </div>
           </li>
         </ul>
