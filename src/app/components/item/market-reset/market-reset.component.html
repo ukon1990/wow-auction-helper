@@ -1,8 +1,13 @@
+<em>
+  This tool is still a work in progress, but you may feel free to try it out.
+</em>
+
 <div *ngIf="!hasDefinedAPI; else apiDefined">
   This functionality needs either a TSM or WoWUction API key to function, as it relies on the market value for now.
 </div>
 
 <ng-template #apiDefined>
+
   <form [formGroup]="form">
     <mat-form-field>
       <input matInput placeholder="Item name" formControlName="name">

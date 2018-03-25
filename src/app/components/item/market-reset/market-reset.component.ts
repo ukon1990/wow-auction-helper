@@ -7,6 +7,7 @@ import { Filters } from '../../../models/filtering';
 import { Auction } from '../../../models/auction/auction';
 import { AuctionItem } from '../../../models/auction/auction-item';
 import { GoldPipe } from '../../../pipes/gold.pipe';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-market-reset',
@@ -28,7 +29,7 @@ export class MarketResetComponent implements OnInit {
     auctionsToBuy: 0
   };
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     this.form = this.formBuilder.group({
       name: null,
       costLimit: null,
@@ -72,6 +73,11 @@ export class MarketResetComponent implements OnInit {
   }
 
   setResults() {
+    this.angulartics2.eventTrack.next({
+      action: 'Calculated',
+      properties: { category: 'Market reset calc' },
+    });
+
     let tmpItem: MarketResetCost;
     this.sum = {
       sumCost: 0,
