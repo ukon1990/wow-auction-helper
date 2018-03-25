@@ -25,6 +25,10 @@ export class MyPetsComponent implements OnInit {
     console.log('Pets', this.petSpecies);
   }
 
+  getPets(): Array<CollectedPet> {
+    return this.petSpecies.filter(p => SharedService.pets[p.stats.speciesId]);
+  }
+
 
   setUserPetMap(): void {
     const tmpMap: Map<number, CollectedPet> = new Map<number, CollectedPet>();

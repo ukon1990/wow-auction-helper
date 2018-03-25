@@ -26,43 +26,49 @@ import { TechnologyComponent } from '../components/about/technology/technology.c
 import { CustomProcComponent } from '../components/settings/crafting-settings/custom-proc/custom-proc.component';
 import { CustomPricesComponent } from '../components/settings/crafting-settings/custom-prices/custom-prices.component';
 import { MyPetsComponent } from '../components/my-pets/my-pets.component';
+import { MarketResetComponent } from '../components/item/market-reset/market-reset.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [ IsRegisteredService ],
+    canActivate: [IsRegisteredService],
     children: [
       { path: '', component: DashboardItemsComponent },
       { path: 'items', component: DashboardItemsComponent },
       { path: 'sellers', component: DashboardSellersComponent }
     ]
   },
-  { path: 'crafting', component: CraftingComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'auctions', component: AuctionsComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'watchlist', component: WatchlistComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [ IsRegisteredService ] },
-  { path: 'tools', canActivate: [ IsRegisteredService ], children: [
-    { path: 'trade-vendor', component: TradeVendorsComponent },
-    { path: 'watchlist', component: WatchlistComponent },
-    { path: 'sellers', component: SellersComponent },
-    { path: 'my-pets', component: MyPetsComponent },
-  ] },
-  { path: 'sellers', component: SellersComponent, canActivate: [ IsRegisteredService ] },
+  { path: 'crafting', component: CraftingComponent, canActivate: [IsRegisteredService] },
+  { path: 'auctions', component: AuctionsComponent, canActivate: [IsRegisteredService] },
+  { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService] },
+  { path: 'watchlist', component: WatchlistComponent, canActivate: [IsRegisteredService] },
+  { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [IsRegisteredService] },
+  {
+    path: 'tools', canActivate: [IsRegisteredService], children: [
+      { path: 'trade-vendor', component: TradeVendorsComponent },
+      { path: 'watchlist', component: WatchlistComponent },
+      { path: 'sellers', component: SellersComponent },
+      { path: 'my-pets', component: MyPetsComponent },
+      { path: 'market-reset', component: MarketResetComponent },
+    ]
+  },
+  { path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService] },
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate:  [ IsRegisteredService ],
+    canActivate: [IsRegisteredService],
     children: [
       { path: '', component: GeneralSettingsComponent },
       { path: 'general', component: GeneralSettingsComponent },
-      { path: 'crafting', component: CraftingSettingsComponent, children: [
-        { path: '', component: CustomPricesComponent },
-        { path: 'custom-prices', component: CustomPricesComponent },
-        { path: 'custom-proc', component: CustomProcComponent }
-      ]},
+      {
+        path: 'crafting', component: CraftingSettingsComponent, children: [
+          { path: '', component: CustomPricesComponent },
+          { path: 'custom-prices', component: CustomPricesComponent },
+          { path: 'custom-proc', component: CustomProcComponent }
+        ]
+      },
       { path: 'characters', component: CharactersComponent },
       { path: 'notifications', component: NotificationSettingsComponent }
     ]
@@ -79,7 +85,7 @@ const routes: Routes = [
       { path: 'technology', component: TechnologyComponent }
     ]
   },
-  { path: 'ud', component: UpdateComponent, canActivate: [ IsRegisteredService ] },
+  { path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService] },
   { path: '**', redirectTo: '' }
 ];
 

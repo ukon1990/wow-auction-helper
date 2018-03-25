@@ -67,6 +67,7 @@ import { TechnologyComponent } from './components/about/technology/technology.co
 import { CustomProcComponent } from './components/settings/crafting-settings/custom-proc/custom-proc.component';
 import { SellerChartComponent } from './components/sellers/seller-chart/seller-chart.component';
 import { MyPetsComponent } from './components/my-pets/my-pets.component';
+import { MarketResetComponent } from './components/item/market-reset/market-reset.component';
 
 
 @NgModule({
@@ -116,7 +117,8 @@ import { MyPetsComponent } from './components/my-pets/my-pets.component';
     TechnologyComponent,
     CustomProcComponent,
     SellerChartComponent,
-    MyPetsComponent
+    MyPetsComponent,
+    MarketResetComponent
   ],
   imports: [
     BrowserModule,

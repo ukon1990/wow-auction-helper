@@ -1,8 +1,8 @@
 <div class="row">
-  <div class="col-md-4" *ngFor="let pet of petSpecies">
+  <div class="col-md-6" *ngFor="let pet of getPets()">
     <mat-card>
       <mat-card-header>
-        <wah-icon [petSpeciesId]="pet.stats.speciesId" mat-card-avatar></wah-icon>
+        <wah-icon iconSize="22" [petSpeciesId]="pet.stats.speciesId" mat-card-avatar></wah-icon>
         <mat-card-title>
           {{ pet.name }}
         </mat-card-title>

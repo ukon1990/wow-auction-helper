@@ -1,0 +1,28 @@
+<form [formGroup]="form">
+  <mat-form-field>
+    <input matInput placeholder="Item name" formControlName="name">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Max total cost" formControlName="costLimit" type="number">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Max number of items to buy" formControlName="maxItemCount" type="number">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Minimum potential ROI %" formControlName="minimumProfit" type="number">
+  </mat-form-field>
+  
+  <mat-form-field>
+    <input matInput placeholder="Minimum daily sold" formControlName="avgDailySold" type="number">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Minimum sale rate %" formControlName="saleRate" type="number">
+  </mat-form-field>
+
+</form>
+
+<wah-data-table id="itemID" [data]="data" [columns]="columns"></wah-data-table>
