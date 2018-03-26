@@ -67,6 +67,6 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
   }
 
   getShoppingString(): string {
-    return `${this.auctionItem.name}/exact/${this.pipe.transform(1)}/${this.pipe.transform(this.form.value * 10000)}`;
+    return `${this.auctionItem.name}/exact/${this.pipe.transform(1)}/${this.pipe.transform((this.form.value * 10000) - 1)}`;
   }
 }

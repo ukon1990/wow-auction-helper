@@ -48,7 +48,7 @@ export class Dashboard {
         { key: 'name', title: 'Name', dataType: 'name' },
         { key: 'rank', title: 'Rank', dataType: '' },
         { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-        { key: 'roi', title: 'ROI', dataType: 'gold' },
+        { key: 'roi', title: 'Profit', dataType: 'gold' },
         { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
       ];
 

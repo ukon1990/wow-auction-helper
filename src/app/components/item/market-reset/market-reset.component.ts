@@ -30,18 +30,22 @@ export class MarketResetComponent implements OnInit {
   };
 
   constructor(private formBuilder: FormBuilder, private angulartics2: Angulartics2) {
+    const query = localStorage['query_market_reset'] ?
+      JSON.parse(localStorage['query_market_reset']) : undefined;
     this.form = this.formBuilder.group({
-      name: null,
-      costLimit: null,
-      maxItemCount: null,
-      minimumProfit: 0,
-      avgDailySold: 10,
-      saleRate: 20,
-      targetMVPercent: 100
+      name: query && query.name !== undefined ? query.name : null,
+      costLimit: query && query.costLimit !== undefined ? query.costLimit : null,
+      maxItemCount: query && query.maxItemCount !== undefined ? query.maxItemCount : null,
+      minimumProfit: query && query.minimumProfit !== undefined ? query.minimumProfit : 30,
+      avgDailySold: query && query.avgDailySold !== undefined ? query.avgDailySold : 10,
+      saleRate: query && query.saleRate !== undefined ? query.saleRate : 20,
+      targetMVPercent: query && query.targetMVPercent !== undefined ? query.targetMVPercent : 100
     });
 
-    this.form.valueChanges.subscribe(() =>
-      this.setResults());
+    this.form.valueChanges.subscribe(() => {
+      this.setResults();
+      localStorage['query_market_reset'] = JSON.stringify(this.form.value);
+    });
   }
 
   ngOnInit() {

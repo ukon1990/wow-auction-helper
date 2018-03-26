@@ -82,7 +82,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       this.columns.push({ key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true });
     }
 
-    this.columns.push({ key: 'roi', title: 'ROI', dataType: 'gold' });
+    this.columns.push({ key: 'roi', title: 'Profit', dataType: 'gold' });
     if (SharedService.user.apiToUse !== 'none') {
       this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
