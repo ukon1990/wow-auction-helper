@@ -1,5 +1,6 @@
 export class MarketResetCost {
   itemID: number;
+  name: string;
   cost = 0;
   avgItemCost = 0;
   auctionCount = 0;

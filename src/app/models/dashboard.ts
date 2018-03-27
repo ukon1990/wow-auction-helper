@@ -111,7 +111,7 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
           { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
-          { key: 'roi', title: 'ROI', dataType: 'gold' },
+          { key: 'roi', title: 'Profit', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true },
           { key: 'quantity', title: 'Size', dataType: 'number' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
@@ -126,7 +126,7 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
           { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
-          { key: 'roi', title: 'ROI', dataType: 'gold' },
+          { key: 'roi', title: 'Profit', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true },
           { key: 'quantity', title: 'Size', dataType: 'number' },
           { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },

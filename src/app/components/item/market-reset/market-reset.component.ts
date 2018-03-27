@@ -97,9 +97,10 @@ export class MarketResetComponent implements OnInit {
         Filters.isSaleRateMatch(ai.itemID, this.form)) {
         tmpItem = new MarketResetCost();
         tmpItem.itemID = ai.itemID;
+        tmpItem.name = ai.name;
         tmpItem.targetPrice = this.getTargetMVPrice(ai);
 
-        ai.auctions.forEach(a => {
+        ai.auctions.forEach((a, i) => {
           if (this.isTargetPriceMatch(a, tmpItem) &&
             this.isCountMatch(a, tmpItem) &&
             this.isMaxCostMatch(a, tmpItem)) {
@@ -107,6 +108,10 @@ export class MarketResetComponent implements OnInit {
             tmpItem.auctionCount++;
             tmpItem.itemCount += a.quantity;
             tmpItem.cost += a.buyout;
+
+            if (!this.isCountMatch(ai.auctions[i + 1], tmpItem) || !this.isMaxCostMatch(ai.auctions[i + 1], tmpItem)) {
+              tmpItem.targetPrice = ai.auctions[i + 1].buyout / ai.auctions[i + 1].quantity;
+            }
           }
         });
 

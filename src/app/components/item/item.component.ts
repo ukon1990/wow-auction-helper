@@ -88,7 +88,7 @@ export class ItemComponent implements OnInit {
     });
   }
 
-  openInNewTab(url) {
+  openInNewTab(url: string, target: string) {
     if (navigator.platform !== 'Win32' &&
       (window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches)) {
       const a = document.createElement('a');
@@ -101,6 +101,11 @@ export class ItemComponent implements OnInit {
     } else {
       window.open(url, '_blank');
     }
+
+    this.angulartics2.eventTrack.next({
+      action: 'Item detail view',
+      properties: { category: `Opened ${ target }` },
+    });
   }
 
   /* istanbul ignore next */
@@ -134,6 +139,11 @@ export class ItemComponent implements OnInit {
     }
     SharedService.user.shoppingCart
       .addEntry(1, SharedService.recipesMapPerItemKnown[SharedService.selectedItemId]);
+
+    this.angulartics2.eventTrack.next({
+      action: 'Item detail view',
+      properties: { category: 'Added to recipe shopping cart' },
+    });
   }
 
   /* istanbul ignore next */
