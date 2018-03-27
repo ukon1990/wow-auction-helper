@@ -37,3 +37,4 @@ Thumbs.db
 *.zip
 
 server/secrets/secrets\.js
+src/app/services/keys\.ts
