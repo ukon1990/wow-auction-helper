@@ -82,7 +82,6 @@ export class LineChartComponent implements OnChanges {
     if (diff < 20) {
       b.buyout = a.buyout;
       b.quantity = a.quantity;
-      console.log(b.buyout / b.quantity, diff);
       return true;
     }
     return false;
