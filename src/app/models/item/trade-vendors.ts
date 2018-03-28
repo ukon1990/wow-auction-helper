@@ -57,19 +57,19 @@ const spiritOfHarmony: TradeVendor = {
   name: 'Spirit of Harmony',
   useForCrafting: false,
   items: [
-    new TradeVendorItem(72094, 0.2),
-    new TradeVendorItem(72103, 0.2),
-    new TradeVendorItem(72238, 0.5),
+    new TradeVendorItem(72094, 5),
+    new TradeVendorItem(72103, 5),
+    new TradeVendorItem(72238, 2),
     new TradeVendorItem(74247, 1),
     new TradeVendorItem(76734, 1),
-    new TradeVendorItem(72093, 0.05),
-    new TradeVendorItem(79101, 0.05),
-    new TradeVendorItem(74250, 0.2),
+    new TradeVendorItem(72093, 20),
+    new TradeVendorItem(79101, 20),
+    new TradeVendorItem(74250, 5),
     new TradeVendorItem(79255, 1),
-    new TradeVendorItem(72120, 0.05),
-    new TradeVendorItem(72988, 0.05),
-    new TradeVendorItem(74249, 0.05),
-    new TradeVendorItem(72092, 0.05)
+    new TradeVendorItem(72120, 20),
+    new TradeVendorItem(72988, 20),
+    new TradeVendorItem(74249, 20),
+    new TradeVendorItem(72092, 20)
   ]
 };
 
@@ -79,8 +79,8 @@ const frozenOrb: TradeVendor = {
   useForCrafting: false,
   items: [
     new TradeVendorItem(36908, 1),
-    new TradeVendorItem(47556, 6),
-    new TradeVendorItem(45087, 4),
+    new TradeVendorItem(47556, 1 / 6),
+    new TradeVendorItem(45087, 1 / 4),
     new TradeVendorItem(35622, 1),
     new TradeVendorItem(35623, 1),
     new TradeVendorItem(35624, 1),

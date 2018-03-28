@@ -1,13 +1,13 @@
 <mat-tab-group>
   <mat-tab *ngFor="let tv of getTradeVendors()" [label]="tv.name">
-    <wah-data-table [columns]="columns" [data]="tv.items" id="itemID"></wah-data-table>
     <p>
       The max value for
-       <a rel="domain={{ locale }},item={{ tv.itemID }}" (click)="select(tv)">{{ tv.name }}</a> 
-       {{ tv.useForCrafting ? 'will' : 'will not' }} be used as the material price for crafting.
+        <a rel="domain={{ locale }},item={{ tv.itemID }}" routerLink="." (click)="select(tv)">{{ tv.name }}</a> 
+        {{ tv.useForCrafting ? 'will' : 'will not' }} be used as the material price for crafting.
     </p>
-    <p *ngIf="!tv.useForCrafting">
+    <p *ngIf="!tv.useForCrafting" class="m-0">
       The current lowest buyout per item is {{ getAuctionItem(tv).buyout | gold }}, with a market value of {{ getAuctionItem(tv).mktPrice | gold }}.
     </p>
+    <wah-data-table [columns]="columns" [data]="tv.items" id="itemID"></wah-data-table>
   </mat-tab>
 </mat-tab-group>

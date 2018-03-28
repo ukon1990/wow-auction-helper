@@ -42,7 +42,20 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
   .list-group-item {
     background-color: transparent;
   }
+
+  wah-dashboard-item > mat-card:not(.full-screen),
+  wah-watchlist-item > mat-card:not(.full-screen),
+  wah-general-settings mat-card:not(.full-screen) {
+    background-color: #5d5d5d1a !important;
+  }
 }
+
+wah-dashboard-item > mat-card:not(.full-screen),
+wah-watchlist-item > mat-card:not(.full-screen),
+wah-general-settings mat-card:not(.full-screen)  {
+  background-color: #f8f2ea1a !important;
+}
+
 wah-character {
   .mat-raised-button {
     color: black !important;

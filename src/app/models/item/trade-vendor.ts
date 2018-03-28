@@ -7,7 +7,7 @@ export class TradeVendor {
 
 export class TradeVendorItem {
   itemID: number;
-  quantity: number;
+  quantity: number; // Numers of items per parent item
   value = 0;
   estDemand = 0;
   regionSaleAvg = 0;
