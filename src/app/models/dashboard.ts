@@ -252,8 +252,18 @@ export class Dashboard {
           const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
             obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal) };
           this.data.push(obj);
-          if (wlVal.left > 0 && wlVal.right > 0) {
-            this.tsmShoppingString += `${item.name}/exact/${pipe.transform(wlVal.left)}/${pipe.transform(wlVal.right)};`;
+          if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
+            this.tsmShoppingString += `${
+              item.name
+            }/exact`;
+            if (item.targetType !== 'quantity') {
+              this.tsmShoppingString += `/${
+                pipe.transform(wlVal.left).replace(',', '')
+              }/${
+                pipe.transform(wlVal.right).replace(',', '')
+              }`;
+            }
+            this.tsmShoppingString += ';';
           }
         }
       });
@@ -325,7 +335,11 @@ export class Dashboard {
         if (SharedService.user.apiToUse !== 'none') {
           mvValue += ai.mktPrice - ai.vendorSell;
         }
-        this.tsmShoppingString += `${ai.name}/exact/1c/${pipe.transform(ai.vendorSell)};`;
+        this.tsmShoppingString += `${
+          ai.name
+        }/exact/1c/${
+          pipe.transform(ai.vendorSell).replace(',', '')
+        };`;
         return true;
       }
       return false;
@@ -417,7 +431,11 @@ export class Dashboard {
 
     this.data = SharedService.auctionItems.filter(ai => {
       if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15) {
-        this.tsmShoppingString += `${ai.name}/exact/1c/${pipe.transform(ai.mktPrice * 0.149)};`;
+        this.tsmShoppingString += `${
+          ai.name
+        }/exact/1c/${
+          pipe.transform(ai.mktPrice * 0.149).replace(',', '')
+        };`;
         return true;
       }
       return false;

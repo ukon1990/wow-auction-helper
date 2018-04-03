@@ -130,7 +130,11 @@ export class MarketResetComponent implements OnInit {
 
     this.tsmShoppingString = '';
     this.data.forEach(mrc => {
-      this.tsmShoppingString += `${ SharedService.items[mrc.itemID].name }/exact/0c/${ this.pipe.transform(mrc.targetPrice - 1 )};`;
+      this.tsmShoppingString += `${
+        SharedService.items[mrc.itemID].name
+      }/exact/1c/${
+        this.pipe.transform(mrc.targetPrice - 1 ).replace(',', '')
+      };`;
     });
 
     if (this.tsmShoppingString.endsWith(';')) {
