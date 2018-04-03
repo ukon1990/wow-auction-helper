@@ -28,7 +28,7 @@ export class LineChartComponent implements OnChanges {
   }
 
   paintChart(): void {
-    let prevAuc = new Auction();
+    let firstAuction = new Auction();
     if (this.chart) {
       this.chart.destroy();
     }
@@ -40,7 +40,7 @@ export class LineChartComponent implements OnChanges {
           label: 'Auctions by buyout/item',
           data: this.data
             .sort((a, b) => a.buyout / a.quantity - b.buyout / b.quantity)
-            .filter((a) => a.buyout > 0 && this.filterData(a, prevAuc))
+            .filter((a) => a.buyout > 0 && this.filterData(a, firstAuction))
             .map(d => d.buyout / d.quantity / 10000),
           backgroundColor: this.getColor(),
           borderColor: this.getColor(),
@@ -67,24 +67,18 @@ export class LineChartComponent implements OnChanges {
     });
   }
 
-  filterData(currentAuction:Auction, previousAuction: Auction) {
-    if (previousAuction.buyout && this.hideOutliers.value) {
-      return this.isNotOutlier(currentAuction, previousAuction);
+  filterData(currentAuction:Auction, firstAuction: Auction) {
+    if (firstAuction.buyout && this.hideOutliers.value) {
+      return this.isNotOutlier(currentAuction, firstAuction);
     } else {
-      previousAuction.buyout = currentAuction.buyout;
-      previousAuction.quantity = currentAuction.quantity;;
+      firstAuction.buyout = currentAuction.buyout;
+      firstAuction.quantity = currentAuction.quantity;;
       return true;
     }
   }
 
   isNotOutlier(a: Auction, b: Auction): boolean {
-    const diff = (a.buyout / a.quantity) / (b.buyout / b.quantity);
-    if (diff < 20) {
-      b.buyout = a.buyout;
-      b.quantity = a.quantity;
-      return true;
-    }
-    return false;
+    return (a.buyout / a.quantity) / (b.buyout / b.quantity) < 20;
   }
 
   /* istanbul ignore next */
