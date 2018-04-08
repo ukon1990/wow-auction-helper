@@ -47,7 +47,7 @@ describe('User', () => {
     });
   });
 
-  fdescribe('slugification of realm', () => {
+  describe('slugification of realm', () => {
     it('realm with spaces', () => {
       expect(User.slugifyString(`Emerald dream`)).toEqual('emerald-dream');
     });

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MyAuctionsComponent } from './my-auctions.component';
 import { TestModule } from '../../../modules/test.module';
 
-describe('MyAuctionsComponent', () => {
+fdescribe('MyAuctionsComponent', () => {
   let component: MyAuctionsComponent;
   let fixture: ComponentFixture<MyAuctionsComponent>;
 
@@ -22,5 +22,9 @@ describe('MyAuctionsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should be able to do sorting by undercut', () => {
+    // TODO: do it
   });
 });

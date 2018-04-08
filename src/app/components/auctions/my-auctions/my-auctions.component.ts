@@ -12,6 +12,8 @@ import { Title } from '@angular/platform-browser';
 })
 export class MyAuctionsComponent implements OnInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+  sortAsc: boolean;
+
   constructor(private _title: Title) {
     this._title.setTitle('WAH - My auctions');
   }
@@ -48,5 +50,23 @@ export class MyAuctionsComponent implements OnInit {
 
   getUserAuctionsCharacters(): Array<UserAuctionCharacter> {
     return SharedService.userAuctions.characters ? SharedService.userAuctions.characters : [];
+  }
+
+
+  sortUndercut(): void {
+    SharedService.userAuctions.auctions.sort((a, b) =>
+      this.compare(a, b));
+    this.sortAsc = !this.sortAsc;
+  }
+
+  private compare(a: Auction, b: Auction): number {
+    return this.sortAsc ?
+      this.boolToComp(a) + this.boolToComp(b) : this.boolToComp(a) + this.boolToComp(b);
+  }
+
+  boolToComp(auction: Auction): number {
+    const a = SharedService.auctionItemsMap[auction.item];
+    return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
+      SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? 1 : -1;
   }
 }

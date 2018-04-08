@@ -84,7 +84,7 @@ describe('sort', () => {
 
     sorter.addKey('buyout');
 
-    expect(sorter.getItemToSort('buyout', { item: 1 })).toBe(10);
+    expect(sorter.getItemToSort(sorter.getKey('buyout'), { item: 1 })).toBe(10);
   });
 
   it('getItemToSort tries to get auction item if the item did not contain the key', () => {
@@ -94,6 +94,6 @@ describe('sort', () => {
 
     sorter.addKey('buyout');
 
-    expect(sorter.getItemToSort('buyout', { item: 1 })).toBe(10);
+    expect(sorter.getItemToSort(sorter.getKey('buyout'), { item: 1 })).toBe(10);
   });
 });
