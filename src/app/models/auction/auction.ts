@@ -47,6 +47,15 @@ export class Auction {
   modifiers?: Array<Modifiers>;
 
   roi?: number;
+
+  constructor(auc?:number, item?: number, buyout?: number, quantity?: number, owner?: string, ownerRealm?: string) {
+    this.auc = auc;
+    this.item = item;
+    this.buyout = buyout;
+    this.quantity = quantity;
+    this.owner = owner;
+    this.ownerRealm = ownerRealm;
+  }
 }
 
 class Bonus {
