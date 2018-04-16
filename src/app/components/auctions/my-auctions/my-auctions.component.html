@@ -4,6 +4,9 @@
       {{ getUserAuctions().undercutAuctions | number }} of your auctions are undercut. <br>
       Your auctions are up for a total of {{ getUserAuctions().auctionWorth | gold }}
     </div>
+    <button mat-raised-button class="ml-1" (click)="sortUndercut(getUserAuctions().auctions)">
+      Sort by undercut amount
+    </button>
     <wah-data-table [id]="'item'" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns"></wah-data-table>
   </mat-tab>
   <ng-container *ngFor="let c of getUserAuctionsCharacters()">
@@ -12,6 +15,9 @@
         {{ c.undercutAuctions | number }} of your auctions are undercut. <br>
         Your auctions are up for a total of {{ c.auctionWorth | gold }}
       </div>
+      <button mat-raised-button class="ml-1" (click)="sortUndercut(c.auctions)">
+        Sort by undercut amount
+      </button>
       <wah-data-table id="item" [showOwner]="true" [data]="c.auctions" [columns]="columns"></wah-data-table>
     </mat-tab>
   </ng-container>

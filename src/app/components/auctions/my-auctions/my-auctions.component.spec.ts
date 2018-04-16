@@ -57,10 +57,23 @@ fdescribe('MyAuctionsComponent', () => {
       new Auction(3, 26, 12, 200, 'That person you hate', charlie.realm)
     ]);
     
-    component.sortUndercut();
+
+    component.sortUndercut(SharedService.userAuctions.auctions);
+    expect(component.getUserAuctions().auctions[0].auc).toBe(40);
+    
+    component.sortUndercut(SharedService.userAuctions.auctions);
+    expect(component.getUserAuctions().auctions[0].auc).toBe(30);
+
+    component.sortUndercut(SharedService.userAuctions.auctions);
     expect(component.getUserAuctions().auctions[0].auc).toBe(40);
 
-    component.sortUndercut();
+    component.sortUndercut(SharedService.userAuctions.auctions);
+    expect(component.getUserAuctions().auctions[0].auc).toBe(30);
+
+    component.sortUndercut(SharedService.userAuctions.auctions);
+    expect(component.getUserAuctions().auctions[0].auc).toBe(40);
+
+    component.sortUndercut(SharedService.userAuctions.auctions);
     expect(component.getUserAuctions().auctions[0].auc).toBe(30);
   });
 });

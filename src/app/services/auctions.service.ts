@@ -49,7 +49,6 @@ export class AuctionsService {
       .then(a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = SharedService.auctionResponse.lastModified;
-        console.log('Pet serv', this.petService);
         AuctionHandler.organize(a['auctions'], this.petService);
         this._dbService.addAuctions(a['auctions']);
 

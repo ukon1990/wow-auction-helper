@@ -4,6 +4,7 @@ import { SharedService } from '../../../services/shared.service';
 import { Auction } from '../../../models/auction/auction';
 import { ColumnDescription } from '../../../models/column-description';
 import { Title } from '@angular/platform-browser';
+import { AuctionItem } from '../../../models/auction/auction-item';
 
 @Component({
   selector: 'wah-my-auctions',
@@ -53,20 +54,19 @@ export class MyAuctionsComponent implements OnInit {
   }
 
 
-  sortUndercut(): void {
-    SharedService.userAuctions.auctions.sort((a, b) =>
-      this.compare(a, b));
+  sortUndercut(array: Array<Auction>): void {
+    array.sort((a, b) => {
+      if (this.sortAsc) {
+        return this.getUndercutAmount(b) - this.getUndercutAmount(a);
+      } else {
+        return this.getUndercutAmount(a) - this.getUndercutAmount(b);
+      }
+    });
     this.sortAsc = !this.sortAsc;
+    
   }
 
-  private compare(a: Auction, b: Auction): number {
-    return this.sortAsc ?
-      this.boolToComp(a) + this.boolToComp(b) : this.boolToComp(a) + this.boolToComp(b);
-  }
-
-  boolToComp(auction: Auction): number {
-    const a = SharedService.auctionItemsMap[auction.item];
-    return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
-      SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? 1 : -1;
+  getUndercutAmount(a: Auction): number {
+    return (a.buyout / a.quantity) - SharedService.auctionItemsMap[a.item].buyout;
   }
 }
