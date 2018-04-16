@@ -99,12 +99,6 @@
                 *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
                 <i class="fas fa-cart-plus"></i>
               </button>
-              <a *ngIf="getItemID(d) && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'"
-                target="_blank"
-                href="https://{{ getUser().region }}.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId={{ getItemID(d) }}"
-                mat-icon-button matTooltip="Go to Web AH and buy">
-                <i class="fas fa-shopping-cart"></i>
-              </a>
               <button *ngIf="c.actions[0] === 'watchlist-group-delete'" mat-icon-button
                 matTooltip="Removes the watchlistgroup and it's items"
                 (click)="removeGroup(i)">

@@ -106,12 +106,6 @@
         Add cheapest known recipe to shopping list
         <i class="fas fa-cart-plus"></i>
       </button>
-      <button *ngIf="getAuctionItem()"
-        (click)="openInNewTab('https://' + getUser().region + '.battle.net/wow/en/vault/character/auction/browse?reverse=false&sort=unitBuyout&itemId=' + getItem().id, 'Web AH')"
-        mat-raised-button>
-        Go to Web AH
-        <i class="fas fa-shopping-cart"></i>
-      </button>
     </mat-card-actions>
   </mat-card>
 </div>
