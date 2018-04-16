@@ -9,7 +9,7 @@ import { Item } from '../../../models/item/item';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
 import { Auction } from '../../../models/auction/auction';
 
-fdescribe('MyAuctionsComponent', () => {
+describe('MyAuctionsComponent', () => {
   let component: MyAuctionsComponent;
   let fixture: ComponentFixture<MyAuctionsComponent>;
   let realm = 'test-realm';
