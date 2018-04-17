@@ -46,6 +46,7 @@ export class Auction {
   bonusLists?: Array<Bonus>;
   modifiers?: Array<Modifiers>;
 
+  undercutByAmount?: number;
   roi?: number;
 
   constructor(auc?:number, item?: number, buyout?: number, quantity?: number, owner?: string, ownerRealm?: string) {

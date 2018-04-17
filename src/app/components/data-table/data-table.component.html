@@ -3,6 +3,7 @@
   [pageSize]="pageEvent.pageSize"
   [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex"
+  [showFirstLastButtons]="true"
   (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
@@ -132,5 +133,6 @@
   [pageSize]="pageEvent.pageSize"
   [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex"
+  [showFirstLastButtons]="true"
   (page)="pageChange($event)">
 </mat-paginator>

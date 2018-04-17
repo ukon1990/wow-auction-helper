@@ -22,6 +22,7 @@ export class MyAuctionsComponent implements OnInit {
   ngOnInit() {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
     this.columns.push({ key: 'quantity', title: 'Stack size', dataType: 'number' });
+    this.columns.push({key: 'undercutByAmount', title: 'Undercut by/item', dataType: 'gold'});
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
     this.columns.push({key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'});
     this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true });
