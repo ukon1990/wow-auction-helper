@@ -22,7 +22,11 @@ export class Sorter {
     }
   }
 
-  sort(arr: any[]): void {
+  sort(arr: any[], customSort?: Function): void {
+    if (customSort) {
+      customSort(arr);
+      return;
+    }
     arr.sort((a, b) => {
       for (let i = this.keys.length - 1; i >= 0; i--) {
         if (this.getItemToSort(this.keys[i], a) === this.getItemToSort(this.keys[i], b)) {
@@ -33,13 +37,13 @@ export class Sorter {
           if (this.isString(a, i)) {
             return this.getItemToSort(this.keys[i], b).localeCompare(this.getItemToSort(this.keys[i], a));
           } else {
-            return this.getItemToSort(this.keys[i], a) < this.getItemToSort(this.keys[i], b) ? 1 : -1;
+            return this.getItemToSort(this.keys[i], a) - this.getItemToSort(this.keys[i], b);
           }
         } else {
           if (this.isString(a, i)) {
             return this.getItemToSort(this.keys[i], a).localeCompare(this.getItemToSort(this.keys[i], b));
           } else {
-            return this.getItemToSort(this.keys[i], a) > this.getItemToSort(this.keys[i], b) ? 1 : -1;
+            return this.getItemToSort(this.keys[i], b) - this.getItemToSort(this.keys[i], a);
           }
         }
       }

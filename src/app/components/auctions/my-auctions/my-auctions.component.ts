@@ -12,17 +12,22 @@ import { AuctionItem } from '../../../models/auction/auction-item';
   styleUrls: ['./my-auctions.component.scss']
 })
 export class MyAuctionsComponent implements OnInit {
+  public static sortAsc: boolean;
+
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
-  sortAsc: boolean;
 
   constructor(private _title: Title) {
     this._title.setTitle('WAH - My auctions');
   }
 
+  public static getUndercutAmount(a: Auction): number {
+    return (a.buyout / a.quantity) - SharedService.auctionItemsMap[a.item].buyout;
+  }
+
   ngOnInit() {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
     this.columns.push({ key: 'quantity', title: 'Stack size', dataType: 'number' });
-    this.columns.push({key: 'undercutByAmount', title: 'Undercut by/item', dataType: 'gold'});
+    this.columns.push({key: 'undercutByAmount', title: 'Undercut by/item', dataType: 'gold', customSort: this.sortUndercut});
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
     this.columns.push({key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'});
     this.columns.push({ key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true });
@@ -57,17 +62,12 @@ export class MyAuctionsComponent implements OnInit {
 
   sortUndercut(array: Array<Auction>): void {
     array.sort((a, b) => {
-      if (this.sortAsc) {
-        return this.getUndercutAmount(b) - this.getUndercutAmount(a);
+      if (MyAuctionsComponent.sortAsc) {
+        return MyAuctionsComponent.getUndercutAmount(b) - MyAuctionsComponent.getUndercutAmount(a);
       } else {
-        return this.getUndercutAmount(a) - this.getUndercutAmount(b);
+        return MyAuctionsComponent.getUndercutAmount(a) - MyAuctionsComponent.getUndercutAmount(b);
       }
     });
-    this.sortAsc = !this.sortAsc;
-    
-  }
-
-  getUndercutAmount(a: Auction): number {
-    return (a.buyout / a.quantity) - SharedService.auctionItemsMap[a.item].buyout;
+    MyAuctionsComponent.sortAsc = !MyAuctionsComponent.sortAsc;
   }
 }

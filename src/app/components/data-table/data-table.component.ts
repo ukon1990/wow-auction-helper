@@ -219,7 +219,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   sort(column: ColumnDescription): void {
     this.sorter.addKey(column.key, column.dataType === 'gold-per-item');
-    this.sorter.sort(this.data);
+    this.sorter.sort(this.data, column.customSort);
   }
 
   getSource(recipe: Recipe): string {

@@ -80,16 +80,9 @@ export class AuctionHandler {
       SharedService.user.shoppingCart.calculateCartCost();
 
       SharedService.userAuctions.auctions.forEach(auc => {
-        auc.undercutByAmount = auc.buyout * auc.quantity - SharedService.auctionItemsMap[auc.item].buyout;
-
-        if (auc.undercutByAmount === 0) {
-          const nextSellerAuction = SharedService.auctionItemsMap[auc.item].auctions
-            .filter(a =>
-              a.owner + a.ownerRealm !== auc.owner + auc.ownerRealm)[0];
-
-          auc.undercutByAmount = auc.buyout * auc.quantity - nextSellerAuction.buyout * nextSellerAuction.quantity;
-        }
+        auc.undercutByAmount = auc.buyout / auc.quantity - SharedService.auctionItemsMap[auc.item].buyout;
       });
+      console.log(SharedService.userAuctions.auctions);
     }, 100);
   }
 

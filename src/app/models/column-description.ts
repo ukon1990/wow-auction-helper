@@ -4,4 +4,5 @@ export class ColumnDescription {
   key?: string;
   actions?: Array<string>;
   hideOnMobile? = false;
+  customSort?: Function;
 }
