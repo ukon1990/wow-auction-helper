@@ -1,0 +1,34 @@
+{
+  "name": "wah",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "ng": "ng",
+    "start": "node ./server.js",
+    "start-dev": "supervisor ./server/server.js",
+    "build": "ng build",
+    "test-build": "ng lint && ng test --browser ChromeHeadless --single-run && ng e2e && ng build --prod",
+    "test": "ng test --browser ChromeHeadless",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.214.1",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "express-http-proxy": "^1.1.0",
+    "mysql": "^2.15.0",
+    "promise-throttle": "^0.4.0",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.103",
+    "supervisor": "^0.12.0",
+    "ts-node": "~3.2.0",
+    "tslint": "~5.7.0",
+    "typescript": "~2.4.2"
+  }
+}
