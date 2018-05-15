@@ -102,9 +102,9 @@
             <span *ngIf="getRealmWithkey().queue; else noQueue">with queue.</span>
             <ng-template #noQueue>
               <span>without queue.</span>
-            </ng-template>.
+            </ng-template>
             <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
-            It is using the timesone "{{ getRealmWithkey(slug).timezone }}".
+            It is using the timezone "{{ getRealmWithkey(slug).timezone }}".
           </mat-card-content>
         </mat-card>
         <mat-card class="col-md-8">
