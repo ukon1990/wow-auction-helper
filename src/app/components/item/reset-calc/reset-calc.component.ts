@@ -2,7 +2,7 @@ import { Component, Input, OnInit , OnDestroy } from '@angular/core';
 import { Auction } from '../../../models/auction/auction';
 import { AuctionItem } from '../../../models/auction/auction-item';
 import { FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Angulartics2 } from 'angulartics2';
 import { GoldPipe } from '../../../pipes/gold.pipe';
 

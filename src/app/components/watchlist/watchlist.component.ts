@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import {  } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
+import { Angulartics2 } from 'angulartics2';
+
 import { Watchlist, WatchlistItem, WatchlistGroup } from '../../models/watchlist/watchlist';
 import { SharedService } from '../../services/shared.service';
 import { Recipe } from '../../models/crafting/recipe';
-import { FormControl } from '@angular/forms';
-import { map } from 'rxjs/operators/map';
-import { Observable } from 'rxjs/Observable';
-import { startWith } from 'rxjs/operators/startWith';
 import { Item } from '../../models/item/item';
-import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-watchlist',

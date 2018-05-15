@@ -90,15 +90,15 @@ td {
     line-height: unset !important;
   }
 
-  span mat-form-field div.mat-input-wrapper.mat-form-field-wrapper {
+  span mat-form-field div.mat-form-field-wrapper.mat-form-field-wrapper {
     padding: 0;
 
-    div div.mat-input-infix.mat-form-field-infix {
+    div div.mat-form-field-infix.mat-form-field-infix {
       border: 0;
       padding: 0;
     }
 
-    div.mat-input-underline {
+    div.mat-form-field-underline {
       top: 1.25em
     }
   }

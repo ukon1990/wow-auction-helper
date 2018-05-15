@@ -4,7 +4,7 @@ import { AuctionItem } from '../../models/auction/auction-item';
 import { ColumnDescription } from '../../models/column-description';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { itemClasses } from '../../models/item/item-classes';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Filters } from '../../models/filtering';
 import { Title } from '@angular/platform-browser';
 
