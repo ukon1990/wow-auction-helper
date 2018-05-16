@@ -6,8 +6,7 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 import { Observable } from 'rxjs';
-import { startWith, filter } from 'rxjs/operators';
-import 'rxjs/add/operator/map';
+import { startWith, filter, map } from 'rxjs/operators';
 
 if (environment.production) {
   enableProdMode();

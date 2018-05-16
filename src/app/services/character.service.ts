@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
-import 'rxjs/add/operator';
+import { startWith, map } from 'rxjs/operators';
 
 @Injectable()
 export class CharacterService {
