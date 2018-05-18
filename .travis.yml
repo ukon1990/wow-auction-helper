@@ -1,4 +1,17 @@
+sudo: required
+addons:
+  chrome: stable
+
 language: node_js
 node_js:
-	- "stable"
-script: "npm i; ng build --prod"
+  - "10"
+
+branches:
+  only:
+    - master
+
+before_script:
+  - npm install -g @angular/cli
+
+script:
+  - ng build --prod
