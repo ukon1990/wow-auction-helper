@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedService } from '../../../services/shared.service';
 import { Notifications } from '../../../models/user/notification';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { User } from '../../../models/user/user';
 
 @Component({

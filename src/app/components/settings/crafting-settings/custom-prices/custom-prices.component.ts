@@ -1,14 +1,14 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import { startWith } from 'rxjs/operators/startWith';
-import { map } from 'rxjs/operators/map';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
+import { Angulartics2 } from 'angulartics2';
+
 import { SharedService } from '../../../../services/shared.service';
 import { Item } from '../../../../models/item/item';
 import { CustomPrice, CustomPrices } from '../../../../models/crafting/custom-price';
 import { ColumnDescription } from '../../../../models/column-description';
 import { Crafting } from '../../../../models/crafting/crafting';
-import { Angulartics2 } from 'angulartics2';
 import { customPricesDefault } from '../../../../models/crafting/default-custom-prices';
 
 @Component({

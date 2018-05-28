@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { startWith, map } from 'rxjs/operators';
+import { Angulartics2 } from 'angulartics2';
+
 import { RealmService } from '../../../services/realm.service';
-import { startWith } from 'rxjs/operators/startWith';
-import { map } from 'rxjs/operators/map';
 import { SharedService } from '../../../services/shared.service';
 import { Realm } from '../../../models/realm';
 import { Router } from '@angular/router';
 import { User } from '../../../models/user/user';
-import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-setup',

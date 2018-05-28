@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
-import 'rxjs/add/operator/map';
+import { startWith, map } from 'rxjs/operators';
 
 @Injectable()
 export class CharacterService {
@@ -17,14 +17,15 @@ export class CharacterService {
         `character/${
           realm
         }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region))
-      .map(c => {
+      .toPromise()
+      .then(c => {
         SharedService.downloading.characterData = false;
         return c;
-      }, error => {
+      }).catch(e => {
         SharedService.downloading.characterData = false;
-        console.error('Failed at downloading character', error);
+        console.error('Failed at downloading character', e);
         return {};
-      }).toPromise();
+      });
   }
 
   getCharacterMinimal(character: string, realm: string): Promise<any> {
@@ -34,13 +35,14 @@ export class CharacterService {
         `character/${
           realm
         }/${character}`))
-      .map(c => {
+      .toPromise()
+      .then(c => {
         SharedService.downloading.characterData = false;
         return c;
-      }, error => {
+      }).catch(e => {
         SharedService.downloading.characterData = false;
-        console.error('Failed at downloading character', error);
+        console.error('Failed at downloading character', e);
         return {};
-      }).toPromise();
+      });
   }
 }

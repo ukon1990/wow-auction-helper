@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import { startWith } from 'rxjs/operators/startWith';
-import { map } from 'rxjs/operators/map';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 import { SharedService } from '../../../../services/shared.service';
 import { Item } from '../../../../models/item/item';
 import { CustomPrice, CustomPrices } from '../../../../models/crafting/custom-price';

@@ -5,11 +5,8 @@ import { Chart } from 'chart.js';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
-import { Observable } from 'rxjs/Observable';
-import { startWith } from 'rxjs/operators/startWith';
-
-import 'rxjs/add/operator/map';
-import { filter } from 'rxjs/operators/filter';
+import { Observable } from 'rxjs';
+import { startWith, filter, map } from 'rxjs/operators';
 
 if (environment.production) {
   enableProdMode();
