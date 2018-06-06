@@ -133,7 +133,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   getCraftersForRecipe(recipe: Recipe) {
-    return SharedService.recipesForUser[recipe.spellID] ? SharedService.recipesForUser[recipe.spellID].toString() : '';
+    return SharedService.recipesForUser[recipe.spellID] ?
+      SharedService.recipesForUser[recipe.spellID].join(', ') : '';
   }
 
   customPrices(): CustomPrices {
