@@ -12,7 +12,7 @@ import {
     MatCardModule, MatProgressSpinnerModule,
     MatSelectModule, MatStepperModule,
     MatExpansionModule, MatTooltipModule,
-    MatSlideToggleModule
+    MatSlideToggleModule, MatChipsModule
 } from '@angular/material';
 
 @NgModule({
@@ -38,7 +38,8 @@ import {
         MatExpansionModule,
         MatTooltipModule,
         MatSlideToggleModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatChipsModule
     ],
     imports: [
     ],

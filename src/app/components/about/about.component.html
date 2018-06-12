@@ -37,6 +37,18 @@
      [active]="rla.isActive">
      Technology
   </a>
+  <a mat-tab-link
+     routerLink="contributors"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Project contributors
+  </a>
+  <a mat-tab-link
+     routerLink="issues"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Todos/Github Issues
+  </a>
 </nav>
 
 <router-outlet></router-outlet>

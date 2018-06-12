@@ -68,6 +68,9 @@ import { CustomProcComponent } from './components/settings/crafting-settings/cus
 import { SellerChartComponent } from './components/sellers/seller-chart/seller-chart.component';
 import { MyPetsComponent } from './components/my-pets/my-pets.component';
 import { MarketResetComponent } from './components/item/market-reset/market-reset.component';
+import { ContributorsComponent } from './components/about/contributors/contributors.component';
+import { GithubService } from './services/github.service';
+import { IssuesComponent } from './components/about/issues/issues.component';
 
 
 @NgModule({
@@ -118,7 +121,9 @@ import { MarketResetComponent } from './components/item/market-reset/market-rese
     CustomProcComponent,
     SellerChartComponent,
     MyPetsComponent,
-    MarketResetComponent
+    MarketResetComponent,
+    ContributorsComponent,
+    IssuesComponent
   ],
   imports: [
     BrowserModule,
@@ -140,7 +145,8 @@ import { MarketResetComponent } from './components/item/market-reset/market-rese
     CraftingService,
     IsRegisteredService,
     WowdbService,
-    PetsService
+    PetsService,
+    GithubService
   ],
   bootstrap: [AppComponent]
 })

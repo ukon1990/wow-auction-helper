@@ -1,0 +1,37 @@
+<div class="row">
+  <div *ngFor="let issue of issues" class="col-md-4 mb-2">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar [style.background-image]="getIconStyle(issue.user.avatar_url)" class="avatar"></div>
+        <mat-card-title>[{{ issue.state }}] {{ issue.title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-subtitle>
+        <mat-chip-list>
+          <mat-chip *ngFor="let label of issue.labels" [color]="label.color">
+            {{ label.name }}
+          </mat-chip>
+        </mat-chip-list>
+      </mat-card-subtitle>
+      <mat-card-content>
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Description
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            {{ issue.body }}
+          </mat-expansion-panel>
+        </mat-accordion>
+
+        <br>
+
+        <mat-card-subtitle>Created at: {{ issue.created_at | date }}</mat-card-subtitle>
+        <mat-card-subtitle>Updated at: {{ issue.updated_at | date }}</mat-card-subtitle>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [href]="issue.html_url" target="_blank">Go to issue page</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

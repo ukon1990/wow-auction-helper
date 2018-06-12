@@ -27,6 +27,8 @@ import { CustomProcComponent } from '../components/settings/crafting-settings/cu
 import { CustomPricesComponent } from '../components/settings/crafting-settings/custom-prices/custom-prices.component';
 import { MyPetsComponent } from '../components/my-pets/my-pets.component';
 import { MarketResetComponent } from '../components/item/market-reset/market-reset.component';
+import { ContributorsComponent } from '../components/about/contributors/contributors.component';
+import { IssuesComponent } from '../components/about/issues/issues.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -82,7 +84,9 @@ const routes: Routes = [
       { path: 'crafting', component: AboutCraftingComponent },
       { path: 'where-is-the-data-from', component: AboutDataComponent },
       { path: 'privacy', component: AboutPrivacyComponent },
-      { path: 'technology', component: TechnologyComponent }
+      { path: 'technology', component: TechnologyComponent },
+      { path: 'contributors', component: ContributorsComponent },
+      { path: 'issues', component: IssuesComponent }
     ]
   },
   { path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService] },
