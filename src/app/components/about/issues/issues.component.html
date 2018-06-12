@@ -7,7 +7,7 @@
       </mat-card-header>
       <mat-card-subtitle>
         <mat-chip-list>
-          <mat-chip *ngFor="let label of issue.labels" [color]="label.color">
+          <mat-chip *ngFor="let label of issue.labels" [style.background-color]="'#' + label.color">
             {{ label.name }}
           </mat-chip>
         </mat-chip-list>

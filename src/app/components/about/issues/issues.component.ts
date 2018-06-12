@@ -23,4 +23,6 @@ export class IssuesComponent {
         url
       }')`);
   }
+
+  // TODO: format & get progression from body text
 }
