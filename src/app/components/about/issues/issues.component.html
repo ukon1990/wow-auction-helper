@@ -19,8 +19,20 @@
               <mat-panel-title>
                 Description
               </mat-panel-title>
+
+              <mat-panel-description>
+                {{ issue.bodyFormatted.completedCount }} / {{ issue.bodyFormatted.todos.length }} items completed.
+              </mat-panel-description>
             </mat-expansion-panel-header>
-            {{ issue.body }}
+            <div [innerHtml]="issue.bodyFormatted.description"></div>
+
+            <mat-list dense>
+              <mat-list-item *ngFor="let todo of issue.bodyFormatted.todos">
+                  <mat-checkbox [checked]="todo.completed" disabled>
+                    {{ todo.text }}
+                  </mat-checkbox>
+              </mat-list-item>
+            </mat-list>             
           </mat-expansion-panel>
         </mat-accordion>
 

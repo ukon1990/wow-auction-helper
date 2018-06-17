@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GithubService } from '../../../services/github.service';
 import { GithubIssue } from '../../../models/github/issues/github-issue.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { GithubIssueBody } from '../../../models/github/issues/github-issue-body.model';
 
 @Component({
   selector: 'wah-issues',
@@ -13,8 +14,11 @@ export class IssuesComponent {
 
   constructor(private service: GithubService, private _sanitizer: DomSanitizer) {
     this.service.getIssues()
-      .then(issues =>
-        this.issues = issues);
+      .then(issues => {
+        issues.forEach(i =>
+          i.bodyFormatted = new GithubIssueBody(i));
+        this.issues = issues;
+      });
   }
 
   getIconStyle(url: string): SafeResourceUrl {
