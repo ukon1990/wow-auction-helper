@@ -11,6 +11,7 @@ import { ItemService } from '../../../services/item.service';
 import { CraftingService } from '../../../services/crafting.service';
 import { PetsService } from '../../../services/pets.service';
 import { AuctionHandler } from '../../../models/auction/auction-handler';
+import { DatabaseService } from '../../../services/database.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -26,6 +27,7 @@ export class GeneralSettingsComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder,
     private angulartics2: Angulartics2,
     private _realmService: RealmService,
+    private dbServie: DatabaseService,
     private itemService: ItemService,
     private craftingService: CraftingService,
     private petsService: PetsService,
@@ -214,5 +216,13 @@ export class GeneralSettingsComponent implements OnInit {
 
   isImportStringNotEmpty(): boolean {
     return this._characterForm.value.importString.length > 0;
+  }
+
+  deleteUser(): void {
+    localStorage.clear();
+    this.dbServie.clearDB();
+    setTimeout(() => {
+      location.reload();
+    }, 2000);
   }
 }

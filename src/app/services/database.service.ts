@@ -131,6 +131,7 @@ export class DatabaseService {
   }
 
   clearDB(): void {
+    this.db.delete();
   }
 
   setDbVersions(): void {
