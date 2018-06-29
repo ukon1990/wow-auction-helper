@@ -71,6 +71,7 @@ import { MarketResetComponent } from './components/item/market-reset/market-rese
 import { ContributorsComponent } from './components/about/contributors/contributors.component';
 import { GithubService } from './services/github.service';
 import { IssuesComponent } from './components/about/issues/issues.component';
+import { ItemSellerChartComponent } from './components/item/item-seller-chart/item-seller-chart.component';
 
 
 @NgModule({
@@ -123,7 +124,8 @@ import { IssuesComponent } from './components/about/issues/issues.component';
     MyPetsComponent,
     MarketResetComponent,
     ContributorsComponent,
-    IssuesComponent
+    IssuesComponent,
+    ItemSellerChartComponent
   ],
   imports: [
     BrowserModule,

@@ -63,6 +63,9 @@
               <wah-line-chart [data]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === 0">
               </wah-line-chart>
             </mat-tab>
+            <mat-tab label="Sellers">
+              <wah-item-seller-chart [auctions]="getAuctionItem().auctions"></wah-item-seller-chart>
+            </mat-tab>
             <mat-tab label="Auctions ({{ getAuctionItem().quantityTotal | number }})" *ngIf="getAuctionItem()">
               <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">
               </wah-data-table>
