@@ -5,6 +5,7 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Angulartics2 } from 'angulartics2';
 import { GoldPipe } from '../../../pipes/gold.pipe';
+import { SharedService } from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-reset-calc',
@@ -15,6 +16,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
   @Input() auctionItem: AuctionItem;
   pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
+  usingAPI = SharedService.user.apiToUse !== 'none';
   resetPrice = {
     numOfAuctions: 0,
     numOfItems: 0,
