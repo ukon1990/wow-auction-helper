@@ -58,13 +58,13 @@
           </wah-line-chart>
         </div>
         <div class="col-md-8">
-          <mat-tab-group #tabs>
+          <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event)" #tabs>
             <mat-tab *ngIf="getAuctionItem() && isMobile()" label="Auction price chart">
-              <wah-line-chart [data]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === 0">
+              <wah-line-chart [data]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
               </wah-line-chart>
             </mat-tab>
-            <mat-tab label="Sellers">
-              <wah-item-seller-chart [auctions]="getAuctionItem().auctions"></wah-item-seller-chart>
+            <mat-tab label="Seller overview">
+              <wah-item-seller-chart [auctions]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === 0"></wah-item-seller-chart>
             </mat-tab>
             <mat-tab label="Auctions ({{ getAuctionItem().quantityTotal | number }})" *ngIf="getAuctionItem()">
               <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">

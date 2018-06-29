@@ -21,7 +21,7 @@ export class ItemSellerChartComponent implements OnChanges, AfterViewInit {
 
   constructor() {
     this.chartTypeForm.setValue(
-      localStorage[this.storageName] ? localStorage[this.storageName] : 'doughnut');
+      localStorage[this.storageName] ? localStorage[this.storageName] : 'pie');
     this.chartTypeForm.valueChanges.subscribe(type => {
       setTimeout(() => {
         this.save();
@@ -39,7 +39,6 @@ export class ItemSellerChartComponent implements OnChanges, AfterViewInit {
     setTimeout(() => {
       this.colors = distinctColors({ count: this.itemSellers.length });
       this.setData();
-      console.log(this.itemSellersMap);
       this.setChart(this.itemSellers);
     }, 100);
   }
@@ -66,8 +65,8 @@ export class ItemSellerChartComponent implements OnChanges, AfterViewInit {
     this.itemSellersMap = new Map<number, ItemSeller>();
 
     this.auctions.forEach(auction => {
-      if (this.itemSellersMap[`${ auction.owner }-${ auction.ownerRealm }`]) {
-        this.itemSellersMap[this.getID(auction)].quantity++;
+      if (this.itemSellersMap[this.getID(auction)]) {
+        this.itemSellersMap[this.getID(auction)].quantity += auction.quantity;
       } else {
         const i = new ItemSeller(auction);
         this.itemSellersMap[this.getID(auction)] = i;

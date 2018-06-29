@@ -23,6 +23,8 @@ export class ItemComponent implements OnInit {
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
   locale = localStorage['locale'].split('-')[0];
+  indexStoredName = 'item_tab_index';
+  selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
 
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
@@ -205,5 +207,10 @@ export class ItemComponent implements OnInit {
 
   isMobile(): boolean {
     return window.matchMedia('(max-width: 767px)').matches;
+  }
+
+  setTabChange(index: number): void {
+    this.selectedTab = index;
+    localStorage[this.indexStoredName] = index;
   }
 }
