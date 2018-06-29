@@ -17,6 +17,10 @@ export class IssuesComponent {
       .then(issues => {
         issues.forEach(i =>
           i.bodyFormatted = new GithubIssueBody(i));
+        issues.sort((a, b) => {
+          return b.bodyFormatted.completedCount / b.bodyFormatted.todos.length
+            - a.bodyFormatted.completedCount / a.bodyFormatted.todos.length;
+        });
         this.issues = issues;
       });
   }
@@ -27,6 +31,4 @@ export class IssuesComponent {
         url
       }')`);
   }
-
-  // TODO: format & get progression from body text
 }

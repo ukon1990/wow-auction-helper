@@ -28,7 +28,7 @@
 
             <mat-list dense>
               <mat-list-item *ngFor="let todo of issue.bodyFormatted.todos">
-                  <mat-checkbox [checked]="todo.completed" disabled>
+                  <mat-checkbox [checked]="todo.completed" [disabled]="true">
                     {{ todo.text }}
                   </mat-checkbox>
               </mat-list-item>
