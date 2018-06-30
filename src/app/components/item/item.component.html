@@ -63,10 +63,10 @@
               <wah-line-chart [data]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
               </wah-line-chart>
             </mat-tab>
-            <mat-tab label="Seller overview">
+            <mat-tab label="Seller overview" (click)="emitSelectedTab('Seller')">
               <wah-item-seller-chart [auctions]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === 0"></wah-item-seller-chart>
             </mat-tab>
-            <mat-tab label="Auctions ({{ getAuctionItem().quantityTotal | number }})" *ngIf="getAuctionItem()">
+            <mat-tab label="Auctions" *ngIf="getAuctionItem()">
               <wah-data-table [columns]="columns" [data]="getAuctionItem().auctions">
               </wah-data-table>
             </mat-tab>
@@ -74,11 +74,11 @@
               <wah-data-table [columns]="recipeColumns" [data]="getRecipesForItem()" [isCrafting]="true">
               </wah-data-table>
             </mat-tab>
-            <mat-tab label="Material for {{ materialFor.length }}" *ngIf="materialFor.length > 0">
+            <mat-tab label="Material for" *ngIf="materialFor.length > 0">
               <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor" [isCrafting]="false">
               </wah-data-table>
             </mat-tab>
-            <mat-tab label="Dropped by {{ wowDBItem.itemSources.length | number }} NPC's" *ngIf="wowDBItem && wowDBItem.itemSources">
+            <mat-tab label="Dropped by NPC's" *ngIf="wowDBItem && wowDBItem.itemSources && wowDBItem.itemSources.length > 0">
               <wah-data-table [columns]="npcColumns" [data]="wowDBItem.itemSources">
               </wah-data-table>
             </mat-tab>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Item } from '../../models/item/item';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
@@ -10,14 +10,15 @@ import { Pet } from '../../models/pet';
 import { AuctionPet } from '../../models/auction/auction-pet';
 import { Angulartics2 } from 'angulartics2';
 import { Endpoints } from '../../services/endpoints';
+import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'wah-item',
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })
-export class ItemComponent implements OnInit {
-  // TODO: https://github.com/d3/d3 with item price range
+export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('tabs') tabs;
   wowDBItem: any;
   targetBuyoutValue: number;
@@ -25,7 +26,7 @@ export class ItemComponent implements OnInit {
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
-
+  selectedTabSubscription: Subscription;
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -78,6 +79,21 @@ export class ItemComponent implements OnInit {
       .catch(e => console.error('Could not get the item from WOW DB', e));
 
     this.setMaterialFor();
+  }
+
+  ngAfterViewInit(): void {
+    this.selectedTabSubscription = (this.tabs as MatTabGroup)
+      .selectedTabChange.subscribe(
+        (event: MatTabChangeEvent) => {
+          this.angulartics2.eventTrack.next({
+            action: `Item detail view - ${ event.tab.textLabel }`,
+            properties: { category: `Changed item detail tab to ${ event.tab.textLabel }` },
+          });
+        });
+  }
+
+  ngOnDestroy(): void {
+    this.selectedTabSubscription.unsubscribe();
   }
 
   setMaterialFor(): void {
@@ -209,7 +225,7 @@ export class ItemComponent implements OnInit {
     return window.matchMedia('(max-width: 767px)').matches;
   }
 
-  setTabChange(index: number): void {
+  setTabChange(index: number, tabName: string): void {
     this.selectedTab = index;
     localStorage[this.indexStoredName] = index;
   }
