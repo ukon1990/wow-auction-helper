@@ -93,8 +93,21 @@ router.patch('/:spellID', (req, res) => {
       const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
       //res.send(recipe);
       getProfession(recipe, function (r) {
-      if (recipe.itemID > 0) {
-        const query = `
+        if (recipe.itemID > 0) {
+          updateRecipe(req, recipe);
+        }
+        console.log(`${new Date().toString()} - Updating recipe ${r.name}(${r.spellID}) - SQL: ${ query }`);
+        res.send(r);
+      });
+    } catch (e) {
+      console.error('Fail', req.params.spellID, body);
+      forceStopIfTest(err);
+    }
+  });
+});
+
+function updateRecipe(req, recipe) {
+  const query = `
           UPDATE recipes SET json = "${
             safeifyString(JSON.stringify(recipe))
           }", timestamp = CURRENT_TIMESTAMP
@@ -113,16 +126,7 @@ router.patch('/:spellID', (req, res) => {
         } catch (e) {
           console.error(`${new Date().toString()} - Could not update ${req.params.spellID} - SQL: ${query}`, e);
         }
-      }
-        console.log(`${new Date().toString()} - Updating recipe ${r.name}(${r.spellID}) - SQL: ${ query }`);
-        res.send(r);
-      });
-    } catch (e) {
-      console.error('Fail', req.params.spellID, body);
-      forceStopIfTest(err);
-    }
-  });
-});
+}
 
 router.get('*', (req, res) => {
   res = headers.setHeaders(res);
