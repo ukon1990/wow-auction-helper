@@ -72,6 +72,7 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!SharedService.selectedItemId) {
       return;
     }
+    console.log(SharedService.items[SharedService.selectedItemId]);
     this._wowDBService.getItem(SharedService.selectedItemId)
       .then(i => {
         this.wowDBItem = i;

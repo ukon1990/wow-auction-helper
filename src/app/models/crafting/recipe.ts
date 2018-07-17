@@ -9,6 +9,7 @@ export class Recipe {
   minCount: number;
   maxCount: number;
   reagents: Array<Reagent>;
+  expansion?: string;
 
   // Applied after cost calculation
   cost?: number;

@@ -7,6 +7,7 @@ import { itemClasses } from '../../models/item/item-classes';
 import { Subscription } from 'rxjs';
 import { Filters } from '../../models/filtering';
 import { Title } from '@angular/platform-browser';
+import { GameBuild } from '../../utils/game-build.util';
 
 @Component({
   selector: 'wah-auctions',
@@ -18,6 +19,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   formChanges: Subscription;
   itemClasses = itemClasses;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+  expansions = GameBuild.expansionMap;
 
   constructor(private formBuilder: FormBuilder, private _title: Title) {
     this._title.setTitle('WAH - Auctions');
@@ -30,7 +32,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
       mktPrice: filter && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
       saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
       avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : 0,
-      onlyVendorSellable: filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false
+      onlyVendorSellable: filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false,
+      expansion: filter && filter.expansion ? filter.expansion : null
     });
   }
 
@@ -76,7 +79,8 @@ export class AuctionsComponent implements OnInit, OnDestroy {
       Filters.isSaleRateMatch(auctionItem.itemID, this.form) &&
       Filters.isBelowMarketValue(auctionItem.itemID, this.form) &&
       Filters.isDailySoldMatch(auctionItem.itemID, this.form) &&
-      Filters.isBelowVendorPrice(auctionItem.itemID, this.form);
+      Filters.isBelowVendorPrice(auctionItem.itemID, this.form)
+      && Filters.isExpansionMatch(auctionItem.itemID, this.form.controls.expansion);
   }
 
   /* istanbul ignore next */

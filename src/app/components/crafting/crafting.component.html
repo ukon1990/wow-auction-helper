@@ -42,6 +42,15 @@
   </mat-form-field>
 
   <mat-form-field class="col">
+    <mat-select placeholder="Expansion" formControlName="expansion">
+      <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
+      <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ expansion }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="col">
     <input matInput placeholder="Minimum profit %" formControlName="profit" type="number" matTooltip="Minimum return on investment">
   </mat-form-field>
 

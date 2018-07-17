@@ -10,6 +10,7 @@ import { Filters } from '../../models/filtering';
 import { Title } from '@angular/platform-browser';
 import { User } from '../../models/user/user';
 import { Crafting } from '../../models/crafting/crafting';
+import { GameBuild } from '../../utils/game-build.util';
 
 @Component({
   selector: 'wah-crafting',
@@ -35,6 +36,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     'Inscription',
     'none'
   ].sort();
+  expansions = GameBuild.expansionMap;
 
   columns: Array<ColumnDescription> = [];
 
@@ -57,7 +59,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
       // Disenchanting
       selectedDEMaterial: query && query.selectedDisenchanting ? query.selectedDisenchanting : 0,
-      DEOnlyProfitable: query && query.onlyProfitable ? query.onlyProfitable : false
+      DEOnlyProfitable: query && query.onlyProfitable ? query.onlyProfitable : false,
+      expansion: query && query.expansion ? query.expansion : null
     });
   }
 
@@ -110,7 +113,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
       && this.isSaleRateMatch(recipe)
       && this.isMinSoldMatch(recipe)
       && this.isProfessionMatch(recipe)
-      && Filters.isItemClassMatch(recipe.itemID, this.searchForm));
+      && Filters.isItemClassMatch(recipe.itemID, this.searchForm)
+      && Filters.isExpansionMatch(recipe.itemID, this.searchForm.controls.expansion));
   }
 
   isKnownRecipe(recipe: Recipe): boolean {

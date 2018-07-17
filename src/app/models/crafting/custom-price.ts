@@ -42,7 +42,7 @@ export class CustomPrice {
 
   constructor(item?: Item) {
     if (item) {
-      this.itemID = parseInt(item.id, 10);
+      this.itemID = item.id;
       this.name = item.name;
       this.price = 0;
     }

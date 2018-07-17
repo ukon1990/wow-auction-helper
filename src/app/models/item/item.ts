@@ -1,7 +1,7 @@
 import { ItemSpells } from './itemspells';
 
 export class Item {
-    id: string;
+    id: number;
     name: string;
     icon: string;
     itemLevel: number;
@@ -15,4 +15,5 @@ export class Item {
     minFactionId: string;
     minReputation: number;
     isDropped: boolean;
+    expansionId: number;
 }

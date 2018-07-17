@@ -3,6 +3,7 @@ import { SharedService } from './shared.service';
 import { HttpClient } from '@angular/common/http';
 import { Item } from '../models/item/item';
 import { Endpoints } from './endpoints';
+import { GameBuild } from '../utils/game-build.util';
 
 @Injectable()
 export class ItemService {
@@ -32,7 +33,7 @@ export class ItemService {
         SharedService.itemsUnmapped = items['items'];
         localStorage['timestamp_items'] = new Date().toDateString();
         SharedService.downloading.items = false;
-        items['items'].forEach(i => {
+        items['items'].forEach((i: Item) => {
           // Making sure that the tradevendor item names are updated in case of locale change
           if (SharedService.tradeVendorMap[i.id]) {
             SharedService.tradeVendorMap[i.id].name = i.name;

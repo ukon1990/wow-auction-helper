@@ -4,6 +4,7 @@ import { SharedService } from './shared.service';
 import { Recipe } from '../models/crafting/recipe';
 import { Endpoints } from './endpoints';
 import { ItemService } from './item.service';
+import { GameBuild } from '../utils/game-build.util';
 
 @Injectable()
 export class CraftingService {
@@ -49,6 +50,7 @@ export class CraftingService {
     if (r.itemID > 0 && !SharedService.items[r.itemID]) {
       this._itemService.addItem(r.itemID);
     }
+
     r.reagents.forEach(reagent => {
       // TODO: Make a permanent fix for this in the backend.
       // As "Create ..." recipes need 10, but the api claims 9 etc, we need to +1 this.

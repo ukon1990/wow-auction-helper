@@ -38,6 +38,15 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field class="col">
+    <mat-select placeholder="Expansion" formControlName="expansion">
+      <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
+      <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ expansion }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <mat-checkbox class="ml-2 mr-2 col" formControlName="onlyVendorSellable" matTooltip="Only display items below the vendor sell price">
     Below vendor price
   </mat-checkbox>

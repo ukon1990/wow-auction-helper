@@ -1,7 +1,8 @@
 import { AuctionItem } from './auction/auction-item';
 import { SharedService } from '../services/shared.service';
 import { itemClasses } from './item/item-classes';
-import { FormGroup } from '@angular/forms/src/model';
+import { FormGroup, FormControl, AbstractControl } from '@angular/forms/src/model';
+import { Item } from './item/item';
 
 export class Filters {
   public static isNameMatch(itemID: number, form: FormGroup): boolean {
@@ -84,5 +85,11 @@ export class Filters {
   private static getItemName(itemID): string {
     return SharedService.auctionItemsMap[itemID] ?
       SharedService.auctionItemsMap[itemID].name : SharedService.items[itemID].name;
+  }
+
+  public static isExpansionMatch(itemID: number, form: AbstractControl): boolean {
+    return form.value === null ||
+      form.value === undefined ||
+      form.value === (SharedService.items[itemID] as Item).expansionId;
   }
 }
