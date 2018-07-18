@@ -62,8 +62,8 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
     this.angulartics2.eventTrack.next({
-      action: 'Item detail view',
-      properties: { category: 'Item' },
+      action: 'Opened',
+      properties: { category: 'Item detail view' },
     });
   }
 
@@ -87,8 +87,8 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
       .selectedTabChange.subscribe(
         (event: MatTabChangeEvent) => {
           this.angulartics2.eventTrack.next({
-            action: `Item detail view - ${ event.tab.textLabel }`,
-            properties: { category: `Changed item detail tab to ${ event.tab.textLabel }` },
+            action: `Changed tab to ${ event.tab.textLabel }`,
+            properties: { category: `Item detail view` },
           });
         });
   }
@@ -122,8 +122,8 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.angulartics2.eventTrack.next({
-      action: 'Item detail view',
-      properties: { category: `Opened ${ target }` },
+      action: `Opened ${ target }`,
+      properties: { category: `Item detail view` },
     });
   }
 
@@ -160,8 +160,8 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
       .addEntry(1, SharedService.recipesMapPerItemKnown[SharedService.selectedItemId]);
 
     this.angulartics2.eventTrack.next({
-      action: 'Item detail view',
-      properties: { category: 'Added to recipe shopping cart' },
+      action: 'Added to recipe shopping cart',
+      properties: { category: 'Item detail view' },
     });
   }
 

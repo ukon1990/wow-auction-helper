@@ -59,8 +59,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.isStandalone()) {
       this.angulartics2.eventTrack.next({
-        action: 'Standalone startup',
-        properties: { category: `Standalone device: ${window.navigator.platform}, ${window.navigator.vendor}` },
+        action: `Device: ${window.navigator.platform}, ${window.navigator.vendor}`,
+        properties: { category: `Standalone startup` },
       });
 
       this._router.events.subscribe(s => {
