@@ -135,7 +135,7 @@ export class UpdateComponent implements OnInit {
         this.updateItems(i);
       }
     }, 100);
-  } //updateItem
+  } // updateItem
 
   getItemCount(): number {
     return this.updated.items.list.length;
