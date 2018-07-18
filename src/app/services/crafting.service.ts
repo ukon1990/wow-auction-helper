@@ -36,7 +36,6 @@ export class CraftingService {
           this.handleRecipe(r, missingItems);
         });
 
-        console.log('Missing items', missingItems);
         if (missingItems.length < 100) {
           this._itemService.addItems(missingItems);
         }
