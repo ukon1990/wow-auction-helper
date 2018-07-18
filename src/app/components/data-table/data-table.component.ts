@@ -178,6 +178,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   getPetId(pet: any): number {
+    if (!SharedService.pets[pet.petSpeciesId]) {
+      console.log('Missing pet', pet.petSpeciesId);
+      return 0;
+    }
     return SharedService.pets[pet.petSpeciesId].creatureId;
   }
 
