@@ -18,7 +18,7 @@ export class ItemService {
         SharedService.items[(item as Item)[0].id] = (item as Item)[0];
         if (SharedService.auctionItemsMap[(item as Item)[0].id]) {
           SharedService.auctionItemsMap[(item as Item)[0].id].name = (item as Item)[0].name;
-            SharedService.auctionItemsMap[(item as Item)[0].id].vendorSell = (item as Item)[0].sellPrice;
+          SharedService.auctionItemsMap[(item as Item)[0].id].vendorSell = (item as Item)[0].sellPrice;
         }
       }).catch(e =>
         console.error('Could not get item with ID ' + itemID, e));
@@ -56,5 +56,38 @@ export class ItemService {
   updateItem(itemID: number): Promise<any> {
     return this._http.patch(Endpoints.getUrl(`item/${itemID}`), null)
       .toPromise() as Promise<any>;
+  }
+
+  /**
+   * Throtteled adding of missing items
+   *
+   * @param {Array<number>} itemsToAdd A list of item id's that needs to be added
+   * @param {number} [i] the next index to add
+   * @returns {void}
+   * @memberof ItemService
+   */
+  addItems(itemsToAdd: Array<number>, i?: number): void {
+    if (!i) {
+      i = 0;
+    }
+
+    if (itemsToAdd.length === 0) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (itemsToAdd[i]) {
+        SharedService.items[i] = new Item();
+        this.addItem(itemsToAdd[i]);
+      }
+
+      i++;
+      if (i === itemsToAdd.length) {
+        console.log(`Done adding ${ i }`);
+        return;
+      } else {
+        this.addItems(itemsToAdd, i);
+      }
+    }, 100);
   }
 }

@@ -2,8 +2,8 @@ import { ItemSpells } from './itemspells';
 
 export class Item {
     id: number;
-    name: string;
-    icon: string;
+    name = 'Missing item';
+    icon = 'inv_scroll_03';
     itemLevel: number;
     itemClass: number;
     itemSubClass: number;

@@ -11,6 +11,7 @@ import { Notifications } from '../models/user/notification';
 import { MatSnackBar } from '@angular/material';
 import { WoWUction } from '../models/auction/wowuction';
 import { PetsService } from './pets.service';
+import { Item } from '../models/item/item';
 
 @Injectable()
 export class AuctionsService {
@@ -59,11 +60,10 @@ export class AuctionsService {
             missingItems.push(ai.itemID);
           }
         });
-        if (missingItems.length < 10) {
-          missingItems.forEach(i => {
-            this._itemService.addItem(i);
-          });
+        if (missingItems.length < 100) {
+          this._itemService.addItems(missingItems);
         } else {
+          console.log('Attempting to download items again.');
           this._itemService.getItems();
         }
         console.log('Auction download is completed');

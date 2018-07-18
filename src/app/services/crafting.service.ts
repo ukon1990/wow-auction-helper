@@ -5,6 +5,7 @@ import { Recipe } from '../models/crafting/recipe';
 import { Endpoints } from './endpoints';
 import { ItemService } from './item.service';
 import { GameBuild } from '../utils/game-build.util';
+import { Item } from '../models/item/item';
 
 @Injectable()
 export class CraftingService {
@@ -25,14 +26,20 @@ export class CraftingService {
     return this._http.get(Endpoints.getUrl(`recipe?locale=${ localStorage['locale'] }`))
       .toPromise()
       .then(recipes => {
+        const missingItems = [];
         SharedService.downloading.recipes = false;
         SharedService.recipes = recipes['recipes'];
         console.log('Recipe download is completed');
 
         // Adding items if there are any missing
         SharedService.recipes.forEach(r => {
-          this.handleRecipe(r);
+          this.handleRecipe(r, missingItems);
         });
+
+        console.log('Missing items', missingItems);
+        if (missingItems.length < 100) {
+          this._itemService.addItems(missingItems);
+        }
       })
       .catch(e => {
         SharedService.downloading.recipes = false;
@@ -45,10 +52,10 @@ export class CraftingService {
       .toPromise() as Promise<Recipe>;
   }
 
-  private handleRecipe(r: Recipe): void {
+  private handleRecipe(r: Recipe, missingItems?: Array<number>): void {
     const possiblyBuggedRecipe = !r.profession && r.name.indexOf('Create ') !== -1;
-    if (r.itemID > 0 && !SharedService.items[r.itemID]) {
-      this._itemService.addItem(r.itemID);
+    if (missingItems && r.itemID > 0 && !SharedService.items[r.itemID]) {
+      missingItems.push(r.itemID);
     }
 
     r.reagents.forEach(reagent => {
