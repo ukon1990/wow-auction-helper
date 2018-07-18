@@ -5,7 +5,8 @@ import { SharedService } from '../../../../services/shared.service';
 
 @Component({
   selector: 'wah-character',
-  templateUrl: './character.component.html'
+  templateUrl: './character.component.html',
+  styleUrls: ['./character.component.scss']
 })
 export class CharacterComponent {
   @Input() index: number;

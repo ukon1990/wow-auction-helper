@@ -26,7 +26,7 @@
       <div class="col-md-6">
         <strong>Primary professions</strong>
 
-        <mat-list role="list">
+        <mat-list role="list" dense>
           <mat-list-item role="listitem" *ngFor="let primary of character.professions.primary">
             <h4 mat-line>{{ primary.name }} ({{ primary.rank }}/{{ primary.max }})</h4>
             <p mat-line>You know {{ primary.recipes.length }} recipes </p>
@@ -35,7 +35,7 @@
       </div>
       <div class="col-md-6">
         <strong>Secondary professions</strong>
-        <mat-list role="list">
+        <mat-list role="list" dense>
           <mat-list-item role="listitem" *ngFor="let secondary of character.professions.secondary">
             <h4 mat-line>{{ secondary.name }} ({{ secondary.rank }}/{{ secondary.max }})</h4>
             <p mat-line>You know {{ secondary.recipes.length }} recipes </p>
