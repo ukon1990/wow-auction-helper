@@ -88,16 +88,19 @@ router.get('/:spellID', (req, res) => {
 router.patch('/:spellID', (req, res) => {
   res = headers.setHeaders(res);
 
-  request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
+  request.get(`https://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
     try {
       const recipe = convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
       //res.send(recipe);
       getProfession(recipe, function (r) {
-        if (recipe.itemID > 0) {
-          updateRecipe(req, recipe);
+
+        if ((recipe.itemID === 0 || !recipe.itemID) && r.itemID) {
+          recipe.itemID = r.itemID;
         }
-        console.log(`${new Date().toString()} - Updating recipe ${r.name}(${r.spellID}) - SQL: ${ query }`);
-        res.send(r);
+
+        if (recipe.itemID > 0) {
+          updateRecipe(res, req, recipe);
+        }
       });
     } catch (e) {
       console.error('Fail', req.params.spellID, body);
@@ -106,26 +109,29 @@ router.patch('/:spellID', (req, res) => {
   });
 });
 
-function updateRecipe(req, recipe) {
+function updateRecipe(res, req, recipe) {
   const query = `
           UPDATE recipes SET json = "${
-            safeifyString(JSON.stringify(recipe))
-          }", timestamp = CURRENT_TIMESTAMP
+    safeifyString(JSON.stringify(recipe))
+    }", timestamp = CURRENT_TIMESTAMP
           WHERE id = ${
-          req.params.spellID
-          };`;
-          console.log('SQL:', query);
-        try {
-          const connection = mysql.createConnection(secrets.databaseConn);
-          connection.query(query, (err, r, body) => {
-            if (err) {
-              throw err;
-            }
-          })
-          connection.end();
-        } catch (e) {
-          console.error(`${new Date().toString()} - Could not update ${req.params.spellID} - SQL: ${query}`, e);
-        }
+    req.params.spellID
+    };`;
+  console.log('SQL:', query);
+  try {
+    const connection = mysql.createConnection(secrets.databaseConn);
+    connection.query(query, (err, r, body) => {
+      if (err) {
+        throw err;
+      }
+
+      console.log(`${new Date().toString()} - Updating recipe ${recipe.name}(${recipe.spellID}) - SQL: ${ query }`);
+      res.send(recipe);
+    });
+    connection.end();
+  } catch (e) {
+    console.error(`${new Date().toString()} - Could not update ${req.params.spellID} - SQL: ${query}`, e);
+  }
 }
 
 router.get('*', (req, res) => {
@@ -204,7 +210,7 @@ function proscessReagents(recipe, nextIndex, callback) {
   if (nextIndex >= recipe.reagents.length) {
     callback(recipe);
   } else {
-    request.get(`http://wowdb.com/api/item/${recipe.reagents[nextIndex].itemID}`, (err, r, body) => {
+    request.get(`https://wowdb.com/api/item/${recipe.reagents[nextIndex].itemID}`, (err, r, body) => {
       try {
         const item = JSON.parse(body.slice(1, body.length - 1));
 

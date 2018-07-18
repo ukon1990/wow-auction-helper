@@ -7,7 +7,8 @@ const express = require('express'),
   secrets = require('../secrets/secrets'),
   locale = require('../locales'),
   mysql = require('mysql'),
-  PromiseThrottle = require('promise-throttle');
+  PromiseThrottle = require('promise-throttle'),
+  wh = require('../wowhead');
 
 // Error handling
 const sendError = (err, res) => {
@@ -22,6 +23,16 @@ let response = {
   data: [],
   message: null
 };
+
+// getting what patch an item was added in
+router.get('/patch/:id', (req, res) => {
+  //res = headers.setHeaders(res);
+  request.get(`http://www.wowhead.com/item=${req.params.id}`, (e, r, b) => {
+    res.send(
+      {r: wh.getExpansion(b)}
+    );
+  });
+});
 
 router.get('/wowdb/:id', (req, res) => {
   res = headers.setHeaders(res);
@@ -51,7 +62,7 @@ router.get('/:id', (req, res) => {
   try {
     const connection = mysql.createConnection(secrets.databaseConn);
     connection.query(`
-      SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped
+      SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId
       FROM items as i
       LEFT OUTER JOIN item_name_locale as l
       ON i.id = l.id
@@ -73,28 +84,31 @@ router.get('/:id', (req, res) => {
           request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=${ locale.getLocale(req) }&apikey=${secrets.apikey}`, (err, re, body) => {
             const icon = JSON.parse(body).icon;
             request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
-              let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
-              item.icon = icon;
+              request.get(`http://www.wowhead.com/item=${req.params.id}`, (whError, whResponse, whBody) => {
+                let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
+                item.expansionId = wh.getExpansion(whBody);
+                item.icon = icon;
 
-              const query = insertItemQuery(item);
-              console.log(`${new Date().toString()} - Adding new item (${item.name}) - SQL: ${ query }`);
-              connection.query(query, (err, r, body) => {
-                if (err) {
-                  console.error('SQL error in items', err);
+                const query = insertItemQuery(item);
+                console.log(`${new Date().toString()} - Adding new item (${item.name}) - SQL: ${ query }`);
+                connection.query(query, (err, r, body) => {
+                  if (err) {
+                    console.error('SQL error in items', err);
+                  }
+
+                  getItemLocale(req.params.id, req, res)
+                    .then( r =>
+                      console.log(`Got locales for item ${ req.params.id }`))
+                    .catch( e =>
+                      console.error(`Could not get locales for item ${ req.params.id }`));
+                  connection.end();
+                });
+
+                if (JSON.parse(body).name) {
+                  item.name = JSON.parse(body).name;
                 }
-
-                getItemLocale(req.params.id, req, res)
-                  .then( r =>
-                    console.log(`Got locales for item ${ req.params.id }`))
-                  .catch( e =>
-                    console.error(`Could not get locales for item ${ req.params.id }`));
-                connection.end();
+                res.send(item);
               });
-
-              if (JSON.parse(body).name) {
-                item.name = JSON.parse(body).name;
-              }
-              res.send(item);
             });
           });
         }
@@ -116,20 +130,23 @@ router.patch('/:id', (req, res) => {
   try {
     request.get(`https://eu.api.battle.net/wow/item/${req.params.id}?locale=en_GB&apikey=${secrets.apikey}`, (err, re, body) => {
       const icon = JSON.parse(body).icon;
-      request.get(`http://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
-        let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
-        item.icon = icon;
-
-        const query = updateItemQuery(item),
-          connection = mysql.createConnection(secrets.databaseConn);
-        console.log(`${new Date().toString()} - Updated the item: (${item.name}) - SQL: ${ query }`);
-        connection.query(query, (err, r, body) => {
-          if (err) {
-            console.error('SQL error in items', err);
-          }
-          connection.end();
+      request.get(`https://wowdb.com/api/item/${req.params.id}`, (e, r, b) => {
+        request.get(`http://www.wowhead.com/item=${req.params.id}`, (whError, whResponse, whBody) => {
+          let item = convertWoWDBToItem(JSON.parse(b.slice(1, b.length - 1)));
+          item.icon = icon;
+          item.expansionId = wh.getExpansion(whBody);
+  
+          const query = updateItemQuery(item),
+            connection = mysql.createConnection(secrets.databaseConn);
+          console.log(`${new Date().toString()} - Updated the item: (${item.name}) - SQL: ${ query }`);
+          connection.query(query, (err, r, body) => {
+            if (err) {
+              console.error('SQL error in items', err);
+            }
+            connection.end();
+          });
+          res.send(item);
         });
-        res.send(item);
       });
     });
   } catch (err) {
@@ -145,7 +162,7 @@ router.get('*', (req, res) => {
   // Get all pets
   const connection = mysql.createConnection(secrets.databaseConn);
   connection.query(`
-    SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped
+    SELECT i.id, COALESCE(${ locale.getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId
     FROM items as i
     LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id;`,
@@ -186,44 +203,48 @@ function convertWoWDBToItem(item) {
     itemSources: item.DroppedBy ? item.DroppedBy : [],
     minFactionId: '0',
     minReputation: parseInt(item.RequiredFactionStanding, 10),
-    isDropped: item.DroppedBy ? item.DroppedBy.length > 0 : false
+    isDropped: item.DroppedBy ? item.DroppedBy.length > 0 : false,
+    expansionId: item.expansionId
   };
   return i;
 }
 
 function insertItemQuery(item) {
   return `INSERT INTO items VALUES(${
-    item.id
+      item.id
     },"${
-    safeifyString(item.name)
+      safeifyString(item.name)
     }", "${
-    item.icon
+      item.icon
     }", ${
-    item.itemLevel
+      item.itemLevel
     }, ${
-    item.itemClass
+      item.itemClass
     }, ${
-    item.itemSubClass
+      item.itemSubClass
     }, ${
-    item.quality
+      item.quality
     }, "${
-    item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
+      item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
     }", "${
-    item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
+      item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
     }", ${
-    item.buyPrice
+      item.buyPrice
     }, ${
-    item.sellPrice
+      item.sellPrice
     }, ${
-    item.itemBind
+      item.itemBind
     }, ${
-    item.minFactionId
+      item.minFactionId
     }, ${
-    item.minReputation
+      item.minReputation
     }, ${
-    item.isDropped
+      item.isDropped
     }
-    ,CURRENT_TIMESTAMP);`;
+    ,CURRENT_TIMESTAMP
+    ,${
+      item.expansionId
+    });`;
 }
 
 function updateItemQuery(item) {
@@ -244,7 +265,8 @@ function updateItemQuery(item) {
       minFactionId = ${ item.minFactionId},
       minReputation = ${ item.minReputation},
       isDropped = ${ item.isDropped},
-      timestamp = CURRENT_TIMESTAMP
+      timestamp = CURRENT_TIMESTAMP,
+      expansionId = ${ item.expansionId }
     WHERE id = ${item.id};`;
 }
 
