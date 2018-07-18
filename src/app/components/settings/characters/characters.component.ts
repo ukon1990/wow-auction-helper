@@ -90,6 +90,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     SharedService.user.characters.push(character);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
+    User.updateRecipesForRealm();
+    Crafting.checkForMissingRecipes(this._craftingService);
+
     this.downloading = false;
     Realm.gatherRealms();
 

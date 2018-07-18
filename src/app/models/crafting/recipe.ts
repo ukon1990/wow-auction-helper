@@ -3,7 +3,7 @@ import { Reagent } from './reagent';
 export class Recipe {
   spellID: number;
   itemID: number;
-  name: string;
+  name = 'Missing recipe data';
   profession?: string;
   rank?: string;
   minCount: number;

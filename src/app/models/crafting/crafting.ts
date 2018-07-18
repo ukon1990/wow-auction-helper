@@ -8,15 +8,20 @@ import { CustomProcs } from './custom-proc';
 export class Crafting {
 
   public static checkForMissingRecipes(craftingService: CraftingService): void {
+    const missingRecipes = [];
     Object.keys(SharedService.recipesForUser).forEach(key => {
       try {
         if (!SharedService.recipesMap[key]) {
-          craftingService.getRecipe(parseInt(key, 10));
+          missingRecipes.push(parseInt(key, 10));
         }
       } catch (e) {
         console.error('checkForMissingRecipes failed', e);
       }
     });
+
+    if (missingRecipes.length > 100) {
+      craftingService.addRecipes(missingRecipes);
+    }
   }
 
   public static calculateCost(): void {

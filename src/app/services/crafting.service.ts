@@ -71,4 +71,37 @@ export class CraftingService {
     });
     SharedService.recipesMap[r.spellID] = r;
   }
+
+  /**
+   * Throtteled adding of missing items
+   *
+   * @param {Array<number>} recipesToAdd A list of item id's that needs to be added
+   * @param {number} [i] the next index to add
+   * @returns {void}
+   * @memberof ItemService
+   */
+  addRecipes(recipesToAdd: Array<number>, i?: number): void {
+    if (!i) {
+      i = 0;
+    }
+
+    if (recipesToAdd.length === 0) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (recipesToAdd[i]) {
+        SharedService.recipesMap[i] = new Recipe();
+        this.getRecipe(recipesToAdd[i]);
+      }
+
+      i++;
+      if (i === recipesToAdd.length) {
+        console.log(`Done adding ${ i } recipes`);
+        return;
+      } else {
+        this.addRecipes(recipesToAdd, i);
+      }
+    }, 100);
+  }
 }

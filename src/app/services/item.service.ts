@@ -83,7 +83,7 @@ export class ItemService {
 
       i++;
       if (i === itemsToAdd.length) {
-        console.log(`Done adding ${ i }`);
+        console.log(`Done adding ${ i } items`);
         return;
       } else {
         this.addItems(itemsToAdd, i);
