@@ -1,13 +1,20 @@
 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <mat-spinner *ngIf="isDownloading()" class="float-left mr-2">
-  </mat-spinner> 
-  <span [ngClass]="{'old-data': timeSinceUpdate > 60}">
-    <div class="float-left mr-1" *ngIf="timeSinceUpdate > 60"
-      matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
-      <i class="fas fa-exclamation-circle"></i>
-    </div>
-    Last update was {{ timeSinceUpdate }} minutes ago
-  </span>
+  <ng-container *ngIf="isDownloading(); else notDownloading">
+    <mat-spinner class="float-left mr-2">
+    </mat-spinner>
+    <span>
+      {{ downloadProgress }}
+    </span>
+  </ng-container>
+  <ng-template #notDownloading>
+    <span [ngClass]="{'old-data': timeSinceUpdate > 60}">
+      <div class="float-left mr-1" *ngIf="timeSinceUpdate > 60"
+        matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      Last update was {{ timeSinceUpdate }} minutes ago
+    </span>
+  </ng-template>
 </a>
 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
   <mat-card>

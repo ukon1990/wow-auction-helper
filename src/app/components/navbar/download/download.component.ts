@@ -23,6 +23,7 @@ export class DownloadComponent implements OnInit {
   lastCheckedMin;
   timeSinceUpdate = 0;
   realmControl: FormControl = new FormControl();
+  downloadProgress = '';
 
   constructor(
     private _realmService: RealmService,
@@ -39,18 +40,25 @@ export class DownloadComponent implements OnInit {
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
+      this.downloadProgress = 'Downloading realms';
       await this._realmService.getRealms();
+      this.downloadProgress = 'Downloading items';
       await this._itemService.getItems();
+      this.downloadProgress = 'Downloading pets';
       await this._petService.getPets();
+      this.downloadProgress = 'Downloading recipes';
       await this._craftingService.getRecipes()
         .then(r => Crafting.checkForMissingRecipes(this._craftingService));
       if (SharedService.user.apiToUse === 'tsm') {
         if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
+          this.downloadProgress = 'Downloading new TSM data';
           await this._auctionsService.getTsmAuctions();
         } else {
+          this.downloadProgress = 'Loading TSM from disk';
           await this._dbService.getTSMItems()
             .then(r => {
               if (Object.keys(SharedService.tsm).length === 0) {
+                this.downloadProgress = 'Downloading TSM data';
                 this._auctionsService.getTsmAuctions();
               }
             })
@@ -61,11 +69,14 @@ export class DownloadComponent implements OnInit {
         }
       } else if (SharedService.user.apiToUse === 'wowuction') {
         if (new Date().toDateString() !== localStorage['timestamp_wowuction']) {
+          this.downloadProgress = 'Downloading new wowuction data';
           await this._auctionsService.getWoWUctionAuctions();
         } else {
+          this.downloadProgress = 'Loading wowuction from disk';
           await this._dbService.getWoWUctionItems()
             .then(r => {
               if (Object.keys(SharedService.wowUction).length === 0) {
+                this.downloadProgress = 'Downloading wowuction data';
                 this._auctionsService.getWoWUctionAuctions();
               }
             })
@@ -75,9 +86,12 @@ export class DownloadComponent implements OnInit {
             });
         }
       }
+
+      this.downloadProgress = 'Loading auctions from disk';
       await this._dbService.getAllAuctions(this._petService)
         .then(r => {
           if (SharedService.auctions.length === 0) {
+            this.downloadProgress = 'Downloading new auctions';
             this._auctionsService.getLastModifiedTime(true);
           }
         })
@@ -121,23 +135,29 @@ export class DownloadComponent implements OnInit {
     });
     switch (type) {
       case 'wowuction':
+        this.downloadProgress = 'Downloading wowuction data';
         await this._auctionsService.getWoWUctionAuctions();
         AuctionHandler.organize(SharedService.auctions);
         break;
       case 'tsm':
+        this.downloadProgress = 'Downloading TSM data';
         await this._auctionsService.getTsmAuctions();
         AuctionHandler.organize(SharedService.auctions);
         break;
       case 'auctions':
+        this.downloadProgress = 'Downloading new auctions';
         this._auctionsService.getLastModifiedTime(true);
         break;
       case 'items':
+        this.downloadProgress = 'Downloading items';
         this._itemService.getItems();
         break;
       case 'pets':
+        this.downloadProgress = 'Downloading pets';
         this._petService.getPets();
         break;
       case 'recipes':
+        this.downloadProgress = 'Downloading recipes';
         this._craftingService.getRecipes();
         break;
     }
@@ -178,6 +198,7 @@ export class DownloadComponent implements OnInit {
           if (SharedService.auctionResponse.lastModified !== lastModified) {
             this.lastCheckedMin = undefined;
             this.checkingForUpdates = false;
+            this.downloadProgress = 'Downloading new auctions';
           } else {
             this.lastCheckedMin = timeSince;
             this.checkingForUpdates = false;
