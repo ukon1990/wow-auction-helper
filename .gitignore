@@ -38,3 +38,4 @@ Thumbs.db
 
 server/secrets/secrets\.js
 src/app/services/keys\.ts
+.env

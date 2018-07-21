@@ -1,15 +1,15 @@
-import { ItemSpells } from './itemspells';
+import { ItemSpells } from "./itemspells";
 
 export class Item {
     id: number;
-    name = 'Missing item';
-    icon = 'inv_scroll_03';
+    name = "Missing item";
+    icon = "inv_scroll_03";
     itemLevel: number;
     itemClass: number;
     itemSubClass: number;
     quality: number;
-    itemSource?: number[];
     itemSpells: ItemSpells[];
+    itemSource?: number[];
     buyPrice: number;
     sellPrice: number;
     itemBind: number;
