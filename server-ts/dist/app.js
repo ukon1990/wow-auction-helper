@@ -46,6 +46,7 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "public"), { max
  */
 app.get("/api", apiController.getApi);
 app.get("/api/item", itemController.getItems);
+app.get("/api/item/:id", itemController.getItem);
 app.get("/api/recipe", recipeController.getRecipes);
 app.get("/api/pet", petController.getPets);
 app.get("/api/auction", auctionController.getAuctions);

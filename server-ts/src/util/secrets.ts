@@ -9,6 +9,9 @@ if (fs.existsSync(".env")) {
 export const ENVIRONMENT = process.env.NODE_ENV;
 const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
 
+export const BLIZZARD_API_KEY = prod ?
+    process.env["BLIZZARD_API_KEY"] : process.env["BLIZZARD_API_KEY_LOCAL"];
+
 export const DATABASE_CREDENTIALS = prod ? {
         host: process.env["MYSQL_URI"],
         user: process.env["MYSQL_USER"],

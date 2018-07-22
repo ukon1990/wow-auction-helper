@@ -12,6 +12,8 @@ if (fs_1.default.existsSync(".env")) {
 }
 exports.ENVIRONMENT = process.env.NODE_ENV;
 const prod = exports.ENVIRONMENT === "production"; // Anything else is treated as 'dev'
+exports.BLIZZARD_API_KEY = prod ?
+    process.env["BLIZZARD_API_KEY"] : process.env["BLIZZARD_API_KEY_LOCAL"];
 exports.DATABASE_CREDENTIALS = prod ? {
     host: process.env["MYSQL_URI"],
     user: process.env["MYSQL_USER"],

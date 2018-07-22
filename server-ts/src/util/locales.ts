@@ -5,5 +5,8 @@
 
 export const getLocale = (request: any) => {
     // req.headers["accept-language"]
-  return request.query.locale ? request.query.locale : "en_GB";
+  if (request.query && request.query.locale) {
+    return request.query.locale;
+  }
+  return "en_GB";
 };

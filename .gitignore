@@ -2,6 +2,7 @@
 
 # compiled output
 /server/dist
+/server-ts/dist
 /tmp
 
 # dependencies
@@ -25,6 +26,7 @@ node_modules
 npm-debug.log
 testem.log
 /typings
+*.log
 
 # e2e
 /e2e/*.js

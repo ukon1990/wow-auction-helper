@@ -38,7 +38,8 @@
     "lodash": "^4.17.4",
     "lusca": "^1.5.2",
     "mysql": "^2.16.0",
-    "request": "^2.83.0",
+    "promise-throttle": "^1.0.0",
+    "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "winston": "^2.4.0"
   },
