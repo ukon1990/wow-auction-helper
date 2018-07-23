@@ -7,7 +7,7 @@ export class WoWHead {
   // disenchantedFrom: WoWHeadDisenchantedFrom[];
   containedInItem: WoWHeadContainedIn[];
   containedInObject: WoWHeadContainedIn[];
-  // currencyFor: WoWHeadCurrencyFor[];
+  currencyFor: WoWHeadCurrencyFor[];
   // objectiveOf: WoWHeadObjectiveOf[];
 }
 
@@ -15,6 +15,7 @@ export class WoWHeadSoldBy {
   id: number;
   name: string;
   tag: string;
+  classification: number;
   location: number[];
   react: number[];
   type: number;
@@ -23,9 +24,9 @@ export class WoWHeadSoldBy {
   currency: number;
 }
 
-export class WoWHeadCreatedBy {}
+export class WoWHeadCreatedBy { }
 
-export class WoWHeadTaughtBy {}
+export class WoWHeadTaughtBy { }
 
 export class WoWHeadDroppedBy {
 
@@ -37,6 +38,7 @@ export class WoWHeadDroppedBy {
   type: number;
   count: number;
   outof: number;
+  chance: number;
   personal_loot: number;
   pctstack: WoWHeadPctStack;
 }
@@ -47,10 +49,33 @@ export class WoWHeadPctStack {
   3: number;
 }
 
-export class WoWHeadContainedIn {}
+export class WoWHeadContainedIn { }
 
-export class WoWHeadCurrencyFor {}
+export class WoWHeadCurrencyFor {
+  classs: number;
+  flags2: number;
+  id: number;
+  level: number;
+  name: string;
+  namedesc: string;
+  reqlevel: number;
+  skill: number;
+  slot: number;
+  source: number[];
+  sourcemore: WoWHeadCurrencyForSourceMore[];
+  subclass: number;
+  cost: any;
+  currency: number;
+  stack: number[];
+}
 
-export class WoWHeadObjectiveOf {}
+export class WoWHeadCurrencyForSourceMore {
+  n: string;
+  t: number;
+  ti: number;
+  z: number;
+}
 
-export class WoWHeadDisenchantedFrom {}
+export class WoWHeadObjectiveOf { }
+
+export class WoWHeadDisenchantedFrom { }

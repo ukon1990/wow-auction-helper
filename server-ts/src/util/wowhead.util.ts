@@ -13,8 +13,8 @@ export class WoWHeadUtil {
     // wh.objectiveOf = undefined;
     wh.soldBy = WoWHeadUtil.getSoldBy(body);
     wh.droppedBy = WoWHeadUtil.getDroppedBy(body);
-    return body;
-    // return wh;
+    // return body;
+    return wh;
   }
 
   public static getExpansion(body: string) {
@@ -33,25 +33,30 @@ export class WoWHeadUtil {
     if (!droppedByResult) {
       return [];
     }
+    const droppedBy = JSON.parse(
+      dbrx.exec(
+        droppedByResult[0])[0]
+        .replace('data: ', '')
+        .replace('});', '')
+        .replace(/,count:/g, ',\"count\":')
+        .replace(/,outof:/g, ',\"outof\":')
+        .replace(/,personal_loot:/g, ',\"personal_loot\":')
+        .replace(/,pctstack:/g, ',\"pctstack\":')
+        .replace(/,maxLevel:/g, ',\"maxLevel\":')
+        .replace(/1:/g, '\"1\":')
+        .replace(/,2:/g, ',\"2\":')
+        .replace(/,3:/g, ',\"3\":')
+        .replace(/'{/g, '{')
+        .replace(/}'/g, '}')
+    );
 
-    const result = dbrx.exec(
-      droppedByResult[0])[0]
-      .replace('data: ', '')
-      .replace('});', '')
-      .replace(/,count:/g, ',\"count\":')
-      .replace(/,outof:/g, ',\"outof\":')
-      .replace(/,personal_loot:/g, ',\"personal_loot\":')
-      .replace(/,pctstack:/g, ',\"pctstack\":')
-      .replace(/,maxLevel:/g, ',\"maxLevel\":')
-      .replace(/1:/g, '\"1\":')
-      .replace(/,2:/g, ',\"2\":')
-      .replace(/,3:/g, ',\"3\":')
-      .replace(/'{/g, '{')
-      .replace(/}'/g, '}');
-    return JSON.parse(result);
+    droppedBy.forEach((npc: WoWHeadDroppedBy) =>
+      npc.dropChance = Math.round((npc.count / npc.outof) * 100));
+
+    return droppedBy;
   }
 
-  public static getSoldBy(body: string) {
+  public static getSoldBy(body: string): WoWHeadSoldBy[] {
     const soldByRegex = new RegExp(/new Listview\({template: 'npc', id: 'sold-by',([\s\S]*?)}\);/g);
     const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
     const soldByResult = soldByRegex.exec(body);
@@ -70,22 +75,52 @@ export class WoWHeadUtil {
       const soldBy = JSON.parse(soldByString) as WoWHeadSoldBy[];
       // const currency = WoWHeadUtil.getCurrency(body);
       if (soldBy) {
-        soldBy.forEach((sBy: WoWHeadSoldBy) =>
-          WoWHeadUtil.setCurrency(sBy));
+        soldBy.forEach((sBy: WoWHeadSoldBy) => {
+          WoWHeadUtil.setCurrency(sBy);
+          delete sBy.classification;
+          delete sBy.type;
+        });
       }
     return soldBy;
   }
 
-  public static setCurrency(soldBy: WoWHeadSoldBy): void {
-    if ((soldBy.cost as Array<any>).length > 0 && soldBy.cost[2] && soldBy.cost[2][0]) {
-      soldBy.currency = soldBy.cost[2][0][0];
-      soldBy.cost = soldBy.cost[2][0][1];
+  public static setCurrency(source: any): void {
+    if ((source.cost as Array<any>).length > 0 && source.cost[2] && source.cost[2][0]) {
+      source.currency = source.cost[2][0][0];
+      source.cost = source.cost[2][0][1];
     } else {
-      soldBy.cost = soldBy.cost[0];
+      source.cost = source.cost[0];
     }
   }
 
-  public static getCurrencyFor(body: string): WoWHeadCurrencyFor {
+  public static getCurrencyFor(body: string): WoWHeadCurrencyFor[] {
     // currency-for
+    const currencyForRegex = new RegExp(/new Listview\({template: 'item', id: 'currency-for',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const currencyForResult = currencyForRegex.exec(body);
+    if (!currencyForResult) {
+      return [];
+    }
+    const currencyForString = dbrx.exec(
+      currencyForResult[0])[0]
+      .replace('data: ', '')
+      .replace('});', '')
+      .replace(/stock:/g, '\"stock\":')
+      .replace(/cost:/g, '\"cost\":')
+      .replace(/stack:/g, '\"stack\":')
+      .replace(/'{/g, '{')
+      .replace(/}'/g, '}');
+    const currencyFor = JSON.parse(currencyForString);
+    if (currencyFor) {
+      currencyFor.forEach((obj: WoWHeadCurrencyFor) => {
+        WoWHeadUtil.setCurrency(obj);
+        delete obj.classs;
+        delete obj.flags2;
+        delete obj.subclass;
+        delete obj.slot;
+        delete obj.skill;
+      });
+    }
+    return currencyFor;
   }
 }
