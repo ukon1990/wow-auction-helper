@@ -5,7 +5,8 @@ export class WoWHead {
   droppedBy: WoWHeadDroppedBy[];
   expansionId: number;
   // disenchantedFrom: WoWHeadDisenchantedFrom[];
-  // containedIn: WoWHeadContainedIn[];
+  containedInItem: WoWHeadContainedIn[];
+  containedInObject: WoWHeadContainedIn[];
   // currencyFor: WoWHeadCurrencyFor[];
   // objectiveOf: WoWHeadObjectiveOf[];
 }

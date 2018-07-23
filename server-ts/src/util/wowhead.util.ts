@@ -1,4 +1,4 @@
-import { WoWHead, WoWHeadSoldBy, WoWHeadDroppedBy } from '../models/item/wowhead';
+import { WoWHead, WoWHeadSoldBy, WoWHeadDroppedBy, WoWHeadCurrencyFor } from '../models/item/wowhead';
 import { Item } from '../models/item/item';
 
 export class WoWHeadUtil {
@@ -7,13 +7,14 @@ export class WoWHeadUtil {
     const wh = new WoWHead();
     wh.expansionId = WoWHeadUtil.getExpansion(body);
     // wh.createdBy = undefined;
-    // wh.containedIn = undefined;
-    // wh.currencyFor = undefined;
+    wh.containedInItem = undefined; // contained-in-item
+    wh.containedInObject = undefined; // contained-in-object
+    wh.currencyFor = WoWHeadUtil.getCurrencyFor(body); // currency-for
     // wh.objectiveOf = undefined;
     wh.soldBy = WoWHeadUtil.getSoldBy(body);
     wh.droppedBy = WoWHeadUtil.getDroppedBy(body);
-    // return body;
-    return wh;
+    return body;
+    // return wh;
   }
 
   public static getExpansion(body: string) {
@@ -37,11 +38,11 @@ export class WoWHeadUtil {
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
-      .replace(/,count/g, ',\"count\"')
-      .replace(/,outof/g, ',\"outof\"')
-      .replace(/,personal_loot/g, ',\"personal_loot\"')
-      .replace(/,pctstack/g, ',\"pctstack\"')
-      .replace(/,maxLevel/g, ',\"maxLevel\"')
+      .replace(/,count:/g, ',\"count\":')
+      .replace(/,outof:/g, ',\"outof\":')
+      .replace(/,personal_loot:/g, ',\"personal_loot\":')
+      .replace(/,pctstack:/g, ',\"pctstack\":')
+      .replace(/,maxLevel:/g, ',\"maxLevel\":')
       .replace(/1:/g, '\"1\":')
       .replace(/,2:/g, ',\"2\":')
       .replace(/,3:/g, ',\"3\":')
@@ -57,16 +58,13 @@ export class WoWHeadUtil {
     if (!soldByResult) {
       return [];
     }
-    /**
-     * pctstack
-     */
     const soldByString = dbrx.exec(
       soldByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
-      .replace(/stock/g, '\"stock\"')
-      .replace(/cost/g, '\"cost\"')
-      .replace(/stack/g, '\"stack\"')
+      .replace(/stock:/g, '\"stock\":')
+      .replace(/cost:/g, '\"cost\":')
+      .replace(/stack:/g, '\"stack\":')
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
       const soldBy = JSON.parse(soldByString) as WoWHeadSoldBy[];
@@ -87,5 +85,7 @@ export class WoWHeadUtil {
     }
   }
 
-  public static getCreatedBy(body: string) {}
+  public static getCurrencyFor(body: string): WoWHeadCurrencyFor {
+    // currency-for
+  }
 }
