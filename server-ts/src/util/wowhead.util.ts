@@ -48,7 +48,6 @@ export class WoWHeadUtil {
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
     return JSON.parse(result);
-    // return result;
   }
 
   public static getSoldBy(body: string) {
