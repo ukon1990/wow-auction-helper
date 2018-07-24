@@ -257,7 +257,7 @@ function updateItemQuery(item) {
       itemSubClass = ${ item.itemSubClass},
       quality = ${ item.quality},
       itemSpells = "${
-    item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'}",
+        item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'}",
       buyPrice = ${ item.buyPrice},
       sellPrice = ${ item.sellPrice},
       itemBind = ${ item.itemBind},

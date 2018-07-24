@@ -10,8 +10,8 @@ export class Item {
   itemClass: number;
   itemSubClass: number;
   quality: number;
-  itemSpells: ItemSpells[];
-  itemSource?: WoWHead;
+  itemSpells: ItemSpells[] = [];
+  itemSource?: WoWHead = new WoWHead();
   buyPrice: number;
   sellPrice: number;
   itemBind: number;

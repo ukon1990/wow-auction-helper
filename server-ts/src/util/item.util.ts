@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import * as mysql from 'mysql';
 import * as request from 'request';
 import * as RequestPromise from 'request-promise';
-import * as PromiseThrottle from 'promise-throttle';
 import { getLocale } from '../util/locales';
 import { safeifyString } from './string.util';
 import { Item } from '../models/item/item';
@@ -11,10 +10,12 @@ import { WoWHeadUtil } from './wowhead.util';
 import { WoWHead } from '../models/item/wowhead';
 import { WoWDBItem } from '../models/item/wowdb';
 import { ItemLocale } from '../models/item/item-locale';
+import { ItemQuery } from '../queries/item.query';
+const PromiseThrottle: any = require('promise-throttle');
 
 export class ItemUtil {
 
-  public static async handleItemRequest(
+  public static async handleItemGetRequest(
     id: number,
     error: Error,
     items: Item[],
@@ -27,23 +28,45 @@ export class ItemUtil {
       return;
     }
 
-    if (items.length === 0) {
+    if (items.length > 0) {
       db.end();
       ItemUtil.handleItem(items[0]);
       response.send(items[0]);
       return;
     } else {
       ItemUtil.downloadAllItemData(id)
-      .then(item =>
-        response.send(item))
-      .catch(error => {
-        console.error(error);
-        response.send(new Item());
-      });
+        .then(item => {
+          response.send(item);
+          db.query(ItemQuery.insert(item));
+          ItemUtil.getItemLocale(id, request, response);
+        })
+        .catch(error => {
+          console.error('handleItemGetRequest', error);
+          response.statusCode = 404;
+          response.send(new Item());
+        });
     }
   }
 
-  public static handleItemsRequest(
+  public static async handleItemPatchRequest(
+    id: number,
+    response: Response,
+    request: any) {
+    const db = mysql.createConnection(DATABASE_CREDENTIALS);
+    ItemUtil.downloadAllItemData(id)
+      .then((item: Item) => {
+        response.send(item);
+        console.log('Query: ', ItemQuery.update(item));
+        db.query(ItemQuery.update(item));
+      })
+      .catch(error => {
+        console.error('Failed at getting item for updating', error);
+        response.statusCode = 404;
+        response.send(new Item());
+      });
+  }
+
+  public static handleItemsGetRequest(
     error: Error,
     items: Item[],
     response: Response,
@@ -59,6 +82,43 @@ export class ItemUtil {
     });
   }
 
+  public static async handleItemsPatchRequest(
+    id: number,
+    rows: Item[],
+    res: Response,
+    req: any) {
+    const promiseThrottle = new PromiseThrottle({
+      requestsPerSecond: 50,
+      promiseImplementation: Promise
+    });
+    const items: Item[] = [], itemIDs: number[] = [];
+    let updateCount = 0;
+
+    rows.forEach((item: Item) => {
+      itemIDs.push(
+        promiseThrottle.add(() => {
+          return new Promise((resolve, reject) => {
+            updateCount++;
+            console.log(`Updating Item: ${item.name} (${updateCount} / ${rows.length})`);
+            request.patch(`http://localhost:3000/api/item/${item.id}`, (res, error) => {
+              if (error) {
+                console.error('handleItemsPatchRequest', error);
+                reject(error);
+              } else {
+                items.push(res);
+                resolve(res);
+              }
+            });
+          });
+        }));
+    });
+    await Promise.all(itemIDs)
+      .then(r => { })
+      .catch(e => console.error('Gave up :(', e));
+
+    res.send(items);
+  }
+
   public static handleItem(item: Item): void {
     item.itemSource = item.itemSource as any === '[]' ?
       [] : JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
@@ -70,26 +130,33 @@ export class ItemUtil {
     return new Promise<Item>(async (resolve, reject) => {
       let item: Item;
 
-      await ItemUtil.getItemFromBlizzard(id, request)
-        .then(i => item = new Item(i))
-        .catch(error => console.error(error));
-      await ItemUtil.getWowDBData(id)
-        .then((i: WoWDBItem) =>
-          WoWDBItem.setItemWithWoWDBValues(i, item))
-        .catch(error => console.error(error));
-      await ItemUtil.getWowheadData(id, WoWHeadUtil.setValuesAll)
-        .then((wh: WoWHead) => {
-          item.expansionId = wh.expansionId;
-          delete wh.expansionId;
-          item.itemSource = wh;
-        })
-        .catch(error => console.error(error));
+      ItemUtil.getItemFromBlizzard(id, request)
+        .then(async i => {
+          item = new Item(i);
+          await ItemUtil.getWowDBData(id)
+            .then((i: WoWDBItem) =>
+              WoWDBItem.setItemWithWoWDBValues(i, item))
+            .catch(error => {
+              console.error('downloadAllItemData.getWowDBData', error);
+            });
 
-      if (!item) {
-        reject();
-      } else {
-        resolve(item);
-      }
+          await ItemUtil.getWowheadData(id, WoWHeadUtil.setValuesAll)
+            .then((wh: WoWHead) => {
+              item.expansionId = wh.expansionId;
+              delete wh.expansionId;
+              item.itemSource = wh;
+            })
+            .catch(error => console.error('downloadAllItemData.getWowheadData', error));
+
+          if (!item) {
+            reject();
+          } else {
+            resolve(item);
+          }
+        })
+        .catch(error => {
+          reject();
+        });
     });
   }
 
@@ -111,11 +178,13 @@ export class ItemUtil {
   public static getWowDBData(id: number): Promise<WoWDBItem> {
     return new Promise((resolve, reject) => {
       request.get(`http://wowdb.com/api/item/${id}`, (error, response, body) => {
-        if (error) {
+        if (error || !body) {
           reject();
+        } else {
+          const response = body.slice(1, body.length - 1);
+          resolve(
+            JSON.parse(response) as WoWDBItem);
         }
-        resolve(
-          JSON.parse(body.slice(1, body.length - 1)) as WoWDBItem);
       });
     });
   }
@@ -126,7 +195,7 @@ export class ItemUtil {
         `https://eu.api.battle.net/wow/item/${id}?locale=${getLocale(req)}&apikey=${BLIZZARD_API_KEY}`,
         (error, re, body) => {
           // const icon = JSON.parse(body).icon;
-          if (error) {
+          if (error || !body) {
             reject();
           }
           resolve(JSON.parse(body) as Item);
@@ -160,7 +229,7 @@ export class ItemUtil {
                         resolve(r);
                       })
                       .catch(e => {
-                        console.error(e);
+                        console.error('setMissingLocales', e);
                         reject({});
                       });
                   });
@@ -168,7 +237,7 @@ export class ItemUtil {
             });
             await Promise.all(itemIDs)
               .then(r => { })
-              .catch(e => console.error(e));
+              .catch(e => console.error('setMissingLocales', e));
             resolve(list);
           } else {
             reject({});

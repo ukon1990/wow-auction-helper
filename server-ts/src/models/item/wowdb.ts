@@ -17,7 +17,6 @@ export class WoWDBItem {
 
   public static setItemWithWoWDBValues(wowDBItem: WoWDBItem, item: Item): void {
       item.itemSpells = wowDBItem.Spells ? wowDBItem.Spells : [];
-      item.itemSource = wowDBItem.DroppedBy ? wowDBItem.DroppedBy : [];
       item.minReputation = parseInt(wowDBItem.RequiredFactionStanding, 10);
       item.isDropped = wowDBItem.DroppedBy ? wowDBItem.DroppedBy.length > 0 : false;
   }
