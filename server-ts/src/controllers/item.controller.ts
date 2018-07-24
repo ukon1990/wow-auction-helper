@@ -17,7 +17,7 @@ export const getItems = (req: Request, res: Response) => {
       LEFT OUTER JOIN item_name_locale as l
       ON i.id = l.id;`,
     (err, rows, fields) =>
-      ItemUtil.handleItemsGetRequest(err, rows as Item[], res, db));
+      ItemUtil.getItems(err, rows as Item[], res, db));
 };
 
 export const getItem = async (req: Request, res: Response) => {
@@ -29,11 +29,11 @@ export const getItem = async (req: Request, res: Response) => {
     ON i.id = l.id
     WHERE i.id = ${ req.params.id };`,
   (err, rows, fields) =>
-    ItemUtil.handleItemGetRequest(req.params.id, err, rows as Item[], res, req, db));
+    ItemUtil.getItem(req.params.id, err, rows as Item[], res, req, db));
 };
 
 export const updateItem = async (req: Request, res: Response) => {
-  ItemUtil.handleItemPatchRequest(req.params.id, res, req);
+  ItemUtil.patchItem(req.params.id, res, req);
 };
 
 export const updateItems = async (req: Request, res: Response) => {
@@ -41,6 +41,6 @@ export const updateItems = async (req: Request, res: Response) => {
   db.query(
     `SELECT * FROM items WHERE timestamp < "2018-07-23";`,
     (err, rows, fields) => {
-      ItemUtil.handleItemsPatchRequest(req.params.id, rows, res, req);
+      ItemUtil.patchItems(req.params.id, rows, res, req);
     });
 };

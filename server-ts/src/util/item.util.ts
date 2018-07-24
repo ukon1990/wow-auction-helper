@@ -15,7 +15,7 @@ const PromiseThrottle: any = require('promise-throttle');
 
 export class ItemUtil {
 
-  public static async handleItemGetRequest(
+  public static async getItem(
     id: number,
     error: Error,
     items: Item[],
@@ -48,7 +48,7 @@ export class ItemUtil {
     }
   }
 
-  public static async handleItemPatchRequest(
+  public static async patchItem(
     id: number,
     response: Response,
     request: any) {
@@ -57,7 +57,14 @@ export class ItemUtil {
       .then((item: Item) => {
         response.send(item);
         console.log('Query: ', ItemQuery.update(item));
-        db.query(ItemQuery.update(item));
+        db.query(ItemQuery.update(item),
+          (err, rows, fields) => {
+            if (err) {
+              console.error(`The update failed for item ${ item }`);
+            } else {
+              console.log(`Successfully updated ${ item }`);
+            }
+          });
       })
       .catch(error => {
         console.error('Failed at getting item for updating', error);
@@ -66,7 +73,7 @@ export class ItemUtil {
       });
   }
 
-  public static handleItemsGetRequest(
+  public static getItems(
     error: Error,
     items: Item[],
     response: Response,
@@ -82,7 +89,7 @@ export class ItemUtil {
     });
   }
 
-  public static async handleItemsPatchRequest(
+  public static async patchItems(
     id: number,
     rows: Item[],
     res: Response,
@@ -100,13 +107,13 @@ export class ItemUtil {
           return new Promise((resolve, reject) => {
             updateCount++;
             console.log(`Updating Item: ${item.name} (${updateCount} / ${rows.length})`);
-            request.patch(`http://localhost:3000/api/item/${item.id}`, (res, error) => {
+            request.patch(`http://localhost:3000/api/item/${item.id}`, (res, error, body) => {
               if (error) {
                 console.error('handleItemsPatchRequest', error);
                 reject(error);
               } else {
-                items.push(res);
-                resolve(res);
+                items.push(body);
+                resolve(body);
               }
             });
           });

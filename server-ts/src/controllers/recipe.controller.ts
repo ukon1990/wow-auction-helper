@@ -1,12 +1,11 @@
-import { Request, Response } from "express";
-import { Item } from "../models/item/item";
+import { Request, Response } from 'express';
+import { Item } from '../models/item/item';
+import { RecipeUtil } from '../util/recipe.util';
 
 /**
- * GET /api/item
+ * GET /api/recipe
  * List of API examples.
  */
 export let getRecipes = (req: Request, res: Response) => {
-    res.send({
-      message: "There is nothing here"
-    });
-  };
+  RecipeUtil.handleRecipeGetAllRequest(req.params.id, res, req);
+};
