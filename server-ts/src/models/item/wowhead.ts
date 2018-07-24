@@ -5,8 +5,8 @@ export class WoWHead {
   droppedBy: WoWHeadDroppedBy[];
   expansionId: number;
   // disenchantedFrom: WoWHeadDisenchantedFrom[];
-  containedInItem: WoWHeadContainedIn[];
-  containedInObject: WoWHeadContainedIn[];
+  containedInItem: WoWHeadContainedInItem[];
+  containedInObject: WoWHeadContainedInItem[];
   currencyFor: WoWHeadCurrencyFor[];
   // objectiveOf: WoWHeadObjectiveOf[];
 }
@@ -38,7 +38,7 @@ export class WoWHeadDroppedBy {
   type: number;
   count: number;
   outof: number;
-  chance: number;
+  dropChance: number;
   personal_loot: number;
   pctstack: WoWHeadPctStack;
 }
@@ -49,7 +49,20 @@ export class WoWHeadPctStack {
   3: number;
 }
 
-export class WoWHeadContainedIn { }
+export class WoWHeadContainedInItem {
+  classs: number;
+  commondrop: boolean;
+  flags2: number;
+  id: number;
+  level: number;
+  name: string;
+  slot: number;
+  source: number[];
+  subclass: number;
+  count: number;
+  outof: number;
+  dropChance: number;
+}
 
 export class WoWHeadCurrencyFor {
   classs: number;
