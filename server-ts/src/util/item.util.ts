@@ -26,28 +26,23 @@ export class ItemUtil {
       response.send(new Item());
       return;
     }
-    /*
-        if (items.length > 0) {
-          db.end();
-          ItemUtil.handleItem(items[0]);
-          response.send(items[0]);
-          return;
-        }*/
-    let item: Item;
 
-    /*await ItemUtil.getItemFromBlizzard(id, request)
-      .then(i => item = new Item(i))
-      .catch(error => console.error(error));
-    await ItemUtil.getWowDBData(id)
-      .then((i: WoWDBItem) =>
-        WoWDBItem.setItemWithWoWDBValues(i, item))
-      .catch(error => console.error(error));*/
-    let re = '';
-    await ItemUtil.getWowheadData(id, WoWHeadUtil.setValuesAll)
-      .then((id: any) => re = id) // item.expansionId = id
-      .catch(error => console.error(error));
-    response.send(re);
+    if (items.length === 0) {
+      db.end();
+      ItemUtil.handleItem(items[0]);
+      response.send(items[0]);
+      return;
+    } else {
+      ItemUtil.downloadAllItemData(id)
+      .then(item =>
+        response.send(item))
+      .catch(error => {
+        console.error(error);
+        response.send(new Item());
+      });
+    }
   }
+
   public static handleItemsRequest(
     error: Error,
     items: Item[],
@@ -69,6 +64,33 @@ export class ItemUtil {
       [] : JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
     item.itemSpells = item.itemSpells as any === '[]' ? [] : [];
+  }
+
+  public static async downloadAllItemData(id: number): Promise<Item> {
+    return new Promise<Item>(async (resolve, reject) => {
+      let item: Item;
+
+      await ItemUtil.getItemFromBlizzard(id, request)
+        .then(i => item = new Item(i))
+        .catch(error => console.error(error));
+      await ItemUtil.getWowDBData(id)
+        .then((i: WoWDBItem) =>
+          WoWDBItem.setItemWithWoWDBValues(i, item))
+        .catch(error => console.error(error));
+      await ItemUtil.getWowheadData(id, WoWHeadUtil.setValuesAll)
+        .then((wh: WoWHead) => {
+          item.expansionId = wh.expansionId;
+          delete wh.expansionId;
+          item.itemSource = wh;
+        })
+        .catch(error => console.error(error));
+
+      if (!item) {
+        reject();
+      } else {
+        resolve(item);
+      }
+    });
   }
 
   public static getWowheadData(id: number, action: Function) {

@@ -1,4 +1,5 @@
 import { ItemSpells } from './itemspells';
+import { WoWHead } from './wowhead';
 
 export class Item {
     id: number;
@@ -17,4 +18,5 @@ export class Item {
     minReputation: number;
     isDropped: boolean;
     expansionId: number;
+    wowHeadExtras: WoWHead;
 }

@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import mysql from "mysql";
-import { Item } from "../models/item/item";
-import { DATABASE_CREDENTIALS } from "../util/secrets";
-import { getLocale } from "../util/locales";
-import { ItemUtil } from "../util/item.util";
+import { Request, Response } from 'express';
+import mysql from 'mysql';
+import { Item } from '../models/item/item';
+import { DATABASE_CREDENTIALS } from '../util/secrets';
+import { getLocale } from '../util/locales';
+import { ItemUtil } from '../util/item.util';
 
 /**
  * GET /api/item

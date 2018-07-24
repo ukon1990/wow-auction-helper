@@ -1,16 +1,17 @@
-import { ItemSpells } from "./itemspells";
-import { NPC } from "./wowdb";
+import { ItemSpells } from './itemspells';
+import { NPC } from './wowdb';
+import { WoWHead } from './wowhead';
 
 export class Item {
   id: number;
-  name = "Missing item";
-  icon = "inv_scroll_03";
+  name = 'Missing item';
+  icon = 'inv_scroll_03';
   itemLevel: number;
   itemClass: number;
   itemSubClass: number;
   quality: number;
   itemSpells: ItemSpells[];
-  itemSource?: NPC[];
+  itemSource?: WoWHead;
   buyPrice: number;
   sellPrice: number;
   itemBind: number;
