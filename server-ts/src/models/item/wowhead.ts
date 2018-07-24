@@ -6,7 +6,7 @@ export class WoWHead {
   expansionId: number;
   // disenchantedFrom: WoWHeadDisenchantedFrom[];
   containedInItem: WoWHeadContainedInItem[];
-  containedInObject: WoWHeadContainedInItem[];
+  containedInObject: WoWHeadContainedInObject[];
   currencyFor: WoWHeadCurrencyFor[];
   // objectiveOf: WoWHeadObjectiveOf[];
 }
@@ -59,6 +59,16 @@ export class WoWHeadContainedInItem {
   slot: number;
   source: number[];
   subclass: number;
+  count: number;
+  outof: number;
+  dropChance: number;
+}
+
+export class WoWHeadContainedInObject {
+  id: number;
+  location: number[];
+  name: string;
+  type: number;
   count: number;
   outof: number;
   dropChance: number;

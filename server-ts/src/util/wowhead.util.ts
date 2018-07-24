@@ -10,7 +10,7 @@ export class WoWHeadUtil {
     wh.expansionId = WoWHeadUtil.getExpansion(body);
     // wh.createdBy = undefined;
     wh.containedInItem = WoWHeadUtil.getContainedInItem(body);
-    wh.containedInObject = undefined; // contained-in-object
+    wh.containedInObject = WoWHeadUtil.getContainedInObject(body); // contained-in-object
     wh.currencyFor = WoWHeadUtil.getCurrencyFor(body);
     // wh.objectiveOf = undefined;
     wh.soldBy = WoWHeadUtil.getSoldBy(body);
@@ -55,6 +55,7 @@ export class WoWHeadUtil {
       delete npc.pctstack;
       delete npc.personal_loot;
       delete npc.classification;
+      npc.name = WoWHeadUtil.cleanName(npc.name);
     });
 
     return droppedBy;
@@ -84,6 +85,7 @@ export class WoWHeadUtil {
           WoWHeadUtil.setCurrency(sBy);
           delete sBy.classification;
           delete sBy.type;
+          sBy.name = WoWHeadUtil.cleanName(sBy.name);
         });
       }
     return soldBy;
@@ -118,13 +120,14 @@ export class WoWHeadUtil {
       .replace(/}'/g, '}');
     const currencyFor = JSON.parse(currencyForString);
     if (currencyFor) {
-      currencyFor.forEach((obj: WoWHeadCurrencyFor) => {
-        WoWHeadUtil.setCurrency(obj);
-        delete obj.classs;
-        delete obj.flags2;
-        delete obj.subclass;
-        delete obj.slot;
-        delete obj.skill;
+      currencyFor.forEach((item: WoWHeadCurrencyFor) => {
+        WoWHeadUtil.setCurrency(item);
+        delete item.classs;
+        delete item.flags2;
+        delete item.subclass;
+        delete item.slot;
+        delete item.skill;
+        item.name = WoWHeadUtil.cleanName(item.name);
       });
     }
     return currencyFor;
@@ -139,7 +142,6 @@ export class WoWHeadUtil {
     }
     let str = dbrx.exec(
       droppedByResult[0])[0]
-      .replace(WoWHeadUtil.pctStackRegex, '')
       .replace('data: ', '')
       .replace('});', '')
       .replace(/,count:/g, ',\"count\":')
@@ -159,39 +161,43 @@ export class WoWHeadUtil {
       delete item.flags2;
       delete item.subclass;
       delete item.level;
+      item.name = WoWHeadUtil.cleanName(item.name);
     });
 
     return items;
   }
 
-  public static getContainedInObject(body: string): any {
-    const droppedByRegex = new RegExp(/new Listview\({template: 'npc', id: 'dropped-by',([\s\S]*?)}\);/g);
+  public static getContainedInObject(body: string): WoWHeadContainedInObject[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'object', id: 'contained-in-object',([\s\S]*?)}\);/g);
     const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
     const droppedByResult = droppedByRegex.exec(body);
     if (!droppedByResult) {
       return [];
     }
-    const droppedBy = JSON.parse(
-      dbrx.exec(
-        droppedByResult[0])[0]
-        .replace(WoWHeadUtil.pctStackRegex, '')
-        .replace('data: ', '')
-        .replace('});', '')
-        .replace(/,count:/g, ',\"count\":')
-        .replace(/,outof:/g, ',\"outof\":')
-        .replace(/,personal_loot:/g, ',\"personal_loot\":')
-        .replace(/,maxLevel:/g, ',\"maxLevel\":')
-        .replace(/'{/g, '{')
-        .replace(/}'/g, '}')
-    );
+    let str = dbrx.exec(
+      droppedByResult[0])[0]
+      .replace('data: ', '')
+      .replace('});', '')
+      .replace(/,count:/g, ',\"count\":')
+      .replace(/,outof:/g, ',\"outof\":')
+      .replace(/,personal_loot:/g, ',\"personal_loot\":')
+      .replace(/,maxLevel:/g, ',\"maxLevel\":')
+      .replace(/'{/g, '{')
+      .replace(/}'/g, '}');
 
-    droppedBy.forEach((npc: WoWHeadDroppedBy) => {
-      npc.dropChance = Math.round((npc.count / npc.outof) * 100);
-      delete npc.pctstack;
-      delete npc.personal_loot;
-      delete npc.classification;
+    str = str.replace(WoWHeadUtil.pctStackRegex, '');
+    const items = JSON.parse(str);
+
+
+    items.forEach((item: WoWHeadContainedInObject) => {
+      item.dropChance = Math.round((item.count / item.outof) * 100);
+      delete item.type;
+      item.name = WoWHeadUtil.cleanName(item.name);
     });
+    return items;
+  }
 
-    return droppedBy;
+  public static cleanName(name: string): string {
+    return name.replace(/^[0-9]{0,1}/g, '');
   }
 }
