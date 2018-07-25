@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('tabs') tabs;
   wowDBItem: any;
+  item: Item;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
   locale = localStorage['locale'].split('-')[0];
@@ -54,10 +55,19 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
     { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
   ];
 
-  npcColumns: Array<ColumnDescription> = [
-    {key: 'Name', title: 'NPC', dataType: ''},
-    {key: 'ID', title: 'WoWDB', dataType: 'wdb-link'},
-    {key: 'ID', title: 'WoWHead', dataType: 'whead-link'}
+  droppedByColumns: Array<ColumnDescription> = [
+    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
+    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
+    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
+  ];
+
+  soldByColumns: Array<ColumnDescription> = [
+    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'tag', title: 'Tag', dataType: ''},
+    {key: 'cost', title: 'Price', dataType: 'gold'},
+    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
+    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
 
   constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
@@ -73,11 +83,16 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     console.log(SharedService.items[SharedService.selectedItemId]);
+
+    if (SharedService.items[SharedService.selectedItemId]) {
+      this.item = SharedService.items[SharedService.selectedItemId];
+    }
+    /*
     this._wowDBService.getItem(SharedService.selectedItemId)
       .then(i => {
         this.wowDBItem = i;
       })
-      .catch(e => console.error('Could not get the item from WOW DB', e));
+      .catch(e => console.error('Could not get the item from WOW DB', e));*/
 
     this.setMaterialFor();
   }

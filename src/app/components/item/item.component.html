@@ -78,8 +78,12 @@
               <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor" [isCrafting]="false">
               </wah-data-table>
             </mat-tab>
-            <mat-tab label="Dropped by NPC's" *ngIf="wowDBItem && wowDBItem.itemSources && wowDBItem.itemSources.length > 0">
-              <wah-data-table [columns]="npcColumns" [data]="wowDBItem.itemSources">
+            <mat-tab label="Dropped by" *ngIf="item.itemSource && item.itemSource.droppedBy.length > 0">
+              <wah-data-table [columns]="droppedByColumns" [data]="item.itemSource.droppedBy">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Sold by" *ngIf="item.itemSource && item.itemSource.soldBy.length > 0">
+              <wah-data-table [columns]="soldByColumns" [data]="item.itemSource.soldBy">
               </wah-data-table>
             </mat-tab>
             <mat-tab label="Reset cost calc" *ngIf="getAuctionItem()">

@@ -1,12 +1,15 @@
-import { Request, Response } from "express";
-import { Item } from "../models/item/item";
+import { Request, Response } from 'express';
+import { AuctionUtil } from '../util/auction.util';
 
 /**
- * GET /api/item
+ * POST /api/auction
  * List of API examples.
  */
-export let getAuctions = (req: Request, res: Response) => {
-    res.send({
-      message: "There is nothing here"
-    });
+export const getAuctions = (req: Request, res: Response) => {
+  AuctionUtil.getAuctions(req, res);
+};
+
+export const getWoWUction =
+  (req: Request, res: Response) => {
+    AuctionUtil.getWoWUction(req, res);
   };

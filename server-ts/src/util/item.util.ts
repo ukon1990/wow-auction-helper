@@ -80,7 +80,7 @@ export class ItemUtil {
     db: mysql.Connection): void {
     if (!error) {
       items.forEach(item =>
-        ItemUtil.handleItem);
+        ItemUtil.handleItem(item));
     }
 
     db.end();
@@ -127,10 +127,9 @@ export class ItemUtil {
   }
 
   public static handleItem(item: Item): void {
-    item.itemSource = item.itemSource as any === '[]' ?
-      [] : JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
+    item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
-    item.itemSpells = item.itemSpells as any === '[]' ? [] : [];
+    item.itemSpells = JSON.parse(item.itemSpells as any);
   }
 
   public static async downloadAllItemData(id: number): Promise<Item> {
@@ -182,6 +181,14 @@ export class ItemUtil {
     });
   }
 
+  public static getWoWDB(req: any, res: Response): void {
+    ItemUtil.getWowDBData(req.params.id)
+      .then((item: WoWDBItem) => {
+        res.send(item);
+      })
+      .catch(error =>
+        res.send(new WoWDBItem()));
+  }
   public static getWowDBData(id: number): Promise<WoWDBItem> {
     return new Promise((resolve, reject) => {
       request.get(`http://wowdb.com/api/item/${id}`, (error, response, body) => {

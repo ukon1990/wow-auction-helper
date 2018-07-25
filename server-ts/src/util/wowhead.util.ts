@@ -1,4 +1,12 @@
-import { WoWHead, WoWHeadSoldBy, WoWHeadDroppedBy, WoWHeadCurrencyFor, WoWHeadContainedInItem } from '../models/item/wowhead';
+import {
+  WoWHead,
+  WoWHeadSoldBy,
+  WoWHeadDroppedBy,
+  WoWHeadCurrencyFor,
+  WoWHeadContainedInItem,
+  WoWHeadContainedInObject,
+  WoWHeadProspectedFrom
+} from '../models/item/wowhead';
 import { Item } from '../models/item/item';
 
 export class WoWHeadUtil {
@@ -15,6 +23,8 @@ export class WoWHeadUtil {
     // wh.objectiveOf = undefined;
     wh.soldBy = WoWHeadUtil.getSoldBy(body);
     wh.droppedBy = WoWHeadUtil.getDroppedBy(body);
+    wh.prospectedFrom = WoWHeadUtil.getProspectedFrom(body);
+    wh.milledFrom = WoWHeadUtil.getMilledFrom(body);
     // return body;
     return wh;
   }
@@ -26,6 +36,101 @@ export class WoWHeadUtil {
       return parseInt(addedIn[0].replace('Added in patch ', '').split('.')[0], 10) - 1;
     }
     return 0;
+  }
+
+  public static getMilledFrom(body: string): WoWHeadProspectedFrom[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'item', id: 'milled-from',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const droppedByResult = droppedByRegex.exec(body);
+    if (!droppedByResult) {
+      return [];
+    }
+
+    let regexResult = dbrx.exec(
+      droppedByResult[0])[0]
+      .replace('data: ', '')
+      .replace('});', '')
+      .replace(/,count:/g, ',\"count\":')
+      .replace(/,outof:/g, ',\"outof\":')
+      .replace(/,personal_loot:/g, ',\"personal_loot\":')
+      .replace(/,stack:/g, ',\"stack\":')
+      .replace(/pctstack:/gi, '"pctstack":')
+      .replace(/([0-9]{1,200}:)/gi, '"$1":')
+      .replace(/'{/g, '{')
+      .replace(/}'/g, '}');
+    // regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
+
+    const droppedBy = JSON.parse(regexResult);
+
+    droppedBy.forEach((item: WoWHeadProspectedFrom) => {
+      item.dropChance = item.count / item.outof;
+      delete item.classs;
+      delete item.flags2;
+      delete item.slot;
+      delete item.subclass;
+      delete item.source;
+      delete item.sourcemore;
+      delete item.level;
+      item.name = WoWHeadUtil.cleanName(item.name);
+    });
+
+    return droppedBy;
+  }
+
+  public static getProspectedFrom(body: string): WoWHeadProspectedFrom[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'item', id: 'prospected-from',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const droppedByResult = droppedByRegex.exec(body);
+    if (!droppedByResult) {
+      return [];
+    }
+
+    let regexResult = dbrx.exec(
+      droppedByResult[0])[0]
+      .replace('data: ', '')
+      .replace('});', '')
+      .replace(/,count:/g, ',\"count\":')
+      .replace(/,outof:/g, ',\"outof\":')
+      .replace(/,personal_loot:/g, ',\"personal_loot\":')
+      .replace(/,stack:/g, ',\"stack\":')
+      .replace(/pctstack:/gi, '"pctstack":')
+      .replace(/([0-9]{1,200}:)/gi, '"$1":')
+      .replace(/'{/g, '{')
+      .replace(/}'/g, '}');
+    // regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
+
+    const droppedBy = JSON.parse(regexResult);
+
+    droppedBy.forEach((item: WoWHeadProspectedFrom) => {
+      item.dropChance = item.count / item.outof;
+      delete item.classs;
+      delete item.flags2;
+      delete item.slot;
+      delete item.subclass;
+      delete item.source;
+      delete item.sourcemore;
+      delete item.level;
+      item.name = WoWHeadUtil.cleanName(item.name);
+    });
+
+    return droppedBy;
+  }
+
+  public static cleanUpItemString(str: string): string {
+    return str
+      .replace('data: ', '')
+      .replace('});', '')
+      .replace(/stock:/g, '\"stock\":')
+      .replace(/cost:/g, '\"cost\":')
+      .replace(/stack:/g, '\"stack\":')
+      .replace(/,count:/g, ',\"count\":')
+      .replace(/,outof:/g, ',\"outof\":')
+      .replace(/,personal_loot:/g, ',\"personal_loot\":')
+      .replace(/,maxLevel:/g, ',\"maxLevel\":')
+      .replace(/pctstack:/gi, '"pctstack":')
+      .replace(/([0-9]{1,200}:)/gi, '"$1":')
+      .replace(/'{/g, '{')
+      .replace(/}'/g, '}');
   }
 
   public static getDroppedBy (body: string): WoWHeadDroppedBy[] {
@@ -44,6 +149,8 @@ export class WoWHeadUtil {
       .replace(/,outof:/g, ',\"outof\":')
       .replace(/,personal_loot:/g, ',\"personal_loot\":')
       .replace(/,maxLevel:/g, ',\"maxLevel\":')
+      .replace(/pctstack:/gi, '"pctstack":')
+      .replace(/([0-9]{1,200}:)/gi, '"$1":')
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
     regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
@@ -51,7 +158,7 @@ export class WoWHeadUtil {
     const droppedBy = JSON.parse(regexResult);
 
     droppedBy.forEach((npc: WoWHeadDroppedBy) => {
-      npc.dropChance = Math.round((npc.count / npc.outof) * 100);
+      npc.dropChance = npc.count / npc.outof;
       delete npc.pctstack;
       delete npc.personal_loot;
       delete npc.classification;
@@ -156,7 +263,7 @@ export class WoWHeadUtil {
 
 
     items.forEach((item: WoWHeadContainedInItem) => {
-      item.dropChance = Math.round((item.count / item.outof) * 100);
+      item.dropChance = item.count / item.outof;
       delete item.classs;
       delete item.flags2;
       delete item.subclass;
@@ -190,7 +297,7 @@ export class WoWHeadUtil {
 
 
     items.forEach((item: WoWHeadContainedInObject) => {
-      item.dropChance = Math.round((item.count / item.outof) * 100);
+      item.dropChance = item.count / item.outof;
       delete item.type;
       item.name = WoWHeadUtil.cleanName(item.name);
     });

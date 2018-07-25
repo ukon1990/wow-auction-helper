@@ -35,6 +35,11 @@ app.use(expressSession({
 }));
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 app.use(
   express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 })
@@ -45,13 +50,21 @@ app.use(
  * API examples routes.
  */
 app.get('/api', apiController.getApi);
+
+// Item
 app.get('/api/item', itemController.getItems);
 app.patch('/api/item', itemController.updateItems);
 app.get('/api/item/:id', itemController.getItem);
 app.patch('/api/item/:id', itemController.updateItem);
+app.get('/api/item/wowdb/:id', itemController.getWoWDBItem);
+
 app.get('/api/recipe', recipeController.getRecipes);
+app.get('/api/recipe/:id', recipeController.getRecipe);
+
 app.get('/api/pet', petController.getPets);
-app.get('/api/auction', auctionController.getAuctions);
+
+app.post('/api/auction', auctionController.getAuctions);
+app.post('/api/auction/wowuction', auctionController.getWoWUction);
 
 /**
  * Primary app routes.

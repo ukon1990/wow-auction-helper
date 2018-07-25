@@ -35,7 +35,6 @@ export class Seller {
 
     SharedService.auctions.forEach(a => {
       if (!SharedService.items[a.item]) {
-        console.log(a.item);
         return;
       }
       id = SharedService.items[a.item].itemClass;

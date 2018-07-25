@@ -9,8 +9,8 @@ import { Recipe } from '../models/crafting/recipe';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class RecipeUtil {
-  public static handleRecipeGetAllRequest(
-    id: number,
+  public static getRecipe(id: number, response: Response, request: any) {}
+  public static getRecipes(
     response: Response,
     request: any
   ): void {

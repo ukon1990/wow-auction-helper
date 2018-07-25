@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { Item } from '../models/item/item';
 import { RecipeUtil } from '../util/recipe.util';
 
 /**
@@ -7,5 +6,13 @@ import { RecipeUtil } from '../util/recipe.util';
  * List of API examples.
  */
 export let getRecipes = (req: Request, res: Response) => {
-  RecipeUtil.handleRecipeGetAllRequest(req.params.id, res, req);
+  RecipeUtil.getRecipes(res, req);
+};
+
+/**
+ * GET /api/recipe/:id
+ * List of API examples.
+ */
+export let getRecipe = (req: Request, res: Response) => {
+  RecipeUtil.getRecipe(req.query.id, res, req);
 };

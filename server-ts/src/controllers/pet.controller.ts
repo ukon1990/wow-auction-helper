@@ -6,5 +6,13 @@ import { PetUtil } from '../util/pet.util';
  * List of API examples.
  */
 export let getPets = (req: Request, res: Response) => {
-  PetUtil.getPets(req.params.id, res, req);
+  PetUtil.getPets(res, req);
+};
+
+/**
+ * GET /api/item
+ * List of API examples.
+ */
+export let getPet = (req: Request, res: Response) => {
+  PetUtil.getPet(req.params.id, res, req);
 };

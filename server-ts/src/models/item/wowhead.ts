@@ -8,6 +8,8 @@ export class WoWHead {
   containedInItem: WoWHeadContainedInItem[];
   containedInObject: WoWHeadContainedInObject[];
   currencyFor: WoWHeadCurrencyFor[];
+  prospectedFrom: WoWHeadProspectedFrom[];
+  milledFrom: WoWHeadProspectedFrom[];
   // objectiveOf: WoWHeadObjectiveOf[];
 }
 
@@ -43,10 +45,24 @@ export class WoWHeadDroppedBy {
   pctstack: WoWHeadPctStack;
 }
 
+export class WoWHeadProspectedFrom {
+  classs: number;
+  flags2: number;
+  id: number;
+  level: number;
+  name: string;
+  slot: number;
+  source: number[];
+  subclass: number;
+  count: number;
+  outof: number;
+  sourcemore: any;
+  stack: number[];
+  pctstack: WoWHeadPctStack;
+  dropChance: number;
+}
+
 export class WoWHeadPctStack {
-  1: number;
-  2: number;
-  3: number;
 }
 
 export class WoWHeadContainedInItem {
