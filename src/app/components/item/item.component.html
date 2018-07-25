@@ -49,7 +49,8 @@
             <br>
             <strong>Market value:</strong> {{ getAuctionItem().mktPrice | gold }}
             <br>
-            <strong *ngIf="isUsingTSM()">Regional sale rate:</strong><strong *ngIf="isUsingWoWUction()">Sale rate:</strong> 
+            <strong *ngIf="isUsingTSM()">Regional sale rate:</strong>
+            <strong *ngIf="isUsingWoWUction()">Sale rate:</strong>
             {{ getAuctionItem().regionSaleRate | percent }}
             <br>
           </div>
@@ -78,12 +79,29 @@
               <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor" [isCrafting]="false">
               </wah-data-table>
             </mat-tab>
-            <mat-tab label="Dropped by" *ngIf="item.itemSource && item.itemSource.droppedBy.length > 0">
-              <wah-data-table [columns]="droppedByColumns" [data]="item.itemSource.droppedBy">
+            <mat-tab label="Dropped by" *ngIf="item.itemSource && item.itemSource.droppedBy && item.itemSource.droppedBy.length > 0">
+              <wah-data-table [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="item.itemSource.droppedBy">
               </wah-data-table>
             </mat-tab>
-            <mat-tab label="Sold by" *ngIf="item.itemSource && item.itemSource.soldBy.length > 0">
-              <wah-data-table [columns]="soldByColumns" [data]="item.itemSource.soldBy">
+            <mat-tab label="Sold by" *ngIf="item.itemSource && item.itemSource.soldBy && item.itemSource.soldBy.length > 0">
+              <wah-data-table [id]="'id'" iconSize="22" [columns]="soldByColumns" [data]="item.itemSource.soldBy">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Contained in object" *ngIf="item.itemSource && item.itemSource.containedInObject && item.itemSource.containedInObject.length > 0">
+              <wah-data-table [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="item.itemSource.containedInObject">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Contained in item" *ngIf="item.itemSource && item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0">
+              <wah-data-table [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="item.itemSource.containedInItem">
+              </wah-data-table>
+            </mat-tab>
+            <mat-tab label="Prospected from" *ngIf="item.itemSource && item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0">
+              <wah-data-table [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="item.itemSource.prospectedFrom">
+              </wah-data-table>
+            </mat-tab>
+
+            <mat-tab label="Milled from" *ngIf="item.itemSource && item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0">
+              <wah-data-table [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="item.itemSource.milledFrom">
               </wah-data-table>
             </mat-tab>
             <mat-tab label="Reset cost calc" *ngIf="getAuctionItem()">

@@ -56,7 +56,7 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   droppedByColumns: Array<ColumnDescription> = [
-    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
     {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
