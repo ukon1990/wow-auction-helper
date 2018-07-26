@@ -39,9 +39,9 @@ export class AuctionUtil {
 
   private static processWoWUction(res: Response, wowUctionURL: string): void {
     request.get(wowUctionURL, (err, re, body) => {
-      const list: any[] = [];
-      let obj = {},
-        tempObj: any = {},
+      const list: any[] = [],
+        obj = {};
+      let tempObj: any = {},
         isFirst = true;
       // 5 == itemID, 7 == market price,
       // 14 == Avg Daily Posted, 15 == Avg Estimated Daily Sold,

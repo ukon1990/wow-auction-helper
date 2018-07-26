@@ -100,8 +100,8 @@ export class PetUtil {
     request: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     db.query(`
-      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(request)} as name, icon, description, source 
-      FROM pets as p, pet_name_locale as l 
+      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(request)} as name, icon, description, source
+      FROM pets as p, pet_name_locale as l
       WHERE l.speciesId = p.speciesId;`, function (err, rows, fields) {
         db.end();
         if (!err) {
@@ -154,7 +154,7 @@ export class PetUtil {
                       console.error(e);
                       reject({});
                     });
-                })
+                });
               }));
           });
           await Promise.all(speciesIDs)

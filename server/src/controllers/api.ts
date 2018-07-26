@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-import async from "async";
-import request from "request";
-import express from "express";
-import { Response, Request, NextFunction } from "express";
+import async from 'async';
+import request from 'request';
+import express from 'express';
+import { Response, Request, NextFunction } from 'express';
 
 
 /**
@@ -12,6 +12,6 @@ import { Response, Request, NextFunction } from "express";
  */
 export let getApi = (req: Request, res: Response) => {
   res.send({
-    message: "There is nothing here"
+    message: 'There is nothing here'
   });
 };

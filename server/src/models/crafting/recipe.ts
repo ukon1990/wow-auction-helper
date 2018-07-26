@@ -16,10 +16,10 @@ export class Recipe {
   roi?: number;
 
   // Fetched for the current auctions
-  mktPrice? = 0;
-  avgDailySold? = 0;
-  regionSaleAvg? = 0;
-  regionSaleRate? = 0;
-  buyout? = 0;
-  quantityTotal? = 0;
+  mktPrice?: number = 0;
+  avgDailySold?: number = 0;
+  regionSaleAvg?: number = 0;
+  regionSaleRate?: number = 0;
+  buyout?: number = 0;
+  quantityTotal?: number = 0;
 }

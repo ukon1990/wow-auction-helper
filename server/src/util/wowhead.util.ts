@@ -46,7 +46,7 @@ export class WoWHeadUtil {
       return [];
     }
 
-    let regexResult = dbrx.exec(
+    const regexResult = dbrx.exec(
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
@@ -85,7 +85,7 @@ export class WoWHeadUtil {
       return [];
     }
 
-    let regexResult = dbrx.exec(
+    const regexResult = dbrx.exec(
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
