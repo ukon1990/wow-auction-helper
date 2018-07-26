@@ -107,7 +107,7 @@ export class ItemUtil {
           return new Promise((resolve, reject) => {
             updateCount++;
             console.log(`Updating Item: ${item.name} (${updateCount} / ${rows.length})`);
-            request.patch(`http://localhost:3000/api/item/${item.id}`, (res, error, body) => {
+            request.patch(`${ req.headers.host }/api/item/${item.id}`, (res, error, body) => {
               if (error) {
                 console.error('handleItemsPatchRequest', error);
                 reject(error);
