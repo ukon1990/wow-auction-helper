@@ -4,10 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { Item } from '../models/item/item';
 import { Endpoints } from './endpoints';
 import { GameBuild } from '../utils/game-build.util';
+import { DatabaseService } from './database.service';
 
 @Injectable()
 export class ItemService {
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient, private dbService: DatabaseService) { }
 
   addItem(itemID: number): void {
     console.log('Attempting to add item data for ' + itemID);
@@ -45,6 +46,8 @@ export class ItemService {
           }
           SharedService.items[i.id] = i;
         });
+
+        this.dbService.addItems(items['items']);
         console.log('Items download is completed');
       })
       .catch(e => {
@@ -54,7 +57,7 @@ export class ItemService {
   }
 
   updateItem(itemID: number): Promise<any> {
-    return this._http.patch(Endpoints.getUrl(`item/${itemID}`), null)
+    return this._http.patch(Endpoints.getUrl(`item/${itemID}`), {})
       .toPromise() as Promise<any>;
   }
 

@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Pet } from '../models/pet';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
+import { DatabaseService } from './database.service';
 
 @Injectable()
 export class PetsService {
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient, private dbService: DatabaseService) { }
 
   getPets(): Promise<any> {
     SharedService.downloading.pets = true;
@@ -18,6 +19,8 @@ export class PetsService {
         (pets['pets'] as Array<Pet>).forEach(p => {
           SharedService.pets[p.speciesId] = p;
         });
+
+        this.dbService.addPets(pets['pets']);
       })
       .catch(e => {
         SharedService.downloading.pets = false;

@@ -56,7 +56,9 @@ app.get('/api/item', itemController.getItems);
 app.patch('/api/item', itemController.updateItems);
 app.get('/api/item/:id', itemController.getItem);
 app.patch('/api/item/:id', itemController.updateItem);
+app.options('/api/item/:id', itemController.updateItem);
 app.get('/api/item/wowdb/:id', itemController.getWoWDBItem);
+app.get('api/item/source/:id', itemController.getItemSources);
 
 app.get('/api/recipe', recipeController.getRecipes);
 app.get('/api/recipe/:id', recipeController.getRecipe);
@@ -64,6 +66,7 @@ app.get('/api/recipe/:id', recipeController.getRecipe);
 app.get('/api/pet', petController.getPets);
 app.get('/api/pet/:id', petController.getPet);
 app.patch('/api/pet/:id', petController.patchPet);
+app.options('/api/pet/:id', petController.patchPet);
 
 app.post('/api/auction', auctionController.getAuctions);
 app.post('/api/auction/wowuction', auctionController.getWoWUction);

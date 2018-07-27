@@ -101,7 +101,7 @@ export class UpdateComponent implements OnInit {
       i = 0;
       this.updated.items.list = [];
       Object.keys(SharedService.items).forEach(itemID => {
-        if (itemID && SharedService.items[itemID]) {
+        if (itemID && SharedService.items[itemID] && !SharedService.items[itemID].itemSource.droppedBy) {
           this.updated.items.list.push(SharedService.items[itemID]);
         }
       });

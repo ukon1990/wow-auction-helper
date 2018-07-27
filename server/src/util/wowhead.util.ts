@@ -14,17 +14,22 @@ export class WoWHeadUtil {
   static pctStackRegex = /,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g;
   // .replace(/,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g, 'tiss');
   public static setValuesAll(body: string): any {
-    const wh = new WoWHead();
-    wh.expansionId = WoWHeadUtil.getExpansion(body);
-    // wh.createdBy = undefined;
-    wh.containedInItem = WoWHeadUtil.getContainedInItem(body);
-    wh.containedInObject = WoWHeadUtil.getContainedInObject(body); // contained-in-object
-    wh.currencyFor = WoWHeadUtil.getCurrencyFor(body);
-    // wh.objectiveOf = undefined;
-    wh.soldBy = WoWHeadUtil.getSoldBy(body);
-    wh.droppedBy = WoWHeadUtil.getDroppedBy(body);
-    wh.prospectedFrom = WoWHeadUtil.getProspectedFrom(body);
-    wh.milledFrom = WoWHeadUtil.getMilledFrom(body);
+    let wh: any = [];
+    try {
+      wh = new WoWHead();
+      wh.expansionId = WoWHeadUtil.getExpansion(body);
+      // wh.createdBy = undefined;
+      wh.containedInItem = WoWHeadUtil.getContainedInItem(body);
+      wh.containedInObject = WoWHeadUtil.getContainedInObject(body); // contained-in-object
+      wh.currencyFor = WoWHeadUtil.getCurrencyFor(body);
+      // wh.objectiveOf = undefined;
+      wh.soldBy = WoWHeadUtil.getSoldBy(body);
+      wh.droppedBy = WoWHeadUtil.getDroppedBy(body);
+      wh.prospectedFrom = WoWHeadUtil.getProspectedFrom(body);
+      wh.milledFrom = WoWHeadUtil.getMilledFrom(body);
+    } catch (error) {
+      console.error('setValuesAll failed', error);
+    }
     // return body;
     return wh;
   }
@@ -50,6 +55,8 @@ export class WoWHeadUtil {
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/"skill"\\:/gi, '"skill":')
       .replace(/,count:/g, ',\"count\":')
       .replace(/,outof:/g, ',\"outof\":')
       .replace(/,personal_loot:/g, ',\"personal_loot\":')
@@ -60,6 +67,7 @@ export class WoWHeadUtil {
       .replace(/}'/g, '}');
     // regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
 
+    regexResult.replace(/"skill"\\:/gi, '"skill":');
     const droppedBy = JSON.parse(regexResult);
 
     droppedBy.forEach((item: WoWHeadProspectedFrom) => {
@@ -89,6 +97,8 @@ export class WoWHeadUtil {
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/"skill"\\:/gi, '"skill":')
       .replace(/,count:/g, ',\"count\":')
       .replace(/,outof:/g, ',\"outof\":')
       .replace(/,personal_loot:/g, ',\"personal_loot\":')
@@ -99,6 +109,7 @@ export class WoWHeadUtil {
       .replace(/}'/g, '}');
     // regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
 
+    regexResult.replace(/"skill"\\:/gi, '"skill":');
     const droppedBy = JSON.parse(regexResult);
 
     droppedBy.forEach((item: WoWHeadProspectedFrom) => {
@@ -120,6 +131,8 @@ export class WoWHeadUtil {
     return str
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/"skill"\\:/gi, '"skill":')
       .replace(/stock:/g, '\"stock\":')
       .replace(/cost:/g, '\"cost\":')
       .replace(/stack:/g, '\"stack\":')
@@ -137,33 +150,42 @@ export class WoWHeadUtil {
     const droppedByRegex = new RegExp(/new Listview\({template: 'npc', id: 'dropped-by',([\s\S]*?)}\);/g);
     const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
     const droppedByResult = droppedByRegex.exec(body);
+    let droppedBy;
     if (!droppedByResult) {
       return [];
     }
 
-    let regexResult = dbrx.exec(
-      droppedByResult[0])[0]
-      .replace('data: ', '')
-      .replace('});', '')
-      .replace(/,count:/g, ',\"count\":')
-      .replace(/,outof:/g, ',\"outof\":')
-      .replace(/,personal_loot:/g, ',\"personal_loot\":')
-      .replace(/,maxLevel:/g, ',\"maxLevel\":')
-      .replace(/pctstack:/gi, '"pctstack":')
-      .replace(/([0-9]{1,200}:)/gi, '"$1":')
-      .replace(/'{/g, '{')
-      .replace(/}'/g, '}');
-    regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
+    try {
+      let regexResult = dbrx.exec(
+        droppedByResult[0])[0]
+        .replace('data: ', '')
+        .replace('});', '')
+        .replace(/"\\:/gi, '\":')
+        .replace(/"skill"\\:/gi, '"skill":')
+        .replace(/,count:/g, ',\"count\":')
+        .replace(/,outof:/g, ',\"outof\":')
+        .replace(/,personal_loot:/g, ',\"personal_loot\":')
+        .replace(/,maxLevel:/g, ',\"maxLevel\":')
+        .replace(/"name":"(:)"/gi, '\$1')
+        .replace(/pctstack:/gi, '"pctstack":')
+        .replace(/([0-9]{1,200}:)/gi, '"$1":')
+        .replace(/'{/g, '{')
+        .replace(/}'/g, '}');
+      regexResult = regexResult.replace(WoWHeadUtil.pctStackRegex, '');
 
-    const droppedBy = JSON.parse(regexResult);
+      regexResult.replace(/"skill"\\:/gi, '"skill":');
+      droppedBy = JSON.parse(regexResult);
 
-    droppedBy.forEach((npc: WoWHeadDroppedBy) => {
-      npc.dropChance = npc.count / npc.outof;
-      delete npc.pctstack;
-      delete npc.personal_loot;
-      delete npc.classification;
-      npc.name = WoWHeadUtil.cleanName(npc.name);
-    });
+      droppedBy.forEach((npc: WoWHeadDroppedBy) => {
+        npc.dropChance = npc.count / npc.outof;
+        delete npc.pctstack;
+        delete npc.personal_loot;
+        delete npc.classification;
+        npc.name = WoWHeadUtil.cleanName(npc.name);
+      });
+    } catch (error) {
+      console.error('getDroppedBy', error);
+    }
 
     return droppedBy;
   }
@@ -180,11 +202,15 @@ export class WoWHeadUtil {
       .replace(WoWHeadUtil.pctStackRegex, '')
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/"skill"\\:/gi, '"skill":')
       .replace(/stock:/g, '\"stock\":')
       .replace(/cost:/g, '\"cost\":')
       .replace(/stack:/g, '\"stack\":')
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
+
+    soldByString.replace(/"skill"\\:/gi, '"skill":');
       const soldBy = JSON.parse(soldByString) as WoWHeadSoldBy[];
       // const currency = WoWHeadUtil.getCurrency(body);
       if (soldBy) {
@@ -220,11 +246,14 @@ export class WoWHeadUtil {
       .replace(WoWHeadUtil.pctStackRegex, '')
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/"skill"\\:/gi, '"skill":')
       .replace(/stock:/g, '\"stock\":')
       .replace(/cost:/g, '\"cost\":')
       .replace(/stack:/g, '\"stack\":')
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
+    currencyForString.replace(/"skill"\\:/gi, '"skill":');
     const currencyFor = JSON.parse(currencyForString);
     if (currencyFor) {
       currencyFor.forEach((item: WoWHeadCurrencyFor) => {
@@ -251,6 +280,8 @@ export class WoWHeadUtil {
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/"skill"\\:/gi, '"skill":')
       .replace(/,count:/g, ',\"count\":')
       .replace(/,outof:/g, ',\"outof\":')
       .replace(/,personal_loot:/g, ',\"personal_loot\":')
@@ -258,6 +289,7 @@ export class WoWHeadUtil {
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
 
+    str.replace(/"skill"\\:/gi, '"skill":');
     str = str.replace(WoWHeadUtil.pctStackRegex, '');
     const items = JSON.parse(str);
 
@@ -285,13 +317,15 @@ export class WoWHeadUtil {
       droppedByResult[0])[0]
       .replace('data: ', '')
       .replace('});', '')
+      .replace(/"\\:/gi, '\":')
+      .replace(/(\"name\":\"[\s\S]*?)(:)([\s\S]*?\")/gi, '$1\\$2$3')
       .replace(/,count:/g, ',\"count\":')
       .replace(/,outof:/g, ',\"outof\":')
       .replace(/,personal_loot:/g, ',\"personal_loot\":')
       .replace(/,maxLevel:/g, ',\"maxLevel\":')
       .replace(/'{/g, '{')
       .replace(/}'/g, '}');
-
+    str.replace(/"skill"\\:/gi, '"skill":');
     str = str.replace(WoWHeadUtil.pctStackRegex, '');
     const items = JSON.parse(str);
 

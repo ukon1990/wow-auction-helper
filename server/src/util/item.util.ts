@@ -59,8 +59,9 @@ export class ItemUtil {
         console.log('Query: ', ItemQuery.update(item));
         db.query(ItemQuery.update(item),
           (err, rows, fields) => {
+            db.end();
             if (err) {
-              console.error(`The update failed for item ${ item }`);
+              console.error(`The update failed for item ${ id }`, item, err);
             } else {
               console.log(`Successfully updated ${ item }`);
             }
@@ -95,10 +96,10 @@ export class ItemUtil {
     res: Response,
     req: any) {
     const promiseThrottle = new PromiseThrottle({
-      requestsPerSecond: 50,
+      requestsPerSecond: 80,
       promiseImplementation: Promise
     });
-    const items: Item[] = [], itemIDs: number[] = [];
+    const items: Item[] = [], itemIDs: any[] = [];
     let updateCount = 0;
 
     rows.forEach((item: Item) => {
@@ -106,12 +107,14 @@ export class ItemUtil {
         promiseThrottle.add(() => {
           return new Promise((resolve, reject) => {
             updateCount++;
-            console.log(`Updating Item: ${item.name} (${updateCount} / ${rows.length})`);
-            request.patch(`${ req.headers.host }/api/item/${item.id}`, (res, error, body) => {
+            console.log(`Updating Item: ${item.name} (${updateCount} / ${rows.length}) ${req.headers.host}`);
+            request.patch(`http://${ req.headers.host }/api/item/${item.id}`, (res, error, body) => {
               if (error) {
-                console.error('handleItemsPatchRequest', error);
+                // console.error('handleItemsPatchRequest', error);
+                console.error(`ERROR for item ID ${ item.id } - > ${ req.headers.host }/api/item/${item.id}`);
                 reject(error);
               } else {
+                console.log(`Added item ID ${ item.id } - > ${ req.headers.host }/api/item/${item.id}`);
                 items.push(body);
                 resolve(body);
               }

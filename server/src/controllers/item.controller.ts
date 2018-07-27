@@ -4,6 +4,7 @@ import { Item } from '../models/item/item';
 import { DATABASE_CREDENTIALS } from '../util/secrets';
 import { getLocale } from '../util/locales';
 import { ItemUtil } from '../util/item.util';
+import { WoWHead } from '../models/item/wowhead';
 
 export const getItem = async (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
@@ -18,6 +19,7 @@ export const getItem = async (req: Request, res: Response) => {
 };
 
 export const updateItem = async (req: Request, res: Response) => {
+  console.log('Patch', req.params.id);
   ItemUtil.patchItem(req.params.id, res, req);
 };
 
@@ -36,11 +38,27 @@ export const getItems = (req: Request, res: Response) => {
       ItemUtil.getItems(err, rows as Item[], res, db));
 };
 
+export const getItemSources = (req: Request, res: Response) => {
+  const db = mysql.createConnection(DATABASE_CREDENTIALS);
+  db.query(`
+      SELECT itemSource
+      FROM items as i
+      WHERE id = ${ req.params.id };`,
+    (err, rows, fields) => {
+      if (err || rows.length === 0) {
+        res.send(new WoWHead());
+      } else {
+        res.send(JSON.parse(rows.itemSource));
+      }
+    });
+};
+
 export const updateItems = async (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
   db.query(
-    `SELECT * FROM items WHERE timestamp < "2018-07-23";`,
+    `SELECT * FROM items WHERE timestamp < "2018-07-26" order by id desc limit 500;`, // timestamp < "2018-07-26";
     (err, rows, fields) => {
+      db.end();
       ItemUtil.patchItems(req.params.id, rows, res, req);
     });
 };

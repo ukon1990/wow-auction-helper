@@ -7,6 +7,7 @@ import { SharedService } from './shared.service';
 import { TSM } from '../models/auction/tsm';
 import { WoWUction } from '../models/auction/wowuction';
 import { PetsService } from './pets.service';
+import { Pet } from '../models/pet';
 /**
  * A Class for handeling the indexedDB
  */
@@ -39,8 +40,11 @@ export class DatabaseService {
   }
 
   addItems(items: Array<Item>): void {
-    this.db.table('items').clear();
     this.db.table('items').bulkPut(items);
+  }
+
+  addPets(pets: Array<Pet>): void {
+    this.db.table('pets').bulkPut(pets);
   }
 
   getAllItems(): void {
