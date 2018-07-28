@@ -1,6 +1,9 @@
 export const safeifyString = (str: string) => {
-  return str
-    .replace(/[\']/g, '\'').replace(/[\"]/g, '\\\"')
-    .replace(/\\\\\"/g, '\\\\\\\"');
+  if (str) {
+    return str
+      .replace(/[\']/g, '\'').replace(/[\"]/g, '\\\"')
+      .replace(/\\\\\"/g, '\\\\\\\"');
+  }
+  return str;
 };
 

@@ -15,19 +15,22 @@ export class CraftingService {
   constructor(private _http: HttpClient, private _itemService: ItemService, private dbService: DatabaseService) { }
 
   getRecipe(spellID: number): void {
-    this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${ localStorage['locale'] }`))
+    this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
       .toPromise()
-        .then(r =>
-          this.handleRecipe(r as Recipe))
-        .catch(e => console.error(`Could not get recipe ${spellID}`, e));
+      .then(r =>
+        this.handleRecipe(r as Recipe))
+      .catch(e => console.error(`Could not get recipe ${spellID}`, e));
   }
 
   getRecipes(): Promise<any> {
     console.log('Downloading recipes');
     SharedService.downloading.recipes = true;
     return this._http.post(
-      Endpoints.getUrl(`recipe?locale=${ localStorage['locale'] }`),
-      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP]})
+      Endpoints.getUrl(`recipe?locale=${localStorage['locale']}`),
+      {
+        timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP] ?
+          localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()
+      })
       .toPromise()
       .then(recipes => {
         const missingItems = [];
@@ -103,7 +106,7 @@ export class CraftingService {
 
       i++;
       if (i === recipesToAdd.length) {
-        console.log(`Done adding ${ i } recipes`);
+        console.log(`Done adding ${i} recipes`);
         return;
       } else {
         this.addRecipes(recipesToAdd, i);

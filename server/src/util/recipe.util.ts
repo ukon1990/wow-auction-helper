@@ -64,13 +64,14 @@ export class RecipeUtil {
   ): void {
 
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
+    console.log('req', req.query);
     // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
     db.query(`
       SELECT l.id, json, ${ getLocale(req)} as name from  recipes as r
       LEFT OUTER JOIN recipe_name_locale as l
       ON r.id = l.id
       WHERE json NOT LIKE '%itemID":0%'
-      AND timestamp > "${ req.query.timestamp}";`, (err, rows, fields) => {
+      AND timestamp > "${ req.body.timestamp + ''}";`, (err, rows, fields) => {
         db.end();
         if (!err) {
           const recipes: any[] = [];
@@ -113,7 +114,7 @@ export class RecipeUtil {
   }
 
   public static getProfession(recipe, callback) {
-    request.get(`https://eu.api.battle.net/wow/recipe/${recipe.spellID}?locale=en_GB&apiKey=${secrets.apikey}`, (err, r, body) => {
+    request.get(`https://eu.api.battle.net/wow/recipe/${recipe.spellID}?locale=en_GB&apikey=${BLIZZARD_API_KEY}`, (err, r, body) => {
       try {
         recipe.profession = JSON.parse(body).profession;
       } catch (e) {
@@ -185,7 +186,7 @@ export class RecipeUtil {
   public static async getRecipeLocale(spellID, req, res) {
     const recipe: ItemLocale = new ItemLocale(spellID);
     const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
-      .map(locale => RequestPromise.get(`https://eu.api.battle.net/wow/spell/${spellID}?locale=${locale}&apikey=${secrets.apikey}`, (r, e, b) => {
+      .map(locale => RequestPromise.get(`https://eu.api.battle.net/wow/spell/${spellID}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`, (r, e, b) => {
         try {
           recipe[locale] = JSON.parse(b).name;
         } catch (e) {
@@ -193,7 +194,7 @@ export class RecipeUtil {
         }
       })),
       usPromises = ['en_US', 'es_MX', 'pt_BR']
-        .map(locale => RequestPromise.get(`https://us.api.battle.net/wow/spell/${spellID}?locale=${locale}&apikey=${secrets.apikey}`, (r, e, b) => {
+        .map(locale => RequestPromise.get(`https://us.api.battle.net/wow/spell/${spellID}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`, (r, e, b) => {
           try {
             recipe[locale] = JSON.parse(b).name;
           } catch (e) {

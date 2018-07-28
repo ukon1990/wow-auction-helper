@@ -54,8 +54,10 @@ export class DatabaseService {
         items.forEach(i => {
           SharedService.items[i.id] = i;
         });
-      }).catch(e =>
-        console.error('Could not restore items from local DB', e));
+      }).catch(e => {
+        console.error('Could not restore items from local DB', e);
+        SharedService.downloading.items = false;
+      });
   }
 
   addPets(pets: Array<Pet>): void {
@@ -63,7 +65,7 @@ export class DatabaseService {
   }
 
   getAllPets(): Dexie.Promise<any> {
-    SharedService.downloading.items = true;
+    SharedService.downloading.pets = true;
     return this.db.table('pets')
       .toArray()
       .then(pets => {
@@ -72,8 +74,10 @@ export class DatabaseService {
           SharedService.pets[i.speciesId] = i;
         });
         console.log('Restored pets from local DB');
-      }).catch(e =>
-        console.error('Could not restore pets from local DB', e));
+      }).catch(e => {
+        console.error('Could not restore pets from local DB', e);
+        SharedService.downloading.pets = false;
+      });
   }
 
   addRecipes(recipes: Array<Recipe>): void {

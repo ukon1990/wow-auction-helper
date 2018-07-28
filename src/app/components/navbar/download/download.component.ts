@@ -61,30 +61,44 @@ export class DownloadComponent implements OnInit {
       this.downloadProgress = 'Downloading realms';
       await this._realmService.getRealms()
         .catch(error => console.error(error));
+
       this.downloadProgress = 'Loading items from disk';
-      this._dbService.getAllItems()
+      await this._dbService.getAllItems()
         .then(async() => {
-          if (Object.keys(SharedService.items).length) {
-            await this.download('items');
+          if (Object.keys(SharedService.items).length === 0) {
+            delete localStorage['timestamp_items'];
           }
         })
         .catch(async error => {
           console.error(error);
-          await this.download('items');
+        });
+      await this.download('items');
+
+      this.downloadProgress = 'Loading pets from disk';
+      await this._dbService.getAllPets()
+        .then(async () => {
+          if (Object.keys(SharedService.pets).length === 0) {
+            delete localStorage['timestamp_pets'];
+            this.downloadProgress = 'Downloading pets';
+          }
+        })
+        .catch(async error => {
         });
       this.downloadProgress = 'Downloading pets';
-      await this._petService.getPets();
+      await this.download('pets');
+
       this.downloadProgress = 'Downloading recipes';
       await this._dbService.getAllRecipes()
         .then(async () => {
           if (SharedService.recipes.length === 0) {
-            await this._craftingService.getRecipes()
-              .then(r => Crafting.checkForMissingRecipes(this._craftingService));
+            delete localStorage['timestamp_recipes'];
           }
         })
         .catch(async (error) => {
-          await this.download('recipes');
         });
+        await this.download('recipes');
+      Crafting.checkForMissingRecipes(this._craftingService);
+
       if (SharedService.user.apiToUse === 'tsm') {
         if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
           this.downloadProgress = 'Downloading new TSM data';

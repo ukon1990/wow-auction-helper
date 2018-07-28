@@ -49,7 +49,7 @@ export const postItems = (req: Request, res: Response) => {
     FROM items as i
     LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id
-    WHERE timestamp > "${ req.query.timestamp }";`,
+    WHERE timestamp > "${ req.body.timestamp }";`,
     (err, rows, fields) =>
       ItemUtil.getItems(err, rows as Item[], res, db));
 };

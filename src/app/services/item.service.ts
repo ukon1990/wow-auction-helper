@@ -31,11 +31,12 @@ export class ItemService {
     SharedService.downloading.items = true;
     return this._http.post(
       Endpoints.getUrl(`item?locale=${ localStorage['locale'] }`),
-      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP]})
+      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP] ?
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()})
       .toPromise()
       .then(items => {
-        SharedService.itemsUnmapped = items['items'];
         SharedService.downloading.items = false;
+        SharedService.itemsUnmapped = items['items'];
         items['items'].forEach((i: Item) => {
           // Making sure that the tradevendor item names are updated in case of locale change
           if (SharedService.tradeVendorMap[i.id]) {

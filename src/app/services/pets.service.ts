@@ -14,8 +14,11 @@ export class PetsService {
   getPets(): Promise<any> {
     SharedService.downloading.pets = true;
     return this._http.post(
-      Endpoints.getUrl(`pet?locale=${ localStorage['locale'] }`),
-      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP]})
+      Endpoints.getUrl(`pet?locale=${localStorage['locale']}`),
+      {
+        timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP] ?
+          localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()
+      })
       .toPromise()
       .then(pets => {
         SharedService.downloading.pets = false;
@@ -34,7 +37,7 @@ export class PetsService {
 
   getPet(speciesId): Promise<any> {
     SharedService.downloading.pets = true;
-    return this._http.get(Endpoints.getUrl(`pet/${speciesId}?locale=${ localStorage['locale'] }`))
+    return this._http.get(Endpoints.getUrl(`pet/${speciesId}?locale=${localStorage['locale']}`))
       .toPromise()
       .then(pet => {
         SharedService.downloading.pets = false;

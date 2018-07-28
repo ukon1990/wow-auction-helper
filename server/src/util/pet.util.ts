@@ -22,7 +22,7 @@ export class PetUtil {
             connection.end();
             res.send(rows[0]);
           } else {
-            request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${DATABASE_CREDENTIALS}`, (err, re, body) => {
+            request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${BLIZZARD_API_KEY}`, (err, re, body) => {
               const pet = PetUtil.reducePet(body),
                 query = `
                   INSERT INTO pets (speciesId, petTypeId, creatureId,
@@ -66,7 +66,7 @@ export class PetUtil {
   }
 
   public static patchPet(req: any, res: any) {
-    request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${DATABASE_CREDENTIALS}`, (err, re, body) => {
+    request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${BLIZZARD_API_KEY}`, (err, re, body) => {
       const pet = PetUtil.reducePet(body),
         query = `
         UPDATE pets
@@ -103,7 +103,7 @@ export class PetUtil {
       SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source
       FROM pets as p, pet_name_locale as l
       WHERE l.speciesId = p.speciesId
-      AND timestamp > "${ req.query.timestamp }";`,
+      AND timestamp > "${ req.body.timestamp }";`,
       (err, rows, fields) => {
         db.end();
         if (!err) {
@@ -173,7 +173,7 @@ export class PetUtil {
   public static async getPetLocale(speciesId: number, req: any, res: any) {
     const pet: ItemLocale = new ItemLocale(speciesId);
     const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
-      .map(locale => RequestPromise.get(`https://eu.api.battle.net/wow/pet/species/${speciesId}?locale=${locale}&apikey=${DATABASE_CREDENTIALS}`, (r, e, b) => {
+      .map(locale => RequestPromise.get(`https://eu.api.battle.net/wow/pet/species/${speciesId}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`, (r, e, b) => {
         try {
           pet[locale] = JSON.parse(b).name;
         } catch (e) {
@@ -181,7 +181,7 @@ export class PetUtil {
         }
       })),
       usPromises = ['en_US', 'es_MX', 'pt_BR']
-        .map(locale => RequestPromise.get(`https://us.api.battle.net/wow/pet/species/${speciesId}?locale=${locale}&apikey=${DATABASE_CREDENTIALS}`, (r, e, b) => {
+        .map(locale => RequestPromise.get(`https://us.api.battle.net/wow/pet/species/${speciesId}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`, (r, e, b) => {
           try {
             pet[locale] = JSON.parse(b).name;
           } catch (e) {
