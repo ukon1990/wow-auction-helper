@@ -95,14 +95,16 @@ export class PetUtil {
     });
   }
 
-  public static getPets(
+  public static postPets(
     response: Response,
-    request: any) {
+    req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     db.query(`
-      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(request)} as name, icon, description, source
+      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source
       FROM pets as p, pet_name_locale as l
-      WHERE l.speciesId = p.speciesId;`, function (err, rows, fields) {
+      WHERE l.speciesId = p.speciesId
+      AND timestamp > "${ req.query.timestamp }";`,
+      (err, rows, fields) => {
         db.end();
         if (!err) {
           response.send({

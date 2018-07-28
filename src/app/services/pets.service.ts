@@ -7,12 +7,15 @@ import { DatabaseService } from './database.service';
 
 @Injectable()
 export class PetsService {
+  readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_pets';
 
   constructor(private _http: HttpClient, private dbService: DatabaseService) { }
 
   getPets(): Promise<any> {
     SharedService.downloading.pets = true;
-    return this._http.get(Endpoints.getUrl(`pet?locale=${ localStorage['locale'] }`))
+    return this._http.post(
+      Endpoints.getUrl(`pet?locale=${ localStorage['locale'] }`),
+      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP]})
       .toPromise()
       .then(pets => {
         SharedService.downloading.pets = false;
@@ -21,7 +24,7 @@ export class PetsService {
         });
 
         this.dbService.addPets(pets['pets']);
-        localStorage['timestamp_pets'] = new Date().toDateString();
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
       })
       .catch(e => {
         SharedService.downloading.pets = false;

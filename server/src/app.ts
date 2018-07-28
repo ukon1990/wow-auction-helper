@@ -53,6 +53,7 @@ app.get('/api', apiController.getApi);
 
 // Item
 app.get('/api/item', itemController.getItems);
+app.post('/api/item', itemController.postItems);
 app.patch('/api/item', itemController.updateItems);
 app.get('/api/item/:id', itemController.getItem);
 app.patch('/api/item/:id', itemController.updateItem);
@@ -60,10 +61,12 @@ app.options('/api/item/:id', itemController.updateItem);
 app.get('/api/item/wowdb/:id', itemController.getWoWDBItem);
 app.get('api/item/source/:id', itemController.getItemSources);
 
-app.get('/api/recipe', recipeController.getRecipes);
+app.get('/api/recipe', recipeController.postRecipes);
+app.post('/api/recipe', recipeController.postRecipes);
 app.get('/api/recipe/:id', recipeController.getRecipe);
 
-app.get('/api/pet', petController.getPets);
+app.get('/api/pet', petController.postPets);
+app.post('/api/pet', petController.postPets);
 app.get('/api/pet/:id', petController.getPet);
 app.patch('/api/pet/:id', petController.patchPet);
 app.options('/api/pet/:id', petController.patchPet);

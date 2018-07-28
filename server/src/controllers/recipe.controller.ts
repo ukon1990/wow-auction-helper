@@ -5,8 +5,8 @@ import { RecipeUtil } from '../util/recipe.util';
  * GET /api/recipe
  * List of API examples.
  */
-export let getRecipes = (req: Request, res: Response) => {
-  RecipeUtil.getRecipes(res, req);
+export let postRecipes = (req: Request, res: Response) => {
+  RecipeUtil.postRecipes(res, req);
 };
 
 /**

@@ -4,8 +4,8 @@ import { PetUtil } from '../util/pet.util';
 /**
  * GET /api/pet
  */
-export let getPets = (req: Request, res: Response) => {
-  PetUtil.getPets(res, req);
+export let postPets = (req: Request, res: Response) => {
+  PetUtil.postPets(res, req);
 };
 
 /**

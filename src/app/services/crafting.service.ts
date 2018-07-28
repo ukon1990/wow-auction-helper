@@ -10,6 +10,7 @@ import { DatabaseService } from './database.service';
 
 @Injectable()
 export class CraftingService {
+  readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
   constructor(private _http: HttpClient, private _itemService: ItemService, private dbService: DatabaseService) { }
 
@@ -24,7 +25,9 @@ export class CraftingService {
   getRecipes(): Promise<any> {
     console.log('Downloading recipes');
     SharedService.downloading.recipes = true;
-    return this._http.get(Endpoints.getUrl(`recipe?locale=${ localStorage['locale'] }`))
+    return this._http.post(
+      Endpoints.getUrl(`recipe?locale=${ localStorage['locale'] }`),
+      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP]})
       .toPromise()
       .then(recipes => {
         const missingItems = [];
@@ -42,7 +45,7 @@ export class CraftingService {
         }
 
         this.dbService.addRecipes(SharedService.recipes);
-        localStorage['timestamp_recipes'] = new Date().toDateString();
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
       })
       .catch(e => {
         SharedService.downloading.recipes = false;

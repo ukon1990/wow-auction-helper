@@ -8,6 +8,7 @@ import { DatabaseService } from './database.service';
 
 @Injectable()
 export class ItemService {
+  readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   constructor(private _http: HttpClient, private dbService: DatabaseService) { }
 
   addItem(itemID: number): void {
@@ -28,7 +29,9 @@ export class ItemService {
   getItems(): Promise<any> {
     console.log('Downloading items');
     SharedService.downloading.items = true;
-    return this._http.get(Endpoints.getUrl(`item?locale=${ localStorage['locale'] }`))
+    return this._http.post(
+      Endpoints.getUrl(`item?locale=${ localStorage['locale'] }`),
+      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP]})
       .toPromise()
       .then(items => {
         SharedService.itemsUnmapped = items['items'];
@@ -47,7 +50,7 @@ export class ItemService {
         });
 
         this.dbService.addItems(items['items']);
-        localStorage['timestamp_items'] = new Date().toDateString();
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
         console.log('Items download is completed');
       })
       .catch(e => {
