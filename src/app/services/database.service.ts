@@ -8,6 +8,7 @@ import { TSM } from '../models/auction/tsm';
 import { WoWUction } from '../models/auction/wowuction';
 import { PetsService } from './pets.service';
 import { Pet } from '../models/pet';
+import { Recipe } from '../models/crafting/recipe';
 /**
  * A Class for handeling the indexedDB
  */
@@ -23,6 +24,7 @@ export class DatabaseService {
     + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation';
   readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
+  readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
 
   constructor() {
     this.db = new Dexie('wah-db');
@@ -43,20 +45,55 @@ export class DatabaseService {
     this.db.table('items').bulkPut(items);
   }
 
+  getAllItems(): Dexie.Promise<any> {
+    SharedService.downloading.items = true;
+    return this.db.table('items')
+      .toArray()
+      .then(items => {
+        SharedService.downloading.items = false;
+        items.forEach(i => {
+          SharedService.items[i.id] = i;
+        });
+      }).catch(e =>
+        console.error('Could not restore items from local DB', e));
+  }
+
   addPets(pets: Array<Pet>): void {
     this.db.table('pets').bulkPut(pets);
   }
 
-  getAllItems(): void {
-    this.db.table('items')
+  getAllPets(): Dexie.Promise<any> {
+    SharedService.downloading.items = true;
+    return this.db.table('pets')
       .toArray()
-      .then(items =>
-        items.forEach(i => {
-          SharedService.items[i.id] = i;
-        })
-      ).catch(e =>
-        console.error('Could not restore items from local DB', e));
+      .then(pets => {
+        SharedService.downloading.pets = false;
+        pets.forEach(i => {
+          SharedService.pets[i.speciesId] = i;
+        });
+        console.log('Restored pets from local DB');
+      }).catch(e =>
+        console.error('Could not restore pets from local DB', e));
   }
+
+  addRecipes(recipes: Array<Recipe>): void {
+    this.db.table('recipes').bulkPut(recipes);
+  }
+
+  getAllRecipes(): Dexie.Promise<any> {
+    SharedService.downloading.recipes = true;
+    return this.db.table('recipes')
+      .toArray()
+      .then(recipes => {
+        SharedService.downloading.recipes = false;
+        SharedService.recipes = recipes as Array<Recipe>;
+        console.log('Restored recipes from local DB');
+      }).catch(e => {
+        console.error('Could not restore recipes from local DB', e);
+        SharedService.downloading.recipes = false;
+      });
+  }
+
 
   addAuction(auction: Auction): void {
     // logic inc
@@ -139,7 +176,15 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
-    this.db.version(2).stores({
+    this.db.version(4).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS
+    });
+    this.db.version(3).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,

@@ -32,7 +32,6 @@ export class ItemService {
       .toPromise()
       .then(items => {
         SharedService.itemsUnmapped = items['items'];
-        localStorage['timestamp_items'] = new Date().toDateString();
         SharedService.downloading.items = false;
         items['items'].forEach((i: Item) => {
           // Making sure that the tradevendor item names are updated in case of locale change
@@ -48,6 +47,7 @@ export class ItemService {
         });
 
         this.dbService.addItems(items['items']);
+        localStorage['timestamp_items'] = new Date().toDateString();
         console.log('Items download is completed');
       })
       .catch(e => {

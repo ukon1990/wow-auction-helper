@@ -25,6 +25,15 @@ export class DownloadComponent implements OnInit {
   realmControl: FormControl = new FormControl();
   downloadProgress = '';
 
+  timestamps = {
+    items: localStorage['timestamp_items'],
+    pets: localStorage['timestamp_pets'],
+    recipes: localStorage['timestamp_recipes'],
+    auctions: localStorage['timestamp_auctions'],
+    tsm: localStorage['timestamp_tsm'],
+    wowuction: localStorage['timestamp_wowuction']
+  };
+
   constructor(
     private _realmService: RealmService,
     private _itemService: ItemService,
@@ -36,19 +45,46 @@ export class DownloadComponent implements OnInit {
       this.realmControl.valueChanges.subscribe(realm => {
         console.log('realm change', realm);
       });
+
+      setInterval(() => {
+        this.timestamps.items = localStorage['timestamp_items'];
+        this.timestamps.pets = localStorage['timestamp_pets'];
+        this.timestamps.recipes = localStorage['timestamp_recipes'];
+        this.timestamps.auctions = localStorage['timestamp_auctions'];
+        this.timestamps.tsm = localStorage['timestamp_tsm'];
+        this.timestamps.wowuction = localStorage['timestamp_wowuction'];
+      }, 1000);
     }
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
       this.downloadProgress = 'Downloading realms';
-      await this._realmService.getRealms();
-      this.downloadProgress = 'Downloading items';
-      await this._itemService.getItems();
+      await this._realmService.getRealms()
+        .catch(error => console.error(error));
+      this.downloadProgress = 'Loading items from disk';
+      this._dbService.getAllItems()
+        .then(async() => {
+          if (Object.keys(SharedService.items).length) {
+            await this.download('items');
+          }
+        })
+        .catch(async error => {
+          console.error(error);
+          await this.download('items');
+        });
       this.downloadProgress = 'Downloading pets';
       await this._petService.getPets();
       this.downloadProgress = 'Downloading recipes';
-      await this._craftingService.getRecipes()
-        .then(r => Crafting.checkForMissingRecipes(this._craftingService));
+      await this._dbService.getAllRecipes()
+        .then(async () => {
+          if (SharedService.recipes.length === 0) {
+            await this._craftingService.getRecipes()
+              .then(r => Crafting.checkForMissingRecipes(this._craftingService));
+          }
+        })
+        .catch(async (error) => {
+          await this.download('recipes');
+        });
       if (SharedService.user.apiToUse === 'tsm') {
         if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
           this.downloadProgress = 'Downloading new TSM data';
@@ -146,19 +182,19 @@ export class DownloadComponent implements OnInit {
         break;
       case 'auctions':
         this.downloadProgress = 'Downloading new auctions';
-        this._auctionsService.getLastModifiedTime(true);
+        await this._auctionsService.getLastModifiedTime(true);
         break;
       case 'items':
         this.downloadProgress = 'Downloading items';
-        this._itemService.getItems();
+        await this._itemService.getItems();
         break;
       case 'pets':
         this.downloadProgress = 'Downloading pets';
-        this._petService.getPets();
+        await this._petService.getPets();
         break;
       case 'recipes':
         this.downloadProgress = 'Downloading recipes';
-        this._craftingService.getRecipes();
+        await this._craftingService.getRecipes();
         break;
     }
   }

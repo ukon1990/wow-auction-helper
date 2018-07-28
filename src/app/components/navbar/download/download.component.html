@@ -38,7 +38,7 @@
               <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
             </td>
             <td>Items</td>
-            <td></td>
+            <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().items" -->
               <button mat-icon-button (click)="download('items')"
@@ -52,7 +52,7 @@
               <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
             </td>
             <td>Recipes</td>
-            <td></td>
+            <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().recipes" -->
               <button mat-icon-button (click)="download('recipes')"
@@ -66,7 +66,7 @@
               <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner>
             </td>
             <td>Pets</td>
-            <td></td>
+            <td>{{ timestamps.pets | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().pets" -->
               <button mat-icon-button (click)="download('pets')"
@@ -80,7 +80,7 @@
               <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
             </td>
             <td>Auctions</td>
-            <td>{{ getAuctionsLastModified() | date: 'HH:mm M/d/yy' }}</td>
+            <td>{{ timestamps.auctions | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().auctions" -->
               <button mat-icon-button (click)="download('auctions')"
@@ -95,7 +95,7 @@
               <mat-spinner *ngIf="getDownloading().wowUctionAuctions"class="float-left mr-2"></mat-spinner>
             </td>
             <td>WoWUction</td>
-            <td>{{ getTime('timestamp_wowuction') | date: 'M/d/yy' }}</td>
+            <td>{{ timestamps.wowuction | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().tsmAuctions" -->
               <button mat-icon-button (click)="download('wowuction')"
@@ -110,7 +110,7 @@
               <mat-spinner *ngIf="getDownloading().tsmAuctions"class="float-left mr-2"></mat-spinner>
             </td>
             <td>TSM</td>
-            <td>{{ getTime('timestamp_tsm') | date: 'M/d/yy' }}</td>
+            <td>{{ timestamps.tsm | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().tsmAuctions" -->
               <button mat-icon-button (click)="download('tsm')"

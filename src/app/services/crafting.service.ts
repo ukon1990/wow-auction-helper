@@ -6,11 +6,12 @@ import { Endpoints } from './endpoints';
 import { ItemService } from './item.service';
 import { GameBuild } from '../utils/game-build.util';
 import { Item } from '../models/item/item';
+import { DatabaseService } from './database.service';
 
 @Injectable()
 export class CraftingService {
 
-  constructor(private _http: HttpClient, private _itemService: ItemService) { }
+  constructor(private _http: HttpClient, private _itemService: ItemService, private dbService: DatabaseService) { }
 
   getRecipe(spellID: number): void {
     this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${ localStorage['locale'] }`))
@@ -39,6 +40,9 @@ export class CraftingService {
         if (missingItems.length < 100) {
           this._itemService.addItems(missingItems);
         }
+
+        this.dbService.addRecipes(SharedService.recipes);
+        localStorage['timestamp_recipes'] = new Date().toDateString();
       })
       .catch(e => {
         SharedService.downloading.recipes = false;

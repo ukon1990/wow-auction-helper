@@ -21,6 +21,7 @@ export class PetsService {
         });
 
         this.dbService.addPets(pets['pets']);
+        localStorage['timestamp_pets'] = new Date().toDateString();
       })
       .catch(e => {
         SharedService.downloading.pets = false;
