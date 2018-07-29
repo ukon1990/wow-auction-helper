@@ -31,6 +31,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() data: Array<any>;
   @Input() numOfRows: number;
   @Input() hideCraftingDetails: boolean;
+  @Input() useAuctionItemForName: boolean;
 
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
@@ -170,6 +171,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       return name;
     }
 
+    if (this.useAuctionItemForName && item.petSpeciesId) {
+      const petId = `${item.item}-${item.petSpeciesId}-${item.petLevel}-${item.petQualityId}`;
+      if (SharedService.auctionItemsMap[petId]) {
+        return SharedService.auctionItemsMap[petId].name;
+      }
+    }
+
     if (this.getItem(id)) {
       return this.getItem(item[this.id]).name;
     }
@@ -187,7 +195,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   /* istanbul ignore next */
   getItem(itemID: number): Item {
-    return SharedService.items[itemID] ? SharedService.items[itemID] : new Item();
+    return SharedService.items[itemID] ?
+    SharedService.items[itemID] : new Item();
   }
 
   getItemID(item: any): number {

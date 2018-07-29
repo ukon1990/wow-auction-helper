@@ -4,7 +4,7 @@
       {{ getUserAuctions().undercutAuctions | number }} of your auctions are undercut. <br>
       Your auctions are up for a total of {{ getUserAuctions().auctionWorth | gold }}
     </div>
-    <wah-data-table [id]="'item'" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns"></wah-data-table>
+    <wah-data-table [id]="'item'" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns" [useAuctionItemForName]="true"></wah-data-table>
   </mat-tab>
   <ng-container *ngFor="let c of getUserAuctionsCharacters()">
     <mat-tab *ngIf="c.auctions.length > 0" label="{{ c.name }} ({{ c.auctions.length | number }})">
