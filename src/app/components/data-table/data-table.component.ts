@@ -33,9 +33,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() hideCraftingDetails: boolean;
   @Input() useAuctionItemForName: boolean;
   @Input() linkType: string;
+  @Input() itemsPerPage = 10;
 
   pageRows: Array<number> = [10, 20, 40, 80, 100];
-  pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
+  pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
   sorter: Sorter;
   locale = localStorage['locale'].split('-')[0];
   previousLength = 0;
@@ -65,6 +66,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       }
       this.previousLength = change.data.currentValue.length;
       this.sorter.sort(this.data);
+    }
+
+    if (change && change.itemsPerPage && change.itemsPerPage.currentValue) {
+      this.pageEvent.pageSize = change.itemsPerPage.currentValue;
     }
   }
 
