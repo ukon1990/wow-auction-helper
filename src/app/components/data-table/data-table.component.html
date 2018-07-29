@@ -24,7 +24,7 @@
         <td [class]="c.cssClass" *ngIf="displayColumn(c)">
           <span [ngSwitch]="c.dataType">
             <span *ngSwitchCase="'name'" [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''">
-              <a rel="domain={{ locale }},{{
+              <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
                 getWHRelations(d)
                 }}" (click)="select(d)">
                 <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"

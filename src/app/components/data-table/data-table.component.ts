@@ -46,6 +46,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     'MEDIUM': '30m-2h',
     'SHORT': '<30m'
   };
+  getBonusList = Auction.getBonusList;
 
   constructor(private angulartics2: Angulartics2) {
     this.sorter = new Sorter();
