@@ -30,8 +30,8 @@
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="row col-md-12" *ngIf="getAuctionItem(); else inCaseNotFound">
-        <div class="col-md-4">
+      <div class="row col-md-12">
+        <div class="col-md-4" *ngIf="getAuctionItem()">
           <strong>Lowest buyout per item:</strong> {{ getAuctionItem().buyout | gold}}
           <span *ngIf="isUsingAPI() && !getAuctionItem().petSpeciesId">({{ getAuctionItem().buyout / getAuctionItem().mktPrice | percent }} MV)</span>
           <br>
@@ -58,13 +58,13 @@
           <wah-line-chart *ngIf="getAuctionItem() && !isMobile()" [data]="getAuctionItem().auctions">
           </wah-line-chart>
         </div>
-        <div class="col-md-8">
+        <div [ngClass]="{'col-md-8': getAuctionItem(), 'col-md-12': !getAuctionItem()}">
           <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event)" #tabs>
             <mat-tab *ngIf="getAuctionItem() && isMobile()" label="Auction price chart">
               <wah-line-chart [data]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
               </wah-line-chart>
             </mat-tab>
-            <mat-tab label="Seller overview" (click)="emitSelectedTab('Seller')">
+            <mat-tab *ngIf="getAuctionItem()" label="Seller overview" (click)="emitSelectedTab('Seller')">
               <wah-item-seller-chart [auctions]="getAuctionItem().auctions" *ngIf="tabs && tabs.selectedIndex === 0"></wah-item-seller-chart>
             </mat-tab>
             <mat-tab label="Auctions" *ngIf="getAuctionItem()">
