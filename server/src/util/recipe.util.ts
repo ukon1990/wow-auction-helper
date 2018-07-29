@@ -31,7 +31,7 @@ export class RecipeUtil {
         } else {
           request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
             const recipe = RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
-            //res.send(recipe);
+            // res.send(recipe);
             RecipeUtil.getProfession(recipe, function (r) {
               if (recipe.itemID > 0) {
                 const query = `INSERT INTO recipes VALUES(${
@@ -168,7 +168,7 @@ export class RecipeUtil {
                       console.error(e);
                       reject({});
                     });
-                })
+                });
               }));
           });
           await Promise.all(spellIDs)

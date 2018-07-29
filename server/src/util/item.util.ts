@@ -130,9 +130,13 @@ export class ItemUtil {
   }
 
   public static handleItem(item: Item): void {
-    item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
+    if (item.itemSource) {
+      item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
+    }
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
-    item.itemSpells = JSON.parse(item.itemSpells as any);
+    if (item.itemSpells) {
+      item.itemSpells = JSON.parse(item.itemSpells as any);
+    }
   }
 
   public static async downloadAllItemData(id: number): Promise<Item> {
