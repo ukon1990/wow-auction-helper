@@ -32,6 +32,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() numOfRows: number;
   @Input() hideCraftingDetails: boolean;
   @Input() useAuctionItemForName: boolean;
+  @Input() linkType: string;
 
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.pageRows[0], length: 0 };
@@ -249,5 +250,21 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   isMobile(): boolean {
     return window.matchMedia('(max-width: 767px)').matches;
+  }
+
+  /**
+   * Gets a string of the relevant relations for an item
+   *
+   * @param {*} item
+   * @returns {string}
+   * @memberof DataTableComponent
+   */
+  getWHRelations(item: any): string {
+    // {{linkType ? linkType : 'npc' }}
+    if (item.petSpeciesId) {
+      return 'npc=' + this.getPetId(item);
+    }
+    return (this.linkType ?
+      `${ this.linkType }=` : 'item=') + this.getItemID(item);
   }
 }

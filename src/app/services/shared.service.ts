@@ -18,6 +18,7 @@ import { ShoppingCart } from '../models/shopping-cart';
 import { Notification } from '../models/user/notification';
 import { CustomProc } from '../models/crafting/custom-proc';
 import { WoWUction } from '../models/auction/wowuction';
+import { Zone } from '../models/zone.model';
 
 @Injectable()
 export class SharedService {
@@ -71,6 +72,7 @@ export class SharedService {
   public static selectedItemId: number;
   public static selectedPetSpeciesId: AuctionPet;
   public static selectedSeller: Seller;
+  public static zoneMap: Map<number, Zone>;
 
 
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();

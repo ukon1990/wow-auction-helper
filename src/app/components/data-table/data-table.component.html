@@ -25,8 +25,7 @@
           <span [ngSwitch]="c.dataType">
             <span *ngSwitchCase="'name'" [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''">
               <a rel="domain={{ locale }},{{
-                  d.petSpeciesId ?
-                  ('npc=' + getPetId(d)) : ('item=' + getItemID(d))
+                getWHRelations(d)
                 }}" (click)="select(d)">
                 <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
                   [id]="d[id]"
@@ -63,14 +62,28 @@
             <span *ngSwitchCase="'gold-per-item'">
                 {{ d[c.key] / d.quantity | gold}}
             </span>
+            <span *ngSwitchCase="'vendor-currency'">
+              <span *ngIf="!d.currency; else itemCurrency">
+                {{ d.cost | gold }}
+              </span>
+              <ng-template #itemCurrency>
+                <a rel="domain={{ locale }},item={{ d.id }}">
+                  <div class="float-left">
+                    {{ d.cost | number }} x
+                  </div>
+                  <wah-icon *ngIf="id" class="float-left ml-1" [size]="22"
+                    [id]="d.currency"></wah-icon>
+                </a>
+              </ng-template>
+            </span>
             <span *ngSwitchCase="'wdb-link'">
-              <a href="https://www.wowdb.com/npcs/{{ d[c.key] }}" target="_blank">
+              <a href="https://www.wowdb.com/{{ linkType ? linkType + 's' : 'npcs' }}/{{ d[c.key] }}" target="_blank">
                 Open
                 <i class="fas fa-external-link-square-alt"></i>
               </a>
             </span>
             <span *ngSwitchCase="'whead-link'">
-              <a href="http://www.wowhead.com/npc={{ d[c.key] }}" target="_blank">
+              <a href="http://www.wowhead.com/{{linkType ? linkType : 'npc' }}={{ d[c.key] }}" target="_blank">
                 Open
                 <i class="fas fa-external-link-square-alt"></i>
               </a>
@@ -80,6 +93,16 @@
             </span>
             <span *ngSwitchCase="'number'">
               {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
+            </span>
+            <span *ngSwitchCase="'zone'">
+              <a
+                *ngFor="let zone of d[c.key] | slice:0:1"
+                data-wh-rename-link="true"
+                href="http://www.wowhead.com/zone={{ d[c.key] }}"
+                target="_blank">
+                {{ zone }}
+                <i class="fas fa-external-link-square-alt"></i>
+              </a>
             </span>
             <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
             <span *ngSwitchCase="'input-number'">

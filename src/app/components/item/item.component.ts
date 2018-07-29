@@ -58,6 +58,14 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   droppedByColumns: Array<ColumnDescription> = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
+    {key: 'location', title: 'Zone', dataType: 'zone'},
+    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
+    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
+  ];
+
+  containedInColumns: Array<ColumnDescription> = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
     {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
@@ -65,7 +73,8 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   soldByColumns: Array<ColumnDescription> = [
     {key: 'name', title: 'Name', dataType: ''},
     {key: 'tag', title: 'Tag', dataType: ''},
-    {key: 'cost', title: 'Price', dataType: 'gold'},
+    {key: 'location', title: 'Zone', dataType: 'zone'},
+    {key: 'cost', title: 'Price', dataType: 'vendor-currency'},
     {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
