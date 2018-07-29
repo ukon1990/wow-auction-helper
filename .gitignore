@@ -2,7 +2,7 @@
 
 # compiled output
 /server/dist
-/server-ts/dist
+/server/src/public
 /tmp
 /public
 
