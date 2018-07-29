@@ -83,7 +83,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   isUsersAuction(auction: any): boolean {
     if (this.showOwner) {
-      const a = SharedService.auctionItemsMap[auction.item ? auction.item : auction.itemID];
+      const a = SharedService.auctionItemsMap[auction.item ? Auction.getAuctionItemId(auction) : auction.itemID];
       return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
         SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? true : false;
     }

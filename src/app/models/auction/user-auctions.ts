@@ -24,7 +24,7 @@ export class UserAuctions {
     let tmpAuctionItem: AuctionItem;
     this.characters.forEach(c => {
       c.auctions.forEach(a => {
-        tmpAuctionItem = auctionItemsMap[a.item];
+        tmpAuctionItem = auctionItemsMap[Auction.getAuctionItemId(a)];
         // Checking if the character is undercutted
         if (tmpAuctionItem.owner !== c.name &&
             a.buyout / a.quantity > tmpAuctionItem.buyout) {

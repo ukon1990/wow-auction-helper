@@ -80,7 +80,7 @@ export class AuctionHandler {
       SharedService.user.shoppingCart.calculateCartCost();
 
       SharedService.userAuctions.auctions.forEach(auc => {
-        auc.undercutByAmount = auc.buyout / auc.quantity - SharedService.auctionItemsMap[auc.item].buyout;
+        auc.undercutByAmount = auc.buyout / auc.quantity - SharedService.auctionItemsMap[Auction.getAuctionItemId(auc)].buyout;
       });
       console.log(SharedService.userAuctions.auctions);
     }, 100);

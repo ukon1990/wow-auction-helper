@@ -21,7 +21,7 @@ export class MyAuctionsComponent implements OnInit {
   }
 
   public static getUndercutAmount(a: Auction): number {
-    return (a.buyout / a.quantity) - SharedService.auctionItemsMap[a.item].buyout;
+    return (a.buyout / a.quantity) - SharedService.auctionItemsMap[Auction.getAuctionItemId(a)].buyout;
   }
 
   ngOnInit() {

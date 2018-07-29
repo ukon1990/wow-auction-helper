@@ -57,6 +57,13 @@ export class Auction {
     this.owner = owner;
     this.ownerRealm = ownerRealm;
   }
+
+  public static getAuctionItemId(auction: Auction): any {
+    if (auction.petSpeciesId) {
+      return `${auction.item}-${auction.petSpeciesId}-${auction.petLevel}-${auction.petQualityId}`;
+    }
+    return auction.item;
+  }
 }
 
 class Bonus {
