@@ -4,6 +4,7 @@
 /server/dist
 /server-ts/dist
 /tmp
+/public
 
 # dependencies
 node_modules
