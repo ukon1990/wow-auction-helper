@@ -21,7 +21,7 @@
             Auctions
           </a>
         </li>
-        <li class="nav-item" *ngIf="isRegisteredUser()">
+        <li class="nav-item" *ngIf="isRegisteredUser()" matTooltip="The percentage, represents the percent of undercut auctions.">
           <a class="nav-link" routerLink="my-auctions" routerLinkActive="active">
             My auctions 
             <span *ngIf="getUserAuctions().auctions.length > 0">
