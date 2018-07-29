@@ -178,7 +178,7 @@ export class DownloadComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  async download(type: string) {
+  async download(type: string, forceUpdate?: boolean) {
     this.angulartics2.eventTrack.next({
       action: type,
       properties: { category: 'Manual download' },
@@ -199,14 +199,23 @@ export class DownloadComponent implements OnInit {
         await this._auctionsService.getLastModifiedTime(true);
         break;
       case 'items':
+        if (forceUpdate) {
+          delete localStorage['timestamp_items'];
+        }
         this.downloadProgress = 'Downloading items';
         await this._itemService.getItems();
         break;
       case 'pets':
+        if (forceUpdate) {
+          delete localStorage['timestamp_pets'];
+        }
         this.downloadProgress = 'Downloading pets';
         await this._petService.getPets();
         break;
       case 'recipes':
+        if (forceUpdate) {
+          delete localStorage['timestamp_recipes'];
+        }
         this.downloadProgress = 'Downloading recipes';
         await this._craftingService.getRecipes();
         break;

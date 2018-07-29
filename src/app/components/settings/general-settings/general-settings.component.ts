@@ -65,8 +65,11 @@ export class GeneralSettingsComponent implements OnInit {
   async saveRealmAndRegion() {
     if (this.changedLocales) {
       localStorage['locale'] = this._characterForm.value.locale;
+      delete localStorage['timestamp_items'];
       await this.itemService.getItems();
+      delete localStorage['timestamp_pets'];
       await this.petsService.getPets();
+      delete localStorage['timestamp_recipes'];
       await this.craftingService.getRecipes();
 
       // Updating the watchlist names

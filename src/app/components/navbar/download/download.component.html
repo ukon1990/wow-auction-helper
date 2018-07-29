@@ -41,7 +41,7 @@
             <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().items" -->
-              <button mat-icon-button (click)="download('items')"
+              <button mat-icon-button (click)="download('items', true)"
                 matTooltip="Re-download item data">
                 <i class="fas fa-download"></i>
               </button>
@@ -55,7 +55,7 @@
             <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().recipes" -->
-              <button mat-icon-button (click)="download('recipes')"
+              <button mat-icon-button (click)="download('recipes', true)"
                 matTooltip="Re-download recipe data">
                 <i class="fas fa-download"></i>
               </button>
@@ -69,7 +69,7 @@
             <td>{{ timestamps.pets | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().pets" -->
-              <button mat-icon-button (click)="download('pets')"
+              <button mat-icon-button (click)="download('pets', true)"
                 matTooltip="Re-download pet data">
                 <i class="fas fa-download"></i>
               </button>

@@ -9,8 +9,8 @@ export class Item {
     itemClass: number;
     itemSubClass: number;
     quality: number;
-    itemSource?: number[];
-    itemSpells: ItemSpells[];
+    itemSource?: WoWHead;
+    itemSpells: any[];
     buyPrice: number;
     sellPrice: number;
     itemBind: number;
@@ -18,5 +18,4 @@ export class Item {
     minReputation: number;
     isDropped: boolean;
     expansionId: number;
-    wowHeadExtras: WoWHead;
 }

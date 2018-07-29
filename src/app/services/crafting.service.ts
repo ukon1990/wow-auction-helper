@@ -35,7 +35,7 @@ export class CraftingService {
       .then(recipes => {
         const missingItems = [];
         SharedService.downloading.recipes = false;
-        SharedService.recipes = recipes['recipes'];
+        SharedService.recipes = SharedService.recipes.concat(recipes['recipes']);
         console.log('Recipe download is completed');
 
         // Adding items if there are any missing

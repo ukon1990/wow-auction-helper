@@ -64,7 +64,6 @@ export class RecipeUtil {
   ): void {
 
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
-    console.log('req', req.query);
     // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
     db.query(`
       SELECT l.id, json, ${ getLocale(req)} as name from  recipes as r

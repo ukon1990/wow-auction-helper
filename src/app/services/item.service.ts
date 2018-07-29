@@ -35,9 +35,10 @@ export class ItemService {
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()})
       .toPromise()
       .then(items => {
+        const missingItems: number[] = [];
         SharedService.downloading.items = false;
-        SharedService.itemsUnmapped = items['items'];
-        items['items'].forEach((i: Item) => {
+        SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items['items']);
+        SharedService.itemsUnmapped.forEach((i: Item) => {
           // Making sure that the tradevendor item names are updated in case of locale change
           if (SharedService.tradeVendorMap[i.id]) {
             SharedService.tradeVendorMap[i.id].name = i.name;
@@ -50,6 +51,26 @@ export class ItemService {
           SharedService.items[i.id] = i;
         });
 
+        // "translating" item names
+        SharedService.itemsUnmapped.forEach((item: Item) => {
+          if (item.itemSource.containedInItem) {
+            item.itemSource.containedInItem.forEach(i =>
+              this.setLocaleForSourceItems(i, missingItems));
+          }
+          if (item.itemSource.milledFrom) {
+            item.itemSource.milledFrom.forEach(i =>
+              this.setLocaleForSourceItems(i, missingItems));
+          }
+          if (item.itemSource.prospectedFrom) {
+            item.itemSource.prospectedFrom.forEach(i =>
+              this.setLocaleForSourceItems(i, missingItems));
+          }
+        });
+
+        if (missingItems.length > 0) {
+          // TODO: when I have time -> this.addItems(missingItems);
+        }
+
         this.dbService.addItems(items['items']);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
         console.log('Items download is completed');
@@ -58,6 +79,14 @@ export class ItemService {
         SharedService.downloading.items = false;
         console.error('Items download failed', e);
       });
+  }
+
+  setLocaleForSourceItems(item: any, missingItems: number[]): void {
+    if (SharedService.items[item.id]) {
+      item.name = SharedService.items[item.id].name;
+    } else {
+      missingItems.push(item.id);
+    }
   }
 
   updateItem(itemID: number): Promise<any> {
