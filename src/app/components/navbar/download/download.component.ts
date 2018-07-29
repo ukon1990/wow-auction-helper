@@ -97,7 +97,7 @@ export class DownloadComponent implements OnInit {
         .catch(async (error) => {
         });
         await this.download('recipes');
-      Crafting.checkForMissingRecipes(this._craftingService);
+      await Crafting.checkForMissingRecipes(this._craftingService);
 
       if (SharedService.user.apiToUse === 'tsm') {
         if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
@@ -106,15 +106,15 @@ export class DownloadComponent implements OnInit {
         } else {
           this.downloadProgress = 'Loading TSM from disk';
           await this._dbService.getTSMItems()
-            .then(r => {
+            .then(async r => {
               if (Object.keys(SharedService.tsm).length === 0) {
                 this.downloadProgress = 'Downloading TSM data';
-                this._auctionsService.getTsmAuctions();
+                await this._auctionsService.getTsmAuctions();
               }
             })
-            .catch(e => {
+            .catch(async e => {
               console.error('Could not restore TSM data', e);
-              this._auctionsService.getTsmAuctions();
+              await this._auctionsService.getTsmAuctions();
             });
         }
       } else if (SharedService.user.apiToUse === 'wowuction') {
@@ -124,15 +124,15 @@ export class DownloadComponent implements OnInit {
         } else {
           this.downloadProgress = 'Loading wowuction from disk';
           await this._dbService.getWoWUctionItems()
-            .then(r => {
+            .then(async r => {
               if (Object.keys(SharedService.wowUction).length === 0) {
                 this.downloadProgress = 'Downloading wowuction data';
-                this._auctionsService.getWoWUctionAuctions();
+                await this._auctionsService.getWoWUctionAuctions();
               }
             })
-            .catch(e => {
+            .catch(async e => {
               console.error('Could not restore WoWUction data', e);
-              this._auctionsService.getWoWUctionAuctions();
+              await this._auctionsService.getWoWUctionAuctions();
             });
         }
       }
