@@ -22,6 +22,7 @@ export class GithubService {
   }
 
   getLatestCommits(): Promise<Array<GithubCommit>> {
+    // Map together with commits on sha https://api.github.com/repos/ukon1990/wow-auction-helper/tags
     return this.http.get('https://api.github.com/repos/ukon1990/wow-auction-helper/commits')
       .toPromise() as Promise<Array<GithubCommit>>;
   }

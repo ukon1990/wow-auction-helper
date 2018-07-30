@@ -1,3 +1,7 @@
+/**
+ * TODO: Base this off item quality and expansions if above wow classic
+ */
+
 export const itemQuality = {
     1: 'Gray',
     2: 'Green',
