@@ -63,6 +63,10 @@ export class Crafting {
           recipe.cost += this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
         }
       });
+
+      // Adding AH cut
+      recipe.cost = recipe.cost * 1.05;
+      // Doing the cost math
       recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);
     } catch (e) {
       console.error('Calc issue with recipe', e, recipe);

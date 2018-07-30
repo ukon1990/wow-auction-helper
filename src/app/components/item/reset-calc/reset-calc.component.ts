@@ -65,6 +65,9 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Adding AH cut to the cost value
+    this.resetPrice.cost = this.resetPrice.cost * 1.05;
+
     this.resetPrice.roi = (this.form.value * 10000) * this.resetPrice.numOfItems - this.resetPrice.cost;
   }
 

@@ -82,7 +82,6 @@ export class AuctionHandler {
       SharedService.userAuctions.auctions.forEach(auc => {
         auc.undercutByAmount = auc.buyout / auc.quantity - SharedService.auctionItemsMap[Auction.getAuctionItemId(auc)].buyout;
       });
-      console.log(SharedService.userAuctions.auctions);
     }, 100);
   }
 
