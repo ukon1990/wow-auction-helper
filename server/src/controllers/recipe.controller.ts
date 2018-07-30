@@ -14,5 +14,5 @@ export let postRecipes = (req: Request, res: Response) => {
  * List of API examples.
  */
 export let getRecipe = (req: Request, res: Response) => {
-  RecipeUtil.getRecipe(req.query.id, res, req);
+  RecipeUtil.getRecipe(req.params.id, res, req);
 };

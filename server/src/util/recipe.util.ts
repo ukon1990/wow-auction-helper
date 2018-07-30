@@ -12,7 +12,7 @@ const PromiseThrottle: any = require('promise-throttle');
 export class RecipeUtil {
   public static getRecipe(id: number, res: Response, req: any) {
     const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-    connection.query(`SELECT json from recipes WHERE id = ${req.params.spellID}`, (err, rows, fields) => {
+    connection.query(`SELECT json from recipes WHERE id = ${id}`, (err, rows, fields) => {
       try {
         if (!err && rows.length > 0) {
           try {
@@ -29,27 +29,32 @@ export class RecipeUtil {
             }
           });
         } else {
-          request.get(`http://wowdb.com/api/spell/${req.params.spellID}`, (err, r, body) => {
-            const recipe = RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
-            // res.send(recipe);
-            RecipeUtil.getProfession(recipe, function (r) {
-              if (recipe.itemID > 0) {
-                const query = `INSERT INTO recipes VALUES(${
-                  req.params.spellID
-                  }, "${
-                  safeifyString(JSON.stringify(recipe))
-                  }", CURRENT_TIMESTAMP);`;
-                console.log(`${new Date().toString()} - Adding new recipe (${r.name}) - SQL: ${query}`);
-                connection.query(query, (err, r, body) => {
-                  if (!err) {
-                    connection.end();
-                  } else {
-                    throw err;
-                  }
-                });
-              }
-              res.send(r);
-            });
+          request.get(`http://wowdb.com/api/spell/${id}`, (err, r, body) => {
+            try {
+              const recipe = RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
+              // res.send(recipe);
+              RecipeUtil.getProfession(recipe, function (r) {
+                if (recipe.itemID > 0) {
+                  const query = `INSERT INTO recipes VALUES(${
+                    req.params.spellID
+                    }, "${
+                    safeifyString(JSON.stringify(recipe))
+                    }", CURRENT_TIMESTAMP);`;
+                  console.log(`${new Date().toString()} - Adding new recipe (${r.name}) - SQL: ${query}`);
+                  connection.query(query, (err, r, body) => {
+                    if (!err) {
+                      connection.end();
+                    } else {
+                      throw err;
+                    }
+                  });
+                }
+                res.send(r);
+              });
+            } catch (error) {
+              console.error(`Could not get recipe with id ${id}`, error);
+              res.status(404).send(new Recipe());
+            }
           });
         }
       } catch (e) {
