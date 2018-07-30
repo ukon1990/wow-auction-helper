@@ -36,7 +36,7 @@ export class RecipeUtil {
               RecipeUtil.getProfession(recipe, function (r) {
                 if (recipe.itemID > 0) {
                   const query = `INSERT INTO recipes VALUES(${
-                    req.params.spellID
+                    id
                     }, "${
                     safeifyString(JSON.stringify(recipe))
                     }", CURRENT_TIMESTAMP);`;
