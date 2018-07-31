@@ -148,30 +148,39 @@ export class Watchlist {
       return;
     }
     this.groupsMap[name] = new WatchlistGroup(name);
-    this.groups.push(this.groupsMap[name]);
+    this.groups.unshift(this.groupsMap[name]);
   }
 
-  moveGroup(array: any[], from: number, to: number) {
+  /**
+   * Moving objects around in array
+   * 
+   * @param {number} from index
+   * @param {number} to index
+   * @memberof Watchlist
+   */
+  moveGroup(from: number, to: number): void {
     if (from !== to) {
       const newList = [];
-      let original;
 
       try {
-        array.forEach((obj, index) => {
-          original = array[from];
-          if (index !== from && index === to) {
-            newList.push(obj);
-            newList.push(original);
-          } else if (index !== from) {
-            if (to < 0 && index === 0) {
-              newList.push(original);
-            }
-            newList.push(obj);
+        const groups = SharedService.user.watchlist.groups,
+          fromGroup = groups[from],
+          toGroup = groups[to];
+        if (!fromGroup || !toGroup) {
+          return;
+        }
+        for (let i = 0; i < groups.length; i++) {
+          if (i === from) {
+            newList[from] = toGroup;
+          } else if (i === to) {
+            newList[to] = fromGroup;
+          } else {
+            newList[i] = groups[i];
           }
-        });
+        }
 
-        array.forEach((obj, index) => {
-          array[index] = newList[index];
+        groups.forEach((obj, index) => {
+          groups[index] = newList[index];
         });
       } catch (error) {
         console.error('Could not regroup the array', error);
@@ -180,6 +189,7 @@ export class Watchlist {
   }
 
   removeGroup(index: number): void {
+    delete this.groupsMap[this.groups[index].name];
     this.groups.splice(index, 1);
     this.save();
   }

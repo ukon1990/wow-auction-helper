@@ -216,6 +216,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
   }
 
+  moveGroup(from: number, to: number): void {
+    SharedService.user.watchlist.moveGroup(from, to);
+  }
+
   removeGroup(index: number): void {
     SharedService.user.watchlist.removeGroup(index);
 
@@ -223,6 +227,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       action: 'Removed group',
       properties: { category: 'Watchlist' },
     });
+    this.pageEvent.pageIndex = 0;
   }
 
   removeRecipe(recipe: ShoppingCartRecipe, index: number): void {

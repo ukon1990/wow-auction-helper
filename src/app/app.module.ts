@@ -72,6 +72,7 @@ import { ContributorsComponent } from './components/about/contributors/contribut
 import { GithubService } from './services/github.service';
 import { IssuesComponent } from './components/about/issues/issues.component';
 import { ItemSellerChartComponent } from './components/item/item-seller-chart/item-seller-chart.component';
+import { WatchlistItemBatchComponent } from './components/watchlist/watchlist-item-batch/watchlist-item-batch.component';
 
 
 @NgModule({
@@ -125,7 +126,8 @@ import { ItemSellerChartComponent } from './components/item/item-seller-chart/it
     MarketResetComponent,
     ContributorsComponent,
     IssuesComponent,
-    ItemSellerChartComponent
+    ItemSellerChartComponent,
+    WatchlistItemBatchComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,5 @@
-<mat-paginator *ngIf="data.length > pageRows[0]"
-  [length]="data.length"
-  [pageSize]="pageEvent.pageSize"
-  [pageSizeOptions]="pageRows"
-  [pageIndex]="pageEvent.pageIndex"
-  [showFirstLastButtons]="true"
-  (page)="pageChange($event)">
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+  [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
   <thead>
@@ -18,8 +13,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index"
-      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
+    <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index" [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
       <ng-container *ngFor="let c of columns;">
         <td [class]="c.cssClass" *ngIf="displayColumn(c)">
           <span [ngSwitch]="c.dataType">
@@ -27,18 +21,19 @@
               <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
                 getWHRelations(d)
                 }}" (click)="select(d)">
-                <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36"
-                  [id]="d[id]"
-                  [petSpeciesId]="d?.petSpeciesId"></wah-icon>
+                <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36" [id]="d[id]" [petSpeciesId]="d?.petSpeciesId"></wah-icon>
                 {{ getItemName(d[c.key], d) }}
               </a>
               <span *ngIf="isCrafting">
                 <br>
                 <span *ngIf="getItem(d.itemID).name !== d.name && !hideCraftingDetails">
-                  {{ getItem(d.itemID).name }} <br>
+                  {{ getItem(d.itemID).name }}
+                  <br>
                 </span>
                 <span *ngIf="!hideCraftingDetails">
-                  {{ d.profession }} <span *ngIf="d.rank"> - {{ d.rank }}</span> <br>
+                  {{ d.profession }}
+                  <span *ngIf="d.rank"> - {{ d.rank }}</span>
+                  <br>
                   <span *ngIf="getCraftersForRecipe(d)">
                     Known by: {{ getCraftersForRecipe(d) }}
                   </span>
@@ -56,11 +51,11 @@
               </span>
 
               <span *ngIf="c.key === 'roi' && d.cost">
-                  ({{ d.roi / d.cost | percent }})
-                </span>
+                ({{ d.roi / d.cost | percent }})
+              </span>
             </span>
             <span *ngSwitchCase="'gold-per-item'">
-                {{ d[c.key] / d.quantity | gold}}
+              {{ d[c.key] / d.quantity | gold}}
             </span>
             <span *ngSwitchCase="'vendor-currency'">
               <span *ngIf="!d.currency; else itemCurrency">
@@ -71,8 +66,7 @@
                   <div class="float-left">
                     {{ d.cost | number }} x
                   </div>
-                  <wah-icon *ngIf="id" class="float-left ml-1" [size]="22"
-                    [id]="d.currency"></wah-icon>
+                  <wah-icon *ngIf="id" class="float-left ml-1" [size]="22" [id]="d.currency"></wah-icon>
                 </a>
               </ng-template>
             </span>
@@ -95,10 +89,7 @@
               {{( d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
             </span>
             <span *ngSwitchCase="'zone'">
-              <a
-                *ngFor="let zone of d[c.key] | slice:0:1"
-                data-wh-rename-link="true"
-                href="http://www.wowhead.com/zone={{ d[c.key] }}"
+              <a *ngFor="let zone of d[c.key] | slice:0:1" data-wh-rename-link="true" href="http://www.wowhead.com/zone={{ d[c.key] }}"
                 target="_blank">
                 {{ zone }}
                 <i class="fas fa-external-link-square-alt"></i>
@@ -119,27 +110,36 @@
               <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
                 <i class="fas fa-eye"></i>
               </button>
-              <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart"
-                *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
+
+              <ng-container *ngFor="let action of c.actions">
+                <span [ngSwitch]="action">
+                  <button *ngSwitchCase="'watchlist-group-delete'" mat-icon-button matTooltip="Removes the watchlistgroup and it's items" (click)="removeGroup(i)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                  <button *ngSwitchCase="'custom-price-delete'" mat-icon-button (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                  <button *ngSwitchCase="'custom-procs-delete'" mat-icon-button (click)="customProcs().remove(d, i)" matTooltip="Remove from custom procs list">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                  <button *ngSwitchCase="'watchlist-group-move-up'" mat-icon-button (click)="moveGroup(i, i - 1)" matTooltip="Move the group up. This will also change it's order in the dashboard.">
+                    <i class="fas fa-chevron-up"></i>
+                  </button>
+
+                  <button *ngSwitchCase="'watchlist-group-move-down'" mat-icon-button (click)="moveGroup(i, i + 1)" matTooltip="Move the group down. This will also change it's order in the dashboard.">
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+                </span>
+              </ng-container>
+              <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart" *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
                 <i class="fas fa-cart-plus"></i>
               </button>
-              <button *ngIf="c.actions[0] === 'watchlist-group-delete'" mat-icon-button
-                matTooltip="Removes the watchlistgroup and it's items"
-                (click)="removeGroup(i)">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              <button *ngIf="c.actions[0] === 'custom-price-delete'" mat-icon-button
-                (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-              <button *ngIf="c.actions[0] === 'custom-procs-delete'" mat-icon-button
-              (click)="customProcs().remove(d, i)" matTooltip="Remove from custom procs list">
-              <i class="fas fa-trash-alt"></i>
-            </button>
             </span>
             <span *ngSwitchCase="'cart-delete'">
-              <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)"
-                matTooltip="Remove item from the shopping cart">
+              <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)" matTooltip="Remove item from the shopping cart">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </span>
@@ -151,11 +151,6 @@
   </tbody>
 </table>
 
-<mat-paginator *ngIf="data.length > pageRows[0]"
-  [length]="data.length"
-  [pageSize]="pageEvent.pageSize"
-  [pageSizeOptions]="pageRows"
-  [pageIndex]="pageEvent.pageIndex"
-  [showFirstLastButtons]="true"
-  (page)="pageChange($event)">
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+  [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>

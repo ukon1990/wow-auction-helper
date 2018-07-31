@@ -12,17 +12,43 @@ import { Angulartics2 } from 'angulartics2';
   styleUrls: ['./watchlist-manager.component.scss']
 })
 export class WatchlistManagerComponent implements OnInit, OnDestroy {
-
+  locale = localStorage['locale'].split('-')[0];
   groupNameForm: FormControl = new FormControl();
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   saveInterval: any;
   importString: FormControl = new FormControl();
   exportString: FormControl = new FormControl();
+  importList = [];
 
   constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'input-text' });
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['watchlist-group-delete'] });
+    this.columns.push({
+      key: '',
+      title: 'Actions',
+      dataType: 'action',
+      actions: [
+        'watchlist-group-delete',
+        'watchlist-group-move-up',
+        'watchlist-group-move-down']
+      });
 
+    this.importString.valueChanges.subscribe(change => {
+      try {
+        this.importList.length = 0;
+        const watchlist = JSON.parse(change) as Watchlist,
+          newList = [],
+          conflicts = [];
+
+        watchlist.groups.forEach(group => {
+          this.importList.push({
+            import: SharedService.user.watchlist.groupsMap[group.name] ? false : true,
+            group: group
+          });
+        });
+      } catch (error) {
+        console.error('Invalid import string');
+      }
+    });
     this.importString.setValue('');
   }
 
@@ -58,8 +84,20 @@ export class WatchlistManagerComponent implements OnInit, OnDestroy {
 
   import(): void {
     try {
-      SharedService.user.watchlist.restoreFrom(JSON.parse(this.importString.value));
+      const watchlistGroups = [];
+      this.importList.forEach(i => {
+        if (i.import) {
+          watchlistGroups.push(i.group);
+        }
+      });
+      const newGroupList = SharedService.user.watchlist.groups.concat(watchlistGroups);
+      SharedService.user.watchlist.groups.length = 0;
+      newGroupList.forEach(group => {
+        SharedService.user.watchlist.groupsMap[group.name] = group;
+        SharedService.user.watchlist.groups.push(group);
+      });
       this.importString.setValue('');
+      this.importList.length = 0;
     } catch (e) {
       console.error('Could not import', e);
     }
