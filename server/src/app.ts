@@ -51,9 +51,11 @@ app.use(
  */
 app.get('/api', apiController.getApi);
 
-// For import
-app.get('/api/item/from-list', itemController.getItemsFromList);
-app.get('/api/recipe/from-list', recipeController.getItemsToAdd);
+if (process.env.NODE_ENV !== 'production') {
+  // For import
+  app.get('/api/item/from-list', itemController.getItemsFromList);
+  app.get('/api/recipe/from-list', recipeController.getItemsToAdd);
+}
 
 
 // Item
