@@ -279,9 +279,10 @@ export class ItemUtil {
     // Limit to 9 per second
     return new Promise((resolve, reject) => {
       const db = mysql.createConnection(DATABASE_CREDENTIALS);
+      // select * from item_name_locale where en_GB = 'undefined';
+      // select id from items where id not in (select id from item_name_locale);
       db.query(`
-        select id from items
-        where id not in (select id from item_name_locale);`,
+        select id from items where id not in (select id from item_name_locale);`,
         async (err, rows, fields) => {
           if (!err) {
             const promiseThrottle = new PromiseThrottle({
@@ -340,16 +341,60 @@ export class ItemUtil {
       });
 
       await ItemUtil.doLocaleInsertQuery(item);
+      // await ItemUtil.doLocaleUpdateQuery(item);
       return item;
     });
   }
 
   public static resolveLocaleResponse(item: ItemLocale, locale: string, b): void {
     try {
+      console.log('undefined', JSON.parse(b).name);
       item[locale] = JSON.parse(b).name;
     } catch (e) {
       item[locale] = '404';
     }
+  }
+
+  public static doLocaleUpdateQuery(item: ItemLocale): Promise<ItemLocale> {
+    return new Promise<ItemLocale>((resolve, reject) => {
+      try {
+        const db = mysql.createConnection(DATABASE_CREDENTIALS),
+          sql = `
+          UPDATE \`100680-wah\`.\`item_name_locale\`
+            SET
+            \`en_GB\` = "${safeifyString(item.en_GB)}",
+            \`en_US\` = "${safeifyString(item.en_US)}",
+            \`de_DE\` = "${safeifyString(item.de_DE)}",
+            \`es_ES\` = "${safeifyString(item.es_ES)}",
+            \`es_MX\` = "${safeifyString(item.es_MX)}",
+            \`fr_FR\` = "${safeifyString(item.fr_FR)}",
+            \`it_IT\` = "${safeifyString(item.it_IT)}",
+            \`pl_PL\` = "${safeifyString(item.pl_PL)}",
+            \`pt_PT\` = "${safeifyString(item.pt_PT)}",
+            \`pt_BR\` = "${safeifyString(item.pt_BR)}",
+            \`ru_RU\` = "${safeifyString(item.ru_RU)}"
+            WHERE \`id\` = ${item.id};`;
+
+        db.query(sql, (err, rows, fields) => {
+          db.query(`UPDATE \`100680-wah\`.\`items\` SET \`timestamp\` = CURRENT_TIMESTAMP WHERE \`id\` = ${ item.id };`, (err) => {
+            db.end();
+            if (err) {
+              console.error(`Locale not added to db for ${item.id}`, err);
+            }
+          });
+          if (!err) {
+            console.log(`Locale added to db for ${item.en_GB}`);
+            reject();
+          } else {
+            console.error(`Locale not added to db for ${item.id}`, err);
+            resolve(item);
+          }
+        });
+        //
+      } catch (e) {
+        reject();
+      }
+    });
   }
 
   public static async doLocaleInsertQuery(item: ItemLocale): Promise<ItemLocale> {

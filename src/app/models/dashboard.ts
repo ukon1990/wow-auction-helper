@@ -146,7 +146,7 @@ export class Dashboard {
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
         this.addAPIColumnsAtPosition(3);
-        this.setWatchListAlerts();
+        this.setWatchListAlerts(array);
         break;
 
         case Dashboard.TYPES.WATCH_LIST_CRAFTS:
@@ -190,9 +190,13 @@ export class Dashboard {
     SharedService.itemDashboards.push(
       new Dashboard('Profitable known crafts', Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS));
     SharedService.itemDashboards.push(
-      new Dashboard('Watchlist alerts', Dashboard.TYPES.WATCH_LIST));
-    SharedService.itemDashboards.push(
       new Dashboard('Watchlist craft alerts', Dashboard.TYPES.WATCH_LIST_CRAFTS));
+
+    // The users watchlists
+    SharedService.user.watchlist.groups.forEach(group => {
+      SharedService.itemDashboards.push(
+        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, group.items));
+    });
     SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
     if (SharedService.user.apiToUse !== 'none') {
@@ -241,32 +245,31 @@ export class Dashboard {
     this.data.sort((a, b) => b.value - a.value);
   }
 
-  private setWatchListAlerts(): void {
+  private setWatchListAlerts(items: any[]): void {
     this.data.length = 0;
     this.tsmShoppingString = '';
+    this.message = `You can edit this dashboard item, over in the watchlist section (tools/watchlist)`;
     const pipe = new GoldPipe();
 
-    SharedService.user.watchlist.groups.forEach(group => {
-      group.items.forEach(item => {
-        if (SharedService.user.watchlist.isTargetMatch(item)) {
-          const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
-            obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal) };
-          this.data.push(obj);
-          if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
-            this.tsmShoppingString += `${
-              item.name
-            }/exact`;
-            if (item.targetType !== 'quantity') {
-              this.tsmShoppingString += `/${
-                pipe.transform(wlVal.left).replace(',', '')
-              }/${
-                pipe.transform(wlVal.right).replace(',', '')
-              }`;
-            }
-            this.tsmShoppingString += ';';
+    items.forEach(item => {
+      if (SharedService.user.watchlist.isTargetMatch(item)) {
+        const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
+          obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal) };
+        this.data.push(obj);
+        if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
+          this.tsmShoppingString += `${
+            item.name
+          }/exact`;
+          if (item.targetType !== 'quantity') {
+            this.tsmShoppingString += `/${
+              pipe.transform(wlVal.left).replace(',', '')
+            }/${
+              pipe.transform(wlVal.right).replace(',', '')
+            }`;
           }
+          this.tsmShoppingString += ';';
         }
-      });
+      }
     });
     if (this.data.length > 0) {
       if (this.tsmShoppingString.endsWith(';')) {

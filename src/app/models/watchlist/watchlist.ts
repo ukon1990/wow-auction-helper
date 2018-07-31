@@ -128,14 +128,6 @@ export class Watchlist {
     return {left: 0, right: 0};
   }
 
-  addGroup(name: string): void {
-    if (this.groupsMap[name]) {
-      return;
-    }
-    this.groupsMap[name] = new WatchlistGroup(name);
-    this.groups.push(this.groupsMap[name]);
-  }
-
   moveItem(fromGroup: WatchlistGroup, toGroup: WatchlistGroup, index: number): void {
     toGroup.items.push(fromGroup.items[index]);
     this.removeItem(fromGroup, index);
@@ -149,6 +141,42 @@ export class Watchlist {
   removeItem(group: WatchlistGroup, index: number): void {
     group.items.splice(index, 1);
     this.save();
+  }
+
+  addGroup(name: string): void {
+    if (this.groupsMap[name]) {
+      return;
+    }
+    this.groupsMap[name] = new WatchlistGroup(name);
+    this.groups.push(this.groupsMap[name]);
+  }
+
+  moveGroup(array: any[], from: number, to: number) {
+    if (from !== to) {
+      const newList = [];
+      let original;
+
+      try {
+        array.forEach((obj, index) => {
+          original = array[from];
+          if (index !== from && index === to) {
+            newList.push(obj);
+            newList.push(original);
+          } else if (index !== from) {
+            if (to < 0 && index === 0) {
+              newList.push(original);
+            }
+            newList.push(obj);
+          }
+        });
+
+        array.forEach((obj, index) => {
+          array[index] = newList[index];
+        });
+      } catch (error) {
+        console.error('Could not regroup the array', error);
+      }
+    }
   }
 
   removeGroup(index: number): void {

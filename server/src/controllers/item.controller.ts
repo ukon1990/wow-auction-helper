@@ -82,6 +82,7 @@ export const updateItems = async (req: Request, res: Response) => {
 
 export const getItemsFromList = async (req: Request, res: Response) => {
   console.log('Yo');
+  // ItemUtil.setMissingLocales(req, res);
   ItemUtil.getItemsToAdd(BFALists.itemIds, res, req);
 };
 
