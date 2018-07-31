@@ -25,6 +25,9 @@ export class DownloadComponent implements OnInit {
   realmControl: FormControl = new FormControl();
   downloadProgress = '';
 
+  // TODO: While navigator.onLine === false for downloads
+  offlineInterval;
+
   timestamps = {
     items: localStorage['timestamp_items'],
     pets: localStorage['timestamp_pets'],
