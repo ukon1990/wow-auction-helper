@@ -51,6 +51,7 @@ export class DatabaseService {
       .toArray()
       .then(items => {
         SharedService.downloading.items = false;
+        SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
         items.forEach(i => {
           SharedService.items[i.id] = i;
         });
