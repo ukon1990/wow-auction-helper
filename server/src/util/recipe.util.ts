@@ -11,12 +11,12 @@ const PromiseThrottle: any = require('promise-throttle');
 
 export class RecipeUtil {
   public static getRecipe(id: number, res: Response, req: any) {
-    const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-    connection.query(`SELECT json from recipes WHERE id = ${id}`, (err, rows, fields) => {
+    const db = mysql.createConnection(DATABASE_CREDENTIALS);
+    db.query(`SELECT json from recipes WHERE id = ${id}`, (err, rows, fields) => {
+      db.end();
       try {
         if (!err && rows.length > 0) {
           try {
-            connection.end();
           } catch (e) {
             console.error('Could not call end()', e);
           }
@@ -34,21 +34,20 @@ export class RecipeUtil {
               const recipe = RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
               // res.send(recipe);
               RecipeUtil.getProfession(recipe, function (r) {
-                if (recipe.itemID > 0) {
-                  const query = `INSERT INTO recipes VALUES(${
-                    id
-                    }, "${
-                    safeifyString(JSON.stringify(recipe))
-                    }", CURRENT_TIMESTAMP);`;
-                  console.log(`${new Date().toString()} - Adding new recipe (${r.name}) - SQL: ${query}`);
-                  connection.query(query, (err, r, body) => {
-                    if (!err) {
-                      connection.end();
-                    } else {
-                      throw err;
-                    }
-                  });
-                }
+                const query = `INSERT INTO recipes VALUES(${
+                  id
+                  }, "${
+                  safeifyString(JSON.stringify(recipe))
+                  }", CURRENT_TIMESTAMP);`;
+                console.log(`${new Date().toString()} - Adding new recipe (${r.name}) - SQL: ${query}`);
+                const dbAdd = mysql.createConnection(DATABASE_CREDENTIALS);
+                dbAdd.query(query, (err, r, body) => {
+                  dbAdd.end();
+                  if (!err) {
+                  } else {
+                    throw err;
+                  }
+                });
                 res.send(r);
               });
             } catch (error) {
@@ -92,6 +91,50 @@ export class RecipeUtil {
           console.log(`${new Date().toString()} - The following error occured while querying DB:`, err);
         }
       });
+  }
+
+  public static async patchItem() {
+    // TODO: Make sure you keep the itemID, in case of recipes missing those.
+    //
+  }
+
+  public static async getItemsToAdd(
+    rows: number[],
+    res: Response,
+    req: any) {
+    const promiseThrottle = new PromiseThrottle({
+      requestsPerSecond: 20,
+      promiseImplementation: Promise
+    });
+    const items: Recipe[] = [], itemIDs: any[] = [], failedIds = [];
+    let updateCount = 0;
+
+    rows.forEach((id: number) => {
+      itemIDs.push(
+        promiseThrottle.add(() => {
+          return new Promise(async (resolve, reject) => {
+            updateCount++;
+            console.log(`Getting Item: ${ id } (${updateCount} / ${rows.length}) ${req.headers.host}`);
+            await request.get(`http://${ req.headers.host }/api/recipe/${id}`, (res, error, body) => {
+              if (error) {
+                // console.error('handleItemsPatchRequest', error);
+                console.error(`ERROR for item ID ${ id } - > ${ req.headers.host }/api/recipe/${ id }`, error);
+                failedIds.push(id);
+                reject(error);
+              } else {
+                console.log(`Added item ID ${ id } - > ${ req.headers.host }/api/recipe/${ id }`);
+                items.push(body);
+                resolve(body);
+              }
+            });
+          });
+        }));
+    });
+    await Promise.all(itemIDs)
+      .then(r => { })
+      .catch(e => console.error('Gave up :(', e));
+
+    res.send({ success: items, failed: failedIds });
   }
 
   public static convertWoWDBToRecipe(wowDBRecipe) {

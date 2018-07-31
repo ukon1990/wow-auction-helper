@@ -5,6 +5,7 @@ import { DATABASE_CREDENTIALS } from '../util/secrets';
 import { getLocale } from '../util/locales';
 import { ItemUtil } from '../util/item.util';
 import { WoWHead } from '../models/item/wowhead';
+import { BFALists } from '../bfa-recipe-list';
 
 export const getItem = async (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
@@ -75,8 +76,13 @@ export const updateItems = async (req: Request, res: Response) => {
     `SELECT * FROM items WHERE timestamp < "2018-07-26" order by id desc limit 500;`, // timestamp < "2018-07-26";
     (err, rows, fields) => {
       db.end();
-      ItemUtil.patchItems(req.params.id, rows, res, req);
+      ItemUtil.patchItems(rows, res, req);
     });
+};
+
+export const getItemsFromList = async (req: Request, res: Response) => {
+  console.log('Yo');
+  ItemUtil.getItemsToAdd(BFALists.itemIds, res, req);
 };
 
 export const getWoWDBItem = (req: Request, res: Response) =>

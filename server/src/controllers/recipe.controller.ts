@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { RecipeUtil } from '../util/recipe.util';
+import { BFALists } from '../bfa-recipe-list';
 
 /**
  * GET /api/recipe
@@ -15,4 +16,8 @@ export let postRecipes = (req: Request, res: Response) => {
  */
 export let getRecipe = (req: Request, res: Response) => {
   RecipeUtil.getRecipe(req.params.id, res, req);
+};
+
+export let getItemsToAdd = (req: Request, res: Response) => {
+  RecipeUtil.getItemsToAdd(BFALists.recipeIds, res, req);
 };

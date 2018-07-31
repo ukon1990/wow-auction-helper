@@ -51,6 +51,11 @@ app.use(
  */
 app.get('/api', apiController.getApi);
 
+// For import
+app.get('/api/item/from-list', itemController.getItemsFromList);
+app.get('/api/recipe/from-list', recipeController.getItemsToAdd);
+
+
 // Item
 app.get('/api/item', itemController.getItems);
 app.post('/api/item', itemController.postItems);
@@ -59,7 +64,7 @@ app.get('/api/item/:id', itemController.getItem);
 app.patch('/api/item/:id', itemController.updateItem);
 app.options('/api/item/:id', itemController.updateItem);
 app.get('/api/item/wowdb/:id', itemController.getWoWDBItem);
-app.get('api/item/source/:id', itemController.getItemSources);
+app.get('/api/item/source/:id', itemController.getItemSources);
 
 app.get('/api/recipe', recipeController.postRecipes);
 app.post('/api/recipe', recipeController.postRecipes);

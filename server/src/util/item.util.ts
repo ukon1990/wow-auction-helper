@@ -37,8 +37,13 @@ export class ItemUtil {
       ItemUtil.downloadAllItemData(id)
         .then(item => {
           response.send(item);
-          db.query(ItemQuery.insert(item));
-          ItemUtil.getItemLocale(id, request, response);
+          db.query(ItemQuery.insert(item), (error, rows, fields) => {
+            db.end();
+            if (error) {
+              console.error(`Could not add ${ id }:`, error);
+            }
+            ItemUtil.getItemLocale(id, request, response);
+          });
         })
         .catch(error => {
           console.error('handleItemGetRequest', error);
@@ -91,7 +96,6 @@ export class ItemUtil {
   }
 
   public static async patchItems(
-    id: number,
     rows: Item[],
     res: Response,
     req: any) {
@@ -127,6 +131,53 @@ export class ItemUtil {
       .catch(e => console.error('Gave up :(', e));
 
     res.send(items);
+  }
+
+  /**
+   * To add stuff from BFA
+   * @static
+   * @param {Item[]} rows
+   * @param {Response} res
+   * @param {*} req
+   * @memberof ItemUtil
+   */
+  public static async getItemsToAdd(
+    rows: number[],
+    res: Response,
+    req: any) {
+    const promiseThrottle = new PromiseThrottle({
+      requestsPerSecond: 20,
+      promiseImplementation: Promise
+    });
+    const items: Item[] = [], itemIDs: any[] = [], failedIds = [];
+    let updateCount = 0;
+
+    rows.forEach((id: number) => {
+      itemIDs.push(
+        promiseThrottle.add(() => {
+          return new Promise(async (resolve, reject) => {
+            updateCount++;
+            console.log(`Getting Item: ${ id } (${updateCount} / ${rows.length}) ${req.headers.host}`);
+            await request.get(`http://${ req.headers.host }/api/item/${id}`, (res, error, body) => {
+              if (error) {
+                // console.error('handleItemsPatchRequest', error);
+                console.error(`ERROR for item ID ${ id } - > ${ req.headers.host }/api/item/${ id }`, error);
+                failedIds.push(id);
+                reject(error);
+              } else {
+                console.log(`Added item ID ${ id } - > ${ req.headers.host }/api/item/${ id }`);
+                items.push(body);
+                resolve(body);
+              }
+            });
+          });
+        }));
+    });
+    await Promise.all(itemIDs)
+      .then(r => { })
+      .catch(e => console.error('Gave up :(', e));
+
+    res.send({ success: items, failed: failedIds });
   }
 
   public static handleItem(item: Item): void {
