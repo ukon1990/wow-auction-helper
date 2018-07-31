@@ -88,8 +88,12 @@ export class Filters {
   }
 
   public static isExpansionMatch(itemID: number, form: AbstractControl): boolean {
-    return form.value === null ||
-      form.value === undefined ||
-      form.value === (SharedService.items[itemID] as Item).expansionId;
+    try {
+      return form.value === null ||
+        form.value === undefined ||
+        form.value === (SharedService.items[itemID] as Item).expansionId;
+    } catch (error) {
+      return false;
+    }
   }
 }
