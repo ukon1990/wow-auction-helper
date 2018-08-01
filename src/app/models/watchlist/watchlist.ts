@@ -14,7 +14,8 @@ export class Watchlist {
     AVG_DAILY_SOLD: 'avgDailySold',
     REGIONAL_AVG_SALE_PRICE: 'regionSaleAvg',
     REGIONAL_SALE_RATE: 'regionSaleRate',
-    QUANTITY_TOTAL: 'quantityTotal'
+    QUANTITY_TOTAL: 'quantityTotal',
+    PROFITABLE_TO_CRAFT: 'craftCost'
   };
   readonly CRITERIA = {
     BELOW: 'below',
@@ -96,14 +97,23 @@ export class Watchlist {
   getTypeValue(item: WatchlistItem): number {
     switch (item.targetType) {
       case this.TARGET_TYPES.QUANTITY:
-        return SharedService.auctionItemsMap[item.itemID][item.compareTo];
+        return this.getCompareToValue(item);
       case this.TARGET_TYPES.GOLD:
-        return SharedService.auctionItemsMap[item.itemID][item.compareTo];
+        return this.getCompareToValue(item);
       case this.TARGET_TYPES.PERCENT:
         return  SharedService.auctionItemsMap[item.itemID].buyout /
-        SharedService.auctionItemsMap[item.itemID][item.compareTo] * 100;
+        this.getCompareToValue(item) * 100;
     }
     return 0;
+  }
+
+  getCompareToValue(item: WatchlistItem): number {
+    if (item.compareTo === this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
+      const recipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe);
+      return recipe ? recipe.cost : 0;
+    } else {
+      return SharedService.auctionItemsMap[item.itemID][item.compareTo];
+    }
   }
 
   getTypeValueInGold(item: WatchlistItem): number {
@@ -111,7 +121,7 @@ export class Watchlist {
       case this.TARGET_TYPES.GOLD:
         return item.value;
       case this.TARGET_TYPES.PERCENT:
-        return SharedService.auctionItemsMap[item.itemID][item.compareTo] * item.value / 100;
+        return this.getCompareToValue(item) * item.value / 100;
     }
     return 0;
   }

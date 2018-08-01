@@ -142,10 +142,11 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'criteria', title: 'Criteria', dataType: '' },
+          { key: 'compareTo', title: 'Compared to', dataType: ''},
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
-        this.addAPIColumnsAtPosition(3);
+        this.addAPIColumnsAtPosition(4);
         this.setWatchListAlerts(array);
         break;
 
@@ -254,7 +255,7 @@ export class Dashboard {
     items.forEach(item => {
       if (SharedService.user.watchlist.isTargetMatch(item)) {
         const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
-          obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal) };
+          obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal), compareTo: item.compareTo };
         this.data.push(obj);
         if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
           this.tsmShoppingString += `${
