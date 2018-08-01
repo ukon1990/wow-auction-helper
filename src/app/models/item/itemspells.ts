@@ -1,10 +1,13 @@
 import { Spell } from '../spell';
 
 export class ItemSpells {
-    spellId: number;
+    SpellID: number;
     spell: Spell;
-    nCharges: number;
+    Charges: number;
     consumable: boolean;
-    categoryId: number;
-    trigger: string;
+    Cooldown: number;
+    CooldownCategory: number;
+    CategoryID: number;
+    Trigger: number;
+    Text: string;
 }

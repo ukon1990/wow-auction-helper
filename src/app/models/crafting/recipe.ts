@@ -10,6 +10,7 @@ export class Recipe {
   maxCount: number;
   reagents: Array<Reagent>;
   expansion?: number;
+  flaggedAsBugged?: boolean;
 
   // Applied after cost calculation
   cost?: number;

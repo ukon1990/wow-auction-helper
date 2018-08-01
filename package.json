@@ -36,6 +36,7 @@
     "hammerjs": "^2.0.8",
     "push.js": "^1.0.5",
     "rxjs": "^6.2.2",
+    "words-to-numbers": "^1.5.1",
     "xlsx": "^0.11.8",
     "zone.js": "^0.8.26"
   },

@@ -99,8 +99,9 @@ export class DownloadComponent implements OnInit {
         })
         .catch(async (error) => {
         });
-        await this.download('recipes');
+      await this.download('recipes');
       await Crafting.checkForMissingRecipes(this._craftingService);
+      Crafting.setOnUseCraftsWithNoReagents();
 
       if (SharedService.user.apiToUse === 'tsm') {
         if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
