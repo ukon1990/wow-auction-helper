@@ -188,8 +188,8 @@ export class Dashboard {
       { key: 'name', title: '', dataType: '' },
       { key: 'name', title: '', dataType: '' }
     ];
-    SharedService.itemDashboards = new Array<Dashboard>();
-    SharedService.sellerDashboards = new Array<Dashboard>();
+    SharedService.itemDashboards.length = 0;
+    SharedService.sellerDashboards.length = 0;
 
     for (let i = 0; i < 10; i++) {
       const db = new Dashboard('', ''),
@@ -208,8 +208,8 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
-    SharedService.itemDashboards = new Array<Dashboard>();
-    SharedService.sellerDashboards = new Array<Dashboard>();
+    SharedService.itemDashboards.length = 0;
+    SharedService.sellerDashboards.length = 0;
 
     // Items
     SharedService.itemDashboards.push(

@@ -39,18 +39,19 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardItemsComponent },
       { path: 'items', component: DashboardItemsComponent },
-      { path: 'sellers', component: DashboardSellersComponent }
+      { path: 'sellers', component: DashboardSellersComponent },
+      { path: 'manage-dashboards', component: WatchlistComponent }
     ]
   },
   { path: 'crafting', component: CraftingComponent, canActivate: [IsRegisteredService] },
   { path: 'auctions', component: AuctionsComponent, canActivate: [IsRegisteredService] },
   { path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService] },
-  { path: 'watchlist', component: WatchlistComponent, canActivate: [IsRegisteredService] },
+  { path: 'watchlist', redirectTo: '/dashboard/manage-dashboards', canActivate: [IsRegisteredService] },
   { path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [IsRegisteredService] },
   {
     path: 'tools', canActivate: [IsRegisteredService], children: [
       { path: 'trade-vendor', component: TradeVendorsComponent },
-      { path: 'watchlist', component: WatchlistComponent },
+      { path: 'watchlist', redirectTo: '/dashboard/manage-dashboards' },
       { path: 'sellers', component: SellersComponent },
       { path: 'my-pets', component: MyPetsComponent },
       { path: 'market-reset', component: MarketResetComponent },

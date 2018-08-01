@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {  } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -9,20 +9,24 @@ import { Watchlist, WatchlistItem, WatchlistGroup } from '../../models/watchlist
 import { SharedService } from '../../services/shared.service';
 import { Recipe } from '../../models/crafting/recipe';
 import { Item } from '../../models/item/item';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-watchlist',
   templateUrl: './watchlist.component.html',
   styleUrls: ['./watchlist.component.scss']
 })
-export class WatchlistComponent implements OnInit {
+export class WatchlistComponent implements AfterViewInit {
   itemSearchForm: FormControl = new FormControl();
   filteredItems: Observable<any>;
   selectedItem: WatchlistItem;
   selectedGroup: WatchlistGroup;
   selectedIndex: number;
+  watchlist: Watchlist;
 
-  constructor(private angulartics2: Angulartics2) {
+  constructor(private angulartics2: Angulartics2, private _title: Title) {
+    this._title.setTitle('WAH - Manage dashboards');
+
     this.filteredItems = this.itemSearchForm.valueChanges
       .pipe(
       startWith(''),
@@ -30,16 +34,13 @@ export class WatchlistComponent implements OnInit {
       );
   }
 
-  ngOnInit() {
-  }
-
-  /* istanbul ignore next */
-  getWatchlist(): Watchlist {
+  ngAfterViewInit() {
     if (!SharedService.user.watchlist) {
       SharedService.user.watchlist = new Watchlist();
     }
-    return SharedService.user.watchlist;
+    this.watchlist = SharedService.user.watchlist;
   }
+
 
   close(): void {
     this.selectedGroup = undefined;
