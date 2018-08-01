@@ -22,6 +22,8 @@ export class WatchlistComponent implements AfterViewInit {
   selectedItem: WatchlistItem;
   selectedGroup: WatchlistGroup;
   selectedIndex: number;
+  selectedBatchAdd: string;
+  selectedTabIndex = 1;
   watchlist: Watchlist;
 
   constructor(private angulartics2: Angulartics2, private _title: Title) {
@@ -41,11 +43,20 @@ export class WatchlistComponent implements AfterViewInit {
     this.watchlist = SharedService.user.watchlist;
   }
 
+  tabChange(index: number): void {
+    this.selectedTabIndex = index;
+  }
 
   close(): void {
+    this.selectedBatchAdd = undefined;
     this.selectedGroup = undefined;
     this.selectedItem = undefined;
     this.selectedIndex = undefined;
+  }
+
+  openBachMenu(group: WatchlistGroup): void {
+    this.selectedGroup = group;
+    this.selectedBatchAdd = group.name;
   }
 
   add(group: WatchlistGroup, item: Item): void {

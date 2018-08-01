@@ -1,31 +1,48 @@
 <p>
-  Your groups will be displayed in the dashboard section, if there are any matches for your rules. 
-  You have multiple rules per item (just add the item again). And you can compare to crafting 
-  cost(if you have character with a recipe for it), buyout, market value etc.
+  Your groups will be displayed in the dashboard section, if there are any matches for your rules. You have multiple rules
+  per item (just add the item again). And you can compare to crafting cost(if you have character with a recipe for it), buyout,
+  market value etc.
 </p>
-<mat-tab-group *ngIf="watchlist" selectedIndex="1" dynamicHeight>
+<mat-tab-group *ngIf="watchlist" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="tabChange($event)" dynamicHeight>
   <mat-tab label="Manage groups">
-    <wah-watchlist-manager></wah-watchlist-manager>
+    <wah-watchlist-manager *ngIf="selectedTabIndex === 0"></wah-watchlist-manager>
   </mat-tab>
-  <ng-container *ngFor="let group of watchlist.groups">
+  <ng-container *ngFor="let group of watchlist.groups; let tabIndex = index">
     <mat-tab [label]="group.name">
-      <form class="row col-md-12">
-        <mat-form-field class="row col-md-12">
-          <input matInput placeholder="The name of the item to add to this group" [matAutocomplete]="auto" [formControl]="itemSearchForm">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let item of filteredItems | async" [value]="item.name" [ngClass]="{'unicorn-dark-theme': isDarkmode()}" (click)="add(group, item)">
-              <wah-icon size="36" [id]="item.id"></wah-icon>
-              <span>{{ item.name }}</span>
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </form>
-      <wah-watchlist-item-manager *ngIf="selectedItem" [group]="selectedGroup" [item]="selectedItem" [index]="selectedIndex" (close)="close()"></wah-watchlist-item-manager>
-      <div class="slim-sm row col-md-12">
-        <div *ngFor="let item of group.items; let i = index" class="col-md-6 col-lg-4 mb-3">
-          <wah-watchlist-item [item]="item" (edit)="edit(group, item, i)" (delete)="delete(group, item, i)"></wah-watchlist-item>
+      <ng-container *ngIf="selectedTabIndex === tabIndex + 1">
+        <div class="row mb-3 ml-2">
+          <!--
+          <form class="col-md-8">
+            <mat-form-field class="row col-md-12">
+              <input matInput placeholder="Search to add a single item to the group" [matAutocomplete]="auto" [formControl]="itemSearchForm">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let item of filteredItems | async" [value]="item.name" [ngClass]="{'unicorn-dark-theme': isDarkmode()}"
+                  (click)="add(group, item)">
+                  <wah-icon size="36" [id]="item.id"></wah-icon>
+                  <span>{{ item.name }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>-->
+          <div class="col-md-12">
+            <button class="float-left" type="button" (click)="openBachMenu(group)" mat-raised-button>
+              <div class="float-left mr-1">
+                <i class="far fa-plus-square"></i>
+              </div>
+              Add one or more item from query
+            </button>
+          </div>
         </div>
-      </div>
+
+        <wah-watchlist-item-manager *ngIf="selectedItem" [group]="selectedGroup" [item]="selectedItem" [index]="selectedIndex" (close)="close()"></wah-watchlist-item-manager>
+
+        <wah-watchlist-item-batch *ngIf="selectedBatchAdd === group.name" [group]="selectedGroup" (close)="close()"></wah-watchlist-item-batch>
+        <div class="slim-sm row col-md-12">
+          <div *ngFor="let item of group.items; let i = index" class="col-md-6 col-lg-4 mb-3">
+            <wah-watchlist-item [item]="item" (edit)="edit(group, item, i)" (delete)="delete(group, item, i)"></wah-watchlist-item>
+          </div>
+        </div>
+      </ng-container>
     </mat-tab>
   </ng-container>
 </mat-tab-group>

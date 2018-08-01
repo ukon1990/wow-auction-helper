@@ -34,6 +34,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() useAuctionItemForName: boolean;
   @Input() linkType: string;
   @Input() itemsPerPage = 10;
+  @Input() dontUsePagignation: boolean;
 
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
