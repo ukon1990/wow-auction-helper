@@ -6,6 +6,7 @@ import { GoldPipe } from '../pipes/gold.pipe';
 import { WatchlistItem } from './watchlist/watchlist';
 import { itemClasses } from './item/item-classes';
 import { Seller } from './seller';
+import { AuctionItem } from './auction/auction-item';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -142,7 +143,7 @@ export class Dashboard {
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
           { key: 'criteria', title: 'Criteria', dataType: '' },
-          { key: 'compareTo', title: 'Compared to', dataType: ''},
+          { key: 'compareTo', title: 'Compared to', dataType: '' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
@@ -150,13 +151,13 @@ export class Dashboard {
         this.setWatchListAlerts(array);
         break;
 
-        case Dashboard.TYPES.WATCH_LIST_CRAFTS:
-          this.idParam = 'itemID';
-          this.columns = crafterColumns;
-          this.isCrafting = true;
-          this.addAPIColumnsAtPosition(4);
-          this.setWatchListCraftingAlerts();
-          break;
+      case Dashboard.TYPES.WATCH_LIST_CRAFTS:
+        this.idParam = 'itemID';
+        this.columns = crafterColumns;
+        this.isCrafting = true;
+        this.addAPIColumnsAtPosition(4);
+        this.setWatchListCraftingAlerts();
+        break;
 
       case Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
         this.idParam = 'itemID';
@@ -178,6 +179,31 @@ export class Dashboard {
         ];
         this.setTradeVendorValues();
         break;
+    }
+  }
+
+  public static addLoadingDashboards(): void {
+    const columns = [
+      { key: 'name', title: '', dataType: '' },
+      { key: 'name', title: '', dataType: '' },
+      { key: 'name', title: '', dataType: '' }
+    ];
+    SharedService.itemDashboards = new Array<Dashboard>();
+    SharedService.sellerDashboards = new Array<Dashboard>();
+
+    for (let i = 0; i < 10; i++) {
+      const db = new Dashboard('', ''),
+        item = new AuctionItem();
+
+      db.idParam = 'itemID';
+      item.itemID = 25;
+      item.name = 'Loading..';
+      db.columns = columns;
+      db.data = [
+        item, item, item, item, item, item, item, item, item, item
+      ];
+      SharedService.itemDashboards.push(db);
+      SharedService.sellerDashboards.push(db);
     }
   }
 
@@ -260,14 +286,14 @@ export class Dashboard {
         if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
           this.tsmShoppingString += `${
             item.name
-          }/exact`;
+            }/exact`;
           if (item.targetType !== SharedService.user.watchlist.TARGET_TYPES.QUANTITY &&
-              item.compareTo !== SharedService.user.watchlist.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
+            item.compareTo !== SharedService.user.watchlist.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
             this.tsmShoppingString += `/${
               pipe.transform(wlVal.left).replace(',', '')
-            }/${
+              }/${
               pipe.transform(wlVal.right).replace(',', '')
-            }`;
+              }`;
           }
           this.tsmShoppingString += ';';
         }
@@ -299,15 +325,15 @@ export class Dashboard {
 
     switch (item.targetType) {
       case 'quantity':
-        value = `${ item.value } pcs`;
+        value = `${item.value} pcs`;
         break;
-        case 'gold':
+      case 'gold':
       case 'percent':
-        value = `${ p.transform(
-          watchlistValue.left === 1 ? watchlistValue.right : watchlistValue.left ) }`;
+        value = `${p.transform(
+          watchlistValue.left === 1 ? watchlistValue.right : watchlistValue.left)}`;
         break;
     }
-    return `${ criteria } ${ value }`;
+    return `${criteria} ${value}`;
   }
 
   private setWatchListCraftingAlerts(): void {
@@ -349,14 +375,14 @@ export class Dashboard {
         }
         this.tsmShoppingString += `${
           ai.name
-        }/exact/1c/${
+          }/exact/1c/${
           pipe.transform(ai.vendorSell).replace(',', '')
-        };`;
+          };`;
         return true;
       }
       return false;
     }).sort((a, b) =>
-    (b.vendorSell - b.buyout) - (a.vendorSell - a.buyout));
+      (b.vendorSell - b.buyout) - (a.vendorSell - a.buyout));
 
     if (this.data.length > 0) {
       if (this.tsmShoppingString.endsWith(';')) {
@@ -403,7 +429,7 @@ export class Dashboard {
 
     if (this.data.length > 0) {
       this.sortByROI();
-      this.message = `Sum potential ROI: ${ pipe.transform(sumROI) }`;
+      this.message = `Sum potential ROI: ${pipe.transform(sumROI)}`;
     }
   }
 
@@ -432,7 +458,7 @@ export class Dashboard {
 
     if (this.data.length > 0) {
       this.sortByROI();
-      this.message = `Sum potential ROI: ${ pipe.transform(sumROI) }`;
+      this.message = `Sum potential ROI: ${pipe.transform(sumROI)}`;
     }
   }
 
@@ -445,9 +471,9 @@ export class Dashboard {
       if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15) {
         this.tsmShoppingString += `${
           ai.name
-        }/exact/1c/${
+          }/exact/1c/${
           pipe.transform(ai.mktPrice * 0.149).replace(',', '')
-        };`;
+          };`;
         return true;
       }
       return false;
@@ -471,7 +497,7 @@ export class Dashboard {
         if (recipe.roi <= 0 || recipe.cost <= 0) {
           return false;
         }
-        if (onlyKnown  && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
+        if (onlyKnown && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
           return false;
         }
         if (SharedService.user.apiToUse !== 'none') {
@@ -511,7 +537,7 @@ export class Dashboard {
   }
 
   private sortByROI(): void {
-    this.data.sort( (a, b) =>
+    this.data.sort((a, b) =>
       b.roi - a.roi);
   }
 }

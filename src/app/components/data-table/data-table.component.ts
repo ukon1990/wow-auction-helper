@@ -174,7 +174,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   /* istanbul ignore next */
   getItemName(name: string, item: any): string {
     const id = this.getItemID(item);
-    if (name) {
+    if (name !== undefined) {
       return name;
     }
 

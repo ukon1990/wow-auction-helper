@@ -177,4 +177,12 @@ export class SetupComponent implements OnInit {
       });
     }
   }
+
+  isDarkMode(): boolean {
+    return SharedService.user.isDarkMode;
+  }
+
+  saveUser(evt: any): void {
+    SharedService.user.isDarkMode = evt.checked;
+  }
 }

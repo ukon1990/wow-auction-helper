@@ -25,7 +25,8 @@
         <h3>Disclaimer</h3>
         <ul>
           <li>
-            For the best user experience, it's recommended that you use <i class="fab fa-chrome"></i>
+            For the best user experience, it's recommended that you use
+            <i class="fab fa-chrome"></i>
             Chrome (latest version) as your browser for this app.
           </li>
           <li>
@@ -40,8 +41,8 @@
             All calculations are done on the client (your computer).
           </li>
           <li>
-            Item, pet, recipe, TSM/Wowuction and auction data is stored on your computer in order to 
-            reduce load time and bandwidth usage. This should take up about a maximum of 200MB total on your computer.
+            Item, pet, recipe, TSM/Wowuction and auction data is stored on your computer in order to reduce load time and bandwidth usage.
+            This should take up about a maximum of 200MB total on your computer.
           </li>
           <li>
             Using tools like CCleaner to clean your browser cache etc, will remove all your settings. So be aware of that.
@@ -68,74 +69,97 @@
     <form [formGroup]="_characterForm">
       <ng-template matStepLabel>Realm, region and locale</ng-template>
       <div class="row">
-        <mat-card class="col-md-4">
-          <mat-card-header>
-            <mat-card-title>
-              Select your realm, region and item language
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-form-field>
-              <mat-select placeholder="Region" formControlName="region">
-                <mat-option value="eu" (click)="getRealms()">
-                  Europe
-                </mat-option>
-                <mat-option value="us" (click)="getRealms()">
-                  America
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field>
-              <mat-select placeholder="Realm" formControlName="realm">
-                <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
-                  {{ getRealmWithkey(slug).name }}
-                </mat-option>
-              </mat-select>
-              <div *ngIf="isDownloadingRealm" class="float-left ml-1 loading">
-                <i class="fas fa-sync" aria-hidden="true"></i>
-              </div>
-            </mat-form-field>
+        <div class="col-md-4">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                Select your realm, region and item language
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-form-field>
+                <mat-select placeholder="Region" formControlName="region">
+                  <mat-option value="eu" (click)="getRealms()">
+                    Europe
+                  </mat-option>
+                  <mat-option value="us" (click)="getRealms()">
+                    America
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select placeholder="Realm" formControlName="realm">
+                  <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
+                    {{ getRealmWithkey(slug).name }}
+                  </mat-option>
+                </mat-select>
+                <div *ngIf="isDownloadingRealm" class="float-left ml-1 loading">
+                  <i class="fas fa-sync" aria-hidden="true"></i>
+                </div>
+              </mat-form-field>
 
-            <mat-form-field class="col-md-4">
-              <mat-select placeholder="Item language" formControlName="locale">
-                <mat-option *ngFor="let locale of locales" [value]="locale.locale">
-                  {{ locale.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </mat-card-content>
+              <mat-form-field class="col-md-4">
+                <mat-select placeholder="Item language" formControlName="locale">
+                  <mat-option *ngFor="let locale of locales" [value]="locale.locale">
+                    {{ locale.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </mat-card-content>
 
-          <mat-card-content *ngIf="getRealmWithkey().name">
-            This is a {{ getRealmWithkey(slug).population }} population realm, 
-            <span *ngIf="getRealmWithkey().queue; else noQueue">with queue.</span>
-            <ng-template #noQueue>
-              <span>without queue.</span>
-            </ng-template>
-            <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
-            It is using the timezone "{{ getRealmWithkey(slug).timezone }}".
-          </mat-card-content>
-        </mat-card>
-        <mat-card class="col-md-8">
-          <mat-card-header>
-            <mat-card-title>
-              Import previous settings
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-form-field class="col-md-10 float-left">
-              <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
-            </mat-form-field>
-            <button class="float-right" mat-button matStepperPrevious (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
-              <i class="fas fa-upload"></i>
-              Restore
-            </button>
-            <button mat-button (click)="fileInput.click()">
-              <i class="fas fa-upload"></i>
-              Select a settings file to import
-              <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
-            </button>
-          </mat-card-content>
-        </mat-card>
+            <mat-card-content *ngIf="getRealmWithkey().name">
+              This is a {{ getRealmWithkey(slug).population }} population realm,
+              <span *ngIf="getRealmWithkey().queue; else noQueue">with queue.</span>
+              <ng-template #noQueue>
+                <span>without queue.</span>
+              </ng-template>
+              <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
+              It is using the timezone "{{ getRealmWithkey(slug).timezone }}".
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="col-md-8">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                Import previous settings
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-form-field class="col-md-10 float-left">
+                <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
+              </mat-form-field>
+              <button class="float-right" mat-button matStepperPrevious (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+                <i class="fas fa-upload"></i>
+                Restore
+              </button>
+              <button mat-button (click)="fileInput.click()">
+                <i class="fas fa-upload"></i>
+                Select a settings file to import
+                <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="col-md-4">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                Select between the light or the dark theme:
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-slide-toggle matTooltip="Toggle dark theme on/off" [checked]="isDarkMode()" (change)="saveUser($event)">
+                {{ isDarkMode() ? 'Change to light theme' : 'Change to dark theme' }}
+              </mat-slide-toggle>
+              <p>
+                You can change this at any time, in the upper right corner.
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </form>
 
@@ -144,11 +168,7 @@
       Back
     </button>
     <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
-      Add crafters/characters
-      <i class="fas fa-arrow-right"></i>
-    </button>
-    <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
-      Finish setup
+      Next
       <i class="fas fa-arrow-right"></i>
     </button>
   </mat-step>
@@ -165,11 +185,7 @@
         Back
       </button>
       <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
-        Add TSM key and/or modify settings
-      </button>
-      <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
-        Finish setup
-        <i class="fas fa-arrow-right"></i>
+        Next
       </button>
     </form>
   </mat-step>
@@ -183,8 +199,9 @@
       </p>
       <p>
         Both TSM and WoWUction gives the realms market value. TSM gives give regional sale rate, regional daily sold and regional
-        avg sale price. WoWUction gives the realms avg daily sold, posted and the estimated demand. You can only have one active at a given time. 
-        But you may provide, both keys but wowuction will be used if both are provided. You can change this in the settings late.
+        avg sale price. WoWUction gives the realms avg daily sold, posted and the estimated demand. You can only have one
+        active at a given time. But you may provide, both keys but wowuction will be used if both are provided. You can change
+        this in the settings late.
       </p>
       <mat-card>
         <mat-card-header>
@@ -194,11 +211,11 @@
         </mat-card-header>
         <mat-card-content>
           <mat-form-field class="col-md-12">
-              <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
-            </mat-form-field>
-            If you don't have a TSM account you can
-            <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
-            <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
+            <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
+          </mat-form-field>
+          If you don't have a TSM account you can
+          <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
+          <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
         </mat-card-content>
       </mat-card>
 
@@ -213,8 +230,8 @@
             <input matInput placeholder="WoWUction API key" formControlName="wowUctionKey">
           </mat-form-field>
           If you don't have an account over at
-          <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have done that, go to "Resources -> Data Export" and copy the
-          text after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
+          <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have done that, go to "Resources -> Data Export" and copy the text
+          after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
         </mat-card-content>
       </mat-card>
     </form>
@@ -224,7 +241,7 @@
         Back
       </button>
       <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
-        Complete setup
+        Complete the setup
       </button>
     </div>
   </mat-step>

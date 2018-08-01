@@ -12,6 +12,7 @@ import { Angulartics2 } from 'angulartics2';
 import { Realm } from '../../../models/realm';
 import { RealmService } from '../../../services/realm.service';
 import { FormControl } from '@angular/forms';
+import { Dashboard } from '../../../models/dashboard';
 
 @Component({
   selector: 'wah-download',
@@ -57,6 +58,8 @@ export class DownloadComponent implements OnInit {
         this.timestamps.tsm = localStorage['timestamp_tsm'];
         this.timestamps.wowuction = localStorage['timestamp_wowuction'];
       }, 1000);
+
+    Dashboard.addLoadingDashboards();
     }
 
   async ngOnInit() {
