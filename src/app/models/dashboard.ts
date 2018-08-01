@@ -191,7 +191,7 @@ export class Dashboard {
     SharedService.itemDashboards.push(
       new Dashboard('Profitable known crafts', Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS));
     SharedService.itemDashboards.push(
-      new Dashboard('Watchlist craft alerts', Dashboard.TYPES.WATCH_LIST_CRAFTS));
+      new Dashboard('Known watchlist craft alerts', Dashboard.TYPES.WATCH_LIST_CRAFTS));
 
     // The users watchlists
     SharedService.user.watchlist.groups.forEach(group => {
@@ -261,7 +261,8 @@ export class Dashboard {
           this.tsmShoppingString += `${
             item.name
           }/exact`;
-          if (item.targetType !== 'quantity') {
+          if (item.targetType !== SharedService.user.watchlist.TARGET_TYPES.QUANTITY &&
+              item.compareTo !== SharedService.user.watchlist.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
             this.tsmShoppingString += `/${
               pipe.transform(wlVal.left).replace(',', '')
             }/${
@@ -312,15 +313,22 @@ export class Dashboard {
   private setWatchListCraftingAlerts(): void {
     this.data.length = 0;
     this.tsmShoppingString = '';
-    const pipe = new GoldPipe();
+    const pipe = new GoldPipe(),
+      // Using this list to avoid duplicate items
+      tmpList = new Map<number, any>();
 
     SharedService.user.watchlist.groups.forEach(group => {
       group.items.forEach(item => {
         if (SharedService.recipesMapPerItemKnown[item.itemID] && SharedService.recipesMapPerItemKnown[item.itemID].roi > 0) {
-          this.data.push(SharedService.recipesMapPerItemKnown[item.itemID]);
+          tmpList[item.itemID] = SharedService.recipesMapPerItemKnown[item.itemID];
         }
       });
     });
+
+    Object.keys(tmpList).forEach(key => {
+      this.data.push(tmpList[key]);
+    });
+
     if (this.data.length > 0) {
       this.sortByROI();
       SharedService.notifications.unshift(

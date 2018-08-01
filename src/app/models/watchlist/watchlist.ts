@@ -112,7 +112,8 @@ export class Watchlist {
       const recipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe);
       return recipe ? recipe.cost : 0;
     } else {
-      return SharedService.auctionItemsMap[item.itemID][item.compareTo];
+      const auctionItem = SharedService.auctionItemsMap[item.itemID];
+      return auctionItem ? auctionItem[item.compareTo] : 0;
     }
   }
 

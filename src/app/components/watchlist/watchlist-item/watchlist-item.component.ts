@@ -44,4 +44,8 @@ export class WatchlistItemComponent implements OnInit {
     SharedService.selectedItemId = item.itemID;
     SharedService.selectedSeller = undefined;
   }
+
+  getAlertValueInGold(): number {
+    return SharedService.user.watchlist.getTypeValueInGold(this.item);
+  }
 }
