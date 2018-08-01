@@ -14,7 +14,7 @@ export class DashboardComponent implements OnDestroy {
   activatedRoute = 'items';
 
   constructor(private route: Router) {
-    route.events.subscribe((event: NavigationEnd) => {
+    this.routeSubscription = route.events.subscribe((event: NavigationEnd) => {
       switch (event.url) {
         case '/dashboard/items':
           this.activatedRoute = 'items';
