@@ -52,6 +52,28 @@ export class TradeVendors {
   }
 }
 
+const inkTrader: TradeVendor = {
+  itemID: 129032,
+  name: 'Ink trader',
+  useForCrafting: false,
+  items: [
+    new TradeVendorItem(113111, 1),
+    new TradeVendorItem(79255, 0.1),
+    new TradeVendorItem(79254, 1),
+    new TradeVendorItem(61981, 0.1),
+    new TradeVendorItem(61978, 1),
+    new TradeVendorItem(43126, 1),
+    new TradeVendorItem(43127, 0.1),
+    new TradeVendorItem(43124, 1),
+    new TradeVendorItem(43122, 1),
+    new TradeVendorItem(43120, 1),
+    new TradeVendorItem(43118, 1),
+    new TradeVendorItem(43116, 1),
+    new TradeVendorItem(39774, 1),
+    new TradeVendorItem(39469, 1)
+  ]
+};
+
 const spiritOfHarmony: TradeVendor = {
   itemID: 76061,
   name: 'Spirit of Harmony',
@@ -411,5 +433,5 @@ const primalSpirit: TradeVendor = {
 };
 
 export const TRADE_VENDORS = [
-  primalSargerite, bloodOfSargeras, primalSpirit, frozenOrb, spiritOfHarmony
+  inkTrader, primalSargerite, bloodOfSargeras, primalSpirit, frozenOrb, spiritOfHarmony
 ];
