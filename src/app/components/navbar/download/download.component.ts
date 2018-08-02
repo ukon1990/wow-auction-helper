@@ -78,7 +78,10 @@ export class DownloadComponent implements OnInit {
         .catch(async error => {
           console.error(error);
         });
-      await this.download('items');
+
+      if (this.isOnline()) {
+        await this.download('items');
+      }
 
       this.downloadProgress = 'Loading pets from disk';
       await this._dbService.getAllPets()
@@ -91,7 +94,10 @@ export class DownloadComponent implements OnInit {
         .catch(async error => {
         });
       this.downloadProgress = 'Downloading pets';
-      await this.download('pets');
+
+      if (this.isOnline()) {
+        await this.download('pets');
+      }
 
       this.downloadProgress = 'Downloading recipes';
       await this._dbService.getAllRecipes()
@@ -102,19 +108,23 @@ export class DownloadComponent implements OnInit {
         })
         .catch(async (error) => {
         });
-      await this.download('recipes');
-      await Crafting.checkForMissingRecipes(this._craftingService);
+
+      if (this.isOnline()) {
+        await this.download('recipes');
+        await Crafting.checkForMissingRecipes(this._craftingService);
+      }
+
       Crafting.setOnUseCraftsWithNoReagents();
 
       if (SharedService.user.apiToUse === 'tsm') {
-        if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
+        if (new Date().toDateString() !== localStorage['timestamp_tsm'] && this.isOnline()) {
           this.downloadProgress = 'Downloading new TSM data';
           await this._auctionsService.getTsmAuctions();
         } else {
           this.downloadProgress = 'Loading TSM from disk';
           await this._dbService.getTSMItems()
             .then(async r => {
-              if (Object.keys(SharedService.tsm).length === 0) {
+              if (Object.keys(SharedService.tsm).length === 0 && this.isOnline()) {
                 this.downloadProgress = 'Downloading TSM data';
                 await this._auctionsService.getTsmAuctions();
               }
@@ -125,14 +135,14 @@ export class DownloadComponent implements OnInit {
             });
         }
       } else if (SharedService.user.apiToUse === 'wowuction') {
-        if (new Date().toDateString() !== localStorage['timestamp_wowuction']) {
+        if (new Date().toDateString() !== localStorage['timestamp_wowuction'] && this.isOnline()) {
           this.downloadProgress = 'Downloading new wowuction data';
           await this._auctionsService.getWoWUctionAuctions();
         } else {
           this.downloadProgress = 'Loading wowuction from disk';
           await this._dbService.getWoWUctionItems()
             .then(async r => {
-              if (Object.keys(SharedService.wowUction).length === 0) {
+              if (Object.keys(SharedService.wowUction).length === 0 && this.isOnline()) {
                 this.downloadProgress = 'Downloading wowuction data';
                 await this._auctionsService.getWoWUctionAuctions();
               }
@@ -147,14 +157,14 @@ export class DownloadComponent implements OnInit {
       this.downloadProgress = 'Loading auctions from disk';
       await this._dbService.getAllAuctions(this._petService)
         .then(r => {
-          if (SharedService.auctions.length === 0) {
+          if (SharedService.auctions.length === 0 && this.isOnline()) {
             this.downloadProgress = 'Downloading new auctions';
             this._auctionsService.getLastModifiedTime(true);
           }
         })
         .catch(e => {
           console.error('Could not restore auctions from DB');
-          if (SharedService.auctions.length === 0) {
+          if (SharedService.auctions.length === 0 && this.isOnline()) {
             this._auctionsService.getLastModifiedTime();
           }
         });
@@ -257,7 +267,7 @@ export class DownloadComponent implements OnInit {
     const timeSince = this.milliSecondsToMinutes(),
       lastModified = SharedService.auctionResponse ? SharedService.auctionResponse.lastModified : undefined;
 
-    if (!this.checkingForUpdates) {
+    if (!this.checkingForUpdates && this.isOnline()) {
       this.checkingForUpdates = true;
       this._auctionsService.getLastModifiedTime()
         .then(r => {
@@ -280,5 +290,9 @@ export class DownloadComponent implements OnInit {
     }
     const ms = new Date().getTime() - (SharedService.auctionResponse.lastModified);
     return Math.round(ms / 60000);
+  }
+
+  private isOnline(): boolean {
+    return navigator.onLine;
   }
 }
