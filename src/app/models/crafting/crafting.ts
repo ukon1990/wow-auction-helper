@@ -170,6 +170,8 @@ export class Crafting {
   public static getCost(itemID: number, count: number): number {
     if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
       return (SharedService.customPricesMap[itemID].price * count);
+    } else if (Crafting.isVendorCheaperThanAH(itemID)) {
+      return (SharedService.items[itemID] as Item).buyPrice * count;
     } else if (SharedService.tradeVendorItemMap[itemID] && SharedService.tradeVendorMap[itemID].useForCrafting) {
       return (SharedService.tradeVendorItemMap[itemID].value * count);
     } else if (SharedService.auctionItemsMap[itemID] && !Crafting.isBelowMktBuyoutValue(itemID)) {
@@ -179,6 +181,18 @@ export class Crafting {
       return (SharedService.tsm[itemID].MarketValue * count);
     }
     return 0;
+  }
+
+  public static isVendorCheaperThanAH(itemID: number): boolean {
+    if (SharedService.items[itemID].isBoughtForGold) {
+      if (!SharedService.auctionItemsMap[itemID]) {
+        return true;
+      } else if (SharedService.items[itemID].buyPrice < SharedService.auctionItemsMap[itemID].buyout) {
+        return true;
+      }
+
+    }
+    return false;
   }
 
   /*

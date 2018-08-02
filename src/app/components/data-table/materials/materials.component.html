@@ -6,7 +6,11 @@
       <mat-card-title>
         <a class="col-md-12" rel="spell={{ getRecipeForItem(r.itemID).spellID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
           <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-          {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getRecipeForItem(r.itemID).name }} - <span class="float-right">{{ getRecipeForItem(r.itemID).cost | gold }}</span>
+          {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getRecipeForItem(r.itemID).name }} - 
+          <span class="float-right">
+            {{ getRecipeForItem(r.itemID).cost | gold }} 
+            {{ getReagentFromVendorString(r) }}
+          </span>
         </a>
       </mat-card-title>
     </mat-card-header>
@@ -14,7 +18,11 @@
       <div class="ml-3 mr-1 mb-1" *ngFor="let subR of getRecipeForItem(r.itemID).reagents" (click)="setSelectedItem(subR)">
         <a rel="item={{ subR.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(subR.itemID, subR.count) }" matTooltip="There are currently {{ getAtAHCount(subR.itemID) | number }} at the auction house. Click for details.">
           <wah-icon *ngIf="subR.itemID" class="float-left" size="22" [id]="subR.itemID"></wah-icon>
-          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(getRecipeForItem(r.itemID)) | number : '1.2' }} x {{ getItemName(subR.itemID)}} - <span class="float-right">{{ getItemValue(subR.itemID) | gold }}</span>
+          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(getRecipeForItem(r.itemID)) | number : '1.2' }} x {{ getItemName(subR.itemID)}} - 
+          <span class="float-right">
+            {{ getItemValue(subR.itemID) | gold }} 
+            {{ getReagentFromVendorString(subR) }}
+          </span>
         </a>
       </div>
     </mat-card-content>
@@ -25,7 +33,11 @@
     <div (click)="setSelectedItem(r)">
       <a rel="item={{ r.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }" matTooltip="There are currently {{ getAtAHCount(r.itemID) | number }} at the auction house. Click for details.">
         <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-        {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.itemID) }} - <span class="float-right">{{ getItemValue(r.itemID) | gold }}</span>
+        {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.itemID) }} - 
+        <span class="float-right">
+          {{ getItemValue(r.itemID) | gold }} 
+          {{ getReagentFromVendorString(r) }}
+        </span>
       </a>
     </div>
   </ng-template>

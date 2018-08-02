@@ -58,4 +58,8 @@ export class MaterialsComponent implements OnInit {
   getMinCount(recipe: Recipe): number {
     return CustomProcs.get(recipe);
   }
+
+  getReagentFromVendorString(reagent: Reagent): string {
+    return Crafting.isVendorCheaperThanAH(reagent.itemID) ? '(V)' : '';
+  }
 }

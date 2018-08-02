@@ -5,6 +5,7 @@ import { Item } from '../models/item/item';
 import { Endpoints } from './endpoints';
 import { GameBuild } from '../utils/game-build.util';
 import { DatabaseService } from './database.service';
+import { WoWHeadSoldBy } from '../models/item/wowhead';
 
 @Injectable()
 export class ItemService {
@@ -65,6 +66,8 @@ export class ItemService {
             item.itemSource.prospectedFrom.forEach(i =>
               this.setLocaleForSourceItems(i, missingItems));
           }
+
+          this.addItemToBoughtFromVendorList(item);
         });
 
         if (missingItems.length > 0) {
@@ -125,5 +128,13 @@ export class ItemService {
         this.addItems(itemsToAdd, i);
       }
     }, 100);
+  }
+
+  addItemToBoughtFromVendorList(item: Item): void {
+    if (item.itemSource && item.itemSource.soldBy) {
+      item.itemSource.soldBy.forEach((soldBy: WoWHeadSoldBy) => {
+        item.isBoughtForGold = !soldBy.currency && soldBy.cost > 0;
+      });
+    }
   }
 }
