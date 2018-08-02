@@ -73,7 +73,7 @@ export const getItemSources = (req: Request, res: Response) => {
 export const updateItems = async (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
   db.query(
-    `SELECT * FROM items WHERE timestamp < "2018-07-26" order by id desc limit 500;`, // timestamp < "2018-07-26";
+    `select *  from items where itemSource not like '%droppedBy%' limit 500;`, // timestamp < "2018-07-26";
     (err, rows, fields) => {
       db.end();
       ItemUtil.patchItems(rows, res, req);
