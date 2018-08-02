@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy, OnChanges } from '@angular/core';
 import { Item } from '../../models/item/item';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
@@ -28,6 +28,7 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
   selectedTabSubscription: Subscription;
+  itemChangeCheckInterval;
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -86,24 +87,14 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  /* istanbul ignore next */
-  ngOnInit() {
-    if (!SharedService.selectedItemId) {
-      return;
-    }
-    console.log(SharedService.items[SharedService.selectedItemId]);
-
-    if (SharedService.items[SharedService.selectedItemId]) {
-      this.item = SharedService.items[SharedService.selectedItemId];
-    }
-    /*
-    this._wowDBService.getItem(SharedService.selectedItemId)
-      .then(i => {
-        this.wowDBItem = i;
-      })
-      .catch(e => console.error('Could not get the item from WOW DB', e));*/
-
-    this.setMaterialFor();
+  ngOnInit(): void {
+    this.setItemData();
+    this.itemChangeCheckInterval = setInterval(() => {
+      if (this.item.id !== SharedService.selectedItemId) {
+        console.log('Change!', this.item.id, SharedService.selectedItemId);
+        this.setItemData();
+      }
+    }, 1000);
   }
 
   ngAfterViewInit(): void {
@@ -119,9 +110,23 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.selectedTabSubscription.unsubscribe();
+    clearInterval(this.itemChangeCheckInterval);
+  }
+
+  setItemData(): void {
+    if (!SharedService.selectedItemId) {
+      return;
+    }
+    console.log(SharedService.items[SharedService.selectedItemId]);
+
+    if (SharedService.items[SharedService.selectedItemId]) {
+      this.item = SharedService.items[SharedService.selectedItemId];
+    }
+    this.setMaterialFor();
   }
 
   setMaterialFor(): void {
+    this.materialFor.length = 0;
     SharedService.recipes.forEach(recipe => {
       recipe.reagents.forEach(reagent => {
         if (reagent.itemID === SharedService.selectedItemId) {
