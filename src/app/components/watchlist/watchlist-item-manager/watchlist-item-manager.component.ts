@@ -3,6 +3,7 @@ import { WatchlistItem, WatchlistGroup } from '../../../models/watchlist/watchli
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedService } from '../../../services/shared.service';
 import { AuctionItem } from '../../../models/auction/auction-item';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-watchlist-item-manager',
@@ -22,7 +23,7 @@ export class WatchlistItemManagerComponent implements OnInit {
   targetTypes = new Array<string>();
   groups = new Array<WatchlistGroup>();
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     Object.keys(SharedService.user.watchlist.CRITERIA).forEach(key => {
       this.criteria.push(SharedService.user.watchlist.CRITERIA[key]);
     });

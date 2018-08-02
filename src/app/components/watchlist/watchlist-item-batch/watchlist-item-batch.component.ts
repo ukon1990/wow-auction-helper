@@ -8,6 +8,7 @@ import { GameBuild } from '../../../utils/game-build.util';
 import { Filters } from '../../../models/filtering';
 import { Item } from '../../../models/item/item';
 import { ColumnDescription } from '../../../models/column-description';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-watchlist-item-batch',
@@ -50,7 +51,7 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
     { key: 'itemLevel', title: 'Item level', dataType: 'number' }
   ];
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     Object.keys(SharedService.user.watchlist.CRITERIA).forEach(key => {
       this.criteria.push(SharedService.user.watchlist.CRITERIA[key]);
     });
@@ -143,6 +144,10 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
       this.group.items.push(wlItem);
     });
     SharedService.user.watchlist.save();
+    this.angulartics2.eventTrack.next({
+      action: `Added ${ this.items.length } new rules`,
+      properties: { category: 'Watchlist' },
+    });
     this.close.emit('');
   }
 

@@ -1,4 +1,4 @@
-<mat-paginator *ngIf="data.length > pageRows[0] && !dontUsePagignation" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
@@ -151,6 +151,6 @@
   </tbody>
 </table>
 
-<mat-paginator *ngIf="data.length > pageRows[0] && !dontUsePagignation" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>

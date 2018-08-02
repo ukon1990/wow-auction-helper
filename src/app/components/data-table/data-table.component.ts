@@ -34,7 +34,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() useAuctionItemForName: boolean;
   @Input() linkType: string;
   @Input() itemsPerPage = 10;
-  @Input() dontUsePagignation: boolean;
+  @Input() disableItemsPerPage: boolean;
 
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
@@ -219,6 +219,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   moveGroup(from: number, to: number): void {
     SharedService.user.watchlist.moveGroup(from, to);
+    this.angulartics2.eventTrack.next({
+      action: `Changed group position`,
+      properties: { category: 'Watchlist' },
+    });
   }
 
   removeGroup(index: number): void {
