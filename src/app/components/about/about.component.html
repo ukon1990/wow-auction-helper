@@ -49,6 +49,12 @@
      [active]="rla.isActive">
      Todos/Github Issues
   </a>
+  <a mat-tab-link
+     routerLink="changelog"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     Changelog
+  </a>
 </nav>
 
 <router-outlet></router-outlet>

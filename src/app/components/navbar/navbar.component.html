@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-dark navbar-expand-lg bg-dark fixed-top mat-elevation-z5">
     <span class="navbar-brand" matTooltip="WoW Auction Helper">
-      WAH (v.{{ appVersion }}) <span *ngIf="isOffline">- You are offline -</span>
+      WAH (<a routerLink="/about/changelog">v.{{ appVersion }}</a>) <span *ngIf="isOffline">- You are offline -</span>
     </span>
     <button class="navbar-toggler" type="button" (click)="showMenu = !showMenu" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

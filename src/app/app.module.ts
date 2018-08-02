@@ -73,6 +73,7 @@ import { GithubService } from './services/github.service';
 import { IssuesComponent } from './components/about/issues/issues.component';
 import { ItemSellerChartComponent } from './components/item/item-seller-chart/item-seller-chart.component';
 import { WatchlistItemBatchComponent } from './components/watchlist/watchlist-item-batch/watchlist-item-batch.component';
+import { ChangelogComponent } from './components/about/changelog/changelog.component';
 
 
 @NgModule({
@@ -127,7 +128,8 @@ import { WatchlistItemBatchComponent } from './components/watchlist/watchlist-it
     ContributorsComponent,
     IssuesComponent,
     ItemSellerChartComponent,
-    WatchlistItemBatchComponent
+    WatchlistItemBatchComponent,
+    ChangelogComponent
   ],
   imports: [
     BrowserModule,

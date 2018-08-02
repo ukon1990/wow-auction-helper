@@ -29,6 +29,7 @@ import { MyPetsComponent } from '../components/my-pets/my-pets.component';
 import { MarketResetComponent } from '../components/item/market-reset/market-reset.component';
 import { ContributorsComponent } from '../components/about/contributors/contributors.component';
 import { IssuesComponent } from '../components/about/issues/issues.component';
+import { ChangelogComponent } from '../components/about/changelog/changelog.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -87,7 +88,8 @@ const routes: Routes = [
       { path: 'privacy', component: AboutPrivacyComponent },
       { path: 'technology', component: TechnologyComponent },
       { path: 'contributors', component: ContributorsComponent },
-      { path: 'issues', component: IssuesComponent }
+      { path: 'issues', component: IssuesComponent },
+      { path: 'changelog', component: ChangelogComponent }
     ]
   },
   { path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService] },
