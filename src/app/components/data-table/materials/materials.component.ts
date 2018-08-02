@@ -12,6 +12,7 @@ import { CustomProc, CustomProcs } from '../../../models/crafting/custom-proc';
 })
 export class MaterialsComponent implements OnInit {
   @Input() recipe: Recipe;
+  vendorTooltip = 'This item is sold by a vendor, and it is currently cheaper source than from the AH.';
 
   constructor() { }
 
@@ -59,7 +60,11 @@ export class MaterialsComponent implements OnInit {
     return CustomProcs.get(recipe);
   }
 
+  usingVendor(reagent: Reagent): boolean {
+    return Crafting.isVendorCheaperThanAH(reagent.itemID) ? true : false;
+  }
+
   getReagentFromVendorString(reagent: Reagent): string {
-    return Crafting.isVendorCheaperThanAH(reagent.itemID) ? '(V)' : '';
+    return this.usingVendor(reagent) ? '(V)' : '';
   }
 }

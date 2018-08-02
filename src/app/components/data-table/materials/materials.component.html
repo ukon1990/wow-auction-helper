@@ -7,7 +7,7 @@
         <a class="col-md-12" rel="spell={{ getRecipeForItem(r.itemID).spellID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
           <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
           {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getRecipeForItem(r.itemID).name }} - 
-          <span class="float-right">
+          <span class="float-right" [matTooltip]="usingVendor(r) ? vendorTooltip : ''">
             {{ getRecipeForItem(r.itemID).cost | gold }} 
             {{ getReagentFromVendorString(r) }}
           </span>
@@ -19,7 +19,7 @@
         <a rel="item={{ subR.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(subR.itemID, subR.count) }" matTooltip="There are currently {{ getAtAHCount(subR.itemID) | number }} at the auction house. Click for details.">
           <wah-icon *ngIf="subR.itemID" class="float-left" size="22" [id]="subR.itemID"></wah-icon>
           {{ subR.count * r.count / getMinCount(recipe) / getMinCount(getRecipeForItem(r.itemID)) | number : '1.2' }} x {{ getItemName(subR.itemID)}} - 
-          <span class="float-right">
+          <span class="float-right" [matTooltip]="usingVendor(subR) ? vendorTooltip : ''">
             {{ getItemValue(subR.itemID) | gold }} 
             {{ getReagentFromVendorString(subR) }}
           </span>
@@ -34,7 +34,7 @@
       <a rel="item={{ r.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }" matTooltip="There are currently {{ getAtAHCount(r.itemID) | number }} at the auction house. Click for details.">
         <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
         {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.itemID) }} - 
-        <span class="float-right">
+        <span class="float-right" [matTooltip]="usingVendor(r) ? vendorTooltip : ''">
           {{ getItemValue(r.itemID) | gold }} 
           {{ getReagentFromVendorString(r) }}
         </span>
