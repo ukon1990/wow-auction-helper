@@ -20,7 +20,19 @@
   <mat-card>
     <mat-card-content>
       <p>
-        Here you can choose to manually re-download any of the following items.
+        The application will keep all the data up to date with auctions item, recipes etc. 
+
+        Auctions will be downloaded as soon as they are available from Blizzard. 
+        You do not have to do anything to get the latest data.
+
+        But in case it does not load correctly. 
+        You can choose to manually re-download any of the following items here. 
+      </p>
+      <p *ngIf="isDownloading()">
+        <strong>The application is currently loading data.</strong> This might take some time depending on your 
+        internet speed, browser and computer. If "loading from disk" takes a long time, and you are not 
+        using the latest version of Chrome. Do consider changing to that. The app is much faster in Chrome 
+        , compared to other browsers.
       </p>
       <table class="table table-hover table-bordered table-striped table-sm"
         [ngClass]="{'table-dark': isDarkmode()}">
@@ -28,7 +40,7 @@
           <tr>
             <td> </td>
             <td>Type</td>
-            <td>Last updated</td>
+            <td>Up to date, as of</td>
             <td>Download</td>
           </tr>
         </thead>
@@ -37,11 +49,13 @@
             <td>
               <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
             </td>
-            <td>Items</td>
+            <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
+              Items (~24 mb)
+            </td>
             <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().items" -->
-              <button mat-icon-button (click)="download('items', true)"
+              <button mat-icon-button (click)="download('items', true)" [disabled]="isDownloading()"
                 matTooltip="Re-download item data">
                 <i class="fas fa-download"></i>
               </button>
@@ -51,11 +65,13 @@
             <td>
               <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
             </td>
-            <td>Recipes</td>
+            <td>
+              Recipes
+            </td>
             <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().recipes" -->
-              <button mat-icon-button (click)="download('recipes', true)"
+              <button mat-icon-button (click)="download('recipes', true)" [disabled]="isDownloading()"
                 matTooltip="Re-download recipe data">
                 <i class="fas fa-download"></i>
               </button>
@@ -70,7 +86,7 @@
             <td>
               <!-- [disabled]="getDownloading().pets" -->
               <button mat-icon-button (click)="download('pets', true)"
-                matTooltip="Re-download pet data">
+                matTooltip="Re-download pet data" [disabled]="isDownloading()"> 
                 <i class="fas fa-download"></i>
               </button>
             </td>
@@ -84,7 +100,7 @@
             <td>
               <!-- [disabled]="getDownloading().auctions" -->
               <button mat-icon-button (click)="download('auctions')"
-                matTooltip="Re-download auction data">
+                matTooltip="Re-download auction data" [disabled]="isDownloading()">
                 <i class="fas fa-download"></i>
               </button>
             </td>
@@ -99,7 +115,7 @@
             <td>
               <!-- [disabled]="getDownloading().tsmAuctions" -->
               <button mat-icon-button (click)="download('wowuction')"
-                matTooltip="Re-download WoWUction data">
+                matTooltip="Re-download WoWUction data" [disabled]="isDownloading()">
                 <i class="fas fa-download"></i>
               </button>
             </td>
@@ -114,7 +130,7 @@
             <td>
               <!-- [disabled]="getDownloading().tsmAuctions" -->
               <button mat-icon-button (click)="download('tsm')"
-                matTooltip="Re-download TSM data">
+                matTooltip="Re-download TSM data" [disabled]="isDownloading()">
                 <i class="fas fa-download"></i>
               </button>
             </td>

@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "2.160.6",
+  "version": "2.160.7",
   "license": "MIT",
   "main": "server.js",
   "scripts": {

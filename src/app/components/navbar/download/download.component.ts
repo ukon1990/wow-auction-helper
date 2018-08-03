@@ -219,15 +219,25 @@ export class DownloadComponent implements OnInit {
         if (forceUpdate) {
           delete localStorage['timestamp_items'];
         }
+
         this.downloadProgress = 'Downloading items';
         await this._itemService.getItems();
+
+        if (forceUpdate) {
+          AuctionHandler.organize(SharedService.auctions);
+        }
         break;
       case 'pets':
         if (forceUpdate) {
           delete localStorage['timestamp_pets'];
         }
+
         this.downloadProgress = 'Downloading pets';
         await this._petService.getPets();
+
+        if (forceUpdate) {
+          AuctionHandler.organize(SharedService.auctions);
+        }
         break;
       case 'recipes':
         if (forceUpdate) {
@@ -235,6 +245,10 @@ export class DownloadComponent implements OnInit {
         }
         this.downloadProgress = 'Downloading recipes';
         await this._craftingService.getRecipes();
+
+        if (forceUpdate) {
+          AuctionHandler.organize(SharedService.auctions);
+        }
         break;
     }
   }
