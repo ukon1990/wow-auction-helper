@@ -74,6 +74,9 @@ import { IssuesComponent } from './components/about/issues/issues.component';
 import { ItemSellerChartComponent } from './components/item/item-seller-chart/item-seller-chart.component';
 import { WatchlistItemBatchComponent } from './components/watchlist/watchlist-item-batch/watchlist-item-batch.component';
 import { ChangelogComponent } from './components/about/changelog/changelog.component';
+import { MillingComponent } from './components/crafting/milling/milling.component';
+import { ProspectingComponent } from './components/crafting/prospecting/prospecting.component';
+import { DisenchantingComponent } from './components/crafting/disenchanting/disenchanting.component';
 
 
 @NgModule({
@@ -129,7 +132,10 @@ import { ChangelogComponent } from './components/about/changelog/changelog.compo
     IssuesComponent,
     ItemSellerChartComponent,
     WatchlistItemBatchComponent,
-    ChangelogComponent
+    ChangelogComponent,
+    MillingComponent,
+    ProspectingComponent,
+    DisenchantingComponent
   ],
   imports: [
     BrowserModule,

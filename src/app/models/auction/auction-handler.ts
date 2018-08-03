@@ -10,6 +10,7 @@ import { AuctionPet } from './auction-pet';
 import { Notifications } from '../user/notification';
 import { WoWUction } from './wowuction';
 import { PetsService } from '../../services/pets.service';
+import { ProspectingAndMillingUtil } from '../../utils/prospect-milling.util';
 
 export class AuctionHandler {
   /**
@@ -72,6 +73,8 @@ export class AuctionHandler {
 
       // Grouping auctions by seller
       Seller.organize();
+
+      ProspectingAndMillingUtil.setCosts();
 
       // Dashboard -> Needs to be done after trade vendors
       Dashboard.addDashboards();

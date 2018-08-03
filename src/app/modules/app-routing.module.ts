@@ -30,6 +30,9 @@ import { MarketResetComponent } from '../components/item/market-reset/market-res
 import { ContributorsComponent } from '../components/about/contributors/contributors.component';
 import { IssuesComponent } from '../components/about/issues/issues.component';
 import { ChangelogComponent } from '../components/about/changelog/changelog.component';
+import { MillingComponent } from '../components/crafting/milling/milling.component';
+import { ProspectingComponent } from '../components/crafting/prospecting/prospecting.component';
+import { DisenchantingComponent } from '../components/crafting/disenchanting/disenchanting.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -56,6 +59,9 @@ const routes: Routes = [
       { path: 'sellers', component: SellersComponent },
       { path: 'my-pets', component: MyPetsComponent },
       { path: 'market-reset', component: MarketResetComponent },
+      { path: 'milling', component: MillingComponent },
+      { path: 'prospecting', component: ProspectingComponent },
+      { path: 'disenchanting', component: DisenchantingComponent }
     ]
   },
   { path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService] },

@@ -116,11 +116,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   /* istanbul ignore next */
   setSelectedItem(item: any): void {
-    if (item.item) {
-      SharedService.selectedItemId = item.item;
-    } else {
-      SharedService.selectedItemId = item.itemID;
-    }
+    SharedService.selectedItemId = item.item || item.itemID || item.id;
     this.setSelectedPet(item);
     SharedService.selectedSeller = undefined;
   }

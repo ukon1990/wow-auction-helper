@@ -6,6 +6,7 @@ import { Endpoints } from './endpoints';
 import { GameBuild } from '../utils/game-build.util';
 import { DatabaseService } from './database.service';
 import { WoWHeadSoldBy } from '../models/item/wowhead';
+import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
 
 @Injectable()
 export class ItemService {
@@ -54,18 +55,20 @@ export class ItemService {
 
         // "translating" item names
         SharedService.itemsUnmapped.forEach((item: Item) => {
-          if (item.itemSource.containedInItem) {
+          if (item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
             item.itemSource.containedInItem.forEach(i =>
               this.setLocaleForSourceItems(i, missingItems));
           }
-          if (item.itemSource.milledFrom) {
+          if (item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
             item.itemSource.milledFrom.forEach(i =>
               this.setLocaleForSourceItems(i, missingItems));
           }
-          if (item.itemSource.prospectedFrom) {
+          if (item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0) {
             item.itemSource.prospectedFrom.forEach(i =>
               this.setLocaleForSourceItems(i, missingItems));
           }
+
+          ProspectingAndMillingUtil.isSourceMilling(item);
 
           this.addItemToBoughtFromVendorList(item);
         });

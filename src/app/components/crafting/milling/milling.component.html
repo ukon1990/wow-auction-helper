@@ -1,0 +1,48 @@
+<mat-tab-group>
+  <mat-tab label="Milling">
+    <div class="row">
+      <div *ngFor="let item of getMilling()" class="col-md-4 mb-2">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title (click)="setSelectedItem(item)">
+              <a rel="domain={{ locale }},item={{ item.id }}">
+                <wah-icon class="float-left" [size]="22" [id]="item.id"></wah-icon>
+                {{ item.name }}
+              </a>
+            </mat-card-title>
+            <mat-card-subtitle>
+              Buyout {{ item.yield | gold }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <wah-data-table [id]="'id'" [columns]="columns" [data]="item.sources" [iconSize]="22"></wah-data-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Prospecting">
+    <div class="row">
+      <div *ngFor="let item of getProspects()" class="col-md-4 mb-2">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title (click)="setSelectedItem(item)">
+              <a rel="domain={{ locale }},item={{ item.id }}">
+                <wah-icon class="float-left" [size]="22" [id]="item.id"></wah-icon>
+                {{ item.name }}
+              </a>
+            </mat-card-title>
+            <mat-card-subtitle>
+              Buyout {{ item.yield | gold }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <wah-data-table [id]="'id'" [columns]="columns" [data]="item.sources" [iconSize]="22"></wah-data-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
