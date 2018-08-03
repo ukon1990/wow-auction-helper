@@ -31,7 +31,6 @@ import { ContributorsComponent } from '../components/about/contributors/contribu
 import { IssuesComponent } from '../components/about/issues/issues.component';
 import { ChangelogComponent } from '../components/about/changelog/changelog.component';
 import { MillingComponent } from '../components/crafting/milling/milling.component';
-import { ProspectingComponent } from '../components/crafting/prospecting/prospecting.component';
 import { DisenchantingComponent } from '../components/crafting/disenchanting/disenchanting.component';
 
 const routes: Routes = [
@@ -59,8 +58,7 @@ const routes: Routes = [
       { path: 'sellers', component: SellersComponent },
       { path: 'my-pets', component: MyPetsComponent },
       { path: 'market-reset', component: MarketResetComponent },
-      { path: 'milling', component: MillingComponent },
-      { path: 'prospecting', component: ProspectingComponent },
+      { path: 'milling-and-prospecting', component: MillingComponent },
       { path: 'disenchanting', component: DisenchantingComponent }
     ]
   },

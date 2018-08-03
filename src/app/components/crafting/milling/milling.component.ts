@@ -29,10 +29,4 @@ export class MillingComponent implements OnInit {
   getProspects(): Remains[] {
     return ProspectingAndMillingUtil.gemSource;
   }
-
-  setSelectedItem(item: Remains): void {
-    SharedService.selectedItemId = item.id;
-    SharedService.selectedSeller = undefined;
-  }
-
 }

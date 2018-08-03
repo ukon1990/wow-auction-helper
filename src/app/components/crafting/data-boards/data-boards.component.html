@@ -1,0 +1,28 @@
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+  [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
+</mat-paginator>
+<div class="row">
+  <div *ngFor="let item of data" class="col-md-4 mb-2">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title (click)="setSelectedItem(item)">
+          <a rel="domain={{ locale }},item={{ item.id }}">
+            <wah-icon class="float-left" [size]="22" [id]="item.id"></wah-icon>
+            {{ item.name }}
+          </a>
+        </mat-card-title>
+        <mat-card-subtitle>
+          Buyout {{ item.buyout | gold }}
+          <br> ROI {{ item.yield | gold }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <wah-data-table [id]="'id'" [columns]="columns" [data]="item.sources" [iconSize]="22"></wah-data-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+  [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
+</mat-paginator>
