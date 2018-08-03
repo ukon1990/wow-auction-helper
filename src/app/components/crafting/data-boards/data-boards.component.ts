@@ -12,10 +12,10 @@ import { PageEvent } from '@angular/material';
 export class DataBoardsComponent implements OnInit {
   @Input() data: Remains[];
   @Input() columns: ColumnDescription[];
-  @Input() itemsPerPage = 10;
+  @Input() itemsPerPage = 12;
 
 
-  pageRows: Array<number> = [10, 20, 40, 80, 100];
+  pageRows: Array<number> = [12, 24, 36];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
 
   constructor() { }
@@ -32,4 +32,20 @@ export class DataBoardsComponent implements OnInit {
   pageChange(event: PageEvent): void {
     this.pageEvent = event;
   }
+
+    /* istanbul ignore next */
+  getToValue(): number {
+    if (!this.pageEvent || !this.pageEvent.pageSize) {
+      return this.pageRows[0];
+    }
+    return this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1);
+  }
+
+    /* istanbul ignore next */
+    getFromValue(): number {
+      if (!this.pageEvent || !this.pageEvent.pageSize) {
+        return 0;
+      }
+      return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
+    }
 }
