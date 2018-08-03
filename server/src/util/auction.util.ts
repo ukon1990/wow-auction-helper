@@ -6,11 +6,14 @@ import { Item } from '../models/item/item';
 import { BLIZZARD_API_KEY, DATABASE_CREDENTIALS } from './secrets';
 import { ItemLocale } from '../models/item/item-locale';
 import { ItemQuery } from '../queries/item.query';
+import { Auction } from '../models/auction/auction';
 const PromiseThrottle: any = require('promise-throttle');
 const request: any = require('request');
 const RequestPromise = require('request-promise');
 
+
 export class AuctionUtil {
+/*
   public static getAuctions(req: Request, res: Response): void {
     const url = req.body.url;
 
@@ -22,6 +25,44 @@ export class AuctionUtil {
         auctions: []
       });
     }
+  }*/
+  public static getAuctions(req: Request, res: Response): void {
+    const url = req.body.url;
+
+    if (url && url.indexOf('.worldofwarcraft.com/auction-data') !== -1) {
+      request.get(url, (error, response, body) => {
+        if (error) {
+          res.send({
+            realms: [],
+            auctions: []
+          });
+          console.error('getAuctions', error);
+          return;
+        }
+        res.send(AuctionUtil.removeUnused(JSON.parse(body)));
+      });
+    } else {
+      res.send({
+        realms: [],
+        auctions: []
+      });
+    }
+  }
+
+  private static removeUnused(auctionResponse) {
+    const response = {
+      realms: auctionResponse.realms,
+      auctions: auctionResponse.auctions as Auction[]
+    };
+
+    response.auctions.forEach((auction: Auction) => {
+      delete auction.auc;
+      delete auction.context;
+      delete auction.rand;
+      delete auction.seed;
+    });
+
+    return response;
   }
 
   public static getWoWUction(req: any, res: Response): void {
