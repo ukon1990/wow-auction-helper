@@ -19,6 +19,7 @@ export class RemainsSource {
   name: string;
   cost: number;
   roi: number;
+  value?: number;
   dropChance: number;
 
   constructor(mill?: WoWHeadProspectedFrom) {

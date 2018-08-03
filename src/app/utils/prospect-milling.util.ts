@@ -42,6 +42,8 @@ export class ProspectingAndMillingUtil {
       remains.sources.forEach(source => {
         if (!map[source.id]) {
           map[source.id] = new Remains(SharedService.items[source.id]);
+          map[source.id].yield = 0;
+          map[source.id].buyout = ProspectingAndMillingUtil.getAHValue(source.id);
           toArray.push(map[source.id]);
         }
         if (source.dropChance > 0) {
@@ -49,9 +51,9 @@ export class ProspectingAndMillingUtil {
           targetItem.id = remains.id;
           targetItem.name = remains.name;
           targetItem.dropChance = source.dropChance;
-          targetItem.cost = source.cost;
-          targetItem.roi = source.roi;
-          map[source.id].yield += source.roi;
+          targetItem.cost = (ProspectingAndMillingUtil.getAHValue(remains.id) / ProspectingAndMillingUtil.NEEDED_PER) * source.dropChance;
+          targetItem.roi = targetItem.cost - ProspectingAndMillingUtil.getAHValue(remains.id);
+          map[source.id].yield += targetItem.roi;
           (map[source.id] as Remains).sources.push(targetItem);
         }
       });
@@ -82,4 +84,7 @@ export class ProspectingAndMillingUtil {
       SharedService.items[b.id].expansionId - SharedService.items[a.id].expansionId);
   }
 
+  public static getAHValue(id: number): number {
+    return SharedService.auctionItemsMap[id] ? SharedService.auctionItemsMap[id].buyout : 0;
+  }
 }
