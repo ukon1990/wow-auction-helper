@@ -18,6 +18,15 @@
               </div>
               Add one or more item from query
             </button>
+
+            <div class="float-left" matTooltip='You can change this in "Manage groups"'>
+              <mat-form-field class="ml-2">
+                <input matInput placeholder="Minimum regional sale rate %" [(ngModel)]="group.matchSaleRate" disabled>
+              </mat-form-field>
+              <mat-form-field class="ml-2">
+                <input matInput placeholder="Minimum daily sold" [(ngModel)]="group.matchDailySold" disabled>
+              </mat-form-field>
+            </div>
           </div>
         </div>
 
