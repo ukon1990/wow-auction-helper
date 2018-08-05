@@ -1,7 +1,5 @@
 import {
   Watchlist,
-
-
   WatchlistGroup
 } from './watchlist';
 import { Recipe } from '../crafting/recipe';
@@ -67,7 +65,9 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'criteria': 'below',
     'minCraftingProfit': 0
   }],
-  'name': 'Legion herbs'
+  'name': 'Legion herbs',
+  matchSaleRate: 0,
+  matchDailySold: 0
 },
 {
   'items': [{
@@ -90,7 +90,9 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'criteria': 'below',
     'minCraftingProfit': 0
   }],
-  'name': 'Legion ores'
+  'name': 'Legion ores',
+  matchSaleRate: 0,
+  matchDailySold: 0
 },
 {
   'items': [{
@@ -123,7 +125,9 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'criteria': 'below',
     'minCraftingProfit': 0
   }],
-  'name': 'Enchanting materials'
+  'name': 'Enchanting materials',
+  matchSaleRate: 0,
+  matchDailySold: 0
 },
 {
   'items': [{
@@ -166,7 +170,9 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'criteria': 'below',
     'minCraftingProfit': 0
   }],
-  'name': 'Legion Gems'
+  'name': 'Legion Gems',
+  matchSaleRate: 0,
+  matchDailySold: 0
 },
 {
   'items': [{
@@ -239,7 +245,9 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'criteria': 'below',
     'minCraftingProfit': 0
   }],
-  'name': 'Legion fish'
+  'name': 'Legion fish',
+  matchSaleRate: 0,
+  matchDailySold: 0
 },
 {
   'items': [{
@@ -262,5 +270,7 @@ export const defaultWatchlist: Array<WatchlistGroup> = [{
     'criteria': 'below',
     'minCraftingProfit': 0
   }],
-  'name': 'Legion leather'
+  'name': 'Legion leather',
+  matchSaleRate: 0,
+  matchDailySold: 0
 }];
