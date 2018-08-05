@@ -150,7 +150,7 @@ export class Dashboard {
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
         this.addAPIColumnsAtPosition(4);
-        this.setWatchListAlerts(array);
+        this.setWatchListAlerts(array[0]);
         break;
 
       case Dashboard.TYPES.WATCH_LIST_CRAFTS:
@@ -224,7 +224,7 @@ export class Dashboard {
     // The users watchlists
     SharedService.user.watchlist.groups.forEach(group => {
       SharedService.itemDashboards.push(
-        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, group));
+        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]));
     });
     SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
