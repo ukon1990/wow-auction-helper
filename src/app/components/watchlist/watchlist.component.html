@@ -11,19 +11,6 @@
     <mat-tab [label]="group.name">
       <ng-container *ngIf="selectedTabIndex === tabIndex + 1">
         <div class="row mb-3 ml-2">
-          <!--
-          <form class="col-md-8">
-            <mat-form-field class="row col-md-12">
-              <input matInput placeholder="Search to add a single item to the group" [matAutocomplete]="auto" [formControl]="itemSearchForm">
-              <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let item of filteredItems | async" [value]="item.name" [ngClass]="{'unicorn-dark-theme': isDarkmode()}"
-                  (click)="add(group, item)">
-                  <wah-icon size="36" [id]="item.id"></wah-icon>
-                  <span>{{ item.name }}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </form>-->
           <div class="col-md-12">
             <button class="float-left" type="button" (click)="openBachMenu(group)" mat-raised-button>
               <div class="float-left mr-1">
@@ -31,6 +18,15 @@
               </div>
               Add one or more item from query
             </button>
+
+            <div class="float-left" matTooltip='You can change this in "Manage groups"'>
+              <mat-form-field class="ml-2">
+                <input matInput placeholder="Minimum regional sale rate %" [(ngModel)]="group.matchSaleRate" disabled>
+              </mat-form-field>
+              <mat-form-field class="ml-2">
+                <input matInput placeholder="Minimum daily sold" [(ngModel)]="group.matchDailySold" disabled>
+              </mat-form-field>
+            </div>
           </div>
         </div>
 

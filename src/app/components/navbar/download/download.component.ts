@@ -196,10 +196,12 @@ export class DownloadComponent implements OnInit {
 
   /* istanbul ignore next */
   async download(type: string, forceUpdate?: boolean) {
-    this.angulartics2.eventTrack.next({
-      action: type,
-      properties: { category: 'Manual download' },
-    });
+    if (forceUpdate) {
+      this.angulartics2.eventTrack.next({
+        action: type,
+        properties: { category: 'Manual download' },
+      });
+    }
     switch (type) {
       case 'wowuction':
         this.downloadProgress = 'Downloading wowuction data';

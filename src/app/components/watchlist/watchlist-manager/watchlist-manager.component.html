@@ -4,6 +4,13 @@
   </mat-form-field>
   <button type="submit" mat-raised-button>Create group</button>
 </form>
+<p>
+  Min sale rate requires a TSM or Wowuction API key. 
+  And are set as a percent value from 0 and up. The percent value is 10 for 10% and not 0.1.
+</p>
+<p>
+  Min daily sold requires a TSM or Wowuction API key.
+</p>
 <wah-data-table [columns]="columns" [data]="getWatchlist().groups"></wah-data-table>
 
 <p>

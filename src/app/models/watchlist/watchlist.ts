@@ -72,6 +72,10 @@ export class Watchlist {
         if (!this.groupsMap[g.name]) {
           this.groupsMap[g.name] = new WatchlistGroup(g.name);
         }
+        if (g.matchDailySold === undefined || g.matchSaleRate === undefined) {
+          g.matchDailySold = 0;
+          g.matchSaleRate = 0;
+        }
         this.groupsMap[g.name].items.push(g);
       });
     }
@@ -236,6 +240,8 @@ export class Watchlist {
 export class WatchlistGroup {
   name: string;
   items: Array<WatchlistItem> = new Array<WatchlistItem>();
+  matchSaleRate = 0;
+  matchDailySold = 0;
 
   constructor(name: string, items?: Array<WatchlistItem>) {
     this.name = name;
