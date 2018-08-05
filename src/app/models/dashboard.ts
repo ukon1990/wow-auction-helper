@@ -277,7 +277,7 @@ export class Dashboard {
   private setWatchListAlerts(group: WatchlistGroup): void {
     this.data.length = 0;
     this.tsmShoppingString = '';
-    this.message = `You can edit this dashboard item, over in the watchlist section (tools/watchlist)`;
+    this.message = `You can edit this dashboard item, over in the "manage custom dashboards" section`;
     const pipe = new GoldPipe();
     const form = (new FormBuilder).group({
       avgDailySold: group.matchDailySold,
