@@ -3,10 +3,12 @@ import { SharedService } from '../services/shared.service';
 import { Item } from './item/item';
 import { Notification } from './user/notification';
 import { GoldPipe } from '../pipes/gold.pipe';
-import { WatchlistItem } from './watchlist/watchlist';
+import { WatchlistItem, WatchlistGroup } from './watchlist/watchlist';
 import { itemClasses } from './item/item-classes';
 import { Seller } from './seller';
 import { AuctionItem } from './auction/auction-item';
+import { Filters } from './filtering';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -148,7 +150,7 @@ export class Dashboard {
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
         this.addAPIColumnsAtPosition(4);
-        this.setWatchListAlerts(array);
+        this.setWatchListAlerts(array[0]);
         break;
 
       case Dashboard.TYPES.WATCH_LIST_CRAFTS:
@@ -222,7 +224,7 @@ export class Dashboard {
     // The users watchlists
     SharedService.user.watchlist.groups.forEach(group => {
       SharedService.itemDashboards.push(
-        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, group.items));
+        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]));
     });
     SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
@@ -272,14 +274,21 @@ export class Dashboard {
     this.data.sort((a, b) => b.value - a.value);
   }
 
-  private setWatchListAlerts(items: any[]): void {
+  private setWatchListAlerts(group: WatchlistGroup): void {
     this.data.length = 0;
     this.tsmShoppingString = '';
-    this.message = `You can edit this dashboard item, over in the watchlist section (tools/watchlist)`;
+    this.message = `You can edit this dashboard item, over in the "manage custom dashboards" section`;
     const pipe = new GoldPipe();
+    const form = (new FormBuilder).group({
+      avgDailySold: group.matchDailySold,
+      saleRate: group.matchSaleRate
+    });
 
-    items.forEach(item => {
-      if (SharedService.user.watchlist.isTargetMatch(item)) {
+
+    group.items.forEach(item => {
+      if (SharedService.user.watchlist.isTargetMatch(item) &&
+        Filters.isSaleRateMatch(item.itemID, form) &&
+        Filters.isDailySoldMatch(item.itemID, form)) {
         const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
           obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal), compareTo: item.compareTo };
         this.data.push(obj);

@@ -22,6 +22,8 @@ export class WatchlistManagerComponent implements OnInit, OnDestroy {
 
   constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'input-text' });
+    this.columns.push({ key: 'matchSaleRate', title: 'Min sale rate', dataType: 'input-number' });
+    this.columns.push({ key: 'matchDailySold', title: 'Min daily sold (region)', dataType: 'input-number' });
     this.columns.push({
       key: '',
       title: 'Actions',
