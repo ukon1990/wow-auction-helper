@@ -27,9 +27,6 @@ export class ChangeLog {
         previousTag.title = `${ new Date(commit.commit.author.date).toLocaleDateString() } - version ${ previousTag.tag }`;
         previousTag.changes.push(commit.commit);
       }
-      if (previousTag) {
-        // previousTag.changes.push(commit.commit);
-      }
     });
 
 
