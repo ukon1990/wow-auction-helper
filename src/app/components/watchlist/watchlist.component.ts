@@ -25,6 +25,7 @@ export class WatchlistComponent implements AfterViewInit {
   selectedBatchAdd: string;
   selectedTabIndex = 1;
   watchlist: Watchlist;
+  shareString;
 
   constructor(private angulartics2: Angulartics2, private _title: Title) {
     this._title.setTitle('WAH - Manage dashboards');
@@ -45,6 +46,11 @@ export class WatchlistComponent implements AfterViewInit {
 
   tabChange(index: number): void {
     this.selectedTabIndex = index;
+    this.shareString = undefined;
+  }
+
+  shareGroup(group: WatchlistGroup): void {
+    this.shareString = JSON.stringify({ groups: [group]});
   }
 
   close(): void {

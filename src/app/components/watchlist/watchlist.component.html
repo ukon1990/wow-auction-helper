@@ -27,6 +27,16 @@
                 <input matInput placeholder="Minimum daily sold" [(ngModel)]="group.matchDailySold" disabled>
               </mat-form-field>
             </div>
+
+            <div class="float-right mr-2">
+              <mat-form-field class="ml-2" *ngIf="shareString">
+                <input matInput placeholder="Copy this string to share th group" [value]="shareString">
+              </mat-form-field>
+              <button matTooltip="Share this group" (click)="shareGroup(group)" mat-raised-button>
+                <i class=" mr-2 far fa-share-square"></i>
+                Share
+              </button>
+            </div>
           </div>
         </div>
 
