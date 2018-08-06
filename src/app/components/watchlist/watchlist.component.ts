@@ -116,6 +116,11 @@ export class WatchlistComponent implements AfterViewInit {
     });
   }
 
+  clearGroup(group: WatchlistGroup): void {
+    group.items.length = 0;
+    SharedService.user.watchlist.save();
+  }
+
   /**
  * Such efficient, such ugh
  * @param name Item name for the query
