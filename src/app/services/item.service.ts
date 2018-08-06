@@ -68,8 +68,6 @@ export class ItemService {
               this.setLocaleForSourceItems(i, missingItems));
           }
 
-          ProspectingAndMillingUtil.isSourceMilling(item);
-
           this.addItemToBoughtFromVendorList(item);
         });
 

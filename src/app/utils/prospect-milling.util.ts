@@ -4,6 +4,77 @@ import { SharedService } from '../services/shared.service';
 import { AuctionItem } from '../../../server/src/models/auction/auction-item';
 
 export class ProspectingAndMillingUtil {
+  public static prospecting: Remains[] = [];
+  public static mills: Remains[] = [];
+
+  public static TYPES = {
+    MILLING: 'MILLING',
+    PROSPECTING: 'PROSPECTING'
+  };
+
+
+  public static addRemains(type: string, item: Item): void {
+    switch (type) {
+      case ProspectingAndMillingUtil.TYPES.MILLING:
+      ProspectingAndMillingUtil.mills.push(new Remains(item));
+        break;
+      case ProspectingAndMillingUtil.TYPES.PROSPECTING:
+        ProspectingAndMillingUtil.prospecting.push(new Remains(item));
+        break;
+    }
+
+    ProspectingAndMillingUtil.save();
+  }
+
+  public static addTargetItem(remains: Remains, item: Item, count: number, outOf: number): void {
+    remains.sources.push(new RemainsSource(item, count, outOf));
+
+    ProspectingAndMillingUtil.save();
+  }
+
+  public static calculateValues(): void {
+    ProspectingAndMillingUtil.prospecting.forEach(p => {
+      p.sources.forEach(s => {
+        s.calculate();
+        p.yield += s.roi;
+      });
+    });
+  }
+
+  public static save(): void {
+    localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING] =
+      JSON.stringify(ProspectingAndMillingUtil.prospecting);
+
+    localStorage[ProspectingAndMillingUtil.TYPES.MILLING] =
+      JSON.stringify(ProspectingAndMillingUtil.mills);
+  }
+
+  public static export (type: string): string {
+    switch (type) {
+      case ProspectingAndMillingUtil.TYPES.MILLING:
+        return JSON.stringify(ProspectingAndMillingUtil.mills);
+      case ProspectingAndMillingUtil.TYPES.PROSPECTING:
+      return JSON.stringify(ProspectingAndMillingUtil.prospecting);
+    }
+  }
+
+  public static import(type: string, data: string): void {
+    //
+  }
+
+  public static restore(): void {
+    if (localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]) {
+      ProspectingAndMillingUtil.prospecting =
+        JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]);
+    }
+
+    if (localStorage[ProspectingAndMillingUtil.TYPES.MILLING]) {
+      ProspectingAndMillingUtil.mills =
+        JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.MILLING]);
+    }
+  }
+
+    /*
   public static pigments: Remains[] = [];
   public static gems: Remains[] = [];
   // Flipping the bird
@@ -12,8 +83,9 @@ export class ProspectingAndMillingUtil {
   public static gemSource: Remains[] = [];
   public static gemSourceMap = new Map<number, Remains>();
 
-  public static readonly NEEDED_PER = 5;
+  public static readonly NEEDED_PER = 5;*/
 
+  /*
   public static isSourceMilling(item: Item): void {
     if (item.itemSource && item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
       const target = new Remains(item);
@@ -86,5 +158,5 @@ export class ProspectingAndMillingUtil {
 
   public static getAHValue(id: number): number {
     return SharedService.auctionItemsMap[id] ? SharedService.auctionItemsMap[id].buyout : 0;
-  }
+  }*/
 }

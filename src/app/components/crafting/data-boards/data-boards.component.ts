@@ -13,6 +13,7 @@ export class DataBoardsComponent implements OnInit {
   @Input() data: Remains[];
   @Input() columns: ColumnDescription[];
   @Input() itemsPerPage = 12;
+  @Input() type: string;
 
 
   pageRows: Array<number> = [12, 24, 36];

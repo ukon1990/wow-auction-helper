@@ -17,16 +17,32 @@ export class Remains {
 export class RemainsSource {
   id: number;
   name: string;
+  count: number;
+  outOf: number;
   cost: number;
   roi: number;
   value?: number;
   dropChance: number;
 
-  constructor(mill?: WoWHeadProspectedFrom) {
-    if (mill) {
-      this.id = mill.id;
-      this.name = mill.name;
-      this.dropChance = mill.dropChance;
-    }
+  constructor(item: Item, count: number, outOf: number) {
+    this.id = item.id;
+    this.name = item.name;
+    this.count = count;
+    this.outOf = outOf;
+
+    this.setDropChance();
+  }
+
+  update(count: number, outOf: number): void {
+    this.count += count;
+    this.outOf += outOf;
+    this.setDropChance();
+  }
+
+  setDropChance(): void {
+    this.dropChance = this.count / this.outOf;
+  }
+
+  calculate(): void {
   }
 }

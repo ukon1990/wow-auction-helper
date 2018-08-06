@@ -17,16 +17,18 @@ export class MillingComponent implements OnInit {
     { key: 'roi', title: 'ROI', dataType: 'gold'},
     { key: 'dropChance', title: 'Drop chance', dataType: 'percent'}
   ];
+  types = ProspectingAndMillingUtil.TYPES;
+
   constructor() { }
 
   ngOnInit() {
   }
 
   getMilling(): Remains[] {
-    return ProspectingAndMillingUtil.pigmentSource;
+    return ProspectingAndMillingUtil.mills;
   }
 
   getProspects(): Remains[] {
-    return ProspectingAndMillingUtil.gemSource;
+    return ProspectingAndMillingUtil.prospecting;
   }
 }
