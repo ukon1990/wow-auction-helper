@@ -1,8 +1,9 @@
 <mat-card *ngIf="item">
   <mat-card-header>
-    <mat-card-title (click)="setSelectedItem(item)">
-      <wah-icon size="22" [id]="item.itemID"></wah-icon>
-      <a rel="item={{ item.itemID }}" [ngClass]="{'user-auction-lowest': isTargetMatch(item)}">
+    <mat-card-title>
+      <mat-checkbox class="float-left mr-2" [(ngModel)]="selectionItem.isSelected" (change)="setSelection($event)"></mat-checkbox>
+      <a rel="item={{ item.itemID }}" [ngClass]="{'user-auction-lowest': isTargetMatch(item)}" (click)="setSelectedItem(item)">
+          <wah-icon size="22" [id]="item.itemID"></wah-icon>
         {{ item.name }}
       </a>
     </mat-card-title>
