@@ -11,6 +11,10 @@ export class GithubIssueBody {
   }
 
   private format(body: string): void {
+    if (body === null || !body) {
+      this.description = '';
+      return;
+    }
     const parts = body.split('\n');
     parts.forEach((p, i) => {
       if (p.indexOf('- [x] ') > -1) {
