@@ -3,6 +3,8 @@ import { WatchlistItem } from '../../../models/watchlist/watchlist';
 import { Recipe } from '../../../models/crafting/recipe';
 import { SharedService } from '../../../services/shared.service';
 import { AuctionItem } from '../../../models/auction/auction-item';
+import { MatCheckboxChange } from '@angular/material';
+import { SelectionItem } from '../../../models/watchlist/selection-item.model';
 
 @Component({
   selector: 'wah-watchlist-item',
@@ -11,8 +13,10 @@ import { AuctionItem } from '../../../models/auction/auction-item';
 })
 export class WatchlistItemComponent implements OnInit {
   @Input() item: WatchlistItem;
+  @Input() selectionItem: SelectionItem = new SelectionItem();
   @Output() edit: EventEmitter<any> = new EventEmitter<any>();
   @Output() delete: EventEmitter<any> = new EventEmitter<any>();
+  @Output() isSelected: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor() { }
@@ -27,6 +31,10 @@ export class WatchlistItemComponent implements OnInit {
   getAuctionItem(itemID: number): AuctionItem {
     return SharedService.auctionItemsMap[itemID] ?
     SharedService.auctionItemsMap[itemID] : new AuctionItem();
+  }
+
+  setSelection(change: MatCheckboxChange): void {
+    this.isSelected.emit(change.checked);
   }
 
   /* istanbul ignore next */

@@ -113,7 +113,11 @@ export class Watchlist {
 
   getCompareToValue(item: WatchlistItem): number {
     if (item.compareTo === this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
-      const recipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe);
+      const recipeMapItem = SharedService.itemRecipeMap[item.itemID],
+        recipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe) ||
+          recipeMapItem ?
+            recipeMapItem[0] as Recipe : undefined;
+
       return recipe ? recipe.cost : 0;
     } else {
       const auctionItem = SharedService.auctionItemsMap[item.itemID];

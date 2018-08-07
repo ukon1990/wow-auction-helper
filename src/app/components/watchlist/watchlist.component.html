@@ -19,6 +19,34 @@
               Add one or more item from query
             </button>
 
+            <div class="float-left">
+              <button class="ml-2"
+                (click)="openBatchEdit(group)" mat-raised-button
+                [disabled]="batchCount === 0">
+                <i class="mr-2 far fa-edit"></i>
+                Edit batch ({{ batchCount | number }})
+              </button>
+
+              <button class="ml-2"
+                (click)="batchDelete(group)" mat-raised-button
+                [disabled]="batchCount === 0">
+                <i class="mr-2 fas fa-trash-alt"></i>
+                Delete batch ({{ batchCount | number }})
+              </button>
+
+              <button class="ml-2"
+                (click)="setSelections(true, itemSelection[group.name])" mat-raised-button>
+                <i class="mr-2 fas fa-check"></i>
+                Select all
+              </button>
+
+              <button class="ml-2"
+                (click)="setSelections(false, itemSelection[group.name])" mat-raised-button>
+                <i class="mr-2 fas fa-eraser"></i>
+                Clear selections
+              </button>
+            </div>
+
             <div class="float-left" matTooltip='You can change this in "Manage groups"'>
               <mat-form-field class="ml-2">
                 <input matInput placeholder="Minimum regional sale rate %" [(ngModel)]="group.matchSaleRate" disabled>
@@ -29,6 +57,7 @@
             </div>
 
             <div class="float-right mr-2">
+
               <mat-form-field class="ml-2" *ngIf="shareString">
                 <input matInput placeholder="Copy this string to share th group" [value]="shareString">
               </mat-form-field>
@@ -40,12 +69,33 @@
           </div>
         </div>
 
-        <wah-watchlist-item-manager *ngIf="selectedItem" [group]="selectedGroup" [item]="selectedItem" [index]="selectedIndex" (close)="close()"></wah-watchlist-item-manager>
+        <wah-watchlist-item-manager *ngIf="selectedItem || batchEditMode"
+          [group]="selectedGroup"
+          [item]="selectedItem"
+          [selectionList]="itemSelection[group.name]"
+          [batchMode]="batchEditMode"
+          [index]="selectedIndex"
+          (close)="close()">
+        </wah-watchlist-item-manager>
 
-        <wah-watchlist-item-batch *ngIf="selectedBatchAdd === group.name" [group]="selectedGroup" (close)="close()"></wah-watchlist-item-batch>
+        <wah-watchlist-item-batch *ngIf="selectedBatchAdd === group.name"
+          [group]="selectedGroup"
+          (close)="close()">
+        </wah-watchlist-item-batch>
+
+        <mat-form-field *ngIf="tsmGroupStrings[group.name]" class="col-md-12">
+          <textarea placeholder="TSM group string" [value]="tsmGroupStrings[group.name]" matInput></textarea>
+        </mat-form-field>
+
         <div class="slim-sm row col-md-12">
           <div *ngFor="let item of group.items; let i = index" class="col-md-6 col-lg-4 mb-3">
-            <wah-watchlist-item [item]="item" (edit)="edit(group, item, i)" (delete)="delete(group, item, i)"></wah-watchlist-item>
+            <wah-watchlist-item
+              [selectionItem]="itemSelection[group.name][i]"
+              [item]="item"
+              (isSelected)="setCountSelectedItems($event, itemSelection[group.name])"
+              (edit)="edit(group, item, i)"
+              (delete)="delete(group, item, i)">
+            </wah-watchlist-item>
           </div>
         </div>
       </ng-container>

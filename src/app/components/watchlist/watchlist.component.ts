@@ -10,6 +10,7 @@ import { SharedService } from '../../services/shared.service';
 import { Recipe } from '../../models/crafting/recipe';
 import { Item } from '../../models/item/item';
 import { Title } from '@angular/platform-browser';
+import { SelectionItem } from '../../models/watchlist/selection-item.model';
 
 @Component({
   selector: 'wah-watchlist',
@@ -24,8 +25,12 @@ export class WatchlistComponent implements AfterViewInit {
   selectedIndex: number;
   selectedBatchAdd: string;
   selectedTabIndex = 1;
+  batchEditMode = false;
+  batchCount = 0;
   watchlist: Watchlist;
+  itemSelection: Map<string, SelectionItem[]> = new Map<string, SelectionItem[]>();
   shareString;
+  tsmGroupStrings: Map<string, string> = new Map<string, string>();
 
   constructor(private angulartics2: Angulartics2, private _title: Title) {
     this._title.setTitle('WAH - Manage dashboards');
@@ -42,6 +47,9 @@ export class WatchlistComponent implements AfterViewInit {
       SharedService.user.watchlist = new Watchlist();
     }
     this.watchlist = SharedService.user.watchlist;
+
+    this.setTSMGroupString();
+    this.setSelectionItems();
   }
 
   tabChange(index: number): void {
@@ -58,6 +66,10 @@ export class WatchlistComponent implements AfterViewInit {
     this.selectedGroup = undefined;
     this.selectedItem = undefined;
     this.selectedIndex = undefined;
+    this.batchEditMode = false;
+
+    this.setTSMGroupString();
+    this.setSelectionItems();
   }
 
   openBachMenu(group: WatchlistGroup): void {
@@ -75,6 +87,7 @@ export class WatchlistComponent implements AfterViewInit {
       action: 'Added new item',
       properties: { category: 'Watchlist' },
     });
+    this.setSelectionItems();
   }
 
   edit(group: WatchlistGroup, item: WatchlistItem, index: number): void {
@@ -88,12 +101,80 @@ export class WatchlistComponent implements AfterViewInit {
     });
   }
 
-  delete(group: WatchlistGroup, watchlistItem: WatchlistItem, index: number): void {
+  delete(group: WatchlistGroup, watchlistItem: WatchlistItem, index: number, isBatchDeleting?: boolean): void {
     SharedService.user.watchlist.removeItem(group, index);
 
     this.angulartics2.eventTrack.next({
       action: 'Removed item',
       properties: { category: 'Watchlist' },
+    });
+
+    this.setTSMGroupString();
+    if (!isBatchDeleting) {
+      this.setSelectionItems();
+    }
+  }
+
+  setTSMGroupString(): void {
+    this.tsmGroupStrings.clear();
+    SharedService.user.watchlist.groups.forEach(group => {
+      // this.tsmGroupStrings.set
+      const uniqueItems = new Map<string, number>();
+      group.items.forEach(item => {
+        uniqueItems[`i:${ item.itemID }`] = item.itemID;
+      });
+      this.tsmGroupStrings[group.name] = Object.keys(uniqueItems).join(',');
+    });
+  }
+
+  openBatchEdit(group: WatchlistGroup): void {
+    this.batchEditMode = true;
+    this.selectedGroup = group;
+  }
+
+  batchDelete(group: WatchlistGroup): void {
+    for (let i = group.items.length - 1; i >= 0; i--) {
+      if (this.itemSelection[group.name][i].isSelected) {
+        this.delete(group, group.items[i], i, true);
+      }
+    }
+    this.setSelectionItems();
+  }
+
+  setCountSelectedItems(evt, selections: SelectionItem[]): void {
+    this.batchCount = 0;
+    selections.forEach(s => {
+      if (s.isSelected) {
+        this.batchCount++;
+      }
+    });
+  }
+
+  setSelectionItems(): void {
+    this.batchCount = 0;
+    this.itemSelection.clear();
+    SharedService.user.watchlist.groups.forEach((group: WatchlistGroup) => {
+      if (!this.itemSelection[group.name]) {
+        this.itemSelection[group.name] = [];
+      }
+      this.itemSelection[group.name].length = 0;
+      group.items.forEach(item =>
+        this.itemSelection[group.name].push(new SelectionItem()));
+    });
+  }
+
+  clearGroup(group: WatchlistGroup): void {
+    group.items.length = 0;
+    SharedService.user.watchlist.save();
+  }
+
+  setSelections(toSelect: boolean, selections: SelectionItem[]): void {
+    this.batchCount = 0;
+    selections.forEach(s => {
+      if (toSelect) {
+        this.batchCount++;
+      }
+      s.isSelected = toSelect;
     });
   }
 
