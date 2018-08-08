@@ -55,6 +55,9 @@ export class WatchlistComponent implements AfterViewInit {
   tabChange(index: number): void {
     this.selectedTabIndex = index;
     this.shareString = undefined;
+
+    this.setTSMGroupString();
+    this.setSelectionItems();
   }
 
   shareGroup(group: WatchlistGroup): void {
