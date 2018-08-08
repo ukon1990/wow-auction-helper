@@ -67,23 +67,28 @@ export class WatchlistItemManagerComponent implements OnInit {
       this.item.criteria = this.form.value.criteria;
       this.item.minCraftingProfit = this.form.value.minCraftingProfit;
       this.item.value = this.form.value.value;
+
+      if (this.group !== this.form.value.group) {
+        SharedService.user.watchlist.moveItem(this.group, this.form.value.group, this.index);
+      }
     } else {
-      this.selectionList.forEach((sItem, index: number) => {
-        if (sItem.isSelected) {
-          this.group.items[index].compareTo = this.form.value.compareTo;
-          this.group.items[index].target = this.form.value.target;
-          this.group.items[index].targetType = this.form.value.targetType;
-          this.group.items[index].criteria = this.form.value.criteria;
-          this.group.items[index].minCraftingProfit = this.form.value.minCraftingProfit;
-          this.group.items[index].value = this.form.value.value;
+      for (let i = this.selectionList.length - 1; i >= 0; i--) {
+        if (this.selectionList[i].isSelected) {
+          this.group.items[i].compareTo = this.form.value.compareTo;
+          this.group.items[i].target = this.form.value.target;
+          this.group.items[i].targetType = this.form.value.targetType;
+          this.group.items[i].criteria = this.form.value.criteria;
+          this.group.items[i].minCraftingProfit = this.form.value.minCraftingProfit;
+          this.group.items[i].value = this.form.value.value;
+
+          if (this.group !== this.form.value.group) {
+            SharedService.user.watchlist.moveItem(this.group, this.form.value.group, i);
+          }
         }
-      });
+      }
     }
 
     console.log(this.item, this.form.value);
-    if (this.group !== this.form.value.group) {
-      SharedService.user.watchlist.moveItem(this.group, this.form.value.group, this.index);
-    }
     SharedService.user.watchlist.save();
     this.close.emit('');
   }
