@@ -1,11 +1,15 @@
 import { Angulartics2 } from "angulartics2";
 import { HttpErrorResponse } from "@angular/common/http";
+import { SharedService } from "../services/shared.service";
 
 export class ErrorReport {
   public static sendHttpError(error: HttpErrorResponse, ga: Angulartics2): void {
     ga.eventTrack.next({
       action: `${error.status} - ${error.statusText}`,
-      properties: { category: 'Errors', label: error.url },
+      properties: {
+        category: 'Errors',
+        label: `${ error.url } - ${ SharedService.user.realm }@${ SharedService.user.region }`
+      },
     });
   }
 
