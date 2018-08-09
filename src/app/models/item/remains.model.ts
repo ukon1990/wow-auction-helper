@@ -12,6 +12,15 @@ export class Remains {
     this.id = item.id;
     this.name = item.name;
   }
+
+  addSource(item: Item): void {
+    this.sources.push(new RemainsSource(item, 1, 2));
+  }
+
+  updateSourcesDropChance(): void {
+    this.sources.forEach(source =>
+      source.setDropChance());
+  }
 }
 
 export class RemainsSource {
