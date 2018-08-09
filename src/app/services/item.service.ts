@@ -56,8 +56,6 @@ export class ItemService {
             i.itemClass = 0;
             i.itemSubClass = 6;
           }
-          //TODO: Remove
-          ProspectingAndMillingUtil.isSourceMilling(i);
           SharedService.items[i.id] = i;
         });
 

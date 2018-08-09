@@ -1,7 +1,7 @@
 <mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
-<div class="row">
+<div class="row col-md-12">
   <div *ngFor="let item of data | slice:getFromValue():getToValue(); let i = index" class="col-md-4 mb-2">
     <mat-card>
       <mat-card-header>
@@ -20,9 +20,24 @@
       <mat-card-content>
         <wah-data-table [id]="'id'" [columns]="columns" [data]="item.sources" [iconSize]="22"></wah-data-table>
       </mat-card-content>
+
+      <mat-card-actions>
+        <button (click)="openEditWindow(item)" mat-raised-button>
+          Edit
+        </button>
+      </mat-card-actions>
     </mat-card>
   </div>
 </div>
 <mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
+
+
+<wah-shuffle-item-manage
+  *ngIf="itemToEdit"
+  [newRemains]="itemToEdit"
+  [sourceList]="data"
+  [isEditing]="true"
+  (close)="closeEditWindow()">
+</wah-shuffle-item-manage>

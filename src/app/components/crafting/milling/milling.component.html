@@ -1,83 +1,34 @@
 <mat-tab-group>
   <mat-tab label="Milling">
-    <button class="mr-2 mt-2" (click)="openEditWindow(getMills())" mat-raised-button>
+    <button class="mr-2 mt-2"
+      (click)="openEditWindow(editingType.MILLING)" mat-raised-button>
       Add new source item
     </button>
-    <wah-data-boards [columns]="columns" [data]="getMills()" [type]="types.MILLING"></wah-data-boards>
+    <wah-data-boards
+      [columns]="columns"
+      [data]="getMills()"
+      [type]="types.MILLING">
+    </wah-data-boards>
+    <wah-shuffle-item-manage
+      *ngIf="isEditingType === editingType.MILLING"
+      [sourceList]="getMills()"
+      (close)="closeEditWindow()">
+    </wah-shuffle-item-manage>
   </mat-tab>
   <mat-tab label="Prospecting">
-    <button class="mr-2 mt-2" (click)="openEditWindow(getProspects())" mat-raised-button>
+    <button class="mr-2 mt-2"
+      (click)="openEditWindow(editingType.PROSPECTING)" mat-raised-button>
       Add new source item
     </button>
-    <wah-data-boards [columns]="columns" [data]="getProspects()" [type]="types.PROSPECTING"></wah-data-boards>
+    <wah-data-boards
+      [columns]="columns"
+      [data]="getProspects()"
+      [type]="types.PROSPECTING">
+    </wah-data-boards>
+    <wah-shuffle-item-manage
+      *ngIf="isEditingType === editingType.PROSPECTING"
+      [sourceList]="getProspects()"
+      (close)="closeEditWindow()">
+    </wah-shuffle-item-manage>
   </mat-tab>
 </mat-tab-group>
-
-
-<!-- Editing -->
-<div class="full-screen" *ngIf="isEditing">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <div *ngIf="newRemains; else select">
-          <wah-icon class="float-left"
-            *ngIf="newRemains" size="22"
-            [id]="newRemains.id">
-          </wah-icon>
-          <a rel="item={{ newRemains.id }}">
-            {{ newRemains.name }}
-          </a>
-        </div>
-        
-        <ng-template #select>
-          <mat-form-field>
-            <input type="text"
-              placeholder="Search for the origin item (eg. Starlight rose)"
-              matInput [formControl]="itemSearchForm"
-              [matAutocomplete]="auto">
-          </mat-form-field>
-  
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let item of filteredItems | async"
-              class="h-2em"
-              (click)="setItemSource(item)"
-              [value]="item.name">
-              <wah-icon size="36" [id]="item.id"></wah-icon>
-              {{ item.name }}
-            </mat-option>
-          </mat-autocomplete>
-        </ng-template>
-      </mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content *ngIf="newRemains">
-      <mat-form-field class="w-100">
-        <input class="w-100"
-          type="text"
-          placeholder="Item search"
-          matInput [formControl]="itemSearchForm"
-          [matAutocomplete]="searchTarget">
-      </mat-form-field>
-    
-      <mat-autocomplete #searchTarget="matAutocomplete">
-        <mat-option *ngFor="let item of filteredItems | async"
-          class="h-2em"
-          (click)="newRemains.addSource(item)"
-          [value]="item.name">
-          <wah-icon size="36" [id]="item.id"></wah-icon>
-          {{ item.name }}
-        </mat-option>
-      </mat-autocomplete>
-
-      <wah-data-table [columns]="itemSourceColumns" [data]="newRemains.sources"></wah-data-table>
-    </mat-card-content>
-    <mat-card-actions>
-      <button (click)="add()" mat-raised-button>
-        Add
-      </button>
-    </mat-card-actions>
-  </mat-card>
-</div>
-
-<div class="backdrop" (click)="closeEditWindow()" *ngIf="isEditing">
-</div>

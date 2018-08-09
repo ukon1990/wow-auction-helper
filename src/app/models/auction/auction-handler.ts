@@ -87,8 +87,7 @@ export class AuctionHandler {
       SharedService.user.shoppingCart.restore();
       SharedService.user.shoppingCart.calculateCartCost();
 
-      //TODO: Remove
-      // ProspectingAndMillingUtil.setCosts();
+      ProspectingAndMillingUtil.calculateCost();
 
       const t2 = performance.now();
       console.log(`Prices calc time ${ t2 - t1 } ms`);

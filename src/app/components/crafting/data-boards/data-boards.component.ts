@@ -15,7 +15,7 @@ export class DataBoardsComponent implements OnInit {
   @Input() itemsPerPage = 12;
   @Input() type: string;
 
-
+  itemToEdit: Remains;
   pageRows: Array<number> = [12, 24, 36];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
 
@@ -43,10 +43,18 @@ export class DataBoardsComponent implements OnInit {
   }
 
     /* istanbul ignore next */
-    getFromValue(): number {
-      if (!this.pageEvent || !this.pageEvent.pageSize) {
-        return 0;
-      }
-      return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
+  getFromValue(): number {
+    if (!this.pageEvent || !this.pageEvent.pageSize) {
+      return 0;
     }
+    return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
+  }
+
+  openEditWindow(remains: Remains): void {
+    this.itemToEdit = remains;
+  }
+
+  closeEditWindow(): void {
+    this.itemToEdit = undefined;
+  }
 }

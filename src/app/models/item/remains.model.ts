@@ -4,6 +4,7 @@ import { WoWHeadProspectedFrom } from './wowhead';
 export class Remains {
   id: number;
   name: string;
+  outOf: number;
   buyout?: number;
   yield?: number;
   sources: RemainsSource[] = [];
@@ -13,13 +14,13 @@ export class Remains {
     this.name = item.name;
   }
 
-  addSource(item: Item): void {
-    this.sources.push(new RemainsSource(item, 1, 2));
+  public static updateSourcesDropChance(remains: Remains): void {
+    remains.sources.forEach(source =>
+      RemainsSource.setDropChance(remains, source));
   }
 
-  updateSourcesDropChance(): void {
-    this.sources.forEach(source =>
-      source.setDropChance());
+  public static addSource(item: Item, remains: Remains): void {
+    remains.sources.push(new RemainsSource(item, 1, 2));
   }
 }
 
@@ -27,9 +28,7 @@ export class RemainsSource {
   id: number;
   name: string;
   count: number;
-  outOf: number;
   cost: number;
-  roi: number;
   value?: number;
   dropChance: number;
 
@@ -37,19 +36,15 @@ export class RemainsSource {
     this.id = item.id;
     this.name = item.name;
     this.count = count;
-    this.outOf = outOf;
-
-    this.setDropChance();
   }
 
-  update(count: number, outOf: number): void {
-    this.count += count;
-    this.outOf += outOf;
-    this.setDropChance();
+  public static update(count: number, remains: Remains, source: RemainsSource): void {
+    source.count += count;
+    RemainsSource.setDropChance(remains, source);
   }
 
-  setDropChance(): void {
-    this.dropChance = this.count / this.outOf;
+  public static setDropChance(remains: Remains, source: RemainsSource): void {
+    source.dropChance = source.count / remains.outOf;
   }
 
   calculate(): void {

@@ -11,6 +11,17 @@ export class ProspectingAndMillingUtil {
     MILLING: 'MILLING',
     PROSPECTING: 'PROSPECTING'
   };
+/*
+  // TODO: remove
+  public static pigments: Remains[] = [];
+  public static gems: Remains[] = [];
+  // Flipping the bird
+  public static pigmentSource: Remains[] = [];
+  public static pigmentSourceMap = new Map<number, Remains>();
+  public static gemSource: Remains[] = [];
+  public static gemSourceMap = new Map<number, Remains>();
+
+  public static readonly NEEDED_PER = 5;*/
 
 
   public static addRemains(type: string, item: Item): void {
@@ -32,13 +43,31 @@ export class ProspectingAndMillingUtil {
     ProspectingAndMillingUtil.save();
   }
 
-  public static calculateValues(): void {
-    ProspectingAndMillingUtil.prospecting.forEach(p => {
-      p.sources.forEach(s => {
-        s.calculate();
-        p.yield += s.roi;
+  public static calculateCost(): void {
+    ProspectingAndMillingUtil.setIndividualCost(
+      ProspectingAndMillingUtil.mills);
+    ProspectingAndMillingUtil.setIndividualCost(
+      ProspectingAndMillingUtil.prospecting);
+  }
+
+  private static setIndividualCost(list: Remains[]): void {
+    list.forEach((remains: Remains) => {
+      let tmpValue = 0;
+      remains.sources.forEach(source => {
+        source.cost = ProspectingAndMillingUtil.getAuctionItem(source.id).buyout;
+        source.value = source.cost * source.dropChance;
+        tmpValue += source.value;
       });
+
+      remains.buyout = ProspectingAndMillingUtil.getAuctionItem(remains.id).buyout;
+      remains.yield = tmpValue - remains.buyout;
     });
+    ProspectingAndMillingUtil.save();
+  }
+
+  public static getAuctionItem(id: number): AuctionItem {
+    return SharedService.auctionItemsMap[id] ?
+      SharedService.auctionItemsMap[id] : new AuctionItem();
   }
 
   public static save(): void {
@@ -73,18 +102,7 @@ export class ProspectingAndMillingUtil {
         JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.MILLING]);
     }
   }
-
-  // TODO: remove
-  public static pigments: Remains[] = [];
-  public static gems: Remains[] = [];
-  // Flipping the bird
-  public static pigmentSource: Remains[] = [];
-  public static pigmentSourceMap = new Map<number, Remains>();
-  public static gemSource: Remains[] = [];
-  public static gemSourceMap = new Map<number, Remains>();
-
-  public static readonly NEEDED_PER = 5;
-
+/*
   public static isSourceMilling(item: Item): void {
     if (item.itemSource && item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
       const target = new Remains(item);
@@ -118,7 +136,7 @@ export class ProspectingAndMillingUtil {
           toArray.push(map[source.id]);
         }
         if (source.dropChance > 0) {
-          const targetItem = new RemainsSource(SharedService.items[source.id], source.count, source.outOf);
+          const targetItem = new RemainsSource(SharedService.items[source.id], source.count, map[source.id]);
           targetItem.id = remains.id;
           targetItem.name = remains.name;
           targetItem.dropChance = source.dropChance;
@@ -126,6 +144,8 @@ export class ProspectingAndMillingUtil {
           targetItem.roi = targetItem.cost - ProspectingAndMillingUtil.getAHValue(remains.id);
           map[source.id].yield += targetItem.roi;
           (map[source.id] as Remains).sources.push(targetItem);
+          map[source.id].outOf = source['outOf'];
+          delete targetItem['outOf'];
         }
       });
     });
@@ -161,5 +181,5 @@ export class ProspectingAndMillingUtil {
 
   public static getAHValue(id: number): number {
     return SharedService.auctionItemsMap[id] ? SharedService.auctionItemsMap[id].buyout : 0;
-  }/**/
+  }*/
 }
