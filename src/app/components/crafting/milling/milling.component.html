@@ -1,15 +1,15 @@
 <mat-tab-group>
   <mat-tab label="Milling">
-    <button class="mr-2 mt-2" (click)="openEditWindow(milling)" mat-raised-button>
+    <button class="mr-2 mt-2" (click)="openEditWindow(getMills())" mat-raised-button>
       Add new source item
     </button>
-    <wah-data-boards [columns]="columns" [data]="milling" [type]="types.MILLING"></wah-data-boards>
+    <wah-data-boards [columns]="columns" [data]="getMills()" [type]="types.MILLING"></wah-data-boards>
   </mat-tab>
   <mat-tab label="Prospecting">
-    <button class="mr-2 mt-2" (click)="openEditWindow(prospecting)" mat-raised-button>
+    <button class="mr-2 mt-2" (click)="openEditWindow(getProspects())" mat-raised-button>
       Add new source item
     </button>
-    <wah-data-boards [columns]="columns" [data]="prospecting" [type]="types.PROSPECTING"></wah-data-boards>
+    <wah-data-boards [columns]="columns" [data]="getProspects()" [type]="types.PROSPECTING"></wah-data-boards>
   </mat-tab>
 </mat-tab-group>
 

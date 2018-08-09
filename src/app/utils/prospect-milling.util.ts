@@ -74,7 +74,7 @@ export class ProspectingAndMillingUtil {
     }
   }
 
-    /*
+  // TODO: remove
   public static pigments: Remains[] = [];
   public static gems: Remains[] = [];
   // Flipping the bird
@@ -83,16 +83,15 @@ export class ProspectingAndMillingUtil {
   public static gemSource: Remains[] = [];
   public static gemSourceMap = new Map<number, Remains>();
 
-  public static readonly NEEDED_PER = 5;*/
+  public static readonly NEEDED_PER = 5;
 
-  /*
   public static isSourceMilling(item: Item): void {
     if (item.itemSource && item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
       const target = new Remains(item);
       ProspectingAndMillingUtil.pigments.push(target);
       item.itemSource.milledFrom.forEach(t => {
         target.sources.push(
-          new RemainsSource(t));
+          new RemainsSource(SharedService.items[t.id], t.count, t.outof));
       });
     }
 
@@ -101,7 +100,7 @@ export class ProspectingAndMillingUtil {
       ProspectingAndMillingUtil.gems.push(target);
       item.itemSource.prospectedFrom.forEach(t => {
         target.sources.push(
-          new RemainsSource(t));
+          new RemainsSource(SharedService.items[t.id], t.count, t.outof));
       });
     }
   }
@@ -119,7 +118,7 @@ export class ProspectingAndMillingUtil {
           toArray.push(map[source.id]);
         }
         if (source.dropChance > 0) {
-          const targetItem = new RemainsSource();
+          const targetItem = new RemainsSource(SharedService.items[source.id], source.count, source.outOf);
           targetItem.id = remains.id;
           targetItem.name = remains.name;
           targetItem.dropChance = source.dropChance;
@@ -139,6 +138,10 @@ export class ProspectingAndMillingUtil {
     ProspectingAndMillingUtil.setCost(ProspectingAndMillingUtil.gems);
     ProspectingAndMillingUtil.combineSources(
       ProspectingAndMillingUtil.gems, ProspectingAndMillingUtil.gemSourceMap, ProspectingAndMillingUtil.gemSource);
+
+    ProspectingAndMillingUtil.mills = ProspectingAndMillingUtil.pigmentSource;
+    ProspectingAndMillingUtil.prospecting = ProspectingAndMillingUtil.gemSource;
+    ProspectingAndMillingUtil.save();
   }
 
   private static setCost(array: Remains[]): void {
@@ -158,5 +161,5 @@ export class ProspectingAndMillingUtil {
 
   public static getAHValue(id: number): number {
     return SharedService.auctionItemsMap[id] ? SharedService.auctionItemsMap[id].buyout : 0;
-  }*/
+  }/**/
 }

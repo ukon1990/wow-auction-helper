@@ -31,8 +31,8 @@ export class MillingComponent implements OnInit {
     { key: 'outOf', title: 'Out of', dataType: 'input-number' }
   ];
   types = ProspectingAndMillingUtil.TYPES;
-  milling: Remains[] = ProspectingAndMillingUtil.mills;
-  prospecting: Remains[] = ProspectingAndMillingUtil.prospecting;
+  milling: Remains[] = [];
+  prospecting: Remains[] = [];
   isEditing: boolean;
   isEditingType;
   newRemains: Remains;
@@ -47,6 +47,14 @@ export class MillingComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  getProspects(): Remains[] {
+    return ProspectingAndMillingUtil.prospecting;
+  }
+
+  getMills(): Remains[] {
+    return ProspectingAndMillingUtil.mills;
   }
 
   updateTargetItem(target: RemainsSource): void {

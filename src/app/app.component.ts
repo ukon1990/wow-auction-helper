@@ -7,6 +7,7 @@ import { AuctionsService } from './services/auctions.service';
 import { ItemService } from './services/item.service';
 import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 import { Angulartics2 } from 'angulartics2';
+import { ProspectingAndMillingUtil } from './utils/prospect-milling.util';
 
 @Component({
   selector: 'wah-root',
@@ -48,6 +49,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     User.restore();
     SharedService.user.shoppingCart.restore();
+    ProspectingAndMillingUtil.restore();
   }
 
   ngOnInit(): void {
