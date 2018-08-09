@@ -77,6 +77,7 @@ import { ChangelogComponent } from './components/about/changelog/changelog.compo
 import { MillingComponent } from './components/crafting/milling/milling.component';
 import { DisenchantingComponent } from './components/crafting/disenchanting/disenchanting.component';
 import { DataBoardsComponent } from './components/crafting/data-boards/data-boards.component';
+import { ShuffleItemManageComponent } from './components/crafting/shuffle-item-manage/shuffle-item-manage.component';
 
 
 @NgModule({
@@ -135,7 +136,8 @@ import { DataBoardsComponent } from './components/crafting/data-boards/data-boar
     ChangelogComponent,
     MillingComponent,
     DisenchantingComponent,
-    DataBoardsComponent
+    DataBoardsComponent,
+    ShuffleItemManageComponent
   ],
   imports: [
     BrowserModule,
