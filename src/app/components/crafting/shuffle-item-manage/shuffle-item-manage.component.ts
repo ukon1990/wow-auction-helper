@@ -40,6 +40,9 @@ export class ShuffleItemManageComponent implements OnInit {
 
   updateTargetItem(target: RemainsSource): void {
     RemainsSource.update(target.count, this.newRemains, target);
+
+    // TODO: Just do this for that item!
+    ProspectingAndMillingUtil.calculateCost();
   }
 
   save(): void {
