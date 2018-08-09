@@ -1,6 +1,6 @@
-<div class="full-screen" *ngIf="item && item.itemID && group">
+<div class="full-screen" *ngIf="(item && item.itemID || batchMode) && group">
   <mat-card>
-    <mat-card-header>
+    <mat-card-header *ngIf="item; else batch">
       <mat-card-title>
         <wah-icon size="22" [id]="item.itemID"></wah-icon>
         <a rel="item={{ item.itemID }}">
@@ -8,8 +8,17 @@
         </a>
       </mat-card-title>
     </mat-card-header>
+
+    <ng-template #batch>
+      <mat-card-header>
+        <mat-card-title>
+          Batch editing items
+        </mat-card-title>
+      </mat-card-header>
+    </ng-template>
+
     <mat-card-content>
-      <div class="row col-md-12 mb-2" *ngIf="getAuctionItem(item.itemID)">
+      <div class="row col-md-12 mb-2" *ngIf="item && getAuctionItem(item.itemID) && !batchMode">
         <div class="mr-2">
         <strong class="mr-1">Available:</strong> {{ getAuctionItem(item.itemID).quantityTotal | number }}
         </div>
@@ -64,7 +73,7 @@
         </mat-form-field>
       </form>
 
-      <mat-form-field class="row col-md-12" *ngIf="getAuctionItem()">
+      <mat-form-field class="row col-md-12" *ngIf="!batchEdit && getAuctionItem()">
         <textarea matInput placeholder="TSM shopping string"
           value="{{ item.name }}/exact/{{ getTSMString().left | gold }}/{{ getTSMString().right | gold }}"></textarea>
       </mat-form-field>
@@ -80,5 +89,5 @@
   </mat-card>
 </div>
 
-<div class="backdrop" (click)="close.emit('')" *ngIf="item && group">
+<div class="backdrop" (click)="close.emit('')" *ngIf="(item && item.itemID || batchMode) && group">
 </div>

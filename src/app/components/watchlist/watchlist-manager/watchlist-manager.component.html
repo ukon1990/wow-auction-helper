@@ -5,8 +5,8 @@
   <button type="submit" mat-raised-button>Create group</button>
 </form>
 <p>
-  Min sale rate requires a TSM or Wowuction API key. 
-  And are set as a percent value from 0 and up. The percent value is 10 for 10% and not 0.1.
+  Min sale rate requires a TSM or Wowuction API key. And are set as a percent value from 0 and up. The percent value is 10
+  for 10% and not 0.1.
 </p>
 <p>
   Min daily sold requires a TSM or Wowuction API key.
@@ -35,22 +35,40 @@
     </mat-form-field>
 
     <p *ngIf="importList.length > 0">
-      You can change the group name if you want. If a group is unchecked by default, it indicates that there already exist a group with that name.
-      If you import that group (check it in the list), you wil overwrite the existing one. Changing either of the groups name avoids this (above or below).
+      You can change the group name if you want. If a group is unchecked by default, it indicates that there already exist a group
+      with that name. If you import that group (check it in the list), you wil overwrite the existing one. Changing either
+      of the groups name avoids this (above or below).
     </p>
-    <mat-list dense class="h-auto mt-2">
-      <mat-list-item *ngFor="let import of importList">
-          <mat-checkbox class="pl-2" matLine [(ngModel)]="import.import">
-            <input class="ml-2" placeholder="Group name" matInput [(ngModel)]="import.group.name">
-          </mat-checkbox>
-        <div matLine>
-          <a *ngFor="let rule of import.group.items" href="#" rel="domain={{ locale }},item={{ rule.itemID }}">
-            <wah-icon class="float-left" [size]="16" [id]="rule.itemID"></wah-icon>
-            <span class="float-left">{{ rule.name }}, </span>
-          </a>
-        </div>
-      </mat-list-item>
-    </mat-list>
+    <div class="row">
+      <div class="col-md-12" *ngFor="let import of importList">
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-checkbox class="pl-2" matLine [(ngModel)]="import.import">
+                  <mat-form-field>
+                      <input class="ml-2" matInput [(ngModel)]="import.group.name">
+                  </mat-form-field>
+                </mat-checkbox>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-card>
+              <mat-card-content>
+                <div class="row">
+                  <div class="col-md-3" *ngFor="let rule of import.group.items">
+                    <a href="#" rel="domain={{ locale }},item={{ rule.itemID }}">
+                      <wah-icon class="float-left" [size]="16" [id]="rule.itemID"></wah-icon>
+                      <span class="float-left">{{ rule.name }}</span>
+                    </a>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
 
     <button class="col-md-2" mat-button (click)="import()" [disabled]="importString.value === null || importString.value.length === 0">
       <i class="fas fa-upload"></i>

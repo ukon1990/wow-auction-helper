@@ -214,7 +214,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   moveGroup(from: number, to: number): void {
-    SharedService.user.watchlist.moveGroup(from, to);
+    const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
+    SharedService.user.watchlist.moveGroup(pagignationIndex + from, pagignationIndex + to);
     this.angulartics2.eventTrack.next({
       action: `Changed group position`,
       properties: { category: 'Watchlist' },

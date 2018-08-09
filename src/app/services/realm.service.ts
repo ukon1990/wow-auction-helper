@@ -5,11 +5,14 @@ import { SharedService } from './shared.service';
 import { Realm } from '../models/realm';
 import { AuctionsService } from './auctions.service';
 import { User } from '../models/user/user';
+import { ErrorReport } from '../utils/error-report.util';
+import { Angulartics2 } from 'angulartics2';
 
 @Injectable()
 export class RealmService {
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient,
+    private angulartics2: Angulartics2) {}
 
   public static async changeRealm(auctionService: AuctionsService, realm: string, region?: string) {
     if (region) {
@@ -39,6 +42,9 @@ export class RealmService {
         Realm.gatherRealms();
 
       })
-      .catch(e => console.error('Could not download realms', e));
+      .catch(error => {
+        console.error('Could not download realms', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
+      });
   }
 }
