@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { AuctionHandler } from '../models/auction/auction-handler';
 import { Dashboard } from '../models/dashboard';
@@ -12,6 +12,8 @@ import { MatSnackBar } from '@angular/material';
 import { WoWUction } from '../models/auction/wowuction';
 import { PetsService } from './pets.service';
 import { Item } from '../models/item/item';
+import { Angulartics2 } from 'angulartics2';
+import { ErrorReport } from '../utils/error-report.util';
 
 @Injectable()
 export class AuctionsService {
@@ -21,7 +23,8 @@ export class AuctionsService {
     public snackBar: MatSnackBar,
     private _dbService: DatabaseService,
     private _itemService: ItemService,
-    private petService: PetsService) { }
+    private petService: PetsService,
+    private angulartics2: Angulartics2) { }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
@@ -37,7 +40,10 @@ export class AuctionsService {
           }).catch();
         }
       })
-      .catch(e => console.error('Could not get last update time', e));
+      .catch(error => {
+        console.error('Could not get last update time', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
+      });
   }
 
   getAuctions(): Promise<any> {
@@ -80,10 +86,18 @@ export class AuctionsService {
           }
         }
       })
-      .catch(e => {
+      .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
-        console.error('Auction download failed', e);
-        this.openSnackbar(`Auction download failed`);
+        console.error('Auction download failed', error);
+        switch(error.status) {
+          case 504:
+            this.openSnackbar(`Auction download failed. The server took too long time to respond`);
+            break;
+          default:
+            this.openSnackbar(`Auction download failed (${ error.status } - ${ error.statusText })`);
+        }
+
+        ErrorReport.sendHttpError(error, this.angulartics2);
       });
   }
 
@@ -115,7 +129,10 @@ export class AuctionsService {
         SharedService.downloading.tsmAuctions = false;
         this._dbService.getTSMItems().then(r => {
           this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
-        }).catch(error => console.error('Could not restore TSM auctions from local DB', error));
+        }).catch(error => {
+          console.error('Could not restore TSM auctions from local DB', error);
+          ErrorReport.sendHttpError(error, this.angulartics2);
+        });
       });
   }
 
@@ -139,14 +156,18 @@ export class AuctionsService {
         this._dbService.addWoWUctionItems(wowu as Array<WoWUction>);
         this.openSnackbar('Completed WoWUction download');
       })
-      .catch(e => {
+      .catch(error => {
         this.openSnackbar(
           `Could not completed WoWUction download. One reason that this could happen, is if you have used all your requests.`);
-        console.error('Unable to download WoWUction data', e);
+        console.error('Unable to download WoWUction data', error);
         SharedService.downloading.wowUctionAuctions = false;
+        ErrorReport.sendHttpError(error, this.angulartics2);
+
         this._dbService.getWoWUctionItems().then(r => {
           this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
-        }).catch(error => console.error('Could not restore WoWUction auctions from local DB', error));
+        }).catch(error => {
+          console.error('Could not restore WoWUction auctions from local DB', error);
+        });
       });
   }
 

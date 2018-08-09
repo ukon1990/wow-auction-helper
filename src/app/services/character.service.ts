@@ -3,12 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
 import { startWith, map } from 'rxjs/operators';
+import { ErrorReport } from '../utils/error-report.util';
+import { Angulartics2 } from 'angulartics2';
 
 @Injectable()
 export class CharacterService {
   // ${API}character/${realm}/${character}?locale=${realm.locale}&apikey=${apiKey}&fields=professions,statistics,pets,petSlots,mounts
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient,
+    private angulartics2: Angulartics2) { }
 
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
     SharedService.downloading.characterData = true;
@@ -21,9 +24,10 @@ export class CharacterService {
       .then(c => {
         SharedService.downloading.characterData = false;
         return c;
-      }).catch(e => {
+      }).catch(error => {
         SharedService.downloading.characterData = false;
-        console.error('Failed at downloading character', e);
+        console.error('Failed at downloading character', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
         return {};
       });
   }
@@ -39,9 +43,10 @@ export class CharacterService {
       .then(c => {
         SharedService.downloading.characterData = false;
         return c;
-      }).catch(e => {
+      }).catch(error => {
         SharedService.downloading.characterData = false;
-        console.error('Failed at downloading character', e);
+        console.error('Failed at downloading character', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
         return {};
       });
   }
