@@ -6,11 +6,15 @@ import { Endpoints } from './endpoints';
 import { GameBuild } from '../utils/game-build.util';
 import { DatabaseService } from './database.service';
 import { WoWHeadSoldBy } from '../models/item/wowhead';
+import { ErrorReport } from '../utils/error-report.util';
+import { Angulartics2 } from 'angulartics2';
 
 @Injectable()
 export class ItemService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
-  constructor(private _http: HttpClient, private dbService: DatabaseService) { }
+  constructor(private _http: HttpClient,
+    private dbService: DatabaseService,
+    private angulartics2: Angulartics2) { }
 
   addItem(itemID: number): void {
     console.log('Attempting to add item data for ' + itemID);
@@ -23,8 +27,10 @@ export class ItemService {
           SharedService.auctionItemsMap[(item as Item)[0].id].name = (item as Item)[0].name;
           SharedService.auctionItemsMap[(item as Item)[0].id].vendorSell = (item as Item)[0].sellPrice;
         }
-      }).catch(e =>
-        console.error('Could not get item with ID ' + itemID, e));
+      }).catch(error => {
+        console.error('Could not get item with ID ' + itemID, error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
+      });
   }
 
   getItems(): Promise<any> {
@@ -78,9 +84,10 @@ export class ItemService {
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
         console.log('Items download is completed');
       })
-      .catch(e => {
+      .catch(error => {
         SharedService.downloading.items = false;
-        console.error('Items download failed', e);
+        console.error('Items download failed', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
       });
   }
 

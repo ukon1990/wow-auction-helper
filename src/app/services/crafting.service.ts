@@ -7,19 +7,27 @@ import { ItemService } from './item.service';
 import { GameBuild } from '../utils/game-build.util';
 import { Item } from '../models/item/item';
 import { DatabaseService } from './database.service';
+import { ErrorReport } from '../utils/error-report.util';
+import { Angulartics2 } from 'angulartics2';
 
 @Injectable()
 export class CraftingService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
-  constructor(private _http: HttpClient, private _itemService: ItemService, private dbService: DatabaseService) { }
+  constructor(private _http: HttpClient,
+    private _itemService: ItemService,
+    private dbService: DatabaseService,
+    private angulartics2: Angulartics2) { }
 
   getRecipe(spellID: number): void {
     this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
       .toPromise()
       .then(r =>
         this.handleRecipe(r as Recipe))
-      .catch(e => console.error(`Could not get recipe ${spellID}`, e));
+      .catch(error => {
+        console.error(`Could not get recipe ${spellID}`, error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
+      });
   }
 
   getRecipes(): Promise<any> {
@@ -50,9 +58,10 @@ export class CraftingService {
         this.dbService.addRecipes(SharedService.recipes);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
       })
-      .catch(e => {
+      .catch(error => {
         SharedService.downloading.recipes = false;
-        console.error('Recipe download failed', e);
+        console.error('Recipe download failed', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
       });
   }
 

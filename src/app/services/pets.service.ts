@@ -4,12 +4,16 @@ import { Pet } from '../models/pet';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
 import { DatabaseService } from './database.service';
+import { Angulartics2 } from 'angulartics2';
+import { ErrorReport } from '../utils/error-report.util';
 
 @Injectable()
 export class PetsService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_pets';
 
-  constructor(private _http: HttpClient, private dbService: DatabaseService) { }
+  constructor(private _http: HttpClient,
+    private dbService: DatabaseService,
+    private angulartics2: Angulartics2) { }
 
   getPets(): Promise<any> {
     SharedService.downloading.pets = true;
@@ -29,9 +33,10 @@ export class PetsService {
         this.dbService.addPets(pets['pets']);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
       })
-      .catch(e => {
+      .catch(error => {
         SharedService.downloading.pets = false;
-        console.error('Failed at downloading pet', e);
+        console.error('Failed at downloading pet', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
       });
   }
 
@@ -43,9 +48,10 @@ export class PetsService {
         SharedService.downloading.pets = false;
         SharedService.pets[(pet as Pet).speciesId] = pet;
       })
-      .catch(e => {
+      .catch(error => {
         SharedService.downloading.pets = false;
-        console.error('Failed at downloading pet', e);
+        console.error('Failed at downloading pet', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
       });
   }
 
@@ -55,8 +61,9 @@ export class PetsService {
       .then(pet => {
         SharedService.pets[(pet as Pet).speciesId] = pet;
       })
-      .catch(e => {
-        console.error('Failed at downloading pet', e);
+      .catch(error => {
+        console.error('Failed at downloading pet', error);
+        ErrorReport.sendHttpError(error, this.angulartics2);
       });
   }
 }
