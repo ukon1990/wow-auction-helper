@@ -10,6 +10,7 @@ import { ShoppingCart } from '../shopping-cart';
 import { CustomProc, CustomProcs } from '../crafting/custom-proc';
 import { customProcsDefault } from '../crafting/default-custom-procs';
 import { Realm } from '../realm';
+import { ProspectingAndMillingUtil } from '../../utils/prospect-milling.util';
 
 
 
@@ -107,7 +108,15 @@ export class User {
         case 'isDarkMode':
           localStorage['isDarkMode'] = JSON.stringify(user[key]);
           SharedService.user.isDarkMode = user[key];
-          break; /*
+          break;
+        case ProspectingAndMillingUtil.TYPES.MILLING:
+          ProspectingAndMillingUtil.mills = user[key];
+          ProspectingAndMillingUtil.save();
+          break;
+        case ProspectingAndMillingUtil.TYPES.PROSPECTING:
+          ProspectingAndMillingUtil.prospecting = user[key];
+          ProspectingAndMillingUtil.save();
+          break;  /*
         case 'watchlist':
           localStorage[key] = JSON.stringify({ groups: SharedService.user.watchlist.groups });
           SharedService.user.watchlist = new Watchlist();
@@ -199,6 +208,16 @@ export class User {
         case 'watchlist':
           if (isExport) {
             user.watchlist = JSON.parse(localStorage[key]);
+          }
+          break;
+        case ProspectingAndMillingUtil.TYPES.MILLING:
+          if (isExport) {
+            user[ProspectingAndMillingUtil.TYPES.MILLING] = ProspectingAndMillingUtil.mills;
+          }
+          break;
+        case ProspectingAndMillingUtil.TYPES.PROSPECTING:
+          if (isExport) {
+            user[ProspectingAndMillingUtil.TYPES.PROSPECTING] = ProspectingAndMillingUtil.prospecting;
           }
           break;
       }

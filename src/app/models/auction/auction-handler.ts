@@ -10,6 +10,7 @@ import { AuctionPet } from './auction-pet';
 import { Notifications } from '../user/notification';
 import { WoWUction } from './wowuction';
 import { PetsService } from '../../services/pets.service';
+import { ProspectingAndMillingUtil } from '../../utils/prospect-milling.util';
 
 export class AuctionHandler {
   /**
@@ -18,11 +19,10 @@ export class AuctionHandler {
     * @param auctions A raw auction array
     */
   public static organize(auctions: Array<Auction>, petService?: PetsService): void {
+    const t0 = performance.now();
     SharedService.auctionItems.length = 0;
-    Object.keys(SharedService.auctionItemsMap)
-      .forEach(key => {
-        delete SharedService.auctionItemsMap[key];
-      });
+    SharedService.auctionItemsMap.clear();
+    Seller.clearSellers();
 
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
 
@@ -57,12 +57,18 @@ export class AuctionHandler {
         AuctionHandler.updateAuctionItem(a);
       }
 
-      SharedService.userAuctions.addAuction(a);
+      SharedService.userAuctions.addAuction(
+        a, SharedService.auctionItemsMap[Auction.getAuctionItemId(a)]);
+
+      Seller.setSellerData(a);
+
     });
 
     // Checking if we have been undercutted etc
     SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
 
+    const t1 = performance.now();
+    console.log(`Auctions organized in ${ t1 - t0 } ms`);
     setTimeout(() => {
 
       // Trade vendors has to be done before crafting calc
@@ -71,7 +77,11 @@ export class AuctionHandler {
       Crafting.calculateCost();
 
       // Grouping auctions by seller
-      Seller.organize();
+      Seller.setItemClasses();
+
+      // ProspectingAndMillingUtil.setCosts();
+
+      ProspectingAndMillingUtil.calculateCost();
 
       // Dashboard -> Needs to be done after trade vendors
       Dashboard.addDashboards();
@@ -79,9 +89,9 @@ export class AuctionHandler {
       SharedService.user.shoppingCart.restore();
       SharedService.user.shoppingCart.calculateCartCost();
 
-      SharedService.userAuctions.auctions.forEach(auc => {
-        auc.undercutByAmount = auc.buyout / auc.quantity - SharedService.auctionItemsMap[Auction.getAuctionItemId(auc)].buyout;
-      });
+
+      const t2 = performance.now();
+      console.log(`Prices calc time ${ t2 - t1 } ms`);
     }, 100);
   }
 

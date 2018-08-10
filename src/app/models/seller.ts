@@ -19,45 +19,40 @@ export class Seller {
     this.auctions.push(auction);
   }
 
+  public static setSellerData(auction: Auction): void {
+    if (!SharedService.items[auction.item]) {
+      return;
+    }
+    const id = SharedService.items[auction.item].itemClass;
 
-  public static organize(): void {
-    let id;
-    Object.keys(SharedService.sellersMap)
-      .forEach(key => {
-        delete SharedService.sellersMap[key];
-      });
-      Object.keys(SharedService.sellersByItemClassesMap)
-      .forEach(key => {
-        delete SharedService.sellersByItemClassesMap[key];
-      });
+    if (!SharedService.sellersMap[auction.owner]) {
+      SharedService.sellersMap[auction.owner] = new Seller(auction.owner, auction.ownerRealm, auction.buyout, auction.quantity, auction);
+      SharedService.sellers.push(SharedService.sellersMap[auction.owner]);
+    } else {
+      SharedService.sellersMap[auction.owner].liquidity += auction.buyout;
+      SharedService.sellersMap[auction.owner].volume += auction.quantity;
+      SharedService.sellersMap[auction.owner].numOfAuctions++;
+      SharedService.sellersMap[auction.owner].auctions.push(auction);
+    }
+
+    // If none exist
+    if (!SharedService.sellersByItemClassesMap[id]) {
+      SharedService.sellersByItemClassesMap[id] = new Map<string, ItemClassGroup>();
+      SharedService.sellersByItemClassesMap[id] = new ItemClassGroup(auction);
+    } else {
+      SharedService.sellersByItemClassesMap[id].add(auction);
+    }
+  }
+
+  public static clearSellers(): void {
+    SharedService.sellersMap.clear();
+    SharedService.sellersByItemClassesMap.clear();
+
     SharedService.sellers.length = 0;
     SharedService.sellersByItemClass.length = 0;
+  }
 
-    SharedService.auctions.forEach(a => {
-      if (!SharedService.items[a.item]) {
-        return;
-      }
-      id = SharedService.items[a.item].itemClass;
-
-      if (!SharedService.sellersMap[a.owner]) {
-        SharedService.sellersMap[a.owner] = new Seller(a.owner, a.ownerRealm, a.buyout, a.quantity, a);
-        SharedService.sellers.push(SharedService.sellersMap[a.owner]);
-      } else {
-        SharedService.sellersMap[a.owner].liquidity += a.buyout;
-        SharedService.sellersMap[a.owner].volume += a.quantity;
-        SharedService.sellersMap[a.owner].numOfAuctions++;
-        SharedService.sellersMap[a.owner].auctions.push(a);
-      }
-
-      // If none exist
-      if (!SharedService.sellersByItemClassesMap[id]) {
-        SharedService.sellersByItemClassesMap[id] = new Map<string, ItemClassGroup>();
-        SharedService.sellersByItemClassesMap[id] = new ItemClassGroup(a);
-      } else {
-        SharedService.sellersByItemClassesMap[id].add(a);
-      }
-    });
-
+  public static setItemClasses(): void {
     itemClasses.classes.forEach(c => {
       if (SharedService.sellersByItemClassesMap[c.class]) {
         SharedService.sellersByItemClassesMap[c.class].name = c.name;

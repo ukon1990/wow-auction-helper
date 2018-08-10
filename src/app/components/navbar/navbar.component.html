@@ -62,6 +62,11 @@
                   Market resetter
                 </a>
               </li>
+              <li class="nav-item" *ngIf="isRegisteredUser()">
+                <a class="nav-link" routerLink="tools/milling-and-prospecting" routerLinkActive="active">
+                  Prospecting & milling
+                </a>
+              </li>
             </div>
           </li>
         </ul>
