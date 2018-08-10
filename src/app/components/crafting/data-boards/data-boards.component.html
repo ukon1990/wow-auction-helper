@@ -2,7 +2,7 @@
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
 <div class="row col-md-12">
-  <div *ngFor="let item of data | slice:getFromValue():getToValue(); let i = index" class="col-md-4 mb-2">
+  <div *ngFor="let item of data | slice:getFromValue():getToValue(); let i = index" class="col-xs-12 col-md-6 col-lg-6 col-xl-4 mb-2">
     <mat-card>
       <mat-card-header>
         <mat-card-title (click)="setSelectedItem(item)">
@@ -12,8 +12,15 @@
           </a>
         </mat-card-title>
         <mat-card-subtitle>
-          Buyout {{ item.buyout | gold }}
-          <br> ROI {{ item.yield | gold }}
+          <div class="row">
+            <div class="col-md-6">
+              <strong>Buyout</strong> {{ item.buyout | gold }}<br>
+              <strong>ROI</strong> {{ item.yield | gold }}
+            </div>
+            <div class="col-md-6">
+              <strong>Data points</strong> {{ item.outOf | number }}
+            </div>
+          </div>
         </mat-card-subtitle>
       </mat-card-header>
 

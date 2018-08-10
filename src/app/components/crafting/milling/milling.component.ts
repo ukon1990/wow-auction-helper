@@ -14,6 +14,7 @@ export class MillingComponent implements OnInit {
   locale = localStorage['locale'].split('-')[0];
   columns: ColumnDescription[] = [
     { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'count', title: 'Count', dataType: 'number' },
     { key: 'cost', title: 'Cost', dataType: 'gold' },
     { key: 'value', title: 'Value', dataType: 'gold' },
     { key: 'dropChance', title: 'Drop chance', dataType: 'percent' }
