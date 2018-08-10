@@ -81,13 +81,14 @@ export class AuctionHandler {
 
       // ProspectingAndMillingUtil.setCosts();
 
+      ProspectingAndMillingUtil.calculateCost();
+
       // Dashboard -> Needs to be done after trade vendors
       Dashboard.addDashboards();
 
       SharedService.user.shoppingCart.restore();
       SharedService.user.shoppingCart.calculateCartCost();
 
-      ProspectingAndMillingUtil.calculateCost();
 
       const t2 = performance.now();
       console.log(`Prices calc time ${ t2 - t1 } ms`);
