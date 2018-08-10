@@ -46,7 +46,4 @@ export class RemainsSource {
   public static setDropChance(remains: Remains, source: RemainsSource): void {
     source.dropChance = source.count / remains.outOf;
   }
-
-  calculate(): void {
-  }
 }

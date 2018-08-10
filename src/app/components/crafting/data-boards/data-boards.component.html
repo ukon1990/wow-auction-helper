@@ -12,15 +12,9 @@
           </a>
         </mat-card-title>
         <mat-card-subtitle>
-          <div class="row">
-            <div class="col-md-6">
-              <strong>Buyout</strong> {{ item.buyout | gold }}<br>
-              <strong>ROI</strong> {{ item.yield | gold }}
-            </div>
-            <div class="col-md-6">
-              <strong>Data points</strong> {{ item.outOf | number }}
-            </div>
-          </div>
+          <strong>Buyout</strong> {{ item.buyout | gold }}<br>
+          <strong>ROI</strong> {{ item.yield | gold }}<br>
+          <strong>Data points</strong> {{ item.outOf | number }}
         </mat-card-subtitle>
       </mat-card-header>
 

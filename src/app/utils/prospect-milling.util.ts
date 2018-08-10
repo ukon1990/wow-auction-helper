@@ -2,6 +2,8 @@ import { Remains, RemainsSource } from '../models/item/remains.model';
 import { Item } from '../models/item/item';
 import { SharedService } from '../services/shared.service';
 import { AuctionItem } from '../../../server/src/models/auction/auction-item';
+import { defaultProspecting } from './default-prospecting.util';
+import { defaultMilling } from './default-milling.util';
 
 export class ProspectingAndMillingUtil {
   public static prospecting: Remains[] = [];
@@ -95,11 +97,15 @@ export class ProspectingAndMillingUtil {
     if (localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]) {
       ProspectingAndMillingUtil.prospecting =
         JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]);
+    } else {
+      ProspectingAndMillingUtil.prospecting = defaultProspecting;
     }
 
     if (localStorage[ProspectingAndMillingUtil.TYPES.MILLING]) {
       ProspectingAndMillingUtil.mills =
         JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.MILLING]);
+    } else {
+      ProspectingAndMillingUtil.mills = defaultMilling;
     }
   }
 /*
