@@ -117,6 +117,10 @@
                     <i class="fas fa-trash-alt"></i>
                   </button>
 
+                  <button *ngSwitchCase="'remove-from-list'" mat-icon-button matTooltip="Removes this item from the list" (click)="removeFromList(i)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
                   <button *ngSwitchCase="'custom-price-delete'" mat-icon-button (click)="customPrices().remove(d, i)" matTooltip="Remove from custom price list">
                     <i class="fas fa-trash-alt"></i>
                   </button>

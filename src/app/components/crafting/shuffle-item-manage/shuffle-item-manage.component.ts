@@ -23,7 +23,8 @@ export class ShuffleItemManageComponent implements OnInit {
   itemSearchForm: FormControl = new FormControl();
   itemSourceColumns: ColumnDescription[] = [
     { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'count', title: 'Count', dataType: 'input-number' }
+    { key: 'count', title: 'Count', dataType: 'input-number'},
+    { key: '', title: 'Actions', dataType: 'action', actions: ['remove-from-list'] }
   ];
 
   constructor() {
@@ -40,9 +41,6 @@ export class ShuffleItemManageComponent implements OnInit {
 
   updateTargetItem(target: RemainsSource): void {
     RemainsSource.update(target.count, this.newRemains, target);
-
-    // TODO: Just do this for that item!
-    ProspectingAndMillingUtil.calculateCost();
   }
 
   save(): void {
@@ -52,6 +50,9 @@ export class ShuffleItemManageComponent implements OnInit {
       this.newRemains = undefined;
       this.sourceList = undefined;
     }
+    // TODO: Just do this for that item!
+    ProspectingAndMillingUtil.calculateCost();
+
     ProspectingAndMillingUtil.save();
     this.closeEditWindow();
   }

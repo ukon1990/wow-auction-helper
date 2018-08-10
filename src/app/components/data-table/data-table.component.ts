@@ -223,13 +223,19 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   removeGroup(index: number): void {
-    SharedService.user.watchlist.removeGroup(index);
+    const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
+    SharedService.user.watchlist.removeGroup(pagignationIndex + index);
 
     this.angulartics2.eventTrack.next({
       action: 'Removed group',
       properties: { category: 'Watchlist' },
     });
     this.pageEvent.pageIndex = 0;
+  }
+
+  removeFromList(i): void {
+    const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
+    this.data.splice(pagignationIndex + i, 1);
   }
 
   removeRecipe(recipe: ShoppingCartRecipe, index: number): void {

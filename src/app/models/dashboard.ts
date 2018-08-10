@@ -26,6 +26,8 @@ export class Dashboard {
     TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
     WATCH_LIST: 'WATCH_LIST',
     WATCH_LIST_CRAFTS: 'WATCH_LIST_CRAFTS',
+    PROSPECTING: 'PROSPECTING',
+    MILLING: 'MILLING',
     // The users pets, that maybe could be sold for something
     POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
   };
