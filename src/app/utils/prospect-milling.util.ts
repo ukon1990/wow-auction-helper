@@ -62,7 +62,7 @@ export class ProspectingAndMillingUtil {
       });
 
       remains.buyout = ProspectingAndMillingUtil.getAuctionItem(remains.id).buyout;
-      remains.yield = tmpValue - remains.buyout;
+      remains.yield = (tmpValue - remains.buyout) * 0.95;
     });
     ProspectingAndMillingUtil.save();
   }

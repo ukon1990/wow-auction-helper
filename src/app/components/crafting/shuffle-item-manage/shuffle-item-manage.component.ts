@@ -8,6 +8,7 @@ import { FormControl } from '@angular/forms';
 import { Item } from '../../../models/item/item';
 import { SharedService } from '../../../services/shared.service';
 import { ProspectingAndMillingUtil } from '../../../utils/prospect-milling.util';
+import { Angulartics2 } from 'angulartics2';
 
 @Component({
   selector: 'wah-shuffle-item-manage',
@@ -27,7 +28,7 @@ export class ShuffleItemManageComponent implements OnInit {
     { key: '', title: 'Actions', dataType: 'action', actions: ['remove-from-list'] }
   ];
 
-  constructor() {
+  constructor(private angulartics2: Angulartics2) {
     this.filteredItems = this.itemSearchForm.valueChanges
     .pipe(
       startWith(''),
@@ -55,6 +56,11 @@ export class ShuffleItemManageComponent implements OnInit {
 
     ProspectingAndMillingUtil.save();
     this.closeEditWindow();
+
+    this.angulartics2.eventTrack.next({
+      action: `${ this.isEditing ? 'Edited' : 'Added' } - ${ this.newRemains.name }`,
+      properties: { category: `Shuffle` },
+    });
   }
 
   setItemSource(item: Item): void {
