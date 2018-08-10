@@ -9,6 +9,8 @@ import { Seller } from './seller';
 import { AuctionItem } from './auction/auction-item';
 import { Filters } from './filtering';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { Remains } from './item/remains.model';
+import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -26,6 +28,8 @@ export class Dashboard {
     TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
     WATCH_LIST: 'WATCH_LIST',
     WATCH_LIST_CRAFTS: 'WATCH_LIST_CRAFTS',
+    PROSPECTING: 'PROSPECTING',
+    MILLING: 'MILLING',
     // The users pets, that maybe could be sold for something
     POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
   };
@@ -181,6 +185,25 @@ export class Dashboard {
         ];
         this.setTradeVendorValues();
         break;
+      case Dashboard.TYPES.MILLING:
+        this.idParam = 'id';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'yield', title: 'Value', dataType: 'gold' }
+
+        ];
+        this.shuffles(ProspectingAndMillingUtil.mills);
+        break;
+      case Dashboard.TYPES.PROSPECTING:
+        this.idParam = 'id';
+        this.columns = [
+          { key: 'name', title: 'Name', dataType: 'name' },
+          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
+          { key: 'yield', title: 'Value', dataType: 'gold' }
+        ];
+        this.shuffles(ProspectingAndMillingUtil.prospecting);
+        break;
     }
   }
 
@@ -226,6 +249,12 @@ export class Dashboard {
       SharedService.itemDashboards.push(
         new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]));
     });
+
+    
+    SharedService.itemDashboards.push(
+      new Dashboard('Profitable herbs to mill', Dashboard.TYPES.MILLING));
+    SharedService.itemDashboards.push(
+      new Dashboard('Profitable ore to prospect', Dashboard.TYPES.PROSPECTING));
     SharedService.itemDashboards.push(
       new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
     if (SharedService.user.apiToUse !== 'none') {
@@ -315,6 +344,25 @@ export class Dashboard {
       SharedService.notifications.unshift(
         new Notification('Watchlist', `${this.data.length} of your items were matched`));
     }
+  }
+
+  private shuffles(array: Remains[]): void {
+    const pipe = new GoldPipe();
+    this.data.length = 0;
+    this.message = 'You can get more details about and manage these over at the tools -> Milling & Prospecting section';
+    this.tsmShoppingString = '';
+    this.data = array.filter(remains => {
+      if (remains.yield > 0) {
+        this.tsmShoppingString += `${
+          remains.name
+          }/exact/1c/${
+          pipe.transform(remains.buyout + remains.yield).replace(',', '')
+          };`;
+          return true;
+      }
+      return false;
+    }).sort((a, b) =>
+      b.yield - a.yield);
   }
 
   private getWatchlistString(item: WatchlistItem, watchlistValue: any): string {

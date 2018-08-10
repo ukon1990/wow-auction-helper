@@ -56,7 +56,7 @@ export class AuctionUtil {
     };
 
     response.auctions.forEach((auction: Auction) => {
-      auction.auc;
+      // delete auction.auc;
       delete auction.context;
       delete auction.rand;
       delete auction.seed;

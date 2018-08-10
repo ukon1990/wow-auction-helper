@@ -11,13 +11,15 @@ export class UserAuctions {
 
   constructor() {}
 
-  addAuction(auction: Auction): void {
+  addAuction(auction: Auction, auctionItem: AuctionItem): void {
     if (this.charactersMap[auction.ownerRealm] && this.charactersMap[auction.ownerRealm][auction.owner]) {
       this.auctionWorth += auction.buyout;
       this.charactersMap[auction.ownerRealm][auction.owner].auctionWorth += auction.buyout;
       this.auctions.push(auction);
       this.charactersMap[auction.ownerRealm][auction.owner].auctions.push(auction);
     }
+
+    auction.undercutByAmount = auction.buyout / auction.quantity - auctionItem.buyout;
   }
 
   countUndercuttedAuctions(auctionItemsMap: Map<number, AuctionItem>): void {

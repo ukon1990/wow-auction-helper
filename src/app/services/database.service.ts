@@ -101,13 +101,22 @@ export class DatabaseService {
 
 
   addAuction(auction: Auction): void {
-    // logic inc
+    this.db.table('auctions').add(auction)
+      .then(r =>
+        console.log('Successfully added auctions to local DB'))
+      .catch(e =>
+        console.error('Could not add auctions to local DB', e));
   }
+
+  clearAuctions(): void {
+    this.db.table('auctions').clear();
+  }
+
 
   addAuctions(auctions: Array<Auction>): void {
     this.db.table('auctions').clear();
     this.db.table('auctions')
-      .bulkPut(auctions)
+      .bulkAdd(auctions)
       .then(r => console.log('Successfully added auctions to local DB'))
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
