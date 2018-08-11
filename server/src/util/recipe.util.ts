@@ -74,10 +74,12 @@ export class RecipeUtil {
       LEFT OUTER JOIN recipe_name_locale as l
       ON r.id = l.id
       WHERE json NOT LIKE '%itemID":0%'
-      AND timestamp > "${ req.body.timestamp + ''}";`, (err, rows, fields) => {
+      AND timestamp > "${ req.body.timestamp + ''}"
+      ORDER BY timestamp desc;`, (err, rows, fields) => {
         db.end();
         if (!err) {
-          const recipes: any[] = [];
+          const recipes: any[] = [],
+            timestamp = rows.timestamp;
           rows.forEach((row: any) => {
             try {
               recipes.push(
@@ -86,7 +88,10 @@ export class RecipeUtil {
               console.error(`${new Date().toString()} - Could not parse json (${row.id})`, row.json, err);
             }
           });
-          response.send({ 'recipes': recipes });
+          response.send({
+            timestamp: timestamp,
+            recipes: recipes
+          });
         } else {
           console.log(`${new Date().toString()} - The following error occured while querying DB:`, err);
         }
