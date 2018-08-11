@@ -109,7 +109,7 @@ export class PetUtil {
         db.end();
         if (!err) {
           const timestamp = rows[0].timestamp;
-          rows.forEach(row => 
+          rows.forEach(row =>
             delete row.timestamp);
           response.send({
             timestamp: timestamp,
