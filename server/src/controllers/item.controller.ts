@@ -47,7 +47,7 @@ export const getItems = (req: Request, res: Response) => {
 export const postItems = (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
   db.query(`
-    SELECT i.id, COALESCE(${ getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId
+    SELECT i.id, COALESCE(${ getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId, timestamp
     FROM items as i
     LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id

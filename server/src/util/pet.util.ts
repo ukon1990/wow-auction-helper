@@ -100,7 +100,7 @@ export class PetUtil {
     req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     db.query(`
-      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source
+      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source, timestamp
       FROM pets as p, pet_name_locale as l
       WHERE l.speciesId = p.speciesId
       AND timestamp > "${ req.body.timestamp }"

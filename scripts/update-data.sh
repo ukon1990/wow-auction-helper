@@ -16,7 +16,7 @@ for i in ${locales[@]}; do
     gzip 'items-'$i'.json'
     curl --header "Content-Type: application/json" --request POST --data '{"timestamp": "2000-06-30T00:00:00.000Z"}' 'http://localhost:3000/api/recipe?locale='$i'' --output 'recipes-'$i'.json'
     gzip 'recipes-'$i'.json'
-    curl --header "Content-Type: application/json" --request POST --data '{"timestamp": "2000-06-30T00:00:00.000Z"}' 'http://localhost:3000/api/pets?locale='$i'' --output 'pets-'$i'.json'
+    curl --header "Content-Type: application/json" --request POST --data '{"timestamp": "2000-06-30T00:00:00.000Z"}' 'http://localhost:3000/api/pet?locale='$i'' --output 'pets-'$i'.json'
     gzip 'pets-'$i'.json'
 done    
 
