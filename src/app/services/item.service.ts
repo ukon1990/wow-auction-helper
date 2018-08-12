@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ErrorHandler } from '@angular/core';
 import { SharedService } from './shared.service';
 import { HttpClient } from '@angular/common/http';
 import { Item } from '../models/item/item';
@@ -34,62 +34,76 @@ export class ItemService {
       });
   }
 
-  getItems(): Promise<any> {
+  async getItems(): Promise<any> {
+    const locale = localStorage['locale'];
+    let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
     console.log('Downloading items');
     SharedService.downloading.items = true;
-    return this._http.post(
-      Endpoints.getUrl(`item?locale=${ localStorage['locale'] }`),
-      {timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP] ?
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()})
+    if (!timestamp) {
+      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/items-${ locale }.json.gz`)
       .toPromise()
-      .then(items => {
-        const missingItems: number[] = [];
-        SharedService.downloading.items = false;
-        SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items['items']);
-        SharedService.itemsUnmapped.forEach((i: Item) => {
-          // Making sure that the tradevendor item names are updated in case of locale change
-          if (SharedService.tradeVendorMap[i.id]) {
-            SharedService.tradeVendorMap[i.id].name = i.name;
-          }
-
-          if (i.itemClass === 8) {
-            i.itemClass = 0;
-            i.itemSubClass = 6;
-          }
-          SharedService.items[i.id] = i;
-        });
-
-        // "translating" item names
-        SharedService.itemsUnmapped.forEach((item: Item) => {
-          if (item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
-            item.itemSource.containedInItem.forEach(i =>
-              this.setLocaleForSourceItems(i, missingItems));
-          }
-          if (item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
-            item.itemSource.milledFrom.forEach(i =>
-              this.setLocaleForSourceItems(i, missingItems));
-          }
-          if (item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0) {
-            item.itemSource.prospectedFrom.forEach(i =>
-              this.setLocaleForSourceItems(i, missingItems));
-          }
-
-          this.addItemToBoughtFromVendorList(item);
-        });
-
-        if (missingItems.length > 0) {
-          // TODO: when I have time -> this.addItems(missingItems);
-        }
-
-        this.dbService.addItems(items['items']);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
-        console.log('Items download is completed');
+      .then(response => {
+        timestamp = response['timestamp'];
+        this.handleItems(response['items']);
       })
+      .catch(error => {
+        ErrorReport.sendHttpError(error, this.angulartics2);
+      });
+    }
+    return this._http.post(
+      Endpoints.getUrl(`item?locale=${ locale }`),
+      {timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()})
+      .toPromise()
+      .then(items => this.handleItems(items['items']))
       .catch(error => {
         SharedService.downloading.items = false;
         console.error('Items download failed', error);
         ErrorReport.sendHttpError(error, this.angulartics2);
       });
+  }
+
+  handleItems(items: Item[]): void {
+      const missingItems: number[] = [];
+      SharedService.downloading.items = false;
+      SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
+      SharedService.itemsUnmapped.forEach((i: Item) => {
+        // Making sure that the tradevendor item names are updated in case of locale change
+        if (SharedService.tradeVendorMap[i.id]) {
+          SharedService.tradeVendorMap[i.id].name = i.name;
+        }
+
+        if (i.itemClass === 8) {
+          i.itemClass = 0;
+          i.itemSubClass = 6;
+        }
+        SharedService.items[i.id] = i;
+      });
+
+      // "translating" item names
+      SharedService.itemsUnmapped.forEach((item: Item) => {
+        if (item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
+          item.itemSource.containedInItem.forEach(i =>
+            this.setLocaleForSourceItems(i, missingItems));
+        }
+        if (item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
+          item.itemSource.milledFrom.forEach(i =>
+            this.setLocaleForSourceItems(i, missingItems));
+        }
+        if (item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0) {
+          item.itemSource.prospectedFrom.forEach(i =>
+            this.setLocaleForSourceItems(i, missingItems));
+        }
+
+        this.addItemToBoughtFromVendorList(item);
+      });
+
+      if (missingItems.length > 0) {
+        // TODO: when I have time -> this.addItems(missingItems);
+      }
+
+      this.dbService.addItems(items);
+      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+      console.log('Items download is completed');
   }
 
   setLocaleForSourceItems(item: any, missingItems: number[]): void {

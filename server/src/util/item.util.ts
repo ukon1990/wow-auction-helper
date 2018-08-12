@@ -86,7 +86,9 @@ export class ItemUtil {
     db: mysql.Connection): void {
     let timestamp;
     if (!error) {
-      timestamp = items[0]['timestamp'];
+      if (items.length > 0) {
+        timestamp = items[0]['timestamp'];
+      }
       items.forEach(item =>
         ItemUtil.handleItem(item));
     }

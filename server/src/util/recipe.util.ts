@@ -79,7 +79,7 @@ export class RecipeUtil {
         db.end();
         if (!err) {
           const recipes: any[] = [],
-            timestamp = rows[0].timestamp;
+            timestamp = rows.length > 0 ? rows[0].timestamp : undefined;
           rows.forEach((row: any) => {
             try {
               recipes.push(
