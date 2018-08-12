@@ -84,13 +84,18 @@ export class ItemUtil {
     items: Item[],
     response: Response,
     db: mysql.Connection): void {
+    let timestamp;
     if (!error) {
+      if (items.length > 0) {
+        timestamp = items[0]['timestamp'];
+      }
       items.forEach(item =>
         ItemUtil.handleItem(item));
     }
 
     db.end();
     response.send({
+      timestamp: timestamp,
       items: items ? items : []
     });
   }
@@ -181,6 +186,7 @@ export class ItemUtil {
   }
 
   public static handleItem(item: Item): void {
+    delete item['timestamp'];
     if (item.itemSource) {
       item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
     }

@@ -30,34 +30,31 @@ export class CraftingService {
       });
   }
 
-  getRecipes(): Promise<any> {
+  async getRecipes(): Promise<any> {
+    const locale = localStorage['locale'];
+    let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
     console.log('Downloading recipes');
     SharedService.downloading.recipes = true;
+
+    if (!timestamp) {
+      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${ locale }.json.gz`)
+        .toPromise()
+        .then(result => {
+          timestamp = result['timestamp'];
+          this.handleRecipes(result);
+        })
+        .catch(error =>
+          ErrorReport.sendHttpError(error, this.angulartics2));
+    }
+
+    SharedService.downloading.recipes = true;
     return this._http.post(
-      Endpoints.getUrl(`recipe?locale=${localStorage['locale']}`),
+      Endpoints.getUrl(`recipe?locale=${ locale }`),
       {
-        timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP] ?
-          localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()
+        timestamp:  timestamp ? timestamp : new Date('2000-06-30').toJSON()
       })
       .toPromise()
-      .then(recipes => {
-        const missingItems = [];
-        SharedService.downloading.recipes = false;
-        SharedService.recipes = SharedService.recipes.concat(recipes['recipes']);
-        console.log('Recipe download is completed');
-
-        // Adding items if there are any missing
-        SharedService.recipes.forEach(r => {
-          this.handleRecipe(r, missingItems);
-        });
-
-        if (missingItems.length < 100) {
-          this._itemService.addItems(missingItems);
-        }
-
-        this.dbService.addRecipes(SharedService.recipes);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
-      })
+      .then(recipes => this.handleRecipes(recipes))
       .catch(error => {
         SharedService.downloading.recipes = false;
         console.error('Recipe download failed', error);
@@ -87,6 +84,25 @@ export class CraftingService {
     }
 
     SharedService.recipesMap[r.spellID] = r;
+  }
+
+  handleRecipes(recipes: any): void {
+    const missingItems = [];
+    SharedService.downloading.recipes = false;
+    SharedService.recipes = SharedService.recipes.concat(recipes['recipes']);
+    console.log('Recipe download is completed');
+
+    // Adding items if there are any missing
+    SharedService.recipes.forEach(r => {
+      this.handleRecipe(r, missingItems);
+    });
+
+    if (missingItems.length < 100) {
+      this._itemService.addItems(missingItems);
+    }
+
+    this.dbService.addRecipes(SharedService.recipes);
+    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
   }
 
   /**

@@ -100,14 +100,22 @@ export class PetUtil {
     req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     db.query(`
-      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source
+      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source, timestamp
       FROM pets as p, pet_name_locale as l
       WHERE l.speciesId = p.speciesId
-      AND timestamp > "${ req.body.timestamp }";`,
+      AND timestamp > "${ req.body.timestamp }"
+      ORDER BY timestamp desc;`,
       (err, rows, fields) => {
         db.end();
         if (!err) {
+          let timestamp;
+          if (rows.length > 0) {
+            timestamp = rows[0].timestamp;
+          }
+          rows.forEach(row =>
+            delete row.timestamp);
           response.send({
+            timestamp: timestamp,
             'pets': rows
           });
         } else {

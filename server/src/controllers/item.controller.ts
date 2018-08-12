@@ -31,10 +31,11 @@ export const updateItem = async (req: Request, res: Response) => {
 export const getItems = (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
   db.query(`
-      SELECT i.id, COALESCE(${ getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId
+      SELECT i.id, COALESCE(${ getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId, timestamp
       FROM items as i
       LEFT OUTER JOIN item_name_locale as l
-      ON i.id = l.id;`,
+      ON i.id = l.id
+      ORDER BY timestamp desc;`,
     (err, rows, fields) =>
       ItemUtil.getItems(err, rows as Item[], res, db));
 };
@@ -46,11 +47,12 @@ export const getItems = (req: Request, res: Response) => {
 export const postItems = (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);
   db.query(`
-    SELECT i.id, COALESCE(${ getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId
+    SELECT i.id, COALESCE(${ getLocale(req) }, i.name) as name, icon, itemLevel, itemClass, itemSubClass, quality, itemSpells, itemSource, buyPrice, sellPrice, itemBind, minFactionId, minReputation, isDropped, expansionId, timestamp
     FROM items as i
     LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id
-    WHERE timestamp > "${ req.body.timestamp }";`,
+    WHERE timestamp > "${ req.body.timestamp }"
+    ORDER BY timestamp desc;`,
     (err, rows, fields) =>
       ItemUtil.getItems(err, rows as Item[], res, db));
 };

@@ -8,6 +8,7 @@ import flash from 'express-flash';
 import expressSession from 'express-session';
 import path from 'path';
 import expressValidator from 'express-validator';
+import awsServerless from 'aws-serverless-express';
 import bluebird from 'bluebird';
 
 // Load environment variables from .env file, where API keys and passwords are configured

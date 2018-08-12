@@ -38,6 +38,7 @@ testem.log
 Thumbs.db
 
 *.zip
+*.json.gz
 
 server/secrets/secrets\.js
 src/app/services/keys\.ts
