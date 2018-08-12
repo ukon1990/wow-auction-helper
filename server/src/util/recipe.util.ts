@@ -70,7 +70,7 @@ export class RecipeUtil {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
     db.query(`
-      SELECT l.id, json, ${ getLocale(req)} as name, timestamp from  recipes as r
+      SELECT r.id, json, ${ getLocale(req)} as name, timestamp from  recipes as r
       LEFT OUTER JOIN recipe_name_locale as l
       ON r.id = l.id
       WHERE json NOT LIKE '%itemID":0%'
@@ -82,8 +82,11 @@ export class RecipeUtil {
             timestamp = rows.length > 0 ? rows[0].timestamp : undefined;
           rows.forEach((row: any) => {
             try {
-              recipes.push(
-                JSON.parse(row.json));
+              const recipe = JSON.parse(row.json);
+              if (row.name) {
+                recipe.name = row.name;
+              }
+              recipes.push(recipe);
             } catch (err) {
               console.error(`${new Date().toString()} - Could not parse json (${row.id})`, row.json, err);
             }
