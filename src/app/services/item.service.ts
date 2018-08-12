@@ -9,12 +9,14 @@ import { WoWHeadSoldBy } from '../models/item/wowhead';
 import { ErrorReport } from '../utils/error-report.util';
 import { Angulartics2 } from 'angulartics2';
 import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class ItemService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   constructor(private _http: HttpClient,
     private dbService: DatabaseService,
+    public snackBar: MatSnackBar,
     private angulartics2: Angulartics2) { }
 
   addItem(itemID: number): void {
@@ -40,6 +42,7 @@ export class ItemService {
     console.log('Downloading items');
     SharedService.downloading.items = true;
     if (!timestamp) {
+      this.openSnackbar('Downloading the item DB for first time use. This might take a couple minutes(~27 MB).');
       await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/items-${ locale }.json.gz`)
       .toPromise()
       .then(response => {
@@ -50,6 +53,7 @@ export class ItemService {
         ErrorReport.sendHttpError(error, this.angulartics2);
       });
     }
+    SharedService.downloading.items = true;
     return this._http.post(
       Endpoints.getUrl(`item?locale=${ locale }`),
       {timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()})
@@ -158,5 +162,9 @@ export class ItemService {
         item.isBoughtForGold = !soldBy.currency && soldBy.cost > 0;
       });
     }
+  }
+
+  private openSnackbar(message: string): void {
+    this.snackBar.open(message, 'Ok', { duration: 3000 });
   }
 }

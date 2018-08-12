@@ -15,24 +15,29 @@ export class PetsService {
     private dbService: DatabaseService,
     private angulartics2: Angulartics2) { }
 
-  getPets(): Promise<any> {
+  async getPets(): Promise<any> {
+    const locales = localStorage['locale'];
+    let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
+
+    if (!timestamp) {
+      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/pets-${ locales }.json.gz`)
+        .toPromise()
+        .then(response => {
+          timestamp = response['timestamp'];
+          this.handlePets(response);
+        })
+        .catch(error => ErrorReport.sendHttpError(error, this.angulartics2));
+    }
+
     SharedService.downloading.pets = true;
     return this._http.post(
-      Endpoints.getUrl(`pet?locale=${localStorage['locale']}`),
+      Endpoints.getUrl(`pet?locale=${ locales }`),
       {
-        timestamp: localStorage[this.LOCAL_STORAGE_TIMESTAMP] ?
+        timestamp: timestamp ?
           localStorage[this.LOCAL_STORAGE_TIMESTAMP] : new Date('2000-06-30').toJSON()
       })
       .toPromise()
-      .then(pets => {
-        SharedService.downloading.pets = false;
-        (pets['pets'] as Array<Pet>).forEach(p => {
-          SharedService.pets[p.speciesId] = p;
-        });
-
-        this.dbService.addPets(pets['pets']);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
-      })
+      .then(pets => this.handlePets(pets))
       .catch(error => {
         SharedService.downloading.pets = false;
         console.error('Failed at downloading pet', error);
@@ -53,6 +58,16 @@ export class PetsService {
         console.error('Failed at downloading pet', error);
         ErrorReport.sendHttpError(error, this.angulartics2);
       });
+  }
+
+  handlePets(pets: any) {
+    SharedService.downloading.pets = false;
+    (pets['pets'] as Array<Pet>).forEach(p => {
+      SharedService.pets[p.speciesId] = p;
+    });
+
+    this.dbService.addPets(pets['pets']);
+    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
   }
 
   updatePet(speciesId): Promise<any> {
