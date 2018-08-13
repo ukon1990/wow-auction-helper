@@ -87,7 +87,7 @@ export class ItemUtil {
     let timestamp;
     if (!error) {
       if (items.length > 0) {
-        timestamp = items[0]['timestamp'];
+        timestamp = items[0] ? items[0]['timestamp'] : undefined;
       }
       items.forEach(item =>
         ItemUtil.handleItem(item));
