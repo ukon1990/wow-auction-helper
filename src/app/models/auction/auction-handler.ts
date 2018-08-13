@@ -21,7 +21,8 @@ export class AuctionHandler {
   public static organize(auctions: Array<Auction>, petService?: PetsService): void {
     const t0 = performance.now();
     SharedService.auctionItems.length = 0;
-    SharedService.auctionItemsMap.clear();
+    Object.keys(SharedService.auctionItemsMap).forEach(id =>
+      delete SharedService.auctionItemsMap[id]);
     Seller.clearSellers();
 
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
@@ -32,6 +33,7 @@ export class AuctionHandler {
     });
 
     SharedService.auctions = auctions;
+    console.log(SharedService.auctions);
     auctions.forEach(a => {
       if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`]) {
         const petId = `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
@@ -63,6 +65,7 @@ export class AuctionHandler {
       Seller.setSellerData(a);
 
     });
+    console.log(SharedService.auctionItems, SharedService.auctionItemsMap);
 
     // Checking if we have been undercutted etc
     SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
