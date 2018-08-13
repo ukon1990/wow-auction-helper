@@ -1,3 +1,11 @@
+<form *ngIf="isUsinAPI()" [formGroup]="form"  class="ml-2 mr-2 row">
+  <mat-form-field class="col">
+    <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate" matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
+  </mat-form-field>
+  <mat-form-field class="col">
+    <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
+  </mat-form-field>
+</form>
 <mat-tab-group>
   <mat-tab *ngFor="let tv of getTradeVendors()" [label]="tv.name">
     <p>
@@ -8,6 +16,6 @@
     <p *ngIf="!tv.useForCrafting" class="m-0">
       The current lowest buyout per item is {{ getAuctionItem(tv).buyout | gold }}, with a market value of {{ getAuctionItem(tv).mktPrice | gold }}.
     </p>
-    <wah-data-table [columns]="columns" [data]="tv.items" id="itemID"></wah-data-table>
+    <wah-data-table [columns]="columns" [data]="filteredTradeVendorItems(tv)" id="itemID"></wah-data-table>
   </mat-tab>
 </mat-tab-group>
