@@ -22,14 +22,14 @@
     "serve-debug": "nodemon --inspect dist/server.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "add-build-to-zip": "rm build.zip; zip -r build.zip  dist/ package.json package-lock.json tslint.json jest.config.js src/ tsconfig.json .env"
-  },
+    },
   "dependencies": {
     "async": "^2.6.0",
-    "aws-serverless-express": "^3.2.0",
     "bcrypt-nodejs": "^0.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "compression": "^1.7.3",
+    "cors": "^2.8.3",
     "dotenv": "^4.0.0",
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
