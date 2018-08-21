@@ -10,6 +10,7 @@ import { ErrorReport } from '../utils/error-report.util';
 import { Angulartics2 } from 'angulartics2';
 import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
 import { MatSnackBar } from '@angular/material';
+import { ItemOverrides } from '../overrides/item.overrides';
 
 @Injectable()
 export class ItemService {
@@ -46,6 +47,9 @@ export class ItemService {
       await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/items-${ locale }.json.gz`)
       .toPromise()
       .then(response => {
+        SharedService.itemsUnmapped = [];
+        Object.keys(SharedService.items).forEach(id =>
+          delete SharedService.items[id]);
         timestamp = response['timestamp'];
         this.handleItems(response['items']);
       })
@@ -70,21 +74,19 @@ export class ItemService {
       const missingItems: number[] = [];
       SharedService.downloading.items = false;
       SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
-      SharedService.itemsUnmapped.forEach((i: Item) => {
-        // Making sure that the tradevendor item names are updated in case of locale change
-        if (SharedService.tradeVendorMap[i.id]) {
-          SharedService.tradeVendorMap[i.id].name = i.name;
-        }
-
-        if (i.itemClass === 8) {
-          i.itemClass = 0;
-          i.itemSubClass = 6;
-        }
-        SharedService.items[i.id] = i;
-      });
-
-      // "translating" item names
       SharedService.itemsUnmapped.forEach((item: Item) => {
+        // Making sure that the tradevendor item names are updated in case of locale change
+        if (SharedService.tradeVendorMap[item.id]) {
+          SharedService.tradeVendorMap[item.id].name = item.name;
+        }
+
+        if (item.itemClass === 8) {
+          item.itemClass = 0;
+          item.itemSubClass = 6;
+        }
+
+        SharedService.items[item.id] = item;
+
         if (item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
           item.itemSource.containedInItem.forEach(i =>
             this.setLocaleForSourceItems(i, missingItems));
@@ -158,6 +160,11 @@ export class ItemService {
 
   addItemToBoughtFromVendorList(item: Item): void {
     if (item.itemSource && item.itemSource.soldBy) {
+      if (ItemOverrides.NOT_SOLD_BY_VENDOR[item.id]) {
+        item.itemSource.soldBy = [];
+        item.isBoughtForGold = false;
+        return;
+      }
       item.itemSource.soldBy.forEach((soldBy: WoWHeadSoldBy) => {
         item.isBoughtForGold = !soldBy.currency && soldBy.cost > 0;
       });
