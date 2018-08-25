@@ -48,18 +48,17 @@ function gzipResponse(context: Context, body, callback: Callback): void {
     if (err) {
       context.fail(err);
     }
-    const res = {
-        statusCode: 200,
-        body: ahData.toString('base64'),
-        isBase64Encoded: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Encoding': 'gzip'
-        }
-    };
     // context.succeed(response);
     console.log('gzipped');
-    callback(null, res);
+    callback(null, {
+      statusCode: 200,
+      body: ahData.toString('base64'),
+      isBase64Encoded: true,
+      headers: {
+          // 'Content-Type': 'application/json',
+          'Content-Encoding': 'gzip'
+      }
+  });
   });
 }
 
