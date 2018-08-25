@@ -18,11 +18,10 @@ export class Endpoints {
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public static getUrl(path: string): string {
-    const url = `/api/${path}`;
-    /* TODO: once the lambda is done
+    let url = `/api/${path}`;
     if (path === 'auction' && SharedService.user.region === 'us') {
       url = Endpoints.LAMBDAS.AUCTION_US;
-    }*/
+    }
     return environment.production ?
       url : `${ Endpoints.WAH_LOCAL_API }${ path }`;
   }

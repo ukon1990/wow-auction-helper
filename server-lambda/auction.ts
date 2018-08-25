@@ -6,14 +6,13 @@ const RequestPromise = require('request-promise');
 exports.getAuctions = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   console.log('', event);
   const testing = false;
-  const url = testing ?
-    'http://localhost:4200/assets/mock/auctions.json' : event['url'] || JSON.parse(event.body).url;
+  const url = event['url'] || JSON.parse(event.body).url;
   const response = {
     realms: [],
     auctions: []
   };
   try {
-    if (url && testing) {
+    if (url) {
       console.log('url', url);
       if (url && (url.indexOf('.worldofwarcraft.com/auction-data') !== -1 || testing)) {
         console.log('Contains url');
@@ -55,7 +54,7 @@ function gzipResponse(context: Context, body, callback: Callback): void {
       body: ahData.toString('base64'),
       isBase64Encoded: true,
       headers: {
-          // 'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
           'Content-Encoding': 'gzip'
       }
   });
