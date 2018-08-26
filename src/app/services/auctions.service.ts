@@ -97,7 +97,7 @@ export class AuctionsService {
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
         console.error('Auction download failed', error);
-        switch(error.status) {
+        switch (error.status) {
           case 504:
             this.openSnackbar(`Auction download failed. The server took too long time to respond`);
             break;
@@ -184,8 +184,8 @@ export class AuctionsService {
 
         this._dbService.getWoWUctionItems().then(r => {
           this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
-        }).catch(error => {
-          console.error('Could not restore WoWUction auctions from local DB', error);
+        }).catch(err => {
+          console.error('Could not restore WoWUction auctions from local DB', err);
         });
       });
   }
