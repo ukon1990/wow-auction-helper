@@ -10,6 +10,8 @@ import { Crafting } from '../../../models/crafting/crafting';
 import { CraftingService } from '../../../services/crafting.service';
 import { Angulartics2 } from 'angulartics2';
 import { Character } from '../../../models/character/character';
+import {MatSnackBar} from '@angular/material';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'wah-characters',
@@ -25,6 +27,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   _characterForm: FormGroup;
 
   constructor(private _characterService: CharacterService,
+    private snackBar: MatSnackBar,
     private _realmService: RealmService, private _craftingService: CraftingService,
     private formBuilder: FormBuilder, private angulartics2: Angulartics2
   ) {
@@ -56,18 +59,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     this.downloading = true;
 
     if (this._characterForm.value.characterBelowLevelTen) {
-      const character = new Character();
-      character.name = this._characterForm.value.name;
-      character.realm = SharedService.realms[this._characterForm.value.realm].name;
-      character.thumbnail = '';
-      character.level = 0;
-
-      this.angulartics2.eventTrack.next({
-        action: 'Added a lower than level 10 character',
-        properties: { category: 'Characters' },
-      });
-      this.processCharacter(character);
-      return;
+      this.addLowlevelCharacter();
     }
 
     this.angulartics2.eventTrack.next({
@@ -81,8 +73,49 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
       this.region ? this.region : SharedService.user.region
       )
       .then(c => {
-        this.processCharacter(c);
-      }).catch(() => this.downloading = false);
+        if (!c.error) {
+          this.processCharacter(c);
+            this.openSnackbar(`${ c.name } was successfully added`);
+        } else {
+          if (c.error.status === 404) {
+            this.openSnackbar(`${
+                this._characterForm.value.name
+                } could not be found on the realm ${
+                this._characterForm.value.realm
+                }.`);
+          } else {
+            this.addLowlevelCharacter();
+            this.openSnackbar(`Could not find any character data for ${
+                this._characterForm.value.name
+              }@${
+                this._characterForm.value.realm
+              }. Blizzard's service responded with: ${
+                c.error.statusText
+              }. The character will be added to your list, but with no profession data etc.
+               You can try to manually update the character later.`);
+          }
+        }
+        this.downloading = false;
+      }).catch((error: HttpErrorResponse) => {
+        this.downloading = false;
+        console.log('error', error);
+        this.openSnackbar(`Something went wrong, while adding ${ this._characterForm.value.name }. ${error.statusText}`);
+    });
+  }
+
+  addLowlevelCharacter(): void {
+      const character = new Character();
+      character.name = this._characterForm.value.name;
+      character.realm = SharedService.realms[this._characterForm.value.realm].name;
+      character.thumbnail = '';
+      character.level = 0;
+
+      this.angulartics2.eventTrack.next({
+          action: 'Added a lower than level 10 character',
+          properties: { category: 'Characters' },
+      });
+      this.processCharacter(character);
+      return;
   }
 
   processCharacter(character: Character): void {
@@ -158,5 +191,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   getCharacters(): any[] {
     return SharedService.user.characters;
+  }
+
+  private openSnackbar(message: string): void {
+      this.snackBar.open(message, 'Ok', { duration: 15000 });
   }
 }

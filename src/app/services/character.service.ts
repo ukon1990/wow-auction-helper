@@ -28,7 +28,7 @@ export class CharacterService {
         SharedService.downloading.characterData = false;
         console.error('Failed at downloading character', error);
         ErrorReport.sendHttpError(error, this.angulartics2);
-        return {};
+        return {error: error};
       });
   }
 
@@ -47,7 +47,7 @@ export class CharacterService {
         SharedService.downloading.characterData = false;
         console.error('Failed at downloading character', error);
         ErrorReport.sendHttpError(error, this.angulartics2);
-        return {};
+        return {error: error};
       });
   }
 }
