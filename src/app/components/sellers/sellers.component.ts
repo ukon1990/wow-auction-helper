@@ -44,7 +44,7 @@ export class SellersComponent implements OnInit {
   }
 
   isNameMatch(seller: Seller): boolean {
-    return this.searchForm.value.name === null || seller.name.toLowerCase().indexOf(this.searchForm.value.name) > -1;
+    return this.searchForm.value.name === null || seller.name.toLowerCase().indexOf(this.searchForm.value.name.toLowerCase()) > -1;
   }
 
   isLiquidityMatch(seller: Seller): boolean {
