@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { TradeVendor } from '../../models/item/trade-vendor';
+import { TradeVendor, TradeVendorItem } from '../../models/item/trade-vendor';
 import { TRADE_VENDORS } from '../../models/item/trade-vendors';
 import { ColumnDescription } from '../../models/column-description';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
+import { Filters } from '../../models/filtering';
+import { FormGroup, FormBuilder } from '../../../../node_modules/@angular/forms';
+import { Subscription } from '../../../../node_modules/rxjs';
 
 @Component({
   selector: 'wah-trade-vendors',
@@ -13,8 +16,21 @@ import { AuctionItem } from '../../models/auction/auction-item';
 export class TradeVendorsComponent implements OnInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   locale = localStorage['locale'].split('-')[0];
+  form: FormGroup;
+  formChanges: Subscription;
 
-  constructor() { }
+  constructor(private formBuilder: FormBuilder) {
+    const filter = JSON.parse(localStorage.getItem('query_trade_vendors')) || undefined;
+    this.form = formBuilder.group({
+      saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
+      avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : 0
+    });
+
+    this.formChanges = this.form.valueChanges.subscribe((change) => {
+      console.log(change);
+      localStorage['query_trade_vendors'] = JSON.stringify(change);
+    });
+  }
 
   ngOnInit() {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
@@ -38,8 +54,22 @@ export class TradeVendorsComponent implements OnInit {
     SharedService.selectedItemId = tv.itemID;
   }
 
+  filteredTradeVendorItems(tv: TradeVendor): TradeVendorItem[] {
+    return tv.items.filter(i => this.isMatch(i));
+  }
+
+  isMatch(item: TradeVendorItem): boolean {
+    return Filters.isSaleRateMatch(item.itemID, this.form) &&
+      Filters.isDailySoldMatch(item.itemID, this.form);
+  }
+
   getAuctionItem(tradeVendor: TradeVendor): AuctionItem {
     return SharedService.auctionItemsMap[tradeVendor.itemID] ?
       SharedService.auctionItemsMap[tradeVendor.itemID] : new AuctionItem();
+  }
+
+  /* istanbul ignore next */
+  isUsinAPI(): boolean {
+    return SharedService.user.apiToUse !== 'none';
   }
 }

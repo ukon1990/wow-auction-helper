@@ -14,6 +14,7 @@ import { PetsService } from './pets.service';
 import { Item } from '../models/item/item';
 import { Angulartics2 } from 'angulartics2';
 import { ErrorReport } from '../utils/error-report.util';
+import { Compression } from '../utils/compression.util';
 
 @Injectable()
 export class AuctionsService {
@@ -47,13 +48,20 @@ export class AuctionsService {
   }
 
   getAuctions(): Promise<any> {
+    if (SharedService.downloading.auctions) {
+      return;
+    }
     const missingItems = [];
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${ SharedService.user.realm }`);
-    return this._http.post(Endpoints.getUrl('auction'), { url: SharedService.auctionResponse.url })
+    return this._http.post(
+        Endpoints.getUrl('auction'), { url: SharedService.auctionResponse.url })
       .toPromise()
       .then(a => {
+        if (a['isBase64Encoded']) {
+          a = Compression.decompress(a['body']);
+        }
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = SharedService.auctionResponse.lastModified;
         AuctionHandler.organize(a['auctions'], this.petService);
@@ -89,7 +97,7 @@ export class AuctionsService {
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
         console.error('Auction download failed', error);
-        switch(error.status) {
+        switch (error.status) {
           case 504:
             this.openSnackbar(`Auction download failed. The server took too long time to respond`);
             break;
@@ -99,6 +107,17 @@ export class AuctionsService {
 
         ErrorReport.sendHttpError(error, this.angulartics2);
       });
+  }
+
+  getAuctionsAndDecompress(): void {
+    this._http.post('https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/default/getAuctions', {
+      url: 'http://auction-api-us.worldofwarcraft.com/auction-data/5301bfa3fe54bb793c685437da49ac42/auctions.json'
+    }).toPromise()
+    .then(r => {
+      console.log('compressed response', r);
+      Compression.decompress(r['body']);
+    })
+    .catch(error => console.error(error));
   }
 
   getTsmAuctions(): Promise<any> {
@@ -165,8 +184,8 @@ export class AuctionsService {
 
         this._dbService.getWoWUctionItems().then(r => {
           this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
-        }).catch(error => {
-          console.error('Could not restore WoWUction auctions from local DB', error);
+        }).catch(err => {
+          console.error('Could not restore WoWUction auctions from local DB', err);
         });
       });
   }

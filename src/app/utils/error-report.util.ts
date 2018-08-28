@@ -1,6 +1,8 @@
-import { Angulartics2 } from "angulartics2";
-import { HttpErrorResponse } from "@angular/common/http";
+import { Angulartics2 } from 'angulartics2';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SharedService } from '../services/shared.service';
+declare function require(moduleName: string): any;
+const version = require('../../../package.json').version;
 
 export class ErrorReport {
   public static sendHttpError(error: HttpErrorResponse, ga: Angulartics2): void {
@@ -8,7 +10,7 @@ export class ErrorReport {
       ga.eventTrack.next({
         action: `${error.status} - ${error.statusText}`,
         properties: {
-          category: 'Errors',
+          category: `Http errors (${ version })`,
           label: `${ error.url } - ${ SharedService.user.realm }@${ SharedService.user.region }`
         },
       });
@@ -19,7 +21,7 @@ export class ErrorReport {
     ga.eventTrack.next({
       action: functionName,
       properties: {
-        category: 'Errors',
+        category: `Errors (${ version })`,
         label: error.message
       },
     });

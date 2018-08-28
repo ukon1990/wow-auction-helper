@@ -8,6 +8,7 @@ import { ItemService } from './services/item.service';
 import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 import { Angulartics2 } from 'angulartics2';
 import { ProspectingAndMillingUtil } from './utils/prospect-milling.util';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'wah-root',
