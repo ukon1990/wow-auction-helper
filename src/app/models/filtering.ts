@@ -34,6 +34,20 @@ export class Filters {
     return true;
   }
 
+  public static isItemAboveQuality(id: number, form: FormGroup): boolean {
+    if (typeof form.getRawValue().minItemQuality !== 'number') {
+      return true;
+    }
+    return (SharedService.items[id] as Item).quality >= form.getRawValue().minItemQuality;
+  }
+
+  public static isAboveItemLevel(id: number, form: FormGroup): boolean {
+    if (typeof form.getRawValue().minItemLevel !== 'number') {
+      return true;
+    }
+    return (SharedService.items[id] as Item).itemLevel >= form.getRawValue().minItemLevel;
+  }
+
   public static isSaleRateMatch(itemID: number, form: FormGroup): boolean {
     if (Filters.isUsingAPI() && form.value.saleRate && form.value.saleRate > 0) {
       return SharedService.auctionItemsMap[itemID].regionSaleRate >= form.value.saleRate / 100;

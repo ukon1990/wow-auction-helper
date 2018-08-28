@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Filters } from '../../models/filtering';
 import { Title } from '@angular/platform-browser';
 import { GameBuild } from '../../utils/game-build.util';
+import { itemQuality, itemQualities } from '../../models/item/disenchanting-list';
 
 @Component({
   selector: 'wah-auctions',
@@ -18,6 +19,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   form: FormGroup;
   formChanges: Subscription;
   itemClasses = itemClasses;
+  itemQualities = itemQualities;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   expansions = GameBuild.expansionMap;
 
@@ -33,7 +35,9 @@ export class AuctionsComponent implements OnInit, OnDestroy {
       saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
       avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : 0,
       onlyVendorSellable: filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false,
-      expansion: filter && filter.expansion ? filter.expansion : null
+      expansion: filter && filter.expansion ? filter.expansion : null,
+      minItemQuality: filter && filter.minItemQuality ? filter.minItemQuality : null,
+      minItemLevel: filter && filter.minItemLevel ? filter.minItemLevel : null
     });
   }
 
@@ -51,6 +55,7 @@ export class AuctionsComponent implements OnInit, OnDestroy {
 
   addColumns(): void {
     this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
+    this.columns.push({ key: 'itemLevel', title: 'iLvL', dataType: 'number' });
     this.columns.push({ key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true});
     this.columns.push({ key: 'quantityTotal', title: 'Stock', dataType: 'number' });
     this.columns.push({ key: 'buyout', title: 'Buyout', dataType: 'gold' });
@@ -79,7 +84,9 @@ export class AuctionsComponent implements OnInit, OnDestroy {
       Filters.isSaleRateMatch(auctionItem.itemID, this.form) &&
       Filters.isBelowMarketValue(auctionItem.itemID, this.form) &&
       Filters.isDailySoldMatch(auctionItem.itemID, this.form) &&
-      Filters.isBelowVendorPrice(auctionItem.itemID, this.form)
+      Filters.isBelowVendorPrice(auctionItem.itemID, this.form) &&
+      Filters.isItemAboveQuality(auctionItem.itemID, this.form) &&
+      Filters.isAboveItemLevel(auctionItem.itemID, this.form)
       && Filters.isExpansionMatch(auctionItem.itemID, this.form.controls.expansion);
   }
 

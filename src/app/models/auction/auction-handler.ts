@@ -137,6 +137,8 @@ export class AuctionHandler {
     tmpAuc.petLevel = auction.petLevel;
     tmpAuc.petQualityId = auction.petQualityId;
     tmpAuc.name = AuctionHandler.getItemName(auction);
+    tmpAuc.itemLevel = SharedService.items[auction.item] ?
+      SharedService.items[auction.item].itemLevel : 0;
     tmpAuc.owner = auction.owner;
     tmpAuc.ownerRealm = auction.ownerRealm;
     tmpAuc.buyout = auction.buyout / auction.quantity;

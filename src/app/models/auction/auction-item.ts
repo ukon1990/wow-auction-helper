@@ -4,6 +4,7 @@ export class AuctionItem {
   itemID: number;
   petSpeciesId?: number;
   name = 'Unavailable';
+  itemLevel = 0;
   buyout = 0;
   bid = 0;
   owner: string;
