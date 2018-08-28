@@ -5,8 +5,9 @@ import { SharedService } from '../services/shared.service';
 import { AuctionItem } from './auction/auction-item';
 import { Filters } from './filtering';
 import { Item } from './item/item';
+import { FormBuilder } from '@angular/forms';
 
-describe('Filters', () => {
+fdescribe('Filters', () => {
   let component: AuctionsComponent;
   let fixture: ComponentFixture<AuctionsComponent>;
 
@@ -80,6 +81,17 @@ describe('Filters', () => {
       expect(SharedService.items[25].itemClass).toEqual('0');
       expect(component.form.value['itemClass']).toEqual('1');
       expect(Filters.isItemClassMatch(ai.itemID, component.form)).toBeTruthy();
+    });
+  });
+
+  describe('should be able to filter for minimum item quality', () => {
+    it('Should return true if the quality is above the set value', () => {
+      const form = new FormBuilder().group({
+        minItemQuality: 1
+      });
+      SharedService.items[25] = new Item();
+      SharedService.items[25].quality = 3;
+      expect(Filters.isItemAboveQuality(25, form)).toBeTruthy();
     });
   });
 });

@@ -39,6 +39,19 @@
   </mat-form-field>
 
   <mat-form-field class="col">
+    <input matInput type="number" placeholder="Minimum item level" formControlName="minItemLevel" matTooltip="Some items may appear with incorrect iLvL.">
+  </mat-form-field>
+
+  <mat-form-field class="col">
+    <mat-select placeholder="Minimum item quality" formControlName="minItemQuality">
+      <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">Any</mat-option>
+      <mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ quality }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="col">
     <mat-select placeholder="Expansion" formControlName="expansion">
       <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
       <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
