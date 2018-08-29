@@ -45,8 +45,12 @@ export class Seller {
   }
 
   public static clearSellers(): void {
-    SharedService.sellersMap.clear();
-    SharedService.sellersByItemClassesMap.clear();
+    Object.keys(SharedService.sellersMap).forEach(key => {
+      delete SharedService.sellersMap[key];
+    });
+    Object.keys(SharedService.sellersByItemClassesMap).forEach(key => {
+      delete SharedService.sellersByItemClassesMap[key];
+    });
 
     SharedService.sellers.length = 0;
     SharedService.sellersByItemClass.length = 0;
