@@ -1,10 +1,12 @@
 {
   "name": "wah",
-  "version": "2.171.0",
+  "version": "2.171.1",
   "license": "MIT",
   "main": "server.js",
   "scripts": {
     "ng": "ng",
+    "ng-serve": "ng serve",
+    "ng-serve-secondary": "ng serve --port 4201",
     "start": "node ./server/server.js",
     "start-dev": "supervisor ./server/server.js",
     "build": "ng build --prod; cd server; npm run build; cd ..",
