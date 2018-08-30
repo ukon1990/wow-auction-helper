@@ -12,12 +12,12 @@ export class UserAuctions {
   constructor() {}
 
   addAuction(auction: Auction, auctionItem: AuctionItem): void {
-    if (this.charactersMap[auction.ownerRealm.toLowerCase()] && this.charactersMap[auction.ownerRealm.toLowerCase()][auction.owner]) {
-      console.log('Hit! I am hit!');
+    const realm = auction.ownerRealm.toLowerCase();
+    if (this.charactersMap[realm] && this.charactersMap[realm][auction.owner]) {
       this.auctionWorth += auction.buyout;
-      this.charactersMap[auction.ownerRealm][auction.owner].auctionWorth += auction.buyout;
+      this.charactersMap[realm][auction.owner].auctionWorth += auction.buyout;
       this.auctions.push(auction);
-      this.charactersMap[auction.ownerRealm][auction.owner].auctions.push(auction);
+      this.charactersMap[realm][auction.owner].auctions.push(auction);
     }
 
     auction.undercutByAmount = auction.buyout / auction.quantity - auctionItem.buyout;
@@ -49,13 +49,13 @@ export class UserAuctions {
     this.characters.length = 0;
     this.charactersMap = new Map<string, Map<string, UserAuctionCharacter>>();
     characters.forEach(c => {
-      if (!this.charactersMap[c.realm.toLowerCase()]) {
-        this.charactersMap[c.realm.toLowerCase()] = new Map<string, UserAuctionCharacter>();
+      const realm = c.realm.toLowerCase();
+      if (!this.charactersMap[realm]) {
+        this.charactersMap[realm] = new Map<string, UserAuctionCharacter>();
       }
-      this.charactersMap[c.realm.toLowerCase()][c.name] = new UserAuctionCharacter(c);
-      this.characters.push(this.charactersMap[c.realm.toLowerCase()][c.name]);
+      this.charactersMap[realm][c.name] = new UserAuctionCharacter(c);
+      this.characters.push(this.charactersMap[realm][c.name]);
     });
-    console.log(this.charactersMap);
   }
 }
 
