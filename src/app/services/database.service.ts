@@ -61,6 +61,10 @@ export class DatabaseService {
       });
   }
 
+  clearItems(): void {
+      this.db.table('items').clear();
+  }
+
   addPets(pets: Array<Pet>): void {
     this.db.table('pets').bulkPut(pets);
   }
@@ -81,6 +85,10 @@ export class DatabaseService {
       });
   }
 
+  clearPets(): void {
+      this.db.table('pets').clear();
+  }
+
   addRecipes(recipes: Array<Recipe>): void {
     this.db.table('recipes').bulkPut(recipes);
   }
@@ -97,6 +105,10 @@ export class DatabaseService {
         console.error('Could not restore recipes from local DB', e);
         SharedService.downloading.recipes = false;
       });
+  }
+
+  clearRecipes(): void {
+    this.db.table('recipes').clear();
   }
 
 

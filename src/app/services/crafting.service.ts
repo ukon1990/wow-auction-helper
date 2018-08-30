@@ -37,10 +37,12 @@ export class CraftingService {
     SharedService.downloading.recipes = true;
 
     if (!timestamp) {
+      this.dbService.clearRecipes();
       await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${ locale }.json.gz`)
         .toPromise()
         .then(result => {
           timestamp = result['timestamp'];
+          SharedService.recipes.length = 0;
           this.handleRecipes(result);
         })
         .catch(error =>
@@ -87,9 +89,23 @@ export class CraftingService {
   }
 
   handleRecipes(recipes: any): void {
-    const missingItems = [];
+    const missingItems = [],
+      noRecipes = SharedService.recipes.length === 0;
     SharedService.downloading.recipes = false;
-    SharedService.recipes = SharedService.recipes.concat(recipes['recipes']);
+
+    recipes['recipes'].forEach((recipe: Recipe) => {
+      if (SharedService.recipesMap[recipe.spellID]) {
+        Object.keys(recipe).forEach(key => {
+          SharedService.recipesMap[recipe.spellID][key] = recipe[key];
+        });
+        // In case of a full clear
+        if (noRecipes) {
+          SharedService.recipes.push(recipe);
+        }
+      } else {
+        SharedService.recipes.push(recipe);
+      }
+    });
     console.log('Recipe download is completed');
 
     // Adding items if there are any missing
