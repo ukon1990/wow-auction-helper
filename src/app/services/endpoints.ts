@@ -41,12 +41,16 @@ export class Endpoints {
   public static getBattleNetApi(query: string, region?: string): string {
     // 'assets/mock/auctions.json'
     return `https://${
-      region ? (region === 'eu' ? 'eu' : 'us') : SharedService.user.region
+      Endpoints.getRegion(region)
       }.api.battle.net/wow/${
         query
       }${
         Endpoints.getBinder(query)
       }apikey=${Keys.blizzard}`;
+  }
+
+  public static getRegion (region: string): string {
+    return region ? (region === 'eu' ? 'eu' : 'us') : SharedService.user.region;
   }
 
   private static getBinder(query: string) {

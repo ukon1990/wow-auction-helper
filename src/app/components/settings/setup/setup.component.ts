@@ -58,8 +58,8 @@ export class SetupComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router,
     private angulartics2: Angulartics2) {
     this._characterForm = this._formBuilder.group({
-      region: ['', Validators.required],
-      realm: ['', Validators.required],
+      region: ['eu', Validators.required],
+      realm: ['aegwynn', Validators.required],
       tsmKey: '',
       wowUctionKey: '',
       importString: '',
