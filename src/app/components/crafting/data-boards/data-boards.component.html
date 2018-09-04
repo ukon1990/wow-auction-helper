@@ -13,7 +13,11 @@
         </mat-card-title>
         <mat-card-subtitle>
           <strong>Buyout</strong> {{ item.buyout | gold }}<br>
-          <strong>ROI</strong> {{ item.yield | gold }}<br>
+          <strong>ROI</strong> {{ item.yield | gold }} 
+          <span
+            matTooltip='The break-even point (BEP) in economics, business—and specifically cost accounting—is the point at which total cost and total revenue are equal, i.e. "even". - Wikipedia'>
+            (Break-even at {{ item.buyout + item.yield | gold }})
+          </span><br>
           <strong>Data points</strong> {{ item.outOf | number }}
         </mat-card-subtitle>
       </mat-card-header>
