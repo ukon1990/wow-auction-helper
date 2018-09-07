@@ -11,6 +11,7 @@ import { Filters } from './filtering';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Remains } from './item/remains.model';
 import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
+import { EventEmitter } from '@angular/core';
 
 export class Dashboard {
   public static readonly TYPES = {
@@ -33,6 +34,9 @@ export class Dashboard {
     // The users pets, that maybe could be sold for something
     POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
   };
+
+  public static itemEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
+  public static sellerEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
 
   idParam: string;
   title: string;
@@ -250,7 +254,7 @@ export class Dashboard {
         new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]));
     });
 
-    
+
     SharedService.itemDashboards.push(
       new Dashboard('Profitable herbs to mill', Dashboard.TYPES.MILLING));
     SharedService.itemDashboards.push(
@@ -284,6 +288,9 @@ export class Dashboard {
         new Dashboard(`Top sellers by volume for the item class ${c.name}`,
           Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers));
     });
+
+    Dashboard.itemEvents.emit(SharedService.itemDashboards);
+    Dashboard.sellerEvents.emit(SharedService.sellerDashboards);
   }
 
   private addAPIColumnsAtPosition(index: number): void {

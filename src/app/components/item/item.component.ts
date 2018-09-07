@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterContentInit, OnDestroy, OnChanges, AfterViewInit } from '@angular/core';
 import { Item } from '../../models/item/item';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
@@ -18,17 +18,21 @@ import { Subscription } from 'rxjs';
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })
-export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs') tabs;
   wowDBItem: any;
-  item: Item;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
+  createdBy: Array<Recipe>;
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
   selectedTabSubscription: Subscription;
-  itemChangeCheckInterval;
+  selected = {
+    item: undefined,
+    auctionItem: undefined,
+    seller: undefined
+  };
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -88,13 +92,11 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.log('selected', this.selected);
+
     this.setItemData();
-    this.itemChangeCheckInterval = setInterval(() => {
-      if (this.item.id !== SharedService.selectedItemId) {
-        console.log('Change!', this.item.id, SharedService.selectedItemId);
-        this.setItemData();
-      }
-    }, 1000);
+    this.setAuctionItem();
+    this.setRecipesForItem();
   }
 
   ngAfterViewInit(): void {
@@ -108,9 +110,13 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
         });
   }
 
+  ngAfterContentInit(): void {
+    SharedService.events.detailPanelOpen.emit(true);
+  }
+
   ngOnDestroy(): void {
     this.selectedTabSubscription.unsubscribe();
-    clearInterval(this.itemChangeCheckInterval);
+    SharedService.events.detailPanelOpen.emit(false);
   }
 
   setItemData(): void {
@@ -120,9 +126,9 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(SharedService.items[SharedService.selectedItemId]);
 
     if (SharedService.items[SharedService.selectedItemId]) {
-      this.item = SharedService.items[SharedService.selectedItemId];
+      this.selected.item = SharedService.items[SharedService.selectedItemId];
+      this.setMaterialFor();
     }
-    this.setMaterialFor();
   }
 
   setMaterialFor(): void {
@@ -170,12 +176,9 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.getUser().apiToUse !== 'none';
   }
 
-  itemHasRecipes(): boolean {
-    return SharedService.itemRecipeMap[SharedService.selectedItemId] ? true : false;
-  }
 
-  getRecipesForItem(): Array<Recipe> {
-    return SharedService.itemRecipeMap[SharedService.selectedItemId];
+  setRecipesForItem(): void {
+    this.createdBy = SharedService.itemRecipeMap[SharedService.selectedItemId];
   }
 
   userHasRecipeForItem(): boolean {
@@ -195,8 +198,8 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /* istanbul ignore next */
-  getAuctionItem(): AuctionItem {
-    return this.auctionItemExists() ?
+  setAuctionItem(): void {
+    this.selected.auctionItem = this.auctionItemExists() ?
       SharedService.auctionItemsMap[this.getAuctionId()] : undefined;
   }
 
@@ -218,12 +221,6 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /* istanbul ignore next */
-  getItem(): Item {
-    return SharedService.items[SharedService.selectedItemId] ?
-      SharedService.items[SharedService.selectedItemId] : undefined;
-  }
-
-  /* istanbul ignore next */
   getPet(): Pet {
     if (!SharedService.selectedPetSpeciesId) {
       return undefined;
@@ -237,7 +234,7 @@ export class ItemComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getTUJUrl(): string {
-    return `${Endpoints.getUndermineUrl()}item/${this.getItem().id}`;
+    return `${Endpoints.getUndermineUrl()}item/${this.selected.item().id}`;
   }
 
   /* istanbul ignore next */

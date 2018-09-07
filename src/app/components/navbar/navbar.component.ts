@@ -27,7 +27,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     console.log('App version', version);
     setInterval(() =>
-      this.isOffline = !navigator.onLine);
+      this.isOffline = !navigator.onLine, 10000);
   }
 
   ngAfterViewInit(): void {

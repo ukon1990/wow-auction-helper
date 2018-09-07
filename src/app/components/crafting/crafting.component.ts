@@ -21,6 +21,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   formChanges: Subscription;
   filtered: Array<Recipe> = new Array<Recipe>();
+  auctionSubscription: Subscription;
   itemClasses = itemClasses;
   professions = [
     'First Aid',
@@ -37,6 +38,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     'none'
   ].sort();
   expansions = GameBuild.expansionMap;
+  delayFilter = false;
 
   columns: Array<ColumnDescription> = [];
 
@@ -66,9 +68,24 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.addColumns();
+    this.filter();
+
     this.formChanges = this.searchForm.valueChanges.subscribe(() => {
       localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
+
+      if (!this.delayFilter) {
+        this.delayFilter = true;
+        setTimeout(() => {
+          this.filter();
+          this.delayFilter = false;
+        }, 100);
+      }
     });
+
+    this.auctionSubscription = SharedService.events.auctionUpdate
+      .subscribe(() => {
+        this.filter();
+      });
   }
 
   ngOnDestroy() {
@@ -94,27 +111,23 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
-  getRecipes(): Array<Recipe> {
-    return this.filter();
-  }
-
-  filter(): Array<Recipe> {
+  filter(): void {
     if (SharedService.user.useIntermediateCrafting !== this.searchForm.value.intermediate) {
       // We need to update those crafting costs as we changed our strategy
       SharedService.user.useIntermediateCrafting = this.searchForm.value.intermediate;
       User.save();
       Crafting.calculateCost();
     }
-    return SharedService.recipes
-    .filter(recipe =>
-      this.isKnownRecipe(recipe)
-      && this.isNameMatch(recipe)
-      && this.isProfitMatch(recipe)
-      && this.isSaleRateMatch(recipe)
-      && this.isMinSoldMatch(recipe)
-      && this.isProfessionMatch(recipe)
-      && Filters.isItemClassMatch(recipe.itemID, this.searchForm)
-      && Filters.isExpansionMatch(recipe.itemID, this.searchForm.controls.expansion));
+    this.filtered = SharedService.recipes
+      .filter(recipe =>
+        this.isKnownRecipe(recipe)
+        && this.isNameMatch(recipe)
+        && this.isProfitMatch(recipe)
+        && this.isSaleRateMatch(recipe)
+        && this.isMinSoldMatch(recipe)
+        && this.isProfessionMatch(recipe)
+        && Filters.isItemClassMatch(recipe.itemID, this.searchForm)
+        && Filters.isExpansionMatch(recipe.itemID, this.searchForm.controls.expansion));
   }
 
   isKnownRecipe(recipe: Recipe): boolean {

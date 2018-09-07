@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, AfterContentInit } from '@angular/core';
 import { SharedService } from '../../services/shared.service';
 import { AuctionItem } from '../../models/auction/auction-item';
 import { ColumnDescription } from '../../models/column-description';
@@ -15,17 +15,21 @@ import { itemQuality, itemQualities } from '../../models/item/disenchanting-list
   templateUrl: './auctions.component.html',
   styleUrls: ['./auctions.component.scss']
 })
-export class AuctionsComponent implements OnInit, OnDestroy {
+export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit,  AfterContentInit {
   form: FormGroup;
   formChanges: Subscription;
+  auctionSubscription: Subscription;
+  filteredAuctions = [];
   itemClasses = itemClasses;
   itemQualities = itemQualities;
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   expansions = GameBuild.expansionMap;
+  delayFilter = false;
 
   constructor(private formBuilder: FormBuilder, private _title: Title) {
     this._title.setTitle('WAH - Auctions');
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
+    this.addColumns();
 
     this.form = formBuilder.group({
       name: filter && filter.name ? filter.name : '',
@@ -42,14 +46,32 @@ export class AuctionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+  }
+
+  async ngAfterViewInit() {
     this.formChanges = this.form.valueChanges.subscribe((change) => {
       localStorage['query_auctions'] = JSON.stringify(this.form.value);
+
+      if (!this.delayFilter) {
+        this.delayFilter = true;
+        setTimeout(() => {
+            this.filterAuctions();
+            this.delayFilter = false;
+        }, 100);
+      }
     });
-    this.addColumns();
+    this.auctionSubscription = SharedService.events.auctionUpdate.subscribe(() => {
+      this.filterAuctions();
+    });
+  }
+
+  async ngAfterContentInit() {
+    await this.filterAuctions();
   }
 
   ngOnDestroy(): void {
     this.formChanges.unsubscribe();
+    this.auctionSubscription.unsubscribe();
   }
 
 
@@ -74,8 +96,9 @@ export class AuctionsComponent implements OnInit, OnDestroy {
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
-  getAuctions(): Array<AuctionItem> {
-    return SharedService.auctionItems.filter(i => this.isMatch(i));
+  async filterAuctions() {
+    this.filteredAuctions = SharedService.auctionItems
+      .filter(i => this.isMatch(i));
   }
 
   isMatch(auctionItem: AuctionItem): boolean {

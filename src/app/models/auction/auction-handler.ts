@@ -33,7 +33,6 @@ export class AuctionHandler {
     });
 
     SharedService.auctions = auctions;
-    console.log(SharedService.auctions);
     auctions.forEach(a => {
       if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`]) {
         const petId = `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
@@ -65,7 +64,6 @@ export class AuctionHandler {
       Seller.setSellerData(a);
 
     });
-    console.log(SharedService.auctionItems, SharedService.auctionItemsMap);
 
     // Checking if we have been undercutted etc
     SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
@@ -95,6 +93,7 @@ export class AuctionHandler {
 
       const t2 = performance.now();
       console.log(`Prices calc time ${ t2 - t1 } ms`);
+      SharedService.events.auctionUpdate.emit(true);
     }, 100);
   }
 

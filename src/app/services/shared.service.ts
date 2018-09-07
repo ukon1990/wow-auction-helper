@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { User } from '../models/user/user';
 import { AuctionItem } from '../models/auction/auction-item';
 import { Recipe } from '../models/crafting/recipe';
@@ -35,6 +35,11 @@ export class SharedService {
     {locale: 'pt_BR', name: 'Português (Brasil)'},
     {locale: 'ru_RU', name: 'русский'}
   ];
+
+  public static events = {
+    detailPanelOpen: new EventEmitter<boolean>(),
+    auctionUpdate: new EventEmitter<boolean>()
+  };
 
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static customProcsMap: Map<number, CustomProc> = new Map<number, CustomProc>();
