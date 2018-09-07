@@ -52,13 +52,13 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit,  Aft
     this.formChanges = this.form.valueChanges.subscribe((change) => {
       localStorage['query_auctions'] = JSON.stringify(this.form.value);
 
-      this.delayFilter = true;
-      setTimeout(() => {
-        if (!this.delayFilter) {
-          this.filterAuctions();
-          this.delayFilter = false;
-        }
-      }, 100);
+      if (!this.delayFilter) {
+        this.delayFilter = true;
+        setTimeout(() => {
+            this.filterAuctions();
+            this.delayFilter = false;
+        }, 100);
+      }
     });
     this.auctionSubscription = SharedService.events.auctionUpdate.subscribe(() => {
       this.filterAuctions();

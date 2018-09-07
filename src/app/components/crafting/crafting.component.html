@@ -70,4 +70,9 @@
     <button type="button" (click)="searchForm.reset()" mat-raised-button>Reset</button>
   </div>
 </form>
-<wah-data-table id="itemID" [data]="getRecipes()" [columns]="columns" [isCrafting]="true"></wah-data-table>
+<wah-data-table
+  id="itemID"
+  [data]="filtered"
+  [columns]="columns"
+  [isCrafting]="true">
+</wah-data-table>
