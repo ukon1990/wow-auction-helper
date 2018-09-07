@@ -67,7 +67,7 @@
   <button class="btn btn-default mat-elevation-z5 ml-2 mr-2" type="button" (click)="form.reset()">Reset</button>
 </form>
 <wah-data-table
-  *ngIf="filterAuctions()"
+  *ngIf="filteredAuctions"
   iconSize="22"
   itemsPerPage="20"
   id="itemID"

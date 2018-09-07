@@ -55,23 +55,23 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit,  Aft
       this.delayFilter = true;
       setTimeout(() => {
         if (!this.delayFilter) {
-          // this.filterAuctions();
+          this.filterAuctions();
           this.delayFilter = false;
         }
       }, 100);
     });
-    /*
     this.auctionSubscription = SharedService.events.auctionUpdate.subscribe(() => {
       this.filterAuctions();
-    });*/
+    });
   }
 
   async ngAfterContentInit() {
+    await this.filterAuctions();
   }
 
   ngOnDestroy(): void {
     this.formChanges.unsubscribe();
-    // this.auctionSubscription.unsubscribe();
+    this.auctionSubscription.unsubscribe();
   }
 
 
@@ -96,10 +96,9 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit,  Aft
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
-  filterAuctions() {
+  async filterAuctions() {
     this.filteredAuctions = SharedService.auctionItems
       .filter(i => this.isMatch(i));
-    return this.filteredAuctions;
   }
 
   isMatch(auctionItem: AuctionItem): boolean {
