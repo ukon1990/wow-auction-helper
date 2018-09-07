@@ -1,5 +1,5 @@
 <div class="row col-md-12 slim-sm">
-  <ng-container *ngFor="let d of getItemDashboards()">
+  <ng-container *ngFor="let d of dashboards">
     <div *ngIf="d.data.length > 0" class="col-md-6 mb-3 slim-sm">
       <wah-dashboard-item [dashboard]="d"></wah-dashboard-item>
     </div>

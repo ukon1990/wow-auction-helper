@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { Component, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnChanges, AfterContentInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
@@ -11,7 +11,7 @@ declare let $: Function;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements OnChanges {
+export class LineChartComponent implements AfterContentInit {
   @Input() data: Array<Auction>;
   viewIsInit = false;
   hideOutliers: FormControl = new FormControl(true);
@@ -23,12 +23,12 @@ export class LineChartComponent implements OnChanges {
     });
   }
 
-  ngOnChanges(): void {
-    setTimeout(this.paintChart(), 100);
+  ngAfterContentInit(): void {
+    this.paintChart();
   }
 
   paintChart(): void {
-    let firstAuction = new Auction();
+    const firstAuction = new Auction();
     if (this.chart) {
       this.chart.destroy();
     }

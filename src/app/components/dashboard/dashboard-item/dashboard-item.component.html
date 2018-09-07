@@ -1,4 +1,4 @@
-<mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen()}">
+<mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen}">
   <mat-card-header>
     <div class="action-icon mat-elevation-z5" (click)="openClose()" matTooltip="Click to open/close the full window.">
       <button mat-raised-button class="btn btn-sm">
@@ -20,8 +20,8 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <wah-data-table [id]="dashboard?.idParam" iconSize="22" [columns]="detailView ? dashboard.columns : dashboard.columns.slice(0,4)"
-      [data]="detailView ? dashboard.data : dashboard.data.slice(0,5)" [isCrafting]="dashboard.isCrafting" [hideCraftingDetails]="true"></wah-data-table>
+    <wah-data-table [id]="dashboard?.idParam" iconSize="22" [columns]="currentColumns"
+      [data]="data" [isCrafting]="dashboard.isCrafting" [hideCraftingDetails]="true"></wah-data-table>
     <!-- detailView -->
     <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0" class="row col-md-12">
       <textarea matInput placeholder="TSM shopping string"
@@ -29,4 +29,4 @@
     </mat-form-field>
   </mat-card-content>
 </mat-card>
-<div *ngIf="detailView && !isOtherDetailPanelOpen()" class="backdrop" (click)="openClose()"></div>
+<div *ngIf="detailView && !isOtherDetailPanelOpen" class="backdrop" (click)="openClose()"></div>

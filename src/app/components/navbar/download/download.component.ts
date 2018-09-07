@@ -171,7 +171,8 @@ export class DownloadComponent implements OnInit {
 
       this.timeSinceUpdate = this.milliSecondsToMinutes();
       await this.setLastUpdateAvailableTime();
-      setInterval(() => this.setLastUpdateAvailableTime(), 5000);
+      setInterval(() =>
+        this.setLastUpdateAvailableTime(), 5000);
     }
   }
 
