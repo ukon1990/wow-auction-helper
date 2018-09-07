@@ -9,6 +9,7 @@ import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 import { Angulartics2 } from 'angulartics2';
 import { ProspectingAndMillingUtil } from './utils/prospect-milling.util';
 import { environment } from '../environments/environment';
+import { UpdateService } from './services/update.service';
 
 @Component({
   selector: 'wah-root',
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
     private _itemService: ItemService,
+    private updateService: UpdateService,
     private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
     private angulartics2: Angulartics2) {
     if (!localStorage['locale']) {

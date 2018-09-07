@@ -78,6 +78,7 @@ import { MillingComponent } from './components/crafting/milling/milling.componen
 import { DisenchantingComponent } from './components/crafting/disenchanting/disenchanting.component';
 import { DataBoardsComponent } from './components/crafting/data-boards/data-boards.component';
 import { ShuffleItemManageComponent } from './components/crafting/shuffle-item-manage/shuffle-item-manage.component';
+import { UpdateService } from './services/update.service';
 
 
 @NgModule({
@@ -161,7 +162,8 @@ import { ShuffleItemManageComponent } from './components/crafting/shuffle-item-m
     IsRegisteredService,
     WowdbService,
     PetsService,
-    GithubService
+    GithubService,
+    UpdateService
   ],
   bootstrap: [AppComponent]
 })
