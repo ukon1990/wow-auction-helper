@@ -102,12 +102,13 @@ export class Crafting {
   }
 
   public static calculateCost(): void {
-    Object.keys(SharedService.itemRecipeMap).forEach(key => {
-      SharedService.itemRecipeMap[key].length = 0;
-    });
-
     SharedService.recipes
-      .forEach(r => this.costForRecipe(r));
+      .forEach((r: Recipe) => {
+        if (SharedService.itemRecipeMap[r.itemID]) {
+          SharedService.itemRecipeMap[r.itemID].length = 0;
+        }
+        this.costForRecipe(r);
+      });
   }
 
   private static costForRecipe(recipe: Recipe): void {
