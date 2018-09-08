@@ -26,7 +26,7 @@ export class PetsService {
           timestamp = response['timestamp'];
           this.handlePets(response);
         })
-        .catch(error => ErrorReport.sendHttpError(error, this.angulartics2));
+        .catch(error => ErrorReport.sendHttpError(error));
     }
 
     SharedService.downloading.pets = true;
@@ -41,7 +41,7 @@ export class PetsService {
       .catch(error => {
         SharedService.downloading.pets = false;
         console.error('Failed at downloading pet', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 
@@ -56,7 +56,7 @@ export class PetsService {
       .catch(error => {
         SharedService.downloading.pets = false;
         console.error('Failed at downloading pet', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 
@@ -78,7 +78,7 @@ export class PetsService {
       })
       .catch(error => {
         console.error('Failed at downloading pet', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 }

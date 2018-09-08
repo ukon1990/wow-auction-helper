@@ -4,14 +4,12 @@ import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
 import { startWith, map } from 'rxjs/operators';
 import { ErrorReport } from '../utils/error-report.util';
-import { Angulartics2 } from 'angulartics2';
 
 @Injectable()
 export class CharacterService {
   // ${API}character/${realm}/${character}?locale=${realm.locale}&apikey=${apiKey}&fields=professions,statistics,pets,petSlots,mounts
 
-  constructor(private _http: HttpClient,
-    private angulartics2: Angulartics2) { }
+  constructor(private _http: HttpClient) { }
 
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
     SharedService.downloading.characterData = true;
@@ -26,8 +24,6 @@ export class CharacterService {
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
-        console.error('Failed at downloading character', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
         return {error: error};
       });
   }
@@ -46,7 +42,7 @@ export class CharacterService {
       }).catch(error => {
         SharedService.downloading.characterData = false;
         console.error('Failed at downloading character', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
         return {error: error};
       });
   }

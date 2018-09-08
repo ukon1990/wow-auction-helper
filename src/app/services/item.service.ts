@@ -36,7 +36,7 @@ export class ItemService {
                 }
             }).catch(error => {
             console.error('Could not get item with ID ' + itemID, error);
-            ErrorReport.sendHttpError(error, this.angulartics2);
+            ErrorReport.sendHttpError(error);
         });
     }
 
@@ -59,7 +59,7 @@ export class ItemService {
                     this.handleItems(response['items']);
                 })
                 .catch(error => {
-                    ErrorReport.sendHttpError(error, this.angulartics2);
+                    ErrorReport.sendHttpError(error);
                 });
         }
         SharedService.downloading.items = true;
@@ -71,7 +71,7 @@ export class ItemService {
             .catch(error => {
                 SharedService.downloading.items = false;
                 console.error('Items download failed', error);
-                ErrorReport.sendHttpError(error, this.angulartics2);
+                ErrorReport.sendHttpError(error);
             });
     }
 

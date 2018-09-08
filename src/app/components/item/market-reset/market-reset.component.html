@@ -50,5 +50,12 @@
       [value]="tsmShoppingString"></textarea>
   </mat-form-field>
 
-  <wah-data-table id="itemID" [data]="data" [columns]="columns"></wah-data-table>  
+  <wah-data-table
+    *ngIf="data"
+    iconSize="22"
+    itemsPerPage="20"
+    id="itemID"
+    [data]="data"
+    [columns]="columns">
+  </wah-data-table>
 </ng-template>
