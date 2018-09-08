@@ -43,7 +43,7 @@ export class AuctionsService {
       })
       .catch(error => {
         console.error('Could not get last update time', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 
@@ -105,7 +105,7 @@ export class AuctionsService {
             this.openSnackbar(`Auction download failed (${ error.status } - ${ error.statusText })`);
         }
 
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 
@@ -150,7 +150,7 @@ export class AuctionsService {
           this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
         }).catch(error => {
           console.error('Could not restore TSM auctions from local DB', error);
-          ErrorReport.sendHttpError(error, this.angulartics2);
+          ErrorReport.sendHttpError(error);
         });
       });
   }
@@ -180,7 +180,7 @@ export class AuctionsService {
           `Could not completed WoWUction download. One reason that this could happen, is if you have used all your requests.`);
         console.error('Unable to download WoWUction data', error);
         SharedService.downloading.wowUctionAuctions = false;
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
 
         this._dbService.getWoWUctionItems().then(r => {
           this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);

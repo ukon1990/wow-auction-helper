@@ -26,7 +26,7 @@ export class CraftingService {
         this.handleRecipe(r as Recipe))
       .catch(error => {
         console.error(`Could not get recipe ${spellID}`, error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 
@@ -46,7 +46,7 @@ export class CraftingService {
           this.handleRecipes(result);
         })
         .catch(error =>
-          ErrorReport.sendHttpError(error, this.angulartics2));
+          ErrorReport.sendHttpError(error));
     }
 
     SharedService.downloading.recipes = true;
@@ -60,7 +60,7 @@ export class CraftingService {
       .catch(error => {
         SharedService.downloading.recipes = false;
         console.error('Recipe download failed', error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
       });
   }
 

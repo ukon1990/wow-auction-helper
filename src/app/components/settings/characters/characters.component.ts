@@ -10,8 +10,9 @@ import { Crafting } from '../../../models/crafting/crafting';
 import { CraftingService } from '../../../services/crafting.service';
 import { Angulartics2 } from 'angulartics2';
 import { Character } from '../../../models/character/character';
-import {MatSnackBar} from '@angular/material';
-import {HttpErrorResponse} from '@angular/common/http';
+import { MatSnackBar } from '@angular/material';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorReport, ErrorOptions } from '../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-characters',
@@ -60,62 +61,76 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
     if (this._characterForm.value.characterBelowLevelTen) {
       this.addLowlevelCharacter();
+      this.angulartics2.eventTrack.next({
+        action: 'Added level < 10 character',
+        properties: { category: 'Characters' },
+      });
     }
-
-    this.angulartics2.eventTrack.next({
-      action: 'Added character',
-      properties: { category: 'Characters' },
-    });
     this._characterService
       .getCharacter(
-      this._characterForm.value.name,
-      this._characterForm.value.realm,
-      this.region ? this.region : SharedService.user.region
+        this._characterForm.value.name,
+        this._characterForm.value.realm,
+        this.region ? this.region : SharedService.user.region
       )
       .then(c => {
         if (!c.error) {
           this.processCharacter(c);
-            this.openSnackbar(`${ c.name } was successfully added`);
+          this.openSnackbar(`${c.name} was successfully added`);
+          this.angulartics2.eventTrack.next({
+            action: 'Added character',
+            properties: { category: 'Characters' },
+          });
         } else {
           if (c.error.status === 404) {
-            this.openSnackbar(`${
+            ErrorReport.sendHttpError(
+              c.error,
+              new ErrorOptions(
+                true,
+                `${
                 this._characterForm.value.name
                 } could not be found on the realm ${
                 this._characterForm.value.realm
-                }.`);
+                }.`));
           } else {
             this.addLowlevelCharacter();
-            this.openSnackbar(`Could not find any character data for ${
+            ErrorReport.sendHttpError(
+              c.error,
+              new ErrorOptions(
+                true,
+                `Could not find any character data for ${
                 this._characterForm.value.name
-              }@${
+                }@${
                 this._characterForm.value.realm
-              }. Blizzard's service responded with: ${
+                }. Blizzard's service responded with: ${
                 c.error.statusText
-              }. The character will be added to your list, but with no profession data etc.
-               You can try to manually update the character later.`);
+                }. The character will be added to your list, but with no profession data etc.
+                 You can try to manually update the character later.`));
           }
         }
         this.downloading = false;
       }).catch((error: HttpErrorResponse) => {
         this.downloading = false;
-        console.log('error', error);
-        this.openSnackbar(`Something went wrong, while adding ${ this._characterForm.value.name }. ${error.statusText}`);
-    });
+        ErrorReport.sendHttpError(
+          error,
+          new ErrorOptions(
+            true,
+            `Something went wrong, while adding ${this._characterForm.value.name}.`));
+      });
   }
 
   addLowlevelCharacter(): void {
-      const character = new Character();
-      character.name = this._characterForm.value.name;
-      character.realm = SharedService.realms[this._characterForm.value.realm].name;
-      character.thumbnail = '';
-      character.level = 0;
+    const character = new Character();
+    character.name = this._characterForm.value.name;
+    character.realm = SharedService.realms[this._characterForm.value.realm].name;
+    character.thumbnail = '';
+    character.level = 0;
 
-      this.angulartics2.eventTrack.next({
-          action: 'Added a lower than level 10 character',
-          properties: { category: 'Characters' },
-      });
-      this.processCharacter(character);
-      return;
+    this.angulartics2.eventTrack.next({
+      action: 'Added a lower than level 10 character',
+      properties: { category: 'Characters' },
+    });
+    this.processCharacter(character);
+    return;
   }
 
   processCharacter(character: Character): void {
@@ -136,21 +151,29 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   updateCharacter(index: number): void {
     SharedService.user.characters[index]['downloading'] = true;
-    this.angulartics2.eventTrack.next({
-      action: 'Updated',
-      properties: { category: 'Characters' },
-    });
     this._characterService.getCharacter(
       SharedService.user.characters[index].name,
       SharedService.user.characters[index].realm
     ).then(c => {
-      SharedService.user.characters[index] = c;
-      localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-      User.updateRecipesForRealm();
-      Crafting.checkForMissingRecipes(this._craftingService);
+      if (!c.error) {
+        SharedService.user.characters[index] = c;
+        localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+        User.updateRecipesForRealm();
+        Crafting.checkForMissingRecipes(this._craftingService);
 
-      if (SharedService.user.region && SharedService.user.realm) {
-        AuctionHandler.organize(SharedService.auctions);
+        if (SharedService.user.region && SharedService.user.realm) {
+          AuctionHandler.organize(SharedService.auctions);
+        }
+
+        this.angulartics2.eventTrack.next({
+          action: 'Updated',
+          properties: { category: 'Characters' },
+        });
+      } else {
+        delete SharedService.user.characters[index]['downloading'];
+        ErrorReport.sendHttpError(
+          c.error,
+          new ErrorOptions(true, 'Could not update the character'));
       }
     });
   }
@@ -194,6 +217,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   private openSnackbar(message: string): void {
-      this.snackBar.open(message, 'Ok', { duration: 15000 });
+    this.snackBar.open(message, 'Ok', { duration: 15000 });
   }
 }

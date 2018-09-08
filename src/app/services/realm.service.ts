@@ -49,7 +49,7 @@ export class RealmService {
       .catch((error: HttpErrorResponse) => {
         const msg = 'Could not download realms';
         console.error(msg, error);
-        ErrorReport.sendHttpError(error, this.angulartics2);
+        ErrorReport.sendHttpError(error);
         this.openSnackbar(`${ msg }. Blizzard's API responded with: ${ error.status } - ${ error.statusText }`);
 
         // In case Blizzard's API fails, use old data json
