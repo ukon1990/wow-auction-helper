@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { Angulartics2 } from 'angulartics2';
 import { GoldPipe } from '../../../pipes/gold.pipe';
 import { SharedService } from '../../../services/shared.service';
+import { Crafting } from '../../../models/crafting/crafting';
 
 @Component({
   selector: 'wah-reset-calc',
@@ -66,9 +67,10 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
     });
 
     // Adding AH cut to the cost value
-    this.resetPrice.cost = this.resetPrice.cost * 1.05;
+    this.resetPrice.cost = this.resetPrice.cost;
 
     this.resetPrice.roi = (this.form.value * 10000) * this.resetPrice.numOfItems - this.resetPrice.cost;
+    this.resetPrice.roi *= Crafting.ahCutModifier;
   }
 
   getShoppingString(): string {

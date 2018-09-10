@@ -19,6 +19,7 @@ import { Notification } from '../models/user/notification';
 import { CustomProc } from '../models/crafting/custom-proc';
 import { WoWUction } from '../models/auction/wowuction';
 import { Zone } from '../models/zone.model';
+import { DefaultDashboardSettings } from '../models/dashboard/default-dashboard-settings.model';
 
 @Injectable()
 export class SharedService {
@@ -40,6 +41,8 @@ export class SharedService {
     detailPanelOpen: new EventEmitter<boolean>(),
     auctionUpdate: new EventEmitter<boolean>()
   };
+
+  public static defaultDashboardSettingsListMap = new Map<string, DefaultDashboardSettings>();
 
   public static customPricesMap: Map<number, CustomPrice> = new Map<number, CustomPrice>();
   public static customProcsMap: Map<number, CustomProc> = new Map<number, CustomProc>();

@@ -40,7 +40,12 @@
           <strong class="mr-1">Alert criteria:</strong> {{ item.criteria }}
         </div>
         <div class="row">
-          <strong class="mr-1">Alert compare to:</strong> {{ item.compareTo }}
+          <strong class="mr-1">Alert compare to:</strong> 
+          <mat-select [value]="item.compareTo" disabled>
+            <mat-option *ngFor="let cv of comparableVariables" [value]="cv.id">
+              {{ cv.title }}
+            </mat-option>
+          </mat-select>
         </div>
       </div>
     </div>

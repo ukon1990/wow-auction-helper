@@ -9,14 +9,24 @@ export class Watchlist {
   private storageName = 'watchlist';
   readonly COMPARABLE_VARIABLES = {
     BUYOUT: 'buyout',
+    PROFITABLE_TO_CRAFT: 'craftCost',
     BID: 'bid',
     MARKET_VALUE: 'mktPrice',
     AVG_DAILY_SOLD: 'avgDailySold',
     REGIONAL_AVG_SALE_PRICE: 'regionSaleAvg',
     REGIONAL_SALE_RATE: 'regionSaleRate',
-    QUANTITY_TOTAL: 'quantityTotal',
-    PROFITABLE_TO_CRAFT: 'craftCost'
+    QUANTITY_TOTAL: 'quantityTotal'
   };
+  readonly COMPARABLE_VARIABLES_LIST = [
+    {id: this.COMPARABLE_VARIABLES.BUYOUT, title: 'Buyout'},
+    {id: this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT, title: 'Buyout compared to craft cost'},
+    {id: this.COMPARABLE_VARIABLES.BID, title: 'Buyout compared to bid'},
+    {id: this.COMPARABLE_VARIABLES.MARKET_VALUE, title: 'Buyout compared to realm market value'},
+    {id: this.COMPARABLE_VARIABLES.AVG_DAILY_SOLD, title: 'Regionally avg daily sold'},
+    {id: this.COMPARABLE_VARIABLES.REGIONAL_AVG_SALE_PRICE, title: 'Compare buyout to regional avg sale price'},
+    {id: this.COMPARABLE_VARIABLES.REGIONAL_SALE_RATE, title: 'Compare to sale rate'},
+    {id: this.COMPARABLE_VARIABLES.QUANTITY_TOTAL, title: 'Compare to available quantity'}
+  ];
   readonly CRITERIA = {
     BELOW: 'below',
     EQUAL: 'equal',
@@ -246,6 +256,7 @@ export class WatchlistGroup {
   items: Array<WatchlistItem> = new Array<WatchlistItem>();
   matchSaleRate = 0;
   matchDailySold = 0;
+  hide: false;
 
   constructor(name: string, items?: Array<WatchlistItem>) {
     this.name = name;

@@ -79,6 +79,8 @@ import { DisenchantingComponent } from './components/crafting/disenchanting/dise
 import { DataBoardsComponent } from './components/crafting/data-boards/data-boards.component';
 import { ShuffleItemManageComponent } from './components/crafting/shuffle-item-manage/shuffle-item-manage.component';
 import { UpdateService } from './services/update.service';
+import { ManageItemsBuiltInComponent } from './components/dashboard/manage-items-built-in/manage-items-built-in.component';
+import { ManageItemsBuiltInItemComponent } from './components/dashboard/manage-items-built-in-item/manage-items-built-in-item.component';
 
 
 @NgModule({
@@ -138,7 +140,9 @@ import { UpdateService } from './services/update.service';
     MillingComponent,
     DisenchantingComponent,
     DataBoardsComponent,
-    ShuffleItemManageComponent
+    ShuffleItemManageComponent,
+    ManageItemsBuiltInComponent,
+    ManageItemsBuiltInItemComponent
   ],
   imports: [
     BrowserModule,

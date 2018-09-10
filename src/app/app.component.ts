@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 import { UpdateService } from './services/update.service';
 import { ErrorReport } from './utils/error-report.util';
 import { MatSnackBar } from '@angular/material';
+import { DefaultDashboardSettings } from './models/dashboard/default-dashboard-settings.model';
 
 @Component({
   selector: 'wah-root',
@@ -53,6 +54,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           break;
       }
     }
+    DefaultDashboardSettings.init();
     User.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar);
     SharedService.user.shoppingCart.restore();

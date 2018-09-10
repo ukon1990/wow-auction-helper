@@ -24,7 +24,7 @@ export class WatchlistComponent implements AfterViewInit {
   selectedGroup: WatchlistGroup;
   selectedIndex: number;
   selectedBatchAdd: string;
-  selectedTabIndex = 1;
+  selectedTabIndex = 2;
   batchEditMode = false;
   batchCount = 0;
   watchlist: Watchlist;
@@ -168,6 +168,12 @@ export class WatchlistComponent implements AfterViewInit {
 
   clearGroup(group: WatchlistGroup): void {
     group.items.length = 0;
+    SharedService.user.watchlist.save();
+  }
+
+  save(group): void {
+    // group.items = checked;
+    console.log('grp', group);
     SharedService.user.watchlist.save();
   }
 

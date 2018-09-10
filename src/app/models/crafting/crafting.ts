@@ -10,6 +10,7 @@ import { Reagent } from './reagent';
 import wordsToNumbers from 'words-to-numbers';
 
 export class Crafting {
+  public static ahCutModifier = 0.95;
 
   public static checkForMissingRecipes(craftingService: CraftingService): void {
     const missingRecipes = [];
@@ -142,9 +143,9 @@ export class Crafting {
       });
 
       // Adding AH cut
-      recipe.cost = recipe.cost * 1.05;
+      recipe.cost = recipe.cost;
       // Doing the cost math
-      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);
+      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * Crafting.ahCutModifier;
     } catch (e) {
       console.error('Calc issue with recipe', e, recipe);
     }

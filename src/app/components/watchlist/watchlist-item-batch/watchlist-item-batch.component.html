@@ -66,9 +66,9 @@
     <mat-card-content>
         <form [formGroup]="form" class="row">
             <mat-form-field class="col-md-2">
-              <mat-select placeholder="Compare buyout/quantity to" formControlName="compareTo">
-                <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-                  {{ i }}
+              <mat-select placeholder="Compare to" formControlName="compareTo">
+                <mat-option *ngFor="let cv of comparableVariables" [value]="cv.id" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+                  {{ cv.title }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
