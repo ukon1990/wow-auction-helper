@@ -55,7 +55,8 @@ function gzipResponse(context: Context, body, callback: Callback): void {
       isBase64Encoded: true,
       headers: {
           'Content-Type': 'application/json',
-          'Content-Encoding': 'gzip'
+          'Content-Encoding': 'gzip',
+          'Character-Encoding': 'UTF8'
       }
   });
   });

@@ -123,12 +123,24 @@ export class Watchlist {
 
   getCompareToValue(item: WatchlistItem): number {
     if (item.compareTo === this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
-      const recipeMapItem = SharedService.itemRecipeMap[item.itemID],
-        recipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe) ||
-          recipeMapItem ?
-            recipeMapItem[0] as Recipe : undefined;
+      const knownRecipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe);
+      const recipeMapItem = SharedService.itemRecipeMap[item.itemID];
 
-      return recipe ? recipe.cost : 0;
+      if (knownRecipe) {
+        return knownRecipe.cost;
+      } else if (recipeMapItem.length > 0) {
+        let lowestCost = 0;
+
+        recipeMapItem.forEach((recipe: Recipe) => {
+          if (lowestCost === 0 || recipe.cost < lowestCost) {
+            lowestCost = recipe.cost;
+          }
+        });
+
+        return lowestCost;
+      }
+
+      return 0;
     } else {
       const auctionItem = SharedService.auctionItemsMap[item.itemID];
       return auctionItem ? auctionItem[item.compareTo] : 0;
