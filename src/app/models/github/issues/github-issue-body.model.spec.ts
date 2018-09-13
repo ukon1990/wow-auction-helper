@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GithubIssueBody } from './github-issue-body.model';
 import { GithubIssue } from './github-issue.model';
 
-fdescribe('IssuesComponent', () => {
+describe('IssuesComponent', () => {
   describe('format', () => {
     it('Should be able to format message', () => {
       const body = new GithubIssueBody({
