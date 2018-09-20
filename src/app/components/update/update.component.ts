@@ -3,6 +3,9 @@ import { SharedService } from '../../services/shared.service';
 import { CraftingService } from '../../services/crafting.service';
 import { Recipe } from '../../models/crafting/recipe';
 import { ItemService } from '../../services/item.service';
+import { Filters } from '../../models/filtering';
+import { FormControl } from '@angular/forms';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'wah-update',
@@ -10,6 +13,7 @@ import { ItemService } from '../../services/item.service';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
+  inProd = environment.production;
   updated = {
     recipes: {
       completed: [],
@@ -48,11 +52,14 @@ export class UpdateComponent implements OnInit {
     if (!i) {
       i = 0 ;
       this.updated.recipes.list = [];
-      SharedService.recipes.forEach(r => {
-        if (r) {
-          this.updated.recipes.list.push(r);
-        }
-      });
+      SharedService.recipes
+        .filter((recipe: Recipe) =>
+          Filters.isExpansionMatch(recipe.itemID, new FormControl(7)))
+        .forEach(r => {
+          if (r) {
+            this.updated.recipes.list.push(r);
+          }
+        });
     }
 
     if (this.updated.recipes.list.length === 0) {

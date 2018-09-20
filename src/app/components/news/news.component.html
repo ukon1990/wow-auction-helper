@@ -2,8 +2,11 @@
   <mat-card class="mb-3">
     <mat-card-header>
       <mat-card-title>
-        Welcome back!
+        Changelog
       </mat-card-title>
+      <mat-card-subtitle>
+        A new version has been released, since your last visit.
+      </mat-card-subtitle>
       <div class="action-icon mat-elevation-z5" (click)="close()">
         <button mat-raised-button class="btn btn-sm">
           <i class="fas fa-times"></i>
@@ -11,9 +14,6 @@
       </div>
     </mat-card-header>
     <mat-card-content class="overflow">
-      <p>
-        New functionality have been added since your last visit, among them you will find the following:
-      </p>
       <div class="scrollable">
         <wah-changelog></wah-changelog>
       </div>

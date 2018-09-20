@@ -4,6 +4,7 @@ import { SharedService } from '../../../services/shared.service';
 import { Crafting } from '../../../models/crafting/crafting';
 import { Recipe } from '../../../models/crafting/recipe';
 import { CustomProc, CustomProcs } from '../../../models/crafting/custom-proc';
+import { ItemService } from '../../../services/item.service';
 
 @Component({
   selector: 'wah-materials',
@@ -44,6 +45,7 @@ export class MaterialsComponent implements OnInit {
 
   setSelectedItem(reagent: Reagent): void {
     SharedService.selectedItemId = reagent.itemID;
+    ItemService.itemSelection.emit(reagent.itemID);
   }
 
   getRecipeForItem(itemID: number): Array<Reagent> {

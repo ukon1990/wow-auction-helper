@@ -3,8 +3,13 @@
 <wah-seller *ngIf="isSellerSelected()" [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-seller>
 
 <wah-navbar [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-navbar>
-<div id="main" class="mt-6 container-fluid" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+<div
+  id="main"
+  class="mt-6 container-fluid"
+  [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+  <!-- TODO:  , 'd-none': isItemSelected() || isSellerSelected() -->
   <mat-card>
     <router-outlet></router-outlet>
   </mat-card>
+  <wah-footer></wah-footer>
 </div>

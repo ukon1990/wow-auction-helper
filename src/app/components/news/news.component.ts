@@ -1,5 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 
+declare function require(moduleName: string): any;
+const version = require('../../../../package.json').version;
 declare var $;
 @Component({
   selector: 'wah-news',
@@ -8,7 +10,6 @@ declare var $;
 })
 export class NewsComponent implements AfterViewInit {
   currentDate: string;
-  lastUpdateDate = '30.07.2018';
   showNews: boolean;
 
   constructor() {
@@ -18,9 +19,9 @@ export class NewsComponent implements AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       try {
-        console.log(localStorage['timestamp_news'], this.lastUpdateDate);
+        console.log(localStorage['timestamp_news'], version);
         if (localStorage['realm'] &&
-          localStorage['timestamp_news'] !== this.lastUpdateDate) {
+          localStorage['timestamp_news'] !== version) {
             this.showNews = true;
         }
       } catch (e) {
@@ -30,7 +31,7 @@ export class NewsComponent implements AfterViewInit {
   }
 
   close(): void {
-    localStorage['timestamp_news'] = this.lastUpdateDate;
+    localStorage['timestamp_news'] = version;
     this.showNews = false;
   }
 }

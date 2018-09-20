@@ -41,6 +41,7 @@ export class SharedService {
     detailPanelOpen: new EventEmitter<boolean>(),
     auctionUpdate: new EventEmitter<boolean>()
   };
+  public static preScrollPosition = 0;
 
   public static defaultDashboardSettingsListMap = new Map<string, DefaultDashboardSettings>();
 

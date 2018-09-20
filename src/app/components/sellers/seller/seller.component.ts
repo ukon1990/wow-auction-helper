@@ -52,6 +52,7 @@ export class SellerComponent implements OnInit {
   /* istanbul ignore next */
   close(): void {
     SharedService.selectedSeller = undefined;
+    SharedService.events.detailPanelOpen.emit(false);
   }
 
   getSeller(): Seller {

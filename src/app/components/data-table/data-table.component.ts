@@ -15,6 +15,7 @@ import { ShoppingCartRecipe } from '../../models/shopping-cart';
 import { Angulartics2 } from 'angulartics2';
 import { CustomProcs } from '../../models/crafting/custom-proc';
 import { Watchlist, WatchlistGroup } from '../../models/watchlist/watchlist';
+import { ItemService } from '../../services/item.service';
 
 @Component({
   selector: 'wah-data-table',
@@ -76,6 +77,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   select(item): void {
+    SharedService.selectedItemId = undefined;
+    SharedService.selectedPetSpeciesId = undefined;
+    SharedService.selectedSeller = undefined;
+
     if (this.id === 'name') {
       this.setSelectedSeller(item);
     } else {
@@ -109,16 +114,18 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
+    SharedService.preScrollPosition = window.scrollY;
     SharedService.selectedSeller = SharedService.sellersMap[seller.name];
-    SharedService.selectedItemId = undefined;
-    SharedService.selectedPetSpeciesId = undefined;
+    SharedService.events.detailPanelOpen.emit(true);
   }
 
   /* istanbul ignore next */
   setSelectedItem(item: any): void {
+    SharedService.preScrollPosition = window.scrollY;
     SharedService.selectedItemId = item.item || item.itemID || item.id;
     this.setSelectedPet(item);
-    SharedService.selectedSeller = undefined;
+    ItemService.itemSelection.emit(SharedService.selectedItemId);
+    SharedService.events.detailPanelOpen.emit(true);
   }
 
   /* istanbul ignore next */

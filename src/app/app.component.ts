@@ -13,6 +13,7 @@ import { UpdateService } from './services/update.service';
 import { ErrorReport } from './utils/error-report.util';
 import { MatSnackBar } from '@angular/material';
 import { DefaultDashboardSettings } from './models/dashboard/default-dashboard-settings.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'wah-root',
@@ -20,6 +21,8 @@ import { DefaultDashboardSettings } from './models/dashboard/default-dashboard-s
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  detailOpenCloseSubscription: Subscription;
+  mainWindowScrollPosition = 0;
 
   constructor(private _router: Router,
     private _craftingService: CraftingService,
@@ -59,6 +62,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     ErrorReport.init(this.angulartics2, this.matSnackBar);
     SharedService.user.shoppingCart.restore();
     ProspectingAndMillingUtil.restore();
+
+    this.detailOpenCloseSubscription = SharedService.events.detailPanelOpen.subscribe(() => {
+      // making sure that we are scroleld back to the correct position after opening the detail panel
+      if (!this.isPanelOpen()) {
+        window.scrollTo(0, SharedService.preScrollPosition);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -82,6 +92,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  isPanelOpen(): boolean {
+    return SharedService.selectedSeller !== undefined ||
+      SharedService.selectedItemId !== undefined ||
+      SharedService.selectedPetSpeciesId !== undefined;
   }
 
   isStandalone(): boolean {

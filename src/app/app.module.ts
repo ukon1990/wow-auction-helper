@@ -81,6 +81,7 @@ import { ShuffleItemManageComponent } from './components/crafting/shuffle-item-m
 import { UpdateService } from './services/update.service';
 import { ManageItemsBuiltInComponent } from './components/dashboard/manage-items-built-in/manage-items-built-in.component';
 import { ManageItemsBuiltInItemComponent } from './components/dashboard/manage-items-built-in-item/manage-items-built-in-item.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 
 @NgModule({
@@ -142,7 +143,8 @@ import { ManageItemsBuiltInItemComponent } from './components/dashboard/manage-i
     DataBoardsComponent,
     ShuffleItemManageComponent,
     ManageItemsBuiltInComponent,
-    ManageItemsBuiltInItemComponent
+    ManageItemsBuiltInItemComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

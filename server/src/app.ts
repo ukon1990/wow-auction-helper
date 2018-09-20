@@ -72,6 +72,7 @@ app.get('/api/item/source/:id', itemController.getItemSources);
 app.get('/api/recipe', recipeController.postRecipes);
 app.post('/api/recipe', recipeController.postRecipes);
 app.get('/api/recipe/:id', recipeController.getRecipe);
+app.options('/api/recipe/:id', recipeController.patchRecipes);
 
 app.get('/api/pet', petController.postPets);
 app.post('/api/pet', petController.postPets);

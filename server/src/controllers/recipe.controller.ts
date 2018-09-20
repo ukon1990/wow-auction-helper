@@ -10,6 +10,10 @@ export let postRecipes = (req: Request, res: Response) => {
   RecipeUtil.postRecipes(res, req);
 };
 
+export let patchRecipes = (req: Request, res: Response) => {
+  RecipeUtil.patchItem(req.params.id, res, req);
+};
+
 /**
  * GET /api/recipe/:id
  * List of API examples.

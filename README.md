@@ -19,6 +19,8 @@ It contains some tools for gold making in World of Warcraft. Some of it's featur
 * Watchlist
   * You can set up watchlist groups, where you define rules for items to show up in the dashboard. e.g. If Foxflower is below 70% of it's market value. Or there are more than 0 available of a specific item etc.
 
+## Suggested VS code pack for angular:
+* Angular-Schule: Extension Pack
 
 ## Setup requirements
 First of all you need to have nodejs and @angular/cli installed on your computer. Both the backend and the front-end use it. The front-end just for building the project.
