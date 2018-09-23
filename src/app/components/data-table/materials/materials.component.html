@@ -1,24 +1,25 @@
 <div class="full-width mt-2 mb-2" *ngFor="let r of recipe.reagents">
 
   <!-- Intermidiate craft -->
-  <mat-card *ngIf="getRecipeForItem(r.itemID) && useIntermediateCrafting(); else regular" class="p-0 m-0 pt-2 pb-2">
+  <mat-card *ngIf="r.intermediateEligible && useIntermediateCrafting(); else regular" class="p-0 m-0 pt-2 pb-2">
     <mat-card-header  (click)="setSelectedItem(r)">
       <mat-card-title>
-        <a class="col-md-12" rel="spell={{ getRecipeForItem(r.itemID).spellID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
+        <a class="col-md-12" rel="spell={{ r.recipe.spellID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
           <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-          {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getRecipeForItem(r.itemID).name }} - 
+          {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} - 
           <span class="float-right" [matTooltip]="usingVendor(r) ? vendorTooltip : ''">
-            {{ getRecipeForItem(r.itemID).cost | gold }} 
+            {{ r.recipe.cost | gold }} 
             {{ getReagentFromVendorString(r) }}
           </span>
+          ({{ r.intermediateEligible }})
         </a>
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="ml-3 mr-1 mb-1" *ngFor="let subR of getRecipeForItem(r.itemID).reagents" (click)="setSelectedItem(subR)">
+      <div class="ml-3 mr-1 mb-1" *ngFor="let subR of r.recipe.reagents" (click)="setSelectedItem(subR)">
         <a rel="item={{ subR.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(subR.itemID, subR.count) }" matTooltip="There are currently {{ getAtAHCount(subR.itemID) | number }} at the auction house. Click for details.">
           <wah-icon *ngIf="subR.itemID" class="float-left" size="22" [id]="subR.itemID"></wah-icon>
-          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(getRecipeForItem(r.itemID)) | number : '1.2' }} x {{ getItemName(subR.itemID)}} - 
+          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }} x {{ getItemName(subR.itemID)}} - 
           <span class="float-right" [matTooltip]="usingVendor(subR) ? vendorTooltip : ''">
             {{ getItemValue(subR.itemID) | gold }} 
             {{ getReagentFromVendorString(subR) }}

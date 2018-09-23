@@ -89,23 +89,30 @@ export class CraftingService {
   }
 
   handleRecipes(recipes: any): void {
-    const missingItems = [],
+    const missingItems = [], tmpList = [],
       noRecipes = SharedService.recipes.length === 0;
     SharedService.downloading.recipes = false;
 
-    recipes['recipes'].forEach((recipe: Recipe) => {
-      if (SharedService.recipesMap[recipe.spellID]) {
-        Object.keys(recipe).forEach(key => {
-          SharedService.recipesMap[recipe.spellID][key] = recipe[key];
-        });
-        // In case of a full clear
-        if (noRecipes) {
+    if (recipes['recipes'].lenght > 0) {
+      recipes['recipes'].forEach((recipe: Recipe) => {
+        if (SharedService.recipesMap[recipe.spellID]) {
+          Object.keys(recipe).forEach(key => {
+            SharedService.recipesMap[recipe.spellID][key] = recipe[key];
+          });
+          // In case of a full clear
+          if (noRecipes) {
+            SharedService.recipes.push(recipe);
+          }
+        } else {
           SharedService.recipes.push(recipe);
         }
-      } else {
-        SharedService.recipes.push(recipe);
-      }
-    });
+      });
+
+      Object.keys(SharedService.recipesMap)
+        .forEach(id => tmpList.push(SharedService.recipesMap[id]));
+      SharedService.recipes = tmpList;
+      console.log('recipes', tmpList);
+    }
     console.log('Recipe download is completed');
 
     // Adding items if there are any missing

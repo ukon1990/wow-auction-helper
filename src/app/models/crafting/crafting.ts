@@ -128,14 +128,23 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
+        const re = SharedService.recipesMapPerItemKnown[r.itemID];
         // If this is a intermediate craft
-        if (SharedService.user.useIntermediateCrafting &&
-          SharedService.recipesMapPerItemKnown[r.itemID]) {
-          const re = SharedService.recipesMapPerItemKnown[r.itemID];
+        if (SharedService.user.useIntermediateCrafting && re) {
           if (re.reagents.length > 0) {
+            let tmpCost = 0;
+            const regularCost = this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
             re.reagents.forEach(rea => {
-              recipe.cost += this.getCost(rea.itemID, rea.count) / CustomProcs.get(re) * r.count;
+              tmpCost += this.getCost(rea.itemID, rea.count) / CustomProcs.get(re) * r.count;
             });
+
+            if (tmpCost < regularCost) {
+              recipe.cost += tmpCost;
+              r.intermediateEligible = true;
+              r.recipe = re;
+            } else {
+              recipe.cost += regularCost;
+            }
           }
         } else {
           recipe.cost += this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
