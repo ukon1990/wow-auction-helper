@@ -11,10 +11,12 @@ import { Subscription } from 'rxjs';
 })
 export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit {
   @Input() dashboard: Dashboard;
+  @Input() filterParameter: string;
   detailPanelOpenSubscription: Subscription;
   isOtherDetailPanelOpen = false;
 
   detailView = false;
+  maxVisibleRows;
   currentColumns;
   data;
   constructor(private angulartics2: Angulartics2) { }
@@ -40,8 +42,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit 
   }
 
   setData(): void {
-    this.data = this.detailView ?
-      this.dashboard.data : this.dashboard.data.slice(0, 5);
+    this.maxVisibleRows = this.detailView ? undefined : 5;
   }
 
   openClose(): void {

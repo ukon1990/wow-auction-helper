@@ -246,75 +246,127 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
+    let db: Dashboard;
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
 
     // Items
-    SharedService.itemDashboards.push(
-      new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_CRAFTS].title,
-        Dashboard.TYPES.PROFITABLE_CRAFTS));
-    SharedService.itemDashboards.push(
-      new Dashboard(
+    db = new Dashboard(
+      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_CRAFTS].title,
+      Dashboard.TYPES.PROFITABLE_CRAFTS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+    db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS].title,
-        Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS));
-    SharedService.itemDashboards.push(
-      new Dashboard(
+        Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.WATCH_LIST_CRAFTS].title,
-        Dashboard.TYPES.WATCH_LIST_CRAFTS));
+        Dashboard.TYPES.WATCH_LIST_CRAFTS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
 
     // The users watchlists
     SharedService.user.watchlist.groups.forEach(group => {
-      SharedService.itemDashboards.push(
-        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]));
+      db = new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]);
+
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
     });
 
 
-    SharedService.itemDashboards.push(
-      new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title, Dashboard.TYPES.MILLING));
-    SharedService.itemDashboards.push(
-      new Dashboard(SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title, Dashboard.TYPES.PROSPECTING));
-    SharedService.itemDashboards.push(
-      new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MOST_AVAILABLE_ITEMS].title,
-        Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
-    if (SharedService.user.apiToUse !== 'none') {
-      SharedService.itemDashboards.push(
-        new Dashboard(
-          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
-          Dashboard.TYPES.POTENTIAL_DEALS));
+    db = new Dashboard(
+      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
+      Dashboard.TYPES.MILLING);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
     }
-    SharedService.itemDashboards.push(
-      new Dashboard(
+
+    db = new Dashboard(
+      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
+      Dashboard.TYPES.PROSPECTING);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MOST_AVAILABLE_ITEMS].title,
+        Dashboard.TYPES.MOST_AVAILABLE_ITEMS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    if (SharedService.user.apiToUse !== 'none') {
+      db = new Dashboard(
+          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
+          Dashboard.TYPES.POTENTIAL_DEALS);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
+    }
+    db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS].title,
-        Dashboard.TYPES.CHEAP_BIDS));
-    SharedService.itemDashboards.push(
-      new Dashboard(
+        Dashboard.TYPES.CHEAP_BIDS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT].title,
-        Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT));
-    SharedService.itemDashboards.push(
-      new Dashboard(
+        Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL].title,
-        Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL));
-    SharedService.itemDashboards.push(
-      new Dashboard(
+        Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.TRADE_VENDOR_VALUES].title,
-        Dashboard.TYPES.TRADE_VENDOR_VALUES));
+        Dashboard.TYPES.TRADE_VENDOR_VALUES);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
 
     // Sellers
-    SharedService.sellerDashboards.push(
-      new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
-    SharedService.sellerDashboards.push(
-      new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
+    db = new Dashboard(
+      'Top sellers by liquidity',
+      Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.sellerDashboards.push(db);
+    }
 
-    SharedService.sellerDashboards.push(
-      new Dashboard('Top sellers by active auctions', Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS));
+    db = new Dashboard(
+      'Top sellers by volume',
+      Dashboard.TYPES.TOP_SELLERS_BY_VOLUME);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.sellerDashboards.push(db);
+    }
+
+    db = new Dashboard(
+      'Top sellers by active auctions',
+      Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.sellerDashboards.push(db);
+    }
 
     SharedService.sellersByItemClass.forEach(c => {
-      SharedService.sellerDashboards.push(
-        new Dashboard(`Top sellers by volume for the item class ${c.name}`,
-          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers));
+      db = new Dashboard(
+        `Top sellers by volume for the item class ${c.name}`,
+          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.sellerDashboards.push(db);
+      }
     });
 
     Dashboard.itemEvents.emit(SharedService.itemDashboards);

@@ -1,4 +1,8 @@
-<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+<mat-form-field *ngIf="filterParameter !== undefined" class="float-left">
+  <input matInput placeholder="Search by name" [formControl]="searchField">
+</mat-form-field>
+
+<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" class="float-right" [length]="filteredData.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
@@ -13,7 +17,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let d of data | slice:getFromValue():getToValue(); let i = index" [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
+    <tr *ngFor="let d of filteredData | slice:getFromValue():getToValue(); let i = index" [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
       <ng-container *ngFor="let c of columns;">
         <td [class]="c.cssClass" *ngIf="displayColumn(c)">
           <span [ngSwitch]="c.dataType">
@@ -155,6 +159,6 @@
   </tbody>
 </table>
 
-<mat-paginator *ngIf="data.length > pageRows[0]" [length]="data.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" [length]="filteredData.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>

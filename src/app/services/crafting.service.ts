@@ -93,7 +93,8 @@ export class CraftingService {
       noRecipes = SharedService.recipes.length === 0;
     SharedService.downloading.recipes = false;
 
-    if (recipes['recipes'].lenght > 0) {
+    if (recipes['recipes'].length > 0) {
+      const recipeMapKeys = Object.keys(SharedService.recipesMap);
       recipes['recipes'].forEach((recipe: Recipe) => {
         if (SharedService.recipesMap[recipe.spellID]) {
           Object.keys(recipe).forEach(key => {
@@ -108,9 +109,11 @@ export class CraftingService {
         }
       });
 
-      Object.keys(SharedService.recipesMap)
-        .forEach(id => tmpList.push(SharedService.recipesMap[id]));
-      SharedService.recipes = tmpList;
+      if (recipeMapKeys.length > 0) {
+        recipeMapKeys.forEach(id =>
+          tmpList.push(SharedService.recipesMap[id]));
+        SharedService.recipes = tmpList;
+      }
       console.log('recipes', tmpList);
     }
     console.log('Recipe download is completed');

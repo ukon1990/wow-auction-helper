@@ -5,6 +5,46 @@ import { SharedService } from '../../services/shared.service';
 import { defaultWatchlist } from './default-watchlist';
 import { Dashboard } from '../dashboard';
 
+export class WatchlistItem {
+  itemID: number;
+  name: string;
+  compareTo: string;
+  target?: number;
+  targetType: string;
+  criteria: string;
+  minCraftingProfit: number;
+  value = 0;
+
+  constructor(itemID?: any) {
+    itemID = parseInt(itemID, 10);
+    if (itemID && SharedService.items[itemID]) {
+      const wl = SharedService.user.watchlist;
+      this.itemID = itemID;
+      this.name = SharedService.items[itemID].name;
+      this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
+      this.targetType = wl.TARGET_TYPES.GOLD;
+      this.criteria = wl.CRITERIA.BELOW;
+      this.minCraftingProfit = 0;
+    }
+  }
+}
+
+export class WatchlistGroup {
+  name: string;
+  items: Array<WatchlistItem> = new Array<WatchlistItem>();
+  matchSaleRate = 0;
+  matchDailySold = 0;
+  hide: false;
+
+  constructor(name: string, items?: Array<WatchlistItem>) {
+    this.name = name;
+
+    if (items) {
+      this.items = items;
+    }
+  }
+}
+
 export class Watchlist {
   private storageName = 'watchlist';
   readonly COMPARABLE_VARIABLES = {
@@ -128,7 +168,7 @@ export class Watchlist {
 
       if (knownRecipe) {
         return knownRecipe.cost;
-      } else if (recipeMapItem.length > 0) {
+      } else if (recipeMapItem && recipeMapItem.length > 0) {
         let lowestCost = 0;
 
         recipeMapItem.forEach((recipe: Recipe) => {
@@ -194,7 +234,7 @@ export class Watchlist {
 
   /**
    * Moving objects around in array
-   * 
+   *
    * @param {number} from index
    * @param {number} to index
    * @memberof Watchlist
@@ -260,45 +300,5 @@ export class Watchlist {
       criteria: item.criteria,
       minCraftingProfit: item.minCraftingProfit ? item.minCraftingProfit : 0
     };
-  }
-}
-
-export class WatchlistGroup {
-  name: string;
-  items: Array<WatchlistItem> = new Array<WatchlistItem>();
-  matchSaleRate = 0;
-  matchDailySold = 0;
-  hide: false;
-
-  constructor(name: string, items?: Array<WatchlistItem>) {
-    this.name = name;
-
-    if (items) {
-      this.items = items;
-    }
-  }
-}
-
-export class WatchlistItem {
-  itemID: number;
-  name: string;
-  compareTo: string;
-  target?: number;
-  targetType: string;
-  criteria: string;
-  minCraftingProfit: number;
-  value = 0;
-
-  constructor(itemID?: any) {
-    itemID = parseInt(itemID, 10);
-    if (itemID && SharedService.items[itemID]) {
-      const wl = SharedService.user.watchlist;
-      this.itemID = itemID;
-      this.name = SharedService.items[itemID].name;
-      this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
-      this.targetType = wl.TARGET_TYPES.GOLD;
-      this.criteria = wl.CRITERIA.BELOW;
-      this.minCraftingProfit = 0;
-    }
   }
 }
