@@ -11,7 +11,7 @@ export let postRecipes = (req: Request, res: Response) => {
 };
 
 export let patchRecipes = (req: Request, res: Response) => {
-  RecipeUtil.patchItem(req.params.id, res, req);
+  RecipeUtil.patchRecipe(req.params.id, res, req);
 };
 
 /**

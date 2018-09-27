@@ -89,46 +89,51 @@ export class CraftingService {
   }
 
   handleRecipes(recipes: any): void {
-    const missingItems = [], tmpList = [],
+    const missingItems = [], map = new Map<number, Recipe>(),
       noRecipes = SharedService.recipes.length === 0;
     SharedService.downloading.recipes = false;
 
     if (recipes['recipes'].length > 0) {
-      const recipeMapKeys = Object.keys(SharedService.recipesMap);
-      recipes['recipes'].forEach((recipe: Recipe) => {
-        if (SharedService.recipesMap[recipe.spellID]) {
+      const list = SharedService.recipes.concat(recipes['recipes']);
+      SharedService.recipes = [];
+      list.forEach((recipe: Recipe) => {
+        if (!recipe) {
+          return;
+        }
+
+        if (recipe.name.indexOf('Pact of Versatility') > -1) {
+          console.log(recipe.name, recipe.rank, recipe.reagents[0].count);
+        }
+
+        if (map[recipe.spellID]) {
           Object.keys(recipe).forEach(key => {
-            SharedService.recipesMap[recipe.spellID][key] = recipe[key];
+            map[recipe.spellID][key] = recipe[key];
           });
-          // In case of a full clear
-          if (noRecipes) {
-            SharedService.recipes.push(recipe);
-          }
         } else {
+          map[recipe.spellID] = recipe;
           SharedService.recipes.push(recipe);
         }
       });
-
-      if (recipeMapKeys.length > 0) {
-        recipeMapKeys.forEach(id =>
-          tmpList.push(SharedService.recipesMap[id]));
-        SharedService.recipes = tmpList;
-      }
-      console.log('recipes', tmpList);
+      console.log('List length', list.length, SharedService.recipes.length, Object.keys(map).length);
     }
     console.log('Recipe download is completed');
 
     // Adding items if there are any missing
-    SharedService.recipes.forEach(r => {
-      this.handleRecipe(r, missingItems);
-    });
+    try {
+      SharedService.recipes.forEach(r => {
+        this.handleRecipe(r, missingItems);
+      });
 
-    if (missingItems.length < 100) {
-      this._itemService.addItems(missingItems);
+      if (missingItems.length < 100) {
+        this._itemService.addItems(missingItems);
+      }
+
+      this.dbService.addRecipes(SharedService.recipes);
+      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    } catch (error) {
+      console.error(error);
     }
-
-    this.dbService.addRecipes(SharedService.recipes);
-    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    console.log('List length', SharedService.recipes.length);
   }
 
   /**

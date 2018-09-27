@@ -106,16 +106,40 @@ export class RecipeUtil {
    * @param response
    * @param req
    */
-  public static async patchItem(
+  public static async patchRecipe(
     id: number,
     res: Response,
     req: any
   ) {
-    request.get(`http://wowdb.com/api/spell/${id}`, (err, r, body) => {
+    request.get(`http://wowdb.com/api/spell/${id}`, async (err, r, body) => {
       try {
         const recipe = RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
-        // res.send(recipe);
-        RecipeUtil.getProfession(recipe, function (r) {
+        const missingItemId = recipe.itemID === 0;
+
+        if (missingItemId) {
+          await new Promise((resolve, reject) => {
+            request.get(`http://localhost:3000/api/recipe/${recipe.spellID}`, async (err, r, b) => {
+              const recip = b ? JSON.parse(b) : {};
+              if (recip) {
+                recipe.itemID = recip.itemID;
+                resolve();
+              }
+            });
+          }).then();
+          if (recipe.itemID === 0) {
+            const db = mysql.createConnection(DATABASE_CREDENTIALS);
+            const sql = `select id from items where name like "%${ recipe.name }%" limit 1;`;
+            await db.query(sql, (err, rows, fields) => {
+              db.end();
+              if (err) {
+                console.error('Error', err);
+              } else if (rows.length > 0) {
+                recipe.itemID = rows[0].id;
+              }
+            });
+          }
+        }
+        await RecipeUtil.getProfession(recipe, function (r) {
           const query = `
           UPDATE recipes SET json = "${
           safeifyString(JSON.stringify(recipe))
