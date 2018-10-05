@@ -16,7 +16,7 @@
   </div>
 
   <mat-form-field class="ml-2 mr-2 col">
-    <mat-select placeholder="Item class" formControlName="itemClass">
+    <mat-select  [disableOptionCentering]="true" placeholder="Item class" formControlName="itemClass">
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
@@ -27,7 +27,7 @@
   </mat-form-field>
 
   <mat-form-field *ngIf="itemClasses.classes[form.value.itemClass]" class="ml-2 mr-2 col">
-    <mat-select placeholder="Item sub class" formControlName="itemSubClass">
+    <mat-select  [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
@@ -43,7 +43,7 @@
   </mat-form-field>
 
   <mat-form-field class="col">
-    <mat-select placeholder="Minimum item quality" formControlName="minItemQuality">
+    <mat-select  [disableOptionCentering]="true" placeholder="Minimum item quality" formControlName="minItemQuality">
       <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">Any</mat-option>
       <mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         {{ quality }}
@@ -52,7 +52,7 @@
   </mat-form-field>
 
   <mat-form-field class="col">
-    <mat-select placeholder="Expansion" formControlName="expansion">
+    <mat-select  [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
       <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
       <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         {{ expansion }}

@@ -21,7 +21,7 @@
       </mat-form-field>
 
       <mat-form-field class="mr-2" *ngIf="board.limitToExpansion !== null">
-        <mat-select placeholder="Limit to expansion" formControlName="limitToExpansion">
+        <mat-select  [disableOptionCentering]="true" placeholder="Limit to expansion" formControlName="limitToExpansion">
           <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">No</mat-option>
           <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
             {{ expansion }}
