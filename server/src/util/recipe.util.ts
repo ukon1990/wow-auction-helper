@@ -101,9 +101,68 @@ export class RecipeUtil {
       });
   }
 
-  public static async patchItem() {
-    // TODO: Make sure you keep the itemID, in case of recipes missing those.
-    //
+  /**
+   * For updating a recipe
+   * @param response
+   * @param req
+   */
+  public static async patchRecipe(
+    id: number,
+    res: Response,
+    req: any
+  ) {
+    request.get(`http://wowdb.com/api/spell/${id}`, async (err, r, body) => {
+      try {
+        const recipe = RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));
+        const missingItemId = recipe.itemID === 0;
+
+        if (missingItemId) {
+          await new Promise((resolve, reject) => {
+            request.get(`http://localhost:3000/api/recipe/${recipe.spellID}`, async (err, r, b) => {
+              const recip = b ? JSON.parse(b) : {};
+              if (recip) {
+                recipe.itemID = recip.itemID;
+                resolve();
+              }
+            });
+          }).then();
+          if (recipe.itemID === 0) {
+            const db = mysql.createConnection(DATABASE_CREDENTIALS);
+            const sql = `select id from items where name like "%${ recipe.name }%" limit 1;`;
+            await db.query(sql, (err, rows, fields) => {
+              db.end();
+              if (err) {
+                console.error('Error', err);
+              } else if (rows.length > 0) {
+                recipe.itemID = rows[0].id;
+              }
+            });
+          }
+        }
+        await RecipeUtil.getProfession(recipe, function (r) {
+          const query = `
+          UPDATE recipes SET json = "${
+          safeifyString(JSON.stringify(recipe))
+          }", timestamp = CURRENT_TIMESTAMP
+                WHERE id = ${
+          id
+          };`;
+          console.log(`${new Date().toString()} - Updating recipe (${r.name}) - SQL: ${query}`);
+          const dbAdd = mysql.createConnection(DATABASE_CREDENTIALS);
+          dbAdd.query(query, (err, r, body) => {
+            dbAdd.end();
+            if (!err) {
+            } else {
+              throw err;
+            }
+          });
+          res.send(r);
+        });
+      } catch (error) {
+        console.error(`Could not get recipe with id ${id}`, error);
+        res.status(404).send(new Recipe());
+      }
+    });
   }
 
   public static async getItemsToAdd(

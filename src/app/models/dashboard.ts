@@ -12,27 +12,29 @@ import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Remains } from './item/remains.model';
 import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
 import { EventEmitter } from '@angular/core';
+import { DefaultDashboardSettings } from './dashboard/default-dashboard-settings.model';
+import { Crafting } from './crafting/crafting';
 
 export class Dashboard {
   public static readonly TYPES = {
-    TOP_SELLERS_BY_AUCTIONS_FOR_CLASS: 'TOP_SELLERS_BY_AUCTIONS_FOR_CLASS',
-    TOP_SELLERS_BY_AUCTIONS: 'TOP_SELLERS_BY_AUCTIONS',
-    TOP_SELLERS_BY_VOLUME: 'TOP_SELLERS_BY_VOLUME',
-    TOP_SELLERS_BY_LIQUIDITY: 'TOP_SELLERS_BY_LIQUIDITY',
-    MOST_AVAILABLE_ITEMS: 'AVAILABLE_ITEMS',
-    PROFITABLE_CRAFTS: 'PROFITABLE_CRAFTS',
-    PROFITABLE_KNOWN_CRAFTS: 'MOST_PROFITABLE_KNOWN_CRAFTS',
-    POTENTIAL_DEALS: 'POTENTIAL_DEALS',
-    CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'CHEAP_BIDS_WITH_LOW_TIME_LEFT',
-    CHEAP_BIDS: 'CHEAP_BIDS',
-    CHEAPER_THAN_VENDOR_SELL: 'CHEAPER_THAN_VENDOR_SELL',
-    TRADE_VENDOR_VALUES: 'TRADE_VENDOR_VALUES',
-    WATCH_LIST: 'WATCH_LIST',
-    WATCH_LIST_CRAFTS: 'WATCH_LIST_CRAFTS',
-    PROSPECTING: 'PROSPECTING',
-    MILLING: 'MILLING',
+    TOP_SELLERS_BY_AUCTIONS_FOR_CLASS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS_FOR_CLASS',
+    TOP_SELLERS_BY_AUCTIONS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS',
+    TOP_SELLERS_BY_VOLUME: 'DASHBOARD_TOP_SELLERS_BY_VOLUME',
+    TOP_SELLERS_BY_LIQUIDITY: 'DASHBOARD_TOP_SELLERS_BY_LIQUIDITY',
+    MOST_AVAILABLE_ITEMS: 'DASHBOARD_AVAILABLE_ITEMS',
+    PROFITABLE_CRAFTS: 'DASHBOARD_PROFITABLE_CRAFTS',
+    PROFITABLE_KNOWN_CRAFTS: 'DASHBOARD_MOST_PROFITABLE_KNOWN_CRAFTS',
+    POTENTIAL_DEALS: 'DASHBOARD_POTENTIAL_DEALS',
+    CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'DASHBOARD_CHEAP_BIDS_WITH_LOW_TIME_LEFT',
+    CHEAP_BIDS: 'DASHBOARD_CHEAP_BIDS',
+    CHEAPER_THAN_VENDOR_SELL: 'DASHBOARD_CHEAPER_THAN_VENDOR_SELL',
+    TRADE_VENDOR_VALUES: 'DASHBOARD_TRADE_VENDOR_VALUES',
+    WATCH_LIST: 'DASHBOARD_WATCH_LIST',
+    WATCH_LIST_CRAFTS: 'DASHBOARD_WATCH_LIST_CRAFTS',
+    PROSPECTING: 'DASHBOARD_PROSPECTING',
+    MILLING: 'DASHBOARD_MILLING',
     // The users pets, that maybe could be sold for something
-    POSSIBLE_PROFIT_FROM_PETS: 'POSSIBLE_PROFIT_FROM_PETS'
+    POSSIBLE_PROFIT_FROM_PETS: 'DASHBOARD_POSSIBLE_PROFIT_FROM_PETS'
   };
 
   public static itemEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
@@ -45,6 +47,8 @@ export class Dashboard {
   data: Array<any> = new Array<any>();
   message: string;
   isCrafting = false;
+  isDisabled = false;
+  settings?: DefaultDashboardSettings;
 
   constructor(title: string, type: string, array?: Array<any>) {
     this.title = title;
@@ -62,6 +66,10 @@ export class Dashboard {
         { key: 'roi', title: 'Profit', dataType: 'gold' },
         { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
       ];
+    this.settings = SharedService.defaultDashboardSettingsListMap[type];
+    if (this.settings) {
+      this.isDisabled = this.settings.isDisabled;
+    }
 
     switch (type) {
       case Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS:
@@ -121,10 +129,11 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
-          { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
+          { key: 'buyout', title: 'Min buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
           { key: 'roi', title: 'Profit', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true },
           { key: 'quantity', title: 'Size', dataType: 'number' },
+          { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
           { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
         ];
         this.addAPIColumnsAtPosition(5);
@@ -136,7 +145,7 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
-          { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
+          { key: 'buyout', title: 'Min buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
           { key: 'roi', title: 'Profit', dataType: 'gold' },
           { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true },
           { key: 'quantity', title: 'Size', dataType: 'number' },
@@ -194,7 +203,7 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'yield', title: 'Value', dataType: 'gold' }
+          { key: 'yield', title: 'Profit', dataType: 'gold' }
 
         ];
         this.shuffles(ProspectingAndMillingUtil.mills);
@@ -204,7 +213,7 @@ export class Dashboard {
         this.columns = [
           { key: 'name', title: 'Name', dataType: 'name' },
           { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'yield', title: 'Value', dataType: 'gold' }
+          { key: 'yield', title: 'Profit', dataType: 'gold' }
         ];
         this.shuffles(ProspectingAndMillingUtil.prospecting);
         break;
@@ -237,56 +246,127 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
+    let db: Dashboard;
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
 
     // Items
-    SharedService.itemDashboards.push(
-      new Dashboard('Profitable crafts', Dashboard.TYPES.PROFITABLE_CRAFTS));
-    SharedService.itemDashboards.push(
-      new Dashboard('Profitable known crafts', Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS));
-    SharedService.itemDashboards.push(
-      new Dashboard('Known watchlist craft alerts', Dashboard.TYPES.WATCH_LIST_CRAFTS));
+    db = new Dashboard(
+      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_CRAFTS].title,
+      Dashboard.TYPES.PROFITABLE_CRAFTS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS].title,
+        Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.WATCH_LIST_CRAFTS].title,
+        Dashboard.TYPES.WATCH_LIST_CRAFTS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
 
     // The users watchlists
     SharedService.user.watchlist.groups.forEach(group => {
-      SharedService.itemDashboards.push(
-        new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]));
+      db = new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]);
+
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
     });
 
 
-    SharedService.itemDashboards.push(
-      new Dashboard('Profitable herbs to mill', Dashboard.TYPES.MILLING));
-    SharedService.itemDashboards.push(
-      new Dashboard('Profitable ore to prospect', Dashboard.TYPES.PROSPECTING));
-    SharedService.itemDashboards.push(
-      new Dashboard('Items by availability', Dashboard.TYPES.MOST_AVAILABLE_ITEMS));
-    if (SharedService.user.apiToUse !== 'none') {
-      SharedService.itemDashboards.push(
-        new Dashboard('Potential deals', Dashboard.TYPES.POTENTIAL_DEALS));
+    db = new Dashboard(
+      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
+      Dashboard.TYPES.MILLING);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
     }
-    SharedService.itemDashboards.push(
-      new Dashboard('Potential bid deals', Dashboard.TYPES.CHEAP_BIDS));
-    SharedService.itemDashboards.push(
-      new Dashboard('Potential 30 minute bid deals', Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT));
-    SharedService.itemDashboards.push(
-      new Dashboard('Buyout below vendor sell price', Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL));
-    SharedService.itemDashboards.push(
-      new Dashboard('Trade vendor currency in gold', Dashboard.TYPES.TRADE_VENDOR_VALUES));
+
+    db = new Dashboard(
+      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
+      Dashboard.TYPES.PROSPECTING);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MOST_AVAILABLE_ITEMS].title,
+        Dashboard.TYPES.MOST_AVAILABLE_ITEMS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    if (SharedService.user.apiToUse !== 'none') {
+      db = new Dashboard(
+          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
+          Dashboard.TYPES.POTENTIAL_DEALS);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
+    }
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS].title,
+        Dashboard.TYPES.CHEAP_BIDS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT].title,
+        Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL].title,
+        Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
+
+    db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.TRADE_VENDOR_VALUES].title,
+        Dashboard.TYPES.TRADE_VENDOR_VALUES);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.itemDashboards.push(db);
+    }
 
     // Sellers
-    SharedService.sellerDashboards.push(
-      new Dashboard('Top sellers by liquidity', Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY));
-    SharedService.sellerDashboards.push(
-      new Dashboard('Top sellers by volume', Dashboard.TYPES.TOP_SELLERS_BY_VOLUME));
+    db = new Dashboard(
+      'Top sellers by liquidity',
+      Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.sellerDashboards.push(db);
+    }
 
-    SharedService.sellerDashboards.push(
-      new Dashboard('Top sellers by active auctions', Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS));
+    db = new Dashboard(
+      'Top sellers by volume',
+      Dashboard.TYPES.TOP_SELLERS_BY_VOLUME);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.sellerDashboards.push(db);
+    }
+
+    db = new Dashboard(
+      'Top sellers by active auctions',
+      Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS);
+    if (db.data.length > 0 && !db.isDisabled) {
+      SharedService.sellerDashboards.push(db);
+    }
 
     SharedService.sellersByItemClass.forEach(c => {
-      SharedService.sellerDashboards.push(
-        new Dashboard(`Top sellers by volume for the item class ${c.name}`,
-          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers));
+      db = new Dashboard(
+        `Top sellers by volume for the item class ${c.name}`,
+          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.sellerDashboards.push(db);
+      }
     });
 
     Dashboard.itemEvents.emit(SharedService.itemDashboards);
@@ -305,13 +385,16 @@ export class Dashboard {
     this.data.length = 0;
     Object.keys(SharedService.tradeVendorItemMap)
       .forEach(key => {
-        this.data.push(SharedService.tradeVendorItemMap[key]);
+        if (!this.isExpansionMissMatch(parseInt(key, 10))) {
+          this.data.push(SharedService.tradeVendorItemMap[key]);
+        }
       });
     this.data.sort((a, b) => b.value - a.value);
   }
 
   private setWatchListAlerts(group: WatchlistGroup): void {
     this.data.length = 0;
+    this.isDisabled = group.hide;
     this.tsmShoppingString = '';
     this.message = `You can edit this dashboard item, over in the "manage custom dashboards" section`;
     const pipe = new GoldPipe();
@@ -359,13 +442,17 @@ export class Dashboard {
     this.message = 'You can get more details about and manage these over at the tools -> Milling & Prospecting section';
     this.tsmShoppingString = '';
     this.data = array.filter(remains => {
+      if (this.isExpansionMissMatch(remains.id)) {
+        return false;
+      }
+
       if (remains.yield > 0) {
         this.tsmShoppingString += `${
           remains.name
           }/exact/1c/${
           pipe.transform(remains.buyout + remains.yield).replace(',', '')
           };`;
-          return true;
+        return true;
       }
       return false;
     }).sort((a, b) =>
@@ -409,8 +496,16 @@ export class Dashboard {
 
     SharedService.user.watchlist.groups.forEach(group => {
       group.items.forEach(item => {
-        if (SharedService.recipesMapPerItemKnown[item.itemID] && SharedService.recipesMapPerItemKnown[item.itemID].roi > 0) {
-          tmpList[item.itemID] = SharedService.recipesMapPerItemKnown[item.itemID];
+        if (this.isExpansionMissMatch(item.itemID)) {
+          return;
+        }
+
+        const recipe = SharedService.recipesMapPerItemKnown[item.itemID];
+        if (recipe &&
+          recipe.roi / recipe.cost >= this.settings.minROIPercent &&
+          this.getAuctionItem(item.itemID).regionSaleRate >= this.settings.regionSaleRate &&
+          this.getAuctionItem(item.itemID).avgDailySold >= this.settings.avgDailySold) {
+          tmpList[item.itemID] = recipe;
         }
       });
     });
@@ -432,6 +527,10 @@ export class Dashboard {
     this.data.length = 0;
     this.tsmShoppingString = '';
     this.data = SharedService.auctionItems.filter(ai => {
+      if (this.isExpansionMissMatch(ai.itemID)) {
+        return false;
+      }
+
       if (ai.buyout !== 0 && ai.buyout < ai.vendorSell) {
         value += ai.vendorSell - ai.buyout;
         if (SharedService.user.apiToUse !== 'none') {
@@ -471,21 +570,27 @@ export class Dashboard {
     this.data.length = 0;
     SharedService.auctions.forEach(a => {
       let match = true;
-      if (a.timeLeft !== 'SHORT') {
+      if (this.isExpansionMissMatch(a.item)) {
         match = false;
       }
 
-      if (match && (a.buyout === 0 || (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout > 0.9)) {
+      if (a.timeLeft !== 'SHORT' && a.timeLeft !== 'MEDIUM') {
+        match = false;
+      }
+
+      if (match && (a.buyout === 0 ||
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * Crafting.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
       if (match && SharedService.user.apiToUse !== 'none' &&
-        SharedService.auctionItemsMap[a.item].avgDailySold < 1 && SharedService.auctionItemsMap[a.item].regionSaleRate < 0.30) {
+        SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
+        SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
       }
 
       if (match) {
-        a.roi = SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid;
+        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * Crafting.ahCutModifier;
         sumROI += a.roi;
         this.data.push(a);
       }
@@ -504,17 +609,23 @@ export class Dashboard {
     SharedService.auctions.forEach(a => {
       let match = true;
 
-      if (match && (a.buyout === 0 || (a.bid / a.quantity) / SharedService.auctionItemsMap[a.item].buyout > 0.9)) {
+      if (this.isExpansionMissMatch(a.item)) {
+        match = false;
+      }
+
+      if (match && (a.buyout === 0 ||
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * Crafting.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
       if (match && SharedService.user.apiToUse !== 'none' &&
-        SharedService.auctionItemsMap[a.item].avgDailySold < 1 && SharedService.auctionItemsMap[a.item].regionSaleRate < 0.30) {
+        SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
+        SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
       }
 
       if (match) {
-        a.roi = SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid;
+        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * Crafting.ahCutModifier;
         sumROI += a.roi;
         this.data.push(a);
       }
@@ -532,7 +643,13 @@ export class Dashboard {
     this.tsmShoppingString = '';
 
     this.data = SharedService.auctionItems.filter(ai => {
-      if (ai.avgDailySold > 1 && ai.regionSaleRate > 0.30 && ai.buyout / ai.mktPrice < 0.15) {
+      if (this.isExpansionMissMatch(ai.itemID)) {
+        return false;
+      }
+
+      if (ai.avgDailySold > this.settings.avgDailySold &&
+        ai.regionSaleRate > this.settings.regionSaleRate &&
+        (ai.buyout / ai.mktPrice) < this.settings.minROIPercent) {
         this.tsmShoppingString += `${
           ai.name
           }/exact/1c/${
@@ -554,23 +671,30 @@ export class Dashboard {
     const pipe: GoldPipe = new GoldPipe();
     this.data.length = 0;
     this.data = SharedService.recipes
-      .sort((a, b) => {
-        return b.roi - a.roi;
-      })
       .filter(recipe => {
-        if (recipe.roi <= 0 || recipe.cost <= 0) {
+        if (this.isExpansionMissMatch(recipe.itemID)) {
           return false;
         }
+
+        if (recipe.roi / recipe.cost <= this.settings.minROIPercent) {
+          return false;
+        }
+
         if (onlyKnown && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
           return false;
         }
         if (SharedService.user.apiToUse !== 'none') {
-          if (recipe.avgDailySold < 1 || recipe.regionSaleRate <= 0.10) {
+          if (this.getAuctionItem(recipe.itemID).avgDailySold <= this.settings.avgDailySold ||
+            this.getAuctionItem(recipe.itemID).regionSaleRate <= this.settings.regionSaleRate) {
             return false;
           }
         }
+
         sumROI += recipe.roi;
         return true;
+      })
+      .sort((a, b) => {
+        return b.roi - a.roi;
       });
     if (this.data.length > 0) {
       this.message = `Crafting 1 of each may yeild a ROI of ${pipe.transform(sumROI)}`;
@@ -603,5 +727,15 @@ export class Dashboard {
   private sortByROI(): void {
     this.data.sort((a, b) =>
       b.roi - a.roi);
+  }
+
+  private isExpansionMissMatch(id: number): boolean {
+    return this.settings.limitToExpansion > -1 &&
+      SharedService.items[id].expansionId !== this.settings.limitToExpansion;
+  }
+
+  private getAuctionItem(id: number): AuctionItem {
+    return SharedService.auctionItemsMap[id] ?
+      SharedService.auctionItemsMap[id] : new AuctionItem();
   }
 }

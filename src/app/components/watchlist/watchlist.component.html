@@ -4,12 +4,17 @@
   market value etc.
 </p>
 <mat-tab-group *ngIf="watchlist" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="tabChange($event)" dynamicHeight>
-  <mat-tab label="Manage groups">
+  <mat-tab label="Manage custom boards">
     <wah-watchlist-manager *ngIf="selectedTabIndex === 0"></wah-watchlist-manager>
   </mat-tab>
+
+  <mat-tab label="Manage built-in boards">
+    <wah-manage-items-built-in></wah-manage-items-built-in>
+  </mat-tab>
+
   <ng-container *ngFor="let group of watchlist.groups; let tabIndex = index">
     <mat-tab [label]="group.name">
-      <ng-container *ngIf="selectedTabIndex === tabIndex + 1">
+      <ng-container *ngIf="selectedTabIndex === tabIndex + 2">
         <div class="row mb-3 ml-2">
           <div class="col-md-12">
             <button class="float-left" type="button" (click)="openBachMenu(group)" mat-raised-button>
@@ -19,7 +24,7 @@
               Add one or more item from query
             </button>
 
-            <div class="float-left">
+            <div class="float-left mt-2">
               <button class="ml-2"
                 (click)="openBatchEdit(group)" mat-raised-button
                 [disabled]="batchCount === 0">
@@ -45,6 +50,10 @@
                 <i class="mr-2 fas fa-eraser"></i>
                 Clear selections
               </button>
+
+              <mat-checkbox class="ml-2" [(ngModel)]="group.hide" (change)="save(group)">
+                Hide from dashboard
+              </mat-checkbox>
             </div>
 
             <div class="float-left" matTooltip='You can change this in "Manage groups"'>

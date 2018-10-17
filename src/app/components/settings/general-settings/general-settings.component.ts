@@ -42,6 +42,11 @@ export class GeneralSettingsComponent implements OnInit {
       locale: localStorage['locale']
     });
 
+    this._characterForm.controls.region.valueChanges.subscribe(region => {
+      this.getRealms(region);
+      this.changedRealm = true;
+    });
+
     this._characterForm.controls.realm.valueChanges.subscribe(realm => {
       this.changedRealm = true;
     });
@@ -147,10 +152,10 @@ export class GeneralSettingsComponent implements OnInit {
     return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
   }
 
-  getRealms(): void {
+  getRealms(region?: string): void {
     setTimeout(() => {
       this._realmService
-        .getRealms(this._characterForm.value.region);
+        .getRealms(region ? region : this._characterForm.value.region);
     }, 100);
   }
 

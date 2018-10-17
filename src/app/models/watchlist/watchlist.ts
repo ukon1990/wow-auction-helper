@@ -5,18 +5,68 @@ import { SharedService } from '../../services/shared.service';
 import { defaultWatchlist } from './default-watchlist';
 import { Dashboard } from '../dashboard';
 
+export class WatchlistItem {
+  itemID: number;
+  name: string;
+  compareTo: string;
+  target?: number;
+  targetType: string;
+  criteria: string;
+  minCraftingProfit: number;
+  value = 0;
+
+  constructor(itemID?: any) {
+    itemID = parseInt(itemID, 10);
+    if (itemID && SharedService.items[itemID]) {
+      const wl = SharedService.user.watchlist;
+      this.itemID = itemID;
+      this.name = SharedService.items[itemID].name;
+      this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
+      this.targetType = wl.TARGET_TYPES.GOLD;
+      this.criteria = wl.CRITERIA.BELOW;
+      this.minCraftingProfit = 0;
+    }
+  }
+}
+
+export class WatchlistGroup {
+  name: string;
+  items: Array<WatchlistItem> = new Array<WatchlistItem>();
+  matchSaleRate = 0;
+  matchDailySold = 0;
+  hide: false;
+
+  constructor(name: string, items?: Array<WatchlistItem>) {
+    this.name = name;
+
+    if (items) {
+      this.items = items;
+    }
+  }
+}
+
 export class Watchlist {
   private storageName = 'watchlist';
   readonly COMPARABLE_VARIABLES = {
     BUYOUT: 'buyout',
+    PROFITABLE_TO_CRAFT: 'craftCost',
     BID: 'bid',
     MARKET_VALUE: 'mktPrice',
     AVG_DAILY_SOLD: 'avgDailySold',
     REGIONAL_AVG_SALE_PRICE: 'regionSaleAvg',
     REGIONAL_SALE_RATE: 'regionSaleRate',
-    QUANTITY_TOTAL: 'quantityTotal',
-    PROFITABLE_TO_CRAFT: 'craftCost'
+    QUANTITY_TOTAL: 'quantityTotal'
   };
+  readonly COMPARABLE_VARIABLES_LIST = [
+    {id: this.COMPARABLE_VARIABLES.BUYOUT, title: 'Buyout'},
+    {id: this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT, title: 'Buyout compared to craft cost'},
+    {id: this.COMPARABLE_VARIABLES.BID, title: 'Buyout compared to bid'},
+    {id: this.COMPARABLE_VARIABLES.MARKET_VALUE, title: 'Buyout compared to realm market value'},
+    {id: this.COMPARABLE_VARIABLES.AVG_DAILY_SOLD, title: 'Regionally avg daily sold'},
+    {id: this.COMPARABLE_VARIABLES.REGIONAL_AVG_SALE_PRICE, title: 'Compare buyout to regional avg sale price'},
+    {id: this.COMPARABLE_VARIABLES.REGIONAL_SALE_RATE, title: 'Compare to sale rate'},
+    {id: this.COMPARABLE_VARIABLES.QUANTITY_TOTAL, title: 'Compare to available quantity'}
+  ];
   readonly CRITERIA = {
     BELOW: 'below',
     EQUAL: 'equal',
@@ -113,12 +163,24 @@ export class Watchlist {
 
   getCompareToValue(item: WatchlistItem): number {
     if (item.compareTo === this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
-      const recipeMapItem = SharedService.itemRecipeMap[item.itemID],
-        recipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe) ||
-          recipeMapItem ?
-            recipeMapItem[0] as Recipe : undefined;
+      const knownRecipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe);
+      const recipeMapItem = SharedService.itemRecipeMap[item.itemID];
 
-      return recipe ? recipe.cost : 0;
+      if (knownRecipe) {
+        return knownRecipe.cost;
+      } else if (recipeMapItem && recipeMapItem.length > 0) {
+        let lowestCost = 0;
+
+        recipeMapItem.forEach((recipe: Recipe) => {
+          if (lowestCost === 0 || recipe.cost < lowestCost) {
+            lowestCost = recipe.cost;
+          }
+        });
+
+        return lowestCost;
+      }
+
+      return 0;
     } else {
       const auctionItem = SharedService.auctionItemsMap[item.itemID];
       return auctionItem ? auctionItem[item.compareTo] : 0;
@@ -172,7 +234,7 @@ export class Watchlist {
 
   /**
    * Moving objects around in array
-   * 
+   *
    * @param {number} from index
    * @param {number} to index
    * @memberof Watchlist
@@ -238,44 +300,5 @@ export class Watchlist {
       criteria: item.criteria,
       minCraftingProfit: item.minCraftingProfit ? item.minCraftingProfit : 0
     };
-  }
-}
-
-export class WatchlistGroup {
-  name: string;
-  items: Array<WatchlistItem> = new Array<WatchlistItem>();
-  matchSaleRate = 0;
-  matchDailySold = 0;
-
-  constructor(name: string, items?: Array<WatchlistItem>) {
-    this.name = name;
-
-    if (items) {
-      this.items = items;
-    }
-  }
-}
-
-export class WatchlistItem {
-  itemID: number;
-  name: string;
-  compareTo: string;
-  target?: number;
-  targetType: string;
-  criteria: string;
-  minCraftingProfit: number;
-  value = 0;
-
-  constructor(itemID?: any) {
-    itemID = parseInt(itemID, 10);
-    if (itemID && SharedService.items[itemID]) {
-      const wl = SharedService.user.watchlist;
-      this.itemID = itemID;
-      this.name = SharedService.items[itemID].name;
-      this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
-      this.targetType = wl.TARGET_TYPES.GOLD;
-      this.criteria = wl.CRITERIA.BELOW;
-      this.minCraftingProfit = 0;
-    }
   }
 }

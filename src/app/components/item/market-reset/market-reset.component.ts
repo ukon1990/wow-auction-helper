@@ -8,6 +8,7 @@ import { Auction } from '../../../models/auction/auction';
 import { AuctionItem } from '../../../models/auction/auction-item';
 import { GoldPipe } from '../../../pipes/gold.pipe';
 import { Angulartics2 } from 'angulartics2';
+import { Crafting } from '../../../models/crafting/crafting';
 
 @Component({
   selector: 'wah-market-reset',
@@ -117,9 +118,10 @@ export class MarketResetComponent implements OnInit {
 
         tmpItem.avgItemCost = tmpItem.cost / tmpItem.itemCount;
         // Adding AH cut
-        tmpItem.cost = tmpItem.cost * 1.05;
+        tmpItem.cost = tmpItem.cost;
 
         tmpItem.roi = tmpItem.targetPrice * tmpItem.itemCount - tmpItem.cost;
+        tmpItem.roi *= Crafting.ahCutModifier;
 
         if (tmpItem.cost > 0 && this.isMinimumProfitPercentMatch(tmpItem)) {
           this.sum.auctionsToBuy += tmpItem.auctionCount;

@@ -1,27 +1,30 @@
 <mat-tab-group *ngIf="hasUserCharacters(); else noChars">
   <mat-tab label="All">
     <div class="row col-md-12">
-      {{ getUserAuctions().undercutAuctions | number }} of your auctions are undercut. <br>
-      Your auctions are up for a total of {{ getUserAuctions().auctionWorth | gold }}
+      {{ getUserAuctions().undercutAuctions | number }} of your auctions are undercut.
+      <br> Your auctions are up for a total of {{ getUserAuctions().auctionWorth | gold }}
     </div>
-    <wah-data-table iconSize="22" itemsPerPage="20" [id]="'item'" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns" [useAuctionItemForName]="true"></wah-data-table>
+    <wah-data-table iconSize="22" itemsPerPage="20" [id]="'item'" [showOwner]="true" [data]="getUserAuctions().auctions" [columns]="columns"
+      [useAuctionItemForName]="true" filterParameter="name"></wah-data-table>
   </mat-tab>
   <ng-container *ngFor="let c of getUserAuctionsCharacters()">
     <mat-tab *ngIf="c.auctions.length > 0" label="{{ c.name }} ({{ c.auctions.length | number }})">
       <div class="row col-md-12">
-        {{ c.undercutAuctions | number }} of your auctions are undercut. <br>
-        Your auctions are up for a total of {{ c.auctionWorth | gold }}
+        {{ c.undercutAuctions | number }} of your auctions are undercut.
+        <br> Your auctions are up for a total of {{ c.auctionWorth | gold }}
       </div>
-      <wah-data-table iconSize="22" itemsPerPage="20" id="item" [showOwner]="true" [data]="c.auctions" [columns]="columns"></wah-data-table>
+      <wah-data-table iconSize="22" itemsPerPage="20" id="item" [showOwner]="true" [data]="c.auctions" [columns]="columns" filterParameter="name"></wah-data-table>
     </mat-tab>
   </ng-container>
 </mat-tab-group>
 
 <ng-template #noChars>
- <p>It seems like you have no characters added. Do add characters in the <a routerLink="/settings/characters">characters settings section</a>, in order to use this feature.</p>
+  <p>It seems like you have no characters added. Do add characters in the
+    <a routerLink="/settings/characters">characters settings section</a>, in order to use this feature.</p>
 </ng-template>
 
 <em>
-  Here you can see your auctions. Green text indicates that you have the lowest buyout for that spesific item. However, 
-  that does not indicate that that spescific auction is the lowest buyout. The undercut column, displays by how much an auction is undercut.
+  Here you can see your auctions. Green text indicates that you have the lowest buyout for that spesific item. However, that
+  does not indicate that that spescific auction is the lowest buyout. The undercut column, displays by how much an auction
+  is undercut.
 </em>

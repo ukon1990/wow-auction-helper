@@ -18,6 +18,8 @@ export class WatchlistItemComponent implements OnInit {
   @Output() delete: EventEmitter<any> = new EventEmitter<any>();
   @Output() isSelected: EventEmitter<any> = new EventEmitter<any>();
 
+  comparableVariables = SharedService.user.watchlist.COMPARABLE_VARIABLES_LIST;
+
 
   constructor() { }
 

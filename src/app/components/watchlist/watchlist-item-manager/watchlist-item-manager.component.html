@@ -37,15 +37,15 @@
       </div>
       <form [formGroup]="form" class="row">
         <mat-form-field class="col-md-2">
-          <mat-select placeholder="Compare buyout/quantity to" formControlName="compareTo">
-            <mat-option *ngFor="let i of comparableVariables" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-              {{ i }}
+          <mat-select  [disableOptionCentering]="true" placeholder="Compare to" formControlName="compareTo">
+            <mat-option *ngFor="let cv of comparableVariables" [value]="cv.id" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+              {{ cv.title }}
             </mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field class="col-md-2">
-          <mat-select placeholder="Criteria" formControlName="criteria">
+          <mat-select  [disableOptionCentering]="true" placeholder="Criteria" formControlName="criteria">
             <mat-option *ngFor="let i of criteria" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
             </mat-option>
@@ -53,7 +53,7 @@
         </mat-form-field>
 
         <mat-form-field class="col-md-2">
-          <mat-select placeholder="Target type" formControlName="targetType">
+          <mat-select  [disableOptionCentering]="true" placeholder="Target type" formControlName="targetType">
             <mat-option *ngFor="let i of targetTypes" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ i }}
             </mat-option>
@@ -65,7 +65,7 @@
         </mat-form-field>
 
         <mat-form-field class="col-md-2">
-          <mat-select placeholder="Group" formControlName="group">
+          <mat-select  [disableOptionCentering]="true" placeholder="Group" formControlName="group">
             <mat-option *ngFor="let group of groups" [value]="group" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
               {{ group.name }}
             </mat-option>

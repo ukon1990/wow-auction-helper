@@ -4,7 +4,7 @@
   </mat-form-field>
 
   <mat-form-field class="col">
-    <mat-select placeholder="Profession" formControlName="profession">
+    <mat-select  [disableOptionCentering]="true" placeholder="Profession" formControlName="profession">
       <mat-option value="All" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
       <mat-option *ngFor="let i of professions" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         {{ i }}
@@ -20,7 +20,7 @@
   </div>
 
   <mat-form-field class="ml-2 mr-2 col">
-    <mat-select placeholder="Item class" formControlName="itemClass">
+    <mat-select  [disableOptionCentering]="true" placeholder="Item class" formControlName="itemClass">
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
@@ -31,7 +31,7 @@
   </mat-form-field>
 
   <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]" class="ml-2 mr-2 col">
-    <mat-select placeholder="Item sub class" formControlName="itemSubClass">
+    <mat-select  [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
       <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
@@ -42,7 +42,7 @@
   </mat-form-field>
 
   <mat-form-field class="col">
-    <mat-select placeholder="Expansion" formControlName="expansion">
+    <mat-select  [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
       <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
       <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         {{ expansion }}

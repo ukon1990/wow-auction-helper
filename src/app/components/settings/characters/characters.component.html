@@ -6,8 +6,8 @@
 <!-- Form -->
 <form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="_characterForm">
   <mat-form-field class="col-md-3">
-    <mat-select placeholder="Realm" formControlName="realm">
-      <mat-select placeholder="Realm" formControlName="realm">
+    <mat-select  [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
+      <mat-select  [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
         <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
           {{ getRealmWithkey(slug).name }}
         </mat-option>

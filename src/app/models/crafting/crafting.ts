@@ -10,6 +10,7 @@ import { Reagent } from './reagent';
 import wordsToNumbers from 'words-to-numbers';
 
 export class Crafting {
+  public static ahCutModifier = 0.95;
 
   public static checkForMissingRecipes(craftingService: CraftingService): void {
     const missingRecipes = [];
@@ -102,13 +103,12 @@ export class Crafting {
   }
 
   public static calculateCost(): void {
+    Object.keys(SharedService.itemRecipeMap).forEach(key => {
+      SharedService.itemRecipeMap[key].length = 0;
+    });
+
     SharedService.recipes
-      .forEach((r: Recipe) => {
-        if (SharedService.itemRecipeMap[r.itemID]) {
-          SharedService.itemRecipeMap[r.itemID].length = 0;
-        }
-        this.costForRecipe(r);
-      });
+      .forEach(r => this.costForRecipe(r));
   }
 
   private static costForRecipe(recipe: Recipe): void {
@@ -128,14 +128,23 @@ export class Crafting {
         recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
       }
       recipe.reagents.forEach(r => {
+        const re = SharedService.recipesMapPerItemKnown[r.itemID];
         // If this is a intermediate craft
-        if (SharedService.user.useIntermediateCrafting &&
-          SharedService.recipesMapPerItemKnown[r.itemID]) {
-          const re = SharedService.recipesMapPerItemKnown[r.itemID];
+        if (SharedService.user.useIntermediateCrafting && re) {
           if (re.reagents.length > 0) {
+            let tmpCost = 0;
+            const regularCost = this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
             re.reagents.forEach(rea => {
-              recipe.cost += this.getCost(rea.itemID, rea.count) / CustomProcs.get(re) * r.count;
+              tmpCost += this.getCost(rea.itemID, rea.count) / CustomProcs.get(re) * r.count;
             });
+
+            if (tmpCost < regularCost) {
+              recipe.cost += tmpCost;
+              r.intermediateEligible = true;
+              r.recipe = re;
+            } else {
+              recipe.cost += regularCost;
+            }
           }
         } else {
           recipe.cost += this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
@@ -143,9 +152,9 @@ export class Crafting {
       });
 
       // Adding AH cut
-      recipe.cost = recipe.cost * 1.05;
+      recipe.cost = recipe.cost;
       // Doing the cost math
-      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]);
+      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * Crafting.ahCutModifier;
     } catch (e) {
       console.error('Calc issue with recipe', e, recipe);
     }

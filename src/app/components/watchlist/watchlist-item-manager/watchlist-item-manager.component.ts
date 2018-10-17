@@ -22,17 +22,13 @@ export class WatchlistItemManagerComponent implements OnInit {
 
   form: FormGroup;
   criteria = new Array<string>();
-  comparableVariables = new Array<string>();
+  comparableVariables = SharedService.user.watchlist.COMPARABLE_VARIABLES_LIST;
   targetTypes = new Array<string>();
   groups = new Array<WatchlistGroup>();
 
   constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
     Object.keys(SharedService.user.watchlist.CRITERIA).forEach(key => {
       this.criteria.push(SharedService.user.watchlist.CRITERIA[key]);
-    });
-
-    Object.keys(SharedService.user.watchlist.COMPARABLE_VARIABLES).forEach(key => {
-      this.comparableVariables.push(SharedService.user.watchlist.COMPARABLE_VARIABLES[key]);
     });
 
     Object.keys(SharedService.user.watchlist.TARGET_TYPES).forEach(key => {

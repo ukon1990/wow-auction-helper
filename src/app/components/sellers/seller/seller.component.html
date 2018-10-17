@@ -27,7 +27,7 @@
                 <wah-seller-chart [seller]="getSeller()"></wah-seller-chart>
             </mat-tab>
             <mat-tab label="Auctions ({{ getSeller().auctions.length | number }})">
-              <wah-data-table [id]="'item'" iconSize="22" [columns]="columns" [data]="getSeller().auctions">
+              <wah-data-table [id]="'item'" iconSize="22" [columns]="columns" [data]="getSeller().auctions" filterParameter="name">
               </wah-data-table>
             </mat-tab>
           </mat-tab-group>

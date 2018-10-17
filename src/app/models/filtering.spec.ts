@@ -7,7 +7,7 @@ import { Filters } from './filtering';
 import { Item } from './item/item';
 import { FormBuilder } from '@angular/forms';
 
-fdescribe('Filters', () => {
+describe('Filters', () => {
   let component: AuctionsComponent;
   let fixture: ComponentFixture<AuctionsComponent>;
 

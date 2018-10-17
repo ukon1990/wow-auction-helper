@@ -89,36 +89,51 @@ export class CraftingService {
   }
 
   handleRecipes(recipes: any): void {
-    const missingItems = [],
+    const missingItems = [], map = new Map<number, Recipe>(),
       noRecipes = SharedService.recipes.length === 0;
     SharedService.downloading.recipes = false;
 
-    recipes['recipes'].forEach((recipe: Recipe) => {
-      if (SharedService.recipesMap[recipe.spellID]) {
-        Object.keys(recipe).forEach(key => {
-          SharedService.recipesMap[recipe.spellID][key] = recipe[key];
-        });
-        // In case of a full clear
-        if (noRecipes) {
+    if (recipes['recipes'].length > 0) {
+      const list = SharedService.recipes.concat(recipes['recipes']);
+      SharedService.recipes = [];
+      list.forEach((recipe: Recipe) => {
+        if (!recipe) {
+          return;
+        }
+
+        if (recipe.name.indexOf('Pact of Versatility') > -1) {
+          console.log(recipe.name, recipe.rank, recipe.reagents[0].count);
+        }
+
+        if (map[recipe.spellID]) {
+          Object.keys(recipe).forEach(key => {
+            map[recipe.spellID][key] = recipe[key];
+          });
+        } else {
+          map[recipe.spellID] = recipe;
           SharedService.recipes.push(recipe);
         }
-      } else {
-        SharedService.recipes.push(recipe);
-      }
-    });
+      });
+      console.log('List length', list.length, SharedService.recipes.length, Object.keys(map).length);
+    }
     console.log('Recipe download is completed');
 
     // Adding items if there are any missing
-    SharedService.recipes.forEach(r => {
-      this.handleRecipe(r, missingItems);
-    });
+    try {
+      SharedService.recipes.forEach(r => {
+        this.handleRecipe(r, missingItems);
+      });
 
-    if (missingItems.length < 100) {
-      this._itemService.addItems(missingItems);
+      if (missingItems.length < 100) {
+        this._itemService.addItems(missingItems);
+      }
+
+      this.dbService.addRecipes(SharedService.recipes);
+      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    } catch (error) {
+      console.error(error);
     }
-
-    this.dbService.addRecipes(SharedService.recipes);
-    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    console.log('List length', SharedService.recipes.length);
   }
 
   /**

@@ -1,4 +1,4 @@
-import {Injectable, ErrorHandler} from '@angular/core';
+import {Injectable, ErrorHandler, EventEmitter} from '@angular/core';
 import {SharedService} from './shared.service';
 import {HttpClient} from '@angular/common/http';
 import {Item} from '../models/item/item';
@@ -15,6 +15,7 @@ import {Recipe} from '../models/crafting/recipe';
 
 @Injectable()
 export class ItemService {
+    public static itemSelection: EventEmitter<number> = new EventEmitter<number>();
     readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
 
     constructor(private _http: HttpClient,

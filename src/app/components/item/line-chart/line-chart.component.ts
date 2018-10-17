@@ -1,8 +1,9 @@
 import { FormControl } from '@angular/forms';
-import { Component, Input, ViewChild, ElementRef, OnChanges, AfterContentInit } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnChanges, AfterContentInit, SimpleChanges } from '@angular/core';
 import { Chart } from 'chart.js';
 import { Auction } from '../../../models/auction/auction';
 import { SharedService } from '../../../services/shared.service';
+import { Subscription } from 'rxjs';
 
 // Replace with : http://www.chartjs.org/samples/latest/
 declare let $: Function;
@@ -11,11 +12,12 @@ declare let $: Function;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements AfterContentInit {
+export class LineChartComponent implements AfterContentInit, OnChanges {
   @Input() data: Array<Auction>;
   viewIsInit = false;
   hideOutliers: FormControl = new FormControl(true);
   chart: Chart;
+  selectionSubscription: Subscription;
 
   constructor() {
     this.hideOutliers.valueChanges.subscribe(() => {
@@ -25,6 +27,14 @@ export class LineChartComponent implements AfterContentInit {
 
   ngAfterContentInit(): void {
     this.paintChart();
+    this.viewIsInit = true;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.data && changes.data.currentValue) {
+      this.data = changes.data.currentValue;
+      this.paintChart();
+    }
   }
 
   paintChart(): void {

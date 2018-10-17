@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, Output, OnChanges } from '@angular/core';
+import { Component, AfterViewInit, Input, Output, OnChanges, OnDestroy } from '@angular/core';
 import { PageEvent } from '@angular/material';
 import { ColumnDescription } from '../../models/column-description';
 import { SharedService } from '../../services/shared.service';
@@ -15,13 +15,16 @@ import { ShoppingCartRecipe } from '../../models/shopping-cart';
 import { Angulartics2 } from 'angulartics2';
 import { CustomProcs } from '../../models/crafting/custom-proc';
 import { Watchlist, WatchlistGroup } from '../../models/watchlist/watchlist';
+import { ItemService } from '../../services/item.service';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'wah-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss']
 })
-export class DataTableComponent implements AfterViewInit, OnChanges {
+export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() id: any;
   @Input() iconSize: number;
@@ -34,8 +37,14 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() useAuctionItemForName: boolean;
   @Input() linkType: string;
   @Input() itemsPerPage = 10;
+  @Input() maxVisibleRows: number;
   @Input() disableItemsPerPage: boolean;
+  @Input() filterParameter: string;
 
+  filteredData = [];
+  filterSubscriber: Subscription;
+
+  searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
   sorter: Sorter;
@@ -57,6 +66,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     if (this.numOfRows) {
       this.pageEvent.pageSize = this.numOfRows;
     }
+
+    if (this.filterParameter) {
+      this.filterSubscriber = this.searchField.valueChanges
+        .subscribe(() => this.filterData());
+    }
   }
 
   /* istanbul ignore next */
@@ -67,7 +81,12 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
         this.pageEvent.pageIndex = 0;
       }
       this.previousLength = change.data.currentValue.length;
-      this.sorter.sort(this.data);
+      this.filteredData = change.data.currentValue;
+      this.sorter.sort(this.filteredData);
+
+      if (this.filterParameter) {
+        this.filterData();
+      }
     }
 
     if (change && change.itemsPerPage && change.itemsPerPage.currentValue) {
@@ -75,7 +94,33 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.filterSubscriber) {
+      this.filterSubscriber.unsubscribe();
+    }
+  }
+
+  filterData(): void {
+    if (!this.filterParameter || !this.data) {
+      this.filteredData = this.data;
+      return;
+    }
+    const name = this.searchField.value;
+    this.pageEvent.pageIndex = 0;
+    this.filteredData = this.data.filter(d => {
+      const compareName = d[this.filterParameter] ?
+        d[this.filterParameter] : SharedService.items[d.item][this.filterParameter];
+      return compareName.toLowerCase()
+        .indexOf((name !== null ? name : '')
+        .toLowerCase()) > -1;
+    });
+  }
+
   select(item): void {
+    SharedService.selectedItemId = undefined;
+    SharedService.selectedPetSpeciesId = undefined;
+    SharedService.selectedSeller = undefined;
+
     if (this.id === 'name') {
       this.setSelectedSeller(item);
     } else {
@@ -109,16 +154,18 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
+    SharedService.preScrollPosition = window.scrollY;
     SharedService.selectedSeller = SharedService.sellersMap[seller.name];
-    SharedService.selectedItemId = undefined;
-    SharedService.selectedPetSpeciesId = undefined;
+    SharedService.events.detailPanelOpen.emit(true);
   }
 
   /* istanbul ignore next */
   setSelectedItem(item: any): void {
+    SharedService.preScrollPosition = window.scrollY;
     SharedService.selectedItemId = item.item || item.itemID || item.id;
     this.setSelectedPet(item);
-    SharedService.selectedSeller = undefined;
+    ItemService.itemSelection.emit(SharedService.selectedItemId);
+    SharedService.events.detailPanelOpen.emit(true);
   }
 
   /* istanbul ignore next */
@@ -160,6 +207,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     if (!this.pageEvent || !this.pageEvent.pageSize) {
       return this.pageRows[0];
     }
+
+    if (this.maxVisibleRows) {
+      return this.maxVisibleRows;
+    }
+
     return this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1);
   }
 
@@ -235,7 +287,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   removeFromList(i): void {
     const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
-    this.data.splice(pagignationIndex + i, 1);
+    this.filteredData.splice(pagignationIndex + i, 1);
   }
 
   removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
@@ -253,7 +305,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   sort(column: ColumnDescription): void {
     this.sorter.addKey(column.key, column.dataType === 'gold-per-item');
-    this.sorter.sort(this.data, column.customSort);
+    this.sorter.sort(this.filteredData, column.customSort);
   }
 
   getSource(recipe: Recipe): string {

@@ -157,7 +157,7 @@
             <td>Current realm</td>
             <td>
               <mat-form-field>
-                <mat-select placeholder="Realm" [formControl]="realmControl">
+                <mat-select  [disableOptionCentering]="true" placeholder="Realm" [formControl]="realmControl">
                   <mat-option *ngFor="let realm of getUserRealms()" [value]="slug">
                     {{ realm.name }}
                   </mat-option>

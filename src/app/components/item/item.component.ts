@@ -12,6 +12,7 @@ import { Angulartics2 } from 'angulartics2';
 import { Endpoints } from '../../services/endpoints';
 import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material';
 import { Subscription } from 'rxjs';
+import { ItemService } from '../../services/item.service';
 
 @Component({
   selector: 'wah-item',
@@ -33,6 +34,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     auctionItem: undefined,
     seller: undefined
   };
+  selectionSubscription: Subscription;
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -89,6 +91,10 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       action: 'Opened',
       properties: { category: 'Item detail view' },
     });
+
+    this.selectionSubscription = ItemService.itemSelection.subscribe(() => {
+      this.ngOnInit();
+    });
   }
 
   ngOnInit(): void {
@@ -117,6 +123,10 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   ngOnDestroy(): void {
     this.selectedTabSubscription.unsubscribe();
     SharedService.events.detailPanelOpen.emit(false);
+
+    if (this.selectionSubscription) {
+      this.selectionSubscription.unsubscribe();
+    }
   }
 
   setItemData(): void {
@@ -234,13 +244,14 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   getTUJUrl(): string {
-    return `${Endpoints.getUndermineUrl()}item/${this.selected.item().id}`;
+    return `${Endpoints.getUndermineUrl()}item/${this.selected.item.id}`;
   }
 
   /* istanbul ignore next */
   close(): void {
     SharedService.selectedItemId = undefined;
     SharedService.selectedPetSpeciesId = undefined;
+    SharedService.events.detailPanelOpen.emit(false);
   }
 
   /* istanbul ignore next */

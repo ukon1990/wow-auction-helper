@@ -78,17 +78,17 @@
             </mat-card-header>
             <mat-card-content>
               <mat-form-field>
-                <mat-select placeholder="Region" formControlName="region">
-                  <mat-option value="eu" (click)="getRealms()">
+                <mat-select  [disableOptionCentering]="true" placeholder="Region" formControlName="region">
+                  <mat-option value="eu">
                     Europe
                   </mat-option>
-                  <mat-option value="us" (click)="getRealms()">
+                  <mat-option value="us">
                     America
                   </mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field>
-                <mat-select placeholder="Realm" formControlName="realm">
+                <mat-select  [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
                   <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
                     {{ getRealmWithkey(slug).name }}
                   </mat-option>
@@ -99,7 +99,7 @@
               </mat-form-field>
 
               <mat-form-field class="col-md-4">
-                <mat-select placeholder="Item language" formControlName="locale">
+                <mat-select  [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
                   <mat-option *ngFor="let locale of locales" [value]="locale.locale">
                     {{ locale.name }}
                   </mat-option>

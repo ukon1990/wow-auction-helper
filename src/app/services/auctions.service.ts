@@ -130,7 +130,7 @@ export class AuctionsService {
       SharedService.user.realm
       }?format=json&apiKey=${
       SharedService.user.apiTsm
-      }`) // 'assets/mock/tsm.json'
+      }&fields=Id,MarketValue,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`) // 'assets/mock/tsm.json'
       .toPromise()
       .then(tsm => {
         localStorage['timestamp_tsm'] = new Date().toDateString();
