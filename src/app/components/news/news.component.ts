@@ -21,7 +21,7 @@ export class NewsComponent implements AfterViewInit {
       try {
         console.log(localStorage['timestamp_news'], version);
         if (localStorage['realm'] &&
-          localStorage['timestamp_news'] !== version) {
+            localStorage['timestamp_news'] && localStorage['timestamp_news'] !== version) {
             this.showNews = true;
         }
       } catch (e) {
