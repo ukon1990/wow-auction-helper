@@ -69,6 +69,11 @@ export class SetupComponent implements OnInit {
     this._characterForm.controls.locale.valueChanges.subscribe(locale => {
       localStorage['locale'] = locale;
     });
+
+    this.getRealms();
+    this._characterForm.controls.region
+          .valueChanges
+        .subscribe(region => this.getRealms(region));
   }
 
   ngOnInit() {
@@ -93,11 +98,11 @@ export class SetupComponent implements OnInit {
     return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
   }
 
-  getRealms(): void {
+  getRealms(region?: string): void {
     this.isDownloadingRealm = true;
     setTimeout(() => {
       this._realmService
-        .getRealms(this._characterForm.value.region)
+        .getRealms(region ? region : this._characterForm.value.region)
           .then(r => {
             this.isDownloadingRealm = false;
           })

@@ -9,11 +9,9 @@ declare var $;
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements AfterViewInit {
-  currentDate: string;
   showNews: boolean;
 
   constructor() {
-    this.currentDate = new Date().toLocaleDateString();
   }
 
   ngAfterViewInit() {
@@ -21,8 +19,10 @@ export class NewsComponent implements AfterViewInit {
       try {
         console.log(localStorage['timestamp_news'], version);
         if (localStorage['realm'] &&
-          localStorage['timestamp_news'] !== version) {
+            localStorage['timestamp_news'] && localStorage['timestamp_news'] !== version) {
             this.showNews = true;
+        } else if (!localStorage['timestamp_news']) {
+            this.close();
         }
       } catch (e) {
         console.log(e);
