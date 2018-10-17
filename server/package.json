@@ -22,7 +22,7 @@
     "serve-debug": "nodemon --inspect dist/server.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "add-build-to-zip": "rm build.zip; zip -r build.zip  dist/ package.json package-lock.json tslint.json jest.config.js src/ tsconfig.json .env"
-    },
+  },
   "dependencies": {
     "async": "^2.6.0",
     "bcrypt-nodejs": "^0.0.3",
