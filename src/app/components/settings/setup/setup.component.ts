@@ -128,12 +128,11 @@ export class SetupComponent implements OnInit {
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {
-      console.log(JSON.parse(reader.result));
       try {
         SharedService.user.watchlist
           .attemptRestoreFromString(reader.result);
 
-        User.import(reader.result);
+        User.import(reader.result as string);
 
         this.angulartics2.eventTrack.next({
           action: 'Imported existing setup from file',

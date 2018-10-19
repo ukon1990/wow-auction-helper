@@ -37,7 +37,6 @@ export class ShuffleItemManageComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(console.log(this.newRemains), 100);
   }
 
   updateTargetItem(target: RemainsSource): void {
