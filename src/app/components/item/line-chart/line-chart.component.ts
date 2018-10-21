@@ -21,7 +21,7 @@ export class LineChartComponent implements AfterContentInit, OnChanges {
 
   constructor() {
     this.hideOutliers.valueChanges.subscribe(() => {
-      setTimeout(this.paintChart(), 100);
+      setTimeout(this.paintChart, 100);
     });
   }
 
