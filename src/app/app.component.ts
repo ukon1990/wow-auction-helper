@@ -69,6 +69,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         window.scrollTo(0, SharedService.preScrollPosition);
       }
     });
+    this.angulartics2GoogleAnalytics.startTracking();
   }
 
   ngOnInit(): void {
