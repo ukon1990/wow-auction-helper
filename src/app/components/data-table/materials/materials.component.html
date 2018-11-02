@@ -1,9 +1,9 @@
-<div class="full-width mt-2 mb-2" *ngFor="let r of recipe.reagents">
+<div class="materials-scrollable full-width mt-2 mb-2" *ngFor="let r of recipe.reagents">
 
   <!-- Intermidiate craft -->
   <mat-card *ngIf="r.intermediateEligible && useIntermediateCrafting(); else regular" class="p-0 m-0 pt-2 pb-2">
     <mat-card-header  (click)="setSelectedItem(r)">
-      <mat-card-title>
+      <mat-card-subtitle>
         <a class="col-md-12" rel="spell={{ r.recipe.spellID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
           <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
           {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} - 
@@ -11,9 +11,8 @@
             {{ r.recipe.cost | gold }} 
             {{ getReagentFromVendorString(r) }}
           </span>
-          ({{ r.intermediateEligible }})
         </a>
-      </mat-card-title>
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <div class="ml-3 mr-1 mb-1" *ngFor="let subR of r.recipe.reagents" (click)="setSelectedItem(subR)">

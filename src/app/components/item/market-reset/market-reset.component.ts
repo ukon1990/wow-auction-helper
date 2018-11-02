@@ -55,7 +55,7 @@ export class MarketResetComponent implements OnInit {
     this.checkInterval = setInterval(() => {
       if (SharedService.auctions.length > 0) {
         clearInterval(this.checkInterval);
-        setTimeout(this.setResults(), 100);
+        setTimeout(this.setResults, 100);
       }
     }, 1000);
   }

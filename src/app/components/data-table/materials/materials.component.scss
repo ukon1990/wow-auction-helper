@@ -5,3 +5,8 @@
 .full-width {
     width: 100%;
 }
+.materials-scrollable {
+    max-height: 4em;
+    overflow-y: auto;
+    display: block;
+}

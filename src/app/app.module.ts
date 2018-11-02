@@ -154,7 +154,7 @@ import { FooterComponent } from './components/footer/footer.component';
     FormsModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
+    Angulartics2Module.forRoot(),
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
   ],
   providers: [

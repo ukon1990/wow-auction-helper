@@ -15,6 +15,7 @@ export class DataBoardsComponent implements OnInit {
   @Input() itemsPerPage = 12;
   @Input() type: string;
 
+  locale = localStorage['locale'].split('-')[0];
   itemToEdit: Remains;
   pageRows: Array<number> = [12, 24, 36];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };

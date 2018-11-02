@@ -202,12 +202,12 @@ export class GeneralSettingsComponent implements OnInit {
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {
-      console.log(JSON.parse(reader.result));
+      console.log(reader.result);
       try {
         SharedService.user.watchlist
           .attemptRestoreFromString(reader.result);
 
-        User.import(reader.result);
+        User.import(reader.result.toString());
 
         this.angulartics2.eventTrack.next({
           action: 'Imported existing setup from file',
