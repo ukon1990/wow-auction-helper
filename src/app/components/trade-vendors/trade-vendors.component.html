@@ -16,6 +16,6 @@
     <p *ngIf="!tv.useForCrafting" class="m-0">
       The current lowest buyout per item is {{ getAuctionItem(tv).buyout | gold }}, with a market value of {{ getAuctionItem(tv).mktPrice | gold }}.
     </p>
-    <wah-data-table [columns]="columns" [data]="filteredTradeVendorItems(tv)" id="itemID"></wah-data-table>
+    <wah-data-table [columns]="columns" [data]="filteredTradeVendorItems(tv)" id="itemID" [iconSize]="22"></wah-data-table>
   </mat-tab>
 </mat-tab-group>

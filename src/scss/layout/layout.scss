@@ -139,3 +139,8 @@ wah-character {
 .h-2em {
   height: 2em !important;
 }
+
+/* The old font-size for mat-header-title looks better for titles containing item names */
+.mat-card-header .mat-card-title.small-title {
+  font-size: 14px;
+}
