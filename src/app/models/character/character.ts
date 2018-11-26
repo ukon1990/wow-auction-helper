@@ -25,6 +25,16 @@ export class Character {
   pets?: UserPets;
   petSlots?: PetSlot[];
   downloading?: boolean;
+
+  constructor(realm?: string, name?: string) {
+    if (realm) {
+      this.realm = realm;
+    }
+
+    if (name) {
+      this.name = name;
+    }
+  }
 }
 
 class Profession {
@@ -50,7 +60,8 @@ class CharacterStatistic {
   money: false;
 }
 
-class Mount { }
+class Mount {
+}
 
 class UserPets {
   numCollected = 0;
@@ -86,4 +97,5 @@ class PetStats {
   speed: number;
 }
 
-class PetSlot { }
+class PetSlot {
+}

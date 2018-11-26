@@ -46,7 +46,7 @@ export class Endpoints {
         query
       }${
         Endpoints.getBinder(query)
-      }apikey=${Keys.blizzard}`;
+      }apikey=${Keys.blizzard}&locale=${ localStorage['locale'] }`;
   }
 
   public static getRegion (region: string): string {
