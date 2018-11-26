@@ -26,6 +26,7 @@ export class AuctionHandler {
     Seller.clearSellers();
 
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
+    console.log('User test', SharedService.userAuctions);
 
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
@@ -34,12 +35,12 @@ export class AuctionHandler {
 
     SharedService.auctions = auctions;
     auctions.forEach(a => {
-      if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`]) {
-        const petId = `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
+      if (a.petSpeciesId && AuctionHandler.isPetNotInList(a)) {
+        const petId = AuctionHandler.getPetId(a);
         SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
 
-        if (!SharedService.pets[a.petSpeciesId] && petService) {
+        if (AuctionHandler.isPetMissing(a, petService)) {
           console.log('Attempting to add pet');
           petService.getPet(a.petSpeciesId).then(p => {
             AuctionHandler.getItemName(a);
@@ -97,8 +98,20 @@ export class AuctionHandler {
     }, 100);
   }
 
+  private static getPetId(a) {
+    return `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
+  }
+
   private static auctionPriceHandler(): AuctionItem {
     return null;
+  }
+
+  private static  isPetNotInList(a) {
+    return !SharedService.auctionItemsMap[AuctionHandler.getPetId(a)];
+  }
+
+  private static  isPetMissing(a, petService: PetsService) {
+    return !SharedService.pets[a.petSpeciesId] && petService;
   }
 
   private static getItemName(auction: Auction): string {
