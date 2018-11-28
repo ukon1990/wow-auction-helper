@@ -39,13 +39,14 @@
     "pako": "^1.0.6",
     "push.js": "^1.0.9",
     "rxjs": "^6.3.3",
+    "tslib": "^1.9.0",
     "words-to-numbers": "^1.5.1",
     "xlsx": "^0.14.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.10.6",
-    "@angular/cli": "7.0.6",
+    "@angular/cli": "7.1.0",
     "@angular/compiler-cli": "7.1.0",
     "@angular/language-service": "7.1.0",
     "@types/jasmine": "~3.3.0",
