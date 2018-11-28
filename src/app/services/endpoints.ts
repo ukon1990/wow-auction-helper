@@ -1,6 +1,6 @@
-import { SharedService } from './shared.service';
-import { Keys } from './keys';
-import { environment } from '../../environments/environment';
+import {SharedService} from './shared.service';
+import {Keys} from './keys';
+import {environment} from '../../environments/environment';
 
 export class Endpoints {
   public static readonly TSM_API = 'https://api.tradeskillmaster.com/v1/item';
@@ -15,6 +15,7 @@ export class Endpoints {
   public static readonly LAMBDAS = {
     AUCTION_US: 'https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/default/getAuctions'
   };
+
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public static getUrl(path: string): string {
@@ -24,7 +25,7 @@ export class Endpoints {
     }
     console.log('path', url);
     return environment.production ?
-      url : `${ Endpoints.WAH_LOCAL_API }${ path }`;
+      url : `${Endpoints.WAH_LOCAL_API}${path}`;
   }
 
   public static getUndermineUrl(): string {
@@ -34,22 +35,29 @@ export class Endpoints {
 
     return `https://theunderminejournal.com/#${
       SharedService.user.region}/${
-        SharedService.realms[SharedService.user.realm].slug}/`;
+      Endpoints.getRealm().slug}/`;
   }
 
- // http://localhost:3000/api/auction?
-  public static getBattleNetApi(query: string, region?: string): string {
+  private static getRealm() {
+    return SharedService.realms[SharedService.user.realm];
+  }
+
+// http://localhost:3000/api/auction?
+  public static getBattleNetApi(query: string, region?: string, dontUseUserLocale?: boolean): string {
     // 'assets/mock/auctions.json'
+    const localeString = dontUseUserLocale ?
+      '' : `&locale=${Endpoints.getRealm().locale}`;
+
     return `https://${
       Endpoints.getRegion(region)
       }.api.battle.net/wow/${
-        query
+      query
       }${
-        Endpoints.getBinder(query)
-      }apikey=${Keys.blizzard}`;
+      Endpoints.getBinder(query)
+      }apikey=${Keys.blizzard}${localeString}`;
   }
 
-  public static getRegion (region: string): string {
+  public static getRegion(region: string): string {
     return region ? (region === 'eu' ? 'eu' : 'us') : SharedService.user.region;
   }
 

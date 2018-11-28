@@ -69,7 +69,7 @@ export class CraftingService {
       .toPromise() as Promise<Recipe>;
   }
 
-  private handleRecipe(r: Recipe, missingItems?: Array<number>): void {
+  handleRecipe(r: Recipe, missingItems?: Array<number>): void {
     const possiblyBuggedRecipe = !r.profession && r.name.indexOf('Create ') !== -1;
     if (missingItems && r.itemID > 0 && !SharedService.items[r.itemID]) {
       missingItems.push(r.itemID);
