@@ -1,16 +1,14 @@
-import { User } from './../user/user';
-import { SharedService } from './../../services/shared.service';
-import { Auction } from './auction';
-import { AuctionItem } from './auction-item';
-import { Crafting } from '../crafting/crafting';
-import { Dashboard } from '../dashboard';
-import { TradeVendors } from '../item/trade-vendors';
-import { Seller } from '../seller';
-import { AuctionPet } from './auction-pet';
-import { Notifications } from '../user/notification';
-import { WoWUction } from './wowuction';
-import { PetsService } from '../../services/pets.service';
-import { ProspectingAndMillingUtil } from '../../utils/prospect-milling.util';
+import {SharedService} from './../../services/shared.service';
+import {Auction} from './auction';
+import {AuctionItem} from './auction-item';
+import {Crafting} from '../crafting/crafting';
+import {Dashboard} from '../dashboard';
+import {TradeVendors} from '../item/trade-vendors';
+import {Seller} from '../seller';
+import {AuctionPet} from './auction-pet';
+import {WoWUction} from './wowuction';
+import {PetsService} from '../../services/pets.service';
+import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 
 export class AuctionHandler {
   /**
@@ -26,6 +24,7 @@ export class AuctionHandler {
     Seller.clearSellers();
 
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
+    console.log('User test', SharedService.userAuctions);
 
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
@@ -34,19 +33,19 @@ export class AuctionHandler {
 
     SharedService.auctions = auctions;
     auctions.forEach(a => {
-      if (a.petSpeciesId && !SharedService.auctionItemsMap[`${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`]) {
-        const petId = `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
+      if (a.petSpeciesId && AuctionHandler.isPetNotInList(a)) {
+        const petId = AuctionHandler.getPetId(a);
         SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
 
-        if (!SharedService.pets[a.petSpeciesId] && petService) {
+        if (AuctionHandler.isPetMissing(a, petService)) {
           console.log('Attempting to add pet');
           petService.getPet(a.petSpeciesId).then(p => {
             AuctionHandler.getItemName(a);
             console.log('Fetched pet', SharedService.pets[a.petSpeciesId]);
           });
         } else {
-          if (!SharedService.pets[a.petSpeciesId].auctions) {
+          if (!AuctionHandler.petHasAuctions(a)) {
             SharedService.pets[a.petSpeciesId].auctions = new Array<AuctionItem>();
           }
           SharedService.pets[a.petSpeciesId].auctions.push(SharedService.auctionItemsMap[petId]);
@@ -97,8 +96,24 @@ export class AuctionHandler {
     }, 100);
   }
 
+  private static petHasAuctions(a) {
+    return SharedService.pets[a.petSpeciesId].auctions;
+  }
+
+  private static getPetId(a) {
+    return `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
+  }
+
   private static auctionPriceHandler(): AuctionItem {
     return null;
+  }
+
+  private static  isPetNotInList(a) {
+    return !SharedService.auctionItemsMap[AuctionHandler.getPetId(a)];
+  }
+
+  private static  isPetMissing(a, petService: PetsService) {
+    return !SharedService.pets[a.petSpeciesId] && petService;
   }
 
   private static getItemName(auction: Auction): string {
@@ -130,6 +145,34 @@ export class AuctionHandler {
   }
 
   private static newAuctionItem(auction: Auction): AuctionItem {
+    const tmpAuc = AuctionHandler.getTempAuctionItem(auction);
+
+    if (AuctionHandler.useTSM() && SharedService.tsm[auction.item]) {
+      AuctionHandler.setTSMData(auction, tmpAuc);
+
+    } else if (AuctionHandler.useWoWUction() && SharedService.wowUction[auction.item]) {
+      AuctionHandler.setWowuctionData(auction, tmpAuc);
+    }
+    return tmpAuc;
+  }
+
+  private static setWowuctionData(auction: Auction, tmpAuc) {
+    const wowuItem: WoWUction = SharedService.wowUction[auction.item];
+    tmpAuc.regionSaleRate = wowuItem.estDemand;
+    tmpAuc.mktPrice = wowuItem.mktPrice;
+    tmpAuc.avgDailySold = wowuItem.avgDailySold;
+    tmpAuc.avgDailyPosted = wowuItem.avgDailyPosted;
+  }
+
+  private static setTSMData(auction: Auction, tmpAuc) {
+    const tsmItem = SharedService.tsm[auction.item];
+    tmpAuc.regionSaleRate = tsmItem.RegionSaleRate;
+    tmpAuc.mktPrice = tsmItem.MarketValue;
+    tmpAuc.avgDailySold = tsmItem.RegionAvgDailySold;
+    tmpAuc.regionSaleAvg = tsmItem.RegionSaleAvg;
+  }
+
+  private static getTempAuctionItem(auction: Auction) {
     const tmpAuc = new AuctionItem();
     tmpAuc.itemID = auction.item;
     tmpAuc.petSpeciesId = auction.petSpeciesId;
@@ -145,21 +188,6 @@ export class AuctionHandler {
     tmpAuc.quantityTotal += auction.quantity;
     tmpAuc.vendorSell = SharedService.items[tmpAuc.itemID] ? SharedService.items[tmpAuc.itemID].sellPrice : 0;
     tmpAuc.auctions.push(auction);
-
-    if (this.useTSM() && SharedService.tsm[auction.item]) {
-      const tsmItem = SharedService.tsm[auction.item];
-      tmpAuc.regionSaleRate = tsmItem.RegionSaleRate;
-      tmpAuc.mktPrice = tsmItem.MarketValue;
-      tmpAuc.avgDailySold = tsmItem.RegionAvgDailySold;
-      tmpAuc.regionSaleAvg = tsmItem.RegionSaleAvg;
-
-    } else if (this.useWoWUction() && SharedService.wowUction[auction.item]) {
-      const wowuItem: WoWUction = SharedService.wowUction[auction.item];
-      tmpAuc.regionSaleRate = wowuItem.estDemand;
-      tmpAuc.mktPrice = wowuItem.mktPrice;
-      tmpAuc.avgDailySold = wowuItem.avgDailySold;
-      tmpAuc.avgDailyPosted = wowuItem.avgDailyPosted;
-    }
     return tmpAuc;
   }
 

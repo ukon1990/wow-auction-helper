@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
-import { Item } from '../models/item/item';
-import { Auction } from '../models/auction/auction';
-import { AuctionHandler } from '../models/auction/auction-handler';
-import { SharedService } from './shared.service';
-import { TSM } from '../models/auction/tsm';
-import { WoWUction } from '../models/auction/wowuction';
-import { PetsService } from './pets.service';
-import { Pet } from '../models/pet';
-import { Recipe } from '../models/crafting/recipe';
+import {Item} from '../models/item/item';
+import {Auction} from '../models/auction/auction';
+import {AuctionHandler} from '../models/auction/auction-handler';
+import {SharedService} from './shared.service';
+import {TSM} from '../models/auction/tsm';
+import {WoWUction} from '../models/auction/wowuction';
+import {PetsService} from './pets.service';
+import {Pet} from '../models/pet';
+import {Recipe} from '../models/crafting/recipe';
+import {environment} from '../../environments/environment';
+
 /**
  * A Class for handeling the indexedDB
  */
@@ -33,8 +35,8 @@ export class DatabaseService {
       .then(() => {
         console.log('wah-db successfully started');
       }).catch(error => {
-        console.log('Unable to start indexedDB', error);
-      });
+      console.log('Unable to start indexedDB', error);
+    });
   }
 
   addItem(item: Item): void {
@@ -42,6 +44,9 @@ export class DatabaseService {
   }
 
   addItems(items: Array<Item>): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('items').bulkPut(items);
   }
 
@@ -62,10 +67,13 @@ export class DatabaseService {
   }
 
   clearItems(): void {
-      this.db.table('items').clear();
+    this.db.table('items').clear();
   }
 
   addPets(pets: Array<Pet>): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('pets').bulkPut(pets);
   }
 
@@ -86,10 +94,13 @@ export class DatabaseService {
   }
 
   clearPets(): void {
-      this.db.table('pets').clear();
+    this.db.table('pets').clear();
   }
 
   addRecipes(recipes: Array<Recipe>): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('recipes').bulkPut(recipes);
   }
 
@@ -113,6 +124,9 @@ export class DatabaseService {
 
 
   addAuction(auction: Auction): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('auctions').add(auction)
       .then(r =>
         console.log('Successfully added auctions to local DB'))
@@ -126,6 +140,9 @@ export class DatabaseService {
 
 
   addAuctions(auctions: Array<Auction>): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('auctions').clear();
     this.db.table('auctions')
       .bulkAdd(auctions)
@@ -148,6 +165,9 @@ export class DatabaseService {
   }
 
   addWoWUctionItems(wowuction: Array<WoWUction>): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('wowuction').clear();
     this.db.table('wowuction')
       .bulkPut(wowuction)
@@ -173,6 +193,9 @@ export class DatabaseService {
   }
 
   addTSMItems(tsm: Array<TSM>): void {
+    if (environment.test) {
+      return;
+    }
     this.db.table('tsm').clear();
     this.db.table('tsm')
       .bulkPut(tsm)

@@ -1,9 +1,8 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { TestModule } from '../modules/test.module';
-import { Compression } from './compression.util';
-import { FileService } from '../services/file.service';
+import {TestBed} from '@angular/core/testing';
+import {Compression} from './compression.util';
+import {FileService} from '../services/file.service';
 
-fdescribe('Compression', () => {
+describe('Compression', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
