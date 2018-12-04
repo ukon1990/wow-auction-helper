@@ -35,14 +35,18 @@ export class Endpoints {
 
     return `https://theunderminejournal.com/#${
       SharedService.user.region}/${
-      SharedService.realms[SharedService.user.realm].slug}/`;
+      Endpoints.getRealm().slug}/`;
   }
 
-  // http://localhost:3000/api/auction?
+  private static getRealm() {
+    return SharedService.realms[SharedService.user.realm];
+  }
+
+// http://localhost:3000/api/auction?
   public static getBattleNetApi(query: string, region?: string, dontUseUserLocale?: boolean): string {
     // 'assets/mock/auctions.json'
     const localeString = dontUseUserLocale ?
-      '' : `&locale=${localStorage['locale']}`;
+      '' : `&locale=${Endpoints.getRealm().locale}`;
 
     return `https://${
       Endpoints.getRegion(region)
