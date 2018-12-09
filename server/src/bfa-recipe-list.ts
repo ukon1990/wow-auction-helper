@@ -1,4 +1,22 @@
 export class BFALists {
+    private static tidesOfVengence = {
+      recipes: [
+        // Alchemy
+        287234, 286630, 286547, 287447, 287448, 287449, 287288, 291084, 291085, 291086, 286921, 286922, 286923,
+        // Blacksmith
+        287235, 286631, 286014, 286015, 286016, 285081, 285089, 285082, 285090, 285098
+        // Cooking - https://www.wowhead.com/bfa-cooking-guide#new-recipes
+      ],
+      items: [
+        165703, 165948,
+        // Alchemy
+        165721, 166974, 166975, 166976, 165926, 165927, 165928,
+        // Blacksmith
+        152812, 165406, 165414, 165379, 165389, 165397
+        // Cooking
+      ],
+      pets: []
+    };
     public static recipeIds: number[] = [
         280282,
         259412,
