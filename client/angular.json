@@ -11,7 +11,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "./server/src/public",
+            "outputPath": "../server/src/public",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -22,6 +22,7 @@
               "src/favicon.ico"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/scss/styles.scss"
             ],
             "scripts": [
@@ -77,6 +78,7 @@
               "node_modules/distinct-colors/dist/distinct-colors.min.js"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/scss/styles.scss"
             ],
             "assets": [

@@ -1,9 +1,9 @@
 import { Remains, RemainsSource } from '../models/item/remains.model';
 import { Item } from '../models/item/item';
 import { SharedService } from '../services/shared.service';
-import { AuctionItem } from '../../../server/src/models/auction/auction-item';
 import { defaultProspecting } from './default-prospecting.util';
 import { defaultMilling } from './default-milling.util';
+import { AuctionItem } from '../models/auction/auction-item';
 
 export class ProspectingAndMillingUtil {
   public static prospecting: Remains[] = [];

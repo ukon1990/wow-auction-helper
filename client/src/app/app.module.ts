@@ -82,6 +82,7 @@ import { UpdateService } from './services/update.service';
 import { ManageItemsBuiltInComponent } from './components/dashboard/manage-items-built-in/manage-items-built-in.component';
 import { ManageItemsBuiltInItemComponent } from './components/dashboard/manage-items-built-in-item/manage-items-built-in-item.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -155,7 +156,8 @@ import { FooterComponent } from './components/footer/footer.component';
     HttpClientModule,
     HttpClientJsonpModule,
     Angulartics2Module.forRoot(),
-    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
+    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
+    BrowserAnimationsModule
   ],
   providers: [
     RealmService,
