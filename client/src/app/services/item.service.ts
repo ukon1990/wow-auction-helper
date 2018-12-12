@@ -24,21 +24,24 @@ export class ItemService {
                 private angulartics2: Angulartics2) {
     }
 
-    addItem(itemID: number): void {
+    addItem(itemID: number): Promise<any> {
         console.log('Attempting to add item data for ' + itemID);
-        this._http.get(Endpoints.getUrl(`item/${itemID}?locale=${ localStorage['locale'] }`))
+        return this._http.get(Endpoints.getUrl(`item/${itemID}?locale=${ localStorage['locale'] }`))
             .toPromise()
-            .then((item) => {
+            .then((item: Item) => {
                 console.log('downloaded item', item);
-                SharedService.items[(item as Item)[0].id] = (item as Item)[0];
-                if (SharedService.auctionItemsMap[(item as Item)[0].id]) {
-                    SharedService.auctionItemsMap[(item as Item)[0].id].name = (item as Item)[0].name;
-                    SharedService.auctionItemsMap[(item as Item)[0].id].vendorSell = (item as Item)[0].sellPrice;
+                SharedService.items[item.id] = (item as Item);
+                if (SharedService.auctionItemsMap[item.id]) {
+                    SharedService.auctionItemsMap[item.id].name = item.name;
+                    SharedService.auctionItemsMap[item.id].vendorSell = item.sellPrice;
                 }
+                this.dbService.addItem(item);
+                return item;
             }).catch(error => {
             console.error('Could not get item with ID ' + itemID, error);
             ErrorReport.sendHttpError(error);
-        });
+            return error;
+        }) as Promise<any>;
     }
 
     async getItems(): Promise<any> {
