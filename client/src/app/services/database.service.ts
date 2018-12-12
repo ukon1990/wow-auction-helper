@@ -50,9 +50,22 @@ export class DatabaseService {
     this.db.table('items').bulkPut(items);
   }
 
-  getAllItems(): Dexie.Promise<any> {
+  async getAllItems(): Dexie.Promise<any> {
     SharedService.downloading.items = true;
+    return new Dexie.Promise<any>(async (resolve) => {
+      await this.getItemsInBatch(0, 50000);
+      await this.getItemsInBatch(50001, 100000);
+      await this.getItemsInBatch(100001, 200000);
+      await this.getItemsInBatch(200001, 1000000);
+      console.log('count', SharedService.itemsUnmapped.length);
+      resolve();
+    });
+  }
+
+  private getItemsInBatch(from: number, to: number) {
     return this.db.table('items')
+      .where(':id')
+      .between(from,to)
       .toArray()
       .then(items => {
         SharedService.downloading.items = false;

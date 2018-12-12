@@ -39,8 +39,9 @@ export class Endpoints {
   }
 
   private static getRealm(slug?: string) {
-    console.log(SharedService.realms, slug);
-    return SharedService.realms[slug ? slug : SharedService.user.realm];
+    const fromSlug = SharedService.realms[slug],
+      currentRealm = SharedService.realms[SharedService.user.realm];
+    return fromSlug || currentRealm;
   }
 
 // http://localhost:3000/api/auction?
