@@ -83,6 +83,8 @@ import { ManageItemsBuiltInComponent } from './components/dashboard/manage-items
 import { ManageItemsBuiltInItemComponent } from './components/dashboard/manage-items-built-in-item/manage-items-built-in-item.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AddItemsComponent } from './components/update/add-items/add-items.component';
+import { AddRecipesComponent } from './components/update/add-recipes/add-recipes.component';
 
 
 @NgModule({
@@ -145,7 +147,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ShuffleItemManageComponent,
     ManageItemsBuiltInComponent,
     ManageItemsBuiltInItemComponent,
-    FooterComponent
+    FooterComponent,
+    AddItemsComponent,
+    AddRecipesComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,30 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+          Add new recipes
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form (ngSubmit)="addItems()">
+          <mat-form-field>
+            <input matInput placeholder="Comma seperated spell ID's" [formControl]="input"/>
+          </mat-form-field>
+          <button mat-raised-button type="submit">
+            Add
+          </button>
+        </form>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-primary">
+            <strong>Progress:</strong> {{ progress.completed.length + progress.failed.length }}/{{ progress.ids.length }} ({{ getProgress() | percent }})
+            <br>
+            <mat-progress-bar mode="determinate" [value]="getProgress() * 100"></mat-progress-bar>
+          </li>
+  
+          <li class="list-group-item list-group-item-secondary">
+            Failed ids: {{ progress.failed | json }}
+          </li>
+        </ul>
+  
+        <wah-data-table [id]="'id'" [columns]="columns" [data]=progress.completed></wah-data-table>
+      </mat-card-content>
+  </mat-card>

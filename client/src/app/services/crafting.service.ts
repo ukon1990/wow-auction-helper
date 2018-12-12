@@ -19,14 +19,15 @@ export class CraftingService {
     private dbService: DatabaseService,
     private angulartics2: Angulartics2) { }
 
-  getRecipe(spellID: number): void {
-    this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
+  getRecipe(spellID: number): Promise<Recipe> {
+    return this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
       .toPromise()
       .then(r =>
         this.handleRecipe(r as Recipe))
       .catch(error => {
         console.error(`Could not get recipe ${spellID}`, error);
         ErrorReport.sendHttpError(error);
+        return error;
       });
   }
 
@@ -69,15 +70,15 @@ export class CraftingService {
       .toPromise() as Promise<Recipe>;
   }
 
-  handleRecipe(r: Recipe, missingItems?: Array<number>): void {
+  async handleRecipe(r: Recipe, missingItems?: Array<number>): Promise<Recipe> {
     const possiblyBuggedRecipe = !r.profession && r.name.indexOf('Create ') !== -1;
     if (missingItems && r.itemID > 0 && !SharedService.items[r.itemID]) {
       missingItems.push(r.itemID);
     }
 
-    r.reagents.forEach(reagent => {
+    r.reagents.forEach(async reagent => {
       if (reagent.itemID > 0 && !SharedService.items[reagent.itemID]) {
-        this._itemService.addItem(reagent.itemID);
+        await this._itemService.addItem(reagent.itemID);
       }
     });
 
@@ -86,6 +87,7 @@ export class CraftingService {
     }
 
     SharedService.recipesMap[r.spellID] = r;
+    return r;
   }
 
   handleRecipes(recipes: any): void {

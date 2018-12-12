@@ -74,6 +74,9 @@
                 </a>
               </ng-template>
             </span>
+            <span *ngSwitchCase="'boolean'">
+              <mat-checkbox [checked]="d[c.key]" disabled></mat-checkbox>
+            </span>
             <span *ngSwitchCase="'wdb-link'">
               <a href="https://www.wowdb.com/{{ linkType ? linkType + 's' : 'npcs' }}/{{ d[c.key] }}" target="_blank">
                 Open

@@ -153,7 +153,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     SharedService.user.characters[index]['downloading'] = true;
     this._characterService.getCharacter(
       SharedService.user.characters[index].name,
-      SharedService.user.characters[index].realm
+      User.slugifyString(SharedService.user.characters[index].realm),
+      this._characterForm.value.region
     ).then(c => {
       if (!c.error) {
         SharedService.user.characters[index] = c;
