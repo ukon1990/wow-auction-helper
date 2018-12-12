@@ -17,7 +17,7 @@ export class CharacterService {
       .get(Endpoints.getBattleNetApi(
         `character/${
           realm
-        }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region))
+        }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region, false, realm))
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
