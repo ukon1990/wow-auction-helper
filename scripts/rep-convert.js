@@ -1,7 +1,8 @@
 function convert(input) {
   const reps = input['ReputationRecipes'];
-  const list [];
-  Object.keys(reps).forEach(name => list.push(getRepData(name, reps[name])));
+  const list = [];
+  Object.keys(reps).forEach(name =>
+    list.push(getRepData(name, reps[name])));
   return list;
 }
 
@@ -9,11 +10,42 @@ function getRepData(name, repData) {
   const rep = {
     id: 0,
     name: name,
+    vendors: getVendorData(repData.Vendor),
+    recipes: getRecipeData(repData.Professions),
     isAlly: repData.IsAlly,
-    isHorde: repData.IsHorde,
+    isHorde: repData.IsHorde
   };
   return rep;
 }
+
+function getVendorData(vendors) {
+  const list =[];
+  Object.keys(vendors).forEach((name) => {
+    list.push({
+      name: name,
+      isAlly: vendors[name].IsAlly,
+      isHorde: vendors[name].IsHorde,
+      locations: getVendorLocationData() 
+    });
+  }); 
+  return list; 
+}
+
+function getVendorLocationData(locations) {
+  const list =[];
+  Object.keys(locations).forEach(i => {
+    list.push({
+      npcId: locations[i].NpcID,
+      zone: locations[i].Zone
+    });
+  }); 
+  return list;
+} 
+
+function getRecipeData(vendors) {
+  const list = []; 
+  return list; 
+} 
 
 
 console.log(convert({"ReputationRecipes": {
