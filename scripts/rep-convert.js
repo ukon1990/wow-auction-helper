@@ -25,7 +25,7 @@ function getVendorData(vendors) {
       name: name,
       isAlly: vendors[name].IsAlly,
       isHorde: vendors[name].IsHorde,
-      locations: getVendorLocationData() 
+      locations: getVendorLocationData(vendors[name].Location) 
     });
   }); 
   return list; 
@@ -42,8 +42,9 @@ function getVendorLocationData(locations) {
   return list;
 } 
 
-function getRecipeData(vendors) {
-  const list = []; 
+function getRecipeData(professions) {
+  const list = [];
+
   return list; 
 } 
 
