@@ -85,6 +85,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddItemsComponent } from './components/update/add-items/add-items.component';
 import { AddRecipesComponent } from './components/update/add-recipes/add-recipes.component';
+import { ReputationsComponent } from './components/reputations/reputations.component';
 
 
 @NgModule({
@@ -149,7 +150,8 @@ import { AddRecipesComponent } from './components/update/add-recipes/add-recipes
     ManageItemsBuiltInItemComponent,
     FooterComponent,
     AddItemsComponent,
-    AddRecipesComponent
+    AddRecipesComponent,
+    ReputationsComponent
   ],
   imports: [
     BrowserModule,

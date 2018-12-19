@@ -32,6 +32,7 @@ import { IssuesComponent } from '../components/about/issues/issues.component';
 import { ChangelogComponent } from '../components/about/changelog/changelog.component';
 import { MillingComponent } from '../components/crafting/milling/milling.component';
 import { DisenchantingComponent } from '../components/crafting/disenchanting/disenchanting.component';
+import { ReputationsComponent } from '../components/reputations/reputations.component';
 
 const routes: Routes = [
   { path: '', component: SetupComponent },
@@ -59,7 +60,8 @@ const routes: Routes = [
       { path: 'my-pets', component: MyPetsComponent },
       { path: 'market-reset', component: MarketResetComponent },
       { path: 'milling-and-prospecting', component: MillingComponent },
-      { path: 'disenchanting', component: DisenchantingComponent }
+      { path: 'disenchanting', component: DisenchantingComponent },
+      { path: 'reputations', component: ReputationsComponent }
     ]
   },
   { path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService] },
