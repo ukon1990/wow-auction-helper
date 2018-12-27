@@ -16,9 +16,9 @@ export class PetUtil {
     req: any) {
     try {
       const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-      connection.query('SELECT * from pets where speciesId = ' + req.params.id, function (err, rows, fields) {
+      connection.query('SELECT * from pets where speciesId = ' + req.params.id, function (error, rows, fields) {
         try {
-          if (!err && rows.length > 0) {
+          if (!error && rows.length > 0) {
             connection.end();
             res.send(rows[0]);
           } else {
@@ -40,9 +40,9 @@ export class PetUtil {
               console.log(`${new Date().toString()} - Adding new pet to the DB: ${req.params.id} - SQL: ${query}`);
 
               connection.query(query,
-                (err, rows, fields) => {
-                  if (err) {
-                    console.error(`Could not add the species with the id ${req.params.id}`, err.sqlMessage, query);
+                (dbError) => {
+                  if (dbError) {
+                    console.error(`Could not add the species with the id ${req.params.id}`, dbError.sqlMessage, query);
                   } else {
                     console.log(`Successfully added pet with speciesID ${req.params.id}`);
                     PetUtil.getPetLocale(pet.speciesId, req, res)

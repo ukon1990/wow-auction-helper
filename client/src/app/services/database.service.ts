@@ -65,7 +65,7 @@ export class DatabaseService {
   private getItemsInBatch(from: number, to: number) {
     return this.db.table('items')
       .where(':id')
-      .between(from,to)
+      .between(from, to)
       .toArray()
       .then(items => {
         SharedService.downloading.items = false;

@@ -1,24 +1,20 @@
 import express from 'express';
-import compression from 'compression';  // compresses requests
+import compression from 'compression'; // compresses requests
 import bodyParser from 'body-parser';
-import logger from './util/logger';
 import lusca from 'lusca';
 import dotenv from 'dotenv';
-import flash from 'express-flash';
 import expressSession from 'express-session';
 import path from 'path';
 import expressValidator from 'express-validator';
-import bluebird from 'bluebird';
-
-// Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: '.env.example' });
-
 // Controllers (route handlers)
 import * as apiController from './controllers/api';
 import * as itemController from './controllers/item.controller';
 import * as recipeController from './controllers/recipe.controller';
 import * as petController from './controllers/pet.controller';
 import * as auctionController from './controllers/auction.controller';
+
+// Load environment variables from .env file, where API keys and passwords are configured
+dotenv.config({ path: '.env.example' });
 
 // Create Express server
 const app = express();
