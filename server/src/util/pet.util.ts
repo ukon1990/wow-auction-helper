@@ -1,11 +1,13 @@
-import { Request, Response } from 'express';
+import {Response} from 'express';
 import * as mysql from 'mysql';
 import * as request from 'request';
 import * as RequestPromise from 'request-promise';
-import { getLocale } from '../util/locales';
-import { safeifyString } from './string.util';
-import { BLIZZARD_API_KEY, DATABASE_CREDENTIALS } from './secrets';
-import { ItemLocale } from '../models/item/item-locale';
+import {getLocale} from '../util/locales';
+import {safeifyString} from './string.util';
+import {DATABASE_CREDENTIALS} from './secrets';
+import {ItemLocale} from '../models/item/item-locale';
+import {Endpoints} from '../endpoints';
+
 const PromiseThrottle: any = require('promise-throttle');
 
 export class PetUtil {
@@ -16,83 +18,95 @@ export class PetUtil {
     req: any) {
     try {
       const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-      connection.query('SELECT * from pets where speciesId = ' + req.params.id, function (error, rows, fields) {
-        try {
-          if (!error && rows.length > 0) {
-            connection.end();
-            res.send(rows[0]);
-          } else {
-            request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${BLIZZARD_API_KEY}`, (err, re, body) => {
-              const pet = PetUtil.reducePet(body),
-                query = `
+      connection.query(`
+            SELECT *
+            FROM pets
+            WHERE speciesId = ${ req.params.id }`,
+        (error, rows) => {
+          try {
+            if (!error && rows.length > 0) {
+              connection.end();
+              res.send(rows[0]);
+            } else {
+              request.get(
+                new Endpoints()
+                  .getPath(`pet/species/${req.params.id}?locale=en_GB`), async (err, re, body) => {
+                  const pet = PetUtil.reducePet(body),
+                    query = `
                   INSERT INTO pets (speciesId, petTypeId, creatureId,
                     name, icon, description, source)
                     VALUES (
-                      ${ pet.speciesId},
-                      ${ pet.petTypeId},
-                      ${ pet.creatureId},
-                      "${ safeifyString(pet.name)}",
-                      "${ pet.icon}",
-                      "${ safeifyString(pet.description)}",
-                      "${ safeifyString(pet.source)}");`;
+                      ${pet.speciesId},
+                      ${pet.petTypeId},
+                      ${pet.creatureId},
+                      "${safeifyString(pet.name)}",
+                      "${pet.icon}",
+                      "${safeifyString(pet.description)}",
+                      "${safeifyString(pet.source)}");`;
 
-              res.send(pet);
-              console.log(`${new Date().toString()} - Adding new pet to the DB: ${req.params.id} - SQL: ${query}`);
+                  res.send(pet);
+                  console.log(`${new Date().toString()} - Adding new pet to the DB: ${req.params.id} - SQL: ${query}`);
 
-              connection.query(query,
-                (dbError) => {
-                  if (dbError) {
-                    console.error(`Could not add the species with the id ${req.params.id}`, dbError.sqlMessage, query);
-                  } else {
-                    console.log(`Successfully added pet with speciesID ${req.params.id}`);
-                    PetUtil.getPetLocale(pet.speciesId, req, res)
-                      .then(p => console.log(`Added locale for pet ${pet.name}`))
-                      .catch(e => console.error(`Could not get locale for ${pet.name}`, e));
-                  }
+                  await connection.query(query,
+                    (dbError) =>
+                      this.handlePetInsertResponse(dbError, req, query, pet, res));
+                  connection.end();
                 });
-              connection.end();
-            });
+            }
+          } catch (e) {
+            console.error(`Could not get the pet with the speciesID ${req.params.id}`, e);
+            connection.end();
+            res.json({});
           }
-        } catch (e) {
-          console.error(`Could not get the pet with the speciesID ${req.params.id}`, e);
-          connection.end();
-          res.json({});
-        }
-      });
+        });
     } catch (err) {
       res.send({});
       console.error(err);
     }
   }
 
+  private static handlePetInsertResponse(dbError, req: any, query: string, pet, res: e.Response) {
+    if (dbError) {
+      console.error(`Could not add the species with the id ${req.params.id}`, dbError.sqlMessage, query);
+    } else {
+      console.log(`Successfully added pet with speciesID ${req.params.id}`);
+      PetUtil.getPetLocale(pet.speciesId, req, res)
+        .then(p => console.log(`Added locale for pet ${pet.name}`))
+        .catch(e => console.error(`Could not get locale for ${pet.name}`, e));
+    }
+  }
+
   public static patchPet(req: any, res: any) {
-    request.get(`https://eu.api.battle.net/wow/pet/species/${req.params.id}?locale=en_GB&apikey=${BLIZZARD_API_KEY}`, (err, re, body) => {
-      const pet = PetUtil.reducePet(body),
-        query = `
+    request.get(
+      new Endpoints()
+        .getPath(`pet/species/${req.params.id}?locale=en_GB`),
+      (error, re, body) => {
+        const pet = PetUtil.reducePet(body),
+          query = `
         UPDATE pets
           SET
-            petTypeId = ${ pet.petTypeId},
-            creatureId = ${ pet.creatureId},
-            name = "${ safeifyString(pet.name)}",
-            icon = "${ pet.icon}",
-            description = "${ safeifyString(pet.description)}",
-            source = "${ safeifyString(pet.source)}"
-          WHERE speciesId = ${ pet.speciesId};`;
+            petTypeId = ${pet.petTypeId},
+            creatureId = ${pet.creatureId},
+            name = "${safeifyString(pet.name)}",
+            icon = "${pet.icon}",
+            description = "${safeifyString(pet.description)}",
+            source = "${safeifyString(pet.source)}"
+          WHERE speciesId = ${pet.speciesId};`;
 
-      res.json(pet);
-      console.log(`${new Date().toString()} - Updating pet with speciesID: ${req.params.id} - SQL: ${query}`);
+        res.json(pet);
+        console.log(`${new Date().toString()} - Updating pet with speciesID: ${req.params.id} - SQL: ${query}`);
 
-      const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-      connection.query(query,
-        (err, rows, fields) => {
-          if (err) {
-            console.error(`Could not update the pet with the speciesId ${req.params.id}`, err.sqlMessage);
-          } else {
-            console.log(`Successfully updated pet with speciesId ${req.params.id}`);
-          }
-        });
-      connection.end();
-    });
+        const connection = mysql.createConnection(DATABASE_CREDENTIALS);
+        connection.query(query,
+          (err, rows, fields) => {
+            if (err) {
+              console.error(`Could not update the pet with the speciesId ${req.params.id}`, err.sqlMessage);
+            } else {
+              console.log(`Successfully updated pet with speciesId ${req.params.id}`);
+            }
+          });
+        connection.end();
+      });
   }
 
   public static postPets(
@@ -100,10 +114,10 @@ export class PetUtil {
     req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     db.query(`
-      SELECT p.speciesId, petTypeId, creatureId, ${ getLocale(req)} as name, icon, description, source, timestamp
+      SELECT p.speciesId, petTypeId, creatureId, ${getLocale(req)} as name, icon, description, source, timestamp
       FROM pets as p, pet_name_locale as l
       WHERE l.speciesId = p.speciesId
-      AND timestamp > "${ req.body.timestamp }"
+      AND timestamp > "${req.body.timestamp}"
       ORDER BY timestamp desc;`,
       (err, rows, fields) => {
         db.end();
@@ -142,7 +156,12 @@ export class PetUtil {
     // Limit to 9 per second
     return new Promise((reso, rej) => {
       const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-      connection.query('select speciesId from pets where speciesId not in (select speciesId from pet_name_locale);', async (err, rows, fields) => {
+      connection.query(`
+        select speciesId
+        from pets
+        where speciesId not in (
+          select speciesId
+          from pet_name_locale);`, async (err, rows, fields) => {
         if (!err) {
           const promiseThrottle = new PromiseThrottle({
             requestsPerSecond: 1,
@@ -168,7 +187,8 @@ export class PetUtil {
               }));
           });
           await Promise.all(speciesIDs)
-            .then(r => { })
+            .then(r => {
+            })
             .catch(e => console.error(e));
           reso(list);
         } else {
@@ -180,24 +200,24 @@ export class PetUtil {
 
   public static async getPetLocale(speciesId: number, req: any, res: any) {
     const pet: ItemLocale = new ItemLocale(speciesId);
-    const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
-      .map(locale => RequestPromise.get(`https://eu.api.battle.net/wow/pet/species/${speciesId}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`, (r, e, b) => {
-        try {
-          pet[locale] = JSON.parse(b).name;
-        } catch (e) {
-          pet[locale] = '404';
-        }
-      })),
-      usPromises = ['en_US', 'es_MX', 'pt_BR']
-        .map(locale => RequestPromise.get(`https://us.api.battle.net/wow/pet/species/${speciesId}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`, (r, e, b) => {
-          try {
-            pet[locale] = JSON.parse(b).name;
-          } catch (e) {
-            pet[locale] = '404';
-          }
-        }));
+    const euPromises = this.getLocalePromises(
+      ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU'],
+      speciesId,
+      pet,
+      'eu'),
+      usPromises = this.getLocalePromises(
+        ['en_US', 'es_MX', 'pt_BR'],
+        speciesId,
+        pet,
+        'us');
 
-    await Promise.all(euPromises).then(r => { }).catch(e => { });
+    await Promise.all(euPromises).then(r => {
+    }).catch(e => {
+    });
+
+    await Promise.all(usPromises).then(r => {
+    }).catch(e => {
+    });
 
     try {
       const connection = mysql.createConnection(DATABASE_CREDENTIALS),
@@ -228,7 +248,7 @@ export class PetUtil {
           "${safeifyString(pet['pt_BR'])}",
           "${safeifyString(pet['ru_RU'])}");`;
 
-      connection.query(sql, (err, rows, fields) => {
+      connection.query(sql, (err) => {
         if (!err) {
           console.log(`Locale added to db for ${pet.en_GB}`);
         } else {
@@ -241,5 +261,18 @@ export class PetUtil {
       //
     }
     return pet;
+  }
+
+  private static getLocalePromises(array: string[], speciesId: number, pet: ItemLocale, region: string) {
+    return array
+      .map(locale => RequestPromise.get(
+        new Endpoints()
+          .getPath(`pet/species/${speciesId}?locale=${locale}`, region), (r, e, b) => {
+          try {
+            pet[locale] = JSON.parse(b).name;
+          } catch (e) {
+            pet[locale] = '404';
+          }
+        }));
   }
 }

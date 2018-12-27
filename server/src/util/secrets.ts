@@ -12,6 +12,12 @@ const prod = ENVIRONMENT === 'production'; // Anything else is treated as 'dev'
 export const BLIZZARD_API_KEY = prod ?
     process.env['BLIZZARD_API_KEY'] : process.env['BLIZZARD_API_KEY_LOCAL'];
 
+export const BLIZZARD = {
+  CLIENT_ID: process.env['BLIZZARD_CLIENT_ID'],
+  CLIENT_SECRET: process.env['BLIZZARD_CLIENT_SECRET'],
+  ACCESS_TOKEN: process.env['BLIZZARD_ACCESS_TOKEN']
+};
+
 export const DATABASE_CREDENTIALS = prod ? {
         host: process.env['MYSQL_URI'],
         user: process.env['MYSQL_USER'],
@@ -23,6 +29,7 @@ export const DATABASE_CREDENTIALS = prod ? {
         password: process.env['MYSQL_PASSWORD_LOCAL'],
         database: process.env['MYSQL_SCHEMA']
     };
+
 if (!DATABASE_CREDENTIALS.host) {
     logger.error('No DB connection string. Set the environment variables.');
     process.exit(1);
