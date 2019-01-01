@@ -14,7 +14,7 @@ export class Endpoints {
   }
 
   getPath(query: string, region?: string): string {
-    return this.getBase(region) + query;
+    return this.getBase(region) + this.addQueriesToQueries(query);
   }
 
   private addQueriesToQueries(query: string): string {

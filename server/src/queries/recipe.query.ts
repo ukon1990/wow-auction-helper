@@ -1,6 +1,5 @@
-import { safeifyString } from '../util/string.util';
-import { Pet } from '../models/pet';
-import { Recipe } from '../models/crafting/recipe';
+import {safeifyString} from '../util/string.util';
+import {Recipe} from '../models/crafting/recipe';
 
 export class RecipeQuery {
   public static update(recipe: Recipe): string {
@@ -17,8 +16,8 @@ export class RecipeQuery {
   public static insert(recipe: Recipe): string {
     return `INSERT INTO recipes VALUES(${
       recipe.spellID
-    }, "${
+      }, "${
       safeifyString(JSON.stringify(recipe))
-    }", CURRENT_TIMESTAMP);`;
+      }", CURRENT_TIMESTAMP);`;
   }
 }
