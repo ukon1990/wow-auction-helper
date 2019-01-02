@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { SharedService } from '../../../services/shared.service';
-import { ItemService } from '../../../services/item.service';
-import { CraftingService } from '../../../services/crafting.service';
-import { AuctionsService } from '../../../services/auctions.service';
-import { PetsService } from '../../../services/pets.service';
-import { DatabaseService } from '../../../services/database.service';
-import { TSM } from '../../../models/auction/tsm';
-import { AuctionHandler } from '../../../models/auction/auction-handler';
-import { Crafting } from '../../../models/crafting/crafting';
-import { Angulartics2 } from 'angulartics2';
-import { Realm } from '../../../models/realm';
-import { RealmService } from '../../../services/realm.service';
-import { FormControl } from '@angular/forms';
-import { Dashboard } from '../../../models/dashboard';
+import {Component, OnInit} from '@angular/core';
+import {SharedService} from '../../../services/shared.service';
+import {ItemService} from '../../../services/item.service';
+import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {PetsService} from '../../../services/pets.service';
+import {DatabaseService} from '../../../services/database.service';
+import {AuctionHandler} from '../../../models/auction/auction-handler';
+import {Crafting} from '../../../models/crafting/crafting';
+import {Angulartics2} from 'angulartics2';
+import {Realm} from '../../../models/realm';
+import {RealmService} from '../../../services/realm.service';
+import {FormControl} from '@angular/forms';
+import {Dashboard} from '../../../models/dashboard';
 
 @Component({
   selector: 'wah-download',
@@ -168,11 +167,32 @@ export class DownloadComponent implements OnInit {
             this._auctionsService.getLastModifiedTime();
           }
         });
+      this.downloadProgress = '';
 
       this.timeSinceUpdate = this.milliSecondsToMinutes();
       await this.setLastUpdateAvailableTime();
       setInterval(() =>
         this.setLastUpdateAvailableTime(), 5000);
+    }
+  }
+
+  getMessage(): string {
+    if (this.downloadProgress.length > 0) {
+      return this.downloadProgress;
+    } else if (SharedService.downloading.auctions) {
+      return 'Downloading auction data';
+    } else if (SharedService.downloading.tsmAuctions) {
+      return 'Downloading TSM data';
+    } else if (SharedService.downloading.wowUctionAuctions) {
+      return 'Downloading WoWuction data';
+    } else if (SharedService.downloading.items) {
+      return 'Downloading item data';
+    } else if (SharedService.downloading.pets) {
+      return 'Downloading pet data';
+    } else if (SharedService.downloading.recipes) {
+      return 'Downloading recipe data';
+    } else if (SharedService.downloading.characterData) {
+      return 'Downloading character data';
     }
   }
 
