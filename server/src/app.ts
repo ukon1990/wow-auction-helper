@@ -12,6 +12,7 @@ import * as itemController from './controllers/item.controller';
 import * as recipeController from './controllers/recipe.controller';
 import * as petController from './controllers/pet.controller';
 import * as auctionController from './controllers/auction.controller';
+import * as characterController from './controllers/character.controller';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: '.env.example' });
@@ -84,7 +85,7 @@ app.get('/api/auction/:region/:realm', auctionController.getSnapshotForRealm);
 app.post('/api/auction/wowuction', auctionController.getWoWUction);
 
 // Character
-app.get('character/:realm/:name', () => {});
+app.get('/api/character/:region/:realm/:name', characterController.getCharacter);
 
 /**
  * Primary app routes.

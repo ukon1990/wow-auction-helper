@@ -38,7 +38,7 @@ export class Endpoints {
       Endpoints.getRealm().slug}/`;
   }
 
-  private static getRealm(slug?: string) {
+  public static getRealm(slug?: string) {
     const fromSlug = SharedService.realms[slug],
       currentRealm = SharedService.realms[SharedService.user.realm];
     return fromSlug || currentRealm;
