@@ -121,6 +121,8 @@ export class AuctionsService {
   }
 
   getTsmAuctions(): Promise<any> {
+    const region = SharedService.user.region;
+    if (region === 'eu' || region === 'us') {
     console.log('Downloading TSM data');
     SharedService.downloading.tsmAuctions = true;
     this.openSnackbar('Downloading TSM data');
@@ -153,9 +155,15 @@ export class AuctionsService {
           ErrorReport.sendHttpError(error);
         });
       });
+    } else {
+      return new Promise((resolve) => []);
+    }
   }
 
   getWoWUctionAuctions(): Promise<any> {
+    const region = SharedService.user.region;
+
+    if (region === 'eu' || region === 'us') {
     console.log('Downloading WoWUction data');
     SharedService.downloading.wowUctionAuctions = true;
     this.openSnackbar('Downloading WoWUction data');
@@ -188,6 +196,9 @@ export class AuctionsService {
           console.error('Could not restore WoWUction auctions from local DB', err);
         });
       });
+    } else {
+      return new Promise((resolve) => []);
+    }
   }
 
   private openSnackbar(message: string): void {

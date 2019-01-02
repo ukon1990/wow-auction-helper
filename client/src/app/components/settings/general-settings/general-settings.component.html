@@ -11,11 +11,8 @@
           <div class="row">
             <mat-form-field class="col-md-4">
               <mat-select  [disableOptionCentering]="true" placeholder="Region" formControlName="region">
-                <mat-option value="eu">
-                  Europe
-                </mat-option>
-                <mat-option value="us">
-                  America
+                <mat-option *ngFor="let region of regions" [value]="region.id">
+                  {{ region.name }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -54,7 +51,7 @@
         </mat-card-actions>
       </mat-card>
 
-      <mat-card class="mt-2">
+      <mat-card class="mt-2" *ngIf="isWithinSupported3RDPartyAPIRegion()">
         <mat-card-header>
           <mat-card-title>Your API key (optional)</mat-card-title>
         </mat-card-header>
