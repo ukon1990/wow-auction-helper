@@ -1,5 +1,4 @@
-import request from 'supertest';
-import { WoWHeadUtil } from '../src/util/wowhead.util';
+import {WoWHeadUtil} from '../src/util/wowhead.util';
 
 describe('WoWHead string conversions', () => {
   it('getContainedInItem ', () => {
