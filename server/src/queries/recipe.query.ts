@@ -3,7 +3,7 @@ import {Recipe} from '../models/crafting/recipe';
 import {getLocale} from '../util/locale.util';
 
 export class RecipeQuery {
-  public static update(recipe: Recipe, id: number) {
+  public static update(recipe: Recipe | any, id: number) {
     return `
           UPDATE recipes
           SET
@@ -37,5 +37,15 @@ export class RecipeQuery {
       WHERE json NOT LIKE '%itemID":0%'
       AND timestamp > "${req.body.timestamp + ''}"
       ORDER BY timestamp desc;`;
+  }
+
+  public static getById(id: number) {
+    return `SELECT json
+            FROM recipes
+    WHERE id = ${id}`;
+  }
+
+  public static getItemWithSimilarName(recipe) {
+    return `select id from items where name like "%${recipe.name}%" limit 1;`;
   }
 }

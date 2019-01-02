@@ -1,14 +1,12 @@
 #WAH client
-This project requires you to have a blizzard API key.
-Your api key is stored in ``src/app/service/keys.ts`` (you need to create this file)
+## Setup
+This project requires you to have node.js and angular CLI installed.
+To install the angular CLI simply type `npm i -g @angular/cli` in the terminal/CMD.
+When that is done, run `npm i` in the client directory to install all the packages.
 
-The file should look like this (soon to be depricated):
-```
-export class Keys {
-    public static blizzard = 'a string with your api key';
-}
-
-```
+## Updating Angular
+To update angular, simply type `ng update` into the terminal while in the client directory.
+Then just paste all the available updates into the terminal.
 
 #### Building and running the development server
 While you are developing on the project, use the following command to serve the web application:

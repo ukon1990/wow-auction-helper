@@ -9,4 +9,3 @@ import {CharacterUtil} from '../util/character.util';
 export const postCharacter = (req: Request, res: Response) => {
   CharacterUtil.post(req, res);
 };
-

@@ -12,9 +12,7 @@ const PromiseThrottle: any = require('promise-throttle');
 export class RecipeUtil {
   public static getRecipe(id: number, res: Response, req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
-    db.query(`SELECT json
-              from recipes
-    WHERE id = ${id}`, (dbError, rows) => {
+    db.query(RecipeQuery.getById(id), (dbError, rows) => {
       db.end();
       try {
         if (!dbError && rows.length > 0) {
@@ -82,7 +80,7 @@ export class RecipeUtil {
 
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
-    db.query(RecipeQuery.getAllRecipesWithNoItemId(req), (err, rows, fields) => {
+    db.query(RecipeQuery.getAllRecipesWithNoItemId(req), (err, rows) => {
       db.end();
       if (!err) {
         const recipes: any[] = [],
@@ -135,7 +133,7 @@ export class RecipeUtil {
           }).then();
           if (recipe.itemID === 0) {
             const db = mysql.createConnection(DATABASE_CREDENTIALS);
-            const sql = `select id from items where name like "%${recipe.name}%" limit 1;`;
+            const sql = RecipeQuery.getItemWithSimilarName(recipe);
             await db.query(sql, (err, rows, fields) => {
               db.end();
               if (err) {
@@ -265,44 +263,45 @@ export class RecipeUtil {
     // Limit to 9 per second
     return new Promise((reso, rej) => {
       const connection = mysql.createConnection(DATABASE_CREDENTIALS);
-      connection.query(RecipeQuery.getSelectIdFromRecipesWhereIdNotInSelectIdFromRecipeNameLocale(), async (err, rows, fields) => {
-        if (!err) {
-          const promiseThrottle = new PromiseThrottle({
-            requestsPerSecond: 1,
-            promiseImplementation: Promise
-          });
+      connection.query(RecipeQuery.getSelectIdFromRecipesWhereIdNotInSelectIdFromRecipeNameLocale(),
+        async (err, rows) => {
+          if (!err) {
+            const promiseThrottle = new PromiseThrottle({
+              requestsPerSecond: 1,
+              promiseImplementation: Promise
+            });
 
-          const list = [];
-          const spellIDs = [];
-          rows.forEach(row => {
-            spellIDs.push(
-              promiseThrottle.add(() => {
-                return new Promise((resolve, reject) => {
-                  LocaleUtil.setLocales(
-                    row.id,
-                    'id',
-                    'recipe_name_locale',
-                    'spell')
-                    .then(r => {
-                      list.push(r);
-                      resolve(r);
-                    })
-                    .catch(e => {
-                      console.error(e);
-                      reject({});
-                    });
-                });
-              }));
-          });
-          await Promise.all(spellIDs)
-            .then(r => {
-            })
-            .catch(e => console.error(e));
-          reso(list);
-        } else {
-          rej({});
-        }
-      });
+            const list = [];
+            const spellIDs = [];
+            rows.forEach(row => {
+              spellIDs.push(
+                promiseThrottle.add(() => {
+                  return new Promise((resolve, reject) => {
+                    LocaleUtil.setLocales(
+                      row.id,
+                      'id',
+                      'recipe_name_locale',
+                      'spell')
+                      .then(r => {
+                        list.push(r);
+                        resolve(r);
+                      })
+                      .catch(e => {
+                        console.error(e);
+                        reject({});
+                      });
+                  });
+                }));
+            });
+            await Promise.all(spellIDs)
+              .then(r => {
+              })
+              .catch(e => console.error(e));
+            reso(list);
+          } else {
+            rej({});
+          }
+        });
     });
   }
 }

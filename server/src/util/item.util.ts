@@ -1,28 +1,28 @@
-import { Request, Response } from 'express';
+import {Response} from 'express';
 import * as mysql from 'mysql';
 import * as request from 'request';
-import * as RequestPromise from 'request-promise';
-import { getLocale } from './locale.util';
-import { safeifyString } from './string.util';
-import { Item } from '../models/item/item';
-import { BLIZZARD_API_KEY, DATABASE_CREDENTIALS } from './secrets';
-import { WoWHeadUtil } from './wowhead.util';
-import { WoWHead } from '../models/item/wowhead';
-import { WoWDBItem } from '../models/item/wowdb';
-import { ItemLocale } from '../models/item/item-locale';
-import { ItemQuery } from '../queries/item.query';
+import {getLocale, LocaleUtil} from './locale.util';
+import {Item} from '../models/item/item';
+import {DATABASE_CREDENTIALS} from './secrets';
+import {WoWHeadUtil} from './wowhead.util';
+import {WoWHead} from '../models/item/wowhead';
+import {WoWDBItem} from '../models/item/wowdb';
+import {ItemLocale} from '../models/item/item-locale';
+import {ItemQuery} from '../queries/item.query';
+import {Endpoints} from '../endpoints';
+
 const PromiseThrottle: any = require('promise-throttle');
 
 export class ItemUtil {
 
   public static async getItem(
     id: number,
-    error: Error,
+    dbError: Error,
     items: Item[],
     response: Response,
-    request: any,
+    req: any,
     db: mysql.Connection) {
-    if (error) {
+    if (dbError) {
       db.end();
       response.send(new Item());
       return;
@@ -37,10 +37,10 @@ export class ItemUtil {
       ItemUtil.downloadAllItemData(id)
         .then(item => {
           response.send(item);
-          db.query(ItemQuery.insert(item), (error, rows, fields) => {
+          db.query(ItemQuery.insert(item), (dbInsertError) => {
             db.end();
-            if (error) {
-              console.error(`Could not add ${ id }:`, error);
+            if (dbInsertError) {
+              console.error(`Could not add ${id}:`, dbInsertError);
             }
             ItemUtil.getItemLocale(id, request, response);
           });
@@ -56,19 +56,19 @@ export class ItemUtil {
   public static async patchItem(
     id: number,
     response: Response,
-    request: any) {
+    req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
     ItemUtil.downloadAllItemData(id)
       .then((item: Item) => {
         response.send(item);
         console.log('Query: ', ItemQuery.update(item));
         db.query(ItemQuery.update(item),
-          (err, rows, fields) => {
+          (err) => {
             db.end();
             if (err) {
-              console.error(`The update failed for item ${ id }`, item, err);
+              console.error(`The update failed for item ${id}`, item, err);
             } else {
-              console.log(`Successfully updated ${ item }`);
+              console.log(`Successfully updated ${item}`);
             }
           });
       })
@@ -102,7 +102,7 @@ export class ItemUtil {
 
   public static async patchItems(
     rows: Item[],
-    res: Response,
+    resp: Response,
     req: any) {
     const promiseThrottle = new PromiseThrottle({
       requestsPerSecond: 80,
@@ -117,13 +117,13 @@ export class ItemUtil {
           return new Promise((resolve, reject) => {
             updateCount++;
             console.log(`Updating Item: ${item.name} (${updateCount} / ${rows.length}) ${req.headers.host}`);
-            request.patch(`http://${ req.headers.host }/api/item/${item.id}`, (res, error, body) => {
+            request.patch(`http://${req.headers.host}/api/item/${item.id}`, (res, error, body) => {
               if (error) {
                 // console.error('handleItemsPatchRequest', error);
-                console.error(`ERROR for item ID ${ item.id } - > ${ req.headers.host }/api/item/${item.id}`);
+                console.error(`ERROR for item ID ${item.id} - > ${req.headers.host}/api/item/${item.id}`);
                 reject(error);
               } else {
-                console.log(`Added item ID ${ item.id } - > ${ req.headers.host }/api/item/${item.id}`);
+                console.log(`Added item ID ${item.id} - > ${req.headers.host}/api/item/${item.id}`);
                 items.push(body);
                 resolve(body);
               }
@@ -132,10 +132,11 @@ export class ItemUtil {
         }));
     });
     await Promise.all(itemIDs)
-      .then(r => { })
+      .then(r => {
+      })
       .catch(e => console.error('Gave up :(', e));
 
-    res.send(items);
+    resp.send(items);
   }
 
   /**
@@ -148,7 +149,7 @@ export class ItemUtil {
    */
   public static async getItemsToAdd(
     rows: number[],
-    res: Response,
+    resp: Response,
     req: any) {
     const promiseThrottle = new PromiseThrottle({
       requestsPerSecond: 20,
@@ -162,15 +163,15 @@ export class ItemUtil {
         promiseThrottle.add(() => {
           return new Promise(async (resolve, reject) => {
             updateCount++;
-            console.log(`Getting Item: ${ id } (${updateCount} / ${rows.length}) ${req.headers.host}`);
-            await request.get(`http://${ req.headers.host }/api/item/${id}`, (res, error, body) => {
+            console.log(`Getting Item: ${id} (${updateCount} / ${rows.length}) ${req.headers.host}`);
+            await request.get(`http://${req.headers.host}/api/item/${id}`, (res, error, body) => {
               if (error) {
                 // console.error('handleItemsPatchRequest', error);
-                console.error(`ERROR for item ID ${ id } - > ${ req.headers.host }/api/item/${ id }`, error);
+                console.error(`ERROR for item ID ${id} - > ${req.headers.host}/api/item/${id}`, error);
                 failedIds.push(id);
                 reject(error);
               } else {
-                console.log(`Added item ID ${ id } - > ${ req.headers.host }/api/item/${ id }`);
+                console.log(`Added item ID ${id} - > ${req.headers.host}/api/item/${id}`);
                 items.push(body);
                 resolve(body);
               }
@@ -179,10 +180,11 @@ export class ItemUtil {
         }));
     });
     await Promise.all(itemIDs)
-      .then(r => { })
+      .then(r => {
+      })
       .catch(e => console.error('Gave up :(', e));
 
-    res.send({ success: items, failed: failedIds });
+    resp.send({success: items, failed: failedIds});
   }
 
   public static handleItem(item: Item): void {
@@ -204,8 +206,8 @@ export class ItemUtil {
         .then(async i => {
           item = new Item(i);
           await ItemUtil.getWowDBData(id)
-            .then((i: WoWDBItem) =>
-              WoWDBItem.setItemWithWoWDBValues(i, item))
+            .then((wowdbItem: WoWDBItem) =>
+              WoWDBItem.setItemWithWoWDBValues(wowdbItem, item))
             .catch(error => {
               console.error('downloadAllItemData.getWowDBData', error);
             });
@@ -216,7 +218,8 @@ export class ItemUtil {
               delete wh.expansionId;
               item.itemSource = wh;
             })
-            .catch(error => console.error('downloadAllItemData.getWowheadData', error));
+            .catch(error =>
+              console.error('downloadAllItemData.getWowheadData', error));
 
           if (!item) {
             reject();
@@ -250,18 +253,19 @@ export class ItemUtil {
       .then((item: WoWDBItem) => {
         res.send(item);
       })
-      .catch(error =>
+      .catch(() =>
         res.send(new WoWDBItem()));
   }
+
   public static getWowDBData(id: number): Promise<WoWDBItem> {
     return new Promise((resolve, reject) => {
       request.get(`http://wowdb.com/api/item/${id}`, (error, response, body) => {
         if (error || !body) {
           reject();
         } else {
-          const response = body.slice(1, body.length - 1);
+          const object = body.slice(1, body.length - 1);
           resolve(
-            JSON.parse(response) as WoWDBItem);
+            JSON.parse(object) as WoWDBItem);
         }
       });
     });
@@ -270,7 +274,8 @@ export class ItemUtil {
   public static getItemFromBlizzard(id: number, req: any): Promise<Item> {
     return new Promise((resolve, reject) => {
       request.get(
-        `https://eu.api.battle.net/wow/item/${id}?locale=${getLocale(req)}&apikey=${BLIZZARD_API_KEY}`,
+        new Endpoints()
+          .getPath(`item/${id}?locale=${getLocale(req)}`),
         (error, re, body) => {
           // const icon = JSON.parse(body).icon;
           if (error || !body) {
@@ -288,7 +293,9 @@ export class ItemUtil {
       // select * from item_name_locale where en_GB = 'undefined';
       // select id from items where id not in (select id from item_name_locale);
       db.query(`
-        select id from items where id not in (select id from item_name_locale);`,
+            select id
+            from items
+            where id not in (select id from item_name_locale);`,
         async (err, rows, fields) => {
           if (!err) {
             const promiseThrottle = new PromiseThrottle({
@@ -301,22 +308,23 @@ export class ItemUtil {
             rows.forEach(row => {
               itemIDs.push(
                 promiseThrottle.add(() => {
-                  return new Promise((resolve, reject) => {
+                  return new Promise((rowResolve, rowReject) => {
                     this.getItemLocale(row.id, req, res)
                       .then(r => {
                         list.push(r);
-                        resolve(r);
+                        rowResolve(r);
                       })
                       .catch(e => {
-                        console.error('setMissingLocales', e);
-                        reject({});
+                        console.error('setMissingLocales failed', e);
+                        rowReject({});
                       });
                   });
                 }));
             });
             await Promise.all(itemIDs)
-              .then(r => { })
-              .catch(e => console.error('setMissingLocales', e));
+              .then(r => {
+              })
+              .catch(e => console.error('setMissingLocales failed', e));
             resolve(list);
           } else {
             reject({});
@@ -325,118 +333,11 @@ export class ItemUtil {
     });
   }
 
-  public static async getItemLocale(itemID: number, req, res): Promise<ItemLocale> {
-    return new Promise<ItemLocale>(async (resolve, reject) => {
-      const item = new ItemLocale(itemID);
-
-      const euPromises = ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']
-        .map(locale =>
-          RequestPromise.get(
-            `https://eu.api.battle.net/wow/item/${itemID}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`,
-            (r, e, b) =>
-              ItemUtil.resolveLocaleResponse(item, locale, b))),
-        usPromises = ['en_US', 'es_MX', 'pt_BR']
-          .map(locale =>
-            RequestPromise.get(`https://us.api.battle.net/wow/item/${itemID}?locale=${locale}&apikey=${BLIZZARD_API_KEY}`,
-              (r, e, b) =>
-                ItemUtil.resolveLocaleResponse(item, locale, b)));
-
-      await Promise.all(euPromises).then(r => {
-      }).catch(e => {
-        // console.error(e);
-      });
-
-      await ItemUtil.doLocaleInsertQuery(item);
-      // await ItemUtil.doLocaleUpdateQuery(item);
-      return item;
-    });
-  }
-
-  public static resolveLocaleResponse(item: ItemLocale, locale: string, b): void {
-    try {
-      console.log('undefined', JSON.parse(b).name);
-      item[locale] = JSON.parse(b).name;
-    } catch (e) {
-      item[locale] = '404';
-    }
-  }
-
-  public static doLocaleUpdateQuery(item: ItemLocale): Promise<ItemLocale> {
-    return new Promise<ItemLocale>((resolve, reject) => {
-      try {
-        const db = mysql.createConnection(DATABASE_CREDENTIALS),
-          sql = `
-          UPDATE \`100680-wah\`.\`item_name_locale\`
-            SET
-            \`en_GB\` = "${safeifyString(item.en_GB)}",
-            \`en_US\` = "${safeifyString(item.en_US)}",
-            \`de_DE\` = "${safeifyString(item.de_DE)}",
-            \`es_ES\` = "${safeifyString(item.es_ES)}",
-            \`es_MX\` = "${safeifyString(item.es_MX)}",
-            \`fr_FR\` = "${safeifyString(item.fr_FR)}",
-            \`it_IT\` = "${safeifyString(item.it_IT)}",
-            \`pl_PL\` = "${safeifyString(item.pl_PL)}",
-            \`pt_PT\` = "${safeifyString(item.pt_PT)}",
-            \`pt_BR\` = "${safeifyString(item.pt_BR)}",
-            \`ru_RU\` = "${safeifyString(item.ru_RU)}"
-            WHERE \`id\` = ${item.id};`;
-
-        db.query(sql, (err, rows, fields) => {
-          db.query(`UPDATE \`100680-wah\`.\`items\` SET \`timestamp\` = CURRENT_TIMESTAMP WHERE \`id\` = ${ item.id };`, (err) => {
-            db.end();
-            if (err) {
-              console.error(`Locale not added to db for ${item.id}`, err);
-            }
-          });
-          if (!err) {
-            console.log(`Locale added to db for ${item.en_GB}`);
-            reject();
-          } else {
-            console.error(`Locale not added to db for ${item.id}`, err);
-            resolve(item);
-          }
-        });
-        //
-      } catch (e) {
-        reject();
-      }
-    });
-  }
-
-  public static async doLocaleInsertQuery(item: ItemLocale): Promise<ItemLocale> {
-    return new Promise<ItemLocale>((resolve, reject) => {
-      try {
-        const db = mysql.createConnection(DATABASE_CREDENTIALS),
-          sql = `INSERT INTO item_name_locale
-        (id, en_GB, en_US, de_DE, es_ES, es_MX, fr_FR, it_IT, pl_PL, pt_PT, pt_BR, ru_RU)
-        VALUES
-        (${item.id},
-          "${safeifyString(item.en_GB)}",
-          "${safeifyString(item.en_US)}",
-          "${safeifyString(item.de_DE)}",
-          "${safeifyString(item.es_ES)}",
-          "${safeifyString(item.es_MX)}",
-          "${safeifyString(item.fr_FR)}",
-          "${safeifyString(item.it_IT)}",
-          "${safeifyString(item.pl_PL)}",
-          "${safeifyString(item.pt_PT)}",
-          "${safeifyString(item.pt_BR)}",
-          "${safeifyString(item.ru_RU)}");`;
-
-        db.query(sql, (err, rows, fields) => {
-          db.end();
-          if (!err) {
-            console.log(`Locale added to db for ${item.en_GB}`);
-            reject();
-          } else {
-            console.error(`Locale not added to db for ${item.en_GB}`, err);
-            resolve(item);
-          }
-        });
-        //
-      } catch (e) {
-        reject();
-      }
-    });
+  public static async getItemLocale(id: number, req, res): Promise<ItemLocale> {
+    return LocaleUtil.setLocales(
+      id,
+      'id',
+      'item_name_locale',
+      'item');
   }
 }

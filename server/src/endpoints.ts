@@ -19,9 +19,9 @@ export class Endpoints {
 
   private addQueriesToQueries(query: string): string {
     if (query.indexOf('?') > -1) {
-      return `${ query }&access_token=${ BLIZZARD.ACCESS_TOKEN }`;
+      return `${query}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
     } else {
-      return `${ query }?access_token=${ BLIZZARD.ACCESS_TOKEN }`;
+      return `${query}?access_token=${BLIZZARD.ACCESS_TOKEN}`;
     }
   }
 }
