@@ -13,6 +13,7 @@ import * as recipeController from './controllers/recipe.controller';
 import * as petController from './controllers/pet.controller';
 import * as auctionController from './controllers/auction.controller';
 import * as characterController from './controllers/character.controller';
+import {getRealmStatus} from './controllers/realm.controller';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: '.env.example' });
@@ -86,6 +87,9 @@ app.post('/api/auction/wowuction', auctionController.getWoWUction);
 
 // Character
 app.post('/api/character', characterController.postCharacter);
+
+// Realm status
+app.get('/api/realm/:region', getRealmStatus);
 
 /**
  * Primary app routes.
