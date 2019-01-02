@@ -85,7 +85,7 @@ app.get('/api/auction/:region/:realm', auctionController.getSnapshotForRealm);
 app.post('/api/auction/wowuction', auctionController.getWoWUction);
 
 // Character
-app.get('/api/character/:region/:realm/:name', characterController.getCharacter);
+app.post('/api/character', characterController.postCharacter);
 
 /**
  * Primary app routes.

@@ -5,7 +5,7 @@ import {DATABASE_CREDENTIALS} from './secrets';
 import {Endpoints} from '../endpoints';
 import {PetQuery} from '../queries/pet.query';
 import {Pet} from '../models/pet';
-import {LocaleUtil} from './locales';
+import {LocaleUtil} from './locale.util';
 
 const PromiseThrottle: any = require('promise-throttle');
 

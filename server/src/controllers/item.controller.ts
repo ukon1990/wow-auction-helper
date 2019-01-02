@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import * as mysql from 'mysql';
 import { Item } from '../models/item/item';
 import { DATABASE_CREDENTIALS } from '../util/secrets';
-import { getLocale } from '../util/locales';
 import { ItemUtil } from '../util/item.util';
 import { WoWHead } from '../models/item/wowhead';
 import { BFALists } from '../bfa-recipe-list';
+import {getLocale} from '../util/locale.util';
 
 export const getItem = async (req: Request, res: Response) => {
   const db = mysql.createConnection(DATABASE_CREDENTIALS);

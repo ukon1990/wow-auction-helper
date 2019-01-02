@@ -1,6 +1,6 @@
-import {getLocale} from '../util/locales';
 import {safeifyString} from '../util/string.util';
 import {Pet} from '../models/pet';
+import {getLocale} from '../util/locale.util';
 
 export class PetQuery {
   public static selectAllForTimestampWithLocale(req: any): string {

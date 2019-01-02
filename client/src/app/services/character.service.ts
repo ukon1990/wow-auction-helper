@@ -14,13 +14,14 @@ export class CharacterService {
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
     SharedService.downloading.characterData = true;
     return this._http
-      .get(Endpoints.getUrl(
-        `character/${
-          region
-          }/${
-          realm
-        }/${character}?withFields=true&locale=${
-          Endpoints.getRealm(User.slugifyString(realm)).locale}`))
+      .post(Endpoints.getUrl(`character`),
+        {
+          region: region ? region : SharedService.user.region,
+          realm: realm,
+          name: character,
+          locale: Endpoints.getRealm(User.slugifyString(realm)).locale,
+          withFields: true
+        })
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
@@ -34,13 +35,14 @@ export class CharacterService {
   getCharacterMinimal(character: string, realm: string): Promise<any> {
     SharedService.downloading.characterData = true;
     return this._http
-      .get(Endpoints.getUrl(
-        `character/${
-          SharedService.user.region
-          }/${
-          realm
-          }/${character}?locale=${
-          Endpoints.getRealm(User.slugifyString(realm)).locale}`))
+      .post(Endpoints.getUrl(`character`),
+        {
+          region: SharedService.user.region,
+          realm: realm,
+          name: character,
+          locale: Endpoints.getRealm(User.slugifyString(realm)).locale,
+          withFields: false
+        })
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;

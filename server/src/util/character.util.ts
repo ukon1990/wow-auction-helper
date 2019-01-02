@@ -1,25 +1,23 @@
 import {Endpoints} from '../endpoints';
-import {getLocale} from './locales';
-
 const request: any = require('request');
 
 export class CharacterUtil {
 
-  public static get(req, res) {
+  public static post(req, res) {
     const url = new Endpoints().getPath(
-      `character//${
-        req.params.realm
+      `character/${
+        encodeURIComponent(req.body.realm)
         }/${
-        req.params.name
+        encodeURIComponent(req.body.name)
         }?${
-          this.getFields(req)
+        this.getFields(req)
         }locale=${
-        getLocale(req)
+        req.body.locale
         }`,
-      req.params.region);
-      console.log('url', url);
+      req.body.region);
+
     request.get(url,
-      req.params.region,
+      req.body.region,
       (error, response, body) => {
         if (error) {
           res.status(404);
@@ -32,8 +30,7 @@ export class CharacterUtil {
   }
 
   private static getFields(req) {
-    const withFields = req.query.withFields;
-    return withFields === 'true' ?
+    return req.body.withFields ?
       'fields=professions,statistics,pets,petSlots,mounts&' : '';
   }
 }

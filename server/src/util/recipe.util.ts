@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import * as mysql from 'mysql';
 import * as request from 'request';
 import * as RequestPromise from 'request-promise';
-import { getLocale } from '../util/locales';
+import { getLocale } from './locale.util';
 import { safeifyString } from './string.util';
 import { BLIZZARD_API_KEY, DATABASE_CREDENTIALS } from './secrets';
 import { Recipe } from '../models/crafting/recipe';

@@ -8,19 +8,6 @@ const RequestPromise = require('request-promise');
 
 
 export class AuctionUtil {
-/*
-  public static getAuctions(req: Request, res: Response): void {
-    const url = req.body.url;
-
-    if (url && url.indexOf('.worldofwarcraft.com/auction-data') !== -1) {
-      request(url).pipe(res);
-    } else {
-      res.send({
-        realms: [],
-        auctions: []
-      });
-    }
-  }*/
   public static getAuctions(req: Request, res: Response): void {
     const url = req.body.url;
 
