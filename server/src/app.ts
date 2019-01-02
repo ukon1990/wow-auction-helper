@@ -64,20 +64,27 @@ app.options('/api/item/:id', itemController.updateItem);
 app.get('/api/item/wowdb/:id', itemController.getWoWDBItem);
 app.get('/api/item/source/:id', itemController.getItemSources);
 
+// Recipes
 app.get('/api/recipe', recipeController.postRecipes);
 app.post('/api/recipe', recipeController.postRecipes);
 app.get('/api/recipe/:id', recipeController.getRecipe);
 app.patch('/api/recipe/:id', recipeController.patchRecipes);
 app.options('/api/recipe/:id', recipeController.patchRecipes);
 
+// Pets
 app.get('/api/pet', petController.postPets);
 app.post('/api/pet', petController.postPets);
 app.get('/api/pet/:id', petController.getPet);
 app.patch('/api/pet/:id', petController.patchPet);
 app.options('/api/pet/:id', petController.patchPet);
 
+// Auctions
 app.post('/api/auction', auctionController.getAuctions);
+app.get('/api/auction/:region/:realm', auctionController.getSnapshotForRealm);
 app.post('/api/auction/wowuction', auctionController.getWoWUction);
+
+// Character
+app.get('character/:realm/:name', () => {});
 
 /**
  * Primary app routes.

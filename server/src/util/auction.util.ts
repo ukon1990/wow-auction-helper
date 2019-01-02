@@ -7,6 +7,7 @@ import { BLIZZARD_API_KEY, DATABASE_CREDENTIALS } from './secrets';
 import { ItemLocale } from '../models/item/item-locale';
 import { ItemQuery } from '../queries/item.query';
 import { Auction } from '../models/auction/auction';
+import {Endpoints} from '../endpoints';
 const PromiseThrottle: any = require('promise-throttle');
 const request: any = require('request');
 const RequestPromise = require('request-promise');
@@ -95,7 +96,7 @@ export class AuctionUtil {
           tempObj = l.split('\t');
           list.push({
             id: parseInt(tempObj[4], 10),
-            mktPrice: parseInt(tempObj[6]),
+            mktPrice: parseInt(tempObj[6], 10),
             avgDailyPosted: parseFloat(tempObj[15]),
             avgDailySold: parseFloat(tempObj[16]),
             estDemand: parseFloat(tempObj[17]),
@@ -104,6 +105,25 @@ export class AuctionUtil {
         }
       });
       res.send(list);
+    });
+  }
+
+  static getSnapshotForRealm(req, res) {
+    request.get(new Endpoints().getPath(
+      `auction/data/${ req.params.realm }`,
+      req.params.region),
+      (error, response, body) => {
+      if (error) {
+        res.send({
+          files: [{
+            lastModified: undefined,
+            url: ''
+          }]
+        });
+        console.error('get auction data url failed', error);
+        return;
+      }
+      res.send(JSON.parse(body));
     });
   }
 }
