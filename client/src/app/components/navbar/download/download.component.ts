@@ -172,7 +172,7 @@ export class DownloadComponent implements OnInit {
       this.timeSinceUpdate = this.milliSecondsToMinutes();
       await this.setLastUpdateAvailableTime();
       setInterval(() =>
-        this.setLastUpdateAvailableTime(), 5000);
+        this.setLastUpdateAvailableTime(), 30000);
     }
   }
 
@@ -303,6 +303,9 @@ export class DownloadComponent implements OnInit {
   setLastUpdateAvailableTime(): void {
     const timeSince = this.milliSecondsToMinutes(),
       lastModified = SharedService.auctionResponse ? SharedService.auctionResponse.lastModified : undefined;
+    if (timeSince < 15) {
+      return;
+    }
 
     if (!this.checkingForUpdates && this.isOnline()) {
       this.checkingForUpdates = true;
@@ -311,7 +314,6 @@ export class DownloadComponent implements OnInit {
           if (SharedService.auctionResponse.lastModified !== lastModified) {
             this.lastCheckedMin = undefined;
             this.checkingForUpdates = false;
-            this.downloadProgress = 'Downloading new auctions';
           } else {
             this.lastCheckedMin = timeSince;
             this.checkingForUpdates = false;
