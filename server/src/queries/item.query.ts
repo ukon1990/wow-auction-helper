@@ -1,5 +1,6 @@
-import { Item } from '../models/item/item';
-import { safeifyString } from '../util/string.util';
+import {Item} from '../models/item/item';
+import {safeifyString} from '../util/string.util';
+import {getLocale} from '../util/locale.util';
 
 export class ItemQuery {
   public static update(item: Item) {
@@ -7,19 +8,19 @@ export class ItemQuery {
     Object.keys(item).forEach(key => {
       if (item[key]) {
         if (typeof item[key] === 'string') {
-          columns.push(`${ key } = "${ safeifyString(item[key]) }"`);
+          columns.push(`${key} = "${safeifyString(item[key])}"`);
         } else if (typeof item[key] === 'object') {
           columns.push(`
-            ${ key } = "${ safeifyString(JSON.stringify(item[key])) }"`);
+            ${key} = "${safeifyString(JSON.stringify(item[key]))}"`);
         } else {
-          columns.push(`${ key } = ${ item[key] }`);
+          columns.push(`${key} = ${item[key]}`);
         }
       }
     });
     return `
       UPDATE items
       SET
-        ${ columns.toString() },
+        ${columns.toString()},
         timestamp = CURRENT_TIMESTAMP
       WHERE id = ${item.id};`;
   }
@@ -27,39 +28,129 @@ export class ItemQuery {
   public static insert(item: Item) {
     return `
       INSERT INTO items VALUES(${
-          item.id
-        },"${
-          safeifyString(item.name)
-        }", "${
-          item.icon
-        }", ${
-          item.itemLevel
-        }, ${
-          item.itemClass
-        }, ${
-          item.itemSubClass
-        }, ${
-          item.quality
-        }, "${
-          item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
-        }", "${
-          item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
-        }", ${
-          item.buyPrice
-        }, ${
-          item.sellPrice
-        }, ${
-          item.itemBind
-        }, ${
-          item.minFactionId
-        }, ${
-          item.minReputation
-        }, ${
-          item.isDropped
-        }
+      item.id
+      },"${
+      safeifyString(item.name)
+      }", "${
+      item.icon
+      }", ${
+      item.itemLevel
+      }, ${
+      item.itemClass
+      }, ${
+      item.itemSubClass
+      }, ${
+      item.quality
+      }, "${
+      item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
+      }", "${
+      item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
+      }", ${
+      item.buyPrice
+      }, ${
+      item.sellPrice
+      }, ${
+      item.itemBind
+      }, ${
+      item.minFactionId
+      }, ${
+      item.minReputation
+      }, ${
+      item.isDropped
+      }
         ,CURRENT_TIMESTAMP
         ,${
-          item.expansionId
-        });`;
+      item.expansionId
+      });`;
+  }
+
+  public static getById(req) {
+    return `
+    SELECT
+      i.id,
+     COALESCE(${getLocale(req)}, i.name) as name,
+     icon,
+     itemLevel,
+     itemClass,
+     itemSubClass,
+     quality,
+     itemSpells,
+     itemSource,
+     buyPrice,
+     sellPrice,
+     itemBind,
+     minFactionId,
+     minReputation,
+     isDropped,
+     expansionId
+    FROM items as i
+    LEFT OUTER JOIN item_name_locale as l
+    ON i.id = l.id
+    WHERE i.id = ${req.params.id};`;
+  }
+
+  public static getAllAuctionsAfterAndOrderByTimestamp(req) {
+    return `
+    SELECT
+         i.id,
+         COALESCE(${getLocale(req)}, i.name) as name,
+         icon,
+         itemLevel,
+         itemClass,
+         itemSubClass,
+         quality,
+         itemSpells,
+         itemSource,
+         buyPrice,
+         sellPrice,
+         itemBind,
+         minFactionId,
+         minReputation,
+         isDropped,
+         expansionId,
+         timestamp
+    FROM items as i
+    LEFT OUTER JOIN item_name_locale as l
+    ON i.id = l.id
+    WHERE timestamp > "${req.body.timestamp}"
+    ORDER BY timestamp desc;`;
+  }
+
+  public static getAllItemsOrderByTimestamp(req) {
+    return `
+      SELECT
+             i.id, COALESCE(${getLocale(req)}, i.name) as name,
+             icon,
+             itemLevel,
+             itemClass,
+             itemSubClass,
+             quality,
+             itemSpells,
+             itemSource,
+             buyPrice,
+             sellPrice,
+             itemBind,
+             minFactionId,
+             minReputation,
+             isDropped,
+             expansionId,
+             timestamp
+      FROM items as i
+      LEFT OUTER JOIN item_name_locale as l
+      ON i.id = l.id
+      ORDER BY timestamp desc;`;
+  }
+
+  public static getItemSourceForId(req) {
+    return `
+      SELECT itemSource
+      FROM items as i
+      WHERE id = ${req.params.id};`;
+  }
+
+  public static getItemsToUpdate() {
+    return `SELECT *
+            FROM items
+            WHERE itemLevel > 400;`;
   }
 }

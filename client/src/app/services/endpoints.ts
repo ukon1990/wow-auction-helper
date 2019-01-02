@@ -1,5 +1,4 @@
 import {SharedService} from './shared.service';
-import {Keys} from './keys';
 import {environment} from '../../environments/environment';
 
 export class Endpoints {
@@ -38,25 +37,10 @@ export class Endpoints {
       Endpoints.getRealm().slug}/`;
   }
 
-  private static getRealm(slug?: string) {
+  public static getRealm(slug?: string) {
     const fromSlug = SharedService.realms[slug],
       currentRealm = SharedService.realms[SharedService.user.realm];
     return fromSlug || currentRealm;
-  }
-
-// http://localhost:3000/api/auction?
-  public static getBattleNetApi(query: string, region?: string, dontUseUserLocale?: boolean, realmSlug?: string): string {
-    // 'assets/mock/auctions.json'
-    const localeString = dontUseUserLocale ?
-      '' : `&locale=${Endpoints.getRealm(realmSlug).locale}`;
-
-    return `https://${
-      Endpoints.getRegion(region)
-      }.api.battle.net/wow/${
-      query
-      }${
-      Endpoints.getBinder(query)
-      }apikey=${Keys.blizzard}${localeString}`;
   }
 
   public static getRegion(region: string): string {

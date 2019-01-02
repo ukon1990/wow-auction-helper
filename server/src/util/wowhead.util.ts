@@ -1,17 +1,17 @@
 import {
   WoWHead,
-  WoWHeadSoldBy,
-  WoWHeadDroppedBy,
-  WoWHeadCurrencyFor,
   WoWHeadContainedInItem,
   WoWHeadContainedInObject,
-  WoWHeadProspectedFrom
+  WoWHeadCurrencyFor,
+  WoWHeadDroppedBy,
+  WoWHeadProspectedFrom,
+  WoWHeadSoldBy
 } from '../models/item/wowhead';
-import { Item } from '../models/item/item';
 
 export class WoWHeadUtil {
 
   static pctStackRegex = /,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g;
+
   // .replace(/,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g, 'tiss');
   public static setValuesAll(body: string): any {
     let wh: any = [];
@@ -54,7 +54,7 @@ export class WoWHeadUtil {
       dbrx.exec(
         droppedByResult[0])[0]);
 
-    droppedBy.forEach((item: WoWHeadProspectedFrom) => {
+    droppedBy.forEach((item: WoWHeadProspectedFrom) => {
       item.dropChance = item.count / item.outof;
       delete item.classs;
       delete item.flags2;
@@ -80,7 +80,7 @@ export class WoWHeadUtil {
       dbrx.exec(
         droppedByResult[0])[0]);
 
-    droppedBy.forEach((item: WoWHeadProspectedFrom) => {
+    droppedBy.forEach((item: WoWHeadProspectedFrom) => {
       item.dropChance = item.count / item.outof;
       delete item.classs;
       delete item.flags2;
@@ -96,10 +96,10 @@ export class WoWHeadUtil {
   }
 
   public static stringToObject(str: string): any[] {
-    return eval (str.replace('data: ', '').replace('});', ''));
+    return eval(str.replace('data: ', '').replace('});', ''));
   }
 
-  public static getDroppedBy (body: string): WoWHeadDroppedBy[] {
+  public static getDroppedBy(body: string): WoWHeadDroppedBy[] {
     const droppedByRegex = new RegExp(/new Listview\({template: 'npc', id: 'dropped-by',([\s\S]*?)}\);/g);
     const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
     const droppedByResult = droppedByRegex.exec(body);
@@ -113,7 +113,7 @@ export class WoWHeadUtil {
         dbrx.exec(
           droppedByResult[0])[0]);
 
-      droppedBy.forEach((npc: WoWHeadDroppedBy) => {
+      droppedBy.forEach((npc: WoWHeadDroppedBy) => {
         npc.dropChance = npc.count / npc.outof;
         delete npc.pctstack;
         delete npc.personal_loot;
@@ -135,18 +135,18 @@ export class WoWHeadUtil {
       return [];
     }
 
-      const soldBy = WoWHeadUtil.stringToObject(
-        dbrx.exec(
-          soldByResult[0])[0]) as WoWHeadSoldBy[];
-      // const currency = WoWHeadUtil.getCurrency(body);
-      if (soldBy) {
-        soldBy.forEach((sBy: WoWHeadSoldBy) => {
-          WoWHeadUtil.setCurrency(sBy);
-          delete sBy.classification;
-          delete sBy.type;
-          sBy.name = WoWHeadUtil.cleanName(sBy.name);
-        });
-      }
+    const soldBy = WoWHeadUtil.stringToObject(
+      dbrx.exec(
+        soldByResult[0])[0]) as WoWHeadSoldBy[];
+    // const currency = WoWHeadUtil.getCurrency(body);
+    if (soldBy) {
+      soldBy.forEach((sBy: WoWHeadSoldBy) => {
+        WoWHeadUtil.setCurrency(sBy);
+        delete sBy.classification;
+        delete sBy.type;
+        sBy.name = WoWHeadUtil.cleanName(sBy.name);
+      });
+    }
     return soldBy;
   }
 
@@ -197,7 +197,7 @@ export class WoWHeadUtil {
         droppedByResult[0])[0]);
 
 
-    items.forEach((item: WoWHeadContainedInItem) => {
+    items.forEach((item: WoWHeadContainedInItem) => {
       item.dropChance = item.count / item.outof;
       delete item.classs;
       delete item.flags2;
@@ -221,7 +221,7 @@ export class WoWHeadUtil {
         droppedByResult[0])[0]);
 
 
-    items.forEach((item: WoWHeadContainedInObject) => {
+    items.forEach((item: WoWHeadContainedInObject) => {
       item.dropChance = item.count / item.outof;
       delete item['pctstack'];
       delete item.type;
