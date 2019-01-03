@@ -37,6 +37,10 @@ export class ItemUtil {
       ItemUtil.downloadAllItemData(id)
         .then(item => {
           response.send(item);
+          if (!item.name) {
+            return;
+          }
+
           db.query(ItemQuery.insert(item), (dbInsertError) => {
             db.end();
             if (dbInsertError) {

@@ -21,7 +21,9 @@ export const getLocale = (request: any) => {
 export class LocaleUtil {
   private static locales = {
     eu: ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU'],
-    us: ['en_US', 'es_MX', 'pt_BR']
+    us: ['en_US', 'es_MX', 'pt_BR'],
+    kr: ['ko_KR'],
+    tw: ['zh_TW']
   };
 
   public static async setLocales(id: any, idName: string, tableName: string, apiPath: string): Promise<any> {
@@ -63,15 +65,20 @@ export class LocaleUtil {
 
   private static getLocalePromises(array: string[], id: number, locales: ItemLocale, region: string, apiPath: string) {
     return array
-      .map(locale => RequestPromise.get(
-        new Endpoints()
-          .getPath(`${apiPath}/${id}?locale=${locale}`, region), (r, e, b) => {
-          try {
-            locales[locale] = JSON.parse(b).name;
-          } catch (e) {
-            locales[locale] = '404';
-          }
-        }));
+      .map(locale =>
+        LocaleUtil.getRequestPromise(apiPath, id, locale, region, locales));
+  }
+
+  private static getRequestPromise(apiPath: string, id: number, locale, region: string, locales: ItemLocale) {
+    return RequestPromise.get(
+      new Endpoints()
+        .getPath(`${apiPath}/${id}?locale=${locale}`, region), (r, e, b) => {
+        try {
+          locales[locale] = JSON.parse(b).name;
+        } catch (e) {
+          locales[locale] = '404';
+        }
+      });
   }
 
   private static parseRegions(id: any, data: ItemLocale, apiPath: string) {
@@ -84,5 +91,51 @@ export class LocaleUtil {
           region,
           apiPath)
       ));
+  }
+
+  public static async addLocale(id: any, locale: string, region: string, apiPath: string, idName: string, tableName: string) {
+    return new Promise(async (resolve) => {
+      const localeResult: ItemLocale = new ItemLocale(id);
+
+      await LocaleUtil.getRequestPromise(apiPath, id, locale, region, localeResult);
+      await this.updateLocale(id, tableName, idName, locale, localeResult[locale]);
+
+      resolve({
+        id: id,
+        name: localeResult
+      });
+    });
+  }
+
+  private static checkForMissingLocales(id: any, data: ItemLocale, apiPath: string) {
+    return Object.keys(LocaleUtil.locales).map(region =>
+      Promise.all(
+        this.getLocalePromises(
+          LocaleUtil.locales[region],
+          id,
+          data,
+          region,
+          apiPath)
+      ));
+  }
+
+  private static updateLocale(id: any, tableName: string, idName: string, locale: string, data: string) {
+    return new Promise((resolve) => {
+      try {
+        const connection = mysql.createConnection(DATABASE_CREDENTIALS);
+        connection.query(LocaleQuery.updateSingleLocale(tableName, idName, id, locale, data),
+          (err) => {
+            if (!err) {
+              console.log(`Locale added to db for ${locale}@${data}`);
+            } else {
+              console.error(`Locale not added to db for ${locale}@${data}`, err);
+            }
+            connection.end();
+            resolve();
+          });
+      } catch (e) {
+        resolve();
+      }
+    });
   }
 }

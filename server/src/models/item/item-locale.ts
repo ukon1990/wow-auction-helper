@@ -10,6 +10,8 @@ export class ItemLocale {
   pt_PT: string;
   pt_BR: string;
   ru_RU: string;
+  ko_KR: string;
+  zh_TW: string;
 
   constructor(public id: number) {}
 }
