@@ -10,6 +10,11 @@
       [active]="activatedRoute === 'sellers'">
       Sellers ({{ getSellersCount() | number }})
   </a>
+    <a mat-tab-link
+       routerLink="ah-summary"
+       [active]="activatedRoute === 'ah-summary'">
+        Sellers ({{ getSellersCount() | number }})
+    </a>
   <a mat-tab-link
       routerLink="manage-dashboards"
       [active]="activatedRoute == 'manage-dashboards'">
