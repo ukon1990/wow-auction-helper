@@ -85,6 +85,12 @@
                   <mat-option value="us">
                     America
                   </mat-option>
+                  <mat-option value="kr">
+                    Korea
+                  </mat-option>
+                  <mat-option value="tw">
+                    Taiwan
+                  </mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field>
@@ -184,13 +190,18 @@
         <i class="fas fa-arrow-left"></i>
         Back
       </button>
-      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()">
+      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" *ngIf="isWithinSupported3RDPartyAPIRegion(); else completeButtonTemplate">
         Next
       </button>
+      <ng-template #completeButtonTemplate>
+        <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
+          Complete the setup
+        </button>
+      </ng-template>
     </form>
   </mat-step>
 
-  <mat-step>
+  <mat-step *ngIf="isWithinSupported3RDPartyAPIRegion()">
     <form [formGroup]="_characterForm">
       <ng-template matStepLabel>API and settings (optional)</ng-template>
       <strong>Your API key (optional)</strong>

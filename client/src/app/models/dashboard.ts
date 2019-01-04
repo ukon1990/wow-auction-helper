@@ -16,6 +16,7 @@ import { DefaultDashboardSettings } from './dashboard/default-dashboard-settings
 import { Crafting } from './crafting/crafting';
 
 export class Dashboard {
+  public static fails = [];
   public static readonly TYPES = {
     TOP_SELLERS_BY_AUCTIONS_FOR_CLASS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS_FOR_CLASS',
     TOP_SELLERS_BY_AUCTIONS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS',
@@ -257,6 +258,7 @@ export class Dashboard {
     if (db.data.length > 0 && !db.isDisabled) {
       SharedService.itemDashboards.push(db);
     }
+
     db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS].title,
         Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS);
@@ -730,8 +732,14 @@ export class Dashboard {
   }
 
   private isExpansionMissMatch(id: number): boolean {
-    return this.settings.limitToExpansion > -1 &&
-      SharedService.items[id].expansionId !== this.settings.limitToExpansion;
+    if (this.settings.limitToExpansion > -1) {
+      if (!SharedService.items[id]) {
+        return false;
+      } else {
+        return SharedService.items[id].expansionId !== this.settings.limitToExpansion;
+      }
+    }
+    return true;
   }
 
   private getAuctionItem(id: number): AuctionItem {

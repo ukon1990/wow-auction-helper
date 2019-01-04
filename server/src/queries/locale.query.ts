@@ -14,7 +14,9 @@ export class LocaleQuery {
           pl_PL,
           pt_PT,
           pt_BR,
-          ru_RU)
+          ru_RU,
+          ko_KR,
+          zh_TW)
         VALUES
         (${data['id']},
           "${safeifyString(data['en_GB'])}",
@@ -27,6 +29,22 @@ export class LocaleQuery {
           "${safeifyString(data['pl_PL'])}",
           "${safeifyString(data['pt_PT'])}",
           "${safeifyString(data['pt_BR'])}",
-          "${safeifyString(data['ru_RU'])}");`;
+          "${safeifyString(data['ru_RU'])}"
+          "${safeifyString(data['ko_KR'])}"
+          "${safeifyString(data['zh_TW'])}");`;
+  }
+
+  public static getMissingItemsLocales(localeTableName: string, locale: string): string {
+    return `
+      SELECT locale.id
+      FROM ${localeTableName} as locale
+      WHERE ${locale} IS NULL;`;
+  }
+
+  static updateSingleLocale(tableName: string, idName: string, id: any, locale: string, data: string) {
+    return `
+    UPDATE ${tableName}
+    SET ${locale}='${data}'
+    WHERE id=${id};`;
   }
 }

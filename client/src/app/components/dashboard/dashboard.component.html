@@ -1,23 +1,28 @@
 <h2>Dashboard</h2>
 <nav mat-tab-nav-bar>
-  <a mat-tab-link
-      routerLink="items"
-      [active]="activatedRoute === 'items'">
-      Items ({{ getitemCount() | number }})
-  </a>
-  <a mat-tab-link
-      routerLink="sellers"
-      [active]="activatedRoute === 'sellers'">
-      Sellers ({{ getSellersCount() | number }})
-  </a>
-  <a mat-tab-link
-      routerLink="manage-dashboards"
-      [active]="activatedRoute == 'manage-dashboards'">
+    <a mat-tab-link
+       routerLink="items"
+       [active]="activatedRoute === 'items'">
+        Items ({{ getitemCount() | number }})
+    </a>
+    <a mat-tab-link
+       routerLink="sellers"
+       [active]="activatedRoute === 'sellers'">
+        Sellers ({{ getSellersCount() | number }})
+    </a><!--
+    <a mat-tab-link
+       routerLink="ah-summary"
+       [active]="activatedRoute === 'ah-summary'">
+        AH summary
+    </a>-->
+    <a mat-tab-link
+       routerLink="manage-dashboards"
+       [active]="activatedRoute == 'manage-dashboards'">
       <span class="mr-2">
         <i class="fas fa-cog"></i>
       </span>
-      Manage dashboards
-  </a>
+        Manage dashboards
+    </a>
 </nav>
 
 <router-outlet></router-outlet>

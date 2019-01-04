@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      {{ summary.title }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <wah-charts *ngIf="summary.data.length > 0"
+                [defaultType]="summary.chartType"
+                storageName="{{ summary.title }}-chart"
+                [labels]="summary.labels"
+                [data]="summary.data">
+    </wah-charts>
+  </mat-card-content>
+</mat-card>

@@ -171,6 +171,7 @@ export class DatabaseService {
         SharedService.downloading.auctions = false;
         AuctionHandler.organize(auctions, petService);
         console.log('Restored auction from local DB');
+        SharedService.events.auctionUpdate.emit();
       }).catch(e => {
         console.error('Could not restore auctions from local DB', e);
         SharedService.downloading.auctions = false;

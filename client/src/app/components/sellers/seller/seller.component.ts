@@ -36,7 +36,9 @@ export class SellerComponent implements OnInit {
         SharedService.selectedSeller.name,
         SharedService.selectedSeller.realm)
         .then(c => {
-          this.character = c;
+          if (!c.status) {
+            this.character = c;
+          }
           SharedService.downloading.characterData = false;
         })
         .catch(e => {

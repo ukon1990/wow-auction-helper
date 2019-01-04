@@ -22,7 +22,7 @@ export class Endpoints {
     if (path === 'auction' && SharedService.user.region === 'us') {
       url = Endpoints.LAMBDAS.AUCTION_US;
     }
-    console.log('path', url);
+
     return environment.production ?
       url : `${Endpoints.WAH_LOCAL_API}${path}`;
   }

@@ -1,0 +1,25 @@
+<div class="canvas">
+  <canvas id="chart"></canvas>
+</div>
+<mat-form-field>
+  <mat-select
+          [disableOptionCentering]="true"
+          placeholder="Chart type"
+          [formControl]="chartTypeForm">
+    <mat-option value="bar">
+      Bar
+    </mat-option>
+    <mat-option value="line">
+      Line
+    </mat-option>
+    <mat-option value="pie">
+      Pie chart
+    </mat-option>
+    <mat-option value="doughnut">
+      Doughnut
+    </mat-option>
+    <mat-option value="radar">
+      Radar
+    </mat-option>
+  </mat-select>
+</mat-form-field>
