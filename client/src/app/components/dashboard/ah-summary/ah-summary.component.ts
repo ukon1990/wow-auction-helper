@@ -4,6 +4,10 @@ import {Item} from '../../../models/item/item';
 import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../../models/auction/auction-item';
 import {itemClasses} from '../../../models/item/item-classes';
+import {SummaryCard} from '../../../models/summary-card.model';
+import {ChartData} from '../../../models/chart-data.model';
+import {Recipe} from '../../../models/crafting/recipe';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -12,27 +16,57 @@ import {itemClasses} from '../../../models/item/item-classes';
 })
 export class AhSummaryComponent implements OnInit, OnDestroy {
   ahEvents: Subscription;
-  summaries = [
-    {
-      title: 'Expansions',
-      chartType: 'bar',
-      labels: ['Classic', 'TBC', 'WOTLK', 'Cata', 'MOP', 'WOD', 'Legion', 'BFA'],
-      data: [],
-      table: {
-        columns: [],
-        data: []
-      }
-    }, {
-      title: 'Item classes',
-      chartType: 'bar',
-      labels: ['Classic', 'TBC', 'WOTLK', 'Cata', 'MOP', 'WOD', 'Legion', 'BFA'],
-      data: [],
-      table: {
-        columns: [],
-        data: []
-      }
-    }
+  summaries: SummaryCard[] = [
+    this.expansionSummary(),
+    this.itemByClassSummary(),
+    this.getProfessionItemCount()
   ];
+
+  private getProfessionItemCount() {
+    return new SummaryCard(
+      'Item count per profession',
+      'line',
+      [
+        'Blacksmithing',
+        'Leatherworking',
+        'Alchemy',
+        'Cooking',
+        'Mining',
+        'Tailoring',
+        'Engineering',
+        'Enchanting',
+        'Jewelcrafting',
+        'Inscription',
+        'none'
+      ].map(name => new ChartData(name, name)),
+      []);
+  }
+
+  private itemByClassSummary() {
+    return new SummaryCard(
+      'Items by class',
+      'pie',
+      itemClasses.classes.map(c =>
+        new ChartData(c.class, c.name)),
+      []);
+  }
+
+  private expansionSummary() {
+    return new SummaryCard(
+      'Items by expansion',
+      'bar',
+      [
+        new ChartData(0, 'Classic'),
+        new ChartData(1, 'TBC'),
+        new ChartData(2, 'WOTLK'),
+        new ChartData(3, 'Cata'),
+        new ChartData(4, 'MOP'),
+        new ChartData(5, 'WOD'),
+        new ChartData(6, 'Legion'),
+        new ChartData(7, 'BFA')
+      ],
+      []);
+  }
 
   /**
    * Potential interesting data:
@@ -43,7 +77,8 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
    * - Expansions
    */
 
-  constructor() {
+  constructor(private title: Title) {
+    this.title.setTitle('WAH - Summary dashboard');
   }
 
   ngOnInit() {
@@ -59,14 +94,15 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
 
   summarizeData(): void {
     this.summaries.forEach(s =>
-      s.data.length = 0);
+      s.clearEntries());
 
     SharedService.auctionItems.forEach((item: AuctionItem) => {
       this.addByExpansion(item);
 
       this.itemsByClass(item);
+
+      this.addCrafts(item);
     });
-    console.log(this.summaries);
   }
 
   getItem(item: AuctionItem): Item {
@@ -75,16 +111,21 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
   }
 
   private addByExpansion(item: AuctionItem) {
-    const atIndex = this.summaries[0].data[this.getItem(item).expansionId];
-    if (!atIndex) {
-      this.summaries[0].data[this.getItem(item).expansionId] = 1;
-    } else {
-      this.summaries[0].data[this.getItem(item).expansionId]++;
-    }
+    (this.summaries[0] as SummaryCard)
+      .addEntry(this.getItem(item).expansionId, 1);
   }
 
   private itemsByClass(item: AuctionItem) {
+    (this.summaries[1] as SummaryCard)
+      .addEntry(this.getItem(item).itemClass, item.quantityTotal);
+  }
 
+  private addCrafts(item: AuctionItem) {
+    const recipe: Recipe[] = SharedService.itemRecipeMap[item.itemID];
+    if (recipe) {
+      (this.summaries[2] as SummaryCard)
+        .addEntry(recipe[0].profession, item.quantityTotal);
+    }
   }
 
   setItemClassLabels(): void {

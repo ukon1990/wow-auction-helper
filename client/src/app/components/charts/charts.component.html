@@ -1,5 +1,5 @@
-<div class="canvas">
-  <canvas id="chart"></canvas>
+<div class="canvas" *ngIf="storageName">
+  <canvas id="{{ storageName }}"></canvas>
 </div>
 <mat-form-field>
   <mat-select
