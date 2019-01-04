@@ -72,6 +72,6 @@ export class ChartsComponent implements AfterViewInit, OnChanges {
   }
 
   private onClick(elements, chartItem): void {
-  this.selection.emit(chartItem[0]['_index']);
-}
+    this.selection.emit(chartItem[0]['_index']);
+  }
 }

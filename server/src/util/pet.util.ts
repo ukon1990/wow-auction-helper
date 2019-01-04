@@ -95,7 +95,6 @@ export class PetUtil {
     response: Response,
     req: any) {
     const db = mysql.createConnection(DATABASE_CREDENTIALS);
-    console.log('Query', PetQuery.selectAllForTimestampWithLocale(req));
     db.query(PetQuery.selectAllForTimestampWithLocale(req),
       (err, rows, fields) => {
         db.end();
