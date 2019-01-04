@@ -16,10 +16,6 @@ import {Compression} from '../utils/compression.util';
 
 @Injectable()
 export class AuctionsService {
-  public static events = {
-    auctions: new EventEmitter<any>(),
-    api: new EventEmitter<any>()
-  };
 
   constructor(
     private _http: HttpClient,
@@ -97,7 +93,7 @@ export class AuctionsService {
             console.error('Could not send notification', e);
           }
         }
-        AuctionsService.events.auctions.emit();
+        SharedService.events.auctionUpdate.emit();
       })
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;

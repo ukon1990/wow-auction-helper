@@ -18,5 +18,5 @@ export class Item {
     minReputation: number;
     isDropped: boolean;
     isBoughtForGold?: boolean;
-    expansionId: number;
+    expansionId = 0;
 }

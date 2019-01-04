@@ -86,6 +86,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddItemsComponent } from './components/update/add-items/add-items.component';
 import { AddRecipesComponent } from './components/update/add-recipes/add-recipes.component';
 import { AhSummaryComponent } from './components/dashboard/ah-summary/ah-summary.component';
+import { ChartsComponent } from './components/charts/charts.component';
+import { SummaryCardComponent } from './components/dashboard/ah-summary/summary-card/summary-card.component';
 
 
 @NgModule({
@@ -151,7 +153,9 @@ import { AhSummaryComponent } from './components/dashboard/ah-summary/ah-summary
     FooterComponent,
     AddItemsComponent,
     AddRecipesComponent,
-    AhSummaryComponent
+    AhSummaryComponent,
+    ChartsComponent,
+    SummaryCardComponent
   ],
   imports: [
     BrowserModule,

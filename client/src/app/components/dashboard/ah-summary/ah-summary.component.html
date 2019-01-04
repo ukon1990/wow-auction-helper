@@ -1,3 +1,6 @@
-<p>
-  ah-summary works!
-</p>
+<div class="row col-md-12">
+    <wah-summary-card *ngFor="let s of summaries"
+                      class="col-md-4"
+                      [summary]="s">
+    </wah-summary-card>
+</div>
