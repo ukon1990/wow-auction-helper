@@ -732,14 +732,15 @@ export class Dashboard {
   }
 
   private isExpansionMissMatch(id: number): boolean {
-    if (this.settings.limitToExpansion > -1) {
+    if (this.settings.limitToExpansion === -1) {
+      return false;
+    } else {
       if (!SharedService.items[id]) {
-        return false;
+        return true;
       } else {
         return SharedService.items[id].expansionId !== this.settings.limitToExpansion;
       }
     }
-    return true;
   }
 
   private getAuctionItem(id: number): AuctionItem {
