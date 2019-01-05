@@ -1,20 +1,18 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { SharedService } from './shared.service';
-import { AuctionHandler } from '../models/auction/auction-handler';
-import { Dashboard } from '../models/dashboard';
-import { TSM } from '../models/auction/tsm';
-import { Endpoints } from './endpoints';
-import { DatabaseService } from './database.service';
-import { ItemService } from './item.service';
-import { Notifications } from '../models/user/notification';
-import { MatSnackBar } from '@angular/material';
-import { WoWUction } from '../models/auction/wowuction';
-import { PetsService } from './pets.service';
-import { Item } from '../models/item/item';
-import { Angulartics2 } from 'angulartics2';
-import { ErrorReport } from '../utils/error-report.util';
-import { Compression } from '../utils/compression.util';
+import {EventEmitter, Injectable} from '@angular/core';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {SharedService} from './shared.service';
+import {AuctionHandler} from '../models/auction/auction-handler';
+import {TSM} from '../models/auction/tsm';
+import {Endpoints} from './endpoints';
+import {DatabaseService} from './database.service';
+import {ItemService} from './item.service';
+import {Notifications} from '../models/user/notification';
+import {MatSnackBar} from '@angular/material';
+import {WoWUction} from '../models/auction/wowuction';
+import {PetsService} from './pets.service';
+import {Angulartics2} from 'angulartics2';
+import {ErrorReport} from '../utils/error-report.util';
+import {Compression} from '../utils/compression.util';
 
 @Injectable()
 export class AuctionsService {
@@ -25,12 +23,14 @@ export class AuctionsService {
     private _dbService: DatabaseService,
     private _itemService: ItemService,
     private petService: PetsService,
-    private angulartics2: Angulartics2) { }
+    private angulartics2: Angulartics2) {
+  }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
-    return this._http.get(Endpoints.getBattleNetApi(`auction/data/${SharedService.user.realm}`))
+    return this._http.get(Endpoints.getUrl(
+      `auction/${SharedService.user.region}/${SharedService.user.realm}`))
       .toPromise()
       .then(r => {
         SharedService.auctionResponse = r['files'][0];
@@ -38,7 +38,7 @@ export class AuctionsService {
           this.getAuctions()
             .then(res => {
               console.log('Updating auctions');
-          }).catch();
+            }).catch();
         }
       })
       .catch(error => {
@@ -54,9 +54,9 @@ export class AuctionsService {
     const missingItems = [];
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
-    this.openSnackbar(`Downloading auctions for ${ SharedService.user.realm }`);
+    this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     return this._http.post(
-        Endpoints.getUrl('auction'), { url: SharedService.auctionResponse.url })
+      Endpoints.getUrl('auction'), {url: SharedService.auctionResponse.url})
       .toPromise()
       .then(a => {
         if (a['isBase64Encoded']) {
@@ -93,6 +93,7 @@ export class AuctionsService {
             console.error('Could not send notification', e);
           }
         }
+        SharedService.events.auctionUpdate.emit();
       })
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
@@ -102,7 +103,7 @@ export class AuctionsService {
             this.openSnackbar(`Auction download failed. The server took too long time to respond`);
             break;
           default:
-            this.openSnackbar(`Auction download failed (${ error.status } - ${ error.statusText })`);
+            this.openSnackbar(`Auction download failed (${error.status} - ${error.statusText})`);
         }
 
         ErrorReport.sendHttpError(error);
@@ -113,14 +114,16 @@ export class AuctionsService {
     this._http.post('https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/default/getAuctions', {
       url: 'http://auction-api-us.worldofwarcraft.com/auction-data/5301bfa3fe54bb793c685437da49ac42/auctions.json'
     }).toPromise()
-    .then(r => {
-      console.log('compressed response', r);
-      Compression.decompress(r['body']);
-    })
-    .catch(error => console.error(error));
+      .then(r => {
+        console.log('compressed response', r);
+        Compression.decompress(r['body']);
+      })
+      .catch(error => console.error(error));
   }
 
   getTsmAuctions(): Promise<any> {
+    const region = SharedService.user.region;
+    if (region === 'eu' || region === 'us') {
     console.log('Downloading TSM data');
     SharedService.downloading.tsmAuctions = true;
     this.openSnackbar('Downloading TSM data');
@@ -153,9 +156,15 @@ export class AuctionsService {
           ErrorReport.sendHttpError(error);
         });
       });
+    } else {
+      return new Promise((resolve) => []);
+    }
   }
 
   getWoWUctionAuctions(): Promise<any> {
+    const region = SharedService.user.region;
+
+    if (region === 'eu' || region === 'us') {
     console.log('Downloading WoWUction data');
     SharedService.downloading.wowUctionAuctions = true;
     this.openSnackbar('Downloading WoWUction data');
@@ -188,9 +197,12 @@ export class AuctionsService {
           console.error('Could not restore WoWUction auctions from local DB', err);
         });
       });
+    } else {
+      return new Promise((resolve) => []);
+    }
   }
 
   private openSnackbar(message: string): void {
-    this.snackBar.open(message, 'Ok', { duration: 3000 });
+    this.snackBar.open(message, 'Ok', {duration: 3000});
   }
 }

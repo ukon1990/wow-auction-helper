@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SharedService } from '../../../services/shared.service';
-import { Realm } from '../../../models/realm';
-import { User } from '../../../models/user/user';
-import { RealmService } from '../../../services/realm.service';
-import { AuctionsService } from '../../../services/auctions.service';
-import { Angulartics2 } from 'angulartics2';
-import { FileService } from '../../../services/file.service';
-import { ItemService } from '../../../services/item.service';
-import { CraftingService } from '../../../services/crafting.service';
-import { PetsService } from '../../../services/pets.service';
-import { AuctionHandler } from '../../../models/auction/auction-handler';
-import { DatabaseService } from '../../../services/database.service';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {SharedService} from '../../../services/shared.service';
+import {Realm} from '../../../models/realm';
+import {User} from '../../../models/user/user';
+import {RealmService} from '../../../services/realm.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {Angulartics2} from 'angulartics2';
+import {FileService} from '../../../services/file.service';
+import {ItemService} from '../../../services/item.service';
+import {CraftingService} from '../../../services/crafting.service';
+import {PetsService} from '../../../services/pets.service';
+import {AuctionHandler} from '../../../models/auction/auction-handler';
+import {DatabaseService} from '../../../services/database.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -23,6 +23,12 @@ export class GeneralSettingsComponent implements OnInit {
   locales = SharedService.locales;
   changedLocales = false;
   changedRealm = false;
+  regions = [
+    { id: 'eu', name: 'Europe'},
+    { id: 'us', name: 'America'},
+    { id: 'kr', name: 'Korea'},
+    { id: 'tw', name: 'Taiwan'}
+  ];
 
   constructor(private _formBuilder: FormBuilder,
     private angulartics2: Angulartics2,
@@ -60,6 +66,11 @@ export class GeneralSettingsComponent implements OnInit {
     if (!SharedService.realms || Object.keys(SharedService.realms).length === 0) {
       this.getRealms();
     }
+  }
+
+  isWithinSupported3RDPartyAPIRegion(): boolean {
+    return this._characterForm.getRawValue().region === 'eu' ||
+      this._characterForm.getRawValue().region === 'us';
   }
 
   hasRealmChange(): boolean {

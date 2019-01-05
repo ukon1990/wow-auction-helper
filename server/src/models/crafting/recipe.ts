@@ -1,4 +1,4 @@
-import { Reagent } from './reagent';
+import {Reagent} from './reagent';
 
 export class Recipe {
   spellID: number;
@@ -16,10 +16,10 @@ export class Recipe {
   roi?: number;
 
   // Fetched for the current auctions
-  mktPrice?: number = 0;
-  avgDailySold?: number = 0;
-  regionSaleAvg?: number = 0;
-  regionSaleRate?: number = 0;
-  buyout?: number = 0;
-  quantityTotal?: number = 0;
+  mktPrice = 0;
+  avgDailySold = 0;
+  regionSaleAvg = 0;
+  regionSaleRate = 0;
+  buyout = 0;
+  quantityTotal = 0;
 }

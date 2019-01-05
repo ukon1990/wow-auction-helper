@@ -1,23 +1,23 @@
-import { Component, AfterViewInit, Input, Output, OnChanges, OnDestroy } from '@angular/core';
-import { PageEvent } from '@angular/material';
-import { ColumnDescription } from '../../models/column-description';
-import { SharedService } from '../../services/shared.service';
-import { AuctionItem } from '../../models/auction/auction-item';
-import { Auction } from '../../models/auction/auction';
-import { Recipe } from '../../models/crafting/recipe';
-import { User } from '../../models/user/user';
-import { Sorter } from '../../models/sorter';
-import { Item } from '../../models/item/item';
-import { Seller } from '../../models/seller';
-import { AuctionPet } from '../../models/auction/auction-pet';
-import { CustomPrice, CustomPrices } from '../../models/crafting/custom-price';
-import { ShoppingCartRecipe } from '../../models/shopping-cart';
-import { Angulartics2 } from 'angulartics2';
-import { CustomProcs } from '../../models/crafting/custom-proc';
-import { Watchlist, WatchlistGroup } from '../../models/watchlist/watchlist';
-import { ItemService } from '../../services/item.service';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import {AfterViewInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
+import {PageEvent} from '@angular/material';
+import {ColumnDescription} from '../../models/column-description';
+import {SharedService} from '../../services/shared.service';
+import {AuctionItem} from '../../models/auction/auction-item';
+import {Auction} from '../../models/auction/auction';
+import {Recipe} from '../../models/crafting/recipe';
+import {User} from '../../models/user/user';
+import {Sorter} from '../../models/sorter';
+import {Item} from '../../models/item/item';
+import {Seller} from '../../models/seller';
+import {AuctionPet} from '../../models/auction/auction-pet';
+import {CustomPrices} from '../../models/crafting/custom-price';
+import {ShoppingCartRecipe} from '../../models/shopping-cart';
+import {Angulartics2} from 'angulartics2';
+import {CustomProcs} from '../../models/crafting/custom-proc';
+import {Watchlist} from '../../models/watchlist/watchlist';
+import {ItemService} from '../../services/item.service';
+import {FormControl} from '@angular/forms';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'wah-data-table',
@@ -46,7 +46,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
-  pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
+  pageEvent: PageEvent = {pageIndex: 0, pageSize: this.itemsPerPage, length: 0};
   sorter: Sorter;
   locale = localStorage['locale'].split('-')[0];
   previousLength = 0;
@@ -108,11 +108,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     const name = this.searchField.value;
     this.pageEvent.pageIndex = 0;
     this.filteredData = this.data.filter(d => {
+      if (!d[this.filterParameter] && !SharedService.items[d.item]) {
+        return false;
+      }
+
       const compareName = d[this.filterParameter] ?
         d[this.filterParameter] : SharedService.items[d.item][this.filterParameter];
       return compareName.toLowerCase()
         .indexOf((name !== null ? name : '')
-        .toLowerCase()) > -1;
+          .toLowerCase()) > -1;
     });
   }
 
@@ -132,7 +136,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.showOwner) {
       const a = SharedService.auctionItemsMap[auction.item ? Auction.getAuctionItemId(auction) : auction.itemID];
       return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
-        SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? true : false;
+      SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? true : false;
     }
     return false;
   }
@@ -142,16 +146,17 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       SharedService.user.shoppingCart.addEntry(1, entry, undefined);
       this.angulartics2.eventTrack.next({
         action: 'Added recipe',
-        properties: { category: 'Shopping cart' },
+        properties: {category: 'Shopping cart'},
       });
     } else {
       SharedService.user.shoppingCart.addEntry(1, undefined, entry);
       this.angulartics2.eventTrack.next({
         action: 'Added item',
-        properties: { category: 'Shopping cart' },
+        properties: {category: 'Shopping cart'},
       });
     }
   }
+
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
     SharedService.preScrollPosition = window.scrollY;
@@ -252,7 +257,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   /* istanbul ignore next */
   getItem(itemID: number): Item {
     return SharedService.items[itemID] ?
-    SharedService.items[itemID] : new Item();
+      SharedService.items[itemID] : new Item();
   }
 
   getItemID(item: any): number {
@@ -270,7 +275,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     SharedService.user.watchlist.moveGroup(pagignationIndex + from, pagignationIndex + to);
     this.angulartics2.eventTrack.next({
       action: `Changed group position`,
-      properties: { category: 'Watchlist' },
+      properties: {category: 'Watchlist'},
     });
   }
 
@@ -280,7 +285,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     this.angulartics2.eventTrack.next({
       action: 'Removed group',
-      properties: { category: 'Watchlist' },
+      properties: {category: 'Watchlist'},
     });
     this.pageEvent.pageIndex = 0;
   }
@@ -294,7 +299,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     SharedService.user.shoppingCart.removeRecipe(recipe, index);
     this.angulartics2.eventTrack.next({
       action: 'Removed recipe',
-      properties: { category: 'Shopping cart' },
+      properties: {category: 'Shopping cart'},
     });
   }
 
@@ -336,6 +341,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       return 'npc=' + this.getPetId(item);
     }
     return (this.linkType ?
-      `${ this.linkType }=` : 'item=') + this.getItemID(item);
+      `${this.linkType}=` : 'item=') + this.getItemID(item);
   }
 }

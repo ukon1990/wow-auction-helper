@@ -1,0 +1,16 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            {{ summary.title }}
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <wah-charts *ngIf="summary.data.length > 0"
+                    [defaultType]="summary.type"
+                    storageName="{{ summary.title }}-chart"
+                    [labels]="summary.labels"
+                    [dataMap]="summary.dataMap"
+                    (selection)="selection($event)">
+        </wah-charts>
+    </mat-card-content>
+</mat-card>

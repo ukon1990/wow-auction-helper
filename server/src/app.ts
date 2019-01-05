@@ -1,24 +1,22 @@
 import express from 'express';
-import compression from 'compression';  // compresses requests
+import compression from 'compression'; // compresses requests
 import bodyParser from 'body-parser';
-import logger from './util/logger';
 import lusca from 'lusca';
 import dotenv from 'dotenv';
-import flash from 'express-flash';
 import expressSession from 'express-session';
 import path from 'path';
 import expressValidator from 'express-validator';
-import bluebird from 'bluebird';
-
-// Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: '.env.example' });
-
 // Controllers (route handlers)
 import * as apiController from './controllers/api';
 import * as itemController from './controllers/item.controller';
 import * as recipeController from './controllers/recipe.controller';
 import * as petController from './controllers/pet.controller';
 import * as auctionController from './controllers/auction.controller';
+import * as characterController from './controllers/character.controller';
+import {getRealmStatus} from './controllers/realm.controller';
+
+// Load environment variables from .env file, where API keys and passwords are configured
+dotenv.config({ path: '.env.example' });
 
 // Create Express server
 const app = express();
@@ -68,20 +66,30 @@ app.options('/api/item/:id', itemController.updateItem);
 app.get('/api/item/wowdb/:id', itemController.getWoWDBItem);
 app.get('/api/item/source/:id', itemController.getItemSources);
 
+// Recipes
 app.get('/api/recipe', recipeController.postRecipes);
 app.post('/api/recipe', recipeController.postRecipes);
 app.get('/api/recipe/:id', recipeController.getRecipe);
 app.patch('/api/recipe/:id', recipeController.patchRecipes);
 app.options('/api/recipe/:id', recipeController.patchRecipes);
 
+// Pets
 app.get('/api/pet', petController.postPets);
 app.post('/api/pet', petController.postPets);
 app.get('/api/pet/:id', petController.getPet);
 app.patch('/api/pet/:id', petController.patchPet);
 app.options('/api/pet/:id', petController.patchPet);
 
+// Auctions
 app.post('/api/auction', auctionController.getAuctions);
+app.get('/api/auction/:region/:realm', auctionController.getSnapshotForRealm);
 app.post('/api/auction/wowuction', auctionController.getWoWUction);
+
+// Character
+app.post('/api/character', characterController.postCharacter);
+
+// Realm status
+app.get('/api/realm/:region', getRealmStatus);
 
 /**
  * Primary app routes.

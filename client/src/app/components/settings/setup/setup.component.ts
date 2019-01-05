@@ -87,6 +87,11 @@ export class SetupComponent implements OnInit {
     }
   }
 
+  isWithinSupported3RDPartyAPIRegion(): boolean {
+    return this._characterForm.getRawValue().region === 'eu' ||
+      this._characterForm.getRawValue().region === 'us';
+  }
+
   getRealmsKeys() {
     return SharedService.realms ? Object.keys(SharedService.realms) : [];
   }

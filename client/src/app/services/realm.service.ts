@@ -37,9 +37,8 @@ export class RealmService {
       `/assets/data/${
         Endpoints.getRegion(region)
         }-realms.json` :
-        Endpoints.getBattleNetApi(
-        'realm/status?',
-        region, true);
+        Endpoints.getUrl(
+        `realm/${region}`);
     return this._http.get(url)
       .toPromise()
       .then(r => {

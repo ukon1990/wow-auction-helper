@@ -86,6 +86,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddItemsComponent } from './components/update/add-items/add-items.component';
 import { AddRecipesComponent } from './components/update/add-recipes/add-recipes.component';
 import { ReputationsComponent } from './components/reputations/reputations.component';
+import { AhSummaryComponent } from './components/dashboard/ah-summary/ah-summary.component';
+import { ChartsComponent } from './components/charts/charts.component';
+import { SummaryCardComponent } from './components/dashboard/ah-summary/summary-card/summary-card.component';
 
 
 @NgModule({
@@ -150,6 +153,10 @@ import { ReputationsComponent } from './components/reputations/reputations.compo
     ManageItemsBuiltInItemComponent,
     FooterComponent,
     AddItemsComponent,
+    AddRecipesComponent,
+    AhSummaryComponent,
+    ChartsComponent,
+    SummaryCardComponent,
     AddRecipesComponent,
     ReputationsComponent
   ],

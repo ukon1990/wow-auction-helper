@@ -65,7 +65,7 @@ export class DatabaseService {
   private getItemsInBatch(from: number, to: number) {
     return this.db.table('items')
       .where(':id')
-      .between(from,to)
+      .between(from, to)
       .toArray()
       .then(items => {
         SharedService.downloading.items = false;
@@ -171,6 +171,7 @@ export class DatabaseService {
         SharedService.downloading.auctions = false;
         AuctionHandler.organize(auctions, petService);
         console.log('Restored auction from local DB');
+        SharedService.events.auctionUpdate.emit();
       }).catch(e => {
         console.error('Could not restore auctions from local DB', e);
         SharedService.downloading.auctions = false;

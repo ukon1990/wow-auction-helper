@@ -4,20 +4,24 @@ import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
 import { startWith, map } from 'rxjs/operators';
 import { ErrorReport } from '../utils/error-report.util';
+import {User} from '../models/user/user';
 
 @Injectable()
 export class CharacterService {
-  // ${API}character/${realm}/${character}?locale=${realm.locale}&apikey=${apiKey}&fields=professions,statistics,pets,petSlots,mounts
 
   constructor(private _http: HttpClient) { }
 
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
     SharedService.downloading.characterData = true;
     return this._http
-      .get(Endpoints.getBattleNetApi(
-        `character/${
-          realm
-        }/${character}?fields=professions,statistics,pets,petSlots,mounts`, region, false, realm))
+      .post(Endpoints.getUrl(`character`),
+        {
+          region: region ? region : SharedService.user.region,
+          realm: realm,
+          name: character,
+          locale: Endpoints.getRealm(User.slugifyString(realm)).locale,
+          withFields: true
+        })
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
@@ -31,10 +35,14 @@ export class CharacterService {
   getCharacterMinimal(character: string, realm: string): Promise<any> {
     SharedService.downloading.characterData = true;
     return this._http
-      .get(Endpoints.getBattleNetApi(
-        `character/${
-          realm
-        }/${character}`))
+      .post(Endpoints.getUrl(`character`),
+        {
+          region: SharedService.user.region,
+          realm: realm,
+          name: character,
+          locale: Endpoints.getRealm(User.slugifyString(realm)).locale,
+          withFields: false
+        })
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;

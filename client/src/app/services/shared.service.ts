@@ -34,7 +34,9 @@ export class SharedService {
     {locale: 'it_IT', name: 'Italiano'},
     {locale: 'pt_PT', name: 'Português (Portugal)'},
     {locale: 'pt_BR', name: 'Português (Brasil)'},
-    {locale: 'ru_RU', name: 'русский'}
+    {locale: 'ru_RU', name: 'русский'},
+    {locale: 'ko_KR', name: 'Korean (Soon™)'},
+    {locale: 'zh_TW', name: 'Chinese (Soon™)'}
   ];
 
   public static events = {

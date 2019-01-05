@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { RecipeUtil } from '../util/recipe.util';
-import { BFALists } from '../bfa-recipe-list';
+import {Request, Response} from 'express';
+import {RecipeUtil} from '../util/recipe.util';
+import {BFALists} from '../bfa-recipe-list';
 
 /**
  * GET /api/recipe

@@ -32,9 +32,13 @@ export class SellerComponent implements OnInit {
   /* istanbul ignore next */
   ngOnInit() {
     if (SharedService.selectedSeller) {
-      this._characterService.getCharacter(SharedService.selectedSeller.name, SharedService.selectedSeller.realm)
+      this._characterService.getCharacter(
+        SharedService.selectedSeller.name,
+        SharedService.selectedSeller.realm)
         .then(c => {
-          this.character = c;
+          if (!c.status) {
+            this.character = c;
+          }
           SharedService.downloading.characterData = false;
         })
         .catch(e => {
