@@ -190,6 +190,7 @@ export class ItemService {
             }
             item.itemSource.soldBy.forEach((soldBy: WoWHeadSoldBy) => {
                 item.isBoughtForGold = !soldBy.currency && soldBy.cost > 0;
+                item.vendorBoughtLimit = soldBy.stock;
             });
         }
     }
