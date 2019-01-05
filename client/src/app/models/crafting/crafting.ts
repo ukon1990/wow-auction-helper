@@ -194,7 +194,7 @@ export class Crafting {
   }
 
   public static isVendorCheaperThanAH(itemID: number): boolean {
-    if (SharedService.items[itemID].isBoughtForGold) {
+    if (SharedService.items[itemID].isBoughtForGold && SharedService.user.useVendorPriceForCraftingIfAvailable) {
       if (!SharedService.auctionItemsMap[itemID]) {
         return true;
       } else if (SharedService.items[itemID].buyPrice < SharedService.auctionItemsMap[itemID].buyout) {
