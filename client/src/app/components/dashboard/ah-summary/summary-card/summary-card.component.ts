@@ -12,4 +12,7 @@ export class SummaryCardComponent implements OnInit {
   ngOnInit() {
   }
 
+  selection(id: number) {
+    console.log('selected', id);
+  }
 }

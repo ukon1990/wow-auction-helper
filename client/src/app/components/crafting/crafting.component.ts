@@ -24,7 +24,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
   auctionSubscription: Subscription;
   itemClasses = itemClasses;
   professions = [
-    'First Aid',
     'Blacksmithing',
     'Leatherworking',
     'Alchemy',
