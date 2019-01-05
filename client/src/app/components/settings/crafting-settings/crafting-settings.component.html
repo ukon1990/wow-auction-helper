@@ -1,21 +1,28 @@
-<mat-form-field>
-  <input type="number" placeholder="Use MV if buyout >= {{ buyoutController.value?.buyoutLimit | percent }}% of MV" [formControl]="buyoutController"
-    matInput>
-</mat-form-field>
+<form [formGroup]="form">
+    <mat-form-field>
+        <input type="number"
+               placeholder="Use MV if buyout >= {{ buyoutController.value?.buyoutLimit | percent }}% of MV"
+               formControlName="buyoutLimit"
+               matInput>
+    </mat-form-field>
+    <mat-checkbox class="ml-2" formControlName="useVendorPriceForCraftingIfAvailable">
+        Use vendor price, for crafting if available.
+    </mat-checkbox>
+</form>
 
 <nav mat-tab-nav-bar>
-  <a mat-tab-link
-     routerLink="custom-prices"
-     routerLinkActive #rla="routerLinkActive"
-     [active]="rla.isActive">
-     Custom prices
-  </a>
-  <a mat-tab-link
-     routerLink="custom-proc"
-     routerLinkActive #rla="routerLinkActive"
-     [active]="rla.isActive">
-     Custom proc rates
-  </a>
+    <a mat-tab-link
+       routerLink="custom-prices"
+       routerLinkActive #rla="routerLinkActive"
+       [active]="rla.isActive">
+        Custom prices
+    </a>
+    <a mat-tab-link
+       routerLink="custom-proc"
+       routerLinkActive #rla="routerLinkActive"
+       [active]="rla.isActive">
+        Custom proc rates
+    </a>
 </nav>
 
 <router-outlet></router-outlet>

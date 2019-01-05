@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import { SharedService } from '../../../services/shared.service';
 import { User } from '../../../models/user/user';
+import {Crafting} from '../../../models/crafting/crafting';
 
 @Component({
   selector: 'wah-crafting-settings',
@@ -10,13 +11,21 @@ import { User } from '../../../models/user/user';
 })
 export class CraftingSettingsComponent {
   buyoutController: FormControl = new FormControl();
+  form: FormGroup;
 
-  constructor() {
-    this.buyoutController.setValue(SharedService.user.buyoutLimit);
-    this.buyoutController.valueChanges
-      .subscribe(() => {
-        SharedService.user.buyoutLimit = this.buyoutController.value;
+  constructor(private formBuilder: FormBuilder) {
+    this.form = this.formBuilder.group({
+      buyoutLimit: new FormControl(
+        SharedService.user.buyoutLimit),
+      useVendorPriceForCraftingIfAvailable: new FormControl(
+        SharedService.user.useVendorPriceForCraftingIfAvailable)
+    });
+    this.form.valueChanges
+      .subscribe((data) => {
+        Object.keys(data).forEach(key =>
+          SharedService.user[key] = data[key]);
         User.save();
+        Crafting.calculateCost();
       });
   }
 }

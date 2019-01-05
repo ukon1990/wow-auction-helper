@@ -26,6 +26,7 @@ export class User {
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
+  useVendorPriceForCraftingIfAvailable = true;
   useIntermediateCrafting = true;
   crafters: any[];
   notifications: NotificationSettings = {
@@ -104,6 +105,10 @@ export class User {
         case 'notifications':
           localStorage['notifications'] = JSON.stringify(user[key]);
           SharedService.user.notifications = user[key];
+          break;
+        case 'useVendorPriceForCraftingIfAvailable':
+          localStorage['useVendorPriceForCraftingIfAvailable'] = JSON.stringify(user[key]);
+          SharedService.user.useVendorPriceForCraftingIfAvailable = user[key];
           break;
         case 'isDarkMode':
           localStorage['isDarkMode'] = JSON.stringify(user[key]);
@@ -218,6 +223,12 @@ export class User {
         case ProspectingAndMillingUtil.TYPES.PROSPECTING:
           if (isExport) {
             user[ProspectingAndMillingUtil.TYPES.PROSPECTING] = ProspectingAndMillingUtil.prospecting;
+          }
+          break;
+        default:
+          try {
+            user[key] = JSON.parse(localStorage[key]);
+          } catch (e) {
           }
           break;
       }

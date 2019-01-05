@@ -17,6 +17,7 @@ export class Item {
     minFactionId: string;
     minReputation: number;
     isDropped: boolean;
+    vendorBoughtLimit?: number;
     isBoughtForGold?: boolean;
     expansionId = 0;
 }
