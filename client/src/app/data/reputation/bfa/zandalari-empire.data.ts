@@ -19,7 +19,7 @@ export const zandalariEmpire = {
         name: 'Potion of Replenishment',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -30,7 +30,7 @@ export const zandalariEmpire = {
         name: 'Flask of Endless Fathoms',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -41,7 +41,7 @@ export const zandalariEmpire = {
         name: 'Coastal Healing Potion',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -52,7 +52,7 @@ export const zandalariEmpire = {
         name: 'Battle Potion of Stamina',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -65,7 +65,7 @@ export const zandalariEmpire = {
         name: 'Pact of Haste',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -76,7 +76,7 @@ export const zandalariEmpire = {
         name: 'Weapon Enchant - Stalwart Navigation',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -87,7 +87,7 @@ export const zandalariEmpire = {
         name: 'Weapon Enchant - Deadly Navigation',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -100,7 +100,7 @@ export const zandalariEmpire = {
         name: 'AZ3-R1-T3 Gearspun Goggles',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -111,7 +111,7 @@ export const zandalariEmpire = {
         name: 'AZ3-R1-T3 Gearspun Goggles',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -122,7 +122,7 @@ export const zandalariEmpire = {
         name: 'Organic Discombobulation Grenade',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -133,7 +133,7 @@ export const zandalariEmpire = {
         name: 'Interdimensional Companion Repository',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -144,7 +144,7 @@ export const zandalariEmpire = {
         name: 'Deployable Attire Rearranger',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -157,7 +157,7 @@ export const zandalariEmpire = {
         name: 'Contract: Zandalari Empire',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -170,7 +170,7 @@ export const zandalariEmpire = {
         name: 'Owlseye Loop',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -181,7 +181,7 @@ export const zandalariEmpire = {
         name: 'Laribole Staff of Alacrity',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -192,7 +192,7 @@ export const zandalariEmpire = {
         name: 'Laribole Staff of Alacrity',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],

@@ -1,10 +1,12 @@
-<div class="row">
-  <wah-character class="col-md-4"
-                 (update)="mapProfessions()"
-                 [character]="character">
+<div class="row col-md-12">
+  <wah-character class="col-md-4 mb-2"
+                 [minimal]="true"
+                 [disallowDelete]="true"
+                 [character]="character"
+                 (update)="mapProfessions()">
   </wah-character>
 
-  <div class="col-md-8 row">
+  <div class="col-md-12 row mb-2">
     <ng-container *ngFor="let profession of professions">
       <div class="col" *ngIf="profession.reputations.length > 0">
         <mat-card>

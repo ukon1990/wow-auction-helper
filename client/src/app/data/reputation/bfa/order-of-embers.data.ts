@@ -19,7 +19,7 @@ export const orderOfEmbers = {
         name: 'Battle Potion of Agility',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -30,7 +30,7 @@ export const orderOfEmbers = {
         name: 'Flask of the Undertow',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -41,7 +41,7 @@ export const orderOfEmbers = {
         name: 'Potion of Rising Death',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -52,7 +52,7 @@ export const orderOfEmbers = {
         name: 'Coastal Rejuvenation Potion',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -65,7 +65,7 @@ export const orderOfEmbers = {
         name: 'Pact of Versatility',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -76,7 +76,7 @@ export const orderOfEmbers = {
         name: 'Weapon Enchant - Gale-Force Striking',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -87,7 +87,7 @@ export const orderOfEmbers = {
         name: 'Weapon Enchant - Versatile Navigation',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -100,7 +100,7 @@ export const orderOfEmbers = {
         name: 'AZ3-R1-T3 Orthogonal Optics',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -111,7 +111,7 @@ export const orderOfEmbers = {
         name: 'Frost-Laced Ammunition',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -122,7 +122,7 @@ export const orderOfEmbers = {
         name: 'AZ3-R1-T3 Orthogonal Optics',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -135,7 +135,7 @@ export const orderOfEmbers = {
         name: 'Contract: Order of Embers',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -148,7 +148,7 @@ export const orderOfEmbers = {
         name: 'Royal Quartz Loop',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -161,7 +161,7 @@ export const orderOfEmbers = {
         name: 'Recurve Bow of the Strands',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -174,7 +174,7 @@ export const orderOfEmbers = {
         name: 'Deep Sea Bag',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -185,7 +185,7 @@ export const orderOfEmbers = {
         name: 'Embroidered Deep Sea Cloak',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],

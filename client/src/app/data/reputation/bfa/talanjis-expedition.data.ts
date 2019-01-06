@@ -19,7 +19,7 @@ export const talanjisExpedition = {
         name: 'Battle Potion of Intellect',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -30,7 +30,7 @@ export const talanjisExpedition = {
         name: 'Flask of the Vast Horizon',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -41,7 +41,7 @@ export const talanjisExpedition = {
         name: 'Coastal Mana Potion',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -52,7 +52,7 @@ export const talanjisExpedition = {
         name: 'Potion of Bursting Blood',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -61,11 +61,11 @@ export const talanjisExpedition = {
     ],
     Enchanting: [
       {
-        spellId: 255100,
+        spellId: 2551000000,
         name: 'Pact of Mastery',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -76,7 +76,7 @@ export const talanjisExpedition = {
         name: 'Enchant Weapon - Siphoning',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -87,7 +87,7 @@ export const talanjisExpedition = {
         name: 'Enchant Weapon - Masterful Navigation',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -100,7 +100,7 @@ export const talanjisExpedition = {
         name: 'AZ3-R1-T3 Bionic Bifocals',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -111,7 +111,7 @@ export const talanjisExpedition = {
         name: 'AZ3-R1-T3 Bionic Bifocals',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -124,7 +124,7 @@ export const talanjisExpedition = {
         name: 'Contract: Talanji\'s Expedition',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -137,7 +137,7 @@ export const talanjisExpedition = {
         name: 'Tidal Amethyst Loop',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -150,7 +150,7 @@ export const talanjisExpedition = {
         name: 'Mistscale Knuckles',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -161,7 +161,7 @@ export const talanjisExpedition = {
         name: 'Hardened Tempest Knuckles',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],

@@ -25,7 +25,7 @@ export const tortollanSeekers = {
         name: 'Endless Tincture of Renewed Combat',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -36,7 +36,7 @@ export const tortollanSeekers = {
         name: 'Siren\'s Alchemist Stone',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -49,7 +49,7 @@ export const tortollanSeekers = {
         name: 'Bountiful Captains Feast',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -60,7 +60,7 @@ export const tortollanSeekers = {
         name: 'Bountiful Captains Feast',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -71,7 +71,7 @@ export const tortollanSeekers = {
         name: 'Galley Banquet',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -82,7 +82,7 @@ export const tortollanSeekers = {
         name: 'Grilled Catfish',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -93,7 +93,7 @@ export const tortollanSeekers = {
         name: 'Seasoned Loins',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -106,7 +106,7 @@ export const tortollanSeekers = {
         name: 'Seal of Critical Strike',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -117,7 +117,7 @@ export const tortollanSeekers = {
         name: 'Seal of Versatility',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -130,7 +130,7 @@ export const tortollanSeekers = {
         name: 'Contract: Champions of Azeroth',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -141,7 +141,7 @@ export const tortollanSeekers = {
         name: 'Contract: Tortollan Seekers',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -152,7 +152,7 @@ export const tortollanSeekers = {
         name: 'Codex of the Quiet Mind',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -163,7 +163,7 @@ export const tortollanSeekers = {
         name: 'Darkmoon Card of War',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -174,7 +174,7 @@ export const tortollanSeekers = {
         name: 'Inked Vessel of Robust Regeneration',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -185,7 +185,7 @@ export const tortollanSeekers = {
         name: 'Inscribed Vessel of Mysticism',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -196,7 +196,7 @@ export const tortollanSeekers = {
         name: 'Tome of the Quiet Mind',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -207,7 +207,7 @@ export const tortollanSeekers = {
         name: 'Glyph of the Dolphin',
         rank: 1,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -220,7 +220,7 @@ export const tortollanSeekers = {
         name: 'Embroidered Deep Sea Bag',
         rank: 2,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],

@@ -19,7 +19,7 @@ export const seventhLegion = {
         name: 'Steelskin Potion',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -30,7 +30,7 @@ export const seventhLegion = {
         name: 'Flask of the Currents',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -41,7 +41,7 @@ export const seventhLegion = {
         name: 'Endless Tincture of Fractional Power',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -52,7 +52,7 @@ export const seventhLegion = {
         name: 'Surging Alchemist Stone',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -63,7 +63,7 @@ export const seventhLegion = {
         name: 'Battle Potion of Strength',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -76,7 +76,7 @@ export const seventhLegion = {
         name: 'Stormsteel Shield',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -87,7 +87,7 @@ export const seventhLegion = {
         name: 'Stormsteel Dagger',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -98,7 +98,7 @@ export const seventhLegion = {
         name: 'Stormsteel Spear',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -109,7 +109,7 @@ export const seventhLegion = {
         name: 'Stormsteel Saber',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -122,7 +122,7 @@ export const seventhLegion = {
         name: 'Pact of Critical Strike',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -133,7 +133,7 @@ export const seventhLegion = {
         name: 'Enchanter\'s Sorcerous Scepter',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -146,7 +146,7 @@ export const seventhLegion = {
         name: 'AZ3-R1-T3 Synthetic Specs',
         rank: 2,
         cost: [
-          1100,
+          11000000,
           0,
           0
         ],
@@ -157,7 +157,7 @@ export const seventhLegion = {
         name: 'AZ3-R1-T3 Synthetic Specs',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -168,7 +168,7 @@ export const seventhLegion = {
         name: 'Monelite Scope of Alacrity',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -179,7 +179,7 @@ export const seventhLegion = {
         name: 'Precision Attitude Adjuster',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -190,7 +190,7 @@ export const seventhLegion = {
         name: 'Finely-Tuned Stormsteel Destroyer',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],
@@ -203,7 +203,7 @@ export const seventhLegion = {
         name: 'Amberblaze Loop',
         rank: 3,
         cost: [
-          1400,
+          14000000,
           0,
           0
         ],

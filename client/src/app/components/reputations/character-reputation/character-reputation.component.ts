@@ -74,6 +74,9 @@ export class CharacterReputationComponent implements AfterContentInit {
 
   private combineWithReputationData() {
     this.reputations.forEach(reputation => {
+      if (!this.isReputationMatch(reputation)) {
+        return;
+      }
       Object.keys(reputation.professions).forEach(professionName => {
         if (this.professionMap[professionName]) {
           this.professionMap[professionName].reputations.push({
@@ -107,5 +110,20 @@ export class CharacterReputationComponent implements AfterContentInit {
     ids.forEach(id =>
       map[id] = true);
     return map;
+  }
+
+  private isReputationMatch(reputation: any) {
+    if (this.isAllyMatch(reputation) || this.isHordeMatch(reputation)) {
+      return true;
+    }
+    return false;
+  }
+
+  private isAllyMatch(reputation: any) {
+    return this.character.faction === 0 && reputation.isAlly;
+  }
+
+  private isHordeMatch(reputation: any) {
+    return this.character.faction === 1 && reputation.isHorde;
   }
 }

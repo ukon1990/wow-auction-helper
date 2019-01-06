@@ -11,7 +11,7 @@ export class Character {
   totalHonorableKills: number;
   thumbnail: string; // draenor/217/111484633-avatar.jpg
   calcClass: string;
-  faction: string; // 0 = ally, 1 = horde
+  faction: number; // 0 = ally, 1 = horde
   professions: {
     primary: Array<Profession>,
     secondary: Array<Profession>

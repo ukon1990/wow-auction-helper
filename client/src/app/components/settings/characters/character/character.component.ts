@@ -11,6 +11,8 @@ import { SharedService } from '../../../../services/shared.service';
 export class CharacterComponent {
   @Input() index: number;
   @Input() character: Character;
+  @Input() minimal: boolean;
+  @Input() disallowDelete: boolean;
   @Input() region: string;
   @Input() isSeller: boolean;
   @Output() remove: EventEmitter<any> = new EventEmitter();
