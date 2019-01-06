@@ -135,6 +135,7 @@ export class CraftingService {
     } catch (error) {
       console.error(error);
     }
+    SharedService.events.recipes.emit(true);
     console.log('List length', SharedService.recipes.length);
   }
 

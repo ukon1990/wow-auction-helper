@@ -132,6 +132,7 @@ export class ItemService {
 
         this.dbService.addItems(items);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+        SharedService.events.items.emit(true);
         console.log('Items download is completed');
     }
 

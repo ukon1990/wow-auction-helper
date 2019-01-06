@@ -41,7 +41,10 @@ export class SharedService {
 
   public static events = {
     detailPanelOpen: new EventEmitter<boolean>(),
-    auctionUpdate: new EventEmitter<boolean>()
+    auctionUpdate: new EventEmitter<boolean>(),
+    items: new EventEmitter<boolean>(),
+    recipes: new EventEmitter<boolean>(),
+    pets: new EventEmitter<boolean>()
   };
   public static preScrollPosition = 0;
 

@@ -21,7 +21,7 @@
       </ng-template>
     </mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content *ngIf="!minimal">
     <div *ngIf="character.professions" class="row">
       <div class="col-md-6">
         <strong>Primary professions</strong>
@@ -45,11 +45,15 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="!isSeller">
-    <button mat-raised-button type="button" (click)="remove.emit('')">
+    <button *ngIf="!disallowDelete"
+            mat-raised-button type="button"
+            (click)="remove.emit('')">
       <i class="fa fa-trash" aria-hidden="true"></i>
       Remove
     </button>
-    <button mat-raised-button type="button" (click)="update.emit('')">
+    <button mat-raised-button
+            type="button"
+            (click)="update.emit('')">
       <div class="float-left mr-1" [ngClass]="{'loading': character.downloading}">
         <i class="fas fa-sync" aria-hidden="true"></i>
       </div>
