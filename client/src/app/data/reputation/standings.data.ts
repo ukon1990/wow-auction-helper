@@ -1,4 +1,4 @@
-export class StandingData{
+export class StandingData {
     public static list = [
         {
           id: 0,
