@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import {SharedService} from '../../services/shared.service';
 import {Character} from '../../models/character/character';
 import {Sorter} from '../../models/sorter';
@@ -12,7 +13,8 @@ export class ReputationsComponent implements OnInit {
   charactersByRealm = [];
   charactersByRealmMapped = new Map<string, any>();
 
-  constructor() {
+  constructor(private title: Title) {
+    this.title.setTitle('WAH - Reputations');
   }
 
   ngOnInit() {

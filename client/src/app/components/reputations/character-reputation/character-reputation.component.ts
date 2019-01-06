@@ -5,6 +5,13 @@ import {ColumnDescription} from '../../../models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {Subscription} from 'rxjs';
 import {Recipe} from '../../../models/crafting/recipe';
+import {User} from '../../../models/user/user';
+import {Crafting} from '../../../models/crafting/crafting';
+import {AuctionHandler} from '../../../models/auction/auction-handler';
+import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
+import {CharacterService} from '../../../services/character.service';
+import {CraftingService} from '../../../services/crafting.service';
+import {Report} from '../../../utils/report.util';
 
 @Component({
   selector: 'wah-character-reputation',
@@ -28,7 +35,7 @@ export class CharacterReputationComponent implements AfterContentInit {
 
   subscription: Subscription;
 
-  constructor() {
+  constructor(private characterService: CharacterService, private craftingService: CraftingService) {
   }
 
   ngAfterContentInit() {
@@ -40,6 +47,8 @@ export class CharacterReputationComponent implements AfterContentInit {
       .auctionUpdate
       .subscribe(() =>
         this.mapProfessions());
+
+    console.log('reputations', SharedService.user);
   }
 
   mapProfessions() {
@@ -125,5 +134,39 @@ export class CharacterReputationComponent implements AfterContentInit {
 
   private isHordeMatch(reputation: any) {
     return this.character.faction === 1 && reputation.isHorde;
+  }
+
+  updateCharacter(): void {
+    this.character['downloading'] = true;
+    this.characterService.getCharacter(
+      this.character.name,
+      User.slugifyString(this.character.realm),
+      SharedService.user.region
+    ).then(c => {
+      if (!c.error) {
+        Object.keys(c).forEach((key) => {
+          this.character[key] = c[key];
+        });
+        localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+        User.updateRecipesForRealm();
+        Crafting.checkForMissingRecipes(this.craftingService);
+
+        if (SharedService.user.region && SharedService.user.realm) {
+          AuctionHandler.organize(SharedService.auctions);
+        }
+
+        Report.send('Updated', 'Characters');
+        delete this.character['downloading'];
+        this.mapProfessions();
+
+      } else {
+        delete this.character['downloading'];
+        ErrorReport.sendHttpError(
+          c.error,
+          new ErrorOptions(true, 'Could not update the character'));
+      }
+
+      this.mapProfessions();
+    });
   }
 }

@@ -34,7 +34,7 @@
       <a rel="item={{ r.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }" matTooltip="There are currently {{ getAtAHCount(r.itemID) | number }} at the auction house. Click for details.">
         <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
         {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.itemID) }} - 
-        <span class="float-right" [ngClass]="{'not-found': !vendorHasEnough(r) }" [matTooltip]="vendorTooltip(r)">
+        <span class="float-right" [ngClass]="{'not-found': !vendorHasEnough(r) && usingVendor(r)}" [matTooltip]="vendorTooltip(r)">
           {{ getItemValue(r.itemID) | gold }} 
           {{ getReagentFromVendorString(r) }}
         </span>

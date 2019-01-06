@@ -1,19 +1,19 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { User } from './models/user/user';
-import { SharedService } from './services/shared.service';
-import { CraftingService } from './services/crafting.service';
-import { AuctionsService } from './services/auctions.service';
-import { ItemService } from './services/item.service';
-import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
-import { Angulartics2 } from 'angulartics2';
-import { ProspectingAndMillingUtil } from './utils/prospect-milling.util';
-import { environment } from '../environments/environment';
-import { UpdateService } from './services/update.service';
-import { ErrorReport } from './utils/error-report.util';
-import { MatSnackBar } from '@angular/material';
-import { DefaultDashboardSettings } from './models/dashboard/default-dashboard-settings.model';
-import { Subscription } from 'rxjs';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {User} from './models/user/user';
+import {SharedService} from './services/shared.service';
+import {CraftingService} from './services/crafting.service';
+import {AuctionsService} from './services/auctions.service';
+import {ItemService} from './services/item.service';
+import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
+import {Angulartics2} from 'angulartics2';
+import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
+import {UpdateService} from './services/update.service';
+import {ErrorReport} from './utils/error-report.util';
+import {MatSnackBar} from '@angular/material';
+import {DefaultDashboardSettings} from './models/dashboard/default-dashboard-settings.model';
+import {Subscription} from 'rxjs';
+import {Report} from './utils/report.util';
 
 @Component({
   selector: 'wah-root',
@@ -25,13 +25,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   mainWindowScrollPosition = 0;
 
   constructor(private _router: Router,
-    private _craftingService: CraftingService,
-    private _auctionsService: AuctionsService,
-    private _itemService: ItemService,
-    private updateService: UpdateService,
-    private matSnackBar: MatSnackBar,
-    private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
-    private angulartics2: Angulartics2) {
+              private _craftingService: CraftingService,
+              private _auctionsService: AuctionsService,
+              private _itemService: ItemService,
+              private updateService: UpdateService,
+              private matSnackBar: MatSnackBar,
+              private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
+              private angulartics2: Angulartics2) {
     if (!localStorage['locale']) {
       switch (navigator.language) {
         case 'it':
@@ -60,6 +60,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     DefaultDashboardSettings.init();
     User.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar);
+    Report.init(this.angulartics2);
     SharedService.user.shoppingCart.restore();
     ProspectingAndMillingUtil.restore();
 
@@ -82,7 +83,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (this.isStandalone()) {
       this.angulartics2.eventTrack.next({
         action: `Device: ${window.navigator.platform}, ${window.navigator.vendor}`,
-        properties: { category: `Standalone startup` },
+        properties: {category: `Standalone startup`},
       });
 
       this._router.events.subscribe(s => {
@@ -111,12 +112,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   /* istanbul ignore next */
-  isItemSelected(): boolean  {
+  isItemSelected(): boolean {
     return SharedService.selectedItemId ? true : false;
   }
 
   /* istanbul ignore next */
-  isSellerSelected(): boolean  {
+  isSellerSelected(): boolean {
     return SharedService.selectedSeller ? true : false;
   }
 }
