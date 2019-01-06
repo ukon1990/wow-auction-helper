@@ -65,7 +65,7 @@ export class MaterialsComponent implements OnInit {
   vendorTooltip(reagent: Reagent): string {
     if (!this.vendorHasEnough(reagent)) {
       const vendorCount = SharedService.items[reagent.itemID].vendorBoughtLimit;
-      return `You need to buy ${ reagent.count - vendorCount } from AH, and ${
+      return `You need to buy ${ reagent.count - vendorCount } from AH and ${
         vendorCount } from the vendor. This is used for cost calculation.`;
     }
     return `This item is sold by a vendor, and it is currently cheaper source than from the AH.`;

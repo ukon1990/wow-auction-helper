@@ -1,0 +1,41 @@
+<div class="row col-md-12">
+  <wah-character class="col-md-4 mb-2"
+                 [minimal]="true"
+                 [disallowDelete]="true"
+                 [character]="character"
+                 (update)="mapProfessions()">
+  </wah-character>
+
+  <div class="col-md-12 row mb-2">
+    <ng-container *ngFor="let profession of professions">
+      <div class="col-md-6" *ngIf="profession.reputations.length > 0">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              {{ profession.name }}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-container *ngFor="let reputation of profession.reputations">
+              <mat-card *ngIf="reputation.recipes.length > 0">
+                <mat-card-header>
+                  <mat-card-title>
+                    {{ reputation.name }}
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <wah-data-table
+                          [id]="'itemID'"
+                          iconSize="22"
+                          [columns]="columns"
+                          [data]="reputation.recipes">
+                  </wah-data-table>
+                </mat-card-content>
+              </mat-card>
+            </ng-container>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-container>
+  </div>
+</div>

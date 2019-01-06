@@ -57,6 +57,7 @@ export class DatabaseService {
       await this.getItemsInBatch(50001, 100000);
       await this.getItemsInBatch(100001, 200000);
       await this.getItemsInBatch(200001, 1000000);
+      SharedService.events.items.emit(true);
       console.log('count', SharedService.itemsUnmapped.length);
       resolve();
     });
@@ -124,6 +125,7 @@ export class DatabaseService {
       .then(recipes => {
         SharedService.downloading.recipes = false;
         SharedService.recipes = recipes as Array<Recipe>;
+        SharedService.events.recipes.emit(true);
         console.log('Restored recipes from local DB');
       }).catch(e => {
         console.error('Could not restore recipes from local DB', e);
