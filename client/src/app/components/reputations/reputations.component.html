@@ -1,3 +1,13 @@
-<p>
-  reputations works!
-</p>
+<mat-tab-group>
+  <mat-tab *ngFor="let realm of charactersByRealm"
+           [label]="realm.name">
+    <mat-tab-group>
+      <mat-tab *ngFor="let character of realm.characters"
+              label="{{ character.name }} ({{ character.level }})">
+        <wah-character-reputation
+                [character]="character">
+        </wah-character-reputation>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-tab>
+</mat-tab-group>

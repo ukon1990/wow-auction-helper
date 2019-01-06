@@ -113,7 +113,7 @@ export const tortollanSeekers = {
         requieredStanding: 'Revered'
       },
       {
-        spellId: 256298,
+        spellId: 255097,
         name: 'Seal of Versatility',
         rank: 3,
         cost: [

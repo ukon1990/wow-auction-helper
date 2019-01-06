@@ -89,6 +89,7 @@ import { ReputationsComponent } from './components/reputations/reputations.compo
 import { AhSummaryComponent } from './components/dashboard/ah-summary/ah-summary.component';
 import { ChartsComponent } from './components/charts/charts.component';
 import { SummaryCardComponent } from './components/dashboard/ah-summary/summary-card/summary-card.component';
+import { CharacterReputationComponent } from './components/reputations/character-reputation/character-reputation.component';
 
 
 @NgModule({
@@ -158,7 +159,8 @@ import { SummaryCardComponent } from './components/dashboard/ah-summary/summary-
     ChartsComponent,
     SummaryCardComponent,
     AddRecipesComponent,
-    ReputationsComponent
+    ReputationsComponent,
+    CharacterReputationComponent
   ],
   imports: [
     BrowserModule,

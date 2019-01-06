@@ -9,7 +9,7 @@ import {voldunai} from './bfa/voldunai.data';
 import {theHonorbound} from './bfa/the-honorbound.data';
 
 export class ReputationVendorsData {
-    bfaList = [
+    public static bfa = [
         tortollanSeekers,
         proudmooreAdmiralty,
         orderOfEmbers,
