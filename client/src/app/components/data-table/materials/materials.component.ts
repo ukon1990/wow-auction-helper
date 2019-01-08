@@ -63,12 +63,15 @@ export class MaterialsComponent implements OnInit {
   }
 
   vendorTooltip(reagent: Reagent): string {
-    if (!this.vendorHasEnough(reagent)) {
-      const vendorCount = SharedService.items[reagent.itemID].vendorBoughtLimit;
-      return `You need to buy ${ reagent.count - vendorCount } from AH and ${
-        vendorCount } from the vendor. This is used for cost calculation.`;
+    if (this.usingVendor) {
+      if (!this.vendorHasEnough(reagent)) {
+        const vendorCount = SharedService.items[reagent.itemID].vendorBoughtLimit;
+        return `You need to buy ${ reagent.count - vendorCount } from AH and ${
+          vendorCount } from the vendor. This is used for cost calculation.`;
+      }
+      return `This item is sold by a vendor, and it is currently cheaper source than from the AH.`;
     }
-    return `This item is sold by a vendor, and it is currently cheaper source than from the AH.`;
+    return '';
   }
 
   usingVendor(reagent: Reagent): boolean {
@@ -76,7 +79,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   getReagentFromVendorString(reagent: Reagent): string | boolean {
-    return this.usingVendor(reagent) ? '(V)' : false;
+    return this.usingVendor(reagent) ? '(V)' : '';
   }
 
   vendorHasEnough(reagent: Reagent) {
