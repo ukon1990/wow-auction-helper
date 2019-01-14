@@ -14,9 +14,10 @@ import * as petController from './controllers/pet.controller';
 import * as auctionController from './controllers/auction.controller';
 import * as characterController from './controllers/character.controller';
 import {getRealmStatus} from './controllers/realm.controller';
+import {AuthUtil} from './util/auth.util';
 
 // Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: '.env.example' });
+dotenv.config({path: '.env.example'});
 
 // Create Express server
 const app = express();
@@ -25,22 +26,22 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 app.use(compression());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressValidator());
 app.use(expressSession({
-  cookie: { maxAge: 60000 },
+  cookie: {maxAge: 60000},
   secret: 'null'
 }));
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
 app.use(
-  express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 })
+  express.static(path.join(__dirname, 'public'), {maxAge: 31557600000})
 );
 
 
@@ -97,20 +98,22 @@ app.get('/api/realm/:region', getRealmStatus);
 app.get('*', (req, res) => {
   const url = req.originalUrl;
   if (url.indexOf('.php') === -1) {
-      res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, 'public/index.html'));
   } else {
-      console.log('redirecting', url);
-      // The client is using cache and thus old api endpoint
-      if (url.indexOf('.php') !== -1 || url.toLowerCase().indexOf('phpmyadmin') !== -1) {
-          console.log(`Attempted php vulnerability check @ ${ new Date().toString() } and path: ${url}`);
-          res.status(404).send('Not found');
-      }
+    console.log('redirecting', url);
+    // The client is using cache and thus old api endpoint
+    if (url.indexOf('.php') !== -1 || url.toLowerCase().indexOf('phpmyadmin') !== -1) {
+      console.log(`Attempted php vulnerability check @ ${new Date().toString()} and path: ${url}`);
+      res.status(404).send('Not found');
+    }
   }
 });
 
 app.post('*', (req, res) => {
-  console.log(`Attempted post vulnerability check @ ${ new Date().toString() }. Contents was ${ JSON.stringify(req.body) }`);
+  console.log(`Attempted post vulnerability check @ ${new Date().toString()}. Contents was ${JSON.stringify(req.body)}`);
   res.status(404).send('Not found');
 });
+
+AuthUtil.init();
 
 export default app;
