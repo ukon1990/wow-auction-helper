@@ -1,6 +1,8 @@
 <div class="row col-md-12">
-    <wah-summary-card *ngFor="let s of summaries"
-                      class="col-md-4"
-                      [summary]="s">
-    </wah-summary-card>
+    <ng-container *ngFor="let s of summaries">
+        <wah-summary-card *ngIf="s.data.length > 0"
+                          class="col-md-4"
+                          [summary]="s">
+        </wah-summary-card>
+    </ng-container>
 </div>

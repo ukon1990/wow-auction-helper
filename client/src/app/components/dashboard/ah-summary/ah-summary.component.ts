@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
-import {Item} from '../../../models/item/item';
 import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../../models/auction/auction-item';
 import {itemClasses} from '../../../models/item/item-classes';
@@ -8,6 +7,7 @@ import {SummaryCard} from '../../../models/summary-card.model';
 import {ChartData} from '../../../models/chart-data.model';
 import {Recipe} from '../../../models/crafting/recipe';
 import {Title} from '@angular/platform-browser';
+import {SummaryUtil} from '../../../utils/summary.util';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -19,8 +19,53 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
   summaries: SummaryCard[] = [
     this.expansionSummary(),
     this.itemByClassSummary(),
-    this.getProfessionItemCount()
+    this.getProfessionItemCount(),
+    new SummaryCard(
+      'Recipes with at least 10% profit',
+      'pie',
+      [],
+      []),
+    new SummaryCard(
+      'BFA Recipes with at least 10% profit',
+      'pie',
+      [],
+      []),
+    new SummaryCard(
+      'Recipes with at least 10% profit and 10+ daily sold',
+      'pie',
+      [],
+      []),
+
+    new SummaryCard(
+      'BFA Recipes with at least 10% profit and 10+ daily sold',
+      'pie',
+      [],
+      [])
   ];
+
+  /**
+   * Potential interesting data:
+   * - How many sellers
+   * - How many unique items
+   * - How many per item class and sub class
+   * - Lowest dropchance items at AH?
+   * - Expansions
+   */
+
+  constructor(private title: Title) {
+    this.title.setTitle('WAH - Summary dashboard');
+  }
+
+  ngOnInit() {
+    this.ahEvents = SharedService.events.auctionUpdate
+      .subscribe(() =>
+        this.summarizeData());
+    this.summarizeData();
+  }
+
+  ngOnDestroy(): void {
+    this.ahEvents.unsubscribe();
+  }
 
   private getProfessionItemCount() {
     return new SummaryCard(
@@ -41,6 +86,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
       ].map(name => new ChartData(name, name)),
       []);
   }
+
 
   private itemByClassSummary() {
     return new SummaryCard(
@@ -68,30 +114,6 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
       []);
   }
 
-  /**
-   * Potential interesting data:
-   * - How many sellers
-   * - How many unique items
-   * - How many per item class and sub class
-   * - Lowest dropchance items at AH?
-   * - Expansions
-   */
-
-  constructor(private title: Title) {
-    this.title.setTitle('WAH - Summary dashboard');
-  }
-
-  ngOnInit() {
-    this.ahEvents = SharedService.events.auctionUpdate
-      .subscribe(() =>
-        this.summarizeData());
-    this.summarizeData();
-  }
-
-  ngOnDestroy(): void {
-    this.ahEvents.unsubscribe();
-  }
-
   summarizeData(): void {
     this.summaries.forEach(s =>
       s.clearEntries());
@@ -103,21 +125,38 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
 
       this.addCrafts(item);
     });
-  }
 
-  getItem(item: AuctionItem): Item {
-    return SharedService.items[item.itemID] ?
-      SharedService.items[item.itemID] : new Item();
+    this.addProfitableCrafts(
+      this.summaries[3],
+      SummaryUtil.isProfitMatch,
+      false);
+
+    this.addProfitableCrafts
+    (this.summaries[4],
+      SummaryUtil.isProfitMatch,
+      true);
+
+
+    this.addProfitableCrafts
+    (this.summaries[5],
+      SummaryUtil.isProfitAndDailySoldMatch,
+      false);
+
+
+    this.addProfitableCrafts
+    (this.summaries[6],
+      SummaryUtil.isProfitAndDailySoldMatch,
+      true);
   }
 
   private addByExpansion(item: AuctionItem) {
     (this.summaries[0] as SummaryCard)
-      .addEntry(this.getItem(item).expansionId, 1);
+      .addEntry(SummaryUtil.getItem(item.itemID).expansionId, 1);
   }
 
   private itemsByClass(item: AuctionItem) {
     (this.summaries[1] as SummaryCard)
-      .addEntry(this.getItem(item).itemClass, item.quantityTotal);
+      .addEntry(SummaryUtil.getItem(item.itemID).itemClass, item.quantityTotal);
   }
 
   private addCrafts(item: AuctionItem) {
@@ -127,6 +166,28 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
         .addEntry(recipe[0].profession, item.quantityTotal);
     }
   }
+
+
+  private addProfitableCrafts(summary: SummaryCard, filterFN: (n: Recipe) => boolean, onlyCurrentExpansion: boolean): void {
+    const professions = {};
+
+    SharedService.recipes.forEach((recipe: Recipe) => {
+      if (filterFN(recipe) && SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion)) {
+        const name = SummaryUtil.getProfessionNameFromRecipe(recipe);
+        if (professions[name]) {
+          professions[name]++;
+        } else {
+          professions[name] = 1;
+        }
+      }
+    });
+    Object.keys(professions)
+      .forEach(name => {
+        summary.labels.push(new ChartData(name, name));
+        summary.addEntry(name, professions[name]);
+      });
+  }
+
 
   setItemClassLabels(): void {
     itemClasses.classes.forEach(c => {
