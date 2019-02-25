@@ -90,6 +90,7 @@ import { AhSummaryComponent } from './components/dashboard/ah-summary/ah-summary
 import { ChartsComponent } from './components/charts/charts.component';
 import { SummaryCardComponent } from './components/dashboard/ah-summary/summary-card/summary-card.component';
 import { CharacterReputationComponent } from './components/reputations/character-reputation/character-reputation.component';
+import {PlatformModule} from '@angular/cdk/platform';
 
 
 @NgModule({
@@ -172,7 +173,8 @@ import { CharacterReputationComponent } from './components/reputations/character
     HttpClientJsonpModule,
     Angulartics2Module.forRoot(),
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    PlatformModule
   ],
   providers: [
     RealmService,
