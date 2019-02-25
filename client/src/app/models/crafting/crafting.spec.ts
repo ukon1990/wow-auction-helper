@@ -1,12 +1,13 @@
-import { async, TestBed } from '@angular/core/testing';
-import { SharedService } from '../../services/shared.service';
-import { AuctionItem } from '../auction/auction-item';
-import { Crafting } from './crafting';
-import { User } from '../user/user';
-import { TSM } from '../auction/tsm';
+import {SharedService} from '../../services/shared.service';
+import {AuctionItem} from '../auction/auction-item';
+import {Crafting} from './crafting';
+import {User} from '../user/user';
+import {TSM} from '../auction/tsm';
+import {Recipe} from './recipe';
 
 beforeEach(() => {
   User.restore();
+  const recipe = new Recipe();
 
   SharedService.recipes.length = 0;
   SharedService.auctionItemsMap[10] = new AuctionItem();
@@ -19,15 +20,15 @@ beforeEach(() => {
   SharedService.auctionItemsMap[20].buyout = 10;
   SharedService.tsm[20] = new TSM();
   SharedService.tsm[20].MarketValue = 100;
-  SharedService.recipes.push({
-    spellID: 1,
-    itemID: 10,
-    name: 'test recipe',
-    profession: 'Software developer',
-    minCount: 1,
-    maxCount: 1,
-    reagents: []
-  });
+
+  recipe.spellID = 1;
+  recipe.itemID = 10;
+  recipe.name = 'test recipe';
+  recipe.profession = 'Software developer';
+  recipe.minCount = 1;
+  recipe.maxCount = 1;
+  recipe.reagents = [];
+  SharedService.recipes.push(recipe);
 });
 
 describe('Crafting', () => {
@@ -114,5 +115,6 @@ describe('Crafting', () => {
     });
   });
 
-  describe('Disenchant crafting', () => {});
+  describe('Disenchant crafting', () => {
+  });
 });

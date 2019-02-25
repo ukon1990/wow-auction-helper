@@ -172,7 +172,9 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     const professions = {};
 
     SharedService.recipes.forEach((recipe: Recipe) => {
-      if (filterFN(recipe) && SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion)) {
+      if (filterFN(recipe) &&
+        SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion) &&
+        SummaryUtil.isUnrakedOrRank3(recipe) ) {
         const name = SummaryUtil.getProfessionNameFromRecipe(recipe);
         if (professions[name]) {
           professions[name]++;
