@@ -34,33 +34,33 @@ export class ItemQuery {
       }", "${
       item.icon
       }", ${
-      item.itemLevel
+      item.itemLevel || 0
       }, ${
-      item.itemClass
+      item.itemClass || 0
       }, ${
-      item.itemSubClass
+      item.itemSubClass || 0
       }, ${
-      item.quality
+      item.quality || 0
       }, "${
       item.itemSpells ? safeifyString(JSON.stringify(item.itemSpells)) : '[]'
       }", "${
       item.itemSource ? safeifyString(JSON.stringify(item.itemSource)) : '[]'
       }", ${
-      item.buyPrice
+      item.buyPrice || 0
       }, ${
-      item.sellPrice
+      item.sellPrice || 0
       }, ${
-      item.itemBind
+      item.itemBind || 0
       }, ${
-      item.minFactionId
+      item.minFactionId || 0
       }, ${
-      item.minReputation
+      item.minReputation || 0
       }, ${
-      item.isDropped
+      item.isDropped || false
       }
         ,CURRENT_TIMESTAMP
         ,${
-      item.expansionId
+      item.expansionId || 0
       });`;
   }
 
