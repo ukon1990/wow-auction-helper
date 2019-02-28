@@ -1,12 +1,12 @@
-import { Recipe } from './recipe';
-import { SharedService } from '../../services/shared.service';
-import { Item } from '../item/item';
-import { AuctionItem } from '../auction/auction-item';
-import { CraftingService } from '../../services/crafting.service';
-import { CustomProcs } from './custom-proc';
-import { ItemSpells } from '../item/itemspells';
-import { Spell } from '../spell';
-import { Reagent } from './reagent';
+import {Recipe} from './recipe';
+import {SharedService} from '../../services/shared.service';
+import {Item} from '../item/item';
+import {AuctionItem} from '../auction/auction-item';
+import {CraftingService} from '../../services/crafting.service';
+import {CustomProcs} from './custom-proc';
+import {ItemSpells} from '../item/itemspells';
+import {Spell} from '../spell';
+import {Reagent} from './reagent';
 import wordsToNumbers from 'words-to-numbers';
 
 export class Crafting {
@@ -41,10 +41,10 @@ export class Crafting {
     SharedService.itemsUnmapped.forEach(i =>
       tmpList = tmpList.concat(Crafting.getItemForSpellsThatAreRecipes(i)));
 
-      tmpList.forEach(recipe => {
-        SharedService.recipes.push(recipe);
-        SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
-      });
+    tmpList.forEach(recipe => {
+      SharedService.recipes.push(recipe);
+      SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
+    });
   }
 
   /**
@@ -79,7 +79,7 @@ export class Crafting {
             createCount = numbers !== null && numbers.length > 1 && numbers[1] ? parseInt(numbers[1], 10) : 1;
 
           recipe.spellID = spell.SpellID;
-          recipe.name = `${ name.indexOf('Create') === -1 ? 'Create ' : ''}${ name }`;
+          recipe.name = `${name.indexOf('Create') === -1 ? 'Create ' : ''}${name}`;
           recipe.itemID = originalRecipe.itemID;
           recipe.minCount = createCount;
           recipe.maxCount = createCount;
@@ -194,30 +194,38 @@ export class Crafting {
   }
 
   private static getNeededBuyPriceFromVendor(itemID: number, count: number) {
-    if (SharedService.items[itemID].vendorBoughtLimit && SharedService.items[itemID].vendorBoughtLimit < count) {
-      return (SharedService.items[itemID] as Item).buyPrice * SharedService.items[itemID].vendorBoughtLimit +
-        (SharedService.auctionItemsMap[itemID] ?
-          SharedService.auctionItemsMap[itemID].buyout * (count - SharedService.items[itemID].vendorBoughtLimit) : 0);
+    if (this.getItem(itemID)) {
+      if (this.getItem(itemID).vendorBoughtLimit && SharedService.items[itemID].vendorBoughtLimit < count) {
+        return (SharedService.items[itemID] as Item).buyPrice * SharedService.items[itemID].vendorBoughtLimit +
+          (SharedService.auctionItemsMap[itemID] ?
+            SharedService.auctionItemsMap[itemID].buyout * (count - SharedService.items[itemID].vendorBoughtLimit) : 0);
+      }
+      return (this.getItem(itemID).buyPrice * count);
     }
-    return ((SharedService.items[itemID] as Item).buyPrice * count);
+    return 0;
   }
 
   public static isVendorCheaperThanAH(itemID: number): boolean {
-    if (SharedService.items[itemID].isBoughtForGold && SharedService.user.useVendorPriceForCraftingIfAvailable) {
-      if (!SharedService.auctionItemsMap[itemID]) {
-        return true;
-      } else if (SharedService.items[itemID].buyPrice < SharedService.auctionItemsMap[itemID].buyout) {
-        return true;
+    if (this.getItem(itemID)) {
+      if (this.getItem(itemID).isBoughtForGold && SharedService.user.useVendorPriceForCraftingIfAvailable) {
+        if (!SharedService.auctionItemsMap[itemID]) {
+          return true;
+        } else if (SharedService.items[itemID].buyPrice < SharedService.auctionItemsMap[itemID].buyout) {
+          return true;
+        }
       }
-
     }
     return false;
   }
 
+  private static getItem(itemID: number): Item {
+    return SharedService.items[itemID];
+  }
+
   /*
-  public static getReagentCraftCost(itemID: number, count: number): number {
-    return
-  }*/
+    public static getReagentCraftCost(itemID: number, count: number): number {
+      return
+    }*/
 
   private static existsInTSM(itemID: number): boolean {
     return SharedService.user.apiToUse !== 'none' && SharedService.tsm[itemID];

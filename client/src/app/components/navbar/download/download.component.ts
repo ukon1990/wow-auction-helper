@@ -45,21 +45,21 @@ export class DownloadComponent implements OnInit {
     private _petService: PetsService,
     private _dbService: DatabaseService,
     private angulartics2: Angulartics2) {
-      this.realmControl.valueChanges.subscribe(realm => {
-        console.log('realm change', realm);
-      });
+    this.realmControl.valueChanges.subscribe(realm => {
+      console.log('realm change', realm);
+    });
 
-      setInterval(() => {
-        this.timestamps.items = localStorage['timestamp_items'];
-        this.timestamps.pets = localStorage['timestamp_pets'];
-        this.timestamps.recipes = localStorage['timestamp_recipes'];
-        this.timestamps.auctions = localStorage['timestamp_auctions'];
-        this.timestamps.tsm = localStorage['timestamp_tsm'];
-        this.timestamps.wowuction = localStorage['timestamp_wowuction'];
-      }, 1000);
+    setInterval(() => {
+      this.timestamps.items = localStorage['timestamp_items'];
+      this.timestamps.pets = localStorage['timestamp_pets'];
+      this.timestamps.recipes = localStorage['timestamp_recipes'];
+      this.timestamps.auctions = localStorage['timestamp_auctions'];
+      this.timestamps.tsm = localStorage['timestamp_tsm'];
+      this.timestamps.wowuction = localStorage['timestamp_wowuction'];
+    }, 1000);
 
     Dashboard.addLoadingDashboards();
-    }
+  }
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
@@ -69,7 +69,7 @@ export class DownloadComponent implements OnInit {
 
       this.downloadProgress = 'Loading items from disk';
       await this._dbService.getAllItems()
-        .then(async() => {
+        .then(async () => {
           if (Object.keys(SharedService.items).length === 0) {
             delete localStorage['timestamp_items'];
           }
@@ -174,6 +174,7 @@ export class DownloadComponent implements OnInit {
       setInterval(() =>
         this.setLastUpdateAvailableTime(), 30000);
     }
+    // TODO: Later => this._itemService.addMissingItems();
   }
 
   getMessage(): string {
@@ -220,7 +221,7 @@ export class DownloadComponent implements OnInit {
     if (forceUpdate) {
       this.angulartics2.eventTrack.next({
         action: type,
-        properties: { category: 'Manual download' },
+        properties: {category: 'Manual download'},
       });
     }
     switch (type) {
