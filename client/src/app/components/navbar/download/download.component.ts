@@ -162,9 +162,9 @@ export class DownloadComponent implements OnInit {
           }
         })
         .catch(e => {
-          console.error('Could not restore auctions from DB');
+          console.error('Could not restore auctions from DB', e);
           if (SharedService.auctions.length === 0 && this.isOnline()) {
-            this._auctionsService.getLastModifiedTime();
+            this._auctionsService.getLastModifiedTime(true);
           }
         });
       this.downloadProgress = '';

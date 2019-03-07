@@ -45,7 +45,7 @@ export class MockLoaderUtil {
   }
 
   setRecipes(): void {
-    const service = new CraftingService(null, null, null, null);
+    const service = new CraftingService(null, null, null, null, null);
     service.handleRecipes(this.getFile('recipes'));
   }
 
