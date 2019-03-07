@@ -8,6 +8,7 @@ import {ChartData} from '../../../models/chart-data.model';
 import {Recipe} from '../../../models/crafting/recipe';
 import {Title} from '@angular/platform-browser';
 import {SummaryUtil} from '../../../utils/summary.util';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -15,6 +16,7 @@ import {SummaryUtil} from '../../../utils/summary.util';
   styleUrls: ['./ah-summary.component.scss']
 })
 export class AhSummaryComponent implements OnInit, OnDestroy {
+  displayAs = new FormControl(false);
   ahEvents: Subscription;
   summaries: SummaryCard[] = [
     this.expansionSummary(),
