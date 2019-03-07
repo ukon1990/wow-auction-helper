@@ -304,9 +304,9 @@ export class DownloadComponent implements OnInit {
   setLastUpdateAvailableTime(): void {
     const timeSince = this.milliSecondsToMinutes(),
       lastModified = SharedService.auctionResponse ? SharedService.auctionResponse.lastModified : undefined;
-    if (timeSince < 15) {
+    /*if (timeSince < 15) {
       return;
-    }
+    }*/
 
     if (!this.checkingForUpdates && this.isOnline()) {
       this.checkingForUpdates = true;
