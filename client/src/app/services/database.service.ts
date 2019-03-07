@@ -51,7 +51,20 @@ export class DatabaseService {
   }
 
   async getAllItems(): Dexie.Promise<any> {
+    let count = 0;
     SharedService.downloading.items = true;
+    await this.db.table('items')
+      .count()
+      .then(c => {
+        console.log('Num of items in DB', c);
+        count = c;
+      });
+
+    if (count === 0) {
+      return new Dexie.Promise(
+        (resolve, reject) => reject());
+    }
+
     return new Dexie.Promise<any>(async (resolve) => {
       await this.getItemsInBatch(0, 50000);
       await this.getItemsInBatch(50001, 100000);
@@ -165,7 +178,20 @@ export class DatabaseService {
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
-  getAllAuctions(petService?: PetsService): Dexie.Promise<any> {
+  async getAllAuctions(petService?: PetsService): Dexie.Promise<any> {
+    let count = 0;
+    await this.db.table('auctions')
+      .count()
+      .then(c => {
+        console.log('Num of auctions stored', c);
+        count = c;
+      });
+
+    if (count === 0) {
+      return new Dexie.Promise(
+        (resolve, reject) => reject());
+    }
+
     SharedService.downloading.auctions = true;
     return this.db.table('auctions')
       .toArray()

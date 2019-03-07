@@ -14,6 +14,7 @@ import {MatSnackBar} from '@angular/material';
 import {DefaultDashboardSettings} from './models/dashboard/default-dashboard-settings.model';
 import {Subscription} from 'rxjs';
 import {Report} from './utils/report.util';
+import {Platform} from '@angular/cdk/platform';
 
 @Component({
   selector: 'wah-root',
@@ -24,7 +25,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   detailOpenCloseSubscription: Subscription;
   mainWindowScrollPosition = 0;
 
-  constructor(private _router: Router,
+  constructor(public platform: Platform,
+              private _router: Router,
               private _craftingService: CraftingService,
               private _auctionsService: AuctionsService,
               private _itemService: ItemService,

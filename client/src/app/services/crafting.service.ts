@@ -78,7 +78,7 @@ export class CraftingService {
 
     r.reagents.forEach(async reagent => {
       if (reagent.itemID > 0 && !SharedService.items[reagent.itemID]) {
-        await this._itemService.addItem(reagent.itemID);
+        ItemService.missingQueue[reagent.itemID] = reagent.itemID;
       }
     });
 

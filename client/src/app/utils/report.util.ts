@@ -1,8 +1,8 @@
-import { Angulartics2 } from 'angulartics2';
-import { HttpErrorResponse } from '@angular/common/http';
-import { SharedService } from '../services/shared.service';
-import { MatSnackBar } from '@angular/material';
+import {Angulartics2} from 'angulartics2';
+import {environment} from '../../environments/environment';
+
 declare function require(moduleName: string): any;
+
 const version = require('../../../package.json').version;
 
 export class Report {
@@ -15,8 +15,13 @@ export class Report {
   public static send(action: string, category: string): void {
     Report.ga.eventTrack.next({
       action: action,
-      properties: { category: category },
+      properties: {category: category},
     });
   }
 
+  public static debug(message?: any, ...optionalParams: any[]): void {
+    if (!environment.production) {
+      console.log(message, optionalParams);
+    }
+  }
 }

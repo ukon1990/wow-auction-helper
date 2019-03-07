@@ -8,6 +8,7 @@ import {User} from '../models/user/user';
 import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
+import {ObjectUtil} from '../utils/object.util';
 
 @Injectable()
 export class RealmService {
@@ -37,20 +38,11 @@ export class RealmService {
       `/assets/data/${
         Endpoints.getRegion(region)
         }-realms.json` :
-        Endpoints.getUrl(
+      Endpoints.getUrl(
         `realm/${region}`);
     return this._http.get(url)
       .toPromise()
-      .then(r => {
-        Object.keys(SharedService.realms).forEach(key => {
-          delete SharedService.realms[key];
-        });
-        r['realms'].forEach((realm: Realm) => {
-          SharedService.realms[realm.slug] = realm;
-        });
-        Realm.gatherRealms();
-
-      })
+      .then(r => this.handleRealms(r))
       .catch((error: HttpErrorResponse) => {
         const msg = 'Could not download realms';
         console.error(msg, error);
@@ -66,5 +58,17 @@ export class RealmService {
 
   private openSnackbar(message: string): void {
     this.matSnackBar.open(message, 'Ok', {duration: 3000});
+  }
+
+  private handleRealms(r: Object) {
+    if (ObjectUtil.isAPopulatedObject(r) && ObjectUtil.isAPopulatedObject(r['realms'])) {
+      Object.keys(SharedService.realms).forEach(key => {
+        delete SharedService.realms[key];
+      });
+      r['realms'].forEach((realm: Realm) => {
+        SharedService.realms[realm.slug] = realm;
+      });
+      Realm.gatherRealms();
+    }
   }
 }

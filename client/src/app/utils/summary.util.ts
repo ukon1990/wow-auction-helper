@@ -18,7 +18,7 @@ export class SummaryUtil {
     }
 
     return SummaryUtil.isProfitMatch(recipe) &&
-      tsm.RegionAvgDailySold >= 10;
+      recipe.avgDailySold >= 5 && recipe.regionSaleRate > .15;
   }
 
   public static getProfessionNameFromRecipe(recipe: Recipe): string {
@@ -35,5 +35,9 @@ export class SummaryUtil {
   public static getItem(id: number): Item {
     return SharedService.items[id] ?
       SharedService.items[id] : new Item();
+  }
+
+  public static isUnrakedOrRank3(recipe: Recipe): boolean {
+    return !recipe.rank || recipe.rank === '' || recipe.rank === '3';
   }
 }
