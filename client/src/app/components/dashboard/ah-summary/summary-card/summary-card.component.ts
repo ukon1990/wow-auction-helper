@@ -29,16 +29,17 @@ export class SummaryCardComponent implements OnInit, OnChanges {
     if (changes.summary && changes.summary.currentValue) {
       const summary: SummaryCard = changes.summary.currentValue;
       this.tableData.length = 0;
-      Object.keys(summary.dataMap)
-        .forEach(key =>
+      summary.data
+        .forEach((data: ChartData) =>
           this.tableData.push({
-            id: summary.labels[key] ? summary.labels[key].value : key,
-            value: summary.dataMap[key].value
+            id: summary.labels[data.id] ? summary.labels[data.id].value : data.id,
+            value: data.value
           }));
 
       this.tableData
         .sort((a: ChartData, b: ChartData) =>
           b.value - a.value);
+      Report.debug('summary', Object.keys(summary.dataMap), summary, this.tableData);
     }
   }
 

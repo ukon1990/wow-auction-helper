@@ -10,6 +10,7 @@ import {PetsService} from './pets.service';
 import {Pet} from '../models/pet';
 import {Recipe} from '../models/crafting/recipe';
 import {environment} from '../../environments/environment';
+import {Platform} from '@angular/cdk/platform';
 
 /**
  * A Class for handeling the indexedDB
@@ -28,7 +29,7 @@ export class DatabaseService {
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
 
-  constructor() {
+  constructor(public platform: Platform) {
     this.db = new Dexie('wah-db');
     this.setDbVersions();
     this.db.open()
@@ -51,6 +52,10 @@ export class DatabaseService {
   }
 
   async getAllItems(): Dexie.Promise<any> {
+    if (this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+
     let count = 0;
     SharedService.downloading.items = true;
     await this.db.table('items')
@@ -105,6 +110,10 @@ export class DatabaseService {
   }
 
   getAllPets(): Dexie.Promise<any> {
+    if (this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+
     SharedService.downloading.pets = true;
     return this.db.table('pets')
       .toArray()
@@ -125,13 +134,17 @@ export class DatabaseService {
   }
 
   addRecipes(recipes: Array<Recipe>): void {
-    if (environment.test) {
+    if (environment.test || this.platform.WEBKIT) {
       return;
     }
     this.db.table('recipes').bulkPut(recipes);
   }
 
   getAllRecipes(): Dexie.Promise<any> {
+    if (this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+
     SharedService.downloading.recipes = true;
     return this.db.table('recipes')
       .toArray()
@@ -152,7 +165,7 @@ export class DatabaseService {
 
 
   addAuction(auction: Auction): void {
-    if (environment.test) {
+    if (environment.test || this.platform.WEBKIT) {
       return;
     }
     this.db.table('auctions').add(auction)
@@ -168,7 +181,7 @@ export class DatabaseService {
 
 
   addAuctions(auctions: Array<Auction>): void {
-    if (environment.test) {
+    if (environment.test || this.platform.WEBKIT) {
       return;
     }
     this.db.table('auctions').clear();
@@ -179,17 +192,8 @@ export class DatabaseService {
   }
 
   async getAllAuctions(petService?: PetsService): Dexie.Promise<any> {
-    let count = 0;
-    await this.db.table('auctions')
-      .count()
-      .then(c => {
-        console.log('Num of auctions stored', c);
-        count = c;
-      });
-
-    if (count === 0) {
-      return new Dexie.Promise(
-        (resolve, reject) => reject());
+    if (this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
     }
 
     SharedService.downloading.auctions = true;
@@ -207,7 +211,7 @@ export class DatabaseService {
   }
 
   addWoWUctionItems(wowuction: Array<WoWUction>): void {
-    if (environment.test) {
+    if (environment.test || this.platform.WEBKIT) {
       return;
     }
     this.db.table('wowuction').clear();
@@ -235,7 +239,7 @@ export class DatabaseService {
   }
 
   addTSMItems(tsm: Array<TSM>): void {
-    if (environment.test) {
+    if (environment.test || this.platform.WEBKIT) {
       return;
     }
     this.db.table('tsm').clear();
@@ -246,6 +250,10 @@ export class DatabaseService {
   }
 
   getTSMItems(): Dexie.Promise<any> {
+    if (this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+
     SharedService.downloading.tsmAuctions = true;
     return this.db.table('tsm')
       .toArray()

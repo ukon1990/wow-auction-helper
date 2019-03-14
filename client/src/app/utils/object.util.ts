@@ -11,7 +11,7 @@ export class ObjectUtil {
   }
 
   public static isAPopulatedObject(value: any): boolean {
-    return value !== null && typeof value === 'object' && value.length >= 0;
+    return value !== null && typeof value === 'object' && !ObjectUtil.isArray(value);
   }
 
   public static overwrite(from: object, to: object): void {

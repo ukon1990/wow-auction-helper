@@ -12,6 +12,7 @@ import {ProspectingAndMillingUtil} from '../utils/prospect-milling.util';
 import {MatSnackBar} from '@angular/material';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Recipe} from '../models/crafting/recipe';
+import {Platform} from '@angular/cdk/platform';
 
 @Injectable()
 export class ItemService {
@@ -22,7 +23,8 @@ export class ItemService {
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
               public snackBar: MatSnackBar,
-              private angulartics2: Angulartics2) {
+              private angulartics2: Angulartics2,
+              public platform: Platform) {
   }
 
   addItem(itemID: number): Promise<any> {
@@ -140,8 +142,10 @@ export class ItemService {
       // TODO: when I have time -> this.addItems(missingItems);
     }
 
-    this.dbService.addItems(items);
-    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    if (!this.platform.WEBKIT) {
+      this.dbService.addItems(items);
+      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    }
     SharedService.events.items.emit(true);
     console.log('Items download is completed');
   }

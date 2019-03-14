@@ -9,6 +9,7 @@ import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
 import {ObjectUtil} from '../utils/object.util';
+import {Report} from '../utils/report.util';
 
 @Injectable()
 export class RealmService {
@@ -34,12 +35,22 @@ export class RealmService {
   }
 
   getRealms(region?: string, isRetry?: boolean): Promise<any> {
-    const url = isRetry ?
-      `/assets/data/${
+    let url = '';
+
+    if (isRetry) {
+      url = `/assets/data/${
         Endpoints.getRegion(region)
-        }-realms.json` :
-      Endpoints.getUrl(
+        }-realms.json`;
+    } else {
+      if (!region) {
+        return new Promise<any>((resolve, reject) => {
+          resolve();
+        });
+      }
+      url = Endpoints.getUrl(
         `realm/${region}`);
+    }
+
     return this._http.get(url)
       .toPromise()
       .then(r => this.handleRealms(r))
@@ -61,7 +72,7 @@ export class RealmService {
   }
 
   private handleRealms(r: Object) {
-    if (ObjectUtil.isAPopulatedObject(r) && ObjectUtil.isAPopulatedObject(r['realms'])) {
+    if (ObjectUtil.isAPopulatedObject(r) && ObjectUtil.isArray(r['realms'])) {
       Object.keys(SharedService.realms).forEach(key => {
         delete SharedService.realms[key];
       });
@@ -69,6 +80,10 @@ export class RealmService {
         SharedService.realms[realm.slug] = realm;
       });
       Realm.gatherRealms();
+    } else {
+      ErrorReport.sendError('handleRealms', {
+        name: 'The app could not fetch the realm data correctly', message: 'No object were found', stack: undefined
+      });
     }
   }
 }

@@ -1,23 +1,26 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { SharedService } from './shared.service';
-import { Recipe } from '../models/crafting/recipe';
-import { Endpoints } from './endpoints';
-import { ItemService } from './item.service';
-import { GameBuild } from '../utils/game-build.util';
-import { Item } from '../models/item/item';
-import { DatabaseService } from './database.service';
-import { ErrorReport } from '../utils/error-report.util';
-import { Angulartics2 } from 'angulartics2';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {SharedService} from './shared.service';
+import {Recipe} from '../models/crafting/recipe';
+import {Endpoints} from './endpoints';
+import {ItemService} from './item.service';
+import {GameBuild} from '../utils/game-build.util';
+import {Item} from '../models/item/item';
+import {DatabaseService} from './database.service';
+import {ErrorReport} from '../utils/error-report.util';
+import {Angulartics2} from 'angulartics2';
+import {Platform} from '@angular/cdk/platform';
 
 @Injectable()
 export class CraftingService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
   constructor(private _http: HttpClient,
-    private _itemService: ItemService,
-    private dbService: DatabaseService,
-    private angulartics2: Angulartics2) { }
+              private _itemService: ItemService,
+              private dbService: DatabaseService,
+              private angulartics2: Angulartics2,
+              public platform: Platform) {
+  }
 
   getRecipe(spellID: number): Promise<Recipe> {
     return this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
@@ -39,7 +42,7 @@ export class CraftingService {
 
     if (!timestamp) {
       this.dbService.clearRecipes();
-      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${ locale }.json.gz`)
+      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${locale}.json.gz`)
         .toPromise()
         .then(result => {
           timestamp = result['timestamp'];
@@ -52,9 +55,9 @@ export class CraftingService {
 
     SharedService.downloading.recipes = true;
     return this._http.post(
-      Endpoints.getUrl(`recipe?locale=${ locale }`),
+      Endpoints.getUrl(`recipe?locale=${locale}`),
       {
-        timestamp:  timestamp ? timestamp : new Date('2000-06-30').toJSON()
+        timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
       })
       .toPromise()
       .then(recipes => this.handleRecipes(recipes))
@@ -130,8 +133,10 @@ export class CraftingService {
         this._itemService.addItems(missingItems);
       }
 
-      this.dbService.addRecipes(SharedService.recipes);
-      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+      if (!this.platform.WEBKIT) {
+        this.dbService.addRecipes(SharedService.recipes);
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+      }
     } catch (error) {
       console.error(error);
     }
@@ -169,6 +174,6 @@ export class CraftingService {
       } else {
         this.addRecipes(recipesToAdd, i);
       }
-    }, 100);
+    }, 1000);
   }
 }

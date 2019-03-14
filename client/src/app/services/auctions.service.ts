@@ -70,7 +70,6 @@ export class AuctionsService {
         // Adding lacking items to the database
         SharedService.auctionItems.forEach(ai => {
           if (!SharedService.items[ai.itemID]) {
-            console.log('Did not find ' + ai.itemID);
             missingItems.push(ai.itemID);
           }
         });

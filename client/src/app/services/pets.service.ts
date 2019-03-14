@@ -6,6 +6,7 @@ import { Endpoints } from './endpoints';
 import { DatabaseService } from './database.service';
 import { Angulartics2 } from 'angulartics2';
 import { ErrorReport } from '../utils/error-report.util';
+import {Platform} from '@angular/cdk/platform';
 
 @Injectable()
 export class PetsService {
@@ -13,7 +14,8 @@ export class PetsService {
 
   constructor(private _http: HttpClient,
     private dbService: DatabaseService,
-    private angulartics2: Angulartics2) { }
+    private angulartics2: Angulartics2,
+              public platform: Platform) { }
 
   async getPets(): Promise<any> {
     const locales = localStorage['locale'];
@@ -66,8 +68,10 @@ export class PetsService {
       SharedService.pets[p.speciesId] = p;
     });
 
-    this.dbService.addPets(pets['pets']);
-    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    if (!this.platform.WEBKIT) {
+      this.dbService.addPets(pets['pets']);
+      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+    }
   }
 
   updatePet(speciesId): Promise<any> {

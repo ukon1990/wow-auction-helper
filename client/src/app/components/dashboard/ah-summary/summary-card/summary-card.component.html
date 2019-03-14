@@ -6,7 +6,7 @@
     </mat-card-header>
     <mat-card-content>
         <wah-data-table *ngIf="!useChart; else chartTemplate"
-                itemsPerPage="5"
+                itemsPerPage="30"
                 [data]="tableData"
                 [columns]="columns">
         </wah-data-table>

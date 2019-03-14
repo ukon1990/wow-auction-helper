@@ -98,8 +98,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   ngOnInit(): void {
-    console.log('selected', this.selected);
-
     this.setItemData();
     this.setAuctionItem();
     this.setRecipesForItem();
@@ -118,6 +116,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   ngAfterContentInit(): void {
     SharedService.events.detailPanelOpen.emit(true);
+    console.log('Selected item data', this.selected);
   }
 
   ngOnDestroy(): void {

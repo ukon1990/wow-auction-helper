@@ -39,11 +39,12 @@ export class AuctionHandler {
         SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
 
         if (AuctionHandler.isPetMissing(a, petService)) {
+          /* TODO: Make this less annoying
           console.log('Attempting to add pet');
           petService.getPet(a.petSpeciesId).then(p => {
             AuctionHandler.getItemName(a);
-            console.log('Fetched pet', SharedService.pets[a.petSpeciesId]);
-          });
+            // console.log('Fetched pet', SharedService.pets[a.petSpeciesId]);
+          });*/
         } else {
           if (!AuctionHandler.petHasAuctions(a)) {
             SharedService.pets[a.petSpeciesId].auctions = new Array<AuctionItem>();
