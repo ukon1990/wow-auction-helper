@@ -13,9 +13,9 @@ provider:
   timeout: 120000
 
 functions:
-  auction:
-    handler: auction.getAuctions
+  getAuctionUrl:
+    handler: auction.handler
     events:
       - http:
-          method: post
+          method: get
           path: auction

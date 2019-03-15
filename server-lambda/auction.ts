@@ -1,7 +1,13 @@
 import { APIGatewayEvent, Callback, Context, Handler } from 'aws-lambda';
-const zlib = require('zlib');
+import { gzipResponse } from './utils/convertion.util';
+import { AuctionHandler } from './handlers/auction.handler';
 const request: any = require('request');
 const RequestPromise = require('request-promise');
+
+exports.request = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  AuctionHandler.route(event, context, callback);
+};
+
 
 exports.getAuctions = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   console.log('', event);
@@ -38,29 +44,6 @@ exports.getAuctions = (event: APIGatewayEvent, context: Context, callback: Callb
     gzipResponse(context, response, callback);
   }
 };
-
-function gzipResponse(context: Context, body, callback: Callback): void {
-  zlib.gzip(
-    new Buffer(
-      typeof body === 'string' ? body : JSON.stringify(body), 'utf-8'),
-    (err, ahData) => {
-    if (err) {
-      context.fail(err);
-    }
-    // context.succeed(response);
-    console.log('gzipped');
-    callback(null, {
-      statusCode: 200,
-      body: ahData.toString('base64'),
-      isBase64Encoded: true,
-      headers: {
-          'Content-Type': 'application/json',
-          'Content-Encoding': 'gzip',
-          'Character-Encoding': 'UTF8'
-      }
-  });
-  });
-}
 
 function removeUnused(auctionResponse) {
   const response = {
