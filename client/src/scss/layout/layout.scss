@@ -3,9 +3,11 @@
 .mat-tab-body-wrapper {
   padding-top: 1em;
 }
+
 .mat-tab-nav-bar.mat-primary {
   margin-bottom: 1em;
 }
+
 .wowhead-tooltip {
   z-index: 502 !important;
 }
@@ -13,22 +15,20 @@
 .cdk-overlay-container {
   z-index: 1030 !important;
 }
-/*
-wah-seller .full-screen {
-  height: 80vh;
-}*/
 
 .full-screen {
   z-index: 501;
-  right: 5em;
-  left: 5em;
-  top: 5em;
-  max-height: 80vh;
-  position: fixed;
-  max-height: 80vh;
+  right: 5%;
+  left: 5%;
+  top: 5%;
+  bottom: 5%;
+
+  height: 90%;
+  width: 90%;
+  position: fixed !important;
+
   .mat-card-content .mat-tab-body {
     overflow-y: scroll;
-    /*max-height: 50vh;*/
   }
 
   & .dropped-by .mat-list {
@@ -38,6 +38,19 @@ wah-seller .full-screen {
     .mat-list-item {
       height: 45px !important;
     }
+  }
+
+  & > mat-card-header {
+    height: 3em;
+  }
+
+  & > mat-card-content {
+    overflow-y: scroll;
+    height: calc(100% - 8em);
+  }
+
+  & > mat-card-actions {
+    height: 2em;
   }
 }
 
@@ -120,6 +133,7 @@ wah-character {
   .mat-list-item {
     color: white !important;
   }
+
   .character-bg {
     background-color: rgb(33, 37, 41) !important;
   }
