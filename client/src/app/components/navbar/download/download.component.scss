@@ -1,9 +1,18 @@
 .dropdown-menu {
   width: 30em;
+  max-width: 100%;
   left: auto;
   right: 0;
 }
 
 .old-data {
   color: red !important;
+}
+
+@media (max-width: 767px) {
+  .dropdown-menu {
+    width: 100%;
+    max-height: 18em;
+    overflow-y: scroll;
+  }
 }

@@ -13,25 +13,24 @@
 .cdk-overlay-container {
   z-index: 1030 !important;
 }
+/*
 wah-seller .full-screen {
   height: 80vh;
-}
+}*/
 
 .full-screen {
-  z-index: 501 !important;
-  right: 5em !important;
-  left: 5em !important;
-  top: 5em !important;
-  max-height: 80vh !important;
-  position: fixed !important;
-
-  & > mat-card {
-    max-height: 80vh;
-    .mat-card-content .mat-tab-body {
-      overflow-y: scroll;
-      /*max-height: 50vh;*/
-    }
+  z-index: 501;
+  right: 5em;
+  left: 5em;
+  top: 5em;
+  max-height: 80vh;
+  position: fixed;
+  max-height: 80vh;
+  .mat-card-content .mat-tab-body {
+    overflow-y: scroll;
+    /*max-height: 50vh;*/
   }
+
   & .dropped-by .mat-list {
     overflow-y: auto;
     max-height: 25em;
