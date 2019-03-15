@@ -10,20 +10,7 @@
     bottom: 0 !important;
     top: 0 !important;
     max-height: none !important;
-    height: 100%; /* calc(100% - 3em) */
+    height: 100%;
     position: fixed !important;
-
-    & >mat-card-header {
-      height: 3em;
-    }
-
-    & > mat-card-content {
-      overflow-y: scroll;
-      height: calc(100% - 8em);
-    }
-
-    & > mat-card-actions {
-      height: 2em;
-    }
   }
 }
