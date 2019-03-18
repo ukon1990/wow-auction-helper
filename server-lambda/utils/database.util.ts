@@ -5,12 +5,8 @@ import {Connection, MysqlError} from 'mysql';
 export class DatabaseUtil {
   connection: Connection;
 
-  constructor(query?: string) {
+  constructor() {
     this.connection = mysql.createConnection(DATABASE_CREDENTIALS);
-
-    if (query) {
-      this.query(query);
-    }
   }
 
   query(query: string): Promise<any> {

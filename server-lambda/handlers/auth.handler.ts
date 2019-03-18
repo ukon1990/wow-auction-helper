@@ -12,6 +12,7 @@ export class AuthHandler {
           }&scope=wow.profile`,
         (err, r, body) => {
           const tokenResponse = JSON.parse(body);
+          BLIZZARD.ACCESS_TOKEN = tokenResponse.access_token;
           resolve(tokenResponse.access_token);
         });
     });

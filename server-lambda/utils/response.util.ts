@@ -1,4 +1,4 @@
-import { Callback } from "aws-lambda";
+import {Callback} from 'aws-lambda';
 
 const zlib = require('zlib');
 
@@ -21,7 +21,10 @@ export class Response {
         });
     }
 
-    public static error(callback: Callback): any {
+    public static error(callback: Callback, error?): any {
+        if (error) {
+            console.error(error);
+        }
         return Response.get({
             statusCode: 500,
             message: 'Malormed request'

@@ -1,9 +1,6 @@
-import {APIGatewayEvent, Callback, Context, Handler} from 'aws-lambda';
-import {gzipResponse} from './utils/convertion.util';
-import {AuctionHandler} from './handlers/auction.handler';
+import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from './utils/response.util';
 import {ItemHandler} from './handlers/item.handler';
-import {RequestBody} from './models/request-body.model';
 
 const request: any = require('request');
 const RequestPromise = require('request-promise');
@@ -24,7 +21,7 @@ class ItemController {
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getById(id, callback);
+        new ItemHandler().getById(event, callback);
         break;
       default:
         Response.error(callback);
@@ -36,7 +33,7 @@ class ItemController {
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        Response.get(event, callback);
+        new ItemHandler().getAllRelevant(event, callback);
         break;
       default:
         Response.error(callback);
