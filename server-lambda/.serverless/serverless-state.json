@@ -117,7 +117,7 @@
                   [
                     "wah-api",
                     "dev",
-                    "us-east-2",
+                    "eu-west-1",
                     "lambdaRole"
                   ]
                 ]
@@ -131,7 +131,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/wah-api/dev/1552926648260-2019-03-18T16:30:48.260Z/wah-api.zip"
+                "S3Key": "serverless/wah-api/dev/1552930201240-2019-03-18T17:30:01.240Z/wah-api.zip"
               },
               "FunctionName": "wah-api-dev-getAuctionUrl",
               "Handler": "auction.handler",
@@ -150,14 +150,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "GetAuctionUrlLambdaVersionTVCLgVsQxL68YslhtwsDZO83cWwvnFAjegEDWePDU": {
+          "GetAuctionUrlLambdaVersionsihigI14bipsyIKIfQcdEuiUij9eTGoohgaHBLmWs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetAuctionUrlLambdaFunction"
               },
-              "CodeSha256": "sd0/2p3N1QniKczC+fogKYOOZHeoFGHuXM0jDbPpSPM="
+              "CodeSha256": "gVumz0ZmUbKMp02awW5jOjk3sNG39rTXDhMWRx+KCC8="
             }
           },
           "TestLambdaFunction": {
@@ -167,7 +167,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/wah-api/dev/1552926648260-2019-03-18T16:30:48.260Z/wah-api.zip"
+                "S3Key": "serverless/wah-api/dev/1552930201240-2019-03-18T17:30:01.240Z/wah-api.zip"
               },
               "FunctionName": "wah-api-dev-test",
               "Handler": "test.handler",
@@ -186,14 +186,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "TestLambdaVersionCzREN7osb6mfDVyhE52kLq7rDm3EgelOMlal22zc": {
+          "TestLambdaVersionSlOfAvuBhqDar57VpDyNrgmgi8Zn6lEy8yPHOWvw8c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TestLambdaFunction"
               },
-              "CodeSha256": "sd0/2p3N1QniKczC+fogKYOOZHeoFGHuXM0jDbPpSPM="
+              "CodeSha256": "gVumz0ZmUbKMp02awW5jOjk3sNG39rTXDhMWRx+KCC8="
             }
           },
           "ApiGatewayRestApi": {
@@ -370,7 +370,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1552926648294": {
+          "ApiGatewayDeployment1552930201272": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -488,13 +488,13 @@
           "GetAuctionUrlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetAuctionUrlLambdaVersionTVCLgVsQxL68YslhtwsDZO83cWwvnFAjegEDWePDU"
+              "Ref": "GetAuctionUrlLambdaVersionsihigI14bipsyIKIfQcdEuiUij9eTGoohgaHBLmWs"
             }
           },
           "TestLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TestLambdaVersionCzREN7osb6mfDVyhE52kLq7rDm3EgelOMlal22zc"
+              "Ref": "TestLambdaVersionSlOfAvuBhqDar57VpDyNrgmgi8Zn6lEy8yPHOWvw8c"
             }
           },
           "ServiceEndpoint": {
@@ -507,7 +507,7 @@
                   {
                     "Ref": "ApiGatewayRestApi"
                   },
-                  ".execute-api.us-east-2.",
+                  ".execute-api.eu-west-1.",
                   {
                     "Ref": "AWS::URLSuffix"
                   },
@@ -613,7 +613,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/wah-api/dev/1552926648260-2019-03-18T16:30:48.260Z",
+    "artifactDirectoryName": "serverless/wah-api/dev/1552930201240-2019-03-18T17:30:01.240Z",
     "artifact": ""
   }
 }

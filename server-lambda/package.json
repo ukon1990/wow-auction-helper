@@ -4,22 +4,25 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
   "scripts": {
+    "deploy-eu": "serverless deploy -r eu-west-1",
+    "deploy-us": "serverless deploy -r us-east-2",
+    "deploy": "deploy-us & deploy-eu",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "request": "^2.88.0",
-    "request-promise": "^4.2.2",
+    "request-promise": "^4.2.4",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.1",
-    "@types/node": "^8.0.57",
-    "serverless-offline": "^3.25.8",
-    "serverless-webpack": "^5.1.1",
-    "source-map-support": "^0.5.6",
-    "ts-loader": "^4.2.0",
-    "typescript": "^2.9.2",
-    "webpack": "^4.5.0"
+    "@types/aws-lambda": "8.10.23",
+    "@types/node": "^11.11.3",
+    "serverless-offline": "^4.9.1",
+    "serverless-webpack": "^5.2.0",
+    "source-map-support": "^0.5.11",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6"
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT"
