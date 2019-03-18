@@ -1,7 +1,8 @@
 import * as http from 'request';
+import { BLIZZARD } from '../secrets';
 
 export class AuthHandler {
-    getToken(): Promise<string> {
+    public static getToken(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             http.get(`https://eu.battle.net/oauth/token?grant_type=client_credentials&client_id=${
                 BLIZZARD.CLIENT_ID

@@ -10,7 +10,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 
   switch (type) {
     case 'POST':
-      AuctionHandler.post(event, context, callback);
+      new AuctionHandler().post(event, context, callback);
       break;
     default:
     callback(null, Response.get(event));

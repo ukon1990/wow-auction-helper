@@ -1,6 +1,4 @@
 export interface AHDumpResponse {
-    files: [{
-        url: string;
-        lastModified: number;
-    }];
+    url: string;
+    lastModified: number;
 }

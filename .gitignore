@@ -45,3 +45,4 @@ src/app/services/keys\.ts
 .env
 
 server-lambda/.webpack
+secrets.ts
