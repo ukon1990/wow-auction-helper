@@ -1,4 +1,4 @@
-# WAH backend service
+# WAH AWS Lambda backend service
 
 ## Setup
 In order to run this project's backend you will need to create a secrets.ts file in this directory.
@@ -17,6 +17,8 @@ export const DATABASE_CREDENTIALS = {
     PASSWORD: 'password',
 };
 ```
+
+You also need to install serverless by running `npm i -g serverless`. In order to deploy the lambda functions, you need to have aws-cli set up on your development computer.
 
 Once that is done. Do `npm i` to install any dependencies and you're good to go.
 
@@ -137,3 +139,9 @@ You serve the server for development by using the following command:
 serverless offline start
 ```
 This command will reload the server every time you save changes to one of it's files.
+
+## Deploying to AWS API Gateway and Lambda
+To deploy to multiple regions, the easiest way is to just update the deploy.sh script with the regions, you wish to deploy to. And do `sh deploy.sh` in the terminal.
+Atlernatively, if you use windows, run `serverless deploy -r eu-west-2` manually or create your own script.
+
+This will then upload everything to AWS, and set up the API Gateway etc and output the endpoint url's.

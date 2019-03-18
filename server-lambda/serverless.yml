@@ -10,7 +10,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   memorySize: 720
-  timeout: 120000
+  timeout: 900
 
 functions:
   getAuctionUrl:
@@ -19,6 +19,8 @@ functions:
       - http:
           method: post
           path: auction
+          cors:
+            origin: '*'
   test:
     handler: test.handler
     events:

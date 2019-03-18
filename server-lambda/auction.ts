@@ -9,6 +9,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
   const type = event.httpMethod;
 
   switch (type) {
+    case 'OPTIONS':
     case 'POST':
       new AuctionHandler().post(event, context, callback);
       break;

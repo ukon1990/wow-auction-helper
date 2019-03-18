@@ -29,11 +29,18 @@ export class AuctionsService {
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
-    return this._http.get(Endpoints.getUrl(
-      `auction/${SharedService.user.region}/${SharedService.user.realm}`))
+    console.log('auc url', Endpoints.getLambdaUrl(`auction`, SharedService.user.region));
+    return this._http.post(
+      Endpoints.getLambdaUrl(`auction`, SharedService.user.region), {
+        region: SharedService.user.region,
+        realm: SharedService.user.realm
+      })
       .toPromise()
       .then(r => {
-        SharedService.auctionResponse = r['files'][0];
+        console.log('pre respons', r);
+        const response = r['isBase64Encoded'] ? Compression.decompress(r['body']['data'] + '') : r;
+        console.log('Response for url', response);
+        SharedService.auctionResponse = response;
         if (force || previousLastModified !== SharedService.auctionResponse.lastModified) {
           this.getAuctions()
             .then(res => {
@@ -123,38 +130,38 @@ export class AuctionsService {
   getTsmAuctions(): Promise<any> {
     const region = SharedService.user.region;
     if (region === 'eu' || region === 'us') {
-    console.log('Downloading TSM data');
-    SharedService.downloading.tsmAuctions = true;
-    this.openSnackbar('Downloading TSM data');
-    return this._http.get(`${Endpoints.TSM_API}/${
-      SharedService.user.region
-      }/${
-      SharedService.user.realm
-      }?format=json&apiKey=${
-      SharedService.user.apiTsm
-      }&fields=Id,MarketValue,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`) // 'assets/mock/tsm.json'
-      .toPromise()
-      .then(tsm => {
-        localStorage['timestamp_tsm'] = new Date().toDateString();
-        (<TSM[]>tsm).forEach(a => {
-          SharedService.tsm[a.Id] = a;
+      console.log('Downloading TSM data');
+      SharedService.downloading.tsmAuctions = true;
+      this.openSnackbar('Downloading TSM data');
+      return this._http.get(`${Endpoints.TSM_API}/${
+        SharedService.user.region
+        }/${
+        SharedService.user.realm
+        }?format=json&apiKey=${
+        SharedService.user.apiTsm
+        }&fields=Id,MarketValue,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`) // 'assets/mock/tsm.json'
+        .toPromise()
+        .then(tsm => {
+          localStorage['timestamp_tsm'] = new Date().toDateString();
+          (<TSM[]>tsm).forEach(a => {
+            SharedService.tsm[a.Id] = a;
+          });
+          SharedService.downloading.tsmAuctions = false;
+          console.log('TSM data download is complete');
+          this._dbService.addTSMItems(tsm as Array<TSM>);
+          this.openSnackbar('Completed TSM download');
+        })
+        .catch(e => {
+          this.openSnackbar(`Could not completed TSM download. One reason that this could happen, is if you have used all your requests.`);
+          console.error('Unable to download TSM data', e);
+          SharedService.downloading.tsmAuctions = false;
+          this._dbService.getTSMItems().then(r => {
+            this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
+          }).catch(error => {
+            console.error('Could not restore TSM auctions from local DB', error);
+            ErrorReport.sendHttpError(error);
+          });
         });
-        SharedService.downloading.tsmAuctions = false;
-        console.log('TSM data download is complete');
-        this._dbService.addTSMItems(tsm as Array<TSM>);
-        this.openSnackbar('Completed TSM download');
-      })
-      .catch(e => {
-        this.openSnackbar(`Could not completed TSM download. One reason that this could happen, is if you have used all your requests.`);
-        console.error('Unable to download TSM data', e);
-        SharedService.downloading.tsmAuctions = false;
-        this._dbService.getTSMItems().then(r => {
-          this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
-        }).catch(error => {
-          console.error('Could not restore TSM auctions from local DB', error);
-          ErrorReport.sendHttpError(error);
-        });
-      });
     } else {
       return new Promise((resolve) => []);
     }
@@ -164,38 +171,38 @@ export class AuctionsService {
     const region = SharedService.user.region;
 
     if (region === 'eu' || region === 'us') {
-    console.log('Downloading WoWUction data');
-    SharedService.downloading.wowUctionAuctions = true;
-    this.openSnackbar('Downloading WoWUction data');
-    return this._http.post(`${Endpoints.getUrl('auction/wowuction')}`,
-      {
-        region: SharedService.user.region,
-        realm: SharedService.user.realm,
-        key: SharedService.user.apiWoWu
-      }).toPromise()
-      .then(wowu => {
-        localStorage['timestamp_wowuction'] = new Date().toDateString();
-        (<WoWUction[]>wowu).forEach(a => {
-          SharedService.wowUction[a.id] = a;
-        });
-        SharedService.downloading.wowUctionAuctions = false;
-        console.log('WoWUction data download is complete');
-        this._dbService.addWoWUctionItems(wowu as Array<WoWUction>);
-        this.openSnackbar('Completed WoWUction download');
-      })
-      .catch(error => {
-        this.openSnackbar(
-          `Could not completed WoWUction download. One reason that this could happen, is if you have used all your requests.`);
-        console.error('Unable to download WoWUction data', error);
-        SharedService.downloading.wowUctionAuctions = false;
-        ErrorReport.sendHttpError(error);
+      console.log('Downloading WoWUction data');
+      SharedService.downloading.wowUctionAuctions = true;
+      this.openSnackbar('Downloading WoWUction data');
+      return this._http.post(`${Endpoints.getUrl('auction/wowuction')}`,
+        {
+          region: SharedService.user.region,
+          realm: SharedService.user.realm,
+          key: SharedService.user.apiWoWu
+        }).toPromise()
+        .then(wowu => {
+          localStorage['timestamp_wowuction'] = new Date().toDateString();
+          (<WoWUction[]>wowu).forEach(a => {
+            SharedService.wowUction[a.id] = a;
+          });
+          SharedService.downloading.wowUctionAuctions = false;
+          console.log('WoWUction data download is complete');
+          this._dbService.addWoWUctionItems(wowu as Array<WoWUction>);
+          this.openSnackbar('Completed WoWUction download');
+        })
+        .catch(error => {
+          this.openSnackbar(
+            `Could not completed WoWUction download. One reason that this could happen, is if you have used all your requests.`);
+          console.error('Unable to download WoWUction data', error);
+          SharedService.downloading.wowUctionAuctions = false;
+          ErrorReport.sendHttpError(error);
 
-        this._dbService.getWoWUctionItems().then(r => {
-          this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
-        }).catch(err => {
-          console.error('Could not restore WoWUction auctions from local DB', err);
+          this._dbService.getWoWUctionItems().then(r => {
+            this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
+          }).catch(err => {
+            console.error('Could not restore WoWUction auctions from local DB', err);
+          });
         });
-      });
     } else {
       return new Promise((resolve) => []);
     }

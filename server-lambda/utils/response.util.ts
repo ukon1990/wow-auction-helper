@@ -9,9 +9,10 @@ export class Response {
             console.log('get', error, buffer);
             callback(null, {
                 statusCode: 200,
-                body: buffer,
+                body: buffer.toString('base64'),
                 isBase64Encoded: true,
                 headers: {
+                    'Access-Control-Allow-Origin': '*',
                     'Content-Type': 'application/json',
                     'Content-Encoding': 'gzip',
                     'Character-Encoding': 'UTF8'

@@ -11,7 +11,7 @@
       "name": "aws",
       "runtime": "nodejs8.10",
       "memorySize": 720,
-      "timeout": 120000,
+      "timeout": 900,
       "versionFunctions": true,
       "remoteFunctionData": null,
       "compiledCloudFormationTemplate": {
@@ -117,7 +117,7 @@
                   [
                     "wah-api",
                     "dev",
-                    "us-east-1",
+                    "us-east-2",
                     "lambdaRole"
                   ]
                 ]
@@ -131,7 +131,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/wah-api/dev/1552918044589-2019-03-18T14:07:24.589Z/wah-api.zip"
+                "S3Key": "serverless/wah-api/dev/1552926648260-2019-03-18T16:30:48.260Z/wah-api.zip"
               },
               "FunctionName": "wah-api-dev-getAuctionUrl",
               "Handler": "auction.handler",
@@ -143,21 +143,21 @@
                 ]
               },
               "Runtime": "nodejs8.10",
-              "Timeout": 120000
+              "Timeout": 900
             },
             "DependsOn": [
               "GetAuctionUrlLogGroup",
               "IamRoleLambdaExecution"
             ]
           },
-          "GetAuctionUrlLambdaVersionnvI5hKl7s5WtJTWW8ssRldNYurQ5l1h15XNYFnxDB2w": {
+          "GetAuctionUrlLambdaVersionTVCLgVsQxL68YslhtwsDZO83cWwvnFAjegEDWePDU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetAuctionUrlLambdaFunction"
               },
-              "CodeSha256": "x88lMggiHCy1GxzrRqhj0YZawBCDdeDPS0i6FN57fjE="
+              "CodeSha256": "sd0/2p3N1QniKczC+fogKYOOZHeoFGHuXM0jDbPpSPM="
             }
           },
           "TestLambdaFunction": {
@@ -167,7 +167,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/wah-api/dev/1552918044589-2019-03-18T14:07:24.589Z/wah-api.zip"
+                "S3Key": "serverless/wah-api/dev/1552926648260-2019-03-18T16:30:48.260Z/wah-api.zip"
               },
               "FunctionName": "wah-api-dev-test",
               "Handler": "test.handler",
@@ -179,21 +179,21 @@
                 ]
               },
               "Runtime": "nodejs8.10",
-              "Timeout": 120000
+              "Timeout": 900
             },
             "DependsOn": [
               "TestLogGroup",
               "IamRoleLambdaExecution"
             ]
           },
-          "TestLambdaVersionME163tPRJdXMKI8FtRl77XUDgKRNvyWUeUOgZJKKFo8": {
+          "TestLambdaVersionCzREN7osb6mfDVyhE52kLq7rDm3EgelOMlal22zc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TestLambdaFunction"
               },
-              "CodeSha256": "x88lMggiHCy1GxzrRqhj0YZawBCDdeDPS0i6FN57fjE="
+              "CodeSha256": "sd0/2p3N1QniKczC+fogKYOOZHeoFGHuXM0jDbPpSPM="
             }
           },
           "ApiGatewayRestApi": {
@@ -232,6 +232,53 @@
                 ]
               },
               "PathPart": "test",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAuctionOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuction"
+              },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -323,7 +370,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1552918044622": {
+          "ApiGatewayDeployment1552926648294": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -332,6 +379,7 @@
               "StageName": "dev"
             },
             "DependsOn": [
+              "ApiGatewayMethodAuctionOptions",
               "ApiGatewayMethodAuctionPost",
               "ApiGatewayMethodTestAny"
             ]
@@ -440,13 +488,13 @@
           "GetAuctionUrlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetAuctionUrlLambdaVersionnvI5hKl7s5WtJTWW8ssRldNYurQ5l1h15XNYFnxDB2w"
+              "Ref": "GetAuctionUrlLambdaVersionTVCLgVsQxL68YslhtwsDZO83cWwvnFAjegEDWePDU"
             }
           },
           "TestLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TestLambdaVersionME163tPRJdXMKI8FtRl77XUDgKRNvyWUeUOgZJKKFo8"
+              "Ref": "TestLambdaVersionCzREN7osb6mfDVyhE52kLq7rDm3EgelOMlal22zc"
             }
           },
           "ServiceEndpoint": {
@@ -459,7 +507,7 @@
                   {
                     "Ref": "ApiGatewayRestApi"
                   },
-                  ".execute-api.us-east-1.",
+                  ".execute-api.us-east-2.",
                   {
                     "Ref": "AWS::URLSuffix"
                   },
@@ -512,16 +560,32 @@
             "http": {
               "method": "post",
               "path": "auction",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "allowCredentials": false,
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ]
+              },
               "integration": "AWS_PROXY"
             }
           }
         ],
         "name": "wah-api-dev-getAuctionUrl",
         "package": {
-          "artifact": "/Users/jonas/Dev/Hobby/Web/wow-auction-helper/server-lambda/.serverless/.serverless/wah-api.zip"
+          "artifact": ".serverless/wah-api.zip"
         },
         "memory": 720,
-        "timeout": 120000,
+        "timeout": 900,
         "runtime": "nodejs8.10",
         "vpc": {}
       },
@@ -538,10 +602,10 @@
         ],
         "name": "wah-api-dev-test",
         "package": {
-          "artifact": "/Users/jonas/Dev/Hobby/Web/wow-auction-helper/server-lambda/.serverless/.serverless/wah-api.zip"
+          "artifact": ".serverless/wah-api.zip"
         },
         "memory": 720,
-        "timeout": 120000,
+        "timeout": 900,
         "runtime": "nodejs8.10",
         "vpc": {}
       }
@@ -549,7 +613,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/wah-api/dev/1552918044589-2019-03-18T14:07:24.589Z",
+    "artifactDirectoryName": "serverless/wah-api/dev/1552926648260-2019-03-18T16:30:48.260Z",
     "artifact": ""
   }
 }
