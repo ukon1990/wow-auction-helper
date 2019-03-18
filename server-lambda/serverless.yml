@@ -19,3 +19,9 @@ functions:
       - http:
           method: post
           path: auction
+  test:
+    handler: test.handler
+    events:
+      - http:
+          method: any
+          path: test
