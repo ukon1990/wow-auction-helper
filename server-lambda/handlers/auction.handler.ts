@@ -1,17 +1,34 @@
 import { APIGatewayEvent, Callback, Context, Handler } from 'aws-lambda';
+import { Response } from '../utils/response.util';
+import { AHDumpResponse } from '../models/auction/ah-dump-response.model';
+
+const request: any = require('request');
+const RequestPromise = require('request-promise');
 
 export class AuctionHandler {
 
-public static route (event: APIGatewayEvent, context: Context, callback: Callback) {
-    callback(null, {
-        statusCode: 200,
-        body: event,
-        isBase64Encoded: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Encoding': 'gzip',
-            'Character-Encoding': 'UTF8'
+public static post (event: APIGatewayEvent, context: Context, callback: Callback) {
+    const body = JSON.parse(event.body),
+        region = body.region,
+        realm = body.realm,
+        timestamp = body.timestamp;
+
+    if (region && realm) {
+        callback(null, 
+            Response.get(event));
+    } else {
+        callback(null, 
+            Response.error());
+    }
+}
+
+public static getLatestDumpResponse(region: string, realm: string): Promise<AHDumpResponse> {
+    return request.get('',  (error, response, body) => {
+        if (error || !body.files) {
+            // TODO: Logic
+            return {files : []};
         }
+        return body;
     });
 }
 

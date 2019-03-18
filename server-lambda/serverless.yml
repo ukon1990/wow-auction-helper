@@ -17,5 +17,5 @@ functions:
     handler: auction.handler
     events:
       - http:
-          method: get
+          method: post
           path: auction
