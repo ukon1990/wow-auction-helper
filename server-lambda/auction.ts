@@ -13,6 +13,6 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
       new AuctionHandler().post(event, context, callback);
       break;
     default:
-    callback(null, Response.get(event));
+      Response.error(callback);
   }
 };
