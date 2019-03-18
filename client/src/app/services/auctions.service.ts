@@ -13,6 +13,7 @@ import {PetsService} from './pets.service';
 import {Angulartics2} from 'angulartics2';
 import {ErrorReport} from '../utils/error-report.util';
 import {Compression} from '../utils/compression.util';
+import {AuctionResponse} from '../models/auction/auctions-response';
 
 @Injectable()
 export class AuctionsService {
@@ -29,7 +30,6 @@ export class AuctionsService {
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
-    console.log('auc url', Endpoints.getLambdaUrl(`auction`, SharedService.user.region));
     return this._http.post(
       Endpoints.getLambdaUrl(`auction`, SharedService.user.region), {
         region: SharedService.user.region,
@@ -37,10 +37,8 @@ export class AuctionsService {
       })
       .toPromise()
       .then(r => {
-        console.log('pre respons', r);
-        const response = r['isBase64Encoded'] ? Compression.decompress(r['body']['data'] + '') : r;
-        console.log('Response for url', response);
-        SharedService.auctionResponse = response;
+        console.log('Response for url', r);
+        SharedService.auctionResponse = r as AuctionResponse;
         if (force || previousLastModified !== SharedService.auctionResponse.lastModified) {
           this.getAuctions()
             .then(res => {
@@ -63,12 +61,10 @@ export class AuctionsService {
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     return this._http.post(
-      Endpoints.getUrl('auction'), {url: SharedService.auctionResponse.url})
+      Endpoints.getLambdaUrl(`auction`, SharedService.user.region),
+      {url: SharedService.auctionResponse.url})
       .toPromise()
       .then(a => {
-        if (a['isBase64Encoded']) {
-          a = Compression.decompress(a['body']);
-        }
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = SharedService.auctionResponse.lastModified;
         AuctionHandler.organize(a['auctions'], this.petService);
