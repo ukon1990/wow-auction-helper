@@ -9,14 +9,37 @@ const request: any = require('request');
 const RequestPromise = require('request-promise');
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const type = event.httpMethod;
 
-  switch (type) {
-    case 'OPTIONS':
-    case 'POST':
-      const body = JSON.parse(event.body) as RequestBody;
-      break;
-    default:
-      Response.error(callback);
+  if (event.pathParameters && event.pathParameters.id) {
+    ItemController.byId(event, callback);
+  } else {
+    ItemController.all(event, callback);
   }
 };
+
+class ItemController {
+  public static byId(event: APIGatewayEvent, callback: Callback) {
+    const type = event.httpMethod,
+      id = +event.pathParameters.id;
+    switch (type) {
+      case 'OPTIONS':
+      case 'POST':
+        new ItemHandler().getById(id, callback);
+        break;
+      default:
+        Response.error(callback);
+    }
+  }
+
+  public static all(event: APIGatewayEvent, callback: Callback) {
+    const type = event.httpMethod;
+    switch (type) {
+      case 'OPTIONS':
+      case 'POST':
+        Response.get(event, callback);
+        break;
+      default:
+        Response.error(callback);
+    }
+  }
+}

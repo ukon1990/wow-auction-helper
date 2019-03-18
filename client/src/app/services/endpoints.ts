@@ -14,7 +14,9 @@ export class Endpoints {
   public static readonly LAMBDAS = {
     AUCTION_US: 'https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/default/getAuctions',
     EU: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
-    US: ''
+    US: 'https://rmq2etod45.execute-api.us-east-2.amazonaws.com/dev/',
+    KR: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
+    TW: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/'
   };
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg

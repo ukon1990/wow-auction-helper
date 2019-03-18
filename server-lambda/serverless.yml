@@ -21,6 +21,22 @@ functions:
           path: auction
           cors:
             origin: '*'
+
+  getItems:
+    handler: item.handler
+    events:
+      - http:
+          method: any
+          path: item
+          cors:
+            origin: '*'
+
+      - http:
+          method: any
+          path: item/{id}
+          cors:
+            origin: '*'
+
   test:
     handler: test.handler
     events:

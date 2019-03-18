@@ -101,7 +101,7 @@
             [
               "wah-api",
               "dev",
-              "eu-west-1",
+              "us-east-2",
               "lambdaRole"
             ]
           ]
@@ -115,7 +115,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/wah-api/dev/1552930201240-2019-03-18T17:30:01.240Z/wah-api.zip"
+          "S3Key": "serverless/wah-api/dev/1552937953671-2019-03-18T19:39:13.671Z/wah-api.zip"
         },
         "FunctionName": "wah-api-dev-getAuctionUrl",
         "Handler": "auction.handler",
@@ -134,14 +134,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "GetAuctionUrlLambdaVersionsihigI14bipsyIKIfQcdEuiUij9eTGoohgaHBLmWs": {
+    "GetAuctionUrlLambdaVersioniC72NAuiBAqs1YMfHCjwsBiiNF8zFtsQwsBZ7kC9k": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetAuctionUrlLambdaFunction"
         },
-        "CodeSha256": "gVumz0ZmUbKMp02awW5jOjk3sNG39rTXDhMWRx+KCC8="
+        "CodeSha256": "X/rpwr0YM85EeiX93AHB59JXvzJxJSB5mzoPOMWeexM="
       }
     },
     "TestLambdaFunction": {
@@ -151,7 +151,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/wah-api/dev/1552930201240-2019-03-18T17:30:01.240Z/wah-api.zip"
+          "S3Key": "serverless/wah-api/dev/1552937953671-2019-03-18T19:39:13.671Z/wah-api.zip"
         },
         "FunctionName": "wah-api-dev-test",
         "Handler": "test.handler",
@@ -170,14 +170,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "TestLambdaVersionSlOfAvuBhqDar57VpDyNrgmgi8Zn6lEy8yPHOWvw8c": {
+    "TestLambdaVersionsth9mZPPyheIxPIJH3ZsBMzkYiU3D8AlzORUKYg0IM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "TestLambdaFunction"
         },
-        "CodeSha256": "gVumz0ZmUbKMp02awW5jOjk3sNG39rTXDhMWRx+KCC8="
+        "CodeSha256": "X/rpwr0YM85EeiX93AHB59JXvzJxJSB5mzoPOMWeexM="
       }
     },
     "ApiGatewayRestApi": {
@@ -354,7 +354,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552930201272": {
+    "ApiGatewayDeployment1552937953717": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -472,13 +472,13 @@
     "GetAuctionUrlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetAuctionUrlLambdaVersionsihigI14bipsyIKIfQcdEuiUij9eTGoohgaHBLmWs"
+        "Ref": "GetAuctionUrlLambdaVersioniC72NAuiBAqs1YMfHCjwsBiiNF8zFtsQwsBZ7kC9k"
       }
     },
     "TestLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "TestLambdaVersionSlOfAvuBhqDar57VpDyNrgmgi8Zn6lEy8yPHOWvw8c"
+        "Ref": "TestLambdaVersionsth9mZPPyheIxPIJH3ZsBMzkYiU3D8AlzORUKYg0IM"
       }
     },
     "ServiceEndpoint": {
@@ -491,7 +491,7 @@
             {
               "Ref": "ApiGatewayRestApi"
             },
-            ".execute-api.eu-west-1.",
+            ".execute-api.us-east-2.",
             {
               "Ref": "AWS::URLSuffix"
             },
