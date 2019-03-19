@@ -12,19 +12,22 @@ export class Endpoints {
   // char/realm/??/??.jpg
   public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
   public static readonly LAMBDAS = {
-    AUCTION_US: 'https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/default/getAuctions'
+    EU: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
+    US: 'https://rmq2etod45.execute-api.us-east-2.amazonaws.com/dev/',
+    KR: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
+    TW: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/'
   };
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
+  public static getLambdaUrl(path: string, region: string): string {
+    return Endpoints.LAMBDAS[region.toUpperCase()] + path;
+  }
+
   public static getUrl(path: string): string {
-    let url = `/api/${path}`;
-    if (path === 'auction' && SharedService.user.region === 'us') {
-      url = Endpoints.LAMBDAS.AUCTION_US;
-    }
 
     return environment.production ?
-      url : `${Endpoints.WAH_LOCAL_API}${path}`;
+       `/api/${path}` : `${Endpoints.WAH_LOCAL_API}${path}`;
   }
 
   public static getUndermineUrl(): string {
