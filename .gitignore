@@ -45,4 +45,5 @@ src/app/services/keys\.ts
 .env
 
 server-lambda/.webpack
+server-lambda/.serverless
 secrets.ts
