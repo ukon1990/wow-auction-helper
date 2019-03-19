@@ -29,6 +29,10 @@ export class ItemHandler {
         Response.error(callback, error));
   }
 
+  update(event: APIGatewayEvent, callback: Callback) {
+
+  }
+
   getAllRelevant(event: APIGatewayEvent, callback: Callback) {
     const body = JSON.parse(event.body),
       timestamp = body.timestamp,
@@ -43,6 +47,14 @@ export class ItemHandler {
   }
 
   async addItem(event: APIGatewayEvent, callback: Callback) {
+    const id = +event.pathParameters.id;
+    let item: Item;
+    console.log('Adding missing item', id);
+    await this.getFromBlizzard(id).then((i: Item) =>
+      item = i);
+
+    await this.getWowDBData(id).then();
+    await this.getWowheadData(id).then();
   }
 
   getWowheadData(id: number): Promise<WoWHead> {

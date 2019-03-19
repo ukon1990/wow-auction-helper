@@ -23,6 +23,9 @@ class ItemController {
       case 'POST':
         new ItemHandler().getById(event, callback);
         break;
+      case 'PATCH':
+        new ItemHandler().update(event, callback);
+        break;
       default:
         Response.error(callback);
     }
