@@ -1,27 +1,27 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {Response} from './utils/response.util';
-import {ItemHandler} from './handlers/item.handler';
+import {Response} from '../utils/response.util';
+import {RecipeHandler} from '../handlers/recipe.handler';
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 
   if (event.pathParameters && event.pathParameters.id) {
-    ItemController.byId(event, callback);
+    RecipeController.byId(event, callback);
   } else {
-    ItemController.all(event, callback);
+    RecipeController.all(event, callback);
   }
 };
 
-class ItemController {
+class RecipeController {
   public static byId(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod,
       id = +event.pathParameters.id;
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getById(event, callback);
+        new RecipeHandler().getById(event, callback);
         break;
       case 'PATCH':
-        new ItemHandler().update(event, callback);
+        new RecipeHandler().update(event, callback);
         break;
       default:
         Response.error(callback);
@@ -33,7 +33,7 @@ class ItemController {
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getAllRelevant(event, callback);
+        new RecipeHandler().getAllRelevant(event, callback);
         break;
       default:
         Response.error(callback);
