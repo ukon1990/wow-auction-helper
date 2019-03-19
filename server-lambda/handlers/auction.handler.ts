@@ -63,7 +63,7 @@ export class AuctionHandler {
   private getLatestDumpPath(region: string, realm: string): Promise<AHDumpResponse> {
     return new Promise<AHDumpResponse>((resolve, reject) => {
       request.get(
-        new Endpoints().getPath(`auction/data/${realm}`),
+        new Endpoints().getPath(`auction/data/${realm}`, region),
         (error, response, body) => {
           body = JSON.parse(body);
 
