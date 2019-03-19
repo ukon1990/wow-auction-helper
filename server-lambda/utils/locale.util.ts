@@ -9,8 +9,8 @@ import {Endpoints} from './endpoints.util';
  * @param {*} request
  */
 
-export const getLocale = (request: any) => {
-  return request.locale || 'en_GB';
+export const getLocale = (locale: string) => {
+  return locale || 'en_GB';
 };
 
 export class LocaleUtil {

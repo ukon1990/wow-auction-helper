@@ -39,7 +39,7 @@ export class ItemHandler {
       locale = body.locale;
 
     new DatabaseUtil()
-      .query(ItemQueries.getAllItemsOrderByTimestamp(locale))
+      .query(ItemQueries.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
       .then((items: Item[]) =>
         Response.get(ItemUtil.handleItems(items), callback))
       .catch(error =>
@@ -55,6 +55,11 @@ export class ItemHandler {
 
     await this.getWowDBData(id).then();
     await this.getWowheadData(id).then();
+
+    await new DatabaseUtil()
+      .query(ItemQueries.insert(item));
+
+    Response.get(item, callback);
   }
 
   getWowheadData(id: number): Promise<WoWHead> {
