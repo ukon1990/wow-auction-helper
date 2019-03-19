@@ -116,10 +116,10 @@ export class ItemQuery {
     ORDER BY timestamp desc;`;
   }
 
-  public static getAllItemsOrderByTimestamp(locale: string) {
+  public static getAllItemsOrderByTimestamp(req) {
     return `
       SELECT
-             i.id, COALESCE(${getLocale(locale)}, i.name) as name,
+             i.id, COALESCE(${getLocale(req)}, i.name) as name,
              icon,
              itemLevel,
              itemClass,
