@@ -6,7 +6,7 @@
   "scripts": {
     "deploy-eu": "serverless deploy -r eu-west-1",
     "deploy-us": "serverless deploy -r us-east-2",
-    "deploy": "deploy-us & deploy-eu",
+    "deploy": "npm run deploy-us && npm run deploy-eu",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
