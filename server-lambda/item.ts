@@ -2,9 +2,6 @@ import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from './utils/response.util';
 import {ItemHandler} from './handlers/item.handler';
 
-const request: any = require('request');
-const RequestPromise = require('request-promise');
-
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 
   if (event.pathParameters && event.pathParameters.id) {
