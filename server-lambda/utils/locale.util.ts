@@ -1,6 +1,6 @@
 import * as RequestPromise from 'request-promise';
 import {ItemLocale} from '../models/item/item-locale';
-import {LocaleQuery} from '../queries/locale.queries';
+import {LocaleQuery} from '../queries/locale.query';
 import {DatabaseUtil} from './database.util';
 import {Endpoints} from './endpoints.util';
 

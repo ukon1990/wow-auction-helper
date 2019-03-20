@@ -1,6 +1,6 @@
 import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
-import {ItemQueries} from '../queries/item.queries';
+import {ItemQuery} from '../queries/item.query';
 import {Item} from '../models/item/item';
 import {Response} from '../utils/response.util';
 import {WoWDBItem} from '../models/item/wowdb';
@@ -15,14 +15,12 @@ const request = require('request');
 
 export class ItemHandler {
   async getById(event: APIGatewayEvent, callback: Callback) {
-    console.log('getById', +event.pathParameters.id);
     // await AuthHandler.getToken();
     new DatabaseUtil()
-      .query(ItemQueries.getById(
+      .query(ItemQuery.getById(
         +event.pathParameters.id,
         JSON.parse(event.body).locale))
       .then((items: Item[]) => {
-        console.log('gotById', items);
         if (items[0]) {
           Response.get(
             ItemUtil.handleItem(items[0]), callback);
@@ -41,7 +39,7 @@ export class ItemHandler {
     this.getFreshItem(id, event)
       .then(async item => {
         new DatabaseUtil()
-          .query(ItemQueries.update(item))
+          .query(ItemQuery.update(item))
           .then(() =>
             Response.get(item, callback))
           .catch(error =>
@@ -58,7 +56,7 @@ export class ItemHandler {
 
     new DatabaseUtil()
       .query(
-        ItemQueries.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
+        ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
       .then((items: Item[]) =>
         Response.get(ItemUtil.handleItems(items), callback))
       .catch(error =>
@@ -73,7 +71,7 @@ export class ItemHandler {
 
         new DatabaseUtil()
           .query(
-            ItemQueries.insert(item));
+            ItemQuery.insert(item));
 
         LocaleUtil.setLocales(
           id,

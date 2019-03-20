@@ -2,7 +2,7 @@ import {Item} from '../models/item/item';
 import {safeifyString} from '../utils/string.util';
 import {getLocale} from '../utils/locale.util';
 
-export class ItemQueries {
+export class ItemQuery {
   public static update(item: Item) {
     const columns: any[] = [];
     Object.keys(item).forEach(key => {

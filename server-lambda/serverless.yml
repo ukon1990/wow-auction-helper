@@ -37,7 +37,7 @@ functions:
           cors:
             origin: '*'
   pets:
-    handler: controllers/item.controller.handler
+    handler: controllers/pet.controller.handler
     events:
       - http:
           method: any
