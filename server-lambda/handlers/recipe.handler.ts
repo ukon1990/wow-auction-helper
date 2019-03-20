@@ -10,12 +10,8 @@ export class RecipeHandler {
     new DatabaseUtil()
       .query(RecipeQuery.getAllRecipesWithNoItemId(params.locale, params.timestamp))
       .then((recipes: any[]) => {
-        const recipe = this.convertList(recipes)[0];
-        if (recipe) {
-          Response.get(recipe, callback);
-        } else {
-          Response.error(callback);
-        }
+        Response.get(
+          this.convertList(recipes), callback);
       })
       .catch(error => Response.error(callback, error));
 
