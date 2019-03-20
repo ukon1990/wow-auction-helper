@@ -63,11 +63,13 @@ export class ItemHandler {
         Response.error(callback, error));
   }
 
-  async addItem(event: APIGatewayEvent, callback: Callback) {
+  async addItem(event: APIGatewayEvent, callback?: Callback) {
     const id = +event.pathParameters.id;
     await this.getFreshItem(id, event)
       .then(item => {
-        Response.send(item, callback);
+        if (callback) {
+          Response.send(item, callback);
+        }
 
         new DatabaseUtil()
           .query(

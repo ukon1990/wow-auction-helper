@@ -6,6 +6,8 @@ import {RecipeQuery} from '../queries/recipe.query';
 import {RecipeUtil} from '../utils/recipe.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {LocaleUtil} from '../utils/locale.util';
+import {Item} from '../models/item/item';
+import {ItemHandler} from './item.handler';
 
 const request = require('request');
 
@@ -30,7 +32,7 @@ export class RecipeHandler {
       .query(RecipeQuery.getById(id))
       .then(async (recipes: any[]) => {
         const oldVersion = this.convertList(recipes)[0];
-        await this.getRecipeFromWowDB(id)
+        await this.getRecipeFromWowDB(id, event)
           .then((currentRecipe: Recipe) => {
             // Enchants does not have itemID set as creates in WoWDB, so don't overwrite 0 itemID's
             if (oldVersion.itemID && !currentRecipe.itemID) {
@@ -38,20 +40,13 @@ export class RecipeHandler {
             }
             currentRecipe.name = oldVersion.name;
 
-            LocaleUtil.setLocales(
-              currentRecipe.spellID,
-              'id',
-              'recipe_name_locale',
-              'spell'
-            );
-
             Response.send(currentRecipe, callback);
-            /*
+
             new DatabaseUtil()
               .query(RecipeQuery.update(currentRecipe))
               .then(() =>
                 Response.send(currentRecipe, callback))
-              .catch(error => Response.error(callback, error));*/
+              .catch(error => Response.error(callback, error));
 
           })
           .catch(error =>
@@ -71,14 +66,14 @@ export class RecipeHandler {
         if (recipe) {
           Response.send(recipe, callback);
         } else {
-          this.addRecipe(id, recipe, callback);
+          this.addRecipe(id, recipe, JSON.parse(event.body).locale, callback);
         }
       })
       .catch(error =>
         Response.error(callback, error));
   }
 
-  private async addRecipe(id, recipe, callback: Callback) {
+  private async addRecipe(id, recipe, locale: string, callback: Callback) {
     await this.getRecipeFromWowDB(id)
       .then(newRecipe => {
         this.getProfessionForRecipe(newRecipe)
@@ -94,7 +89,13 @@ export class RecipeHandler {
               'id',
               'recipe_name_locale',
               'spell'
-            );
+            ).then(locales => {
+              if (locales[locale]) {
+                recipe.name = locales[locale];
+              }
+            })
+              .catch(error =>
+                Response.error(callback, error));
             Response.send(newRecipe, callback);
           })
           .catch(error =>
@@ -114,14 +115,31 @@ export class RecipeHandler {
     return recipes;
   }
 
-  private getRecipeFromWowDB(id: number): Promise<Recipe> {
+  private getRecipeFromWowDB(id: number, event: APIGatewayEvent): Promise<Recipe> {
     return new Promise<Recipe>((resolve, reject) => {
       request.get(`http://wowdb.com/api/spell/${id}`, async (error, result, body) => {
         const recipe = RecipeUtil.convert(JSON.parse(body.slice(1, body.length - 1)));
         const missingItemId = recipe.itemID === 0;
+
         if (missingItemId) {
-          // TODO: For enchants etc
+          await new DatabaseUtil()
+            .query(RecipeQuery.getItemWithSimilarName(recipe))
+            .then((item: Item) =>
+              recipe.itemID = item.id)
+            .catch(e =>
+              console.error(e));
         }
+
+        new DatabaseUtil()
+          .query(RecipeQuery.getMissingItems(recipe))
+          .then((rows: any[]) => {
+            if (rows.length > 0) {
+              console.log('Adding missing items');
+              rows.forEach(row => {
+                // TODO: request.post()
+              });
+            }
+          });
 
         resolve(recipe);
       });

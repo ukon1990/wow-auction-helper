@@ -64,3 +64,10 @@ functions:
           path: recipe/{id}
           cors:
             origin: '*'
+
+  test:
+    handler: controllers/test.controller.handler
+    events:
+      - http:
+          method: any
+          path: test
