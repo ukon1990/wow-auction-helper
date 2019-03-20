@@ -29,8 +29,8 @@ export class LocaleQuery {
           "${safeifyString(data['pl_PL'])}",
           "${safeifyString(data['pt_PT'])}",
           "${safeifyString(data['pt_BR'])}",
-          "${safeifyString(data['ru_RU'])}"
-          "${safeifyString(data['ko_KR'])}"
+          "${safeifyString(data['ru_RU'])}",
+          "${safeifyString(data['ko_KR'])}",
           "${safeifyString(data['zh_TW'])}");`;
   }
 

@@ -1,7 +1,7 @@
 import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {Response} from '../utils/response.util';
-import {Recipe} from '../models/crafting/recipe';
+import {Recipe, RecipeSpell} from '../models/crafting/recipe';
 import {RecipeQuery} from '../queries/recipe.query';
 import {RecipeUtil} from '../utils/recipe.util';
 import {Endpoints} from '../utils/endpoints.util';
@@ -30,17 +30,28 @@ export class RecipeHandler {
       .query(RecipeQuery.getById(id))
       .then(async (recipes: any[]) => {
         const oldVersion = this.convertList(recipes)[0];
-        this.getRecipeFromWowDB(id)
+        await this.getRecipeFromWowDB(id)
           .then((currentRecipe: Recipe) => {
             // Enchants does not have itemID set as creates in WoWDB, so don't overwrite 0 itemID's
             if (oldVersion.itemID && !currentRecipe.itemID) {
               currentRecipe.itemID = oldVersion.itemID;
             }
+            currentRecipe.name = oldVersion.name;
+
+            LocaleUtil.setLocales(
+              currentRecipe.spellID,
+              'id',
+              'recipe_name_locale',
+              'spell'
+            );
+
+            Response.send(currentRecipe, callback);
+            /*
             new DatabaseUtil()
               .query(RecipeQuery.update(currentRecipe))
               .then(() =>
                 Response.send(currentRecipe, callback))
-              .catch(error => Response.error(callback, error));
+              .catch(error => Response.error(callback, error));*/
 
           })
           .catch(error =>
@@ -71,18 +82,20 @@ export class RecipeHandler {
     await this.getRecipeFromWowDB(id)
       .then(newRecipe => {
         this.getProfessionForRecipe(newRecipe)
-          .then(profession => {
-            recipe.profession = profession;
+          .then(async spell => {
+            recipe.profession = spell.profession;
 
-            Response.send(newRecipe, callback)
-              .finally(() => {
-                LocaleUtil.setLocales(
-                  recipe.spellID,
-                  'id',
-                  'recipe_name_locale',
-                  'spell'
-                );
-              });
+            await new DatabaseUtil()
+              .query(
+                RecipeQuery.insert(id, recipe));
+
+            await LocaleUtil.setLocales(
+              recipe.spellID,
+              'id',
+              'recipe_name_locale',
+              'spell'
+            );
+            Response.send(newRecipe, callback);
           })
           .catch(error =>
             Response.error(callback, error));
@@ -115,13 +128,13 @@ export class RecipeHandler {
     });
   }
 
-  private getProfessionForRecipe(recipe: Recipe): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+  private getProfessionForRecipe(recipe: Recipe): Promise<RecipeSpell> {
+    return new Promise<RecipeSpell>((resolve, reject) => {
       request.get(new Endpoints()
         .getPath(`recipe/${recipe.spellID}?locale=en_GB`), (err, r, body) => {
         try {
-          const profession = JSON.parse(body).profession;
-          resolve(profession);
+          const spell = JSON.parse(body) as RecipeSpell;
+          resolve(spell);
         } catch (e) {
           reject({
             message: `Could not find a profession for ${recipe.spellID} - ${recipe.name}`,
