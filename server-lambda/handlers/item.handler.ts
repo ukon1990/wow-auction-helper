@@ -22,7 +22,7 @@ export class ItemHandler {
         JSON.parse(event.body).locale))
       .then((items: Item[]) => {
         if (items[0]) {
-          Response.get(
+          Response.send(
             ItemUtil.handleItem(items[0]), callback);
           return;
         }
@@ -41,7 +41,7 @@ export class ItemHandler {
         new DatabaseUtil()
           .query(ItemQuery.update(item))
           .then(() =>
-            Response.get(item, callback))
+            Response.send(item, callback))
           .catch(error =>
             Response.error(callback, error));
       })
@@ -58,7 +58,7 @@ export class ItemHandler {
       .query(
         ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
       .then((items: Item[]) =>
-        Response.get(ItemUtil.handleItems(items), callback))
+        Response.send(ItemUtil.handleItems(items), callback))
       .catch(error =>
         Response.error(callback, error));
   }
@@ -67,7 +67,7 @@ export class ItemHandler {
     const id = +event.pathParameters.id;
     await this.getFreshItem(id, event)
       .then(item => {
-        Response.get(item, callback);
+        Response.send(item, callback);
 
         new DatabaseUtil()
           .query(
@@ -81,7 +81,7 @@ export class ItemHandler {
       })
       .catch(error => {
         console.error(error);
-        Response.get(new Item(), callback);
+        Response.send(new Item(), callback);
       });
   }
 

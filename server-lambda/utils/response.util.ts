@@ -3,7 +3,7 @@ import {Callback} from 'aws-lambda';
 const zlib = require('zlib');
 
 export class Response {
-    public static async get(body: any, callback: Callback) {
+    public static async send(body: any, callback: Callback) {
         const gzip = zlib.createGzip();
         zlib.gzip(JSON.stringify(body), (error, buffer) => {
             console.log('get', error, buffer);
@@ -25,7 +25,7 @@ export class Response {
         if (error) {
             console.error(error);
         }
-        return Response.get({
+        return Response.send({
             statusCode: 500,
             message: 'Malormed request'
         }, callback);

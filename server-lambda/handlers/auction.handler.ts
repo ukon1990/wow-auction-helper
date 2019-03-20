@@ -37,7 +37,7 @@ export class AuctionHandler {
         .catch(error => console.error('Unable to fetch data'));
       console.log('Has response?', apiResponse);
 
-      Response.get(apiResponse, callback);
+      Response.send(apiResponse, callback);
     } else {
       Response.error(callback);
     }
@@ -53,7 +53,7 @@ export class AuctionHandler {
             Response.error(callback);
             return;
           }
-          Response.get(body, callback);
+          Response.send(body, callback);
         });
     } else {
       Response.error(callback);

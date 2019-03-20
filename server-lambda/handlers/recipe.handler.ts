@@ -7,7 +7,7 @@ import {RecipeUtil} from '../utils/recipe.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {LocaleUtil} from '../utils/locale.util';
 
-const request = require('require');
+const request = require('request');
 
 export class RecipeHandler {
   getAllRelevant(event: APIGatewayEvent, callback: Callback) {
@@ -16,7 +16,7 @@ export class RecipeHandler {
       .query(RecipeQuery.getAllRecipesAfterTimestamp(params.locale, params.timestamp))
       .then((recipes: any[]) => {
         console.log(RecipeQuery.getAllRecipesAfterTimestamp(params.locale, params.timestamp));
-        Response.get(
+        Response.send(
           this.convertList(recipes), callback);
       })
       .catch(error => Response.error(callback, error));
@@ -24,7 +24,30 @@ export class RecipeHandler {
   }
 
   update(event: APIGatewayEvent, callback: Callback) {
+    const id = +event.pathParameters.id;
 
+    new DatabaseUtil()
+      .query(RecipeQuery.getById(id))
+      .then(async (recipes: any[]) => {
+        const oldVersion = this.convertList(recipes)[0];
+        this.getRecipeFromWowDB(id)
+          .then((currentRecipe: Recipe) => {
+            // Enchants does not have itemID set as creates in WoWDB, so don't overwrite 0 itemID's
+            if (oldVersion.itemID && !currentRecipe.itemID) {
+              currentRecipe.itemID = oldVersion.itemID;
+            }
+            new DatabaseUtil()
+              .query(RecipeQuery.update(currentRecipe))
+              .then(() =>
+                Response.send(currentRecipe, callback))
+              .catch(error => Response.error(callback, error));
+
+          })
+          .catch(error =>
+            Response.error(callback, error));
+      })
+      .catch(error =>
+        Response.error(callback, error));
   }
 
   getById(event: APIGatewayEvent, callback: Callback) {
@@ -35,30 +58,35 @@ export class RecipeHandler {
       .then(async (recipes: any[]) => {
         const recipe = this.convertList(recipes)[0];
         if (recipe) {
-          Response.get(recipe, callback);
+          Response.send(recipe, callback);
         } else {
-          await this.getRecipeFromWowDB(id)
-            .then(newRecipe => {
-              this.getProfessionForRecipe(newRecipe)
-                .then(profession => {
-                  recipe.profession = profession;
-
-                  Response.get(newRecipe, callback)
-                    .finally(() => {
-                      LocaleUtil.setLocales(
-                        recipe.spellID,
-                        'id',
-                        'recipe_name_locale',
-                        'spell'
-                      );
-                    });
-                })
-                .catch(error =>
-                  Response.error(callback, error));
-            });
+          this.addRecipe(id, recipe, callback);
         }
       })
-      .catch(error => Response.error(callback, error));
+      .catch(error =>
+        Response.error(callback, error));
+  }
+
+  private async addRecipe(id, recipe, callback: Callback) {
+    await this.getRecipeFromWowDB(id)
+      .then(newRecipe => {
+        this.getProfessionForRecipe(newRecipe)
+          .then(profession => {
+            recipe.profession = profession;
+
+            Response.send(newRecipe, callback)
+              .finally(() => {
+                LocaleUtil.setLocales(
+                  recipe.spellID,
+                  'id',
+                  'recipe_name_locale',
+                  'spell'
+                );
+              });
+          })
+          .catch(error =>
+            Response.error(callback, error));
+      });
   }
 
   convertList(list: any[]): Recipe[] {
@@ -79,7 +107,7 @@ export class RecipeHandler {
         const recipe = RecipeUtil.convert(JSON.parse(body.slice(1, body.length - 1)));
         const missingItemId = recipe.itemID === 0;
         if (missingItemId) {
-          //
+          // TODO: For enchants etc
         }
 
         resolve(recipe);

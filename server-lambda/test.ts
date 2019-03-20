@@ -6,7 +6,7 @@ const request: any = require('request');
 const RequestPromise = require('request-promise');
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-    Response.get(
+    Response.send(
         {
             default: 'abcdefg',
             french: `Gentils ascenseurs c'est délicieux pense jour mais savourer nous être rêves au.`,
