@@ -136,7 +136,9 @@ export class RecipeHandler {
             if (rows.length > 0) {
               console.log('Adding missing items');
               rows.forEach(row => {
-                // TODO: request.post()
+                // We don't really need to do anything upon success/failure here
+                request.post(
+                  `${event.multiValueHeaders.Host}/item/${id}`,event.body, () => {});
               });
             }
           });
