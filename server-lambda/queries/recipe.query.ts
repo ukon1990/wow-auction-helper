@@ -29,7 +29,7 @@ export class RecipeQuery {
                     FROM recipe_name_locale);`;
   }
 
-  public static getAllRecipesWithNoItemId(locale: string, timestamp: Date) {
+  public static getAllRecipesAfterTimestamp(locale: string, timestamp: Date) {
     return `
       SELECT r.id, json, ${getLocale(locale)} as name, timestamp from  recipes as r
       LEFT OUTER JOIN recipe_name_locale as l
