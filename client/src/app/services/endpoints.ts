@@ -12,10 +12,18 @@ export class Endpoints {
   // char/realm/??/??.jpg
   public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
   public static readonly LAMBDAS = {
-    EU: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/',
-    US: 'https://rmq2etod45.execute-api.us-east-2.amazonaws.com/',
-    KR: 'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/',
-    TW: 'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/'
+    EU: environment.production ?
+      'https://lcrz8vcw36.execute-api.eu-west-1.amazonaws.com/prod/' :
+      'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
+    US: environment.production ?
+      'https://lpjgdbp9n9.execute-api.us-east-2.amazonaws.com/prod/' :
+      'https://rmq2etod45.execute-api.us-east-2.amazonaws.com/dev/',
+    KR: environment.production ?
+      'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/' :
+      'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/dev/',
+    TW: environment.production ?
+      'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/' :
+      'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/dev/'
   };
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
@@ -23,8 +31,6 @@ export class Endpoints {
   public static getLambdaUrl(path: string, region: string): string {
     return `${
       Endpoints.LAMBDAS[region.toUpperCase()]
-      }${
-      environment.production ? 'prod/' : 'dev/'
       }${
       path
       }`;
