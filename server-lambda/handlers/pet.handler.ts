@@ -75,7 +75,7 @@ export class PetHandler {
     new DatabaseUtil()
       .query(PetQuery.selectAllForTimestampWithLocale(body.locale, body.timestamp))
       .then((rows: any[]) => {
-        let timestamp;
+        let timestamp = new Date().toJSON();
         if (rows.length > 0) {
           timestamp = rows[0].timestamp;
         }

@@ -57,8 +57,11 @@ export class ItemHandler {
     new DatabaseUtil()
       .query(
         ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
-      .then((items: Item[]) =>
-        Response.send(ItemUtil.handleItems(items), callback))
+      .then((rows: any[]) =>
+        Response.send({
+          timestamp: rows[0] ? rows[0].timestamp : new Date().toJSON(),
+          items: ItemUtil.handleItems(rows)
+        }, callback))
       .catch(error =>
         Response.error(callback, error, event));
   }

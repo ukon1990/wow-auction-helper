@@ -14,6 +14,11 @@ import {ItemOverrides} from '../overrides/item.overrides';
 import {Recipe} from '../models/crafting/recipe';
 import {Platform} from '@angular/cdk/platform';
 
+class ItemResponse {
+  timestamp: Date;
+  items: Item[];
+}
+
 @Injectable()
 export class ItemService {
   public static missingQueue: Map<string, number> = new Map<string, number>();
@@ -61,12 +66,12 @@ export class ItemService {
       this.openSnackbar('Downloading the item DB for first time use. This might take a couple minutes(~27 MB).');
       await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/items-${locale}.json.gz`)
         .toPromise()
-        .then(response => {
+        .then((response: ItemResponse) => {
           SharedService.itemsUnmapped = [];
           Object.keys(SharedService.items).forEach(id =>
             delete SharedService.items[id]);
-          timestamp = response['timestamp'];
-          this.handleItems(response['items']);
+          timestamp = response.timestamp;
+          this.handleItems(response);
         })
         .catch(error => {
           ErrorReport.sendHttpError(error);
@@ -80,7 +85,7 @@ export class ItemService {
         timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
       })
       .toPromise()
-      .then(items => this.handleItems(items['items']))
+      .then(items => this.handleItems(items as ItemResponse))
       .catch(error => {
         SharedService.downloading.items = false;
         console.error('Items download failed', error);
@@ -97,12 +102,12 @@ export class ItemService {
       await this.addItem(ItemService.missingQueue[id]));
   }
 
-  handleItems(items: Item[]): void {
+  handleItems(items: ItemResponse): void {
     const missingItems: number[] = [],
       noItems = SharedService.itemsUnmapped.length === 0;
     SharedService.downloading.items = false;
 
-    items.forEach((item: Item) => {
+    items.items.forEach((item: Item) => {
       if (SharedService.items[item.id]) {
         Object.keys(item).forEach(key => {
           SharedService.items[item.id][key] = item[key];
@@ -149,8 +154,8 @@ export class ItemService {
     }
 
     if (!this.platform.WEBKIT) {
-      this.dbService.addItems(items);
-      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+      this.dbService.addItems(items.items);
+      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
     }
     SharedService.events.items.emit(true);
     console.log('Items download is completed');

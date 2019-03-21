@@ -42,8 +42,9 @@ export class RealmService {
         Endpoints.getRegion(region)
         }-realms.json`;
       return this._http.post(Endpoints.getLambdaUrl(
-        `realm/${region}`), {
-        locale: localStorage['locale']
+        `realm`), {
+        locale: localStorage['locale'],
+        region: region
       })
         .toPromise()
         .then(r => this.handleRealms(r));
@@ -55,8 +56,9 @@ export class RealmService {
       }
 
       return this._http.post(Endpoints.getLambdaUrl(
-        `realm/${region}`), {
-        locale: localStorage['locale']
+        `realm`), {
+        locale: localStorage['locale'],
+        region: region
       })
         .toPromise()
         .then(r => this.handleRealms(r))

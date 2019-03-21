@@ -18,8 +18,10 @@ export class RecipeHandler {
       .query(RecipeQuery.getAllRecipesAfterTimestamp(params.locale, params.timestamp))
       .then((recipes: any[]) => {
         console.log(RecipeQuery.getAllRecipesAfterTimestamp(params.locale, params.timestamp));
-        Response.send(
-          this.convertList(recipes), callback);
+        Response.send({
+          timestamp: recipes[0] ? recipes[0]['timestamp'] : new Date().toJSON(),
+          recipes: this.convertList(recipes)
+        }, callback);
       })
       .catch(error =>
         Response.error(callback, error, event));
