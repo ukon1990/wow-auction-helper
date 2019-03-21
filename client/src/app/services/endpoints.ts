@@ -30,7 +30,8 @@ export class Endpoints {
 
   public static getLambdaUrl(path: string, region?: string): string {
     if (!region) {
-      region = SharedService.user.region;
+      region = SharedService.user && SharedService.user.region ?
+        SharedService.user.region : 'eu';
     }
 
     return `${
