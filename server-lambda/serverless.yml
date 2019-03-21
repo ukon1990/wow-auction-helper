@@ -14,7 +14,7 @@ provider:
 
 functions:
   auctions:
-    handler: controllers/auction.controller.handler
+    handler: controllers/auction.handler
     events:
       - http:
           method: post
@@ -23,7 +23,7 @@ functions:
             origin: '*'
 
   items:
-    handler: controllers/item.controller.handler
+    handler: controllers/item.handler
     events:
       - http:
           method: any
@@ -37,7 +37,7 @@ functions:
           cors:
             origin: '*'
   pets:
-    handler: controllers/pet.controller.handler
+    handler: controllers/pet.handler
     events:
       - http:
           method: any
@@ -51,7 +51,7 @@ functions:
           cors:
             origin: '*'
   recipes:
-    handler: controllers/recipe.controller.handler
+    handler: controllers/recipe.handler
     events:
       - http:
           method: any
@@ -66,7 +66,7 @@ functions:
             origin: '*'
 
   test:
-    handler: controllers/test.controller.handler
+    handler: controllers/test.handler
     events:
       - http:
           method: any

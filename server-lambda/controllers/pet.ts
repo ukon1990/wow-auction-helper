@@ -5,13 +5,13 @@ import {PetHandler} from '../handlers/pet.handler';
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 
   if (event.pathParameters && event.pathParameters.id) {
-    ItemController.byId(event, callback);
+    PetController.byId(event, callback);
   } else {
-    ItemController.all(event, callback);
+    PetController.all(event, callback);
   }
 };
 
-class ItemController {
+class PetController {
   public static byId(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod,
       id = +event.pathParameters.id;
