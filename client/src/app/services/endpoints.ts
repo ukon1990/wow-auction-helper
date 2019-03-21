@@ -28,7 +28,11 @@ export class Endpoints {
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
-  public static getLambdaUrl(path: string, region: string): string {
+  public static getLambdaUrl(path: string, region?: string): string {
+    if (!region) {
+      region = SharedService.user.region;
+    }
+
     return `${
       Endpoints.LAMBDAS[region.toUpperCase()]
       }${
@@ -39,7 +43,7 @@ export class Endpoints {
   public static getUrl(path: string): string {
 
     return environment.production ?
-       `/api/${path}` : `${Endpoints.WAH_LOCAL_API}${path}`;
+      `/api/${path}` : `${Endpoints.WAH_LOCAL_API}${path}`;
   }
 
   public static getUndermineUrl(): string {

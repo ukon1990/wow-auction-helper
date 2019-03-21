@@ -23,7 +23,10 @@ export class CraftingService {
   }
 
   getRecipe(spellID: number): Promise<Recipe> {
-    return this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
+    return this._http.post(
+      Endpoints.getLambdaUrl(`recipe/${spellID}`), {
+        locale: localStorage['locale']
+      })
       .toPromise()
       .then(r =>
         this.handleRecipe(r as Recipe))
@@ -55,12 +58,14 @@ export class CraftingService {
 
     SharedService.downloading.recipes = true;
     return this._http.post(
-      Endpoints.getUrl(`recipe?locale=${locale}`),
+      Endpoints.getLambdaUrl(`recipe`),
       {
+        locales: locale,
         timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
       })
       .toPromise()
-      .then(recipes => this.handleRecipes(recipes))
+      .then(recipes =>
+        this.handleRecipes(recipes))
       .catch(error => {
         SharedService.downloading.recipes = false;
         console.error('Recipe download failed', error);
@@ -69,7 +74,9 @@ export class CraftingService {
   }
 
   updateRecipe(spellID: number): Promise<Recipe> {
-    return this._http.patch(Endpoints.getUrl(`recipe/${spellID}`), null)
+    return this._http.patch(Endpoints.getLambdaUrl(`recipe/${spellID}`), {
+      locale: localStorage['locale']
+    })
       .toPromise() as Promise<Recipe>;
   }
 

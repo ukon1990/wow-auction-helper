@@ -29,7 +29,10 @@ export class ItemService {
 
   addItem(itemID: number): Promise<any> {
     console.log('Attempting to add item data for ' + itemID);
-    return this._http.get(Endpoints.getUrl(`item/${itemID}?locale=${localStorage['locale']}`))
+    return this._http.post(
+      Endpoints.getLambdaUrl(`item/${itemID}`), {
+        locale: localStorage['locale']
+      })
       .toPromise()
       .then((item: Item) => {
         console.log('downloaded item', item);
@@ -71,8 +74,11 @@ export class ItemService {
     }
     SharedService.downloading.items = true;
     return this._http.post(
-      Endpoints.getUrl(`item?locale=${locale}`),
-      {timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()})
+      Endpoints.getLambdaUrl(`item`),
+      {
+        locale: locale,
+        timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
+      })
       .toPromise()
       .then(items => this.handleItems(items['items']))
       .catch(error => {
