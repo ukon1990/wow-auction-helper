@@ -80,3 +80,9 @@ functions:
           path: realm
           cors:
             origin: '*'
+  test:
+    handler: controllers/test.handler
+    events:
+      - http:
+          method: any
+          path: test

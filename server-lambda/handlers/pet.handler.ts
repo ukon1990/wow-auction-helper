@@ -11,7 +11,7 @@ export class PetHandler {
   getById(event: APIGatewayEvent, callback: Callback) {
     const locale = JSON.parse(event.body).locale;
     const id = +event.pathParameters.id;
-    this.getPetFromDB(id, locale)
+    this.getPetFromDBById(id, locale)
       .then((pet: Pet) => {
         if (pet) {
           Response.send(pet, callback);
@@ -42,7 +42,7 @@ export class PetHandler {
       });
   }
 
-  private async getPetFromDB(id, locale) {
+  private async getPetFromDBById(id, locale) {
     return new Promise<Pet>(async (resolve, reject) => {
       new DatabaseUtil()
         .query(PetQuery.getPetBySpeciesId(id, locale))
@@ -55,6 +55,18 @@ export class PetHandler {
   }
 
   update(event: APIGatewayEvent, callback: Callback) {
+    const locale = JSON.parse(event.body).locale;
+    const id = +event.pathParameters.id;
+    this.getPet(id)
+      .then((newPet: Pet) => {
+        new DatabaseUtil()
+          .query(PetQuery.updatePet(newPet))
+          .then(() =>
+            Response.send(newPet, callback))
+          .catch(error => Response.error(callback, error, event));
+      })
+      .catch(error =>
+        Response.error(callback, error, event));
 
   }
 
