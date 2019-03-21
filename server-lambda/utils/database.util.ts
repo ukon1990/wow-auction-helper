@@ -3,7 +3,7 @@ import {DATABASE_CREDENTIALS} from '../secrets';
 import {Connection, MysqlError} from 'mysql';
 
 export class DatabaseUtil {
-  connection: Connection;
+  private connection: Connection;
 
   constructor() {
     this.connection = mysql.createConnection(DATABASE_CREDENTIALS);

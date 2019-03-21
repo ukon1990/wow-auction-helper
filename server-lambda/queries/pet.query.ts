@@ -16,10 +16,10 @@ export class PetQuery {
     ORDER BY timestamp desc;`;
   }
 
-  static getPetBySpeciesId(req: any): string {
+  static getPetBySpeciesId(id: number, locale: string): string {
     return `SELECT *
             FROM pets
-    WHERE speciesId = ${ req.params.id }`;
+    WHERE speciesId = ${ id }`;
   }
 
   static insertInto(pet: Pet) {
