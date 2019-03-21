@@ -29,8 +29,8 @@ First of all you need to have nodejs and @angular/cli installed on your computer
 
 ## Front and back-end documentation
 * [Front-end](client/client.md)
-* [Back-end](server/node-server.md)
-* [AWS Lambda Back-end](server-lambda/lambda.md) - W.I.P
+* [AWS Lambda Back-end](server-lambda/lambda.md)
+* [(Depricated)Back-end](server/node-server.md)
 
 
 ## "Copy right"
