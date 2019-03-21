@@ -66,15 +66,15 @@ export class RecipeHandler {
         if (recipe) {
           Response.send(recipe, callback);
         } else {
-          this.addRecipe(id, recipe, JSON.parse(event.body).locale, callback);
+          this.addRecipe(id, recipe, JSON.parse(event.body).locale, event, callback);
         }
       })
       .catch(error =>
         Response.error(callback, error));
   }
 
-  private async addRecipe(id, recipe, locale: string, callback: Callback) {
-    await this.getRecipeFromWowDB(id)
+  private async addRecipe(id, recipe, locale: string, event: APIGatewayEvent, callback: Callback) {
+    await this.getRecipeFromWowDB(id, event)
       .then(newRecipe => {
         this.getProfessionForRecipe(newRecipe)
           .then(async spell => {
@@ -138,7 +138,8 @@ export class RecipeHandler {
               rows.forEach(row => {
                 // We don't really need to do anything upon success/failure here
                 request.post(
-                  `${event.multiValueHeaders.Host}/item/${id}`,event.body, () => {});
+                  `${event.headers.Host}/item/${id}`, event.body, () => {
+                  });
               });
             }
           });
