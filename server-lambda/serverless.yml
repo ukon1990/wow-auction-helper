@@ -71,3 +71,5 @@ functions:
       - http:
           method: any
           path: test
+          cors:
+            origin: '*'
