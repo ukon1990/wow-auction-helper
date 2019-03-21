@@ -37,7 +37,6 @@ export class AuctionsService {
       })
       .toPromise()
       .then(r => {
-        console.log('Response for url', r);
         SharedService.auctionResponse = r as AuctionResponse;
         if (force || previousLastModified !== SharedService.auctionResponse.lastModified) {
           this.getAuctions()

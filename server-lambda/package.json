@@ -4,9 +4,14 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
   "scripts": {
-    "deploy-eu": "serverless deploy -r eu-west-1",
-    "deploy-us": "serverless deploy -r us-east-2",
-    "deploy": "npm run deploy-us && npm run deploy-eu",
+    "deploy-dev-eu": "serverless deploy -r eu-west-1 -s dev",
+    "deploy-dev-us": "serverless deploy -r us-east-2 -s dev",
+    "deploy-dev-kr": "serverless deploy -r ap-northeast-2 -s dev",
+    "deploy-dev": "npm run deploy-dev-us && npm run deploy-dev-eu && npm run deploy-dev-kr",
+    "deploy-eu": "serverless deploy -r eu-west-1 -s prod",
+    "deploy-us": "serverless deploy -r us-east-2 -s prod",
+    "deploy-kr": "serverless deploy -r ap-northeast-2 -s prod",
+    "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -19,11 +24,12 @@
   "devDependencies": {
     "@types/aws-lambda": "8.10.23",
     "@types/node": "^11.11.3",
-    "serverless-offline": "^4.9.1",
+    "serverless-offline": "^4.9.2",
     "serverless-webpack": "^5.2.0",
     "source-map-support": "^0.5.11",
     "ts-loader": "^5.3.3",
     "typescript": "^3.3.3333",
+    "uglifyjs-webpack-plugin": "^2.1.2",
     "webpack": "^4.29.6"
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",

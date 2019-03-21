@@ -56,19 +56,7 @@ export class DatabaseService {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
 
-    let count = 0;
     SharedService.downloading.items = true;
-    await this.db.table('items')
-      .count()
-      .then(c => {
-        console.log('Num of items in DB', c);
-        count = c;
-      });
-
-    if (count === 0) {
-      return new Dexie.Promise(
-        (resolve, reject) => reject());
-    }
 
     return new Dexie.Promise<any>(async (resolve) => {
       await this.getItemsInBatch(0, 50000);
@@ -76,7 +64,6 @@ export class DatabaseService {
       await this.getItemsInBatch(100001, 200000);
       await this.getItemsInBatch(200001, 1000000);
       SharedService.events.items.emit(true);
-      console.log('count', SharedService.itemsUnmapped.length);
       resolve();
     });
   }

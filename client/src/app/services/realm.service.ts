@@ -41,30 +41,37 @@ export class RealmService {
       url = `/assets/data/${
         Endpoints.getRegion(region)
         }-realms.json`;
+      return this._http.post(Endpoints.getLambdaUrl(
+        `realm`), {
+        locale: localStorage['locale'],
+        region: region
+      })
+        .toPromise()
+        .then(r => this.handleRealms(r));
     } else {
       if (!region) {
         return new Promise<any>((resolve, reject) => {
           resolve();
         });
       }
-      url = Endpoints.getUrl(
-        `realm/${region}`);
-    }
 
-    return this._http.get(url)
-      .toPromise()
-      .then(r => this.handleRealms(r))
-      .catch((error: HttpErrorResponse) => {
-        const msg = 'Could not download realms';
-        console.error(msg, error);
-        ErrorReport.sendHttpError(error);
-        this.openSnackbar(`${msg}. Blizzard's API responded with: ${error.status} - ${error.statusText}`);
+      return this._http.post(Endpoints.getLambdaUrl(
+        `realm`), {
+        locale: localStorage['locale'],
+        region: region
+      })
+        .toPromise()
+        .then(r => this.handleRealms(r))
+        .catch((error: HttpErrorResponse) => {
+          const msg = 'Could not download realms';
+          console.error(msg, error);
+          ErrorReport.sendHttpError(error);
+          this.openSnackbar(`${msg}. Blizzard's API responded with: ${error.status} - ${error.statusText}`);
 
-        // In case Blizzard's API fails, use old data json
-        if (!isRetry) {
+          // In case Blizzard's API fails, use old data json
           this.getRealms(region, true);
-        }
-      });
+        });
+    }
   }
 
   private openSnackbar(message: string): void {

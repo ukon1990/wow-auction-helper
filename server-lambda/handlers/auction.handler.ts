@@ -37,9 +37,9 @@ export class AuctionHandler {
         .catch(error => console.error('Unable to fetch data'));
       console.log('Has response?', apiResponse);
 
-      Response.get(apiResponse, callback);
+      Response.send(apiResponse, callback);
     } else {
-      Response.error(callback);
+      Response.error(callback, 'Realm or region is missing from the request');
     }
   }
 
@@ -50,13 +50,13 @@ export class AuctionHandler {
           body = JSON.parse(body);
 
           if (error) {
-            Response.error(callback);
+            Response.error(callback, error);
             return;
           }
-          Response.get(body, callback);
+          Response.send(body, callback);
         });
     } else {
-      Response.error(callback);
+      Response.error(callback, 'Could not get the auction dump, no URL were provided');
     }
   }
 

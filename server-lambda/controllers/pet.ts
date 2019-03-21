@@ -1,33 +1,30 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {Response} from './utils/response.util';
-import {ItemHandler} from './handlers/item.handler';
-
-const request: any = require('request');
-const RequestPromise = require('request-promise');
+import {Response} from '../utils/response.util';
+import {PetHandler} from '../handlers/pet.handler';
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 
   if (event.pathParameters && event.pathParameters.id) {
-    ItemController.byId(event, callback);
+    PetController.byId(event, callback);
   } else {
-    ItemController.all(event, callback);
+    PetController.all(event, callback);
   }
 };
 
-class ItemController {
+class PetController {
   public static byId(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod,
       id = +event.pathParameters.id;
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getById(event, callback);
+        new PetHandler().getById(event, callback);
         break;
       case 'PATCH':
-        new ItemHandler().update(event, callback);
+        new PetHandler().update(event, callback);
         break;
       default:
-        Response.error(callback);
+        Response.error(callback, 'The method you provided, is not available.', event);
     }
   }
 
@@ -36,10 +33,10 @@ class ItemController {
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getAllRelevant(event, callback);
+        new PetHandler().getAllRelevant(event, callback);
         break;
       default:
-        Response.error(callback);
+        Response.error(callback, 'The method you provided, is not available.', event);
     }
   }
 }

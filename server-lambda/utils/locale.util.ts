@@ -1,16 +1,18 @@
 import * as RequestPromise from 'request-promise';
 import {ItemLocale} from '../models/item/item-locale';
-import {LocaleQuery} from '../queries/locale.queries';
+import {LocaleQuery} from '../queries/locale.query';
 import {DatabaseUtil} from './database.util';
 import {Endpoints} from './endpoints.util';
+import {BLIZZARD} from '../secrets';
+import {AuthHandler} from '../handlers/auth.handler';
 
 /**
  * Sets the locale for the request, if no locale is defined, it will either use en_GB or the users browser locale if possible
  * @param {*} request
  */
 
-export const getLocale = (request: any) => {
-  return request.locale || 'en_GB';
+export const getLocale = (locale: string) => {
+  return locale || 'en_GB';
 };
 
 export class LocaleUtil {
@@ -24,6 +26,10 @@ export class LocaleUtil {
   public static async setLocales(id: any, idName: string, tableName: string, apiPath: string): Promise<any> {
     const data: ItemLocale = new ItemLocale(id);
 
+    if (BLIZZARD.ACCESS_TOKEN === '') {
+      await AuthHandler.getToken();
+    }
+
     await this.fetchLocales(id, data, apiPath);
     console.log('data after for each', data);
 
@@ -32,6 +38,7 @@ export class LocaleUtil {
   }
 
   private static insertToDB(tableName: string, idName: string, data: ItemLocale) {
+    console.log('Query', LocaleQuery.insert(tableName, idName, data));
     new DatabaseUtil()
       .query(LocaleQuery.insert(tableName, idName, data))
       .then(result =>

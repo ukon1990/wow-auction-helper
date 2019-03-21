@@ -2,7 +2,7 @@ import {Item} from '../models/item/item';
 import {safeifyString} from '../utils/string.util';
 import {getLocale} from '../utils/locale.util';
 
-export class ItemQueries {
+export class ItemQuery {
   public static update(item: Item) {
     const columns: any[] = [];
     Object.keys(item).forEach(key => {
@@ -89,11 +89,11 @@ export class ItemQueries {
     WHERE i.id = ${id};`;
   }
 
-  public static getAllAuctionsAfterAndOrderByTimestamp(req) {
+  public static getAllAuctionsAfterAndOrderByTimestamp(locale: string, timestamp: Date) {
     return `
     SELECT
          i.id,
-         COALESCE(${getLocale(req)}, i.name) as name,
+         COALESCE(${getLocale(locale)}, i.name) as name,
          icon,
          itemLevel,
          itemClass,
@@ -112,14 +112,14 @@ export class ItemQueries {
     FROM items as i
     LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id
-    WHERE timestamp > "${req.body.timestamp}"
+    WHERE timestamp > "${timestamp}"
     ORDER BY timestamp desc;`;
   }
 
-  public static getAllItemsOrderByTimestamp(req) {
+  public static getAllItemsOrderByTimestamp(locale: string) {
     return `
       SELECT
-             i.id, COALESCE(${getLocale(req)}, i.name) as name,
+             i.id, COALESCE(${getLocale(locale)}, i.name) as name,
              icon,
              itemLevel,
              itemClass,
