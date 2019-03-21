@@ -172,7 +172,7 @@ import {PlatformModule} from '@angular/cdk/platform';
     HttpClientModule,
     HttpClientJsonpModule,
     Angulartics2Module.forRoot(),
-    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
+    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     BrowserAnimationsModule,
     PlatformModule
   ],
