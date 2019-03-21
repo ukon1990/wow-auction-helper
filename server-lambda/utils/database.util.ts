@@ -11,15 +11,27 @@ export class DatabaseUtil {
 
   query(query: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.connection.query(query, (error: MysqlError, rows: any[]) => {
-        this.connection.end();
-
+      this.connection.connect((error) => {
         if (error) {
-          reject({error: error, query: query});
+          reject({
+            message: 'Could not connect to the database',
+            error: error.stack
+          });
           return;
         }
 
-        resolve(rows);
+        console.log('connected as id ' + this.connection.threadId);
+
+        this.connection.query(query, (err: MysqlError, rows: any[]) => {
+          this.connection.end();
+
+          if (err) {
+            reject({message: 'Failed to execute the query', error: err.stack});
+            return;
+          }
+
+          resolve(rows);
+        });
       });
     });
   }
