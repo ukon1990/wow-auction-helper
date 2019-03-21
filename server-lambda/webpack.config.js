@@ -26,4 +26,7 @@ module.exports = {
       { test: /\.tsx?$/, loader: 'ts-loader' },
     ],
   },
+    optimization: {
+        minimize: false
+    }
 };
