@@ -14,7 +14,7 @@ export class CharacterService {
   getCharacter(character: string, realm: string, region?: string): Promise<any> {
     SharedService.downloading.characterData = true;
     return this._http
-      .post(Endpoints.getUrl(`character`),
+      .post(Endpoints.getLambdaUrl(`character`),
         {
           region: region ? region : SharedService.user.region,
           realm: realm,
@@ -35,7 +35,7 @@ export class CharacterService {
   getCharacterMinimal(character: string, realm: string): Promise<any> {
     SharedService.downloading.characterData = true;
     return this._http
-      .post(Endpoints.getUrl(`character`),
+      .post(Endpoints.getLambdaUrl(`character`),
         {
           region: SharedService.user.region,
           realm: realm,

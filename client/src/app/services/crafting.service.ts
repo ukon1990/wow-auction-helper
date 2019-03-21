@@ -11,6 +11,11 @@ import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {Platform} from '@angular/cdk/platform';
 
+class RecipeResponse {
+  timestamp: Date;
+  recipes: Recipe[];
+}
+
 @Injectable()
 export class CraftingService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
@@ -23,7 +28,10 @@ export class CraftingService {
   }
 
   getRecipe(spellID: number): Promise<Recipe> {
-    return this._http.get(Endpoints.getUrl(`recipe/${spellID}?locale=${localStorage['locale']}`))
+    return this._http.post(
+      Endpoints.getLambdaUrl(`recipe/${spellID}`), {
+        locale: localStorage['locale']
+      })
       .toPromise()
       .then(r =>
         this.handleRecipe(r as Recipe))
@@ -44,8 +52,8 @@ export class CraftingService {
       this.dbService.clearRecipes();
       await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${locale}.json.gz`)
         .toPromise()
-        .then(result => {
-          timestamp = result['timestamp'];
+        .then((result: RecipeResponse) => {
+          timestamp = result.timestamp;
           SharedService.recipes.length = 0;
           this.handleRecipes(result);
         })
@@ -55,12 +63,14 @@ export class CraftingService {
 
     SharedService.downloading.recipes = true;
     return this._http.post(
-      Endpoints.getUrl(`recipe?locale=${locale}`),
+      Endpoints.getLambdaUrl(`recipe`),
       {
+        locales: locale,
         timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
       })
       .toPromise()
-      .then(recipes => this.handleRecipes(recipes))
+      .then((recipes: RecipeResponse) =>
+        this.handleRecipes(recipes))
       .catch(error => {
         SharedService.downloading.recipes = false;
         console.error('Recipe download failed', error);
@@ -69,7 +79,9 @@ export class CraftingService {
   }
 
   updateRecipe(spellID: number): Promise<Recipe> {
-    return this._http.patch(Endpoints.getUrl(`recipe/${spellID}`), null)
+    return this._http.patch(Endpoints.getLambdaUrl(`recipe/${spellID}`), {
+      locale: localStorage['locale']
+    })
       .toPromise() as Promise<Recipe>;
   }
 
@@ -93,13 +105,13 @@ export class CraftingService {
     return r;
   }
 
-  handleRecipes(recipes: any): void {
+  handleRecipes(recipes: RecipeResponse): void {
     const missingItems = [], map = new Map<number, Recipe>(),
       noRecipes = SharedService.recipes.length === 0;
     SharedService.downloading.recipes = false;
 
-    if (recipes['recipes'].length > 0) {
-      const list = SharedService.recipes.concat(recipes['recipes']);
+    if (recipes.recipes.length > 0) {
+      const list = SharedService.recipes.concat(recipes.recipes);
       SharedService.recipes = [];
       list.forEach((recipe: Recipe) => {
         if (!recipe) {
@@ -135,7 +147,7 @@ export class CraftingService {
 
       if (!this.platform.WEBKIT) {
         this.dbService.addRecipes(SharedService.recipes);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = recipes.timestamp;
       }
     } catch (error) {
       console.error(error);

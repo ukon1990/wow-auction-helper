@@ -23,3 +23,13 @@ export class Recipe {
   buyout = 0;
   quantityTotal = 0;
 }
+
+/**
+ * The recipe object returned by blizzards API
+ */
+export interface RecipeSpell {
+  id: number;
+  name: string;
+  profession: string;
+  icon: string;
+}

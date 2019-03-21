@@ -13,8 +13,8 @@ provider:
   timeout: 900
 
 functions:
-  getAuctionUrl:
-    handler: auction.handler
+  auctions:
+    handler: controllers/auction.handler
     events:
       - http:
           method: post
@@ -22,8 +22,8 @@ functions:
           cors:
             origin: '*'
 
-  getItems:
-    handler: item.handler
+  items:
+    handler: controllers/item.handler
     events:
       - http:
           method: any
@@ -36,9 +36,52 @@ functions:
           path: item/{id}
           cors:
             origin: '*'
+  pets:
+    handler: controllers/pet.handler
+    events:
+      - http:
+          method: any
+          path: pet
+          cors:
+            origin: '*'
 
+      - http:
+          method: any
+          path: pet/{id}
+          cors:
+            origin: '*'
+  recipes:
+    handler: controllers/recipe.handler
+    events:
+      - http:
+          method: any
+          path: recipe
+          cors:
+            origin: '*'
+
+      - http:
+          method: any
+          path: recipe/{id}
+          cors:
+            origin: '*'
+  character:
+    handler: controllers/character.handler
+    events:
+      - http:
+          method: post
+          path: character
+          cors:
+            origin: '*'
+  realm:
+    handler: controllers/realm.handler
+    events:
+      - http:
+          method: post
+          path: realm
+          cors:
+            origin: '*'
   test:
-    handler: test.handler
+    handler: controllers/test.handler
     events:
       - http:
           method: any
