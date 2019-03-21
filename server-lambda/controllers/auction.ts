@@ -11,6 +11,6 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
       new AuctionHandler().post(event, context, callback);
       break;
     default:
-      Response.error(callback);
+      Response.error(callback, 'The method you provided, is not available.', event);
   }
 };

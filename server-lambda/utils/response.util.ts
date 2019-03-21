@@ -1,4 +1,4 @@
-import {Callback} from 'aws-lambda';
+import {APIGatewayEvent, Callback} from 'aws-lambda';
 
 const zlib = require('zlib');
 
@@ -21,13 +21,14 @@ export class Response {
         });
     }
 
-    public static error(callback: Callback, error?): any {
+    public static error(callback: Callback, error?, event?: APIGatewayEvent): any {
         if (error) {
             console.error(error);
         }
         return Response.send({
             statusCode: 500,
-            message: 'Malormed request'
+            error: error ? error : 'Malormed request',
+            event: event
         }, callback);
     }
 }

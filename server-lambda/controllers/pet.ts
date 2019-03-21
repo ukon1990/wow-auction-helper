@@ -24,7 +24,7 @@ class PetController {
         new PetHandler().update(event, callback);
         break;
       default:
-        Response.error(callback);
+        Response.error(callback, 'The method you provided, is not available.', event);
     }
   }
 
@@ -36,7 +36,7 @@ class PetController {
         new PetHandler().getAllRelevant(event, callback);
         break;
       default:
-        Response.error(callback);
+        Response.error(callback, 'The method you provided, is not available.', event);
     }
   }
 }

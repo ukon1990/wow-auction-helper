@@ -30,7 +30,7 @@ export class ItemHandler {
         this.addItem(event, callback);
       })
       .catch(error =>
-        Response.error(callback, error));
+        Response.error(callback, error, event));
   }
 
   update(event: APIGatewayEvent, callback: Callback) {
@@ -43,10 +43,10 @@ export class ItemHandler {
           .then(() =>
             Response.send(item, callback))
           .catch(error =>
-            Response.error(callback, error));
+            Response.error(callback, error, event));
       })
       .catch(error =>
-        Response.error(callback, error));
+        Response.error(callback, error, event));
   }
 
   getAllRelevant(event: APIGatewayEvent, callback: Callback) {
@@ -60,7 +60,7 @@ export class ItemHandler {
       .then((items: Item[]) =>
         Response.send(ItemUtil.handleItems(items), callback))
       .catch(error =>
-        Response.error(callback, error));
+        Response.error(callback, error, event));
   }
 
   async addItem(event: APIGatewayEvent, callback?: Callback) {

@@ -21,7 +21,8 @@ export class RecipeHandler {
         Response.send(
           this.convertList(recipes), callback);
       })
-      .catch(error => Response.error(callback, error));
+      .catch(error =>
+        Response.error(callback, error, event));
 
   }
 
@@ -46,14 +47,15 @@ export class RecipeHandler {
               .query(RecipeQuery.update(currentRecipe))
               .then(() =>
                 Response.send(currentRecipe, callback))
-              .catch(error => Response.error(callback, error));
+              .catch(error =>
+                Response.error(callback, error, event));
 
           })
           .catch(error =>
-            Response.error(callback, error));
+            Response.error(callback, error, event));
       })
       .catch(error =>
-        Response.error(callback, error));
+        Response.error(callback, error, event));
   }
 
   getById(event: APIGatewayEvent, callback: Callback) {
@@ -70,7 +72,7 @@ export class RecipeHandler {
         }
       })
       .catch(error =>
-        Response.error(callback, error));
+        Response.error(callback, error, event));
   }
 
   private async addRecipe(id, recipe, locale: string, event: APIGatewayEvent, callback: Callback) {
@@ -95,11 +97,11 @@ export class RecipeHandler {
               }
             })
               .catch(error =>
-                Response.error(callback, error));
+                Response.error(callback, error, event));
             Response.send(newRecipe, callback);
           })
           .catch(error =>
-            Response.error(callback, error));
+            Response.error(callback, error, event));
       });
   }
 
@@ -138,7 +140,10 @@ export class RecipeHandler {
               rows.forEach(row => {
                 // We don't really need to do anything upon success/failure here
                 request.post(
-                  `${event.headers.Host}/item/${id}`, event.body, () => {
+                  `https://${
+                    event.headers.Host}${
+                    event.requestContext.stage}/item/${
+                    id}`, event.body, () => {
                   });
               });
             }
