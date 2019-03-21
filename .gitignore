@@ -5,6 +5,7 @@
 /server/src/public
 /tmp
 /public
+/dist
 
 # dependencies
 node_modules
