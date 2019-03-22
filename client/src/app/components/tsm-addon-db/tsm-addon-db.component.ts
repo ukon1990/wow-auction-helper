@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as lua from 'luaparse';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'wah-tsm-addon-db',
@@ -7,8 +8,62 @@ import * as lua from 'luaparse';
   styleUrls: ['./tsm-addon-db.component.scss']
 })
 export class TsmAddonDbComponent implements OnInit {
+  form: FormGroup;
+  dataSets = [
+    {
+      name: 'csvSales',
+      columns: []
+    },
+    {
+      name: 'csvIncome',
+      columns: []
+    },
+    {
+      name: 'csvExpired',
+      columns: []
+    },
+    {
+      name: 'csvExpense',
+      columns: []
+    },
+    {
+      name: 'csvCancelled',
+      columns: []
+    },
+    {
+      name: 'csvBuys',
+      columns: []
+    },
+    {
+      name: 'characterGuilds',
+      columns: []
+    },
+    {
+      name: 'bagQuantity',
+      columns: []
+    },
+    {
+      name: 'bankQuantity',
+      columns: []
+    },
+    {
+      name: 'goldLog',
+      columns: []
+    }
+  ];
+  realms = [];
+  characters = [];
+  table = {
+    columns: [],
+    data: []
+  };
 
-  constructor() {
+  constructor(private formBuilder: FormBuilder) {
+    this.form = this.formBuilder.group({
+      dataset: new FormControl('csvSales'),
+      realm: new FormControl('Draenor'),
+      character: new FormControl()
+    });
   }
 
   ngOnInit() {
@@ -28,15 +83,11 @@ export class TsmAddonDbComponent implements OnInit {
     const fields = lua.parse(input).body[0].init[0].fields;
     const result = {};
 
-    console.log('Original', fields);
-
     fields.forEach(field => {
       const fRes = this.convertField(field);
-      if (fRes.character) {
-        if (!result[fRes.type]) {
-          result[fRes.type] = {};
-        }
-        result[fRes.type][fRes.character.realm] = fRes.data;
+      if (fRes.character && fRes.character.realm) {
+        this.addRealmBoundData(fRes, result);
+
       } else {
         result[fRes.type] = fRes.data;
       }
@@ -45,10 +96,24 @@ export class TsmAddonDbComponent implements OnInit {
     return result;
   }
 
+  private addRealmBoundData(fRes, result) {
+    if (!result[fRes.type]) {
+      result[fRes.type] = {};
+    }
+
+    if (fRes.character.name) {
+      if (!result[fRes.type][fRes.character.realm]) {
+        result[fRes.type][fRes.character.realm] = [];
+      }
+      result[fRes.type][fRes.character.realm][fRes.character.name] = fRes.data;
+    } else {
+      result[fRes.type][fRes.character.realm] = fRes.data;
+    }
+  }
+
   private convertField(field: any): any {
     const keys = field.key.value.split('@');
     const character = this.splitCharacterData(keys[1]),
-      location = keys[2],
       type = keys[3];
     const result = {
       type: type,
@@ -97,9 +162,20 @@ export class TsmAddonDbComponent implements OnInit {
     return result;
   }
 
-  private splitCharacterData(keys): { name: string; faction: string; realm: string; } {
-    if (keys && keys[1]) {
-      const split = keys[1].split(' - ');
+  private splitCharacterData(keys): { name?: string; faction?: string; realm: string; } {
+    if (keys) {
+      const split = keys.split(' - ');
+      console.log('split', split);
+      if (split.length === 1) {
+        return {realm: split[0]};
+      }
+
+      if (split.length === 2) {
+        return {
+          faction: split[0],
+          realm: split[1]
+        };
+      }
 
       return {
         name: split[0],
@@ -149,7 +225,7 @@ export class TsmAddonDbComponent implements OnInit {
             value: column.value.value
           };
 
-          if (character) {
+          if (character && character.name) {
             obj['character'] = character.name;
           }
 

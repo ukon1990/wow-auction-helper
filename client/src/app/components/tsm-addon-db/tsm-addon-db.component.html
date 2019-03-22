@@ -1,5 +1,38 @@
 <button mat-button (click)="fileInput.click()">
   <i class="fas fa-upload"></i>
-  Import Saved Variables lua
+  Import data from the TSM addon
   <input class="d-none" type="file" accept="lua" (change)="importFromFile($event)" #fileInput/>
 </button>
+
+characterGuilds bagQuantity bankQuantity goldLog
+
+csvSales, Income Expired, Expense, Cancelled, Buys
+
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-select placeholder="Dataset" formControlName="dataset">
+      <mat-option *ngFor="let set of dataSets">
+        {{ set.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="realms.length > 0">
+    <mat-select placeholder="Realm" formControlName="realm">
+      <mat-option *ngFor="let realm of realms">
+        {{ realm }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="characters.length > 0">
+    <mat-select placeholder="Character" formControlName="character">
+      <mat-option *ngFor="let name of character">
+        {{ name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
+<div *ngIf="table.data.length > 0">
+  <wah-data-table ></wah-data-table>
+</div>
