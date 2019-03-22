@@ -1,0 +1,5 @@
+<button mat-button (click)="fileInput.click()">
+  <i class="fas fa-upload"></i>
+  Import Saved Variables lua
+  <input class="d-none" type="file" accept="lua" (change)="importFromFile($event)" #fileInput/>
+</button>
