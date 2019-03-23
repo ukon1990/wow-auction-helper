@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 import {TsmLuaUtil} from '../../utils/tsm-lua.util';
 import {ObjectUtil} from '../../utils/object.util';
+import {SharedService} from '../../services/shared.service';
 
 @Component({
   selector: 'wah-tsm-addon-db',
@@ -30,6 +31,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
       {key: 'name', title: 'Name', dataType: 'name'},
       {key: 'player', title: 'Character', dataType: 'seller'},
       {key: 'quantity', title: 'Quantity', dataType: 'number'},
+      {key: 'price', title: 'Price', dataType: 'number'},
       {key: 'stackSize', title: 'Stack size', dataType: 'number'},
       {key: 'time', title: 'Time', dataType: 'date'}
     ],
@@ -115,6 +117,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
       hasCharacters: true
     }
   ];
+  tsmAddonData = SharedService.tsmAddonData;
   selectedSet;
   realms = [];
   characters = [];
@@ -160,7 +163,6 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
     Object.keys(this.selectedSet.data)
       .forEach(realm =>
         this.realms.push(realm));
-    console.log('realms', this.realms, this.selectedSet);
 
     if (ObjectUtil.isNullOrUndefined(this.form.value.realm)) {
       this.form.controls.realm.setValue(this.realms[0]);
@@ -182,7 +184,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
           });
       }
 
-      if (this.form.value.character) {
+      if (this.form.value.character && this.form.value.realm === realm) {
         this.setTableData(realm, this.form.value.character);
       } else {
         this.form.controls.character.setValue(this.characters[0]);
@@ -193,7 +195,6 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
   }
 
   importFromFile(fileEvent): void {
-    console.log('File', fileEvent);
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {

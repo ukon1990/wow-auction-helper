@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-subtitle>
+      <span *ngIf="userProfit.daysSince === 1">
+        Past {{  userProfit.daysSince }} day
+      </span>
+
+      <span *ngIf="userProfit.daysSince > 1">
+        Past {{  userProfit.daysSince }} days
+      </span>
+
+
+      <span *ngIf="!userProfit.daysSince">
+        Everything
+      </span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <strong>Sales:</strong> {{ userProfit?.sales.copper | gold }} <br>
+    <strong>Income:</strong> {{ userProfit?.income.copper | gold }} <br>
+    <strong>Expenses:</strong> {{ userProfit?.expenses.copper | gold }} <br>
+    <strong>Purchases:</strong> {{ userProfit?.purchases.copper | gold }} <br>
+    <strong>Profit:</strong> {{ userProfit?.profit | gold }}
+  </mat-card-content>
+</mat-card>

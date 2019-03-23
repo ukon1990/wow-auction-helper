@@ -92,6 +92,8 @@ import { SummaryCardComponent } from './components/dashboard/ah-summary/summary-
 import { CharacterReputationComponent } from './components/reputations/character-reputation/character-reputation.component';
 import {PlatformModule} from '@angular/cdk/platform';
 import { TsmAddonDbComponent } from './components/tsm-addon-db/tsm-addon-db.component';
+import { ProfitSummaryComponent } from './components/tsm-addon-db/profit-summary/profit-summary.component';
+import { ProfitSummaryCardComponent } from './components/tsm-addon-db/profit-summary-card/profit-summary-card.component';
 
 
 @NgModule({
@@ -163,7 +165,9 @@ import { TsmAddonDbComponent } from './components/tsm-addon-db/tsm-addon-db.comp
     AddRecipesComponent,
     ReputationsComponent,
     CharacterReputationComponent,
-    TsmAddonDbComponent
+    TsmAddonDbComponent,
+    ProfitSummaryComponent,
+    ProfitSummaryCardComponent
   ],
   imports: [
     BrowserModule,

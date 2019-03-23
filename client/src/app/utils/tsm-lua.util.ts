@@ -1,6 +1,16 @@
 import * as lua from 'luaparse';
 import {SharedService} from '../services/shared.service';
 import {ObjectUtil} from './object.util';
+import {ItemInventory} from '../models/item/item';
+
+class TSMCSV {
+  characterGuilds: any;
+  csvExpense: any[];
+  csvSales: any[];
+  csvIncome: any[];
+  csvBuys: any[];
+  profitSummary: any;
+}
 
 export class TsmLuaUtil {
   public static calculateInventory(inventory): void {
@@ -13,6 +23,10 @@ export class TsmLuaUtil {
         } else {
           item.buyout = 0;
           item.sumBuyout = 0;
+        }
+
+        if (SharedService.items[item.id]) {
+          SharedService.items[item.id].inventory = item;
         }
       });
     });
@@ -28,14 +42,23 @@ export class TsmLuaUtil {
         this.addRealmBoundData(fRes, result);
 
       } else {
-        result[fRes.type] = fRes.data;
+        if (fRes.type === undefined || fRes.type === 'undefined') {
+        } else {
+          result[fRes.type] = fRes.data;
+        }
       }
     });
 
     this.setInventory(result);
 
+    this.getUserProfits(result as TSMCSV);
+
+    Object.keys(result)
+      .forEach(key =>
+        SharedService.tsmAddonData[key] = result[key]);
     return result;
   }
+
 
   private addRealmBoundData(fRes, result) {
     if (!result[fRes.type]) {
@@ -252,6 +275,9 @@ export class TsmLuaUtil {
 
       Object.keys(map[realm]).forEach(id =>
         tsmData.inventory[realm].push(map[realm][id]));
+
+      tsmData.inventory[realm].sort((a: ItemInventory, b: ItemInventory) =>
+        b.quantity > a.quantity);
     });
     TsmLuaUtil.calculateInventory(tsmData.inventory);
   }
@@ -262,18 +288,115 @@ export class TsmLuaUtil {
     }
 
     if (!map[realm][item.id]) {
-      map[realm][item.id] = {
-        id: item.id,
-        name: item.name,
-        quantity: item.value,
-        characters: [`${item.character}(${item.value} in ${storedIn})`],
-        sumBuyout: 0,
-        buyout: 0
-      };
+      map[realm][item.id] = new ItemInventory(item, storedIn);
     } else {
-      map[realm][item.id].quantity += item.quantity;
-      map[realm][item.id].characters.push(
-        `${item.character}(${item.value} in ${storedIn})`);
+      map[realm][item.id].addCharacter(item, storedIn);
     }
+  }
+
+  private getUserProfits(result: TSMCSV) {
+    const characters = result.characterGuilds;
+    result.profitSummary = {};
+    console.log('csv', result);
+
+    Object.keys(result.csvExpense).forEach(realm => {
+      result.profitSummary[realm] = {
+        past24Hours: new UserProfit(1, characters[realm]),
+        past7Days: new UserProfit(7, characters[realm]),
+        past30Days: new UserProfit(30, characters[realm]),
+        past90Days: new UserProfit(90, characters[realm]),
+        total: new UserProfit(undefined, characters[realm])
+      };
+
+      result.csvBuys[realm].forEach(row => {
+        this.addUpProfits(result.profitSummary[realm], row, 'purchases');
+      });
+
+      result.csvExpense[realm].forEach(row => {
+        this.addUpProfits(result.profitSummary[realm], row, 'expense');
+      });
+
+      result.csvIncome[realm].forEach(row => {
+        this.addUpProfits(result.profitSummary[realm], row, 'income');
+      });
+
+      result.csvSales[realm].forEach(row => {
+        this.addUpProfits(result.profitSummary[realm], row, 'sales');
+      });
+    });
+  }
+
+  private addUpProfits(profitSummary, row, type: string) {
+    profitSummary.past24Hours.add(row, type);
+    profitSummary.past7Days.add(row, type);
+    profitSummary.past30Days.add(row, type);
+    profitSummary.past90Days.add(row, type);
+    profitSummary.total.add(row, type);
+  }
+}
+
+export class UserProfit {
+  expenses: UserProfitValue = new UserProfitValue();
+  sales: UserProfitValue = new UserProfitValue();
+  income: UserProfitValue = new UserProfitValue();
+  purchases: UserProfitValue = new UserProfitValue();
+  profit = 0;
+
+  constructor(public daysSince: number, private characters: any) {
+  }
+
+  add(value: { amount: number; time: number; price: number; }, type: string): void {
+    const thenVsNow = new Date().getTime() - value.time;
+    if (this.isTimeMatch(thenVsNow) && !this.excludeUserCharacters(value)) {
+      switch (type) {
+        case 'expense':
+          this.expenses.add(value);
+          this.profit -= value.amount;
+          break;
+        case 'sales':
+          this.sales.add(value);
+          this.profit += value.price;
+          break;
+        case 'income':
+          this.income.add(value);
+          this.profit += value.amount;
+          break;
+        case 'purchases':
+          this.purchases.add(value);
+          this.profit -= value.price;
+          break;
+      }
+    }
+  }
+
+  private isTimeMatch(thenVsNow) {
+    return this.getDaysFromMS(thenVsNow) <= this.daysSince || !this.daysSince;
+  }
+
+  excludeUserCharacters(v: any): boolean {
+    if (!this.characters) {
+      return false;
+    }
+    return this.characters[v.player] && this.characters[v.otherPlayer];
+  }
+
+  getDaysFromMS(ms: number): number {
+    const day = 86400000;
+    return ms / day;
+  }
+}
+
+export class UserProfitValue {
+  quantity = 0;
+  copper = 0;
+
+  add(value): void {
+    if (value.quantity) {
+      this.quantity += value.quantity;
+    } else {
+      this.quantity += 1;
+    }
+
+    this.copper += value.amount || value.price;
   }
 }

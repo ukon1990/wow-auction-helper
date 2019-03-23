@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Profit summary</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <div class="row col-md-12">
+      <wah-profit-summary-card class="col-md-4 mb-2"
+                               [userProfit]="getProfit().past24Hours">
+      </wah-profit-summary-card>
+
+      <wah-profit-summary-card class="col-md-4 mb-2"
+                               [userProfit]="getProfit().past7Days">
+      </wah-profit-summary-card>
+
+      <wah-profit-summary-card class="col-md-4 mb-2"
+                               [userProfit]="getProfit().past30Days">
+      </wah-profit-summary-card>
+
+      <wah-profit-summary-card class="col-md-4 mb-2"
+                               [userProfit]="getProfit().past90Days">
+      </wah-profit-summary-card>
+
+      <wah-profit-summary-card class="col-md-4 mb-2"
+                               [userProfit]="getProfit().total">
+      </wah-profit-summary-card>
+    </div>
+
+  </mat-card-content>
+</mat-card>
