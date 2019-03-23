@@ -4,35 +4,36 @@
   <input class="d-none" type="file" accept="lua" (change)="importFromFile($event)" #fileInput/>
 </button>
 
-characterGuilds bagQuantity bankQuantity goldLog
-
-csvSales, Income Expired, Expense, Cancelled, Buys
-
 <form [formGroup]="form">
   <mat-form-field>
     <mat-select placeholder="Dataset" formControlName="dataset">
-      <mat-option *ngFor="let set of dataSets">
+      <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
         {{ set.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="realms.length > 0">
+  <mat-form-field>
     <mat-select placeholder="Realm" formControlName="realm">
-      <mat-option *ngFor="let realm of realms">
+      <mat-option *ngFor="let realm of realms" [value]="realm">
         {{ realm }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="characters.length > 0">
+  <mat-form-field *ngIf="selectedSet?.hasCharacters">
     <mat-select placeholder="Character" formControlName="character">
-      <mat-option *ngFor="let name of character">
+      <mat-option *ngFor="let name of characters" [value]="name">
         {{ name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 </form>
-<div *ngIf="table.data.length > 0">
-  <wah-data-table ></wah-data-table>
+<div *ngIf="selectedSet">
+  <wah-data-table
+          id="id"
+          [iconSize]="22"
+          [itemsPerPage]="40"
+          [columns]="table.columns"
+          [data]="table.data"></wah-data-table>
 </div>

@@ -2,6 +2,10 @@ import {Report} from './report.util';
 
 export class ObjectUtil {
 
+  public static isNullOrUndefined(value: any): boolean {
+    return !value || value === null;
+  }
+
   public static isObject(value: any): boolean {
     return value && typeof value === 'object' && value !== null && !value.forEach && !value.push;
   }

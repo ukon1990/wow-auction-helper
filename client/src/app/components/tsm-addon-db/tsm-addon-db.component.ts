@@ -1,56 +1,121 @@
-import {Component, OnInit} from '@angular/core';
-import * as lua from 'luaparse';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {SubscriptionsUtil} from '../../utils/subscriptions.util';
+import {TsmLuaUtil} from '../../utils/tsm-lua.util';
+import {ObjectUtil} from '../../utils/object.util';
 
 @Component({
   selector: 'wah-tsm-addon-db',
   templateUrl: './tsm-addon-db.component.html',
   styleUrls: ['./tsm-addon-db.component.scss']
 })
-export class TsmAddonDbComponent implements OnInit {
+export class TsmAddonDbComponent implements OnInit, OnDestroy {
   form: FormGroup;
+  /**
+   amount: 50000000
+   otherPlayer: "Mission"
+   player: "Bløder"
+   time: 1552897387
+   type: "Garrison"
+   */
+  columns = {
+    amount: [
+      {key: 'type', title: 'Source', dataType: 'string'},
+      {key: 'otherPlayer', title: 'From', dataType: 'seller'},
+      {key: 'player', title: 'To', dataType: 'seller'},
+      {key: 'amount', title: 'Amount', dataType: 'gold'},
+      {key: 'time', title: 'Time', dataType: 'date'}
+    ],
+    player: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'player', title: 'Character', dataType: 'seller'},
+      {key: 'quantity', title: 'Quantity', dataType: 'number'},
+      {key: 'stackSize', title: 'Stack size', dataType: 'number'},
+      {key: 'time', title: 'Time', dataType: 'date'}
+    ],
+    buys: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'player', title: 'Character', dataType: 'seller'},
+      {key: 'otherPlayer', title: 'From', dataType: 'seller'},
+      {key: 'quantity', title: 'Quantity', dataType: 'number'},
+      {key: 'stackSize', title: 'Size', dataType: 'number'},
+      {key: 'price', title: 'Price', dataType: 'gold'},
+      {key: 'time', title: 'Time', dataType: 'date'}
+    ]
+  };
   dataSets = [
     {
       name: 'csvSales',
-      columns: []
+      columns: this.columns.player,
+      data: [],
+      hasCharacters: false
     },
     {
       name: 'csvIncome',
-      columns: []
+      columns: this.columns.amount,
+      data: [],
+      hasCharacters: false
     },
     {
       name: 'csvExpired',
-      columns: []
+      columns: this.columns.player,
+      data: [],
+      hasCharacters: false
     },
     {
       name: 'csvExpense',
-      columns: []
+      columns: this.columns.amount,
+      data: [],
+      hasCharacters: false
     },
     {
       name: 'csvCancelled',
-      columns: []
+      columns: [
+        {key: 'name', title: 'Name', dataType: 'name'},
+        {key: 'player', title: 'Character', dataType: 'seller'},
+        {key: 'quantity', title: 'Quantity', dataType: 'number'},
+        {key: 'stackSize', title: 'Size', dataType: 'number'},
+        {key: 'time', title: 'Time', dataType: 'date'}
+      ],
+      data: [],
+      hasCharacters: false
     },
     {
       name: 'csvBuys',
-      columns: []
+      columns: this.columns.buys,
+      data: [],
+      hasCharacters: false
     },
     {
-      name: 'characterGuilds',
-      columns: []
-    },
-    {
-      name: 'bagQuantity',
-      columns: []
-    },
-    {
-      name: 'bankQuantity',
-      columns: []
+      name: 'auctionQuantity',
+      columns: [],
+      data: [],
+      hasCharacters: true
+    }, {
+      title: 'Inventory',
+      name: 'inventory',
+      columns: [
+        {key: 'name', title: 'Name', dataType: 'name'},
+        {key: 'characters', title: 'Character', dataType: 'array'},
+        {key: 'quantity', title: 'Quantity', dataType: 'number'},
+        {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+        {key: 'sumBuyout', title: 'Total buyout', dataType: 'gold'}
+      ],
+      data: [],
+      hasCharacters: false
     },
     {
       name: 'goldLog',
-      columns: []
+      columns: [
+        {key: 'minute', title: 'Time', dataType: 'date'},
+        {key: 'character', title: 'Character', dataType: 'seller'},
+        {key: 'copper', title: 'Gold', dataType: 'gold'}
+      ],
+      data: [],
+      hasCharacters: true
     }
   ];
+  selectedSet;
   realms = [];
   characters = [];
   table = {
@@ -58,15 +123,73 @@ export class TsmAddonDbComponent implements OnInit {
     data: []
   };
 
+  subscriptions = new SubscriptionsUtil();
+
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
-      dataset: new FormControl('csvSales'),
-      realm: new FormControl('Draenor'),
+      dataset: new FormControl(0),
+      realm: new FormControl(),
       character: new FormControl()
     });
   }
 
   ngOnInit() {
+    this.subscriptions.add(
+      this.form.controls.dataset.valueChanges,
+      (set) =>
+        this.handleDataSetChange(set));
+    this.subscriptions.add(
+      this.form.controls.realm.valueChanges,
+      (realm: string) =>
+        this.setCharactersOnRealm(realm));
+
+    this.subscriptions.add(
+      this.form.controls.character.valueChanges,
+      (name: string) =>
+        this.setTableData(this.form.value.realm, name));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+
+  private handleDataSetChange(index: number) {
+    this.selectedSet = this.dataSets[index];
+    this.realms.length = 0;
+    Object.keys(this.selectedSet.data)
+      .forEach(realm =>
+        this.realms.push(realm));
+    console.log('realms', this.realms, this.selectedSet);
+
+    if (ObjectUtil.isNullOrUndefined(this.form.value.realm)) {
+      this.form.controls.realm.setValue(this.realms[0]);
+    } else {
+      this.setCharactersOnRealm(this.form.value.realm);
+    }
+  }
+
+  private setCharactersOnRealm(realm: string) {
+    if (this.selectedSet.hasCharacters) {
+      this.characters.length = 0;
+      this.characters.push('All');
+      if (this.selectedSet.data[this.form.value.realm]) {
+        Object.keys(this.selectedSet.data[this.form.value.realm])
+          .forEach(name => {
+            if (name !== 'All') {
+              this.characters.push(name);
+            }
+          });
+      }
+
+      if (this.form.value.character) {
+        this.setTableData(realm, this.form.value.character);
+      } else {
+        this.form.controls.character.setValue(this.characters[0]);
+      }
+    } else {
+      this.setTableData(realm);
+    }
   }
 
   importFromFile(fileEvent): void {
@@ -74,175 +197,47 @@ export class TsmAddonDbComponent implements OnInit {
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {
-      console.log(this.convertList(reader.result));
+      const data = new TsmLuaUtil().convertList(reader.result);
+      this.dataSets.forEach(set =>
+        set.data = data[set.name]);
+
+      this.handleDataSetChange(0);
+      console.log(data);
     };
     reader.readAsText(files[0]);
   }
 
-  convertList(input: any): object {
-    const fields = lua.parse(input).body[0].init[0].fields;
-    const result = {};
-
-    fields.forEach(field => {
-      const fRes = this.convertField(field);
-      if (fRes.character && fRes.character.realm) {
-        this.addRealmBoundData(fRes, result);
-
-      } else {
-        result[fRes.type] = fRes.data;
-      }
-    });
-
-    return result;
-  }
-
-  private addRealmBoundData(fRes, result) {
-    if (!result[fRes.type]) {
-      result[fRes.type] = {};
-    }
-
-    if (fRes.character.name) {
-      if (!result[fRes.type][fRes.character.realm]) {
-        result[fRes.type][fRes.character.realm] = [];
-      }
-      result[fRes.type][fRes.character.realm][fRes.character.name] = fRes.data;
+  private setTableData(realm: string, character?: string) {
+    console.log(this.dataSets, this.selectedSet, realm, character);
+    if (realm && character) {
+      this.table.columns = this.selectedSet.columns;
+      this.table.data = this.selectedSet.data[realm][character];
     } else {
-      result[fRes.type][fRes.character.realm] = fRes.data;
+      this.table.columns = this.selectedSet.columns;
+      this.table.data = this.selectedSet.data[realm];
+    }
+
+    if (ObjectUtil.isObject(this.table.data)) {
+      const list = [];
+      Object.keys(this.table.data)
+        .forEach(id =>
+          list.push(this.table.data[id]));
+      this.table.data = list;
+    }
+    this.sortTableByTime();
+
+    console.log('table', this.table);
+  }
+
+  private sortTableByTime() {
+    if (this.shouldSortBasedOnTime()) {
+      this.table.data
+        .sort((a, b) =>
+          (b.time || b.minute) - (a.time || a.minute));
     }
   }
 
-  private convertField(field: any): any {
-    const keys = field.key.value.split('@');
-    const character = this.splitCharacterData(keys[1]),
-      type = keys[3];
-    const result = {
-      type: type,
-      character: character,
-      data: undefined
-    };
-
-    switch (field.value.type) {
-      case 'TableConstructorExpression':
-        result.data = this.handleTable(field, character);
-        break;
-      case 'NumericLiteral':
-      case 'BooleanLiteral':
-        result.data = field.value.value;
-        break;
-      case 'StringLiteral' :
-        const d = field.value.value.split('\n');
-        if (d.length > 0) {
-          result.data = [];
-          const headers = d[0].split(',');
-          for (let i = 1, l = d.length; i < l; i++) {
-            const obj = {};
-            const columns = d[i].split(',');
-            columns.forEach((column, index) => {
-
-              if (!isNaN(+column)) {
-                obj[headers[index]] = +column;
-              } else if (headers[index] === 'itemString') {
-                const tmp = column.split(':');
-                obj['itemId'] = +tmp[1];
-                obj['bonusIds'] = tmp.slice(2, tmp.length - 1);
-              } else {
-                obj[headers[index]] = column;
-              }
-            });
-            result.data.push(obj);
-          }
-        } else {
-          result.data = field.value.value;
-        }
-        break;
-      default:
-        result.data = field.value;
-    }
-
-    return result;
-  }
-
-  private splitCharacterData(keys): { name?: string; faction?: string; realm: string; } {
-    if (keys) {
-      const split = keys.split(' - ');
-      console.log('split', split);
-      if (split.length === 1) {
-        return {realm: split[0]};
-      }
-
-      if (split.length === 2) {
-        return {
-          faction: split[0],
-          realm: split[1]
-        };
-      }
-
-      return {
-        name: split[0],
-        faction: split[1],
-        realm: split[2]
-      };
-    }
-    return undefined;
-  }
-
-  private handleTable(field: any, character: any) {
-    let result = {};
-    if (field.value && field.value.fields) {
-      field.value.fields.forEach(column => {
-        switch (column.type) {
-          case 'TableValue': // Table row?
-            result[column.value.type] = this.handleTable(column.value, character);
-            break;
-          case 'TableKey':
-            const o = this.handleTableKey(column, character);
-            const id = o.key ? o.key : column.key.value;
-            result[id] = o;
-            break;
-          default:
-            console.log(column.type, column);
-            break;
-        }
-      });
-    } else {
-      // console.log('handleTable', result, type, field);
-      result = field.value;
-    }
-    return result;
-  }
-
-  private handleTableKey(column, character: any): any {
-    switch (column.type) {
-      case 'TableKey':
-        if (column.value.fields) {
-          const list = [];
-          column.value.fields.forEach(field =>
-            list.push(field));
-          return list;
-        } else {
-          const obj = {
-            key: this.handleKey(column.key.value),
-            value: column.value.value
-          };
-
-          if (character && character.name) {
-            obj['character'] = character.name;
-          }
-
-          return obj;
-        }
-    }
-  }
-
-  private handleKey(value) {
-    const tmp = value.split(':');
-    if (tmp.length > 0) {
-      if (isNaN(+tmp[1])) {
-        return value;
-      }
-      return +tmp[1];
-    }
-
-    return value;
+  private shouldSortBasedOnTime() {
+    return this.table.data && this.table.data[0] && (this.table.data[0].time || this.table.data[0].minute);
   }
 }

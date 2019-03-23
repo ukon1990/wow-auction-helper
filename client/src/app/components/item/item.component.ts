@@ -13,6 +13,7 @@ import { Endpoints } from '../../services/endpoints';
 import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ItemService } from '../../services/item.service';
+import {GameBuild} from '../../utils/game-build.util';
 
 @Component({
   selector: 'wah-item',
@@ -21,6 +22,7 @@ import { ItemService } from '../../services/item.service';
 })
 export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs') tabs;
+  expansions = GameBuild.expansionMap;
   wowDBItem: any;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();

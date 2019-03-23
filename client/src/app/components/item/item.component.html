@@ -52,6 +52,7 @@
           <strong *ngIf="isUsingWoWUction()">Sale rate:</strong>
           {{ selected.auctionItem.regionSaleRate | percent }}
           <br>
+          <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         </div>
 
         <wah-line-chart *ngIf="selected.auctionItem && !isMobile()" [data]="selected.auctionItem.auctions">
