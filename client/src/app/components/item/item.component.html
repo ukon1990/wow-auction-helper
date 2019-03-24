@@ -5,7 +5,8 @@
         <i class="fas fa-times" matTooltip="Close detail view"></i>
       </button>
     </div>
-    <wah-icon mat-card-avatar *ngIf="selected.item.id" class="float-left" size="36" [id]="selected.item.id" [petSpeciesId]="getSelectedPet()?.petSpeciesId"></wah-icon>
+    <wah-icon mat-card-avatar *ngIf="selected.item.id" class="float-left" size="36" [id]="selected.item.id"
+              [petSpeciesId]="getSelectedPet()?.petSpeciesId"></wah-icon>
     <mat-card-title>
         <span *ngIf="getPet() || selected.item; else itemName">
           <a rel="domain={{ locale }},{{
@@ -32,7 +33,8 @@
     <div class="row col-md-12">
       <div class="col-md-4" *ngIf="selected.auctionItem">
         <strong>Lowest buyout per item:</strong> {{ selected.auctionItem.buyout | gold}}
-        <span *ngIf="isUsingAPI() && !selected.auctionItem.petSpeciesId">({{ selected.auctionItem.buyout / selected.auctionItem.mktPrice | percent }} MV)</span>
+        <span *ngIf="isUsingAPI() && !selected.auctionItem.petSpeciesId">({{ selected.auctionItem.buyout / selected.auctionItem.mktPrice | percent }}
+          MV)</span>
         <br>
         <strong>Stock:</strong> {{ selected.auctionItem.quantityTotal | number }} pcs
         <br>
@@ -52,6 +54,7 @@
           <strong *ngIf="isUsingWoWUction()">Sale rate:</strong>
           {{ selected.auctionItem.regionSaleRate | percent }}
           <br>
+          <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         </div>
 
         <wah-line-chart *ngIf="selected.auctionItem && !isMobile()" [data]="selected.auctionItem.auctions">
@@ -60,47 +63,83 @@
       <div [ngClass]="{'col-md-8': selected.auctionItem, 'col-md-12': !selected.auctionItem}">
         <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event)" #tabs>
           <mat-tab *ngIf="selected.auctionItem && isMobile()" label="Auction price chart">
-            <wah-line-chart [data]="selected.auctionItem.auctions" *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
+            <wah-line-chart [data]="selected.auctionItem.auctions"
+                            *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
             </wah-line-chart>
           </mat-tab>
           <mat-tab *ngIf="selected.auctionItem" label="Seller overview" (click)="emitSelectedTab('Seller')">
-            <wah-item-seller-chart [auctions]="selected.auctionItem.auctions" *ngIf="tabs && tabs.selectedIndex === 0"></wah-item-seller-chart>
+            <wah-item-seller-chart [auctions]="selected.auctionItem.auctions"
+                                   *ngIf="tabs && tabs.selectedIndex === 0"></wah-item-seller-chart>
           </mat-tab>
           <mat-tab label="Auctions" *ngIf="selected.auctionItem">
-            <wah-data-table [columns]="columns" [data]="selected.auctionItem.auctions" filterParameter="owner" [numOfRows]="20">
+            <wah-data-table [columns]="columns" [data]="selected.auctionItem.auctions" filterParameter="owner"
+                            [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
+
+          <mat-tab label="Data from TSM">
+            <wah-item-sale-summary *ngIf="selected.item.id"
+                                   [itemId]="selected.item.id">
+            </wah-item-sale-summary>
+
+            <mat-card *ngIf="selected.item.inventory" class="mb-3">
+              <mat-card-header>
+                <mat-card-subtitle>
+                  One or more of your characters have this item
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <strong>Quantity: </strong> {{ selected.item.inventory.quantity }} <br>
+                <strong>Valued at: </strong> {{ selected.item.inventory.sumBuyout | gold }} total. <br>
+                <strong>Inventory status: </strong> {{ selected.item.inventory.characters.toString() }}
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+
           <mat-tab label="Created by" *ngIf="createdBy">
             <wah-data-table [columns]="recipeColumns" [data]="createdBy" [isCrafting]="true" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
           <mat-tab label="Material for" *ngIf="materialFor.length > 0">
-            <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor" [isCrafting]="false" filterParameter="name" [numOfRows]="20">
+            <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor"
+                            [isCrafting]="false" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
-          <mat-tab label="Dropped by" *ngIf="selected.item.itemSource && selected.item.itemSource.droppedBy && selected.item.itemSource.droppedBy.length > 0">
-            <wah-data-table linkType="npc" [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="selected.item.itemSource.droppedBy" filterParameter="name" [numOfRows]="20">
+          <mat-tab label="Dropped by"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.droppedBy && selected.item.itemSource.droppedBy.length > 0">
+            <wah-data-table linkType="npc" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.droppedBy" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
-          <mat-tab label="Sold by" *ngIf="selected.item.itemSource && selected.item.itemSource.soldBy && selected.item.itemSource.soldBy.length > 0">
-            <wah-data-table linkType="npc" [id]="'id'" iconSize="22" [columns]="soldByColumns" [data]="selected.item.itemSource.soldBy" filterParameter="name" [numOfRows]="20">
+          <mat-tab label="Sold by"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.soldBy && selected.item.itemSource.soldBy.length > 0">
+            <wah-data-table linkType="npc" [id]="'id'" iconSize="22" [columns]="soldByColumns"
+                            [data]="selected.item.itemSource.soldBy" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
-          <mat-tab label="Contained in object" *ngIf="selected.item.itemSource && selected.item.itemSource.containedInObject && selected.item.itemSource.containedInObject.length > 0">
-            <wah-data-table linkType="object" [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="selected.item.itemSource.containedInObject" filterParameter="name" [numOfRows]="20">
+          <mat-tab label="Contained in object"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.containedInObject && selected.item.itemSource.containedInObject.length > 0">
+            <wah-data-table linkType="object" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.containedInObject" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
-          <mat-tab label="Contained in item" *ngIf="selected.item.itemSource && selected.item.itemSource.containedInItem && selected.item.itemSource.containedInItem.length > 0">
-            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="containedInColumns" [data]="selected.item.itemSource.containedInItem" filterParameter="name" [numOfRows]="20">
+          <mat-tab label="Contained in item"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.containedInItem && selected.item.itemSource.containedInItem.length > 0">
+            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="containedInColumns"
+                            [data]="selected.item.itemSource.containedInItem" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
-          <mat-tab label="Prospected from" *ngIf="selected.item.itemSource && selected.item.itemSource.prospectedFrom && selected.item.itemSource.prospectedFrom.length > 0">
-            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="selected.item.itemSource.prospectedFrom" filterParameter="name" [numOfRows]="20">
+          <mat-tab label="Prospected from"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.prospectedFrom && selected.item.itemSource.prospectedFrom.length > 0">
+            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.prospectedFrom" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
 
-          <mat-tab label="Milled from" *ngIf="selected.item.itemSource && selected.item.itemSource.milledFrom && selected.item.itemSource.milledFrom.length > 0">
-            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns" [data]="selected.item.itemSource.milledFrom" filterParameter="name" [numOfRows]="20">
+          <mat-tab label="Milled from"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.milledFrom && selected.item.itemSource.milledFrom.length > 0">
+            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.milledFrom" filterParameter="name" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
           <mat-tab label="Reset cost calc" *ngIf="selected.auctionItem">
@@ -126,7 +165,8 @@
       TUJ
       <i class="fas fa-external-link-square-alt"></i>
     </button>
-    <button mat-raised-button matTooltip="Add to shopping list" *ngIf="userHasRecipeForItem()" (click)="addEntryToCart()">
+    <button mat-raised-button matTooltip="Add to shopping list" *ngIf="userHasRecipeForItem()"
+            (click)="addEntryToCart()">
       Add cheapest known recipe to shopping list
       <i class="fas fa-cart-plus"></i>
     </button>

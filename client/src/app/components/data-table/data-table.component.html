@@ -44,6 +44,9 @@
                 </span>
               </span>
             </span>
+            <span *ngSwitchCase="'date'">
+              {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
+            </span>
             <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
               {{ d[c.key] }}
             </span>
@@ -101,6 +104,9 @@
                 {{ zone }}
                 <i class="fas fa-external-link-square-alt"></i>
               </a>
+            </span>
+            <span *ngSwitchCase="'array'">
+              {{ d[c.key].toString() }}
             </span>
             <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
             <span *ngSwitchCase="'input-number'">

@@ -44,7 +44,8 @@ export class SharedService {
     auctionUpdate: new EventEmitter<boolean>(),
     items: new EventEmitter<boolean>(),
     recipes: new EventEmitter<boolean>(),
-    pets: new EventEmitter<boolean>()
+    pets: new EventEmitter<boolean>(),
+    realms: new EventEmitter<boolean>()
   };
   public static preScrollPosition = 0;
 
@@ -73,6 +74,7 @@ export class SharedService {
   public static recipesMapPerItemKnown: Map<number, Recipe> = new Map<number, Recipe>();
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
 
+  public static tsmAddonData = {};
   public static items: Map<number, Item> = new Map<number, Item>();
   public static itemsUnmapped: Array<Item> = new Array<Item>();
   public static tradeVendorItemMap: Map<number, TradeVendorItemValue> = new Map<number, TradeVendorItemValue>();

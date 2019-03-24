@@ -159,6 +159,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
+    console.log('Clicked seller', seller);
     SharedService.preScrollPosition = window.scrollY;
     SharedService.selectedSeller = SharedService.sellersMap[seller.name];
     SharedService.events.detailPanelOpen.emit(true);

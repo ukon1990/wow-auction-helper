@@ -1,18 +1,20 @@
-import { Component, OnInit, Input, ViewChild, AfterContentInit, OnDestroy, OnChanges, AfterViewInit } from '@angular/core';
-import { Item } from '../../models/item/item';
-import { SharedService } from '../../services/shared.service';
-import { AuctionItem } from '../../models/auction/auction-item';
-import { ColumnDescription } from '../../models/column-description';
-import { WowdbService } from '../../services/wowdb.service';
-import { User } from '../../models/user/user';
-import { Recipe } from '../../models/crafting/recipe';
-import { Pet } from '../../models/pet';
-import { AuctionPet } from '../../models/auction/auction-pet';
-import { Angulartics2 } from 'angulartics2';
-import { Endpoints } from '../../services/endpoints';
-import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material';
-import { Subscription } from 'rxjs';
-import { ItemService } from '../../services/item.service';
+import {Component, OnInit, Input, ViewChild, AfterContentInit, OnDestroy, OnChanges, AfterViewInit} from '@angular/core';
+import {Item} from '../../models/item/item';
+import {SharedService} from '../../services/shared.service';
+import {AuctionItem} from '../../models/auction/auction-item';
+import {ColumnDescription} from '../../models/column-description';
+import {WowdbService} from '../../services/wowdb.service';
+import {User} from '../../models/user/user';
+import {Recipe} from '../../models/crafting/recipe';
+import {Pet} from '../../models/pet';
+import {AuctionPet} from '../../models/auction/auction-pet';
+import {Angulartics2} from 'angulartics2';
+import {Endpoints} from '../../services/endpoints';
+import {MatTabGroup, MatTab, MatTabChangeEvent} from '@angular/material';
+import {Subscription} from 'rxjs';
+import {ItemService} from '../../services/item.service';
+import {GameBuild} from '../../utils/game-build.util';
+import {UserProfit} from '../../utils/tsm-lua.util';
 
 @Component({
   selector: 'wah-item',
@@ -21,6 +23,7 @@ import { ItemService } from '../../services/item.service';
 })
 export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs') tabs;
+  expansions = GameBuild.expansionMap;
   wowDBItem: any;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
@@ -46,20 +49,20 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   ];
 
   recipeColumns: Array<ColumnDescription> = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'reagents', title: 'Materials', dataType: 'materials' },
-    { key: 'cost', title: 'Cost', dataType: 'gold' },
-    { key: 'roi', title: 'ROI', dataType: 'gold' },
-    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'reagents', title: 'Materials', dataType: 'materials'},
+    {key: 'cost', title: 'Cost', dataType: 'gold'},
+    {key: 'roi', title: 'ROI', dataType: 'gold'},
+    {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
   ];
 
   recipeColumnsSimple: Array<ColumnDescription> = [
-    { key: 'rank', title: 'Rank', dataType: '' },
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'profession', title: 'Source', dataType: '' },
-    { key: 'cost', title: 'Cost', dataType: 'gold' },
-    { key: 'roi', title: 'ROI', dataType: 'gold' },
-    { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+    {key: 'rank', title: 'Rank', dataType: ''},
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'profession', title: 'Source', dataType: ''},
+    {key: 'cost', title: 'Cost', dataType: 'gold'},
+    {key: 'roi', title: 'ROI', dataType: 'gold'},
+    {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
   ];
 
   droppedByColumns: Array<ColumnDescription> = [
@@ -89,7 +92,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
     this.angulartics2.eventTrack.next({
       action: 'Opened',
-      properties: { category: 'Item detail view' },
+      properties: {category: 'Item detail view'},
     });
 
     this.selectionSubscription = ItemService.itemSelection.subscribe(() => {
@@ -108,8 +111,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       .selectedTabChange.subscribe(
         (event: MatTabChangeEvent) => {
           this.angulartics2.eventTrack.next({
-            action: `Changed tab to ${ event.tab.textLabel }`,
-            properties: { category: `Item detail view` },
+            action: `Changed tab to ${event.tab.textLabel}`,
+            properties: {category: `Item detail view`},
           });
         });
   }
@@ -166,8 +169,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     }
 
     this.angulartics2.eventTrack.next({
-      action: `Opened ${ target }`,
-      properties: { category: `Item detail view` },
+      action: `Opened ${target}`,
+      properties: {category: `Item detail view`},
     });
   }
 
@@ -193,6 +196,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   userHasRecipeForItem(): boolean {
     return SharedService.recipesMapPerItemKnown[SharedService.selectedItemId] ? true : false;
   }
+
   addEntryToCart(): void {
     if (!this.userHasRecipeForItem()) {
       return;
@@ -202,7 +206,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
     this.angulartics2.eventTrack.next({
       action: 'Added to recipe shopping cart',
-      properties: { category: 'Item detail view' },
+      properties: {category: 'Item detail view'},
     });
   }
 
