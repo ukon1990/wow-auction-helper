@@ -316,7 +316,7 @@ export class TsmLuaUtil {
       });
 
       result.csvExpense[realm].forEach(row => {
-        this.addUpProfits(result.profitSummary[realm], row, 'expense');
+        this.addUpProfits(result.profitSummary[realm], row, 'expenses');
       });
 
       result.csvIncome[realm].forEach(row => {
@@ -326,6 +326,11 @@ export class TsmLuaUtil {
       result.csvSales[realm].forEach(row => {
         this.addUpProfits(result.profitSummary[realm], row, 'sales');
       });
+
+      this.setAndSortItemList(result.profitSummary[realm], 'purchases');
+      this.setAndSortItemList(result.profitSummary[realm], 'expenses');
+      this.setAndSortItemList(result.profitSummary[realm], 'income');
+      this.setAndSortItemList(result.profitSummary[realm], 'sales');
     });
   }
 
@@ -335,6 +340,14 @@ export class TsmLuaUtil {
     profitSummary.past30Days.add(row, type);
     profitSummary.past90Days.add(row, type);
     profitSummary.total.add(row, type);
+  }
+
+  private setAndSortItemList(profitSummary, type: string) {
+    profitSummary.past24Hours[type].setAndSortItemList();
+    profitSummary.past7Days[type].setAndSortItemList();
+    profitSummary.past30Days[type].setAndSortItemList();
+    profitSummary.past90Days[type].setAndSortItemList();
+    profitSummary.total[type].setAndSortItemList();
   }
 }
 
@@ -352,7 +365,7 @@ export class UserProfit {
     const thenVsNow = new Date().getTime() - value.time;
     if (this.isTimeMatch(thenVsNow) && !this.excludeUserCharacters(value)) {
       switch (type) {
-        case 'expense':
+        case 'expenses':
           this.expenses.add(value);
           this.profit -= value.amount;
           break;
@@ -392,15 +405,60 @@ export class UserProfit {
 export class UserProfitValue {
   quantity = 0;
   copper = 0;
+  itemMap = {};
+  items = [];
 
   add(value): void {
     if (value.quantity) {
       this.quantity += value.quantity;
       this.copper += this.getCopperValue(value) * value.quantity;
     } else {
-      this.quantity += 1;
+      this.quantity++;
       this.copper += this.getCopperValue(value);
     }
+
+    this.addItem(value);
+  }
+
+  private addItem(value): void {
+    let i = this.itemMap[value.id];
+    if (!i) {
+      this.itemMap[value.id] = {
+        id: value.id,
+        name: value.name,
+        quantity: 0,
+        totalPrice: 0,
+        maxPrice: 0,
+        minPrice: 0,
+        avgPrice: 0
+      };
+      i = this.itemMap[value.id];
+    }
+    if (value.quantity) {
+      i.quantity += value.quantity;
+    } else {
+      i.quantity++;
+    }
+
+    if (this.getCopperValue(value) > i.maxPrice) {
+      i.maxPrice = this.getCopperValue(value);
+    }
+
+    if (i.minPrice === 0 || this.getCopperValue(value) < i.minPrice) {
+      i.minPrice = this.getCopperValue(value);
+    }
+
+    i.totalPrice += this.getCopperValue(value) * i.quantity;
+    i.avgPrice = i.totalPrice / i.quantity;
+  }
+
+  setAndSortItemList(): void {
+    Object.keys(this.itemMap)
+      .forEach(id =>
+        this.items.push(this.itemMap[id]));
+
+    this.items.sort((a, b) =>
+      b.totalPrice - a.totalPrice);
   }
 
   private getCopperValue(value) {
