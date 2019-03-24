@@ -81,10 +81,11 @@ export class SetupComponent implements OnInit {
       this._router.navigateByUrl('dashboard');
     }
 
+    /*
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
       console.log('Not https!');
       location.href = window.location.href.replace('http', 'https');
-    }
+    }*/
   }
 
   isWithinSupported3RDPartyAPIRegion(): boolean {

@@ -33,7 +33,8 @@ import {ChangelogComponent} from '../components/about/changelog/changelog.compon
 import {MillingComponent} from '../components/crafting/milling/milling.component';
 import {DisenchantingComponent} from '../components/crafting/disenchanting/disenchanting.component';
 import {AhSummaryComponent} from '../components/dashboard/ah-summary/ah-summary.component';
-import { ReputationsComponent } from '../components/reputations/reputations.component';
+import {ReputationsComponent} from '../components/reputations/reputations.component';
+import {TsmAddonDbComponent} from '../components/tsm-addon-db/tsm-addon-db.component';
 
 const routes: Routes = [
   {path: '', component: SetupComponent},
@@ -46,6 +47,7 @@ const routes: Routes = [
       {path: 'items', component: DashboardItemsComponent},
       {path: 'sellers', component: DashboardSellersComponent},
       {path: 'ah-summary', component: AhSummaryComponent},
+      {path: 'tsm', component: TsmAddonDbComponent},
       {path: 'manage-dashboards', component: WatchlistComponent}
     ]
   },
@@ -56,14 +58,14 @@ const routes: Routes = [
   {path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [IsRegisteredService]},
   {
     path: 'tools', canActivate: [IsRegisteredService], children: [
-      { path: 'trade-vendor', component: TradeVendorsComponent },
-      { path: 'watchlist', redirectTo: '/dashboard/manage-dashboards' },
-      { path: 'sellers', component: SellersComponent },
-      { path: 'my-pets', component: MyPetsComponent },
-      { path: 'market-reset', component: MarketResetComponent },
-      { path: 'milling-and-prospecting', component: MillingComponent },
-      { path: 'disenchanting', component: DisenchantingComponent },
-      { path: 'reputations', component: ReputationsComponent }
+      {path: 'trade-vendor', component: TradeVendorsComponent},
+      {path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'},
+      {path: 'sellers', component: SellersComponent},
+      {path: 'my-pets', component: MyPetsComponent},
+      {path: 'market-reset', component: MarketResetComponent},
+      {path: 'milling-and-prospecting', component: MillingComponent},
+      {path: 'disenchanting', component: DisenchantingComponent},
+      {path: 'reputations', component: ReputationsComponent}
     ]
   },
   {path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService]},

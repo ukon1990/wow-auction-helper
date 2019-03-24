@@ -30,13 +30,16 @@ export class RecipeQuery {
                     FROM recipe_name_locale);`;
   }
 
+  /*
+  * Old version had:
+  * json NOT LIKE '%itemID":0%' AND ..
+  */
   public static getAllRecipesAfterTimestamp(locale: string, timestamp: Date) {
     return `
       SELECT r.id, json, ${getLocale(locale)} as name, timestamp from  recipes as r
       LEFT OUTER JOIN recipe_name_locale as l
       ON r.id = l.id
-      WHERE json NOT LIKE '%itemID":0%'
-      AND timestamp > "${timestamp + ''}"
+      WHERE timestamp > "${timestamp + ''}"
       ORDER BY timestamp desc;`;
   }
 
