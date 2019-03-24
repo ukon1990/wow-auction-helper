@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 import {TsmLuaUtil} from '../../utils/tsm-lua.util';
@@ -10,7 +10,8 @@ import {SharedService} from '../../services/shared.service';
   templateUrl: './tsm-addon-db.component.html',
   styleUrls: ['./tsm-addon-db.component.scss']
 })
-export class TsmAddonDbComponent implements OnInit, OnDestroy {
+export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit {
+  @Input() importMode: boolean;
   form: FormGroup;
   /**
    amount: 50000000
@@ -129,7 +130,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
   };
 
   subscriptions = new SubscriptionsUtil();
-  private lastModified: Date;
+  lastModified: Date;
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
@@ -153,6 +154,19 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
       this.form.controls.character.valueChanges,
       (name: string) =>
         this.setTableData(this.form.value.realm, name));
+  }
+
+  ngAfterContentInit(): void {
+    const realm = SharedService.realms[SharedService.user.realm];
+    if (realm) {
+      this.form.controls.realm.setValue(realm.name);
+    } else {
+      this.subscriptions.add(
+        SharedService.events.realms,
+        () => this.ngAfterContentInit(),
+        {terminateUponEvent: true});
+    }
+    console.log('realm', this.form.value, realm);
   }
 
   ngOnDestroy(): void {
@@ -204,7 +218,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
       const data = new TsmLuaUtil().convertList(reader.result);
       this.dataSets.forEach(set =>
         set.data = data[set.name]);
-    this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
+      this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
 
       this.handleDataSetChange(0);
       console.log({

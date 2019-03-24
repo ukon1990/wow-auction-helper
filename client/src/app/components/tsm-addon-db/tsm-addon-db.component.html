@@ -13,6 +13,8 @@
   </mat-card-header>
   <mat-card-content>
     To update the data, do /reload in-game and import the file again.
+    For now, this has to be imported every session, you wish to use this data.
+    It might be persistent in the future, but the app will probably not be able to auto-import.
   </mat-card-content>
   <mat-card-actions>
     <button mat-button (click)="fileInput.click()">
@@ -27,42 +29,58 @@
   </mat-card-actions>
 </mat-card>
 
-<div *ngIf="tsmAddonData?.characterGuilds">
-  <wah-profit-summary *ngIf="selectedSet"
-                      [realm]="form.value.realm"></wah-profit-summary>
+<div *ngIf="tsmAddonData?.characterGuilds && !importMode">
+  <mat-tab-group>
+    <mat-tab label="Summary">
+      <form [formGroup]="form">
+        <mat-form-field>
+          <mat-select placeholder="Realm" formControlName="realm">
+            <mat-option *ngFor="let realm of realms" [value]="realm">
+              {{ realm }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-  <form [formGroup]="form">
-    <mat-form-field>
-      <mat-select placeholder="Dataset" formControlName="dataset">
-        <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
-          {{ set.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+      </form>
+      <wah-profit-summary *ngIf="selectedSet"
+                          [realm]="form.value.realm"></wah-profit-summary>
+    </mat-tab>
+    <mat-tab label="Datasets">
+      <form [formGroup]="form">
+        <mat-form-field>
+          <mat-select placeholder="Dataset" formControlName="dataset">
+            <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
+              {{ set.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <mat-form-field>
-      <mat-select placeholder="Realm" formControlName="realm">
-        <mat-option *ngFor="let realm of realms" [value]="realm">
-          {{ realm }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Realm" formControlName="realm">
+            <mat-option *ngFor="let realm of realms" [value]="realm">
+              {{ realm }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <mat-form-field *ngIf="selectedSet?.hasCharacters">
-      <mat-select placeholder="Character" formControlName="character">
-        <mat-option *ngFor="let name of characters" [value]="name">
-          {{ name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </form>
-  <div *ngIf="selectedSet">
+        <mat-form-field *ngIf="selectedSet?.hasCharacters">
+          <mat-select placeholder="Character" formControlName="character">
+            <mat-option *ngFor="let name of characters" [value]="name">
+              {{ name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+      <div *ngIf="selectedSet">
 
-    <wah-data-table
-            id="id"
-            [iconSize]="22"
-            [itemsPerPage]="40"
-            [columns]="table.columns"
-            [data]="table.data"></wah-data-table>
-  </div>
+        <wah-data-table
+                id="id"
+                [iconSize]="22"
+                [itemsPerPage]="40"
+                filterParameter="name"
+                [columns]="table.columns"
+                [data]="table.data"></wah-data-table>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

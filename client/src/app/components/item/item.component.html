@@ -57,19 +57,6 @@
           <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         </div>
 
-        <mat-card *ngIf="selected.item.inventory">
-          <mat-card-header>
-            <mat-card-subtitle>
-              One or more of your characters have this item
-            </mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <strong>Quantity: </strong> {{ selected.item.inventory.quantity }} <br>
-            <strong>Valued at: </strong> {{ selected.item.inventory.sumBuyout | gold }} total. <br>
-            <strong>Inventory status: </strong> {{ selected.item.inventory.characters.toString() }}
-          </mat-card-content>
-        </mat-card>
-
         <wah-line-chart *ngIf="selected.auctionItem && !isMobile()" [data]="selected.auctionItem.auctions">
         </wah-line-chart>
       </div>
@@ -89,6 +76,26 @@
                             [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
+
+          <mat-tab label="Data from TSM">
+            <wah-item-sale-summary *ngIf="selected.item.id"
+                                   [itemId]="selected.item.id">
+            </wah-item-sale-summary>
+
+            <mat-card *ngIf="selected.item.inventory" class="mb-3">
+              <mat-card-header>
+                <mat-card-subtitle>
+                  One or more of your characters have this item
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <strong>Quantity: </strong> {{ selected.item.inventory.quantity }} <br>
+                <strong>Valued at: </strong> {{ selected.item.inventory.sumBuyout | gold }} total. <br>
+                <strong>Inventory status: </strong> {{ selected.item.inventory.characters.toString() }}
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+
           <mat-tab label="Created by" *ngIf="createdBy">
             <wah-data-table [columns]="recipeColumns" [data]="createdBy" [isCrafting]="true" [numOfRows]="20">
             </wah-data-table>

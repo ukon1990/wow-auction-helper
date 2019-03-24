@@ -44,7 +44,8 @@ export class SharedService {
     auctionUpdate: new EventEmitter<boolean>(),
     items: new EventEmitter<boolean>(),
     recipes: new EventEmitter<boolean>(),
-    pets: new EventEmitter<boolean>()
+    pets: new EventEmitter<boolean>(),
+    realms: new EventEmitter<boolean>()
   };
   public static preScrollPosition = 0;
 

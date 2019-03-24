@@ -22,5 +22,36 @@
     <strong>Expenses:</strong> {{ userProfit?.expenses.copper | gold }} <br>
     <strong>Purchases:</strong> {{ userProfit?.purchases.copper | gold }} <br>
     <strong>Profit:</strong> {{ userProfit?.profit | gold }}
+    <Strong>Avg profit per day: </Strong> {{ userProfit?.profit / userProfit?.daysSince | gold }}
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>Sold items:</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <wah-data-table
+                id="id"
+                [iconSize]="22"
+                [columns]="columns"
+                [data]="userProfit?.sales?.items"
+                [maxVisibleRows]="5"></wah-data-table>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>Purchased items:</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <wah-data-table
+                id="id"
+                [iconSize]="22"
+                [columns]="columns"
+                [data]="userProfit?.purchases?.items"
+                [maxVisibleRows]="5"></wah-data-table>
+      </mat-card-content>
+    </mat-card>
   </mat-card-content>
 </mat-card>

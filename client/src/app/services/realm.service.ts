@@ -35,7 +35,9 @@ export class RealmService {
   }
 
   getRealms(region?: string, isRetry?: boolean): Promise<any> {
+    console.log('Realms', Endpoints.getRegion(region));
     let url = '';
+    region = Endpoints.getRegion(region);
 
     if (isRetry) {
       url = `/assets/data/${
@@ -44,7 +46,7 @@ export class RealmService {
       return this._http.post(Endpoints.getLambdaUrl(
         `realm`), {
         locale: localStorage['locale'],
-        region: region
+        region: Endpoints.getRegion(region)
       })
         .toPromise()
         .then(r => this.handleRealms(r));
@@ -87,6 +89,7 @@ export class RealmService {
         SharedService.realms[realm.slug] = realm;
       });
       Realm.gatherRealms();
+      SharedService.events.realms.emit(true);
     } else {
       ErrorReport.sendError('handleRealms', {
         name: 'The app could not fetch the realm data correctly', message: 'No object were found', stack: undefined

@@ -5,6 +5,8 @@ import {ItemInventory} from '../models/item/item';
 
 class TSMCSV {
   characterGuilds: any;
+  csvCancelled: any[];
+  csvExpired: any[];
   csvExpense: any[];
   csvSales: any[];
   csvIncome: any[];
@@ -300,16 +302,17 @@ export class TsmLuaUtil {
   private getUserProfits(result: TSMCSV) {
     const characters = result.characterGuilds;
     result.profitSummary = {};
-    console.log('csv', result);
 
-    Object.keys(result.csvExpense).forEach(realm => {
-      result.profitSummary[realm] = {
-        past24Hours: new UserProfit(1, characters[realm]),
-        past7Days: new UserProfit(7, characters[realm]),
-        past30Days: new UserProfit(30, characters[realm]),
-        past90Days: new UserProfit(90, characters[realm]),
-        total: new UserProfit(undefined, characters[realm])
-      };
+    Object.keys(result.csvCancelled).forEach(realm => {
+      result.profitSummary[realm] = new ProfitSummary(realm, characters);
+
+      result.csvExpired[realm].forEach(row => {
+        this.addUpProfits(result.profitSummary[realm], row, 'expired');
+      });
+
+      result.csvCancelled[realm].forEach(row => {
+        this.addUpProfits(result.profitSummary[realm], row, 'cancelled');
+      });
 
       result.csvBuys[realm].forEach(row => {
         this.addUpProfits(result.profitSummary[realm], row, 'purchases');
@@ -327,9 +330,9 @@ export class TsmLuaUtil {
         this.addUpProfits(result.profitSummary[realm], row, 'sales');
       });
 
+      this.setAndSortItemList(result.profitSummary[realm], 'expired');
+      this.setAndSortItemList(result.profitSummary[realm], 'cancelled');
       this.setAndSortItemList(result.profitSummary[realm], 'purchases');
-      this.setAndSortItemList(result.profitSummary[realm], 'expenses');
-      this.setAndSortItemList(result.profitSummary[realm], 'income');
       this.setAndSortItemList(result.profitSummary[realm], 'sales');
     });
   }
@@ -337,6 +340,7 @@ export class TsmLuaUtil {
   private addUpProfits(profitSummary, row, type: string) {
     profitSummary.past24Hours.add(row, type);
     profitSummary.past7Days.add(row, type);
+    profitSummary.past14Days.add(row, type);
     profitSummary.past30Days.add(row, type);
     profitSummary.past90Days.add(row, type);
     profitSummary.total.add(row, type);
@@ -345,17 +349,39 @@ export class TsmLuaUtil {
   private setAndSortItemList(profitSummary, type: string) {
     profitSummary.past24Hours[type].setAndSortItemList();
     profitSummary.past7Days[type].setAndSortItemList();
+    profitSummary.past14Days[type].setAndSortItemList();
     profitSummary.past30Days[type].setAndSortItemList();
     profitSummary.past90Days[type].setAndSortItemList();
     profitSummary.total[type].setAndSortItemList();
   }
 }
 
+export class ProfitSummary {
+  past24Hours: UserProfit;
+  past7Days: UserProfit;
+  past14Days: UserProfit;
+  past90Days: UserProfit;
+  past30Days: UserProfit;
+  total: UserProfit;
+
+  constructor(realm: string, characters: any) {
+    this.past24Hours = new UserProfit(1, characters[realm]);
+    this.past7Days = new UserProfit(7, characters[realm]);
+    this.past14Days = new UserProfit(14, characters[realm]);
+    this.past30Days = new UserProfit(30, characters[realm]);
+    this.past90Days = new UserProfit(90, characters[realm]);
+    this.total = new UserProfit(undefined, characters[realm]);
+  }
+
+}
+
 export class UserProfit {
-  expenses: UserProfitValue = new UserProfitValue();
-  sales: UserProfitValue = new UserProfitValue();
-  income: UserProfitValue = new UserProfitValue();
-  purchases: UserProfitValue = new UserProfitValue();
+  expired: UserProfitValue = new UserProfitValue('Expired');
+  cancelled: UserProfitValue = new UserProfitValue('Cancelled');
+  expenses: UserProfitValue = new UserProfitValue('Expenses');
+  sales: UserProfitValue = new UserProfitValue('Sales');
+  income: UserProfitValue = new UserProfitValue('Income');
+  purchases: UserProfitValue = new UserProfitValue('Purchases');
   profit = 0;
 
   constructor(public daysSince: number, private characters: any) {
@@ -365,20 +391,24 @@ export class UserProfit {
     const thenVsNow = new Date().getTime() - value.time;
     if (this.isTimeMatch(thenVsNow) && !this.excludeUserCharacters(value)) {
       switch (type) {
+        case 'expired':
+        case 'cancelled':
+          this[type].add(value);
+          break;
         case 'expenses':
-          this.expenses.add(value);
+          this[type].add(value);
           this.profit -= value.amount;
           break;
-        case 'sales':
-          this.sales.add(value);
-          this.profit += value.price * value['quantity'];
-          break;
         case 'income':
-          this.income.add(value);
+          this[type].add(value);
           this.profit += value.amount;
           break;
+        case 'sales':
+          this[type].add(value);
+          this.profit += value.price * value['quantity'];
+          break;
         case 'purchases':
-          this.purchases.add(value);
+          this[type].add(value);
           this.profit -= value.price * value['quantity'];
           break;
       }
@@ -408,16 +438,18 @@ export class UserProfitValue {
   itemMap = {};
   items = [];
 
+  constructor(public category: string) {
+  }
+
   add(value): void {
     if (value.quantity) {
       this.quantity += value.quantity;
       this.copper += this.getCopperValue(value) * value.quantity;
+      this.addItem(value);
     } else {
       this.quantity++;
       this.copper += this.getCopperValue(value);
     }
-
-    this.addItem(value);
   }
 
   private addItem(value): void {
@@ -430,7 +462,8 @@ export class UserProfitValue {
         totalPrice: 0,
         maxPrice: 0,
         minPrice: 0,
-        avgPrice: 0
+        avgPrice: 0,
+        category: this.category
       };
       i = this.itemMap[value.id];
     }
@@ -448,7 +481,7 @@ export class UserProfitValue {
       i.minPrice = this.getCopperValue(value);
     }
 
-    i.totalPrice += this.getCopperValue(value) * i.quantity;
+    i.totalPrice += this.getCopperValue(value) * (value.quantity || 1);
     i.avgPrice = i.totalPrice / i.quantity;
   }
 
@@ -462,6 +495,6 @@ export class UserProfitValue {
   }
 
   private getCopperValue(value) {
-    return value.amount || value.price;
+    return value.amount || value.price || 0;
   }
 }

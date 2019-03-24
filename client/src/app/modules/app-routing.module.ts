@@ -47,6 +47,7 @@ const routes: Routes = [
       {path: 'items', component: DashboardItemsComponent},
       {path: 'sellers', component: DashboardSellersComponent},
       {path: 'ah-summary', component: AhSummaryComponent},
+      {path: 'tsm', component: TsmAddonDbComponent},
       {path: 'manage-dashboards', component: WatchlistComponent}
     ]
   },
@@ -64,8 +65,7 @@ const routes: Routes = [
       {path: 'market-reset', component: MarketResetComponent},
       {path: 'milling-and-prospecting', component: MillingComponent},
       {path: 'disenchanting', component: DisenchantingComponent},
-      {path: 'reputations', component: ReputationsComponent},
-      {path: 'tsm', component: TsmAddonDbComponent}
+      {path: 'reputations', component: ReputationsComponent}
     ]
   },
   {path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService]},
