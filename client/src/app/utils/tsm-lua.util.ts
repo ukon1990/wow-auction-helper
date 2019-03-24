@@ -257,6 +257,9 @@ export class TsmLuaUtil {
         tsmData.bankQuantity[realm].All.forEach(item =>
           this.addItemToInventory(item, map, 'Bank', realm)));
 
+    Object.keys(tsmData.mailQuantity).forEach(realm =>
+      tsmData.mailQuantity[realm].All.forEach(item =>
+        this.addItemToInventory(item, map, 'Mail', realm)));
 
     Object.keys(tsmData.reagentBankQuantity)
       .forEach(realm =>
@@ -355,7 +358,7 @@ export class UserProfit {
           break;
         case 'sales':
           this.sales.add(value);
-          this.profit += value.price;
+          this.profit += value.price * value['quantity'];
           break;
         case 'income':
           this.income.add(value);
@@ -363,7 +366,7 @@ export class UserProfit {
           break;
         case 'purchases':
           this.purchases.add(value);
-          this.profit -= value.price;
+          this.profit -= value.price * value['quantity'];
           break;
       }
     }
@@ -393,10 +396,14 @@ export class UserProfitValue {
   add(value): void {
     if (value.quantity) {
       this.quantity += value.quantity;
+      this.copper += this.getCopperValue(value) * value.quantity;
     } else {
       this.quantity += 1;
+      this.copper += this.getCopperValue(value);
     }
+  }
 
-    this.copper += value.amount || value.price;
+  private getCopperValue(value) {
+    return value.amount || value.price;
   }
 }

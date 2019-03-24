@@ -30,8 +30,10 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
     player: [
       {key: 'name', title: 'Name', dataType: 'name'},
       {key: 'player', title: 'Character', dataType: 'seller'},
+      {key: 'source', title: 'Source', dataType: 'string'},
+      {key: 'otherPlayer', title: 'Other player', dataType: 'seller'},
       {key: 'quantity', title: 'Quantity', dataType: 'number'},
-      {key: 'price', title: 'Price', dataType: 'number'},
+      {key: 'price', title: 'Price', dataType: 'gold'},
       {key: 'stackSize', title: 'Stack size', dataType: 'number'},
       {key: 'time', title: 'Time', dataType: 'date'}
     ],
@@ -127,6 +129,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
   };
 
   subscriptions = new SubscriptionsUtil();
+  private lastModified: Date;
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
@@ -197,13 +200,18 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy {
   importFromFile(fileEvent): void {
     const files = fileEvent.target.files;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = (e) => {
       const data = new TsmLuaUtil().convertList(reader.result);
       this.dataSets.forEach(set =>
         set.data = data[set.name]);
+    this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
 
       this.handleDataSetChange(0);
-      console.log(data);
+      console.log({
+        event: fileEvent,
+        dunno: e,
+        data: data
+      });
     };
     reader.readAsText(files[0]);
   }
