@@ -21,6 +21,7 @@
   </mat-card-header>
   <mat-card-content>
     <wah-data-table [id]="dashboard?.idParam" iconSize="22" [columns]="currentColumns" [filterParameter]="filterParameter" [data]="dashboard?.data" [maxVisibleRows]="maxVisibleRows"
+                    [numOfRows]="20"
       [isCrafting]="dashboard.isCrafting" [hideCraftingDetails]="true"></wah-data-table>
     <!-- detailView -->
     <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0" class="row col-md-12">
