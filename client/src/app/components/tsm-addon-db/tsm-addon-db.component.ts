@@ -4,6 +4,8 @@ import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 import {TsmLuaUtil} from '../../utils/tsm-lua.util';
 import {ObjectUtil} from '../../utils/object.util';
 import {SharedService} from '../../services/shared.service';
+import { Report } from '../../utils/report.util';
+import { DatabaseService } from '../../services/database.service';
 
 @Component({
   selector: 'wah-tsm-addon-db',
@@ -90,10 +92,20 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       columns: this.columns.buys,
       data: [],
       hasCharacters: false
+    },{
+      title: 'Pending mail',
+      name: 'pendingMail',
+      columns: [],
+      data: [],
+      hasCharacters: true
     },
     {
       name: 'auctionQuantity',
-      columns: [],
+      columns: [
+        {key: 'name', title: 'Name', dataType: 'name'},
+        {key: 'character', title: 'character', dataType: 'seller'},
+        {key: 'value', title: 'Auctions', dataType: 'number'}
+      ],
       data: [],
       hasCharacters: true
     }, {
@@ -130,9 +142,10 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
   };
 
   subscriptions = new SubscriptionsUtil();
-  lastModified: Date;
+  lastModified: Date = localStorage['timestamp_tsm_addon_import'] ?
+    new Date(localStorage['timestamp_tsm_addon_import']) : undefined;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private dbService: DatabaseService) {
     this.form = this.formBuilder.group({
       dataset: new FormControl(0),
       realm: new FormControl(),
@@ -158,6 +171,12 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
 
   ngAfterContentInit(): void {
     const realm = SharedService.realms[SharedService.user.realm];
+  
+    if (SharedService.tsmAddonData.characterGuilds) {
+      this.setDataSets(SharedService.tsmAddonData);
+      this.handleDataSetChange(0);
+    }
+
     if (realm) {
       this.form.controls.realm.setValue(realm.name);
     } else {
@@ -166,7 +185,6 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
         () => this.ngAfterContentInit(),
         {terminateUponEvent: true});
     }
-    console.log('realm', this.form.value, realm);
   }
 
   ngOnDestroy(): void {
@@ -189,7 +207,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
   }
 
   private setCharactersOnRealm(realm: string) {
-    if (this.selectedSet.hasCharacters) {
+    if (this.selectedSet && this.selectedSet.hasCharacters) {
       this.characters.length = 0;
       this.characters.push('All');
       if (this.selectedSet.data[this.form.value.realm]) {
@@ -216,22 +234,25 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = new TsmLuaUtil().convertList(reader.result);
-      this.dataSets.forEach(set =>
-        set.data = data[set.name]);
+      this.setDataSets(data);
       this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
 
       this.handleDataSetChange(0);
-      console.log({
-        event: fileEvent,
-        dunno: e,
-        data: data
-      });
+      this.dbService.addTSMAddonData(reader.result, this.lastModified);
+      Report.send('Imported TSM addon data', 'Import');
     };
     reader.readAsText(files[0]);
   }
 
+  setDataSets(data): void {
+    this.dataSets.forEach(set =>
+      set.data = data[set.name]);
+  }
+
   private setTableData(realm: string, character?: string) {
-    console.log(this.dataSets, this.selectedSet, realm, character);
+    if (!this.selectedSet) {
+      return;
+    }
     if (realm && character) {
       this.table.columns = this.selectedSet.columns;
       this.table.data = this.selectedSet.data[realm][character];
@@ -249,7 +270,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
     }
     this.sortTableByTime();
 
-    console.log('table', this.table);
+    console.log('Selected table data', this.table);
   }
 
   private sortTableByTime() {

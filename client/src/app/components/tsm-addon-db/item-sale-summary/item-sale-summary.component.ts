@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy, OnInit, EventEmitter, Output} from '@angular/core';
 import {ProfitSummary, UserProfit} from '../../../utils/tsm-lua.util';
 import {ColumnDescription} from '../../../models/column-description';
 import {SharedService} from '../../../services/shared.service';
@@ -12,6 +12,8 @@ import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 })
 export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
   @Input() itemId: number;
+  @Output() saleRate: EventEmitter<number> = new EventEmitter<number>();
+  readonly LOCAL_STORAGE_KEY = 'item-details-prefered-sale-rate';
   realm: string;
   columns: ColumnDescription[] = [
     {key: 'category', title: 'Category', dataType: 'string'},
@@ -30,7 +32,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
     {key: 'past90Days', title: 'Past 90 days'},
     {key: 'total', title: 'All'}
   ];
-  field = new FormControl('past14Days');
+  field = new FormControl(this.getFormFieldValueFromStorage());
   subscriptions = new SubscriptionsUtil();
   allData = SharedService.tsmAddonData;
   personalSaleRate = 0;
@@ -40,6 +42,11 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
       this.field.valueChanges,
       (setKey) =>
         this.setData(setKey));
+  }
+
+  getFormFieldValueFromStorage(): string {
+    return localStorage[this.LOCAL_STORAGE_KEY] ?
+    localStorage[this.LOCAL_STORAGE_KEY] : 'past90Days';
   }
 
   ngAfterContentInit() {
@@ -56,6 +63,8 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
       return;
     }
     const realms = SharedService.tsmAddonData['profitSummary'];
+    localStorage[this.LOCAL_STORAGE_KEY] = setKey;
+    
     if (realms && realms[this.realm]) {
       const dataset = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit),
         sales = dataset.sales.itemMap[this.itemId],
@@ -84,7 +93,8 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
         total += cancelled.quantity;
       }
 
-      this.personalSaleRate = plus / total;
+      this.personalSaleRate = plus / (total || 1);
+      this.saleRate.emit(this.personalSaleRate);
     }
   }
 }

@@ -27,7 +27,7 @@ export class Item {
 export class ItemInventory {
   id: number;
   name: string;
-  quantity: string;
+  quantity = 0;
   characters: string[] = [];
   buyout: number;
   sumBuyout: number;
@@ -35,12 +35,12 @@ export class ItemInventory {
   constructor(item: any, storedIn: string) {
     this.id = item.id;
     this.name = item.name;
-    this.quantity = item.value || 0;
 
     this.addCharacter(item, storedIn);
   }
 
   addCharacter(item, storedIn: string): void {
+    this.quantity += item.value;
     this.characters.push(`${item.character}(${item.value} in ${storedIn})`);
   }
 }

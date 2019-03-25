@@ -54,8 +54,11 @@
           <strong *ngIf="isUsingWoWUction()">Sale rate:</strong>
           {{ selected.auctionItem.regionSaleRate | percent }}
           <br>
-          <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         </div>
+        <div *ngIf="personalSaleRate">
+          <strong>Personal sale rate: </strong> {{ personalSaleRate | percent }} <br>
+        </div>
+        <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
 
         <wah-line-chart *ngIf="selected.auctionItem && !isMobile()" [data]="selected.auctionItem.auctions">
         </wah-line-chart>
@@ -79,7 +82,8 @@
 
           <mat-tab label="Data from TSM">
             <wah-item-sale-summary *ngIf="selected.item.id"
-                                   [itemId]="selected.item.id">
+                                   [itemId]="selected.item.id"
+                                   (saleRate)="setPersonalSaleRate($event)">
             </wah-item-sale-summary>
 
             <mat-card *ngIf="selected.item.inventory" class="mb-3">
