@@ -1,7 +1,7 @@
 <div class="canvas" *ngIf="storageName">
   <canvas id="{{ storageName }}"></canvas>
 </div>
-<mat-form-field>
+<mat-form-field *ngIf="allowTypeChange">
   <mat-select
           [disableOptionCentering]="true"
           placeholder="Chart type"

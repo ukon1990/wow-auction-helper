@@ -77,7 +77,7 @@ export class LineChartComponent implements AfterContentInit, OnChanges {
     });
   }
 
-  filterData(currentAuction:Auction, firstAuction: Auction) {
+  filterData(currentAuction: Auction, firstAuction: Auction) {
     if (firstAuction.buyout && this.hideOutliers.value) {
       return this.isNotOutlier(currentAuction, firstAuction);
     } else {

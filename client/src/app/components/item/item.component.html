@@ -81,11 +81,6 @@
           </mat-tab>
 
           <mat-tab label="Data from TSM">
-            <wah-item-sale-summary *ngIf="selected.item.id"
-                                   [itemId]="selected.item.id"
-                                   (saleRate)="setPersonalSaleRate($event)">
-            </wah-item-sale-summary>
-
             <mat-card *ngIf="selected.item.inventory" class="mb-3">
               <mat-card-header>
                 <mat-card-subtitle>
@@ -98,6 +93,11 @@
                 <strong>Inventory status: </strong> {{ selected.item.inventory.characters.toString() }}
               </mat-card-content>
             </mat-card>
+
+            <wah-item-sale-summary *ngIf="selected.item.id"
+                                   [itemId]="selected.item.id"
+                                   (saleRate)="setPersonalSaleRate($event)">
+            </wah-item-sale-summary>
           </mat-tab>
 
           <mat-tab label="Created by" *ngIf="createdBy">

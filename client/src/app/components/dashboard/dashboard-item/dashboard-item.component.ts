@@ -42,7 +42,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit 
   }
 
   setData(): void {
-    this.maxVisibleRows = this.detailView ? undefined : 5;
+    this.maxVisibleRows = this.detailView ? 20 : 5;
   }
 
   openClose(): void {

@@ -11,9 +11,9 @@ import {Pet} from '../models/pet';
 import {Recipe} from '../models/crafting/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
-import { TSMCSV, TsmLuaUtil } from '../utils/tsm-lua.util';
-import { ErrorReport } from '../utils/error-report.util';
-import { Report } from '../utils/report.util';
+import {TSMCSV, TsmLuaUtil} from '../utils/tsm-lua.util';
+import {ErrorReport} from '../utils/error-report.util';
+import {Report} from '../utils/report.util';
 
 /**
  * A Class for handeling the indexedDB
@@ -31,13 +31,7 @@ export class DatabaseService {
   readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
-  readonly TSM_ADDON_HISTORY = 'timestamp,data';/*'guildVaults,expiringMail,' +
-    'csvExpired,auctionQuantity,playerProfessions,deMaxQuality,goldLog,classKey,' +
-    'reagentBankQuantity,auctionPrices,mailQuantity,' +
-    'bagQuantity,mailDisenchantablesChar,csvIncome,bankQuantity,expiringAuction,' +
-    'professions,characterGuilds,csvBuys,csvExpense,pendingMail,recentlyMailedList,crafts,mats,' +
-    'destroyingHistory,csvCancelled,guildGoldLog,csvSales,customPriceSources,' +
-    'groups,inboxMessages,groupPriceSource,items,inventoryMap,inventory,profitSummar';*/
+  readonly TSM_ADDON_HISTORY = 'timestamp,data';
 
   constructor(public platform: Platform) {
     this.db = new Dexie('wah-db');
@@ -269,6 +263,7 @@ export class DatabaseService {
           return;
         }
         new TsmLuaUtil().convertList(tsm[0].data);
+        SharedService.events.tsmDataRestored.emit(true);
         console.log('Restored TSM addon historical data from local DB');
       })
       .catch(e => {

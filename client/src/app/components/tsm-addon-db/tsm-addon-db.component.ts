@@ -4,8 +4,8 @@ import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 import {TsmLuaUtil} from '../../utils/tsm-lua.util';
 import {ObjectUtil} from '../../utils/object.util';
 import {SharedService} from '../../services/shared.service';
-import { Report } from '../../utils/report.util';
-import { DatabaseService } from '../../services/database.service';
+import {Report} from '../../utils/report.util';
+import {DatabaseService} from '../../services/database.service';
 
 @Component({
   selector: 'wah-tsm-addon-db',
@@ -92,7 +92,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       columns: this.columns.buys,
       data: [],
       hasCharacters: false
-    },{
+    }, {
       title: 'Pending mail',
       name: 'pendingMail',
       columns: [],
@@ -104,7 +104,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
         {key: 'character', title: 'character', dataType: 'seller'},
-        {key: 'value', title: 'Auctions', dataType: 'number'}
+        {key: 'value', title: 'Quantity', dataType: 'number'}
       ],
       data: [],
       hasCharacters: true
@@ -167,11 +167,15 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       this.form.controls.character.valueChanges,
       (name: string) =>
         this.setTableData(this.form.value.realm, name));
+
+    this.subscriptions.add(
+      SharedService.events.tsmDataRestored,
+      () => this.ngAfterContentInit());
   }
 
   ngAfterContentInit(): void {
     const realm = SharedService.realms[SharedService.user.realm];
-  
+
     if (SharedService.tsmAddonData.characterGuilds) {
       this.setDataSets(SharedService.tsmAddonData);
       this.handleDataSetChange(0);

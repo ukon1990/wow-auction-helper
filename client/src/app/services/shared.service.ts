@@ -46,7 +46,8 @@ export class SharedService {
     items: new EventEmitter<boolean>(),
     recipes: new EventEmitter<boolean>(),
     pets: new EventEmitter<boolean>(),
-    realms: new EventEmitter<boolean>()
+    realms: new EventEmitter<boolean>(),
+    tsmDataRestored: new EventEmitter<boolean>()
   };
   public static preScrollPosition = 0;
 

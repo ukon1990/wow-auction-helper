@@ -472,7 +472,8 @@ export class UserProfitValue {
         maxPrice: 0,
         minPrice: 0,
         avgPrice: 0,
-        category: this.category
+        category: this.category,
+        history: []
       };
       i = this.itemMap[value.id];
     }
@@ -481,6 +482,11 @@ export class UserProfitValue {
     } else {
       i.quantity++;
     }
+    i.history.push({
+      buyout: this.getCopperValue(value),
+      quantity: value.quantity,
+      timestamp: value.time
+    });
 
     if (this.getCopperValue(value) > i.maxPrice) {
       i.maxPrice = this.getCopperValue(value);
