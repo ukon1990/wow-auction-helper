@@ -49,7 +49,7 @@
         <mat-form-field>
           <mat-select placeholder="Dataset" formControlName="dataset">
             <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
-              {{ set.name }}
+              {{ set.title }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -76,7 +76,7 @@
                 id="id"
                 [iconSize]="22"
                 [itemsPerPage]="40"
-                filterParameter="name"
+                [filterParameter]="getFilterParam()"
                 [columns]="table.columns"
                 [data]="table.data"></wah-data-table>
       </div>

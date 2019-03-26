@@ -29,6 +29,7 @@ export class ItemInventory {
   name: string;
   quantity = 0;
   characters: string[] = [];
+  characterMap = {};
   buyout: number;
   sumBuyout: number;
 
@@ -41,6 +42,16 @@ export class ItemInventory {
 
   addCharacter(item, storedIn: string): void {
     this.quantity += item.value;
-    this.characters.push(`${item.character}(${item.value} in ${storedIn})`);
+    if (!this.characterMap[item.character]) {
+      this.characterMap[item.character] = [];
+    }
+
+    this.characterMap[item.character].push(` ${item.value} in ${storedIn}`);
+
+    // Such optimal
+    this.characters.length = 0;
+    Object.keys(this.characterMap).forEach(name => {
+      this.characters.push(` ${name}(${this.characterMap[name].toString()})`);
+    });
   }
 }

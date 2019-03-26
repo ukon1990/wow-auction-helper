@@ -197,6 +197,19 @@ export const seventhLegion = {
         requieredStanding: 'Revered'
       }
     ],
+    Inscription: [
+      {
+        spellId: 284293,
+        name: 'Contract: 7th Legion',
+        rank: 2,
+        cost: [
+          11000000,
+          0,
+          0
+        ],
+        requieredStanding: 'Friendly'
+      }
+    ],
     Jewelcrafting: [
       {
         spellId: 256515,

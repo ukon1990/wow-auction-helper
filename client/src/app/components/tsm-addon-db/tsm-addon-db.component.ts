@@ -52,30 +52,35 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
   };
   dataSets = [
     {
+      title: 'Sold auctions',
       name: 'csvSales',
       columns: this.columns.player,
       data: [],
       hasCharacters: false
     },
     {
+      title: 'Income',
       name: 'csvIncome',
       columns: this.columns.amount,
       data: [],
       hasCharacters: false
     },
     {
+      title: 'Expired auctions',
       name: 'csvExpired',
       columns: this.columns.player,
       data: [],
       hasCharacters: false
     },
     {
+      title: 'Expenses',
       name: 'csvExpense',
       columns: this.columns.amount,
       data: [],
       hasCharacters: false
     },
     {
+      title: 'Cancelled auctions',
       name: 'csvCancelled',
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
@@ -88,6 +93,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       hasCharacters: false
     },
     {
+      title: 'Purchased auctions',
       name: 'csvBuys',
       columns: this.columns.buys,
       data: [],
@@ -100,6 +106,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       hasCharacters: true
     },
     {
+      title: 'Auctions',
       name: 'auctionQuantity',
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
@@ -122,6 +129,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       hasCharacters: false
     },
     {
+      title: 'Gold log',
       name: 'goldLog',
       columns: [
         {key: 'minute', title: 'Time', dataType: 'date'},
@@ -208,6 +216,19 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
     } else {
       this.setCharactersOnRealm(this.form.value.realm);
     }
+  }
+
+  getFilterParam(): string {
+    if (!this.table.data || !this.table.data[0]) {
+      return undefined;
+    }
+
+    if (this.table.data[0].name) {
+      return 'name';
+    } else if (this.table.data[0].source) {
+      return 'type';
+    }
+    return undefined;
   }
 
   private setCharactersOnRealm(realm: string) {

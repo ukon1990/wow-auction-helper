@@ -116,6 +116,19 @@ export const theHonorbound = {
         requieredStanding: 'Revered'
       }
     ],
+    Inscription: [
+      {
+        spellId: 284296,
+        name: 'Contract: The Honorbound',
+        rank: 2,
+        cost: [
+          11000000,
+          0,
+          0
+        ],
+        requieredStanding: 'Friendly'
+      }
+    ],
     Enchanting: [
       {
         spellId: 255098,

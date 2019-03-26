@@ -88,9 +88,17 @@
                 </mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
-                <strong>Quantity: </strong> {{ selected.item.inventory.quantity }} <br>
-                <strong>Valued at: </strong> {{ selected.item.inventory.sumBuyout | gold }} total. <br>
-                <strong>Inventory status: </strong> {{ selected.item.inventory.characters.toString() }}
+                <mat-list dense>
+                  <mat-list-item>
+                    Sum value: {{ selected.item.inventory.quantity * selected.auctionItem.buyout | gold }} total.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Quantity: {{ selected.item.inventory.quantity | number }}
+                  </mat-list-item>
+                  <mat-list-item *ngFor="let char of selected.item.inventory.characters">
+                    {{ char }}
+                  </mat-list-item>
+                </mat-list>
               </mat-card-content>
             </mat-card>
 
