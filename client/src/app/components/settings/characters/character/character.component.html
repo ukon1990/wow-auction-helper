@@ -27,19 +27,24 @@
         <strong>Primary professions</strong>
 
         <mat-list role="list" dense>
-          <mat-list-item role="listitem" *ngFor="let primary of character.professions.primary">
-            <h4 mat-line>{{ primary.name }} ({{ primary.rank }}/{{ primary.max }})</h4>
-            <p mat-line>You know {{ primary.recipes.length }} recipes </p>
-          </mat-list-item>
+          <ng-container *ngFor="let primary of character.professions.primary">
+            <mat-list-item role="listitem" *ngIf="primary.recipes.length > 0 || primary.id === 182 || primary.id === 393 || primary.id === 186">
+              <h4 mat-line>{{ primary.name }}</h4>
+              <p mat-line>You know {{ primary.recipes.length }} recipes </p>
+            </mat-list-item>
+          </ng-container>
         </mat-list>
       </div>
       <div class="col-md-6">
         <strong>Secondary professions</strong>
         <mat-list role="list" dense>
-          <mat-list-item role="listitem" *ngFor="let secondary of character.professions.secondary">
-            <h4 mat-line>{{ secondary.name }} ({{ secondary.rank }}/{{ secondary.max }})</h4>
-            <p mat-line>You know {{ secondary.recipes.length }} recipes </p>
-          </mat-list-item>
+          <ng-container *ngFor="let secondary of character.professions.secondary">
+            <mat-list-item role="listitem" *ngIf="secondary.recipes.length > 0 || secondary.id === 794 || secondary.id === 356">
+              <h4 mat-line>{{ secondary.name }}</h4>
+              <p mat-line>You know {{ secondary.recipes.length }} recipes </p>
+            </mat-list-item>
+          </ng-container>
+
         </mat-list>
       </div>
     </div>
