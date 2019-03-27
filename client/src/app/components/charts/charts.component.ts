@@ -1,25 +1,31 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, OnDestroy} from '@angular/core';
 import {Chart} from 'chart.js';
 import * as distinctColors from 'distinct-colors';
 import {FormControl} from '@angular/forms';
 import {Item} from '../../models/item/item';
 import {ChartData} from '../../models/chart-data.model';
+import {Report} from '../../utils/report.util';
+import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 
 @Component({
   selector: 'wah-charts',
   templateUrl: './charts.component.html',
   styleUrls: ['./charts.component.scss']
 })
-export class ChartsComponent implements AfterViewInit, OnChanges {
+export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() dataMap: Map<any, ChartData>;
   @Input() labels: ChartData[];
+  @Input() datasetLabel: string;
   @Input() storageName;
   @Input() defaultType = 'doughnut';
+  @Input() allowTypeChange = true;
   @Output() selection = new EventEmitter<number>();
 
   chart: Chart;
   chartTypeForm: FormControl = new FormControl();
   colors;
+
+  subscriptions = new SubscriptionsUtil();
 
   constructor() {
   }
@@ -27,21 +33,27 @@ export class ChartsComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {
     this.chartTypeForm.setValue(
       localStorage[this.storageName] ? localStorage[this.storageName] : this.defaultType);
-    this.chartTypeForm.valueChanges.subscribe(type => {
-      setTimeout(() => {
-        this.save();
-        this.setChart();
-      }, 100);
-    });
+    this.subscriptions.add(
+      this.chartTypeForm.valueChanges,
+      (type => {
+        setTimeout(() => {
+          this.save();
+          this.setChart();
+        }, 100);
+      }));
 
     this.setChart();
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes): void {
     setTimeout(() => {
       this.colors = distinctColors({count: this.labels.length});
       this.setChart();
     }, 100);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   setChart(): void {
@@ -56,6 +68,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges {
       type: this.chartTypeForm.value,
       data: {
         datasets: [{
+          label: this.datasetLabel,
           data: this.getData(),
           backgroundColor: this.colors
         }],

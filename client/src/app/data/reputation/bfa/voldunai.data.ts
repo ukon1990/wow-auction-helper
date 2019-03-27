@@ -132,14 +132,14 @@ export const voldunai = {
     Inscription: [
       {
         spellId: 256291,
-        name: 'Contract: Order of Embers',
+        name: 'Contract: Voldunai',
         rank: 2,
         cost: [
           11000000,
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requieredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [

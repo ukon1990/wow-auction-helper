@@ -1,9 +1,12 @@
-import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy, OnInit, EventEmitter, Output} from '@angular/core';
 import {ProfitSummary, UserProfit} from '../../../utils/tsm-lua.util';
 import {ColumnDescription} from '../../../models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {FormControl} from '@angular/forms';
 import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
+import {SummaryCard} from '../../../models/summary-card.model';
+import {Report} from '../../../utils/report.util';
+import {ChartData} from '../../../models/chart-data.model';
 
 @Component({
   selector: 'wah-item-sale-summary',
@@ -12,6 +15,8 @@ import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 })
 export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
   @Input() itemId: number;
+  @Output() saleRate: EventEmitter<number> = new EventEmitter<number>();
+  readonly LOCAL_STORAGE_KEY = 'item-details-prefered-sale-rate';
   realm: string;
   columns: ColumnDescription[] = [
     {key: 'category', title: 'Category', dataType: 'string'},
@@ -30,9 +35,12 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
     {key: 'past90Days', title: 'Past 90 days'},
     {key: 'total', title: 'All'}
   ];
-  field = new FormControl('past14Days');
+  field = new FormControl(this.getFormFieldValueFromStorage());
   subscriptions = new SubscriptionsUtil();
   allData = SharedService.tsmAddonData;
+  chartData: {
+    sales: SummaryCard; purchases: SummaryCard;
+  } = {sales: undefined, purchases: undefined};
   personalSaleRate = 0;
 
   constructor() {
@@ -40,6 +48,11 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
       this.field.valueChanges,
       (setKey) =>
         this.setData(setKey));
+  }
+
+  getFormFieldValueFromStorage(): string {
+    return localStorage[this.LOCAL_STORAGE_KEY] ?
+      localStorage[this.LOCAL_STORAGE_KEY] : 'past90Days';
   }
 
   ngAfterContentInit() {
@@ -56,8 +69,10 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
       return;
     }
     const realms = SharedService.tsmAddonData['profitSummary'];
+    localStorage[this.LOCAL_STORAGE_KEY] = setKey;
+
     if (realms && realms[this.realm]) {
-      const dataset = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit),
+      const dataset: UserProfit = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit),
         sales = dataset.sales.itemMap[this.itemId],
         purchases = dataset.purchases.itemMap[this.itemId],
         expired = dataset.expired.itemMap[this.itemId],
@@ -83,8 +98,33 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
         this.data.push(cancelled);
         total += cancelled.quantity;
       }
+      this.addChartData(dataset, 'sales');
 
-      this.personalSaleRate = plus / total;
+      this.addChartData(dataset, 'purchases');
+
+
+      Report.debug('setData dataset', dataset, this.chartData);
+
+      this.personalSaleRate = plus / (total || 1);
+      this.saleRate.emit(this.personalSaleRate);
     }
+  }
+
+  private addChartData(dataset: UserProfit, type: string) {
+    const item = dataset[type].itemMap[this.itemId];
+    this.chartData[type] = new SummaryCard('', 'line');
+    if (!item) {
+      return;
+    }
+
+    item.history
+      .forEach(h =>
+        this.chartData[type].addEntry(h.timestamp, h.buyout / 10000));
+    this.chartData[type].data.sort((a: ChartData, b: ChartData) =>
+      a.id - b.id);
+
+    this.chartData[type].data.forEach((data, i) =>
+      this.chartData[type].labels.push(
+        new ChartData(data.id, new Date(data.id).toLocaleString())));
   }
 }

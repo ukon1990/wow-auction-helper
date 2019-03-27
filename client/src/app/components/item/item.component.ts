@@ -32,6 +32,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
   selectedTabSubscription: Subscription;
+  personalSaleRate;
   selected = {
     item: undefined,
     auctionItem: undefined,
@@ -129,6 +130,10 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     if (this.selectionSubscription) {
       this.selectionSubscription.unsubscribe();
     }
+  }
+
+  setPersonalSaleRate(saleRate: number): void {
+    this.personalSaleRate = saleRate;
   }
 
   setItemData(): void {

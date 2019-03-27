@@ -95,6 +95,7 @@ import { TsmAddonDbComponent } from './components/tsm-addon-db/tsm-addon-db.comp
 import { ProfitSummaryComponent } from './components/tsm-addon-db/profit-summary/profit-summary.component';
 import { ProfitSummaryCardComponent } from './components/tsm-addon-db/profit-summary-card/profit-summary-card.component';
 import { ItemSaleSummaryComponent } from './components/tsm-addon-db/item-sale-summary/item-sale-summary.component';
+import { AppUpdateComponent } from './components/update/app-update/app-update.component';
 
 
 @NgModule({
@@ -169,7 +170,8 @@ import { ItemSaleSummaryComponent } from './components/tsm-addon-db/item-sale-su
     TsmAddonDbComponent,
     ProfitSummaryComponent,
     ProfitSummaryCardComponent,
-    ItemSaleSummaryComponent
+    ItemSaleSummaryComponent,
+    AppUpdateComponent
   ],
   imports: [
     BrowserModule,

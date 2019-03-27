@@ -27,20 +27,31 @@ export class Item {
 export class ItemInventory {
   id: number;
   name: string;
-  quantity: string;
+  quantity = 0;
   characters: string[] = [];
+  characterMap = {};
   buyout: number;
   sumBuyout: number;
 
   constructor(item: any, storedIn: string) {
     this.id = item.id;
     this.name = item.name;
-    this.quantity = item.value || 0;
 
     this.addCharacter(item, storedIn);
   }
 
   addCharacter(item, storedIn: string): void {
-    this.characters.push(`${item.character}(${item.value} in ${storedIn})`);
+    this.quantity += item.value;
+    if (!this.characterMap[item.character]) {
+      this.characterMap[item.character] = [];
+    }
+
+    this.characterMap[item.character].push(` ${item.value} in ${storedIn}`);
+
+    // Such optimal
+    this.characters.length = 0;
+    Object.keys(this.characterMap).forEach(name => {
+      this.characters.push(` ${name}(${this.characterMap[name].toString()})`);
+    });
   }
 }

@@ -139,7 +139,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requieredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [

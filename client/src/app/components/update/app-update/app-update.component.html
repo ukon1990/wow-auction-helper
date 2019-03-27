@@ -1,0 +1,30 @@
+<div class="full-screen" *ngIf="updateAvailable">
+    <mat-card class="mb-3">
+      <mat-card-header>
+        <mat-card-title>
+          A new version is available, and has been installed on your computer.
+        </mat-card-title>
+        <mat-card-subtitle>
+          Reload or click the button below to go to the new version.
+        </mat-card-subtitle>
+        <div class="action-icon mat-elevation-z5" (click)="close()">
+          <button mat-raised-button class="btn btn-sm">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </mat-card-header>
+
+      <mat-card-actions>
+        <button mat-raised-button (click)="reload()">Reload</button>
+      </mat-card-actions>
+
+      <mat-card-content class="overflow">
+        <div class="scrollable">
+          <wah-changelog></wah-changelog>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  
+  <div *ngIf="updateAvailable " class="backdrop " (click)="close() ">
+  </div>

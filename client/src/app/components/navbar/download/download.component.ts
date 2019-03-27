@@ -173,6 +173,7 @@ export class DownloadComponent implements OnInit {
       await this.setLastUpdateAvailableTime();
       setInterval(() =>
         this.setLastUpdateAvailableTime(), 30000);
+      await this._dbService.getTSMAddonData();
     }
     // TODO: Later => this._itemService.addMissingItems();
   }

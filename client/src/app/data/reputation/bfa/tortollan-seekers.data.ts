@@ -134,7 +134,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requieredStanding: 'Friendly'
       },
       {
         spellId: 256295,
@@ -145,7 +145,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requieredStanding: 'Friendly'
       },
       {
         spellId: 256234,

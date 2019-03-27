@@ -11,6 +11,9 @@ import {Pet} from '../models/pet';
 import {Recipe} from '../models/crafting/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
+import {TSMCSV, TsmLuaUtil} from '../utils/tsm-lua.util';
+import {ErrorReport} from '../utils/error-report.util';
+import {Report} from '../utils/report.util';
 
 /**
  * A Class for handeling the indexedDB
@@ -28,6 +31,7 @@ export class DatabaseService {
   readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
+  readonly TSM_ADDON_HISTORY = 'timestamp,data';
 
   constructor(public platform: Platform) {
     this.db = new Dexie('wah-db');
@@ -225,6 +229,49 @@ export class DatabaseService {
       });
   }
 
+  addTSMAddonData(tsm: any, lastModified: Date): void {
+    if (this.platform.WEBKIT) {
+      return;
+    }
+
+    Report.debug('addTSMAddonData', tsm);
+
+    this.db.table('tsmAddonHistory').clear();
+    this.db.table('tsmAddonHistory')
+      .put({
+        timestamp: lastModified,
+        data: tsm
+      })
+      .then(r => {
+        localStorage['timestamp_tsm_addon_import'] = lastModified;
+        console.log('Successfully added tsm addon history data to local DB');
+      })
+      .catch(error =>
+        ErrorReport.sendError('addTSMAddonData', error));
+  }
+
+
+  getTSMAddonData(): Dexie.Promise<any> {
+    if (this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+
+    return this.db.table('tsmAddonHistory')
+      .toArray()
+      .then(tsm => {
+        if (!tsm[0]) {
+          return;
+        }
+        new TsmLuaUtil().convertList(tsm[0].data);
+        SharedService.events.tsmDataRestored.emit(true);
+        console.log('Restored TSM addon historical data from local DB');
+      })
+      .catch(e => {
+        console.error('Could not restore TSM data', e);
+        SharedService.downloading.tsmAuctions = false;
+      });
+  }
+
   addTSMItems(tsm: Array<TSM>): void {
     if (environment.test || this.platform.WEBKIT) {
       return;
@@ -262,6 +309,15 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+    this.db.version(5).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      tsmAddonHistory: this.TSM_ADDON_HISTORY
+    });
     this.db.version(4).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,

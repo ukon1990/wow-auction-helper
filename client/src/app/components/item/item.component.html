@@ -54,8 +54,11 @@
           <strong *ngIf="isUsingWoWUction()">Sale rate:</strong>
           {{ selected.auctionItem.regionSaleRate | percent }}
           <br>
-          <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         </div>
+        <div *ngIf="personalSaleRate">
+          <strong>Personal sale rate: </strong> {{ personalSaleRate | percent }} <br>
+        </div>
+        <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
 
         <wah-line-chart *ngIf="selected.auctionItem && !isMobile()" [data]="selected.auctionItem.auctions">
         </wah-line-chart>
@@ -78,10 +81,6 @@
           </mat-tab>
 
           <mat-tab label="Data from TSM">
-            <wah-item-sale-summary *ngIf="selected.item.id"
-                                   [itemId]="selected.item.id">
-            </wah-item-sale-summary>
-
             <mat-card *ngIf="selected.item.inventory" class="mb-3">
               <mat-card-header>
                 <mat-card-subtitle>
@@ -89,11 +88,24 @@
                 </mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
-                <strong>Quantity: </strong> {{ selected.item.inventory.quantity }} <br>
-                <strong>Valued at: </strong> {{ selected.item.inventory.sumBuyout | gold }} total. <br>
-                <strong>Inventory status: </strong> {{ selected.item.inventory.characters.toString() }}
+                <mat-list dense>
+                  <mat-list-item>
+                    Sum value: {{ selected.item.inventory.quantity * selected.auctionItem.buyout | gold }} total.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Quantity: {{ selected.item.inventory.quantity | number }}
+                  </mat-list-item>
+                  <mat-list-item *ngFor="let char of selected.item.inventory.characters">
+                    {{ char }}
+                  </mat-list-item>
+                </mat-list>
               </mat-card-content>
             </mat-card>
+
+            <wah-item-sale-summary *ngIf="selected.item.id"
+                                   [itemId]="selected.item.id"
+                                   (saleRate)="setPersonalSaleRate($event)">
+            </wah-item-sale-summary>
           </mat-tab>
 
           <mat-tab label="Created by" *ngIf="createdBy">

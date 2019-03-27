@@ -2,16 +2,17 @@ import * as lua from 'luaparse';
 import {SharedService} from '../services/shared.service';
 import {ObjectUtil} from './object.util';
 import {ItemInventory} from '../models/item/item';
+import { Report } from './report.util';
 
-class TSMCSV {
-  characterGuilds: any;
-  csvCancelled: any[];
-  csvExpired: any[];
-  csvExpense: any[];
-  csvSales: any[];
-  csvIncome: any[];
-  csvBuys: any[];
-  profitSummary: any;
+export class TSMCSV {
+  characterGuilds?: any;
+  csvCancelled?: any[];
+  csvExpired?: any[];
+  csvExpense?: any[];
+  csvSales?: any[];
+  csvIncome?: any[];
+  csvBuys?: any[];
+  profitSummary?: any;
 }
 
 export class TsmLuaUtil {
@@ -41,7 +42,7 @@ export class TsmLuaUtil {
     fields.forEach(field => {
       const fRes = this.convertField(field);
       if (fRes.character && fRes.character.realm) {
-        this.addRealmBoundData(fRes, result);
+        this.addRealmBoundData(fRes, result, field);
 
       } else {
         if (fRes.type === undefined || fRes.type === 'undefined') {
@@ -49,6 +50,8 @@ export class TsmLuaUtil {
           result[fRes.type] = fRes.data;
         }
       }
+
+
     });
 
     this.setInventory(result);
@@ -58,11 +61,13 @@ export class TsmLuaUtil {
     Object.keys(result)
       .forEach(key =>
         SharedService.tsmAddonData[key] = result[key]);
+
+    console.log('Imported TSM history', result);
     return result;
   }
 
 
-  private addRealmBoundData(fRes, result) {
+  private addRealmBoundData(fRes, result, field) {
     if (!result[fRes.type]) {
       result[fRes.type] = {};
     }
@@ -75,6 +80,10 @@ export class TsmLuaUtil {
       result[fRes.type][fRes.character.realm][fRes.character.name] = fRes.data;
 
       this.summerizeData(result, fRes);
+
+      if (Object.keys(result[fRes.type][fRes.character.realm][fRes.character.name]).length === 0) {
+        Report.debug('Field missing data', [fRes, field]);
+      }
 
     } else {
       result[fRes.type][fRes.character.realm] = fRes.data;
@@ -463,7 +472,8 @@ export class UserProfitValue {
         maxPrice: 0,
         minPrice: 0,
         avgPrice: 0,
-        category: this.category
+        category: this.category,
+        history: []
       };
       i = this.itemMap[value.id];
     }
@@ -472,6 +482,11 @@ export class UserProfitValue {
     } else {
       i.quantity++;
     }
+    i.history.push({
+      buyout: this.getCopperValue(value),
+      quantity: value.quantity,
+      timestamp: value.time
+    });
 
     if (this.getCopperValue(value) > i.maxPrice) {
       i.maxPrice = this.getCopperValue(value);
