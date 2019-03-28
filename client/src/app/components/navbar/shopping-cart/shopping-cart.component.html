@@ -1,43 +1,58 @@
 <a class="nav-link dropdown-toggle" href="#" id="shoppingCart"
-  data-toggle="dropdown" aria-haspopup="true" [attr.aria-expanded]="show"
-  (click)="show = !show"
-  matTooptip="Shopping cart">
+   data-toggle="dropdown" aria-haspopup="true" [attr.aria-expanded]="show"
+   (click)="toggleDisplay()"
+   matTooptip="Shopping cart">
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
   {{ getShoppingCart().recipes.length + getShoppingCart().items.length | number }}
 </a>
-<div class="dropdown-menu" aria-labelledby="shoppingCart" [ngClass]="{'show': show}" (click)="setShow()">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <strong class="shopping-cart-header">
-          Shopping cart
-        </strong>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <wah-data-table [id]="'itemID'"
-        [iconSize]="22"
-        [columns]="columnsRecipes"
-        [data]="getShoppingCart().recipes"></wah-data-table>
 
-      <strong class="row col-md-12">Reagents needed:</strong>
-      <wah-data-table [id]="'itemID'"
-        [iconSize]="22"
-        [columns]="columns"
-        [data]="getShoppingCart().reagents"></wah-data-table>
-      Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
-      <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
-      <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
-      <br>
-      <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0" class="row col-md-12">
+<mat-card *ngIf="show" class="full-screen">
+  <mat-card-header>
+    <div class="action-icon mat-elevation-z5" (click)="toggleDisplay()" matTooltip="Close the shopping cart">
+      <button mat-raised-button class="btn btn-sm">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <mat-card-title>
+      <strong class="shopping-cart-header">
+        Shopping cart
+      </strong>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-md-4">
+        <strong class="row col-md-12">Recipes:</strong>
+        <wah-data-table [id]="'itemID'"
+                        [iconSize]="22"
+                        [columns]="columnsRecipes"
+                        [data]="getShoppingCart().recipes">
+        </wah-data-table>
+      </div>
+      <div class="col-md-4">
+        <strong class="row col-md-12">Reagents needed:</strong>
+        <wah-data-table [id]="'itemID'"
+                        [iconSize]="22"
+                        [columns]="columns"
+                        [data]="getShoppingCart().reagents"></wah-data-table>
+        Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
+        <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
+        <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
+        <br>
+        <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0"
+                        class="row col-md-12">
         <textarea matInput placeholder="TSM shopping string"
-          [value]="getShoppingCart().tsmShoppingString"></textarea>
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>
-    </mat-card-actions>
-  </mat-card>
-</div>
+                  [value]="getShoppingCart().tsmShoppingString"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>
+  </mat-card-actions>
+</mat-card>
+
+<div *ngIf="show" class="backdrop" (click)="toggleDisplay()"></div>
