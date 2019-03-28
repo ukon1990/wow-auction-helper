@@ -15,6 +15,8 @@ import {Subscription} from 'rxjs';
 import {ItemService} from '../../services/item.service';
 import {GameBuild} from '../../utils/game-build.util';
 import {UserProfit} from '../../utils/tsm-lua.util';
+import {SubscriptionsUtil} from '../../utils/subscriptions.util';
+import {Report} from '../../utils/report.util';
 
 @Component({
   selector: 'wah-item',
@@ -31,14 +33,13 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
-  selectedTabSubscription: Subscription;
   personalSaleRate;
   selected = {
     item: undefined,
     auctionItem: undefined,
     seller: undefined
   };
-  selectionSubscription: Subscription;
+  subscriptions = new SubscriptionsUtil();
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -91,31 +92,32 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   ];
 
   constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
-    this.angulartics2.eventTrack.next({
-      action: 'Opened',
-      properties: {category: 'Item detail view'},
-    });
-
-    this.selectionSubscription = ItemService.itemSelection.subscribe(() => {
-      this.ngOnInit();
-    });
   }
 
   ngOnInit(): void {
     this.setItemData();
     this.setAuctionItem();
     this.setRecipesForItem();
+
+    Report.send('Opened', 'Item detail view');
   }
 
   ngAfterViewInit(): void {
-    this.selectedTabSubscription = (this.tabs as MatTabGroup)
-      .selectedTabChange.subscribe(
-        (event: MatTabChangeEvent) => {
-          this.angulartics2.eventTrack.next({
-            action: `Changed tab to ${event.tab.textLabel}`,
-            properties: {category: `Item detail view`},
-          });
+    this.subscriptions.add(
+      (this.tabs as MatTabGroup)
+        .selectedTabChange,
+      (event: MatTabChangeEvent) => {
+        this.angulartics2.eventTrack.next({
+          action: `Changed tab to ${event.tab.textLabel}`,
+          properties: {category: `Item detail view`},
         });
+      }
+    );
+
+    this.subscriptions.add(
+      ItemService.itemSelection,
+      () => this.ngOnInit()
+    );
   }
 
   ngAfterContentInit(): void {
@@ -124,12 +126,9 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   ngOnDestroy(): void {
-    this.selectedTabSubscription.unsubscribe();
     SharedService.events.detailPanelOpen.emit(false);
 
-    if (this.selectionSubscription) {
-      this.selectionSubscription.unsubscribe();
-    }
+    this.subscriptions.unsubscribe();
   }
 
   setPersonalSaleRate(saleRate: number): void {
@@ -219,6 +218,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   setAuctionItem(): void {
     this.selected.auctionItem = this.auctionItemExists() ?
       SharedService.auctionItemsMap[this.getAuctionId()] : undefined;
+
+    Report.debug('setAuctionItem', this.selected.auctionItem);
   }
 
   getAuctionId(): any {

@@ -9,13 +9,14 @@ import {AuctionPet} from './auction-pet';
 import {WoWUction} from './wowuction';
 import {PetsService} from '../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
+import {ProfitSummary} from '../../utils/tsm-lua.util';
 
 export class AuctionHandler {
   /**
-    * Organizes the auctions into groups of auctions per item
-    * Used in the auction service.
-    * @param auctions A raw auction array
-    */
+   * Organizes the auctions into groups of auctions per item
+   * Used in the auction service.
+   * @param auctions A raw auction array
+   */
   public static organize(auctions: Array<Auction>, petService?: PetsService): void {
     const t0 = performance.now();
     SharedService.auctionItems.length = 0;
@@ -69,7 +70,7 @@ export class AuctionHandler {
     SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
 
     const t1 = performance.now();
-    console.log(`Auctions organized in ${ t1 - t0 } ms`);
+    console.log(`Auctions organized in ${t1 - t0} ms`);
     setTimeout(() => {
 
       // Trade vendors has to be done before crafting calc
@@ -92,7 +93,7 @@ export class AuctionHandler {
 
 
       const t2 = performance.now();
-      console.log(`Prices calc time ${ t2 - t1 } ms`);
+      console.log(`Prices calc time ${t2 - t1} ms`);
       SharedService.events.auctionUpdate.emit(true);
     }, 100);
   }
@@ -109,11 +110,11 @@ export class AuctionHandler {
     return null;
   }
 
-  private static  isPetNotInList(a) {
+  private static isPetNotInList(a) {
     return !SharedService.auctionItemsMap[AuctionHandler.getPetId(a)];
   }
 
-  private static  isPetMissing(a, petService: PetsService) {
+  private static isPetMissing(a, petService: PetsService) {
     return !SharedService.pets[a.petSpeciesId] && petService;
   }
 
@@ -154,7 +155,20 @@ export class AuctionHandler {
     } else if (AuctionHandler.useWoWUction() && SharedService.wowUction[auction.item]) {
       AuctionHandler.setWowuctionData(auction, tmpAuc);
     }
+
+    AuctionHandler.setUserSaleRateForAuction(auction);
     return tmpAuc;
+  }
+
+  private static setUserSaleRateForAuction(auction: Auction) {
+    const addon = SharedService.tsmAddonData.profitSummary;
+    if (!addon || !SharedService.realms) {
+      return;
+    }
+    const profitSummary: ProfitSummary = addon.profitSummary[SharedService.realms[SharedService.user.realm].name];
+    if (profitSummary) {
+      profitSummary.setSaleRateForItem(auction.item);
+    }
   }
 
   private static setWowuctionData(auction: Auction, tmpAuc) {

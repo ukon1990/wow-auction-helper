@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, Input, OnDestroy, OnInit, EventEmitter, Output} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy, OnInit, EventEmitter, Output, OnChanges, SimpleChanges} from '@angular/core';
 import {ProfitSummary, UserProfit} from '../../../utils/tsm-lua.util';
 import {ColumnDescription} from '../../../models/column-description';
 import {SharedService} from '../../../services/shared.service';
@@ -7,13 +7,14 @@ import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 import {SummaryCard} from '../../../models/summary-card.model';
 import {Report} from '../../../utils/report.util';
 import {ChartData} from '../../../models/chart-data.model';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-item-sale-summary',
   templateUrl: './item-sale-summary.component.html',
   styleUrls: ['./item-sale-summary.component.scss']
 })
-export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
+export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, OnChanges {
   @Input() itemId: number;
   @Output() saleRate: EventEmitter<number> = new EventEmitter<number>();
   readonly LOCAL_STORAGE_KEY = 'item-details-prefered-sale-rate';
@@ -50,6 +51,11 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
         this.setData(setKey));
   }
 
+  ngOnChanges() {
+    setTimeout(() =>
+      this.ngAfterContentInit());
+  }
+
   getFormFieldValueFromStorage(): string {
     return localStorage[this.LOCAL_STORAGE_KEY] ?
       localStorage[this.LOCAL_STORAGE_KEY] : 'past90Days';
@@ -65,48 +71,51 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy {
   }
 
   setData(setKey: string): void {
-    if (!this.realm) {
-      return;
+    try {
+      if (!this.realm) {
+        return;
+      }
+      const realms = SharedService.tsmAddonData['profitSummary'];
+      localStorage[this.LOCAL_STORAGE_KEY] = setKey;
+
+      if (realms && realms[this.realm]) {
+        const dataset: UserProfit = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit);
+        this.data.length = 0;
+        this.setChartData(dataset);
+
+        this.addChartData(dataset, 'sales');
+
+        this.addChartData(dataset, 'purchases');
+
+
+        Report.debug('setData dataset', dataset, this.chartData);
+
+        this.saleRate.emit(this.personalSaleRate);
+      }
+    } catch (error) {
+      ErrorReport.sendError('ItemSaleSummaryComponent.setData', error);
     }
-    const realms = SharedService.tsmAddonData['profitSummary'];
-    localStorage[this.LOCAL_STORAGE_KEY] = setKey;
+  }
 
-    if (realms && realms[this.realm]) {
-      const dataset: UserProfit = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit),
-        sales = dataset.sales.itemMap[this.itemId],
-        purchases = dataset.purchases.itemMap[this.itemId],
-        expired = dataset.expired.itemMap[this.itemId],
-        cancelled = dataset.cancelled.itemMap[this.itemId];
-      let total = 0, plus = 0;
-      this.data.length = 0;
+  private setChartData(dataset: UserProfit) {
+    const sales = dataset.sales.itemMap[this.itemId],
+      purchases = dataset.purchases.itemMap[this.itemId],
+      expired = dataset.expired.itemMap[this.itemId],
+      cancelled = dataset.cancelled.itemMap[this.itemId];
 
-      if (sales) {
-        this.data.push(sales);
-        plus += sales.quantity;
-        total += sales.quantity;
-      }
-      if (purchases) {
-        this.data.push(purchases);
-      }
+    if (sales) {
+      this.data.push(sales);
+    }
+    if (purchases) {
+      this.data.push(purchases);
+    }
 
-      if (expired) {
-        this.data.push(expired);
-        total += expired.quantity;
-      }
+    if (expired) {
+      this.data.push(expired);
+    }
 
-      if (cancelled) {
-        this.data.push(cancelled);
-        total += cancelled.quantity;
-      }
-      this.addChartData(dataset, 'sales');
-
-      this.addChartData(dataset, 'purchases');
-
-
-      Report.debug('setData dataset', dataset, this.chartData);
-
-      this.personalSaleRate = plus / (total || 1);
-      this.saleRate.emit(this.personalSaleRate);
+    if (cancelled) {
+      this.data.push(cancelled);
     }
   }
 

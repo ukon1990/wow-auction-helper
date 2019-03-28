@@ -6,6 +6,7 @@ import {ObjectUtil} from '../../utils/object.util';
 import {SharedService} from '../../services/shared.service';
 import {Report} from '../../utils/report.util';
 import {DatabaseService} from '../../services/database.service';
+import {ErrorReport} from '../../utils/error-report.util';
 
 @Component({
   selector: 'wah-tsm-addon-db',
@@ -15,13 +16,6 @@ import {DatabaseService} from '../../services/database.service';
 export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit {
   @Input() importMode: boolean;
   form: FormGroup;
-  /**
-   amount: 50000000
-   otherPlayer: "Mission"
-   player: "Bløder"
-   time: 1552897387
-   type: "Garrison"
-   */
   columns = {
     amount: [
       {key: 'type', title: 'Source', dataType: 'string'},
@@ -52,7 +46,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
   };
   dataSets = [
     {
-      title: 'Sold auctions',
+      title: 'Sold items',
       name: 'csvSales',
       columns: this.columns.player,
       data: [],
@@ -255,18 +249,26 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
   }
 
   importFromFile(fileEvent): void {
-    const files = fileEvent.target.files;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = new TsmLuaUtil().convertList(reader.result);
-      this.setDataSets(data);
-      this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
+    try {
+      const files = fileEvent.target.files;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new TsmLuaUtil().convertList(reader.result);
+          this.setDataSets(data);
+          this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
 
-      this.handleDataSetChange(0);
-      this.dbService.addTSMAddonData(reader.result, this.lastModified);
-      Report.send('Imported TSM addon data', 'Import');
-    };
-    reader.readAsText(files[0]);
+          this.handleDataSetChange(0);
+          this.dbService.addTSMAddonData(reader.result, this.lastModified);
+          Report.send('Imported TSM addon data', 'Import');
+        } catch (error) {
+          ErrorReport.sendError('importFromFile', error);
+        }
+      };
+      reader.readAsText(files[0]);
+    } catch (error) {
+      ErrorReport.sendError('importFromFile', error);
+    }
   }
 
   setDataSets(data): void {
