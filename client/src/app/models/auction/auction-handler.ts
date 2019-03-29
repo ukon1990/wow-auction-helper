@@ -38,6 +38,7 @@ export class AuctionHandler {
         const petId = AuctionHandler.getPetId(a);
         SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
+        AuctionHandler.setUserSaleRateForAuction(a);
 
         if (AuctionHandler.isPetMissing(a, petService)) {
           /* TODO: Make this less annoying
@@ -55,6 +56,7 @@ export class AuctionHandler {
       } else if (!SharedService.auctionItemsMap[a.item]) {
         SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
         SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
+        AuctionHandler.setUserSaleRateForAuction(a);
       } else {
         AuctionHandler.updateAuctionItem(a);
       }
@@ -155,8 +157,6 @@ export class AuctionHandler {
     } else if (AuctionHandler.useWoWUction() && SharedService.wowUction[auction.item]) {
       AuctionHandler.setWowuctionData(auction, tmpAuc);
     }
-
-    AuctionHandler.setUserSaleRateForAuction(auction);
     return tmpAuc;
   }
 
