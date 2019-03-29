@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../services/shared.service';
 import {Realm} from '../../../models/realm';
@@ -12,35 +12,37 @@ import {CraftingService} from '../../../services/crafting.service';
 import {PetsService} from '../../../services/pets.service';
 import {AuctionHandler} from '../../../models/auction/auction-handler';
 import {DatabaseService} from '../../../services/database.service';
+import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 
 @Component({
   selector: 'wah-general-settings',
   templateUrl: './general-settings.component.html',
   styleUrls: ['./general-settings.component.scss']
 })
-export class GeneralSettingsComponent implements OnInit {
+export class GeneralSettingsComponent implements OnInit, OnDestroy {
   _characterForm: FormGroup;
   locales = SharedService.locales;
   changedLocales = false;
   changedRealm = false;
   regions = [
-    { id: 'eu', name: 'Europe'},
-    { id: 'us', name: 'America'},
-    { id: 'kr', name: 'Korea'},
-    { id: 'tw', name: 'Taiwan'}
+    {id: 'eu', name: 'Europe'},
+    {id: 'us', name: 'America'},
+    {id: 'kr', name: 'Korea'},
+    {id: 'tw', name: 'Taiwan'}
   ];
+  subscriptions = new SubscriptionsUtil();
 
   constructor(private _formBuilder: FormBuilder,
-    private angulartics2: Angulartics2,
-    private _realmService: RealmService,
-    private dbServie: DatabaseService,
-    private itemService: ItemService,
-    private craftingService: CraftingService,
-    private petsService: PetsService,
-    private _auctionService: AuctionsService) {
+              private angulartics2: Angulartics2,
+              private _realmService: RealmService,
+              private dbServie: DatabaseService,
+              private itemService: ItemService,
+              private craftingService: CraftingService,
+              private petsService: PetsService,
+              private _auctionService: AuctionsService) {
     this._characterForm = this._formBuilder.group({
-      region: [ SharedService.user.region, Validators.required],
-      realm: [ SharedService.user.realm, Validators.required],
+      region: [SharedService.user.region, Validators.required],
+      realm: [SharedService.user.realm, Validators.required],
       tsmKey: SharedService.user.apiTsm,
       wowUctionKey: SharedService.user.apiWoWu,
       importString: '',
@@ -48,24 +50,35 @@ export class GeneralSettingsComponent implements OnInit {
       locale: localStorage['locale']
     });
 
-    this._characterForm.controls.region.valueChanges.subscribe(region => {
-      this.getRealms(region);
-      this.changedRealm = true;
-    });
+    this.subscriptions.add(
+      this._characterForm.controls.region.valueChanges,
+      region => {
+        this.getRealms(region);
+        this.changedRealm = true;
+      }
+    );
 
-    this._characterForm.controls.realm.valueChanges.subscribe(realm => {
-      this.changedRealm = true;
-    });
+    this.subscriptions.add(
+      this._characterForm.controls.realm.valueChanges,
+      realm => {
+        this.changedRealm = true;
+      });
 
-    this._characterForm.controls.locale.valueChanges.subscribe(locale => {
-      this.changedLocales = true;
-    });
+    this.subscriptions.add(
+      this._characterForm.controls.locale.valueChanges,
+      locale => {
+        this.changedLocales = true;
+      });
   }
 
   ngOnInit() {
     if (!SharedService.realms || Object.keys(SharedService.realms).length === 0) {
       this.getRealms();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   isWithinSupported3RDPartyAPIRegion(): boolean {
@@ -180,16 +193,16 @@ export class GeneralSettingsComponent implements OnInit {
         JSON.stringify(User.getSettings(true)));
     this.angulartics2.eventTrack.next({
       action: 'Exported settings to string',
-      properties: { category: 'General settings' },
+      properties: {category: 'General settings'},
     });
   }
 
   exportAsFile(): void {
-    FileService.saveJSONToFile(User.getSettings(true), `wah-settings-${ SharedService.user.realm }.json`);
+    FileService.saveJSONToFile(User.getSettings(true), `wah-settings-${SharedService.user.realm}.json`);
 
     this.angulartics2.eventTrack.next({
       action: 'Exported settings to file',
-      properties: { category: 'General settings' },
+      properties: {category: 'General settings'},
     });
   }
 
@@ -201,7 +214,7 @@ export class GeneralSettingsComponent implements OnInit {
 
       this.angulartics2.eventTrack.next({
         action: 'Imported existing setup',
-        properties: { category: 'General settings' },
+        properties: {category: 'General settings'},
       });
 
       this.saveRealmAndRegion();
@@ -222,7 +235,7 @@ export class GeneralSettingsComponent implements OnInit {
 
         this.angulartics2.eventTrack.next({
           action: 'Imported existing setup from file',
-          properties: { category: 'General settings' },
+          properties: {category: 'General settings'},
         });
 
         this.saveRealmAndRegion();

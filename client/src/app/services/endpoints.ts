@@ -16,8 +16,8 @@ export class Endpoints {
       'https://lcrz8vcw36.execute-api.eu-west-1.amazonaws.com/prod/' :
       'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
     US: environment.production ?
-      'https://lpjgdbp9n9.execute-api.us-east-2.amazonaws.com/prod/' :
-      'https://rmq2etod45.execute-api.us-east-2.amazonaws.com/dev/',
+      'https://w7r88eeid9.execute-api.us-west-1.amazonaws.com/prod/' :
+      'https://qbxwravpi9.execute-api.us-west-1.amazonaws.com/dev/',
     KR: environment.production ?
       'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/' :
       'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/dev/',
@@ -64,7 +64,7 @@ export class Endpoints {
   }
 
   public static getRegion(region: string): string {
-    return region ? (region === 'eu' ? 'eu' : 'us') : SharedService.user.region;
+    return region ? region : SharedService.user.region;
   }
 
   private static getBinder(query: string) {

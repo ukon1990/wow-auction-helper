@@ -1,4 +1,4 @@
-import { Auction } from './auction';
+import {Auction} from './auction';
 
 export class AuctionItem {
   itemID: number;
@@ -19,4 +19,12 @@ export class AuctionItem {
   mktPrice = 0;
   vendorSell = 0;
   quantityTotal = 0;
+
+  past24HoursSaleRate?: number;
+  past7DaysSaleRate?: number;
+  past14DaysSaleRate?: number;
+  past30DaysSaleRate?: number;
+  past90DaysSaleRate?: number;
+  totalSaleRate?: number;
+  hasPersonalSaleRate: boolean;
 }
