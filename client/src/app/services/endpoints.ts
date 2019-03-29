@@ -64,7 +64,7 @@ export class Endpoints {
   }
 
   public static getRegion(region: string): string {
-    return region ? (region === 'eu' ? 'eu' : 'us') : SharedService.user.region;
+    return region ? region : SharedService.user.region;
   }
 
   private static getBinder(query: string) {

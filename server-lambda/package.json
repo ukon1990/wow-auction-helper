@@ -9,7 +9,7 @@
     "deploy-dev-kr": "serverless deploy -r ap-northeast-2 -s dev",
     "deploy-dev": "npm run deploy-dev-us && npm run deploy-dev-eu && npm run deploy-dev-kr",
     "deploy-eu": "serverless deploy -r eu-west-1 -s prod",
-    "deploy-us": "serverless deploy -r us-east-2 -s prod",
+    "deploy-us": "serverless deploy -r us-west-1 -s prod",
     "deploy-kr": "serverless deploy -r ap-northeast-2 -s prod",
     "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr",
     "test": "echo \"Error: no test specified\" && exit 1"

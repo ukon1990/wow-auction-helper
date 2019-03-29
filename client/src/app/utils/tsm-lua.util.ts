@@ -292,6 +292,10 @@ export class TsmLuaUtil {
   }
 
   private handleKey(value) {
+    if (!value) {
+      return value;
+    }
+
     try {
       const tmp = value.split(':');
       if (tmp.length > 0) {
@@ -409,7 +413,11 @@ export class TsmLuaUtil {
   }
 
   private isCurrentRealm(realm) {
-    return realm === SharedService.realms[SharedService.user.realm].name;
+    const r = SharedService.realms[SharedService.user.realm];
+    if (!r) {
+      return false;
+    }
+    return realm === r.name;
   }
 
   private addUpProfits(profitSummary, row, type: string) {
