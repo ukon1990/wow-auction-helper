@@ -292,6 +292,10 @@ export class TsmLuaUtil {
   }
 
   private handleKey(value) {
+    if (!value) {
+      return value;
+    }
+
     try {
       const tmp = value.split(':');
       if (tmp.length > 0) {
