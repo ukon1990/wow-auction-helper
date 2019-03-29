@@ -413,7 +413,11 @@ export class TsmLuaUtil {
   }
 
   private isCurrentRealm(realm) {
-    return realm === SharedService.realms[SharedService.user.realm].name;
+    const r = SharedService.realms[SharedService.user.realm];
+    if (!r) {
+      return false;
+    }
+    return realm === r.name;
   }
 
   private addUpProfits(profitSummary, row, type: string) {

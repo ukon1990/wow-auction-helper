@@ -161,11 +161,11 @@ export class AuctionHandler {
   }
 
   private static setUserSaleRateForAuction(auction: Auction) {
-    const addon = SharedService.tsmAddonData.profitSummary;
-    if (!addon || !SharedService.realms) {
+    const profitSummaryMain = SharedService.tsmAddonData.profitSummary;
+    if (!profitSummaryMain || !SharedService.realms) {
       return;
     }
-    const profitSummary: ProfitSummary = addon.profitSummary[SharedService.realms[SharedService.user.realm].name];
+    const profitSummary: ProfitSummary = profitSummaryMain[SharedService.realms[SharedService.user.realm].name];
     if (profitSummary) {
       profitSummary.setSaleRateForItem(auction.item);
     }
