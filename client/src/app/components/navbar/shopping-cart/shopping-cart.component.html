@@ -48,6 +48,24 @@
                   [value]="getShoppingCart().tsmShoppingString"></textarea>
         </mat-form-field>
       </div>
+
+
+      <div class="col-md-4">
+        <strong class="row col-md-12">From your inventory:</strong>
+        <wah-data-table [id]="'itemID'"
+                        [iconSize]="22"
+                        [columns]="columns"
+                        [data]="getShoppingCart().reagents"></wah-data-table>
+        Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
+        <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
+        <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
+        <br>
+        <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0"
+                        class="row col-md-12">
+        <textarea matInput placeholder="TSM shopping string"
+                  [value]="getShoppingCart().tsmShoppingString"></textarea>
+        </mat-form-field>
+      </div>
     </div>
   </mat-card-content>
   <mat-card-actions>

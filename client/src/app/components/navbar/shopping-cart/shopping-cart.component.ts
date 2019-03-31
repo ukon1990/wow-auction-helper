@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { SharedService } from '../../../services/shared.service';
-import { ShoppingCart, ShoppingCartRecipe } from '../../../models/shopping-cart';
-import { User } from '../../../models/user/user';
-import { Recipe } from '../../../models/crafting/recipe';
-import { ColumnDescription } from '../../../models/column-description';
-import { Angulartics2 } from 'angulartics2';
+import {SharedService} from '../../../services/shared.service';
+import {ShoppingCart, ShoppingCartRecipe} from '../../../models/shopping-cart';
+import {User} from '../../../models/user/user';
+import {Recipe} from '../../../models/crafting/recipe';
+import {ColumnDescription} from '../../../models/column-description';
+import {Angulartics2} from 'angulartics2';
 import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
+import {Report} from '../../../utils/report.util';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -15,25 +16,30 @@ import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   show: boolean;
-  columnsRecipes: Array<ColumnDescription> = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'quantity', title: 'Qty', dataType: 'input-number' },
-    { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-    { key: '', title: '', dataType: 'cart-delete' }
+  columnsRecipes: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'quantity', title: 'Qty', dataType: 'input-number'},
+    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    {key: '', title: '', dataType: 'cart-delete'}
   ];
-  columns: Array<ColumnDescription> = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'quantity', title: 'Qty', dataType: 'number' },
-    { key: 'buyout', title: 'Buyout', dataType: 'gold' }
+  columns: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'quantity', title: 'Qty', dataType: 'number'},
+    {key: 'buyout', title: 'Buyout', dataType: 'gold'}
   ];
+
+  columnsInventory: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'quantity', title: 'Qty', dataType: 'number'},
+    {key: 'characters', title: 'Characters', dataType: 'string'}
+  ];
+
   subscriptions = new SubscriptionsUtil();
 
-  constructor(private angulartics2: Angulartics2) { }
+  constructor() {
+  }
 
   ngOnInit() {
-    // TSM import thingy
-    // Auksjoner
-    // Shopping cart
 
     this.subscriptions.add(
       SharedService.events.shopingCart,
@@ -70,10 +76,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   clearShoppingCart(): void {
     this.getShoppingCart().clear();
-    this.angulartics2.eventTrack.next({
-      action: 'Cleared cart',
-      properties: { category: 'Shopping cart' },
-    });
+    Report.send('Cleared cart', 'Shopping cart');
   }
 
   getUser(): User {
@@ -85,14 +88,19 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   }
 
   private handleShoppingCartUpdate(data: any) {
-    return undefined;
+    // Make sure to split stuff into three lists
+    // - Vendor bought
+    // - Buy from AH
+    // - Got it in my inventory
   }
 
   private handleAHUpdate() {
-    return undefined;
+    // Update need to be bought costs
+    // Make sure to split vendor items into it's own list
   }
 
   private handleTSMAddonDataUpdate() {
+    // Update inventory status
     return undefined;
   }
 }

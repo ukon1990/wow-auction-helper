@@ -15,6 +15,8 @@ export class TSMCSV {
   csvIncome?: any[];
   csvBuys?: any[];
   profitSummary?: any;
+  inventory?: object;
+  inventoryMap?: object;
 }
 
 export class TsmLuaUtil {

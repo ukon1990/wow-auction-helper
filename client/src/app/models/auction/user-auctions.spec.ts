@@ -3,7 +3,7 @@ import {Character} from '../character/character';
 import {Auction} from './auction';
 import {AuctionItem} from './auction-item';
 
-fdescribe('UserAuctions', () => {
+describe('UserAuctions', () => {
   let userAuctions: UserAuctions;
   const realm1 = 'emerald dream', realm2 = 'razuvious',
     character1 = 'orange', character2 = 'Банан';
