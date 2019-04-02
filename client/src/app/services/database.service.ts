@@ -237,7 +237,7 @@ export class DatabaseService {
       return;
     }
 
-    Report.debug('addTSMAddonData', tsm);
+    Report.debug('DatabaseService.addTSMAddonData', tsm);
 
     this.db.table('tsmAddonHistory').clear();
     this.db.table('tsmAddonHistory')
@@ -250,7 +250,7 @@ export class DatabaseService {
         console.log('Successfully added tsm addon history data to local DB');
       })
       .catch(error =>
-        ErrorReport.sendError('addTSMAddonData', error));
+        ErrorReport.sendError('DatabaseService.addTSMAddonData', error));
   }
 
 

@@ -22,7 +22,7 @@ fdescribe('ShoppingCartUtil', () => {
 
     SharedService.tsmAddonData.inventoryMap = {
       'realm': {
-        25: inventoryItem
+        158188: inventoryItem
       }
     };
     recipe = SharedService.recipesMap[264769];
@@ -55,6 +55,20 @@ fdescribe('ShoppingCartUtil', () => {
     });
 
     it('can add sum recipe', () => {
+      /* TODO: Remember to add stuff to known recipes
+      const subRecipe = SharedService.itemRecipeMap[158188][0],
+       oldROI = subRecipe.roi;
+      subRecipe.roi = 50000;
+      console.log('Recipe', SharedService.itemRecipeMap[158188][0]);
+      expect(SharedService.itemRecipeMap[158188][0].roi).toBe(10);
+      subRecipe.roi = oldROI;*/
+    });
+  });
+
+  describe('split', () => {
+    it('can get items to get from inventory', () => {
+      expect(cart.sources.inventory[0].quantity).toBe(4);
+      expect(cart.sources.ah[0].quantity).toBe(4);
     });
   });
 

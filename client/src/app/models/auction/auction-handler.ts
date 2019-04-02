@@ -73,31 +73,28 @@ export class AuctionHandler {
 
     const t1 = performance.now();
     console.log(`Auctions organized in ${t1 - t0} ms`);
-    setTimeout(() => {
+    // Trade vendors has to be done before crafting calc
+    TradeVendors.setValues();
 
-      // Trade vendors has to be done before crafting calc
-      TradeVendors.setValues();
+    Crafting.calculateCost();
 
-      Crafting.calculateCost();
+    // Grouping auctions by seller
+    Seller.setItemClasses();
 
-      // Grouping auctions by seller
-      Seller.setItemClasses();
+    // ProspectingAndMillingUtil.setCosts();
 
-      // ProspectingAndMillingUtil.setCosts();
+    ProspectingAndMillingUtil.calculateCost();
 
-      ProspectingAndMillingUtil.calculateCost();
+    // Dashboard -> Needs to be done after trade vendors
+    Dashboard.addDashboards();
 
-      // Dashboard -> Needs to be done after trade vendors
-      Dashboard.addDashboards();
-
-      SharedService.user.shoppingCart.restore();
-      SharedService.user.shoppingCart.calculateCartCost();
+    SharedService.user.shoppingCart.restore();
+    SharedService.user.shoppingCart.calculateCartCost();
 
 
-      const t2 = performance.now();
-      console.log(`Prices calc time ${t2 - t1} ms`);
-      SharedService.events.auctionUpdate.emit(true);
-    }, 100);
+    const t2 = performance.now();
+    console.log(`Prices calc time ${t2 - t1} ms`);
+    SharedService.events.auctionUpdate.emit(true);
   }
 
   private static petHasAuctions(a) {
