@@ -1,19 +1,21 @@
-import { ColumnDescription } from './column-description';
-import { SharedService } from '../services/shared.service';
-import { Item } from './item/item';
-import { Notification } from './user/notification';
-import { GoldPipe } from '../pipes/gold.pipe';
-import { WatchlistItem, WatchlistGroup } from './watchlist/watchlist';
-import { itemClasses } from './item/item-classes';
-import { Seller } from './seller';
-import { AuctionItem } from './auction/auction-item';
-import { Filters } from './filtering';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { Remains } from './item/remains.model';
-import { ProspectingAndMillingUtil } from '../utils/prospect-milling.util';
-import { EventEmitter } from '@angular/core';
-import { DefaultDashboardSettings } from './dashboard/default-dashboard-settings.model';
-import { Crafting } from './crafting/crafting';
+import {ColumnDescription} from './column-description';
+import {SharedService} from '../services/shared.service';
+import {Item} from './item/item';
+import {Notification} from './user/notification';
+import {GoldPipe} from '../pipes/gold.pipe';
+import {WatchlistItem, WatchlistGroup} from './watchlist/watchlist';
+import {itemClasses} from './item/item-classes';
+import {Seller} from './seller';
+import {AuctionItem} from './auction/auction-item';
+import {Filters} from './filtering';
+import {FormControl, FormGroup, FormBuilder} from '@angular/forms';
+import {Remains} from './item/remains.model';
+import {ProspectingAndMillingUtil} from '../utils/prospect-milling.util';
+import {EventEmitter} from '@angular/core';
+import {DefaultDashboardSettings} from './dashboard/default-dashboard-settings.model';
+import {Crafting} from './crafting/crafting';
+import {Report} from '../utils/report.util';
+import {ErrorReport} from '../utils/error-report.util';
 
 export class Dashboard {
   public static fails = [];
@@ -55,17 +57,17 @@ export class Dashboard {
     this.title = title;
     this.idParam = 'name';
     const sellerColumns = [
-      { key: 'name', title: 'Name', dataType: 'name' },
-      { key: 'liquidity', title: 'Liquidity', dataType: 'gold' },
-      { key: 'volume', title: 'Volume', dataType: 'number' },
-      { key: 'numOfAuctions', title: 'Auctions', dataType: 'number' }
-    ],
+        {key: 'name', title: 'Name', dataType: 'name'},
+        {key: 'liquidity', title: 'Liquidity', dataType: 'gold'},
+        {key: 'volume', title: 'Volume', dataType: 'number'},
+        {key: 'numOfAuctions', title: 'Auctions', dataType: 'number'}
+      ],
       crafterColumns = [
-        { key: 'name', title: 'Name', dataType: 'name' },
-        { key: 'rank', title: 'Rank', dataType: '' },
-        { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-        { key: 'roi', title: 'Profit', dataType: 'gold' },
-        { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+        {key: 'name', title: 'Name', dataType: 'name'},
+        {key: 'rank', title: 'Rank', dataType: ''},
+        {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+        {key: 'roi', title: 'Profit', dataType: 'gold'},
+        {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
       ];
     this.settings = SharedService.defaultDashboardSettingsListMap[type];
     if (this.settings) {
@@ -92,10 +94,10 @@ export class Dashboard {
       case Dashboard.TYPES.MOST_AVAILABLE_ITEMS:
         this.idParam = 'itemID';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'quantityTotal', title: 'Stock', dataType: 'number' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'quantityTotal', title: 'Stock', dataType: 'number'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
         ];
         this.addAPIColumnsAtPosition(3);
         this.groupItemsByAvailability();
@@ -116,10 +118,10 @@ export class Dashboard {
       case Dashboard.TYPES.POTENTIAL_DEALS:
         this.idParam = 'itemID';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'bid', title: 'Bid', dataType: 'gold' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'] }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+          {key: 'bid', title: 'Bid', dataType: 'gold'},
+          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
         ];
         this.addAPIColumnsAtPosition(3);
         this.setPotentialDeals();
@@ -128,14 +130,14 @@ export class Dashboard {
       case Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT:
         this.idParam = 'item';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
-          { key: 'buyout', title: 'Min buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
-          { key: 'roi', title: 'Profit', dataType: 'gold' },
-          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true },
-          { key: 'quantity', title: 'Size', dataType: 'number' },
-          { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
+          {key: 'buyout', title: 'Min buyout/item', dataType: 'gold-per-item', hideOnMobile: true},
+          {key: 'roi', title: 'Profit', dataType: 'gold'},
+          {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true},
+          {key: 'quantity', title: 'Size', dataType: 'number'},
+          {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
+          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
         ];
         this.addAPIColumnsAtPosition(5);
         this.setCheapBidsWithLowTimeLeft();
@@ -144,14 +146,14 @@ export class Dashboard {
       case Dashboard.TYPES.CHEAP_BIDS:
         this.idParam = 'item';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
-          { key: 'buyout', title: 'Min buyout/item', dataType: 'gold-per-item', hideOnMobile: true },
-          { key: 'roi', title: 'Profit', dataType: 'gold' },
-          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true },
-          { key: 'quantity', title: 'Size', dataType: 'number' },
-          { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
+          {key: 'buyout', title: 'Min buyout/item', dataType: 'gold-per-item', hideOnMobile: true},
+          {key: 'roi', title: 'Profit', dataType: 'gold'},
+          {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true},
+          {key: 'quantity', title: 'Size', dataType: 'number'},
+          {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
+          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
         ];
         this.addAPIColumnsAtPosition(5);
         this.setCheapBids();
@@ -160,12 +162,12 @@ export class Dashboard {
       case Dashboard.TYPES.WATCH_LIST:
         this.idParam = 'itemID';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'criteria', title: 'Criteria', dataType: '' },
-          { key: 'compareTo', title: 'Compared to', dataType: '' },
-          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+          {key: 'criteria', title: 'Criteria', dataType: ''},
+          {key: 'compareTo', title: 'Compared to', dataType: ''},
+          {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'},
+          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
         ];
         this.addAPIColumnsAtPosition(4);
         this.setWatchListAlerts(array[0]);
@@ -182,10 +184,10 @@ export class Dashboard {
       case Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL:
         this.idParam = 'itemID';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'vendorSell', title: 'Vendor sell', dataType: 'gold' },
-          { key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+          {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'},
+          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
         ];
         this.addAPIColumnsAtPosition(3);
         this.setCheaperThanVendorSell();
@@ -193,18 +195,18 @@ export class Dashboard {
       case Dashboard.TYPES.TRADE_VENDOR_VALUES:
         this.idParam = 'itemID';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'bestValueName', title: 'Target', dataType: 'name' },
-          { key: 'value', title: 'Value', dataType: 'gold' }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'bestValueName', title: 'Target', dataType: 'name'},
+          {key: 'value', title: 'Value', dataType: 'gold'}
         ];
         this.setTradeVendorValues();
         break;
       case Dashboard.TYPES.MILLING:
         this.idParam = 'id';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'yield', title: 'Profit', dataType: 'gold' }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+          {key: 'yield', title: 'Profit', dataType: 'gold'}
 
         ];
         this.shuffles(ProspectingAndMillingUtil.mills);
@@ -212,9 +214,9 @@ export class Dashboard {
       case Dashboard.TYPES.PROSPECTING:
         this.idParam = 'id';
         this.columns = [
-          { key: 'name', title: 'Name', dataType: 'name' },
-          { key: 'buyout', title: 'Buyout', dataType: 'gold' },
-          { key: 'yield', title: 'Profit', dataType: 'gold' }
+          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+          {key: 'yield', title: 'Profit', dataType: 'gold'}
         ];
         this.shuffles(ProspectingAndMillingUtil.prospecting);
         break;
@@ -223,9 +225,9 @@ export class Dashboard {
 
   public static addLoadingDashboards(): void {
     const columns = [
-      { key: 'name', title: '', dataType: '' },
-      { key: 'name', title: '', dataType: '' },
-      { key: 'name', title: '', dataType: '' }
+      {key: 'name', title: '', dataType: ''},
+      {key: 'name', title: '', dataType: ''},
+      {key: 'name', title: '', dataType: ''}
     ];
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
@@ -250,126 +252,129 @@ export class Dashboard {
     let db: Dashboard;
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
+    try {
+      // Items
+      db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_CRAFTS].title,
+        Dashboard.TYPES.PROFITABLE_CRAFTS);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    // Items
-    db = new Dashboard(
-      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_CRAFTS].title,
-      Dashboard.TYPES.PROFITABLE_CRAFTS);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
-
-    db = new Dashboard(
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS].title,
         Dashboard.TYPES.PROFITABLE_KNOWN_CRAFTS);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    db = new Dashboard(
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.WATCH_LIST_CRAFTS].title,
         Dashboard.TYPES.WATCH_LIST_CRAFTS);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
-
-    // The users watchlists
-    SharedService.user.watchlist.groups.forEach(group => {
-      db = new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]);
-
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
-    });
+
+      // The users watchlists
+      SharedService.user.watchlist.groups.forEach(group => {
+        db = new Dashboard(group.name, Dashboard.TYPES.WATCH_LIST, [group]);
+
+        if (db.data.length > 0 && !db.isDisabled) {
+          SharedService.itemDashboards.push(db);
+        }
+      });
 
 
-    db = new Dashboard(
-      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
-      Dashboard.TYPES.MILLING);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
+        Dashboard.TYPES.MILLING);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    db = new Dashboard(
-      SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
-      Dashboard.TYPES.PROSPECTING);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      db = new Dashboard(
+        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
+        Dashboard.TYPES.PROSPECTING);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    db = new Dashboard(
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MOST_AVAILABLE_ITEMS].title,
         Dashboard.TYPES.MOST_AVAILABLE_ITEMS);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
-
-    if (SharedService.user.apiToUse !== 'none') {
-      db = new Dashboard(
-          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
-          Dashboard.TYPES.POTENTIAL_DEALS);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.itemDashboards.push(db);
       }
-    }
-    db = new Dashboard(
+
+      if (SharedService.user.apiToUse !== 'none') {
+        db = new Dashboard(
+          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
+          Dashboard.TYPES.POTENTIAL_DEALS);
+        if (db.data.length > 0 && !db.isDisabled) {
+          SharedService.itemDashboards.push(db);
+        }
+      }
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS].title,
         Dashboard.TYPES.CHEAP_BIDS);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    db = new Dashboard(
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT].title,
         Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    db = new Dashboard(
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL].title,
         Dashboard.TYPES.CHEAPER_THAN_VENDOR_SELL);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    db = new Dashboard(
+      db = new Dashboard(
         SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.TRADE_VENDOR_VALUES].title,
         Dashboard.TYPES.TRADE_VENDOR_VALUES);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.itemDashboards.push(db);
-    }
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.itemDashboards.push(db);
+      }
 
-    // Sellers
-    db = new Dashboard(
-      'Top sellers by liquidity',
-      Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.sellerDashboards.push(db);
-    }
-
-    db = new Dashboard(
-      'Top sellers by volume',
-      Dashboard.TYPES.TOP_SELLERS_BY_VOLUME);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.sellerDashboards.push(db);
-    }
-
-    db = new Dashboard(
-      'Top sellers by active auctions',
-      Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS);
-    if (db.data.length > 0 && !db.isDisabled) {
-      SharedService.sellerDashboards.push(db);
-    }
-
-    SharedService.sellersByItemClass.forEach(c => {
+      // Sellers
       db = new Dashboard(
-        `Top sellers by volume for the item class ${c.name}`,
-          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers);
+        'Top sellers by liquidity',
+        Dashboard.TYPES.TOP_SELLERS_BY_LIQUIDITY);
       if (db.data.length > 0 && !db.isDisabled) {
         SharedService.sellerDashboards.push(db);
       }
-    });
+
+      db = new Dashboard(
+        'Top sellers by volume',
+        Dashboard.TYPES.TOP_SELLERS_BY_VOLUME);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.sellerDashboards.push(db);
+      }
+
+      db = new Dashboard(
+        'Top sellers by active auctions',
+        Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS);
+      if (db.data.length > 0 && !db.isDisabled) {
+        SharedService.sellerDashboards.push(db);
+      }
+
+      SharedService.sellersByItemClass.forEach(c => {
+        db = new Dashboard(
+          `Top sellers by volume for the item class ${c.name}`,
+          Dashboard.TYPES.TOP_SELLERS_BY_AUCTIONS_FOR_CLASS, c.sellers);
+        if (db.data.length > 0 && !db.isDisabled) {
+          SharedService.sellerDashboards.push(db);
+        }
+      });
+    } catch (error) {
+      ErrorReport.sendError('addDashboards', error);
+    }
 
     Dashboard.itemEvents.emit(SharedService.itemDashboards);
     Dashboard.sellerEvents.emit(SharedService.sellerDashboards);
@@ -377,9 +382,9 @@ export class Dashboard {
 
   private addAPIColumnsAtPosition(index: number): void {
     if (SharedService.user.apiToUse !== 'none') {
-      this.columns.splice(index, 0, { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
-      this.columns.splice(index, 0, { key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
-      this.columns.splice(index, 0, { key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true });
+      this.columns.splice(index, 0, {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
+      this.columns.splice(index, 0, {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+      this.columns.splice(index, 0, {key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
     }
   }
 
@@ -411,7 +416,7 @@ export class Dashboard {
         Filters.isSaleRateMatch(item.itemID, form) &&
         Filters.isDailySoldMatch(item.itemID, form)) {
         const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
-          obj = { itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal), compareTo: item.compareTo };
+          obj = {itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal), compareTo: item.compareTo};
         this.data.push(obj);
         if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
           this.tsmShoppingString += `${
@@ -708,6 +713,7 @@ export class Dashboard {
     SharedService.sellers.forEach(s => this.data.push(s));
     this.data.sort((a, b) => b.auctions.length - a.auctions.length);
   }
+
   private groupSellersByVolume(sellers: Array<Seller>): void {
     this.data.length = 0;
     sellers.forEach(s => this.data.push(s));
@@ -716,8 +722,7 @@ export class Dashboard {
 
   private groupItemsByAvailability(): void {
     this.data.length = 0;
-    this.data = SharedService.auctionItems.
-      sort((a, b) => b.quantityTotal - a.quantityTotal);
+    this.data = SharedService.auctionItems.sort((a, b) => b.quantityTotal - a.quantityTotal);
   }
 
   private groupSellerByLiquidity(): void {

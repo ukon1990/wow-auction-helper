@@ -1,6 +1,7 @@
 import {GoldPipe} from '../pipes/gold.pipe';
 import {Recipe} from '../models/crafting/recipe';
 import {Reagent} from '../models/crafting/reagent';
+import {SharedService} from '../services/shared.service';
 
 export class ShoppingCartUtil {
   /**
@@ -36,6 +37,10 @@ export class ShoppingCart {
 
   }
 
+  upgrade(old: any): void {
+    // TODO: Do this
+  }
+
   add(recipe: Recipe, quantity: number = 1): void {
     if (this.recipeMap[recipe.spellID]) {
       (this.recipeMap[recipe.spellID] as ShoppingCartItem)
@@ -64,7 +69,44 @@ export class ShoppingCart {
       });
   }
 
-  remove(id: number): void {
+  remove(id: number, quantity?: number): void {
+    const recipe = SharedService.recipesMap[id],
+      cartRecipe: ShoppingCartItem = this.recipeMap[id];
+    if (!recipe || !cartRecipe) {
+      return;
+    }
+
+    if (!quantity) {
+      quantity = cartRecipe.quantity;
+    }
+
+    cartRecipe.decrement(quantity);
+
+    if (cartRecipe.quantity <= 0) {
+      this.removeFromList(cartRecipe, this.recipes, this.recipeMap);
+    }
+
+    recipe.reagents
+      .forEach((reagent: Reagent) => {
+        if (this.reagentMap[reagent.itemID]) {
+          const cartReagent = (this.reagentMap[reagent.itemID] as ShoppingCartItem);
+
+          cartReagent.decrement(
+            reagent.count * quantity);
+
+          if (cartReagent.quantity <= 0) {
+            this.removeFromList(cartReagent, this.reagents, this.reagentMap);
+          }
+        }
+      });
+  }
+
+  private removeFromList(cartItem: ShoppingCartItem, array: ShoppingCartItem[], map: object) {
+    const index = array
+      .findIndex((item) =>
+        item === cartItem);
+    array.splice(index, 1);
+    delete map[cartItem.id];
   }
 }
 
