@@ -4,6 +4,7 @@ import {Reagent} from '../models/crafting/reagent';
 import {SharedService} from '../services/shared.service';
 import {Item} from '../models/item/item';
 import {AuctionItem} from '../models/auction/auction-item';
+import {Auction} from '../models/auction/auction';
 
 export class ShoppingCartUtil {
   /**
@@ -38,14 +39,21 @@ export class ShoppingCart {
   sources = {
     inventory: [],
     ah: [],
-    vendor: []
+    vendor: [],
+    farm: []
   };
+  sumCost = 0;
+  sumTotalCost = 0;
 
   constructor() {
 
   }
 
   upgrade(old: any): void {
+    // TODO: Do this
+  }
+
+  import(data: object): void {
     // TODO: Do this
   }
 
@@ -151,11 +159,15 @@ export class ShoppingCart {
     let addedCount = this.handleInventorySource(inventory, reagent);
 
     if (addedCount < reagent.quantity) {
-      addedCount += this.handleVendorSource(reagent);
+      addedCount += this.handleVendorSource(reagent, addedCount);
     }
 
     if (addedCount < reagent.quantity) {
+      addedCount += this.handleAuctionSource(reagent, addedCount);
+    }
 
+    if (addedCount < reagent.quantity) {
+      this.handleFarmSource(reagent, addedCount);
     }
   }
 
@@ -175,26 +187,118 @@ export class ShoppingCart {
     return addedCount;
   }
 
+  calculateCosts(): void {
+    this.sumCost = 0;
+    this.sources.vendor
+      .forEach((reagent: ShoppingCartItem) => {
+        reagent.cost = (SharedService.items[reagent.id] as Item)
+          .itemSource.soldBy[0]
+          .cost * reagent.quantity;
+        this.sumCost += reagent.cost;
+      });
+    this.sources.ah
+      .forEach((reagent: ShoppingCartItem) => {
+        const result = this.getSumCostOfItem(reagent.id, reagent.quantity);
+        reagent.cost = result.need.cost;
+        reagent.avgCost = reagent.cost / reagent.quantity;
+
+        reagent.totalCost = result.total.cost;
+        reagent.totalCount = result.total.count;
+        this.sumCost += reagent.cost;
+        this.sumTotalCost += reagent.totalCost;
+      });
+  }
+
+  /*
+   Calculates the cost of buying an item, assuming that we buy whatever
+   stacks that are available until we have the correct quantity
+   */
+  private getSumCostOfItem(id: number, quantity: number): {
+    need: { cost: number; count: number },
+    total: { cost: number; count: number }
+  } {
+    const auctionItem: AuctionItem = SharedService.auctionItemsMap[id],
+      result = {
+        need: {
+          cost: 0,
+          count: 0
+        },
+        total: {
+          cost: 0,
+          count: 0
+        }
+      };
+    if (auctionItem) {
+      auctionItem.auctions.forEach((item: Auction) => {
+        if (result.need.count >= quantity) {
+          return;
+        }
+
+
+        if (item.quantity + result.need.count > quantity) {
+          const perItem = item.buyout / item.quantity;
+          const need = (quantity - (item.quantity + result.need.count)) * -1;
+          result.need.cost += need * perItem;
+          result.need.count += need;
+
+          console.log('auctionhouse.need', need);
+        } else {
+          result.need.cost += item.buyout;
+          result.need.count += item.quantity;
+        }
+
+        result.total.cost += item.buyout;
+        result.total.count += item.quantity;
+      });
+    }
+    return result;
+  }
+
   private handleVendorSource(reagent: ShoppingCartItem, currentQuantity: number): number {
     const item: Item = SharedService.items[reagent.id],
-      auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id];
-    let addedCount = 0;
+      auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id],
+      need = reagent.quantity - currentQuantity;
 
-    if (this.isAvailableAtVendor(item)) {
-      // TODO: Verify that the vendor item is actually cheaper also
-      addedCount = reagent.quantity - currentQuantity;
+    if (this.isAvailableAtVendor(item) && this.isVendorCheaperThanAH(item, auctionItem)) {
+      this.sources.vendor.push(new ShoppingCartItem(reagent.id, need));
+      return need;
     }
+    return 0;
+  }
 
-    return addedCount;
+  private isVendorCheaperThanAH(item: Item, auctionItem: AuctionItem) {
+    return item.itemSource.soldBy[0] && item.itemSource.soldBy[0].cost < auctionItem.buyout;
   }
 
   private isAvailableAtVendor(item: Item): boolean {
     return item.itemSource && item.itemSource.soldBy && item.itemSource.soldBy.length > 0;
   }
+
+  private handleAuctionSource(reagent: ShoppingCartItem, addedCount: number) {
+    const need = reagent.quantity - addedCount,
+      auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id];
+
+    if (need > 0 && auctionItem && auctionItem.quantityTotal > need) {
+      const cartItem = new ShoppingCartItem(reagent.id, need);
+      this.sources.ah.push(cartItem);
+      return cartItem.quantity;
+    }
+
+    return 0;
+  }
+
+  private handleFarmSource(reagent: ShoppingCartItem, addedCount: number) {
+    this.sources.farm.push(
+      new ShoppingCartItem(reagent.id, reagent.quantity - addedCount));
+  }
 }
 
 export class ShoppingCartItem {
   subCraft: ShoppingCartItem;
+  cost = 0;
+  avgCost = 0;
+  totalCost = 0;
+  totalCount = 0;
 
   constructor(public id: number, public quantity: number, private subRecipe?: Recipe) {
     if (subRecipe) {

@@ -9,6 +9,7 @@ import {ItemService} from '../services/item.service';
 import {PetsService} from '../services/pets.service';
 import {User} from '../models/user/user';
 import {AuctionsService} from '../services/auctions.service';
+import {RealmService} from '../services/realm.service';
 
 declare function require(moduleName: string): any;
 
@@ -16,6 +17,7 @@ export class MockLoaderUtil {
 
   initBaseData() {
     environment.test = true;
+    this.setRealms();
     this.setUser();
     this.setItems();
     this.setPets();
@@ -61,7 +63,7 @@ export class MockLoaderUtil {
 
   setUser(): void {
     localStorage['region'] = 'eu';
-    localStorage['realm'] = 'realm';
+    localStorage['realm'] = 'draenor';
     localStorage['character'] = '';
 
     localStorage['api_tsm'] = null;
@@ -71,5 +73,11 @@ export class MockLoaderUtil {
     localStorage['timestamp_news'] = '123';
 
     User.restore();
+  }
+
+  private setRealms() {
+    const realms = this.getFile('realms');
+    const service = new RealmService(null, null, null);
+    service.handleRealms(realms);
   }
 }

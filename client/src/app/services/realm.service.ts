@@ -80,7 +80,7 @@ export class RealmService {
     this.matSnackBar.open(message, 'Ok', {duration: 3000});
   }
 
-  private handleRealms(r: Object) {
+  public handleRealms(r: Object) {
     if (ObjectUtil.isAPopulatedObject(r) && ObjectUtil.isArray(r['realms'])) {
       Object.keys(SharedService.realms).forEach(key => {
         delete SharedService.realms[key];

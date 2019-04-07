@@ -21,9 +21,24 @@ fdescribe('ShoppingCartUtil', () => {
       'bags');
 
     SharedService.tsmAddonData.inventoryMap = {
-      'realm': {
+      'Draenor': {
         158188: inventoryItem
       }
+    };
+
+    SharedService.items[39354].itemSource = {
+      soldBy: [{
+        id: 66,
+        location: [12],
+        maxlevel: 10,
+        minlevel: 10,
+        name: 'Tharynn Bouden',
+        react: [1, -1],
+        tag: 'Trade Supplies',
+        stock: -1,
+        cost: 15,
+        stack: 5
+      }]
     };
     recipe = SharedService.recipesMap[264769];
   });
@@ -65,10 +80,47 @@ fdescribe('ShoppingCartUtil', () => {
     });
   });
 
-  describe('split', () => {
+  describe('calculateCost', () => {
+    beforeEach(() => {
+      cart.add(recipe, 2);
+    });
+
+    it('Can calculate cost from vendor', () => {
+      cart.calculateCosts();
+      expect(cart.sources.vendor[0].cost).toBe(30);
+    });
+
+    it('Can calculate cost from ah', () => {
+      cart.calculateCosts();
+      console.log('auctionhouse', SharedService.auctionItemsMap[158188]);
+      expect(cart.sources.ah[0].cost).toBe(2249995);
+    });
+
+    it('Can calculate the total cost', () => {
+      cart.calculateCosts();
+      expect(cart.sumCost).toBe(2249995 + 30);
+    });
+  });
+
+  describe('setSources', () => {
+    beforeEach(() => {
+      cart.add(recipe, 2);
+    });
+
     it('can get items to get from inventory', () => {
       expect(cart.sources.inventory[0].quantity).toBe(4);
-      expect(cart.sources.ah[0].quantity).toBe(4);
+      expect(cart.sources.ah[0].quantity).toBe(12);
+      expect(cart.sources.vendor[0].quantity).toBe(2);
+    });
+  });
+
+  describe('getSumCostOfItem', () => {
+    it('Can calculate cost with only lowest buyout as price', () => {
+      expect(0).toBe(0);
+    });
+
+    it('Can calculate cost by counting up form the lowest price', () => {
+      expect(0).toBe(0);
     });
   });
 
