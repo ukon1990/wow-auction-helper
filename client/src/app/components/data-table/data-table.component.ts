@@ -355,16 +355,25 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (column.key) {
       this.updateCartCountForRecipe(
         recipe as ShoppingCartItem, newValue);
+    } else if (recipe instanceof Recipe) {
+      this.addRecipeToCart(recipe as Recipe, newValue);
     } else {
-      const cart = SharedService.user.shoppingCart;
-      if (cart.recipeMap[recipe.spellID]) {
-        this.updateCartCountForRecipe(
-          cart.recipeMap[recipe.spellID] as ShoppingCartItem, newValue);
-      } else {
-        SharedService.user.shoppingCart.add(
-          recipe,
-          newValue);
+      const r: Recipe = SharedService.recipesMapPerItemKnown[recipe[this.id]];
+      if (r) {
+        this.addRecipeToCart(r, newValue);
       }
+    }
+  }
+
+  private addRecipeToCart(recipe: any, newValue) {
+    const cart = SharedService.user.shoppingCart;
+    if (cart.recipeMap[recipe.spellID]) {
+      this.updateCartCountForRecipe(
+        cart.recipeMap[recipe.spellID] as ShoppingCartItem, newValue);
+    } else {
+      SharedService.user.shoppingCart.add(
+        recipe,
+        newValue);
     }
   }
 
@@ -379,5 +388,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
         recipe.id,
         diff * -1);
     }
+  }
+
+  isKnownRecipe(item: any) {
+    const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id];
+    if (SharedService.recipesMapPerItemKnown[id])  {
+      return true;
+    }
+    return false;
   }
 }

@@ -67,7 +67,8 @@ export class Dashboard {
         {key: 'rank', title: 'Rank', dataType: ''},
         {key: 'buyout', title: 'Buyout', dataType: 'gold'},
         {key: 'roi', title: 'Profit', dataType: 'gold'},
-        {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
+        {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'},
+        {key: '', title: 'Actions', dataType: 'action', actions: ['wowhead', 'item-info']}
       ];
     this.settings = SharedService.defaultDashboardSettingsListMap[type];
     if (this.settings) {
@@ -167,8 +168,9 @@ export class Dashboard {
           {key: 'criteria', title: 'Criteria', dataType: ''},
           {key: 'compareTo', title: 'Compared to', dataType: ''},
           {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'},
-          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
+          {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
         ];
+
         this.addAPIColumnsAtPosition(4);
         this.setWatchListAlerts(array[0]);
         break;
