@@ -1,15 +1,13 @@
-import { Recipe } from './crafting/recipe';
-import { Reagent } from './crafting/reagent';
-import { AuctionItem } from './auction/auction-item';
-import { Item } from './item/item';
-import { SharedService } from '../services/shared.service';
-import { GoldPipe } from '../pipes/gold.pipe';
-import { CustomProcs } from './crafting/custom-proc';
+import {Recipe} from './crafting/recipe';
+import {AuctionItem} from './auction/auction-item';
+import {SharedService} from '../services/shared.service';
+import {GoldPipe} from '../pipes/gold.pipe';
+import {CustomProcs} from './crafting/custom-proc';
 
 /**
  * Local storage value: shopping_cart
  */
-export class ShoppingCart {
+export class ShoppingCartOld {
   private pipe: GoldPipe = new GoldPipe();
 
   tsmShoppingString = '';

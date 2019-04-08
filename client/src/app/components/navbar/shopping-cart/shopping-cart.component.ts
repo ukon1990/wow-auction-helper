@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../services/shared.service';
-import {ShoppingCart, ShoppingCartRecipe} from '../../../models/shopping-cart';
 import {User} from '../../../models/user/user';
 import {Recipe} from '../../../models/crafting/recipe';
 import {ColumnDescription} from '../../../models/column-description';
-import {Angulartics2} from 'angulartics2';
 import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 import {Report} from '../../../utils/report.util';
+import {ShoppingCart} from '../../../models/shopping/shopping-cart.model';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -14,6 +13,7 @@ import {Report} from '../../../utils/report.util';
   styleUrls: ['./shopping-cart.component.scss']
 })
 export class ShoppingCartComponent implements OnInit, OnDestroy {
+  cart: ShoppingCart = SharedService.user.shoppingCart;
 
   show: boolean;
   columnsRecipes: ColumnDescription[] = [
@@ -55,6 +55,17 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
       SharedService.events.auctionUpdate,
       () => this.handleAHUpdate()
     );
+
+    this.subscriptions.add(
+      SharedService.events.recipes,
+      () =>
+        this.setCart());
+  }
+
+  private setCart() {
+    SharedService.user.shoppingCart = new ShoppingCart();
+    this.cart = SharedService.user.shoppingCart;
+    this.cart.calculateCosts();
   }
 
   ngOnDestroy(): void {
@@ -66,16 +77,8 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
       SharedService.recipesMap[spellID] : new Recipe();
   }
 
-  getShoppingCart(): ShoppingCart {
-    return SharedService.user.shoppingCart;
-  }
-
-  removeRecipeFromCart(recipe: ShoppingCartRecipe, index: number): void {
-    this.getShoppingCart().removeRecipe(recipe, index);
-  }
-
   clearShoppingCart(): void {
-    this.getShoppingCart().clear();
+    this.cart.clear();
     Report.send('Cleared cart', 'Shopping cart');
   }
 
@@ -101,6 +104,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   private handleTSMAddonDataUpdate() {
     // Update inventory status
+    this.setCart();
     return undefined;
   }
 }

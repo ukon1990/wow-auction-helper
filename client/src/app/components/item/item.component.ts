@@ -206,7 +206,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       return;
     }
     SharedService.user.shoppingCart
-      .addEntry(1, SharedService.recipesMapPerItemKnown[SharedService.selectedItemId]);
+      .add(SharedService.recipesMapPerItemKnown[SharedService.selectedItemId]);
 
     this.angulartics2.eventTrack.next({
       action: 'Added to recipe shopping cart',

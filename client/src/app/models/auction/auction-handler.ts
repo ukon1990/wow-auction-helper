@@ -10,6 +10,7 @@ import {WoWUction} from './wowuction';
 import {PetsService} from '../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ProfitSummary} from '../../utils/tsm-lua.util';
+import {ShoppingCart} from '../shopping/shopping-cart.model';
 
 export class AuctionHandler {
   /**
@@ -88,8 +89,7 @@ export class AuctionHandler {
     // Dashboard -> Needs to be done after trade vendors
     Dashboard.addDashboards();
 
-    SharedService.user.shoppingCart.restore();
-    SharedService.user.shoppingCart.calculateCartCost();
+    SharedService.user.shoppingCart.calculateCosts();
 
 
     const t2 = performance.now();

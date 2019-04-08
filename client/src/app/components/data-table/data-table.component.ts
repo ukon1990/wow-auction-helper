@@ -11,13 +11,14 @@ import {Item} from '../../models/item/item';
 import {Seller} from '../../models/seller';
 import {AuctionPet} from '../../models/auction/auction-pet';
 import {CustomPrices} from '../../models/crafting/custom-price';
-import {ShoppingCartRecipe} from '../../models/shopping-cart';
 import {Angulartics2} from 'angulartics2';
 import {CustomProcs} from '../../models/crafting/custom-proc';
 import {Watchlist} from '../../models/watchlist/watchlist';
 import {ItemService} from '../../services/item.service';
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
+import {Report} from '../../utils/report.util';
+import {ShoppingCartItem} from '../../models/shopping/shopping-cart.model';
 
 @Component({
   selector: 'wah-data-table',
@@ -143,17 +144,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   addEntryToCart(entry: any): void {
     if (entry.spellID) {
-      SharedService.user.shoppingCart.addEntry(1, entry, undefined);
-      this.angulartics2.eventTrack.next({
-        action: 'Added recipe',
-        properties: {category: 'Shopping cart'},
-      });
+      SharedService.user.shoppingCart.add(entry);
+      Report.send('Added recipe', 'Shopping cart');
     } else {
-      SharedService.user.shoppingCart.addEntry(1, undefined, entry);
-      this.angulartics2.eventTrack.next({
-        action: 'Added item',
-        properties: {category: 'Shopping cart'},
-      });
+      // TODO: Add item -> SharedService.user.shoppingCart.add(entry);
+      // Report.send('Added item', 'Shopping cart');
     }
   }
 
@@ -296,8 +291,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.filteredData.splice(pagignationIndex + i, 1);
   }
 
-  removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
-    SharedService.user.shoppingCart.removeRecipe(recipe, index);
+  removeRecipe(recipe: ShoppingCartItem, index: number): void {
+    SharedService.user.shoppingCart.remove(recipe.id);
     this.angulartics2.eventTrack.next({
       action: 'Removed recipe',
       properties: {category: 'Shopping cart'},

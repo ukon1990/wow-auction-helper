@@ -1,8 +1,8 @@
-import {MockLoaderUtil} from '../mocks/mock-loader.util';
-import {SharedService} from '../services/shared.service';
-import {ItemInventory} from '../models/item/item';
-import {Recipe} from '../models/crafting/recipe';
-import {ShoppingCart} from './shopping-cart.util';
+import {MockLoaderUtil} from '../../mocks/mock-loader.util';
+import {SharedService} from '../../services/shared.service';
+import {ItemInventory} from '../item/item';
+import {Recipe} from '../crafting/recipe';
+import {ShoppingCart} from './shopping-cart.model';
 
 fdescribe('ShoppingCartUtil', () => {
   let recipe: Recipe,
@@ -77,6 +77,71 @@ fdescribe('ShoppingCartUtil', () => {
       console.log('Recipe', SharedService.itemRecipeMap[158188][0]);
       expect(SharedService.itemRecipeMap[158188][0].roi).toBe(10);
       subRecipe.roi = oldROI;*/
+    });
+  });
+
+  describe('upgrade', () => {
+    it('Can upgrade', () => {
+      const oldData = {
+        'recipes': [{
+          'quantity': 1,
+          'intermediateCount': 0,
+          'reagents': [{
+            'intermediateCount': 0,
+            'itemID': 39354,
+            'quantity': 1
+          }, {
+            'intermediateCount': 0,
+            'itemID': 158188,
+            'quantity': 8
+          }],
+          'spellID': 264766,
+          'itemID': 158201
+        }, {
+          'quantity': 1,
+          'intermediateCount': 0,
+          'reagents': [{
+            'intermediateCount': 0,
+            'itemID': 152877,
+            'quantity': 4
+          }, {
+            'intermediateCount': 0,
+            'itemID': 152876,
+            'quantity': 3
+          }, {
+            'intermediateCount': 0,
+            'itemID': 152875,
+            'quantity': 15
+          }],
+          'spellID': 255098,
+          'itemID': 153442
+        }],
+        'reagents': [{
+          'intermediateCount': 0,
+          'itemID': 39354,
+          'quantity': 1
+        }, {
+          'intermediateCount': 0,
+          'itemID': 158188,
+          'quantity': 8
+        }, {
+          'intermediateCount': 0,
+          'itemID': 152877,
+          'quantity': 4
+        }, {
+          'intermediateCount': 0,
+          'itemID': 152876,
+          'quantity': 3
+        }, {
+          'intermediateCount': 0,
+          'itemID': 152875,
+          'quantity': 15
+        }],
+        'items': []
+      };
+      cart.upgrade(oldData);
+      expect(cart.recipes.length).toBe(2);
+      expect(cart.reagents.length).toBe(5);
     });
   });
 

@@ -4,7 +4,7 @@ import {
 } from '@angular/core/testing';
 import { User } from './user/user';
 import { Recipe } from './crafting/recipe';
-import { ShoppingCart } from './shopping-cart';
+import { ShoppingCartOld } from './shopping-cart';
 import { SharedService } from '../services/shared.service';
 import { AuctionItem } from './auction/auction-item';
 
@@ -71,7 +71,7 @@ describe('ShoppingCart', () => {
   });
 
   it('Adding recipes to the list, should workas expected', () => {
-    const cart: ShoppingCart = new ShoppingCart();
+    const cart: ShoppingCartOld = new ShoppingCartOld();
     SharedService.user.useIntermediateCrafting = false;
     cart.addEntry(1, bindingOfHaste);
     expect(cart.reagents[1].quantity).toBe(35);
@@ -80,7 +80,7 @@ describe('ShoppingCart', () => {
   });
 
   it('Adding recipes to the list with intermediate craft, should workas expected', () => {
-    const cart: ShoppingCart = new ShoppingCart();
+    const cart: ShoppingCartOld = new ShoppingCartOld();
     SharedService.user.useIntermediateCrafting = true;
     cart.addEntry(1, bindingOfHaste);
     expect(cart.reagents[1].quantity).toBe(11.667);
@@ -89,7 +89,7 @@ describe('ShoppingCart', () => {
   });
 
   it('Can remove recipe', () => {
-    const cart: ShoppingCart = new ShoppingCart();
+    const cart: ShoppingCartOld = new ShoppingCartOld();
     SharedService.user.useIntermediateCrafting = true;
     cart.addEntry(1, bindingOfHaste);
     cart.addEntry(1, bindingOfHaste);

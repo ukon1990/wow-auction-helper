@@ -5,7 +5,7 @@
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
-  {{ getShoppingCart().recipes.length + getShoppingCart().items.length | number }}
+  {{ cart.recipes.length | number }}
 </a>
 
 <mat-card *ngIf="show" class="full-screen">
@@ -29,42 +29,55 @@
         <wah-data-table [id]="'itemID'"
                         [iconSize]="22"
                         [columns]="columnsRecipes"
-                        [data]="getShoppingCart().recipes">
+                        [data]="cart.recipes">
         </wah-data-table>
       </div>
       <div class="col-md-4">
         <strong class="row col-md-12">Reagents needed:</strong>
-        <wah-data-table [id]="'itemID'"
+        <wah-data-table [id]="'id'"
                         [iconSize]="22"
                         [columns]="columns"
-                        [data]="getShoppingCart().reagents"></wah-data-table>
-        Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
-        <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
-        <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
-        <br>
-        <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0"
-                        class="row col-md-12">
-        <textarea matInput placeholder="TSM shopping string"
-                  [value]="getShoppingCart().tsmShoppingString"></textarea>
-        </mat-form-field>
+                        [data]="cart.reagents"></wah-data-table>
       </div>
 
-
       <div class="col-md-4">
-        <strong class="row col-md-12">From your inventory:</strong>
-        <wah-data-table [id]="'itemID'"
-                        [iconSize]="22"
-                        [columns]="columns"
-                        [data]="getShoppingCart().reagents"></wah-data-table>
-        Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
-        <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
-        <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
+
+        <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
+        <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
+        <strong>Profit: </strong> {{ cart.profit | gold }} <br>
+        <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }}
         <br>
-        <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0"
+        <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
                         class="row col-md-12">
         <textarea matInput placeholder="TSM shopping string"
-                  [value]="getShoppingCart().tsmShoppingString"></textarea>
+                  [value]="cart.tsmShoppingString"></textarea>
         </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <strong class="row col-md-12">From your inventory:</strong>
+        <wah-data-table [id]="'id'"
+                        [iconSize]="22"
+                        [columns]="columns"
+                        [data]="cart.sources.inventory"></wah-data-table>
+      </div>
+
+      <div class="col-md-4">
+        <strong class="row col-md-12">From AH:</strong>
+        <wah-data-table [id]="'id'"
+                        [iconSize]="22"
+                        [columns]="columns"
+                        [data]="cart.sources.ah"></wah-data-table>
+      </div>
+
+      <div class="col-md-4">
+        <strong class="row col-md-12">To farm:</strong>
+        <wah-data-table [id]="'id'"
+                        [iconSize]="22"
+                        [columns]="columns"
+                        [data]="cart.sources.farm"></wah-data-table>
       </div>
     </div>
   </mat-card-content>
