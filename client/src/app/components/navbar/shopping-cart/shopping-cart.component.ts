@@ -30,8 +30,11 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   columnsInventory: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'number'},
-    {key: 'characters', title: 'Characters', dataType: 'string'}
+    {key: 'quantity', title: 'Need', dataType: 'number'},
+    {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
+    {key: 'inventoryValue', title: 'Buy price', dataType: 'gold'},
+    {key: 'avgCost', title: 'Avg buy price', dataType: 'gold'}
+    // {key: 'characters', title: 'Characters', dataType: 'string'}
   ];
 
   subscriptions = new SubscriptionsUtil();
@@ -100,6 +103,8 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   private handleAHUpdate() {
     // Update need to be bought costs
     // Make sure to split vendor items into it's own list
+    this.cart.setSources();
+    this.cart.calculateCosts();
   }
 
   private handleTSMAddonDataUpdate() {

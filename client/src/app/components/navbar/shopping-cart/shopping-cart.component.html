@@ -44,8 +44,8 @@
 
         <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
         <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
+        <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
         <strong>Profit: </strong> {{ cart.profit | gold }} <br>
-        <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }}
         <br>
         <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
                         class="row col-md-12">
@@ -60,7 +60,7 @@
         <strong class="row col-md-12">From your inventory:</strong>
         <wah-data-table [id]="'id'"
                         [iconSize]="22"
-                        [columns]="columns"
+                        [columns]="columnsInventory"
                         [data]="cart.sources.inventory"></wah-data-table>
       </div>
 
