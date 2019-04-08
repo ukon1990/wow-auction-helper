@@ -64,5 +64,5 @@ export class ItemInventory {
 export class ItemPurchase {
   buyout: number;
   quantity: number;
-  timestamp: Date;
+  timestamp: number;
 }

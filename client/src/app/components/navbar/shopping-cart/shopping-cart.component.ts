@@ -25,15 +25,15 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'quantity', title: 'Qty', dataType: 'number'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold'}
+    {key: 'buyout', title: 'Min buyout', dataType: 'gold'}
   ];
 
   columnsInventory: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'quantity', title: 'Need', dataType: 'number'},
     {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
-    {key: 'inventoryValue', title: 'Buy price', dataType: 'gold'},
-    {key: 'avgCost', title: 'Avg buy price', dataType: 'gold'}
+    {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
+    {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'}
     // {key: 'characters', title: 'Characters', dataType: 'string'}
   ];
 

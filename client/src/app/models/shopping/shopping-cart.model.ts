@@ -26,6 +26,7 @@ export class ShoppingCart {
   sumCost = 0;
   sumTotalCost = 0;
   profit = 0;
+  sumEstimatedInventoryCost = 0;
   tsmShoppingString = '';
 
   constructor() {
@@ -233,7 +234,8 @@ export class ShoppingCart {
     if (!item) {
       return;
     }
-    const history: ItemPurchase[] = [];
+    const history: ItemPurchase[] = [], used = [];
+    reagent.inventoryValue = 0;
 
     item.history
       .forEach((purchase: ItemPurchase) => {
@@ -242,24 +244,33 @@ export class ShoppingCart {
 
     history
       .sort((a: ItemPurchase, b: ItemPurchase) =>
-        a.buyout - b.buyout);
-    Report.debug('ShoppingCart.history', history);
+        b.timestamp - a.timestamp);
 
     history.forEach((purchase: ItemPurchase) => {
       if (quantity <= quantityFound) {
         return;
       }
 
+      if (purchase.quantity + quantityFound > quantity) {
+        reagent.inventoryValue += purchase.buyout * (quantity - quantityFound);
+        Report.debug(`ShoppingCart.history ${ reagent.id }`, purchase.buyout, quantity, quantityFound, reagent);
+      } else {
+        reagent.inventoryValue += purchase.buyout * purchase.quantity;
+        Report.debug(`ShoppingCart.history ${ reagent.id } - else`, purchase.buyout, quantity, quantityFound, reagent);
+      }
+      used.push(purchase);
+
       quantityFound += purchase.quantity;
-      reagent.inventoryValue += purchase.buyout;
-      reagent.avgCost = reagent.inventoryValue / reagent.quantity;
     });
+    Report.debug('ShoppingCart.history', history, used);
+    reagent.avgCost = reagent.inventoryValue / reagent.quantity;
   }
 
   calculateCosts(): void {
     this.sumCost = 0;
     this.sumTotalCost = 0;
     this.profit = 0;
+    this.sumEstimatedInventoryCost = 0;
 
     this.recipes.forEach(item => {
       const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID];
@@ -267,6 +278,11 @@ export class ShoppingCart {
         this.totalValue += auctionItem.buyout;
       }
     });
+
+    this.sources.inventory
+      .forEach((reagent: ShoppingCartItem) => {
+        this.sumEstimatedInventoryCost += reagent.inventoryValue;
+      });
 
     this.sources.vendor
       .forEach((reagent: ShoppingCartItem) => {

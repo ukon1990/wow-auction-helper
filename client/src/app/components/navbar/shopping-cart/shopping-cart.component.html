@@ -45,7 +45,9 @@
         <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
         <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
         <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
-        <strong>Profit: </strong> {{ cart.profit | gold }} <br>
+        <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
+        <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
+        <strong>Estimated profit - inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }} <br>
         <br>
         <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
                         class="row col-md-12">
