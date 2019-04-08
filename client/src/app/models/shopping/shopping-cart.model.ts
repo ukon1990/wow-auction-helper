@@ -408,6 +408,9 @@ export class ShoppingCart {
     this.sources.ah.length = 0;
     this.sources.farm.length = 0;
     this.sources.inventory.length = 0;
+
+    this.calculateCosts();
+    this.save();
   }
 
   private save() {

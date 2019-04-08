@@ -340,11 +340,12 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       `${this.linkType}=` : 'item=') + this.getItemID(item);
   }
 
-  getCartCount(recipe: any, column: ColumnDescription): number {
+  getCartCount(item: any, column: ColumnDescription): number {
     if (column.key) {
-      return (recipe as ShoppingCartItem).quantity;
+      return (item as ShoppingCartItem).quantity;
     } else {
-      return SharedService.user.shoppingCart.recipeMap[recipe.spellID] ?
+      const recipe: Recipe = this.isKnownRecipe(item);
+      return item && SharedService.user.shoppingCart.recipeMap[recipe.spellID] ?
         SharedService.user.shoppingCart.recipeMap[recipe.spellID].quantity :
         0;
     }
@@ -391,9 +392,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   isKnownRecipe(item: any) {
+    if (!item) {
+      return false;
+    }
+
     const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id];
-    if (SharedService.recipesMapPerItemKnown[id])  {
-      return true;
+    if (SharedService.recipesMapPerItemKnown[id]) {
+      return SharedService.recipesMapPerItemKnown[id];
     }
     return false;
   }
