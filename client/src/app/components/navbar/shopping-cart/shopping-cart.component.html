@@ -23,7 +23,7 @@
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div class="row">
+    <div class="row col-md-12">
       <div class="col-md-4">
         <strong class="row col-md-12">Recipes:</strong>
         <wah-data-table [id]="'itemID'"
@@ -47,7 +47,7 @@
         <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
         <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
         <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
-        <strong>Estimated profit - inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }} <br>
+        <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }} <br>
         <br>
         <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
                         class="row col-md-12">
@@ -57,8 +57,9 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-4">
+    <div class="row col-md-12">
+      <h4 class="col-md-12">Sources:</h4>
+      <div class="col-md-8">
         <strong class="row col-md-12">From your inventory:</strong>
         <wah-data-table [id]="'id'"
                         [iconSize]="22"
@@ -74,7 +75,15 @@
                         [data]="cart.sources.ah"></wah-data-table>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-6">
+        <strong class="row col-md-12">From vendor:</strong>
+        <wah-data-table [id]="'id'"
+                        [iconSize]="22"
+                        [columns]="columns"
+                        [data]="cart.sources.vendor"></wah-data-table>
+      </div>
+
+      <div class="col-md-6">
         <strong class="row col-md-12">To farm:</strong>
         <wah-data-table [id]="'id'"
                         [iconSize]="22"

@@ -107,7 +107,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
     }
 
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
+    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['wowhead', 'item-info'], hideOnMobile: true });
+    this.columns.push({key: undefined, title: 'In cart', dataType: 'cart-recipe-count'});
   }
 
   filter(): void {

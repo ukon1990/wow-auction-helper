@@ -1,7 +1,7 @@
 import {Recipe} from '../crafting/recipe';
 import {Reagent} from '../crafting/reagent';
 import {SharedService} from '../../services/shared.service';
-import {Item, ItemPurchase} from '../item/item';
+import {Item, ItemInventory, ItemPurchase} from '../item/item';
 import {AuctionItem} from '../auction/auction-item';
 import {Auction} from '../auction/auction';
 import {Report} from '../../utils/report.util';
@@ -208,9 +208,11 @@ export class ShoppingCart {
       if (i.quantity >= reagent.quantity) {
         addedCount += reagent.quantity;
         this.sources.inventory.push(reagent);
+        reagent.setCharacters(inventory[reagent.id].characters);
       } else {
-        this.sources.inventory.push(
-          new ShoppingCartItem(reagent.id, i.quantity));
+        const item = new ShoppingCartItem(reagent.id, i.quantity);
+        item.setCharacters((inventory[reagent.id] as ItemInventory).characters);
+        this.sources.inventory.push(item);
         addedCount += i.quantity;
       }
 
@@ -253,10 +255,10 @@ export class ShoppingCart {
 
       if (purchase.quantity + quantityFound > quantity) {
         reagent.inventoryValue += purchase.buyout * (quantity - quantityFound);
-        Report.debug(`ShoppingCart.history ${ reagent.id }`, purchase.buyout, quantity, quantityFound, reagent);
+        Report.debug(`ShoppingCart.history ${reagent.id}`, purchase.buyout, quantity, quantityFound, reagent);
       } else {
         reagent.inventoryValue += purchase.buyout * purchase.quantity;
-        Report.debug(`ShoppingCart.history ${ reagent.id } - else`, purchase.buyout, quantity, quantityFound, reagent);
+        Report.debug(`ShoppingCart.history ${reagent.id} - else`, purchase.buyout, quantity, quantityFound, reagent);
       }
       used.push(purchase);
 
@@ -267,15 +269,16 @@ export class ShoppingCart {
   }
 
   calculateCosts(): void {
+    this.totalValue = 0;
     this.sumCost = 0;
     this.sumTotalCost = 0;
     this.profit = 0;
     this.sumEstimatedInventoryCost = 0;
 
-    this.recipes.forEach(item => {
+    this.recipes.forEach((item: ShoppingCartItem) => {
       const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID];
       if (auctionItem) {
-        this.totalValue += auctionItem.buyout;
+        this.totalValue += auctionItem.buyout * item.quantity;
       }
     });
 
@@ -400,6 +403,11 @@ export class ShoppingCart {
     this.sumTotalCost = 0;
     this.sumCost = 0;
     this.profit = 0;
+
+    this.sources.vendor.length = 0;
+    this.sources.ah.length = 0;
+    this.sources.farm.length = 0;
+    this.sources.inventory.length = 0;
   }
 
   private save() {
@@ -433,6 +441,7 @@ export class ShoppingCartItem {
 
   inventoryValue = 0;
   inventoryQuantity = 0;
+  characters?: any[];
 
   constructor(public id: number, public quantity: number, private subRecipe?: Recipe, public itemID?: number) {
     if (subRecipe) {
@@ -447,5 +456,9 @@ export class ShoppingCartItem {
   decrement(quantity: number): number {
     this.quantity -= quantity;
     return this.quantity;
+  }
+
+  setCharacters(characters: any[]): void {
+    this.characters = characters;
   }
 }

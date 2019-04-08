@@ -18,7 +18,7 @@ import {ItemService} from '../../services/item.service';
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {Report} from '../../utils/report.util';
-import {ShoppingCartItem} from '../../models/shopping/shopping-cart.model';
+import {ShoppingCart, ShoppingCartItem} from '../../models/shopping/shopping-cart.model';
 
 @Component({
   selector: 'wah-data-table',
@@ -338,5 +338,46 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     return (this.linkType ?
       `${this.linkType}=` : 'item=') + this.getItemID(item);
+  }
+
+  getCartCount(recipe: any, column: ColumnDescription): number {
+    if (column.key) {
+      return (recipe as ShoppingCartItem).quantity;
+    } else {
+      return SharedService.user.shoppingCart.recipeMap[recipe.spellID] ?
+        SharedService.user.shoppingCart.recipeMap[recipe.spellID].quantity :
+        0;
+    }
+  }
+
+  setCartCount(recipe: any, column: ColumnDescription, event: Event): void {
+    const newValue = +event.target['value'];
+    if (column.key) {
+      this.updateCartCountForRecipe(
+        recipe as ShoppingCartItem, newValue);
+    } else {
+      const cart = SharedService.user.shoppingCart;
+      if (cart.recipeMap[recipe.spellID]) {
+        this.updateCartCountForRecipe(
+          cart.recipeMap[recipe.spellID] as ShoppingCartItem, newValue);
+      } else {
+        SharedService.user.shoppingCart.add(
+          recipe,
+          newValue);
+      }
+    }
+  }
+
+  private updateCartCountForRecipe(recipe: ShoppingCartItem, newValue: number) {
+    const diff = newValue - recipe.quantity;
+    if (diff > 0) {
+      SharedService.user.shoppingCart.add(
+        SharedService.recipesMap[recipe.id],
+        diff);
+    } else {
+      SharedService.user.shoppingCart.remove(
+        recipe.id,
+        diff * -1);
+    }
   }
 }

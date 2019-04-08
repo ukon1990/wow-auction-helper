@@ -18,14 +18,15 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   show: boolean;
   columnsRecipes: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'input-number'},
+    {key: 'quantity', title: 'Qty', dataType: 'cart-recipe-count'},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: '', title: '', dataType: 'cart-delete'}
   ];
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'quantity', title: 'Qty', dataType: 'number'},
-    {key: 'buyout', title: 'Min buyout', dataType: 'gold'}
+    {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
+    {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'}
   ];
 
   columnsInventory: ColumnDescription[] = [
@@ -33,8 +34,8 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
     {key: 'quantity', title: 'Need', dataType: 'number'},
     {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
     {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
-    {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'}
-    // {key: 'characters', title: 'Characters', dataType: 'string'}
+    {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'},
+    {key: 'characters', title: 'Characters', dataType: 'array'}
   ];
 
   subscriptions = new SubscriptionsUtil();
@@ -68,6 +69,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   private setCart() {
     SharedService.user.shoppingCart = new ShoppingCart();
     this.cart = SharedService.user.shoppingCart;
+    this.cart.setSources();
     this.cart.calculateCosts();
   }
 
