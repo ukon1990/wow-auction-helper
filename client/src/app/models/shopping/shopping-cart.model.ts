@@ -6,6 +6,7 @@ import {AuctionItem} from '../auction/auction-item';
 import {Auction} from '../auction/auction';
 import {Report} from '../../utils/report.util';
 import {ProfitSummary} from '../../utils/tsm-lua.util';
+import {ErrorReport} from '../../utils/error-report.util';
 
 
 export class ShoppingCart {
@@ -40,54 +41,64 @@ export class ShoppingCart {
   }
 
   upgrade(old: object): void {
-    console.log('upgrade', old);
-    if (old && old['reagents'] && old['recipes']) {
-      old['recipes'].forEach(recipe => {
-        const r = SharedService.recipesMap[recipe.spellID];
-        if (r) {
-          this.add(r, recipe.quantity, true);
-        }
-      });
+    try {
+      if (old && old['reagents'] && old['recipes']) {
+        old['recipes'].forEach(recipe => {
+          const r = SharedService.recipesMap[recipe.spellID];
+          if (r) {
+            this.add(r, recipe.quantity, true);
+          }
+        });
 
-      this.save();
+        this.save();
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.upgrade', error);
     }
   }
 
   import(data: object): void {
-    if (SharedService.recipes.length === 0) {
-      return;
-    }
-    // Import recipes
-    if (data['recipes']) {
-      data['recipes']
-        .forEach(recipe => {
-          const r = SharedService.recipesMap[recipe.id];
-          if (!r) {
-            Report.debug('ShoppingCart.import', recipe, r);
-            return;
-          }
-          this.add(
-            r,
-            recipe.quantity,
-            true);
-        });
+    try {
+      if (SharedService.recipes.length === 0) {
+        return;
+      }
+      // Import recipes
+      if (data['recipes']) {
+        data['recipes']
+          .forEach(recipe => {
+            const r = SharedService.recipesMap[recipe.id];
+            if (!r) {
+              return;
+            }
+            this.add(
+              r,
+              recipe.quantity,
+              true);
+          });
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.import', error);
     }
   }
 
   setSources(): void {
-    const realm = this.getUserRealm(),
-      inventoryMap = SharedService.tsmAddonData.inventoryMap;
-    let inventory;
-    if (realm && inventoryMap && inventoryMap[realm.name]) {
-      inventory = inventoryMap[realm.name];
-    }
+    try {
+      const realm = this.getUserRealm(),
+        inventoryMap = SharedService.tsmAddonData.inventoryMap;
+      let inventory;
+      if (realm && inventoryMap && inventoryMap[realm.name]) {
+        inventory = inventoryMap[realm.name];
+      }
 
-    this.sources.ah.length = 0;
-    this.sources.inventory.length = 0;
-    this.sources.vendor.length = 0;
-    this.reagents
-      .forEach((reagent: ShoppingCartItem) =>
-        this.setSourcesForReagent(reagent, inventory));
+      this.sources.ah.length = 0;
+      this.sources.inventory.length = 0;
+      this.sources.vendor.length = 0;
+      this.reagents
+        .forEach((reagent: ShoppingCartItem) =>
+          this.setSourcesForReagent(reagent, inventory));
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.setSources', error);
+    }
   }
 
   private getUserRealm() {
@@ -95,221 +106,257 @@ export class ShoppingCart {
   }
 
   add(recipe: Recipe, quantity: number = 1, doNotSave?: boolean): void {
-    if (this.recipeMap[recipe.spellID]) {
-      (this.recipeMap[recipe.spellID] as ShoppingCartItem)
-        .increment(quantity);
-    } else {
-      this.recipeMap[recipe.spellID] = new ShoppingCartItem(
-        recipe.spellID, quantity, undefined, recipe.itemID);
-      this.recipes.push(this.recipeMap[recipe.spellID]);
-    }
-    this.addReagents(recipe, quantity);
-    this.calculateCosts();
+    try {
+      if (this.recipeMap[recipe.spellID]) {
+        (this.recipeMap[recipe.spellID] as ShoppingCartItem)
+          .increment(quantity);
+      } else {
+        this.recipeMap[recipe.spellID] = new ShoppingCartItem(
+          recipe.spellID, quantity, undefined, recipe.itemID);
+        this.recipes.push(this.recipeMap[recipe.spellID]);
+      }
+      this.addReagents(recipe, quantity);
+      this.calculateCosts();
 
-    if (!doNotSave) {
-      this.save();
+      if (!doNotSave) {
+        this.save();
+      }
+      SharedService.events.shopingCart.emit();
+      Report.send('Added recipe to shopping cart', 'Shopping cart');
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.add', error);
     }
-    Report.debug('ShoppingCart.add', recipe, quantity, this);
   }
 
   addReagents(recipe: Recipe, quantity: number = 1): void {
-    recipe.reagents
-      .forEach((reagent: Reagent) => {
-        if (reagent.intermediateEligible && reagent.recipe.roi > 0) {
-          this.add(reagent.recipe, quantity);
-        } else {
-          this.addReagent(reagent, quantity);
-        }
-      });
-    this.setSources();
+    try {
+      recipe.reagents
+        .forEach((reagent: Reagent) => {
+          if (reagent.intermediateEligible && reagent.recipe.roi > 0) {
+            this.add(reagent.recipe, quantity);
+          } else {
+            this.addReagent(reagent, quantity);
+          }
+        });
+      this.setSources();
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.addReagents', error);
+    }
   }
 
   private addReagent(reagent: Reagent, quantity: number) {
-    if (this.reagentMap[reagent.itemID]) {
-      (this.reagentMap[reagent.itemID] as ShoppingCartItem)
-        .increment(
-          reagent.count * quantity);
-    } else {
-      const item = new ShoppingCartItem(
-        reagent.itemID, reagent.count * quantity);
-      this.reagentMap[reagent.itemID] = item;
-      this.reagents.push(item);
+    try {
+      if (this.reagentMap[reagent.itemID]) {
+        (this.reagentMap[reagent.itemID] as ShoppingCartItem)
+          .increment(
+            reagent.count * quantity);
+      } else {
+        const item = new ShoppingCartItem(
+          reagent.itemID, reagent.count * quantity);
+        this.reagentMap[reagent.itemID] = item;
+        this.reagents.push(item);
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.addReagent', error);
     }
   }
 
   remove(id: number, quantity?: number): void {
-    const recipe = SharedService.recipesMap[id],
-      cartRecipe: ShoppingCartItem = this.recipeMap[id];
-    if (!recipe || !cartRecipe) {
-      return;
+    try {
+      const recipe = SharedService.recipesMap[id],
+        cartRecipe: ShoppingCartItem = this.recipeMap[id];
+      if (!recipe || !cartRecipe) {
+        return;
+      }
+
+      if (!quantity) {
+        quantity = cartRecipe.quantity;
+      }
+
+      cartRecipe.decrement(quantity);
+
+      if (cartRecipe.quantity <= 0) {
+        this.removeFromList(cartRecipe, this.recipes, this.recipeMap);
+      }
+
+      recipe.reagents
+        .forEach((reagent: Reagent) => {
+          this.removeReagentForRecipe(reagent, quantity);
+        });
+
+      this.setSources();
+      this.calculateCosts();
+      this.save();
+      SharedService.events.shopingCart.emit();
+      Report.send('Removed recipe from shopping cart', 'Shopping cart');
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.remove', error);
     }
-
-    if (!quantity) {
-      quantity = cartRecipe.quantity;
-    }
-
-    cartRecipe.decrement(quantity);
-
-    if (cartRecipe.quantity <= 0) {
-      this.removeFromList(cartRecipe, this.recipes, this.recipeMap);
-    }
-
-    recipe.reagents
-      .forEach((reagent: Reagent) => {
-        this.removeReagentForRecipe(reagent, quantity);
-      });
-
-    this.setSources();
-    this.calculateCosts();
-    this.save();
   }
 
   private removeReagentForRecipe(reagent: Reagent, quantity: number) {
-    if (this.reagentMap[reagent.itemID]) {
-      const cartReagent = (this.reagentMap[reagent.itemID] as ShoppingCartItem);
+    try {
+      if (this.reagentMap[reagent.itemID]) {
+        const cartReagent = (this.reagentMap[reagent.itemID] as ShoppingCartItem);
 
-      cartReagent.decrement(
-        reagent.count * quantity);
+        cartReagent.decrement(
+          reagent.count * quantity);
 
-      if (cartReagent.quantity <= 0) {
-        this.removeFromList(cartReagent, this.reagents, this.reagentMap);
+        if (cartReagent.quantity <= 0) {
+          this.removeFromList(cartReagent, this.reagents, this.reagentMap);
+        }
       }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.removeReagentForRecipe', error);
     }
   }
 
   private removeFromList(cartItem: ShoppingCartItem, array: ShoppingCartItem[], map: object) {
-    const index = array
-      .findIndex((item) =>
-        item === cartItem);
-    array.splice(index, 1);
-    delete map[cartItem.id];
+    try {
+      const index = array
+        .findIndex((item) =>
+          item === cartItem);
+      array.splice(index, 1);
+      delete map[cartItem.id];
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.removeFromList', error);
+    }
   }
 
   private setSourcesForReagent(reagent: ShoppingCartItem, inventory: object) {
-    let addedCount = this.handleInventorySource(inventory, reagent);
+    try {
+      let addedCount = this.handleInventorySource(inventory, reagent);
 
-    if (addedCount < reagent.quantity) {
-      addedCount += this.handleVendorSource(reagent, addedCount);
-    }
+      if (addedCount < reagent.quantity) {
+        addedCount += this.handleVendorSource(reagent, addedCount);
+      }
 
-    if (addedCount < reagent.quantity) {
-      addedCount += this.handleAuctionSource(reagent, addedCount);
-    }
+      if (addedCount < reagent.quantity) {
+        addedCount += this.handleAuctionSource(reagent, addedCount);
+      }
 
-    if (addedCount < reagent.quantity) {
-      this.handleFarmSource(reagent, addedCount);
+      if (addedCount < reagent.quantity) {
+        this.handleFarmSource(reagent, addedCount);
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.setSourcesForReagent', error);
     }
   }
 
   private handleInventorySource(inventory: object, reagent: ShoppingCartItem): number {
     let addedCount = 0;
-    if (inventory && inventory[reagent.id]) {
-      const i = inventory[reagent.id];
-      if (i.quantity >= reagent.quantity) {
-        addedCount += reagent.quantity;
-        this.sources.inventory.push(reagent);
-        reagent.setCharacters(inventory[reagent.id].characters);
-      } else {
-        const item = new ShoppingCartItem(reagent.id, i.quantity);
-        item.setCharacters((inventory[reagent.id] as ItemInventory).characters);
-        this.sources.inventory.push(item);
-        addedCount += i.quantity;
+    try {
+      if (inventory && inventory[reagent.id]) {
+        const i = inventory[reagent.id];
+        if (i.quantity >= reagent.quantity) {
+          addedCount += reagent.quantity;
+          this.sources.inventory.push(reagent);
+          reagent.setCharacters(inventory[reagent.id].characters);
+        } else {
+          const item = new ShoppingCartItem(reagent.id, i.quantity);
+          item.setCharacters((inventory[reagent.id] as ItemInventory).characters);
+          this.sources.inventory.push(item);
+          addedCount += i.quantity;
+        }
+
+        reagent.inventoryQuantity = inventory[reagent.id].quantity;
+        this.setInventoryHistory(reagent, addedCount);
       }
-
-      reagent.inventoryQuantity = inventory[reagent.id].quantity;
-      this.setInventoryHistory(reagent, addedCount);
-
-      Report.debug('ShoppingCart.handleInventorySource', inventory[reagent.id]);
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.handleInventorySource', error);
     }
     return addedCount;
   }
 
   private setInventoryHistory(reagent: ShoppingCartItem, quantity: number) {
-    if (!SharedService.tsmAddonData || !SharedService.tsmAddonData.profitSummary) {
-      return;
-    }
-
-    const profitSummary: ProfitSummary = SharedService.tsmAddonData.profitSummary[this.getUserRealm().name],
-      item = profitSummary.total.purchases.itemMap[reagent.id];
-    let quantityFound = 0;
-
-    if (!item) {
-      return;
-    }
-    const history: ItemPurchase[] = [], used = [];
-    reagent.inventoryValue = 0;
-
-    item.history
-      .forEach((purchase: ItemPurchase) => {
-        history.push(purchase);
-      });
-
-    history
-      .sort((a: ItemPurchase, b: ItemPurchase) =>
-        b.timestamp - a.timestamp);
-
-    history.forEach((purchase: ItemPurchase) => {
-      if (quantity <= quantityFound) {
+    try {
+      if (!SharedService.tsmAddonData || !SharedService.tsmAddonData.profitSummary) {
         return;
       }
 
-      if (purchase.quantity + quantityFound > quantity) {
-        reagent.inventoryValue += purchase.buyout * (quantity - quantityFound);
-        Report.debug(`ShoppingCart.history ${reagent.id}`, purchase.buyout, quantity, quantityFound, reagent);
-      } else {
-        reagent.inventoryValue += purchase.buyout * purchase.quantity;
-        Report.debug(`ShoppingCart.history ${reagent.id} - else`, purchase.buyout, quantity, quantityFound, reagent);
-      }
-      used.push(purchase);
+      const profitSummary: ProfitSummary = SharedService.tsmAddonData.profitSummary[this.getUserRealm().name],
+        item = profitSummary.total.purchases.itemMap[reagent.id];
+      let quantityFound = 0;
 
-      quantityFound += purchase.quantity;
-    });
-    Report.debug('ShoppingCart.history', history, used);
-    reagent.avgCost = reagent.inventoryValue / reagent.quantity;
+      if (!item) {
+        return;
+      }
+      const history: ItemPurchase[] = [], used = [];
+      reagent.inventoryValue = 0;
+
+      item.history
+        .forEach((purchase: ItemPurchase) => {
+          history.push(purchase);
+        });
+
+      history
+        .sort((a: ItemPurchase, b: ItemPurchase) =>
+          b.timestamp - a.timestamp);
+
+      history.forEach((purchase: ItemPurchase) => {
+        if (quantity <= quantityFound) {
+          return;
+        }
+
+        if (purchase.quantity + quantityFound > quantity) {
+          reagent.inventoryValue += purchase.buyout * (quantity - quantityFound);
+        } else {
+          reagent.inventoryValue += purchase.buyout * purchase.quantity;
+        }
+        used.push(purchase);
+
+        quantityFound += purchase.quantity;
+      });
+      reagent.avgCost = reagent.inventoryValue / reagent.quantity;
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.setInventoryHistory', error);
+    }
   }
 
   calculateCosts(): void {
-    this.totalValue = 0;
-    this.sumCost = 0;
-    this.sumTotalCost = 0;
-    this.profit = 0;
-    this.sumEstimatedInventoryCost = 0;
+    try {
+      this.totalValue = 0;
+      this.sumCost = 0;
+      this.sumTotalCost = 0;
+      this.profit = 0;
+      this.sumEstimatedInventoryCost = 0;
 
-    this.recipes.forEach((item: ShoppingCartItem) => {
-      const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID];
-      if (auctionItem) {
-        this.totalValue += auctionItem.buyout * item.quantity;
-      }
-    });
-
-    this.sources.inventory
-      .forEach((reagent: ShoppingCartItem) => {
-        this.sumEstimatedInventoryCost += reagent.inventoryValue;
+      this.recipes.forEach((item: ShoppingCartItem) => {
+        const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID];
+        if (auctionItem) {
+          this.totalValue += auctionItem.buyout * item.quantity;
+        }
       });
 
-    this.sources.vendor
-      .forEach((reagent: ShoppingCartItem) => {
-        reagent.cost = (SharedService.items[reagent.id] as Item)
-          .itemSource.soldBy[0]
-          .cost * reagent.quantity;
-        this.sumCost += reagent.cost;
-      });
-    this.sources.ah
-      .forEach((reagent: ShoppingCartItem) => {
-        const result = this.getSumCostOfItem(reagent.id, reagent.quantity);
-        reagent.cost = result.need.cost;
-        reagent.avgCost = reagent.cost / reagent.quantity;
+      this.sources.inventory
+        .forEach((reagent: ShoppingCartItem) => {
+          this.sumEstimatedInventoryCost += reagent.inventoryValue;
+        });
 
-        reagent.totalCost = result.total.cost;
-        reagent.totalCount = result.total.count;
-        this.sumCost += reagent.cost;
-        this.sumTotalCost += reagent.totalCost;
-      });
+      this.sources.vendor
+        .forEach((reagent: ShoppingCartItem) => {
+          reagent.cost = (SharedService.items[reagent.id] as Item)
+            .itemSource.soldBy[0]
+            .cost * reagent.quantity;
+          this.sumCost += reagent.cost;
+        });
+      this.sources.ah
+        .forEach((reagent: ShoppingCartItem) => {
+          const result = this.getSumCostOfItem(reagent.id, reagent.quantity);
+          reagent.cost = result.need.cost;
+          reagent.avgCost = reagent.cost / reagent.quantity;
 
-    this.profit = this.totalValue - this.sumCost;
-    this.setShoppingString();
+          reagent.totalCost = result.total.cost;
+          reagent.totalCount = result.total.count;
+          this.sumCost += reagent.cost;
+          this.sumTotalCost += reagent.totalCost;
+        });
 
-    Report.debug('ShoppingCart.calculateCosts', this);
+      this.profit = this.totalValue - this.sumCost;
+      this.setShoppingString();
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.calculateCosts', error);
+    }
   }
 
   /*
@@ -331,38 +378,46 @@ export class ShoppingCart {
           count: 0
         }
       };
-    if (auctionItem) {
-      auctionItem.auctions.forEach((item: Auction) => {
-        if (result.need.count >= quantity) {
-          return;
-        }
+    try {
+      if (auctionItem) {
+        auctionItem.auctions.forEach((item: Auction) => {
+          if (result.need.count >= quantity) {
+            return;
+          }
 
 
-        if (item.quantity + result.need.count > quantity) {
-          const perItem = item.buyout / item.quantity;
-          const need = (quantity - (item.quantity + result.need.count)) * -1;
-          result.need.cost += need * perItem;
-          result.need.count += need;
-        } else {
-          result.need.cost += item.buyout;
-          result.need.count += item.quantity;
-        }
+          if (item.quantity + result.need.count > quantity) {
+            const perItem = item.buyout / item.quantity;
+            const need = (quantity - (item.quantity + result.need.count)) * -1;
+            result.need.cost += need * perItem;
+            result.need.count += need;
+          } else {
+            result.need.cost += item.buyout;
+            result.need.count += item.quantity;
+          }
 
-        result.total.cost += item.buyout;
-        result.total.count += item.quantity;
-      });
+          result.total.cost += item.buyout;
+          result.total.count += item.quantity;
+        });
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.getSumCostOfItem', error);
     }
     return result;
   }
 
   private handleVendorSource(reagent: ShoppingCartItem, currentQuantity: number): number {
-    const item: Item = SharedService.items[reagent.id],
-      auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id],
-      need = reagent.quantity - currentQuantity;
+    try {
+      const item: Item = SharedService.items[reagent.id],
+        auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id],
+        need = reagent.quantity - currentQuantity;
 
-    if (this.isAvailableAtVendor(item) && this.isVendorCheaperThanAH(item, auctionItem)) {
-      this.sources.vendor.push(new ShoppingCartItem(reagent.id, need));
-      return need;
+      if (this.isAvailableAtVendor(item) && this.isVendorCheaperThanAH(item, auctionItem)) {
+        this.sources.vendor.push(new ShoppingCartItem(reagent.id, need));
+        return need;
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.handleVendorSource', error);
     }
     return 0;
   }
@@ -377,13 +432,17 @@ export class ShoppingCart {
   }
 
   private handleAuctionSource(reagent: ShoppingCartItem, addedCount: number) {
-    const need = reagent.quantity - addedCount,
-      auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id];
+    try {
+      const need = reagent.quantity - addedCount,
+        auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id];
 
-    if (need > 0 && auctionItem && auctionItem.quantityTotal > need) {
-      const cartItem = new ShoppingCartItem(reagent.id, need);
-      this.sources.ah.push(cartItem);
-      return cartItem.quantity;
+      if (need > 0 && auctionItem && auctionItem.quantityTotal > need) {
+        const cartItem = new ShoppingCartItem(reagent.id, need);
+        this.sources.ah.push(cartItem);
+        return cartItem.quantity;
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.handleAuctionSource', error);
     }
 
     return 0;
@@ -420,17 +479,21 @@ export class ShoppingCart {
   }
 
   private setShoppingString(): void {
-    this.tsmShoppingString = '';
-    let item: AuctionItem;
-    this.sources.ah.forEach((r: ShoppingCartItem) => {
-      item = SharedService.auctionItemsMap[r.id];
-      if (item) {
-        this.tsmShoppingString += `${item.name}/exact/x${Math.ceil(r.quantity)};`;
-      }
-    });
+    try {
+      this.tsmShoppingString = '';
+      let item: AuctionItem;
+      this.sources.ah.forEach((r: ShoppingCartItem) => {
+        item = SharedService.auctionItemsMap[r.id];
+        if (item) {
+          this.tsmShoppingString += `${item.name}/exact/x${Math.ceil(r.quantity)};`;
+        }
+      });
 
-    if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
-      this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+      if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
+        this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
+      }
+    } catch (error) {
+      ErrorReport.sendError('ShoppingCart.setShoppingString', error);
     }
   }
 }

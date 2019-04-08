@@ -96,10 +96,6 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   }
 
   private handleShoppingCartUpdate(data: any) {
-    // Make sure to split stuff into three lists
-    // - Vendor bought
-    // - Buy from AH
-    // - Got it in my inventory
   }
 
   private handleAHUpdate() {
