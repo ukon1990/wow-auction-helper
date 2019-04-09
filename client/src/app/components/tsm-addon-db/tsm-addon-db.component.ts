@@ -262,12 +262,12 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
           this.dbService.addTSMAddonData(reader.result, this.lastModified);
           Report.send('Imported TSM addon data', 'Import');
         } catch (error) {
-          ErrorReport.sendError('importFromFile', error);
+          ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
         }
       };
       reader.readAsText(files[0]);
     } catch (error) {
-      ErrorReport.sendError('importFromFile', error);
+      ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
     }
   }
 

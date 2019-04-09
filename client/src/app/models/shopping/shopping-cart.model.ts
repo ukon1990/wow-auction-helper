@@ -470,6 +470,7 @@ export class ShoppingCart {
 
     this.calculateCosts();
     this.save();
+    Report.send('Cleared cart', 'Shopping cart');
   }
 
   private save() {

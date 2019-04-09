@@ -22,19 +22,39 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: '', title: '', dataType: 'cart-delete'}
   ];
-  columns: ColumnDescription[] = [
+  columnsNeededReagents: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'quantity', title: 'Qty', dataType: 'number'},
     {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
     {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'}
   ];
 
+  columnsAH: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'quantity', title: 'Qty', dataType: 'number'},
+    {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
+    {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
+    {key: 'totalCost', title: 'Total', dataType: 'gold'}
+  ];
+
+  columnsVendor: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'quantity', title: 'Qty', dataType: 'number'},
+    {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
+    {key: 'totalCost', title: 'Total', dataType: 'gold'}
+  ];
+
+  columnsFarm: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'quantity', title: 'Qty', dataType: 'number'}
+  ];
+
   columnsInventory: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'quantity', title: 'Need', dataType: 'number'},
     {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
-    {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
     {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'},
+    {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
     {key: 'characters', title: 'Characters', dataType: 'array'}
   ];
 
@@ -84,7 +104,6 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   clearShoppingCart(): void {
     this.cart.clear();
-    Report.send('Cleared cart', 'Shopping cart');
   }
 
   getUser(): User {
@@ -93,6 +112,9 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   toggleDisplay(): void {
     this.show = !this.show;
+    Report.send(
+      this.show ? 'Shopping cart opened' : 'Shopping cart closed',
+      'ShoppingCart');
   }
 
   private handleShoppingCartUpdate(data: any) {

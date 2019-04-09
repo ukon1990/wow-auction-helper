@@ -9,7 +9,6 @@ import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
 import {ObjectUtil} from '../utils/object.util';
-import {Report} from '../utils/report.util';
 
 @Injectable()
 export class RealmService {
@@ -91,7 +90,7 @@ export class RealmService {
       Realm.gatherRealms();
       SharedService.events.realms.emit(true);
     } else {
-      ErrorReport.sendError('handleRealms', {
+      ErrorReport.sendError('RealmService.handleRealms', {
         name: 'The app could not fetch the realm data correctly', message: 'No object were found', stack: undefined
       });
     }

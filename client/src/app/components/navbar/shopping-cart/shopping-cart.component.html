@@ -5,7 +5,7 @@
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
-  {{ cart.recipes.length | number }}
+  Shopping cart ({{ cart.recipes.length | number }} crafts, {{ cart.profit | gold }})
 </a>
 
 <mat-card *ngIf="show" class="full-screen">
@@ -23,74 +23,80 @@
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div class="row col-md-12">
-      <div class="col-md-4">
-        <strong class="row col-md-12">Recipes:</strong>
-        <wah-data-table [id]="'itemID'"
-                        [iconSize]="22"
-                        [columns]="columnsRecipes"
-                        [data]="cart.recipes">
-        </wah-data-table>
-      </div>
-      <div class="col-md-4">
-        <strong class="row col-md-12">Reagents needed:</strong>
-        <wah-data-table [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns"
-                        [data]="cart.reagents"></wah-data-table>
-      </div>
 
-      <div class="col-md-4">
+      <div class="row col-md-12">
+        <h4 class="col-md-12">Overview:</h4>
+        <div class="col-lg-4">
+          <strong class="row col-md-12">Recipes:</strong>
+          <wah-data-table [id]="'itemID'"
+                          [iconSize]="22"
+                          [columns]="columnsRecipes"
+                          [data]="cart.recipes">
+          </wah-data-table>
+        </div>
+        <div class="col-lg-4">
+          <strong class="row col-md-12">Reagents needed:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsNeededReagents"
+                          [data]="cart.reagents"></wah-data-table>
+        </div>
 
-        <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
-        <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
-        <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
-        <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
-        <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
-        <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }} <br>
-        <br>
-        <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
-                        class="row col-md-12">
+        <div class="col-lg-4">
+
+          <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
+          <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
+          <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
+          <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
+          <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
+          <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }}
+          <br>
+          <br>
+          <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
+                          class="row col-md-12">
         <textarea matInput placeholder="TSM shopping string"
                   [value]="cart.tsmShoppingString"></textarea>
-        </mat-form-field>
-      </div>
-    </div>
+          </mat-form-field>
+          <br>
 
-    <div class="row col-md-12">
-      <h4 class="col-md-12">Sources:</h4>
-      <div class="col-md-8">
-        <strong class="row col-md-12">From your inventory:</strong>
-        <wah-data-table [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columnsInventory"
-                        [data]="cart.sources.inventory"></wah-data-table>
+          <wah-tsm-addon-db [importMode]="true"></wah-tsm-addon-db>
+        </div>
       </div>
 
-      <div class="col-md-4">
-        <strong class="row col-md-12">From AH:</strong>
-        <wah-data-table [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns"
-                        [data]="cart.sources.ah"></wah-data-table>
-      </div>
+      <div class="row col-md-12">
+        <h4 class="col-md-12">Sources:</h4>
+        <div class="col-md-12">
+          <strong class="row col-md-12">From your inventory:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsInventory"
+                          [data]="cart.sources.inventory"></wah-data-table>
+        </div>
 
-      <div class="col-md-6">
-        <strong class="row col-md-12">From vendor:</strong>
-        <wah-data-table [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns"
-                        [data]="cart.sources.vendor"></wah-data-table>
-      </div>
+        <div class="col-lg-4">
+          <strong class="row col-md-12">From AH:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsAH"
+                          [data]="cart.sources.ah"></wah-data-table>
+        </div>
 
-      <div class="col-md-6">
-        <strong class="row col-md-12">To farm:</strong>
-        <wah-data-table [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns"
-                        [data]="cart.sources.farm"></wah-data-table>
+        <div class="col-lg-4">
+          <strong class="row col-md-12">From vendor:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsVendor"
+                          [data]="cart.sources.vendor"></wah-data-table>
+        </div>
+
+        <div class="col-lg-4">
+          <strong class="row col-md-12">To farm:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsFarm"
+                          [data]="cart.sources.farm"></wah-data-table>
+        </div>
       </div>
-    </div>
   </mat-card-content>
   <mat-card-actions>
     <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>

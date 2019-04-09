@@ -67,8 +67,7 @@ export class Dashboard {
         {key: 'rank', title: 'Rank', dataType: ''},
         {key: 'buyout', title: 'Buyout', dataType: 'gold'},
         {key: 'roi', title: 'Profit', dataType: 'gold'},
-        {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'},
-        {key: '', title: 'Actions', dataType: 'action', actions: ['wowhead', 'item-info']}
+        {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
       ];
     this.settings = SharedService.defaultDashboardSettingsListMap[type];
     if (this.settings) {
@@ -97,8 +96,7 @@ export class Dashboard {
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
           {key: 'quantityTotal', title: 'Stock', dataType: 'number'},
-          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'}
         ];
         this.addAPIColumnsAtPosition(3);
         this.groupItemsByAvailability();
@@ -121,8 +119,7 @@ export class Dashboard {
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
           {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-          {key: 'bid', title: 'Bid', dataType: 'gold'},
-          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
+          {key: 'bid', title: 'Bid', dataType: 'gold'}
         ];
         this.addAPIColumnsAtPosition(3);
         this.setPotentialDeals();
@@ -137,8 +134,7 @@ export class Dashboard {
           {key: 'roi', title: 'Profit', dataType: 'gold'},
           {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true},
           {key: 'quantity', title: 'Size', dataType: 'number'},
-          {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
-          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
+          {key: 'timeLeft', title: 'Time left', dataType: 'time-left'}
         ];
         this.addAPIColumnsAtPosition(5);
         this.setCheapBidsWithLowTimeLeft();
@@ -153,8 +149,7 @@ export class Dashboard {
           {key: 'roi', title: 'Profit', dataType: 'gold'},
           {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold', hideOnMobile: true},
           {key: 'quantity', title: 'Size', dataType: 'number'},
-          {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
-          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
+          {key: 'timeLeft', title: 'Time left', dataType: 'time-left'}
         ];
         this.addAPIColumnsAtPosition(5);
         this.setCheapBids();
@@ -188,8 +183,7 @@ export class Dashboard {
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
           {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-          {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'},
-          {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
+          {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'}
         ];
         this.addAPIColumnsAtPosition(3);
         this.setCheaperThanVendorSell();
