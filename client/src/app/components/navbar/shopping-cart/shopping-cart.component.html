@@ -59,7 +59,52 @@
           </mat-form-field>
           <br>
 
-          <wah-tsm-addon-db [importMode]="true"></wah-tsm-addon-db>
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Import/Update inventory status
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <wah-tsm-addon-db [importMode]="true"></wah-tsm-addon-db>
+
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Cost caluclation logic</mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <p>
+                When the app calculates the cost of your shopping cart.
+                It looks through all the auctions per reagent, from the cheapest auction and up.
+                As long as the "total quantity to purchase" does not exceed 120% of the needed quantity of reagents, It is used in the calculation.
+              </p>
+              <p>
+                So lets say, that you need 20 Owlseye, and you have the following auctions:
+              </p>
+              <mat-list dense>
+                <mat-list-item>Stack of 1 for 20g per item</mat-list-item>
+                <mat-list-item>
+                  <div mat-line>Stack of 50 for 22g per item</div>
+                  <div mat-line>This one will be ignored</div>
+                </mat-list-item>
+                <mat-list-item>Stack of 5 for 23g per item</mat-list-item>
+                <mat-list-item>Stack of 10 for 24g per item</mat-list-item>
+                <mat-list-item>Stack of 5 for 25g per item</mat-list-item>
+              </mat-list>
+              <p>
+                The app will then expect that you will buy 21 Owlseye instead of 51, and set the total cost to 500g instead of 1,120g.
+                And use the avg item buyout of those 21, to estimate the potential crafting profit.
+                The cost of the Owlseye you need, in this case would then be set to 476g.
+              </p>
+
+              <p>
+                If you have a couple in your inventory, it will subtract the ones in your inventory from what you need to get from other sources.
+                The total value of those in your inventory, will be based upon the last x you have bought.
+              </p>
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
       </div>
 
