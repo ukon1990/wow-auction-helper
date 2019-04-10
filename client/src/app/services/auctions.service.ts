@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from './shared.service';
 import {AuctionHandler} from '../models/auction/auction-handler';
@@ -12,7 +12,6 @@ import {WoWUction} from '../models/auction/wowuction';
 import {PetsService} from './pets.service';
 import {Angulartics2} from 'angulartics2';
 import {ErrorReport} from '../utils/error-report.util';
-import {Compression} from '../utils/compression.util';
 import {AuctionResponse} from '../models/auction/auctions-response';
 
 @Injectable()
@@ -109,17 +108,6 @@ export class AuctionsService {
 
         ErrorReport.sendHttpError(error);
       });
-  }
-
-  getAuctionsAndDecompress(): void {
-    this._http.post('https://4m6c7drle0.execute-api.us-west-2.amazonaws.com/default/getAuctions', {
-      url: 'http://auction-api-us.worldofwarcraft.com/auction-data/5301bfa3fe54bb793c685437da49ac42/auctions.json'
-    }).toPromise()
-      .then(r => {
-        console.log('compressed response', r);
-        Compression.decompress(r['body']);
-      })
-      .catch(error => console.error(error));
   }
 
   getTsmAuctions(): Promise<any> {

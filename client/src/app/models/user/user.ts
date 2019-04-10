@@ -1,17 +1,13 @@
-import { NotificationSettings } from './notification';
-import { SharedService } from '../../services/shared.service';
-import { Character } from '../character/character';
-import { Watchlist } from '../watchlist/watchlist';
-import { CustomPrice, CustomPrices } from '../crafting/custom-price';
-import { CraftingService } from '../../services/crafting.service';
-import { Recipe } from '../crafting/recipe';
-import { customPricesDefault } from '../crafting/default-custom-prices';
-import { ShoppingCart } from '../shopping-cart';
-import { CustomProc, CustomProcs } from '../crafting/custom-proc';
-import { customProcsDefault } from '../crafting/default-custom-procs';
-import { Realm } from '../realm';
-import { ProspectingAndMillingUtil } from '../../utils/prospect-milling.util';
-
+import {NotificationSettings} from './notification';
+import {SharedService} from '../../services/shared.service';
+import {Character} from '../character/character';
+import {Watchlist} from '../watchlist/watchlist';
+import {CustomPrice, CustomPrices} from '../crafting/custom-price';
+import {customPricesDefault} from '../crafting/default-custom-prices';
+import {CustomProc, CustomProcs} from '../crafting/custom-proc';
+import {customProcsDefault} from '../crafting/default-custom-procs';
+import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
+import {ShoppingCart} from '../shopping/shopping-cart.model';
 
 
 export class User {

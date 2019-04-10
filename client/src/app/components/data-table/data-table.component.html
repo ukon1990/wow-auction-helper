@@ -155,6 +155,16 @@
                 <i class="fas fa-cart-plus"></i>
               </button>
             </span>
+
+            <ng-container *ngSwitchCase="'cart-recipe-count'">
+              <mat-form-field class="input-column" *ngIf="isKnownRecipe(d)">
+              <input matInput
+                     type="number"
+                     [value]="getCartCount(d, c)"
+                     (change)="setCartCount(d, c, $event)">
+            </mat-form-field>
+            </ng-container>
+
             <span *ngSwitchCase="'cart-delete'">
               <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)" matTooltip="Remove item from the shopping cart">
                 <i class="fas fa-trash-alt"></i>

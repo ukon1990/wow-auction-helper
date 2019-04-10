@@ -15,6 +15,7 @@ import {DefaultDashboardSettings} from './models/dashboard/default-dashboard-set
 import {Subscription} from 'rxjs';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
+import {ShoppingCart} from './models/shopping/shopping-cart.model';
 
 @Component({
   selector: 'wah-root',
@@ -63,7 +64,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     User.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar);
     Report.init(this.angulartics2);
-    SharedService.user.shoppingCart.restore();
+    SharedService.user.shoppingCart = new ShoppingCart();
     ProspectingAndMillingUtil.restore();
 
     this.detailOpenCloseSubscription = SharedService.events.detailPanelOpen.subscribe(() => {

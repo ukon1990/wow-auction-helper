@@ -9,12 +9,11 @@ import { Realm } from '../models/realm';
 import { Dashboard } from '../models/dashboard';
 import { Pet } from '../models/pet';
 import { AuctionResponse } from '../models/auction/auctions-response';
-import { TradeVendor, TradeVendorItem, TradeVendorItemValue } from '../models/item/trade-vendor';
-import { UserAuctions, UserAuctionCharacter } from '../models/auction/user-auctions';
+import { TradeVendor, TradeVendorItemValue } from '../models/item/trade-vendor';
+import { UserAuctions } from '../models/auction/user-auctions';
 import { CustomPrice } from '../models/crafting/custom-price';
 import { Seller, ItemClassGroup } from '../models/seller';
 import { AuctionPet } from '../models/auction/auction-pet';
-import { ShoppingCart } from '../models/shopping-cart';
 import { Notification } from '../models/user/notification';
 import { CustomProc } from '../models/crafting/custom-proc';
 import { WoWUction } from '../models/auction/wowuction';
@@ -47,7 +46,8 @@ export class SharedService {
     recipes: new EventEmitter<boolean>(),
     pets: new EventEmitter<boolean>(),
     realms: new EventEmitter<boolean>(),
-    tsmDataRestored: new EventEmitter<boolean>()
+    tsmDataRestored: new EventEmitter<boolean>(),
+    shopingCart: new EventEmitter<Recipe>()
   };
   public static preScrollPosition = 0;
 

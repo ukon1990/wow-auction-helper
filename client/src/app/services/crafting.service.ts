@@ -145,7 +145,7 @@ export class CraftingService {
         this._itemService.addItems(missingItems);
       }
 
-      if (!this.platform.WEBKIT) {
+      if (this.platform !== null && !this.platform.WEBKIT) {
         this.dbService.addRecipes(SharedService.recipes);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = recipes.timestamp;
       }

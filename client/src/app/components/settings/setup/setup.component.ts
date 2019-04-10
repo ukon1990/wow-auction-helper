@@ -8,6 +8,7 @@ import { SharedService } from '../../../services/shared.service';
 import { Realm } from '../../../models/realm';
 import { Router } from '@angular/router';
 import { User } from '../../../models/user/user';
+import {Report} from '../../../utils/report.util';
 
 @Component({
   selector: 'wah-setup',
@@ -181,10 +182,7 @@ export class SetupComponent implements OnInit {
 
       User.restore();
       this._router.navigateByUrl('/dashboard');
-      this.angulartics2.eventTrack.next({
-        action: 'New user registered',
-        properties: { category: 'User registration' },
-      });
+      Report.send('New user registered', 'User registration');
     }
   }
 

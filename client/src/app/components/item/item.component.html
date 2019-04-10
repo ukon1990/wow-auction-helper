@@ -53,7 +53,8 @@
             </span>
           <br>
         </div>
-        <mat-card class="mt-3 mb-3" *ngIf="isUsingTSM() || isUsingWoWUction() || selected?.auctionItem?.hasPersonalSaleRate">
+        <mat-card class="mt-3 mb-3"
+                  *ngIf="isUsingTSM() || isUsingWoWUction() || selected?.auctionItem?.hasPersonalSaleRate">
           <mat-card-header>
             <mat-card-subtitle>
               Sale rate
@@ -127,7 +128,7 @@
           </mat-tab>
 
           <mat-tab label="Created by" *ngIf="createdBy">
-            <wah-data-table [columns]="recipeColumns" [data]="createdBy" [isCrafting]="true" [numOfRows]="20">
+            <wah-data-table id="itemID" [columns]="recipeColumns" [data]="createdBy" [isCrafting]="true" [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
           <mat-tab label="Material for" *ngIf="materialFor.length > 0">
@@ -195,11 +196,20 @@
       TUJ
       <i class="fas fa-external-link-square-alt"></i>
     </button>
-    <button mat-raised-button matTooltip="Add to shopping list" *ngIf="userHasRecipeForItem()"
-            (click)="addEntryToCart()">
-      Add cheapest known recipe to shopping list
-      <i class="fas fa-cart-plus"></i>
-    </button>
+
+    <div *ngIf="userHasRecipeForItem()" class="float-right">
+      <mat-form-field>
+        <input matInput
+               placeholder="Quantity"
+               [formControl]="shoppingCartQuantityField">
+      </mat-form-field>
+
+      <button mat-raised-button matTooltip="Add to shopping list"
+              (click)="addEntryToCart()">
+        Add to cart
+        <i class="fas fa-cart-plus"></i>
+      </button>
+    </div>
   </mat-card-actions>
 </mat-card>
 
