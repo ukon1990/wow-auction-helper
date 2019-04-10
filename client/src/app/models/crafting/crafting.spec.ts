@@ -1,37 +1,37 @@
 import {SharedService} from '../../services/shared.service';
 import {AuctionItem} from '../auction/auction-item';
 import {Crafting} from './crafting';
-import {User} from '../user/user';
 import {TSM} from '../auction/tsm';
 import {Recipe} from './recipe';
-
-beforeEach(() => {
-  User.restore();
-  const recipe = new Recipe();
-
-  SharedService.recipes.length = 0;
-  SharedService.auctionItemsMap[10] = new AuctionItem();
-  SharedService.auctionItemsMap[10].buyout = 20;
-  SharedService.auctionItemsMap[11] = new AuctionItem();
-  SharedService.auctionItemsMap[11].buyout = 10;
-  SharedService.auctionItemsMap[12] = new AuctionItem();
-  SharedService.auctionItemsMap[12].buyout = 30;
-  SharedService.auctionItemsMap[20] = new AuctionItem();
-  SharedService.auctionItemsMap[20].buyout = 10;
-  SharedService.tsm[20] = new TSM();
-  SharedService.tsm[20].MarketValue = 100;
-
-  recipe.spellID = 1;
-  recipe.itemID = 10;
-  recipe.name = 'test recipe';
-  recipe.profession = 'Software developer';
-  recipe.minCount = 1;
-  recipe.maxCount = 1;
-  recipe.reagents = [];
-  SharedService.recipes.push(recipe);
-});
+import {MockLoaderUtil} from '../../mocks/mock-loader.util';
 
 describe('Crafting', () => {
+  beforeAll(() => {
+    new MockLoaderUtil().initBaseData();
+    const recipe = new Recipe();
+
+    SharedService.recipes.length = 0;
+    SharedService.auctionItemsMap[10] = new AuctionItem();
+    SharedService.auctionItemsMap[10].buyout = 20;
+    SharedService.auctionItemsMap[11] = new AuctionItem();
+    SharedService.auctionItemsMap[11].buyout = 10;
+    SharedService.auctionItemsMap[12] = new AuctionItem();
+    SharedService.auctionItemsMap[12].buyout = 30;
+    SharedService.auctionItemsMap[20] = new AuctionItem();
+    SharedService.auctionItemsMap[20].buyout = 10;
+    SharedService.tsm[20] = new TSM();
+    SharedService.tsm[20].MarketValue = 100;
+
+    recipe.spellID = 1;
+    recipe.itemID = 10;
+    recipe.name = 'test recipe';
+    recipe.profession = 'Software developer';
+    recipe.minCount = 1;
+    recipe.maxCount = 1;
+    recipe.reagents = [];
+    SharedService.recipes.push(recipe);
+  });
+
   describe('Should be able to calculate cost', () => {
     it('for one reagent', () => {
       SharedService.recipes[0].reagents.push({

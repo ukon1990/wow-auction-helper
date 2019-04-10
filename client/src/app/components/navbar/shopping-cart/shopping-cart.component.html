@@ -1,43 +1,106 @@
 <a class="nav-link dropdown-toggle" href="#" id="shoppingCart"
-  data-toggle="dropdown" aria-haspopup="true" [attr.aria-expanded]="show"
-  (click)="show = !show"
-  matTooptip="Shopping cart">
+   data-toggle="dropdown" aria-haspopup="true" [attr.aria-expanded]="show"
+   (click)="toggleDisplay()"
+   matTooptip="Shopping cart">
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
-  {{ getShoppingCart().recipes.length + getShoppingCart().items.length | number }}
+  Shopping cart ({{ cart.recipes.length | number }} crafts, {{ cart.profit | gold }})
 </a>
-<div class="dropdown-menu" aria-labelledby="shoppingCart" [ngClass]="{'show': show}" (click)="setShow()">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <strong class="shopping-cart-header">
-          Shopping cart
-        </strong>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <wah-data-table [id]="'itemID'"
-        [iconSize]="22"
-        [columns]="columnsRecipes"
-        [data]="getShoppingCart().recipes"></wah-data-table>
 
-      <strong class="row col-md-12">Reagents needed:</strong>
-      <wah-data-table [id]="'itemID'"
-        [iconSize]="22"
-        [columns]="columns"
-        [data]="getShoppingCart().reagents"></wah-data-table>
-      Sum buyout from AH: {{ getShoppingCart().buyout | gold }}
-      <br> Sum material cost from AH: {{ getShoppingCart().cost | gold }}
-      <br> Potential sale profit: {{ getShoppingCart().profit | gold }}
-      <br>
-      <mat-form-field *ngIf="getShoppingCart().tsmShoppingString && getShoppingCart().tsmShoppingString.length > 0" class="row col-md-12">
+<mat-card *ngIf="show" class="full-screen">
+  <mat-card-header>
+    <div class="action-icon mat-elevation-z5" (click)="toggleDisplay()" matTooltip="Close the shopping cart">
+      <button mat-raised-button class="btn btn-sm">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <mat-card-title>
+      <strong class="shopping-cart-header">
+        Shopping cart
+      </strong>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+
+      <div class="row col-md-12">
+        <h4 class="col-md-12">Overview:</h4>
+        <div class="col-lg-4">
+          <strong class="row col-md-12">Recipes:</strong>
+          <wah-data-table [id]="'itemID'"
+                          [iconSize]="22"
+                          [columns]="columnsRecipes"
+                          [data]="cart.recipes">
+          </wah-data-table>
+        </div>
+        <div class="col-lg-4">
+          <strong class="row col-md-12">Reagents needed:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsNeededReagents"
+                          [data]="cart.reagents"></wah-data-table>
+        </div>
+
+        <div class="col-lg-4">
+
+          <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
+          <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
+          <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
+          <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
+          <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
+          <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }}
+          <br>
+          <br>
+          <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
+                          class="row col-md-12">
         <textarea matInput placeholder="TSM shopping string"
-          [value]="getShoppingCart().tsmShoppingString"></textarea>
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>
-    </mat-card-actions>
-  </mat-card>
-</div>
+                  [value]="cart.tsmShoppingString"></textarea>
+          </mat-form-field>
+          <br>
+
+          <wah-tsm-addon-db [importMode]="true"></wah-tsm-addon-db>
+        </div>
+      </div>
+
+      <div class="row col-md-12">
+        <h4 class="col-md-12">Sources:</h4>
+        <div class="col-md-12">
+          <strong class="row col-md-12">From your inventory:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsInventory"
+                          [data]="cart.sources.inventory"></wah-data-table>
+        </div>
+
+        <div class="col-lg-4">
+          <strong class="row col-md-12">From AH:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsAH"
+                          [data]="cart.sources.ah"></wah-data-table>
+        </div>
+
+        <div class="col-lg-4">
+          <strong class="row col-md-12">From vendor:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsVendor"
+                          [data]="cart.sources.vendor"></wah-data-table>
+        </div>
+
+        <div class="col-lg-4">
+          <strong class="row col-md-12">To farm:</strong>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="columnsFarm"
+                          [data]="cart.sources.farm"></wah-data-table>
+        </div>
+      </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>
+  </mat-card-actions>
+</mat-card>
+
+<div *ngIf="show" class="backdrop" (click)="toggleDisplay()"></div>

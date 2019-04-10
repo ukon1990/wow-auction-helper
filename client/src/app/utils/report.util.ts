@@ -13,6 +13,9 @@ export class Report {
   }
 
   public static send(action: string, category: string): void {
+    if (!Report.ga) {
+      return;
+    }
     Report.ga.eventTrack.next({
       action: action,
       properties: {category: category},

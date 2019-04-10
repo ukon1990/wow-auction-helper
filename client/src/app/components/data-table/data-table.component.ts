@@ -11,13 +11,14 @@ import {Item} from '../../models/item/item';
 import {Seller} from '../../models/seller';
 import {AuctionPet} from '../../models/auction/auction-pet';
 import {CustomPrices} from '../../models/crafting/custom-price';
-import {ShoppingCartRecipe} from '../../models/shopping-cart';
 import {Angulartics2} from 'angulartics2';
 import {CustomProcs} from '../../models/crafting/custom-proc';
 import {Watchlist} from '../../models/watchlist/watchlist';
 import {ItemService} from '../../services/item.service';
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
+import {Report} from '../../utils/report.util';
+import {ShoppingCart, ShoppingCartItem} from '../../models/shopping/shopping-cart.model';
 
 @Component({
   selector: 'wah-data-table',
@@ -143,17 +144,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   addEntryToCart(entry: any): void {
     if (entry.spellID) {
-      SharedService.user.shoppingCart.addEntry(1, entry, undefined);
-      this.angulartics2.eventTrack.next({
-        action: 'Added recipe',
-        properties: {category: 'Shopping cart'},
-      });
+      SharedService.user.shoppingCart.add(entry);
+      Report.send('Added recipe', 'Shopping cart');
     } else {
-      SharedService.user.shoppingCart.addEntry(1, undefined, entry);
-      this.angulartics2.eventTrack.next({
-        action: 'Added item',
-        properties: {category: 'Shopping cart'},
-      });
+      // TODO: Add item -> SharedService.user.shoppingCart.add(entry);
+      // Report.send('Added item', 'Shopping cart');
     }
   }
 
@@ -296,8 +291,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.filteredData.splice(pagignationIndex + i, 1);
   }
 
-  removeRecipe(recipe: ShoppingCartRecipe, index: number): void {
-    SharedService.user.shoppingCart.removeRecipe(recipe, index);
+  removeRecipe(recipe: ShoppingCartItem, index: number): void {
+    SharedService.user.shoppingCart.remove(recipe.id);
     this.angulartics2.eventTrack.next({
       action: 'Removed recipe',
       properties: {category: 'Shopping cart'},
@@ -343,5 +338,68 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     return (this.linkType ?
       `${this.linkType}=` : 'item=') + this.getItemID(item);
+  }
+
+  getCartCount(item: any, column: ColumnDescription): number {
+    if (column.key) {
+      return (item as ShoppingCartItem).quantity;
+    } else {
+      const recipe: Recipe = this.isKnownRecipe(item);
+      return item && SharedService.user.shoppingCart.recipeMap[recipe.spellID] ?
+        SharedService.user.shoppingCart.recipeMap[recipe.spellID].quantity :
+        0;
+    }
+  }
+
+  setCartCount(recipe: any, column: ColumnDescription, event: Event): void {
+    const newValue = +event.target['value'];
+    if (column.key) {
+      this.updateCartCountForRecipe(
+        recipe as ShoppingCartItem, newValue);
+    } else if (recipe instanceof Recipe) {
+      this.addRecipeToCart(recipe as Recipe, newValue);
+    } else {
+      const r: Recipe = SharedService.recipesMapPerItemKnown[recipe[this.id]];
+      if (r) {
+        this.addRecipeToCart(r, newValue);
+      }
+    }
+  }
+
+  private addRecipeToCart(recipe: any, newValue) {
+    const cart = SharedService.user.shoppingCart;
+    if (cart.recipeMap[recipe.spellID]) {
+      this.updateCartCountForRecipe(
+        cart.recipeMap[recipe.spellID] as ShoppingCartItem, newValue);
+    } else if (newValue > 0) {
+      SharedService.user.shoppingCart.add(
+        recipe,
+        newValue);
+    }
+  }
+
+  private updateCartCountForRecipe(recipe: ShoppingCartItem, newValue: number) {
+    const diff = newValue - recipe.quantity;
+    if (diff > 0 && newValue > 0) {
+      SharedService.user.shoppingCart.add(
+        SharedService.recipesMap[recipe.id],
+        diff);
+    } else {
+      SharedService.user.shoppingCart.remove(
+        recipe.id,
+        newValue > 0 ? diff * -1 : undefined);
+    }
+  }
+
+  isKnownRecipe(item: any) {
+    if (!item) {
+      return false;
+    }
+
+    const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id];
+    if (SharedService.recipesMapPerItemKnown[id]) {
+      return SharedService.recipesMapPerItemKnown[id];
+    }
+    return false;
   }
 }

@@ -17,6 +17,7 @@ import {GameBuild} from '../../utils/game-build.util';
 import {UserProfit} from '../../utils/tsm-lua.util';
 import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 import {Report} from '../../utils/report.util';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'wah-item',
@@ -39,6 +40,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     auctionItem: undefined,
     seller: undefined
   };
+  shoppingCartQuantityField: FormControl = new FormControl(1);
   subscriptions = new SubscriptionsUtil();
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
@@ -55,7 +57,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'reagents', title: 'Materials', dataType: 'materials'},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true}
+    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
   recipeColumnsSimple: Array<ColumnDescription> = [
@@ -64,7 +66,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'profession', title: 'Source', dataType: ''},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info']}
+    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
   droppedByColumns: Array<ColumnDescription> = [
@@ -206,7 +208,9 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       return;
     }
     SharedService.user.shoppingCart
-      .addEntry(1, SharedService.recipesMapPerItemKnown[SharedService.selectedItemId]);
+      .add(
+        SharedService.recipesMapPerItemKnown[SharedService.selectedItemId],
+        this.shoppingCartQuantityField.value);
 
     this.angulartics2.eventTrack.next({
       action: 'Added to recipe shopping cart',

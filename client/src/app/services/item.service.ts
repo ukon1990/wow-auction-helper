@@ -133,15 +133,15 @@ export class ItemService {
 
       SharedService.items[item.id] = item;
 
-      if (item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
+      if (item.itemSource && item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
         item.itemSource.containedInItem.forEach(i =>
           this.setLocaleForSourceItems(i, missingItems));
       }
-      if (item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
+      if (item.itemSource && item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
         item.itemSource.milledFrom.forEach(i =>
           this.setLocaleForSourceItems(i, missingItems));
       }
-      if (item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0) {
+      if (item.itemSource && item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0) {
         item.itemSource.prospectedFrom.forEach(i =>
           this.setLocaleForSourceItems(i, missingItems));
       }
@@ -153,7 +153,7 @@ export class ItemService {
       // TODO: when I have time -> this.addItems(missingItems);
     }
 
-    if (!this.platform.WEBKIT) {
+    if (this.platform !== null && !this.platform.WEBKIT) {
       this.dbService.addItems(items.items);
       localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
     }

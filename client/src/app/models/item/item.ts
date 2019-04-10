@@ -32,6 +32,7 @@ export class ItemInventory {
   characterMap = {};
   buyout: number;
   sumBuyout: number;
+  purchases: ItemPurchase[] = [];
 
   constructor(item: any, storedIn: string) {
     this.id = item.id;
@@ -54,4 +55,14 @@ export class ItemInventory {
       this.characters.push(` ${name}(${this.characterMap[name].toString()})`);
     });
   }
+
+  addPurchase(purchase: object): void {
+    // 'this.purchases.push(new ItemPurchase());
+  }
+}
+
+export class ItemPurchase {
+  buyout: number;
+  quantity: number;
+  timestamp: number;
 }

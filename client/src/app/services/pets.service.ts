@@ -78,7 +78,7 @@ export class PetsService {
       SharedService.pets[p.speciesId] = p;
     });
 
-    if (!this.platform.WEBKIT) {
+    if (this.platform !== null && !this.platform.WEBKIT) {
       this.dbService.addPets(pets.pets);
       localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date().toJSON();
     }
