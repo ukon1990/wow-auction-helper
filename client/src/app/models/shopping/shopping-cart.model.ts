@@ -93,6 +93,7 @@ export class ShoppingCart {
       this.sources.ah.length = 0;
       this.sources.inventory.length = 0;
       this.sources.vendor.length = 0;
+      this.sources.farm.length = 0;
       this.reagents
         .forEach((reagent: ShoppingCartItem) =>
           this.setSourcesForReagent(reagent, inventory));
@@ -381,23 +382,27 @@ export class ShoppingCart {
     try {
       if (auctionItem) {
         auctionItem.auctions.forEach((item: Auction) => {
+          const newQuantity = item.quantity + result.need.count,
+            maxQuantityDiffPercent = 1.2;
+
           if (result.need.count >= quantity) {
             return;
+          } else if (newQuantity / quantity <= maxQuantityDiffPercent) {
+            // Should not get more than 20% more than we need.
+
+            if (newQuantity > quantity) {
+              const perItem = item.buyout / item.quantity;
+              const need = (quantity - (item.quantity + result.need.count)) * -1;
+              result.need.cost += need * perItem;
+              result.need.count += need;
+            } else {
+              result.need.cost += item.buyout;
+              result.need.count += item.quantity;
+            }
+
+            result.total.cost += item.buyout;
+            result.total.count += item.quantity;
           }
-
-
-          if (item.quantity + result.need.count > quantity) {
-            const perItem = item.buyout / item.quantity;
-            const need = (quantity - (item.quantity + result.need.count)) * -1;
-            result.need.cost += need * perItem;
-            result.need.count += need;
-          } else {
-            result.need.cost += item.buyout;
-            result.need.count += item.quantity;
-          }
-
-          result.total.cost += item.buyout;
-          result.total.count += item.quantity;
         });
       }
     } catch (error) {
