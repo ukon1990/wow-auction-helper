@@ -9,8 +9,8 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
-  memorySize: 720
-  timeout: 900
+  memorySize: 300
+  timeout: 60
 
 functions:
   auctions:

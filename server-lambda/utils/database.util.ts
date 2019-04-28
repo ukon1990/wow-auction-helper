@@ -15,12 +15,13 @@ export class DatabaseUtil {
         if (error) {
           reject({
             message: 'Could not connect to the database',
-            error: error.stack
+            error: 'Could not connect to the database',
+            stack: error.stack
           });
           return;
         }
 
-        console.log('connected as id ' + this.connection.threadId);
+        console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
 
         this.connection.query(query, (err: MysqlError, rows: any[]) => {
           this.connection.end();

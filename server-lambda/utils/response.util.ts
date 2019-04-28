@@ -27,8 +27,15 @@ export class Response {
     }
     return Response.send({
       statusCode: 500,
-      error: error ? error : 'Malormed request',
+      error: this.getErrorMessage(error),
       event: event.requestContext.stage === 'dev' ? event : undefined
     }, callback);
+  }
+
+  private static getErrorMessage(error) {
+    if (error) {
+      return error.message ? error.message : error;
+    }
+    return 'Malormed request';
   }
 }
