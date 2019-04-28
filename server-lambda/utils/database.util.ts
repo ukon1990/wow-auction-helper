@@ -15,7 +15,8 @@ export class DatabaseUtil {
         if (error) {
           reject({
             message: 'Could not connect to the database',
-            error: error.stack
+            error: 'Could not connect to the database',
+            stack: error.stack
           });
           return;
         }
