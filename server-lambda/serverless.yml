@@ -36,6 +36,11 @@ functions:
           path: item/{id}
           cors:
             origin: '*'
+      - http:
+          method: get
+          path: item/missing-locales
+          cors:
+            origin: '*'
   pets:
     handler: controllers/pet.handler
     events:

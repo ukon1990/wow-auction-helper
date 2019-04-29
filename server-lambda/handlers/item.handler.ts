@@ -170,4 +170,35 @@ export class ItemHandler {
         });
     });
   }
+
+  findMissingLocales(event: APIGatewayEvent, callback: Callback) {
+    new DatabaseUtil()
+      .query(ItemQuery.findMissingLocales())
+      .then((rows: any[]) => this.processMissingLocales(rows, event, callback))
+      .catch(error => Response.error(callback, error, event));
+  }
+
+  private processMissingLocales(rows: any[], event: APIGatewayEvent, callback: Callback) {
+    const result = {};
+    if (rows.length > 0) {
+      Object.keys(rows[0])
+        .forEach(column => {
+          if (column !== 'id') {
+            result[column] = [];
+          }
+        });
+      rows.forEach(row =>
+        this.processMissingLocalesRow(row, result));
+    }
+    Response.send(result, callback);
+  }
+
+  private processMissingLocalesRow(row, result) {
+    Object.keys(row)
+      .forEach(column => {
+        if (row[column] === null || row[column] === '404') {
+          result[column].push(row.id);
+        }
+      });
+  }
 }
