@@ -9,7 +9,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
-  memorySize: 300
+  memorySize: 512
   timeout: 60
 
 functions:
