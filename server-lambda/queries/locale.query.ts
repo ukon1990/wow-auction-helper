@@ -64,10 +64,6 @@ export class LocaleQuery {
                 ko_KR = 404 or ko_KR is null or
                 zh_TW = 404 or zh_TW is null or
                 fr_FR = 404 or fr_FR is null;`;
-    /**
-     ko_KR = 404 or ko_KR is null or
-     zh_TW = 404 or zh_TW is null or
-     */
   }
 
   public static updateTimestamp(table: string, id: number, idName: string): string {

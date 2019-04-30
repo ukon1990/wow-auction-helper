@@ -134,6 +134,10 @@ export class LocaleHandler {
   }
 
   private updateLocaleTable(table: string, idName: string, id: number, locale, name) {
+    if (!name) {
+      console.error('Could not find by id:', id);
+      return;
+    }
     const sql = LocaleQuery
       .updateSingleLocale(`${table}_name_locale`, idName, id, locale, name);
     console.log('SQL:', sql);
