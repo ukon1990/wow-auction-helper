@@ -153,23 +153,4 @@ export class ItemQuery {
             FROM items
             WHERE itemLevel > 400;`;
   }
-
-  public static findMissingLocales(): string {
-    return `select *
-            from item_name_locale
-            where
-            \ten_GB = 404 or en_GB is null or
-                en_US = 404 or en_US is null or
-                de_DE = 404 or de_DE is null or
-                es_ES = 404 or es_ES is null or
-                es_MX = 404 or es_MX is null or
-                it_IT = 404 or it_IT is null or
-                pl_PL = 404 or pl_PL is null or
-                pt_PT = 404 or pt_PT is null or
-                pt_BR = 404 or pt_BR is null or
-                ru_RU = 404 or ru_RU is null or
-                ko_KR = 404 or ko_KR is null or
-                zh_TW = 404 or zh_TW is null or
-                fr_FR = 404 or fr_FR is null;`;
-  }
 }

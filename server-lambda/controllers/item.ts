@@ -6,8 +6,6 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 
   if (event.pathParameters && event.pathParameters.id) {
     ItemController.byId(event, callback);
-  } else if (event.path === '/item/missing-locales') {
-    ItemController.findMissingLocales(event, callback);
   } else {
     ItemController.all(event, callback);
   }
@@ -40,15 +38,5 @@ class ItemController {
       default:
         Response.error(callback, 'The method you provided, is not available.', event);
     }
-  }
-
-  static findMissingLocales(event: APIGatewayEvent, callback: Callback) {
-    if (this.isNotInAWS(event)) {
-      new ItemHandler().findMissingLocales(event, callback);
-    }
-  }
-
-  private static isNotInAWS(event: APIGatewayEvent) {
-    return event.requestContext.accountId === 'offlineContext_accountId';
   }
 }

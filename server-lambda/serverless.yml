@@ -21,7 +21,14 @@ functions:
           path: auction
           cors:
             origin: '*'
-
+  locales:
+    handler: controllers/locale.handler
+    events:
+      - http:
+          method: post
+          path: locale/add-missing
+          cors:
+            origin: 'localhost:3000'
   items:
     handler: controllers/item.handler
     events:
@@ -34,11 +41,6 @@ functions:
       - http:
           method: any
           path: item/{id}
-          cors:
-            origin: '*'
-      - http:
-          method: get
-          path: item/missing-locales
           cors:
             origin: '*'
   pets:
