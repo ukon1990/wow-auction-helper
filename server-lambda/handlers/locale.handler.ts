@@ -41,10 +41,12 @@ export class LocaleHandler {
   };
 
   async findMissingLocales(event: APIGatewayEvent, callback: Callback) {
-    const body = JSON.parse(event.body);
+    const body = JSON.parse(event.body),
+      sql = LocaleQuery.findMissingLocales(body.table);
+    console.log('findMissingLocales SQL:', sql);
     await AuthHandler.getToken();
     new DatabaseUtil()
-      .query(LocaleQuery.findMissingLocales(body.table))
+      .query(sql)
       .then((rows: any[]) =>
         this.processMissingLocales(rows, body.table, event, callback))
       .catch(error => Response.error(callback, error, event));
@@ -111,12 +113,12 @@ export class LocaleHandler {
   private getAddLocalePromises(id: number, table: string, idName: string, locale: string): Promise<any> {
     switch (table) {
       case 'pet':
-        return new PetHandler().getPet(id, locale)
+        return new PetHandler().getPet(id, locale, this.localeRegionMap[locale])
           .then((pet: Pet) =>
             this.updateLocaleTable(table, idName, id, locale, pet.name))
           .catch(console.error);
       case 'item':
-        return new ItemHandler().getFromBlizzard(id, locale)
+        return new ItemHandler().getFromBlizzard(id, locale, this.localeRegionMap[locale])
           .then((item: Item) =>
             this.updateLocaleTable(table, idName, id, locale, item.name))
           .catch(console.error);
@@ -124,7 +126,7 @@ export class LocaleHandler {
         return new RecipeHandler().getProfessionForRecipe({
           spellID: id,
           name: 'not set'
-        } as Recipe)
+        } as Recipe, locale, this.localeRegionMap[locale])
           .then((spell: RecipeSpell) =>
             this.updateLocaleTable(table, idName, id, locale, spell.name))
           .catch(console.error);
@@ -140,7 +142,7 @@ export class LocaleHandler {
     }
     const sql = LocaleQuery
       .updateSingleLocale(`${table}_name_locale`, idName, id, locale, name);
-    console.log('SQL:', sql);
+    console.log('updateLocaleTable SQL:', sql);
     new DatabaseUtil()
       .query(
         sql)
@@ -151,7 +153,7 @@ export class LocaleHandler {
 
   private updateTableTimestamp(table: string, id: number, idName: string, name, locale) {
     const sql = LocaleQuery.updateTimestamp(table + 's', id, idName);
-    console.log('SQL:', sql);
+    console.log('updateTableTimestamp SQL:', sql);
     new DatabaseUtil()
       .query(sql)
       .then(() => console.log(`Successfully added ${id} - ${name} to ${locale}`))

@@ -154,13 +154,13 @@ export class ItemHandler {
     }));
   }
 
-  getFromBlizzard(id: number, locale: string): Promise<Item> {
+  getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
 
       request.get(
         new Endpoints()
-          .getPath(`item/${id}?locale=${getLocale(locale)}`),
+          .getPath(`item/${id}?locale=${getLocale(locale)}`, region),
         (error, re, body) => {
           // const icon = JSON.parse(body).icon;
           if (error || !body) {

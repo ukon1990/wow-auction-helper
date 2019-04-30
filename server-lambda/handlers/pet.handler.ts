@@ -105,10 +105,11 @@ export class PetHandler {
     };
   }
 
-  getPet(id: number, locale?: string): Promise<Pet> {
+  getPet(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Pet> {
+    const url = new Endpoints()
+      .getPath(`pet/species/${id}?locale=${getLocale(locale)}`, region);
     return new Promise<Pet>((resolve, reject) => {
-      request.get(new Endpoints()
-          .getPath(`pet/species/${id}?locale=${getLocale(locale)}`),
+      request.get(url,
         (error, response, body) => {
         if (error) {
           reject(error);
