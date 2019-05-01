@@ -18,7 +18,7 @@ export class LocaleQuery {
           ko_KR,
           zh_TW)
         VALUES
-        (${data['id']},
+        (${data[idName]},
           "${safeifyString(data['en_GB'])}",
           "${safeifyString(data['en_US'])}",
           "${safeifyString(data['de_DE'])}",
@@ -43,8 +43,12 @@ export class LocaleQuery {
 
   static updateSingleLocale(tableName: string, idName: string, id: any, locale: string, data: string) {
     return `UPDATE ${tableName}
-            SET ${locale}='${data.replace(/[']/g, '\\\'')}'
+            SET ${locale}='${LocaleQuery.cleanUpString(data)}'
             WHERE ${idName}=${id};`;
+  }
+
+  private static cleanUpString(data: string) {
+    return data.replace(/[']/g, '\\\'');
   }
 
   public static findMissingLocales(type: string): string {
@@ -62,28 +66,30 @@ export class LocaleQuery {
               pt_PT = 404 or pt_PT is null or
               pt_BR = 404 or pt_BR is null or
               ru_RU = 404 or ru_RU is null or
+              fr_FR = 404 or fr_FR is null or
               ko_KR = 404 or ko_KR is null or
-              zh_TW = 404 or zh_TW is null or
-              fr_FR = 404 or fr_FR is null
+              zh_TW = 404 or zh_TW is null
             union
             select
               ${idName},
-              null as en_GB,
-              null as en_US,
-              null as de_DE,
-              null as es_ES,
-              null as es_MX,
-              null as fr_FR,
-              null as it_IT,
-              null as pl_PL,
-              null as pt_PT,
-              null as pt_BR,
-              null as ru_RU,
-              null as ko_KR,
-              null as zh_TW
+              'insert' as en_GB,
+              'insert' as en_US,
+              'insert' as de_DE,
+              'insert' as es_ES,
+              'insert' as es_MX,
+              'insert' as fr_FR,
+              'insert' as it_IT,
+              'insert' as pl_PL,
+              'insert' as pt_PT,
+              'insert' as pt_BR,
+              'insert' as ru_RU,
+              'insert' as ko_KR,
+              'insert' as zh_TW
             from ${type}s
             where
                 ${idName} not in (select ${idName} from ${type}_name_locale);`;
+    /**
+     */
   }
 
   public static updateTimestamp(table: string, id: number, idName: string): string {
