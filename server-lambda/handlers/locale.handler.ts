@@ -14,6 +14,7 @@ import {ItemLocale} from '../models/item/item-locale';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class LocaleHandler {
+  requestsPerSecondThreashold = 20;
   region = {
     eu: 'eu',
     us: 'us',
@@ -90,7 +91,7 @@ export class LocaleHandler {
 
   private async insertNewEntries(inserts: ItemLocale[], table: string, idName: string) {
     const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5,
+        requestsPerSecond: this.requestsPerSecondThreashold,
         promiseImplementation: Promise
       }),
       promises = [];
@@ -118,7 +119,7 @@ export class LocaleHandler {
 
   private async updateLocaleForIds(ids: number[], table: string, idName: string, locale: string) {
     const promiseThrottle = new PromiseThrottle({
-      requestsPerSecond: 5,
+      requestsPerSecond: this.requestsPerSecondThreashold,
       promiseImplementation: Promise
     });
     const itemIDs: any[] = [];
@@ -224,7 +225,7 @@ export class LocaleHandler {
       .query(
         sql)
       .then(() =>
-        (this.updateTableTimestamp(table, id, idName, name, locale)))
+        this.updateTableTimestamp(table, id, idName, name, locale))
       .catch(console.error);
   }
 
