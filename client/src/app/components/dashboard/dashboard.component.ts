@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Dashboard } from '../../models/dashboard';
-import { SharedService } from '../../services/shared.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Dashboard} from '../../models/dashboard';
+import {SharedService} from '../../services/shared.service';
+import {Router, NavigationEnd} from '@angular/router';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'wah-dashboard',
@@ -14,22 +14,28 @@ export class DashboardComponent implements OnDestroy {
   activatedRoute = 'items';
 
   constructor(private route: Router) {
-    this.routeSubscription = route.events.subscribe((event: NavigationEnd) => {
-      switch (event.url) {
-        case '/dashboard/items':
-          this.activatedRoute = 'items';
-          break;
-        case '/dashboard/sellers':
-          this.activatedRoute = 'sellers';
-          break;
-        case '/dashboard/manage-dashboards':
-          this.activatedRoute = 'manage-dashboards';
-          break;
-      }
-    });
+    this.routeSubscription = route.events
+      .subscribe((event: NavigationEnd) =>
+        this.onNavigationChange(event));
   }
+
+
   ngOnDestroy(): void {
     this.routeSubscription.unsubscribe();
+  }
+
+  private onNavigationChange(event: NavigationEnd) {
+    switch (event.url) {
+      case '/dashboard/items':
+        this.activatedRoute = 'items';
+        break;
+      case '/dashboard/sellers':
+        this.activatedRoute = 'sellers';
+        break;
+      case '/dashboard/manage-dashboards':
+        this.activatedRoute = 'manage-dashboards';
+        break;
+    }
   }
 
   getSellersCount(): number {

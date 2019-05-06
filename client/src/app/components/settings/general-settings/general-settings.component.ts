@@ -12,7 +12,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {PetsService} from '../../../services/pets.service';
 import {AuctionHandler} from '../../../models/auction/auction-handler';
 import {DatabaseService} from '../../../services/database.service';
-import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-general-settings',
@@ -30,7 +30,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     {id: 'kr', name: 'Korea'},
     {id: 'tw', name: 'Taiwan'}
   ];
-  subscriptions = new SubscriptionsUtil();
+  subscriptions = new SubscriptionManager();
 
   constructor(private _formBuilder: FormBuilder,
               private angulartics2: Angulartics2,

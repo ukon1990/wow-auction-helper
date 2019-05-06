@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, Input} from '@angular/core';
+import {AfterContentInit, Component, Input, OnDestroy} from '@angular/core';
 import {Character} from '../../../models/character/character';
 import {ReputationVendorsData} from '../../../data/reputation/reputations-list.data';
 import {ColumnDescription} from '../../../models/column-description';
@@ -18,7 +18,7 @@ import {Report} from '../../../utils/report.util';
   templateUrl: './character-reputation.component.html',
   styleUrls: ['./character-reputation.component.scss']
 })
-export class CharacterReputationComponent implements AfterContentInit {
+export class CharacterReputationComponent implements AfterContentInit, OnDestroy {
   @Input() character: Character;
   reputations = ReputationVendorsData.bfa;
   professions = [];
@@ -49,6 +49,10 @@ export class CharacterReputationComponent implements AfterContentInit {
         this.mapProfessions());
 
     console.log('reputations', SharedService.user);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   mapProfessions() {

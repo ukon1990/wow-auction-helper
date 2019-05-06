@@ -4,8 +4,7 @@ import * as distinctColors from 'distinct-colors';
 import {FormControl} from '@angular/forms';
 import {Item} from '../../models/item/item';
 import {ChartData} from '../../models/chart-data.model';
-import {Report} from '../../utils/report.util';
-import {SubscriptionsUtil} from '../../utils/subscriptions.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-charts',
@@ -25,7 +24,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
   chartTypeForm: FormControl = new FormControl();
   colors;
 
-  subscriptions = new SubscriptionsUtil();
+  subscriptions = new SubscriptionManager();
 
   constructor() {
   }

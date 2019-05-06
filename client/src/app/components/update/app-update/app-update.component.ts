@@ -1,7 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
-import { SubscriptionsUtil } from '../../../utils/subscriptions.util';
-import { UpdateService } from '../../../services/update.service';
-import { UpdateActivatedEvent } from '@angular/service-worker';
+import {Component, OnDestroy} from '@angular/core';
+import {UpdateService} from '../../../services/update.service';
+import {UpdateActivatedEvent} from '@angular/service-worker';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-app-update',
@@ -9,7 +9,7 @@ import { UpdateActivatedEvent } from '@angular/service-worker';
   styleUrls: ['./app-update.component.scss']
 })
 export class AppUpdateComponent implements OnDestroy {
-  subscriptions = new SubscriptionsUtil();
+  subscriptions = new SubscriptionManager();
   updateAvailable: boolean;
 
   constructor() {

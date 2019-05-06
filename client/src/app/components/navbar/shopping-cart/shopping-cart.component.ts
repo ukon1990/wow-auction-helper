@@ -3,9 +3,9 @@ import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
 import {Recipe} from '../../../models/crafting/recipe';
 import {ColumnDescription} from '../../../models/column-description';
-import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 import {Report} from '../../../utils/report.util';
 import {ShoppingCart} from '../../../models/shopping/shopping-cart.model';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -58,7 +58,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
     {key: 'characters', title: 'Characters', dataType: 'array'}
   ];
 
-  subscriptions = new SubscriptionsUtil();
+  subscriptions = new SubscriptionManager();
 
   constructor() {
   }
