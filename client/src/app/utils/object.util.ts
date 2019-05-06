@@ -7,19 +7,25 @@ export class ObjectUtil {
   }
 
   public static isObject(value: any): boolean {
-    return value && typeof value === 'object' && value !== null && !value.forEach && !value.push;
+    return !ObjectUtil.isNullOrUndefined(value) &&
+      typeof value === 'object' &&
+      !value.forEach && !value.push;
   }
 
   public static isArray(value: any): boolean {
-    return value && typeof value === 'object' && value !== null && value.forEach && value.push;
+    return !ObjectUtil.isNullOrUndefined(value) &&
+      typeof value === 'object' &&
+      value.forEach && value.push;
   }
 
   public static isAPopulatedObject(value: any): boolean {
-    return value !== null && typeof value === 'object' && !ObjectUtil.isArray(value);
+    return !ObjectUtil.isNullOrUndefined(value) &&
+      typeof value === 'object' &&
+      !ObjectUtil.isArray(value);
   }
 
   public static overwrite(from: object, to: object): void {
-    if (!from || from === null) {
+    if (ObjectUtil.isNullOrUndefined(from)) {
       Report.debug(
         {message: ''} as Error,
         'Could not clone an object');
@@ -41,7 +47,7 @@ export class ObjectUtil {
   }
 
   public static clone(object: object): object {
-    if (!object || object === null) {
+    if (ObjectUtil.isNullOrUndefined(object)) {
       Report.debug(
         {message: ''} as Error,
         'Could not clone an object');
@@ -62,7 +68,7 @@ export class ObjectUtil {
   }
 
   public static cloneArray(array: Array<any>): Array<any> {
-    if (!array || array === null) {
+    if (ObjectUtil.isNullOrUndefined(array)) {
       Report.debug(
         {message: ''} as Error,
         'Could not clone an array');
