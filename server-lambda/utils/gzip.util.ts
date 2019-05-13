@@ -1,16 +1,17 @@
 const zlib = require('zlib');
+
 export class GzipUtil {
-  compress(input: any): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+  compress(input: any): Promise<Buffer> {
+    return new Promise<Buffer>((resolve, reject) => {
       const gzip = zlib.createGzip();
-      zlib.gzip(JSON.stringify(input), (error, buffer) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(
-            buffer.toString('base64'));
-        }
-      });
+      zlib.gzip(JSON.stringify(input),
+        (error: Error | null, buffer: Buffer) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(buffer);
+          }
+        });
     });
   }
 }

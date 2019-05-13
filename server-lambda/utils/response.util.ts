@@ -7,7 +7,7 @@ export class Response {
       .then(obj =>
         callback(null, {
           statusCode: 200,
-          body: obj,
+          body: obj.toString('base64'),
           isBase64Encoded: true,
           headers: {
             'Access-Control-Allow-Origin': '*',

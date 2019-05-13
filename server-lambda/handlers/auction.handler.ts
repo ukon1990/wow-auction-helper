@@ -4,6 +4,7 @@ import {AHDumpResponse} from '../models/auction/ah-dump-response.model';
 import {AuthHandler} from './auth.handler';
 import {BLIZZARD} from '../secrets';
 import {Endpoints} from '../utils/endpoints.util';
+import {S3Handler} from './s3.handler';
 
 const request: any = require('request');
 const RequestPromise = require('request-promise');
@@ -78,34 +79,35 @@ export class AuctionHandler {
     });
   }
 
-  private isInS3(): Promise<boolean> {
+  private sendToS3(data: any, region: string, ahId: number, lastModified: number, size: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      resolve();
-    });
-  }
-
-  private sendToS3(data: any, region: string, ahId: number): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      console.log(`Stored ${ahId}@${region} in S3`);
+      new S3Handler().save(
+        data,
+        `auctions/${region}/${ahId}/${lastModified}.json.gz`,
+        {
+          region, ahId, lastModified, size
+        });
       resolve();
     });
   }
 
   s3(event: APIGatewayEvent, context: Context, callback: Callback) {
     try {
-      const url = JSON.parse(event.body).url;
+      const body = JSON.parse(event.body),
+        url = body.url,
+        lastModified = body.lastModified,
+        ahId = body.ahId;
       Response.send({
         message: 'Downloading started'
       }, callback);
       this.downloadDump(url)
         .then(r => {
           console.log(`Download success. Sending ${this.getSizeOfResponseInMB(r)}MB to s3.`);
-          this.sendToS3(r.body, 'eu', 0);
+          this.sendToS3(r.body, 'eu', ahId, lastModified, this.getSizeOfResponseInMB(r));
         })
         .catch(error =>
           Response.error(callback, error, event));
     } catch (error) {
-      console.log('shit', error);
       Response.error(callback, error, event);
     }
 
@@ -116,7 +118,7 @@ export class AuctionHandler {
       return 0;
     }
 
-    return r.headers['content-length'] / 1000000;
+    return +(r.headers['content-length'] / 1000000).toFixed(2);
   }
 
   private downloadDump(url: string): Promise<any> {
