@@ -87,6 +87,12 @@ functions:
           path: realm
           cors:
             origin: '*'
+  realmAllRegions:
+    handler: controllers/realm.handleGetAll
+    events:
+      - http:
+          method: get
+          path: realm/all
   test:
     handler: controllers/test.handler
     events:
