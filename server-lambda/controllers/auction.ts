@@ -14,3 +14,16 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
       Response.error(callback, 'The method you provided, is not available.', event);
   }
 };
+
+exports.s3 = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const type = event.httpMethod;
+
+  switch (type) {
+    case 'OPTIONS':
+    case 'POST':
+      new AuctionHandler().s3(event, context, callback);
+      break;
+    default:
+      Response.error(callback, 'The method you provided, is not available.', event);
+  }
+};

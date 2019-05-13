@@ -68,7 +68,10 @@ export class RealmHandler {
           region: region,
           realms: [],
           isActive: true,
-          autoUpdate: region === 'eu' || region === 'us'
+          autoUpdate: region === 'eu' || region === 'us',
+          isUpdating: false,
+          lastChecked: undefined,
+          lastModified: undefined
         };
       }
       map[id].realms.push({

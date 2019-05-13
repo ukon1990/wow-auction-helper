@@ -45,16 +45,11 @@ export class AuctionHandler {
 
   async getAuctionDump(url: string, callback: Callback) {
     if (url) {
-      request.get(url,
-        (error, response, body) => {
-          body = JSON.parse(body);
-
-          if (error) {
-            Response.error(callback, error);
-            return;
-          }
-          Response.send(body, callback);
-        });
+      this.downloadDump(url)
+        .then((response) =>
+          Response.send(response.dump, callback))
+        .catch(error =>
+          Response.error(callback, error));
     } else {
       Response.error(callback, 'Could not get the auction dump, no URL were provided');
     }
@@ -89,9 +84,56 @@ export class AuctionHandler {
     });
   }
 
-  private sendToS3(): Promise<any> {
+  private sendToS3(data: any, region: string, ahId: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
+      console.log(`Stored ${ahId}@${region} in S3`);
       resolve();
+    });
+  }
+
+  s3(event: APIGatewayEvent, context: Context, callback: Callback) {
+    try {
+      const url = JSON.parse(event.body).url;
+      Response.send({
+        message: 'Downloading started'
+      }, callback);
+      this.downloadDump(url)
+        .then(r => {
+          console.log(`Download success. Sending ${this.getSizeOfResponseInMB(r)}MB to s3.`);
+          this.sendToS3(r.body, 'eu', 0);
+        })
+        .catch(error =>
+          Response.error(callback, error, event));
+    } catch (error) {
+      console.log('shit', error);
+      Response.error(callback, error, event);
+    }
+
+  }
+
+  private getSizeOfResponseInMB(r) {
+    if (r && !r.headers || !r.headers['content-length']) {
+      return 0;
+    }
+
+    return r.headers['content-length'] / 1000000;
+  }
+
+  private downloadDump(url: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      request.get(url,
+        (error, response) => {
+          if (error) {
+            reject(error);
+          } else {
+            try {
+              response.body = JSON.parse(response.body);
+              resolve(response);
+            } catch (exception) {
+              reject(exception);
+            }
+          }
+        });
     });
   }
 }
