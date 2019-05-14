@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { startWith, map } from 'rxjs/operators';
-import { Angulartics2 } from 'angulartics2';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {startWith, map} from 'rxjs/operators';
+import {Angulartics2} from 'angulartics2';
 
-import { RealmService } from '../../../services/realm.service';
-import { SharedService } from '../../../services/shared.service';
-import { Realm } from '../../../models/realm';
-import { Router } from '@angular/router';
-import { User } from '../../../models/user/user';
+import {RealmService} from '../../../services/realm.service';
+import {SharedService} from '../../../services/shared.service';
+import {Realm} from '../../../models/realm';
+import {Router} from '@angular/router';
+import {User} from '../../../models/user/user';
 import {Report} from '../../../utils/report.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {RealmStatus} from '../../../models/realm-status.model';
 
 @Component({
   selector: 'wah-setup',
@@ -55,9 +57,23 @@ export class SetupComponent implements OnInit {
       alt: 'Support for different locales'
     }
   ];
+  regions = [
+    {id: 'eu', name: 'Europe'},
+    {id: 'us', name: 'America'},
+    {id: 'kr', name: 'Korea'},
+    {id: 'tw', name: 'Taiwan'}
+  ];
+  realmsMap = {
+    eu: [],
+    us: [],
+    kr: [],
+    tw: []
+  };
+  currentRealm: RealmStatus;
+  sm = new SubscriptionManager();
 
   constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router,
-    private angulartics2: Angulartics2) {
+              private angulartics2: Angulartics2) {
     this._characterForm = this._formBuilder.group({
       region: ['eu', Validators.required],
       realm: ['aegwynn', Validators.required],
@@ -67,14 +83,27 @@ export class SetupComponent implements OnInit {
       locale: localStorage['locale']
     });
 
-    this._characterForm.controls.locale.valueChanges.subscribe(locale => {
-      localStorage['locale'] = locale;
-    });
+    this.sm.add(
+      this._realmService.events.list,
+      (list: RealmStatus[]) =>
+        this.processRealms(list));
+
+    this.sm.add(
+      this._characterForm.controls.locale.valueChanges,
+      locale => {
+        localStorage['locale'] = locale;
+      });
 
     this.getRealms();
-    this._characterForm.controls.region
-          .valueChanges
-        .subscribe(region => this.getRealms(region));
+    this.sm.add(
+      this._characterForm.controls.region.valueChanges,
+      region => this.getRealms(region));
+
+    this.sm.add(
+      this._characterForm.controls.realm.valueChanges,
+      name => {
+        this.setSelectedRealm(name);
+      });
   }
 
   ngOnInit() {
@@ -110,12 +139,12 @@ export class SetupComponent implements OnInit {
     setTimeout(() => {
       this._realmService
         .getRealms(region ? region : this._characterForm.value.region)
-          .then(r => {
-            this.isDownloadingRealm = false;
-          })
-          .catch(e => {
-            this.isDownloadingRealm = false;
-          });
+        .then(r => {
+          this.isDownloadingRealm = false;
+        })
+        .catch(e => {
+          this.isDownloadingRealm = false;
+        });
     }, 100);
   }
 
@@ -143,7 +172,7 @@ export class SetupComponent implements OnInit {
 
         this.angulartics2.eventTrack.next({
           action: 'Imported existing setup from file',
-          properties: { category: 'User registration' },
+          properties: {category: 'User registration'},
         });
 
         this.redirectUserFromRestore();
@@ -158,7 +187,7 @@ export class SetupComponent implements OnInit {
     this._router.navigateByUrl('/crafting');
     this.angulartics2.eventTrack.next({
       action: 'Imported existing setup',
-      properties: { category: 'User registration' },
+      properties: {category: 'User registration'},
     });
   }
 
@@ -192,5 +221,24 @@ export class SetupComponent implements OnInit {
 
   saveUser(evt: any): void {
     SharedService.user.isDarkMode = evt.checked;
+  }
+
+  private setSelectedRealm(name?: string) {
+    const form = this._characterForm.getRawValue();
+    this.realmsMap[form.region].forEach((status: RealmStatus) => {
+      if (form.region === status.region && (name || form.realm) === status.slug) {
+        this.currentRealm = status;
+      }
+    });
+  }
+
+  private processRealms(list: RealmStatus[]) {
+    Object.keys(this.realmsMap)
+      .forEach(key =>
+        this.realmsMap[key] = []);
+    list.forEach(status =>
+      this.realmsMap[status.region].push(status));
+
+    this.setSelectedRealm();
   }
 }

@@ -13,6 +13,7 @@ import {PetsService} from '../../../services/pets.service';
 import {AuctionHandler} from '../../../models/auction/auction-handler';
 import {DatabaseService} from '../../../services/database.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {RealmStatus} from '../../../models/realm-status.model';
 
 @Component({
   selector: 'wah-general-settings',
@@ -20,7 +21,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
   styleUrls: ['./general-settings.component.scss']
 })
 export class GeneralSettingsComponent implements OnInit, OnDestroy {
-  _characterForm: FormGroup;
+  characterForm: FormGroup;
   locales = SharedService.locales;
   changedLocales = false;
   changedRealm = false;
@@ -30,6 +31,14 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     {id: 'kr', name: 'Korea'},
     {id: 'tw', name: 'Taiwan'}
   ];
+  realmsMap = {
+    eu: [],
+    us: [],
+    kr: [],
+    tw: []
+  };
+  currentRealm: RealmStatus;
+
   subscriptions = new SubscriptionManager();
 
   constructor(private _formBuilder: FormBuilder,
@@ -40,7 +49,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
               private craftingService: CraftingService,
               private petsService: PetsService,
               private _auctionService: AuctionsService) {
-    this._characterForm = this._formBuilder.group({
+    this.characterForm = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
       realm: [SharedService.user.realm, Validators.required],
       tsmKey: SharedService.user.apiTsm,
@@ -51,7 +60,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(
-      this._characterForm.controls.region.valueChanges,
+      this.characterForm.controls.region.valueChanges,
       region => {
         this.getRealms(region);
         this.changedRealm = true;
@@ -59,16 +68,31 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      this._characterForm.controls.realm.valueChanges,
-      realm => {
-        this.changedRealm = true;
+      this.characterForm.controls.realm.valueChanges,
+      name => {
+        this.setSelectedRealm(name);
       });
 
     this.subscriptions.add(
-      this._characterForm.controls.locale.valueChanges,
+      this.characterForm.controls.locale.valueChanges,
       locale => {
         this.changedLocales = true;
       });
+
+    this.subscriptions.add(
+      this._realmService.events.list,
+      (list: RealmStatus[]) =>
+        this.processRealms(list));
+  }
+
+  private setSelectedRealm(name?: string) {
+    const form = this.characterForm.getRawValue();
+    this.changedRealm = true;
+    this.realmsMap[form.region].forEach((status: RealmStatus) => {
+      if (form.region === status.region && (name || form.realm) === status.slug) {
+        this.currentRealm = status;
+      }
+    });
   }
 
   ngOnInit() {
@@ -82,18 +106,18 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   isWithinSupported3RDPartyAPIRegion(): boolean {
-    return this._characterForm.getRawValue().region === 'eu' ||
-      this._characterForm.getRawValue().region === 'us';
+    return this.characterForm.getRawValue().region === 'eu' ||
+      this.characterForm.getRawValue().region === 'us';
   }
 
   hasRealmChange(): boolean {
-    return SharedService.user.realm !== this._characterForm.value.realm ||
-      SharedService.user.region !== this._characterForm.value.region;
+    return SharedService.user.realm !== this.characterForm.value.realm ||
+      SharedService.user.region !== this.characterForm.value.region;
   }
 
   async saveRealmAndRegion() {
     if (this.changedLocales) {
-      localStorage['locale'] = this._characterForm.value.locale;
+      localStorage['locale'] = this.characterForm.value.locale;
       delete localStorage['timestamp_items'];
       await this.itemService.getItems();
       delete localStorage['timestamp_pets'];
@@ -121,22 +145,22 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     if (this.changedRealm) {
       await RealmService.changeRealm(
         this._auctionService,
-        this._characterForm.value.realm,
-        this._characterForm.value.region);
+        this.characterForm.value.realm,
+        this.characterForm.value.region);
       this.changedRealm = false;
     }
   }
 
   hasTSMKeyChanged(): boolean {
-    return SharedService.user.apiTsm !== this._characterForm.value.tsmKey;
+    return SharedService.user.apiTsm !== this.characterForm.value.tsmKey;
   }
 
   hasWoWUctionKeyChanged(): boolean {
-    return SharedService.user.apiWoWu !== this._characterForm.value.wowUctionKey;
+    return SharedService.user.apiWoWu !== this.characterForm.value.wowUctionKey;
   }
 
   saveWoWuction(): void {
-    SharedService.user.apiWoWu = this._characterForm.value.wowUctionKey;
+    SharedService.user.apiWoWu = this.characterForm.value.wowUctionKey;
     if (SharedService.user.apiWoWu.length > 0) {
       SharedService.user.apiToUse = 'wowuction';
       this._auctionService.getWoWUctionAuctions();
@@ -155,7 +179,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveTSMKey(): void {
-    SharedService.user.apiTsm = this._characterForm.value.tsmKey;
+    SharedService.user.apiTsm = this.characterForm.value.tsmKey;
     if (SharedService.user.apiTsm.length > 0) {
       SharedService.user.apiToUse = 'tsm';
       this._auctionService.getTsmAuctions();
@@ -171,7 +195,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
   getRealmWithkey(slug?: string): Realm {
     if (!slug) {
-      slug = this._characterForm.value.realm;
+      slug = this.characterForm.value.realm;
     }
     return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
   }
@@ -179,16 +203,16 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   getRealms(region?: string): void {
     setTimeout(() => {
       this._realmService
-        .getRealms(region ? region : this._characterForm.value.region);
+        .getRealms(region ? region : this.characterForm.value.region);
     }, 100);
   }
 
   isValid(): boolean {
-    return this._characterForm.status === 'VALID';
+    return this.characterForm.status === 'VALID';
   }
 
   exportData(): void {
-    this._characterForm.controls['exportString']
+    this.characterForm.controls['exportString']
       .setValue(
         JSON.stringify(User.getSettings(true)));
     this.angulartics2.eventTrack.next({
@@ -209,8 +233,8 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   importUser(): void {
     if (this.isImportStringNotEmpty()) {
       SharedService.user.watchlist
-        .attemptRestoreFromString(this._characterForm.value.importString);
-      User.import(this._characterForm.value.importString);
+        .attemptRestoreFromString(this.characterForm.value.importString);
+      User.import(this.characterForm.value.importString);
 
       this.angulartics2.eventTrack.next({
         action: 'Imported existing setup',
@@ -247,7 +271,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   isImportStringNotEmpty(): boolean {
-    return this._characterForm.value.importString.length > 0;
+    return this.characterForm.value.importString.length > 0;
   }
 
   deleteUser(): void {
@@ -256,5 +280,23 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       location.reload();
     }, 2000);
+  }
+
+  private processRealms(list: RealmStatus[]) {
+    Object.keys(this.realmsMap)
+      .forEach(key =>
+        this.realmsMap[key] = []);
+    list.forEach(status =>
+      this.realmsMap[status.region].push(status));
+
+    this.setSelectedRealm();
+  }
+
+  milliSecondsToMinutes(status: RealmStatus): number {
+    if (!SharedService.auctionResponse || !status) {
+      return 0;
+    }
+    const ms = new Date().getTime() - (status.lastModified);
+    return Math.round(ms / 60000);
   }
 }

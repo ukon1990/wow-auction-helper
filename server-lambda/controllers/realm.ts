@@ -12,11 +12,12 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
   }
 };
 
+exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new RealmHandler()
+    .getRealmByRegionAndName(event, callback);
+};
+
 exports.handleGetAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  if (event['isOffline']) {
-    new RealmHandler()
-      .getAllRealms(event, callback);
-  } else {
-    Response.error(callback, 'You are not authorized', event);
-  }
+  new RealmHandler()
+    .getAllRealms(event, callback);
 };

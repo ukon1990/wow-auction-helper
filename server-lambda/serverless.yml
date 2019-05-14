@@ -21,6 +21,31 @@ functions:
           path: auction
           cors:
             origin: '*'
+  auctionsS3:
+    handler: controllers/auction.s3
+    events:
+      - http:
+          method: post
+          path: auction/s3
+          cors:
+            origin: '*'
+  updateAllHouses:
+    handler: controllers/auction.updateAll
+    events:
+      - http:
+          method: any
+          path: auction/update
+          cors:
+            origin: '*'
+
+  updateSpesificHouse:
+    handler: controllers/auction.updateOne
+    events:
+      - http:
+          method: post
+          path: auction/update-one
+          cors:
+            origin: '*'
   locales:
     handler: controllers/locale.handler
     events:
@@ -93,6 +118,16 @@ functions:
       - http:
           method: get
           path: realm/all
+          cors:
+            origin: '*'
+  getByRegionAndName:
+    handler: controllers/realm.getByRegionAndName
+    events:
+      - http:
+          method: get
+          path: realm/{region}/{realm}
+          cors:
+            origin: '*'
   test:
     handler: controllers/test.handler
     events:
