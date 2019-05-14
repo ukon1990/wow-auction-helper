@@ -9,11 +9,16 @@ import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
 import {ObjectUtil} from '../utils/object.util';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class RealmService {
+  events = {
+    realmStatus: new BehaviorSubject(undefined),
+    list: new BehaviorSubject([])
+  };
 
-  constructor(private _http: HttpClient,
+  constructor(private http: HttpClient,
               private angulartics2: Angulartics2,
               private matSnackBar: MatSnackBar) {
   }
@@ -33,62 +38,39 @@ export class RealmService {
     await auctionService.getLastModifiedTime(true);
   }
 
-  getRealms(region?: string, isRetry?: boolean): Promise<any> {
-    console.log('Realms', Endpoints.getRegion(region));
-    let url = '';
-    region = Endpoints.getRegion(region);
-
-    if (isRetry) {
-      url = `/assets/data/${
-        Endpoints.getRegion(region)
-        }-realms.json`;
-      return this._http.post(Endpoints.getLambdaUrl(
-        `realm`), {
-        locale: localStorage['locale'],
-        region: Endpoints.getRegion(region)
+  getStatus(region: string, realm: string): Promise<any> {
+    return this.http.get(Endpoints.getLambdaUrl(`realm/${region}/${realm}`, region))
+      .toPromise()
+      .then(status => {
+        this.events.realmStatus.next(status);
       })
-        .toPromise()
-        .then(r => this.handleRealms(r));
-    } else {
-      if (!region) {
-        return new Promise<any>((resolve, reject) => {
-          resolve();
-        });
-      }
+      .catch(error => {
+      });
+  }
 
-      return this._http.post(Endpoints.getLambdaUrl(
-        `realm`), {
-        locale: localStorage['locale'],
-        region: region
-      })
-        .toPromise()
-        .then(r => this.handleRealms(r))
-        .catch((error: HttpErrorResponse) => {
-          const msg = 'Could not download realms';
-          console.error(msg, error);
-          ErrorReport.sendHttpError(error);
-          this.openSnackbar(`${msg}. Blizzard's API responded with: ${error.status} - ${error.statusText}`);
-
-          // In case Blizzard's API fails, use old data json
-          this.getRealms(region, true);
-        });
-    }
+  getRealms(region?: string): Promise<any> {
+    return this.http.get(Endpoints.getLambdaUrl('realm/all', region))
+      .toPromise()
+      .then((realms: any[]) =>
+        this.handleRealms(realms))
+      .catch();
   }
 
   private openSnackbar(message: string): void {
     this.matSnackBar.open(message, 'Ok', {duration: 3000});
   }
 
-  public handleRealms(r: Object) {
-    if (ObjectUtil.isAPopulatedObject(r) && ObjectUtil.isArray(r['realms'])) {
+  public handleRealms(realms: any[]) {
+    if (ObjectUtil.isArray(realms)) {
       Object.keys(SharedService.realms).forEach(key => {
         delete SharedService.realms[key];
       });
-      r['realms'].forEach((realm: Realm) => {
+      realms.forEach((realm: Realm) => {
         SharedService.realms[realm.slug] = realm;
       });
       Realm.gatherRealms();
       SharedService.events.realms.emit(true);
+      this.events.list.next(realms);
     } else {
       ErrorReport.sendError('RealmService.handleRealms', {
         name: 'The app could not fetch the realm data correctly', message: 'No object were found', stack: undefined

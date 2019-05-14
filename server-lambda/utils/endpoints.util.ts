@@ -31,8 +31,16 @@ export class Endpoints {
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public getLambdaUrl(path: string, region: string, event: APIGatewayEvent): string {
+    const stage = this.getStage(event);
     return `${
-      this.LAMBDAS[region.toUpperCase()][event.requestContext.stage]}${path}`;
+      this.LAMBDAS[region.toUpperCase()][stage]}${path}`;
+  }
+
+  private getStage(event: APIGatewayEvent) {
+    if (!event || !event.requestContext) {
+      return 'prod';
+    }
+    return event.requestContext.stage;
   }
 
   getBase(region?: string): string {

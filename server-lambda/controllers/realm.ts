@@ -18,10 +18,6 @@ exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callbac
 };
 
 exports.handleGetAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  if (event['isOffline']) {
-    new RealmHandler()
-      .getAllRealms(event, callback);
-  } else {
-    Response.error(callback, 'You are not authorized', event);
-  }
+  new RealmHandler()
+    .getAllRealms(event, callback);
 };

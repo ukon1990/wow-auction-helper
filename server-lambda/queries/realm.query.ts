@@ -30,10 +30,11 @@ export class RealmQuery {
   }
 
   static getAll(): string {
-    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, url, lastModified
+    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, url, lastModified, ah.size as size
             FROM auction_house_realm AS realm
             LEFT OUTER JOIN auction_houses AS ah
-            ON ah.id = realm.ahId;`;
+            ON ah.id = realm.ahId
+            ORDER BY name;`;
   }
 
   static getAllHouses(): string {
