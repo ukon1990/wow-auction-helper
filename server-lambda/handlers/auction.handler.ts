@@ -7,7 +7,7 @@ import {Endpoints} from '../utils/endpoints.util';
 import {S3Handler} from './s3.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
-import {id} from 'aws-sdk/clients/datapipeline';
+import {HttpClientUtil} from '../utils/http-client.util';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -64,11 +64,12 @@ export class AuctionHandler {
       request.get(
         url,
         (error, response, body) => {
+          console.log('getLatestDumpPath', body, url);
           body = JSON.parse(body);
 
           if (error) {
             // TODO: Logic
-            resolve(undefined);
+            reject(error);
           }
           resolve(body.files[0]);
         });
@@ -173,7 +174,7 @@ export class AuctionHandler {
 
     new DatabaseUtil()
       .query(RealmQuery.getAllHouses())
-      .then(rows => {
+      .then(async rows => {
         const promiseThrottle = new PromiseThrottle({
             requestsPerSecond: 10,
             promiseImplementation: Promise
@@ -192,14 +193,39 @@ export class AuctionHandler {
 
           promises.push(
             promiseThrottle.add(
-              this.updateHouse.bind(this, row)));
+              new HttpClientUtil()
+                .post
+                .bind(
+                  this,
+                  new Endpoints()
+                    .getLambdaUrl('auction/update-one', row.region, event),
+                  row,
+                  true)));
         });
 
-        Promise.all(promises)
+        await Promise.all(promises)
           .catch(console.error);
+        console.log('Done adding stuff?');
       })
       .catch(error =>
         Response.error(callback, error, event));
+  }
+
+  async updateHouseRequest(event: APIGatewayEvent, callback: Callback) {
+    console.log('request', event.body);
+    const body = JSON.parse(event.body);
+    Response.send({
+      message: 'started updateHouseRequest',
+      request: body
+    }, callback);
+
+    await AuthHandler.getToken()
+      .catch(console.error);
+
+    this.updateHouse(body)
+      .then(() => {
+      })
+      .catch(console.error);
   }
 
   private async updateHouse(dbResult: { id, region, slug, name, lastModified, url }): Promise<any> {

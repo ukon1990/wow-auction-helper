@@ -29,7 +29,7 @@ export class AuctionsService {
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
-    return this._http.post(
+    return this._http(
       Endpoints.getLambdaUrl(`auction`, SharedService.user.region), {
         region: SharedService.user.region,
         realm: SharedService.user.realm

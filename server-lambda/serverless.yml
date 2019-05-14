@@ -37,6 +37,15 @@ functions:
           path: auction/update
           cors:
             origin: '*'
+
+  updateSpesificHouse:
+    handler: controllers/auction.updateOne
+    events:
+      - http:
+          method: post
+          path: auction/update-one
+          cors:
+            origin: '*'
   locales:
     handler: controllers/locale.handler
     events:

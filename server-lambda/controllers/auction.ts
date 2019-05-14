@@ -31,3 +31,7 @@ exports.s3 = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   new AuctionHandler().updateAllHouses(event, callback);
 };
+
+exports.updateOne = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new AuctionHandler().updateHouseRequest(event, callback);
+};
