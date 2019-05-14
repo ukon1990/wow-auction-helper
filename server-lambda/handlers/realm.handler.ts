@@ -23,6 +23,19 @@ export class RealmHandler {
 
   }
 
+  getRealmByRegionAndName(event: APIGatewayEvent, callback: Callback) {
+    const params = event.pathParameters;
+    new DatabaseUtil()
+      .query(
+        RealmQuery.getHouseForRealm(params.region, params.realm))
+      .then(rows =>
+        Response.send(
+          rows.length > 0 ? rows[0] : {},
+          callback))
+      .catch(error =>
+        Response.error(callback, error, event));
+  }
+
   getAllRealms(event: APIGatewayEvent, callback: Callback) {
     new DatabaseUtil()
       .query(RealmQuery.getAll())
@@ -130,4 +143,5 @@ export class RealmHandler {
         .catch(console.error);
     }
   }
+
 }

@@ -118,6 +118,12 @@ functions:
       - http:
           method: get
           path: realm/all
+  getByRegionAndName:
+    handler: controllers/realm.getByRegionAndName
+    events:
+      - http:
+          method: get
+          path: realm/{region}/{realm}
   test:
     handler: controllers/test.handler
     events:

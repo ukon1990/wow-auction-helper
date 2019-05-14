@@ -72,8 +72,8 @@ export class RealmQuery {
             WHERE id IN (
                   SELECT ahId
                   FROM auction_house_realm
-                  WHERE slug = ${realmSlug})
-                AND region = ${region};`;
+                  WHERE slug = "${realmSlug}")
+                AND region = "${region}";`;
   }
 
   static isUpdating(id: number, isUpdating: boolean) {
