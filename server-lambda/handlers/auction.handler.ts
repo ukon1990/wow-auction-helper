@@ -5,9 +5,12 @@ import {AuthHandler} from './auth.handler';
 import {BLIZZARD} from '../secrets';
 import {Endpoints} from '../utils/endpoints.util';
 import {S3Handler} from './s3.handler';
+import {DatabaseUtil} from '../utils/database.util';
+import {RealmQuery} from '../queries/realm.query';
+import {id} from 'aws-sdk/clients/datapipeline';
 
 const request: any = require('request');
-const RequestPromise = require('request-promise');
+const PromiseThrottle: any = require('promise-throttle');
 
 export class AuctionHandler {
 
@@ -36,7 +39,6 @@ export class AuctionHandler {
       await this.getLatestDumpPath(region, realm)
         .then(response => apiResponse = response)
         .catch(error => console.error('Unable to fetch data'));
-      console.log('Has response?', apiResponse);
 
       Response.send(apiResponse, callback);
     } else {
@@ -48,7 +50,7 @@ export class AuctionHandler {
     if (url) {
       this.downloadDump(url)
         .then((response) =>
-          Response.send(response.dump, callback))
+          Response.send(response.body, callback))
         .catch(error =>
           Response.error(callback, error));
     } else {
@@ -57,9 +59,10 @@ export class AuctionHandler {
   }
 
   private getLatestDumpPath(region: string, realm: string): Promise<AHDumpResponse> {
+    const url = new Endpoints().getPath(`auction/data/${realm}`, region);
     return new Promise<AHDumpResponse>((resolve, reject) => {
       request.get(
-        new Endpoints().getPath(`auction/data/${realm}`, region),
+        url,
         (error, response, body) => {
           body = JSON.parse(body);
 
@@ -79,34 +82,54 @@ export class AuctionHandler {
     });
   }
 
-  private sendToS3(data: any, region: string, ahId: number, lastModified: number, size: number): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  private async sendToS3(data: any, region: string, ahId: number, lastModified: number, size: number): Promise<any> {
+    return new Promise((resolve, reject) => {
       new S3Handler().save(
         data,
         `auctions/${region}/${ahId}/${lastModified}.json.gz`,
         {
           region, ahId, lastModified, size
-        });
-      resolve();
+        })
+        .then((r => {
+          const query = RealmQuery.updateUrl(
+            ahId, r.url, lastModified, size
+          );
+          console.log('Sending to S3');
+          new DatabaseUtil()
+            .query(query)
+            .then(() => {
+              console.log(`Successfully updated id=${ahId}`);
+              resolve();
+            })
+            .catch(reject);
+        }))
+        .catch(reject);
     });
   }
 
-  s3(event: APIGatewayEvent, context: Context, callback: Callback) {
+  async s3(event: APIGatewayEvent, context: Context, callback: Callback) {
     try {
-      const body = JSON.parse(event.body),
-        url = body.url,
-        lastModified = body.lastModified,
-        ahId = body.ahId;
       Response.send({
         message: 'Downloading started'
       }, callback);
-      this.downloadDump(url)
-        .then(r => {
-          console.log(`Download success. Sending ${this.getSizeOfResponseInMB(r)}MB to s3.`);
-          this.sendToS3(r.body, 'eu', ahId, lastModified, this.getSizeOfResponseInMB(r));
+      const body = JSON.parse(event.body),
+        ahId = body.ahId;
+      let house;
+
+      await new DatabaseUtil()
+        .query(RealmQuery.getHouse(ahId))
+        .then(rows =>
+          house = rows.length > 0 ? rows[0] : undefined);
+
+      if (!house) {
+        throw Error('Not found');
+      }
+      await AuthHandler.getToken()
+        .catch(console.error);
+      this.updateHouse(house)
+        .then(() => {
         })
-        .catch(error =>
-          Response.error(callback, error, event));
+        .catch(console.error);
     } catch (error) {
       Response.error(callback, error, event);
     }
@@ -124,18 +147,99 @@ export class AuctionHandler {
   private downloadDump(url: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request.get(url,
-        (error, response) => {
-          if (error) {
+        (error, response, body) => {
+          if (error || !response) {
+            console.log('In download dump error', error);
             reject(error);
           } else {
             try {
-              response.body = JSON.parse(response.body);
+              response['body'] = JSON.parse(body);
+              console.log('In download dump complete');
               resolve(response);
             } catch (exception) {
+              console.log('In download dump fail');
               reject(exception);
             }
           }
         });
     });
+  }
+
+  async updateAllHouses(event: APIGatewayEvent, callback: Callback) {
+    const region = event.body ?
+      JSON.parse(event.body).region : undefined;
+    await AuthHandler.getToken()
+      .catch(console.error);
+
+    new DatabaseUtil()
+      .query(RealmQuery.getAllHouses())
+      .then(rows => {
+        const promiseThrottle = new PromiseThrottle({
+            requestsPerSecond: 10,
+            promiseImplementation: Promise
+          }),
+          promises = [];
+
+        Response.send({
+          message: `Updating ${rows.length} houses.`,
+          rows
+        }, callback);
+
+        rows.forEach(row => {
+          if (region && row.region !== region) {
+            return;
+          }
+
+          promises.push(
+            promiseThrottle.add(
+              this.updateHouse.bind(this, row)));
+        });
+
+        Promise.all(promises)
+          .catch(console.error);
+      })
+      .catch(error =>
+        Response.error(callback, error, event));
+  }
+
+  private async updateHouse(dbResult: { id, region, slug, name, lastModified, url }): Promise<any> {
+    let error, ahDumpResponse: AHDumpResponse;
+    return new Promise<any>(async (resolve, reject) => {
+      await this.getLatestDumpPath(dbResult.region, dbResult.slug)
+        .then((r: AHDumpResponse) =>
+          ahDumpResponse = r)
+        .catch(e => error = e);
+      if (ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
+        console.log('Downloading dump');
+        await this.setIsUpdating(dbResult.id, true);
+        this.downloadDump(ahDumpResponse.url)
+          .then(r => {
+            console.log('Dump is downloaded');
+            this.sendToS3(
+              r.body, dbResult.region, dbResult.id,
+              ahDumpResponse.lastModified, this.getSizeOfResponseInMB(r))
+              .then(resolve)
+              .catch(reject);
+          })
+          .catch(e => {
+            this.setIsUpdating(dbResult.id, false)
+              .catch(console.error);
+            reject(e);
+          });
+      } else if (error) {
+        console.error(error);
+        reject(error);
+      } else {
+        console.log(`No new data available for id=${dbResult.id}`);
+        resolve();
+      }
+    });
+  }
+
+  private setIsUpdating(ahId: number, isUpdating) {
+    return new DatabaseUtil()
+      .query(RealmQuery.isUpdating(ahId, isUpdating))
+      .then()
+      .catch(console.error);
   }
 }

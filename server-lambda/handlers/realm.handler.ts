@@ -5,6 +5,8 @@ import {Endpoints} from '../utils/endpoints.util';
 import {Response} from '../utils/response.util';
 import {Realm, RealmStatuses} from '../models/realm.model';
 import {LocaleHandler} from './locale.handler';
+import {DatabaseUtil} from '../utils/database.util';
+import {RealmQuery} from '../queries/realm.query';
 
 export class RealmHandler {
 
@@ -21,7 +23,16 @@ export class RealmHandler {
 
   }
 
-  async getAllRealms(event: APIGatewayEvent, callback: Callback) {
+  getAllRealms(event: APIGatewayEvent, callback: Callback) {
+    new DatabaseUtil()
+      .query(RealmQuery.getAll())
+      .then(res =>
+        Response.send(res, callback))
+      .catch(error =>
+        Response.error(callback, error, event));
+  }
+
+  async getAllRealmsGrouped(event: APIGatewayEvent, callback: Callback) {
     await AuthHandler.getToken();
     const list = [],
       regions = Object.keys(new LocaleHandler().region);
@@ -35,6 +46,8 @@ export class RealmHandler {
     }
 
     Response.send(list, callback);
+
+    // this.addHouses(list);
   }
 
   getRealmList(region: string): Promise<RealmStatuses> {
@@ -56,7 +69,7 @@ export class RealmHandler {
     });
   }
 
-  private processRealms(region: string, status: RealmStatuses, list: any[]) {
+  private async processRealms(region: string, status: RealmStatuses, list: any[]) {
     const map = {};
     status.realms.forEach((realm: Realm) => {
       const id = realm.connected_realms
@@ -79,6 +92,9 @@ export class RealmHandler {
         ahId: map[id].id,
         slug: realm.slug,
         name: realm.name,
+        battlegroup: realm.battlegroup,
+        timezone: realm.timezone,
+        locale: realm.locale,
         isActive: true
       });
     });
@@ -87,5 +103,31 @@ export class RealmHandler {
       .forEach(id =>
         list.push(map[id]));
     return list;
+  }
+
+  private async addHouses(list: any[]) {
+    for (let i = 0; i < list.length; i++) {
+      const house = list[i];
+      const query = RealmQuery.insertHouse(house);
+      console.log(query);
+      await new DatabaseUtil().query(query)
+        .then(async res => {
+          await this.addRealms(house, res);
+        })
+        .catch(console.error);
+    }
+  }
+
+  private async addRealms(house, res) {
+    house.id = res.insertId;
+    for (let ir = 0; ir < house.realms.length; ir++) {
+      const realm = house.realms[ir];
+      realm.ahId = house.id;
+      await new DatabaseUtil()
+        .query(RealmQuery.insertRealm(realm))
+        .then(() => {
+        })
+        .catch(console.error);
+    }
   }
 }

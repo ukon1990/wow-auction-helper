@@ -26,8 +26,12 @@ export class Response {
     return Response.send({
       statusCode: 500,
       error: this.getErrorMessage(error),
-      event: event.requestContext.stage === 'dev' ? event : undefined
+      event: this.getEvent(event)
     }, callback);
+  }
+
+  private static getEvent(event: APIGatewayEvent) {
+    return event && event.requestContext.stage === 'dev' ? event : undefined;
   }
 
   private static getErrorMessage(error) {

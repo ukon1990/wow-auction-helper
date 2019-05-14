@@ -29,6 +29,14 @@ functions:
           path: auction/s3
           cors:
             origin: '*'
+  updateAllHouses:
+    handler: controllers/auction.updateAll
+    events:
+      - http:
+          method: any
+          path: auction/update
+          cors:
+            origin: '*'
   locales:
     handler: controllers/locale.handler
     events:
