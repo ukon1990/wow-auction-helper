@@ -12,14 +12,14 @@ export class ContributorsComponent {
   contributors = new Array<GithubContributor>();
   failed = false;
 
-  constructor(private service: GithubService, private _sanitizer: DomSanitizer) {
+  constructor(private service: GithubService, private sanitizer: DomSanitizer) {
     this.service.getContributors()
       .then((contributors =>
         this.contributors = contributors));
   }
 
   getIconStyle(url: string): SafeResourceUrl {
-    return this._sanitizer.bypassSecurityTrustStyle(
+    return this.sanitizer.bypassSecurityTrustStyle(
       `url('${
         url
       }')`);

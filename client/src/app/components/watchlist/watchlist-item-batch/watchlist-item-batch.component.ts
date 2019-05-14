@@ -1,14 +1,15 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { WatchlistGroup, WatchlistItem } from '../../../models/watchlist/watchlist';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { SharedService } from '../../../services/shared.service';
-import { Subscription } from 'rxjs';
-import { itemClasses } from '../../../models/item/item-classes';
-import { GameBuild } from '../../../utils/game-build.util';
-import { Filters } from '../../../models/filtering';
-import { Item } from '../../../models/item/item';
-import { ColumnDescription } from '../../../models/column-description';
-import { Angulartics2 } from 'angulartics2';
+import {Component, OnInit, Input, EventEmitter, Output, OnDestroy} from '@angular/core';
+import {WatchlistGroup, WatchlistItem} from '../../../models/watchlist/watchlist';
+import {FormGroup, FormBuilder} from '@angular/forms';
+import {SharedService} from '../../../services/shared.service';
+import {Subscription} from 'rxjs';
+import {itemClasses} from '../../../models/item/item-classes';
+import {GameBuild} from '../../../utils/game-build.util';
+import {Filters} from '../../../models/filtering';
+import {Item} from '../../../models/item/item';
+import {ColumnDescription} from '../../../models/column-description';
+import {Angulartics2} from 'angulartics2';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-watchlist-item-batch',
@@ -28,8 +29,7 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
   groups = new Array<WatchlistGroup>();
   previousCriterias;
   queryName = 'query_dashboard_item';
-  formSubscription: Subscription;
-  itemFormSubscription: Subscription;
+  subs = new SubscriptionManager();
   itemClasses = itemClasses;
   expansions = GameBuild.expansionMap;
   professions = [
@@ -47,8 +47,8 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
   ].sort();
   items: Item[] = [];
   columns: ColumnDescription[] = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'itemLevel', title: 'Item level', dataType: 'number' }
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'itemLevel', title: 'Item level', dataType: 'number'}
   ];
 
   constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
@@ -68,7 +68,8 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
       if (localStorage[this.queryName]) {
         this.previousCriterias = JSON.parse(localStorage[this.queryName]);
       }
-    } catch (error) {}
+    } catch (error) {
+    }
     const item = this.previousCriterias ?
       this.previousCriterias : new WatchlistItem(25);
     this.form = this._formBuilder.group({
@@ -90,18 +91,22 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
       expansion: null
     });
 
-    this.formSubscription = this.form.valueChanges.subscribe((query) => {
-      localStorage[this.queryName] = JSON.stringify(query);
-    });
+    this.subs.add(
+      this.form.valueChanges,
+      (query) => {
+        localStorage[this.queryName] = JSON.stringify(query);
+      });
 
-    this.itemFormSubscription = this.itemForm.valueChanges.subscribe(() => {
-      setTimeout(() => {
-        this.items.length = 0;
-        this.items = this.items.concat(SharedService.itemsUnmapped.filter(i =>
-          this.isMatch(i)));
-            console.log(this.items);
-      }, 10);
-    });
+    this.subs.add(
+      this.itemForm.valueChanges,
+      () => {
+        setTimeout(() => {
+          this.items.length = 0;
+          this.items = this.items.concat(SharedService.itemsUnmapped.filter(i =>
+            this.isMatch(i)));
+          console.log(this.items);
+        }, 10);
+      });
   }
 
   isMatch(item: Item): boolean {
@@ -112,8 +117,7 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.formSubscription.unsubscribe();
-    this.itemFormSubscription.unsubscribe();
+    this.subs.unsubscribe();
   }
 
   isProfessionMatch(item: Item): boolean {
@@ -122,7 +126,7 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
     if (!recipe) {
       return validByDefault ? true : false;
     }
-    return  validByDefault ||
+    return validByDefault ||
       this.itemForm.value.profession === recipe[0].profession ||
       !recipe[0].profession && this.itemForm.value.profession === 'none';
   }
@@ -141,8 +145,8 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
     });
     SharedService.user.watchlist.save();
     this.angulartics2.eventTrack.next({
-      action: `Added ${ this.items.length } new rules`,
-      properties: { category: 'Watchlist' },
+      action: `Added ${this.items.length} new rules`,
+      properties: {category: 'Watchlist'},
     });
     this.close.emit('');
   }

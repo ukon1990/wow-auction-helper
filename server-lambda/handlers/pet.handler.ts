@@ -2,8 +2,9 @@ import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {PetQuery} from '../queries/pet.query';
 import {Response} from '../utils/response.util';
-import {Pet} from '../../server/src/models/pet';
-import {LocaleUtil} from '../utils/locale.util';
+import {getLocale, LocaleUtil} from '../utils/locale.util';
+import {Pet} from '../models/pet';
+import {Endpoints} from '../utils/endpoints.util';
 
 const request = require('request');
 
@@ -104,9 +105,12 @@ export class PetHandler {
     };
   }
 
-  private getPet(id: number): Promise<Pet> {
+  getPet(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Pet> {
+    const url = new Endpoints()
+      .getPath(`pet/species/${id}?locale=${getLocale(locale)}`, region);
     return new Promise<Pet>((resolve, reject) => {
-      request.get(`pet/species/${id}?locale=en_GB`, (error, response, body) => {
+      request.get(url,
+        (error, response, body) => {
         if (error) {
           reject(error);
           return;

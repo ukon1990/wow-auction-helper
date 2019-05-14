@@ -12,6 +12,8 @@ import {Realm} from '../../../models/realm';
 import {RealmService} from '../../../services/realm.service';
 import {FormControl} from '@angular/forms';
 import {Dashboard} from '../../../models/dashboard';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {RealmStatus} from '../../../models/realm-status.model';
 
 @Component({
   selector: 'wah-download',
@@ -24,9 +26,7 @@ export class DownloadComponent implements OnInit {
   timeSinceUpdate = 0;
   realmControl: FormControl = new FormControl();
   downloadProgress = '';
-
-  // TODO: While navigator.onLine === false for downloads
-  offlineInterval;
+  subs = new SubscriptionManager();
 
   timestamps = {
     items: localStorage['timestamp_items'],
@@ -45,9 +45,7 @@ export class DownloadComponent implements OnInit {
     private _petService: PetsService,
     private _dbService: DatabaseService,
     private angulartics2: Angulartics2) {
-    this.realmControl.valueChanges.subscribe(realm => {
-      console.log('realm change', realm);
-    });
+
 
     setInterval(() => {
       this.timestamps.items = localStorage['timestamp_items'];
@@ -58,7 +56,18 @@ export class DownloadComponent implements OnInit {
       this.timestamps.wowuction = localStorage['timestamp_wowuction'];
     }, 1000);
 
+    this.subs.add(
+      this._realmService.events.realmStatus,
+      (status) => this.setRealmStatus(status));
+
     Dashboard.addLoadingDashboards();
+  }
+
+  private setRealmStatus(status: RealmStatus) {
+    this.timeSinceUpdate = this.milliSecondsToMinutes(status);
+    /*if (timeSince < 15) {
+      return;
+    }*/
   }
 
   async ngOnInit() {
@@ -154,26 +163,10 @@ export class DownloadComponent implements OnInit {
       }
 
       this.downloadProgress = 'Loading auctions from disk';
-      await this._dbService.getAllAuctions(this._petService)
-        .then(r => {
-          if (SharedService.auctions.length === 0 && this.isOnline()) {
-            this.downloadProgress = 'Downloading new auctions';
-            this._auctionsService.getLastModifiedTime(true);
-          }
-        })
-        .catch(e => {
-          console.error('Could not restore auctions from DB', e);
-          if (SharedService.auctions.length === 0 && this.isOnline()) {
-            this._auctionsService.getLastModifiedTime(true);
-          }
-        });
-      this.downloadProgress = '';
 
-      this.timeSinceUpdate = this.milliSecondsToMinutes();
-      await this.setLastUpdateAvailableTime();
-      setInterval(() =>
-        this.setLastUpdateAvailableTime(), 30000);
+      await this.startRealmStatusInterval();
       await this._dbService.getTSMAddonData();
+      this.downloadProgress = '';
     }
     // TODO: Later => this._itemService.addMissingItems();
   }
@@ -302,38 +295,43 @@ export class DownloadComponent implements OnInit {
     return SharedService.isDownloading();
   }
 
-  setLastUpdateAvailableTime(): void {
-    const timeSince = this.milliSecondsToMinutes(),
-      lastModified = SharedService.auctionResponse ? SharedService.auctionResponse.lastModified : undefined;
-    /*if (timeSince < 15) {
-      return;
-    }*/
 
-    if (!this.checkingForUpdates && this.isOnline()) {
-      this.checkingForUpdates = true;
-      this._auctionsService.getLastModifiedTime()
-        .then(r => {
-          if (SharedService.auctionResponse.lastModified !== lastModified) {
-            this.lastCheckedMin = undefined;
-            this.checkingForUpdates = false;
-          } else {
-            this.lastCheckedMin = timeSince;
-            this.checkingForUpdates = false;
-          }
-        });
-    }
-    this.timeSinceUpdate = timeSince;
-  }
-
-  private milliSecondsToMinutes(): number {
-    if (!SharedService.auctionResponse) {
+  private milliSecondsToMinutes(status: RealmStatus): number {
+    if (!SharedService.auctionResponse || !status) {
       return 0;
     }
-    const ms = new Date().getTime() - (SharedService.auctionResponse.lastModified);
+    const ms = new Date().getTime() - (status.lastModified);
     return Math.round(ms / 60000);
   }
 
   private isOnline(): boolean {
     return navigator.onLine;
+  }
+
+  private async startRealmStatusInterval() {
+    await this.updateRealmStatus();
+    setInterval(() =>
+      this.updateRealmStatus(), 30000);
+  }
+
+  private updateRealmStatus(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      if (!this.checkingForUpdates && this.isOnline()) {
+        this.checkingForUpdates = true;
+        this._realmService.getStatus(
+          SharedService.user.region,
+          SharedService.user.realm)
+          .then((status) => {
+            this.checkingForUpdates = false;
+            resolve();
+          })
+          .catch((error) => {
+            this.checkingForUpdates = false;
+            reject(error);
+          });
+      } else {
+        reject();
+      }
+    });
   }
 }

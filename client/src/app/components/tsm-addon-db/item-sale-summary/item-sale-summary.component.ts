@@ -1,13 +1,13 @@
-import {AfterContentInit, Component, Input, OnDestroy, OnInit, EventEmitter, Output, OnChanges, SimpleChanges} from '@angular/core';
+import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
 import {ProfitSummary, UserProfit} from '../../../utils/tsm-lua.util';
 import {ColumnDescription} from '../../../models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {FormControl} from '@angular/forms';
-import {SubscriptionsUtil} from '../../../utils/subscriptions.util';
 import {SummaryCard} from '../../../models/summary-card.model';
 import {Report} from '../../../utils/report.util';
 import {ChartData} from '../../../models/chart-data.model';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-item-sale-summary',
@@ -37,7 +37,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     {key: 'total', title: 'All'}
   ];
   field = new FormControl(this.getFormFieldValueFromStorage());
-  subscriptions = new SubscriptionsUtil();
+  subscriptions = new SubscriptionManager();
   allData = SharedService.tsmAddonData;
   chartData: {
     sales: SummaryCard; purchases: SummaryCard;

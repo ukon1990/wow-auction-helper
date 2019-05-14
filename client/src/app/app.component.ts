@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
 import {User} from './models/user/user';
 import {SharedService} from './services/shared.service';
 import {CraftingService} from './services/crafting.service';
@@ -16,14 +16,15 @@ import {Subscription} from 'rxjs';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './models/shopping/shopping-cart.model';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, AfterViewInit {
-  detailOpenCloseSubscription: Subscription;
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+  subs = new SubscriptionManager();
   mainWindowScrollPosition = 0;
 
   constructor(public platform: Platform,
@@ -35,6 +36,58 @@ export class AppComponent implements OnInit, AfterViewInit {
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2) {
+    this.setLocale();
+    DefaultDashboardSettings.init();
+    User.restore();
+    ErrorReport.init(this.angulartics2, this.matSnackBar);
+    Report.init(this.angulartics2);
+    SharedService.user.shoppingCart = new ShoppingCart();
+    ProspectingAndMillingUtil.restore();
+
+    this.subs.add(
+      SharedService.events.detailPanelOpen,
+      () =>
+        this.scrollToTheTop());
+    this.angulartics2GoogleAnalytics.startTracking();
+  }
+
+  ngOnInit(): void {
+    this.restorePreviousLocation();
+  }
+
+
+  ngAfterViewInit(): void {
+    if (this.isStandalone()) {
+      Report.send(
+        `Device: ${window.navigator.platform}, ${window.navigator.vendor}`,
+        `Standalone startup`
+      );
+
+      this.subs.add(
+        this._router.events,
+        (event: NavigationEnd) =>
+          this.onNavigationChange(event));
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  private restorePreviousLocation() {
+    if (this.isStandalone() && localStorage['current_path']) {
+      this._router.navigateByUrl(localStorage['current_path']);
+    }
+  }
+
+  private scrollToTheTop() {
+    // making sure that we are scrolled back to the correct position after opening the detail panel
+    if (!this.isPanelOpen()) {
+      window.scrollTo(0, SharedService.preScrollPosition);
+    }
+  }
+
+  private setLocale() {
     if (!localStorage['locale']) {
       switch (navigator.language) {
         case 'it':
@@ -60,42 +113,21 @@ export class AppComponent implements OnInit, AfterViewInit {
           break;
       }
     }
-    DefaultDashboardSettings.init();
-    User.restore();
-    ErrorReport.init(this.angulartics2, this.matSnackBar);
-    Report.init(this.angulartics2);
-    SharedService.user.shoppingCart = new ShoppingCart();
-    ProspectingAndMillingUtil.restore();
-
-    this.detailOpenCloseSubscription = SharedService.events.detailPanelOpen.subscribe(() => {
-      // making sure that we are scroleld back to the correct position after opening the detail panel
-      if (!this.isPanelOpen()) {
-        window.scrollTo(0, SharedService.preScrollPosition);
-      }
-    });
-    this.angulartics2GoogleAnalytics.startTracking();
   }
 
-  ngOnInit(): void {
-    if (this.isStandalone() && localStorage['current_path']) {
-      this._router.navigateByUrl(localStorage['current_path']);
-    }
+  private onNavigationChange(event: NavigationEnd) {
+    this.saveCurrentRoute(event);
   }
 
-  ngAfterViewInit(): void {
-    if (this.isStandalone()) {
-      this.angulartics2.eventTrack.next({
-        action: `Device: ${window.navigator.platform}, ${window.navigator.vendor}`,
-        properties: {category: `Standalone startup`},
-      });
-
-      this._router.events.subscribe(s => {
-        try {
-          localStorage['current_path'] = s['url'];
-        } catch (e) {
-          console.error('Could not save router change', e);
-        }
-      });
+  private saveCurrentRoute(event: NavigationEnd) {
+    try {
+      /**
+       * As iOS does not save where you are upon reload in a "installed" webapp.
+       * We're storing the current path.
+       */
+      localStorage['current_path'] = event['url'];
+    } catch (e) {
+      console.error('Could not save router change', e);
     }
   }
 
@@ -116,11 +148,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   /* istanbul ignore next */
   isItemSelected(): boolean {
-    return SharedService.selectedItemId ? true : false;
+    return !!SharedService.selectedItemId;
   }
 
   /* istanbul ignore next */
   isSellerSelected(): boolean {
-    return SharedService.selectedSeller ? true : false;
+    return !!SharedService.selectedSeller;
   }
 }

@@ -13,23 +13,40 @@ import {PetsService} from './pets.service';
 import {Angulartics2} from 'angulartics2';
 import {ErrorReport} from '../utils/error-report.util';
 import {AuctionResponse} from '../models/auction/auctions-response';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {BehaviorSubject} from 'rxjs';
+import {Auction} from '../models/auction/auction';
+import {AuctionItem} from '../models/auction/auction-item';
+import {RealmService} from './realm.service';
+import {RealmStatus} from '../models/realm-status.model';
 
 @Injectable()
 export class AuctionsService {
+  events = {
+    list: new BehaviorSubject<Auction[]>([]),
+    groupedList: new BehaviorSubject<AuctionItem[]>([])
+  };
+  subs = new SubscriptionManager();
+
 
   constructor(
-    private _http: HttpClient,
+    private http: HttpClient,
     public snackBar: MatSnackBar,
     private _dbService: DatabaseService,
     private _itemService: ItemService,
     private petService: PetsService,
+    private realmService: RealmService,
     private angulartics2: Angulartics2) {
+    this.subs.add(
+      this.realmService.events.realmStatus,
+      (status: RealmStatus) =>
+        this.getLatestData(status));
   }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
-    return this._http.post(
+    return this.http.post(
       Endpoints.getLambdaUrl(`auction`, SharedService.user.region), {
         region: SharedService.user.region,
         realm: SharedService.user.realm
@@ -54,19 +71,20 @@ export class AuctionsService {
     if (SharedService.downloading.auctions) {
       return;
     }
-    const missingItems = [];
+    const missingItems = [],
+      realmStatus: RealmStatus = this.realmService.events.realmStatus.getValue();
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
-    return this._http.post(
-      Endpoints.getLambdaUrl(`auction`, SharedService.user.region),
-      {url: SharedService.auctionResponse.url})
+    return this.http
+      .get(realmStatus.url)
       .toPromise()
       .then(a => {
+        this.events.list.next(a['auctions']);
         SharedService.downloading.auctions = false;
-        localStorage['timestamp_auctions'] = SharedService.auctionResponse.lastModified;
+        localStorage['timestamp_auctions'] = realmStatus.lastModified;
         AuctionHandler.organize(a['auctions'], this.petService);
-        this._dbService.addAuctions(a['auctions']);
+        // TODO: Remove ? -> this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
         SharedService.auctionItems.forEach(ai => {
@@ -116,7 +134,7 @@ export class AuctionsService {
       console.log('Downloading TSM data');
       SharedService.downloading.tsmAuctions = true;
       this.openSnackbar('Downloading TSM data');
-      return this._http.get(`${Endpoints.TSM_API}/${
+      return this.http.get(`${Endpoints.TSM_API}/${
         SharedService.user.region
         }/${
         SharedService.user.realm
@@ -157,7 +175,7 @@ export class AuctionsService {
       console.log('Downloading WoWUction data');
       SharedService.downloading.wowUctionAuctions = true;
       this.openSnackbar('Downloading WoWUction data');
-      return this._http.post(`${Endpoints.getUrl('auction/wowuction')}`,
+      return this.http.post(`${Endpoints.getUrl('auction/wowuction')}`,
         {
           region: SharedService.user.region,
           realm: SharedService.user.realm,
@@ -193,5 +211,29 @@ export class AuctionsService {
 
   private openSnackbar(message: string): void {
     this.snackBar.open(message, 'Ok', {duration: 3000});
+  }
+
+  private getLatestData(status: RealmStatus) {
+    if (!status) {
+      return;
+    }
+
+    const previousLastModified = +localStorage['timestamp_auctions'];
+    if (this.shouldDownload(status, previousLastModified)) {
+      this.getAuctions();
+    }
+  }
+
+  private shouldDownload(status: RealmStatus, previousLastModified) {
+    return this.isNewUpdateAvailable(status, previousLastModified) || this.isAuctionArrayEmpty(status);
+  }
+
+  private isNewUpdateAvailable(status: RealmStatus, previousLastModified) {
+    return status && status.lastModified !== previousLastModified && !SharedService.downloading.auctions;
+  }
+
+  private isAuctionArrayEmpty(status: RealmStatus) {
+    const list = this.events.list.getValue();
+    return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
   }
 }

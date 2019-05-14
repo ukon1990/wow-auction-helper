@@ -1,5 +1,4 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {CharacterHandler} from '../handlers/character.handler';
 import {Response} from '../utils/response.util';
 import {RealmHandler} from '../handlers/realm.handler';
 
@@ -11,4 +10,14 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
     Response
       .error(callback, 'The method you provided, is not available.', event);
   }
+};
+
+exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new RealmHandler()
+    .getRealmByRegionAndName(event, callback);
+};
+
+exports.handleGetAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new RealmHandler()
+    .getAllRealms(event, callback);
 };

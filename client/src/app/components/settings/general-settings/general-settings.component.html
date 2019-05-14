@@ -1,4 +1,4 @@
-<form [formGroup]="_characterForm">
+<form [formGroup]="characterForm">
   <div class="row mb-3">
     <div class="col-md-6">
       <mat-card>
@@ -10,7 +10,7 @@
         <mat-card-content>
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select  [disableOptionCentering]="true" placeholder="Region" formControlName="region">
+              <mat-select [disableOptionCentering]="true" placeholder="Region" formControlName="region">
                 <mat-option *ngFor="let region of regions" [value]="region.id">
                   {{ region.name }}
                 </mat-option>
@@ -18,15 +18,16 @@
             </mat-form-field>
 
             <mat-form-field class="col-md-4">
-              <mat-select  [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
-                <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
-                  {{ getRealmWithkey(slug).name }}
+              <mat-select [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
+                <mat-option *ngFor="let realm of realmsMap[characterForm.getRawValue().region]"
+                            [value]="realm.slug">
+                  {{ realm.name }} - Last modified: {{ milliSecondsToMinutes(realm) | number }} min ago
                 </mat-option>
               </mat-select>
             </mat-form-field>
 
             <mat-form-field class="col-md-4">
-              <mat-select  [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
+              <mat-select [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
                 <mat-option *ngFor="let locale of locales" [value]="locale.locale">
                   {{ locale.name }}
                 </mat-option>
@@ -35,14 +36,12 @@
           </div>
         </mat-card-content>
 
-        <mat-card-content *ngIf="getRealmWithkey().name">
-          This is a {{ getRealmWithkey(slug).population }} population realm,
-          <span *ngIf="getRealmWithkey().queue; else noQueue">with queue.</span>
-          <ng-template #noQueue>
-            <span>without queue.</span>
-          </ng-template>
-          <span *ngIf="getRealmWithkey().connected_realms.length > 1">It is connected with {{ getRealmWithkey(slug).connected_realms.length }} realms.</span>
-          It is using the timezone "{{ getRealmWithkey(slug).timezone }}".
+        <mat-card-content *ngIf="currentRealm">
+          <strong>AH size in MB: </strong> {{ currentRealm.size | number }} <br>
+          <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
+          <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
+          <strong>Realm locale: </strong>  {{ currentRealm.locale }} <br>
+          <strong>Last updated: </strong>  {{ milliSecondsToMinutes(currentRealm) | number }} minutes ago
         </mat-card-content>
         <mat-card-actions>
           <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange() && !changedLocales">
@@ -57,11 +56,13 @@
         </mat-card-header>
         <mat-card-content>
           <p>
-            Supplying the app with an API key, allows it to display statistical data like Market value, regional sale rate and av regional
+            Supplying the app with an API key, allows it to display statistical data like Market value, regional sale
+            rate and av regional
             daily sold.
           </p>
           <p>
-            Both TSM and WoWUction gives the realms market value. TSM gives give regional sale rate, regional daily sold and regional
+            Both TSM and WoWUction gives the realms market value. TSM gives give regional sale rate, regional daily sold
+            and regional
             avg sale price. WoWUction gives the realms avg daily sold, posted and the estimated demand.
           </p>
           <mat-card>
@@ -76,7 +77,8 @@
                 <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
               </mat-form-field>
               If you don't have a TSM account you can
-              <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
+              <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this
+                link</a>. Once you've done that, you can find your API key in the bottom of your
               <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
             </mat-card-content>
             <mat-card-actions>
@@ -98,7 +100,8 @@
                 <input matInput placeholder="WoWUction API key" formControlName="wowUctionKey">
               </mat-form-field>
               If you don't have an account over at
-              <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have done that, go to "Resources -> Data Export" and copy the
+              <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have
+              done that, go to "Resources -> Data Export" and copy the
               text after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
             </mat-card-content>
             <mat-card-actions>
@@ -141,7 +144,8 @@
         </mat-card-header>
         <mat-card-content>
           <mat-form-field class="col-md-10">
-            <textarea matInput formControlName="exportString" placeholder="The export string will appear here."></textarea>
+            <textarea matInput formControlName="exportString"
+                      placeholder="The export string will appear here."></textarea>
           </mat-form-field>
           <button class="col-md-2" mat-button (click)="exportData()">
             <i class="fas fa-download"></i>
@@ -155,21 +159,21 @@
       </mat-card>
 
       <mat-card class="mt-2">
-          <mat-card-header>
-            <mat-card-title>
-              Delete all stored data
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            This will delete all your settings and the data stored in the local database.
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button (click)="deleteUser()">
-              <i class="fas fa-trash-alt"></i>
-              Delete all locally stored data
-            </button>
-          </mat-card-actions>
-        </mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Delete all stored data
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          This will delete all your settings and the data stored in the local database.
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="deleteUser()">
+            <i class="fas fa-trash-alt"></i>
+            Delete all locally stored data
+          </button>
+        </mat-card-actions>
+      </mat-card>
     </div>
   </div>
 </form>

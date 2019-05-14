@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { TradeVendor, TradeVendorItem } from '../../models/item/trade-vendor';
 import { TRADE_VENDORS } from '../../models/item/trade-vendors';
 import { ColumnDescription } from '../../models/column-description';
@@ -13,7 +13,7 @@ import { Subscription } from '../../../../node_modules/rxjs';
   templateUrl: './trade-vendors.component.html',
   styleUrls: ['./trade-vendors.component.scss']
 })
-export class TradeVendorsComponent implements OnInit {
+export class TradeVendorsComponent implements OnInit, OnDestroy {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   locale = localStorage['locale'].split('-')[0];
   form: FormGroup;
@@ -44,6 +44,10 @@ export class TradeVendorsComponent implements OnInit {
       this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' });
     }
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: [] });
+  }
+
+  ngOnDestroy() {
+    this.formChanges.unsubscribe();
   }
 
   getTradeVendors(): Array<TradeVendor> {

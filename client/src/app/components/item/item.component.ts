@@ -11,13 +11,11 @@ import {AuctionPet} from '../../models/auction/auction-pet';
 import {Angulartics2} from 'angulartics2';
 import {Endpoints} from '../../services/endpoints';
 import {MatTabGroup, MatTab, MatTabChangeEvent} from '@angular/material';
-import {Subscription} from 'rxjs';
 import {ItemService} from '../../services/item.service';
 import {GameBuild} from '../../utils/game-build.util';
-import {UserProfit} from '../../utils/tsm-lua.util';
-import {SubscriptionsUtil} from '../../utils/subscriptions.util';
 import {Report} from '../../utils/report.util';
 import {FormControl} from '@angular/forms';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-item',
@@ -41,7 +39,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     seller: undefined
   };
   shoppingCartQuantityField: FormControl = new FormControl(1);
-  subscriptions = new SubscriptionsUtil();
+  subscriptions = new SubscriptionManager();
   columns: Array<ColumnDescription> = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},

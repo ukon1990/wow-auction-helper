@@ -1,4 +1,7 @@
 export class ItemLocale {
+  id?: number;
+  speciesId?: number;
+
   en_GB: string;
   en_US: string;
   de_DE: string;
@@ -13,5 +16,7 @@ export class ItemLocale {
   ko_KR: string;
   zh_TW: string;
 
-  constructor(public id: number) {}
+  constructor(id?: number) {
+    this.id = id;
+  }
 }

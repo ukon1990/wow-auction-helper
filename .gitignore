@@ -40,6 +40,8 @@ Thumbs.db
 
 *.zip
 *.json.gz
+scripts/gzip
+scripts/json
 
 server/secrets/secrets\.js
 src/app/services/keys\.ts

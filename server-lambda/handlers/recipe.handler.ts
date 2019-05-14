@@ -156,10 +156,11 @@ export class RecipeHandler {
     });
   }
 
-  private getProfessionForRecipe(recipe: Recipe): Promise<RecipeSpell> {
+  getProfessionForRecipe(recipe: Recipe, locale: string = 'en_GB', region: string = 'eu'): Promise<RecipeSpell> {
     return new Promise<RecipeSpell>((resolve, reject) => {
       request.get(new Endpoints()
-        .getPath(`recipe/${recipe.spellID}?locale=en_GB`), (err, r, body) => {
+        .getPath(`recipe/${recipe.spellID}?locale=${locale ? locale : 'en_GB'}`, region),
+        (err, r, body) => {
         try {
           const spell = JSON.parse(body) as RecipeSpell;
           resolve(spell);
