@@ -6,21 +6,26 @@
   </mat-card-header>
   <mat-card-content>
     <form class="row" [formGroup]="form">
-      <mat-form-field class="col-md-4">
-        <mat-select [disableOptionCentering]="true" placeholder="Region" formControlName="region">
-          <mat-option *ngFor="let region of regions" [value]="region.id">
-            {{ region.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <mat-form-field class="col-md-8">
+        <input matInput
+               placeholder="Select a realm"
+               aria-label="State"
+               [matAutocomplete]="auto"
+               [formControl]="autocompleteField">
 
-      <mat-form-field class="col-md-4">
-        <mat-select [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
-          <mat-option *ngFor="let realm of realmsMap[form.getRawValue().region]"
-                      [value]="realm.slug">
-            {{ realm.name }}
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option (onSelectionChange)="onOptionSelected(realm.realm)"
+                  *ngFor="let realm of filteredRealms"
+                  [value]="realm.value">
+            {{
+              realm.match.start
+            }}<u><strong>{{
+              realm.match.match
+            }}</strong></u>{{
+              realm.match.end
+            }}
           </mat-option>
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
 
       <mat-form-field class="col-md-4">
@@ -37,8 +42,7 @@
     <strong>AH size in MB: </strong> {{ currentRealm.size | number }} <br>
     <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
     <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
-    <strong>Realm locale: </strong>  {{ currentRealm.locale }} <br>
-    <strong>Last updated: </strong>  {{ milliSecondsToMinutes(currentRealm) | number }} minutes ago
+    <strong>Realm locale: </strong>  {{ currentRealm.locale }}
   </mat-card-content>
   <mat-card-actions>
     <ng-content></ng-content>

@@ -1,17 +1,18 @@
-import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {RealmService} from '../../../services/realm.service';
 import {RealmStatus} from '../../../models/realm-status.model';
 import {SharedService} from '../../../services/shared.service';
 import {ObjectUtil} from '../../../utils/object.util';
+import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 
 @Component({
   selector: 'wah-select-realm',
   templateUrl: './select-realm.component.html',
   styleUrls: ['./select-realm.component.scss']
 })
-export class SelectRealmComponent implements AfterContentInit, OnChanges {
+export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChanges {
   @Input() region: string;
   @Input() realm: string;
   @Input() locale: string;
@@ -26,22 +27,13 @@ export class SelectRealmComponent implements AfterContentInit, OnChanges {
     realm: new FormControl(),
     locale: new FormControl()
   });
+  autocompleteField = new FormControl('');
   locales = SharedService.locales;
-  regions = [
-    {id: 'eu', name: 'Europe'},
-    {id: 'us', name: 'America'},
-    {id: 'kr', name: 'Korea'},
-    {id: 'tw', name: 'Taiwan'}
-  ];
-  realmsMap = {
-    eu: [],
-    us: [],
-    kr: [],
-    tw: []
-  };
   currentRealm: RealmStatus;
+  filteredRealms: any[] = [];
 
   sm = new SubscriptionManager();
+  private realms: RealmStatus[] = [];
 
   constructor(private service: RealmService) {
   }
@@ -57,10 +49,27 @@ export class SelectRealmComponent implements AfterContentInit, OnChanges {
       this.form.valueChanges,
       (value) => this.handleFormChanges(value));
 
+    this.sm.add(
+      this.autocompleteField.valueChanges,
+      (value) => this.filterRealms(value));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    Object.keys(changes).forEach(key => {
+      this.setFormControlChange(changes, key);
+    });
+  }
+
+  private setFormControlChange(changes: SimpleChanges, key) {
+    const currentValue = changes[key].currentValue,
+      formControl: AbstractControl = this.form.controls[key];
+    if (formControl) {
+      formControl.setValue(currentValue);
+    }
+  }
+
+  ngOnDestroy() {
+    this.sm.unsubscribe();
   }
 
   private setFormValues() {
@@ -75,21 +84,20 @@ export class SelectRealmComponent implements AfterContentInit, OnChanges {
       return;
     }
 
-    this.realmsMap[form.region].forEach((status: RealmStatus) => {
-      if (form.region === status.region && (name || form.realm) === status.slug) {
-        this.currentRealm = status;
-      }
-    });
+    this.realms
+      .forEach((status: RealmStatus) => {
+        if (form.region === status.region && (name || form.realm) === status.slug) {
+          this.currentRealm = status;
+          this.autocompleteField
+            .setValue(this.getRealmNameAndRegion(status));
+        }
+      });
   }
 
   private processRealms(list: RealmStatus[]) {
-    Object.keys(this.realmsMap)
-      .forEach(key =>
-        this.realmsMap[key] = []);
-    list.forEach(status =>
-      this.realmsMap[status.region].push(status));
-
+    this.realms = list;
     this.setSelectedRealm();
+    this.filterRealms();
   }
 
   milliSecondsToMinutes(status: RealmStatus): number {
@@ -103,5 +111,39 @@ export class SelectRealmComponent implements AfterContentInit, OnChanges {
   private handleFormChanges(value: any) {
     this.changes.emit(value);
     this.setSelectedRealm();
+  }
+
+  private filterRealms(value?: string) {
+    this.filteredRealms.length = 0;
+    this.realms
+      .forEach((realm: RealmStatus) => {
+        const realmName = this.getRealmNameAndRegion(realm);
+        if (TextUtil.contains(realmName, value) && !TextUtil.isEmpty(value)) {
+          this.addFilterResult(realmName, realm, value);
+        } else if (TextUtil.isEmpty(value)) {
+          this.addFilterResult(realmName, realm, '');
+        }
+      });
+  }
+
+  private addFilterResult(realmName, realm: RealmStatus, value: string) {
+    this.filteredRealms.push({
+      value: realmName,
+      realm: realm,
+      match: TextUtil.getMatchingParts(realmName, value)
+    });
+  }
+
+  private getRealmNameAndRegion(realm: RealmStatus) {
+    if (ObjectUtil.isNullOrUndefined(realm)) {
+      return '';
+    }
+    return `${realm.name} (${realm.region})`;
+  }
+
+  onOptionSelected(realm: RealmStatus) {
+    this.currentRealm = realm;
+    this.form.controls.region.setValue(realm.region);
+    this.form.controls.realm.setValue(realm.slug);
   }
 }
