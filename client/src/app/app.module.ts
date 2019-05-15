@@ -6,7 +6,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 import { Angulartics2Module } from 'angulartics2';
-import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 
 import { AppRoutingModule } from './modules/app-routing.module';
 
@@ -97,6 +96,7 @@ import { ProfitSummaryCardComponent } from './components/tsm-addon-db/profit-sum
 import { ItemSaleSummaryComponent } from './components/tsm-addon-db/item-sale-summary/item-sale-summary.component';
 import { AppUpdateComponent } from './components/update/app-update/app-update.component';
 import { SelectRealmComponent } from './components/settings/select-realm/select-realm.component';
+import { RealmListComponent } from './components/realm-list/realm-list.component';
 
 
 @NgModule({
@@ -173,7 +173,8 @@ import { SelectRealmComponent } from './components/settings/select-realm/select-
     ProfitSummaryCardComponent,
     ItemSaleSummaryComponent,
     AppUpdateComponent,
-    SelectRealmComponent
+    SelectRealmComponent,
+    RealmListComponent
   ],
   imports: [
     BrowserModule,

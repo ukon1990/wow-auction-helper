@@ -2,13 +2,17 @@
   <div class="row mb-3">
     <div class="col-md-6">
       <wah-select-realm
-      [region]="form.getRawValue().region"
-      [realm]="form.getRawValue().realm"
-      [locale]="form.getRawValue().locale"
-      (changes)="realmSelectionEvent($event)">
-        <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange() && !changedLocales">
+              [region]="form.getRawValue().region"
+              [realm]="form.getRawValue().realm"
+              [locale]="form.getRawValue().locale"
+              (changes)="realmSelectionEvent($event)">
+        <button mat-button
+                (click)="saveRealmAndRegion()"
+                [disabled]="!hasRealmChange() && !changedLocales">
           <i class="fas fa-save"></i> Save
         </button>
+
+        <wah-realm-list></wah-realm-list>
       </wah-select-realm>
 
       <mat-card class="mt-2" *ngIf="isWithinSupported3RDPartyAPIRegion()">
