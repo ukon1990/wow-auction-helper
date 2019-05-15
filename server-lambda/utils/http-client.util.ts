@@ -21,7 +21,6 @@ export class HttpClientUtil {
   }
 
   post(url: string, requestBody: any, ignoreHttpResponse?: boolean): Promise<any> {
-    console.log('Post request');
     return new Promise<any>((resolve, reject) => {
       request.post({
           headers: {

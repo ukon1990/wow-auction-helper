@@ -96,6 +96,7 @@ import { ProfitSummaryComponent } from './components/tsm-addon-db/profit-summary
 import { ProfitSummaryCardComponent } from './components/tsm-addon-db/profit-summary-card/profit-summary-card.component';
 import { ItemSaleSummaryComponent } from './components/tsm-addon-db/item-sale-summary/item-sale-summary.component';
 import { AppUpdateComponent } from './components/update/app-update/app-update.component';
+import { SelectRealmComponent } from './components/settings/select-realm/select-realm.component';
 
 
 @NgModule({
@@ -171,7 +172,8 @@ import { AppUpdateComponent } from './components/update/app-update/app-update.co
     ProfitSummaryComponent,
     ProfitSummaryCardComponent,
     ItemSaleSummaryComponent,
-    AppUpdateComponent
+    AppUpdateComponent,
+    SelectRealmComponent
   ],
   imports: [
     BrowserModule,

@@ -1,54 +1,15 @@
-<form [formGroup]="characterForm">
+<form [formGroup]="form">
   <div class="row mb-3">
     <div class="col-md-6">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            Select your realm, region and item language
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="row">
-            <mat-form-field class="col-md-4">
-              <mat-select [disableOptionCentering]="true" placeholder="Region" formControlName="region">
-                <mat-option *ngFor="let region of regions" [value]="region.id">
-                  {{ region.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field class="col-md-4">
-              <mat-select [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
-                <mat-option *ngFor="let realm of realmsMap[characterForm.getRawValue().region]"
-                            [value]="realm.slug">
-                  {{ realm.name }} - Last modified: {{ milliSecondsToMinutes(realm) | number }} min ago
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field class="col-md-4">
-              <mat-select [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
-                <mat-option *ngFor="let locale of locales" [value]="locale.locale">
-                  {{ locale.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </mat-card-content>
-
-        <mat-card-content *ngIf="currentRealm">
-          <strong>AH size in MB: </strong> {{ currentRealm.size | number }} <br>
-          <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
-          <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
-          <strong>Realm locale: </strong>  {{ currentRealm.locale }} <br>
-          <strong>Last updated: </strong>  {{ milliSecondsToMinutes(currentRealm) | number }} minutes ago
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange() && !changedLocales">
-            <i class="fas fa-save"></i> Save
-          </button>
-        </mat-card-actions>
-      </mat-card>
+      <wah-select-realm
+      [region]="form.getRawValue().region"
+      [realm]="form.getRawValue().realm"
+      [locale]="form.getRawValue().locale"
+      (changes)="realmSelectionEvent($event)">
+        <button mat-button (click)="saveRealmAndRegion()" [disabled]="!hasRealmChange() && !changedLocales">
+          <i class="fas fa-save"></i> Save
+        </button>
+      </wah-select-realm>
 
       <mat-card class="mt-2" *ngIf="isWithinSupported3RDPartyAPIRegion()">
         <mat-card-header>
@@ -85,29 +46,10 @@
               <button mat-button (click)="saveTSMKey()">
                 <i class="fas fa-save"></i> Save and use
               </button>
-            </mat-card-actions>
-          </mat-card>
 
-          <mat-card class="mt-2">
-            <mat-card-header>
-              <mat-card-title>
-                WowUction
-                <span *ngIf="isUsingWoWUction()">(In use)</span>
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <mat-form-field class="col-md-12">
-                <input matInput placeholder="WoWUction API key" formControlName="wowUctionKey">
-              </mat-form-field>
-              If you don't have an account over at
-              <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have
-              done that, go to "Resources -> Data Export" and copy the
-              text after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-button (click)="saveWoWuction()">
-                <i class="fas fa-save"></i> Save and use
-              </button>
+              <mat-checkbox formControlName="updateAPIOnRealmChange">
+                Update upon realm change
+              </mat-checkbox>
             </mat-card-actions>
           </mat-card>
         </mat-card-content>

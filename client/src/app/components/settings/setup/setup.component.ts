@@ -18,8 +18,7 @@ import {RealmStatus} from '../../../models/realm-status.model';
   styleUrls: ['./setup.component.scss']
 })
 export class SetupComponent implements OnInit {
-  isDownloadingRealm: boolean;
-  _characterForm: FormGroup;
+  form: FormGroup;
   locales = SharedService.locales;
   imagesForRoll = [
     {
@@ -57,24 +56,12 @@ export class SetupComponent implements OnInit {
       alt: 'Support for different locales'
     }
   ];
-  regions = [
-    {id: 'eu', name: 'Europe'},
-    {id: 'us', name: 'America'},
-    {id: 'kr', name: 'Korea'},
-    {id: 'tw', name: 'Taiwan'}
-  ];
-  realmsMap = {
-    eu: [],
-    us: [],
-    kr: [],
-    tw: []
-  };
-  currentRealm: RealmStatus;
+
   sm = new SubscriptionManager();
 
   constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router,
               private angulartics2: Angulartics2) {
-    this._characterForm = this._formBuilder.group({
+    this.form = this._formBuilder.group({
       region: ['eu', Validators.required],
       realm: ['aegwynn', Validators.required],
       tsmKey: '',
@@ -84,25 +71,9 @@ export class SetupComponent implements OnInit {
     });
 
     this.sm.add(
-      this._realmService.events.list,
-      (list: RealmStatus[]) =>
-        this.processRealms(list));
-
-    this.sm.add(
-      this._characterForm.controls.locale.valueChanges,
+      this.form.controls.locale.valueChanges,
       locale => {
         localStorage['locale'] = locale;
-      });
-
-    this.getRealms();
-    this.sm.add(
-      this._characterForm.controls.region.valueChanges,
-      region => this.getRealms(region));
-
-    this.sm.add(
-      this._characterForm.controls.realm.valueChanges,
-      name => {
-        this.setSelectedRealm(name);
       });
   }
 
@@ -110,17 +81,11 @@ export class SetupComponent implements OnInit {
     if (SharedService.user.realm && SharedService.user.region) {
       this._router.navigateByUrl('dashboard');
     }
-
-    /*
-    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-      console.log('Not https!');
-      location.href = window.location.href.replace('http', 'https');
-    }*/
   }
 
   isWithinSupported3RDPartyAPIRegion(): boolean {
-    return this._characterForm.getRawValue().region === 'eu' ||
-      this._characterForm.getRawValue().region === 'us';
+    return this.form.getRawValue().region === 'eu' ||
+      this.form.getRawValue().region === 'us';
   }
 
   getRealmsKeys() {
@@ -129,32 +94,18 @@ export class SetupComponent implements OnInit {
 
   getRealmWithkey(slug?: string): Realm {
     if (!slug) {
-      slug = this._characterForm.value.realm;
+      slug = this.form.value.realm;
     }
     return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
   }
 
-  getRealms(region?: string): void {
-    this.isDownloadingRealm = true;
-    setTimeout(() => {
-      this._realmService
-        .getRealms(region ? region : this._characterForm.value.region)
-        .then(r => {
-          this.isDownloadingRealm = false;
-        })
-        .catch(e => {
-          this.isDownloadingRealm = false;
-        });
-    }, 100);
-  }
-
   isValid(): boolean {
-    return this._characterForm.status === 'VALID';
+    return this.form.status === 'VALID';
   }
 
   importUserData(): void {
-    if (this._characterForm.value.importString.length > 0) {
-      User.import(this._characterForm.value.importString);
+    if (this.form.value.importString.length > 0) {
+      User.import(this.form.value.importString);
       this.redirectUserFromRestore();
     }
   }
@@ -193,15 +144,15 @@ export class SetupComponent implements OnInit {
 
   completeSetup(): void {
     if (this.isValid()) {
-      localStorage['region'] = this._characterForm.value.region;
-      localStorage['realm'] = this._characterForm.value.realm;
-      localStorage['character'] = this._characterForm.value.name;
+      localStorage['region'] = this.form.value.region;
+      localStorage['realm'] = this.form.value.realm;
+      localStorage['character'] = this.form.value.name;
 
-      localStorage['api_tsm'] = this._characterForm.value.tsmKey;
-      localStorage['api_wowuction'] = this._characterForm.value.wowUctionKey;
-      if (this._characterForm.value.tsmKey.length > 0) {
+      localStorage['api_tsm'] = this.form.value.tsmKey;
+      localStorage['api_wowuction'] = this.form.value.wowUctionKey;
+      if (this.form.value.tsmKey.length > 0) {
         localStorage['api_to_use'] = 'tsm';
-      } else if (this._characterForm.value.wowUctionKey.length > 0) {
+      } else if (this.form.value.wowUctionKey.length > 0) {
         localStorage['api_to_use'] = 'wowuction';
       } else {
         localStorage['api_to_use'] = 'none';
@@ -223,22 +174,10 @@ export class SetupComponent implements OnInit {
     SharedService.user.isDarkMode = evt.checked;
   }
 
-  private setSelectedRealm(name?: string) {
-    const form = this._characterForm.getRawValue();
-    this.realmsMap[form.region].forEach((status: RealmStatus) => {
-      if (form.region === status.region && (name || form.realm) === status.slug) {
-        this.currentRealm = status;
-      }
-    });
-  }
-
-  private processRealms(list: RealmStatus[]) {
-    Object.keys(this.realmsMap)
+  realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
+    Object.keys(change)
       .forEach(key =>
-        this.realmsMap[key] = []);
-    list.forEach(status =>
-      this.realmsMap[status.region].push(status));
-
-    this.setSelectedRealm();
+        this.form.controls[key]
+          .setValue(change[key]));
   }
 }

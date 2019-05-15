@@ -1,0 +1,46 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Select your realm, region and item language
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="row" [formGroup]="form">
+      <mat-form-field class="col-md-4">
+        <mat-select [disableOptionCentering]="true" placeholder="Region" formControlName="region">
+          <mat-option *ngFor="let region of regions" [value]="region.id">
+            {{ region.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="col-md-4">
+        <mat-select [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
+          <mat-option *ngFor="let realm of realmsMap[form.getRawValue().region]"
+                      [value]="realm.slug">
+            {{ realm.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="col-md-4">
+        <mat-select [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
+          <mat-option *ngFor="let locale of locales" [value]="locale.locale">
+            {{ locale.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+
+  <mat-card-content *ngIf="currentRealm">
+    <strong>AH size in MB: </strong> {{ currentRealm.size | number }} <br>
+    <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
+    <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
+    <strong>Realm locale: </strong>  {{ currentRealm.locale }} <br>
+    <strong>Last updated: </strong>  {{ milliSecondsToMinutes(currentRealm) | number }} minutes ago
+  </mat-card-content>
+  <mat-card-actions>
+    <ng-content></ng-content>
+  </mat-card-actions>
+</mat-card>
