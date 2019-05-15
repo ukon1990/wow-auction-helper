@@ -64,7 +64,6 @@ export class AuctionHandler {
       request.get(
         url,
         (error, response, body) => {
-          console.log('getLatestDumpPath', body, url);
           body = JSON.parse(body);
 
           if (error) {
@@ -171,12 +170,14 @@ export class AuctionHandler {
       JSON.parse(event.body).region : undefined;
     await AuthHandler.getToken()
       .catch(console.error);
+    console.log('Starting AH updates');
 
     new DatabaseUtil()
-      .query(RealmQuery.getAllHouses())
+      .query(RealmQuery
+        .getAllHousesWithLastModifiedOlderThan(15))
       .then(async rows => {
         const promiseThrottle = new PromiseThrottle({
-            requestsPerSecond: 10,
+            requestsPerSecond: 50,
             promiseImplementation: Promise
           }),
           promises = [];
@@ -204,15 +205,15 @@ export class AuctionHandler {
         });
 
         await Promise.all(promises)
+          .then(() =>
+            console.log('Done initiating AH updates'))
           .catch(console.error);
-        console.log('Done adding stuff?');
       })
       .catch(error =>
         Response.error(callback, error, event));
   }
 
   async updateHouseRequest(event: APIGatewayEvent, callback: Callback) {
-    console.log('request', event.body);
     const body = JSON.parse(event.body);
     Response.send({
       message: 'started updateHouseRequest',
@@ -236,11 +237,10 @@ export class AuctionHandler {
           ahDumpResponse = r)
         .catch(e => error = e);
       if (ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
-        console.log('Downloading dump');
+        console.log(`Updating id=${dbResult.id}`);
         await this.setIsUpdating(dbResult.id, true);
         this.downloadDump(ahDumpResponse.url)
           .then(r => {
-            console.log('Dump is downloaded');
             this.sendToS3(
               r.body, dbResult.region, dbResult.id,
               ahDumpResponse.lastModified, this.getSizeOfResponseInMB(r))
@@ -256,7 +256,6 @@ export class AuctionHandler {
         console.error(error);
         reject(error);
       } else {
-        console.log(`No new data available for id=${dbResult.id}`);
         resolve();
       }
     });

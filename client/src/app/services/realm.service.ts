@@ -23,19 +23,21 @@ export class RealmService {
               private matSnackBar: MatSnackBar) {
   }
 
-  public static async changeRealm(auctionService: AuctionsService, realm: string, region?: string) {
+  async changeRealm(auctionsService: AuctionsService, realm: string, region?: string, updateApi?: boolean) {
     if (region) {
       SharedService.user.region = region;
     }
     SharedService.user.realm = realm;
     User.save();
 
-    if (SharedService.user.apiToUse === 'tsm') {
-      await auctionService.getTsmAuctions();
-    } else if (SharedService.user.apiToUse === 'wowuction') {
-      await auctionService.getWoWUctionAuctions();
+    if (updateApi) {
+      if (SharedService.user.apiToUse === 'tsm') {
+        await auctionsService.getTsmAuctions();
+      } else if (SharedService.user.apiToUse === 'wowuction') {
+        await auctionsService.getWoWUctionAuctions();
+      }
     }
-    await auctionService.getLastModifiedTime(true);
+    await this.getStatus(region, realm);
   }
 
   getStatus(region: string, realm: string): Promise<any> {

@@ -48,6 +48,18 @@ export class RealmQuery {
             WHERE ah.id = realm.ahId;`;
   }
 
+  static getAllHousesWithLastModifiedOlderThan(minutesAgo: number) {
+    return `SELECT ah.id as id, region, slug, name, url, lastModified
+            FROM auction_houses as ah
+            LEFT OUTER JOIN (
+                SELECT ahId, slug, name
+                FROM auction_house_realm
+                GROUP BY ahId) as realm
+            ON ah.id = realm.ahId
+            WHERE ah.id = realm.ahId
+                AND lastModified <= ${+new Date() - minutesAgo * 60000};`;
+  }
+
   static updateUrl(ahId: number, url: string, lastModified: number, size: number): string {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET

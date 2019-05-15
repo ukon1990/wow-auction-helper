@@ -66,52 +66,16 @@
     </div>
   </mat-step>
   <mat-step>
-    <form [formGroup]="_characterForm">
+    <form [formGroup]="form">
       <ng-template matStepLabel>Realm, region and locale</ng-template>
       <div class="row">
         <div class="col-md-4">
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>
-                Select your realm, region and item language
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <mat-form-field>
-                <mat-select  [disableOptionCentering]="true" placeholder="Region" formControlName="region">
-                  <mat-option *ngFor="let region of regions" [value]="region.id">
-                    {{ region.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-select [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
-                  <mat-option *ngFor="let realm of realmsMap[_characterForm.getRawValue().region]"
-                              [value]="realm.slug">
-                    {{ realm.name }}
-                  </mat-option>
-                </mat-select>
-                <div *ngIf="isDownloadingRealm" class="float-left ml-1 loading">
-                  <i class="fas fa-sync" aria-hidden="true"></i>
-                </div>
-              </mat-form-field>
-
-              <mat-form-field class="col-md-4">
-                <mat-select  [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
-                  <mat-option *ngFor="let locale of locales" [value]="locale.locale">
-                    {{ locale.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </mat-card-content>
-
-            <mat-card-content *ngIf="currentRealm">
-              <strong>AH size in MB: </strong> {{ currentRealm.size | number }} <br>
-              <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
-              <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
-              <strong>Realm locale: </strong>  {{ currentRealm.locale }}
-            </mat-card-content>
-          </mat-card>
+          <wah-select-realm
+                  [region]="form.getRawValue().region"
+                  [realm]="form.getRawValue().realm"
+                  [locale]="form.getRawValue().locale"
+                  (changes)="realmSelectionEvent($event)">
+          </wah-select-realm>
         </div>
 
         <div class="col-md-8">
@@ -125,7 +89,7 @@
               <mat-form-field class="col-md-10 float-left">
                 <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
               </mat-form-field>
-              <button class="float-right" mat-button matStepperPrevious (click)="importUserData()" [disabled]="_characterForm.controls.importString.status === 'INVALID'">
+              <button class="float-right" mat-button matStepperPrevious (click)="importUserData()" [disabled]="form.controls.importString.status === 'INVALID'">
                 <i class="fas fa-upload"></i>
                 Restore
               </button>
@@ -168,11 +132,11 @@
     </button>
   </mat-step>
   <mat-step>
-    <form [formGroup]="_characterForm">
+    <form [formGroup]="form">
       <ng-template matStepLabel>Characters (optional)</ng-template>
       <mat-card>
         <mat-card-content>
-          <wah-characters [region]="_characterForm.value.region" [realm]="_characterForm.value.realm"></wah-characters>
+          <wah-characters [region]="form.value.region" [realm]="form.value.realm"></wah-characters>
         </mat-card-content>
       </mat-card>
       <button class="float-left" mat-button matStepperPrevious>
@@ -191,17 +155,11 @@
   </mat-step>
 
   <mat-step *ngIf="isWithinSupported3RDPartyAPIRegion()">
-    <form [formGroup]="_characterForm">
+    <form [formGroup]="form">
       <ng-template matStepLabel>API and settings (optional)</ng-template>
       <strong>Your API key (optional)</strong>
       <p>
         Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
-      </p>
-      <p>
-        Both TSM and WoWUction gives the realms market value. TSM gives give regional sale rate, regional daily sold and regional
-        avg sale price. WoWUction gives the realms avg daily sold, posted and the estimated demand. You can only have one
-        active at a given time. But you may provide, both keys but wowuction will be used if both are provided. You can change
-        this in the settings late.
       </p>
       <mat-card>
         <mat-card-header>
@@ -216,22 +174,6 @@
           If you don't have a TSM account you can
           <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
           <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="mt-2">
-        <mat-card-header>
-          <mat-card-title>
-            WowUction
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-form-field class="col-md-12">
-            <input matInput placeholder="WoWUction API key" formControlName="wowUctionKey">
-          </mat-form-field>
-          If you don't have an account over at
-          <a href="http://www.wowuction.com/" target="_blank">WoWUction</a>, you need to create one. Once you have done that, go to "Resources -> Data Export" and copy the text
-          after "Tools/RealmDataExportGetFileStatic?token=" and paste that in above.
         </mat-card-content>
       </mat-card>
     </form>
