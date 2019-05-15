@@ -1,0 +1,34 @@
+<button mat-raised-button (click)="toggle()" *ngIf="!show; else tableTemplate">
+  Display the statuses of all realms in a table
+</button>
+
+<ng-template #tableTemplate>
+  <mat-card class="full-screen">
+    <mat-card-header>
+      <div class="action-icon mat-elevation-z5" (click)="toggle()" matTooltip="Click to open/close the full window.">
+        <button mat-raised-button class="btn btn-sm">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <mat-card-title>
+        Realm list
+      </mat-card-title>
+
+    </mat-card-header>
+    <mat-card-content>
+      <wah-data-table
+              [numOfRows]="20"
+              [columns]="columns"
+              [data]="realms"></wah-data-table>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button
+              (click)="service.getRealms()">
+        Update
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  <div class="backdrop" (click)="toggle()">
+  </div>
+</ng-template>

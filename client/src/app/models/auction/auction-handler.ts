@@ -10,7 +10,7 @@ import {WoWUction} from './wowuction';
 import {PetsService} from '../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ProfitSummary} from '../../utils/tsm-lua.util';
-import {ShoppingCart} from '../shopping/shopping-cart.model';
+import {Pet} from '../pet';
 
 export class AuctionHandler {
   /**
@@ -18,15 +18,23 @@ export class AuctionHandler {
    * Used in the auction service.
    * @param auctions A raw auction array
    */
-  public static organize(auctions: Array<Auction>, petService?: PetsService): void {
-    const t0 = performance.now();
-    SharedService.auctionItems.length = 0;
-    Object.keys(SharedService.auctionItemsMap).forEach(id =>
-      delete SharedService.auctionItemsMap[id]);
-    Seller.clearSellers();
+  public static organize(auctions: Array<Auction>, petService?: PetsService): Promise<any> {
+    return new Promise<AuctionItem[]>((resolve, reject) => {
+      try {
+        const t0 = performance.now();
+        this.clearOldData();
+        this.groupAuctions(auctions, petService);
+        this.calculateCosts(t0);
+        SharedService.events.auctionUpdate.emit(true);
+        resolve(SharedService.auctionItems);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 
+  private static groupAuctions(auctions: Array<Auction>, petService: PetsService) {
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
-    console.log('User test', SharedService.userAuctions);
 
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
@@ -34,44 +42,22 @@ export class AuctionHandler {
     });
 
     SharedService.auctions = auctions;
-    auctions.forEach(a => {
-      if (a.petSpeciesId && AuctionHandler.isPetNotInList(a)) {
-        const petId = AuctionHandler.getPetId(a);
-        SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
-        SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
-        AuctionHandler.setUserSaleRateForAuction(a);
-
-        if (AuctionHandler.isPetMissing(a, petService)) {
-          /* TODO: Make this less annoying
-          console.log('Attempting to add pet');
-          petService.getPet(a.petSpeciesId).then(p => {
-            AuctionHandler.getItemName(a);
-            // console.log('Fetched pet', SharedService.pets[a.petSpeciesId]);
-          });*/
-        } else {
-          if (!AuctionHandler.petHasAuctions(a)) {
-            SharedService.pets[a.petSpeciesId].auctions = new Array<AuctionItem>();
-          }
-          SharedService.pets[a.petSpeciesId].auctions.push(SharedService.auctionItemsMap[petId]);
-        }
-      } else if (!SharedService.auctionItemsMap[a.item]) {
-        SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
-        SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
-        AuctionHandler.setUserSaleRateForAuction(a);
-      } else {
-        AuctionHandler.updateAuctionItem(a);
-      }
-
-      SharedService.userAuctions.addAuction(
-        a, SharedService.auctionItemsMap[Auction.getAuctionItemId(a)]);
-
-      Seller.setSellerData(a);
-
-    });
+    auctions.forEach((a: Auction) =>
+      this.processAuction(a, petService));
 
     // Checking if we have been undercutted etc
-    SharedService.userAuctions.countUndercuttedAuctions(SharedService.auctionItemsMap);
+    SharedService.userAuctions
+      .countUndercuttedAuctions(SharedService.auctionItemsMap);
+  }
 
+  private static clearOldData() {
+    SharedService.auctionItems.length = 0;
+    Object.keys(SharedService.auctionItemsMap).forEach(id =>
+      delete SharedService.auctionItemsMap[id]);
+    Seller.clearSellers();
+  }
+
+  private static calculateCosts(t0) {
     const t1 = performance.now();
     console.log(`Auctions organized in ${t1 - t0} ms`);
     // Trade vendors has to be done before crafting calc
@@ -94,19 +80,57 @@ export class AuctionHandler {
 
     const t2 = performance.now();
     console.log(`Prices calc time ${t2 - t1} ms`);
-    SharedService.events.auctionUpdate.emit(true);
   }
 
-  private static petHasAuctions(a) {
-    return SharedService.pets[a.petSpeciesId].auctions;
+  private static processAuction(a, petService: PetsService) {
+    if (a.petSpeciesId && AuctionHandler.isPetNotInList(a)) {
+      const petId = AuctionHandler.getPetId(a);
+      SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
+      SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
+      AuctionHandler.setUserSaleRateForAuction(a);
+
+      if (AuctionHandler.isPetMissing(a, petService)) {
+        /* TODO: Make this less annoying
+        console.log('Attempting to add pet');
+        petService.getPet(a.petSpeciesId).then(p => {
+          AuctionHandler.getItemName(a);
+          // console.log('Fetched pet', SharedService.pets[a.petSpeciesId]);
+        });*/
+      } else {
+        this.handlePetAuction(a, petId);
+      }
+    } else if (!SharedService.auctionItemsMap[a.item]) {
+      SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
+      SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
+      AuctionHandler.setUserSaleRateForAuction(a);
+    } else {
+      AuctionHandler.updateAuctionItem(a);
+    }
+
+    SharedService.userAuctions.addAuction(
+      a, SharedService.auctionItemsMap[Auction.getAuctionItemId(a)]);
+
+    Seller.setSellerData(a);
+  }
+
+  private static handlePetAuction(a: Auction, petId) {
+    const pet: Pet = SharedService.pets[a.petSpeciesId];
+    if (!pet) {
+      console.log(`Missing pet ${a.petSpeciesId}`,
+        SharedService.pets[a.petSpeciesId]);
+      return;
+    }
+
+    if (!pet.auctions) {
+      SharedService.pets[a.petSpeciesId].auctions = new Array<AuctionItem>();
+    }
+
+    SharedService.pets[a.petSpeciesId]
+      .auctions.push(SharedService.auctionItemsMap[petId]);
   }
 
   private static getPetId(a) {
     return `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
-  }
-
-  private static auctionPriceHandler(): AuctionItem {
-    return null;
   }
 
   private static isPetNotInList(a) {

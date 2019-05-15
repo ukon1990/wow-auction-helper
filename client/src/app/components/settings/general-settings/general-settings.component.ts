@@ -1,7 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../services/shared.service';
-import {Realm} from '../../../models/realm';
 import {User} from '../../../models/user/user';
 import {RealmService} from '../../../services/realm.service';
 import {AuctionsService} from '../../../services/auctions.service';
@@ -14,17 +13,18 @@ import {AuctionHandler} from '../../../models/auction/auction-handler';
 import {DatabaseService} from '../../../services/database.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Report} from '../../../utils/report.util';
+import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
+import {Difference} from '@ukon1990/js-utilities/dist/models/difference.model';
 
 @Component({
   selector: 'wah-general-settings',
   templateUrl: './general-settings.component.html',
   styleUrls: ['./general-settings.component.scss']
 })
-export class GeneralSettingsComponent implements OnInit, OnDestroy {
+export class GeneralSettingsComponent implements OnDestroy {
   form: FormGroup;
-  changedLocales = false;
-  changedRealm = false;
-
+  originalUserObject: User;
+  userChanges: Map<string, Difference> = new Map<string, Difference>();
 
   subscriptions = new SubscriptionManager();
 
@@ -39,36 +39,44 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.form = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
       realm: [SharedService.user.realm, Validators.required],
-      tsmKey: SharedService.user.apiTsm,
-      wowUctionKey: SharedService.user.apiWoWu,
+      apiTsm: SharedService.user.apiTsm,
       importString: '',
       exportString: '',
       locale: localStorage['locale'],
       updateAPIOnRealmChange: this.getUpdateAPIOnRealmChange()
     });
 
-    this.subscriptions.add(
-      this.form.controls.region.valueChanges,
-      () => {
-        this.changedRealm = true;
-      }
-    );
+    this.setOriginalUserObject();
+    this.addSubscriptions();
+  }
 
-    this.subscriptions.add(
-      this.form.controls.realm.valueChanges,
-      () => {
-        this.setSelectedRealm();
-      });
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
 
-    this.subscriptions.add(
-      this.form.controls.locale.valueChanges,
-      () => {
-        this.changedLocales = true;
-      });
-
+  private addSubscriptions() {
     this.subscriptions.add(
       this.form.controls.updateAPIOnRealmChange.valueChanges,
       (value) => this.setUpdateAPIOnRealmChange(value));
+
+    this.subscriptions.add(
+      this.form.valueChanges,
+      (value) =>
+        this.userChanges = this.getDifferenceMap(value)
+    );
+  }
+
+  private getDifferenceMap(value) {
+    const differenceMap = new Map<string, any>();
+    ObjectUtil
+      .getDifference(
+        this.originalUserObject,
+        value,
+        undefined,
+        Object.keys(this.form.getRawValue()))
+      .forEach(field =>
+        differenceMap.set(field.name, field));
+    return differenceMap;
   }
 
   private setUpdateAPIOnRealmChange(value: boolean): void {
@@ -80,32 +88,18 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     return value ? JSON.parse(value) : false;
   }
 
-  private setSelectedRealm() {
-    this.changedRealm = true;
-  }
-
-  ngOnInit() {
-    if (!SharedService.realms || Object.keys(SharedService.realms).length === 0) {
-      this.getRealms();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
   isWithinSupported3RDPartyAPIRegion(): boolean {
     return this.form.getRawValue().region === 'eu' ||
       this.form.getRawValue().region === 'us';
   }
 
-  hasRealmChange(): boolean {
-    return SharedService.user.realm !== this.form.value.realm ||
-      SharedService.user.region !== this.form.value.region;
+  hasRealmChanges(): boolean {
+    return this.hasChangedRealmOrRegion() ||
+      this.userChanges.has('locale');
   }
 
   async saveRealmAndRegion() {
-    if (this.changedLocales) {
+    if (this.userChanges.has('locale')) {
       localStorage['locale'] = this.form.value.locale;
       delete localStorage['timestamp_items'];
       await this.itemService.getItems();
@@ -115,53 +109,36 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       await this.craftingService.getRecipes();
 
       // Updating the watchlist names
-      SharedService.user.watchlist.groups.forEach(g => {
-        g.items.forEach(i => {
-          if (SharedService.items[i.itemID]) {
-            i.name = SharedService.items[i.itemID].name;
-          }
-        });
-      });
-      SharedService.user.watchlist.save();
+      this.updateWatchlistItemNamesToNewLocale();
 
-      this.changedLocales = false;
 
-      if (!this.changedRealm) {
+      if (this.hasNotChangedRealmOrRegion()) {
         AuctionHandler.organize(SharedService.auctions);
       }
     }
 
-    if (this.changedRealm) {
+    if (this.hasChangedRealmOrRegion()) {
       await this._realmService.changeRealm(
         this._auctionService,
         this.form.value.realm,
         this.form.value.region,
         false);
-      this.changedRealm = false;
     }
   }
 
-  hasTSMKeyChanged(): boolean {
-    return SharedService.user.apiTsm !== this.form.value.tsmKey;
+  private hasNotChangedRealmOrRegion() {
+    return !this.userChanges.has('region') && !this.userChanges.has('realm');
   }
 
-  hasWoWUctionKeyChanged(): boolean {
-    return SharedService.user.apiWoWu !== this.form.value.wowUctionKey;
-  }
-
-  saveWoWuction(): void {
-    SharedService.user.apiWoWu = this.form.value.wowUctionKey;
-    if (SharedService.user.apiWoWu.length > 0) {
-      SharedService.user.apiToUse = 'wowuction';
-      this._auctionService.getWoWUctionAuctions();
-    } else {
-      SharedService.user.apiToUse = 'none';
-    }
-    User.save();
-  }
-
-  isUsingWoWUction(): boolean {
-    return SharedService.user.apiToUse === 'wowuction';
+  private updateWatchlistItemNamesToNewLocale() {
+    SharedService.user.watchlist.groups.forEach(g => {
+      g.items.forEach(i => {
+        if (SharedService.items[i.itemID]) {
+          i.name = SharedService.items[i.itemID].name;
+        }
+      });
+    });
+    SharedService.user.watchlist.save();
   }
 
   isUsingTSM(): boolean {
@@ -169,7 +146,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveTSMKey(): void {
-    SharedService.user.apiTsm = this.form.value.tsmKey;
+    SharedService.user.apiTsm = this.form.value.apiTsm;
     if (SharedService.user.apiTsm.length > 0) {
       SharedService.user.apiToUse = 'tsm';
       this._auctionService.getTsmAuctions();
@@ -179,22 +156,8 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     User.save();
   }
 
-  getRealmsKeys() {
-    return SharedService.realms ? Object.keys(SharedService.realms) : [];
-  }
-
-  getRealmWithkey(slug?: string): Realm {
-    if (!slug) {
-      slug = this.form.value.realm;
-    }
-    return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
-  }
-
-  getRealms(region?: string): void {
-    setTimeout(() => {
-      this._realmService
-        .getRealms(region ? region : this.form.value.region);
-    }, 100);
+  private setOriginalUserObject() {
+    this.originalUserObject = ObjectUtil.clone(SharedService.user) as User;
   }
 
   isValid(): boolean {
@@ -206,7 +169,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       .setValue(
         JSON.stringify(User.getSettings(true)));
     Report.send('Exported settings to string',
-    'General settings');
+      'General settings');
   }
 
   exportAsFile(): void {
@@ -276,5 +239,10 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       .forEach(key =>
         this.form.controls[key]
           .setValue(change[key]));
+  }
+
+  private hasChangedRealmOrRegion(): boolean {
+    return this.userChanges.has('region') ||
+      this.userChanges.has('realm');
   }
 }

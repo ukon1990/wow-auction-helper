@@ -63,7 +63,7 @@ export class SetupComponent implements OnInit {
               private angulartics2: Angulartics2) {
     this.form = this._formBuilder.group({
       region: ['eu', Validators.required],
-      realm: ['aegwynn', Validators.required],
+      realm: [null, Validators.required],
       tsmKey: '',
       wowUctionKey: '',
       importString: '',

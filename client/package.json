@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "2.188.0",
+  "version": "2.189.0",
   "license": "MIT",
   "main": "server.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "@angular/pwa": "^0.13.6",
     "@angular/router": "~7.2.15",
     "@angular/service-worker": "~7.2.15",
+    "@ukon1990/js-utilities": "0.0.8",
     "@ukon1990/subscription-manager": "^1.0.2",
     "angulartics2": "^7.4.1",
     "chart.js": "^2.8.0",

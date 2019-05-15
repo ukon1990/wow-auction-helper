@@ -14,6 +14,7 @@ import {MatSnackBar} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
 import {Report} from '../../../utils/report.util';
+import {AuctionsService} from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-characters',
@@ -30,8 +31,11 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   constructor(private _characterService: CharacterService,
               private snackBar: MatSnackBar,
-              private _realmService: RealmService, private _craftingService: CraftingService,
-              private formBuilder: FormBuilder, private angulartics2: Angulartics2
+              private realmService: RealmService,
+              private craftingService: CraftingService,
+              private auctionService: AuctionsService,
+              private formBuilder: FormBuilder,
+              private angulartics2: Angulartics2
   ) {
     this._characterForm = this.formBuilder.group({
       region: SharedService.user.region,
@@ -140,7 +144,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
     User.updateRecipesForRealm();
-    Crafting.checkForMissingRecipes(this._craftingService);
+    Crafting.checkForMissingRecipes(this.craftingService);
 
     this.downloading = false;
     Realm.gatherRealms();
@@ -161,10 +165,11 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
         SharedService.user.characters[index] = c;
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
         User.updateRecipesForRealm();
-        Crafting.checkForMissingRecipes(this._craftingService);
+        Crafting.checkForMissingRecipes(this.craftingService);
 
         if (SharedService.user.region && SharedService.user.realm) {
-          AuctionHandler.organize(SharedService.auctions);
+          AuctionHandler.organize(
+            this.getAuctions());
         }
 
 
@@ -176,6 +181,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
           new ErrorOptions(true, 'Could not update the character'));
       }
     });
+  }
+
+  private getAuctions() {
+    return this.auctionService.events.list.getValue();
   }
 
   getRealmsKeys() {
@@ -191,7 +200,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   getRealms(): void {
     setTimeout(() => {
-      this._realmService
+      this.realmService
         .getRealms(this._characterForm.value.region);
     }, 100);
   }
@@ -203,13 +212,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     Realm.gatherRealms();
 
     if (SharedService.user.region && SharedService.user.realm) {
-      AuctionHandler.organize(SharedService.auctions);
+      AuctionHandler.organize(this.getAuctions());
     }
 
-    this.angulartics2.eventTrack.next({
-      action: 'Removed character',
-      properties: {category: 'Characters'},
-    });
+    Report.send('Removed character', 'Characters');
   }
 
   getCharacters(): any[] {
