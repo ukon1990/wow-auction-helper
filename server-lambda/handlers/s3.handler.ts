@@ -19,13 +19,14 @@ export class S3Handler {
   private uploadGzip(path: string, buffer: Buffer, queryData: any) {
     return new Promise<any>((resolve, reject) => {
       const s3 = new AWS.S3({
-        accessKeyId: AWS_DETAILS.ACCESS_KEY,
-        secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
-      });
+          accessKeyId: AWS_DETAILS.ACCESS_KEY,
+          secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
+        }),
+        region = queryData.region;
 
       console.log(`Uploading to s3 -> ${path}`);
       s3.upload({
-        Bucket: 'wah-data',
+        Bucket: this.getBucketName(region),
         Key: path,
         Body: buffer,
         ContentEncoding: 'gzip',
@@ -40,5 +41,18 @@ export class S3Handler {
         resolve(queryData);
       });
     });
+  }
+
+  private getBucketName(region) {
+    let bucket = 'wah-data';
+
+    if (region) {
+      if (region === 'tw' || region === 'kr') {
+        bucket += '-as';
+      } else {
+        bucket += '-' + region;
+      }
+    }
+    return bucket;
   }
 }
