@@ -174,7 +174,7 @@ export class AuctionHandler {
 
     new DatabaseUtil()
       .query(RealmQuery
-        .getAllHousesWithLastModifiedOlderThan(15))
+        .getAllHousesWithLastModifiedOlderThan(52)) // This is the lowest dump update frequency found in EU and US
       .then(async rows => {
         const promiseThrottle = new PromiseThrottle({
             requestsPerSecond: 50,
