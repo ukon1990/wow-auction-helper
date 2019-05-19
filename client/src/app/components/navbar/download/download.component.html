@@ -13,6 +13,7 @@
         <i class="fas fa-exclamation-circle"></i>
       </div>
       Last update was {{ timeSinceUpdate }} minutes ago
+      <small *ngIf="realmStatus">(~{{ realmStatus.lowestDelay - timeSinceUpdate }} min left)</small>
     </span>
   </ng-template>
 </a>
@@ -101,21 +102,6 @@
               <!-- [disabled]="getDownloading().auctions" -->
               <button mat-icon-button (click)="download('auctions')"
                 matTooltip="Re-download auction data" [disabled]="isDownloading()">
-                <i class="fas fa-download"></i>
-              </button>
-            </td>
-          </tr>
-
-          <tr *ngIf="isUsingWowUction()">
-            <td>
-              <mat-spinner *ngIf="getDownloading().wowUctionAuctions"class="float-left mr-2"></mat-spinner>
-            </td>
-            <td>WoWUction</td>
-            <td>{{ timestamps.wowuction | date: 'HH:mm M/d/yy' }}</td>
-            <td>
-              <!-- [disabled]="getDownloading().tsmAuctions" -->
-              <button mat-icon-button (click)="download('wowuction')"
-                matTooltip="Re-download WoWUction data" [disabled]="isDownloading()">
                 <i class="fas fa-download"></i>
               </button>
             </td>

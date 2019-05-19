@@ -14,6 +14,7 @@ import {FormControl} from '@angular/forms';
 import {Dashboard} from '../../../models/dashboard';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {RealmStatus} from '../../../models/realm-status.model';
+import {Report} from '../../../utils/report.util';
 
 @Component({
   selector: 'wah-download',
@@ -36,6 +37,7 @@ export class DownloadComponent implements OnInit {
     tsm: localStorage['timestamp_tsm'],
     wowuction: localStorage['timestamp_wowuction']
   };
+  private realmStatus: RealmStatus;
 
   constructor(
     private _realmService: RealmService,
@@ -64,7 +66,8 @@ export class DownloadComponent implements OnInit {
   }
 
   private setRealmStatus(status: RealmStatus) {
-    this.timeSinceUpdate = this.milliSecondsToMinutes(status);
+    this.realmStatus = status;
+    console.log('status');
     /*if (timeSince < 15) {
       return;
     }*/
@@ -213,60 +216,23 @@ export class DownloadComponent implements OnInit {
   /* istanbul ignore next */
   async download(type: string, forceUpdate?: boolean) {
     if (forceUpdate) {
-      this.angulartics2.eventTrack.next({
-        action: type,
-        properties: {category: 'Manual download'},
-      });
+      Report.send(type, 'Manual download');
     }
     switch (type) {
-      case 'wowuction':
-        this.downloadProgress = 'Downloading wowuction data';
-        await this._auctionsService.getWoWUctionAuctions();
-        AuctionHandler.organize(SharedService.auctions);
-        break;
       case 'tsm':
-        this.downloadProgress = 'Downloading TSM data';
-        await this._auctionsService.getTsmAuctions();
-        AuctionHandler.organize(SharedService.auctions);
+        this.downloadTSM();
         break;
       case 'auctions':
-        this.downloadProgress = 'Downloading new auctions';
-        await this._auctionsService.getLastModifiedTime(true);
+        this.downloadAuctions();
         break;
       case 'items':
-        if (forceUpdate) {
-          delete localStorage['timestamp_items'];
-        }
-
-        this.downloadProgress = 'Downloading items';
-        await this._itemService.getItems();
-
-        if (forceUpdate) {
-          AuctionHandler.organize(SharedService.auctions);
-        }
+        this.downloadItems(forceUpdate);
         break;
       case 'pets':
-        if (forceUpdate) {
-          delete localStorage['timestamp_pets'];
-        }
-
-        this.downloadProgress = 'Downloading pets';
-        await this._petService.getPets();
-
-        if (forceUpdate) {
-          AuctionHandler.organize(SharedService.auctions);
-        }
+        this.downloadPets(forceUpdate);
         break;
       case 'recipes':
-        if (forceUpdate) {
-          delete localStorage['timestamp_recipes'];
-        }
-        this.downloadProgress = 'Downloading recipes';
-        await this._craftingService.getRecipes();
-
-        if (forceUpdate) {
-          AuctionHandler.organize(SharedService.auctions);
-        }
+        this.downloadRecipes(forceUpdate);
         break;
     }
   }
@@ -311,12 +277,13 @@ export class DownloadComponent implements OnInit {
   private async startRealmStatusInterval() {
     await this.updateRealmStatus();
     setInterval(() =>
-      this.updateRealmStatus(), 30000);
+      this.updateRealmStatus(), 10000);
   }
 
   private updateRealmStatus(): Promise<any> {
+    this.timeSinceUpdate = this.milliSecondsToMinutes(this.realmStatus);
     return new Promise<any>((resolve, reject) => {
-      if (!this.checkingForUpdates && this.isOnline()) {
+      if (this.shouldUpdateRealmStatus()) {
         this.checkingForUpdates = true;
         this._realmService.getStatus(
           SharedService.user.region,
@@ -330,8 +297,69 @@ export class DownloadComponent implements OnInit {
             reject(error);
           });
       } else {
-        reject();
+        resolve();
       }
     });
+  }
+
+  private shouldUpdateRealmStatus() {
+    return !this.checkingForUpdates &&
+      this.isOnline() &&
+      this.shouldAnUpdateShouldBeAvailableSoon();
+  }
+
+  private shouldAnUpdateShouldBeAvailableSoon() {
+    return !this.realmStatus ||
+      this.realmStatus.lowestDelay - this.timeSinceUpdate < 1;
+  }
+
+  private async downloadAuctions() {
+    this.downloadProgress = 'Downloading new auctions';
+    await this._realmService.getStatus(SharedService.user.region, SharedService.user.realm);
+    await this._auctionsService.getAuctions();
+  }
+
+  private async downloadTSM() {
+    this.downloadProgress = 'Downloading TSM data';
+    await this._auctionsService.getTsmAuctions();
+    AuctionHandler.organize(SharedService.auctions);
+  }
+
+  private async downloadPets(forceUpdate: boolean) {
+    if (forceUpdate) {
+      delete localStorage['timestamp_pets'];
+    }
+
+    this.downloadProgress = 'Downloading pets';
+    await this._petService.getPets();
+
+    if (forceUpdate) {
+      AuctionHandler.organize(SharedService.auctions);
+    }
+  }
+
+  private async downloadRecipes(forceUpdate: boolean) {
+    if (forceUpdate) {
+      delete localStorage['timestamp_recipes'];
+    }
+    this.downloadProgress = 'Downloading recipes';
+    await this._craftingService.getRecipes();
+
+    if (forceUpdate) {
+      AuctionHandler.organize(SharedService.auctions);
+    }
+  }
+
+  private async downloadItems(forceUpdate: boolean) {
+    if (forceUpdate) {
+      delete localStorage['timestamp_items'];
+    }
+
+    this.downloadProgress = 'Downloading items';
+    await this._itemService.getItems();
+
+    if (forceUpdate) {
+      AuctionHandler.organize(SharedService.auctions);
+    }
   }
 }
