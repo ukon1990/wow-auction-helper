@@ -82,7 +82,8 @@ export class AuctionHandler {
     });
   }
 
-  private async sendToS3(data: any, region: string, ahId: number, lastModified: number, size: number): Promise<any> {
+  private async sendToS3(data: any, region: string, ahId: number, lastModified: number, size: number,
+                         delay: { avg: any; highest: any; lowest: any }): Promise<any> {
     return new Promise((resolve, reject) => {
       new S3Handler().save(
         data,
@@ -92,7 +93,7 @@ export class AuctionHandler {
         })
         .then((r => {
           const query = RealmQuery.updateUrl(
-            ahId, r.url, lastModified, size
+            ahId, r.url, lastModified, size, delay
           );
           console.log('Sending to S3');
           new DatabaseUtil()
@@ -174,13 +175,14 @@ export class AuctionHandler {
 
     new DatabaseUtil()
       .query(RealmQuery
-        .getAllHousesWithLastModifiedOlderThan(15))
+        .getAllHousesWithLastModifiedOlderThanPreviousDelay()) // This is the lowest dump update frequency found in EU and US
       .then(async rows => {
         const promiseThrottle = new PromiseThrottle({
             requestsPerSecond: 50,
             promiseImplementation: Promise
           }),
           promises = [];
+        console.log(`Updating ${rows.length} houses.`);
 
         Response.send({
           message: `Updating ${rows.length} houses.`,
@@ -229,7 +231,7 @@ export class AuctionHandler {
       .catch(console.error);
   }
 
-  private async updateHouse(dbResult: { id, region, slug, name, lastModified, url }): Promise<any> {
+  private async updateHouse(dbResult: { id, region, slug, name, lastModified, url, lowestDelay, avgDelay, highestDelay }): Promise<any> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
       await this.getLatestDumpPath(dbResult.region, dbResult.slug)
@@ -243,7 +245,10 @@ export class AuctionHandler {
           .then(r => {
             this.sendToS3(
               r.body, dbResult.region, dbResult.id,
-              ahDumpResponse.lastModified, this.getSizeOfResponseInMB(r))
+              ahDumpResponse.lastModified,
+              this.getSizeOfResponseInMB(r),
+              this.getDelay(dbResult,
+                ahDumpResponse.lastModified))
               .then(resolve)
               .catch(reject);
           })
@@ -266,5 +271,27 @@ export class AuctionHandler {
       .query(RealmQuery.isUpdating(ahId, isUpdating))
       .then()
       .catch(console.error);
+  }
+
+  private getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay }, lastModified: number) {
+    const diff = Math.round((lastModified - dbResult.lastModified) / 60000);
+
+    if (diff < dbResult.lowestDelay && diff >= 1 || !dbResult.lowestDelay) {
+      dbResult.lowestDelay = diff;
+    }
+
+    if (diff !== dbResult.avgDelay && dbResult.avgDelay) {
+      dbResult.avgDelay = (dbResult.avgDelay + diff) / 2;
+    } else if (!dbResult.avgDelay) {
+      dbResult.avgDelay = diff;
+    }
+
+    if (diff > dbResult.highestDelay && diff < 120) {
+      dbResult.highestDelay = diff;
+    }
+
+    return {
+      lowest: dbResult.lowestDelay, avg: dbResult.avgDelay, highest: dbResult.highestDelay
+    };
   }
 }

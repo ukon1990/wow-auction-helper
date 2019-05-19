@@ -9,4 +9,7 @@ export interface RealmStatus {
   url: string;
   lastModified: any;
   size: number;
+  lowestDelay: number;
+  avgDelay: number;
+  highestDelay: number;
 }
