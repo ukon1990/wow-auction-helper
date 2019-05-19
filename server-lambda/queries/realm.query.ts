@@ -30,7 +30,8 @@ export class RealmQuery {
   }
 
   static getAll(): string {
-    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, url, lastModified, ah.size as size
+    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, url,
+                lastModified, lowestDelay, avgDelay, highestDelay, ah.size as size
             FROM auction_house_realm AS realm
             LEFT OUTER JOIN auction_houses AS ah
             ON ah.id = realm.ahId
@@ -38,7 +39,7 @@ export class RealmQuery {
   }
 
   static getAllHouses(): string {
-    return `SELECT ah.id as id, region, slug, name, url, lastModified
+    return `SELECT ah.id as id, region, slug, name, url, lastModified, lowestDelay, avgDelay, highestDelay
             FROM auction_houses as ah
             LEFT OUTER JOIN (
                 SELECT ahId, slug, name
@@ -48,25 +49,30 @@ export class RealmQuery {
             WHERE ah.id = realm.ahId;`;
   }
 
-  static getAllHousesWithLastModifiedOlderThan(minutesAgo: number) {
-    return `SELECT ah.id as id, region, slug, name, url, lastModified
+  static getAllHousesWithLastModifiedOlderThanPreviousDelay() {
+    return `SELECT ah.id as id, region, slug, name, url, lastModified,
+                lowestDelay, avgDelay, highestDelay, (${+new Date()} - lastModified) / 60000 as timeSince
             FROM auction_houses as ah
             LEFT OUTER JOIN (
                 SELECT ahId, slug, name
-                FROM auction_house_realm
+              FROM auction_house_realm
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
-                AND lastModified <= ${+new Date() - minutesAgo * 60000};`;
+                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 
-  static updateUrl(ahId: number, url: string, lastModified: number, size: number): string {
+  static updateUrl(ahId: number, url: string, lastModified: number, size: number,
+                   delay: { avg: any; highest: any; lowest: any }): string {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
               \`url\` = "${url}",
               \`lastModified\` = ${lastModified},
               \`isUpdating\` = 0,
-              \`size\` = ${size}
+              \`size\` = ${size},
+              \`lowestDelay\` = ${delay.lowest},
+              \`avgDelay\` = ${delay.avg},
+              \`highestDelay\` = ${delay.highest}
                 WHERE \`id\` = ${ahId};`;
   }
 
