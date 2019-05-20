@@ -275,9 +275,11 @@ export class AuctionHandler {
 
   private getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay }, lastModified: number) {
     const diff = Math.round((lastModified - dbResult.lastModified) / 60000);
+    console.log(`The diff for ${dbResult.id} is ${diff}`, dbResult.lowestDelay, dbResult.highestDelay);
 
     if (diff < dbResult.lowestDelay && diff >= 1 || !dbResult.lowestDelay) {
       dbResult.lowestDelay = diff;
+      console.log(`Decreasing lowest with ${diff - dbResult.lowestDelay}`);
     }
 
     if (diff !== dbResult.avgDelay && dbResult.avgDelay) {
@@ -288,6 +290,7 @@ export class AuctionHandler {
 
     if (diff > dbResult.highestDelay && diff < 120) {
       dbResult.highestDelay = diff;
+      console.log(`Increasing highest with ${diff - dbResult.highestDelay}`);
     }
 
     return {
