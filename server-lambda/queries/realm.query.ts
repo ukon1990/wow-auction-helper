@@ -59,7 +59,6 @@ export class RealmQuery {
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
-                AND isUpdating = 0
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 
