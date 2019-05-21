@@ -7,6 +7,7 @@ import {Realm, RealmStatuses} from '../models/realm.model';
 import {LocaleHandler} from './locale.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
+import {HttpClientUtil} from '../utils/http-client.util';
 
 export class RealmHandler {
 
@@ -28,10 +29,24 @@ export class RealmHandler {
     new DatabaseUtil()
       .query(
         RealmQuery.getHouseForRealm(params.region, params.realm))
-      .then(rows =>
-        Response.send(
-          rows.length > 0 ? rows[0] : {},
-          callback))
+      .then(async rows => {
+        if (rows.length > 0) {
+          if (rows[0].autoUpdate === 0) {
+            await new DatabaseUtil().query(
+              RealmQuery.activateHouse(rows[0].id))
+              .then(() => console.log('Successfully activated id=', rows[0].id))
+              .catch(console.error);
+            new HttpClientUtil()
+              .post(new Endpoints()
+                .getLambdaUrl('auction/update-one', rows[0].region, event),
+                rows[0],
+                true);
+          }
+          Response.send(rows[0], callback);
+        } else {
+          Response.send({}, callback);
+        }
+      })
       .catch(error =>
         Response.error(callback, error, event));
   }

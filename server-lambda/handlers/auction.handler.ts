@@ -282,15 +282,18 @@ export class AuctionHandler {
       console.log(`Decreasing lowest with ${diff - dbResult.lowestDelay}`);
     }
 
-    if (diff !== dbResult.avgDelay && dbResult.avgDelay) {
-      dbResult.avgDelay = (dbResult.avgDelay + diff) / 2;
-    } else if (!dbResult.avgDelay) {
-      dbResult.avgDelay = diff;
-    }
 
-    if (diff > dbResult.highestDelay && diff < 120) {
-      dbResult.highestDelay = diff;
-      console.log(`Increasing highest with ${diff - dbResult.highestDelay}`);
+    if (diff < 120) {
+      if (diff !== dbResult.avgDelay && dbResult.avgDelay) {
+        dbResult.avgDelay = (dbResult.avgDelay + diff) / 2;
+      } else if (!dbResult.avgDelay) {
+        dbResult.avgDelay = diff;
+      }
+
+      if (diff > dbResult.highestDelay) {
+        dbResult.highestDelay = diff;
+        console.log(`Increasing highest with ${diff - dbResult.highestDelay}`);
+      }
     }
 
     return {

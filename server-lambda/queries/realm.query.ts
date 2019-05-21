@@ -59,6 +59,7 @@ export class RealmQuery {
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
+                AND autoUpdate = 1
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 
@@ -99,6 +100,13 @@ export class RealmQuery {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
               \`isUpdating\` = ${isUpdating ? 1 : 0}
+                WHERE \`id\` = ${id};`;
+  }
+
+  static activateHouse(id: any) {
+    return `UPDATE \`100680-wah\`.\`auction_houses\`
+            SET
+              \`autoUpdate\` = 1
                 WHERE \`id\` = ${id};`;
   }
 }
