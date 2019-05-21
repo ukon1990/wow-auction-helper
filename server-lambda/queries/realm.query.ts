@@ -103,10 +103,20 @@ export class RealmQuery {
                 WHERE \`id\` = ${id};`;
   }
 
-  static activateHouse(id: any) {
+  static activateHouse(id: any): string {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
+              \`firstRequested\` = ${+new Date()},
+              \`lastRequested\` = ${+new Date()},
               \`autoUpdate\` = 1
+                WHERE \`id\` = ${id};`;
+  }
+
+  static updateLastRequested(id: any): string {
+
+    return `UPDATE \`100680-wah\`.\`auction_houses\`
+            SET
+              \`lastRequested\` = ${+new Date()}
                 WHERE \`id\` = ${id};`;
   }
 }

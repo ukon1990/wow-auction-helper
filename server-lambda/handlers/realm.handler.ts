@@ -43,6 +43,10 @@ export class RealmHandler {
                 true);
           }
           Response.send(rows[0], callback);
+          new DatabaseUtil().query(
+            RealmQuery.updateLastRequested(rows[0].id))
+            .then(() => {})
+            .catch(console.error);
         } else {
           Response.send({}, callback);
         }
