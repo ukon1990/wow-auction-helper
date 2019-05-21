@@ -79,25 +79,13 @@ export class AuctionsService {
     return this.http
       .get(realmStatus.url)
       .toPromise()
-      .then(a => {
-        this.events.list.next(a['auctions']);
+      .then(async a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        AuctionHandler.organize(a['auctions'], this.petService);
-        // TODO: Remove ? -> this._dbService.addAuctions(a['auctions']);
+        await AuctionHandler.organize(a['auctions'], this.petService);
 
         // Adding lacking items to the database
-        SharedService.auctionItems.forEach(ai => {
-          if (!SharedService.items[ai.itemID]) {
-            missingItems.push(ai.itemID);
-          }
-        });
-        if (missingItems.length < 100) {
-          this._itemService.addItems(missingItems);
-        } else {
-          console.log('Attempting to download items again.');
-          this._itemService.getItems();
-        }
+        this.handleMissingAuctionItems(missingItems);
         console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
 
@@ -112,6 +100,8 @@ export class AuctionsService {
           }
         }
         SharedService.events.auctionUpdate.emit();
+        this.events.list.next(a['auctions']);
+        this.events.groupedList.next(SharedService.auctionItems);
       })
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
@@ -126,6 +116,20 @@ export class AuctionsService {
 
         ErrorReport.sendHttpError(error);
       });
+  }
+
+  private handleMissingAuctionItems(missingItems) {
+    SharedService.auctionItems.forEach(ai => {
+      if (!SharedService.items[ai.itemID]) {
+        missingItems.push(ai.itemID);
+      }
+    });
+    if (missingItems.length < 100) {
+      this._itemService.addItems(missingItems);
+    } else {
+      console.log('Attempting to download items again.');
+      this._itemService.getItems();
+    }
   }
 
   getTsmAuctions(): Promise<any> {
