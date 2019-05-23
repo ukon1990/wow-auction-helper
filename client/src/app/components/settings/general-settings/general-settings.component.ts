@@ -124,6 +124,7 @@ export class GeneralSettingsComponent implements OnDestroy {
         this.form.value.region,
         false);
     }
+    this.setOriginalUserObject();
   }
 
   private hasNotChangedRealmOrRegion() {
@@ -154,6 +155,7 @@ export class GeneralSettingsComponent implements OnDestroy {
       SharedService.user.apiToUse = 'none';
     }
     User.save();
+    this.setOriginalUserObject();
   }
 
   private setOriginalUserObject() {

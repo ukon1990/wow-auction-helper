@@ -3,6 +3,7 @@ export class TradeVendor {
   name: string;
   useForCrafting = true;
   items: Array<TradeVendorItem>;
+  itemsFiltered: Array<TradeVendorItem> = [];
 }
 
 export class TradeVendorItem {

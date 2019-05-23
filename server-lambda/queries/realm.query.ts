@@ -59,6 +59,7 @@ export class RealmQuery {
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
+                AND autoUpdate = 1
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 
@@ -99,6 +100,23 @@ export class RealmQuery {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
               \`isUpdating\` = ${isUpdating ? 1 : 0}
+                WHERE \`id\` = ${id};`;
+  }
+
+  static activateHouse(id: any): string {
+    return `UPDATE \`100680-wah\`.\`auction_houses\`
+            SET
+              \`firstRequested\` = ${+new Date()},
+              \`lastRequested\` = ${+new Date()},
+              \`autoUpdate\` = 1
+                WHERE \`id\` = ${id};`;
+  }
+
+  static updateLastRequested(id: any): string {
+
+    return `UPDATE \`100680-wah\`.\`auction_houses\`
+            SET
+              \`lastRequested\` = ${+new Date()}
                 WHERE \`id\` = ${id};`;
   }
 }

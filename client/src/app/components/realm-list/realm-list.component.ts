@@ -18,7 +18,6 @@ export class RealmListComponent implements OnInit, OnDestroy {
     {key: 'battlegroup', title: 'Battlegroup', dataType: 'text'},
     {key: 'timezone', title: 'Timezone', dataType: 'text'},
     {key: 'locale', title: 'Locale', dataType: 'text'},
-    {key: 'lastModified', title: 'Last modified', dataType: 'date'},
     {key: 'lowestDelay', title: 'Minutes per update', dataType: 'number'},
     {key: 'size', title: 'Size in MB', dataType: 'number'}
   ];

@@ -1,8 +1,8 @@
-import { AuctionItem } from './auction/auction-item';
-import { SharedService } from '../services/shared.service';
-import { itemClasses } from './item/item-classes';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms/src/model';
-import { Item } from './item/item';
+import {AuctionItem} from './auction/auction-item';
+import {SharedService} from '../services/shared.service';
+import {itemClasses} from './item/item-classes';
+import {FormGroup, FormControl, AbstractControl} from '@angular/forms/src/model';
+import {Item} from './item/item';
 
 export class Filters {
   public static isNameMatch(itemID: number, form: FormGroup): boolean {
@@ -20,7 +20,7 @@ export class Filters {
     } else if (Filters.isUsingAPI()) {
       return Math.round((
         SharedService.auctionItemsMap[itemID].buyout / SharedService.auctionItemsMap[itemID].mktPrice
-        ) * 100) <= form.value.mktPrice;
+      ) * 100) <= form.value.mktPrice;
     }
     return true;
   }
@@ -49,6 +49,10 @@ export class Filters {
   }
 
   public static isSaleRateMatch(itemID: number, form: FormGroup): boolean {
+    if (!SharedService.auctionItemsMap[itemID]) {
+      return false;
+    }
+
     if (Filters.isUsingAPI() && form.value.saleRate && form.value.saleRate > 0) {
       return SharedService.auctionItemsMap[itemID].regionSaleRate >= form.value.saleRate / 100;
     }
@@ -56,6 +60,10 @@ export class Filters {
   }
 
   public static isDailySoldMatch(itemID: number, form: FormGroup): boolean {
+    if (!SharedService.auctionItemsMap[itemID]) {
+      return false;
+    }
+
     if (Filters.isUsingAPI() && form.value.avgDailySold && form.value.avgDailySold > 0) {
       return SharedService.auctionItemsMap[itemID].avgDailySold >= form.value.avgDailySold;
     }

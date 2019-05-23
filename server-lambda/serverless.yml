@@ -9,12 +9,13 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
-  memorySize: 512
+  memorySize: 200
   timeout: 60
 
 functions:
   auctions:
     handler: controllers/auction.handler
+    memorySize: 512
     events:
       - http:
           method: post
@@ -31,6 +32,7 @@ functions:
             origin: '*'
   updateAllHouses:
     handler: controllers/auction.updateAll
+    memorySize: 200
     events:
       - http:
           method: any
@@ -40,6 +42,7 @@ functions:
 
   updateSpesificHouse:
     handler: controllers/auction.updateOne
+    memorySize: 512
     events:
       - http:
           method: post
@@ -56,6 +59,7 @@ functions:
             origin: 'localhost:3000'
   items:
     handler: controllers/item.handler
+    memorySize: 160
     events:
       - http:
           method: any
@@ -70,6 +74,7 @@ functions:
             origin: '*'
   pets:
     handler: controllers/pet.handler
+    memorySize: 128
     events:
       - http:
           method: any
@@ -84,6 +89,7 @@ functions:
             origin: '*'
   recipes:
     handler: controllers/recipe.handler
+    memorySize: 128
     events:
       - http:
           method: any
@@ -98,6 +104,7 @@ functions:
             origin: '*'
   character:
     handler: controllers/character.handler
+    memorySize: 128
     events:
       - http:
           method: post
@@ -114,6 +121,7 @@ functions:
             origin: '*'
   realmAllRegions:
     handler: controllers/realm.handleGetAll
+    memorySize: 128
     events:
       - http:
           method: get
@@ -122,6 +130,7 @@ functions:
             origin: '*'
   getByRegionAndName:
     handler: controllers/realm.getByRegionAndName
+    memorySize: 128
     events:
       - http:
           method: get
@@ -134,3 +143,11 @@ functions:
       - http:
           method: any
           path: test
+
+  logger:
+    handler: controllers/logger.handler
+    memorySize: 128
+    events:
+      - http:
+          method: any
+          path: logger

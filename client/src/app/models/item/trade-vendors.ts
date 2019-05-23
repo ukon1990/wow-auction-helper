@@ -1,50 +1,67 @@
-import { TradeVendor, TradeVendorItem } from './trade-vendor';
-import { SharedService } from '../../services/shared.service';
-import { Item } from './item';
+import {TradeVendor, TradeVendorItem} from './trade-vendor';
+import {SharedService} from '../../services/shared.service';
+import {Item} from './item';
 
 export class TradeVendors {
   public static setValues(): void {
     TRADE_VENDORS.forEach(vendor => {
-      // Re-setting the item name in case of locale is not English
-      if (SharedService.items[vendor.itemID]) {
-        vendor.name = SharedService.items[vendor.itemID].name;
-      }
-
-      vendor.items.forEach(item => {
-        item.value = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-          SharedService.auctionItemsMap[item.itemID].buyout * item.quantity : 0;
-        item.buyout = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-          SharedService.auctionItemsMap[item.itemID].buyout : 0;
-        if (SharedService.user.apiToUse !== 'none') {
-          item.estDemand = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-            SharedService.auctionItemsMap[item.itemID].estDemand : 0;
-          item.regionSaleAvg = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-            SharedService.auctionItemsMap[item.itemID].regionSaleAvg : 0;
-          item.mktPrice = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-            SharedService.auctionItemsMap[item.itemID].mktPrice : 0;
-          item.avgSold = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-            SharedService.auctionItemsMap[item.itemID].avgDailySold : 0;
-        }
-      });
-      vendor.items.sort(function (a, b) {
-        return b.value - a.value;
-      });
-
-      SharedService.tradeVendorMap[vendor.itemID] = vendor;
+      this.setVendorValues(vendor);
     });
 
     Object.keys(SharedService.tradeVendorMap)
-    .forEach(key => {
-      const item = {
-        itemID: SharedService.tradeVendorMap[key].items[0].itemID,
-        name: SharedService.tradeVendorMap[key].name,
-        bestValueName: TradeVendors.getItem(key).name,
-        value: SharedService.tradeVendorMap[key].items[0].value,
-        tradeVendor: SharedService.tradeVendorMap[key]
-      };
-      SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
-    });
+      .forEach(key => {
+        this.updateTradeVendorItemMap(key);
+      });
   }
+
+  private static setVendorValues(vendor) {
+// Re-setting the item name in case of locale is not English
+    if (SharedService.items[vendor.itemID]) {
+      vendor.name = SharedService.items[vendor.itemID].name;
+    }
+
+    vendor.items.forEach(item => {
+      this.setItemValue(item);
+    });
+    vendor.items.sort(function (a, b) {
+      return b.value - a.value;
+    });
+
+    SharedService.tradeVendorMap[vendor.itemID] = vendor;
+  }
+
+  private static updateTradeVendorItemMap(key) {
+    const item = {
+      itemID: SharedService.tradeVendorMap[key].items[0].itemID,
+      name: SharedService.tradeVendorMap[key].name,
+      bestValueName: TradeVendors.getItem(key).name,
+      value: SharedService.tradeVendorMap[key].items[0].value,
+      tradeVendor: SharedService.tradeVendorMap[key]
+    };
+    SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
+  }
+
+  private static setItemValue(item) {
+    item.value = SharedService.auctionItemsMap[item.itemID] !== undefined ?
+      SharedService.auctionItemsMap[item.itemID].buyout * item.quantity : 0;
+    item.buyout = SharedService.auctionItemsMap[item.itemID] !== undefined ?
+      SharedService.auctionItemsMap[item.itemID].buyout : 0;
+    if (SharedService.user.apiToUse !== 'none') {
+      this.setItemApiValues(item);
+    }
+  }
+
+  private static setItemApiValues(item) {
+    item.estDemand = SharedService.auctionItemsMap[item.itemID] !== undefined ?
+      SharedService.auctionItemsMap[item.itemID].estDemand : 0;
+    item.regionSaleAvg = SharedService.auctionItemsMap[item.itemID] !== undefined ?
+      SharedService.auctionItemsMap[item.itemID].regionSaleAvg : 0;
+    item.mktPrice = SharedService.auctionItemsMap[item.itemID] !== undefined ?
+      SharedService.auctionItemsMap[item.itemID].mktPrice : 0;
+    item.avgSold = SharedService.auctionItemsMap[item.itemID] !== undefined ?
+      SharedService.auctionItemsMap[item.itemID].avgDailySold : 0;
+  }
+
   private static getItem(itemID: any) {
     const item = SharedService
       .items[SharedService.tradeVendorMap[itemID].items[0].itemID];
@@ -56,6 +73,7 @@ const inkTrader: TradeVendor = {
   itemID: 129032,
   name: 'Ink trader',
   useForCrafting: false,
+  itemsFiltered: [],
   items: [
     new TradeVendorItem(113111, 1),
     new TradeVendorItem(79255, 0.1),
@@ -78,6 +96,7 @@ const spiritOfHarmony: TradeVendor = {
   itemID: 76061,
   name: 'Spirit of Harmony',
   useForCrafting: false,
+  itemsFiltered: [],
   items: [
     new TradeVendorItem(72094, 5),
     new TradeVendorItem(72103, 5),
@@ -99,6 +118,7 @@ const frozenOrb: TradeVendor = {
   itemID: 43102,
   name: 'Frozen Orb',
   useForCrafting: false,
+  itemsFiltered: [],
   items: [
     new TradeVendorItem(36908, 1),
     new TradeVendorItem(47556, 1 / 6),
@@ -116,6 +136,7 @@ const primalSargerite: TradeVendor = {
   itemID: 151568,
   name: 'Primal Sargerite',
   useForCrafting: true,
+  itemsFiltered: [],
   items: [
     new TradeVendorItem(151718, 0.1),
     new TradeVendorItem(151719, 0.1),
@@ -131,305 +152,52 @@ const primalSargerite: TradeVendor = {
 };
 
 const bloodOfSargeras: TradeVendor = {
-  'itemID': 124124,
-  'name': 'Blood of Sargeras',
+  itemID: 124124,
+  name: 'Blood of Sargeras',
   useForCrafting: true,
-  'items': [{
-    'itemID': 142117,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124118,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124119,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124120,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124121,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124107,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124108,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124109,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124110,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124111,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124112,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124101,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124102,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124103,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124104,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124105,
-    'quantity': 3,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 123918,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 123919,
-    'quantity': 5,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124113,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124115,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124438,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124439,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124437,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124440,
-    'quantity': 10,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 124441,
-    'quantity': 3,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }]
+  itemsFiltered: [],
+  items: [
+    new TradeVendorItem(142117, 10),
+    new TradeVendorItem(124118, 10),
+    new TradeVendorItem(124119, 10),
+    new TradeVendorItem(124120, 10),
+    new TradeVendorItem(124121, 10),
+    new TradeVendorItem(124107, 10),
+    new TradeVendorItem(124108, 10),
+    new TradeVendorItem(124109, 10),
+    new TradeVendorItem(124110, 10),
+    new TradeVendorItem(124111, 10),
+    new TradeVendorItem(124112, 10),
+    new TradeVendorItem(124101, 10),
+    new TradeVendorItem(124102, 10),
+    new TradeVendorItem(124103, 10),
+    new TradeVendorItem(124104, 10),
+    new TradeVendorItem(124105, 3),
+    new TradeVendorItem(123918, 10),
+    new TradeVendorItem(123919, 5),
+    new TradeVendorItem(124113, 10),
+    new TradeVendorItem(124115, 10),
+    new TradeVendorItem(124438, 10),
+    new TradeVendorItem(124439, 10),
+    new TradeVendorItem(124437, 10),
+    new TradeVendorItem(124440, 10),
+    new TradeVendorItem(124441, 3)
+  ]
 };
 
 const primalSpirit: TradeVendor = {
   'itemID': 120945,
   'name': 'Primal spirit',
   useForCrafting: true,
-  'items': [{
-    'itemID': 113264,
-    'quantity': 0.15,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 113263,
-    'quantity': 0.15,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 113261,
-    'quantity': 0.15,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 113262,
-    'quantity': 0.15,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 118472,
-    'quantity': 0.25,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 127759,
-    'quantity': 0.25,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }, {
-    'itemID': 108996,
-    'quantity': 0.05,
-    'value': 0,
-    'estDemand': 0,
-    'regionSaleAvg': 0,
-    'mktPrice': 0,
-    'avgSold': 0,
-    'buyout': 0
-  }]
+  itemsFiltered: [],
+  'items': [
+    new TradeVendorItem(113264, .15),
+    new TradeVendorItem(113263, .15),
+    new TradeVendorItem(113261, .15),
+    new TradeVendorItem(113262, .15),
+    new TradeVendorItem(118472, .25),
+    new TradeVendorItem(127759, .25),
+    new TradeVendorItem(108996, .05)]
 };
 
 export const TRADE_VENDORS = [
