@@ -143,3 +143,11 @@ functions:
       - http:
           method: any
           path: test
+
+  logger:
+    handler: controllers/logger.handler
+    memorySize: 128
+    events:
+      - http:
+          method: any
+          path: logger
