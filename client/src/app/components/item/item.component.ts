@@ -23,7 +23,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
-  @ViewChild('tabs') tabs;
+  @ViewChild('tabs', {static: false}) tabs;
   expansions = GameBuild.expansionMap;
   wowDBItem: any;
   targetBuyoutValue: number;
