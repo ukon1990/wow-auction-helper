@@ -82,6 +82,7 @@
               "src/scss/styles.scss"
             ],
             "assets": [
+              "src/mock",
               "src/assets",
               "src/fonts",
               "src/favicon.ico"
