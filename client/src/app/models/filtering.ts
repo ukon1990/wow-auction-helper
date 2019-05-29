@@ -1,7 +1,6 @@
-import {AuctionItem} from './auction/auction-item';
 import {SharedService} from '../services/shared.service';
 import {itemClasses} from './item/item-classes';
-import {FormGroup, FormControl, AbstractControl} from '@angular/forms/src/model';
+import {AbstractControl, FormGroup} from '@angular/forms';
 import {Item} from './item/item';
 
 export class Filters {
