@@ -114,7 +114,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
     this.show = !this.show;
     Report.send(
       this.show ? 'Shopping cart opened' : 'Shopping cart closed',
-      'ShoppingCart');
+      'Shopping cart');
   }
 
   private handleShoppingCartUpdate(data: any) {
