@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuctionsComponent } from '../modules/core/components_/auctions/auctions.component';
+import { AuctionsComponent } from '../modules/core/components/auctions/auctions.component';
 import { TestModule } from '../modules/test.module';
 import { SharedService } from '../services/shared.service';
 import { AuctionItem } from './auction/auction-item';

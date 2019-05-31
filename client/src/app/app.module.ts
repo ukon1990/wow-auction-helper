@@ -10,7 +10,6 @@ import {Angulartics2Module} from 'angulartics2';
 import {AppRoutingModule} from './modules/app-routing.module';
 
 import {AppComponent} from './app.component';
-import {MaterialModule} from './modules/material.module';
 import {RealmService} from './services/realm.service';
 import {CharacterService} from './services/character.service';
 import {AuctionsService} from './services/auctions.service';
@@ -37,9 +36,6 @@ import {CoreModule} from './modules/core/core.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MaterialModule,
-    ReactiveFormsModule,
-    FormsModule,
     HttpClientModule,
     HttpClientJsonpModule,
     Angulartics2Module.forRoot(),

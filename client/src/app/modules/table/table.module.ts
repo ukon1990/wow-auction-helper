@@ -5,7 +5,7 @@ import {MaterialsComponent} from './components/materials/materials.component';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatPaginatorModule, MatTooltipModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SortIconComponent} from './components/sort-icon/sort-icon.component';
-import {CoreModule} from '../core/core.module';
+import {IconModule} from '../icon/icon.module';
 
 @NgModule({
   declarations: [DataTableComponent, MaterialsComponent, SortIconComponent],
@@ -18,7 +18,7 @@ import {CoreModule} from '../core/core.module';
     MatCheckboxModule,
     FormsModule,
     MatButtonModule,
-    CoreModule
+    IconModule
   ],
   exports: [DataTableComponent, SortIconComponent]
 })

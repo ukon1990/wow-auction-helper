@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { SharedService } from '../../../../../services/shared.service';
+import {Component, Input} from '@angular/core';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {SharedService} from '../../services/shared.service';
 
 @Component({
   selector: 'wah-icon',
@@ -15,13 +15,14 @@ export class IconComponent {
 
   defaultIcon = 'inv_scroll_03';
 
-  constructor(private _sanitizer: DomSanitizer) { }
+  constructor(private _sanitizer: DomSanitizer) {
+  }
 
   getIconStyle(): SafeResourceUrl {
     return this._sanitizer.bypassSecurityTrustStyle(
       `url('https://render-eu.worldofwarcraft.com/icons/56/${
         this.getIcon()
-      }.jpg')`);
+        }.jpg')`);
   }
 
   getIcon(): string {
