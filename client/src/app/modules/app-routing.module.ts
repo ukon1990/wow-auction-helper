@@ -1,40 +1,33 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {SetupComponent} from '../components/settings/setup/setup.component';
-import {CraftingComponent} from '../components/crafting/crafting.component';
-import {SettingsComponent} from '../components/settings/settings.component';
+import {SetupComponent} from './settings/components/setup/setup.component';
+import {CraftingComponent} from './core/components_/crafting/crafting.component';
 import {IsRegisteredService} from '../Is-registered.service';
-import {DashboardComponent} from '../components/dashboard/dashboard.component';
-import {UpdateComponent} from '../components/update/update.component';
-import {AuctionsComponent} from '../components/auctions/auctions.component';
-import {AboutComponent} from '../components/about/about.component';
-import {MyAuctionsComponent} from '../components/auctions/my-auctions/my-auctions.component';
-import {TradeVendorsComponent} from '../components/trade-vendors/trade-vendors.component';
-import {WatchlistComponent} from '../components/watchlist/watchlist.component';
-import {GeneralSettingsComponent} from '../components/settings/general-settings/general-settings.component';
-import {CraftingSettingsComponent} from '../components/settings/crafting-settings/crafting-settings.component';
-import {CharactersComponent} from '../components/settings/characters/characters.component';
-import {NotificationSettingsComponent} from '../components/settings/notification-settings/notification-settings.component';
-import {AboutCraftingComponent} from '../components/about/about-crafting/about-crafting.component';
-import {AboutPrivacyComponent} from '../components/about/about-privacy/about-privacy.component';
-import {AboutDataComponent} from '../components/about/about-data/about-data.component';
-import {AboutWhatIsComponent} from '../components/about/about-what-is/about-what-is.component';
-import {DashboardItemsComponent} from '../components/dashboard/dashboard-items/dashboard-items.component';
-import {DashboardSellersComponent} from '../components/dashboard/dashboard-sellers/dashboard-sellers.component';
-import {SellersComponent} from '../components/sellers/sellers.component';
-import {TechnologyComponent} from '../components/about/technology/technology.component';
-import {CustomProcComponent} from '../components/settings/crafting-settings/custom-proc/custom-proc.component';
-import {CustomPricesComponent} from '../components/settings/crafting-settings/custom-prices/custom-prices.component';
-import {MyPetsComponent} from '../components/my-pets/my-pets.component';
-import {MarketResetComponent} from '../components/item/market-reset/market-reset.component';
-import {ContributorsComponent} from '../components/about/contributors/contributors.component';
-import {IssuesComponent} from '../components/about/issues/issues.component';
-import {ChangelogComponent} from '../components/about/changelog/changelog.component';
-import {MillingComponent} from '../components/crafting/milling/milling.component';
-import {DisenchantingComponent} from '../components/crafting/disenchanting/disenchanting.component';
-import {AhSummaryComponent} from '../components/dashboard/ah-summary/ah-summary.component';
-import {ReputationsComponent} from '../components/reputations/reputations.component';
-import {TsmAddonDbComponent} from '../components/tsm-addon-db/tsm-addon-db.component';
+import {DashboardComponent} from './core/components_/dashboard/dashboard.component';
+import {UpdateComponent} from './core/components_/update/update.component';
+import {AuctionsComponent} from './core/components_/auctions/auctions.component';
+import {AboutComponent} from './about/components/about.component';
+import {MyAuctionsComponent} from './core/components_/auctions/my-auctions/my-auctions.component';
+import {TradeVendorsComponent} from './core/components_/trade-vendors/trade-vendors.component';
+import {WatchlistComponent} from './core/components_/watchlist/watchlist.component';
+import {AboutCraftingComponent} from './about/components/about-crafting/about-crafting.component';
+import {AboutPrivacyComponent} from './about/components/about-privacy/about-privacy.component';
+import {AboutDataComponent} from './about/components/about-data/about-data.component';
+import {AboutWhatIsComponent} from './about/components/about-what-is/about-what-is.component';
+import {DashboardItemsComponent} from './core/components_/dashboard/dashboard-items/dashboard-items.component';
+import {DashboardSellersComponent} from './core/components_/dashboard/dashboard-sellers/dashboard-sellers.component';
+import {SellersComponent} from './sellers/components/sellers.component';
+import {TechnologyComponent} from './about/components/technology/technology.component';
+import {MyPetsComponent} from './core/components_/my-pets/my-pets.component';
+import {MarketResetComponent} from './core/components_/item/market-reset/market-reset.component';
+import {ContributorsComponent} from './about/components/contributors/contributors.component';
+import {IssuesComponent} from './about/components/issues/issues.component';
+import {ChangelogComponent} from './about/components/changelog/changelog.component';
+import {MillingComponent} from './core/components_/crafting/milling/milling.component';
+import {DisenchantingComponent} from './core/components_/crafting/disenchanting/disenchanting.component';
+import {AhSummaryComponent} from './core/components_/dashboard/ah-summary/ah-summary.component';
+import {ReputationsComponent} from './core/components_/reputations/reputations.component';
+import {TsmAddonDbComponent} from './core/components_/tsm-addon-db/tsm-addon-db.component';
 
 const routes: Routes = [
   {path: '', component: SetupComponent},
@@ -69,24 +62,6 @@ const routes: Routes = [
     ]
   },
   {path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService]},
-  {
-    path: 'settings',
-    component: SettingsComponent,
-    canActivate: [IsRegisteredService],
-    children: [
-      {path: '', component: GeneralSettingsComponent},
-      {path: 'general', component: GeneralSettingsComponent},
-      {
-        path: 'crafting', component: CraftingSettingsComponent, children: [
-          {path: '', component: CustomPricesComponent},
-          {path: 'custom-prices', component: CustomPricesComponent},
-          {path: 'custom-proc', component: CustomProcComponent}
-        ]
-      },
-      {path: 'characters', component: CharactersComponent},
-      {path: 'notifications', component: NotificationSettingsComponent}
-    ]
-  },
   {
     path: 'about',
     component: AboutComponent,
