@@ -14,6 +14,9 @@ import {SettingsModule} from '../settings/settings.module';
     SellerComponent,
     SellerChartComponent
   ],
+  exports: [
+    SellerComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,

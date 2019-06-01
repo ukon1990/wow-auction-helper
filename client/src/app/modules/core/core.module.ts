@@ -107,7 +107,7 @@ import {SettingsModule} from '../settings/settings.module';
     IconModule,
     SettingsModule
   ],
-  exports: [GoldPipe]
+  exports: [GoldPipe, NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
 })
 export class CoreModule {
 }

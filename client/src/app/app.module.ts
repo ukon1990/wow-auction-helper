@@ -27,6 +27,8 @@ import {SettingsModule} from './modules/settings/settings.module';
 import {TableModule} from './modules/table/table.module';
 import {SellersModule} from './modules/sellers/sellers.module';
 import {CoreModule} from './modules/core/core.module';
+import {MatCardModule} from '@angular/material';
+import {AboutModule} from './modules/about/about.module';
 
 
 @NgModule({
@@ -45,7 +47,9 @@ import {CoreModule} from './modules/core/core.module';
     CoreModule,
     SettingsModule,
     TableModule,
-    SellersModule
+    SellersModule,
+    MatCardModule,
+    AboutModule
   ],
   providers: [
     RealmService,

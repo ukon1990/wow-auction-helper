@@ -34,7 +34,8 @@ import {RouterModule} from '@angular/router';
   ],
   exports: [
     AboutWhatIsComponent,
-    AboutPrivacyComponent
+    AboutPrivacyComponent,
+    NewsComponent
   ],
   providers: [GithubService]
 })
