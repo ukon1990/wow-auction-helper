@@ -13,6 +13,7 @@ import {AboutCraftingComponent} from './components/about-crafting/about-crafting
 import {GithubService} from './services/github.service';
 import {MatTabsModule} from '@angular/material';
 import {RouterModule} from '@angular/router';
+import {AboutRouteModule} from './about-route.module';
 
 @NgModule({
   declarations: [
@@ -30,12 +31,13 @@ import {RouterModule} from '@angular/router';
   imports: [
     CommonModule,
     MatTabsModule,
-    RouterModule
+    AboutRouteModule
   ],
   exports: [
     AboutWhatIsComponent,
     AboutPrivacyComponent,
-    NewsComponent
+    NewsComponent,
+    AboutRouteModule
   ],
   providers: [GithubService]
 })

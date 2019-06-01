@@ -42,7 +42,6 @@ import {IconModule} from '../icon/icon.module';
   ],
   imports: [
     CommonModule,
-    RouterModule,
     MatTabsModule,
     AboutModule,
     MatStepperModule,
@@ -61,7 +60,7 @@ import {IconModule} from '../icon/icon.module';
     MatTooltipModule,
     IconModule
   ],
-  exports: [RealmListComponent]
+  exports: [RealmListComponent, SettingsRouteModule]
 })
 export class SettingsModule {
 }

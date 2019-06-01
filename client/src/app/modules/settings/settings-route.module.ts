@@ -1,4 +1,4 @@
-import {Route, RouterModule} from '@angular/router';
+import {Route, RouterModule, Routes} from '@angular/router';
 import {SettingsComponent} from './components/settings.component';
 import {IsRegisteredService} from '../../Is-registered.service';
 import {GeneralSettingsComponent} from './components/general-settings/general-settings.component';
@@ -9,7 +9,7 @@ import {CharactersComponent} from '../character/components/characters.component'
 import {NotificationSettingsComponent} from './components/notification-settings/notification-settings.component';
 import {NgModule} from '@angular/core';
 
-const routes: Route[] = [{
+const routes: Routes = [{
   path: 'settings',
   component: SettingsComponent,
   canActivate: [IsRegisteredService],

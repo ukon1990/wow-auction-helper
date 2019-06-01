@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CraftingSettingsComponent } from './crafting-settings.component';
-import { TestModule } from '../../../modules/test.module';
+import {TestModule} from '../../../test.module';
 
 describe('CraftingSettingsComponent', () => {
   let component: CraftingSettingsComponent;

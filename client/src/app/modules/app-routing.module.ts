@@ -62,27 +62,13 @@ const routes: Routes = [
     ]
   },
   {path: 'sellers', component: SellersComponent, canActivate: [IsRegisteredService]},
-  {
-    path: 'about',
-    component: AboutComponent,
-    children: [
-      {path: '', component: AboutWhatIsComponent},
-      {path: 'what-is', component: AboutWhatIsComponent},
-      {path: 'crafting', component: AboutCraftingComponent},
-      {path: 'where-is-the-data-from', component: AboutDataComponent},
-      {path: 'privacy', component: AboutPrivacyComponent},
-      {path: 'technology', component: TechnologyComponent},
-      {path: 'contributors', component: ContributorsComponent},
-      {path: 'issues', component: IssuesComponent},
-      {path: 'changelog', component: ChangelogComponent}
-    ]
-  },
   {path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService]},
   {path: '**', redirectTo: ''}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,
+    { enableTracing: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
