@@ -21,7 +21,6 @@ import {AboutModule} from '../about/about.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {RealmListComponent} from './components/realm-list/realm-list.component';
 import {TableModule} from '../table/table.module';
-import {SettingsRouteModule} from './settings-route.module';
 import {CharacterModule} from '../character/character.module';
 import {SettingsComponent} from './components/settings.component';
 import {CustomPricesComponent} from './components/crafting-settings/custom-prices/custom-prices.component';
@@ -42,6 +41,7 @@ import {IconModule} from '../icon/icon.module';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     MatTabsModule,
     AboutModule,
     MatStepperModule,
@@ -54,13 +54,12 @@ import {IconModule} from '../icon/icon.module';
     MatSelectModule,
     MatCheckboxModule,
     TableModule,
-    SettingsRouteModule,
     CharacterModule,
     MatInputModule,
     MatTooltipModule,
     IconModule
   ],
-  exports: [RealmListComponent, SettingsRouteModule]
+  exports: [RealmListComponent]
 })
 export class SettingsModule {
 }

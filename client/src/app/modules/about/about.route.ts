@@ -8,9 +8,8 @@ import {TechnologyComponent} from './components/technology/technology.component'
 import {ContributorsComponent} from './components/contributors/contributors.component';
 import {IssuesComponent} from './components/issues/issues.component';
 import {ChangelogComponent} from './components/changelog/changelog.component';
-import {NgModule} from '@angular/core';
 
-const route: Route = {
+export const ABOUT_ROUTE: Route = {
     path: 'about',
     component: AboutComponent,
     children: [
@@ -25,10 +24,3 @@ const route: Route = {
       {path: 'changelog', component: ChangelogComponent}
     ]
   };
-
-@NgModule({
-  imports: [RouterModule.forChild([route])],
-  exports: [RouterModule]
-})
-export class AboutRouteModule {
-}

@@ -9,7 +9,7 @@ import {CharactersComponent} from '../character/components/characters.component'
 import {NotificationSettingsComponent} from './components/notification-settings/notification-settings.component';
 import {NgModule} from '@angular/core';
 
-const routes: Routes = [{
+export const SETTINGS_ROUTE: Route = {
   path: 'settings',
   component: SettingsComponent,
   canActivate: [IsRegisteredService],
@@ -24,13 +24,5 @@ const routes: Routes = [{
       ]
     },
     {path: 'characters', component: CharactersComponent},
-    {path: 'notifications', component: NotificationSettingsComponent}
-  ]
-}];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class SettingsRouteModule {
-}
+    {path: 'notifications', component: NotificationSettingsComponent}]
+};
