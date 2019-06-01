@@ -23,7 +23,7 @@ import {UtilModule} from '../util/util.module';
     MatCardModule,
     UtilModule
   ],
-  exports: [DataTableComponent, SortIconComponent]
+  exports: [DataTableComponent, SortIconComponent, MaterialsComponent]
 })
 export class TableModule {
 }

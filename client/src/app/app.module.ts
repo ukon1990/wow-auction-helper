@@ -29,6 +29,7 @@ import {SellersModule} from './modules/sellers/sellers.module';
 import {CoreModule} from './modules/core/core.module';
 import {MatCardModule} from '@angular/material';
 import {AboutModule} from './modules/about/about.module';
+import {DashboardModule} from './modules/dashboard/dashboard.module';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import {AboutModule} from './modules/about/about.module';
     TableModule,
     SellersModule,
     MatCardModule,
-    AboutModule
+    AboutModule,
+    DashboardModule
   ],
   providers: [
     RealmService,

@@ -18,21 +18,21 @@
     </ng-template>
 
     <mat-card-content>
-      <div class="row col-md-12 mb-2" *ngIf="item && getAuctionItem(item.itemID) && !batchMode">
+      <div class="row col-md-12 mb-2" *ngIf="item && getAuctionItem() && !batchMode">
         <div class="mr-2">
-        <strong class="mr-1">Available:</strong> {{ getAuctionItem(item.itemID).quantityTotal | number }}
+        <strong class="mr-1">Available:</strong> {{ getAuctionItem().quantityTotal | number }}
         </div>
         <div class="mr-2">
-          <strong class="mr-1">Buyout:</strong> {{ getAuctionItem(item.itemID).buyout | gold }}
+          <strong class="mr-1">Buyout:</strong> {{ getAuctionItem().buyout | gold }}
         </div>
-        <div class="mr-2" *ngIf="getAuctionItem(item.itemID).mktPrice > 0">
-          <strong class="mr-1">Market value:</strong> {{ getAuctionItem(item.itemID).mktPrice | gold }}
+        <div class="mr-2" *ngIf="getAuctionItem().mktPrice > 0">
+          <strong class="mr-1">Market value:</strong> {{ getAuctionItem().mktPrice | gold }}
         </div>
-        <div class="mr-2" *ngIf="getAuctionItem(item.itemID).regionSaleAvg > 0">
-          <strong class="mr-1">Regional avg sale price:</strong> {{ getAuctionItem(item.itemID).regionSaleAvg | gold }}
+        <div class="mr-2" *ngIf="getAuctionItem().regionSaleAvg > 0">
+          <strong class="mr-1">Regional avg sale price:</strong> {{ getAuctionItem().regionSaleAvg | gold }}
         </div>
-        <div class="mr-2" *ngIf="getAuctionItem(item.itemID).regionSaleRate > 0">
-          <strong class="mr-1">Regional sale rate:</strong> {{ getAuctionItem(item.itemID).regionSaleRate | percent }}
+        <div class="mr-2" *ngIf="getAuctionItem().regionSaleRate > 0">
+          <strong class="mr-1">Regional sale rate:</strong> {{ getAuctionItem().regionSaleRate | percent }}
         </div>
       </div>
       <form [formGroup]="form" class="row">
@@ -73,7 +73,7 @@
         </mat-form-field>
       </form>
 
-      <mat-form-field class="row col-md-12" *ngIf="!batchEdit && getAuctionItem()">
+      <mat-form-field class="row col-md-12" *ngIf="!batchMode && getAuctionItem()">
         <textarea matInput placeholder="TSM shopping string"
           value="{{ item.name }}/exact/{{ getTSMString().left | gold }}/{{ getTSMString().right | gold }}"></textarea>
       </mat-form-field>

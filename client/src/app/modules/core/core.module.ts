@@ -3,8 +3,6 @@ import {CommonModule} from '@angular/common';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {MenuComponent} from './components/navbar/menu/menu.component';
 import {CraftingComponent} from './components/crafting/crafting.component';
-import {DashboardComponent} from './components/dashboard/dashboard.component';
-import {DashboardItemComponent} from './components/dashboard/dashboard-item/dashboard-item.component';
 import {AuctionsComponent} from './components/auctions/auctions.component';
 import {UpdateComponent} from './components/update/update.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
@@ -14,28 +12,17 @@ import {LineChartComponent} from './components/item/line-chart/line-chart.compon
 import {ResetCalcComponent} from './components/item/reset-calc/reset-calc.component';
 import {MyAuctionsComponent} from './components/auctions/my-auctions/my-auctions.component';
 import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
-import {WatchlistComponent} from './components/watchlist/watchlist.component';
-import {WatchlistItemComponent} from './components/watchlist/watchlist-item/watchlist-item.component';
-import {WatchlistManagerComponent} from './components/watchlist/watchlist-manager/watchlist-manager.component';
-import {DashboardItemsComponent} from './components/dashboard/dashboard-items/dashboard-items.component';
-import {DashboardSellersComponent} from './components/dashboard/dashboard-sellers/dashboard-sellers.component';
-import {WatchlistItemManagerComponent} from './components/watchlist/watchlist-item-manager/watchlist-item-manager.component';
 import {MyPetsComponent} from './components/my-pets/my-pets.component';
 import {MarketResetComponent} from './components/item/market-reset/market-reset.component';
 import {ItemSellerChartComponent} from './components/item/item-seller-chart/item-seller-chart.component';
-import {WatchlistItemBatchComponent} from './components/watchlist/watchlist-item-batch/watchlist-item-batch.component';
 import {MillingComponent} from './components/crafting/milling/milling.component';
 import {DisenchantingComponent} from './components/crafting/disenchanting/disenchanting.component';
 import {DataBoardsComponent} from './components/crafting/data-boards/data-boards.component';
 import {ShuffleItemManageComponent} from './components/crafting/shuffle-item-manage/shuffle-item-manage.component';
-import {ManageItemsBuiltInComponent} from './components/dashboard/manage-items-built-in/manage-items-built-in.component';
-import {ManageItemsBuiltInItemComponent} from './components/dashboard/manage-items-built-in-item/manage-items-built-in-item.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {AddItemsComponent} from './components/update/add-items/add-items.component';
 import {AddRecipesComponent} from './components/update/add-recipes/add-recipes.component';
-import {AhSummaryComponent} from './components/dashboard/ah-summary/ah-summary.component';
 import {ChartsComponent} from './components/charts/charts.component';
-import {SummaryCardComponent} from './components/dashboard/ah-summary/summary-card/summary-card.component';
 import {ReputationsComponent} from './components/reputations/reputations.component';
 import {CharacterReputationComponent} from './components/reputations/character-reputation/character-reputation.component';
 import {TsmAddonDbComponent} from './components/tsm-addon-db/tsm-addon-db.component';
@@ -56,8 +43,6 @@ import {UtilModule} from '../util/util.module';
     NavbarComponent,
     MenuComponent,
     CraftingComponent,
-    DashboardComponent,
-    DashboardItemComponent,
     AuctionsComponent,
     UpdateComponent,
     DownloadComponent,
@@ -67,28 +52,17 @@ import {UtilModule} from '../util/util.module';
     ResetCalcComponent,
     MyAuctionsComponent,
     TradeVendorsComponent,
-    WatchlistComponent,
-    WatchlistItemComponent,
-    WatchlistManagerComponent,
-    DashboardItemsComponent,
-    DashboardSellersComponent,
-    WatchlistItemManagerComponent,
     MyPetsComponent,
     MarketResetComponent,
     ItemSellerChartComponent,
-    WatchlistItemBatchComponent,
     MillingComponent,
     DisenchantingComponent,
     DataBoardsComponent,
     ShuffleItemManageComponent,
-    ManageItemsBuiltInComponent,
-    ManageItemsBuiltInItemComponent,
     FooterComponent,
     AddItemsComponent,
     AddRecipesComponent,
-    AhSummaryComponent,
     ChartsComponent,
-    SummaryCardComponent,
     AddRecipesComponent,
     ReputationsComponent,
     CharacterReputationComponent,

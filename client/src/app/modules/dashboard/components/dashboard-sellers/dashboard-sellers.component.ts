@@ -1,8 +1,8 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import {SharedService} from '../../../../../services/shared.service';
-import {Dashboard} from '../../../../../models/dashboard';
+import {SharedService} from '../../../../services/shared.service';
+import {Dashboard} from '../../../../models/dashboard';
 
 @Component({
   selector: 'wah-dashboard-sellers',

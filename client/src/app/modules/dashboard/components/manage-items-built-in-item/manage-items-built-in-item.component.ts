@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import {GameBuild} from '../../../../../utils/game-build.util';
-import {SharedService} from '../../../../../services/shared.service';
-import {DefaultDashboardSettings} from '../../../../../models/dashboard/default-dashboard-settings.model';
-import {Dashboard} from '../../../../../models/dashboard';
+import {GameBuild} from '../../../../utils/game-build.util';
+import {SharedService} from '../../../../services/shared.service';
+import {DefaultDashboardSettings} from '../../../../models/dashboard/default-dashboard-settings.model';
+import {Dashboard} from '../../../../models/dashboard';
 
 @Component({
   selector: 'wah-manage-items-built-in-item',

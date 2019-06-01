@@ -2,13 +2,13 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {Title} from '@angular/platform-browser';
 import {FormControl} from '@angular/forms';
-import {SummaryCard} from '../../../../../models/summary-card.model';
-import {SharedService} from '../../../../../services/shared.service';
-import {ChartData} from '../../../../../models/chart-data.model';
-import {itemClasses} from '../../../../../models/item/item-classes';
-import {AuctionItem} from '../../../../../models/auction/auction-item';
-import {SummaryUtil} from '../../../../../utils/summary.util';
-import {Recipe} from '../../../../../models/crafting/recipe';
+import {SummaryCard} from '../../../../models/summary-card.model';
+import {SharedService} from '../../../../services/shared.service';
+import {ChartData} from '../../../../models/chart-data.model';
+import {itemClasses} from '../../../../models/item/item-classes';
+import {AuctionItem} from '../../../../models/auction/auction-item';
+import {SummaryUtil} from '../../../../utils/summary.util';
+import {Recipe} from '../../../../models/crafting/recipe';
 
 @Component({
   selector: 'wah-ah-summary',

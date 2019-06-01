@@ -94,7 +94,7 @@ export class WatchlistItemManagerComponent implements OnInit {
     return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 
-  getAuctionItem(): boolean {
+  getAuctionItem(): AuctionItem {
     return this.item && SharedService.auctionItemsMap[this.item.itemID] ?
       SharedService.auctionItemsMap[this.item.itemID] : undefined;
   }

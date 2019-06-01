@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
-import {SharedService} from '../../../../services/shared.service';
+import {SharedService} from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-dashboard',

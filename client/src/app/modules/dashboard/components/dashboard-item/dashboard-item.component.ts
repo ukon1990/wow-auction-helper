@@ -1,8 +1,8 @@
 import {Component, OnInit, Input, AfterViewInit, OnDestroy} from '@angular/core';
 import {Angulartics2} from 'angulartics2';
 import {Subscription} from 'rxjs';
-import {Dashboard} from '../../../../../models/dashboard';
-import {SharedService} from '../../../../../services/shared.service';
+import {Dashboard} from '../../../../models/dashboard';
+import {SharedService} from '../../../../services/shared.service';
 
 @Component({
   selector: 'wah-dashboard-item',
