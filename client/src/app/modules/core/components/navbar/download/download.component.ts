@@ -11,7 +11,7 @@ import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
-import {Dashboard} from '../../../../../models/dashboard';
+import {Dashboard} from '../../../../dashboard/models/dashboard.model';
 import {Crafting} from '../../../../../models/crafting/crafting';
 import {Realm} from '../../../../../models/realm';
 import {AuctionHandler} from '../../../../../models/auction/auction-handler';

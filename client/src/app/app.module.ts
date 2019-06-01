@@ -30,6 +30,9 @@ import {CoreModule} from './modules/core/core.module';
 import {MatCardModule} from '@angular/material';
 import {AboutModule} from './modules/about/about.module';
 import {DashboardModule} from './modules/dashboard/dashboard.module';
+import {CraftingModule} from './modules/crafting/crafting.module';
+import {PetModule} from './modules/pet/pet.module';
+import {AuctionModule} from './modules/auction/auction.module';
 
 
 @NgModule({
@@ -51,7 +54,10 @@ import {DashboardModule} from './modules/dashboard/dashboard.module';
     SellersModule,
     MatCardModule,
     AboutModule,
-    DashboardModule
+    DashboardModule,
+    PetModule,
+    CraftingModule,
+    AuctionModule
   ],
   providers: [
     RealmService,

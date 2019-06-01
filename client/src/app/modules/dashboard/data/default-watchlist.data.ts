@@ -1,8 +1,4 @@
-import {
-  Watchlist,
-  WatchlistGroup
-} from './watchlist';
-import { Recipe } from '../crafting/recipe';
+import {WatchlistGroup} from '../models/watchlist.model';
 
 export const defaultWatchlist: Array<WatchlistGroup> = [
     {

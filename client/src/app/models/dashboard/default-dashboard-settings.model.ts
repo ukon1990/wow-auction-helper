@@ -1,5 +1,5 @@
 import { SharedService } from '../../services/shared.service';
-import { Dashboard } from '../dashboard';
+import { Dashboard } from '../../modules/dashboard/models/dashboard.model';
 
 export class DefaultDashboardSettings {
   public static list = [

@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {MenuComponent} from './components/navbar/menu/menu.component';
-import {CraftingComponent} from './components/crafting/crafting.component';
 import {AuctionsComponent} from './components/auctions/auctions.component';
 import {UpdateComponent} from './components/update/update.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
@@ -12,13 +11,8 @@ import {LineChartComponent} from './components/item/line-chart/line-chart.compon
 import {ResetCalcComponent} from './components/item/reset-calc/reset-calc.component';
 import {MyAuctionsComponent} from './components/auctions/my-auctions/my-auctions.component';
 import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
-import {MyPetsComponent} from './components/my-pets/my-pets.component';
 import {MarketResetComponent} from './components/item/market-reset/market-reset.component';
 import {ItemSellerChartComponent} from './components/item/item-seller-chart/item-seller-chart.component';
-import {MillingComponent} from './components/crafting/milling/milling.component';
-import {DisenchantingComponent} from './components/crafting/disenchanting/disenchanting.component';
-import {DataBoardsComponent} from './components/crafting/data-boards/data-boards.component';
-import {ShuffleItemManageComponent} from './components/crafting/shuffle-item-manage/shuffle-item-manage.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {AddItemsComponent} from './components/update/add-items/add-items.component';
 import {AddRecipesComponent} from './components/update/add-recipes/add-recipes.component';
@@ -42,7 +36,6 @@ import {UtilModule} from '../util/util.module';
   declarations: [
     NavbarComponent,
     MenuComponent,
-    CraftingComponent,
     AuctionsComponent,
     UpdateComponent,
     DownloadComponent,
@@ -52,13 +45,8 @@ import {UtilModule} from '../util/util.module';
     ResetCalcComponent,
     MyAuctionsComponent,
     TradeVendorsComponent,
-    MyPetsComponent,
     MarketResetComponent,
     ItemSellerChartComponent,
-    MillingComponent,
-    DisenchantingComponent,
-    DataBoardsComponent,
-    ShuffleItemManageComponent,
     FooterComponent,
     AddItemsComponent,
     AddRecipesComponent,

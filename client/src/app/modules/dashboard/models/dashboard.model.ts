@@ -1,21 +1,18 @@
-import {ColumnDescription} from './column-description';
-import {SharedService} from '../services/shared.service';
-import {Item} from './item/item';
-import {Notification} from './user/notification';
-import {GoldPipe} from '../modules/util/pipes/gold.pipe';
-import {WatchlistItem, WatchlistGroup} from './watchlist/watchlist';
-import {itemClasses} from './item/item-classes';
-import {Seller} from './seller';
-import {AuctionItem} from './auction/auction-item';
-import {Filters} from './filtering';
-import {FormControl, FormGroup, FormBuilder} from '@angular/forms';
-import {Remains} from './item/remains.model';
-import {ProspectingAndMillingUtil} from '../utils/prospect-milling.util';
+import {ColumnDescription} from '../../../models/column-description';
+import {SharedService} from '../../../services/shared.service';
+import {Notification} from '../../../models/user/notification';
+import {GoldPipe} from '../../util/pipes/gold.pipe';
+import {WatchlistGroup, WatchlistItem} from './watchlist.model';
+import {Seller} from '../../../models/seller';
+import {AuctionItem} from '../../../models/auction/auction-item';
+import {Filters} from '../../../models/filtering';
+import {FormBuilder} from '@angular/forms';
+import {Remains} from '../../../models/item/remains.model';
+import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {EventEmitter} from '@angular/core';
-import {DefaultDashboardSettings} from './dashboard/default-dashboard-settings.model';
-import {Crafting} from './crafting/crafting';
-import {Report} from '../utils/report.util';
-import {ErrorReport} from '../utils/error-report.util';
+import {DefaultDashboardSettings} from '../../../models/dashboard/default-dashboard-settings.model';
+import {Crafting} from '../../../models/crafting/crafting';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 export class Dashboard {
   public static fails = [];

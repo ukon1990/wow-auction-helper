@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {Route, RouterModule, Routes} from '@angular/router';
 import {SetupComponent} from './settings/components/setup/setup.component';
-import {CraftingComponent} from './core/components/crafting/crafting.component';
+import {CraftingComponent} from './crafting/components/crafting.component';
 import {IsRegisteredService} from '../Is-registered.service';
 import {DashboardComponent} from './dashboard/components/dashboard.component';
 import {UpdateComponent} from './core/components/update/update.component';
@@ -12,10 +12,10 @@ import {WatchlistComponent} from './dashboard/components/manage-custom-dashboard
 import {DashboardItemsComponent} from './dashboard/components/dashboard-items/dashboard-items.component';
 import {DashboardSellersComponent} from './dashboard/components/dashboard-sellers/dashboard-sellers.component';
 import {SellersComponent} from './sellers/components/sellers.component';
-import {MyPetsComponent} from './core/components/my-pets/my-pets.component';
+import {MyPetsComponent} from './pet/components/my-pets.component';
 import {MarketResetComponent} from './core/components/item/market-reset/market-reset.component';
-import {MillingComponent} from './core/components/crafting/milling/milling.component';
-import {DisenchantingComponent} from './core/components/crafting/disenchanting/disenchanting.component';
+import {MillingComponent} from './crafting/components/milling/milling.component';
+import {DisenchantingComponent} from './crafting/components/disenchanting/disenchanting.component';
 import {AhSummaryComponent} from './dashboard/components/ah-summary/ah-summary.component';
 import {ReputationsComponent} from './core/components/reputations/reputations.component';
 import {TsmAddonDbComponent} from './core/components/tsm-addon-db/tsm-addon-db.component';

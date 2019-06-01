@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PageEvent } from '@angular/material';
-import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../../models/column-description';
-import {Remains} from '../../../../../models/item/remains.model';
+import {SharedService} from '../../../../services/shared.service';
+import {ColumnDescription} from '../../../../models/column-description';
+import {Remains} from '../../../../models/item/remains.model';
 
 @Component({
   selector: 'wah-data-boards',

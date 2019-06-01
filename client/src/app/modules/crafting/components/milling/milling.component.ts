@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {ProspectingAndMillingUtil} from '../../../../../utils/prospect-milling.util';
-import {ColumnDescription} from '../../../../../models/column-description';
-import {Remains} from '../../../../../models/item/remains.model';
+import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
+import {ColumnDescription} from '../../../../models/column-description';
+import {Remains} from '../../../../models/item/remains.model';
 
 
 @Component({

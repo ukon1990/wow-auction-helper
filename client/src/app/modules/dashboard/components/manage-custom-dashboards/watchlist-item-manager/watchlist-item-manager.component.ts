@@ -1,10 +1,10 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { WatchlistItem, WatchlistGroup } from '../../../../../models/watchlist/watchlist';
+import { WatchlistItem, WatchlistGroup } from '../../../models/watchlist.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedService } from '../../../../../services/shared.service';
 import { AuctionItem } from '../../../../../models/auction/auction-item';
 import { Angulartics2 } from 'angulartics2';
-import { SelectionItem } from '../../../../../models/watchlist/selection-item.model';
+import { SelectionItem } from '../../../models/selection-item.model';
 
 @Component({
   selector: 'wah-watchlist-item-manager',

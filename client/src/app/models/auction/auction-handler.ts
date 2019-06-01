@@ -2,7 +2,7 @@ import {SharedService} from './../../services/shared.service';
 import {Auction} from './auction';
 import {AuctionItem} from './auction-item';
 import {Crafting} from '../crafting/crafting';
-import {Dashboard} from '../dashboard';
+import {Dashboard} from '../../modules/dashboard/models/dashboard.model';
 import {TradeVendors} from '../item/trade-vendors';
 import {Seller} from '../seller';
 import {AuctionPet} from './auction-pet';

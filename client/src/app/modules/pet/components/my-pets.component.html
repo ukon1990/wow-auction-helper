@@ -2,7 +2,7 @@
   <div class="col-md-6" *ngFor="let pet of getPets()">
     <mat-card>
       <mat-card-header>
-        <wah-icon iconSize="22" [petSpeciesId]="pet.stats.speciesId" mat-card-avatar></wah-icon>
+        <wah-icon [size]="22" [petSpeciesId]="pet.stats.speciesId" mat-card-avatar></wah-icon>
         <mat-card-title>
           {{ pet.name }}
         </mat-card-title>
@@ -12,7 +12,10 @@
       </mat-card-header>
       <mat-card-content>
         <strong>You have:</strong> {{ pet.count }} <br>
-        <wah-data-table *ngIf="getPet(pet.stats.speciesId) && getPet(pet.stats.speciesId).auctions" id="itemID" [data]="getPet(pet.stats.speciesId).auctions" [columns]="columns"></wah-data-table>
+        <wah-data-table *ngIf="getPet(pet.stats.speciesId) && getPet(pet.stats.speciesId).auctions"
+                        id="itemID"
+                        [data]="getPet(pet.stats.speciesId).auctions"
+                        [columns]="columns"></wah-data-table>
       </mat-card-content>
     </mat-card>
   </div>

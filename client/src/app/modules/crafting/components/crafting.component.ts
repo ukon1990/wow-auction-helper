@@ -2,14 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {Recipe} from '../../../../models/crafting/recipe';
-import {GameBuild} from '../../../../utils/game-build.util';
-import {itemClasses} from '../../../../models/item/item-classes';
-import {ColumnDescription} from '../../../../models/column-description';
-import {SharedService} from '../../../../services/shared.service';
-import {User} from '../../../../models/user/user';
-import {Crafting} from '../../../../models/crafting/crafting';
-import {Filters} from '../../../../models/filtering';
+import {Recipe} from '../../../models/crafting/recipe';
+import {GameBuild} from '../../../utils/game-build.util';
+import {itemClasses} from '../../../models/item/item-classes';
+import {ColumnDescription} from '../../../models/column-description';
+import {SharedService} from '../../../services/shared.service';
+import {User} from '../../../models/user/user';
+import {Crafting} from '../../../models/crafting/crafting';
+import {Filters} from '../../../models/filtering';
 
 @Component({
   selector: 'wah-crafting',

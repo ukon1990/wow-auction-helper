@@ -1,7 +1,7 @@
 import {NotificationSettings} from './notification';
 import {SharedService} from '../../services/shared.service';
 import {Character} from '../character/character';
-import {Watchlist} from '../watchlist/watchlist';
+import {Watchlist} from '../../modules/dashboard/models/watchlist.model';
 import {CustomPrice, CustomPrices} from '../crafting/custom-price';
 import {customPricesDefault} from '../crafting/default-custom-prices';
 import {CustomProc, CustomProcs} from '../crafting/custom-proc';

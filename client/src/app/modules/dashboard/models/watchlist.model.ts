@@ -1,9 +1,7 @@
-import { Recipe } from '../crafting/recipe';
-import { Item } from '../item/item';
-import { itemClasses } from '../item/item-classes';
-import { SharedService } from '../../services/shared.service';
-import { defaultWatchlist } from './default-watchlist';
-import { Dashboard } from '../dashboard';
+import {Recipe} from '../../../models/crafting/recipe';
+import {SharedService} from '../../../services/shared.service';
+import {defaultWatchlist} from '../data/default-watchlist.data';
+import {Dashboard} from './dashboard.model';
 
 export class WatchlistItem {
   itemID: number;

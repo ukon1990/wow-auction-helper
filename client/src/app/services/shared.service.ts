@@ -6,7 +6,7 @@ import { Item } from '../models/item/item';
 import { TSM } from '../models/auction/tsm';
 import { Auction } from '../models/auction/auction';
 import { Realm } from '../models/realm';
-import { Dashboard } from '../models/dashboard';
+import { Dashboard } from '../modules/dashboard/models/dashboard.model';
 import { Pet } from '../models/pet';
 import { AuctionResponse } from '../models/auction/auctions-response';
 import { TradeVendor, TradeVendorItemValue } from '../models/item/trade-vendor';

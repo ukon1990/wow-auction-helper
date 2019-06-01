@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, EventEmitter, Output, OnDestroy} from '@angular/core';
-import {WatchlistGroup, WatchlistItem} from '../../../../../models/watchlist/watchlist';
+import {WatchlistGroup, WatchlistItem} from '../../../models/watchlist.model';
 import {FormGroup, FormBuilder} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {Subscription} from 'rxjs';
