@@ -1,6 +1,6 @@
 import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
 import {ProfitSummary, UserProfit} from '../../../../../utils/tsm-lua.util';
-import {ColumnDescription} from '../../../../../models/column-description';
+import {ColumnDescription} from '../../../../table/models/column-description';
 import {SharedService} from '../../../../../services/shared.service';
 import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../../models/summary-card.model';

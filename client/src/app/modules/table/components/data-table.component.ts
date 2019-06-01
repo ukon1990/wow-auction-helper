@@ -6,19 +6,19 @@ import {ItemService} from '../../../services/item.service';
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {Report} from '../../../utils/report.util';
-import {ColumnDescription} from '../../../models/column-description';
+import {ColumnDescription} from '../models/column-description';
 import {Sorter} from '../../../models/sorter';
-import {Auction} from '../../../models/auction/auction';
+import {Auction} from '../../auction/models/auction.model';
 import {SharedService} from '../../../services/shared.service';
 import {Seller} from '../../../models/seller';
-import {AuctionPet} from '../../../models/auction/auction-pet';
-import {CustomPrices} from '../../../models/crafting/custom-price';
-import {CustomProcs} from '../../../models/crafting/custom-proc';
-import {Recipe} from '../../../models/crafting/recipe';
+import {AuctionPet} from '../../auction/models/auction-pet.model';
+import {CustomPrices} from '../../crafting/models/custom-price';
+import {CustomProcs} from '../../crafting/models/custom-proc';
+import {Recipe} from '../../crafting/models/recipe';
 import {User} from '../../../models/user/user';
 import {Item} from '../../../models/item/item';
-import {AuctionItem} from '../../../models/auction/auction-item';
-import {ShoppingCartItem} from '../../../models/shopping/shopping-cart.model';
+import {AuctionItem} from '../../auction/models/auction-item.model';
+import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart.model';
 
 @Component({
   selector: 'wah-data-table',

@@ -1,13 +1,13 @@
 import {AfterContentInit, Component, Input, OnDestroy} from '@angular/core';
-import {Character} from '../../../../../models/character/character';
+import {Character} from '../../../../character/models/character.model';
 import {ReputationVendorsData} from '../../../../../data/reputation/reputations-list.data';
-import {ColumnDescription} from '../../../../../models/column-description';
+import {ColumnDescription} from '../../../../table/models/column-description';
 import {SharedService} from '../../../../../services/shared.service';
 import {Subscription} from 'rxjs';
-import {Recipe} from '../../../../../models/crafting/recipe';
+import {Recipe} from '../../../../crafting/models/recipe';
 import {User} from '../../../../../models/user/user';
-import {Crafting} from '../../../../../models/crafting/crafting';
-import {AuctionHandler} from '../../../../../models/auction/auction-handler';
+import {Crafting} from '../../../../crafting/models/crafting';
+import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
 import {CharacterService} from '../../../../../services/character.service';
 import {CraftingService} from '../../../../../services/crafting.service';
@@ -156,7 +156,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
         Crafting.checkForMissingRecipes(this.craftingService);
 
         if (SharedService.user.region && SharedService.user.realm) {
-          AuctionHandler.organize(SharedService.auctions);
+          AuctionUtil.organize(SharedService.auctions);
         }
 
         Report.send('Updated', 'Characters');

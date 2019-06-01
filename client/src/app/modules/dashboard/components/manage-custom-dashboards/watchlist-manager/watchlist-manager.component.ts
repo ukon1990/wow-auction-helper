@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Watchlist } from '../../../models/watchlist.model';
 import { SharedService } from '../../../../../services/shared.service';
-import { ColumnDescription } from '../../../../../models/column-description';
+import { ColumnDescription } from '../../../../table/models/column-description';
 import { Item } from '../../../../../models/item/item';
 import { Angulartics2 } from 'angulartics2';
 

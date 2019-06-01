@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../../../services/shared.service';
 import { Seller } from '../../../../models/seller';
-import { ColumnDescription } from '../../../../models/column-description';
+import { ColumnDescription } from '../../../table/models/column-description';
 import { CharacterService } from '../../../../services/character.service';
-import { Character } from '../../../../models/character/character';
+import { Character } from '../../../character/models/character.model';
 
 @Component({
   selector: 'wah-seller',

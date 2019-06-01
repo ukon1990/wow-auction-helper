@@ -1,4 +1,4 @@
-import { AuctionItem } from './auction/auction-item';
+import { AuctionItem } from '../modules/auction/models/auction-item.model';
 import { SharedService } from '../services/shared.service';
 
 export class Sorter {

@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Report} from '../../../../../utils/report.util';
-import {ColumnDescription} from '../../../../../models/column-description';
+import {ColumnDescription} from '../../../../table/models/column-description';
 import {SummaryCard} from '../../../../../models/summary-card.model';
 import {ChartData} from '../../../../../models/chart-data.model';
 

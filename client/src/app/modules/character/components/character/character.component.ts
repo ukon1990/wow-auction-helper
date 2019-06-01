@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
-import {Character} from '../../../../models/character/character';
+import {Character} from '../../models/character.model';
 
 @Component({
   selector: 'wah-character',

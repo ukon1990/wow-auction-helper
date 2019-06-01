@@ -2,7 +2,7 @@ import { Component, AfterViewInit, Input, OnChanges } from '@angular/core';
 import { Chart } from 'chart.js';
 import * as distinctColors from 'distinct-colors';
 import { FormControl } from '@angular/forms';
-import {Auction} from '../../../../../models/auction/auction';
+import {Auction} from '../../../../auction/models/auction.model';
 
 @Component({
   selector: 'wah-item-seller-chart',

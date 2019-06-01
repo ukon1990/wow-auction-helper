@@ -4,7 +4,7 @@ import {ObjectUtil} from './object.util';
 import {ItemInventory} from '../models/item/item';
 import {Report} from './report.util';
 import {ErrorReport} from './error-report.util';
-import {AuctionItem} from '../models/auction/auction-item';
+import {AuctionItem} from '../modules/auction/models/auction-item.model';
 
 export class TSMCSV {
   characterGuilds?: any;

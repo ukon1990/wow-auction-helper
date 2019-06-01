@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {SharedService} from '../../../../services/shared.service';
-import {DefaultDashboardSettings} from '../../../../models/dashboard/default-dashboard-settings.model';
+import {DefaultDashboardSettings} from '../../models/default-dashboard-settings.model';
 import {Dashboard} from '../../models/dashboard.model';
 
 @Component({

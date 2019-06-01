@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../../models/column-description';
-import {Auction} from '../../../../../models/auction/auction';
-import {UserAuctionCharacter, UserAuctions} from '../../../../../models/auction/user-auctions';
+import {ColumnDescription} from '../../../../table/models/column-description';
+import {Auction} from '../../../../auction/models/auction.model';
+import {UserAuctions} from '../../../../auction/models/user-auctions.model';
+import {UserAuctionCharacter} from '../../../../auction/models/user-auction-character.model';
 
 @Component({
   selector: 'wah-my-auctions',

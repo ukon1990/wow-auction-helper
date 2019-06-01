@@ -7,7 +7,7 @@ import { Angulartics2 } from 'angulartics2';
 
 import { Watchlist, WatchlistItem, WatchlistGroup } from '../../models/watchlist.model';
 import { SharedService } from '../../../../services/shared.service';
-import { Recipe } from '../../../../models/crafting/recipe';
+import { Recipe } from '../../../crafting/models/recipe';
 import { Item } from '../../../../models/item/item';
 import { Title } from '@angular/platform-browser';
 import { SelectionItem } from '../../models/selection-item.model';

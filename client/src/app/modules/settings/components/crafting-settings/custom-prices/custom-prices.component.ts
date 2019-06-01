@@ -6,10 +6,10 @@ import { Angulartics2 } from 'angulartics2';
 
 import { SharedService } from '../../../../../services/shared.service';
 import { Item } from '../../../../../models/item/item';
-import { CustomPrice, CustomPrices } from '../../../../../models/crafting/custom-price';
-import { ColumnDescription } from '../../../../../models/column-description';
-import { Crafting } from '../../../../../models/crafting/crafting';
-import { customPricesDefault } from '../../../../../models/crafting/default-custom-prices';
+import { CustomPrice, CustomPrices } from '../../../../crafting/models/custom-price';
+import { ColumnDescription } from '../../../../table/models/column-description';
+import { Crafting } from '../../../../crafting/models/crafting';
+import { customPricesDefault } from '../../../../crafting/models/default-custom-prices';
 
 @Component({
   selector: 'wah-custom-prices',

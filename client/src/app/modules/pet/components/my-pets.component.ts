@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {SharedService} from '../../../services/shared.service';
-import {Pet} from '../../../models/pet';
-import {CollectedPet} from '../../../models/character/character';
-import {ColumnDescription} from '../../../models/column-description';
+import {Pet} from '../models/pet';
+import {CollectedPet} from '../../character/models/character.model';
+import {ColumnDescription} from '../../table/models/column-description';
 
 @Component({
   selector: 'wah-my-pets',

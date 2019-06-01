@@ -3,12 +3,12 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Angulartics2 } from 'angulartics2';
 import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../../models/column-description';
-import {MarketResetCost} from '../../../../../models/auction/market-reset-cost';
+import {ColumnDescription} from '../../../../table/models/column-description';
+import {MarketResetCost} from '../../../../auction/models/market-reset-cost.model';
 import {Filters} from '../../../../../models/filtering';
-import {Crafting} from '../../../../../models/crafting/crafting';
-import {AuctionItem} from '../../../../../models/auction/auction-item';
-import {Auction} from '../../../../../models/auction/auction';
+import {Crafting} from '../../../../crafting/models/crafting';
+import {AuctionItem} from '../../../../auction/models/auction-item.model';
+import {Auction} from '../../../../auction/models/auction.model';
 
 @Component({
   selector: 'wah-market-reset',

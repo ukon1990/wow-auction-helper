@@ -3,7 +3,7 @@ import { Chart } from 'chart.js';
 import * as distinctColors from 'distinct-colors';
 import { Seller } from '../../../../models/seller';
 import { itemClasses } from '../../../../models/item/item-classes';
-import { Auction } from '../../../../models/auction/auction';
+import { Auction } from '../../../auction/models/auction.model';
 import { SharedService } from '../../../../services/shared.service';
 import { Item } from '../../../../models/item/item';
 import { FormControl } from '@angular/forms';

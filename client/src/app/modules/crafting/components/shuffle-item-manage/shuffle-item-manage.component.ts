@@ -8,7 +8,7 @@ import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util
 import {SharedService} from '../../../../services/shared.service';
 import {Remains, RemainsSource} from '../../../../models/item/remains.model';
 import {Item} from '../../../../models/item/item';
-import {ColumnDescription} from '../../../../models/column-description';
+import {ColumnDescription} from '../../../table/models/column-description';
 
 @Component({
   selector: 'wah-shuffle-item-manage',

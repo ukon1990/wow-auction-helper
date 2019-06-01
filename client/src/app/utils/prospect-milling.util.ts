@@ -3,7 +3,7 @@ import { Item } from '../models/item/item';
 import { SharedService } from '../services/shared.service';
 import { defaultProspecting } from './default-prospecting.util';
 import { defaultMilling } from './default-milling.util';
-import { AuctionItem } from '../models/auction/auction-item';
+import { AuctionItem } from '../modules/auction/models/auction-item.model';
 
 export class ProspectingAndMillingUtil {
   public static prospecting: Remains[] = [];

@@ -9,7 +9,7 @@ import {FileService} from '../../../../services/file.service';
 import {ItemService} from '../../../../services/item.service';
 import {CraftingService} from '../../../../services/crafting.service';
 import {PetsService} from '../../../../services/pets.service';
-import {AuctionHandler} from '../../../../models/auction/auction-handler';
+import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {DatabaseService} from '../../../../services/database.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Report} from '../../../../utils/report.util';
@@ -113,7 +113,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
 
       if (this.hasNotChangedRealmOrRegion()) {
-        AuctionHandler.organize(SharedService.auctions);
+        AuctionUtil.organize(SharedService.auctions);
       }
     }
 

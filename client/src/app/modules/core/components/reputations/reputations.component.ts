@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {SharedService} from '../../../../services/shared.service';
-import {Character} from '../../../../models/character/character';
+import {Character} from '../../../character/models/character.model';
 import {Sorter} from '../../../../models/sorter';
 
 @Component({

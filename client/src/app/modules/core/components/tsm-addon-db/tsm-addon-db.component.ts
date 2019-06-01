@@ -104,7 +104,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       name: 'auctionQuantity',
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
-        {key: 'character', title: 'character', dataType: 'seller'},
+        {key: 'character.model.ts', title: 'character.model.ts', dataType: 'seller'},
         {key: 'value', title: 'Quantity', dataType: 'number'}
       ],
       data: [],
@@ -127,7 +127,7 @@ export class TsmAddonDbComponent implements OnInit, OnDestroy, AfterContentInit 
       name: 'goldLog',
       columns: [
         {key: 'minute', title: 'Time', dataType: 'date'},
-        {key: 'character', title: 'Character', dataType: 'seller'},
+        {key: 'character.model.ts', title: 'Character', dataType: 'seller'},
         {key: 'copper', title: 'Gold', dataType: 'gold'}
       ],
       data: [],

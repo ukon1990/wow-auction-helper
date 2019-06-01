@@ -3,8 +3,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MaterialsComponent } from './materials.component';
 import { TestModule } from '../../../test.module';
 import { SharedService } from '../../../../services/shared.service';
-import { AuctionItem } from '../../../../models/auction/auction-item';
-import { Recipe } from '../../../../models/crafting/recipe';
+import { AuctionItem } from '../../../auction/models/auction-item.model';
+import { Recipe } from '../../../crafting/models/recipe';
 
 describe('MaterialsComponent', () => {
   let component: MaterialsComponent;

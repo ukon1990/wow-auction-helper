@@ -1,11 +1,9 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NavbarComponent} from './components/navbar/navbar.component';
-import {MenuComponent} from './components/navbar/menu/menu.component';
 import {AuctionsComponent} from './components/auctions/auctions.component';
 import {UpdateComponent} from './components/update/update.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
-import {ShoppingCartComponent} from './components/navbar/shopping-cart/shopping-cart.component';
 import {ItemComponent} from './components/item/item.component';
 import {LineChartComponent} from './components/item/line-chart/line-chart.component';
 import {ResetCalcComponent} from './components/item/reset-calc/reset-calc.component';
@@ -35,11 +33,9 @@ import {UtilModule} from '../util/util.module';
 @NgModule({
   declarations: [
     NavbarComponent,
-    MenuComponent,
     AuctionsComponent,
     UpdateComponent,
     DownloadComponent,
-    ShoppingCartComponent,
     ItemComponent,
     LineChartComponent,
     ResetCalcComponent,

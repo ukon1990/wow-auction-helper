@@ -1,17 +1,17 @@
-import {ColumnDescription} from '../../../models/column-description';
+import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {Notification} from '../../../models/user/notification';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {WatchlistGroup, WatchlistItem} from './watchlist.model';
 import {Seller} from '../../../models/seller';
-import {AuctionItem} from '../../../models/auction/auction-item';
+import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Filters} from '../../../models/filtering';
 import {FormBuilder} from '@angular/forms';
 import {Remains} from '../../../models/item/remains.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {EventEmitter} from '@angular/core';
-import {DefaultDashboardSettings} from '../../../models/dashboard/default-dashboard-settings.model';
-import {Crafting} from '../../../models/crafting/crafting';
+import {DefaultDashboardSettings} from './default-dashboard-settings.model';
+import {Crafting} from '../../crafting/models/crafting';
 import {ErrorReport} from '../../../utils/error-report.util';
 
 export class Dashboard {

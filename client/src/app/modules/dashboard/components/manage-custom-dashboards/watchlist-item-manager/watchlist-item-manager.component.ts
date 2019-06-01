@@ -2,7 +2,7 @@ import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { WatchlistItem, WatchlistGroup } from '../../../models/watchlist.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedService } from '../../../../../services/shared.service';
-import { AuctionItem } from '../../../../../models/auction/auction-item';
+import { AuctionItem } from '../../../../auction/models/auction-item.model';
 import { Angulartics2 } from 'angulartics2';
 import { SelectionItem } from '../../../models/selection-item.model';
 

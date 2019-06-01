@@ -12,9 +12,9 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
 import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
 import {Dashboard} from '../../../../dashboard/models/dashboard.model';
-import {Crafting} from '../../../../../models/crafting/crafting';
+import {Crafting} from '../../../../crafting/models/crafting';
 import {Realm} from '../../../../../models/realm';
-import {AuctionHandler} from '../../../../../models/auction/auction-handler';
+import {AuctionUtil} from '../../../../auction/utils/auction.util';
 
 @Component({
   selector: 'wah-download',
@@ -321,7 +321,7 @@ export class DownloadComponent implements OnInit {
   private async downloadTSM() {
     this.downloadProgress = 'Downloading TSM data';
     await this._auctionsService.getTsmAuctions();
-    AuctionHandler.organize(SharedService.auctions);
+    AuctionUtil.organize(SharedService.auctions);
   }
 
   private async downloadPets(forceUpdate: boolean) {
@@ -333,7 +333,7 @@ export class DownloadComponent implements OnInit {
     await this._petService.getPets();
 
     if (forceUpdate) {
-      AuctionHandler.organize(SharedService.auctions);
+      AuctionUtil.organize(SharedService.auctions);
     }
   }
 
@@ -345,7 +345,7 @@ export class DownloadComponent implements OnInit {
     await this._craftingService.getRecipes();
 
     if (forceUpdate) {
-      AuctionHandler.organize(SharedService.auctions);
+      AuctionUtil.organize(SharedService.auctions);
     }
   }
 
@@ -358,7 +358,7 @@ export class DownloadComponent implements OnInit {
     await this._itemService.getItems();
 
     if (forceUpdate) {
-      AuctionHandler.organize(SharedService.auctions);
+      AuctionUtil.organize(SharedService.auctions);
     }
   }
 }

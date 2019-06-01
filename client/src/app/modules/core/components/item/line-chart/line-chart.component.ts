@@ -3,7 +3,7 @@ import {AfterContentInit, Component, Input, OnChanges, SimpleChanges} from '@ang
 import {Chart} from 'chart.js';
 import {Subscription} from 'rxjs';
 import {SharedService} from '../../../../../services/shared.service';
-import {Auction} from '../../../../../models/auction/auction';
+import {Auction} from '../../../../auction/models/auction.model';
 
 // Replace with : http://www.chartjs.org/samples/latest/
 declare let $: Function;

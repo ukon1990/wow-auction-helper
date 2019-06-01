@@ -4,10 +4,10 @@ import { MyAuctionsComponent } from './my-auctions.component';
 import { TestModule } from '../../../modules/test.module';
 import { SharedService } from '../../../services/shared.service';
 import { User } from '../../../../../models/user/user';
-import { Character } from '../../../../../models/character/character';
+import { Character } from '../../../../character/models/character.model';
 import { Item } from '../../../../../models/item/item';
-import { AuctionHandler } from '../../../../../models/auction/auction-handler';
-import { Auction } from '../../../../../models/auction/auction';
+import { AuctionUtil } from '../../../../auction/utils/auction.util';
+import { Auction } from '../../../../auction/models/auction.model';
 
 describe('MyAuctionsComponent', () => {
   let component: MyAuctionsComponent;
@@ -49,7 +49,7 @@ describe('MyAuctionsComponent', () => {
     SharedService.items[25].name = 'An item';
     SharedService.items[26] = new Item();
     SharedService.items[26].name = 'Another item';
-    AuctionHandler.organize([
+    AuctionUtil.organize([
       new Auction(30, 25, 10, 200, hinata.name, hinata.realm),
       new Auction(40, 26, 11, 200, charlie.name, charlie.realm),
 

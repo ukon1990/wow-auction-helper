@@ -4,13 +4,13 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { SharedService } from '../../../../../services/shared.service';
 import { Item } from '../../../../../models/item/item';
-import { CustomPrice, CustomPrices } from '../../../../../models/crafting/custom-price';
-import { ColumnDescription } from '../../../../../models/column-description';
-import { Crafting } from '../../../../../models/crafting/crafting';
+import { CustomPrice, CustomPrices } from '../../../../crafting/models/custom-price';
+import { ColumnDescription } from '../../../../table/models/column-description';
+import { Crafting } from '../../../../crafting/models/crafting';
 import { Angulartics2 } from 'angulartics2';
-import { CustomProc, CustomProcs } from '../../../../../models/crafting/custom-proc';
-import { Recipe } from '../../../../../models/crafting/recipe';
-import { customProcsDefault } from '../../../../../models/crafting/default-custom-procs';
+import { CustomProc, CustomProcs } from '../../../../crafting/models/custom-proc';
+import { Recipe } from '../../../../crafting/models/recipe';
+import { customProcsDefault } from '../../../../crafting/models/default-custom-procs';
 
 @Component({
   selector: 'wah-custom-proc',

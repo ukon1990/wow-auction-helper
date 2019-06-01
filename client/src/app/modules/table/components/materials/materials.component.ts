@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Reagent} from '../../../../models/crafting/reagent';
+import {Reagent} from '../../../crafting/models/reagent';
 import {SharedService} from '../../../../services/shared.service';
-import {Crafting} from '../../../../models/crafting/crafting';
-import {Recipe} from '../../../../models/crafting/recipe';
-import {CustomProcs} from '../../../../models/crafting/custom-proc';
+import {Crafting} from '../../../crafting/models/crafting';
+import {Recipe} from '../../../crafting/models/recipe';
+import {CustomProcs} from '../../../crafting/models/custom-proc';
 import {ItemService} from '../../../../services/item.service';
 
 @Component({

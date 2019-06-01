@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TradeVendor, TradeVendorItem} from '../../../../models/item/trade-vendor';
 import {TRADE_VENDORS} from '../../../../models/item/trade-vendors';
-import {ColumnDescription} from '../../../../models/column-description';
+import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
-import {AuctionItem} from '../../../../models/auction/auction-item';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Filters} from '../../../../models/filtering';
 import {FormGroup, FormBuilder} from '@angular/forms';
 import {Subscription} from 'rxjs';

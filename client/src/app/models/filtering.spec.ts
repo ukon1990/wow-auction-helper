@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuctionsComponent } from '../modules/core/components/auctions/auctions.component';
 import { TestModule } from '../modules/test.module';
 import { SharedService } from '../services/shared.service';
-import { AuctionItem } from './auction/auction-item';
+import { AuctionItem } from '../modules/auction/models/auction-item.model';
 import { Filters } from './filtering';
 import { Item } from './item/item';
 import { FormBuilder } from '@angular/forms';

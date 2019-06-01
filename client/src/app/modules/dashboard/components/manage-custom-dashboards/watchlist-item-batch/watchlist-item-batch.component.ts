@@ -7,7 +7,7 @@ import {itemClasses} from '../../../../../models/item/item-classes';
 import {GameBuild} from '../../../../../utils/game-build.util';
 import {Filters} from '../../../../../models/filtering';
 import {Item} from '../../../../../models/item/item';
-import {ColumnDescription} from '../../../../../models/column-description';
+import {ColumnDescription} from '../../../../table/models/column-description';
 import {Angulartics2} from 'angulartics2';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 

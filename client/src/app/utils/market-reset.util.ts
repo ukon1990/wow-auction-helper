@@ -1,4 +1,4 @@
-import { AuctionItem } from '../models/auction/auction-item';
+import { AuctionItem } from '../modules/auction/models/auction-item.model';
 import { ItemMarketReset } from '../models/item/item-market-reset.model';
 import { SharedService } from '../services/shared.service';
 

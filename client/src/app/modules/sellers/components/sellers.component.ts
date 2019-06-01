@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Seller } from '../../../models/seller';
 import { SharedService } from '../../../services/shared.service';
-import { ColumnDescription } from '../../../models/column-description';
+import { ColumnDescription } from '../../table/models/column-description';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';

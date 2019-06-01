@@ -4,16 +4,16 @@ import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {GameBuild} from '../../../../utils/game-build.util';
-import {Recipe} from '../../../../models/crafting/recipe';
-import {ColumnDescription} from '../../../../models/column-description';
+import {Recipe} from '../../../crafting/models/recipe';
+import {ColumnDescription} from '../../../table/models/column-description';
 import {WowdbService} from '../../../../services/wowdb.service';
 import {ItemService} from '../../../../services/item.service';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {User} from '../../../../models/user/user';
-import {AuctionPet} from '../../../../models/auction/auction-pet';
+import {AuctionPet} from '../../../auction/models/auction-pet.model';
 import {Endpoints} from '../../../../services/endpoints';
-import {Pet} from '../../../../models/pet';
+import {Pet} from '../../../pet/models/pet';
 
 @Component({
   selector: 'wah-item',

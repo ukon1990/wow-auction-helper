@@ -1,4 +1,4 @@
-import {Recipe} from '../../../models/crafting/recipe';
+import {Recipe} from '../../crafting/models/recipe';
 import {SharedService} from '../../../services/shared.service';
 import {defaultWatchlist} from '../data/default-watchlist.data';
 import {Dashboard} from './dashboard.model';

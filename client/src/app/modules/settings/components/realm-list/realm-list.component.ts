@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {RealmService} from '../../../../services/realm.service';
 import {RealmStatus} from '../../../../models/realm-status.model';
-import {ColumnDescription} from '../../../../models/column-description';
+import {ColumnDescription} from '../../../table/models/column-description';
 
 @Component({
   selector: 'wah-realm-list',

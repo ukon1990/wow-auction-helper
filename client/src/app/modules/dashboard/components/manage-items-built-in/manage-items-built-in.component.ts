@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {DefaultDashboardSettings} from '../../../../models/dashboard/default-dashboard-settings.model';
+import {DefaultDashboardSettings} from '../../models/default-dashboard-settings.model';
 
 @Component({
   selector: 'wah-manage-items-built-in',

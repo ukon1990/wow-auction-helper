@@ -33,6 +33,7 @@ import {DashboardModule} from './modules/dashboard/dashboard.module';
 import {CraftingModule} from './modules/crafting/crafting.module';
 import {PetModule} from './modules/pet/pet.module';
 import {AuctionModule} from './modules/auction/auction.module';
+import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import {AuctionModule} from './modules/auction/auction.module';
     DashboardModule,
     PetModule,
     CraftingModule,
-    AuctionModule
+    AuctionModule,
+    ShoppingCartModule
   ],
   providers: [
     RealmService,

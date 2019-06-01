@@ -6,9 +6,9 @@ import {SummaryCard} from '../../../../models/summary-card.model';
 import {SharedService} from '../../../../services/shared.service';
 import {ChartData} from '../../../../models/chart-data.model';
 import {itemClasses} from '../../../../models/item/item-classes';
-import {AuctionItem} from '../../../../models/auction/auction-item';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SummaryUtil} from '../../../../utils/summary.util';
-import {Recipe} from '../../../../models/crafting/recipe';
+import {Recipe} from '../../../crafting/models/recipe';
 
 @Component({
   selector: 'wah-ah-summary',

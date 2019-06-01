@@ -9,9 +9,9 @@ import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SharedService} from '../../../services/shared.service';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
-import {Character} from '../../../models/character/character';
-import {Crafting} from '../../../models/crafting/crafting';
-import {AuctionHandler} from '../../../models/auction/auction-handler';
+import {Character} from '../models/character.model';
+import {Crafting} from '../../crafting/models/crafting';
+import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Report} from '../../../utils/report.util';
 import {Realm} from '../../../models/realm';
 import {User} from '../../../models/user/user';
@@ -150,7 +150,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     Realm.gatherRealms();
 
     if (SharedService.user.region && SharedService.user.realm) {
-      AuctionHandler.organize(SharedService.auctions);
+      AuctionUtil.organize(SharedService.auctions);
     }
   }
 
@@ -168,7 +168,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
         Crafting.checkForMissingRecipes(this.craftingService);
 
         if (SharedService.user.region && SharedService.user.realm) {
-          AuctionHandler.organize(
+          AuctionUtil.organize(
             this.getAuctions());
         }
 
@@ -212,7 +212,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     Realm.gatherRealms();
 
     if (SharedService.user.region && SharedService.user.realm) {
-      AuctionHandler.organize(this.getAuctions());
+      AuctionUtil.organize(this.getAuctions());
     }
 
     Report.send('Removed character', 'Characters');

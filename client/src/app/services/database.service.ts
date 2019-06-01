@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {Item} from '../models/item/item';
-import {Auction} from '../models/auction/auction';
-import {AuctionHandler} from '../models/auction/auction-handler';
+import {Auction} from '../modules/auction/models/auction.model';
+import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {SharedService} from './shared.service';
-import {TSM} from '../models/auction/tsm';
-import {WoWUction} from '../models/auction/wowuction';
+import {TSM} from '../modules/auction/models/tsm.model';
+import {WoWUction} from '../modules/auction/models/wowuction.model';
 import {PetsService} from './pets.service';
-import {Pet} from '../models/pet';
-import {Recipe} from '../models/crafting/recipe';
+import {Pet} from '../modules/pet/models/pet';
+import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
 import {TSMCSV, TsmLuaUtil} from '../utils/tsm-lua.util';
@@ -195,7 +195,7 @@ export class DatabaseService {
       .toArray()
       .then(auctions => {
         SharedService.downloading.auctions = false;
-        AuctionHandler.organize(auctions, petService);
+        AuctionUtil.organize(auctions, petService);
         console.log('Restored auction from local DB');
         SharedService.events.auctionUpdate.emit();
       }).catch(e => {

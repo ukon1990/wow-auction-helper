@@ -1,13 +1,13 @@
 import {NotificationSettings} from './notification';
 import {SharedService} from '../../services/shared.service';
-import {Character} from '../character/character';
+import {Character} from '../../modules/character/models/character.model';
 import {Watchlist} from '../../modules/dashboard/models/watchlist.model';
-import {CustomPrice, CustomPrices} from '../crafting/custom-price';
-import {customPricesDefault} from '../crafting/default-custom-prices';
-import {CustomProc, CustomProcs} from '../crafting/custom-proc';
-import {customProcsDefault} from '../crafting/default-custom-procs';
+import {CustomPrice, CustomPrices} from '../../modules/crafting/models/custom-price';
+import {customPricesDefault} from '../../modules/crafting/models/default-custom-prices';
+import {CustomProc, CustomProcs} from '../../modules/crafting/models/custom-proc';
+import {customProcsDefault} from '../../modules/crafting/models/default-custom-procs';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
-import {ShoppingCart} from '../shopping/shopping-cart.model';
+import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
 
 
 export class User {

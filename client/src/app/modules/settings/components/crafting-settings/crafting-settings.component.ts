@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import { SharedService } from '../../../../services/shared.service';
 import { User } from '../../../../models/user/user';
-import {Crafting} from '../../../../models/crafting/crafting';
+import {Crafting} from '../../../crafting/models/crafting';
 
 @Component({
   selector: 'wah-crafting-settings',

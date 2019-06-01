@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CraftingService } from '../../../../../services/crafting.service';
 import { FormControl } from '@angular/forms';
 import { SharedService } from '../../../../../services/shared.service';
-import { Recipe } from '../../../../../models/crafting/recipe';
+import { Recipe } from '../../../../crafting/models/recipe';
 
 @Component({
   selector: 'wah-add-recipes',
