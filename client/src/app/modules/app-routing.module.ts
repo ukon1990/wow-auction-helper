@@ -8,7 +8,7 @@ import {UpdateComponent} from './core/components/update/update.component';
 import {AuctionsComponent} from './core/components/auctions/auctions.component';
 import {MyAuctionsComponent} from './core/components/auctions/my-auctions/my-auctions.component';
 import {TradeVendorsComponent} from './core/components/trade-vendors/trade-vendors.component';
-import {WatchlistComponent} from './dashboard/components/manage-custom-dashboards/watchlist.component';
+import {WatchlistComponent} from './dashboard/components/manage/watchlist.component';
 import {DashboardItemsComponent} from './dashboard/components/dashboard-items/dashboard-items.component';
 import {DashboardSellersComponent} from './dashboard/components/dashboard-sellers/dashboard-sellers.component';
 import {SellersComponent} from './sellers/components/sellers.component';
@@ -71,7 +71,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule {
-  constructor() {
-    console.log('Routes', routes);
-  }
 }

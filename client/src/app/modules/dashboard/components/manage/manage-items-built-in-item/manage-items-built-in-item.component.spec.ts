@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ManageItemsBuiltInItemComponent} from './manage-items-built-in-item.component';
-import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
+import {MockLoaderUtil} from '../../../../../mocks/mock-loader.util';
 
 describe('ManageItemsBuiltInItemComponent', () => {
   let component: ManageItemsBuiltInItemComponent;

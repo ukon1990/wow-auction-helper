@@ -1,9 +1,12 @@
 <mat-card *ngIf="item">
   <mat-card-header>
     <mat-card-title class="small-title">
-      <mat-checkbox class="float-left mr-2" [(ngModel)]="selectionItem.isSelected" (change)="setSelection($event)"></mat-checkbox>
-      <a rel="item={{ item.itemID }}" [ngClass]="{'user-auction-lowest': isTargetMatch(item)}" (click)="setSelectedItem(item)">
-          <wah-icon size="22" [id]="item.itemID"></wah-icon>
+      <mat-checkbox *ngIf="selectionItem"
+                    class="float-left mr-2"
+                    [(ngModel)]="selectionItem.isSelected" (change)="setSelection($event)"></mat-checkbox>
+      <a rel="item={{ item.itemID }}" [ngClass]="{'user-auction-lowest': isTargetMatch(item)}"
+         (click)="setSelectedItem(item)">
+        <wah-icon size="22" [id]="item.itemID"></wah-icon>
         {{ item.name }}
       </a>
     </mat-card-title>
@@ -40,8 +43,8 @@
           <strong class="mr-1">Alert criteria:</strong> {{ item.criteria }}
         </div>
         <div class="row">
-          <strong class="mr-1">Alert compare to:</strong> 
-          <mat-select  [disableOptionCentering]="true" [value]="item.compareTo" disabled>
+          <strong class="mr-1">Alert compare to:</strong>
+          <mat-select [disableOptionCentering]="true" [value]="item.compareTo" disabled>
             <mat-option *ngFor="let cv of comparableVariables" [value]="cv.id">
               {{ cv.title }}
             </mat-option>
