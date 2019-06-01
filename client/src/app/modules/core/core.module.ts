@@ -14,13 +14,8 @@ import {ItemSellerChartComponent} from './components/item/item-seller-chart/item
 import {FooterComponent} from './components/footer/footer.component';
 import {AddItemsComponent} from './components/update/add-items/add-items.component';
 import {AddRecipesComponent} from './components/update/add-recipes/add-recipes.component';
-import {ChartsComponent} from './components/charts/charts.component';
 import {ReputationsComponent} from './components/reputations/reputations.component';
 import {CharacterReputationComponent} from './components/reputations/character-reputation/character-reputation.component';
-import {TsmAddonDbComponent} from './components/tsm-addon-db/tsm-addon-db.component';
-import {ProfitSummaryComponent} from './components/tsm-addon-db/profit-summary/profit-summary.component';
-import {ProfitSummaryCardComponent} from './components/tsm-addon-db/profit-summary-card/profit-summary-card.component';
-import {ItemSaleSummaryComponent} from './components/tsm-addon-db/item-sale-summary/item-sale-summary.component';
 import {AppUpdateComponent} from './components/update/app-update/app-update.component';
 import {MaterialModule} from '../material.module';
 import {TableModule} from '../table/table.module';
@@ -46,14 +41,9 @@ import {UtilModule} from '../util/util.module';
     FooterComponent,
     AddItemsComponent,
     AddRecipesComponent,
-    ChartsComponent,
     AddRecipesComponent,
     ReputationsComponent,
     CharacterReputationComponent,
-    TsmAddonDbComponent,
-    ProfitSummaryComponent,
-    ProfitSummaryCardComponent,
-    ItemSaleSummaryComponent,
     AppUpdateComponent],
   imports: [
     CommonModule,

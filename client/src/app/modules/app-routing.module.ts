@@ -18,7 +18,7 @@ import {MillingComponent} from './crafting/components/milling/milling.component'
 import {DisenchantingComponent} from './crafting/components/disenchanting/disenchanting.component';
 import {AhSummaryComponent} from './dashboard/components/ah-summary/ah-summary.component';
 import {ReputationsComponent} from './core/components/reputations/reputations.component';
-import {TsmAddonDbComponent} from './core/components/tsm-addon-db/tsm-addon-db.component';
+import {TsmAddonDbComponent} from './tsm/components/tsm-addon-db.component';
 import {SettingsComponent} from './settings/components/settings.component';
 import {SETTINGS_ROUTE} from './settings/settings.routes';
 import {ABOUT_ROUTE} from './about/about.route';

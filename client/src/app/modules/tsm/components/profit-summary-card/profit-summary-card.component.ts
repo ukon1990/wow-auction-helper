@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ColumnDescription} from '../../../../table/models/column-description';
+import {ColumnDescription} from '../../../table/models/column-description';
 
 @Component({
   selector: 'wah-profit-summary-card',

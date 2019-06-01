@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
 import {Recipe} from '../../crafting/models/recipe';
-import {ColumnDescription} from '../../table/models/column-description';
 import {Report} from '../../../utils/report.util';
 import {ShoppingCart} from '../models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
@@ -16,47 +15,46 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   cart: ShoppingCart = SharedService.user.shoppingCart;
 
   show: boolean;
-  columnsRecipes: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'cart-recipe-count'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-    {key: '', title: '', dataType: 'cart-delete'}
-  ];
-  columnsNeededReagents: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'number'},
-    {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
-    {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'}
-  ];
+  columns = {
+    recipes: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'quantity', title: 'Qty', dataType: 'cart-recipe-count'},
+      {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+      {key: '', title: '', dataType: 'cart-delete'}
+    ],
+    neededReagents :  [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'quantity', title: 'Qty', dataType: 'number'},
+      {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
+      {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'}
+    ],
+    ah: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'quantity', title: 'Qty', dataType: 'number'},
+      {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
+      {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
+      {key: 'totalCost', title: 'Total', dataType: 'gold'}
+    ],
+    vendor: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'quantity', title: 'Qty', dataType: 'number'},
+      {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
+      {key: 'totalCost', title: 'Total', dataType: 'gold'}
+    ],
+    farm: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'quantity', title: 'Qty', dataType: 'number'}
+    ],
+    inventory: [
+      {key: 'name', title: 'Name', dataType: 'name'},
+      {key: 'quantity', title: 'Need', dataType: 'number'},
+      {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
+      {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'},
+      {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
+      {key: 'characters', title: 'Characters', dataType: 'array'}
+    ]
+  };
 
-  columnsAH: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'number'},
-    {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
-    {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
-    {key: 'totalCost', title: 'Total', dataType: 'gold'}
-  ];
-
-  columnsVendor: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'number'},
-    {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
-    {key: 'totalCost', title: 'Total', dataType: 'gold'}
-  ];
-
-  columnsFarm: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Qty', dataType: 'number'}
-  ];
-
-  columnsInventory: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'quantity', title: 'Need', dataType: 'number'},
-    {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
-    {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'},
-    {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
-    {key: 'characters', title: 'Characters', dataType: 'array'}
-  ];
 
   subscriptions = new SubscriptionManager();
 

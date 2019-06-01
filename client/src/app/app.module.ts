@@ -1,7 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientJsonpModule, HttpClientModule,} from '@angular/common/http';
+import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 
@@ -34,6 +33,7 @@ import {CraftingModule} from './modules/crafting/crafting.module';
 import {PetModule} from './modules/pet/pet.module';
 import {AuctionModule} from './modules/auction/auction.module';
 import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
+import {TsmModule} from './modules/tsm/tsm.module';
 
 
 @NgModule({
@@ -59,7 +59,8 @@ import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
     PetModule,
     CraftingModule,
     AuctionModule,
-    ShoppingCartModule
+    ShoppingCartModule,
+    TsmModule
   ],
   providers: [
     RealmService,

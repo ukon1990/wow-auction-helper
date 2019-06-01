@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SharedService} from '../../../../../services/shared.service';
-import {UserProfit} from '../../../../../utils/tsm-lua.util';
+import {SharedService} from '../../../../services/shared.service';
+import {UserProfit} from '../../../../utils/tsm-lua.util';
 
 @Component({
   selector: 'wah-profit-summary',

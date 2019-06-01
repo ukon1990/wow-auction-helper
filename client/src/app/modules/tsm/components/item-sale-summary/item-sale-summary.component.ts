@@ -1,12 +1,12 @@
 import {AfterContentInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
-import {ProfitSummary, UserProfit} from '../../../../../utils/tsm-lua.util';
-import {ColumnDescription} from '../../../../table/models/column-description';
-import {SharedService} from '../../../../../services/shared.service';
+import {ProfitSummary, UserProfit} from '../../../../utils/tsm-lua.util';
+import {ColumnDescription} from '../../../table/models/column-description';
+import {SharedService} from '../../../../services/shared.service';
 import {FormControl} from '@angular/forms';
-import {SummaryCard} from '../../../../../models/summary-card.model';
-import {Report} from '../../../../../utils/report.util';
-import {ChartData} from '../../../../../models/chart-data.model';
-import {ErrorReport} from '../../../../../utils/error-report.util';
+import {SummaryCard} from '../../../../models/summary-card.model';
+import {Report} from '../../../../utils/report.util';
+import {ChartData} from '../../../../models/chart-data.model';
+import {ErrorReport} from '../../../../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
