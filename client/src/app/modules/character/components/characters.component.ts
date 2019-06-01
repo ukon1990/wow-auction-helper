@@ -3,18 +3,18 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
-import {CharacterService} from '../../../../services/character.service';
-import {RealmService} from '../../../../services/realm.service';
-import {CraftingService} from '../../../../services/crafting.service';
-import {AuctionsService} from '../../../../services/auctions.service';
-import {SharedService} from '../../../../services/shared.service';
-import {ErrorOptions, ErrorReport} from '../../../../utils/error-report.util';
-import {Character} from '../../../../models/character/character';
-import {Crafting} from '../../../../models/crafting/crafting';
-import {AuctionHandler} from '../../../../models/auction/auction-handler';
-import {Report} from '../../../../utils/report.util';
-import {Realm} from '../../../../models/realm';
-import {User} from '../../../../models/user/user';
+import {CharacterService} from '../../../services/character.service';
+import {RealmService} from '../../../services/realm.service';
+import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {SharedService} from '../../../services/shared.service';
+import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
+import {Character} from '../../../models/character/character';
+import {Crafting} from '../../../models/crafting/crafting';
+import {AuctionHandler} from '../../../models/auction/auction-handler';
+import {Report} from '../../../utils/report.util';
+import {Realm} from '../../../models/realm';
+import {User} from '../../../models/user/user';
 
 @Component({
   selector: 'wah-characters',

@@ -73,6 +73,7 @@ export class DownloadComponent implements OnInit {
   }
 
   async ngOnInit() {
+    return; // TODO: Remove
     if (SharedService.user.realm || SharedService.user.region) {
       this.downloadProgress = 'Downloading realms';
       await this._realmService.getRealms()

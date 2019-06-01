@@ -1,10 +1,8 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {IconComponent} from '../icon/icon.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {MenuComponent} from './components/navbar/menu/menu.component';
 import {CraftingComponent} from './components/crafting/crafting.component';
-import {GoldPipe} from '../util/pipes/gold.pipe';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {DashboardItemComponent} from './components/dashboard/dashboard-item/dashboard-item.component';
 import {AuctionsComponent} from './components/auctions/auctions.component';
@@ -49,15 +47,15 @@ import {MaterialModule} from '../material.module';
 import {TableModule} from '../table/table.module';
 import {IconModule} from '../icon/icon.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {SettingsModule} from '../settings/settings.module';
 import {RouterModule} from '@angular/router';
+import {CharacterModule} from '../character/character.module';
+import {UtilModule} from '../util/util.module';
 
 @NgModule({
   declarations: [
     NavbarComponent,
     MenuComponent,
     CraftingComponent,
-    GoldPipe,
     DashboardComponent,
     DashboardItemComponent,
     AuctionsComponent,
@@ -105,8 +103,10 @@ import {RouterModule} from '@angular/router';
     FormsModule,
     MaterialModule,
     TableModule,
+    CharacterModule,
     IconModule,
-    RouterModule
+    RouterModule,
+    UtilModule
   ],
   exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
 })

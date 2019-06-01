@@ -5,35 +5,39 @@ import {SelectRealmComponent} from './components/select-realm/select-realm.compo
 import {NotificationSettingsComponent} from './components/notification-settings/notification-settings.component';
 import {GeneralSettingsComponent} from './components/general-settings/general-settings.component';
 import {CraftingSettingsComponent} from './components/crafting-settings/crafting-settings.component';
-import {CharactersComponent} from './components/characters/characters.component';
-import {CharacterComponent} from './components/characters/character/character.component';
 import {RouterModule} from '@angular/router';
 import {
   MatAutocompleteModule,
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
-  MatFormFieldModule,
+  MatFormFieldModule, MatInputModule,
   MatSelectModule,
   MatSlideToggleModule,
   MatStepperModule,
-  MatTabsModule
+  MatTabsModule, MatTooltipModule
 } from '@angular/material';
 import {AboutModule} from '../about/about.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {RealmListComponent} from './components/realm-list/realm-list.component';
 import {TableModule} from '../table/table.module';
 import {SettingsRouteModule} from './settings-route.module';
+import {CharacterModule} from '../character/character.module';
+import {SettingsComponent} from './components/settings.component';
+import {CustomPricesComponent} from './components/crafting-settings/custom-prices/custom-prices.component';
+import {CustomProcComponent} from './components/crafting-settings/custom-proc/custom-proc.component';
+import {IconModule} from '../icon/icon.module';
 
 @NgModule({
   declarations: [
+    SettingsComponent,
     SetupComponent,
     SelectRealmComponent,
     NotificationSettingsComponent,
     GeneralSettingsComponent,
     CraftingSettingsComponent,
-    CharactersComponent,
-    CharacterComponent,
+    CustomPricesComponent,
+    CustomProcComponent,
     RealmListComponent
   ],
   imports: [
@@ -51,9 +55,13 @@ import {SettingsRouteModule} from './settings-route.module';
     MatSelectModule,
     MatCheckboxModule,
     TableModule,
-    SettingsRouteModule
+    SettingsRouteModule,
+    CharacterModule,
+    MatInputModule,
+    MatTooltipModule,
+    IconModule
   ],
-  exports: [CharacterComponent, RealmListComponent]
+  exports: [RealmListComponent]
 })
 export class SettingsModule {
 }

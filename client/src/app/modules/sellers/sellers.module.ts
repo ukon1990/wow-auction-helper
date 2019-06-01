@@ -7,6 +7,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule, MatCardModule, MatFormFieldModule, MatSelectModule, MatTabsModule, MatTooltipModule} from '@angular/material';
 import {TableModule} from '../table/table.module';
 import {SettingsModule} from '../settings/settings.module';
+import {CharacterModule} from '../character/character.module';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {SettingsModule} from '../settings/settings.module';
     ReactiveFormsModule,
     MatFormFieldModule,
     TableModule,
+    CharacterModule,
     MatSelectModule,
     SettingsModule,
     MatTabsModule,

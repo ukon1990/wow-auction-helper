@@ -7,14 +7,14 @@
     <mat-checkbox formControlName="isWatchlist">If there are one or more matches to my watchlist</mat-checkbox>
     <mat-checkbox formControlName="isBelowVendorSell">Items are below vendor sell price</mat-checkbox>-->
   </form>
-  
+
   Test notification: <button (click)="sendTest()" mat-raised-button>Send</button>
 </div>
 
 <ng-template #notHttps>
   <em>
     Notifications will not work if you are using http instead of https for the webapp. If you are using http to connect to the webapp, consider switching.
-    Export your settings in the general tab and import them into the import 
+    Export your settings in the general tab and import them into the import
     section on the <a href="https://wah.jonaskf.net" target="_blank">https://wah.jonaskf.net</a> (the link opens in a new tab).
   </em>
 </ng-template>

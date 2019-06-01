@@ -23,20 +23,22 @@
             Auctions
           </a>
         </li>
-        <li class="nav-item" *ngIf="isRegisteredUser()" matTooltip="The percentage, represents the percent of undercut auctions.">
+        <li class="nav-item" *ngIf="isRegisteredUser()"
+            matTooltip="The percentage, represents the percent of undercut auctions.">
           <a class="nav-link" routerLink="my-auctions" routerLinkActive="active">
-            My auctions 
+            My auctions
             <span *ngIf="getUserAuctions().auctions.length > 0">
               ({{ getUserAuctions().undercutAuctions / getUserAuctions().auctions.length | percent }})
             </span>
           </a>
         </li>
-        <ul class="navbar-nav" *ngIf="isRegisteredUser()">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Tools
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <li class="nav-item dropdown" *ngIf="isRegisteredUser()">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+             aria-haspopup="true" aria-expanded="false">
+            Tools
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <ul>
               <li class="nav-item">
                 <a class="nav-link" routerLink="dashboard/manage-dashboards" routerLinkActive="active">
                   Manage dashboards
@@ -47,11 +49,11 @@
                   Trade vendors
                 </a>
               </li><!--
-              <li class="nav-item">
-                <a class="nav-link" routerLink="tools/my-pets" routerLinkActive="active">
-                  My pets
-                </a>
-              </li>-->
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="tools/my-pets" routerLinkActive="active">
+                    My pets
+                  </a>
+                </li>-->
               <li class="nav-item">
                 <a class="nav-link" routerLink="tools/sellers" routerLinkActive="active">
                   Sellers
@@ -72,9 +74,9 @@
                   Reputations
                 </a>
               </li>
-            </div>
-          </li>
-        </ul>
+            </ul>
+          </div>
+        </li>
         <li class="nav-item" *ngIf="isRegisteredUser()">
           <a class="nav-link" routerLink="settings" routerLinkActive="active">
             Settings
@@ -101,7 +103,8 @@
           <wah-download></wah-download>
         </li>
       </ul>
-      <mat-slide-toggle matTooltip="Toggle dark theme on/off" [checked]="isDarkMode()" (change)="saveUser($event)"></mat-slide-toggle>
+      <mat-slide-toggle matTooltip="Toggle dark theme on/off" [checked]="isDarkMode()"
+                        (change)="saveUser($event)"></mat-slide-toggle>
     </div>
   </nav>
 </header>
