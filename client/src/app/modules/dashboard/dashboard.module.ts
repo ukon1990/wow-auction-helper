@@ -26,6 +26,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import {UtilModule} from '../util/util.module';
     TableModule,
     MatExpansionModule,
     IconModule,
-    UtilModule
+    UtilModule,
+    RouterModule
   ]
 })
 export class DashboardModule { }

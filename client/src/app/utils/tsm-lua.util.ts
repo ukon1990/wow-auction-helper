@@ -99,7 +99,7 @@ export class TsmLuaUtil {
         this.summerizeData(result, fRes);
 
         if (Object.keys(result[fRes.type][fRes.character.realm][fRes.character.name]).length === 0) {
-          Report.debug('Field missing data', [fRes, field]);
+          // Report.debug('Field missing data', [fRes, field]);
         }
 
       } else {

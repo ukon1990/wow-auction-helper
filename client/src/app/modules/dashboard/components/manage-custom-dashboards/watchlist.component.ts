@@ -1,16 +1,14 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import {  } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
-import { Angulartics2 } from 'angulartics2';
+import {Component, AfterViewInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {startWith, map} from 'rxjs/operators';
 
-import { Watchlist, WatchlistItem, WatchlistGroup } from '../../models/watchlist.model';
-import { SharedService } from '../../../../services/shared.service';
-import { Recipe } from '../../../crafting/models/recipe';
-import { Item } from '../../../../models/item/item';
-import { Title } from '@angular/platform-browser';
-import { SelectionItem } from '../../models/selection-item.model';
+import {Watchlist, WatchlistItem, WatchlistGroup} from '../../models/watchlist.model';
+import {SharedService} from '../../../../services/shared.service';
+import {Item} from '../../../../models/item/item';
+import {Title} from '@angular/platform-browser';
+import {SelectionItem} from '../../models/selection-item.model';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-watchlist',
@@ -32,17 +30,19 @@ export class WatchlistComponent implements AfterViewInit {
   shareString;
   tsmGroupStrings: Map<string, string> = new Map<string, string>();
 
-  constructor(private angulartics2: Angulartics2, private _title: Title) {
+  constructor(private _title: Title) {
     this._title.setTitle('WAH - Manage dashboards');
 
     this.filteredItems = this.itemSearchForm.valueChanges
       .pipe(
-      startWith(''),
-      map(name => this.filter(name))
+        startWith(''),
+        map(name => this.filter(name))
       );
+    console.log('WatchlistComponent.contructor');
   }
 
   ngAfterViewInit() {
+    console.log('WatchlistComponent.ngAfterViewInit', SharedService.user, this.watchlist);
     if (!SharedService.user.watchlist) {
       SharedService.user.watchlist = new Watchlist();
     }
@@ -61,7 +61,7 @@ export class WatchlistComponent implements AfterViewInit {
   }
 
   shareGroup(group: WatchlistGroup): void {
-    this.shareString = JSON.stringify({ groups: [group]});
+    this.shareString = JSON.stringify({groups: [group]});
   }
 
   close(): void {
@@ -86,10 +86,8 @@ export class WatchlistComponent implements AfterViewInit {
     this.edit(group, wlItem, SharedService.user.watchlist.groups.length - 1);
     this.itemSearchForm.setValue('');
 
-    this.angulartics2.eventTrack.next({
-      action: 'Added new item',
-      properties: { category: 'Watchlist' },
-    });
+    Report.send('Added new item', 'Watchlist');
+
     this.setSelectionItems();
   }
 
@@ -98,19 +96,13 @@ export class WatchlistComponent implements AfterViewInit {
     this.selectedItem = item;
     this.selectedIndex = index;
 
-    this.angulartics2.eventTrack.next({
-      action: 'Edited item',
-      properties: { category: 'Watchlist' },
-    });
+    Report.send('Edited item', 'Watchlist');
   }
 
   delete(group: WatchlistGroup, watchlistItem: WatchlistItem, index: number, isBatchDeleting?: boolean): void {
     SharedService.user.watchlist.removeItem(group, index);
 
-    this.angulartics2.eventTrack.next({
-      action: 'Removed item',
-      properties: { category: 'Watchlist' },
-    });
+    Report.send('Removed item', 'Watchlist');
 
     this.setTSMGroupString();
     if (!isBatchDeleting) {
@@ -124,7 +116,7 @@ export class WatchlistComponent implements AfterViewInit {
       // this.tsmGroupStrings.set
       const uniqueItems = new Map<string, number>();
       group.items.forEach(item => {
-        uniqueItems[`i:${ item.itemID }`] = item.itemID;
+        uniqueItems[`i:${item.itemID}`] = item.itemID;
       });
       this.tsmGroupStrings[group.name] = Object.keys(uniqueItems).join(',');
     });
@@ -173,7 +165,6 @@ export class WatchlistComponent implements AfterViewInit {
 
   save(group): void {
     // group.items = checked;
-    console.log('grp', group);
     SharedService.user.watchlist.save();
   }
 
@@ -188,9 +179,9 @@ export class WatchlistComponent implements AfterViewInit {
   }
 
   /**
- * Such efficient, such ugh
- * @param name Item name for the query
- */
+   * Such efficient, such ugh
+   * @param name Item name for the query
+   */
   private filter(name: string): Array<Item> {
     return SharedService.itemsUnmapped.filter(i =>
       i.name.toLowerCase().indexOf(name.toLowerCase()) !== -1).slice(0, 20);

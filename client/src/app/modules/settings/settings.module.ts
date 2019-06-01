@@ -18,7 +18,7 @@ import {
   MatTabsModule, MatTooltipModule
 } from '@angular/material';
 import {AboutModule} from '../about/about.module';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RealmListComponent} from './components/realm-list/realm-list.component';
 import {TableModule} from '../table/table.module';
 import {CharacterModule} from '../character/character.module';
@@ -45,6 +45,7 @@ import {IconModule} from '../icon/icon.module';
     MatTabsModule,
     AboutModule,
     MatStepperModule,
+    FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
