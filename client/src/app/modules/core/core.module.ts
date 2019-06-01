@@ -4,7 +4,7 @@ import {IconComponent} from '../icon/icon.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {MenuComponent} from './components/navbar/menu/menu.component';
 import {CraftingComponent} from './components/crafting/crafting.component';
-import {GoldPipe} from '../../pipes/gold.pipe';
+import {GoldPipe} from '../util/pipes/gold.pipe';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {DashboardItemComponent} from './components/dashboard/dashboard-item/dashboard-item.component';
 import {AuctionsComponent} from './components/auctions/auctions.component';
@@ -50,6 +50,7 @@ import {TableModule} from '../table/table.module';
 import {IconModule} from '../icon/icon.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SettingsModule} from '../settings/settings.module';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -105,9 +106,9 @@ import {SettingsModule} from '../settings/settings.module';
     MaterialModule,
     TableModule,
     IconModule,
-    SettingsModule
+    RouterModule
   ],
-  exports: [GoldPipe, NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
+  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
 })
 export class CoreModule {
 }

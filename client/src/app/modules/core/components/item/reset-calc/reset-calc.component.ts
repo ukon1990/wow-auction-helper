@@ -3,7 +3,7 @@ import { Component, Input, OnInit , OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Angulartics2 } from 'angulartics2';
-import {GoldPipe} from '../../../../../pipes/gold.pipe';
+import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../../services/shared.service';
 import {AuctionItem} from '../../../../../models/auction/auction-item';
 import {Crafting} from '../../../../../models/crafting/crafting';

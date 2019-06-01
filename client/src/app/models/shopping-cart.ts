@@ -1,7 +1,7 @@
 import {Recipe} from './crafting/recipe';
 import {AuctionItem} from './auction/auction-item';
 import {SharedService} from '../services/shared.service';
-import {GoldPipe} from '../pipes/gold.pipe';
+import {GoldPipe} from '../modules/util/pipes/gold.pipe';
 import {CustomProcs} from './crafting/custom-proc';
 
 /**

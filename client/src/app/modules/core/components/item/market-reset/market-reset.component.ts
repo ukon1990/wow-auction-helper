@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Angulartics2 } from 'angulartics2';
-import {GoldPipe} from '../../../../../pipes/gold.pipe';
+import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../../services/shared.service';
 import {ColumnDescription} from '../../../../../models/column-description';
 import {MarketResetCost} from '../../../../../models/auction/market-reset-cost';

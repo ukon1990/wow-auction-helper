@@ -2,7 +2,7 @@ import {ColumnDescription} from './column-description';
 import {SharedService} from '../services/shared.service';
 import {Item} from './item/item';
 import {Notification} from './user/notification';
-import {GoldPipe} from '../pipes/gold.pipe';
+import {GoldPipe} from '../modules/util/pipes/gold.pipe';
 import {WatchlistItem, WatchlistGroup} from './watchlist/watchlist';
 import {itemClasses} from './item/item-classes';
 import {Seller} from './seller';
