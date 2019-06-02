@@ -239,7 +239,6 @@ export class AuctionsService {
 
   private isAuctionArrayEmpty(status: RealmStatus) {
     const list = this.events.list.getValue();
-    console.log('All auctions', list);
     return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
   }
 }

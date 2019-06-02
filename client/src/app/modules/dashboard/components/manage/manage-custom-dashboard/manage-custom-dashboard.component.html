@@ -41,10 +41,14 @@
 
     <div class="float-left" matTooltip='You can change this in "Manage groups"'>
       <mat-form-field class="ml-2">
-        <input matInput placeholder="Minimum regional sale rate %" [(ngModel)]="group.matchSaleRate" disabled>
+        <input matInput type="number"
+               placeholder="Minimum regional sale rate %"
+               [(ngModel)]="group.matchSaleRate">
       </mat-form-field>
       <mat-form-field class="ml-2">
-        <input matInput placeholder="Minimum daily sold" [(ngModel)]="group.matchDailySold" disabled>
+        <input matInput type="number"
+               placeholder="Minimum daily sold"
+               [(ngModel)]="group.matchDailySold">
       </mat-form-field>
     </div>
 

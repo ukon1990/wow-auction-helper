@@ -11,7 +11,7 @@ import {AboutPrivacyComponent} from './components/about-privacy/about-privacy.co
 import {AboutDataComponent} from './components/about-data/about-data.component';
 import {AboutCraftingComponent} from './components/about-crafting/about-crafting.component';
 import {GithubService} from './services/github.service';
-import {MatTabsModule} from '@angular/material';
+import {MatButtonModule, MatCardModule, MatTabsModule, MatTooltipModule} from '@angular/material';
 import {RouterModule} from '@angular/router';
 
 @NgModule({
@@ -30,7 +30,10 @@ import {RouterModule} from '@angular/router';
   imports: [
     CommonModule,
     RouterModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatTooltipModule
   ],
   exports: [
     AboutWhatIsComponent,

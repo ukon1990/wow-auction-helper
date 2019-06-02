@@ -45,8 +45,7 @@ export class DownloadComponent implements OnInit {
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
     private _petService: PetsService,
-    private _dbService: DatabaseService,
-    private angulartics2: Angulartics2) {
+    private _dbService: DatabaseService) {
 
 
     setInterval(() => {

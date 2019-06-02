@@ -202,7 +202,7 @@ export class DatabaseService {
             auctionService.events.groupedList.next(auctionItems))
           .catch(error =>
             ErrorReport.sendError('getAllAuctions', error));
-        console.log('Restored auctions from local DB', auctions);
+        console.log('Restored auctions from local DB');
         SharedService.events.auctionUpdate.emit();
       }).catch(e => {
         console.error('Could not restore auctions from local DB', e);

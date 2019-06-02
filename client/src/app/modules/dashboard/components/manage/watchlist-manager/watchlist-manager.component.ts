@@ -49,10 +49,9 @@ export class WatchlistManagerComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    /* TODO: Do this without interval.
     this.saveInterval = setInterval(() => {
       SharedService.user.watchlist.save();
-    }, 1000);*/
+    }, 1000);
   }
 
   ngOnDestroy(): void {
