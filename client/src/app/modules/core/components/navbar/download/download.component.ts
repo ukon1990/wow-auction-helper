@@ -78,99 +78,98 @@ export class DownloadComponent implements OnInit {
       await this._realmService.getRealms()
         .catch(error => console.error(error));
 
-      this.downloadProgress = 'Loading items from disk';
-      await this._dbService.getAllItems()
-        .then(async () => {
-          if (Object.keys(SharedService.items).length === 0) {
-            delete localStorage['timestamp_items'];
-          }
-        })
-        .catch(async error => {
-          console.error(error);
-        });
-
-      if (this.isOnline()) {
-        await this.download('items');
-      }
-
-      this.downloadProgress = 'Loading pets from disk';
-      await this._dbService.getAllPets()
-        .then(async () => {
-          if (Object.keys(SharedService.pets).length === 0) {
-            delete localStorage['timestamp_pets'];
-            this.downloadProgress = 'Downloading pets';
-          }
-        })
-        .catch(async error => {
-        });
-      this.downloadProgress = 'Downloading pets';
-
-      if (this.isOnline()) {
-        await this.download('pets');
-      }
-
-      this.downloadProgress = 'Downloading recipes';
-      await this._dbService.getAllRecipes()
-        .then(async () => {
-          if (SharedService.recipes.length === 0) {
-            delete localStorage['timestamp_recipes'];
-          }
-        })
-        .catch(async (error) => {
-        });
-
-      if (this.isOnline()) {
-        await this.download('recipes');
-        await Crafting.checkForMissingRecipes(this._craftingService);
-      }
-
-      Crafting.setOnUseCraftsWithNoReagents();
-
-      if (SharedService.user.apiToUse === 'tsm') {
-        if (new Date().toDateString() !== localStorage['timestamp_tsm'] && this.isOnline()) {
-          this.downloadProgress = 'Downloading new TSM data';
-          await this._auctionsService.getTsmAuctions();
-        } else {
-          this.downloadProgress = 'Loading TSM from disk';
-          await this._dbService.getTSMItems()
-            .then(async r => {
-              if (Object.keys(SharedService.tsm).length === 0 && this.isOnline()) {
-                this.downloadProgress = 'Downloading TSM data';
-                await this._auctionsService.getTsmAuctions();
-              }
-            })
-            .catch(async e => {
-              console.error('Could not restore TSM data', e);
-              await this._auctionsService.getTsmAuctions();
-            });
-        }
-      } else if (SharedService.user.apiToUse === 'wowuction') {
-        if (new Date().toDateString() !== localStorage['timestamp_wowuction'] && this.isOnline()) {
-          this.downloadProgress = 'Downloading new wowuction data';
-          await this._auctionsService.getWoWUctionAuctions();
-        } else {
-          this.downloadProgress = 'Loading wowuction from disk';
-          await this._dbService.getWoWUctionItems()
-            .then(async r => {
-              if (Object.keys(SharedService.wowUction).length === 0 && this.isOnline()) {
-                this.downloadProgress = 'Downloading wowuction data';
-                await this._auctionsService.getWoWUctionAuctions();
-              }
-            })
-            .catch(async e => {
-              console.error('Could not restore WoWUction data', e);
-              await this._auctionsService.getWoWUctionAuctions();
-            });
-        }
-      }
-
-      this.downloadProgress = 'Loading auctions from disk';
+      await this.loadItems();
+      await this.loadPets();
+      await this.loadRecipes();
+      await this.loadThirdPartyAPI();
+      await this.loadAuctions();
 
       await this.startRealmStatusInterval();
       await this._dbService.getTSMAddonData();
       this.downloadProgress = '';
     }
     // TODO: Later => this._itemService.addMissingItems();
+  }
+
+  private async loadAuctions() {
+    this.downloadProgress = 'Loading auctions from disk';
+    await this._dbService.getAllAuctions(this._petService, this._auctionsService);
+  }
+
+  private async loadRecipes() {
+    this.downloadProgress = 'Downloading recipes';
+    await this._dbService.getAllRecipes()
+      .then(async () => {
+        if (SharedService.recipes.length === 0) {
+          delete localStorage['timestamp_recipes'];
+        }
+      })
+      .catch(async (error) => {
+      });
+
+    if (this.isOnline()) {
+      await this.download('recipes');
+      await Crafting.checkForMissingRecipes(this._craftingService);
+    }
+
+    Crafting.setOnUseCraftsWithNoReagents();
+  }
+
+  private async loadThirdPartyAPI() {
+    if (SharedService.user.apiToUse === 'tsm') {
+      if (new Date().toDateString() !== localStorage['timestamp_tsm'] && this.isOnline()) {
+        this.downloadProgress = 'Downloading new TSM data';
+        await this._auctionsService.getTsmAuctions();
+      } else {
+        this.downloadProgress = 'Loading TSM from disk';
+        await this._dbService.getTSMItems()
+          .then(async r => {
+            if (Object.keys(SharedService.tsm).length === 0 && this.isOnline()) {
+              this.downloadProgress = 'Downloading TSM data';
+              await this._auctionsService.getTsmAuctions();
+            }
+          })
+          .catch(async e => {
+            console.error('Could not restore TSM data', e);
+            await this._auctionsService.getTsmAuctions();
+          });
+      }
+    }
+  }
+
+  private async loadPets() {
+    this.downloadProgress = 'Loading pets from disk';
+    await this._dbService.getAllPets()
+      .then(async () => {
+        if (Object.keys(SharedService.pets).length === 0) {
+          delete localStorage['timestamp_pets'];
+          this.downloadProgress = 'Downloading pets';
+        }
+      })
+      .catch(async error => {
+      });
+    this.downloadProgress = 'Downloading pets';
+
+    if (this.isOnline()) {
+      await this.download('pets');
+    }
+  }
+
+  private async loadItems() {
+    this.downloadProgress = 'Loading items from disk';
+    await this._dbService.getAllItems()
+      .then(async () => {
+        if (Object.keys(SharedService.items).length === 0) {
+          delete localStorage['timestamp_items'];
+        }
+      })
+      .catch(async error => {
+        console.error(error);
+      });
+
+    if (this.isOnline()) {
+      await this.download('items');
+    }
   }
 
   getMessage(): string {

@@ -83,6 +83,7 @@ export class AuctionsService {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         await AuctionUtil.organize(a['auctions'], this.petService);
+        this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
         this.handleMissingAuctionItems(missingItems);
@@ -238,6 +239,7 @@ export class AuctionsService {
 
   private isAuctionArrayEmpty(status: RealmStatus) {
     const list = this.events.list.getValue();
+    console.log('All auctions', list);
     return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
   }
 }

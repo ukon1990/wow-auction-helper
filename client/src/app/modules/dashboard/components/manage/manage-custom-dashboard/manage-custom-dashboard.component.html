@@ -16,7 +16,7 @@
       </button>
 
       <button class="ml-2"
-              (click)="batchDelete(group)" mat-raised-button
+              (click)="batchDelete()" mat-raised-button
               [disabled]="batchCount === 0">
         <i class="mr-2 fas fa-trash-alt"></i>
         Delete batch ({{ batchCount | number }})
@@ -84,13 +84,14 @@
 </mat-paginator>
 <div class="slim-sm row col-md-12">
 
-  <div *ngFor="let item of group.items | slice:getFromValue():getToValue(); let i = index" class="col-md-6 col-lg-4 mb-3">
+  <div *ngFor="let item of group.items | slice:getFromValue():getToValue(); let i = index"
+       class="col-md-6 col-lg-4 mb-3">
     <wah-watchlist-item *ngIf="itemSelection[getSelectedIndex(i)]"
                         [selectionItem]="itemSelection[getSelectedIndex(i)]"
                         [item]="item"
                         (isSelected)="setCountSelectedItems($event, itemSelection)"
                         (edit)="edit(group, item, getSelectedIndex(i))"
-                        (delete)="delete(group, item, getSelectedIndex(i))">
+                        (delete)="delete(getSelectedIndex(i))">
     </wah-watchlist-item>
   </div>
 </div>

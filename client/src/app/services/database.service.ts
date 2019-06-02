@@ -14,6 +14,7 @@ import {Platform} from '@angular/cdk/platform';
 import {TSMCSV, TsmLuaUtil} from '../utils/tsm-lua.util';
 import {ErrorReport} from '../utils/error-report.util';
 import {Report} from '../utils/report.util';
+import {AuctionsService} from './auctions.service';
 
 /**
  * A Class for handeling the indexedDB
@@ -185,7 +186,7 @@ export class DatabaseService {
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
-  async getAllAuctions(petService?: PetsService): Dexie.Promise<any> {
+  async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
     if (this.platform === null || this.platform.WEBKIT) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
@@ -195,8 +196,13 @@ export class DatabaseService {
       .toArray()
       .then(auctions => {
         SharedService.downloading.auctions = false;
-        AuctionUtil.organize(auctions, petService);
-        console.log('Restored auction from local DB');
+        auctionService.events.list.next(auctions);
+        AuctionUtil.organize(auctions, petService)
+          .then(auctionItems =>
+            auctionService.events.groupedList.next(auctionItems))
+          .catch(error =>
+            ErrorReport.sendError('getAllAuctions', error));
+        console.log('Restored auctions from local DB', auctions);
         SharedService.events.auctionUpdate.emit();
       }).catch(e => {
         console.error('Could not restore auctions from local DB', e);

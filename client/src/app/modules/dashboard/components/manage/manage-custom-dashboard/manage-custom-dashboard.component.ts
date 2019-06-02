@@ -71,8 +71,8 @@ export class ManageCustomDashboardComponent implements AfterViewInit {
     Report.send('Edited item', 'Watchlist');
   }
 
-  delete(group: WatchlistGroup, watchlistItem: WatchlistItem, index: number, isBatchDeleting?: boolean): void {
-    SharedService.user.watchlist.removeItem(group, index);
+  delete(index: number, isBatchDeleting?: boolean): void {
+    SharedService.user.watchlist.removeItem(this.group, index);
 
     Report.send('Removed item', 'Watchlist');
 
@@ -176,12 +176,12 @@ export class ManageCustomDashboardComponent implements AfterViewInit {
     });
   }
 
-  batchDelete(group: WatchlistGroup): void {
-    for (let i = group.items.length - 1; i >= 0; i--) {
-      if (this.itemSelection[group.name][i].isSelected) {
-        this.delete(group, group.items[i], i, true);
+  batchDelete(): void {
+    this.itemSelection.forEach((selection, index: number) => {
+      if (selection.isSelected) {
+        this.delete(index, true);
       }
-    }
+    });
     this.setSelectionItems();
   }
 
