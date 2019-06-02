@@ -108,6 +108,10 @@ export class ManageCustomDashboardComponent implements AfterViewInit {
     SharedService.user.watchlist.save();
   }
 
+  getSelectedIndex(index: number): number {
+    return this.getFromValue() + index;
+  }
+
   /* istanbul ignore next */
   getFromValue(): number {
     if (!this.pageEvent || !this.pageEvent.pageSize) {

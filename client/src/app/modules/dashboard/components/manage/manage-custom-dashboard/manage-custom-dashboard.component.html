@@ -85,12 +85,12 @@
 <div class="slim-sm row col-md-12">
 
   <div *ngFor="let item of group.items | slice:getFromValue():getToValue(); let i = index" class="col-md-6 col-lg-4 mb-3">
-    <wah-watchlist-item *ngIf="itemSelection[i]"
-                        [selectionItem]="itemSelection[getFromValue() + i - 1]"
+    <wah-watchlist-item *ngIf="itemSelection[getSelectedIndex(i)]"
+                        [selectionItem]="itemSelection[getSelectedIndex(i)]"
                         [item]="item"
                         (isSelected)="setCountSelectedItems($event, itemSelection)"
-                        (edit)="edit(group, item, getFromValue() + i - 1)"
-                        (delete)="delete(group, item, getFromValue() + i - 1)">
+                        (edit)="edit(group, item, getSelectedIndex(i))"
+                        (delete)="delete(group, item, getSelectedIndex(i))">
     </wah-watchlist-item>
   </div>
 </div>
