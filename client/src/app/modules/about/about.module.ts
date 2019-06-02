@@ -11,7 +11,15 @@ import {AboutPrivacyComponent} from './components/about-privacy/about-privacy.co
 import {AboutDataComponent} from './components/about-data/about-data.component';
 import {AboutCraftingComponent} from './components/about-crafting/about-crafting.component';
 import {GithubService} from './services/github.service';
-import {MatButtonModule, MatCardModule, MatTabsModule, MatTooltipModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule, MatCheckboxModule,
+  MatChipsModule,
+  MatExpansionModule,
+  MatListModule,
+  MatTabsModule,
+  MatTooltipModule
+} from '@angular/material';
 import {RouterModule} from '@angular/router';
 
 @NgModule({
@@ -33,12 +41,17 @@ import {RouterModule} from '@angular/router';
     MatTabsModule,
     MatCardModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatExpansionModule,
+    MatChipsModule,
+    MatListModule,
+    MatCheckboxModule
   ],
   exports: [
     AboutWhatIsComponent,
     AboutPrivacyComponent,
-    NewsComponent
+    NewsComponent,
+    ChangelogComponent
   ],
   providers: [GithubService]
 })

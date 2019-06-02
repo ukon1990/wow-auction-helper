@@ -17,6 +17,7 @@ import {
 import {IconModule} from '../icon/icon.module';
 import {TableModule} from '../table/table.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UtilModule} from '../util/util.module';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     ReactiveFormsModule,
     FormsModule,
     MatSelectModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    UtilModule
   ]
 })
 export class CraftingModule { }

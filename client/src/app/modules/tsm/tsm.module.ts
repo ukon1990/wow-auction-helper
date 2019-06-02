@@ -16,7 +16,8 @@ import {UtilModule} from '../util/util.module';
     ProfitSummaryCardComponent,
     ItemSaleSummaryComponent],
   exports: [
-    ItemSaleSummaryComponent
+    ItemSaleSummaryComponent,
+    TsmAddonDbComponent
   ],
   imports: [
     CommonModule,
