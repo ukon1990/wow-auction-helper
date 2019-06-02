@@ -10,7 +10,7 @@ export class Endpoints {
   public static readonly IMAGE_PATH = 'https://render-eu.worldofwarcraft.com/';
   public static readonly IMAGE_PATH_ICONS = Endpoints.IMAGE_PATH + 'icons/56';
   // char/realm/??/??.jpg
-  public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
+  public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character.model.ts';
   public static readonly LAMBDAS = {
     EU: environment.production ?
       'https://lcrz8vcw36.execute-api.eu-west-1.amazonaws.com/prod/' :

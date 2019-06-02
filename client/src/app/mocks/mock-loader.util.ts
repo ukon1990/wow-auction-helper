@@ -1,8 +1,8 @@
 import {SharedService} from '../services/shared.service';
-import {TSM} from '../models/auction/tsm';
-import {AuctionHandler} from '../models/auction/auction-handler';
+import {TSM} from '../modules/auction/models/tsm.model';
+import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {environment} from '../../environments/environment';
-import {Pet} from '../models/pet';
+import {Pet} from '../modules/pet/models/pet';
 import {Item} from '../models/item/item';
 import {CraftingService} from '../services/crafting.service';
 import {ItemService} from '../services/item.service';
@@ -36,7 +36,7 @@ export class MockLoaderUtil {
   setAuctionData(): void {
     const auctions = this.getFile('auctions');
     const service = new PetsService(null, null, null, null)
-    AuctionHandler.organize(auctions['auctions'], service);
+    AuctionUtil.organize(auctions['auctions'], service);
   }
 
   setPets(): void {

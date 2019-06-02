@@ -1,22 +1,22 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from './shared.service';
-import {AuctionHandler} from '../models/auction/auction-handler';
-import {TSM} from '../models/auction/tsm';
+import {AuctionUtil} from '../modules/auction/utils/auction.util';
+import {TSM} from '../modules/auction/models/tsm.model';
 import {Endpoints} from './endpoints';
 import {DatabaseService} from './database.service';
 import {ItemService} from './item.service';
 import {Notifications} from '../models/user/notification';
 import {MatSnackBar} from '@angular/material';
-import {WoWUction} from '../models/auction/wowuction';
+import {WoWUction} from '../modules/auction/models/wowuction.model';
 import {PetsService} from './pets.service';
 import {Angulartics2} from 'angulartics2';
 import {ErrorReport} from '../utils/error-report.util';
-import {AuctionResponse} from '../models/auction/auctions-response';
+import {AuctionResponse} from '../modules/auction/models/auctions-response.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {BehaviorSubject} from 'rxjs';
-import {Auction} from '../models/auction/auction';
-import {AuctionItem} from '../models/auction/auction-item';
+import {Auction} from '../modules/auction/models/auction.model';
+import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {RealmStatus} from '../models/realm-status.model';
 
@@ -82,7 +82,8 @@ export class AuctionsService {
       .then(async a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        await AuctionHandler.organize(a['auctions'], this.petService);
+        await AuctionUtil.organize(a['auctions'], this.petService);
+        this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
         this.handleMissingAuctionItems(missingItems);

@@ -1,4 +1,4 @@
-import { Auction } from './auction/auction';
+import { Auction } from '../modules/auction/models/auction.model';
 import { SharedService } from '../services/shared.service';
 import { itemClasses } from './item/item-classes';
 

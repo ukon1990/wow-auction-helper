@@ -1,6 +1,6 @@
-import {Recipe} from '../models/crafting/recipe';
+import {Recipe} from '../modules/crafting/models/recipe';
 import {SharedService} from '../services/shared.service';
-import {TSM} from '../models/auction/tsm';
+import {TSM} from '../modules/auction/models/tsm.model';
 import {Item} from '../models/item/item';
 
 export class SummaryUtil {

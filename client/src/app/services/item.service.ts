@@ -11,7 +11,7 @@ import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from '../utils/prospect-milling.util';
 import {MatSnackBar} from '@angular/material';
 import {ItemOverrides} from '../overrides/item.overrides';
-import {Recipe} from '../models/crafting/recipe';
+import {Recipe} from '../modules/crafting/models/recipe';
 import {Platform} from '@angular/cdk/platform';
 
 class ItemResponse {

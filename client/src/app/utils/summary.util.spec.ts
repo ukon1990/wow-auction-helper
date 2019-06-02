@@ -1,4 +1,4 @@
-import {Recipe} from '../models/crafting/recipe';
+import {Recipe} from '../modules/crafting/models/recipe';
 import {SummaryUtil} from './summary.util';
 
 describe('SummaryUtil', () => {
