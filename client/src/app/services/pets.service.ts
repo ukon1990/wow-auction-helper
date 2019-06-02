@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Pet } from '../models/pet';
+import { Pet } from '../modules/pet/models/pet';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
 import { DatabaseService } from './database.service';

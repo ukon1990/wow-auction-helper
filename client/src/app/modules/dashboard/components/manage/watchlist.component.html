@@ -1,0 +1,14 @@
+<p>
+  Your groups will be displayed in the dashboard section, if there are any matches for your rules. You have multiple rules
+  per item (just add the item again). And you can compare to crafting cost(if you have character with a recipe for it), buyout,
+  market value etc.
+</p>
+<mat-tab-group *ngIf="watchlist" dynamicHeight>
+  <mat-tab label="Custom boards">
+    <wah-watchlist-manager></wah-watchlist-manager>
+  </mat-tab>
+
+  <mat-tab label="Built-in boards">
+    <wah-manage-items-built-in></wah-manage-items-built-in>
+  </mat-tab>
+</mat-tab-group>

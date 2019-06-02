@@ -1,7 +1,7 @@
 import { async, TestBed } from '@angular/core/testing';
 import { Sorter } from './sorter';
 import { SharedService } from '../services/shared.service';
-import { AuctionItem } from './auction/auction-item';
+import { AuctionItem } from '../modules/auction/models/auction-item.model';
 
 let sorter: Sorter,
   arr = [];

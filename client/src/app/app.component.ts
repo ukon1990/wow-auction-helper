@@ -11,11 +11,11 @@ import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
 import {UpdateService} from './services/update.service';
 import {ErrorReport} from './utils/error-report.util';
 import {MatSnackBar} from '@angular/material';
-import {DefaultDashboardSettings} from './models/dashboard/default-dashboard-settings.model';
+import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
 import {Subscription} from 'rxjs';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
-import {ShoppingCart} from './models/shopping/shopping-cart.model';
+import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({

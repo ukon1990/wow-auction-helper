@@ -1,24 +1,24 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { User } from '../models/user/user';
-import { AuctionItem } from '../models/auction/auction-item';
-import { Recipe } from '../models/crafting/recipe';
+import { AuctionItem } from '../modules/auction/models/auction-item.model';
+import { Recipe } from '../modules/crafting/models/recipe';
 import { Item } from '../models/item/item';
-import { TSM } from '../models/auction/tsm';
-import { Auction } from '../models/auction/auction';
+import { TSM } from '../modules/auction/models/tsm.model';
+import { Auction } from '../modules/auction/models/auction.model';
 import { Realm } from '../models/realm';
-import { Dashboard } from '../models/dashboard';
-import { Pet } from '../models/pet';
-import { AuctionResponse } from '../models/auction/auctions-response';
+import { Dashboard } from '../modules/dashboard/models/dashboard.model';
+import { Pet } from '../modules/pet/models/pet';
+import { AuctionResponse } from '../modules/auction/models/auctions-response.model';
 import { TradeVendor, TradeVendorItemValue } from '../models/item/trade-vendor';
-import { UserAuctions } from '../models/auction/user-auctions';
-import { CustomPrice } from '../models/crafting/custom-price';
+import { UserAuctions } from '../modules/auction/models/user-auctions.model';
+import { CustomPrice } from '../modules/crafting/models/custom-price';
 import { Seller, ItemClassGroup } from '../models/seller';
-import { AuctionPet } from '../models/auction/auction-pet';
+import { AuctionPet } from '../modules/auction/models/auction-pet.model';
 import { Notification } from '../models/user/notification';
-import { CustomProc } from '../models/crafting/custom-proc';
-import { WoWUction } from '../models/auction/wowuction';
+import { CustomProc } from '../modules/crafting/models/custom-proc';
+import { WoWUction } from '../modules/auction/models/wowuction.model';
 import { Zone } from '../models/zone.model';
-import { DefaultDashboardSettings } from '../models/dashboard/default-dashboard-settings.model';
+import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
 import {TSMCSV} from '../utils/tsm-lua.util';
 
 @Injectable()
