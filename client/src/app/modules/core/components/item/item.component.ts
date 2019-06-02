@@ -276,4 +276,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     this.selectedTab = index;
     localStorage[this.indexStoredName] = index;
   }
+
+  emitSelectedTab(seller: string) {
+    // TODO: Forgotten?
+  }
 }

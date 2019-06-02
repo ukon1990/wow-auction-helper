@@ -24,6 +24,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {CharacterModule} from '../character/character.module';
 import {UtilModule} from '../util/util.module';
+import {TsmModule} from '../tsm/tsm.module';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import {UtilModule} from '../util/util.module';
     CharacterModule,
     IconModule,
     RouterModule,
-    UtilModule
+    UtilModule,
+    TsmModule
   ],
   exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
 })

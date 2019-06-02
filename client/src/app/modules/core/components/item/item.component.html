@@ -83,7 +83,7 @@
         </wah-line-chart>
       </div>
       <div [ngClass]="{'col-md-8': selected.auctionItem, 'col-md-12': !selected.auctionItem}">
-        <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event)" #tabs>
+        <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" #tabs>
           <mat-tab *ngIf="selected.auctionItem && isMobile()" label="Auction price chart">
             <wah-line-chart [data]="selected.auctionItem.auctions"
                             *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
@@ -128,12 +128,20 @@
           </mat-tab>
 
           <mat-tab label="Created by" *ngIf="createdBy">
-            <wah-data-table id="itemID" [columns]="recipeColumns" [data]="createdBy" [isCrafting]="true" [numOfRows]="20">
+            <wah-data-table [id]="'itemID'"
+                            [columns]="recipeColumns"
+                            [data]="createdBy"
+                            [isCrafting]="true"
+                            [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
           <mat-tab label="Material for" *ngIf="materialFor.length > 0">
-            <wah-data-table id="itemID" iconSize="22" [columns]="recipeColumnsSimple" [data]="materialFor"
-                            [isCrafting]="false" filterParameter="name" [numOfRows]="20">
+            <wah-data-table [id]="'itemID'" iconSize="22"
+                            [columns]="recipeColumnsSimple"
+                            [data]="materialFor"
+                            [isCrafting]="false"
+                            filterParameter="name"
+                            [numOfRows]="20">
             </wah-data-table>
           </mat-tab>
           <mat-tab label="Dropped by"

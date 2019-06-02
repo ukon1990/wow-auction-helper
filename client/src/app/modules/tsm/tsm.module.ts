@@ -15,6 +15,9 @@ import {UtilModule} from '../util/util.module';
     ProfitSummaryComponent,
     ProfitSummaryCardComponent,
     ItemSaleSummaryComponent],
+  exports: [
+    ItemSaleSummaryComponent
+  ],
   imports: [
     CommonModule,
     MatCardModule,
