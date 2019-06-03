@@ -22,7 +22,8 @@ export class TSMCSV {
 export class TsmLuaUtil {
   public static calculateInventory(inventory): void {
     try {
-      Object.keys(inventory).forEach(realm => {
+      const realm =  SharedService.realms[SharedService.user.realm].name;
+      if (inventory[realm]) {
         inventory[realm].forEach(item => {
           const ahItem = SharedService.auctionItemsMap[item.id];
           if (ahItem) {
@@ -37,7 +38,7 @@ export class TsmLuaUtil {
             SharedService.items[item.id].inventory = item;
           }
         });
-      });
+      }
     } catch (error) {
       ErrorReport.sendError('TsmLuaUtil.calculateInventory', error);
     }
