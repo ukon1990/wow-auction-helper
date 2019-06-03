@@ -180,7 +180,9 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
 
   initContent(): void {
     if (SharedService.tsmAddonData.characterGuilds) {
-      const name = this.route.snapshot.firstChild.params.name;
+      const firstChild = this.route.snapshot.firstChild;
+      const name = !ObjectUtil.isNullOrUndefined(firstChild) ?
+        firstChild.params.name : undefined;
       this.setDataSets(SharedService.tsmAddonData);
 
       if (name) {
