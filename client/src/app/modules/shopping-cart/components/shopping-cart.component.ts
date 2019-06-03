@@ -5,6 +5,7 @@ import {Recipe} from '../../crafting/models/recipe';
 import {Report} from '../../../utils/report.util';
 import {ShoppingCart} from '../models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {TsmLuaUtil} from '../../../utils/tsm-lua.util';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -69,7 +70,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      SharedService.events.tsmDataRestored,
+      TsmLuaUtil.events,
       () => this.handleTSMAddonDataUpdate()
     );
 

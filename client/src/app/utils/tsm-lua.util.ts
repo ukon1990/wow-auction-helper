@@ -5,6 +5,7 @@ import {ItemInventory} from '../models/item/item';
 import {Report} from './report.util';
 import {ErrorReport} from './error-report.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
+import {BehaviorSubject} from 'rxjs';
 
 export class TSMCSV {
   characterGuilds?: any;
@@ -20,27 +21,42 @@ export class TSMCSV {
 }
 
 export class TsmLuaUtil {
+  static events: BehaviorSubject<TSMCSV> = new BehaviorSubject(undefined);
+
   public static calculateInventory(inventory): void {
     try {
-      const realm =  SharedService.realms[SharedService.user.realm].name;
-      if (inventory[realm]) {
-        inventory[realm].forEach(item => {
-          const ahItem = SharedService.auctionItemsMap[item.id];
-          if (ahItem) {
-            item.buyout = ahItem.buyout;
-            item.sumBuyout = ahItem.buyout * item.quantity;
-          } else {
-            item.buyout = 0;
-            item.sumBuyout = 0;
-          }
-
-          if (SharedService.items[item.id]) {
-            SharedService.items[item.id].inventory = item;
-          }
-        });
-      }
+      const currentRealm = SharedService.realms[SharedService.user.realm].name;
+      Object.keys(inventory)
+        .forEach(realm =>
+          this.calculateInventoryForRealm(inventory, realm, currentRealm));
     } catch (error) {
       ErrorReport.sendError('TsmLuaUtil.calculateInventory', error);
+    }
+  }
+
+  private static calculateInventoryForRealm(inventory, realm, currentRealm) {
+    if (inventory[realm]) {
+      inventory[realm].forEach(item => {
+        this.calculateInventoryItem(item);
+        this.addInventoryStatusForItem(realm, currentRealm, item);
+      });
+    }
+  }
+
+  private static calculateInventoryItem(item) {
+    const ahItem = SharedService.auctionItemsMap[item.id];
+    if (ahItem) {
+      item.buyout = ahItem.buyout;
+      item.sumBuyout = ahItem.buyout * item.quantity;
+    } else {
+      item.buyout = 0;
+      item.sumBuyout = 0;
+    }
+  }
+
+  private static addInventoryStatusForItem(realm, currentRealm, item) {
+    if (realm === currentRealm && SharedService.items[item.id]) {
+      SharedService.items[item.id].inventory = item;
     }
   }
 
@@ -80,6 +96,7 @@ export class TsmLuaUtil {
     } catch (error) {
       ErrorReport.sendError('TsmLuaUtil.convertList', error);
     }
+    TsmLuaUtil.events.next(result);
     return result;
   }
 

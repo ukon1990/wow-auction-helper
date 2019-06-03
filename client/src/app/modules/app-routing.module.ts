@@ -19,9 +19,10 @@ import {DisenchantingComponent} from './crafting/components/disenchanting/disenc
 import {AhSummaryComponent} from './dashboard/components/ah-summary/ah-summary.component';
 import {ReputationsComponent} from './core/components/reputations/reputations.component';
 import {TsmAddonDbComponent} from './tsm/components/tsm-addon-db.component';
-import {SettingsComponent} from './settings/components/settings.component';
 import {SETTINGS_ROUTE} from './settings/settings.routes';
 import {ABOUT_ROUTE} from './about/about.route';
+import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-summary.component';
+import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
 
 const TOOLS_ROUTE: Route = {
   path: 'tools',
@@ -47,7 +48,16 @@ const DASHBOARD_ROUTE: Route = {
     {path: 'items', component: DashboardItemsComponent},
     {path: 'sellers', component: DashboardSellersComponent},
     {path: 'ah-summary', component: AhSummaryComponent},
-    {path: 'tsm', component: TsmAddonDbComponent},
+    {
+      path: 'tsm', component: TsmAddonDbComponent, children: [
+        {path: 'summary', component: ProfitSummaryComponent},
+        {
+          path: 'dataset', component: TsmDatasetComponent, children: [
+            {path: ':name', component: TsmDatasetComponent}
+          ]
+        }
+      ]
+    },
     {path: 'manage-dashboards', component: WatchlistComponent}
   ]
 };

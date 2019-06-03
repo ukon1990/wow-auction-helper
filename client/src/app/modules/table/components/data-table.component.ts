@@ -81,17 +81,23 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       if (this.previousLength !== change.data.currentValue.length) {
         this.pageEvent.pageIndex = 0;
       }
-      this.previousLength = change.data.currentValue.length;
-      this.filteredData = change.data.currentValue;
-      this.sorter.sort(this.filteredData);
 
-      if (this.filterParameter) {
-        this.filterData();
-      }
+      setTimeout(() =>
+        this.handleDataChange(change));
     }
 
     if (change && change.itemsPerPage && change.itemsPerPage.currentValue) {
       this.pageEvent.pageSize = change.itemsPerPage.currentValue;
+    }
+  }
+
+  private handleDataChange(change) {
+    this.previousLength = change.data.currentValue.length;
+    this.filteredData = change.data.currentValue;
+    this.sorter.sort(this.filteredData);
+
+    if (this.filterParameter) {
+      this.filterData();
     }
   }
 

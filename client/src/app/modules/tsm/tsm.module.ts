@@ -8,13 +8,16 @@ import {MatButtonModule, MatCardModule, MatFormFieldModule, MatSelectModule, Mat
 import {ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';
+import { TsmDatasetComponent } from './components/tsm-dataset/tsm-dataset.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
     TsmAddonDbComponent,
     ProfitSummaryComponent,
     ProfitSummaryCardComponent,
-    ItemSaleSummaryComponent],
+    ItemSaleSummaryComponent,
+    TsmDatasetComponent],
   exports: [
     ItemSaleSummaryComponent,
     TsmAddonDbComponent
@@ -28,7 +31,8 @@ import {UtilModule} from '../util/util.module';
     MatSelectModule,
     TableModule,
     UtilModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterModule
   ]
 })
 export class TsmModule { }
