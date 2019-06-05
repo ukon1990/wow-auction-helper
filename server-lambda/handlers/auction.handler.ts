@@ -177,6 +177,10 @@ export class AuctionHandler {
       .query(RealmQuery
         .getAllHousesWithLastModifiedOlderThanPreviousDelay()) // This is the lowest dump update frequency found in EU and US
       .then(async rows => {
+        let shouldDeactivateNonRequestedRealmsCount = 0;
+        const day = (1000 * 60 * 60 * 24);
+        const week = day * 7;
+        const minLastRequestedTime = +new Date(+new Date() - week);
         const promiseThrottle = new PromiseThrottle({
             requestsPerSecond: 50,
             promiseImplementation: Promise
@@ -193,26 +197,40 @@ export class AuctionHandler {
           if (region && row.region !== region) {
             return;
           }
+          this.addUpdateHousePromise(promises, promiseThrottle, row, event);
 
-          promises.push(
-            promiseThrottle.add(
-              new HttpClientUtil()
-                .post
-                .bind(
-                  this,
-                  new Endpoints()
-                    .getLambdaUrl('auction/update-one', row.region, event),
-                  row,
-                  true)));
+          if (row.lastRequested < minLastRequestedTime) {
+            shouldDeactivateNonRequestedRealmsCount++;
+          }
         });
 
         await Promise.all(promises)
           .then(() =>
             console.log('Done initiating AH updates'))
           .catch(console.error);
+
+        if (shouldDeactivateNonRequestedRealmsCount > 0) {
+          new DatabaseUtil().query(RealmQuery.deactivateNonRequestedHouses(minLastRequestedTime))
+            .then(() =>
+              console.log(`Deactivated auto updating on ${shouldDeactivateNonRequestedRealmsCount} houses`))
+            .catch(console.error);
+        }
       })
       .catch(error =>
         Response.error(callback, error, event));
+  }
+
+  private addUpdateHousePromise(promises, promiseThrottle, row, event: APIGatewayEvent) {
+    promises.push(
+      promiseThrottle.add(
+        new HttpClientUtil()
+          .post
+          .bind(
+            this,
+            new Endpoints()
+              .getLambdaUrl('auction/update-one', row.region, event),
+            row,
+            true)));
   }
 
   async updateHouseRequest(event: APIGatewayEvent, callback: Callback) {
