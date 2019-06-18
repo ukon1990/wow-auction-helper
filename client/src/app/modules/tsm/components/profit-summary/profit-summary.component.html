@@ -4,26 +4,36 @@
   </mat-card-header>
 
   <mat-card-content>
+    <form [formGroup]="form">
+      <mat-form-field>
+        <mat-select placeholder="Realm" formControlName="realm">
+          <mat-option *ngFor="let realm of realms" [value]="realm">
+            {{ realm }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <div class="row col-md-12">
+    </form>
+
+    <div class="row col-md-12" *ngIf="profitSummary[form.getRawValue().realm]">
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="getProfit().past24Hours">
+                               [userProfit]="profitSummary[form.getRawValue().realm].past24Hours">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="getProfit().past7Days">
+                               [userProfit]="profitSummary[form.getRawValue().realm].past7Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="getProfit().past30Days">
+                               [userProfit]="profitSummary[form.getRawValue().realm].past30Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="getProfit().past90Days">
+                               [userProfit]="profitSummary[form.getRawValue().realm].past90Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="getProfit().total">
+                               [userProfit]="profitSummary[form.getRawValue().realm].total">
       </wah-profit-summary-card>
     </div>
 

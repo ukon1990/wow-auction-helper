@@ -39,7 +39,6 @@ export class SummaryCardComponent implements OnInit, OnChanges {
       this.tableData
         .sort((a: ChartData, b: ChartData) =>
           b.value - a.value);
-      Report.debug('summary', Object.keys(summary.dataMap), summary, this.tableData);
     }
   }
 

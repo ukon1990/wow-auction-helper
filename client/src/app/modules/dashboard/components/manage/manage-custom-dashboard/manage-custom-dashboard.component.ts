@@ -1,25 +1,26 @@
-import {AfterViewInit, Component, Input} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy} from '@angular/core';
 import {WatchlistGroup, WatchlistItem} from '../../../models/watchlist.model';
 import {Report} from '../../../../../utils/report.util';
 import {SharedService} from '../../../../../services/shared.service';
 import {Item} from '../../../../../models/item/item';
 import {SelectionItem} from '../../../models/selection-item.model';
-import {map, startWith} from 'rxjs/operators';
-import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {PageEvent} from '@angular/material';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 
 @Component({
   selector: 'wah-manage-custom-dashboard',
   templateUrl: './manage-custom-dashboard.component.html',
-  styleUrls: ['./manage-custom-dashboard.component.scss']
+  styleUrls: ['./manage-custom-dashboard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ManageCustomDashboardComponent implements AfterViewInit {
+export class ManageCustomDashboardComponent implements AfterViewInit, OnDestroy {
   @Input() group: WatchlistGroup;
+  filteredItems: WatchlistItem[] = [];
   shareString;
   item: WatchlistItem;
   itemSearchForm: FormControl = new FormControl();
-  filteredItems: Observable<any>;
   selectedItem: WatchlistItem;
   selectedBatchAdd: string;
   batchEditMode = false;
@@ -29,17 +30,54 @@ export class ManageCustomDashboardComponent implements AfterViewInit {
   selectedIndex: number;
   pageRows: Array<number> = [9, 12, 15, 18, 21];
   pageEvent: PageEvent = {pageIndex: 0, pageSize: 9, length: 0};
+  form: FormGroup;
+  sm = new SubscriptionManager();
 
-  constructor() {
-    this.filteredItems = this.itemSearchForm.valueChanges
-      .pipe(
-        startWith(''),
-        map(name => this.filter(name))
-      );
+  constructor(private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef) {
+    this.form = formBuilder.group({
+      search: new FormControl(''),
+      matchSaleRate: new FormControl(null, Validators.required),
+      matchDailySold: new FormControl(null, Validators.required),
+      hide: new FormControl(false, Validators.required)
+    });
   }
 
   ngAfterViewInit() {
     this.setSelectionItems();
+    this.setForm();
+    this.sm.add(
+      this.form.valueChanges,
+      (form) => this.handleFormChange(form));
+  }
+
+  ngOnDestroy(): void {
+    this.sm.unsubscribe();
+  }
+
+  private handleFormChange(form) {
+    // search is not a relevant change for saving
+    let hadChanged = false;
+    Object.keys(form).forEach(key => {
+      if (key !== 'search') {
+        hadChanged = true;
+        this.group[key] = form[key];
+      } else {
+        this.search(form[key]);
+      }
+    });
+
+    if (hadChanged) {
+      this.save();
+    }
+  }
+
+  private setForm() {
+    Object.keys(this.form.getRawValue()).forEach(key => {
+      if (this.group[key]) {
+        this.form.controls[key].setValue(this.group[key]);
+      }
+    });
+    this.cdRef.detectChanges();
   }
 
   shareGroup(group: WatchlistGroup): void {
@@ -101,6 +139,7 @@ export class ManageCustomDashboardComponent implements AfterViewInit {
     this.itemSelection.length = 0;
     this.group.items.forEach(_ =>
       this.itemSelection.push(new SelectionItem()));
+    this.search(this.form.getRawValue().search);
   }
 
   clearGroup(): void {
@@ -192,5 +231,18 @@ export class ManageCustomDashboardComponent implements AfterViewInit {
 
     this.setTSMGroupString();
     this.setSelectionItems();
+  }
+
+  private search(name: string) {
+    const previousLength = this.filteredItems.length;
+    const results = this.group.items.filter(item =>
+      TextUtil.contains(item.name, name));
+    this.filteredItems = TextUtil.isEmpty(name) ?
+      this.group.items : results;
+
+    if (previousLength !== this.filteredItems.length) {
+      this.pageEvent.pageIndex = 0;
+      this.cdRef.detectChanges();
+    }
   }
 }

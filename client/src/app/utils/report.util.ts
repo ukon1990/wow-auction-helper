@@ -24,7 +24,7 @@ export class Report {
 
   public static debug(message?: any, ...optionalParams: any[]): void {
     if (!environment.production) {
-      console.log(message, optionalParams);
+      console.log(message, ...optionalParams);
     }
   }
 }

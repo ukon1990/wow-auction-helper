@@ -272,7 +272,6 @@ export class DatabaseService {
           return;
         }
         new TsmLuaUtil().convertList(tsm[0].data);
-        SharedService.events.tsmDataRestored.emit(true);
         console.log('Restored TSM addon historical data from local DB');
       })
       .catch(e => {

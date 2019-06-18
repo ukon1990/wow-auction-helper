@@ -106,7 +106,7 @@
               </a>
             </span>
             <span *ngSwitchCase="'array'">
-              {{ d[c.key].toString() }}
+              {{ d[c.key] ? d[c.key].toString() : '' }}
             </span>
             <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
             <span *ngSwitchCase="'input-number'">

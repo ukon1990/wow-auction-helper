@@ -13,6 +13,7 @@ import {
 import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';
+import {TsmModule} from '../tsm/tsm.module';
 
 @NgModule({
   declarations: [
@@ -26,10 +27,10 @@ import {CoreModule} from '../core/core.module';
     MatFormFieldModule,
     MatInputModule,
     MatExpansionModule,
-    CoreModule,
     MatListModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    TsmModule
   ],
   exports: [ShoppingCartComponent]
 })

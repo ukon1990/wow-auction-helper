@@ -24,6 +24,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {CharacterModule} from '../character/character.module';
 import {UtilModule} from '../util/util.module';
+import {TsmModule} from '../tsm/tsm.module';
+import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
+import {AboutModule} from '../about/about.module';
 
 @NgModule({
   declarations: [
@@ -54,7 +57,10 @@ import {UtilModule} from '../util/util.module';
     CharacterModule,
     IconModule,
     RouterModule,
-    UtilModule
+    UtilModule,
+    TsmModule,
+    ShoppingCartModule,
+    AboutModule
   ],
   exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
 })

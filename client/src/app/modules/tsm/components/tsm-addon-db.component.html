@@ -28,58 +28,19 @@
   </mat-card-actions>
 </mat-card>
 
-<div *ngIf="tsmAddonData?.characterGuilds && !importMode">
-  <mat-tab-group>
-    <mat-tab label="Summary">
-      <form [formGroup]="form">
-        <mat-form-field>
-          <mat-select placeholder="Realm" formControlName="realm">
-            <mat-option *ngFor="let realm of realms" [value]="realm">
-              {{ realm }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+<div *ngIf="!importMode">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link
+       routerLink="summary"
+       activatedRoute="active">
+      Summary
+    </a>
+    <a mat-tab-link
+       routerLink="dataset"
+       activatedRoute="active">
+      Datasets
+    </a>
+  </nav>
 
-      </form>
-      <wah-profit-summary *ngIf="selectedSet"
-                          [realm]="form.value.realm"></wah-profit-summary>
-    </mat-tab>
-    <mat-tab label="Datasets">
-      <form [formGroup]="form">
-        <mat-form-field>
-          <mat-select placeholder="Dataset" formControlName="dataset">
-            <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
-              {{ set.title }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-select placeholder="Realm" formControlName="realm">
-            <mat-option *ngFor="let realm of realms" [value]="realm">
-              {{ realm }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field *ngIf="selectedSet?.hasCharacters">
-          <mat-select placeholder="Character" formControlName="character">
-            <mat-option *ngFor="let name of characters" [value]="name">
-              {{ name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </form>
-      <div *ngIf="selectedSet">
-
-        <wah-data-table
-                id="id"
-                [iconSize]="22"
-                [itemsPerPage]="40"
-                [filterParameter]="getFilterParam()"
-                [columns]="table.columns"
-                [data]="table.data"></wah-data-table>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+  <router-outlet></router-outlet>
 </div>

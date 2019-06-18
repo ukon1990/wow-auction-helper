@@ -20,6 +20,7 @@ import { WoWUction } from '../modules/auction/models/wowuction.model';
 import { Zone } from '../models/zone.model';
 import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
 import {TSMCSV} from '../utils/tsm-lua.util';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class SharedService {
@@ -46,7 +47,6 @@ export class SharedService {
     recipes: new EventEmitter<boolean>(),
     pets: new EventEmitter<boolean>(),
     realms: new EventEmitter<boolean>(),
-    tsmDataRestored: new EventEmitter<boolean>(),
     shopingCart: new EventEmitter<Recipe>()
   };
   public static preScrollPosition = 0;

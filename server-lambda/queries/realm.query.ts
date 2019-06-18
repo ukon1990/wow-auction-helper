@@ -119,4 +119,10 @@ export class RealmQuery {
               \`lastRequested\` = ${+new Date()}
                 WHERE \`id\` = ${id};`;
   }
+
+  static deactivateNonRequestedHouses(time: number): string {
+    return `UPDATE auction_houses
+            SET autoUpdate = 0
+            WHERE lastRequested < ${time};`;
+  }
 }
