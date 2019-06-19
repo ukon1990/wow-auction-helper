@@ -73,19 +73,29 @@ export class DownloadComponent implements OnInit {
 
   async ngOnInit() {
     if (SharedService.user.realm || SharedService.user.region) {
+      const startTimestamp = performance.now();
       this.downloadProgress = 'Downloading realms';
       await this._realmService.getRealms()
         .catch(error => console.error(error));
 
-      await this.loadItems();
-      await this.loadPets();
-      await this.loadRecipes();
-      await this.loadThirdPartyAPI();
+      this.downloadProgress = 'Loading static data';
+      await Promise.all([
+        this.loadItems(),
+        this.loadPets(),
+        this.loadRecipes(),
+        this.loadThirdPartyAPI()
+      ])
+        .catch(console.error);
       await this.loadAuctions();
 
       await this.startRealmStatusInterval();
       await this._dbService.getTSMAddonData();
       this.downloadProgress = '';
+      const loadingTime = Math.round(
+        (performance.now() - startTimestamp)
+      );
+      console.log(`App startup took ${loadingTime}ms`);
+      Report.send('startup', `The startup time was ${loadingTime}ms`);
     }
     // TODO: Later => this._itemService.addMissingItems();
   }

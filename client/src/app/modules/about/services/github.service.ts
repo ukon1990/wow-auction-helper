@@ -24,12 +24,12 @@ export class GithubService {
   }
 
   getLatestCommits(): Promise<Array<GithubCommit>> {
-    return this.http.get('https://api.github.com/repos/ukon1990/wow-auction-helper/commits')
+    return this.http.get('https://api.github.com/repos/ukon1990/wow-auction-helper/commits?per_page=500')
       .toPromise() as Promise<Array<GithubCommit>>;
   }
 
   getTags(): Promise<Array<GithubTag>> {
-    return this.http.get('https://api.github.com/repos/ukon1990/wow-auction-helper/tags')
+    return this.http.get('https://api.github.com/repos/ukon1990/wow-auction-helper/tags?per_page=500')
       .toPromise() as Promise<Array<GithubTag>>;
   }
 
