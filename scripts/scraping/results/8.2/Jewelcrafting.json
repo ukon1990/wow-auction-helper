@@ -1,0 +1,369 @@
+{
+  "recipes": [
+    {
+      "spellID": 294793,
+      "itemID": 167943,
+      "name": "Notorious Combatant's Intuitive Staff",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168188,
+          "count": 15
+        },
+        {
+          "itemID": 168193,
+          "count": 15
+        },
+        {
+          "itemID": 168185,
+          "count": 25
+        },
+        {
+          "itemID": 152579,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294794,
+      "itemID": 167943,
+      "name": "Notorious Combatant's Intuitive Staff",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168188,
+          "count": 13
+        },
+        {
+          "itemID": 168193,
+          "count": 13
+        },
+        {
+          "itemID": 168185,
+          "count": 23
+        },
+        {
+          "itemID": 152579,
+          "count": 13
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294795,
+      "itemID": 167943,
+      "name": "Notorious Combatant's Intuitive Staff",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168188,
+          "count": 10
+        },
+        {
+          "itemID": 168193,
+          "count": 10
+        },
+        {
+          "itemID": 168185,
+          "count": 20
+        },
+        {
+          "itemID": 152579,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298794,
+      "itemID": 168642,
+      "name": "Versatile Dark Opal",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168189,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298796,
+      "itemID": 168641,
+      "name": "Quick Sand Spinel",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168192,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298797,
+      "itemID": 168640,
+      "name": "Masterful Sea Currant",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168191,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298798,
+      "itemID": 168639,
+      "name": "Deadly Lava Lazuli",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168190,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298799,
+      "itemID": 168636,
+      "name": "Leviathan's Eye of Strength",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168635,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298800,
+      "itemID": 168637,
+      "name": "Leviathan's Eye of Agility",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168635,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298801,
+      "itemID": 168638,
+      "name": "Leviathan's Eye of Intellect",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168635,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299016,
+      "itemID": 168701,
+      "name": "Leviathan's Eye Loop",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168635,
+          "count": 3
+        },
+        {
+          "itemID": 168188,
+          "count": 35
+        },
+        {
+          "itemID": 168193,
+          "count": 35
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299017,
+      "itemID": 168702,
+      "name": "Crushing Leviathan's Eye Loop",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168635,
+          "count": 4
+        },
+        {
+          "itemID": 168188,
+          "count": 40
+        },
+        {
+          "itemID": 168193,
+          "count": 40
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299018,
+      "itemID": 168703,
+      "name": "Ascended Leviathan's Eye Loop",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168635,
+          "count": 5
+        },
+        {
+          "itemID": 168188,
+          "count": 45
+        },
+        {
+          "itemID": 168193,
+          "count": 45
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 300619,
+      "itemID": 168185,
+      "name": "Mass Prospect Osmenite",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 300756,
+      "itemID": 169220,
+      "name": "Straddling Sage Agate",
+      "profession": "Jewelcrafting",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168188,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    }
+  ],
+  "itemIds": [
+    167943,
+    168188,
+    168193,
+    168185,
+    152579,
+    152668,
+    168642,
+    168189,
+    168641,
+    168192,
+    168640,
+    168191,
+    168639,
+    168190,
+    168636,
+    168635,
+    168637,
+    168638,
+    168701,
+    168702,
+    168703,
+    169220
+  ],
+  "spellIds": [
+    294793,
+    294794,
+    294795,
+    298794,
+    298796,
+    298797,
+    298798,
+    298799,
+    298800,
+    298801,
+    299016,
+    299017,
+    299018,
+    300619,
+    300756
+  ]
+}

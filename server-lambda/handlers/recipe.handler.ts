@@ -121,7 +121,7 @@ export class RecipeHandler {
 
   private getRecipeFromWowDB(id: number, event: APIGatewayEvent): Promise<Recipe> {
     return new Promise<Recipe>((resolve, reject) => {
-      request.get(`http://wowdb.com/api/spell/${id}`, async (error, result, body) => {
+      request.get(`http://ptr.wowdb.com/api/spell/${id}`, async (error, result, body) => {
         const recipe = RecipeUtil.convert(JSON.parse(body.slice(1, body.length - 1)));
         const missingItemId = recipe.itemID === 0;
 
@@ -156,10 +156,10 @@ export class RecipeHandler {
     });
   }
 
-  getProfessionForRecipe(recipe: Recipe, locale: string = 'en_GB', region: string = 'eu'): Promise<RecipeSpell> {
+  getProfessionForRecipe(recipe: Recipe, locale: string = 'en_US', region: string = 'eu'): Promise<RecipeSpell> {
     return new Promise<RecipeSpell>((resolve, reject) => {
       request.get(new Endpoints()
-        .getPath(`recipe/${recipe.spellID}?locale=${locale ? locale : 'en_GB'}`, region),
+        .getPath(`recipe/${recipe.spellID}?locale=${locale ? locale : 'en_US'}`, region),
         (err, r, body) => {
         try {
           const spell = JSON.parse(body) as RecipeSpell;

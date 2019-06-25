@@ -25,6 +25,11 @@
         </li>
       </ul>
 
-      <wah-data-table [id]="'id'" [columns]="columns" [data]=progress.completed></wah-data-table>
+      <wah-data-table
+              iconSize="22"
+              itemsPerPage="100"
+              [id]="'id'"
+              [columns]="columns"
+              [data]=progress.completed></wah-data-table>
     </mat-card-content>
 </mat-card>

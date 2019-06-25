@@ -15,7 +15,7 @@ export const getLocale = (request: any) => {
   if (request.query && request.query.locale) {
     return request.query.locale;
   }
-  return 'en_GB';
+  return 'en_US';
 };
 
 export class LocaleUtil {

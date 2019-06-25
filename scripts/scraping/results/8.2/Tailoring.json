@@ -1,0 +1,778 @@
+{
+  "recipes": [
+    {
+      "spellID": 294829,
+      "itemID": 167983,
+      "name": "Notorious Combatant's Satin Cloak",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 20
+        },
+        {
+          "itemID": 152577,
+          "count": 8
+        },
+        {
+          "itemID": 159959,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294830,
+      "itemID": 167983,
+      "name": "Notorious Combatant's Satin Cloak",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 18
+        },
+        {
+          "itemID": 152577,
+          "count": 6
+        },
+        {
+          "itemID": 159959,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294831,
+      "itemID": 167983,
+      "name": "Notorious Combatant's Satin Cloak",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 15
+        },
+        {
+          "itemID": 152577,
+          "count": 5
+        },
+        {
+          "itemID": 159959,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294832,
+      "itemID": 167979,
+      "name": "Notorious Combatant's Satin Boots",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 20
+        },
+        {
+          "itemID": 152577,
+          "count": 8
+        },
+        {
+          "itemID": 159959,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294833,
+      "itemID": 167979,
+      "name": "Notorious Combatant's Satin Boots",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 18
+        },
+        {
+          "itemID": 152577,
+          "count": 6
+        },
+        {
+          "itemID": 159959,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294834,
+      "itemID": 167979,
+      "name": "Notorious Combatant's Satin Boots",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 15
+        },
+        {
+          "itemID": 152577,
+          "count": 5
+        },
+        {
+          "itemID": 159959,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294835,
+      "itemID": 167985,
+      "name": "Notorious Combatant's Satin Mittens",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 20
+        },
+        {
+          "itemID": 152577,
+          "count": 8
+        },
+        {
+          "itemID": 159959,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294836,
+      "itemID": 167985,
+      "name": "Notorious Combatant's Satin Mittens",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 18
+        },
+        {
+          "itemID": 152577,
+          "count": 6
+        },
+        {
+          "itemID": 159959,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294837,
+      "itemID": 167985,
+      "name": "Notorious Combatant's Satin Mittens",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 15
+        },
+        {
+          "itemID": 152577,
+          "count": 5
+        },
+        {
+          "itemID": 159959,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294838,
+      "itemID": 167987,
+      "name": "Notorious Combatant's Satin Pants",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 30
+        },
+        {
+          "itemID": 152577,
+          "count": 15
+        },
+        {
+          "itemID": 159959,
+          "count": 40
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294839,
+      "itemID": 167987,
+      "name": "Notorious Combatant's Satin Pants",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 28
+        },
+        {
+          "itemID": 152577,
+          "count": 12
+        },
+        {
+          "itemID": 159959,
+          "count": 35
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294840,
+      "itemID": 167987,
+      "name": "Notorious Combatant's Satin Pants",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 25
+        },
+        {
+          "itemID": 152577,
+          "count": 10
+        },
+        {
+          "itemID": 159959,
+          "count": 30
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294841,
+      "itemID": 167977,
+      "name": "Notorious Combatant's Satin Belt",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 20
+        },
+        {
+          "itemID": 152577,
+          "count": 8
+        },
+        {
+          "itemID": 159959,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294842,
+      "itemID": 167977,
+      "name": "Notorious Combatant's Satin Belt",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 18
+        },
+        {
+          "itemID": 152577,
+          "count": 6
+        },
+        {
+          "itemID": 159959,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294843,
+      "itemID": 167977,
+      "name": "Notorious Combatant's Satin Belt",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 15
+        },
+        {
+          "itemID": 152577,
+          "count": 5
+        },
+        {
+          "itemID": 159959,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294844,
+      "itemID": 167981,
+      "name": "Notorious Combatant's Satin Bracers",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 10
+        },
+        {
+          "itemID": 152577,
+          "count": 6
+        },
+        {
+          "itemID": 159959,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294845,
+      "itemID": 167981,
+      "name": "Notorious Combatant's Satin Bracers",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 8
+        },
+        {
+          "itemID": 152577,
+          "count": 5
+        },
+        {
+          "itemID": 159959,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294846,
+      "itemID": 167981,
+      "name": "Notorious Combatant's Satin Bracers",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 7
+        },
+        {
+          "itemID": 152577,
+          "count": 4
+        },
+        {
+          "itemID": 159959,
+          "count": 5
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299031,
+      "itemID": 168728,
+      "name": "Gilded Seaweave Gloves",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 75
+        },
+        {
+          "itemID": 158378,
+          "count": 15
+        },
+        {
+          "itemID": 159959,
+          "count": 40
+        },
+        {
+          "itemID": 152668,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299032,
+      "itemID": 168729,
+      "name": "Reinforced Seaweave Gloves",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 85
+        },
+        {
+          "itemID": 158378,
+          "count": 20
+        },
+        {
+          "itemID": 159959,
+          "count": 45
+        },
+        {
+          "itemID": 152668,
+          "count": 25
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299033,
+      "itemID": 168730,
+      "name": "Banded Seaweave Gloves",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 100
+        },
+        {
+          "itemID": 158378,
+          "count": 25
+        },
+        {
+          "itemID": 159959,
+          "count": 50
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299034,
+      "itemID": 168731,
+      "name": "Gilded Seaweave Breeches",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 85
+        },
+        {
+          "itemID": 158378,
+          "count": 20
+        },
+        {
+          "itemID": 159959,
+          "count": 50
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299035,
+      "itemID": 168732,
+      "name": "Reinforced Seaweave Breeches",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 100
+        },
+        {
+          "itemID": 158378,
+          "count": 25
+        },
+        {
+          "itemID": 159959,
+          "count": 55
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299036,
+      "itemID": 168733,
+      "name": "Banded Seaweave Breeches",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 167738,
+          "count": 115
+        },
+        {
+          "itemID": 158378,
+          "count": 30
+        },
+        {
+          "itemID": 159959,
+          "count": 60
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 301403,
+      "itemID": 169456,
+      "name": "Seabreeze Saddle Blanket",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 158378,
+          "count": 3
+        },
+        {
+          "itemID": 167738,
+          "count": 25
+        },
+        {
+          "itemID": 159959,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 301409,
+      "itemID": 168427,
+      "name": "Saddlechute",
+      "profession": "Tailoring",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 158378,
+          "count": 10
+        },
+        {
+          "itemID": 167738,
+          "count": 50
+        },
+        {
+          "itemID": 168649,
+          "count": 15
+        },
+        {
+          "itemID": 159959,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    }
+  ],
+  "itemIds": [
+    167983,
+    167738,
+    152577,
+    159959,
+    152668,
+    167979,
+    167985,
+    167987,
+    167977,
+    167981,
+    168728,
+    158378,
+    168729,
+    168730,
+    168731,
+    168732,
+    168733,
+    169456,
+    168427,
+    168649
+  ],
+  "spellIds": [
+    294829,
+    294830,
+    294831,
+    294832,
+    294833,
+    294834,
+    294835,
+    294836,
+    294837,
+    294838,
+    294839,
+    294840,
+    294841,
+    294842,
+    294843,
+    294844,
+    294845,
+    294846,
+    299031,
+    299032,
+    299033,
+    299034,
+    299035,
+    299036,
+    301403,
+    301409
+  ]
+}
