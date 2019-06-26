@@ -35,7 +35,9 @@ export class UpdateComponent implements OnInit {
     }
   };
 
-  constructor(private _craftingService: CraftingService, private _itemService: ItemService) { }
+  constructor(private _craftingService: CraftingService, private _itemService: ItemService) {
+    console.log('Environment', environment);
+  }
 
   ngOnInit() {
     this.updated.recipes.list = SharedService.recipes;

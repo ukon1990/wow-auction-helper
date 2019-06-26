@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ItemService } from '../../../../../services/item.service';
-import { FormControl } from '@angular/forms';
-import { SharedService } from '../../../../../services/shared.service';
+import {Component, OnInit} from '@angular/core';
+import {ItemService} from '../../../../../services/item.service';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {SharedService} from '../../../../../services/shared.service';
 
 @Component({
   selector: 'wah-add-items',
@@ -9,10 +9,15 @@ import { SharedService } from '../../../../../services/shared.service';
   styleUrls: ['./add-items.component.scss']
 })
 export class AddItemsComponent implements OnInit {
+  dbActions = [
+    'Insert',
+    'Update'
+  ];
   progress = {
     list: [],
     ids: [],
-    completed: [],
+    new: [],
+    existing: [],
     failed: []
   };
   input: FormControl = new FormControl();
@@ -21,8 +26,18 @@ export class AddItemsComponent implements OnInit {
     {title: 'Name', key: 'name', dataType: 'string'},
     {title: 'Is new', key: 'isNew', dataType: 'boolean'}
   ];
+  columnsFailed = [
+    { title: 'ID', key: 'spellID', dataType: 'string' },
+    { title: 'Message', key: 'message', dataType: 'string' },
+  ];
+  form: FormGroup;
 
-  constructor(private service: ItemService) { }
+  constructor(private service: ItemService, private fb: FormBuilder) {
+    this.form = this.fb.group({
+      input: new FormControl(),
+      action: new FormControl(this.dbActions[0])
+    });
+  }
 
   ngOnInit() {
   }
@@ -31,22 +46,30 @@ export class AddItemsComponent implements OnInit {
     Object.keys(this.progress).forEach(key => {
       this.progress[key] = [];
     });
-    this.progress.ids = this.input.value.replace(/[ a-zA-z]/g, '').split(',');
+    this.progress.ids = this.form.getRawValue().input.replace(/[ a-zA-z]/g, '').split(',');
     this.addItem(0);
   }
 
   async addItem(index: number) {
     const id = this.progress.ids[index];
-    if (SharedService.items[id]) {
-      this.progress.completed.push({ id: id, name: SharedService.items[id].name, isNew: false });
-    } else {
-      await this.service.addItem(id)
-        .then((item) => {
-          this.progress.completed.push({ id: id, name: item.name, isNew: true });
-        })
-        .catch(() => {
-          this.progress.failed.push(id);
+    if (this.shouldUpdate()) {
+      await this.service.updateItem(id)
+        .then((item) =>
+          this.handleServiceResult(item, id))
+        .catch((error) => {
+          this.progress.failed.push({id: id, message: error});
         });
+    } else {
+      if (SharedService.items[id] && !this.shouldUpdate()) {
+        this.progress.existing.push({id: id, name: SharedService.items[id].name, isNew: false});
+      } else {
+        await this.service.addItem(id)
+          .then((item) =>
+            this.handleServiceResult(item, id))
+          .catch((error) => {
+            this.progress.failed.push({id: id, message: error});
+          });
+      }
     }
     index++;
     if (index < this.progress.ids.length) {
@@ -54,7 +77,23 @@ export class AddItemsComponent implements OnInit {
     }
   }
 
+  private handleServiceResult(item, id) {
+    if (item['error']) {
+      this.progress.failed.push({id: id, message: item['error']});
+      return;
+    }
+    this.progress.new.push({id: id, name: item.name, isNew: true});
+  }
+
   getProgress(): number {
-    return (this.progress.completed.length + this.progress.failed.length) / this.progress.ids.length;
+    return this.getProgressCount() / this.progress.ids.length;
+  }
+
+  getProgressCount() {
+    return this.progress.new.length + this.progress.existing.length + this.progress.failed.length;
+  }
+
+  private shouldUpdate() {
+    return this.dbActions[1] === this.form.getRawValue().action;
   }
 }

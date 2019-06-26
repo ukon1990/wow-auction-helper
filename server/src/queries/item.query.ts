@@ -89,6 +89,12 @@ export class ItemQuery {
     WHERE i.id = ${req.params.id};`;
   }
 
+  public static getItemIdForItemWithItemSpellsSpellId(spellId: number): string {
+    return `SELECT id
+            FROM items
+            WHERE itemSpells like '%"spellId":${spellId}%';`;
+  }
+
   public static getAllAuctionsAfterAndOrderByTimestamp(req) {
     return `
     SELECT

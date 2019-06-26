@@ -89,6 +89,12 @@ export class ItemQuery {
     WHERE i.id = ${id};`;
   }
 
+  public static getItemWithNameLike(name: string): string {
+    return `SELECT id
+            FROM items
+            WHERE name like '%${name}%';`;
+  }
+
   public static getAllAuctionsAfterAndOrderByTimestamp(locale: string, timestamp: Date) {
     return `
     SELECT
