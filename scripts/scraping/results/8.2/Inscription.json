@@ -1,0 +1,490 @@
+{
+  "recipes": [
+    {
+      "spellID": 294790,
+      "itemID": 167942,
+      "name": "Notorious Combatant's Etched Vessel",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 50
+        },
+        {
+          "itemID": 158187,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294791,
+      "itemID": 167942,
+      "name": "Notorious Combatant's Etched Vessel",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 45
+        },
+        {
+          "itemID": 158187,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294792,
+      "itemID": 167942,
+      "name": "Notorious Combatant's Etched Vessel",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 40
+        },
+        {
+          "itemID": 158187,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298625,
+      "itemID": 168624,
+      "name": "Vantus Rune: The Eternal Palace",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 168663,
+          "count": 20
+        },
+        {
+          "itemID": 158187,
+          "count": 10
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298647,
+      "itemID": 168624,
+      "name": "Vantus Rune: The Eternal Palace",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 168663,
+          "count": 18
+        },
+        {
+          "itemID": 158187,
+          "count": 9
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298648,
+      "itemID": 168624,
+      "name": "Vantus Rune: The Eternal Palace",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 168663,
+          "count": 15
+        },
+        {
+          "itemID": 158187,
+          "count": 7
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298927,
+      "itemID": 168487,
+      "name": "Mass Mill Zin'anthid",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168487,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298929,
+      "itemID": 168663,
+      "name": "Maroon Ink",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 158186,
+          "count": 1
+        },
+        {
+          "itemID": 168662,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299665,
+      "itemID": 168956,
+      "name": "Contract: Ankoan",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 168663,
+          "count": 20
+        },
+        {
+          "itemID": 158187,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299668,
+      "itemID": 168959,
+      "name": "Contract: Unshackled",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 168663,
+          "count": 20
+        },
+        {
+          "itemID": 158187,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299671,
+      "itemID": 168960,
+      "name": "Contract: Rustbolt Resistance",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 158187,
+          "count": 25
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 302187,
+      "itemID": 169301,
+      "name": "Highborne Compendium of Swirling Tides",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 45
+        },
+        {
+          "itemID": 158187,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 302188,
+      "itemID": 169321,
+      "name": "Highborne Compendium of Sundering",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 45
+        },
+        {
+          "itemID": 158187,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 302189,
+      "itemID": 169328,
+      "name": "Highborne Compendium of Storms",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 45
+        },
+        {
+          "itemID": 158187,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 302190,
+      "itemID": 169302,
+      "name": "Highborne Compendium of Mystical Bulwark",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 50
+        },
+        {
+          "itemID": 168663,
+          "count": 45
+        },
+        {
+          "itemID": 158187,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 304030,
+      "itemID": 170164,
+      "name": "Glyph of the Dark Depths",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 158188,
+          "count": 10
+        },
+        {
+          "itemID": 158187,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 304033,
+      "itemID": 170165,
+      "name": "Glyph of Steaming Fury",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 158188,
+          "count": 10
+        },
+        {
+          "itemID": 158187,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 304036,
+      "itemID": 170168,
+      "name": "Glyph of the Cold Waves",
+      "profession": "Inscription",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 39354,
+          "count": 1
+        },
+        {
+          "itemID": 158188,
+          "count": 10
+        },
+        {
+          "itemID": 158187,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    }
+  ],
+  "itemIds": [
+    167942,
+    39354,
+    168663,
+    158187,
+    152668,
+    168624,
+    168487,
+    158186,
+    168662,
+    168956,
+    168959,
+    168960,
+    169301,
+    169321,
+    169328,
+    169302,
+    170164,
+    158188,
+    170165,
+    170168
+  ],
+  "spellIds": [
+    294790,
+    294791,
+    294792,
+    298625,
+    298647,
+    298648,
+    298927,
+    298929,
+    299665,
+    299668,
+    299671,
+    302187,
+    302188,
+    302189,
+    302190,
+    304030,
+    304033,
+    304036
+  ]
+}

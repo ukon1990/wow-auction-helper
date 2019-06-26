@@ -170,7 +170,7 @@ export class ItemService {
   }
 
   updateItem(itemID: number): Promise<any> {
-    return this._http.patch(Endpoints.getUrl(`item/${itemID}`), {})
+    return this._http.patch(Endpoints.getLambdaUrl(`item/${itemID}`), {})
       .toPromise() as Promise<any>;
   }
 

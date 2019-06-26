@@ -1,0 +1,1184 @@
+{
+  "recipes": [
+    {
+      "spellID": 294748,
+      "itemID": 167967,
+      "name": "Notorious Combatant's Plate Boots",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294749,
+      "itemID": 167967,
+      "name": "Notorious Combatant's Plate Boots",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294750,
+      "itemID": 167967,
+      "name": "Notorious Combatant's Plate Boots",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294751,
+      "itemID": 167969,
+      "name": "Notorious Combatant's Plate Gauntlets",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294752,
+      "itemID": 167969,
+      "name": "Notorious Combatant's Plate Gauntlets",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294753,
+      "itemID": 167969,
+      "name": "Notorious Combatant's Plate Gauntlets",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294754,
+      "itemID": 167971,
+      "name": "Notorious Combatant's Plate Greaves",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 25
+        },
+        {
+          "itemID": 152579,
+          "count": 8
+        },
+        {
+          "itemID": 160298,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294755,
+      "itemID": 167971,
+      "name": "Notorious Combatant's Plate Greaves",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 23
+        },
+        {
+          "itemID": 152579,
+          "count": 6
+        },
+        {
+          "itemID": 160298,
+          "count": 13
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294756,
+      "itemID": 167971,
+      "name": "Notorious Combatant's Plate Greaves",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 20
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294757,
+      "itemID": 167991,
+      "name": "Notorious Combatant's Shield",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294758,
+      "itemID": 167991,
+      "name": "Notorious Combatant's Shield",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294759,
+      "itemID": 167991,
+      "name": "Notorious Combatant's Shield",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294760,
+      "itemID": 167973,
+      "name": "Notorious Combatant's Plate Waistguard",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294761,
+      "itemID": 167973,
+      "name": "Notorious Combatant's Plate Waistguard",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294762,
+      "itemID": 167973,
+      "name": "Notorious Combatant's Plate Waistguard",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294763,
+      "itemID": 167965,
+      "name": "Notorious Combatant's Plate Armguards",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 8
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 7
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294764,
+      "itemID": 167965,
+      "name": "Notorious Combatant's Plate Armguards",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 7
+        },
+        {
+          "itemID": 152579,
+          "count": 2
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294765,
+      "itemID": 167965,
+      "name": "Notorious Combatant's Plate Armguards",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 6
+        },
+        {
+          "itemID": 152579,
+          "count": 1
+        },
+        {
+          "itemID": 160298,
+          "count": 5
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294766,
+      "itemID": 167937,
+      "name": "Notorious Combatant's Cutlass",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294767,
+      "itemID": 167937,
+      "name": "Notorious Combatant's Cutlass",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294768,
+      "itemID": 167937,
+      "name": "Notorious Combatant's Cutlass",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294769,
+      "itemID": 167939,
+      "name": "Notorious Combatant's Deckpounder",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 25
+        },
+        {
+          "itemID": 152579,
+          "count": 8
+        },
+        {
+          "itemID": 160298,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294770,
+      "itemID": 167939,
+      "name": "Notorious Combatant's Deckpounder",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 23
+        },
+        {
+          "itemID": 152579,
+          "count": 6
+        },
+        {
+          "itemID": 160298,
+          "count": 13
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294771,
+      "itemID": 167939,
+      "name": "Notorious Combatant's Deckpounder",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 20
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294772,
+      "itemID": 167995,
+      "name": "Notorious Combatant's Spellblade",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294773,
+      "itemID": 167995,
+      "name": "Notorious Combatant's Spellblade",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294774,
+      "itemID": 167995,
+      "name": "Notorious Combatant's Spellblade",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294775,
+      "itemID": 167989,
+      "name": "Notorious Combatant's Shanker",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294776,
+      "itemID": 167989,
+      "name": "Notorious Combatant's Shanker",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 160298,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294777,
+      "itemID": 167989,
+      "name": "Notorious Combatant's Shanker",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 160298,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294778,
+      "itemID": 167975,
+      "name": "Notorious Combatant's Polearm",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 25
+        },
+        {
+          "itemID": 152579,
+          "count": 8
+        },
+        {
+          "itemID": 160298,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294779,
+      "itemID": 167975,
+      "name": "Notorious Combatant's Polearm",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 23
+        },
+        {
+          "itemID": 152579,
+          "count": 6
+        },
+        {
+          "itemID": 160298,
+          "count": 13
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294780,
+      "itemID": 167975,
+      "name": "Notorious Combatant's Polearm",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 20
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298998,
+      "itemID": 168677,
+      "name": "Osmenite Legguards",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 150
+        },
+        {
+          "itemID": 152579,
+          "count": 20
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298999,
+      "itemID": 168678,
+      "name": "Reinforced Osmenite Legguards",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 200
+        },
+        {
+          "itemID": 152579,
+          "count": 25
+        },
+        {
+          "itemID": 160298,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299000,
+      "itemID": 168679,
+      "name": "Banded Osmenite Legguards",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 250
+        },
+        {
+          "itemID": 152579,
+          "count": 30
+        },
+        {
+          "itemID": 160298,
+          "count": 30
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299001,
+      "itemID": 168680,
+      "name": "Osmenite Girdle",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 100
+        },
+        {
+          "itemID": 152579,
+          "count": 10
+        },
+        {
+          "itemID": 160298,
+          "count": 5
+        },
+        {
+          "itemID": 152668,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299002,
+      "itemID": 168681,
+      "name": "Reinforced Osmenite Girdle",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 125
+        },
+        {
+          "itemID": 152579,
+          "count": 15
+        },
+        {
+          "itemID": 160298,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 25
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299003,
+      "itemID": 168682,
+      "name": "Banded Osmenite Girdle",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 150
+        },
+        {
+          "itemID": 152579,
+          "count": 20
+        },
+        {
+          "itemID": 160298,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 301413,
+      "itemID": 168417,
+      "name": "Inflatable Mount Shoes",
+      "profession": "Blacksmithing",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 152812,
+          "count": 1
+        },
+        {
+          "itemID": 169445,
+          "count": 8
+        }
+      ],
+      "expansion": 7
+    }
+  ],
+  "itemIds": [
+    167967,
+    168185,
+    152579,
+    160298,
+    152668,
+    167969,
+    167971,
+    167991,
+    167973,
+    167965,
+    167937,
+    167939,
+    167995,
+    167989,
+    167975,
+    168677,
+    168678,
+    168679,
+    168680,
+    168681,
+    168682,
+    168417,
+    152812,
+    169445
+  ],
+  "spellIds": [
+    294748,
+    294749,
+    294750,
+    294751,
+    294752,
+    294753,
+    294754,
+    294755,
+    294756,
+    294757,
+    294758,
+    294759,
+    294760,
+    294761,
+    294762,
+    294763,
+    294764,
+    294765,
+    294766,
+    294767,
+    294768,
+    294769,
+    294770,
+    294771,
+    294772,
+    294773,
+    294774,
+    294775,
+    294776,
+    294777,
+    294778,
+    294779,
+    294780,
+    298998,
+    298999,
+    299000,
+    299001,
+    299002,
+    299003,
+    301413
+  ]
+}

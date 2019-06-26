@@ -1,0 +1,1390 @@
+{
+  "recipes": [
+    {
+      "spellID": 294796,
+      "itemID": 167951,
+      "name": "Notorious Combatant's Leather Treads",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 15
+        },
+        {
+          "itemID": 154722,
+          "count": 8
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294797,
+      "itemID": 167951,
+      "name": "Notorious Combatant's Leather Treads",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 12
+        },
+        {
+          "itemID": 154722,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 18
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294798,
+      "itemID": 167951,
+      "name": "Notorious Combatant's Leather Treads",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 10
+        },
+        {
+          "itemID": 154722,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294799,
+      "itemID": 167947,
+      "name": "Notorious Combatant's Leather Gauntlets",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 15
+        },
+        {
+          "itemID": 154722,
+          "count": 8
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294800,
+      "itemID": 167947,
+      "name": "Notorious Combatant's Leather Gauntlets",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 12
+        },
+        {
+          "itemID": 154722,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 18
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294801,
+      "itemID": 167947,
+      "name": "Notorious Combatant's Leather Gauntlets",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 10
+        },
+        {
+          "itemID": 154722,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294802,
+      "itemID": 167949,
+      "name": "Notorious Combatant's Leather Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 20
+        },
+        {
+          "itemID": 154722,
+          "count": 15
+        },
+        {
+          "itemID": 154164,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294803,
+      "itemID": 167949,
+      "name": "Notorious Combatant's Leather Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 18
+        },
+        {
+          "itemID": 154722,
+          "count": 12
+        },
+        {
+          "itemID": 154164,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294804,
+      "itemID": 167949,
+      "name": "Notorious Combatant's Leather Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 15
+        },
+        {
+          "itemID": 154722,
+          "count": 10
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294805,
+      "itemID": 167953,
+      "name": "Notorious Combatant's Leather Waistguard",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 15
+        },
+        {
+          "itemID": 154722,
+          "count": 8
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294806,
+      "itemID": 167953,
+      "name": "Notorious Combatant's Leather Waistguard",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 12
+        },
+        {
+          "itemID": 154722,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 18
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294807,
+      "itemID": 167953,
+      "name": "Notorious Combatant's Leather Waistguard",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 10
+        },
+        {
+          "itemID": 154722,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294808,
+      "itemID": 167945,
+      "name": "Notorious Combatant's Leather Armguards",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 10
+        },
+        {
+          "itemID": 154722,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294809,
+      "itemID": 167945,
+      "name": "Notorious Combatant's Leather Armguards",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 8
+        },
+        {
+          "itemID": 154722,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294810,
+      "itemID": 167945,
+      "name": "Notorious Combatant's Leather Armguards",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 7
+        },
+        {
+          "itemID": 154722,
+          "count": 4
+        },
+        {
+          "itemID": 154164,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294811,
+      "itemID": 167961,
+      "name": "Notorious Combatant's Mail Treads",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 15
+        },
+        {
+          "itemID": 153051,
+          "count": 8
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294812,
+      "itemID": 167961,
+      "name": "Notorious Combatant's Mail Treads",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 12
+        },
+        {
+          "itemID": 153051,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 18
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294813,
+      "itemID": 167961,
+      "name": "Notorious Combatant's Mail Treads",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 10
+        },
+        {
+          "itemID": 153051,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294814,
+      "itemID": 167957,
+      "name": "Notorious Combatant's Mail Gauntlets",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 15
+        },
+        {
+          "itemID": 153051,
+          "count": 8
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294815,
+      "itemID": 167957,
+      "name": "Notorious Combatant's Mail Gauntlets",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 12
+        },
+        {
+          "itemID": 153051,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 18
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294816,
+      "itemID": 167957,
+      "name": "Notorious Combatant's Mail Gauntlets",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 10
+        },
+        {
+          "itemID": 153051,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294817,
+      "itemID": 167959,
+      "name": "Notorious Combatant's Mail Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 20
+        },
+        {
+          "itemID": 153051,
+          "count": 15
+        },
+        {
+          "itemID": 154164,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294818,
+      "itemID": 167959,
+      "name": "Notorious Combatant's Mail Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 18
+        },
+        {
+          "itemID": 153051,
+          "count": 12
+        },
+        {
+          "itemID": 154164,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294819,
+      "itemID": 167959,
+      "name": "Notorious Combatant's Mail Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 15
+        },
+        {
+          "itemID": 153051,
+          "count": 10
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294820,
+      "itemID": 167963,
+      "name": "Notorious Combatant's Mail Waistguard",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 15
+        },
+        {
+          "itemID": 153051,
+          "count": 8
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294821,
+      "itemID": 167963,
+      "name": "Notorious Combatant's Mail Waistguard",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 12
+        },
+        {
+          "itemID": 153051,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 18
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294822,
+      "itemID": 167963,
+      "name": "Notorious Combatant's Mail Waistguard",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 10
+        },
+        {
+          "itemID": 153051,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294823,
+      "itemID": 167955,
+      "name": "Notorious Combatant's Mail Armguards",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 10
+        },
+        {
+          "itemID": 153051,
+          "count": 6
+        },
+        {
+          "itemID": 154164,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294824,
+      "itemID": 167955,
+      "name": "Notorious Combatant's Mail Armguards",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 8
+        },
+        {
+          "itemID": 153051,
+          "count": 5
+        },
+        {
+          "itemID": 154164,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294825,
+      "itemID": 167955,
+      "name": "Notorious Combatant's Mail Armguards",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 7
+        },
+        {
+          "itemID": 153051,
+          "count": 4
+        },
+        {
+          "itemID": 154164,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294826,
+      "itemID": 167935,
+      "name": "Notorious Combatant's Bow",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 20
+        },
+        {
+          "itemID": 168650,
+          "count": 20
+        },
+        {
+          "itemID": 154164,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294827,
+      "itemID": 167935,
+      "name": "Notorious Combatant's Bow",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 18
+        },
+        {
+          "itemID": 168650,
+          "count": 18
+        },
+        {
+          "itemID": 154164,
+          "count": 23
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294828,
+      "itemID": 167935,
+      "name": "Notorious Combatant's Bow",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 15
+        },
+        {
+          "itemID": 168650,
+          "count": 15
+        },
+        {
+          "itemID": 154164,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299019,
+      "itemID": 168704,
+      "name": "Dredged Leather Boots",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 100
+        },
+        {
+          "itemID": 154722,
+          "count": 10
+        },
+        {
+          "itemID": 154165,
+          "count": 45
+        },
+        {
+          "itemID": 152668,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299020,
+      "itemID": 168705,
+      "name": "Reinforced Dredged Boots",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 125
+        },
+        {
+          "itemID": 154722,
+          "count": 15
+        },
+        {
+          "itemID": 154165,
+          "count": 50
+        },
+        {
+          "itemID": 152668,
+          "count": 25
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299021,
+      "itemID": 168706,
+      "name": "Banded Dredged Boots",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 150
+        },
+        {
+          "itemID": 154722,
+          "count": 20
+        },
+        {
+          "itemID": 154165,
+          "count": 55
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299022,
+      "itemID": 168707,
+      "name": "Dredged Leather Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 150
+        },
+        {
+          "itemID": 154722,
+          "count": 20
+        },
+        {
+          "itemID": 154165,
+          "count": 50
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299023,
+      "itemID": 168708,
+      "name": "Reinforced Dredged Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 200
+        },
+        {
+          "itemID": 154722,
+          "count": 25
+        },
+        {
+          "itemID": 154165,
+          "count": 55
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299024,
+      "itemID": 168709,
+      "name": "Banded Dredged Leggings",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 250
+        },
+        {
+          "itemID": 154722,
+          "count": 30
+        },
+        {
+          "itemID": 154165,
+          "count": 60
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299025,
+      "itemID": 168716,
+      "name": "Cragscale Boots",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 100
+        },
+        {
+          "itemID": 153051,
+          "count": 10
+        },
+        {
+          "itemID": 154165,
+          "count": 45
+        },
+        {
+          "itemID": 152668,
+          "count": 20
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299026,
+      "itemID": 168717,
+      "name": "Reinforced Cragscale Boots",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 125
+        },
+        {
+          "itemID": 153051,
+          "count": 15
+        },
+        {
+          "itemID": 154165,
+          "count": 50
+        },
+        {
+          "itemID": 152668,
+          "count": 25
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299027,
+      "itemID": 168718,
+      "name": "Banded Cragscale Boots",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 150
+        },
+        {
+          "itemID": 153051,
+          "count": 20
+        },
+        {
+          "itemID": 154165,
+          "count": 55
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299028,
+      "itemID": 168719,
+      "name": "Cragscale Greaves",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 150
+        },
+        {
+          "itemID": 153051,
+          "count": 20
+        },
+        {
+          "itemID": 154165,
+          "count": 50
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299029,
+      "itemID": 168720,
+      "name": "Reinforced Cragscale Greaves",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 200
+        },
+        {
+          "itemID": 153051,
+          "count": 25
+        },
+        {
+          "itemID": 154165,
+          "count": 55
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299030,
+      "itemID": 168721,
+      "name": "Banded Cragscale Greaves",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168650,
+          "count": 250
+        },
+        {
+          "itemID": 153051,
+          "count": 30
+        },
+        {
+          "itemID": 154165,
+          "count": 60
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 301405,
+      "itemID": 169445,
+      "name": "Dredged Leather Bladder",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168649,
+          "count": 10
+        },
+        {
+          "itemID": 159959,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 301411,
+      "itemID": 168419,
+      "name": "Comfortable Rider's Barding",
+      "profession": "Leatherworking",
+      "rank": 1,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 154166,
+          "count": 2
+        },
+        {
+          "itemID": 169456,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    }
+  ],
+  "itemIds": [
+    167951,
+    168649,
+    154722,
+    154164,
+    152668,
+    167947,
+    167949,
+    167953,
+    167945,
+    167961,
+    168650,
+    153051,
+    167957,
+    167959,
+    167963,
+    167955,
+    167935,
+    168704,
+    154165,
+    168705,
+    168706,
+    168707,
+    168708,
+    168709,
+    168716,
+    168717,
+    168718,
+    168719,
+    168720,
+    168721,
+    169445,
+    159959,
+    168419,
+    154166,
+    169456
+  ],
+  "spellIds": [
+    294796,
+    294797,
+    294798,
+    294799,
+    294800,
+    294801,
+    294802,
+    294803,
+    294804,
+    294805,
+    294806,
+    294807,
+    294808,
+    294809,
+    294810,
+    294811,
+    294812,
+    294813,
+    294814,
+    294815,
+    294816,
+    294817,
+    294818,
+    294819,
+    294820,
+    294821,
+    294822,
+    294823,
+    294824,
+    294825,
+    294826,
+    294827,
+    294828,
+    299019,
+    299020,
+    299021,
+    299022,
+    299023,
+    299024,
+    299025,
+    299026,
+    299027,
+    299028,
+    299029,
+    299030,
+    301405,
+    301411
+  ]
+}

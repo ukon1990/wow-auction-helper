@@ -1,0 +1,737 @@
+{
+  "recipes": [
+    {
+      "spellID": 294784,
+      "itemID": 167940,
+      "name": "Notorious Combatant's Discombobulator",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 163569,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294785,
+      "itemID": 167940,
+      "name": "Notorious Combatant's Discombobulator",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 14
+        },
+        {
+          "itemID": 152579,
+          "count": 4
+        },
+        {
+          "itemID": 163569,
+          "count": 8
+        },
+        {
+          "itemID": 152668,
+          "count": 2
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294786,
+      "itemID": 167940,
+      "name": "Notorious Combatant's Discombobulator",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 12
+        },
+        {
+          "itemID": 152579,
+          "count": 3
+        },
+        {
+          "itemID": 163569,
+          "count": 6
+        },
+        {
+          "itemID": 152668,
+          "count": 1
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294787,
+      "itemID": 167997,
+      "name": "Notorious Combatant's Stormsteel Destroyer",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 25
+        },
+        {
+          "itemID": 152579,
+          "count": 8
+        },
+        {
+          "itemID": 163569,
+          "count": 15
+        },
+        {
+          "itemID": 152668,
+          "count": 5
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294788,
+      "itemID": 167997,
+      "name": "Notorious Combatant's Stormsteel Destroyer",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 23
+        },
+        {
+          "itemID": 152579,
+          "count": 6
+        },
+        {
+          "itemID": 163569,
+          "count": 13
+        },
+        {
+          "itemID": 152668,
+          "count": 4
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 294789,
+      "itemID": 167997,
+      "name": "Notorious Combatant's Stormsteel Destroyer",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 20
+        },
+        {
+          "itemID": 152579,
+          "count": 5
+        },
+        {
+          "itemID": 163569,
+          "count": 10
+        },
+        {
+          "itemID": 152668,
+          "count": 3
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298255,
+      "itemID": 168521,
+      "name": "Ub3r-Module: P.O.G.O.",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 0,
+      "maxCount": 0,
+      "reagents": [
+        {
+          "itemID": 152512,
+          "count": 5
+        },
+        {
+          "itemID": 152579,
+          "count": 2
+        },
+        {
+          "itemID": 163569,
+          "count": 15
+        },
+        {
+          "itemID": 160502,
+          "count": 10
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298256,
+      "itemID": 168523,
+      "name": "Ub3r-Module: Scrap Cannon",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 0,
+      "maxCount": 0,
+      "reagents": [
+        {
+          "itemID": 152512,
+          "count": 5
+        },
+        {
+          "itemID": 152579,
+          "count": 2
+        },
+        {
+          "itemID": 163569,
+          "count": 15
+        },
+        {
+          "itemID": 160502,
+          "count": 10
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298257,
+      "itemID": 168522,
+      "name": "Ub3r-Module: Ub3r-Coil",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 0,
+      "maxCount": 0,
+      "reagents": [
+        {
+          "itemID": 152512,
+          "count": 5
+        },
+        {
+          "itemID": 152579,
+          "count": 2
+        },
+        {
+          "itemID": 163569,
+          "count": 15
+        },
+        {
+          "itemID": 160502,
+          "count": 10
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 298930,
+      "itemID": 168667,
+      "name": "Blingtron 7000",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 152513,
+          "count": 5
+        },
+        {
+          "itemID": 152579,
+          "count": 10
+        },
+        {
+          "itemID": 154123,
+          "count": 3
+        },
+        {
+          "itemID": 154124,
+          "count": 3
+        },
+        {
+          "itemID": 163569,
+          "count": 25
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299004,
+      "itemID": 168689,
+      "name": "Abyssal Synthetic Specs",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 150
+        },
+        {
+          "itemID": 152513,
+          "count": 25
+        },
+        {
+          "itemID": 163569,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299005,
+      "itemID": 168690,
+      "name": "A5C-3N-D3D Synthetic Specs",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 200
+        },
+        {
+          "itemID": 152513,
+          "count": 50
+        },
+        {
+          "itemID": 163569,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299006,
+      "itemID": 168691,
+      "name": "Charged A5C-3N-D3D Synthetic Specs",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 250
+        },
+        {
+          "itemID": 152513,
+          "count": 75
+        },
+        {
+          "itemID": 163569,
+          "count": 30
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299007,
+      "itemID": 168692,
+      "name": "Abyssal Gearspun Goggles",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 150
+        },
+        {
+          "itemID": 152513,
+          "count": 25
+        },
+        {
+          "itemID": 163569,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299008,
+      "itemID": 168693,
+      "name": "A5C-3N-D3D Gearspun Goggles",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 200
+        },
+        {
+          "itemID": 152513,
+          "count": 50
+        },
+        {
+          "itemID": 163569,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299009,
+      "itemID": 168694,
+      "name": "Charged A5C-3N-D3D Gearspun Goggles",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 250
+        },
+        {
+          "itemID": 152513,
+          "count": 75
+        },
+        {
+          "itemID": 163569,
+          "count": 30
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299010,
+      "itemID": 168695,
+      "name": "Abyssal Bionic Bifocals",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 150
+        },
+        {
+          "itemID": 152513,
+          "count": 25
+        },
+        {
+          "itemID": 163569,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299011,
+      "itemID": 168696,
+      "name": "A5C-3N-D3D Bionic Bifocals",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 200
+        },
+        {
+          "itemID": 152513,
+          "count": 50
+        },
+        {
+          "itemID": 163569,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299012,
+      "itemID": 168697,
+      "name": "Charged A5C-3N-D3D Bionic Bifocals",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 250
+        },
+        {
+          "itemID": 152513,
+          "count": 75
+        },
+        {
+          "itemID": 163569,
+          "count": 30
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299013,
+      "itemID": 168698,
+      "name": "Abyssal Orthogonal Optics",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 150
+        },
+        {
+          "itemID": 152513,
+          "count": 25
+        },
+        {
+          "itemID": 163569,
+          "count": 20
+        },
+        {
+          "itemID": 152668,
+          "count": 30
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299014,
+      "itemID": 168699,
+      "name": "A5C-3N-D3D Orthogonal Optics",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 200
+        },
+        {
+          "itemID": 152513,
+          "count": 50
+        },
+        {
+          "itemID": 163569,
+          "count": 25
+        },
+        {
+          "itemID": 152668,
+          "count": 35
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299015,
+      "itemID": 168700,
+      "name": "Charged A5C-3N-D3D Orthogonal Optics",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 168185,
+          "count": 250
+        },
+        {
+          "itemID": 152513,
+          "count": 75
+        },
+        {
+          "itemID": 163569,
+          "count": 30
+        },
+        {
+          "itemID": 152668,
+          "count": 40
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299105,
+      "itemID": 168807,
+      "name": "Wormhole Generator: Kul Tiras",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 152512,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 25
+        },
+        {
+          "itemID": 160502,
+          "count": 5
+        },
+        {
+          "itemID": 163569,
+          "count": 50
+        }
+      ],
+      "expansion": 7
+    },
+    {
+      "spellID": 299106,
+      "itemID": 168808,
+      "name": "Wormhole Generator: Zandalar",
+      "profession": "Engineering",
+      "rank": 0,
+      "minCount": 1,
+      "maxCount": 1,
+      "reagents": [
+        {
+          "itemID": 152512,
+          "count": 15
+        },
+        {
+          "itemID": 152579,
+          "count": 25
+        },
+        {
+          "itemID": 160502,
+          "count": 5
+        },
+        {
+          "itemID": 163569,
+          "count": 50
+        }
+      ],
+      "expansion": 7
+    }
+  ],
+  "itemIds": [
+    167940,
+    168185,
+    152579,
+    163569,
+    152668,
+    167997,
+    168521,
+    152512,
+    160502,
+    168523,
+    168522,
+    168667,
+    152513,
+    154123,
+    154124,
+    168689,
+    168690,
+    168691,
+    168692,
+    168693,
+    168694,
+    168695,
+    168696,
+    168697,
+    168698,
+    168699,
+    168700,
+    168807,
+    168808
+  ],
+  "spellIds": [
+    294784,
+    294785,
+    294786,
+    294787,
+    294788,
+    294789,
+    298255,
+    298256,
+    298257,
+    298930,
+    299004,
+    299005,
+    299006,
+    299007,
+    299008,
+    299009,
+    299010,
+    299011,
+    299012,
+    299013,
+    299014,
+    299015,
+    299105,
+    299106
+  ]
+}

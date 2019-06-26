@@ -1,15 +1,21 @@
-import { APIGatewayEvent, Callback, Context, Handler } from 'aws-lambda';
-import { Response } from './utils/response.util';
-const request: any = require('request');
-const RequestPromise = require('request-promise');
+// This file is required by karma.conf.js and loads recursively all the .spec and framework files
 
-exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-    Response.send(
-        {
-            default: 'abcdefg',
-            french: `Gentils ascenseurs c'est délicieux pense jour mais savourer nous être rêves au.`,
-            russian: 'Тонет глубоко в моём море ненависти',
-            nordic: 'xyzæøå',
-            chinese: '質性韓演理入相期伐築更読絡質。違故藤老閉需在老償激暮格牲浮音併茶開行。'
-        }, callback);
-};
+import 'zone.js/dist/long-stack-trace-zone';
+import 'zone.js/dist/proxy.js';
+import 'zone.js/dist/sync-test';
+import 'zone.js/dist/jasmine-patch';
+import 'zone.js/dist/async-test';
+import 'zone.js/dist/fake-async-test';
+
+// Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.
+declare const __karma__: any;
+declare const require: any;
+
+// Prevent Karma from running prematurely.
+__karma__.loaded = function () {};
+// Then we find all the tests.
+const context = require.context('./', true, /\.spec\.ts$/);
+// And load the modules.
+context.keys().map(context);
+// Finally, start Karma to run the tests.
+__karma__.start();

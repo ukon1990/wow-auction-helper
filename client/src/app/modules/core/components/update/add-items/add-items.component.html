@@ -4,18 +4,33 @@
         Add new items
       </mat-card-title>
     </mat-card-header>
+
+  <mat-card-actions>
+    <form (ngSubmit)="addItems()" [formGroup]="form">
+      <mat-form-field>
+        <mat-select formControlName="action">
+          <mat-option *ngFor="let action of dbActions" [value]="action">
+            {{ action }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+                matInput
+                placeholder="Comma seperated spell ID's"
+                formControlName="input"
+        />
+      </mat-form-field>
+      <button mat-raised-button type="submit">
+        Add
+      </button>
+    </form>
+  </mat-card-actions>
+
     <mat-card-content>
-      <form (ngSubmit)="addItems()">
-        <mat-form-field>
-          <input matInput placeholder="Comma seperated item ID's" [formControl]="input"/>
-        </mat-form-field>
-        <button mat-raised-button type="submit">
-          Add
-        </button>
-      </form>
       <ul class="list-group">
         <li class="list-group-item list-group-item-primary">
-          <strong>Progress:</strong> {{ progress.completed.length + progress.failed.length }}/{{ progress.ids.length }} ({{ getProgress() | percent }})
+          <strong>Progress:</strong> {{ getProgressCount() }}/{{ progress.ids.length }} ({{ getProgress() | percent }})
           <br>
           <mat-progress-bar mode="determinate" [value]="getProgress() * 100"></mat-progress-bar>
         </li>
@@ -25,6 +40,28 @@
         </li>
       </ul>
 
-      <wah-data-table [id]="'id'" [columns]="columns" [data]=progress.completed></wah-data-table>
+      <mat-tab-group>
+        <mat-tab label="New ({{progress.new.length}})">
+          <wah-data-table
+                  [id]="'id'"
+                  [columns]="columns"
+                  [data]="progress.new"
+          ></wah-data-table>
+        </mat-tab>
+        <mat-tab label="Existing ({{progress.existing.length}})">
+          <wah-data-table
+                  [id]="'id'"
+                  [columns]="columns"
+                  [data]="progress.existing"
+          ></wah-data-table>
+        </mat-tab>
+        <mat-tab label="Failed ({{progress.failed.length}})">
+          <wah-data-table
+                  [id]="'id'"
+                  [columns]="columnsFailed"
+                  [data]="progress.failed"
+          ></wah-data-table>
+        </mat-tab>
+      </mat-tab-group>
     </mat-card-content>
 </mat-card>

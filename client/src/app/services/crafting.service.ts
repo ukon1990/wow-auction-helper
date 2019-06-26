@@ -33,8 +33,13 @@ export class CraftingService {
         locale: localStorage['locale']
       })
       .toPromise()
-      .then(r =>
-        this.handleRecipe(r as Recipe))
+      .then((r: Recipe) =>{
+        if (r.name) {
+          return this.handleRecipe(r as Recipe)
+        } else {
+          return r;
+        }
+      })
       .catch(error => {
         console.error(`Could not get recipe ${spellID}`, error);
         ErrorReport.sendHttpError(error);
