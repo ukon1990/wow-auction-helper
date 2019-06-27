@@ -23,7 +23,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252359,
@@ -34,7 +34,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252346,
@@ -45,7 +45,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252390,
@@ -56,7 +56,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Enchanting: [
@@ -69,7 +69,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255143,
@@ -80,7 +80,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 268879,
@@ -91,7 +91,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Engineering: [
@@ -104,7 +104,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requiredStanding: 'Honored'
       },
       {
         spellId: 265102,
@@ -115,7 +115,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 272067,
@@ -126,7 +126,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Inscription: [
@@ -139,7 +139,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [
@@ -152,7 +152,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Leatherworking: [
@@ -165,7 +165,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Tailoring: [
@@ -178,7 +178,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 257116,
@@ -189,7 +189,7 @@ export const orderOfEmbers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ]
   },

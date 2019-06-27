@@ -23,7 +23,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252353,
@@ -34,7 +34,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252384,
@@ -45,7 +45,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 279167,
@@ -56,7 +56,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Enchanting: [
@@ -69,7 +69,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 268915,
@@ -80,7 +80,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 268909,
@@ -91,7 +91,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Engineering: [
@@ -104,7 +104,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requiredStanding: 'Honored'
       },
       {
         spellId: 272061,
@@ -115,7 +115,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255409,
@@ -126,7 +126,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256084,
@@ -137,7 +137,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256156,
@@ -148,7 +148,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Inscription: [
@@ -161,7 +161,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [
@@ -174,7 +174,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256257,
@@ -185,7 +185,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256260,
@@ -196,7 +196,7 @@ export const stormsWake = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ]
   },

@@ -23,7 +23,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252356,
@@ -34,7 +34,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252387,
@@ -45,7 +45,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252343,
@@ -56,7 +56,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Enchanting: [
@@ -69,7 +69,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255112,
@@ -80,7 +80,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 268903,
@@ -91,7 +91,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Engineering: [
@@ -104,7 +104,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requiredStanding: 'Honored'
       },
       {
         spellId: 272064,
@@ -115,7 +115,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255459,
@@ -126,7 +126,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Inscription: [
@@ -139,7 +139,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [
@@ -152,7 +152,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Leatherworking: [
@@ -165,7 +165,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256784,
@@ -176,7 +176,7 @@ export const proudmooreAdmiralty = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ]
   },

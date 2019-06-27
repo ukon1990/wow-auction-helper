@@ -23,7 +23,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252350,
@@ -34,7 +34,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252378,
@@ -45,7 +45,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252381,
@@ -56,7 +56,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 279170,
@@ -67,7 +67,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Blacksmithing: [
@@ -80,7 +80,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 253158,
@@ -91,7 +91,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 253161,
@@ -102,7 +102,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 278133,
@@ -113,7 +113,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Enchanting: [
@@ -126,7 +126,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 265112,
@@ -137,7 +137,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Engineering: [
@@ -150,7 +150,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requiredStanding: 'Honored'
       },
       {
         spellId: 272058,
@@ -161,7 +161,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 264967,
@@ -172,7 +172,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 253152,
@@ -183,7 +183,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255459,
@@ -194,7 +194,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Inscription: [
@@ -207,7 +207,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [
@@ -220,7 +220,7 @@ export const seventhLegion = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ]
   },

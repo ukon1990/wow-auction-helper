@@ -67,7 +67,7 @@ function objectFromProfession(recipe, list) {
     name: recipe.Teaches.Spell,
     rank: parseInt(recipe.Teaches.Rank, 10),
     cost: recipe.Cost,
-    requieredStanding: recipe.ReputationLevel
+    requiredStanding: recipe.ReputationLevel
   });
 }
 

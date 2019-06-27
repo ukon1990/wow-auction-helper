@@ -29,7 +29,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252370,
@@ -40,7 +40,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Cooking: [
@@ -53,7 +53,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requiredStanding: 'Honored'
       },
       {
         spellId: 259423,
@@ -64,7 +64,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 259420,
@@ -75,7 +75,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 259432,
@@ -86,7 +86,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 259435,
@@ -97,7 +97,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Enchanting: [
@@ -110,7 +110,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255097,
@@ -121,7 +121,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Inscription: [
@@ -134,7 +134,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       },
       {
         spellId: 256295,
@@ -145,7 +145,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       },
       {
         spellId: 256234,
@@ -156,7 +156,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256246,
@@ -167,7 +167,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256252,
@@ -178,7 +178,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256249,
@@ -189,7 +189,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256237,
@@ -200,7 +200,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 276059,
@@ -211,7 +211,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Tailoring: [
@@ -224,7 +224,7 @@ export const tortollanSeekers = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ]
   },
