@@ -37,44 +37,30 @@
              aria-haspopup="true" aria-expanded="false">
             Tools
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <ul>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="dashboard/manage-dashboards" routerLinkActive="active">
-                  Manage dashboards
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="tools/trade-vendor" routerLinkActive="active">
-                  Trade vendors
-                </a>
-              </li><!--
-                <li class="nav-item">
-                  <a class="nav-link" routerLink="tools/my-pets" routerLinkActive="active">
-                    My pets
-                  </a>
-                </li>-->
-              <li class="nav-item">
-                <a class="nav-link" routerLink="tools/sellers" routerLinkActive="active">
-                  Sellers
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="tools/market-reset" routerLinkActive="active">
-                  Market resetter
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="tools/milling-and-prospecting" routerLinkActive="active">
-                  Prospecting & milling
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="tools/reputations" routerLinkActive="active">
-                  Reputations
-                </a>
-              </li>
-            </ul>
+          <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" routerLink="dashboard/manage-dashboards" routerLinkActive="active">
+              Manage dashboards
+            </a>
+            <a class="dropdown-item" routerLink="tools/trade-vendor" routerLinkActive="active">
+              Trade vendors
+            </a>
+            <!--
+              <a class="dropdown-item" routerLink="tools/my-pets" routerLinkActive="active">
+                My pets
+              </a>
+             -->
+            <a class="dropdown-item" routerLink="tools/sellers" routerLinkActive="active">
+              Sellers
+            </a>
+            <a class="dropdown-item" routerLink="tools/market-reset" routerLinkActive="active">
+              Market resetter
+            </a>
+            <a class="dropdown-item" routerLink="tools/milling-and-prospecting" routerLinkActive="active">
+              Prospecting & milling
+            </a>
+            <a class="dropdown-item" routerLink="tools/reputations" routerLinkActive="active">
+              Reputations
+            </a>
           </div>
         </li>
         <li class="nav-item" *ngIf="isRegisteredUser()">
