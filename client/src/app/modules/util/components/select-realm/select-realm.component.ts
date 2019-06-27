@@ -16,6 +16,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   @Input() region: string;
   @Input() realm: string;
   @Input() locale: string;
+  @Input() minimal: boolean;
   @Output() changes: EventEmitter<{
     region: string;
     realm: string;

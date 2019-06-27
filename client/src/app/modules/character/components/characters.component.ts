@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnChanges} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -224,5 +224,15 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   private openSnackbar(message: string): void {
     this.snackBar.open(message, 'Ok', {duration: 15000});
+  }
+
+  realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
+    Object.keys(change)
+      .forEach(key => {
+        const control: AbstractControl = this._characterForm.controls[key];
+        if (control) {
+          control.setValue(change[key]);
+        }
+      });
   }
 }

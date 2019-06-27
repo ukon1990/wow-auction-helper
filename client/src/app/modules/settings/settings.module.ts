@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {SetupComponent} from './components/setup/setup.component';
-import {SelectRealmComponent} from './components/select-realm/select-realm.component';
 import {NotificationSettingsComponent} from './components/notification-settings/notification-settings.component';
 import {GeneralSettingsComponent} from './components/general-settings/general-settings.component';
 import {CraftingSettingsComponent} from './components/crafting-settings/crafting-settings.component';
@@ -26,12 +25,12 @@ import {SettingsComponent} from './components/settings.component';
 import {CustomPricesComponent} from './components/crafting-settings/custom-prices/custom-prices.component';
 import {CustomProcComponent} from './components/crafting-settings/custom-proc/custom-proc.component';
 import {IconModule} from '../icon/icon.module';
+import {UtilModule} from '../util/util.module';
 
 @NgModule({
   declarations: [
     SettingsComponent,
     SetupComponent,
-    SelectRealmComponent,
     NotificationSettingsComponent,
     GeneralSettingsComponent,
     CraftingSettingsComponent,
@@ -58,7 +57,8 @@ import {IconModule} from '../icon/icon.module';
     CharacterModule,
     MatInputModule,
     MatTooltipModule,
-    IconModule
+    IconModule,
+    UtilModule
   ],
   exports: [RealmListComponent]
 })

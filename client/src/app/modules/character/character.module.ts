@@ -12,6 +12,7 @@ import {
   MatSelectModule, MatTooltipModule
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
+import {UtilModule} from '../util/util.module';
 
 @NgModule({
   declarations: [CharacterComponent, CharactersComponent],
@@ -25,7 +26,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     MatListModule,
     MatButtonModule,
     MatInputModule,
-    MatTooltipModule
+    MatTooltipModule,
+    UtilModule
   ],
   exports: [CharacterComponent, CharactersComponent]
 })
