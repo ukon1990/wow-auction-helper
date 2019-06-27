@@ -1,0 +1,54 @@
+<mat-card *ngIf="!minimal; else realmAutoCompleteTemplate">
+  <mat-card-header>
+    <mat-card-title>
+      Select your realm, region and item language
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <ng-container *ngTemplateOutlet="realmAutoCompleteTemplate"></ng-container>
+  </mat-card-content>
+
+  <mat-card-content *ngIf="currentRealm">
+    <strong>AH size in MB: </strong> {{ currentRealm.size | number }} <br>
+    <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
+    <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
+    <strong>Realm locale: </strong>  {{ currentRealm.locale }}
+  </mat-card-content>
+  <mat-card-actions>
+    <ng-content></ng-content>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #realmAutoCompleteTemplate>
+  <form class="row" [formGroup]="form">
+    <mat-form-field class="col-md-{{ locale ? 8 : 12 }}">
+      <input matInput
+             placeholder="Select a realm"
+             aria-label="State"
+             [matAutocomplete]="auto"
+             [formControl]="autocompleteField">
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option (onSelectionChange)="onOptionSelected(realm.realm)"
+                    *ngFor="let realm of filteredRealms"
+                    [value]="realm.value">
+          {{
+            realm.match.start
+          }}<u><strong>{{
+            realm.match.match
+          }}</strong></u>{{
+            realm.match.end
+          }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field class="col-md-4" *ngIf="locale">
+      <mat-select [disableOptionCentering]="true" placeholder="Item language" formControlName="locale">
+        <mat-option *ngFor="let locale of locales" [value]="locale.locale">
+          {{ locale.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</ng-template>

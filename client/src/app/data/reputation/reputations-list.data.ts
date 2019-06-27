@@ -7,17 +7,23 @@ import {zandalariEmpire} from './bfa/zandalari-empire.data';
 import {talanjisExpedition} from './bfa/talanjis-expedition.data';
 import {voldunai} from './bfa/voldunai.data';
 import {theHonorbound} from './bfa/the-honorbound.data';
+import {theUnshackled} from './bfa/the-unshackeled.data';
+import {wavebladeAnkoan} from './bfa/waveblade-ankoan.data';
+import {rustboltResistance} from './bfa/rustbolt-resistance.data';
 
 export class ReputationVendorsData {
-    public static bfa = [
-        tortollanSeekers,
-        proudmooreAdmiralty,
-        orderOfEmbers,
-        stormsWake,
-        seventhLegion,
-        zandalariEmpire,
-        talanjisExpedition,
-        voldunai,
-        theHonorbound
-    ];
+  public static bfa = [
+    rustboltResistance,
+    wavebladeAnkoan,
+    theUnshackled,
+    tortollanSeekers,
+    proudmooreAdmiralty,
+    orderOfEmbers,
+    stormsWake,
+    seventhLegion,
+    zandalariEmpire,
+    talanjisExpedition,
+    voldunai,
+    theHonorbound
+  ];
 }

@@ -14,7 +14,7 @@ provider:
 
 functions:
   auctions:
-    handler: controllers/auction.handler
+    handler: src/controllers/auction.handler
     memorySize: 512
     events:
       - http:
@@ -23,7 +23,7 @@ functions:
           cors:
             origin: '*'
   auctionsS3:
-    handler: controllers/auction.s3
+    handler: src/controllers/auction.s3
     events:
       - http:
           method: post
@@ -31,7 +31,7 @@ functions:
           cors:
             origin: '*'
   updateAllHouses:
-    handler: controllers/auction.updateAll
+    handler: src/controllers/auction.updateAll
     memorySize: 200
     events:
       - http:
@@ -41,7 +41,7 @@ functions:
             origin: '*'
 
   updateSpesificHouse:
-    handler: controllers/auction.updateOne
+    handler: src/controllers/auction.updateOne
     memorySize: 512
     events:
       - http:
@@ -50,7 +50,7 @@ functions:
           cors:
             origin: '*'
   locales:
-    handler: controllers/locale.handler
+    handler: src/controllers/locale.handler
     events:
       - http:
           method: post
@@ -58,7 +58,7 @@ functions:
           cors:
             origin: 'localhost:3000'
   items:
-    handler: controllers/item.handler
+    handler: src/controllers/item.handler
     memorySize: 160
     events:
       - http:
@@ -73,7 +73,7 @@ functions:
           cors:
             origin: '*'
   pets:
-    handler: controllers/pet.handler
+    handler: src/controllers/pet.handler
     memorySize: 128
     events:
       - http:
@@ -88,7 +88,7 @@ functions:
           cors:
             origin: '*'
   recipes:
-    handler: controllers/recipe.handler
+    handler: src/controllers/recipe.handler
     memorySize: 128
     events:
       - http:
@@ -103,7 +103,7 @@ functions:
           cors:
             origin: '*'
   character:
-    handler: controllers/character.handler
+    handler: src/controllers/character.handler
     memorySize: 128
     events:
       - http:
@@ -112,7 +112,7 @@ functions:
           cors:
             origin: '*'
   realm:
-    handler: controllers/realm.handler
+    handler: src/controllers/realm.handler
     events:
       - http:
           method: post
@@ -120,7 +120,7 @@ functions:
           cors:
             origin: '*'
   realmAllRegions:
-    handler: controllers/realm.handleGetAll
+    handler: src/controllers/realm.handleGetAll
     memorySize: 128
     events:
       - http:
@@ -129,7 +129,7 @@ functions:
           cors:
             origin: '*'
   getByRegionAndName:
-    handler: controllers/realm.getByRegionAndName
+    handler: src/controllers/realm.getByRegionAndName
     memorySize: 128
     events:
       - http:
@@ -138,14 +138,14 @@ functions:
           cors:
             origin: '*'
   test:
-    handler: controllers/test.handler
+    handler: src/controllers/test.handler
     events:
       - http:
           method: any
           path: test
 
   logger:
-    handler: controllers/logger.handler
+    handler: src/controllers/logger.handler
     memorySize: 128
     events:
       - http:

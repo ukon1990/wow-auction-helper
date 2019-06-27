@@ -23,7 +23,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252356,
@@ -34,7 +34,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252387,
@@ -45,7 +45,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 252343,
@@ -56,7 +56,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Enchanting: [
@@ -69,7 +69,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 255112,
@@ -80,7 +80,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 268903,
@@ -91,7 +91,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Engineering: [
@@ -104,7 +104,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Honored'
+        requiredStanding: 'Honored'
       },
       {
         spellId: 272064,
@@ -115,7 +115,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Inscription: [
@@ -128,7 +128,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Friendly'
+        requiredStanding: 'Friendly'
       }
     ],
     Jewelcrafting: [
@@ -141,7 +141,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ],
     Leatherworking: [
@@ -154,7 +154,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       },
       {
         spellId: 256784,
@@ -165,7 +165,7 @@ export const talanjisExpedition = {
           0,
           0
         ],
-        requieredStanding: 'Revered'
+        requiredStanding: 'Revered'
       }
     ]
   },

@@ -30,7 +30,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
     {key: 'rank', title: 'Rank', dataType: 'number'},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: 'requieredStanding', title: 'Standing', dataType: 'text'}
+    {key: 'requiredStanding', title: 'Standing', dataType: 'text'}
   ];
 
   subscription: Subscription;
@@ -47,8 +47,6 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
       .auctionUpdate
       .subscribe(() =>
         this.mapProfessions());
-
-    console.log('reputations', SharedService.user);
   }
 
   ngOnDestroy(): void {
@@ -91,26 +89,32 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
         return;
       }
       Object.keys(reputation.professions).forEach(professionName => {
-        if (this.professionMap[professionName]) {
-          this.professionMap[professionName].reputations.push({
-            id: reputation.id,
-            name: reputation.name,
-            recipes: reputation.professions[professionName].map(recipe => {
-              return {
-                itemID: this.getRecipe(recipe).itemID,
-                spellId: recipe.spellId,
-                name: recipe.name,
-                rank: recipe.rank,
-                requieredStanding: recipe.requieredStanding,
-                cost: recipe.cost[0],
-                isKnown: this.professionMap[professionName].knownRecipes[recipe.spellId],
-                roi: this.getRecipe(recipe).roi
-              };
-            })
-          });
-        }
+        this.addProfessionData(professionName, reputation);
       });
     });
+  }
+
+  private addProfessionData(professionName, reputation) {
+    const profession = this.professionMap[professionName];
+    if (profession) {
+      profession.reputations.push({
+        id: reputation.id,
+        name: reputation.name,
+        recipes: reputation.professions[professionName]
+          .map(recipe => {
+            return {
+              itemID: this.getRecipe(recipe).itemID,
+              spellId: recipe.spellId,
+              name: recipe.name,
+              rank: recipe.rank,
+              requiredStanding: recipe.requiredStanding,
+              cost: recipe.cost[0],
+              isKnown: this.professionMap[professionName].knownRecipes[recipe.spellId],
+              roi: this.getRecipe(recipe).roi
+            };
+          })
+      });
+    }
   }
 
   private getRecipe(recipe) {

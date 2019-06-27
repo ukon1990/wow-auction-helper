@@ -5,15 +5,12 @@
 </p>
 <!-- Form -->
 <form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="_characterForm">
-  <mat-form-field class="col-md-3">
-    <mat-select  [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
-      <mat-select  [disableOptionCentering]="true" placeholder="Realm" formControlName="realm">
-        <mat-option *ngFor="let slug of getRealmsKeys()" [value]="slug">
-          {{ getRealmWithkey(slug).name }}
-        </mat-option>
-      </mat-select>
-    </mat-select>
-  </mat-form-field>
+  <wah-select-realm
+          [region]="_characterForm.getRawValue().region"
+          [realm]="_characterForm.getRawValue().realm"
+          [minimal]="true"
+          (changes)="realmSelectionEvent($event)">
+  </wah-select-realm>
   <mat-form-field class="col-md-6">
     <input matInput placeholder="Character" formControlName="name">
   </mat-form-field>
