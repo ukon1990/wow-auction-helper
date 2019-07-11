@@ -27,7 +27,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   regions: any;
   downloading: boolean;
-  _characterForm: FormGroup;
+  form: FormGroup;
 
   constructor(private _characterService: CharacterService,
               private snackBar: MatSnackBar,
@@ -37,7 +37,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
               private formBuilder: FormBuilder,
               private angulartics2: Angulartics2
   ) {
-    this._characterForm = this.formBuilder.group({
+    this.form = this.formBuilder.group({
       region: SharedService.user.region,
       realm: SharedService.user.realm,
       name: '',
@@ -46,100 +46,89 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (!SharedService.realms[this._characterForm.value.region]) {
+    if (!SharedService.realms[this.form.value.region]) {
       this.getRealms();
     }
   }
 
   ngOnChanges(change): void {
     if (change.realm && change.realm.currentValue) {
-      this._characterForm.controls.realm.setValue(change.realm.currentValue);
+      this.form.controls.realm.setValue(change.realm.currentValue);
     }
 
     if (change.region && change.region.currentValue) {
-      this._characterForm.controls.region.setValue(change.region.currentValue);
+      this.form.controls.region.setValue(change.region.currentValue);
     }
   }
 
   getCharacter(): void {
     this.downloading = true;
 
-    if (this._characterForm.value.characterBelowLevelTen) {
-      this.addLowlevelCharacter();
-      this.angulartics2.eventTrack.next({
-        action: 'Added level < 10 character',
-        properties: {category: 'Characters'},
-      });
+    if (this.form.value.characterBelowLevelTen) {
+      this.addLowLevelCharacter();
+      Report.send('Added level < 10 character', 'Characters');
+    } else {
+      this._characterService
+        .getCharacter(
+          this.form.value.name,
+          this.form.value.realm,
+          this.region ? this.region : SharedService.user.region
+        )
+        .then(c =>
+          this.addCharacter(c))
+        .catch((error: HttpErrorResponse) =>
+          this.handleCharacterError(error));
     }
-    this._characterService
-      .getCharacter(
-        this._characterForm.value.name,
-        this._characterForm.value.realm,
-        this.region ? this.region : SharedService.user.region
-      )
-      .then(c => {
-        if (!c.error) {
-          this.processCharacter(c);
-          this.openSnackbar(`${c.name} was successfully added`);
-          this.angulartics2.eventTrack.next({
-            action: 'Added character',
-            properties: {category: 'Characters'},
-          });
-        } else {
-          if (c.error.status === 404) {
-            ErrorReport.sendHttpError(
-              c.error,
-              new ErrorOptions(
-                true,
-                `${
-                  this._characterForm.value.name
-                  } could not be found on the realm ${
-                  this._characterForm.value.realm
-                  }.`));
-          } else {
-            this.addLowlevelCharacter();
-            ErrorReport.sendHttpError(
-              c.error,
-              new ErrorOptions(
-                true,
-                `Could not find any character data for ${
-                  this._characterForm.value.name
-                  }@${
-                  this._characterForm.value.realm
-                  }. Blizzard's service responded with: ${
-                  c.error.statusText
-                  }. The character will be added to your list, but with no profession data etc.
-                 You can try to manually update the character later.`));
-          }
-        }
-        this.downloading = false;
-      }).catch((error: HttpErrorResponse) => {
-      this.downloading = false;
-      ErrorReport.sendHttpError(
-        error,
-        new ErrorOptions(
-          true,
-          `Something went wrong, while adding ${this._characterForm.value.name}.`));
-    });
   }
 
-  addLowlevelCharacter(): void {
+  private handleCharacterError(error: HttpErrorResponse) {
+    this.downloading = false;
+    ErrorReport.sendHttpError(
+      error,
+      new ErrorOptions(
+        true,
+        `Something went wrong, while adding ${this.form.value.name}.`));
+  }
+
+  private addCharacter(c) {
+    console.log('Character data:', c);
+    if (!c.error && c.status !== 'nok') {
+      this.processCharacter(c);
+      this.openSnackbar(`${c.name} was successfully added`);
+      this.angulartics2.eventTrack.next({
+        action: 'Added character',
+        properties: {category: 'Characters'},
+      });
+    } else {
+      if (c.error.status === 404) {
+        ErrorReport.sendHttpError(
+          c.error,
+          new ErrorOptions(
+            true,
+            `${
+              this.form.value.name
+              } could not be found on the realm ${
+              this.form.value.realm
+              }.`));
+      }
+    }
+    this.downloading = false;
+  }
+
+  addLowLevelCharacter(): void {
     const character = new Character();
-    character.name = this._characterForm.value.name;
-    character.realm = SharedService.realms[this._characterForm.value.realm].name;
+    character.name = this.form.value.name;
+    character.realm = SharedService.realms[this.form.value.realm].name;
     character.thumbnail = '';
     character.level = 0;
 
-    this.angulartics2.eventTrack.next({
-      action: 'Added a lower than level 10 character',
-      properties: {category: 'Characters'},
-    });
+    Report.send('Added a lower than level 10 character', 'Characters');
     this.processCharacter(character);
     return;
   }
 
   processCharacter(character: Character): void {
-    this._characterForm.controls.name.setValue('');
+    this.form.controls.name.setValue('');
     SharedService.user.characters.push(character);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
@@ -155,32 +144,34 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   updateCharacter(index: number): void {
-    SharedService.user.characters[index]['downloading'] = true;
-    this._characterService.getCharacter(
-      SharedService.user.characters[index].name,
-      User.slugifyString(SharedService.user.characters[index].realm),
-      this._characterForm.value.region
-    ).then(c => {
-      if (!c.error) {
-        SharedService.user.characters[index] = c;
-        localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-        User.updateRecipesForRealm();
-        Crafting.checkForMissingRecipes(this.craftingService);
+    if (SharedService.user.characters[index].level) {
+      SharedService.user.characters[index]['downloading'] = true;
+      this._characterService.getCharacter(
+        SharedService.user.characters[index].name,
+        User.slugifyString(SharedService.user.characters[index].realm),
+        this.form.value.region
+      ).then(c => {
+        if (!c.error) {
+          SharedService.user.characters[index] = c;
+          localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+          User.updateRecipesForRealm();
+          Crafting.checkForMissingRecipes(this.craftingService);
 
-        if (SharedService.user.region && SharedService.user.realm) {
-          AuctionUtil.organize(
-            this.getAuctions());
+          if (SharedService.user.region && SharedService.user.realm) {
+            AuctionUtil.organize(
+              this.getAuctions());
+          }
+
+
+          Report.send('Updated', 'Characters');
+        } else {
+          delete SharedService.user.characters[index]['downloading'];
+          ErrorReport.sendHttpError(
+            c.error,
+            new ErrorOptions(true, 'Could not update the character'));
         }
-
-
-        Report.send('Updated', 'Characters');
-      } else {
-        delete SharedService.user.characters[index]['downloading'];
-        ErrorReport.sendHttpError(
-          c.error,
-          new ErrorOptions(true, 'Could not update the character'));
-      }
-    });
+      });
+    }
   }
 
   private getAuctions() {
@@ -193,7 +184,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
   getRealmWithkey(slug?: string): Realm {
     if (!slug) {
-      slug = this._characterForm.value.realm;
+      slug = this.form.value.realm;
     }
     return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
   }
@@ -201,15 +192,19 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   getRealms(): void {
     setTimeout(() => {
       this.realmService
-        .getRealms(this._characterForm.value.region);
+        .getRealms(this.form.value.region);
     }, 100);
   }
 
   removeCharacter(index: number): void {
     SharedService.user.characters.splice(index, 1);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-    User.updateRecipesForRealm();
-    Realm.gatherRealms();
+    try {
+      User.updateRecipesForRealm();
+      Realm.gatherRealms();
+    } catch (e) {
+      ErrorReport.sendError('removeCharacter', e);
+    }
 
     if (SharedService.user.region && SharedService.user.realm) {
       AuctionUtil.organize(this.getAuctions());
@@ -229,7 +224,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
     Object.keys(change)
       .forEach(key => {
-        const control: AbstractControl = this._characterForm.controls[key];
+        const control: AbstractControl = this.form.controls[key];
         if (control) {
           control.setValue(change[key]);
         }
