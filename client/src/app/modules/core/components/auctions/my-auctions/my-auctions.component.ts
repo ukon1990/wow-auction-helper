@@ -5,6 +5,8 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {Auction} from '../../../../auction/models/auction.model';
 import {UserAuctions} from '../../../../auction/models/user-auctions.model';
 import {UserAuctionCharacter} from '../../../../auction/models/user-auction-character.model';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-my-auctions',
@@ -15,9 +17,15 @@ export class MyAuctionsComponent implements OnInit {
   public static sortAsc: boolean;
 
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+  userAuctions: UserAuctions = SharedService.userAuctions;
+  private sm = new SubscriptionManager();
 
-  constructor(private _title: Title) {
+  constructor(private _title: Title, private service: AuctionsService) {
     this._title.setTitle('WAH - My auctions');
+    this.sm.add(service.events.groupedList, () => {
+      console.log('UserAuctions', SharedService.userAuctions);
+      this.userAuctions = SharedService.userAuctions;
+    });
   }
 
   public static getUndercutAmount(a: Auction): number {
@@ -47,18 +55,10 @@ export class MyAuctionsComponent implements OnInit {
     this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
   }
 
-  getUserAuctions(): UserAuctions {
-    return SharedService.userAuctions;
-  }
 
   hasUserCharacters(): boolean {
     return SharedService.user.characters.length > 0;
   }
-
-  getUserAuctionsCharacters(): Array<UserAuctionCharacter> {
-    return SharedService.userAuctions.characters ? SharedService.userAuctions.characters : [];
-  }
-
 
   sortUndercut(array: Array<Auction>): void {
     array.sort((a, b) => {
