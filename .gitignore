@@ -50,3 +50,5 @@ src/app/services/keys\.ts
 server-lambda/.webpack
 server-lambda/.serverless
 secrets.ts
+
+client/coverage
