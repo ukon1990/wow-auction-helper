@@ -85,8 +85,8 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     try {
       return this.isOnlyBuyableSourceMatch(vendor) &&
         this.onlyPotentiallyProfitableMatch(item, vendor) &&
-        Filters.isSaleRateMatch(item.itemID, this.form) &&
-        Filters.isDailySoldMatch(item.itemID, this.form);
+        Filters.isSaleRateMatch(item.itemID, this.form.getRawValue().saleRate) &&
+        Filters.isDailySoldMatch(item.itemID, this.form.getRawValue().avgDailySold);
     } catch (e) {
       console.error(e, item);
       return false;

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CharactersComponent } from './characters.component';
-import { TestModule } from '../../../modules/test.module';
+import {TestModule} from '../../test.module';
 
 describe('CharactersComponent', () => {
   let component: CharactersComponent;

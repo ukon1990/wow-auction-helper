@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { SharedService } from '../../../../services/shared.service';
-import { CraftingService } from '../../../../services/crafting.service';
-import { Recipe } from '../../../crafting/models/recipe';
-import { ItemService } from '../../../../services/item.service';
-import { Filters } from '../../../../models/filtering';
-import { FormControl } from '@angular/forms';
-import { environment } from '../../../../../environments/environment';
+import {Component, OnInit} from '@angular/core';
+import {SharedService} from '../../../../services/shared.service';
+import {CraftingService} from '../../../../services/crafting.service';
+import {Recipe} from '../../../crafting/models/recipe';
+import {ItemService} from '../../../../services/item.service';
+import {Filters} from '../../../../models/filtering';
+import {FormControl} from '@angular/forms';
+import {environment} from '../../../../../environments/environment';
+import {Item} from '../../../../models/item/item';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
 
 @Component({
   selector: 'wah-update',
@@ -45,18 +47,18 @@ export class UpdateComponent implements OnInit {
 
   /**
    * Recipes
-  */
+   */
   getRecipeProgress(): number {
     return this.updated.recipes.completed.length / this.getRecipeCount() * 100;
   }
 
   updateRecipes(i?: number): void {
     if (!i) {
-      i = 0 ;
+      i = 0;
       this.updated.recipes.list = [];
       SharedService.recipes
         .filter((recipe: Recipe) =>
-          Filters.isExpansionMatch(recipe.itemID, new FormControl(7)))
+          Filters.isExpansionMatch(recipe.itemID, 7))
         .forEach(r => {
           if (r) {
             this.updated.recipes.list.push(r);
@@ -92,7 +94,7 @@ export class UpdateComponent implements OnInit {
         this.updateRecipes(i);
       }
     }, 100);
-  } //updateItem
+  }
 
   getRecipeCount(): number {
     return this.updated.recipes.list.length;
@@ -100,7 +102,7 @@ export class UpdateComponent implements OnInit {
 
   /**
    * Items
-  */
+   */
   getItemProgress(): number {
     return this.updated.items.completed.length / this.getItemCount() * 100;
   }
@@ -148,5 +150,48 @@ export class UpdateComponent implements OnInit {
 
   getItemCount(): number {
     return this.updated.items.list.length;
+  }
+
+  printData() {
+    const recipes = SharedService.recipes.filter(r =>
+      Filters.isExpansionMatch(r.itemID, 7)).slice(0, 99);
+    const pets = Object.keys(SharedService.pets)
+      .map(k =>
+        SharedService.pets[k]).slice(0, 99);
+    const items = [];
+    const auctions = [];
+    recipes.forEach(recipe => {
+      let item: Item = SharedService.items[recipe.itemID];
+      Object.keys(item.itemSource)
+        .forEach(k =>
+          item.itemSource[k].length = 0);
+      items.push();
+      recipe.reagents.forEach(reagent => {
+        item = SharedService.items[reagent.itemID];
+        if (item) {
+          Object.keys(item.itemSource)
+            .forEach(k =>
+              item.itemSource[k].length = 0);
+          items.push(item);
+        }
+      });
+    });
+
+    items.forEach((item: Item) => {
+      if (!item) {
+        return;
+      }
+      const ai: AuctionItem = SharedService.auctionItemsMap[item.id];
+      if (ai) {
+        ai.auctions.slice(0, 30)
+          .forEach(a =>
+            auctions.push(a));
+      }
+    });
+
+    console.log('Recipes:', recipes);
+    console.log('Pets:', pets);
+    console.log('Items:', items);
+    console.log('Auctions:', auctions);
   }
 }

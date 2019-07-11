@@ -1,28 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuctionsComponent } from '../modules/core/components/auctions/auctions.component';
-import { TestModule } from '../modules/test.module';
 import { SharedService } from '../services/shared.service';
 import { AuctionItem } from '../modules/auction/models/auction-item.model';
 import { Filters } from './filtering';
 import { Item } from './item/item';
-import { FormBuilder } from '@angular/forms';
 
-describe('Filters', () => {
-  let component: AuctionsComponent;
-  let fixture: ComponentFixture<AuctionsComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [TestModule]
-    })
-    .compileComponents();
-  }));
-
+fdescribe('Filters', () => {
   beforeEach(() => {
-    fixture = TestBed.createComponent(AuctionsComponent);
-    component = fixture.componentInstance;
     SharedService.user.apiToUse = 'tsm';
-    fixture.detectChanges();
   });
 
   describe('should be able to check if demand query is matching', () => {
@@ -31,8 +14,7 @@ describe('Filters', () => {
       ai.regionSaleRate = 0.08;
       ai.itemID = 25;
       SharedService.auctionItemsMap[ai.itemID] = ai;
-      component.form.controls['saleRate'].setValue(9);
-      expect(Filters.isSaleRateMatch(ai.itemID, component.form)).toBeFalsy();
+      expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeFalsy();
     });
 
     it('When an auction item is equal set value, true shall be returned', () => {
@@ -40,8 +22,7 @@ describe('Filters', () => {
       ai.regionSaleRate = 0.09;
       ai.itemID = 25;
       SharedService.auctionItemsMap[ai.itemID] = ai;
-      component.form.controls['saleRate'].setValue(9);
-      expect(Filters.isSaleRateMatch(ai.itemID, component.form)).toBeTruthy();
+      expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
     });
 
     it('When an auction item is above set value, true shall be returned', () => {
@@ -49,8 +30,7 @@ describe('Filters', () => {
       ai.regionSaleRate = 0.10;
       ai.itemID = 25;
       SharedService.auctionItemsMap[ai.itemID] = ai;
-      component.form.controls['saleRate'].setValue(9);
-      expect(Filters.isSaleRateMatch(ai.itemID, component.form)).toBeTruthy();
+      expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
     });
   });
 
@@ -62,11 +42,8 @@ describe('Filters', () => {
       ai.itemID = 25;
       SharedService.auctionItemsMap[ai.itemID] = ai;
 
-      component.form.controls['itemClass'].setValue(null);
-      expect(Filters.isItemClassMatch(ai.itemID, component.form)).toBeTruthy();
-
-      component.form.controls['itemClass'].setValue(-1);
-      expect(Filters.isItemClassMatch(ai.itemID, component.form)).toBeTruthy();
+      expect(Filters.isItemClassMatch(ai.itemID, null, null)).toBeTruthy();
+      expect(Filters.isItemClassMatch(ai.itemID, -1, undefined)).toBeTruthy();
     });
 
     it('Should be able true if the itemClass is a match', () => {
@@ -75,23 +52,15 @@ describe('Filters', () => {
       SharedService.items[25].itemClass = '0';
       ai.itemID = 25;
       SharedService.auctionItemsMap[ai.itemID] = ai;
-
-      console.log(SharedService.items);
-      component.form.controls['itemClass'].setValue('1');
-      expect(SharedService.items[25].itemClass).toEqual('0');
-      expect(component.form.value['itemClass']).toEqual('1');
-      expect(Filters.isItemClassMatch(ai.itemID, component.form)).toBeTruthy();
+      expect(Filters.isItemClassMatch(ai.itemID, 1, undefined)).toBeTruthy();
     });
   });
 
   describe('should be able to filter for minimum item quality', () => {
     it('Should return true if the quality is above the set value', () => {
-      const form = new FormBuilder().group({
-        minItemQuality: 1
-      });
       SharedService.items[25] = new Item();
       SharedService.items[25].quality = 3;
-      expect(Filters.isItemAboveQuality(25, form)).toBeTruthy();
+      expect(Filters.isItemAboveQuality(25, 1)).toBeTruthy();
     });
   });
 });

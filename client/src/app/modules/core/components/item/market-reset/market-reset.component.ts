@@ -93,9 +93,9 @@ export class MarketResetComponent implements OnInit {
 
     this.data.length = 0;
     SharedService.auctionItems.forEach(ai => {
-      if (Filters.isNameMatch(ai.itemID, this.form) &&
-        Filters.isDailySoldMatch(ai.itemID, this.form) &&
-        Filters.isSaleRateMatch(ai.itemID, this.form)) {
+      if (Filters.isNameMatch(ai.itemID, this.form.getRawValue().name) &&
+        Filters.isDailySoldMatch(ai.itemID, this.form.getRawValue().avgDailySold) &&
+        Filters.isSaleRateMatch(ai.itemID, this.form.getRawValue().saleRate)) {
         tmpItem = new MarketResetCost();
         tmpItem.itemID = ai.itemID;
         tmpItem.name = ai.name;

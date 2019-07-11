@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResetCalcComponent } from './reset-calc.component';
-import { TestModule } from '../../../modules/test.module';
+import {TestModule} from '../../../../test.module';
 
 describe('ResetCalcComponent', () => {
   let component: ResetCalcComponent;

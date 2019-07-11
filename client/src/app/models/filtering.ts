@@ -1,31 +1,32 @@
 import {SharedService} from '../services/shared.service';
 import {itemClasses} from './item/item-classes';
-import {AbstractControl, FormGroup} from '@angular/forms';
 import {Item} from './item/item';
+import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
+import {Recipe} from '../modules/crafting/models/recipe';
 
 export class Filters {
-  public static isNameMatch(itemID: number, form: FormGroup): boolean {
-    if (form.value.name === null || form.value.name.length === 0) {
+  public static isNameMatch(itemID: number, name: string): boolean {
+    if (name === null || name.length === 0) {
       return true;
     }
-    return Filters.getItemName(itemID).toLowerCase().indexOf(form.value.name.toLowerCase()) > -1;
+    return TextUtil.contains(Filters.getItemName(itemID), name);
   }
 
-  public static isBelowMarketValue(itemID: number, form: FormGroup): boolean {
-    if (Filters.isUsingAPI() && (form.value.mktPrice === null || form.value.mktPrice === 0)) {
+  public static isBelowMarketValue(itemID: number, marketValue: number): boolean {
+    if (Filters.isUsingAPI() && (marketValue === null || marketValue === 0)) {
       return true;
     } else if (Filters.isUsingAPI() && SharedService.auctionItemsMap[itemID].mktPrice === 0) {
       return false;
     } else if (Filters.isUsingAPI()) {
       return Math.round((
         SharedService.auctionItemsMap[itemID].buyout / SharedService.auctionItemsMap[itemID].mktPrice
-      ) * 100) <= form.value.mktPrice;
+      ) * 100) <= marketValue;
     }
     return true;
   }
 
-  public static isBelowVendorPrice(itemID: number, form: FormGroup): boolean {
-    if (form.value.onlyVendorSellable) {
+  public static isBelowVendorPrice(itemID: number, onlyVendorSellable): boolean {
+    if (onlyVendorSellable) {
       return SharedService.auctionItemsMap[itemID].vendorSell > 0 &&
         SharedService.auctionItemsMap[itemID].buyout <= SharedService.auctionItemsMap[itemID].vendorSell &&
         SharedService.auctionItemsMap[itemID].bid <= SharedService.auctionItemsMap[itemID].vendorSell;
@@ -33,68 +34,76 @@ export class Filters {
     return true;
   }
 
-  public static isItemAboveQuality(id: number, form: FormGroup): boolean {
-    if (typeof form.getRawValue().minItemQuality !== 'number') {
+  public static isItemAboveQuality(id: number, minItemQuality: number): boolean {
+    if (typeof minItemQuality !== 'number') {
       return true;
     }
-    return (SharedService.items[id] as Item).quality >= form.getRawValue().minItemQuality;
+    return (SharedService.items[id] as Item).quality >= minItemQuality;
   }
 
-  public static isAboveItemLevel(id: number, form: FormGroup): boolean {
-    if (typeof form.getRawValue().minItemLevel !== 'number') {
+  public static isAboveItemLevel(id: number, minItemLevel: number): boolean {
+    if (typeof minItemLevel !== 'number') {
       return true;
     }
-    return (SharedService.items[id] as Item).itemLevel >= form.getRawValue().minItemLevel;
+    return (SharedService.items[id] as Item).itemLevel >= minItemLevel;
   }
 
-  public static isSaleRateMatch(itemID: number, form: FormGroup): boolean {
+  public static isSaleRateMatch(itemID: number, saleRate: number): boolean {
     if (!SharedService.auctionItemsMap[itemID]) {
       return false;
     }
 
-    if (Filters.isUsingAPI() && form.value.saleRate && form.value.saleRate > 0) {
-      return SharedService.auctionItemsMap[itemID].regionSaleRate >= form.value.saleRate / 100;
+    if (Filters.isUsingAPI() && saleRate && saleRate > 0) {
+      return SharedService.auctionItemsMap[itemID].regionSaleRate >= saleRate / 100;
     }
     return true;
   }
 
-  public static isDailySoldMatch(itemID: number, form: FormGroup): boolean {
+  public static isDailySoldMatch(itemID: number, avgDailySold: number): boolean {
     if (!SharedService.auctionItemsMap[itemID]) {
       return false;
     }
 
-    if (Filters.isUsingAPI() && form.value.avgDailySold && form.value.avgDailySold > 0) {
-      return SharedService.auctionItemsMap[itemID].avgDailySold >= form.value.avgDailySold;
+    if (Filters.isUsingAPI() && avgDailySold && avgDailySold > 0) {
+      return SharedService.auctionItemsMap[itemID].avgDailySold >= avgDailySold;
     }
     return true;
   }
 
-  public static isItemClassMatch(itemID: number, form: FormGroup): boolean {
-    const itemClass = SharedService.items[itemID] ? SharedService.items[itemID].itemClass : -1;
+  public static isItemClassMatch(itemID: number, itemClass: number, itemSubClass: number): boolean {
+    const classForId = SharedService.items[itemID] ? SharedService.items[itemID].itemClass : -1;
 
-    if (form.value.itemClass === null || form.value.itemClass === '-1' || form.value.itemClass === -1) {
+    if (isNaN(itemClass)) {
+      itemClass = parseInt('' + itemClass, 10);
+    }
+
+    if (isNaN(itemSubClass)) {
+      itemSubClass = parseInt('' + itemSubClass, 10);
+    }
+
+    if (itemClass === null || itemClass === -1) {
       return true;
-    } else if (itemClasses.classes[form.value.itemClass] &&
-      parseInt(itemClass, 10) === itemClasses.classes[form.value.itemClass].class) {
-      return Filters.isItemSubclassMatch(itemID, itemClasses.classes[form.value.itemClass], form);
+    } else if (itemClasses.classes[itemClass] &&
+      parseInt(classForId, 10) === itemClasses.classes[itemClass].class) {
+      return Filters.isItemSubclassMatch(
+        itemID, itemClasses.classes[itemClass], itemSubClass);
     }
 
     return false;
   }
 
-  public static isItemSubclassMatch(itemID: number, subClasses: any, form: FormGroup): boolean {
-    const subClass = SharedService.items[itemID] ? SharedService.items[itemID].itemSubClass : -1;
+  public static isItemSubclassMatch(itemID: number, subClasses: any, subClass: number): boolean {
+    const itemSubClass = SharedService.items[itemID] ? SharedService.items[itemID].itemSubClass : -1;
 
-    if (form.value.itemSubClass === null || form.value.itemSubClass === -1 ||
-      form.value.itemSubClass === '-1' || form.value.itemSubClass === undefined) {
+    if (itemSubClass === null || itemSubClass === -1 ||
+      itemSubClass === '-1' || itemSubClass === undefined) {
       return true;
     } else {
-      if (!subClasses.subclasses[form.value.itemSubClass]) {
-        form.controls['itemSubClass'].setValue('-1');
+      if (!subClasses.subclasses[itemSubClass]) {
         return true;
       }
       return subClass > -1 ?
-        subClasses.subclasses[form.value.itemSubClass].subclass === parseInt(subClass, 10) : false;
+        subClasses.subclasses[itemSubClass].subclass === parseInt(itemSubClass, 10) : false;
     }
   }
 
@@ -108,13 +117,36 @@ export class Filters {
       SharedService.auctionItemsMap[itemID].name : SharedService.items[itemID].name;
   }
 
-  public static isExpansionMatch(itemID: number, form: AbstractControl): boolean {
+  public static isExpansionMatch(itemID: number, expansionId: number): boolean {
     try {
-      return form.value === null ||
-        form.value === undefined ||
-        form.value === (SharedService.items[itemID] as Item).expansionId;
+      return expansionId === null ||
+        expansionId === undefined ||
+        expansionId === (SharedService.items[itemID] as Item).expansionId;
     } catch (error) {
       return false;
     }
+  }
+
+  static isProfessionMatch(itemID: number, profession: string) {
+    const recipe: Recipe = SharedService.itemRecipeMap[itemID];
+    if (!recipe || !recipe[0]) {
+      return false;
+    }
+
+    return profession === null || profession === 'All' ||
+      profession === recipe[0].profession || !recipe[0].profession && profession === 'none';
+  }
+
+  static isProfitMatch(recipe: Recipe, itemID: number, profit: number) {
+    if (!recipe && SharedService.itemRecipeMap[itemID]) {
+      recipe = SharedService.itemRecipeMap[itemID][0];
+    }
+
+    if (!recipe && !recipe[0]) {
+      return false;
+    }
+
+    return profit === null || profit === 0 ||
+      recipe[0].buyout > 0 && recipe[0].cost > 0 && profit <= recipe[0].roi / recipe[0].cost * 100;
   }
 }
