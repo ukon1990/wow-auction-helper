@@ -56,7 +56,7 @@
             <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().items" -->
-              <button mat-icon-button (click)="download('items', true)" [disabled]="isDownloading()"
+              <button mat-icon-button (click)="download('items', true)"
                 matTooltip="Re-download item data">
                 <i class="fas fa-download"></i>
               </button>
@@ -72,7 +72,7 @@
             <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
             <td>
               <!-- [disabled]="getDownloading().recipes" -->
-              <button mat-icon-button (click)="download('recipes', true)" [disabled]="isDownloading()"
+              <button mat-icon-button (click)="download('recipes', true)"
                 matTooltip="Re-download recipe data">
                 <i class="fas fa-download"></i>
               </button>
@@ -87,7 +87,7 @@
             <td>
               <!-- [disabled]="getDownloading().pets" -->
               <button mat-icon-button (click)="download('pets', true)"
-                matTooltip="Re-download pet data" [disabled]="isDownloading()"> 
+                matTooltip="Re-download pet data">
                 <i class="fas fa-download"></i>
               </button>
             </td>
@@ -101,7 +101,7 @@
             <td>
               <!-- [disabled]="getDownloading().auctions" -->
               <button mat-icon-button (click)="download('auctions')"
-                matTooltip="Re-download auction data" [disabled]="isDownloading()">
+                matTooltip="Re-download auction data">
                 <i class="fas fa-download"></i>
               </button>
             </td>
@@ -135,22 +135,10 @@
       <div>
         Realm data:
       </div>
+      <!--
       <table *ngIf="getUserRealm()" class="table table-hover table-bordered table-striped table-sm"
         [ngClass]="{'table-dark': isDarkmode()}">
         <tbody>
-          <!--
-          <tr>
-            <td>Current realm</td>
-            <td>
-              <mat-form-field>
-                <mat-select  [disableOptionCentering]="true" placeholder="Realm" [formControl]="realmControl">
-                  <mat-option *ngFor="let realm of getUserRealms()" [value]="slug">
-                    {{ realm.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </td>
-          </tr>-->
           <tr>
             <td>Connected to</td>
             <td>
@@ -173,7 +161,7 @@
             <td>{{ getUserRealm().status }}</td>
           </tr>
         </tbody>
-      </table>
+      </table>-->
     </mat-card-content>
   </mat-card>
 </div>

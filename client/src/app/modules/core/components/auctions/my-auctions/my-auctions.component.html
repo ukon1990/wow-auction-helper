@@ -1,5 +1,5 @@
 <mat-tab-group *ngIf="hasUserCharacters(); else noChars">
-  <mat-tab label="All">
+  <mat-tab label="All ({{ userAuctions.auctions.length | number }})">
     <div class="row col-md-12">
       {{ userAuctions.undercutAuctions | number }} of your auctions are undercut.
       <br> Your auctions are up for a total of {{ userAuctions.auctionWorth | gold }}
@@ -8,7 +8,7 @@
                     itemsPerPage="20"
                     [id]="'item'"
                     [showOwner]="true"
-                    [data]="userAuctions.auctions"
+                    [data]="userAuctions?.auctions"
                     [columns]="columns"
                     [useAuctionItemForName]="true"
                     filterParameter="name"></wah-data-table>
