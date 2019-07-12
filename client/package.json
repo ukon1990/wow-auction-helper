@@ -30,7 +30,7 @@
     "@angular/pwa": "^0.800.0",
     "@angular/router": "~8.0.3",
     "@angular/service-worker": "~8.0.3",
-    "@ukon1990/js-utilities": "0.0.8",
+    "@ukon1990/js-utilities": "1.0.0",
     "@ukon1990/subscription-manager": "^1.0.2",
     "angulartics2": "^7.5.2",
     "chart.js": "^2.8.0",
