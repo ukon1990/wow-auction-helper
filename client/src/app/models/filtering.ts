@@ -3,10 +3,12 @@ import {itemClasses} from './item/item-classes';
 import {Item} from './item/item';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {Recipe} from '../modules/crafting/models/recipe';
+import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
+import {AuctionItem} from '../modules/auction/models/auction-item.model';
 
 export class Filters {
   public static isNameMatch(itemID: number, name: string): boolean {
-    if (name === null || name.length === 0) {
+    if (TextUtil.isEmpty(name)) {
       return true;
     }
     return TextUtil.contains(Filters.getItemName(itemID), name);
@@ -49,14 +51,12 @@ export class Filters {
   }
 
   public static isSaleRateMatch(itemID: number, saleRate: number): boolean {
-    if (!SharedService.auctionItemsMap[itemID]) {
-      return false;
+    if (EmptyUtil.isNullOrUndefined(saleRate) || !Filters.isUsingAPI()) {
+      return true;
     }
-
-    if (Filters.isUsingAPI() && saleRate && saleRate > 0) {
-      return SharedService.auctionItemsMap[itemID].regionSaleRate >= saleRate / 100;
-    }
-    return true;
+    const item: AuctionItem = SharedService.auctionItemsMap[itemID],
+      minSaleRatePercent = saleRate / 100;
+    return item && item.regionSaleRate >= minSaleRatePercent;
   }
 
   public static isDailySoldMatch(itemID: number, avgDailySold: number): boolean {
@@ -70,41 +70,27 @@ export class Filters {
     return true;
   }
 
-  public static isItemClassMatch(itemID: number, itemClass: number, itemSubClass: number): boolean {
+  public static isItemClassMatch(itemID: number, itemClassIndex: number, itemSubClassIndex: number): boolean {
     const classForId = SharedService.items[itemID] ? SharedService.items[itemID].itemClass : -1;
-
-    if (isNaN(itemClass)) {
-      itemClass = parseInt('' + itemClass, 10);
-    }
-
-    if (isNaN(itemSubClass)) {
-      itemSubClass = parseInt('' + itemSubClass, 10);
-    }
-
-    if (itemClass === null || itemClass === -1) {
+    if (EmptyUtil.isNullOrUndefined(itemClassIndex) || itemClassIndex === -1) {
       return true;
-    } else if (itemClasses.classes[itemClass] &&
-      parseInt(classForId, 10) === itemClasses.classes[itemClass].class) {
-      return Filters.isItemSubclassMatch(
-        itemID, itemClasses.classes[itemClass], itemSubClass);
     }
+    const iClass = itemClasses.classes[itemClassIndex];
 
-    return false;
+    console.log('isItemClassMatch', SharedService.items[itemID], itemID, itemClassIndex, itemSubClassIndex, iClass);
+    return !iClass || classForId === iClass.class &&
+      this.isItemSubclassMatch(itemID, iClass.subclasses, itemSubClassIndex);
   }
 
-  public static isItemSubclassMatch(itemID: number, subClasses: any, subClass: number): boolean {
-    const itemSubClass = SharedService.items[itemID] ? SharedService.items[itemID].itemSubClass : -1;
+  private static isItemSubclassMatch(itemID: number, subClasses: any, itemSubClassIndex: number): boolean {
+    const subClassForId = SharedService.items[itemID] ? SharedService.items[itemID].itemSubClass : -1;
 
-    if (itemSubClass === null || itemSubClass === -1 ||
-      itemSubClass === '-1' || itemSubClass === undefined) {
+    if (EmptyUtil.isNullOrUndefined(itemSubClassIndex) || itemSubClassIndex === -1) {
       return true;
-    } else {
-      if (!subClasses.subclasses[itemSubClass]) {
-        return true;
-      }
-      return subClass > -1 ?
-        subClasses.subclasses[itemSubClass].subclass === parseInt(itemSubClass, 10) : false;
     }
+    const iSubClass = subClasses[itemSubClassIndex];
+
+    return !iSubClass || subClassForId === iSubClass.subclass;
   }
 
   public static isUsingAPI(): boolean {
@@ -113,28 +99,32 @@ export class Filters {
 
   /* istanbul ignore next */
   private static getItemName(itemID): string {
-    return SharedService.auctionItemsMap[itemID] ?
-      SharedService.auctionItemsMap[itemID].name : SharedService.items[itemID].name;
+    return SharedService.items[itemID] ?
+      SharedService.items[itemID].name : '';
   }
 
   public static isExpansionMatch(itemID: number, expansionId: number): boolean {
-    try {
-      return expansionId === null ||
-        expansionId === undefined ||
-        expansionId === (SharedService.items[itemID] as Item).expansionId;
-    } catch (error) {
-      return false;
+    const item: Item = SharedService.items[itemID] as Item;
+    if (EmptyUtil.isNullOrUndefined(expansionId) || expansionId === -1) {
+      return true;
     }
+    return item &&
+      expansionId === item.expansionId;
   }
 
   static isProfessionMatch(itemID: number, profession: string) {
-    const recipe: Recipe = SharedService.itemRecipeMap[itemID];
-    if (!recipe || !recipe[0]) {
+    const recipes: Recipe[] = SharedService.itemRecipeMap[itemID];
+
+    if (EmptyUtil.isNullOrUndefined(profession) || profession === 'All') {
+      return true;
+    }
+
+    if (!recipes || !recipes[0]) {
       return false;
     }
 
-    return profession === null || profession === 'All' ||
-      profession === recipe[0].profession || !recipe[0].profession && profession === 'none';
+    return profession === recipes[0].profession ||
+      !recipes[0].profession && profession === 'none';
   }
 
   static isProfitMatch(recipe: Recipe, itemID: number, profit: number) {
@@ -142,11 +132,11 @@ export class Filters {
       recipe = SharedService.itemRecipeMap[itemID][0];
     }
 
-    if (!recipe && !recipe[0]) {
+    if (EmptyUtil.isNullOrUndefined(recipe)) {
       return false;
     }
 
-    return profit === null || profit === 0 ||
-      recipe[0].buyout > 0 && recipe[0].cost > 0 && profit <= recipe[0].roi / recipe[0].cost * 100;
+    return EmptyUtil.isNullOrUndefined(profit) || profit === 0 ||
+      recipe.buyout > 0 && recipe.cost > 0 && profit <= recipe.roi / recipe.cost * 100;
   }
 }

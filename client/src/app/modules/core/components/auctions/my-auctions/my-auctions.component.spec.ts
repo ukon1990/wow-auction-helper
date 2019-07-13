@@ -1,24 +1,24 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MyAuctionsComponent } from './my-auctions.component';
-import { User } from '../../../../../models/user/user';
-import { Character } from '../../../../character/models/character.model';
-import { Item } from '../../../../../models/item/item';
-import { AuctionUtil } from '../../../../auction/utils/auction.util';
-import { Auction } from '../../../../auction/models/auction.model';
+import {MyAuctionsComponent} from './my-auctions.component';
+import {User} from '../../../../../models/user/user';
+import {Character} from '../../../../character/models/character.model';
+import {Item} from '../../../../../models/item/item';
+import {AuctionUtil} from '../../../../auction/utils/auction.util';
+import {Auction} from '../../../../auction/models/auction.model';
 import {TestModule} from '../../../../test.module';
 import {SharedService} from '../../../../../services/shared.service';
 
 describe('MyAuctionsComponent', () => {
   let component: MyAuctionsComponent;
   let fixture: ComponentFixture<MyAuctionsComponent>;
-  let realm = 'test-realm';
+  const realm = 'test-realm';
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ TestModule ]
+      imports: [TestModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -56,24 +56,24 @@ describe('MyAuctionsComponent', () => {
       new Auction(2, 25, 9, 200, 'No thanks', hinata.realm),
       new Auction(3, 26, 12, 200, 'That person you hate', charlie.realm)
     ]);
-    
+
 
     component.sortUndercut(SharedService.userAuctions.auctions);
-    expect(component.getUserAuctions().auctions[0].auc).toBe(40);
-    
-    component.sortUndercut(SharedService.userAuctions.auctions);
-    expect(component.getUserAuctions().auctions[0].auc).toBe(30);
+    expect(component.userAuctions.auctions[0].auc).toBe(40);
 
     component.sortUndercut(SharedService.userAuctions.auctions);
-    expect(component.getUserAuctions().auctions[0].auc).toBe(40);
+    expect(component.userAuctions.auctions[0].auc).toBe(30);
 
     component.sortUndercut(SharedService.userAuctions.auctions);
-    expect(component.getUserAuctions().auctions[0].auc).toBe(30);
+    expect(component.userAuctions.auctions[0].auc).toBe(40);
 
     component.sortUndercut(SharedService.userAuctions.auctions);
-    expect(component.getUserAuctions().auctions[0].auc).toBe(40);
+    expect(component.userAuctions.auctions[0].auc).toBe(30);
 
     component.sortUndercut(SharedService.userAuctions.auctions);
-    expect(component.getUserAuctions().auctions[0].auc).toBe(30);
+    expect(component.userAuctions.auctions[0].auc).toBe(40);
+
+    component.sortUndercut(SharedService.userAuctions.auctions);
+    expect(component.userAuctions.auctions[0].auc).toBe(30);
   });
 });

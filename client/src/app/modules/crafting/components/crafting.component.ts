@@ -10,6 +10,7 @@ import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
 import {Crafting} from '../models/crafting';
 import {Filters} from '../../../models/filtering';
+import {ObjectUtil} from '../../../utils/object.util';
 
 @Component({
   selector: 'wah-crafting',
@@ -119,16 +120,22 @@ export class CraftingComponent implements OnInit, OnDestroy {
       User.save();
       Crafting.calculateCost();
     }
+
+    console.log('chagnes', changes);
     this.filtered = SharedService.recipes
-      .filter(recipe =>
-        this.isKnownRecipe(recipe)
-        && this.isNameMatch(recipe)
-        && Filters.isProfitMatch(recipe, undefined, changes.profit)
-        && Filters.isSaleRateMatch(recipe.itemID, changes.demand)
-        && Filters.isDailySoldMatch(recipe.itemID, changes.minSold)
-        && Filters.isProfessionMatch(recipe.itemID, changes.profession)
-        && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
-        && Filters.isExpansionMatch(recipe.itemID, changes.expansion));
+      .filter(recipe => {
+        if (!ObjectUtil.isNullOrUndefined(recipe)) {
+          return this.isKnownRecipe(recipe)
+          && this.isNameMatch(recipe)
+          && Filters.isProfitMatch(recipe, undefined, changes.profit)
+          && Filters.isSaleRateMatch(recipe.itemID, changes.demand)
+          && Filters.isDailySoldMatch(recipe.itemID, changes.minSold)
+          && Filters.isProfessionMatch(recipe.itemID, changes.profession)
+          && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
+          && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
+        }
+        return false;
+      });
   }
 
   isKnownRecipe(recipe: Recipe): boolean {
