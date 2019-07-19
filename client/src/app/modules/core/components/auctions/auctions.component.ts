@@ -3,7 +3,7 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {itemClasses} from '../../../../models/item/item-classes';
-import {Filters} from '../../../../models/filtering';
+import {Filters} from '../../../../utils/filtering';
 import {Title} from '@angular/platform-browser';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {itemQualities} from '../../../../models/item/disenchanting-list';

@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {itemClasses} from '../../../../../models/item/item-classes';
 import {GameBuild} from '../../../../../utils/game-build.util';
-import {Filters} from '../../../../../models/filtering';
+import {Filters} from '../../../../../utils/filtering';
 import {Item} from '../../../../../models/item/item';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {Angulartics2} from 'angulartics2';

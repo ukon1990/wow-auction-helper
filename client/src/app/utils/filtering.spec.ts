@@ -1,9 +1,9 @@
 import {SharedService} from '../services/shared.service';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Filters} from './filtering';
-import {Item} from './item/item';
+import {Item} from '../models/item/item';
 import {Recipe} from '../modules/crafting/models/recipe';
-import {itemClasses} from './item/item-classes';
+import {itemClasses} from '../models/item/item-classes';
 
 fdescribe('Filters', () => {
   beforeEach(() => {
@@ -229,12 +229,21 @@ fdescribe('Filters', () => {
   });
 
   describe('isAboveItemLevel', () => {
+    beforeAll(() => {
+      const item: Item = new Item();
+      item.itemLevel = 30;
+      SharedService.items[25] = item;
+    });
     it('Positive when', () => {
       expect(Filters.isAboveItemLevel(25, undefined)).toBeTruthy();
       expect(Filters.isAboveItemLevel(25, null)).toBeTruthy();
+      expect(Filters.isAboveItemLevel(25, 30)).toBeTruthy();
+      expect(Filters.isAboveItemLevel(25, 20)).toBeTruthy();
     });
 
     it('Negative when', () => {
+      expect(Filters.isAboveItemLevel(1, 100)).toBeFalsy();
+      expect(Filters.isAboveItemLevel(25, 30)).toBeFalsy();
     });
 
   });

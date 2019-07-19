@@ -9,7 +9,7 @@ import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
 import {Crafting} from '../models/crafting';
-import {Filters} from '../../../models/filtering';
+import {Filters} from '../../../utils/filtering';
 import {ObjectUtil} from '../../../utils/object.util';
 
 @Component({

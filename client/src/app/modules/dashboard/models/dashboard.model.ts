@@ -5,7 +5,7 @@ import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {WatchlistGroup, WatchlistItem} from './watchlist.model';
 import {Seller} from '../../../models/seller';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Filters} from '../../../models/filtering';
+import {Filters} from '../../../utils/filtering';
 import {FormBuilder} from '@angular/forms';
 import {Remains} from '../../../models/item/remains.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';

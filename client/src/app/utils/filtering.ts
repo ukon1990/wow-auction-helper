@@ -1,6 +1,6 @@
 import {SharedService} from '../services/shared.service';
-import {itemClasses} from './item/item-classes';
-import {Item} from './item/item';
+import {itemClasses} from '../models/item/item-classes';
+import {Item} from '../models/item/item';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
@@ -43,11 +43,12 @@ export class Filters {
     return (SharedService.items[id] as Item).quality >= minItemQuality;
   }
 
-  public static isAboveItemLevel(id: number, minItemLevel: number): boolean {
+  public static isAboveItemLevel(itemId: number, minItemLevel: number): boolean {
     if (typeof minItemLevel !== 'number') {
       return true;
     }
-    return (SharedService.items[id] as Item).itemLevel >= minItemLevel;
+    const item: Item = SharedService.items[itemId];
+    return item && item.itemLevel >= minItemLevel;
   }
 
   public static isSaleRateMatch(itemID: number, saleRate: number): boolean {
