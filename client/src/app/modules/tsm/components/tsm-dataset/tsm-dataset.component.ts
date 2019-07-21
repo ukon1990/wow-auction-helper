@@ -1,12 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {ObjectUtil} from '../../../../utils/object.util';
+import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {SharedService} from '../../../../services/shared.service';
 import {TsmLuaUtil} from '../../../../utils/tsm-lua.util';
 import {Item, ItemInventory} from '../../../../models/item/item';
 import {TSM} from '../../../auction/models/tsm.model';
 import {ActivatedRoute, Router} from '@angular/router';
+import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 
 @Component({
   selector: 'wah-tsm-dataset',
@@ -181,7 +182,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
   initContent(): void {
     if (SharedService.tsmAddonData.characterGuilds) {
       const firstChild = this.route.snapshot.firstChild;
-      const name = !ObjectUtil.isNullOrUndefined(firstChild) ?
+      const name = !EmptyUtil.isNullOrUndefined(firstChild) ?
         firstChild.params.name : undefined;
       this.setDataSets(SharedService.tsmAddonData);
 
@@ -236,7 +237,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       .forEach(realm =>
         this.realms.push(realm));
 
-    if (ObjectUtil.isNullOrUndefined(this.form.value.realm)) {
+    if (EmptyUtil.isNullOrUndefined(this.form.value.realm)) {
       this.form.controls.realm.setValue(this.realms[0]);
     } else {
       this.setCharactersOnRealm(this.form.value.realm);

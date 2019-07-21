@@ -44,7 +44,8 @@ export class Filters {
   }
 
   public static isAboveItemLevel(itemId: number, minItemLevel: number): boolean {
-    if (typeof minItemLevel !== 'number') {
+    /* istanbul ignore next */
+    if (EmptyUtil.isNullOrUndefined(minItemLevel)) {
       return true;
     }
     const item: Item = SharedService.items[itemId];
@@ -78,7 +79,6 @@ export class Filters {
     }
     const iClass = itemClasses.classes[itemClassIndex];
 
-    console.log('isItemClassMatch', SharedService.items[itemID], itemID, itemClassIndex, itemSubClassIndex, iClass);
     return !iClass || classForId === iClass.class &&
       this.isItemSubclassMatch(itemID, iClass.subclasses, itemSubClassIndex);
   }

@@ -10,7 +10,8 @@ import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
 import {Crafting} from '../models/crafting';
 import {Filters} from '../../../utils/filtering';
-import {ObjectUtil} from '../../../utils/object.util';
+import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
+import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 
 @Component({
   selector: 'wah-crafting',
@@ -124,7 +125,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     console.log('chagnes', changes);
     this.filtered = SharedService.recipes
       .filter(recipe => {
-        if (!ObjectUtil.isNullOrUndefined(recipe)) {
+        if (!EmptyUtil.isNullOrUndefined(recipe)) {
           return this.isKnownRecipe(recipe)
           && this.isNameMatch(recipe)
           && Filters.isProfitMatch(recipe, undefined, changes.profit)

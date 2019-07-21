@@ -228,6 +228,16 @@ fdescribe('Filters', () => {
     });
   });
 
+  describe('isBelowVendorPrice', () => {
+    it('Positive when', () => {
+
+    });
+
+    it('Negative when', () => {
+
+    });
+  });
+
   describe('isAboveItemLevel', () => {
     beforeAll(() => {
       const item: Item = new Item();
@@ -243,7 +253,7 @@ fdescribe('Filters', () => {
 
     it('Negative when', () => {
       expect(Filters.isAboveItemLevel(1, 100)).toBeFalsy();
-      expect(Filters.isAboveItemLevel(25, 30)).toBeFalsy();
+      expect(Filters.isAboveItemLevel(25, 31)).toBeFalsy();
     });
 
   });
