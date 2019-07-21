@@ -66,8 +66,8 @@ export class MaterialsComponent implements OnInit {
     if (this.usingVendor) {
       if (!this.vendorHasEnough(reagent)) {
         const vendorCount = SharedService.items[reagent.itemID].vendorBoughtLimit;
-        return `You need to buy ${ reagent.count - vendorCount } from AH and ${
-          vendorCount } from the vendor. This is used for cost calculation.`;
+        return `You need to buy ${reagent.count - vendorCount} from AH and ${
+          vendorCount} from the vendor. This is used for cost calculation.`;
       }
       return `This item is sold by a vendor, and it is currently cheaper source than from the AH.`;
     }
@@ -83,6 +83,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   vendorHasEnough(reagent: Reagent) {
-    return SharedService.items[reagent.itemID].vendorBoughtLimit >= reagent.count;
+    return SharedService.items[reagent.itemID] &&
+      SharedService.items[reagent.itemID].vendorBoughtLimit >= reagent.count;
   }
 }
