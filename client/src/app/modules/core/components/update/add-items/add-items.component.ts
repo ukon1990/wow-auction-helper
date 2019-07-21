@@ -27,8 +27,8 @@ export class AddItemsComponent implements OnInit {
     {title: 'Is new', key: 'isNew', dataType: 'boolean'}
   ];
   columnsFailed = [
-    { title: 'ID', key: 'spellID', dataType: 'string' },
-    { title: 'Message', key: 'message', dataType: 'string' },
+    {title: 'ID', key: 'spellID', dataType: 'string'},
+    {title: 'Message', key: 'message', dataType: 'string'},
   ];
   form: FormGroup;
 
@@ -40,6 +40,23 @@ export class AddItemsComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  setMissingReagentItems(): void {
+    const list = [];
+    SharedService.recipes.forEach(recipe => {
+      if (!SharedService.items[recipe.itemID] && recipe.itemID) {
+        list.push(recipe.itemID);
+      }
+
+      recipe.reagents.forEach(reagent => {
+        if (!SharedService.items[reagent.itemID] && reagent.itemID) {
+          list.push(reagent.itemID);
+        }
+      });
+    });
+
+    this.form.controls.input.setValue(list.join(','));
   }
 
   addItems(): void {
