@@ -27,7 +27,7 @@ export class Filters {
     return true;
   }
 
-  public static isBelowVendorPrice(itemID: number, onlyVendorSellable): boolean {
+  public static isBelowSellToVendorPrice(itemID: number, onlyVendorSellable): boolean {
     if (onlyVendorSellable) {
       return SharedService.auctionItemsMap[itemID].vendorSell > 0 &&
         SharedService.auctionItemsMap[itemID].buyout <= SharedService.auctionItemsMap[itemID].vendorSell &&

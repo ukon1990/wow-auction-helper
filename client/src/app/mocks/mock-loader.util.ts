@@ -48,6 +48,7 @@ export class MockLoaderUtil {
   setItems(): void {
     const items = this.getFile('items');
     const service = new ItemService(null, null, null, null, null);
+    SharedService.itemsUnmapped.length = 0;
     service.handleItems(items);
   }
 

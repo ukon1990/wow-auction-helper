@@ -4,8 +4,17 @@ import {Filters} from './filtering';
 import {Item} from '../models/item/item';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {itemClasses} from '../models/item/item-classes';
+import {MockLoaderUtil} from '../mocks/mock-loader.util';
 
 fdescribe('Filters', () => {
+  beforeAll(() => {
+    new MockLoaderUtil().initBaseData();
+    console.log('SharedService', {
+      items: SharedService.itemsUnmapped,
+      auctionItems: SharedService.auctionItems
+    });
+  });
+
   beforeEach(() => {
     SharedService.user.apiToUse = 'tsm';
   });
@@ -228,13 +237,24 @@ fdescribe('Filters', () => {
     });
   });
 
-  describe('isBelowVendorPrice', () => {
+  describe('isBelowSellToVendorPrice', () => {
     it('Positive when', () => {
-
+      const fakeItem = new AuctionItem();
+      fakeItem.itemID = 1;
+      fakeItem.buyout = 10;
+      fakeItem.bid = 10;
+      fakeItem.vendorSell = 30;
+      SharedService.auctionItemsMap[fakeItem.itemID] = fakeItem;
+      expect(Filters.isBelowSellToVendorPrice(1, true)).toBeTruthy();
+      expect(Filters.isBelowSellToVendorPrice(160298, false)).toBeTruthy();
+      expect(Filters.isBelowSellToVendorPrice(160298, null)).toBeTruthy();
+      expect(Filters.isBelowSellToVendorPrice(160298, undefined)).toBeTruthy();
     });
 
     it('Negative when', () => {
-
+      console.log('SharedService', SharedService.auctionItemsMap[160298], SharedService.items[160298]);
+      expect(Filters.isBelowSellToVendorPrice(152579, true)).toBeFalsy();
+      expect(Filters.isBelowSellToVendorPrice(160298, true)).toBeFalsy();
     });
   });
 
