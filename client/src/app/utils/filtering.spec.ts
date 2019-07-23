@@ -229,11 +229,22 @@ fdescribe('Filters', () => {
 
   describe('isBelowMarketValue', () => {
     it('Positive when', () => {
-
+      SharedService.user.apiToUse = 'Testing';
+      expect(Filters.isBelowMarketValue(152506, 70)).toBeTruthy();
+      expect(Filters.isBelowMarketValue(152506, undefined)).toBeTruthy();
+      expect(Filters.isBelowMarketValue(152506, null)).toBeTruthy();
+      SharedService.user.apiToUse = 'none';
+      expect(Filters.isBelowMarketValue(152506, 10)).toBeTruthy();
     });
 
     it('Negative when', () => {
-
+      SharedService.user.apiToUse = 'Testing';
+      const fakeItem = new AuctionItem();
+      fakeItem.itemID = 1;
+      fakeItem.mktPrice = 0;
+      SharedService.auctionItemsMap[fakeItem.itemID] = fakeItem;
+      expect(Filters.isBelowMarketValue(1, 0.01)).toBeFalsy();
+      expect(Filters.isBelowMarketValue(152506, 10)).toBeFalsy();
     });
   });
 

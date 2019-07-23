@@ -14,17 +14,21 @@ export class Filters {
     return TextUtil.contains(Filters.getItemName(itemID), name);
   }
 
-  public static isBelowMarketValue(itemID: number, marketValue: number): boolean {
-    if (Filters.isUsingAPI() && (marketValue === null || marketValue === 0)) {
-      return true;
-    } else if (Filters.isUsingAPI() && SharedService.auctionItemsMap[itemID].mktPrice === 0) {
-      return false;
-    } else if (Filters.isUsingAPI()) {
-      return Math.round((
-        SharedService.auctionItemsMap[itemID].buyout / SharedService.auctionItemsMap[itemID].mktPrice
-      ) * 100) <= marketValue;
+  public static isBelowMarketValue(itemID: number, marketValuePercent: number): boolean {
+    const auctionItem: AuctionItem = SharedService.auctionItemsMap[itemID];
+    if (Filters.isUsingAPI() && auctionItem) {
+      if (EmptyUtil.isNullOrUndefined(marketValuePercent)) {
+        return true;
+      }
+
+      if (!auctionItem.mktPrice) {
+        return false;
+      }
+      const result = Math.round((auctionItem.buyout / auctionItem.mktPrice) * 100);
+      console.log('SharedService', auctionItem, result, marketValuePercent);
+      return result <= marketValuePercent;
     }
-    return true;
+    return !EmptyUtil.isNullOrUndefined(auctionItem);
   }
 
   public static isBelowSellToVendorPrice(itemID: number, onlyVendorSellable): boolean {
