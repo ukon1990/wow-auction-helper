@@ -4,7 +4,7 @@ import {ItemInventory} from '../../../models/item/item';
 import {Recipe} from '../../crafting/models/recipe';
 import {ShoppingCart} from './shopping-cart.model';
 
-fdescribe('ShoppingCartUtil', () => {
+describe('ShoppingCartUtil', () => {
   let recipe: Recipe,
     cart: ShoppingCart,
     inventoryItem: ItemInventory;

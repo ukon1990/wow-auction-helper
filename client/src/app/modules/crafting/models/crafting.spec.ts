@@ -19,8 +19,7 @@ describe('Crafting', () => {
     SharedService.auctionItemsMap[12].buyout = 30;
     SharedService.auctionItemsMap[20] = new AuctionItem();
     SharedService.auctionItemsMap[20].buyout = 10;
-    SharedService.tsm[20] = new TSM();
-    SharedService.tsm[20].MarketValue = 100;
+    SharedService.tsm[20] = {MarketValue: 100} as TSM;
 
     recipe.spellID = 1;
     recipe.itemID = 10;

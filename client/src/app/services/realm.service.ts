@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
 import {Realm} from '../models/realm';
@@ -8,7 +8,7 @@ import {User} from '../models/user/user';
 import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
-import {ObjectUtil} from '../utils/object.util';
+import {ArrayUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
@@ -63,7 +63,7 @@ export class RealmService {
   }
 
   public handleRealms(realms: any[]) {
-    if (ObjectUtil.isArray(realms)) {
+    if (ArrayUtil.isArray(realms)) {
       Object.keys(SharedService.realms).forEach(key => {
         delete SharedService.realms[key];
       });

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CharacterComponent } from './character.component';
-import { TestModule } from '../../../test.module';
-import { Character } from '../../../../../../../models/character/character';
+import {CharacterComponent} from './character.component';
+import {TestModule} from '../../../test.module';
+import {Character} from '../../models/character.model';
 
 describe('CharacterComponent', () => {
   let component: CharacterComponent;
@@ -10,9 +10,9 @@ describe('CharacterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ TestModule ]
+      imports: [TestModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

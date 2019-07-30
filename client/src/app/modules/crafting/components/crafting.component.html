@@ -21,7 +21,7 @@
 
   <mat-form-field class="ml-2 mr-2 col">
     <mat-select  [disableOptionCentering]="true" placeholder="Item class" formControlName="itemClass">
-      <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+      <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
       <mat-option *ngFor="let c of itemClasses.classes; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
@@ -32,7 +32,7 @@
 
   <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]" class="ml-2 mr-2 col">
     <mat-select  [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
-      <mat-option value="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+      <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         All
       </mat-option>
       <mat-option *ngFor="let c of itemClasses.classes[searchForm.value['itemClass']].subclasses; let i = index;" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">

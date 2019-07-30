@@ -4,7 +4,7 @@ import {TRADE_VENDORS} from '../../../../models/item/trade-vendors';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {Filters} from '../../../../models/filtering';
+import {Filters} from '../../../../utils/filtering';
 import {FormGroup, FormBuilder} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
@@ -85,8 +85,8 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     try {
       return this.isOnlyBuyableSourceMatch(vendor) &&
         this.onlyPotentiallyProfitableMatch(item, vendor) &&
-        Filters.isSaleRateMatch(item.itemID, this.form) &&
-        Filters.isDailySoldMatch(item.itemID, this.form);
+        Filters.isSaleRateMatch(item.itemID, this.form.getRawValue().saleRate) &&
+        Filters.isDailySoldMatch(item.itemID, this.form.getRawValue().avgDailySold);
     } catch (e) {
       console.error(e, item);
       return false;

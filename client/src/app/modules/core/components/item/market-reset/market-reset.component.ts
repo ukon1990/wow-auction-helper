@@ -5,7 +5,7 @@ import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../../services/shared.service';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {MarketResetCost} from '../../../../auction/models/market-reset-cost.model';
-import {Filters} from '../../../../../models/filtering';
+import {Filters} from '../../../../../utils/filtering';
 import {Crafting} from '../../../../crafting/models/crafting';
 import {AuctionItem} from '../../../../auction/models/auction-item.model';
 import {Auction} from '../../../../auction/models/auction.model';
@@ -93,9 +93,9 @@ export class MarketResetComponent implements OnInit {
 
     this.data.length = 0;
     SharedService.auctionItems.forEach(ai => {
-      if (Filters.isNameMatch(ai.itemID, this.form) &&
-        Filters.isDailySoldMatch(ai.itemID, this.form) &&
-        Filters.isSaleRateMatch(ai.itemID, this.form)) {
+      if (Filters.isNameMatch(ai.itemID, this.form.getRawValue().name) &&
+        Filters.isDailySoldMatch(ai.itemID, this.form.getRawValue().avgDailySold) &&
+        Filters.isSaleRateMatch(ai.itemID, this.form.getRawValue().saleRate)) {
         tmpItem = new MarketResetCost();
         tmpItem.itemID = ai.itemID;
         tmpItem.name = ai.name;

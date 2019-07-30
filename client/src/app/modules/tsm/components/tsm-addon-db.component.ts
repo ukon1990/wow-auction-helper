@@ -1,13 +1,10 @@
-import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {Component, Input} from '@angular/core';
+import {FormBuilder} from '@angular/forms';
 import {TsmLuaUtil} from '../../../utils/tsm-lua.util';
-import {ObjectUtil} from '../../../utils/object.util';
-import {SharedService} from '../../../services/shared.service';
 import {Report} from '../../../utils/report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {ActivatedRoute, ActivatedRouteSnapshot, Route, Router} from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'wah-tsm-addon-db',

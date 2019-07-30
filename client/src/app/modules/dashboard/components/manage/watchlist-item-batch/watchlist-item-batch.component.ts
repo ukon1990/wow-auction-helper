@@ -1,20 +1,21 @@
-import {Component, OnInit, Input, EventEmitter, Output, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {WatchlistGroup, WatchlistItem} from '../../../models/watchlist.model';
-import {FormGroup, FormBuilder} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
-import {Subscription} from 'rxjs';
 import {itemClasses} from '../../../../../models/item/item-classes';
 import {GameBuild} from '../../../../../utils/game-build.util';
-import {Filters} from '../../../../../models/filtering';
+import {Filters} from '../../../../../utils/filtering';
 import {Item} from '../../../../../models/item/item';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {Angulartics2} from 'angulartics2';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {Report} from '../../../../../utils/report.util';
 
 @Component({
   selector: 'wah-watchlist-item-batch',
   templateUrl: './watchlist-item-batch.component.html',
-  styleUrls: ['./watchlist-item-batch.component.scss']
+  styleUrls: ['./watchlist-item-batch.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
 
@@ -51,7 +52,7 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
     {key: 'itemLevel', title: 'Item level', dataType: 'number'}
   ];
 
-  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
+  constructor(private _formBuilder: FormBuilder, private cd: ChangeDetectorRef) {
     Object.keys(SharedService.user.watchlist.CRITERIA).forEach(key => {
       this.criteria.push(SharedService.user.watchlist.CRITERIA[key]);
     });
@@ -83,8 +84,8 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
 
     this.itemForm = this._formBuilder.group({
       name: '',
-      itemClass: '-1',
-      itemSubClass: '-1',
+      itemClass: -1,
+      itemSubClass: -1,
       profession: 'All',
       isSoldByVendor: 2, // TODO: later
       isDroppedByNPCs: 0, // TODO: later
@@ -99,36 +100,38 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       this.itemForm.valueChanges,
-      () => {
-        setTimeout(() => {
-          this.items.length = 0;
-          this.items = this.items.concat(SharedService.itemsUnmapped.filter(i =>
-            this.isMatch(i)));
-          console.log(this.items);
-        }, 10);
+      (changes) => {
+        this.items.length = 0;
+        this.items = SharedService.itemsUnmapped
+          .filter(i =>
+            this.isMatch(i, changes));
+        console.log(this.items);
+        if (this.cd) {
+          this.cd.detectChanges();
+        }
       });
   }
 
-  isMatch(item: Item): boolean {
-    return Filters.isNameMatch(item.id, this.itemForm) &&
-      Filters.isItemClassMatch(item.id, this.itemForm) &&
-      Filters.isExpansionMatch(item.id, this.itemForm.controls.expansion) &&
-      this.isProfessionMatch(item);
+  isMatch(item: Item, changes): boolean {
+    return Filters.isNameMatch(item.id, changes.name) &&
+      Filters.isItemClassMatch(item.id, changes.itemClass, changes.itemSubClass) &&
+      Filters.isExpansionMatch(item.id, changes.expansion) &&
+      this.isProfessionMatch(item, changes.profession);
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  isProfessionMatch(item: Item): boolean {
+  isProfessionMatch(item: Item, profession: string): boolean {
     const recipe = SharedService.itemRecipeMap[item.id],
-      validByDefault = this.itemForm.value.profession === null || this.itemForm.value.profession === 'All';
+      validByDefault = profession === null || profession === 'All';
     if (!recipe) {
       return validByDefault ? true : false;
     }
     return validByDefault ||
-      this.itemForm.value.profession === recipe[0].profession ||
-      !recipe[0].profession && this.itemForm.value.profession === 'none';
+      profession === recipe[0].profession ||
+      !recipe[0].profession && profession === 'none';
   }
 
   add(): void {
@@ -144,10 +147,8 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
       this.group.items.push(wlItem);
     });
     SharedService.user.watchlist.save();
-    this.angulartics2.eventTrack.next({
-      action: `Added ${this.items.length} new rules`,
-      properties: {category: 'Watchlist'},
-    });
+    Report.send(`Added ${this.items.length} new rules`, 'Watchlist');
+
     this.close.emit('');
   }
 

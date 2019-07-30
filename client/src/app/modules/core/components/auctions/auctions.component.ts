@@ -3,7 +3,7 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {itemClasses} from '../../../../models/item/item-classes';
-import {Filters} from '../../../../models/filtering';
+import {Filters} from '../../../../utils/filtering';
 import {Title} from '@angular/platform-browser';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {itemQualities} from '../../../../models/item/disenchanting-list';
@@ -63,8 +63,8 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       }));
     this.subs.add(
       SharedService.events.auctionUpdate,
-      (() => {
-        this.filterAuctions();
+      ((changes) => {
+        this.filterAuctions(changes);
       }));
   }
 
@@ -98,21 +98,26 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
   }
 
-  async filterAuctions() {
+  async filterAuctions(changes?: any) {
+    if (!changes) {
+      changes = this.form.getRawValue();
+    }
+    console.log('changes', changes);
     this.filteredAuctions = SharedService.auctionItems
-      .filter(i => this.isMatch(i));
+      .filter(i => this.isMatch(i, changes));
   }
 
-  isMatch(auctionItem: AuctionItem): boolean {
-    return Filters.isNameMatch(auctionItem.itemID, this.form) &&
-      Filters.isItemClassMatch(auctionItem.itemID, this.form) &&
-      Filters.isSaleRateMatch(auctionItem.itemID, this.form) &&
-      Filters.isBelowMarketValue(auctionItem.itemID, this.form) &&
-      Filters.isDailySoldMatch(auctionItem.itemID, this.form) &&
-      Filters.isBelowVendorPrice(auctionItem.itemID, this.form) &&
-      Filters.isItemAboveQuality(auctionItem.itemID, this.form) &&
-      Filters.isAboveItemLevel(auctionItem.itemID, this.form)
-      && Filters.isExpansionMatch(auctionItem.itemID, this.form.controls.expansion);
+  isMatch(auctionItem: AuctionItem, changes): boolean {
+    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name) &&
+      Filters.isItemClassMatch(
+        auctionItem.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
+      Filters.isSaleRateMatch(auctionItem.itemID, changes.saleRate) &&
+      Filters.isBelowMarketValue(auctionItem.itemID, changes.mktPrice) &&
+      Filters.isDailySoldMatch(auctionItem.itemID, changes.avgDailySold) &&
+      Filters.isBelowSellToVendorPrice(auctionItem.itemID, changes.onlyVendorSellable) &&
+      Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
+      Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
+      Filters.isExpansionMatch(auctionItem.itemID, changes.expansion);
   }
 
   /* istanbul ignore next */

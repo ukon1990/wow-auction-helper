@@ -5,7 +5,7 @@ import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {WatchlistGroup, WatchlistItem} from './watchlist.model';
 import {Seller} from '../../../models/seller';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Filters} from '../../../models/filtering';
+import {Filters} from '../../../utils/filtering';
 import {FormBuilder} from '@angular/forms';
 import {Remains} from '../../../models/item/remains.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
@@ -398,16 +398,11 @@ export class Dashboard {
     this.tsmShoppingString = '';
     this.message = `You can edit this dashboard item, over in the "manage custom dashboards" section`;
     const pipe = new GoldPipe();
-    const form = (new FormBuilder).group({
-      avgDailySold: group.matchDailySold,
-      saleRate: group.matchSaleRate
-    });
-
 
     group.items.forEach(item => {
       if (SharedService.user.watchlist.isTargetMatch(item) &&
-        Filters.isSaleRateMatch(item.itemID, form) &&
-        Filters.isDailySoldMatch(item.itemID, form)) {
+        Filters.isSaleRateMatch(item.itemID, group.matchSaleRate) &&
+        Filters.isDailySoldMatch(item.itemID, group.matchDailySold)) {
         const wlVal = SharedService.user.watchlist.getTSMStringValues(item),
           obj = {itemID: item.itemID, name: item.name, criteria: this.getWatchlistString(item, wlVal), compareTo: item.compareTo};
         this.data.push(obj);

@@ -9,7 +9,9 @@ import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
 import {Crafting} from '../models/crafting';
-import {Filters} from '../../../models/filtering';
+import {Filters} from '../../../utils/filtering';
+import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
+import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 
 @Component({
   selector: 'wah-crafting',
@@ -83,7 +85,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       SharedService.events.auctionUpdate,
-      () => this.filter());
+      (changes) =>
+        this.filter(changes));
   }
 
   ngOnDestroy() {
@@ -108,23 +111,32 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.columns.push({key: undefined, title: 'In cart', dataType: 'cart-recipe-count'});
   }
 
-  filter(): void {
-    if (SharedService.user.useIntermediateCrafting !== this.searchForm.value.intermediate) {
+  filter(changes?: any): void {
+    if (!changes) {
+      changes = this.searchForm.getRawValue();
+    }
+    if (SharedService.user.useIntermediateCrafting !== changes.intermediate) {
       // We need to update those crafting costs as we changed our strategy
-      SharedService.user.useIntermediateCrafting = this.searchForm.value.intermediate;
+      SharedService.user.useIntermediateCrafting = changes.intermediate;
       User.save();
       Crafting.calculateCost();
     }
+
+    console.log('chagnes', changes);
     this.filtered = SharedService.recipes
-      .filter(recipe =>
-        this.isKnownRecipe(recipe)
-        && this.isNameMatch(recipe)
-        && this.isProfitMatch(recipe)
-        && this.isSaleRateMatch(recipe)
-        && this.isMinSoldMatch(recipe)
-        && this.isProfessionMatch(recipe)
-        && Filters.isItemClassMatch(recipe.itemID, this.searchForm)
-        && Filters.isExpansionMatch(recipe.itemID, this.searchForm.controls.expansion));
+      .filter(recipe => {
+        if (!EmptyUtil.isNullOrUndefined(recipe)) {
+          return this.isKnownRecipe(recipe)
+          && this.isNameMatch(recipe)
+          && Filters.isProfitMatch(recipe, undefined, changes.profit)
+          && Filters.isSaleRateMatch(recipe.itemID, changes.demand)
+          && Filters.isDailySoldMatch(recipe.itemID, changes.minSold)
+          && Filters.isProfessionMatch(recipe.itemID, changes.profession)
+          && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
+          && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
+        }
+        return false;
+      });
   }
 
   isKnownRecipe(recipe: Recipe): boolean {
@@ -139,26 +151,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
       (SharedService.items[recipe.itemID] &&
         SharedService.items[recipe.itemID].name.toLowerCase()
           .indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1);
-  }
-
-  isProfitMatch(recipe: Recipe): boolean {
-    return this.searchForm.value.profit === null || this.searchForm.value.profit === 0 ||
-      recipe.buyout > 0 && recipe.cost > 0 && this.searchForm.value.profit <= recipe.roi / recipe.cost * 100;
-  }
-
-  isSaleRateMatch(recipe: Recipe): boolean {
-    return this.searchForm.value.demand === null || this.searchForm.value.demand === 0 ||
-      recipe.regionSaleRate >= this.searchForm.value.demand / 100;
-  }
-
-  isMinSoldMatch(recipe: Recipe): boolean {
-    return this.searchForm.value.minSold === null || this.searchForm.value.minSold === 0 ||
-      this.searchForm.value.minSold <= recipe.avgDailySold;
-  }
-
-  isProfessionMatch(recipe: Recipe): boolean {
-    return this.searchForm.value.profession === null || this.searchForm.value.profession === 'All' ||
-      this.searchForm.value.profession === recipe.profession || !recipe.profession && this.searchForm.value.profession === 'none';
   }
 
 

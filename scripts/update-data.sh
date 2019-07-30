@@ -1,4 +1,4 @@
-#bin/bash
+#!/usr/bin/env bash
 # Items
 declare locales=('en_GB' 'de_DE' 'es_ES' 'fr_FR' 'it_IT' 'pl_PL' 'pt_PT' 'ru_RU' 'en_US' 'es_MX' 'pt_BR' 'ko_KR' 'zh_TW')
 
