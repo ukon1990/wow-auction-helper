@@ -196,7 +196,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   userHasRecipeForItem(): boolean {
-    return SharedService.recipesMapPerItemKnown[SharedService.selectedItemId] ? true : false;
+    return !!SharedService.recipesMapPerItemKnown[SharedService.selectedItemId];
   }
 
   addEntryToCart(): void {

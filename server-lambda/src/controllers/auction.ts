@@ -35,3 +35,6 @@ exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callbac
 exports.updateOne = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   new AuctionHandler().updateHouseRequest(event, callback);
 };
+
+exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
+  new AuctionHandler().deactivateInactiveHouses(event, callback);

@@ -10,7 +10,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   memorySize: 200
-  timeout: 60
+  timeout: 30
 
 functions:
   auctions:
@@ -37,6 +37,16 @@ functions:
       - http:
           method: any
           path: auction/update
+          cors:
+            origin: '*'
+
+  deactivateInactiveHouses:
+    handler: src/controllers/auction.deactivateInactiveHouses
+    memorySize: 200
+    events:
+      - http:
+          method: any
+          path: auction/deactivate
           cors:
             origin: '*'
 

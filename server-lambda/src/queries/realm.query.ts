@@ -120,9 +120,10 @@ export class RealmQuery {
                 WHERE \`id\` = ${id};`;
   }
 
-  static deactivateNonRequestedHouses(time: number): string {
-    return `UPDATE auction_houses
+  static setNonRequestedHousesToNotAutoUpdate(days: number): string {
+    return `UPDATE auction_houses as ah
             SET autoUpdate = 0
-            WHERE lastRequested < ${time};`;
+            WHERE (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastRequested) / 60000 / 60 / 24 > ${ days }
+                AND autoUpdate = 1;`;
   }
 }
