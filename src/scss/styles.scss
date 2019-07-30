@@ -1,0 +1,41 @@
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import './themes/themes.scss';
+
+@import '_bootstrap-custom.scss';
+@import './layout/layout.scss';
+
+#main {
+	min-height: 100vh;
+}
+
+.mt-6 {
+	margin-top: 3.53rem;
+}
+.character-bg {
+	background-size: cover !important;
+  background-position: center !important;
+}
+
+.loading {
+	background-size: cover;
+	animation-name: rotate;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.navbar-dark .dropdown-menu.show {
+    background: #343a40 !important;
+    color: white !important;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

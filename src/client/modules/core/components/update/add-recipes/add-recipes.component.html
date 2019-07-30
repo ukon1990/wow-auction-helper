@@ -1,0 +1,74 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Add new recipes
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-actions>
+    <form (ngSubmit)="addItems()" [formGroup]="form">
+      <mat-form-field>
+        <mat-select formControlName="action">
+          <mat-option *ngFor="let action of dbActions" [value]="action">
+            {{ action }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Comma seperated spell ID's"
+          formControlName="input"
+        />
+      </mat-form-field>
+      <button mat-raised-button type="submit">
+        Add
+      </button>
+    </form>
+  </mat-card-actions>
+
+  <mat-card-content>
+    <ul class="list-group">
+      <li class="list-group-item list-group-item-primary">
+        <strong>Progress:</strong>
+        {{ getCompletedCount() }}/{{
+          progress.ids.length
+        }}
+        ({{ getProgress() | percent }})
+        <br />
+        <mat-progress-bar
+          mode="determinate"
+          [value]="getProgress() * 100"
+        ></mat-progress-bar>
+      </li>
+
+      <li class="list-group-item list-group-item-secondary">
+        Failed ids: {{ progress.failed | json }}
+      </li>
+    </ul>
+
+    <mat-tab-group>
+      <mat-tab label="New ({{progress.new.length}})">
+        <wah-data-table
+          [id]="'id'"
+          [columns]="columns"
+          [data]="progress.new"
+        ></wah-data-table>
+      </mat-tab>
+      <mat-tab label="Existing ({{progress.existing.length}})">
+        <wah-data-table
+          [id]="'id'"
+          [columns]="columns"
+          [data]="progress.existing"
+        ></wah-data-table>
+      </mat-tab>
+      <mat-tab label="Failed ({{progress.failed.length}})">
+        <wah-data-table
+          [id]="'id'"
+          [columns]="columnsFailed"
+          [data]="progress.failed"
+        ></wah-data-table>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

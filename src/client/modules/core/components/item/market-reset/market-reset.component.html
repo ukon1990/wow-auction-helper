@@ -1,0 +1,61 @@
+<em>
+  This tool is still a work in progress, but you may feel free to try it out.
+</em>
+
+<div *ngIf="!hasDefinedAPI; else apiDefined">
+  This functionality needs either a TSM or WoWUction API key to function, as it relies on the market value for now.
+</div>
+
+<ng-template #apiDefined>
+
+  <form [formGroup]="form">
+    <mat-form-field>
+      <input matInput placeholder="Item name" formControlName="name">
+    </mat-form-field>
+    <!--
+    <mat-form-field>
+      <input matInput placeholder="Max total cost" formControlName="costLimit" type="number">
+    </mat-form-field>
+  
+    <mat-form-field>
+      <input matInput placeholder="Max number of items to buy" formControlName="maxItemCount" type="number">
+    </mat-form-field>-->
+  
+    <mat-form-field>
+      <input matInput placeholder="Minimum potential profit %" formControlName="minimumProfit" type="number">
+    </mat-form-field>
+    
+    <mat-form-field>
+      <input matInput placeholder="Minimum daily sold" formControlName="avgDailySold" type="number">
+    </mat-form-field>
+  
+    <mat-form-field>
+      <input matInput placeholder="Minimum sale rate %" formControlName="saleRate" type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Target price is % of MV" formControlName="targetMVPercent" type="number">
+    </mat-form-field>
+  
+  </form>
+  
+  <p>
+    <strong>Potential profit</strong> {{ sum.potentialProfit | gold }}, 
+    <strong>Sum cost:</strong> {{ sum.sumCost | gold }}, 
+    <strong>Items to buy:</strong> {{ sum.itemsToBuy | number }}
+  </p>
+
+  <mat-form-field *ngIf="tsmShoppingString.length > 0"  class="row col-md-12">
+    <textarea matInput placeholder="TSM shopping string"
+      [value]="tsmShoppingString"></textarea>
+  </mat-form-field>
+
+  <wah-data-table
+    *ngIf="data"
+    iconSize="22"
+    itemsPerPage="20"
+    id="itemID"
+    [data]="data"
+    [columns]="columns">
+  </wah-data-table>
+</ng-template>

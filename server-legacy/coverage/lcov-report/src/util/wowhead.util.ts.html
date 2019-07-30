@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/util/wowhead.util.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">src/util</a> wowhead.util.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">79.55% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>105/132</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">48.15% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>13/27</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">89.47% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>17/19</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">79.55% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>105/132</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236</td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">57x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  WoWHead,
+  WoWHeadSoldBy,
+  WoWHeadDroppedBy,
+  WoWHeadCurrencyFor,
+  WoWHeadContainedInItem,
+  WoWHeadContainedInObject,
+  WoWHeadProspectedFrom
+} from '../models/item/wowhead';
+import { Item } from '../models/item/item';
+&nbsp;
+export class WoWHeadUtil {
+&nbsp;
+  static pctStackRegex = /,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g;
+  // .replace(/,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g, 'tiss');
+  public <span class="fstat-no" title="function not covered" >static</span> setValuesAll(body: string): any {
+    let wh: any = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      wh = new WoWHead();</span>
+<span class="cstat-no" title="statement not covered" >      wh.expansionId = WoWHeadUtil.getExpansion(body);</span>
+      // wh.createdBy = undefined;
+<span class="cstat-no" title="statement not covered" >      wh.containedInItem = WoWHeadUtil.getContainedInItem(body);</span>
+<span class="cstat-no" title="statement not covered" >      wh.containedInObject = WoWHeadUtil.getContainedInObject(body); </span>// contained-in-object
+<span class="cstat-no" title="statement not covered" >      wh.currencyFor = WoWHeadUtil.getCurrencyFor(body);</span>
+      // wh.objectiveOf = undefined;
+<span class="cstat-no" title="statement not covered" >      wh.soldBy = WoWHeadUtil.getSoldBy(body);</span>
+<span class="cstat-no" title="statement not covered" >      wh.droppedBy = WoWHeadUtil.getDroppedBy(body);</span>
+<span class="cstat-no" title="statement not covered" >      wh.prospectedFrom = WoWHeadUtil.getProspectedFrom(body);</span>
+<span class="cstat-no" title="statement not covered" >      wh.milledFrom = WoWHeadUtil.getMilledFrom(body);</span>
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >      console.error('setValuesAll failed', error);</span>
+    }
+    // return body;
+<span class="cstat-no" title="statement not covered" >    return wh;</span>
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> getExpansion(body: string): number {
+    const expansionRegex = <span class="cstat-no" title="statement not covered" >new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}/g),</span>
+      addedIn = <span class="cstat-no" title="statement not covered" >expansionRegex.exec(body);</span>
+<span class="cstat-no" title="statement not covered" >    if (addedIn &amp;&amp; addedIn[0]) {</span>
+<span class="cstat-no" title="statement not covered" >      return parseInt(addedIn[0].replace('Added in patch ', '').split('.')[0], 10) - 1;</span>
+    }
+<span class="cstat-no" title="statement not covered" >    return 0;</span>
+  }
+&nbsp;
+  public static getMilledFrom(body: string): WoWHeadProspectedFrom[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'item', id: 'milled-from',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const droppedByResult = droppedByRegex.exec(body);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!droppedByResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+    const droppedBy = WoWHeadUtil.stringToObject(
+      dbrx.exec(
+        droppedByResult[0])[0]);
+&nbsp;
+    droppedBy.forEach((item: WoWHeadProspectedFrom) =&gt; {
+      item.dropChance = item.count / item.outof;
+      delete item.classs;
+      delete item.flags2;
+      delete item.slot;
+      delete item.subclass;
+      delete item.source;
+      delete item.sourcemore;
+      delete item.level;
+      item.name = WoWHeadUtil.cleanName(item.name);
+    });
+&nbsp;
+    return droppedBy;
+  }
+&nbsp;
+  public static getProspectedFrom(body: string): WoWHeadProspectedFrom[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'item', id: 'prospected-from',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const droppedByResult = droppedByRegex.exec(body);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!droppedByResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+    const droppedBy = WoWHeadUtil.stringToObject(
+      dbrx.exec(
+        droppedByResult[0])[0]);
+&nbsp;
+    droppedBy.forEach((item: WoWHeadProspectedFrom) =&gt; {
+      item.dropChance = item.count / item.outof;
+      delete item.classs;
+      delete item.flags2;
+      delete item.slot;
+      delete item.subclass;
+      delete item.source;
+      delete item.sourcemore;
+      delete item.level;
+      item.name = WoWHeadUtil.cleanName(item.name);
+    });
+&nbsp;
+    return droppedBy;
+  }
+&nbsp;
+  public static stringToObject(str: string): any[] {
+    return eval (str.replace('data: ', '').replace('});', ''));
+  }
+&nbsp;
+  public static getDroppedBy (body: string): WoWHeadDroppedBy[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'npc', id: 'dropped-by',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const droppedByResult = droppedByRegex.exec(body);
+    let droppedBy;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!droppedByResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+&nbsp;
+    try {
+      droppedBy = WoWHeadUtil.stringToObject(
+        dbrx.exec(
+          droppedByResult[0])[0]);
+&nbsp;
+      droppedBy.forEach((npc: WoWHeadDroppedBy) =&gt; {
+        npc.dropChance = npc.count / npc.outof;
+        delete npc.pctstack;
+        delete npc.personal_loot;
+        delete npc.classification;
+        npc.name = WoWHeadUtil.cleanName(npc.name);
+      });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >      console.error('getDroppedBy', error);</span>
+    }
+&nbsp;
+    return droppedBy;
+  }
+&nbsp;
+  public static getSoldBy(body: string): WoWHeadSoldBy[] {
+    const soldByRegex = new RegExp(/new Listview\({template: 'npc', id: 'sold-by',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const soldByResult = soldByRegex.exec(body);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!soldByResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+&nbsp;
+      const soldBy = WoWHeadUtil.stringToObject(
+        dbrx.exec(
+          soldByResult[0])[0]) as WoWHeadSoldBy[];
+      // const currency = WoWHeadUtil.getCurrency(body);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (soldBy) {
+        soldBy.forEach((sBy: WoWHeadSoldBy) =&gt; {
+          WoWHeadUtil.setCurrency(sBy);
+          delete sBy.classification;
+          delete sBy.type;
+          sBy.name = WoWHeadUtil.cleanName(sBy.name);
+        });
+      }
+    return soldBy;
+  }
+&nbsp;
+  public static setCurrency(source: any): void {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if ((source.cost as Array&lt;any&gt;).length &gt; 0 &amp;&amp; source.cost[2] &amp;&amp; source.cost[2][0]) {
+      source.currency = source.cost[2][0][0];
+      source.cost = source.cost[2][0][1];
+    } else {
+<span class="cstat-no" title="statement not covered" >      source.cost = source.cost[0];</span>
+    }
+  }
+&nbsp;
+  public static getCurrencyFor(body: string): WoWHeadCurrencyFor[] {
+    // currency-for
+    const currencyForRegex = new RegExp(/new Listview\({template: 'item', id: 'currency-for',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const currencyForResult = currencyForRegex.exec(body);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!currencyForResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+    const currencyForString = dbrx.exec(
+      currencyForResult[0])[0];
+    const currencyFor = WoWHeadUtil.stringToObject(currencyForString);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (currencyFor) {
+      currencyFor.forEach((item: WoWHeadCurrencyFor) =&gt; {
+        WoWHeadUtil.setCurrency(item);
+        delete item.classs;
+        delete item.flags2;
+        delete item.subclass;
+        delete item.slot;
+        delete item.skill;
+        item.name = WoWHeadUtil.cleanName(item.name);
+      });
+    }
+    return currencyFor;
+  }
+&nbsp;
+  public static getContainedInItem(body: string): WoWHeadContainedInItem[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'item', id: 'contained-in-item',([\s\S]*?)}\);/g),
+      dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g),
+      droppedByResult = droppedByRegex.exec(body);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!droppedByResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+&nbsp;
+    const items = WoWHeadUtil.stringToObject(
+      dbrx.exec(
+        droppedByResult[0])[0]);
+&nbsp;
+&nbsp;
+    items.forEach((item: WoWHeadContainedInItem) =&gt; {
+      item.dropChance = item.count / item.outof;
+      delete item.classs;
+      delete item.flags2;
+      delete item.subclass;
+      delete item.level;
+      item.name = WoWHeadUtil.cleanName(item.name);
+    });
+&nbsp;
+    return items;
+  }
+&nbsp;
+  public static getContainedInObject(body: string): WoWHeadContainedInObject[] {
+    const droppedByRegex = new RegExp(/new Listview\({template: 'object', id: 'contained-in-object',([\s\S]*?)}\);/g);
+    const dbrx = new RegExp(/data\: ([\s\S]*?)}\);/g);
+    const droppedByResult = droppedByRegex.exec(body);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!droppedByResult) {
+<span class="cstat-no" title="statement not covered" >      return [];</span>
+    }
+    const items = WoWHeadUtil.stringToObject(
+      dbrx.exec(
+        droppedByResult[0])[0]);
+&nbsp;
+&nbsp;
+    items.forEach((item: WoWHeadContainedInObject) =&gt; {
+      item.dropChance = item.count / item.outof;
+      delete item['pctstack'];
+      delete item.type;
+      item.name = WoWHeadUtil.cleanName(item.name);
+    });
+    return items;
+  }
+&nbsp;
+  public static cleanName(name: string): string {
+    return name.replace(/^[0-9]{0,1}/g, '');
+  }
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Aug 02 2018 08:39:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

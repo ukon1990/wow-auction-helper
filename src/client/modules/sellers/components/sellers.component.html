@@ -1,0 +1,18 @@
+<form [formGroup]="searchForm">
+  <mat-form-field>
+    <input matInput placeholder="Seller name" formControlName="name" type="text">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Min liquidity in gold" formControlName="liquidity" type="number">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Min volume" formControlName="volume" type="number">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Min active auctions" formControlName="numOfAuctions" type="number">
+  </mat-form-field>
+
+  <button type="button" (click)="searchForm.reset()" mat-raised-button>Reset</button>
+</form>
+
+<wah-data-table id="name" iconSize="22" [data]="getSellers()" [columns]="columns"></wah-data-table>

@@ -1,0 +1,59 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-subtitle>
+      <span *ngIf="userProfit.daysSince === 1">
+        Past {{  userProfit.daysSince }} day
+      </span>
+
+      <span *ngIf="userProfit.daysSince > 1">
+        Past {{  userProfit.daysSince }} days
+      </span>
+
+
+      <span *ngIf="!userProfit.daysSince">
+        Everything
+      </span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <strong>Sales:</strong> {{ userProfit?.sales.copper | gold }} <br>
+    <strong>Income:</strong> {{ userProfit?.income.copper | gold }} <br>
+    <strong>Expenses:</strong> {{ userProfit?.expenses.copper | gold }} <br>
+    <strong>Purchases:</strong> {{ userProfit?.purchases.copper | gold }} <br>
+    <strong>Profit:</strong> {{ userProfit?.profit | gold }} <br>
+    <Strong>Avg profit per day: </Strong> {{ userProfit?.profit / userProfit?.daysSince | gold }}
+
+    <mat-card class="mb-3">
+      <mat-card-header>
+        <mat-card-subtitle>Sold items:</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <wah-data-table
+                id="id"
+                [iconSize]="22"
+                [columns]="columns"
+                [data]="userProfit?.sales?.items"
+                filterParameter="name"
+                [numOfRows]="5"></wah-data-table>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-subtitle>Purchased items:</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <wah-data-table
+                id="id"
+                [iconSize]="22"
+                [columns]="columns"
+                [data]="userProfit?.purchases?.items"
+                filterParameter="name"
+                [numOfRows]="5"></wah-data-table>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

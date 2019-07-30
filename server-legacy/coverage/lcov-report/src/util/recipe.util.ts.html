@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/util/recipe.util.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">src/util</a> recipe.util.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">7.63% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>10/131</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/23</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/44</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">7.87% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>10/127</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Request, Response } from 'express';
+import * as mysql from 'mysql';
+import * as request from 'request';
+import * as RequestPromise from 'request-promise';
+import { getLocale } from '../util/locales';
+import { safeifyString } from './string.util';
+import { BLIZZARD_API_KEY, DATABASE_CREDENTIALS } from './secrets';
+import { Recipe } from '../models/crafting/recipe';
+import { ItemLocale } from '../models/item/item-locale';
+const PromiseThrottle: any = require('promise-throttle');
+&nbsp;
+export class RecipeUtil {
+  public <span class="fstat-no" title="function not covered" >static</span> getRecipe(id: number, res: Response, req: any) {
+    const db = <span class="cstat-no" title="statement not covered" >mysql.createConnection(DATABASE_CREDENTIALS);</span>
+<span class="cstat-no" title="statement not covered" >    db.query(`SELECT json from recipes WHERE id = ${id}`, <span class="fstat-no" title="function not covered" >(e</span>rr, rows, fields) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      db.end();</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        if (!err &amp;&amp; rows.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >          try {</span>
+          } catch (e) {
+<span class="cstat-no" title="statement not covered" >            console.error('Could not call end()', e);</span>
+          }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          rows.forEach(<span class="fstat-no" title="function not covered" >r </span>=&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            try {</span>
+<span class="cstat-no" title="statement not covered" >              res.json(JSON.parse(r.json));</span>
+            } catch (err) {
+<span class="cstat-no" title="statement not covered" >              console.error(err, r.json);</span>
+            }
+          });
+        } else {
+<span class="cstat-no" title="statement not covered" >          request.get(`http://wowdb.com/api/spell/${id}`, <span class="fstat-no" title="function not covered" >(e</span>rr, r, body) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            try {</span>
+              const recipe = <span class="cstat-no" title="statement not covered" >RecipeUtil.convertWoWDBToRecipe(JSON.parse(body.slice(1, body.length - 1)));</span>
+              // res.send(recipe);
+<span class="cstat-no" title="statement not covered" >              RecipeUtil.getProfession(recipe, <span class="fstat-no" title="function not covered" >function (</span>r) {</span>
+                const query = <span class="cstat-no" title="statement not covered" >`INSERT INTO recipes VALUES(${</span>
+                  id
+                  }, "${
+                  safeifyString(JSON.stringify(recipe))
+                  }", CURRENT_TIMESTAMP);`;
+<span class="cstat-no" title="statement not covered" >                console.log(`${new Date().toString()} - Adding new recipe (${r.name}) - SQL: ${query}`);</span>
+                const dbAdd = <span class="cstat-no" title="statement not covered" >mysql.createConnection(DATABASE_CREDENTIALS);</span>
+<span class="cstat-no" title="statement not covered" >                dbAdd.query(query, <span class="fstat-no" title="function not covered" >(e</span>rr, r, body) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                  dbAdd.end();</span>
+<span class="cstat-no" title="statement not covered" >                  if (!err) {</span>
+                  } else {
+<span class="cstat-no" title="statement not covered" >                    throw err;</span>
+                  }
+                });
+<span class="cstat-no" title="statement not covered" >                res.send(r);</span>
+              });
+            } catch (error) {
+<span class="cstat-no" title="statement not covered" >              console.error(`Could not get recipe with id ${id}`, error);</span>
+<span class="cstat-no" title="statement not covered" >              res.status(404).send(new Recipe());</span>
+            }
+          });
+        }
+      } catch (e) {
+<span class="cstat-no" title="statement not covered" >        console.error(`${new Date().toString()} - Getting a recipe failed for the spellID ${req.params.spellID}`, e);</span>
+      }
+    });
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> postRecipes(
+    response: Response,
+    req: any
+  ): void {
+&nbsp;
+    const db = <span class="cstat-no" title="statement not covered" >mysql.createConnection(DATABASE_CREDENTIALS);</span>
+    // select json, de_DE from recipes as r, recipe_name_locale as l where r.id = l.id;
+<span class="cstat-no" title="statement not covered" >    db.query(`</span>
+      SELECT l.id, json, ${ getLocale(req)} as name from  recipes as r
+      LEFT OUTER JOIN recipe_name_locale as l
+      ON r.id = l.id
+      WHERE json NOT LIKE '%itemID":0%'
+      AND timestamp &gt; "${ req.body.timestamp + ''}";`, <span class="fstat-no" title="function not covered" >(e</span>rr, rows, fields) =&gt; {
+<span class="cstat-no" title="statement not covered" >        db.end();</span>
+<span class="cstat-no" title="statement not covered" >        if (!err) {</span>
+          const recipes: any[] = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >          rows.forEach(<span class="fstat-no" title="function not covered" >(r</span>ow: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            try {</span>
+<span class="cstat-no" title="statement not covered" >              recipes.push(</span>
+                JSON.parse(row.json));
+            } catch (err) {
+<span class="cstat-no" title="statement not covered" >              console.error(`${new Date().toString()} - Could not parse json (${row.id})`, row.json, err);</span>
+            }
+          });
+<span class="cstat-no" title="statement not covered" >          response.send({ 'recipes': recipes });</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          console.log(`${new Date().toString()} - The following error occured while querying DB:`, err);</span>
+        }
+      });
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> async patchItem() {
+    // TODO: Make sure you keep the itemID, in case of recipes missing those.
+    //
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> async getItemsToAdd(
+    rows: number[],
+    res: Response,
+    req: any) {
+    const promiseThrottle = <span class="cstat-no" title="statement not covered" >new PromiseThrottle({</span>
+      requestsPerSecond: 20,
+      promiseImplementation: Promise
+    });
+    const items: Recipe[] = <span class="cstat-no" title="statement not covered" >[],</span> itemIDs: any[] = <span class="cstat-no" title="statement not covered" >[],</span> failedIds = <span class="cstat-no" title="statement not covered" >[];</span>
+    let updateCount = <span class="cstat-no" title="statement not covered" >0;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    rows.forEach(<span class="fstat-no" title="function not covered" >(i</span>d: number) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      itemIDs.push(</span>
+        promiseThrottle.add(<span class="fstat-no" title="function not covered" >() </span>=&gt; {
+<span class="cstat-no" title="statement not covered" >          return new Promise(<span class="fstat-no" title="function not covered" >async (r</span>esolve, reject) =&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span></span>
+<span class="cstat-no" title="statement not covered" >            updateCount++;</span>
+<span class="cstat-no" title="statement not covered" >            console.log(`Getting Item: ${ id } (${updateCount} / ${rows.length}) ${req.headers.host}`);</span>
+<span class="cstat-no" title="statement not covered" >            await request.get(`http://${ req.headers.host }/api/recipe/${id}`, <span class="fstat-no" title="function not covered" >(r</span>es, error, body) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >              if (error) {</span>
+                // console.error('handleItemsPatchRequest', error);
+<span class="cstat-no" title="statement not covered" >                console.error(`ERROR for item ID ${ id } - &gt; ${ req.headers.host }/api/recipe/${ id }`, error);</span>
+<span class="cstat-no" title="statement not covered" >                failedIds.push(id);</span>
+<span class="cstat-no" title="statement not covered" >                reject(error);</span>
+              } else {
+<span class="cstat-no" title="statement not covered" >                console.log(`Added item ID ${ id } - &gt; ${ req.headers.host }/api/recipe/${ id }`);</span>
+<span class="cstat-no" title="statement not covered" >                items.push(body);</span>
+<span class="cstat-no" title="statement not covered" >                resolve(body);</span>
+              }
+            });
+          });
+        }));
+    });
+<span class="cstat-no" title="statement not covered" >    await Promise.all(itemIDs)</span>
+      .then(<span class="fstat-no" title="function not covered" >r </span>=&gt; { })
+      .catch(<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >console.error('Gave up :(', e))</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    res.send({ success: items, failed: failedIds });</span>
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> convertWoWDBToRecipe(wowDBRecipe) {
+    const basePoints = <span class="cstat-no" title="statement not covered" >wowDBRecipe.Effects[0].BasePoints,</span>
+      recipe = <span class="cstat-no" title="statement not covered" >{</span>
+        spellID: wowDBRecipe.ID,
+        itemID: wowDBRecipe.CreatedItemID,
+        name: wowDBRecipe.Name,
+        profession: 'none',
+        rank: wowDBRecipe.Rank,
+        minCount: basePoints &gt; 0 ? basePoints : 1,
+        maxCount: basePoints &gt; 0 ? basePoints : 1,
+        reagents: RecipeUtil.convertReagents(wowDBRecipe.Reagents)
+      };
+<span class="cstat-no" title="statement not covered" >    return recipe;</span>
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> convertReagents(reagents) {
+    const r = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >    reagents.forEach(<span class="fstat-no" title="function not covered" >reagent</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      r.push({ itemID: reagent.Item, name: '', count: reagent.ItemQty, dropped: false });</span>
+    });
+<span class="cstat-no" title="statement not covered" >    return r;</span>
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> getProfession(recipe, callback) {
+<span class="cstat-no" title="statement not covered" >    request.get(`https://eu.api.battle.net/wow/recipe/${recipe.spellID}?locale=en_GB&amp;apikey=${BLIZZARD_API_KEY}`, <span class="fstat-no" title="function not covered" >(e</span>rr, r, body) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        recipe.profession = JSON.parse(body).profession;</span>
+      } catch (e) {
+<span class="cstat-no" title="statement not covered" >        console.error(`Could not find a profession for ${recipe.spellId} - ${recipe.name}`, body, e);</span>
+      }
+<span class="cstat-no" title="statement not covered" >      RecipeUtil.processReagents(recipe, 0, callback);</span>
+    });
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> processReagents(recipe, nextIndex, callback) {
+<span class="cstat-no" title="statement not covered" >    if (nextIndex &gt;= recipe.reagents.length) {</span>
+<span class="cstat-no" title="statement not covered" >      callback(recipe);</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      request.get(`https://wowdb.com/api/item/${recipe.reagents[nextIndex].itemID}`, <span class="fstat-no" title="function not covered" >(e</span>rr, r, body) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+          const item = <span class="cstat-no" title="statement not covered" >JSON.parse(body.slice(1, body.length - 1));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          recipe.reagents[nextIndex].name = item.Name;</span>
+<span class="cstat-no" title="statement not covered" >          recipe.reagents[nextIndex].dropped = item &amp;&amp; item.DroppedBy &amp;&amp; item.DroppedBy.length &gt; 0;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          RecipeUtil.processReagents(recipe, nextIndex + 1, callback);</span>
+        } catch (e) {
+<span class="cstat-no" title="statement not covered" >          console.error(`Could not get item ${recipe.reagents[nextIndex].itemID}`, body, e);</span>
+        }
+      });
+    }
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> setMissingLocales(req, res) {
+    // Limit to 9 per second
+<span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>eso, rej) =&gt; {</span>
+      const connection = <span class="cstat-no" title="statement not covered" >mysql.createConnection(DATABASE_CREDENTIALS);</span>
+<span class="cstat-no" title="statement not covered" >      connection.query('select id from recipes where id not in (select id from recipe_name_locale);', <span class="fstat-no" title="function not covered" >async (e</span>rr, rows, fields) =&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span></span>
+<span class="cstat-no" title="statement not covered" >        if (!err) {</span>
+          const promiseThrottle = <span class="cstat-no" title="statement not covered" >new PromiseThrottle({</span>
+            requestsPerSecond: 1,
+            promiseImplementation: Promise
+          });
+&nbsp;
+          const list = <span class="cstat-no" title="statement not covered" >[];</span>
+          const spellIDs = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >          rows.forEach(<span class="fstat-no" title="function not covered" >row</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            spellIDs.push(</span>
+              promiseThrottle.add(<span class="fstat-no" title="function not covered" >() </span>=&gt; {
+<span class="cstat-no" title="statement not covered" >                return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                  RecipeUtil.getRecipeLocale(row.id, req, res)</span>
+                    .then(<span class="fstat-no" title="function not covered" >r </span>=&gt; {
+<span class="cstat-no" title="statement not covered" >                      list.push(r);</span>
+<span class="cstat-no" title="statement not covered" >                      resolve(r);</span>
+                    })
+                    .catch(<span class="fstat-no" title="function not covered" >e </span>=&gt; {
+<span class="cstat-no" title="statement not covered" >                      console.error(e);</span>
+<span class="cstat-no" title="statement not covered" >                      reject({});</span>
+                    });
+                });
+              }));
+          });
+<span class="cstat-no" title="statement not covered" >          await Promise.all(spellIDs)</span>
+            .then(<span class="fstat-no" title="function not covered" >r </span>=&gt; { })
+            .catch(<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >console.error(e))</span>;
+<span class="cstat-no" title="statement not covered" >          reso(list);</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          rej({});</span>
+        }
+      });
+    });
+  }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >static</span> async getRecipeLocale(spellID, req, res) {
+    const recipe: ItemLocale = <span class="cstat-no" title="statement not covered" >new ItemLocale(spellID);</span>
+    const euPromises = <span class="cstat-no" title="statement not covered" >['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU']</span>
+      .map(<span class="fstat-no" title="function not covered" >locale</span> =&gt; <span class="cstat-no" title="statement not covered" >RequestPromise.get(`https://eu.api.battle.net/wow/spell/${spellID}?locale=${locale}&amp;apikey=${BLIZZARD_API_KEY}`, <span class="fstat-no" title="function not covered" >(r</span>, e, b) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >          recipe[locale] = JSON.parse(b).name;</span>
+        } catch (e) {
+<span class="cstat-no" title="statement not covered" >          recipe[locale] = '404';</span>
+        }
+      })),
+      usPromises = <span class="cstat-no" title="statement not covered" >['en_US', 'es_MX', 'pt_BR']</span>
+        .map(<span class="fstat-no" title="function not covered" >locale</span> =&gt; <span class="cstat-no" title="statement not covered" >RequestPromise.get(`https://us.api.battle.net/wow/spell/${spellID}?locale=${locale}&amp;apikey=${BLIZZARD_API_KEY}`, <span class="fstat-no" title="function not covered" >(r</span>, e, b) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          try {</span>
+<span class="cstat-no" title="statement not covered" >            recipe[locale] = JSON.parse(b).name;</span>
+          } catch (e) {
+<span class="cstat-no" title="statement not covered" >            recipe[locale] = '404';</span>
+          }
+        }));
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    await Promise.all(euPromises).then(<span class="fstat-no" title="function not covered" >r </span>=&gt; {</span>
+    }).catch(<span class="fstat-no" title="function not covered" >e </span>=&gt; {
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    try {</span>
+      const db = <span class="cstat-no" title="statement not covered" >mysql.createConnection(DATABASE_CREDENTIALS),</span>
+        sql = <span class="cstat-no" title="statement not covered" >`INSERT INTO recipe_name_locale</span>
+        (id,
+          en_GB,
+          en_US,
+          de_DE,
+          es_ES,
+          es_MX,
+          fr_FR,
+          it_IT,
+          pl_PL,
+          pt_PT,
+          pt_BR,
+          ru_RU)
+        VALUES
+        (${recipe['id']},
+          "${safeifyString(recipe['en_GB'])}",
+          "${safeifyString(recipe['en_US'])}",
+          "${safeifyString(recipe['de_DE'])}",
+          "${safeifyString(recipe['es_ES'])}",
+          "${safeifyString(recipe['es_MX'])}",
+          "${safeifyString(recipe['fr_FR'])}",
+          "${safeifyString(recipe['it_IT'])}",
+          "${safeifyString(recipe['pl_PL'])}",
+          "${safeifyString(recipe['pt_PT'])}",
+          "${safeifyString(recipe['pt_BR'])}",
+          "${safeifyString(recipe['ru_RU'])}");`;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      db.query(sql, <span class="fstat-no" title="function not covered" >(e</span>rr, rows, fields) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        db.end();</span>
+<span class="cstat-no" title="statement not covered" >        if (!err) {</span>
+<span class="cstat-no" title="statement not covered" >          console.log(`Locale added to db for ${recipe.en_GB}`);</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          console.error(`Locale not added to db for ${recipe.en_GB}`, err);</span>
+        }
+      });
+      //
+    } catch (e) {
+      //
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return recipe;</span>
+  }
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Aug 02 2018 08:39:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

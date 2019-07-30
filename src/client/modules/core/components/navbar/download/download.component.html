@@ -1,0 +1,167 @@
+<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <ng-container *ngIf="isDownloading(); else notDownloading">
+    <mat-spinner class="float-left mr-2">
+    </mat-spinner>
+    <span>
+      {{ getMessage() }}
+    </span>
+  </ng-container>
+  <ng-template #notDownloading>
+    <span [ngClass]="{'old-data': timeSinceUpdate > 60}">
+      <div class="float-left mr-1" *ngIf="timeSinceUpdate > 60"
+        matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      Last update was {{ timeSinceUpdate }} minutes ago
+      <small *ngIf="realmStatus">(~{{ realmStatus.lowestDelay - timeSinceUpdate }} min left)</small>
+    </span>
+  </ng-template>
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+  <mat-card>
+    <mat-card-content>
+      <p>
+        The application will keep all the data up to date with auctions item, recipes etc. 
+
+        Auctions will be downloaded as soon as they are available from Blizzard. 
+        You do not have to do anything to get the latest data.
+
+        But in case it does not load correctly. 
+        You can choose to manually re-download any of the following items here. 
+      </p>
+      <p *ngIf="isDownloading()">
+        <strong>The application is currently loading data.</strong> This might take some time depending on your 
+        internet speed, browser and computer. If "loading from disk" takes a long time, and you are not 
+        using the latest version of Chrome. Do consider changing to that. The app is much faster in Chrome 
+        , compared to other browsers.
+      </p>
+      <table class="table table-hover table-bordered table-striped table-sm"
+        [ngClass]="{'table-dark': isDarkmode()}">
+        <thead>
+          <tr>
+            <td> </td>
+            <td>Type</td>
+            <td>Up to date, as of</td>
+            <td>Download</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
+            </td>
+            <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
+              Items (~24 mb)
+            </td>
+            <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
+            <td>
+              <!-- [disabled]="getDownloading().items" -->
+              <button mat-icon-button (click)="download('items', true)"
+                matTooltip="Re-download item data">
+                <i class="fas fa-download"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
+            </td>
+            <td>
+              Recipes
+            </td>
+            <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
+            <td>
+              <!-- [disabled]="getDownloading().recipes" -->
+              <button mat-icon-button (click)="download('recipes', true)"
+                matTooltip="Re-download recipe data">
+                <i class="fas fa-download"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner>
+            </td>
+            <td>Pets</td>
+            <td>{{ timestamps.pets | date: 'HH:mm M/d/yy' }}</td>
+            <td>
+              <!-- [disabled]="getDownloading().pets" -->
+              <button mat-icon-button (click)="download('pets', true)"
+                matTooltip="Re-download pet data">
+                <i class="fas fa-download"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
+            </td>
+            <td>Auctions</td>
+            <td>{{ timestamps.auctions | date: 'HH:mm M/d/yy' }}</td>
+            <td>
+              <!-- [disabled]="getDownloading().auctions" -->
+              <button mat-icon-button (click)="download('auctions')"
+                matTooltip="Re-download auction data">
+                <i class="fas fa-download"></i>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="isUsingTSM()">
+            <td>
+              <mat-spinner *ngIf="getDownloading().tsmAuctions"class="float-left mr-2"></mat-spinner>
+            </td>
+            <td>TSM</td>
+            <td>{{ timestamps.tsm | date: 'HH:mm M/d/yy' }}</td>
+            <td>
+              <!-- [disabled]="getDownloading().tsmAuctions" -->
+              <button mat-icon-button (click)="download('tsm')"
+                matTooltip="Re-download TSM data" [disabled]="isDownloading()">
+                <i class="fas fa-download"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-spinner *ngIf="getDownloading().characterData" class="float-left mr-2"></mat-spinner>
+            </td>
+            <td>Characters</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>
+        Realm data:
+      </div>
+      <!--
+      <table *ngIf="getUserRealm()" class="table table-hover table-bordered table-striped table-sm"
+        [ngClass]="{'table-dark': isDarkmode()}">
+        <tbody>
+          <tr>
+            <td>Connected to</td>
+            <td>
+              <span *ngFor="let realm of getUserRealm().connected_realms; let i = index">
+                {{ realm }}
+                <span *ngIf="i < getUserRealm().connected_realms.length - 1">, </span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>Population</td>
+            <td>{{ getUserRealm().population }}</td>
+          </tr>
+          <tr>
+            <td>Queue</td>
+            <td>{{ getUserRealm().queue }}</td>
+          </tr>
+          <tr>
+            <td>Realm status</td>
+            <td>{{ getUserRealm().status }}</td>
+          </tr>
+        </tbody>
+      </table>-->
+    </mat-card-content>
+  </mat-card>
+</div>
