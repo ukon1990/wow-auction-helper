@@ -32,9 +32,9 @@ You need to have nodejs and @angular/cli installed on your computer as both the 
 * [angular.io](https://angular.io/guide/quickstart)
 
 ## Front and back-end documentation
-* [Front-end](client/src/client/client.md)
-* [AWS Lambda Back-end](client/src/lambda/lambda.md)
-* [(Depricated)Back-end](server/node-server.md)
+* [Front-end](src/client/client.md)
+* [AWS Lambda Back-end](src/lambda/lambda.md)
+* [(Depricated)Back-end](server-legacy/node-server.md)
 
 
 ## "Copy right"

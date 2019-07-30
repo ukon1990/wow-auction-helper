@@ -17,6 +17,9 @@
       "dom"
     ]
   },
+  "exclude": [
+    "./server-legacy"
+  ],
   "angularCompilerOptions": {
     "enableIvy": false
   }
