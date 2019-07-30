@@ -14,7 +14,7 @@ provider:
 
 functions:
   auctions:
-    handler: src/controllers/auction.handler
+    handler: src/lambda/controllers/auction.handler
     memorySize: 512
     events:
       - http:
@@ -23,7 +23,7 @@ functions:
           cors:
             origin: '*'
   auctionsS3:
-    handler: src/controllers/auction.s3
+    handler: src/lambda/controllers/auction.s3
     events:
       - http:
           method: post
@@ -31,7 +31,7 @@ functions:
           cors:
             origin: '*'
   updateAllHouses:
-    handler: src/controllers/auction.updateAll
+    handler: src/lambda/controllers/auction.updateAll
     memorySize: 200
     events:
       - http:
@@ -41,7 +41,7 @@ functions:
             origin: '*'
 
   deactivateInactiveHouses:
-    handler: src/controllers/auction.deactivateInactiveHouses
+    handler: src/lambda/controllers/auction.deactivateInactiveHouses
     memorySize: 200
     events:
       - http:
@@ -51,7 +51,7 @@ functions:
             origin: '*'
 
   updateSpesificHouse:
-    handler: src/controllers/auction.updateOne
+    handler: src/lambda/controllers/auction.updateOne
     memorySize: 512
     events:
       - http:
@@ -60,7 +60,7 @@ functions:
           cors:
             origin: '*'
   locales:
-    handler: src/controllers/locale.handler
+    handler: src/lambda/controllers/locale.handler
     events:
       - http:
           method: post
@@ -68,7 +68,7 @@ functions:
           cors:
             origin: 'localhost:3000'
   items:
-    handler: src/controllers/item.handler
+    handler: src/lambda/controllers/item.handler
     memorySize: 160
     events:
       - http:
@@ -83,7 +83,7 @@ functions:
           cors:
             origin: '*'
   pets:
-    handler: src/controllers/pet.handler
+    handler: src/lambda/controllers/pet.handler
     memorySize: 128
     events:
       - http:
@@ -98,7 +98,7 @@ functions:
           cors:
             origin: '*'
   recipes:
-    handler: src/controllers/recipe.handler
+    handler: src/lambda/controllers/recipe.handler
     memorySize: 128
     events:
       - http:
@@ -113,7 +113,7 @@ functions:
           cors:
             origin: '*'
   character:
-    handler: src/controllers/character.handler
+    handler: src/lambda/controllers/character.handler
     memorySize: 128
     events:
       - http:
@@ -122,7 +122,7 @@ functions:
           cors:
             origin: '*'
   realm:
-    handler: src/controllers/realm.handler
+    handler: src/lambda/controllers/realm.handler
     events:
       - http:
           method: post
@@ -130,7 +130,7 @@ functions:
           cors:
             origin: '*'
   realmAllRegions:
-    handler: src/controllers/realm.handleGetAll
+    handler: src/lambda/controllers/realm.handleGetAll
     memorySize: 128
     events:
       - http:
@@ -139,7 +139,7 @@ functions:
           cors:
             origin: '*'
   getByRegionAndName:
-    handler: src/controllers/realm.getByRegionAndName
+    handler: src/lambda/controllers/realm.getByRegionAndName
     memorySize: 128
     events:
       - http:
@@ -148,14 +148,14 @@ functions:
           cors:
             origin: '*'
   test:
-    handler: src/controllers/test.handler
+    handler: src/lambda/controllers/test.handler
     events:
       - http:
           method: any
           path: test
 
   logger:
-    handler: src/controllers/logger.handler
+    handler: src/lambda/controllers/logger.handler
     memorySize: 128
     events:
       - http:

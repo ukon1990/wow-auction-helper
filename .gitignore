@@ -47,8 +47,8 @@ server/secrets/secrets\.js
 src/app/services/keys\.ts
 .env
 
-server-lambda/.webpack
-server-lambda/.serverless
+client/.webpack
+client/.serverless
 secrets.ts
 
 client/coverage

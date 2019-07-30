@@ -2,7 +2,7 @@
   "name": "wah",
   "version": "2.194.1",
   "license": "MIT",
-  "main": "server.js",
+  "main": "handler.js",
   "scripts": {
     "ng": "ng",
     "ng-serve": "ng serve",
@@ -14,7 +14,15 @@
     "test": "ng test --browser ChromeHeadless --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ng-http-serve-prod": "ng build --prod && http-server -p 8080 -c-1 dist"
+    "ng-http-serve-prod": "ng build --prod && http-server -p 8080 -c-1 dist",
+    "deploy-dev-eu": "serverless deploy -r eu-west-1 -s dev",
+    "deploy-dev-us": "serverless deploy -r us-west-1 -s dev",
+    "deploy-dev-kr": "serverless deploy -r ap-northeast-2 -s dev",
+    "deploy-dev": "npm run deploy-dev-us && npm run deploy-dev-eu && npm run deploy-dev-kr",
+    "deploy-eu": "serverless deploy -r eu-west-1 -s prod",
+    "deploy-us": "serverless deploy -r us-west-1 -s prod",
+    "deploy-kr": "serverless deploy -r ap-northeast-2 -s prod",
+    "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr"
   },
   "private": true,
   "dependencies": {
@@ -45,7 +53,13 @@
     "tslib": "^1.9.3",
     "words-to-numbers": "^1.5.1",
     "xlsx": "^0.14.3",
-    "zone.js": "^0.9.1"
+    "zone.js": "^0.9.1",
+    "aws-sdk": "^2.453.0",
+    "mysql": "^2.16.0",
+    "promise-throttle": "^1.0.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.801.1",
@@ -56,6 +70,7 @@
     "@types/jasminewd2": "~2.0.6",
     "@types/jquery": "^3.3.29",
     "@types/node": "^12.0.3",
+    "@types/aws-lambda": "8.10.23",
     "codelyzer": "^5.0.1",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
@@ -69,6 +84,13 @@
     "supervisor": "^0.12.0",
     "ts-node": "~8.2.0",
     "tslint": "~5.16.0",
-    "typescript": "3.4.5"
+    "typescript": "3.4.5",
+    "requirejs": "^2.3.6",
+    "serverless-offline": "^4.9.2",
+    "serverless-webpack": "^5.2.0",
+    "source-map-support": "^0.5.11",
+    "ts-loader": "^5.3.3",
+    "uglifyjs-webpack-plugin": "^2.1.2",
+    "webpack": "^4.29.6"
   }
 }
