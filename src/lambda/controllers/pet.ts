@@ -2,6 +2,7 @@ import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
 import {PetHandler} from '../handlers/pet.handler';
 
+/* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 
   if (event.pathParameters && event.pathParameters.id) {
@@ -12,6 +13,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 class PetController {
+  /* istanbul ignore next */
   public static byId(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod,
       id = +event.pathParameters.id;
@@ -28,6 +30,7 @@ class PetController {
     }
   }
 
+  /* istanbul ignore next */
   public static all(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod;
     switch (type) {

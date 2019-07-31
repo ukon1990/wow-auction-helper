@@ -4,10 +4,12 @@ import {DatabaseUtil} from '../utils/database.util';
 
 const crypto = require('crypto');
 
+/* istanbul ignore next */
 function isMe(requestData) {
   return requestData.ipObfuscated === 'seo7xQEYpAmOwTd+NAOY42cgqYTBbLox4aJ1kGO7gXY=' ? 1 : 0;
 }
 
+/* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const detail = event['detail'];
   const params = detail.requestParameters;
@@ -23,7 +25,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
       .update(detail.sourceIPAddress)
       .digest('base64')
   };
-const sql = `INSERT INTO \`100680-wah\`.\`s3-logs\`
+  const sql = `INSERT INTO \`100680-wah\`.\`s3-logs\`
                           (\`type\`,
                           \`bucket\`,
                           \`region\`,
@@ -33,7 +35,7 @@ const sql = `INSERT INTO \`100680-wah\`.\`s3-logs\`
                           \`isMe\`,
                           \`timestamp\`)
                     VALUES
-                            ("${ requestData.type }",
+                            ("${requestData.type}",
                             "${requestData.bucketName}",
                             "${requestData.region}",
                             ${requestData.ahId},
@@ -45,7 +47,8 @@ const sql = `INSERT INTO \`100680-wah\`.\`s3-logs\`
   new DatabaseUtil()
     .query(
       sql)
-    .then(() => {})
+    .then(() => {
+    })
     .catch(console.error);
   Response.send({message: 'success'}, callback);
 };

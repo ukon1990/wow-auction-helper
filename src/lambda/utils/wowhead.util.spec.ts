@@ -1,7 +1,13 @@
 import {WoWHeadUtil} from './wowhead.util';
+import {WoWHead} from '../models/item/wowhead';
 
 fdescribe('WoWHeadUtil', () => {
-  //  https://www.wowhead.com/item=109118/blackrock-ore
+  /*
+    Sources: 31.july 2019
+    https://www.wowhead.com/item=109118/blackrock-ore
+    https://www.wowhead.com/item=154123/amberblaze#prospected-from
+    https://www.wowhead.com/item=153669/viridescent-pigment
+   */
   let body = `
              <script>
               WH.markup.printHtml("[ul][li][url=\\/items?filter=217;1;0]Crafting Reagent[\\/url][\\/li][li][url=https:\\/\\/theunderminejournal.com\\/#item\\/109118][tooltip=tooltip_buyoutprice]Buyout price[\\/tooltip][\\/url]: [money=8407][color=q0] (each)[\\/color][\\/li][li]Added in patch 6.0.1.18125[\\/li][li class=icon-db-link]Icon: [icondb=962047 name=true][\\/li][li]Related building: [building=61 short=true][\\/li][li]Related building: [building=62 short=true][\\/li][li]Related building: [building=63 short=true][\\/li][\\/ul]", "infobox-contents-0", {
@@ -123,9 +129,83 @@ fdescribe('WoWHeadUtil', () => {
           parent: 'lkljbjkb574',
           data: [{"classs":1,"flags2":8192,"id":30745,"level":60,"name":"7Heavy Toolbox","nslots":20,"slot":18,"slotbak":18,"source":[5],"subclass":4},{"classs":1,"flags2":8192,"id":67390,"level":60,"name":"7\\"Carriage - Maddy\\" High Tech Bag","nslots":20,"slot":18,"slotbak":18,"source":[5],"sourcemore":[{"n":"Dawn Radue","t":1,"ti":50669,"z":1519}],"subclass":4},{"classs":1,"flags2":8192,"id":23774,"level":65,"name":"6Fel Iron Toolbox","nslots":24,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_enggizmos_18","n":"Fel Iron Toolbox","s":202,"t":6,"ti":30348}],"subclass":4},{"classs":1,"flags2":8192,"id":23775,"level":75,"name":"5Titanium Toolbox","nslots":32,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_enggizmos_19","n":"Titanium Toolbox","s":202,"t":6,"ti":30349}],"subclass":4},{"classs":1,"flags2":8192,"id":60217,"level":85,"name":"5Elementium Toolbox","nslots":36,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_enggizmos_34","n":"Elementium Toolbox","s":202,"t":6,"ti":84416}],"subclass":4},{"classs":1,"flags2":8192,"id":30746,"level":60,"name":"7Mining Sack","nslots":20,"slot":18,"slotbak":18,"source":[5],"subclass":6},{"classs":1,"flags2":8192,"id":67396,"level":35,"name":"7\\"Carriage - Christina\\" Precious Metal Bag","nslots":20,"slot":18,"slotbak":18,"source":[5],"sourcemore":[{"n":"Dawn Radue","t":1,"ti":50669,"z":1519}],"subclass":6},{"classs":1,"flags2":8192,"id":29540,"level":65,"name":"6Reinforced Mining Bag","nslots":28,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_bag_15","n":"Reinforced Mining Bag","s":165,"t":6,"ti":35530}],"subclass":6},{"classs":1,"flags2":8192,"id":38347,"level":75,"name":"5Mammoth Mining Bag","nslots":32,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_bag_16","n":"Mammoth Mining Bag","s":165,"t":6,"ti":50971}],"subclass":6},{"classs":1,"flags2":8192,"id":70137,"level":85,"name":"5Triple-Reinforced Mining Bag","nslots":36,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_bag_29","n":"Triple-Reinforced Mining Bag","s":165,"t":6,"ti":100586}],"subclass":6},{"classs":1,"flags2":8192,"id":116260,"level":100,"name":"5Burnished Mining Bag","nslots":36,"slot":18,"slotbak":18,"source":[1],"sourcemore":[{"c":11,"icon":"inv_misc_bag_34","n":"Burnished Mining Bag","s":165,"t":6,"ti":171289}],"subclass":6}],
       });
+      new Listview({
+        template: 'item',
+        id: 'milled-from',
+        name: LANG.tab_milledfrom,
+        tabs: 'tabsRelated',
+        parent: 'lkljbjkb574',
+        extraCols: ['count', 'percent', 'popularity'],
+        sort: ['-percent', 'name'],
+        computeDataFunc: Listview.funcBox.initLootTable,
+            data: [{"classs":7,"flags2":-2147475456,"id":152505,"level":111,"name":"7Riverbud","slot":0,"source":[1,2,16,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_riverbud","n":"Mass Mill Riverbud","s":773,"t":6,"ti":256217}],"subclass":9,"count":1467,"outof":5291,"pctstack":"{1: 36.8098,2: 37.4915,3: 25.6987}","popularity":771},{"classs":7,"flags2":-2147475456,"id":152506,"level":111,"name":"7Star Moss","slot":0,"source":[1,2,16,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_starmoss","n":"Mass Mill Star Moss","s":773,"t":6,"ti":256218}],"subclass":9,"count":1797,"outof":6876,"pctstack":"{1: 39.2877,2: 32.6656,3: 28.0467}","popularity":1793},{"classs":7,"flags2":-2147475456,"id":152507,"level":111,"name":"7Akunda's Bite","slot":0,"source":[1,2,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_akundasbite","n":"Mass Mill Akunda's Bite","s":773,"t":6,"ti":256219}],"subclass":9,"count":1111,"outof":3071,"pctstack":"{1: 29.883,2: 23.4923,3: 46.6247}","popularity":1916},{"classs":7,"flags2":-2147475456,"id":152508,"level":111,"name":"7Winter's Kiss","slot":0,"source":[1,2,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_winterskiss","n":"Mass Mill Winter's Kiss","s":773,"t":6,"ti":256220}],"subclass":9,"count":1340,"outof":5316,"pctstack":"{1: 35.4478,2: 36.3433,3: 28.209}","popularity":815},{"classs":7,"flags2":-2147475456,"id":152509,"level":111,"name":"7Siren's Pollen","slot":0,"source":[1,2,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_pollen","n":"Mass Mill Siren's Pollen","s":773,"t":6,"ti":256221}],"subclass":9,"count":1858,"outof":6995,"pctstack":"{1: 27.8256,2: 43.8106,3: 28.3638}","popularity":833},{"classs":7,"flags2":-2147475456,"id":152510,"level":111,"name":"6Anchor Weed","reqlevel":120,"slot":0,"source":[1,2,4,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_anchorweed","n":"Mass Mill Anchor Weed","s":773,"t":6,"ti":256308}],"subclass":9,"count":888,"outof":948,"pctstack":"{1: 98.8739,3: 1.12613}","popularity":3057},{"classs":7,"flags2":-2147475456,"id":152511,"level":111,"name":"7Sea Stalk","slot":0,"source":[1,2,16,17],"sourcemore":[{"c":11,"icon":"inv_misc_herb_seastalk","n":"Mass Mill Sea Stalk","s":773,"t":6,"ti":256223}],"subclass":9,"count":1603,"outof":6344,"pctstack":"{1: 40.0499,2: 34.9969,3: 24.9532}","popularity":593}],
+    });
+    new Listview({
+        template: 'item',
+        id: 'prospected-from',
+        name: LANG.tab_prospectedfrom,
+        tabs: 'tabsRelated',
+        parent: 'lkljbjkb574',
+        extraCols: [Listview.extraCols.count, Listview.extraCols.percent],
+        sort:['-percent', 'name'],
+        computeDataFunc: Listview.funcBox.initLootTable,
+            data: [{"classs":7,"flags2":-2147475456,"id":152512,"level":111,"name":"7Monelite Ore","slot":0,"source":[1,2,19,23],"sourcemore":[{"c":11,"icon":"inv_ore_monalite","n":"Mass Prospect Monelite","s":755,"t":6,"ti":256611}],"subclass":7,"count":997,"outof":24406,"pctstack":""},{"classs":7,"flags2":-2147475456,"id":152513,"level":111,"name":"6Platinum Ore","slot":0,"source":[1,2,19],"sourcemore":[{"c":11,"icon":"inv_ore_platinum","n":"Mass Prospect Platinum","s":755,"t":6,"ti":256622}],"subclass":7,"count":2011,"outof":17036,"pctstack":""},{"classs":7,"flags2":-2147475456,"id":152579,"level":111,"name":"7Storm Silver Ore","slot":0,"source":[1,2,19,23],"sourcemore":[{"c":11,"icon":"inv_ore_stormsilver","n":"Mass Prospect Storm Silver","s":755,"t":6,"ti":256613}],"subclass":7,"count":1712,"outof":26384,"pctstack":""}],
+    });
 </script>`;
 
-  it('getExpansion', async () => {
-    expect(WoWHeadUtil.getExpansion(body)).toBe(5);
+  describe('setValuesAll', () => {
+    let result: WoWHead;
+
+    beforeAll(() => {
+      result = WoWHeadUtil.setValuesAll(body);
+    });
+
+    it('getExpansion', async () => {
+      expect(result.expansionId).toBe(5);
+    });
+
+    it('getDroppedBy', async () => {
+      expect(result.droppedBy.length).toBe(9);
+    });
+
+    it('containedInObject', async () => {
+      expect(result.containedInObject.length).toBe(5);
+    });
+
+    it('containedInItem', async () => {
+      expect(result.containedInItem.length).toBe(4);
+    });
+
+    it('currencyFor', async () => {
+      expect(result.currencyFor.length).toBe(7);
+    });
+
+    it('soldBy', async () => {
+      expect(result.soldBy.length).toBe(10);
+    });
+
+    it('milledFrom', async () => {
+      expect(result.milledFrom.length).toBe(7);
+    });
+
+    it('prospectedFrom', async () => {
+      expect(result.prospectedFrom.length).toBe(3);
+    });
+
+    it('Empty if not found in body or non accepted js found', () => {
+      expect(WoWHeadUtil.setValuesAll('').milledFrom).toEqual([]);
+      expect(WoWHeadUtil.setValuesAll(`
+      new Listview({
+        template: 'item',
+        id: 'prospected-from',
+        name: LANG.tab_prospectedfrom,
+        tabs: 'tabsRelated',
+        parent: 'lkljbjkb574',
+        extraCols: [Listview.extraCols.count, Listview.extraCols.percent],
+        sort:['-percent', 'name'],
+        computeDataFunc: Listview.funcBox.initLootTable,
+              data: [{dfgjhk],
+      });`).milledFrom).toEqual([]);
+    });
   });
 });

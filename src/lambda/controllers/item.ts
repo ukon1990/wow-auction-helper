@@ -2,6 +2,7 @@ import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
 import {ItemHandler} from '../handlers/item.handler';
 
+/* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
 
   if (event.pathParameters && event.pathParameters.id) {
@@ -12,6 +13,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 class ItemController {
+  /* istanbul ignore next */
   public static byId(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod,
       id = +event.pathParameters.id;
@@ -28,6 +30,7 @@ class ItemController {
     }
   }
 
+  /* istanbul ignore next */
   public static all(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod;
     switch (type) {
