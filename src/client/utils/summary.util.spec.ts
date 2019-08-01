@@ -1,7 +1,7 @@
 import {Recipe} from '../modules/crafting/models/recipe';
 import {SummaryUtil} from './summary.util';
 
-describe('SummaryUtil', () => {
+fdescribe('SummaryUtil', () => {
   describe('isProfitMatch', () => {
     it('below profit margin', () => {
       const recipe = new Recipe();
