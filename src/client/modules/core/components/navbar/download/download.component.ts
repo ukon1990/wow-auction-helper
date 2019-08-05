@@ -101,8 +101,10 @@ export class DownloadComponent implements OnInit {
   }
 
   private async loadAuctions() {
+    /*
     this.downloadProgress = 'Loading auctions from disk';
-    await this._dbService.getAllAuctions(this._petService, this._auctionsService);
+    await this._dbService.getAllAuctions(this._petService, this._auctionsService);*/
+    Report.debug('DownloadComponent.loadAuctions', 'Temporarily disabled');
   }
 
   private async loadRecipes() {

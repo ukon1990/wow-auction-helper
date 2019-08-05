@@ -27,6 +27,9 @@ import {UtilModule} from '../util/util.module';
 import {TsmModule} from '../tsm/tsm.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
+import { MenuComponent } from './components/menu/menu.component';
+import {MatMenuModule} from '@angular/material';
+import { CharacterSelectComponent } from './components/menu/character-select/character-select.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +50,9 @@ import {AboutModule} from '../about/about.module';
     AddRecipesComponent,
     ReputationsComponent,
     CharacterReputationComponent,
-    AppUpdateComponent],
+    AppUpdateComponent,
+    MenuComponent,
+    CharacterSelectComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -60,9 +65,10 @@ import {AboutModule} from '../about/about.module';
     UtilModule,
     TsmModule,
     ShoppingCartModule,
-    AboutModule
+    AboutModule,
+    MatMenuModule
   ],
-  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
+  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent]
 })
 export class CoreModule {
 }

@@ -1,0 +1,100 @@
+<mat-toolbar color="primary" role="heading">
+  <div id="app-branding" class="mr-3">
+    <h1>WAH</h1>
+    <small>v.{{ appVersion }}</small>
+  </div>
+
+
+  <a mat-flat-button
+     color="primary"
+     routerLinkActive="mat-accent"
+     routerLink="dashboard"
+          [matMenuTriggerFor]="dashboardDropdown">Dashboard
+  </a>
+  <mat-menu #dashboardDropdown="matMenu">
+    <a mat-menu-item
+       routerLink="dashboard/items"
+       routerLinkActive="mat-accent">Items
+    </a>
+    <a mat-menu-item
+       routerLink="dashboard/sellers"
+       routerLinkActive="mat-accent">Sellers
+    </a>
+    <a mat-menu-item
+       routerLink="dashboard/ah-summary"
+       routerLinkActive="mat-accent">AH summary
+    </a>
+    <a mat-menu-item
+       routerLink="dashboard/tsm"
+       routerLinkActive="mat-accent">TSM
+    </a>
+    <a mat-menu-item
+       routerLink="dashboard/manage-dashboards"
+       routerLinkActive="mat-accent">Manage
+    </a>
+  </mat-menu>
+
+  <a mat-flat-button
+     color="primary"
+     routerLink="crafting"
+     routerLinkActive="mat-accent">Crafting
+  </a>
+
+  <a mat-flat-button
+     color="primary"
+     routerLink="auctions"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="auctionsDropdown">Auctions
+  </a>
+  <mat-menu #auctionsDropdown="matMenu">
+    <a mat-menu-item
+       routerLink="auctions"
+       routerLinkActive="mat-accent">Auctions
+    </a>
+    <a mat-menu-item
+       routerLink="my-auctions"
+       routerLinkActive="mat-accent">My auctions
+    </a>
+  </mat-menu>
+
+
+  <a mat-flat-button
+     color="primary"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="toolsDropdown">Tools
+  </a>
+  <mat-menu #toolsDropdown="matMenu">
+    <a mat-menu-item
+       routerLink="tools/trade-vendor"
+       routerLinkActive="mat-accent">Trade vendors
+    </a>
+    <a mat-menu-item
+       routerLink="tools/sellers"
+       routerLinkActive="mat-accent">Sellers
+    </a>
+    <a mat-menu-item
+       routerLink="tools/milling-and-prospecting"
+       routerLinkActive="mat-accent">Milling & prospecting
+    </a>
+    <a mat-menu-item
+       routerLink="tools/market-reset"
+       routerLinkActive="mat-accent">Market reset (WIP)
+    </a>
+    <a mat-menu-item
+       routerLink="tools/reputations"
+       routerLinkActive="mat-accent">Reputations
+    </a>
+  </mat-menu>
+
+  <a mat-flat-button
+          color="primary"
+          routerLink="settings"
+          routerLinkActive="mat-accent">Settings
+  </a>
+
+  <a mat-flat-button
+     color="primary"
+     routerLink="about"
+     routerLinkActive="mat-accent">About
+  </a>
+</mat-toolbar>

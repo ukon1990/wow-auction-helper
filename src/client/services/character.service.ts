@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
@@ -8,6 +8,7 @@ import {User} from '../models/user/user';
 
 @Injectable()
 export class CharacterService {
+  events: EventEmitter<any> = new EventEmitter();
 
   constructor(private _http: HttpClient) { }
 

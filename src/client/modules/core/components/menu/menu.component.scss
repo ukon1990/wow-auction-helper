@@ -1,0 +1,16 @@
+.nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 16px;
+}
+#app-branding {
+  small, h1 {
+    float: left;
+    clear: both;
+  }
+
+  h1 {
+    margin-bottom: -.8em;
+  }
+}
