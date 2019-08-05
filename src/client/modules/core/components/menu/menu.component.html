@@ -1,5 +1,5 @@
 <mat-toolbar color="primary" role="heading">
-  <div id="app-branding" class="mr-3">
+  <div id="app-branding" class="mr-3" routerLink="about/changelog">
     <h1>WAH</h1>
     <small>v.{{ appVersion }}</small>
   </div>
@@ -87,9 +87,9 @@
   </mat-menu>
 
   <a mat-flat-button
-          color="primary"
-          routerLink="settings"
-          routerLinkActive="mat-accent">Settings
+     color="primary"
+     routerLink="settings"
+     routerLinkActive="mat-accent">Settings
   </a>
 
   <a mat-flat-button
@@ -97,4 +97,12 @@
      routerLink="about"
      routerLinkActive="mat-accent">About
   </a>
+
+  <!--
+  <wah-shopping-cart></wah-shopping-cart>
+  -->
+
+  <div class="flex-spacer"></div>
+
+  <wah-download></wah-download>
 </mat-toolbar>
