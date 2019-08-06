@@ -1,17 +1,12 @@
-<wah-news [class]="theme.className"></wah-news>
-<wah-app-update [class]="theme.className"></wah-app-update>
-<wah-item *ngIf="isItemSelected()" [class]="theme.className"></wah-item>
-<wah-seller *ngIf="isSellerSelected()" [class]="theme.className"></wah-seller>
+<wah-news></wah-news>
+<wah-app-update></wah-app-update>
+<wah-item *ngIf="isItemSelected()"></wah-item>
+<wah-seller *ngIf="isSellerSelected()"></wah-seller>
 
-<wah-menu
-        [class]="theme.className">
-</wah-menu>
-<!--<wah-navbar [ngClass]="{'unicorn-dark-theme': isDarkmode()}"></wah-navbar>-->
+<wah-menu></wah-menu>
 <div
   id="main"
-  class="mt-6 container-fluid"
-  [class]="theme.className">
-  <!-- TODO:  , 'd-none': isItemSelected() || isSellerSelected() -->
+  class="mt-6 container-fluid">
   <mat-card>
     <router-outlet></router-outlet>
   </mat-card>

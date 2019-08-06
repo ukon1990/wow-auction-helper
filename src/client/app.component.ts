@@ -27,7 +27,6 @@ import {ThemeUtil} from './modules/core/utils/theme.util';
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
   mainWindowScrollPosition = 0;
-  theme = ThemeUtil.current;
 
   constructor(public platform: Platform,
               private _router: Router,
