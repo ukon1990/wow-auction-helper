@@ -17,7 +17,7 @@ export class Filters {
   public static isBelowMarketValue(itemID: number, marketValuePercent: number): boolean {
     const auctionItem: AuctionItem = SharedService.auctionItemsMap[itemID];
     if (Filters.isUsingAPI() && auctionItem) {
-      if (EmptyUtil.isNullOrUndefined(marketValuePercent)) {
+      if (EmptyUtil.isNullOrUndefined(marketValuePercent) || marketValuePercent === 0) {
         return true;
       }
 
@@ -25,7 +25,6 @@ export class Filters {
         return false;
       }
       const result = Math.round((auctionItem.buyout / auctionItem.mktPrice) * 100);
-      console.log('SharedService', auctionItem, result, marketValuePercent);
       return result <= marketValuePercent;
     }
     return !EmptyUtil.isNullOrUndefined(auctionItem);

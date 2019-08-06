@@ -5,7 +5,7 @@
 <mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" class="float-right" [length]="filteredData.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
   [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
 </mat-paginator>
-<table class="table table-hover table-bordered table-striped table-sm" [ngClass]="{'table-dark': isDarkMode()}">
+<table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
   <thead>
     <tr>
       <ng-container *ngFor="let c of columns">

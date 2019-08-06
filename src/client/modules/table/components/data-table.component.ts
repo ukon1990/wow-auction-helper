@@ -19,6 +19,7 @@ import {User} from '../../../models/user/user';
 import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart.model';
+import {ThemeUtil} from '../../core/utils/theme.util';
 
 @Component({
   selector: 'wah-data-table',
@@ -58,6 +59,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     'SHORT': '<30m'
   };
   getBonusList = Auction.getBonusList;
+  theme = ThemeUtil.current;
 
   constructor(private angulartics2: Angulartics2) {
     this.sorter = new Sorter();

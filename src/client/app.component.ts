@@ -17,6 +17,7 @@ import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {ThemeUtil} from './modules/core/utils/theme.util';
 
 @Component({
   selector: 'wah-root',
@@ -26,6 +27,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
   mainWindowScrollPosition = 0;
+  theme = ThemeUtil.current;
 
   constructor(public platform: Platform,
               private _router: Router,

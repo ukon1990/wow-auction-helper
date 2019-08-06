@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ShoppingCartComponent} from './components/shopping-cart.component';
 import {
+  MatBadgeModule,
   MatButtonModule,
   MatCardModule,
   MatExpansionModule,
@@ -30,7 +31,8 @@ import {TsmModule} from '../tsm/tsm.module';
     MatListModule,
     MatButtonModule,
     MatTooltipModule,
-    TsmModule
+    TsmModule,
+    MatBadgeModule
   ],
   exports: [ShoppingCartComponent]
 })

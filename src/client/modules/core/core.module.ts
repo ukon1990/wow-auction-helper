@@ -28,8 +28,9 @@ import {TsmModule} from '../tsm/tsm.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import { MenuComponent } from './components/menu/menu.component';
-import {MatMenuModule} from '@angular/material';
+import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
 import { CharacterSelectComponent } from './components/menu/character-select/character-select.component';
+import { ThemeSelectComponent } from './components/theme-select/theme-select.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { CharacterSelectComponent } from './components/menu/character-select/cha
     CharacterReputationComponent,
     AppUpdateComponent,
     MenuComponent,
-    CharacterSelectComponent],
+    CharacterSelectComponent,
+    ThemeSelectComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -66,7 +68,9 @@ import { CharacterSelectComponent } from './components/menu/character-select/cha
     TsmModule,
     ShoppingCartModule,
     AboutModule,
-    MatMenuModule
+    MatMenuModule,
+    MatGridListModule,
+    MatBadgeModule
   ],
   exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent]
 })

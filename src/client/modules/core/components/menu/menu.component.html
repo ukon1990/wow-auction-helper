@@ -6,6 +6,7 @@
 
 
   <a mat-flat-button
+     class="mr-1 ml-1"
      color="primary"
      routerLinkActive="mat-accent"
      routerLink="dashboard"
@@ -35,30 +36,32 @@
   </mat-menu>
 
   <a mat-flat-button
+     class="mr-1 ml-1"
      color="primary"
      routerLink="crafting"
      routerLinkActive="mat-accent">Crafting
   </a>
 
   <a mat-flat-button
+     class="mr-1 ml-1"
      color="primary"
      routerLink="auctions"
      routerLinkActive="mat-accent"
+     matBadge="{{numberOfUndercutAuctions}}"
+     matBadgePosition="after"
+     matBadgeColor="accent"
+     matBadgeDescription="The number of undercut auctions"
           [matMenuTriggerFor]="auctionsDropdown">Auctions
   </a>
   <mat-menu #auctionsDropdown="matMenu">
-    <a mat-menu-item
-       routerLink="auctions"
-       routerLinkActive="mat-accent">Auctions
-    </a>
     <a mat-menu-item
        routerLink="my-auctions"
        routerLinkActive="mat-accent">My auctions
     </a>
   </mat-menu>
 
-
   <a mat-flat-button
+     class="mr-1 ml-1"
      color="primary"
      routerLinkActive="mat-accent"
           [matMenuTriggerFor]="toolsDropdown">Tools
@@ -87,12 +90,14 @@
   </mat-menu>
 
   <a mat-flat-button
+     class="mr-1 ml-1"
      color="primary"
      routerLink="settings"
      routerLinkActive="mat-accent">Settings
   </a>
 
   <a mat-flat-button
+     class="mr-1 ml-1"
      color="primary"
      routerLink="about"
      routerLinkActive="mat-accent">About
@@ -106,4 +111,6 @@
   <wah-shopping-cart></wah-shopping-cart>
 
   <wah-download></wah-download>
+
+  <wah-theme-select></wah-theme-select>
 </mat-toolbar>

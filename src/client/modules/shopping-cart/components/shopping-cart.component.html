@@ -1,11 +1,15 @@
 <a mat-flat-button
    (click)="toggleDisplay()"
    color="primary"
-   matTooltip="Shopping cart">
+   matTooltip="Shopping cart"
+   matBadge="{{cart.recipes.length | number}}"
+   matBadgeColor="accent"
+   matBadgePosition="before"
+   matBadgeDescription="The number of items in your shopping cart">
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
-  Shopping cart ({{ cart.recipes.length | number }} crafts, {{ cart.profit | gold }})
+  Shopping cart | {{ cart.profit | gold }}
 </a>
 
 <mat-card *ngIf="show" class="full-screen">

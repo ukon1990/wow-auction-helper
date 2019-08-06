@@ -4,12 +4,10 @@
 
 
 @import '~@angular/material/theming';
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// **Be sure that you only ever include this mixin once!**
 @include mat-core();
+@import 'dark-unicorn-theme';
+@import 'dark-blue-theme';
+@import 'dark-pink-theme';
 
 // Define the default theme (same as the example above).
 $candy-app-primary: mat-palette($mat-indigo);
@@ -20,35 +18,6 @@ $candy-app-theme:   mat-light-theme($candy-app-primary, $candy-app-accent);
 @include angular-material-theme($candy-app-theme);
 
 
-// Define an alternate dark theme.
-$dark-primary: mat-palette($mat-blue-grey);
-$dark-accent:  mat-palette($mat-amber, A200, A100, A400);
-$dark-warn:    mat-palette($mat-deep-orange);
-$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
-
-// Include the alternative theme styles inside of a block with a CSS class. You can make this
-// CSS class whatever you want. In this example, any component inside of an element with
-// `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
-.unicorn-dark-theme {
-  @include angular-material-theme($dark-theme);
-  background: #424242;
-  color: white;
-
-  wah-character {
-    .mat-raised-button{
-      color: white !important;
-    }
-  }
-  .list-group-item {
-    background-color: transparent;
-  }
-
-  wah-dashboard-item > mat-card:not(.full-screen),
-  wah-watchlist-item > mat-card:not(.full-screen),
-  wah-general-settings mat-card:not(.full-screen) {
-    background-color: #5d5d5d1a !important;
-  }
-}
 
 wah-dashboard-item > mat-card:not(.full-screen),
 wah-watchlist-item > mat-card:not(.full-screen),
