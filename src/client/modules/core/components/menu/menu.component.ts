@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {SharedService} from '../../../../services/shared.service';
 
 declare function require(moduleName: string): any;
 const version = require('../../../../../../package.json').version;
@@ -18,7 +19,7 @@ export class MenuComponent implements OnDestroy {
   constructor(private service: AuctionsService) {
     this.sm.add(this.service.events.list,
       (list) =>
-        this.numberOfUndercutAuctions = list.length);
+        this.numberOfUndercutAuctions = SharedService.userAuctions.undercutAuctions);
   }
 
   ngOnDestroy(): void {

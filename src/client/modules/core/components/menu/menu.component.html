@@ -8,6 +8,7 @@
   <a mat-flat-button
      class="mr-1 ml-1"
      color="primary"
+          [routerLinkActiveOptions]="{exact: false}"
      routerLinkActive="mat-accent"
           [matMenuTriggerFor]="dashboardDropdown">Dashboard
   </a>
@@ -46,7 +47,8 @@
      color="primary"
      routerLink="auctions"
      routerLinkActive="mat-accent"
-     matBadge="{{numberOfUndercutAuctions}}"
+          [routerLinkActiveOptions]="{exact: false}"
+          matBadge="{{numberOfUndercutAuctions | number}}"
      matBadgePosition="after"
      matBadgeColor="accent"
      matBadgeDescription="The number of undercut auctions"
