@@ -1,10 +1,67 @@
-<mat-toolbar color="primary" role="heading">
+<mat-drawer-container autosize>
+  <mat-drawer #drawer mode="side">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          Shit
+          <div class="float-right"
+                  *ngTemplateOutlet="menuButtonTemplate">
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="side-nav-links"
+              (click)="drawer.toggle()">
+        <ng-container
+                *ngTemplateOutlet="navElementsTemplate">
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+  </mat-drawer>
+  <div>
+    <header>
+      <nav>
+        <mat-toolbar color="primary" role="heading">
+          <mat-toolbar-row class="mat-elevation-z2">
+            <ng-container
+                    *ngTemplateOutlet="brandingTemplate">
+            </ng-container>
+
+            <ng-container *ngIf="!isSmallScreen()" >
+              <ng-container
+                      *ngTemplateOutlet="navElementsTemplate">
+              </ng-container>
+            </ng-container>
+
+            <div class="flex-spacer"></div>
+
+            <ng-container *ngTemplateOutlet="menuButtonTemplate"></ng-container>
+          </mat-toolbar-row>
+        </mat-toolbar>
+      </nav>
+    </header>
+
+    <ng-content></ng-content>
+  </div>
+</mat-drawer-container>
+
+<ng-template #brandingTemplate>
   <div id="app-branding" class="mr-3" routerLink="about/changelog">
     <h1>WAH</h1>
     <small>v.{{ appVersion }}</small>
   </div>
+</ng-template>
 
+<ng-template #menuButtonTemplate>
+  <button *ngIf="isSmallScreen()"
+          type="button"
+          mat-button
+          (click)="drawer.toggle()">
+    <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
+  </button>
+</ng-template>
 
+<ng-template #navElementsTemplate>
   <a mat-flat-button
      class="mr-1 ml-1"
      color="primary"
@@ -107,9 +164,6 @@
      routerLinkActive="mat-accent">About
   </a>
 
-  <!--
-  -->
-
   <div class="flex-spacer"></div>
 
   <wah-shopping-cart></wah-shopping-cart>
@@ -117,4 +171,4 @@
   <wah-download></wah-download>
 
   <wah-theme-select></wah-theme-select>
-</mat-toolbar>
+</ng-template>

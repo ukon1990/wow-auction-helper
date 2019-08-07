@@ -18,3 +18,19 @@
 .flex-spacer {
   flex-grow: 1;
 }
+.example-container {
+  height: 100vh;
+}
+
+.side-nav-links {
+  &  > a {
+    width: 100%;
+    margin: .5em 0;
+  }
+
+  & > wah-shopping-cart,
+  & > wah-theme-select {
+    width: 50%;
+    margin: .5em 0; 
+  }
+}

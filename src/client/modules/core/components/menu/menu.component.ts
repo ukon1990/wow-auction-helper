@@ -25,4 +25,12 @@ export class MenuComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.sm.unsubscribe();
   }
+
+  isSmallScreen(): boolean {
+    return window.innerWidth < 991.98;
+  }
+
+  isExtraSmallScreen(): boolean {
+    return window.innerWidth < 575.98;
+  }
 }
