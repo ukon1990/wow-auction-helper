@@ -9,6 +9,7 @@ import {Theme} from '../../models/theme.model';
 })
 export class ThemeSelectComponent implements OnInit {
   list = ThemeUtil.list;
+  currentTheme = ThemeUtil.current;
 
   constructor() { }
 

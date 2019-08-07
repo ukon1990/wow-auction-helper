@@ -433,7 +433,8 @@ export class ShoppingCart {
   }
 
   private isAvailableAtVendor(item: Item): boolean {
-    return item.itemSource && item.itemSource.soldBy && item.itemSource.soldBy.length > 0;
+    return item && item.itemSource &&
+      item.itemSource.soldBy && item.itemSource.soldBy.length > 0;
   }
 
   private handleAuctionSource(reagent: ShoppingCartItem, addedCount: number) {

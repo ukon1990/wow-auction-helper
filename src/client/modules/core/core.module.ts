@@ -31,6 +31,9 @@ import { MenuComponent } from './components/menu/menu.component';
 import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
 import { CharacterSelectComponent } from './components/menu/character-select/character-select.component';
 import { ThemeSelectComponent } from './components/theme-select/theme-select.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {fas} from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   declarations: [
@@ -70,9 +73,13 @@ import { ThemeSelectComponent } from './components/theme-select/theme-select.com
     AboutModule,
     MatMenuModule,
     MatGridListModule,
-    MatBadgeModule
+    MatBadgeModule,
+    FontAwesomeModule
   ],
   exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent]
 })
 export class CoreModule {
+  constructor() {
+    library.add(fas);
+  }
 }

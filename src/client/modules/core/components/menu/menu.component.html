@@ -45,7 +45,6 @@
   <a mat-flat-button
      class="mr-1 ml-1"
      color="primary"
-     routerLink="auctions"
      routerLinkActive="mat-accent"
           [routerLinkActiveOptions]="{exact: false}"
           matBadge="{{numberOfUndercutAuctions | number}}"
@@ -55,6 +54,10 @@
           [matMenuTriggerFor]="auctionsDropdown">Auctions
   </a>
   <mat-menu #auctionsDropdown="matMenu">
+    <a mat-menu-item
+       routerLink="auctions"
+       routerLinkActive="mat-accent">All auctions
+    </a>
     <a mat-menu-item
        routerLink="my-auctions"
        routerLinkActive="mat-accent">My auctions

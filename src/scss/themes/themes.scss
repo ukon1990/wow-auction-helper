@@ -53,3 +53,8 @@ wah-character {
 .mat-card-header-text {
   margin-left: 0 !important;
 }
+
+.mat-tab-link-container {
+  /* If not, it will cover the shopping cart partially */
+  z-index: 0 !important;
+}
