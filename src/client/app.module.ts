@@ -34,6 +34,7 @@ import {PetModule} from './modules/pet/pet.module';
 import {AuctionModule} from './modules/auction/auction.module';
 import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
 import {TsmModule} from './modules/tsm/tsm.module';
+import {BackgroundDownloadService} from './services/background-download.service';
 
 
 @NgModule({
@@ -73,7 +74,8 @@ import {TsmModule} from './modules/tsm/tsm.module';
     IsRegisteredService,
     WowdbService,
     PetsService,
-    UpdateService
+    UpdateService,
+    BackgroundDownloadService
   ],
   bootstrap: [AppComponent]
 })
