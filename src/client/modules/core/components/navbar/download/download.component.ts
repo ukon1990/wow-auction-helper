@@ -16,6 +16,7 @@ import {Crafting} from '../../../../crafting/models/crafting';
 import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {BackgroundDownloadService} from '../../../../../services/background-download.service';
+import {ThemeUtil} from '../../../utils/theme.util';
 
 @Component({
   selector: 'wah-download',
@@ -23,6 +24,7 @@ import {BackgroundDownloadService} from '../../../../../services/background-down
   styleUrls: ['./download.component.scss']
 })
 export class DownloadComponent implements OnInit {
+  theme = ThemeUtil.current;
   checkingForUpdates: boolean;
   lastCheckedMin;
   timeSinceUpdate = 0;

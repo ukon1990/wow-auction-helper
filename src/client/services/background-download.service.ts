@@ -118,7 +118,6 @@ export class BackgroundDownloadService {
       DateUtil.timeSince(this.realmStatus.lastModified, 'm'));
 
     return new Promise<any>((resolve, reject) => {
-      console.log('updateRealmStatus', this.realmStatus, this.timeSinceUpdate.value);
       if (this.shouldUpdateRealmStatus()) {
         this.checkingForUpdates = true;
         this.realmService.getStatus(

@@ -26,6 +26,7 @@ export class CharacterService {
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
+        this.emitChanges(c);
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
@@ -47,6 +48,7 @@ export class CharacterService {
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
+        this.emitChanges(c);
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
@@ -54,5 +56,10 @@ export class CharacterService {
         ErrorReport.sendHttpError(error);
         return {error: error};
       });
+  }
+
+  private emitChanges(c: Object) {
+    setTimeout(() =>
+      this.events.emit(c));
   }
 }

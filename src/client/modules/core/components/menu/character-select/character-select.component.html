@@ -1,13 +1,24 @@
-<mat-form-field>
-  <mat-select placeholder="Faction">
-    <mat-option value="0">Alliance</mat-option>
-    <mat-option value="1">Horde</mat-option>
-  </mat-select>
-</mat-form-field>
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-select placeholder="Faction"
+                formControlName="faction"
+                matTooltip="Only relevant for crafting and the shopping cart">
+      <mat-option [value]="0">
+        Alliance ({{ realmListMap[form.getRawValue().realm]?.factions[0] | number }})
+      </mat-option>
+      <mat-option [value]="1">
+        Horde ({{ realmListMap[form.getRawValue().realm]?.factions[1] | number }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-<mat-form-field>
-  <mat-select placeholder="Realm">
-    <mat-option value="draenor">Draenor</mat-option>
-    <mat-option value="emerald-dream">Emerald Dream</mat-option>
-  </mat-select>
-</mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Realm" formControlName="realm">
+      <mat-option *ngFor="let realm of realmList"
+                  [value]="realm.slug">
+        {{ realm.name }} ({{realm.characterCount}})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</form>

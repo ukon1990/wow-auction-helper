@@ -1,9 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {SharedService} from '../../../../services/shared.service';
 
 declare function require(moduleName: string): any;
+
 const version = require('../../../../../../package.json').version;
 
 @Component({
@@ -12,6 +13,7 @@ const version = require('../../../../../../package.json').version;
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnDestroy {
+  showMenu: boolean;
   appVersion = version;
   numberOfUndercutAuctions = 0;
   sm = new SubscriptionManager();
@@ -32,5 +34,9 @@ export class MenuComponent implements OnDestroy {
 
   isExtraSmallScreen(): boolean {
     return window.innerWidth < 575.98;
+  }
+
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
   }
 }

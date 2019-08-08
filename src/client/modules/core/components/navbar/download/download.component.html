@@ -3,11 +3,9 @@
    routerLinkActive="mat-accent"
    [matMenuTriggerFor]="downloadDropdown">
   <ng-container *ngIf="isDownloading(); else notDownloading">
-    <mat-spinner class="float-left mr-2">
-    </mat-spinner>
-    <span>
-      {{ getMessage() }}
-    </span>
+    <mat-spinner color="accent" class="float-left mr-2"></mat-spinner>
+
+    Loading app data
   </ng-container>
   <ng-template #notDownloading>
     <span [ngClass]="{'old-data': timeSinceUpdate > 60}">
@@ -20,7 +18,7 @@
     </span>
   </ng-template>
 </a>
-<mat-menu #downloadDropdown="matMenu">
+<mat-menu #downloadDropdown="matMenu" classList="download-dropdown-menu" xPosition="before">
   <mat-card>
     <mat-card-content>
       <p>
@@ -38,8 +36,7 @@
         using the latest version of Chrome. Do consider changing to that. The app is much faster in Chrome
         , compared to other browsers.
       </p>
-      <table class="table table-hover table-bordered table-striped table-sm"
-             [ngClass]="{'table-dark': isDarkmode()}">
+      <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
         <thead>
         <tr>
           <td></td>

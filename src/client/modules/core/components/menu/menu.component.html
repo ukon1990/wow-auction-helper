@@ -1,49 +1,33 @@
-<mat-drawer-container autosize>
-  <mat-drawer #drawer mode="side">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          Shit
-          <div class="float-right"
-                  *ngTemplateOutlet="menuButtonTemplate">
-          </div>
-        </mat-card-title>
-      </mat-card-header>
+<div class="fixed-menu">
+  <header>
+    <nav>
+      <mat-toolbar color="primary" role="heading">
+        <mat-toolbar-row class="mat-elevation-z2">
+          <ng-container
+                  *ngTemplateOutlet="brandingTemplate">
+          </ng-container>
 
-      <mat-card-content class="side-nav-links"
-              (click)="drawer.toggle()">
-        <ng-container
-                *ngTemplateOutlet="navElementsTemplate">
-        </ng-container>
-      </mat-card-content>
-    </mat-card>
-  </mat-drawer>
-  <div>
-    <header>
-      <nav>
-        <mat-toolbar color="primary" role="heading">
-          <mat-toolbar-row class="mat-elevation-z2">
+          <ng-container *ngIf="!isSmallScreen()" >
             <ng-container
-                    *ngTemplateOutlet="brandingTemplate">
+                    *ngTemplateOutlet="navElementsTemplate">
             </ng-container>
+          </ng-container>
 
-            <ng-container *ngIf="!isSmallScreen()" >
-              <ng-container
-                      *ngTemplateOutlet="navElementsTemplate">
-              </ng-container>
-            </ng-container>
 
-            <div class="flex-spacer"></div>
+          <ng-container *ngTemplateOutlet="menuButtonTemplate"></ng-container>
+        </mat-toolbar-row>
+      </mat-toolbar>
+    </nav>
+  </header>
+</div>
 
-            <ng-container *ngTemplateOutlet="menuButtonTemplate"></ng-container>
-          </mat-toolbar-row>
-        </mat-toolbar>
-      </nav>
-    </header>
-
-    <ng-content></ng-content>
+<ng-container *ngIf="isSmallScreen()">
+  <mat-card class="menu-mobile">
+    <mat-card-header></mat-card-header>
+  </mat-card>
+  <div class="backdrop menu-mobile" (click)="toggleMenu()" [ngClass]="{'show': showMenu}">
   </div>
-</mat-drawer-container>
+</ng-container>
 
 <ng-template #brandingTemplate>
   <div id="app-branding" class="mr-3" routerLink="about/changelog">
@@ -56,7 +40,7 @@
   <button *ngIf="isSmallScreen()"
           type="button"
           mat-button
-          (click)="drawer.toggle()">
+          (click)="toggleMenu()">
     <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
   </button>
 </ng-template>
@@ -166,9 +150,12 @@
 
   <div class="flex-spacer"></div>
 
+
   <wah-shopping-cart></wah-shopping-cart>
 
   <wah-download></wah-download>
+
+  <wah-character-select></wah-character-select>
 
   <wah-theme-select></wah-theme-select>
 </ng-template>

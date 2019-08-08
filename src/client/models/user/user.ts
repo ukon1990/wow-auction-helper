@@ -11,6 +11,7 @@ import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.mod
 
 
 export class User {
+  faction: number;
   region: string;
   realm: string;
   character = '';
@@ -54,6 +55,10 @@ export class User {
 
     Object.keys(user).forEach(key => {
       switch (key) {
+        case 'faction':
+          localStorage['faction'] = user[key];
+          SharedService.user.faction = +user[key];
+          break;
         case 'region':
           localStorage['region'] = user[key];
           SharedService.user.region = user[key];
@@ -138,17 +143,8 @@ export class User {
   }
 
   public static delete(): void {
-    delete localStorage['region'];
-    delete localStorage['realm'];
-    delete localStorage['character'];
-    delete localStorage['api_tsm'];
-    delete localStorage['api_wowuction'];
-    delete localStorage['api_to_use'];
-    delete localStorage['crafting_buyout_limit'];
-    delete localStorage['crafters'];
-    delete localStorage['crafters_recipes'];
-    delete localStorage['watchlist'];
-    delete localStorage['notifications'];
+    Object.keys(localStorage)
+      .forEach(k => delete localStorage[k]);
     // lists.myRecipes = [];
     SharedService.user = new User();
   }
@@ -158,6 +154,9 @@ export class User {
 
     Object.keys(localStorage).forEach(key => {
       switch (key) {
+        case 'faction':
+          user.faction = +localStorage[key];
+          break;
         case 'region':
           user.region = localStorage[key];
           break;

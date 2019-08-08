@@ -1,3 +1,11 @@
+.fixed-menu {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
 .nav-bar {
   display: flex;
   flex-wrap: wrap;
@@ -32,5 +40,16 @@
   & > wah-theme-select {
     width: 50%;
     margin: .5em 0; 
+  }
+}
+
+.menu-mobile {
+  position: fixed;
+  width: 90%;
+  max-width: 30em;
+
+  &.backdrop {
+    left: -100%;
+    width: 100%;
   }
 }

@@ -37,7 +37,9 @@ export class RealmService {
         await auctionsService.getWoWUctionAuctions();
       }
     }
-    await this.getStatus(region, realm);
+    await this.getStatus(
+      SharedService.user.region,
+      realm);
   }
 
   getStatus(region: string, realm: string): Promise<any> {
