@@ -11,7 +11,7 @@ import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
-import {TSMCSV, TsmLuaUtil} from '../utils/tsm-lua.util';
+import {TSMCSV, TsmLuaUtil} from '../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../utils/error-report.util';
 import {Report} from '../utils/report.util';
 import {AuctionsService} from './auctions.service';
@@ -176,6 +176,7 @@ export class DatabaseService {
 
 
   addAuctions(auctions: Array<Auction>): void {
+    return; // Deactivated
     if (environment.test || this.platform === null || this.platform.WEBKIT) {
       return;
     }
@@ -187,6 +188,7 @@ export class DatabaseService {
   }
 
   async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
+    return; // Deactivated
     if (this.platform === null || this.platform.WEBKIT) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }

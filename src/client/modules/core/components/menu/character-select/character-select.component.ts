@@ -127,8 +127,6 @@ export class CharacterSelectComponent implements OnDestroy {
     if (!this.isCurrentRealm(slug)) {
       this.realmService.changeRealm(this.auctionsService, slug);
     }
-
-    console.log('formValue', this.form.getRawValue());
   }
 
   private isCurrentRealm(slug: string) {
@@ -138,5 +136,8 @@ export class CharacterSelectComponent implements OnDestroy {
   private handleFactionChange(faction: number) {
     SharedService.user.faction = faction;
     User.save();
+
+    // TODO: Set inventory
+    // TODO: Set known recipes
   }
 }

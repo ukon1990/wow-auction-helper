@@ -1,6 +1,6 @@
 import {AfterContentInit, AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
-import {TSMCSV, TsmLuaUtil, UserProfit} from '../../../../utils/tsm-lua.util';
+import {TSMCSV, TsmLuaUtil, UserProfit} from '../../../../utils/tsm/tsm-lua.util';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';

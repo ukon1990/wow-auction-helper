@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormBuilder} from '@angular/forms';
-import {TsmLuaUtil} from '../../../utils/tsm-lua.util';
+import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
 import {Report} from '../../../utils/report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';

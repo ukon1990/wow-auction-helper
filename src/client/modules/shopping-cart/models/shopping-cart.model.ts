@@ -5,7 +5,7 @@ import {Item, ItemInventory, ItemPurchase} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Auction} from '../../auction/models/auction.model';
 import {Report} from '../../../utils/report.util';
-import {ProfitSummary} from '../../../utils/tsm-lua.util';
+import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 
 

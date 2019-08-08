@@ -19,7 +19,7 @@ import { CustomProc } from '../modules/crafting/models/custom-proc';
 import { WoWUction } from '../modules/auction/models/wowuction.model';
 import { Zone } from '../models/zone.model';
 import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
-import {TSMCSV} from '../utils/tsm-lua.util';
+import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
