@@ -1,10 +1,11 @@
 import * as lua from 'luaparse';
-import {SharedService} from '../services/shared.service';
-import {ItemInventory} from '../models/item/item';
-import {ErrorReport} from './error-report.util';
-import {AuctionItem} from '../modules/auction/models/auction-item.model';
+import {SharedService} from '../../services/shared.service';
+import {ErrorReport} from '../error-report.util';
+import {AuctionItem} from '../../modules/auction/models/auction-item.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
+import {InventoryUtil} from './inventory.util';
+import {Report} from '../report.util';
 
 export class TSMCSV {
   characterGuilds?: any;
@@ -22,68 +23,12 @@ export class TSMCSV {
 export class TsmLuaUtil {
   static events: BehaviorSubject<TSMCSV> = new BehaviorSubject(undefined);
 
-  public static calculateInventory(inventory): void {
-    try {
-      const currentRealm = SharedService.realms[SharedService.user.realm].name;
-      Object.keys(inventory)
-        .forEach(realm =>
-          this.calculateInventoryForRealm(inventory, realm, currentRealm));
-    } catch (error) {
-      ErrorReport.sendError('TsmLuaUtil.calculateInventory', error);
-    }
-  }
-
-  private static calculateInventoryForRealm(inventory, realm, currentRealm) {
-    if (inventory[realm]) {
-      inventory[realm].forEach(item => {
-        this.calculateInventoryItem(item);
-        this.addInventoryStatusForItem(realm, currentRealm, item);
-      });
-    }
-  }
-
-  private static calculateInventoryItem(item) {
-    const ahItem = SharedService.auctionItemsMap[item.id];
-    if (ahItem) {
-      item.buyout = ahItem.buyout;
-      item.sumBuyout = ahItem.buyout * item.quantity;
-    } else {
-      item.buyout = 0;
-      item.sumBuyout = 0;
-    }
-  }
-
-  private static addInventoryStatusForItem(realm, currentRealm, item) {
-    if (realm === currentRealm && SharedService.items[item.id]) {
-      SharedService.items[item.id].inventory = item;
-    }
-  }
-
   convertList(input: any): object {
-    const result = {};
+    let result = {};
     try {
-      const fields = lua.parse(input).body[0].init[0].fields;
+      result = this.processLuaData(input);
 
-      fields.forEach(field => {
-        const fRes = this.convertField(field);
-        if (!fRes) {
-          return;
-        }
-
-        if (fRes.character && fRes.character.realm) {
-          this.addRealmBoundData(fRes, result, field);
-
-        } else {
-          if (fRes.type === undefined || fRes.type === 'undefined') {
-          } else {
-            result[fRes.type] = fRes.data;
-          }
-        }
-
-
-      });
-
-      this.setInventory(result);
+      InventoryUtil.organize(result);
 
       this.getUserProfits(result as TSMCSV);
 
@@ -99,6 +44,29 @@ export class TsmLuaUtil {
     return result;
   }
 
+
+  public processLuaData(input: any) {
+    const result = {};
+    const fields = lua.parse(input).body[0].init[0].fields;
+
+    fields.forEach(field => {
+      const fRes = this.convertField(field);
+      if (!fRes) {
+        return;
+      }
+
+      if (fRes.character && fRes.character.realm) {
+        this.addRealmBoundData(fRes, result, field);
+
+      } else {
+        if (fRes.type === undefined || fRes.type === 'undefined') {
+        } else {
+          result[fRes.type] = fRes.data;
+        }
+      }
+    });
+    return result;
+  }
 
   private addRealmBoundData(fRes, result, field) {
     try {
@@ -152,14 +120,7 @@ export class TsmLuaUtil {
 
   private convertField(field: any): any {
     try {
-      const keys = field.key.value.split('@');
-      const character = this.splitCharacterData(keys[1]),
-        type = keys[3];
-      const result = {
-        type: type,
-        character: character,
-        data: undefined
-      };
+      const {character, type, result} = this.getCharacterDataForField(field);
 
       switch (field.value.type) {
         case 'TableConstructorExpression':
@@ -217,7 +178,19 @@ export class TsmLuaUtil {
     }
   }
 
-  private splitCharacterData(keys): { name?: string; faction?: string; realm: string; } {
+  private getCharacterDataForField(field: any) {
+    const keys = field.key.value.split('@');
+    const character = this.splitCharacterData(keys[1]),
+      type = keys[3];
+    const result = {
+      type: type,
+      character,
+      data: undefined
+    };
+    return {character, type, result};
+  }
+
+  private splitCharacterData(keys): { name?: string; faction?: number; realm: string; } {
 
     try {
       if (keys) {
@@ -228,14 +201,14 @@ export class TsmLuaUtil {
 
         if (split.length === 2) {
           return {
-            faction: split[0],
+            faction: this.factionStringToId(split[0]),
             realm: split[1]
           };
         }
 
         return {
           name: split[0],
-          faction: split[1],
+          faction: this.factionStringToId(split[1]),
           realm: split[2]
         };
       }
@@ -244,6 +217,10 @@ export class TsmLuaUtil {
     }
 
     return undefined;
+  }
+
+  private factionStringToId(name: string) {
+    return name === 'Alliance' ? 0 : 1;
   }
 
   private handleTable(field: any, character: any) {
@@ -298,6 +275,10 @@ export class TsmLuaUtil {
               obj['character'] = character.name;
             }
 
+            if (character && character.faction !== undefined) {
+              obj['faction'] = character.faction;
+            }
+
             if (SharedService.items[obj.id]) {
               obj['name'] = SharedService.items[obj.id].name;
             }
@@ -328,61 +309,6 @@ export class TsmLuaUtil {
     }
 
     return value;
-  }
-
-  private setInventory(tsmData) {
-    try {
-      const map = {};
-      Object.keys(tsmData.bankQuantity)
-        .forEach(realm =>
-          tsmData.bankQuantity[realm].All.forEach(item =>
-            this.addItemToInventory(item, map, 'Bank', realm)));
-
-      Object.keys(tsmData.mailQuantity).forEach(realm =>
-        tsmData.mailQuantity[realm].All.forEach(item =>
-          this.addItemToInventory(item, map, 'Mail', realm)));
-
-      Object.keys(tsmData.reagentBankQuantity)
-        .forEach(realm =>
-          tsmData.reagentBankQuantity[realm].All.forEach(item =>
-            this.addItemToInventory(item, map, 'Reagent bank', realm)));
-
-      Object.keys(tsmData.bagQuantity)
-        .forEach(realm =>
-          tsmData.bagQuantity[realm].All.forEach(item =>
-            this.addItemToInventory(item, map, 'Bags', realm)));
-
-      tsmData.inventoryMap = map;
-      tsmData.inventory = {};
-      Object.keys(map).forEach(realm => {
-        tsmData.inventory[realm] = [];
-
-        Object.keys(map[realm]).forEach(id =>
-          tsmData.inventory[realm].push(map[realm][id]));
-
-        tsmData.inventory[realm].sort((a: ItemInventory, b: ItemInventory) =>
-          b.quantity > a.quantity);
-      });
-      TsmLuaUtil.calculateInventory(tsmData.inventory);
-    } catch (error) {
-      ErrorReport.sendError('TsmLuaUtil.setInventory', error);
-    }
-  }
-
-  private addItemToInventory(item, map, storedIn: string, realm: string): void {
-    try {
-      if (!map[realm]) {
-        map[realm] = {};
-      }
-
-      if (!map[realm][item.id]) {
-        map[realm][item.id] = new ItemInventory(item, storedIn);
-      } else {
-        map[realm][item.id].addCharacter(item, storedIn);
-      }
-    } catch (error) {
-      ErrorReport.sendError('TsmLuaUtil.addItemToInventory', error);
-    }
   }
 
   private getUserProfits(result: TSMCSV) {

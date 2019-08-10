@@ -27,6 +27,13 @@ import {UtilModule} from '../util/util.module';
 import {TsmModule} from '../tsm/tsm.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
+import { MenuComponent } from './components/menu/menu.component';
+import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
+import { CharacterSelectComponent } from './components/menu/character-select/character-select.component';
+import { ThemeSelectComponent } from './components/theme-select/theme-select.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {fas} from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   declarations: [
@@ -47,7 +54,10 @@ import {AboutModule} from '../about/about.module';
     AddRecipesComponent,
     ReputationsComponent,
     CharacterReputationComponent,
-    AppUpdateComponent],
+    AppUpdateComponent,
+    MenuComponent,
+    CharacterSelectComponent,
+    ThemeSelectComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -60,9 +70,16 @@ import {AboutModule} from '../about/about.module';
     UtilModule,
     TsmModule,
     ShoppingCartModule,
-    AboutModule
+    AboutModule,
+    MatMenuModule,
+    MatGridListModule,
+    MatBadgeModule,
+    FontAwesomeModule
   ],
-  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent]
+  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent]
 })
 export class CoreModule {
+  constructor() {
+    library.add(fas);
+  }
 }

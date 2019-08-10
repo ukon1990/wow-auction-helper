@@ -4,7 +4,15 @@ import {SellersComponent} from './components/sellers.component';
 import {SellerComponent} from './components/seller/seller.component';
 import {SellerChartComponent} from './components/seller-chart/seller-chart.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule, MatCardModule, MatFormFieldModule, MatSelectModule, MatTabsModule, MatTooltipModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatSelectModule,
+  MatTabsModule,
+  MatTooltipModule
+} from '@angular/material';
 import {TableModule} from '../table/table.module';
 import {SettingsModule} from '../settings/settings.module';
 import {CharacterModule} from '../character/character.module';
@@ -29,7 +37,8 @@ import {CharacterModule} from '../character/character.module';
     MatTabsModule,
     MatCardModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatInputModule
   ]
 })
 export class SellersModule { }

@@ -15,6 +15,8 @@ import {Dashboard} from '../../../../dashboard/models/dashboard.model';
 import {Crafting} from '../../../../crafting/models/crafting';
 import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
+import {BackgroundDownloadService} from '../../../../../services/background-download.service';
+import {ThemeUtil} from '../../../utils/theme.util';
 
 @Component({
   selector: 'wah-download',
@@ -22,6 +24,7 @@ import {AuctionUtil} from '../../../../auction/utils/auction.util';
   styleUrls: ['./download.component.scss']
 })
 export class DownloadComponent implements OnInit {
+  theme = ThemeUtil.current;
   checkingForUpdates: boolean;
   lastCheckedMin;
   timeSinceUpdate = 0;
@@ -45,23 +48,19 @@ export class DownloadComponent implements OnInit {
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
     private _petService: PetsService,
-    private _dbService: DatabaseService) {
+    private _dbService: DatabaseService,
+    private service: BackgroundDownloadService) {
 
-
-    setInterval(() => {
-      this.timestamps.items = localStorage['timestamp_items'];
-      this.timestamps.pets = localStorage['timestamp_pets'];
-      this.timestamps.recipes = localStorage['timestamp_recipes'];
-      this.timestamps.auctions = localStorage['timestamp_auctions'];
-      this.timestamps.tsm = localStorage['timestamp_tsm'];
-      this.timestamps.wowuction = localStorage['timestamp_wowuction'];
-    }, 1000);
+    this.timestamps = service.timestamps;
 
     this.subs.add(
       this._realmService.events.realmStatus,
       (status) => this.setRealmStatus(status));
 
-    Dashboard.addLoadingDashboards();
+    this.subs.add(
+      this.service.timeSinceUpdate,
+      time =>
+        this.timeSinceUpdate = time);
   }
 
   private setRealmStatus(status: RealmStatus) {
@@ -72,113 +71,6 @@ export class DownloadComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (SharedService.user.realm || SharedService.user.region) {
-      const startTimestamp = performance.now();
-      this.downloadProgress = 'Downloading realms';
-      await this._realmService.getRealms()
-        .catch(error => console.error(error));
-
-      this.downloadProgress = 'Loading static data';
-      await Promise.all([
-        this.loadItems(),
-        this.loadPets(),
-        this.loadRecipes(),
-        this.loadThirdPartyAPI()
-      ])
-        .catch(console.error);
-      await this.loadAuctions();
-
-      await this.startRealmStatusInterval();
-      await this._dbService.getTSMAddonData();
-      this.downloadProgress = '';
-      const loadingTime = Math.round(
-        (performance.now() - startTimestamp)
-      );
-      console.log(`App startup took ${loadingTime}ms`);
-      Report.send('startup', `The startup time was ${loadingTime}ms`);
-    }
-    // TODO: Later => this._itemService.addMissingItems();
-  }
-
-  private async loadAuctions() {
-    this.downloadProgress = 'Loading auctions from disk';
-    await this._dbService.getAllAuctions(this._petService, this._auctionsService);
-  }
-
-  private async loadRecipes() {
-    this.downloadProgress = 'Downloading recipes';
-    await this._dbService.getAllRecipes()
-      .then(async () => {
-        if (SharedService.recipes.length === 0) {
-          delete localStorage['timestamp_recipes'];
-        }
-      })
-      .catch(async (error) => {
-      });
-
-    if (this.isOnline()) {
-      await this.download('recipes');
-      await Crafting.checkForMissingRecipes(this._craftingService);
-    }
-
-    Crafting.setOnUseCraftsWithNoReagents();
-  }
-
-  private async loadThirdPartyAPI() {
-    if (SharedService.user.apiToUse === 'tsm') {
-      if (new Date().toDateString() !== localStorage['timestamp_tsm'] && this.isOnline()) {
-        this.downloadProgress = 'Downloading new TSM data';
-        await this._auctionsService.getTsmAuctions();
-      } else {
-        this.downloadProgress = 'Loading TSM from disk';
-        await this._dbService.getTSMItems()
-          .then(async r => {
-            if (Object.keys(SharedService.tsm).length === 0 && this.isOnline()) {
-              this.downloadProgress = 'Downloading TSM data';
-              await this._auctionsService.getTsmAuctions();
-            }
-          })
-          .catch(async e => {
-            console.error('Could not restore TSM data', e);
-            await this._auctionsService.getTsmAuctions();
-          });
-      }
-    }
-  }
-
-  private async loadPets() {
-    this.downloadProgress = 'Loading pets from disk';
-    await this._dbService.getAllPets()
-      .then(async () => {
-        if (Object.keys(SharedService.pets).length === 0) {
-          delete localStorage['timestamp_pets'];
-          this.downloadProgress = 'Downloading pets';
-        }
-      })
-      .catch(async error => {
-      });
-    this.downloadProgress = 'Downloading pets';
-
-    if (this.isOnline()) {
-      await this.download('pets');
-    }
-  }
-
-  private async loadItems() {
-    this.downloadProgress = 'Loading items from disk';
-    await this._dbService.getAllItems()
-      .then(async () => {
-        if (Object.keys(SharedService.items).length === 0) {
-          delete localStorage['timestamp_items'];
-        }
-      })
-      .catch(async error => {
-        console.error(error);
-      });
-
-    if (this.isOnline()) {
-      await this.download('items');
-    }
   }
 
   getMessage(): string {
@@ -268,56 +160,8 @@ export class DownloadComponent implements OnInit {
     return SharedService.isDownloading();
   }
 
-
-  private milliSecondsToMinutes(status: RealmStatus): number {
-    if (!SharedService.auctionResponse || !status) {
-      return 0;
-    }
-    const ms = new Date().getTime() - (status.lastModified);
-    return Math.round(ms / 60000);
-  }
-
   private isOnline(): boolean {
     return navigator.onLine;
-  }
-
-  private async startRealmStatusInterval() {
-    await this.updateRealmStatus();
-    setInterval(() =>
-      this.updateRealmStatus(), 10000);
-  }
-
-  private updateRealmStatus(): Promise<any> {
-    this.timeSinceUpdate = this.milliSecondsToMinutes(this.realmStatus);
-    return new Promise<any>((resolve, reject) => {
-      if (this.shouldUpdateRealmStatus()) {
-        this.checkingForUpdates = true;
-        this._realmService.getStatus(
-          SharedService.user.region,
-          SharedService.user.realm)
-          .then((status) => {
-            this.checkingForUpdates = false;
-            resolve();
-          })
-          .catch((error) => {
-            this.checkingForUpdates = false;
-            reject(error);
-          });
-      } else {
-        resolve();
-      }
-    });
-  }
-
-  private shouldUpdateRealmStatus() {
-    return !this.checkingForUpdates &&
-      this.isOnline() &&
-      this.shouldAnUpdateShouldBeAvailableSoon();
-  }
-
-  private shouldAnUpdateShouldBeAvailableSoon() {
-    return !this.realmStatus ||
-      this.realmStatus.lowestDelay - this.timeSinceUpdate < 1;
   }
 
   private async downloadAuctions() {

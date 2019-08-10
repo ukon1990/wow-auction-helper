@@ -1,0 +1,55 @@
+.fixed-menu {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 16px;
+}
+#app-branding {
+  small, h1 {
+    float: left;
+    clear: both;
+  }
+
+  h1 {
+    margin-bottom: -.8em;
+  }
+}
+
+.flex-spacer {
+  flex-grow: 1;
+}
+.example-container {
+  height: 100vh;
+}
+
+.side-nav-links {
+  &  > a {
+    width: 100%;
+    margin: .5em 0;
+  }
+
+  & > wah-shopping-cart,
+  & > wah-theme-select {
+    width: 50%;
+    margin: .5em 0; 
+  }
+}
+
+.menu-mobile {
+  position: fixed;
+  width: 90%;
+  max-width: 30em;
+
+  &.backdrop {
+    left: -100%;
+    width: 100%;
+  }
+}

@@ -1,0 +1,229 @@
+<div class="fixed-menu">
+  <header>
+    <nav>
+      <mat-toolbar color="primary" role="heading">
+        <mat-toolbar-row class="mat-elevation-z2">
+          <ng-container
+                  *ngTemplateOutlet="brandingTemplate">
+          </ng-container>
+
+          <ng-container *ngIf="!isSmallScreen()" >
+            <ng-container
+                    *ngTemplateOutlet="navElementsTemplate">
+            </ng-container>
+          </ng-container>
+
+
+          <ng-container *ngTemplateOutlet="mobileMenuTemplate"></ng-container>
+        </mat-toolbar-row>
+      </mat-toolbar>
+    </nav>
+  </header>
+</div>
+
+<ng-template #brandingTemplate>
+  <div id="app-branding" class="mr-3" routerLink="about/changelog">
+    <h1>WAH</h1>
+    <small>v.{{ appVersion }}</small>
+  </div>
+</ng-template>
+
+<ng-template #mobileMenuTemplate>
+  <ng-container *ngIf="isSmallScreen()">
+    <wah-download></wah-download>
+
+    <div class="flex-spacer"></div>
+
+    <button type="button"
+            mat-button
+            [matMenuTriggerFor]="mobileMenuDropdown">
+      <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
+    </button>
+
+    <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #navElementsTemplate>
+  <a mat-flat-button
+     class="mr-1 ml-1"
+     color="primary"
+          [routerLinkActiveOptions]="{exact: false}"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="dashboardDropdown">
+    Dashboard
+  </a>
+
+
+  <a mat-flat-button
+     class="mr-1 ml-1"
+     color="primary"
+     routerLink="crafting"
+     routerLinkActive="mat-accent">Crafting
+  </a>
+
+  <a mat-flat-button
+     class="mr-1 ml-1"
+     color="primary"
+     routerLinkActive="mat-accent"
+          [routerLinkActiveOptions]="{exact: false}"
+          matBadge="{{numberOfUndercutAuctions | number}}"
+     matBadgePosition="after"
+     matBadgeColor="accent"
+     matBadgeDescription="The number of undercut auctions"
+          [matMenuTriggerFor]="auctionsDropdown">Auctions
+  </a>
+
+  <a mat-flat-button
+     class="mr-1 ml-1"
+     color="primary"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="toolsDropdown">Tools
+  </a>
+
+  <a mat-flat-button
+     class="mr-1 ml-1"
+     color="primary"
+     routerLink="settings"
+     routerLinkActive="mat-accent">Settings
+  </a>
+
+  <a mat-flat-button
+     class="mr-1 ml-1"
+     color="primary"
+     routerLink="about"
+     routerLinkActive="mat-accent">About
+  </a>
+
+  <div class="flex-spacer"></div>
+
+
+  <wah-shopping-cart *ngIf="!displayExtraMenu()"></wah-shopping-cart>
+
+  <wah-download></wah-download>
+
+  <wah-character-select *ngIf="!displayExtraMenu()"></wah-character-select>
+
+  <wah-theme-select></wah-theme-select>
+
+  <ng-container *ngIf="displayExtraMenu()">
+    <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #extraMenuTemplate>
+  <button mat-icon-button [matMenuTriggerFor]="menu"
+          aria-label="Display the extra menu"
+          matTooltip="Display the extra menu">
+    <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <ng-container ></ng-container>
+    <div class="p-3">
+      <wah-shopping-cart></wah-shopping-cart>
+      <wah-character-select></wah-character-select>
+    </div>
+  </mat-menu>
+</ng-template>
+
+
+<!-- Material Menu item templates -->
+<mat-menu #mobileMenuDropdown="matMenu">
+  <a mat-menu-item
+     class="mr-1 ml-1"
+          [routerLinkActiveOptions]="{exact: false}"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="dashboardDropdown">
+    Dashboard
+  </a>
+
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLink="crafting"
+     routerLinkActive="mat-accent">Crafting
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLinkActive="mat-accent"
+          [routerLinkActiveOptions]="{exact: false}"
+          matBadge="{{numberOfUndercutAuctions | number}}"
+     matBadgePosition="after"
+     matBadgeColor="accent"
+     matBadgeDescription="The number of undercut auctions"
+          [matMenuTriggerFor]="auctionsDropdown">Auctions
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="toolsDropdown">Tools
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLink="settings"
+     routerLinkActive="mat-accent">Settings
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLink="about"
+     routerLinkActive="mat-accent">About
+  </a>
+</mat-menu>
+<mat-menu #dashboardDropdown="matMenu">
+  <a mat-menu-item
+     routerLink="dashboard/items"
+     routerLinkActive="mat-accent">Items
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/sellers"
+     routerLinkActive="mat-accent">Sellers
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/ah-summary"
+     routerLinkActive="mat-accent">AH summary
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/tsm"
+     routerLinkActive="mat-accent">TSM
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/manage-dashboards"
+     routerLinkActive="mat-accent">Manage
+  </a>
+</mat-menu>
+<mat-menu #toolsDropdown="matMenu">
+  <a mat-menu-item
+     routerLink="tools/trade-vendor"
+     routerLinkActive="mat-accent">Trade vendors
+  </a>
+  <a mat-menu-item
+     routerLink="tools/sellers"
+     routerLinkActive="mat-accent">Sellers
+  </a>
+  <a mat-menu-item
+     routerLink="tools/milling-and-prospecting"
+     routerLinkActive="mat-accent">Milling & prospecting
+  </a>
+  <a mat-menu-item
+     routerLink="tools/market-reset"
+     routerLinkActive="mat-accent">Market reset (WIP)
+  </a>
+  <a mat-menu-item
+     routerLink="tools/reputations"
+     routerLinkActive="mat-accent">Reputations
+  </a>
+</mat-menu>
+<mat-menu #auctionsDropdown="matMenu">
+  <a mat-menu-item
+     routerLink="auctions"
+     routerLinkActive="mat-accent">All auctions
+  </a>
+  <a mat-menu-item
+     routerLink="my-auctions"
+     routerLinkActive="mat-accent">My auctions
+  </a>
+</mat-menu>

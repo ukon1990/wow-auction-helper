@@ -9,7 +9,7 @@ import {AuctionPet} from '../models/auction-pet.model';
 import {WoWUction} from '../models/wowuction.model';
 import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
-import {ProfitSummary} from '../../../utils/tsm-lua.util';
+import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {Pet} from '../../pet/models/pet';
 
 export class AuctionUtil {
@@ -116,8 +116,6 @@ export class AuctionUtil {
   private static handlePetAuction(a: Auction, petId) {
     const pet: Pet = SharedService.pets[a.petSpeciesId];
     if (!pet) {
-      console.log(`Missing pet ${a.petSpeciesId}`,
-        SharedService.pets[a.petSpeciesId]);
       return;
     }
 

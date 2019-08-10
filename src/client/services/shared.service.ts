@@ -19,7 +19,7 @@ import { CustomProc } from '../modules/crafting/models/custom-proc';
 import { WoWUction } from '../modules/auction/models/wowuction.model';
 import { Zone } from '../models/zone.model';
 import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
-import {TSMCSV} from '../utils/tsm-lua.util';
+import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
@@ -73,7 +73,10 @@ export class SharedService {
   public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
   public static recipes: Array<Recipe> = new Array<Recipe>();
   public static recipesMap: Map<number, Recipe> = new Map<number, Recipe>();
-  public static recipesMapPerItemKnown: Map<number, Recipe> = new Map<number, Recipe>();
+  public static recipesMapPerItemKnown = {
+    0: new Map<number, Recipe>(),
+    1: new Map<number, Recipe>()
+  };
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
 
   public static tsmAddonData: TSMCSV = {};

@@ -27,6 +27,7 @@ export class AuctionsService {
     groupedList: new BehaviorSubject<AuctionItem[]>([])
   };
   subs = new SubscriptionManager();
+  doNotOrganize = false;
 
 
   constructor(
@@ -82,7 +83,9 @@ export class AuctionsService {
       .then(async a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        await AuctionUtil.organize(a['auctions'], this.petService);
+        if (!this.doNotOrganize) {
+          await AuctionUtil.organize(a['auctions'], this.petService);
+        }
         this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
@@ -141,11 +144,11 @@ export class AuctionsService {
       this.openSnackbar('Downloading TSM data');
       return this.http.get(`${Endpoints.TSM_API}/${
         SharedService.user.region
-        }/${
+      }/${
         SharedService.user.realm
-        }?format=json&apiKey=${
+      }?format=json&apiKey=${
         SharedService.user.apiTsm
-        }&fields=Id,MarketValue,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`) // 'assets/mock/tsm.json'
+      }&fields=Id,MarketValue,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`) // 'assets/mock/tsm.json'
         .toPromise()
         .then(tsm => {
           localStorage['timestamp_tsm'] = new Date().toDateString();

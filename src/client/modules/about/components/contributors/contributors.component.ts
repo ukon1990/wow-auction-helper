@@ -9,13 +9,13 @@ import {GithubContributor} from '../../models/github/github-contributor.model';
   styleUrls: ['./contributors.component.scss']
 })
 export class ContributorsComponent {
-  contributors = new Array<GithubContributor>();
+  codeContributors = new Array<GithubContributor>();
   failed = false;
 
   constructor(private service: GithubService, private sanitizer: DomSanitizer) {
     this.service.getContributors()
       .then((contributors =>
-        this.contributors = contributors));
+        this.codeContributors = contributors));
   }
 
   getIconStyle(url: string): SafeResourceUrl {

@@ -157,3 +157,17 @@ wah-character {
 .mat-card-header .mat-card-title.small-title {
   font-size: 14px;
 }
+
+/* DownloadComponent CDK menu */
+.download-dropdown-menu {
+  width: 30em !important;
+}
+
+@media (max-width: 767px) {
+  .download-dropdown-menu {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 18em;
+    overflow-y: scroll;
+  }
+}

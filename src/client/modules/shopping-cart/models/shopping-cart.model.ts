@@ -5,7 +5,7 @@ import {Item, ItemInventory, ItemPurchase} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Auction} from '../../auction/models/auction.model';
 import {Report} from '../../../utils/report.util';
-import {ProfitSummary} from '../../../utils/tsm-lua.util';
+import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 
 
@@ -87,7 +87,8 @@ export class ShoppingCart {
         inventoryMap = SharedService.tsmAddonData.inventoryMap;
       let inventory;
       if (realm && inventoryMap && inventoryMap[realm.name]) {
-        inventory = inventoryMap[realm.name];
+        const faction = SharedService.user.faction;
+        inventory = inventoryMap[realm.name][faction];
       }
 
       this.sources.ah.length = 0;
@@ -433,7 +434,8 @@ export class ShoppingCart {
   }
 
   private isAvailableAtVendor(item: Item): boolean {
-    return item.itemSource && item.itemSource.soldBy && item.itemSource.soldBy.length > 0;
+    return item && item.itemSource &&
+      item.itemSource.soldBy && item.itemSource.soldBy.length > 0;
   }
 
   private handleAuctionSource(reagent: ShoppingCartItem, addedCount: number) {

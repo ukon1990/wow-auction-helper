@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { Endpoints } from './endpoints';
@@ -8,6 +8,7 @@ import {User} from '../models/user/user';
 
 @Injectable()
 export class CharacterService {
+  events: EventEmitter<any> = new EventEmitter();
 
   constructor(private _http: HttpClient) { }
 
@@ -25,6 +26,7 @@ export class CharacterService {
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
+        this.emitChanges(c);
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
@@ -46,6 +48,7 @@ export class CharacterService {
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
+        this.emitChanges(c);
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
@@ -53,5 +56,10 @@ export class CharacterService {
         ErrorReport.sendHttpError(error);
         return {error: error};
       });
+  }
+
+  private emitChanges(c: Object) {
+    setTimeout(() =>
+      this.events.emit(c));
   }
 }

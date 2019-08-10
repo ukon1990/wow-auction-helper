@@ -43,7 +43,7 @@ interface Profession {
   icon: string;
   rank: number;
   max: number;
-  recipes: Array<Number>;
+  recipes: Array<number>;
 }
 
 interface CharacterStatisticCategory {

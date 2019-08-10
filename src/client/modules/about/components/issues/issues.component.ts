@@ -16,14 +16,7 @@ export class IssuesComponent {
   constructor(private service: GithubService, private _sanitizer: DomSanitizer) {
     this.service.getIssues()
       .then(issues =>
-        this.handleGithubIssues(issues));
-  }
-
-  handleGithubIssues(issues): void {
-    issues.forEach(i =>
-      i.bodyFormatted = new GithubIssueBody(i));
-
-    this.issues = this.sortIssuesByCompletion(issues);
+        this.issues = this.sortIssuesByCompletion(issues));
   }
 
   private sortIssuesByCompletion(issues: GithubIssue[]): GithubIssue[] {

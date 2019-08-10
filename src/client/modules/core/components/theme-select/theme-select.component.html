@@ -1,0 +1,22 @@
+<a mat-flat-button
+   color="primary"
+   matTooltip="Select color theme"
+   routerLinkActive="mat-accent"
+   [matMenuTriggerFor]="themeDropdown">
+  <fa-icon [icon]="['fas', 'palette']"></fa-icon>
+</a>
+<mat-menu #themeDropdown="matMenu">
+  <mat-grid-list cols="2" rowHeight="1:1">
+    <mat-grid-tile *ngFor="let theme of list"
+                   [style.background-color]="theme.primaryColorCode">
+      <button mat-mini-fab
+              (click)="setTheme(theme)"
+              [style.background-color]="theme.accentColorCode"
+              [matTooltip]="theme.name">
+        <fa-icon *ngIf="theme.className === currentTheme.className"
+                [icon]="['fas', 'check']">
+        </fa-icon>
+      </button>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-menu>

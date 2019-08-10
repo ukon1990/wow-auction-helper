@@ -4,8 +4,6 @@ import {SharedService} from './shared.service';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {Endpoints} from './endpoints';
 import {ItemService} from './item.service';
-import {GameBuild} from '../utils/game-build.util';
-import {Item} from '../models/item/item';
 import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
@@ -33,9 +31,9 @@ export class CraftingService {
         locale: localStorage['locale']
       })
       .toPromise()
-      .then((r: Recipe) =>{
+      .then((r: Recipe) => {
         if (r.name) {
-          return this.handleRecipe(r as Recipe)
+          return this.handleRecipe(r as Recipe);
         } else {
           return r;
         }
@@ -117,14 +115,10 @@ export class CraftingService {
 
     if (recipes.recipes.length > 0) {
       const list = SharedService.recipes.concat(recipes.recipes);
-      SharedService.recipes = [];
+      SharedService.recipes.length = 0;
       list.forEach((recipe: Recipe) => {
         if (!recipe) {
           return;
-        }
-
-        if (recipe.name.indexOf('Pact of Versatility') > -1) {
-          console.log(recipe.name, recipe.rank, recipe.reagents[0].count);
         }
 
         if (map[recipe.spellID]) {

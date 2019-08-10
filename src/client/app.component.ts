@@ -17,6 +17,7 @@ import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {ThemeUtil} from './modules/core/utils/theme.util';
 
 @Component({
   selector: 'wah-root',
