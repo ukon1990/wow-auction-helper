@@ -142,6 +142,5 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     User.save();
 
     this.dbService.getTSMAddonData();
-    // TODO: Set known recipes
   }
 }

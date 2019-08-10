@@ -14,20 +14,12 @@
           </ng-container>
 
 
-          <ng-container *ngTemplateOutlet="menuButtonTemplate"></ng-container>
+          <ng-container *ngTemplateOutlet="mobileMenuTemplate"></ng-container>
         </mat-toolbar-row>
       </mat-toolbar>
     </nav>
   </header>
 </div>
-
-<ng-container *ngIf="isSmallScreen()">
-  <mat-card class="menu-mobile">
-    <mat-card-header></mat-card-header>
-  </mat-card>
-  <div class="backdrop menu-mobile" (click)="toggleMenu()" [ngClass]="{'show': showMenu}">
-  </div>
-</ng-container>
 
 <ng-template #brandingTemplate>
   <div id="app-branding" class="mr-3" routerLink="about/changelog">
@@ -36,16 +28,20 @@
   </div>
 </ng-template>
 
-<ng-template #menuButtonTemplate>
-  <button *ngIf="isSmallScreen()"
-          type="button"
-          mat-button
-          [matMenuTriggerFor]="belowMenu">
-    <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
-  </button>
-  <mat-menu #belowMenu="matMenu" yPosition="below">
-    <ng-container *ngTemplateOutlet="navElementsTemplate"></ng-container>
-  </mat-menu>
+<ng-template #mobileMenuTemplate>
+  <ng-container *ngIf="isSmallScreen()">
+    <wah-download></wah-download>
+
+    <div class="flex-spacer"></div>
+
+    <button type="button"
+            mat-button
+            [matMenuTriggerFor]="mobileMenuDropdown">
+      <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
+    </button>
+
+    <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
+  </ng-container>
 </ng-template>
 
 <ng-template #navElementsTemplate>
@@ -54,7 +50,8 @@
      color="primary"
           [routerLinkActiveOptions]="{exact: false}"
      routerLinkActive="mat-accent"
-          [matMenuTriggerFor]="dashboardDropdown">Dashboard
+          [matMenuTriggerFor]="dashboardDropdown">
+    Dashboard
   </a>
 
 
@@ -110,28 +107,71 @@
   <wah-theme-select></wah-theme-select>
 
   <ng-container *ngIf="displayExtraMenu()">
-    <button mat-icon-button [matMenuTriggerFor]="menu"
-            aria-label="Display the extra menu"
-            matTooltip="Display the extra menu">
-      <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
-    </mat-menu>
+    <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
   </ng-container>
 </ng-template>
 
 <ng-template #extraMenuTemplate>
-  <div class="p-3">
-    <wah-shopping-cart></wah-shopping-cart>
-    <wah-character-select></wah-character-select>
-  </div>
+  <button mat-icon-button [matMenuTriggerFor]="menu"
+          aria-label="Display the extra menu"
+          matTooltip="Display the extra menu">
+    <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <ng-container ></ng-container>
+    <div class="p-3">
+      <wah-shopping-cart></wah-shopping-cart>
+      <wah-character-select></wah-character-select>
+    </div>
+  </mat-menu>
 </ng-template>
 
 
 <!-- Material Menu item templates -->
 <mat-menu #mobileMenuDropdown="matMenu">
+  <a mat-menu-item
+     class="mr-1 ml-1"
+          [routerLinkActiveOptions]="{exact: false}"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="dashboardDropdown">
+    Dashboard
+  </a>
 
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLink="crafting"
+     routerLinkActive="mat-accent">Crafting
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLinkActive="mat-accent"
+          [routerLinkActiveOptions]="{exact: false}"
+          matBadge="{{numberOfUndercutAuctions | number}}"
+     matBadgePosition="after"
+     matBadgeColor="accent"
+     matBadgeDescription="The number of undercut auctions"
+          [matMenuTriggerFor]="auctionsDropdown">Auctions
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLinkActive="mat-accent"
+          [matMenuTriggerFor]="toolsDropdown">Tools
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLink="settings"
+     routerLinkActive="mat-accent">Settings
+  </a>
+
+  <a mat-menu-item
+     class="mr-1 ml-1"
+     routerLink="about"
+     routerLinkActive="mat-accent">About
+  </a>
 </mat-menu>
 <mat-menu #dashboardDropdown="matMenu">
   <a mat-menu-item
