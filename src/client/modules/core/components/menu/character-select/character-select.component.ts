@@ -9,6 +9,7 @@ import {AuctionsService} from '../../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {User} from '../../../../../models/user/user';
 import {DatabaseService} from '../../../../../services/database.service';
+import {Report} from '../../../../../utils/report.util';
 
 @Component({
   selector: 'wah-character-select',
@@ -32,7 +33,6 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
       realm: new FormControl(this.getFormValueFor('realm')),
       faction: new FormControl(this.getFormValueFor('faction'))
     });
-    console.log('Initial values', this.form.getRawValue());
   }
 
   ngOnInit(): void {
@@ -131,6 +131,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     if (!this.isCurrentRealm(slug)) {
       this.realmService.changeRealm(this.auctionsService, slug);
     }
+    Report.send('handleRealmChange', 'CharacterSelectComponent');
   }
 
   private isCurrentRealm(slug: string) {
@@ -142,5 +143,6 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     User.save();
 
     this.dbService.getTSMAddonData();
+    Report.send('handleFactionChange', 'CharacterSelectComponent');
   }
 }
