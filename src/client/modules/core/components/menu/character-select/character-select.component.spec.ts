@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CharacterSelectComponent } from './character-select.component';
+import {CharacterSelectComponent} from './character-select.component';
 
 describe('CharacterSelectComponent', () => {
   let component: CharacterSelectComponent;
@@ -8,9 +8,9 @@ describe('CharacterSelectComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CharacterSelectComponent ]
+      declarations: [CharacterSelectComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -21,5 +21,14 @@ describe('CharacterSelectComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('setRealmList', () => {
+  });
+
+  describe('handleRealmChange', () => {
+  });
+
+  describe('handleFactionChange', () => {
   });
 });

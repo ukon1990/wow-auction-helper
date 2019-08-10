@@ -5,6 +5,7 @@ import {AuctionItem} from '../../modules/auction/models/auction-item.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {InventoryUtil} from './inventory.util';
+import {Report} from '../report.util';
 
 export class TSMCSV {
   characterGuilds?: any;
@@ -23,28 +24,9 @@ export class TsmLuaUtil {
   static events: BehaviorSubject<TSMCSV> = new BehaviorSubject(undefined);
 
   convertList(input: any): object {
-    const result = {};
+    let result = {};
     try {
-      const fields = lua.parse(input).body[0].init[0].fields;
-
-      fields.forEach(field => {
-        const fRes = this.convertField(field);
-        if (!fRes) {
-          return;
-        }
-
-        if (fRes.character && fRes.character.realm) {
-          this.addRealmBoundData(fRes, result, field);
-
-        } else {
-          if (fRes.type === undefined || fRes.type === 'undefined') {
-          } else {
-            result[fRes.type] = fRes.data;
-          }
-        }
-
-
-      });
+      result = this.processLuaData(input);
 
       InventoryUtil.organize(result);
 
@@ -62,6 +44,29 @@ export class TsmLuaUtil {
     return result;
   }
 
+
+  public processLuaData(input: any) {
+    const result = {};
+    const fields = lua.parse(input).body[0].init[0].fields;
+
+    fields.forEach(field => {
+      const fRes = this.convertField(field);
+      if (!fRes) {
+        return;
+      }
+
+      if (fRes.character && fRes.character.realm) {
+        this.addRealmBoundData(fRes, result, field);
+
+      } else {
+        if (fRes.type === undefined || fRes.type === 'undefined') {
+        } else {
+          result[fRes.type] = fRes.data;
+        }
+      }
+    });
+    return result;
+  }
 
   private addRealmBoundData(fRes, result, field) {
     try {
@@ -115,14 +120,7 @@ export class TsmLuaUtil {
 
   private convertField(field: any): any {
     try {
-      const keys = field.key.value.split('@');
-      const character = this.splitCharacterData(keys[1]),
-        type = keys[3];
-      const result = {
-        type: type,
-        character: character,
-        data: undefined
-      };
+      const {character, type, result} = this.getCharacterDataForField(field);
 
       switch (field.value.type) {
         case 'TableConstructorExpression':
@@ -180,7 +178,19 @@ export class TsmLuaUtil {
     }
   }
 
-  private splitCharacterData(keys): { name?: string; faction?: string; realm: string; } {
+  private getCharacterDataForField(field: any) {
+    const keys = field.key.value.split('@');
+    const character = this.splitCharacterData(keys[1]),
+      type = keys[3];
+    const result = {
+      type: type,
+      character,
+      data: undefined
+    };
+    return {character, type, result};
+  }
+
+  private splitCharacterData(keys): { name?: string; faction?: number; realm: string; } {
 
     try {
       if (keys) {
@@ -191,14 +201,14 @@ export class TsmLuaUtil {
 
         if (split.length === 2) {
           return {
-            faction: split[0],
+            faction: this.factionStringToId(split[0]),
             realm: split[1]
           };
         }
 
         return {
           name: split[0],
-          faction: split[1],
+          faction: this.factionStringToId(split[1]),
           realm: split[2]
         };
       }
@@ -207,6 +217,10 @@ export class TsmLuaUtil {
     }
 
     return undefined;
+  }
+
+  private factionStringToId(name: string) {
+    return name === 'Alliance' ? 0 : 1;
   }
 
   private handleTable(field: any, character: any) {
@@ -259,6 +273,10 @@ export class TsmLuaUtil {
 
             if (character && character.name) {
               obj['character'] = character.name;
+            }
+
+            if (character && character.faction !== undefined) {
+              obj['faction'] = character.faction;
             }
 
             if (SharedService.items[obj.id]) {

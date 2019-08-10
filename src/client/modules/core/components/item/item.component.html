@@ -1,5 +1,5 @@
 <mat-card class="full-screen" *ngIf="selected.item">
-  <mat-card-header>
+  <mat-card-header class="mat-primary">
     <div class="action-icon mat-elevation-z5" (click)="close()" matTooltip="Click to open/close the full window.">
       <button mat-raised-button class="btn btn-sm">
         <i class="fas fa-times" matTooltip="Close detail view"></i>
@@ -35,14 +35,14 @@
         <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         <br>
         <strong>Lowest buyout per item:</strong> {{ selected.auctionItem.buyout | gold}}
-        <span *ngIf="isUsingAPI() && !selected.auctionItem.petSpeciesId">({{ selected.auctionItem.buyout / selected.auctionItem.mktPrice | percent }}
+        <span *ngIf="isUsing3PAPI && !selected.auctionItem.petSpeciesId">({{ selected.auctionItem.buyout / selected.auctionItem.mktPrice | percent }}
           MV)</span>
         <br>
         <strong>Market value:</strong> {{ selected.auctionItem.mktPrice | gold }}
         <br>
         <strong>Stock:</strong> {{ selected.auctionItem.quantityTotal | number }} pcs
         <br>
-        <div *ngIf="isUsingAPI() && !selected.auctionItem.petSpeciesId" class="clearfix">
+        <div *ngIf="isUsing3PAPI && !selected.auctionItem.petSpeciesId" class="clearfix">
           <strong>Avg daily sold:</strong> {{ selected.auctionItem.avgDailySold | number }}
           <br>
           <span *ngIf="isUsingWoWUction()">
@@ -100,7 +100,7 @@
           </mat-tab>
 
           <mat-tab label="Data from TSM">
-            <mat-card *ngIf="selected.item.inventory" class="mb-3">
+            <mat-card *ngIf="selected.item?.inventory[factionId]" class="mb-3">
               <mat-card-header>
                 <mat-card-subtitle>
                   One or more of your characters have this item
@@ -109,12 +109,12 @@
               <mat-card-content>
                 <mat-list dense>
                   <mat-list-item>
-                    Sum value: {{ selected.item.inventory.quantity * selected.auctionItem.buyout | gold }} total.
+                    Sum value: {{ selected.item.inventory[factionId].quantity * selected.auctionItem.buyout | gold }} total.
                   </mat-list-item>
                   <mat-list-item>
-                    Quantity: {{ selected.item.inventory.quantity | number }}
+                    Quantity: {{ selected.item.inventory[factionId].quantity | number }}
                   </mat-list-item>
-                  <mat-list-item *ngFor="let char of selected.item.inventory.characters">
+                  <mat-list-item *ngFor="let char of selected.item.inventory[factionId].characters">
                     {{ char }}
                   </mat-list-item>
                 </mat-list>

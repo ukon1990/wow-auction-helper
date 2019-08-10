@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {RealmService} from '../../../../../services/realm.service';
@@ -8,13 +8,14 @@ import {CharacterService} from '../../../../../services/character.service';
 import {AuctionsService} from '../../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {User} from '../../../../../models/user/user';
+import {DatabaseService} from '../../../../../services/database.service';
 
 @Component({
   selector: 'wah-character-select',
   templateUrl: './character-select.component.html',
   styleUrls: ['./character-select.component.scss']
 })
-export class CharacterSelectComponent implements OnDestroy {
+export class CharacterSelectComponent implements OnInit, OnDestroy {
   form: FormGroup;
   realmList = [];
   realmListMap = {};
@@ -24,14 +25,17 @@ export class CharacterSelectComponent implements OnDestroy {
   sm = new SubscriptionManager();
 
   constructor(
-    private fb: FormBuilder, private realmService: RealmService,
+    private fb: FormBuilder, private realmService: RealmService, private dbService: DatabaseService,
     private characterService: CharacterService, private auctionsService: AuctionsService) {
     this.form = this.fb.group({
       region: new FormControl(this.getFormValueFor('region')),
       realm: new FormControl(this.getFormValueFor('realm')),
       faction: new FormControl(this.getFormValueFor('faction'))
     });
+    console.log('Initial values', this.form.getRawValue());
+  }
 
+  ngOnInit(): void {
     this.sm.add(this.realmService.events.list,
       (realms) => this.setRealmList(realms));
 
@@ -53,7 +57,7 @@ export class CharacterSelectComponent implements OnDestroy {
   }
 
   private getFormValueFor(userField: string): any {
-    if (SharedService.user && SharedService.user[userField]) {
+    if (SharedService.user && SharedService.user[userField] !== undefined) {
       return SharedService.user[userField];
     }
     return null;
@@ -117,8 +121,8 @@ export class CharacterSelectComponent implements OnDestroy {
       return;
     }
     const realm = this.realmListMap[slug];
-
-    if (realm && (!this.isCurrentRealm(slug) || !SharedService.user.faction)) {
+    const faction = SharedService.user.faction;
+    if (realm && (!this.isCurrentRealm(slug) || faction === undefined)) {
       this.form.controls.faction.setValue(
         realm.factions[0] > realm.factions[1] ? 0 : 1
       );
@@ -137,7 +141,7 @@ export class CharacterSelectComponent implements OnDestroy {
     SharedService.user.faction = faction;
     User.save();
 
-    // TODO: Set inventory
+    this.dbService.getTSMAddonData();
     // TODO: Set known recipes
   }
 }

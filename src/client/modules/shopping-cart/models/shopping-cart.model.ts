@@ -87,7 +87,8 @@ export class ShoppingCart {
         inventoryMap = SharedService.tsmAddonData.inventoryMap;
       let inventory;
       if (realm && inventoryMap && inventoryMap[realm.name]) {
-        inventory = inventoryMap[realm.name];
+        const faction = SharedService.user.faction;
+        inventory = inventoryMap[realm.name][faction];
       }
 
       this.sources.ah.length = 0;

@@ -1,5 +1,6 @@
 import {ItemSpells} from './itemspells';
 import {WoWHead} from './wowhead';
+import {Report} from '../../utils/report.util';
 
 export class Item {
   id: number;

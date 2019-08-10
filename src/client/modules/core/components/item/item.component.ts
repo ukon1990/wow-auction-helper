@@ -10,10 +10,10 @@ import {WowdbService} from '../../../../services/wowdb.service';
 import {ItemService} from '../../../../services/item.service';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
-import {User} from '../../../../models/user/user';
 import {AuctionPet} from '../../../auction/models/auction-pet.model';
 import {Endpoints} from '../../../../services/endpoints';
 import {Pet} from '../../../pet/models/pet';
+import {User} from '../../../../models/user/user';
 
 @Component({
   selector: 'wah-item',
@@ -24,6 +24,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   @ViewChild('tabs', {static: false}) tabs;
   expansions = GameBuild.expansionMap;
   wowDBItem: any;
+  factionId: number;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
   createdBy: Array<Recipe>;
@@ -88,11 +89,14 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
+  private isUsing3PAPI: boolean;
 
   constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
   }
 
   ngOnInit(): void {
+    this.factionId = SharedService.user.faction;
+    this.isUsing3PAPI = SharedService.user.apiToUse !== 'none';
     this.setItemData();
     this.setAuctionItem();
     this.setRecipesForItem();
@@ -179,15 +183,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   /* istanbul ignore next */
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
-  }
-
-  /* istanbul ignore next */
-  getUser(): User {
-    return SharedService.user;
-  }
-
-  isUsingAPI(): boolean {
-    return this.getUser().apiToUse !== 'none';
   }
 
 
