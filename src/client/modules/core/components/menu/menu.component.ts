@@ -7,6 +7,24 @@ declare function require(moduleName: string): any;
 
 const version = require('../../../../../../package.json').version;
 
+class MenuItem {
+  public color = 'primary';
+  public class = 'mr-1 ml-1';
+  public routerLinkActive = 'mat-accent';
+
+  constructor(
+    public routerLink: string,
+    public text: string,
+    public options: {
+      badge?: any, routerLinkActiveOptions?: any
+    } =
+      {
+        routerLinkActiveOptions: {exact: false},
+      }
+  ) {
+  }
+}
+
 @Component({
   selector: 'wah-menu',
   templateUrl: './menu.component.html',
@@ -17,6 +35,9 @@ export class MenuComponent implements OnDestroy {
   appVersion = version;
   numberOfUndercutAuctions = 0;
   sm = new SubscriptionManager();
+  menuItems = [
+    new MenuItem()
+  ];
 
   constructor(private service: AuctionsService) {
     this.sm.add(this.service.events.list,
@@ -32,8 +53,8 @@ export class MenuComponent implements OnDestroy {
     return window.innerWidth < 991.98;
   }
 
-  isExtraSmallScreen(): boolean {
-    return window.innerWidth < 575.98;
+  displayExtraMenu(): boolean {
+    return window.innerWidth < 1534;
   }
 
   toggleMenu() {

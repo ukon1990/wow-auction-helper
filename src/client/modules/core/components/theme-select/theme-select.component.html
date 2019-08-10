@@ -1,9 +1,9 @@
 <a mat-flat-button
    color="primary"
+   matTooltip="Select color theme"
    routerLinkActive="mat-accent"
    [matMenuTriggerFor]="themeDropdown">
   <fa-icon [icon]="['fas', 'palette']"></fa-icon>
-  Themes
 </a>
 <mat-menu #themeDropdown="matMenu">
   <mat-grid-list cols="2" rowHeight="1:1">

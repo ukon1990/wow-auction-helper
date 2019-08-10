@@ -40,9 +40,12 @@
   <button *ngIf="isSmallScreen()"
           type="button"
           mat-button
-          (click)="toggleMenu()">
+          [matMenuTriggerFor]="belowMenu">
     <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
   </button>
+  <mat-menu #belowMenu="matMenu" yPosition="below">
+    <ng-container *ngTemplateOutlet="navElementsTemplate"></ng-container>
+  </mat-menu>
 </ng-template>
 
 <ng-template #navElementsTemplate>
@@ -53,28 +56,7 @@
      routerLinkActive="mat-accent"
           [matMenuTriggerFor]="dashboardDropdown">Dashboard
   </a>
-  <mat-menu #dashboardDropdown="matMenu">
-    <a mat-menu-item
-       routerLink="dashboard/items"
-       routerLinkActive="mat-accent">Items
-    </a>
-    <a mat-menu-item
-       routerLink="dashboard/sellers"
-       routerLinkActive="mat-accent">Sellers
-    </a>
-    <a mat-menu-item
-       routerLink="dashboard/ah-summary"
-       routerLinkActive="mat-accent">AH summary
-    </a>
-    <a mat-menu-item
-       routerLink="dashboard/tsm"
-       routerLinkActive="mat-accent">TSM
-    </a>
-    <a mat-menu-item
-       routerLink="dashboard/manage-dashboards"
-       routerLinkActive="mat-accent">Manage
-    </a>
-  </mat-menu>
+
 
   <a mat-flat-button
      class="mr-1 ml-1"
@@ -94,16 +76,6 @@
      matBadgeDescription="The number of undercut auctions"
           [matMenuTriggerFor]="auctionsDropdown">Auctions
   </a>
-  <mat-menu #auctionsDropdown="matMenu">
-    <a mat-menu-item
-       routerLink="auctions"
-       routerLinkActive="mat-accent">All auctions
-    </a>
-    <a mat-menu-item
-       routerLink="my-auctions"
-       routerLinkActive="mat-accent">My auctions
-    </a>
-  </mat-menu>
 
   <a mat-flat-button
      class="mr-1 ml-1"
@@ -111,28 +83,6 @@
      routerLinkActive="mat-accent"
           [matMenuTriggerFor]="toolsDropdown">Tools
   </a>
-  <mat-menu #toolsDropdown="matMenu">
-    <a mat-menu-item
-       routerLink="tools/trade-vendor"
-       routerLinkActive="mat-accent">Trade vendors
-    </a>
-    <a mat-menu-item
-       routerLink="tools/sellers"
-       routerLinkActive="mat-accent">Sellers
-    </a>
-    <a mat-menu-item
-       routerLink="tools/milling-and-prospecting"
-       routerLinkActive="mat-accent">Milling & prospecting
-    </a>
-    <a mat-menu-item
-       routerLink="tools/market-reset"
-       routerLinkActive="mat-accent">Market reset (WIP)
-    </a>
-    <a mat-menu-item
-       routerLink="tools/reputations"
-       routerLinkActive="mat-accent">Reputations
-    </a>
-  </mat-menu>
 
   <a mat-flat-button
      class="mr-1 ml-1"
@@ -151,11 +101,89 @@
   <div class="flex-spacer"></div>
 
 
-  <wah-shopping-cart></wah-shopping-cart>
+  <wah-shopping-cart *ngIf="!displayExtraMenu()"></wah-shopping-cart>
 
   <wah-download></wah-download>
 
-  <wah-character-select></wah-character-select>
+  <wah-character-select *ngIf="!displayExtraMenu()"></wah-character-select>
 
   <wah-theme-select></wah-theme-select>
+
+  <ng-container *ngIf="displayExtraMenu()">
+    <button mat-icon-button [matMenuTriggerFor]="menu"
+            aria-label="Display the extra menu"
+            matTooltip="Display the extra menu">
+      <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
+    </mat-menu>
+  </ng-container>
 </ng-template>
+
+<ng-template #extraMenuTemplate>
+  <div class="p-3">
+    <wah-shopping-cart></wah-shopping-cart>
+    <wah-character-select></wah-character-select>
+  </div>
+</ng-template>
+
+
+<!-- Material Menu item templates -->
+<mat-menu #mobileMenuDropdown="matMenu">
+
+</mat-menu>
+<mat-menu #dashboardDropdown="matMenu">
+  <a mat-menu-item
+     routerLink="dashboard/items"
+     routerLinkActive="mat-accent">Items
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/sellers"
+     routerLinkActive="mat-accent">Sellers
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/ah-summary"
+     routerLinkActive="mat-accent">AH summary
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/tsm"
+     routerLinkActive="mat-accent">TSM
+  </a>
+  <a mat-menu-item
+     routerLink="dashboard/manage-dashboards"
+     routerLinkActive="mat-accent">Manage
+  </a>
+</mat-menu>
+<mat-menu #toolsDropdown="matMenu">
+  <a mat-menu-item
+     routerLink="tools/trade-vendor"
+     routerLinkActive="mat-accent">Trade vendors
+  </a>
+  <a mat-menu-item
+     routerLink="tools/sellers"
+     routerLinkActive="mat-accent">Sellers
+  </a>
+  <a mat-menu-item
+     routerLink="tools/milling-and-prospecting"
+     routerLinkActive="mat-accent">Milling & prospecting
+  </a>
+  <a mat-menu-item
+     routerLink="tools/market-reset"
+     routerLinkActive="mat-accent">Market reset (WIP)
+  </a>
+  <a mat-menu-item
+     routerLink="tools/reputations"
+     routerLinkActive="mat-accent">Reputations
+  </a>
+</mat-menu>
+<mat-menu #auctionsDropdown="matMenu">
+  <a mat-menu-item
+     routerLink="auctions"
+     routerLinkActive="mat-accent">All auctions
+  </a>
+  <a mat-menu-item
+     routerLink="my-auctions"
+     routerLinkActive="mat-accent">My auctions
+  </a>
+</mat-menu>
