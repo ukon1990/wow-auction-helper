@@ -245,27 +245,28 @@ export class User {
     });
   }
 
-  public static setRecipesForCharacter(character): void {
+  public static setRecipesForCharacter(character: Character): void {
     if (character && character.professions &&
       SharedService.user.realm.toLowerCase() === User.slugifyString(character.realm)) {
       character.professions.primary.forEach(primary => {
         primary.recipes.forEach(recipe => {
-          User.addRecipe(recipe, character.name);
+          User.addRecipe(recipe, character.name, character.faction);
         });
       });
       character.professions.secondary.forEach(secondary => {
         secondary.recipes.forEach(recipe => {
-          User.addRecipe(recipe, character.name);
+          User.addRecipe(recipe, character.name, character.faction);
         });
       });
     }
   }
 
-  private static addRecipe(spellId: number, characterName: string): void {
+  private static addRecipe(spellId: number, characterName: string, faction: number): void {
     if (!SharedService.recipesForUser[spellId]) {
       SharedService.recipesForUser[spellId] = new Array<string>();
     }
-    SharedService.recipesForUser[spellId].push(characterName);
+    SharedService.recipesForUser[spellId].push(
+      `${characterName} (${ faction ? 'H' : 'A'})`);
   }
 
   public static slugifyString(realm: string): string {

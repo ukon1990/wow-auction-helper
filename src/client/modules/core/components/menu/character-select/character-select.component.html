@@ -12,7 +12,8 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field
+          matTooltip="Quick realm change, for those with characters on multiple realms. If a realm is missing, add a character in the settings.">
     <mat-select placeholder="Realm" formControlName="realm">
       <mat-option *ngFor="let realm of realmList"
                   [value]="realm.slug">
