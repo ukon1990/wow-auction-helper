@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-12">
+    <p>These have contributed to the codebase in some way</p>
+    <br>
+    <em>Only pull-requests and commits are displayed</em>
+  </div>
+  <div *ngFor="let contributor of codeContributors" class="col-md-4">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar [style.background-image]="getIconStyle(contributor.avatar_url)" class="avatar"></div>
+        <mat-card-title>{{ contributor.login }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-actions>
+        <a mat-button [href]="contributor.html_url" target="_blank">Go to profile page</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

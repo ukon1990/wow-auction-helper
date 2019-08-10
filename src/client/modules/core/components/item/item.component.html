@@ -1,0 +1,225 @@
+<mat-card class="full-screen" *ngIf="selected.item">
+  <mat-card-header>
+    <div class="action-icon mat-elevation-z5" (click)="close()" matTooltip="Click to open/close the full window.">
+      <button mat-raised-button class="btn btn-sm">
+        <i class="fas fa-times" matTooltip="Close detail view"></i>
+      </button>
+    </div>
+    <wah-icon mat-card-avatar *ngIf="selected.item.id" class="float-left" size="36" [id]="selected.item.id"
+              [petSpeciesId]="getSelectedPet()?.petSpeciesId"></wah-icon>
+    <mat-card-title>
+        <span *ngIf="getPet() || selected.item; else itemName">
+          <a rel="domain={{ locale }},{{
+              getPet() ?
+              ('npc=' + getPet().creatureId) : ('item=' + selected.item.id)
+            }}">
+            {{ getPet() ? getPet().name : selected.item.name }}
+          </a>
+        </span>
+      <ng-template #itemName>
+        <a rel="domain={{ locale }},{{ 'item=' + wowDBItem.ID }}">
+          {{ wowDBItem.Name }}
+        </a>
+      </ng-template>
+    </mat-card-title>
+    <mat-card-subtitle *ngIf="getSelectedPet()">
+        <span class="mr-auto">
+          <strong>Level:</strong> {{ getSelectedPet().petLevel }}</span>
+      <span class="mr-auto">
+          <strong>Quality:</strong> {{ getSelectedPet().petQualityId }}</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="row col-md-12">
+      <div class="col-md-4" *ngIf="selected.auctionItem">
+        <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
+        <br>
+        <strong>Lowest buyout per item:</strong> {{ selected.auctionItem.buyout | gold}}
+        <span *ngIf="isUsing3PAPI && !selected.auctionItem.petSpeciesId">({{ selected.auctionItem.buyout / selected.auctionItem.mktPrice | percent }}
+          MV)</span>
+        <br>
+        <strong>Market value:</strong> {{ selected.auctionItem.mktPrice | gold }}
+        <br>
+        <strong>Stock:</strong> {{ selected.auctionItem.quantityTotal | number }} pcs
+        <br>
+        <div *ngIf="isUsing3PAPI && !selected.auctionItem.petSpeciesId" class="clearfix">
+          <strong>Avg daily sold:</strong> {{ selected.auctionItem.avgDailySold | number }}
+          <br>
+          <span *ngIf="isUsingWoWUction()">
+              <strong>Avg daily posted:</strong> {{ selected.auctionItem.avgDailyPosted | number }}
+            </span>
+          <span *ngIf="isUsingTSM()">
+              <strong>Avg sale price:</strong> {{ selected.auctionItem.regionSaleAvg | gold }}
+            </span>
+          <br>
+        </div>
+        <mat-card class="mt-3 mb-3"
+                  *ngIf="isUsingTSM() || isUsingWoWUction() || selected?.auctionItem?.hasPersonalSaleRate">
+          <mat-card-header>
+            <mat-card-subtitle>
+              Sale rate
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div *ngIf="isUsingTSM() || isUsingWoWUction()">
+              <strong *ngIf="isUsingTSM()">TSM: </strong>
+              <strong *ngIf="isUsingWoWUction()">WoWUction: </strong>
+              {{ selected.auctionItem.regionSaleRate | percent }}
+            </div>
+
+            <ng-container *ngIf="selected?.auctionItem?.hasPersonalSaleRate">
+              <strong>Last 24 hours: </strong> {{ selected.auctionItem.past24HoursSaleRate | percent }}<br>
+              <strong>Last 7 days: </strong> {{ selected.auctionItem.past7DaysSaleRate | percent }}<br>
+              <strong>Last 14 days: </strong> {{ selected.auctionItem.past14DaysSaleRate | percent }}<br>
+              <strong>Last 30 days: </strong> {{ selected.auctionItem.past30DaysSaleRate | percent }}<br>
+              <strong>Last 90 days: </strong> {{ selected.auctionItem.past90DaysSaleRate | percent }}<br>
+              <strong>Overall: </strong> {{ selected.auctionItem.totalSaleRate | percent }}
+            </ng-container>
+          </mat-card-content>
+        </mat-card>
+
+        <wah-line-chart *ngIf="selected.auctionItem && !isMobile()" [data]="selected.auctionItem.auctions">
+        </wah-line-chart>
+      </div>
+      <div [ngClass]="{'col-md-8': selected.auctionItem, 'col-md-12': !selected.auctionItem}">
+        <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" #tabs>
+          <mat-tab *ngIf="selected.auctionItem && isMobile()" label="Auction price chart">
+            <wah-line-chart [data]="selected.auctionItem.auctions"
+                            *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
+            </wah-line-chart>
+          </mat-tab>
+          <mat-tab *ngIf="selected.auctionItem" label="Seller overview" (click)="emitSelectedTab('Seller')">
+            <wah-item-seller-chart [auctions]="selected.auctionItem.auctions"
+                                   *ngIf="tabs && tabs.selectedIndex === 0"></wah-item-seller-chart>
+          </mat-tab>
+          <mat-tab label="Auctions" *ngIf="selected.auctionItem">
+            <wah-data-table [columns]="columns" [data]="selected.auctionItem.auctions" filterParameter="owner"
+                            [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+
+          <mat-tab label="Data from TSM">
+            <mat-card *ngIf="selected.item?.inventory[factionId]" class="mb-3">
+              <mat-card-header>
+                <mat-card-subtitle>
+                  One or more of your characters have this item
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <mat-list dense>
+                  <mat-list-item>
+                    Sum value: {{ selected.item.inventory[factionId].quantity * selected.auctionItem.buyout | gold }} total.
+                  </mat-list-item>
+                  <mat-list-item>
+                    Quantity: {{ selected.item.inventory[factionId].quantity | number }}
+                  </mat-list-item>
+                  <mat-list-item *ngFor="let char of selected.item.inventory[factionId].characters">
+                    {{ char }}
+                  </mat-list-item>
+                </mat-list>
+              </mat-card-content>
+            </mat-card>
+
+            <wah-item-sale-summary *ngIf="selected.item.id"
+                                   [itemId]="selected.item.id"
+                                   (saleRate)="setPersonalSaleRate($event)">
+            </wah-item-sale-summary>
+          </mat-tab>
+
+          <mat-tab label="Created by" *ngIf="createdBy">
+            <wah-data-table [id]="'itemID'"
+                            [columns]="recipeColumns"
+                            [data]="createdBy"
+                            [isCrafting]="true"
+                            [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Material for" *ngIf="materialFor.length > 0">
+            <wah-data-table [id]="'itemID'" iconSize="22"
+                            [columns]="recipeColumnsSimple"
+                            [data]="materialFor"
+                            [isCrafting]="false"
+                            filterParameter="name"
+                            [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Dropped by"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.droppedBy && selected.item.itemSource.droppedBy.length > 0">
+            <wah-data-table linkType="npc" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.droppedBy" filterParameter="name" [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Sold by"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.soldBy && selected.item.itemSource.soldBy.length > 0">
+            <wah-data-table linkType="npc" [id]="'id'" iconSize="22" [columns]="soldByColumns"
+                            [data]="selected.item.itemSource.soldBy" filterParameter="name" [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Contained in object"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.containedInObject && selected.item.itemSource.containedInObject.length > 0">
+            <wah-data-table linkType="object" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.containedInObject" filterParameter="name" [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Contained in item"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.containedInItem && selected.item.itemSource.containedInItem.length > 0">
+            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="containedInColumns"
+                            [data]="selected.item.itemSource.containedInItem" filterParameter="name" [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Prospected from"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.prospectedFrom && selected.item.itemSource.prospectedFrom.length > 0">
+            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.prospectedFrom" filterParameter="name" [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+
+          <mat-tab label="Milled from"
+                   *ngIf="selected.item.itemSource && selected.item.itemSource.milledFrom && selected.item.itemSource.milledFrom.length > 0">
+            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
+                            [data]="selected.item.itemSource.milledFrom" filterParameter="name" [numOfRows]="20">
+            </wah-data-table>
+          </mat-tab>
+          <mat-tab label="Reset cost calc" *ngIf="selected.auctionItem">
+            <wah-reset-calc [auctionItem]="selected.auctionItem"></wah-reset-calc>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+    <ng-template #inCaseNotFound>
+      This item was not found at the auction house.
+    </ng-template>
+  </mat-card-content>
+  <mat-card-actions>
+    <button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item.id, 'WoWDB')" mat-raised-button>
+      WoWDB
+      <i class="fas fa-external-link-square-alt"></i>
+    </button>
+    <button (click)="openInNewTab('http://www.wowhead.com/item=' + selected.item.id, 'WoWHead')" mat-raised-button>
+      WoWHead
+      <i class="fas fa-external-link-square-alt"></i>
+    </button>
+    <button (click)="openInNewTab(getTUJUrl(), 'TUJ')" mat-raised-button>
+      TUJ
+      <i class="fas fa-external-link-square-alt"></i>
+    </button>
+
+    <div *ngIf="userHasRecipeForItem()" class="float-right">
+      <mat-form-field>
+        <input matInput
+               placeholder="Quantity"
+               [formControl]="shoppingCartQuantityField">
+      </mat-form-field>
+
+      <button mat-raised-button matTooltip="Add to shopping list"
+              (click)="addEntryToCart()">
+        Add to cart
+        <i class="fas fa-cart-plus"></i>
+      </button>
+    </div>
+  </mat-card-actions>
+</mat-card>
+
+<div *ngIf="selected.item" class="backdrop" (click)="close()">
+</div>

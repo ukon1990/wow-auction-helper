@@ -1,0 +1,18 @@
+
+
+<div id="main" class="mt-6 container-fluid">
+  <mat-card>
+    <router-outlet></router-outlet>
+  </mat-card>
+  <wah-footer></wah-footer>
+</div>
+
+<wah-news></wah-news>
+
+<wah-app-update></wah-app-update>
+
+<wah-item *ngIf="isItemSelected()"></wah-item>
+
+<wah-seller *ngIf="isSellerSelected()"></wah-seller>
+
+<wah-menu></wah-menu>
