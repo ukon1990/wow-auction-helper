@@ -2,6 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {SharedService} from '../../../../services/shared.service';
+import {Report} from '../../../../utils/report.util';
 
 declare function require(moduleName: string): any;
 
@@ -22,6 +23,7 @@ export class MenuComponent implements OnDestroy {
     this.sm.add(this.service.events.list,
       (list) =>
         this.numberOfUndercutAuctions = SharedService.userAuctions.undercutAuctions);
+    Report.send( 'startup', `App version ${ version }`);
   }
 
   ngOnDestroy(): void {

@@ -40,10 +40,10 @@ export class ErrorReport {
   public static sendError(functionName: string, error: Error, options?: ErrorOptions): void {
     if (ErrorReport.ga) {
       ErrorReport.ga.eventTrack.next({
-        action: functionName,
+        action: `Error: ${functionName}`,
         properties: {
           category: `Errors (${version})`,
-          label: `${error.name} - ${error.message} - ${error.stack}`
+          label: `${functionName}: ${error.name} - ${error.message} - ${error.stack}`
         },
       });
     }

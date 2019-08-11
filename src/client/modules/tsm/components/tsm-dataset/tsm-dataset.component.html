@@ -15,6 +15,17 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field *ngIf="currentSetIsInventory()">
+    <mat-select placeholder="Realm" formControlName="faction">
+      <mat-option [value]="0">
+        Alliance
+      </mat-option>
+      <mat-option [value]="1">
+        Horde
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <mat-form-field *ngIf="characters.length > 0">
     <mat-select placeholder="Character" formControlName="character">
       <mat-option *ngFor="let name of characters" [value]="name">
@@ -46,4 +57,20 @@
         [itemsPerPage]="40"
         [filterParameter]="getFilterParam()"
         [columns]="table.columns"
-        [data]="table.data"></wah-data-table>
+        [data]="table.data">
+  <form [formGroup]="inventoryFilterForm" *ngIf="currentSetIsInventory()">
+    <mat-form-field>
+      <input
+              type="number"
+              formControlName="saleRate"
+              placeholder="Min sale rate" matInput>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input
+              type="number"
+              formControlName="avgDailySold"
+              placeholder="Min avg daily sold" matInput>
+    </mat-form-field>
+  </form>
+</wah-data-table>

@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -41,7 +41,7 @@
     "@fortawesome/angular-fontawesome": "^0.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.21",
     "@fortawesome/free-solid-svg-icons": "^5.10.1",
-    "@ukon1990/js-utilities": "^1.5.0",
+    "@ukon1990/js-utilities": "^1.5.1",
     "@ukon1990/subscription-manager": "^1.0.2",
     "angulartics2": "^8.0.0",
     "aws-sdk": "^2.507.0",
