@@ -245,8 +245,6 @@ export class DatabaseService {
       return;
     }
 
-    Report.debug('DatabaseService.addTSMAddonData', tsm);
-
     this.db.table('tsmAddonHistory').clear();
     this.db.table('tsmAddonHistory')
       .put({

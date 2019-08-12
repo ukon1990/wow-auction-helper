@@ -5,7 +5,6 @@ import {SharedService} from '../../services/shared.service';
 
 export class InventoryUtil {
   static organize(inventory): void {
-    console.log('TSM data', inventory);
     this.setInventory(inventory);
   }
 

@@ -100,7 +100,7 @@
           </mat-tab>
 
           <mat-tab label="Data from TSM">
-            <mat-card *ngIf="selected.item?.inventory[factionId]" class="mb-3">
+            <mat-card *ngIf="selected?.item?.inventory && selected?.item?.inventory[factionId]" class="mb-3">
               <mat-card-header>
                 <mat-card-subtitle>
                   One or more of your characters have this item

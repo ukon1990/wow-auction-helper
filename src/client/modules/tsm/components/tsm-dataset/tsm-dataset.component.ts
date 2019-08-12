@@ -8,6 +8,8 @@ import {Item, ItemInventory} from '../../../../models/item/item';
 import {TSM} from '../../../auction/models/tsm.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
+import {Filters} from '../../../../utils/filtering';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-tsm-dataset',
@@ -103,7 +105,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       name: 'auctionQuantity',
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
-        {key: 'character.model.ts', title: 'character.model.ts', dataType: 'seller'},
+        {key: 'character', title: 'character.model.ts', dataType: 'seller'},
         {key: 'value', title: 'Quantity', dataType: 'number'}
       ],
       data: [],
@@ -126,7 +128,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       name: 'goldLog',
       columns: [
         {key: 'minute', title: 'Time', dataType: 'date'},
-        {key: 'character.model.ts', title: 'Character', dataType: 'seller'},
+        {key: 'character', title: 'Character', dataType: 'seller'},
         {key: 'copper', title: 'Gold', dataType: 'gold'}
       ],
       data: [],
@@ -141,6 +143,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
     data: []
   };
   form: FormGroup;
+  inventoryFilterForm: FormGroup;
   sm = new SubscriptionManager();
   inventoryValue: number;
   inventoryValueOnlyInDemand: number;
@@ -149,7 +152,13 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
     this.form = this.formBuilder.group({
       dataset: new FormControl(0),
       realm: new FormControl(),
-      character: new FormControl()
+      character: new FormControl(),
+      faction: new FormControl(SharedService.user.faction)
+    });
+
+    this.inventoryFilterForm = this.formBuilder.group({
+      saleRate: new FormControl(0),
+      avgDailySold: new FormControl(0)
     });
   }
 
@@ -171,12 +180,23 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
 
     this.sm.add(
       this.form.controls.character.valueChanges,
-      (name: string) =>
-        this.setTableData(this.form.value.realm, name));
+      (name: string) => {
+        this.setTableData(this.form.value.realm, name);
+      });
+
+    this.sm.add(
+      this.form.controls.faction.valueChanges,
+      (faction: number) =>
+        this.handleFactionChange(faction));
 
     this.sm.add(
       TsmLuaUtil.events,
       () => this.initContent());
+
+    this.sm.add(
+      this.inventoryFilterForm.valueChanges,
+      (formData) =>
+        this.handleInventorySet(this.form.getRawValue().faction, formData));
   }
 
   initContent(): void {
@@ -258,28 +278,37 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
   }
 
   private setCharactersOnRealm(realm: string) {
+    const {character, faction} = this.form.value;
     if (this.selectedSet && this.selectedSet.hasCharacters) {
-      this.characters.length = 0;
-      this.characters.push('All');
-      if (this.selectedSet.data[this.form.value.realm]) {
-        Object.keys(this.selectedSet.data[this.form.value.realm])
-          .forEach(name => {
-            if (name !== 'All') {
-              this.characters.push(name);
-            }
-          });
-      }
-
-      if (this.form.value.character && this.form.value.realm === realm) {
-        this.setTableData(realm, this.form.value.character);
-      } else {
-        this.form.controls.character.setValue(this.characters[0]);
-      }
+      this.handleDataSetWithCharacters(realm, character);
+    } else if (this.currentSetIsInventory()) {
+      this.setTableData(realm, undefined, faction);
+      this.handleInventorySet();
     } else {
       this.setTableData(realm);
     }
 
-    this.handleInventorySet();
+  }
+
+  private handleDataSetWithCharacters(realm: string, character) {
+    this.characters.length = 0;
+    this.characters.push('All');
+    if (this.selectedSet.data[realm]) {
+      Object.keys(this.selectedSet.data[realm])
+        .forEach(name => {
+          if (name !== 'All') {
+            this.characters.push(name);
+          }
+        });
+    }
+
+    if (character && this.form.value.realm === realm) {
+      this.setTableData(realm, character);
+    } else {
+      // So that it won't happen until the actual realm value is set to the form
+      setTimeout(() =>
+        this.form.controls.character.setValue(this.characters[0]));
+    }
   }
 
   setDataSets(data): void {
@@ -287,15 +316,19 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       set.data = data[set.name]);
   }
 
-  private setTableData(realm: string, character?: string) {
+  private setTableData(realm: string, character?: string, faction?: number) {
     if (!this.selectedSet) {
       return;
     }
+
+    this.table.columns = this.selectedSet.columns;
     if (realm && character) {
-      this.table.columns = this.selectedSet.columns;
+      Report.debug('TsmDatasetComponent.setTableData', this.selectedSet, realm, character);
       this.table.data = this.selectedSet.data[realm][character];
+    } else if (realm && !EmptyUtil.isNullOrUndefined(faction)) {
+      const realmData = this.selectedSet.data[realm];
+      this.table.data = realmData[faction] || [];
     } else {
-      this.table.columns = this.selectedSet.columns;
       this.table.data = this.selectedSet.data[realm];
     }
 
@@ -307,6 +340,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       this.table.data = list;
     }
     this.sortTableByTime();
+    Report.debug('TsmDatasetComponent.setTableData', this.table);
   }
 
   private sortTableByTime() {
@@ -321,14 +355,26 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
     return this.table.data && this.table.data[0] && (this.table.data[0].time || this.table.data[0].minute);
   }
 
-  private handleInventorySet() {
+  private handleInventorySet(currentFaction?: number, formData?: { saleRate: number, avgDailySold: number }) {
     if (!this.currentSetIsInventory()) {
       return;
     }
-    const realm = this.form.getRawValue().realm;
+    const {realm, faction} = this.form.getRawValue();
+    const factionToUse = !EmptyUtil.isNullOrUndefined(currentFaction) ?
+      currentFaction : faction;
+    let list = this.selectedSet.data[realm][factionToUse];
     this.inventoryValue = 0;
     this.inventoryValueOnlyInDemand = 0;
-    this.selectedSet.data[realm].forEach((iv: ItemInventory) => {
+    if (!list) {
+      return;
+    }
+    if (!formData) {
+      formData = this.inventoryFilterForm.getRawValue();
+    }
+
+    list = this.filterInventory(formData, list);
+
+    list.forEach((iv: ItemInventory) => {
       const tsm: TSM = SharedService.tsm[iv.id];
       if (!this.isSoldByVendor(SharedService.items[iv.id])) {
         this.inventoryValue += iv.sumBuyout;
@@ -338,9 +384,22 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
         }
       }
     });
+    this.table.data = list;
   }
 
   private isSoldByVendor(item: Item): boolean {
     return item && item.itemSource && item.itemSource.soldBy && item.itemSource.soldBy.length > 0;
+  }
+
+  private handleFactionChange(faction: number) {
+    this.setTableData(this.form.value.realm, undefined, faction);
+    console.log('FactionChange');
+    this.handleInventorySet(faction);
+  }
+
+  private filterInventory(formData: { saleRate: number, avgDailySold: number }, data: ItemInventory[]) {
+    return data.filter(item =>
+      Filters.isSaleRateMatch(item.id, formData.saleRate) &&
+      Filters.isDailySoldMatch(item.id, formData.avgDailySold));
   }
 }
