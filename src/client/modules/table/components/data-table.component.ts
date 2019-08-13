@@ -175,13 +175,14 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.setSelectedPet(item);
     ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
+    console.log('clicked', item);
   }
 
   /* istanbul ignore next */
   setSelectedPet(pet: any) {
     if (pet.petSpeciesId) {
-      SharedService.selectedPetSpeciesId =
-        new AuctionPet(pet.petSpeciesId, pet.petLevel, pet.petQualityId);
+      const id = new AuctionPet(pet.petSpeciesId, pet.petLevel, pet.petQualityId);
+      SharedService.selectedPetSpeciesId = id;
     }
   }
 

@@ -1,5 +1,16 @@
-<div class="row">
-  <div class="col-md-6" *ngFor="let pet of getPets()">
+
+Total pet value: {{ petValue | gold }}
+
+<wah-data-table
+        iconSize="22"
+        id="petSpeciesId"
+        [columns]="table.columns"
+        [data]="table.data"></wah-data-table>
+
+<!--<div class="row">
+  <ng-container *ngTemplateOutlet="paginationTemplate"></ng-container>
+
+  <div class="col-md-6" *ngFor="let pet of petSpecies | slice: getFromValue():getToValue()">
     <mat-card>
       <mat-card-header>
         <wah-icon [size]="22" [petSpeciesId]="pet.stats.speciesId" mat-card-avatar></wah-icon>
@@ -12,11 +23,19 @@
       </mat-card-header>
       <mat-card-content>
         <strong>You have:</strong> {{ pet.count }} <br>
-        <wah-data-table *ngIf="getPet(pet.stats.speciesId) && getPet(pet.stats.speciesId).auctions"
+        <wah-data-table *ngIf="petAuctionsMap[pet.stats.speciesId]"
                         id="itemID"
-                        [data]="getPet(pet.stats.speciesId).auctions"
+                        [data]="petAuctionsMap[pet.stats.speciesId]"
                         [columns]="columns"></wah-data-table>
       </mat-card-content>
     </mat-card>
   </div>
-</div>
+
+  <ng-container *ngTemplateOutlet="paginationTemplate"></ng-container>
+</div>-->
+
+<ng-template #paginationTemplate>
+  <mat-paginator *ngIf="petSpecies.length > pageRows[0]" class="col-md-12" [length]="petSpecies.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+                 [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
+  </mat-paginator>
+</ng-template>
