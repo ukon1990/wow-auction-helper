@@ -7,7 +7,7 @@
                   *ngTemplateOutlet="brandingTemplate">
           </ng-container>
 
-          <ng-container *ngIf="!isSmallScreen()" >
+          <ng-container *ngIf="!isSmallScreen() && isUserSet" >
             <ng-container
                     *ngTemplateOutlet="navElementsTemplate">
             </ng-container>
@@ -29,7 +29,7 @@
 </ng-template>
 
 <ng-template #mobileMenuTemplate>
-  <ng-container *ngIf="isSmallScreen()">
+  <ng-container *ngIf="isSmallScreen() && isUserSet">
     <wah-download></wah-download>
 
     <div class="flex-spacer"></div>

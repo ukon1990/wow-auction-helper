@@ -106,13 +106,11 @@
           <mat-card>
             <mat-card-header>
               <mat-card-title>
-                Select between the light or the dark theme:
+                Select between the thems with this button:
               </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <mat-slide-toggle matTooltip="Toggle dark theme on/off" [checked]="isDarkMode()" (change)="saveUser($event)">
-                {{ isDarkMode() ? 'Change to light theme' : 'Change to dark theme' }}
-              </mat-slide-toggle>
+              <wah-theme-select></wah-theme-select>
               <p>
                 You can change this at any time, in the upper right corner.
               </p>

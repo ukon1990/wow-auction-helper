@@ -132,6 +132,9 @@ export class User {
 
     if (user.realm && user.region) {
       this.updateRecipesForRealm();
+      SharedService.events.isUserSet.next(true);
+    } else {
+      SharedService.events.isUserSet.next(false);
     }
   }
 
@@ -139,6 +142,7 @@ export class User {
     SharedService.user = User.getSettings();
     if (SharedService.user.realm && SharedService.user.region) {
       this.updateRecipesForRealm();
+      SharedService.events.isUserSet.next(true);
     }
   }
 

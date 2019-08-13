@@ -18,12 +18,16 @@ export class MenuComponent implements OnDestroy {
   appVersion = version;
   numberOfUndercutAuctions = 0;
   sm = new SubscriptionManager();
+  isUserSet: boolean;
 
   constructor(private service: AuctionsService) {
     this.sm.add(this.service.events.list,
       (list) =>
         this.numberOfUndercutAuctions = SharedService.userAuctions.undercutAuctions);
-    Report.send( 'startup', `App version ${ version }`);
+    this.sm.add(
+      SharedService.events.isUserSet,
+      isSet => this.isUserSet = isSet);
+    Report.send('startup', `App version ${version}`);
   }
 
   ngOnDestroy(): void {
@@ -36,9 +40,5 @@ export class MenuComponent implements OnDestroy {
 
   displayExtraMenu(): boolean {
     return window.innerWidth < 1534;
-  }
-
-  toggleMenu() {
-    this.showMenu = !this.showMenu;
   }
 }

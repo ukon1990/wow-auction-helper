@@ -26,6 +26,7 @@ import {CustomPricesComponent} from './components/crafting-settings/custom-price
 import {CustomProcComponent} from './components/crafting-settings/custom-proc/custom-proc.component';
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
+import {CoreModule} from '../core/core.module';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import {UtilModule} from '../util/util.module';
     MatInputModule,
     MatTooltipModule,
     IconModule,
-    UtilModule
+    UtilModule,
+    CoreModule
   ],
   exports: [RealmListComponent]
 })
