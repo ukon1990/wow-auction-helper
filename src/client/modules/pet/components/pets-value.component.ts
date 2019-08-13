@@ -30,9 +30,10 @@ export class PetsValueComponent implements OnInit, OnDestroy {
       {key: 'name', title: 'Name', dataType: 'name'},
       {key: 'userStock', title: 'Your Stock', dataType: 'number'},
       {key: 'ahStock', title: 'AH stock', dataType: 'number'},
+      {key: 'totalBuyout', title: 'Sum min buyout', dataType: 'gold'},
       {key: 'minBuyout', title: 'Min buyout', dataType: 'gold'},
       {key: 'avgBuyout', title: 'Avg buyout', dataType: 'gold'},
-      {key: 'maxBuyout', title: 'Max buyout', dataType: 'gold'},
+      {key: 'maxBuyout', title: 'Max buyout', dataType: 'gold'}
     ],
     data: []
   };
@@ -89,7 +90,7 @@ export class PetsValueComponent implements OnInit, OnDestroy {
       this.petSpecies.push(pet);
     });
 
-    this.table.data.length = 0;
+    this.table.data = [];
     this.petValue = 0;
     this.petSpecies.forEach((species: CollectedPet) => {
       const pet = new PetTableData(species, this.petAuctionsMap[species.stats.speciesId]);

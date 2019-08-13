@@ -23,7 +23,7 @@ import {RealmStatus} from '../models/realm-status.model';
 @Injectable()
 export class AuctionsService {
   events = {
-    isDownloading: new BehaviorSubject<boolean>(false),
+    isDownloading: new BehaviorSubject<boolean>(true),
     list: new BehaviorSubject<Auction[]>([]),
     groupedList: new BehaviorSubject<AuctionItem[]>([])
   };

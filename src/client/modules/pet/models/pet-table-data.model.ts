@@ -14,6 +14,7 @@ export class PetTableData {
   public minBuyout: number;
   public avgBuyout: number;
   public maxBuyout: number;
+  public totalBuyout: number;
 
   constructor(private collectedPet: CollectedPet, public auctions: AuctionItem[]) {
     this.petSpeciesId = collectedPet.stats.speciesId;
@@ -25,6 +26,7 @@ export class PetTableData {
     this.ahStock = this.getStock(auctions);
 
     this.setBuyout(auctions);
+    this.totalBuyout = this.minBuyout * this.userStock;
   }
 
   private setBuyout(auctions: AuctionItem[]) {
