@@ -38,6 +38,7 @@ export class ItemHandler {
 
     this.getFreshItem(id, event)
       .then(async item => {
+        console.log('SQL: ', ItemQuery.update(item)); // inventoryType
         new DatabaseUtil()
           .query(ItemQuery.update(item))
           .then(() =>
