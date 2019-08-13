@@ -20,6 +20,8 @@ import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart.model';
 import {ThemeUtil} from '../../core/utils/theme.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-data-table',
@@ -44,7 +46,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() filterParameter: string;
 
   filteredData = [];
-  filterSubscriber: Subscription;
+  sm = new SubscriptionManager();
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
@@ -71,8 +73,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     if (this.filterParameter) {
-      this.filterSubscriber = this.searchField.valueChanges
-        .subscribe(() => this.filterData());
+      this.sm.add(this.searchField.valueChanges,
+        (value) => this.filterData(value));
     }
   }
 
@@ -99,22 +101,20 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.sorter.sort(this.filteredData);
 
     if (this.filterParameter) {
-      this.filterData();
+      this.filterData(this.searchField.value);
     }
   }
 
   ngOnDestroy(): void {
-    if (this.filterSubscriber) {
-      this.filterSubscriber.unsubscribe();
-    }
+    this.sm.unsubscribe();
   }
 
-  filterData(): void {
+  filterData(value: any): void {
     if (!this.filterParameter || !this.data) {
       this.filteredData = this.data;
       return;
     }
-    const name = this.searchField.value;
+
     this.pageEvent.pageIndex = 0;
     this.filteredData = this.data.filter(d => {
       if (!d[this.filterParameter] && !SharedService.items[d.item]) {
@@ -123,9 +123,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
       const compareName = d[this.filterParameter] ?
         d[this.filterParameter] : SharedService.items[d.item][this.filterParameter];
-      return compareName.toLowerCase()
-        .indexOf((name !== null ? name : '')
-          .toLowerCase()) > -1;
+      return TextUtil.isEmpty(value) || TextUtil.contains(compareName, value);
     });
   }
 
@@ -175,13 +173,14 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.setSelectedPet(item);
     ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
+    console.log('clicked', item);
   }
 
   /* istanbul ignore next */
   setSelectedPet(pet: any) {
     if (pet.petSpeciesId) {
-      SharedService.selectedPetSpeciesId =
-        new AuctionPet(pet.petSpeciesId, pet.petLevel, pet.petQualityId);
+      const id = new AuctionPet(pet.petSpeciesId, pet.petLevel, pet.petQualityId);
+      SharedService.selectedPetSpeciesId = id;
     }
   }
 

@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TestModule } from '../../test.module';
 
-import { MyPetsComponent } from './my-pets.component';
+import { PetsValueComponent } from './pets-value.component';
 
 describe('MyPetsComponent', () => {
-  let component: MyPetsComponent;
-  let fixture: ComponentFixture<MyPetsComponent>;
+  let component: PetsValueComponent;
+  let fixture: ComponentFixture<PetsValueComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -15,7 +15,7 @@ describe('MyPetsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MyPetsComponent);
+    fixture = TestBed.createComponent(PetsValueComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

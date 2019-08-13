@@ -23,6 +23,7 @@ import {RealmStatus} from '../models/realm-status.model';
 @Injectable()
 export class AuctionsService {
   events = {
+    isDownloading: new BehaviorSubject<boolean>(true),
     list: new BehaviorSubject<Auction[]>([]),
     groupedList: new BehaviorSubject<AuctionItem[]>([])
   };
@@ -72,6 +73,7 @@ export class AuctionsService {
     if (SharedService.downloading.auctions) {
       return;
     }
+    this.events.isDownloading.next(true);
     const missingItems = [],
       realmStatus: RealmStatus = this.realmService.events.realmStatus.getValue();
     console.log('Downloading auctions');
@@ -105,10 +107,12 @@ export class AuctionsService {
         }
         SharedService.events.auctionUpdate.emit();
         this.events.list.next(a['auctions']);
+        this.events.isDownloading.next(true);
         this.events.groupedList.next(SharedService.auctionItems);
       })
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
+        this.events.isDownloading.next(true);
         console.error('Auction download failed', error);
         switch (error.status) {
           case 504:

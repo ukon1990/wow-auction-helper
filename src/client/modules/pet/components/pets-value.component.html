@@ -1,0 +1,21 @@
+
+<div *ngIf="petSpecies.length > 0 || isDownloadingAHData; else noPetsTemplate">
+  Total pet value: {{ petValue | gold }}
+
+  <wah-data-table
+          iconSize="22"
+          id="petSpeciesId"
+          itemsPerPage="20"
+          filterParameter="name"
+          [columns]="table.columns"
+          [data]="table.data"></wah-data-table>
+</div>
+
+<ng-template #noPetsTemplate>
+  <p>
+    This page might appear empty, either because none of your pets were found at the auction house.
+    Or because you have no added no Characters to the app.
+  </p>
+
+  <wah-characters></wah-characters>
+</ng-template>

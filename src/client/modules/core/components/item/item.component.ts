@@ -124,7 +124,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   ngAfterContentInit(): void {
     SharedService.events.detailPanelOpen.emit(true);
-    console.log('Selected item data', this.selected);
   }
 
   ngOnDestroy(): void {
@@ -141,7 +140,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     if (!SharedService.selectedItemId) {
       return;
     }
-    console.log(SharedService.items[SharedService.selectedItemId]);
 
     if (SharedService.items[SharedService.selectedItemId]) {
       this.selected.item = SharedService.items[SharedService.selectedItemId];
