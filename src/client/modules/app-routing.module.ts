@@ -12,7 +12,7 @@ import {WatchlistComponent} from './dashboard/components/manage/watchlist.compon
 import {DashboardItemsComponent} from './dashboard/components/dashboard-items/dashboard-items.component';
 import {DashboardSellersComponent} from './dashboard/components/dashboard-sellers/dashboard-sellers.component';
 import {SellersComponent} from './sellers/components/sellers.component';
-import {MyPetsComponent} from './pet/components/my-pets.component';
+import {PetsValueComponent} from './pet/components/pets-value.component';
 import {MarketResetComponent} from './core/components/item/market-reset/market-reset.component';
 import {MillingComponent} from './crafting/components/milling/milling.component';
 import {DisenchantingComponent} from './crafting/components/disenchanting/disenchanting.component';
@@ -31,7 +31,7 @@ const TOOLS_ROUTE: Route = {
     {path: 'trade-vendor', component: TradeVendorsComponent},
     {path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'},
     {path: 'sellers', component: SellersComponent},
-    {path: 'my-pets', component: MyPetsComponent},
+    {path: 'my-pets', component: PetsValueComponent},
     {path: 'market-reset', component: MarketResetComponent},
     {path: 'milling-and-prospecting', component: MillingComponent},
     {path: 'disenchanting', component: DisenchantingComponent},
