@@ -36,7 +36,7 @@
     "express-session": "^1.15.6",
     "express-validator": "^5.3.1",
     "fbgraph": "^1.4.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "lusca": "^1.6.1",
     "mysql": "^2.16.0",
     "promise-throttle": "^1.0.0",
