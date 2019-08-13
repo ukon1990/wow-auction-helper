@@ -10,10 +10,11 @@ import {PetTableData} from '../models/pet-table-data.model';
 
 @Component({
   selector: 'wah-my-pets',
-  templateUrl: './my-pets.component.html',
-  styleUrls: ['./my-pets.component.scss']
+  templateUrl: './pets-value.component.html',
+  styleUrls: ['./pets-value.component.scss']
 })
-export class MyPetsComponent implements OnInit, OnDestroy {
+export class PetsValueComponent implements OnInit, OnDestroy {
+  isDownloadingAHData = true;
   petSpecies: CollectedPet[] = [];
   pets: CollectedPet[] = [];
   petAuctionsMap = {};
@@ -48,6 +49,10 @@ export class MyPetsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sm.add(SharedService.events.auctionUpdate,
       () => this.handleAHUpdate());
+
+    this.sm.add(this.ahService.events.isDownloading,
+        isDownloading =>
+      this.isDownloadingAHData = isDownloading);
   }
 
   ngOnDestroy(): void {
@@ -79,7 +84,7 @@ export class MyPetsComponent implements OnInit, OnDestroy {
 
     });
 
-    Report.debug('MyPetsComponent.setUserPets', {tmpMap, species: this.petSpecies, auctionMap: this.petAuctionsMap});
+    Report.debug('PetsValueComponent.setUserPets', {tmpMap, species: this.petSpecies, auctionMap: this.petAuctionsMap});
     tmpMap.forEach(pet => {
       this.petSpecies.push(pet);
     });
