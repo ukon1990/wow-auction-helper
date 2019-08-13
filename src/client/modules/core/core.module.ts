@@ -76,7 +76,7 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
     MatBadgeModule,
     FontAwesomeModule
   ],
-  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent]
+  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent]
 })
 export class CoreModule {
   constructor() {
