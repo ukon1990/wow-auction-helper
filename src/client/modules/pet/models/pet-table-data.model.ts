@@ -17,7 +17,7 @@ export class PetTableData {
 
   constructor(private collectedPet: CollectedPet, public auctions: AuctionItem[]) {
     this.petSpeciesId = collectedPet.stats.speciesId;
-    this.name = collectedPet.name;
+    this.name = collectedPet.creatureName;
     this.icon = collectedPet.icon;
     this.petLevel = collectedPet.stats.level;
     this.petQualityId = collectedPet.qualityId;

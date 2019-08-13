@@ -31,7 +31,7 @@ const TOOLS_ROUTE: Route = {
     {path: 'trade-vendor', component: TradeVendorsComponent},
     {path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'},
     {path: 'sellers', component: SellersComponent},
-    {path: 'my-pets', component: PetsValueComponent},
+    {path: 'pet-value', component: PetsValueComponent},
     {path: 'market-reset', component: MarketResetComponent},
     {path: 'milling-and-prospecting', component: MillingComponent},
     {path: 'disenchanting', component: DisenchantingComponent},
