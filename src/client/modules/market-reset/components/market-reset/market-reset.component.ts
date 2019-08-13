@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Angulartics2 } from 'angulartics2';
-import {GoldPipe} from '../../../../util/pipes/gold.pipe';
-import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../table/models/column-description';
-import {MarketResetCost} from '../../../../auction/models/market-reset-cost.model';
-import {Filters} from '../../../../../utils/filtering';
-import {Crafting} from '../../../../crafting/models/crafting';
-import {AuctionItem} from '../../../../auction/models/auction-item.model';
-import {Auction} from '../../../../auction/models/auction.model';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
+import {SharedService} from '../../../../services/shared.service';
+import {ColumnDescription} from '../../../table/models/column-description';
+import {MarketResetCost} from '../../../auction/models/market-reset-cost.model';
+import {Filters} from '../../../../utils/filtering';
+import {Crafting} from '../../../crafting/models/crafting';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {Auction} from '../../../auction/models/auction.model';
 
 @Component({
   selector: 'wah-market-reset',

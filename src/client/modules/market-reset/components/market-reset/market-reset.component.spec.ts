@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MarketResetComponent } from './market-reset.component';
 
-describe('MarketResetComponent', () => {
+fdescribe('MarketResetComponent', () => {
   let component: MarketResetComponent;
   let fixture: ComponentFixture<MarketResetComponent>;
 

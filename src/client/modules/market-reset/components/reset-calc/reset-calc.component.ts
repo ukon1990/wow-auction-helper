@@ -3,10 +3,10 @@ import { Component, Input, OnInit , OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Angulartics2 } from 'angulartics2';
-import {GoldPipe} from '../../../../util/pipes/gold.pipe';
-import {SharedService} from '../../../../../services/shared.service';
-import {AuctionItem} from '../../../../auction/models/auction-item.model';
-import {Crafting} from '../../../../crafting/models/crafting';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
+import {SharedService} from '../../../../services/shared.service';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {Crafting} from '../../../crafting/models/crafting';
 
 @Component({
   selector: 'wah-reset-calc',

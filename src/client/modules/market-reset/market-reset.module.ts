@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {AuctionsComponent} from './components/auctions/auctions.component';
-import {MyAuctionsComponent} from './components/my-auctions/my-auctions.component';
+import {MarketResetComponent} from './components/market-reset/market-reset.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '../material.module';
 import {TableModule} from '../table/table.module';
@@ -14,11 +13,13 @@ import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {ResetCalcComponent} from './components/reset-calc/reset-calc.component';
+
 
 @NgModule({
   declarations: [
-    AuctionsComponent,
-    MyAuctionsComponent
+    MarketResetComponent,
+    ResetCalcComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +38,10 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     MatGridListModule,
     MatBadgeModule,
     FontAwesomeModule
+  ],
+  exports: [
+    ResetCalcComponent
   ]
 })
-export class AuctionModule {
+export class MarketResetModule {
 }

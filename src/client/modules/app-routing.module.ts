@@ -13,7 +13,7 @@ import {DashboardItemsComponent} from './dashboard/components/dashboard-items/da
 import {DashboardSellersComponent} from './dashboard/components/dashboard-sellers/dashboard-sellers.component';
 import {SellersComponent} from './sellers/components/sellers.component';
 import {PetsValueComponent} from './pet/components/pets-value.component';
-import {MarketResetComponent} from './core/components/item/market-reset/market-reset.component';
+import {MarketResetComponent} from './market-reset/components/market-reset/market-reset.component';
 import {MillingComponent} from './crafting/components/milling/milling.component';
 import {DisenchantingComponent} from './crafting/components/disenchanting/disenchanting.component';
 import {AhSummaryComponent} from './dashboard/components/ah-summary/ah-summary.component';
