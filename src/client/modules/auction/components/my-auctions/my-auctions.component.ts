@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../table/models/column-description';
-import {Auction} from '../../../../auction/models/auction.model';
-import {UserAuctions} from '../../../../auction/models/user-auctions.model';
-import {UserAuctionCharacter} from '../../../../auction/models/user-auction-character.model';
+import {SharedService} from '../../../../services/shared.service';
+import {ColumnDescription} from '../../../table/models/column-description';
+import {Auction} from '../../models/auction.model';
+import {UserAuctions} from '../../models/user-auctions.model';
+import {UserAuctionCharacter} from '../../models/user-auction-character.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {AuctionsService} from '../../../../../services/auctions.service';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-my-auctions',

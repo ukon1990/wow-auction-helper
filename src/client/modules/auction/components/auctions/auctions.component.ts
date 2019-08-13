@@ -1,5 +1,5 @@
 import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {AuctionItem} from '../../models/auction-item.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {itemClasses} from '../../../../models/item/item-classes';

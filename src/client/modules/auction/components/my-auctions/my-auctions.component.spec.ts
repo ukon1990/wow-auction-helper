@@ -1,13 +1,13 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {MyAuctionsComponent} from './my-auctions.component';
-import {User} from '../../../../../models/user/user';
-import {Character} from '../../../../character/models/character.model';
-import {Item} from '../../../../../models/item/item';
-import {AuctionUtil} from '../../../../auction/utils/auction.util';
-import {Auction} from '../../../../auction/models/auction.model';
-import {TestModule} from '../../../../test.module';
-import {SharedService} from '../../../../../services/shared.service';
+import {User} from '../../../../models/user/user';
+import {Character} from '../../../character/models/character.model';
+import {Item} from '../../../../models/item/item';
+import {AuctionUtil} from '../../utils/auction.util';
+import {Auction} from '../../models/auction.model';
+import {TestModule} from '../../../test.module';
+import {SharedService} from '../../../../services/shared.service';
 
 describe('MyAuctionsComponent', () => {
   let component: MyAuctionsComponent;
