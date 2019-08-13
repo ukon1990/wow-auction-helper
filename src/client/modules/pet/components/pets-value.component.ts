@@ -7,6 +7,7 @@ import {AuctionsService} from '../../../services/auctions.service';
 import {PageEvent} from '@angular/material';
 import {Report} from '../../../utils/report.util';
 import {PetTableData} from '../models/pet-table-data.model';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-my-pets',
@@ -44,7 +45,8 @@ export class PetsValueComponent implements OnInit, OnDestroy {
 
   petValue = 0;
 
-  constructor(private ahService: AuctionsService) {
+  constructor(private ahService: AuctionsService, private title: Title) {
+    this.title.setTitle('WAH - Pet value');
   }
 
   ngOnInit() {

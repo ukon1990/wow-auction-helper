@@ -26,12 +26,7 @@ export class User {
   useVendorPriceForCraftingIfAvailable = true;
   useIntermediateCrafting = true;
   crafters: any[];
-  notifications: NotificationSettings = {
-    isUpdateAvailable: true,
-    isBelowVendorSell: true,
-    isUndercut: true,
-    isWatchlist: true
-  };
+  notifications: NotificationSettings = new NotificationSettings();
   watchlist: Watchlist = new Watchlist();
   shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
@@ -204,10 +199,7 @@ export class User {
           user.useIntermediateCrafting = JSON.parse(localStorage[key]);
           break;
         case 'notifications':
-          user.notifications = JSON.parse(localStorage[key]);
-          break;
-        case 'isDarkMode':
-          user.isDarkMode = JSON.parse(localStorage[key]);
+          user.notifications = new NotificationSettings(JSON.parse(localStorage[key]));
           break;
         case 'watchlist':
           if (isExport) {

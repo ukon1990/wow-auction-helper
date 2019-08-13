@@ -95,16 +95,7 @@ export class AuctionsService {
         console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
 
-        if (SharedService.user.notifications.isUndercut) {
-          try {
-            Notifications.send(
-              'WAH - Auction data just got updated',
-              `${SharedService.userAuctions.undercutAuctions} of your auctions were undercut.`
-            );
-          } catch (e) {
-            console.error('Could not send notification', e);
-          }
-        }
+        this.handleNotifications();
         SharedService.events.auctionUpdate.emit();
         this.events.list.next(a['auctions']);
         this.events.isDownloading.next(true);
@@ -247,5 +238,28 @@ export class AuctionsService {
   private isAuctionArrayEmpty(status: RealmStatus) {
     const list = this.events.list.getValue();
     return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
+  }
+
+  private handleNotifications() {
+    this.sendNewAuctionDataAvailable();
+    this.sendUndercutNotification();
+  }
+
+  private sendNewAuctionDataAvailable() {
+    const undercutAuctions = SharedService.userAuctions.undercutAuctions;
+    if (SharedService.user.notifications.isUpdateAvailable) {
+      Notifications.send(
+        'WAH - New auction data',
+        `There are new auctions available for ${SharedService.user.realm}.`);
+    }
+  }
+
+  private sendUndercutNotification() {
+    const undercutAuctions = SharedService.userAuctions.undercutAuctions;
+    if (SharedService.user.notifications.isUndercut && undercutAuctions > 0) {
+      Notifications.send(
+        'WAH - You have been undercut',
+        `${undercutAuctions} of your auctions were undercut.`);
+    }
   }
 }

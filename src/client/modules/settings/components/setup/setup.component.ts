@@ -134,10 +134,7 @@ export class SetupComponent implements OnInit {
 
   redirectUserFromRestore(): void {
     this._router.navigateByUrl('/crafting');
-    this.angulartics2.eventTrack.next({
-      action: 'Imported existing setup',
-      properties: {category: 'User registration'},
-    });
+    Report.send('Imported existing setup', 'User registration');
   }
 
   completeSetup(): void {
