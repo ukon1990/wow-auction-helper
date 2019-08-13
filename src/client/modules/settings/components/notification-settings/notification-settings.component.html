@@ -1,12 +1,23 @@
 
-<div *ngIf="isHttps(); else notHttps">
-  Only send notifications:
-  <form [formGroup]="form"><!--
-    <mat-checkbox formControlName="isUpdateAvailable">Whenever the AH updates</mat-checkbox>-->
-    <mat-checkbox formControlName="isUndercut">If I'm undercut</mat-checkbox><!--
-    <mat-checkbox formControlName="isWatchlist">If there are one or more matches to my watchlist</mat-checkbox>
-    <mat-checkbox formControlName="isBelowVendorSell">Items are below vendor sell price</mat-checkbox>-->
-  </form>
+<div *ngIf="isHttps; else notHttps">
+  <label id="notifications-radio-group-label">Only send notifications:</label>
+  <br>
+  <mat-radio-group
+          aria-labelledby="notifications-radio-group-label"
+          [formControl]="notificationsForm">
+    <mat-radio-button value="disableNotifications">
+      Disable notifications
+    </mat-radio-button>
+    <br>
+    <mat-radio-button value="isUpdateAvailable">
+      Whenever the AH updates
+    </mat-radio-button>
+    <br>
+    <mat-radio-button value="isUndercut">
+      If I'm undercut
+    </mat-radio-button>
+  </mat-radio-group>
+  <br>
 
   Test notification: <button (click)="sendTest()" mat-raised-button>Send</button>
 </div>

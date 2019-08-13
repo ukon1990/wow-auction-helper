@@ -10,7 +10,7 @@ import {
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
-  MatFormFieldModule, MatInputModule,
+  MatFormFieldModule, MatInputModule, MatRadioModule,
   MatSelectModule,
   MatSlideToggleModule,
   MatStepperModule,
@@ -60,7 +60,8 @@ import {CoreModule} from '../core/core.module';
     MatTooltipModule,
     IconModule,
     UtilModule,
-    CoreModule
+    CoreModule,
+    MatRadioModule
   ],
   exports: [RealmListComponent]
 })

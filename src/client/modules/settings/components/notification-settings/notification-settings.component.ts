@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {Subscription} from 'rxjs';
 import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {Notifications} from '../../../../models/user/notification';
+import {TextUtil} from '@ukon1990/js-utilities';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-notification-settings',
@@ -11,24 +13,22 @@ import {Notifications} from '../../../../models/user/notification';
   styleUrls: ['./notification-settings.component.scss']
 })
 export class NotificationSettingsComponent implements OnInit, OnDestroy {
-
-  form: FormGroup;
+  isHttps = location.protocol === 'https:' || TextUtil.contains(location.href, 'localhost');
+  notificationsForm: FormControl;
   formChanges: Subscription;
 
-  constructor(private _formBuilder: FormBuilder) {
-    this.form = this._formBuilder.group({
-      isUpdateAvailable: SharedService.user.notifications.isUpdateAvailable,
-      isBelowVendorSell: SharedService.user.notifications.isBelowVendorSell,
-      isUndercut: SharedService.user.notifications.isUndercut,
-      isWatchlist: SharedService.user.notifications.isWatchlist
-    });
+  constructor() {
+    const notifications = SharedService.user.notifications.getString();
+
+    this.notificationsForm = new FormControl(notifications);
   }
 
   ngOnInit(): void {
-    this.formChanges = this.form.valueChanges.subscribe( (change) => {
-      SharedService.user.notifications.isUndercut = change.isUndercut;
-      User.save();
-    });
+    this.formChanges = this.notificationsForm.valueChanges
+      .subscribe((change) => {
+        SharedService.user.notifications.setString(change);
+        User.save();
+      });
   }
 
   ngOnDestroy(): void {
@@ -37,9 +37,5 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
 
   sendTest(): void {
     Notifications.send('This is a test', 'This is a test');
-  }
-
-  isHttps(): boolean {
-    return location.protocol === 'https:';
   }
 }
