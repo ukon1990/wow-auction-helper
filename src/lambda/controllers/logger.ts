@@ -15,12 +15,18 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) =>
   new LogController(event, callback).clientEvent();
 
+
+/* istanbul ignore next */
+exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Callback) =>
+  new LogController(event, callback).deleteClient();
+
 export class LogController {
   detail;
   userId: string;
 
   constructor(public event: APIGatewayEvent, public callback: Callback) {
-    this.detail = event['detail'];
+    console.log(this.event, this.event['identity']);
+    this.detail = this.event.requestContext['identity'];
     this.userId = this.generateId();
   }
 
@@ -54,6 +60,7 @@ export class LogController {
       if (!entry.userId) {
         entry.userId = this.userId;
       }
+      console.log(LogQuery.userEvent(entry));
       new DatabaseUtil()
         .query(LogQuery.userEvent(entry))
         .then(r =>
@@ -65,9 +72,26 @@ export class LogController {
     }
   }
 
+  deleteClient(): void {
+    try {
+      const entry: LogEntry = JSON.parse(this.event.body);
+      if (!entry.userId) {
+        entry.userId = this.userId;
+      }
+      new DatabaseUtil()
+        .query(LogQuery.deleteUser(entry))
+        .then(r =>
+          Response.send({success: true, userId: entry.userId}, this.callback))
+        .catch(e =>
+          Response.error(this.callback, e, this.event));
+    } catch (e) {
+      Response.error(this.callback, e, this.event);
+    }
+  }
+
   private generateId() {
     return crypto.createHash('sha256')
-      .update(this.detail.sourceIPAddress)
+      .update(this.detail.sourceIp)
       .digest('base64');
   }
 }

@@ -51,6 +51,10 @@ export class User {
 
     Object.keys(user).forEach(key => {
       switch (key) {
+        case 'doNotReport':
+          localStorage.setItem(key, JSON.stringify(user[key]));
+          SharedService.user[key] = user[key];
+          break;
         case 'faction':
           localStorage['faction'] = user[key];
           SharedService.user.faction = +user[key];

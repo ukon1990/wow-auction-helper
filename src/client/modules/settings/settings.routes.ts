@@ -7,7 +7,6 @@ import {CustomPricesComponent} from './components/crafting-settings/custom-price
 import {CustomProcComponent} from './components/crafting-settings/custom-proc/custom-proc.component';
 import {CharactersComponent} from '../character/components/characters.component';
 import {NotificationSettingsComponent} from './components/notification-settings/notification-settings.component';
-import {NgModule} from '@angular/core';
 
 export const SETTINGS_ROUTE: Route = {
   path: 'settings',

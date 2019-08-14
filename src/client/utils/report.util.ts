@@ -2,6 +2,7 @@ import {Angulartics2} from 'angulartics2';
 import {environment} from '../../environments/environment';
 import {ReportService} from '../services/report/report.service';
 import {SharedService} from '../services/shared.service';
+import {NavigationEnd} from '@angular/router';
 
 declare function require(moduleName: string): any;
 
@@ -31,5 +32,12 @@ export class Report {
     if (!environment.production) {
       console.log(message, ...optionalParams);
     }
+  }
+
+  static navigation(event: NavigationEnd) {
+    if (!environment.production || SharedService.user.doNotReport || !(event instanceof NavigationEnd)) {
+      return;
+    }
+    this.service.send(event.urlAfterRedirects, `Redirect no.${event.id}`, version, 'navigation');
   }
 }

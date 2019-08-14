@@ -24,10 +24,21 @@ export class ReportService {
         locale: localStorage['locale'],
         browserLocale: navigator.language,
         isClassic: false,
-        platform: navigator.platform
+        platform: navigator.platform,
+        userId: localStorage.getItem('logUserId')
       } as LogEntry)
       .toPromise()
-      .then(() => {})
+      .then((res) => {
+        localStorage.setItem('logUserId', res['userId']);
+      })
       .catch(console.error);
+  }
+
+  delete(): Promise<any> {
+    return this.http.delete(
+      Endpoints.getLambdaUrl('logger/client-event'))
+      .toPromise()
+      .then(r =>
+        localStorage.removeItem('logUserId'));
   }
 }
