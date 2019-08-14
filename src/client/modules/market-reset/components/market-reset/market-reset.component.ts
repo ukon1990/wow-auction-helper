@@ -41,7 +41,7 @@ export class MarketResetComponent implements OnInit {
     itemsToBuy: 0,
     auctionsToBuy: 0
   };
-  private rowShoppingString = '';
+  rowShoppingString = '';
 
   constructor(private formBuilder: FormBuilder, private service: AuctionsService) {
     const query = localStorage['query_market_reset'] ?
@@ -49,6 +49,7 @@ export class MarketResetComponent implements OnInit {
     this.form = this.formBuilder.group({
       name: new FormControl(query.name),
       timeToSell: new FormControl(query.timeToSell),
+      breakPointPercent: new FormControl(query.breakPointPercent || 110),
       mktPriceUpperThreshold: new FormControl(query.mktPriceUpperThreshold),
       minROI: new FormControl(query.minROI),
       minROIPercent: new FormControl(query.minROIPercent),
@@ -89,7 +90,7 @@ export class MarketResetComponent implements OnInit {
         return;
       }
 
-      const item: ItemReset = new ItemReset(ai);
+      const item: ItemReset = new ItemReset(ai, query.breakPointPercent / 100);
       for (let i = 0, l = item.breakPoints.length; i < l; i++) {
         const bp = item.breakPoints[i];
         if (Filters.isXSmallerThanY(bp.sellTime, query.timeToSell)) {

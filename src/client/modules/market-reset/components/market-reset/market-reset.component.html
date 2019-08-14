@@ -1,60 +1,71 @@
-<em>
-  This tool is still a work in progress, but you may feel free to try it out.
-</em>
+<form [formGroup]="form">
+  <mat-form-field>
+    <input matInput placeholder="Item name" formControlName="name">
+  </mat-form-field>
 
-<div *ngIf="!hasDefinedAPI; else apiDefined">
-  This functionality needs either a TSM or WoWUction API key to function, as it relies on the market value for now.
-</div>
-
-<ng-template #apiDefined>
-
-  <form [formGroup]="form">
+  <mat-form-field>
+    <input matInput placeholder="ROI increment percent"
+           formControlName="breakPointPercent"
+           type="number"
+            min="101">
+  </mat-form-field>
+  <ng-container *ngIf="hasDefinedAPI">
     <mat-form-field>
-      <input matInput placeholder="Item name" formControlName="name">
+      <input matInput
+             placeholder="Est time to sell"
+             formControlName="timeToSell"
+             type="number"
+              min="0">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Est time to sell" formControlName="timeToSell">
+      <input matInput
+             placeholder="Max mkt"
+             type="number"
+             formControlName="mktPriceUpperThreshold">
     </mat-form-field>
+  </ng-container>
+  <mat-form-field>
+    <input matInput
+           placeholder="Min ROI in gold"
+           formControlName="minROI"
+           type="number"
+           min="0">
+  </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Max mkt" formControlName="mktPriceUpperThreshold">
-    </mat-form-field>
+  <mat-form-field>
+    <input matInput
+           placeholder="Min ROI in percent"
+           formControlName="minROIPercent"
+           type="number"
+           min="0">
+  </mat-form-field>
+</form>
 
-    <mat-form-field>
-      <input matInput placeholder="Min ROI in gold" formControlName="minROI">
-    </mat-form-field>
+<p>
+  <strong>Potential profit</strong> {{ sum?.potentialProfit | gold }},
+  <strong>Sum cost:</strong> {{ sum?.sumCost | gold }},
+  <strong>Items to buy:</strong> {{ sum?.itemsToBuy | number }}
+</p>
 
-    <mat-form-field>
-      <input matInput placeholder="Min ROI in percent" formControlName="minROIPercent">
-    </mat-form-field>
-  </form>
-
-  <p>
-    <strong>Potential profit</strong> {{ sum?.potentialProfit | gold }},
-    <strong>Sum cost:</strong> {{ sum?.sumCost | gold }},
-    <strong>Items to buy:</strong> {{ sum?.itemsToBuy | number }}
-  </p>
-
-  <mat-form-field *ngIf="tsmShoppingString.length > 0" class="row col-md-12">
+<mat-form-field *ngIf="tsmShoppingString.length > 0" class="row col-md-12">
     <textarea matInput placeholder="TSM shopping string"
               [value]="tsmShoppingString"></textarea>
-  </mat-form-field>
+</mat-form-field>
 
 
-  <p>Click on a row(not the name) to get the TSM string for it.</p>
-  <mat-form-field *ngIf="rowShoppingString.length > 0" class="row col-md-12">
+<p>Click on a row(not the name) to get the TSM string for it.</p>
+<mat-form-field *ngIf="rowShoppingString.length > 0" class="row col-md-12">
     <textarea matInput placeholder="Shopping string for the selected row"
               [value]="rowShoppingString"></textarea>
-  </mat-form-field>
+</mat-form-field>
 
-  <wah-data-table
-          *ngIf="data"
-          iconSize="22"
-          itemsPerPage="20"
-          id="itemID"
-          [data]="data"
-          [columns]="columns"
-          (rowClicked)="setRoShoppingString($event)">
-  </wah-data-table>
-</ng-template>
+<wah-data-table
+        *ngIf="data"
+        iconSize="22"
+        itemsPerPage="20"
+        id="itemID"
+        [data]="data"
+        [columns]="columns"
+        (rowClicked)="setRoShoppingString($event)">
+</wah-data-table>
