@@ -1,16 +1,17 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
-import { SharedService } from '../../../../../services/shared.service';
-import { Item } from '../../../../../models/item/item';
-import { CustomPrice, CustomPrices } from '../../../../crafting/models/custom-price';
-import { ColumnDescription } from '../../../../table/models/column-description';
-import { Crafting } from '../../../../crafting/models/crafting';
-import { Angulartics2 } from 'angulartics2';
-import { CustomProc, CustomProcs } from '../../../../crafting/models/custom-proc';
-import { Recipe } from '../../../../crafting/models/recipe';
-import { customProcsDefault } from '../../../../crafting/models/default-custom-procs';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {FormBuilder, FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {startWith, map} from 'rxjs/operators';
+import {SharedService} from '../../../../../services/shared.service';
+import {Item} from '../../../../../models/item/item';
+import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
+import {ColumnDescription} from '../../../../table/models/column-description';
+import {Crafting} from '../../../../crafting/models/crafting';
+import {Angulartics2} from 'angulartics2';
+import {CustomProc, CustomProcs} from '../../../../crafting/models/custom-proc';
+import {Recipe} from '../../../../crafting/models/recipe';
+import {customProcsDefault} from '../../../../crafting/models/default-custom-procs';
+import {Report} from '../../../../../utils/report.util';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -25,17 +26,17 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   saveInterval: any;
   @Input() itemID: number;
 
-  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
+  constructor(private _formBuilder: FormBuilder) {
     this.filteredItems = this.itemSearchForm.valueChanges
       .pipe(
         startWith(''),
         map(name => this.filter(name))
       );
-    this.columns.push({ key: 'rank', title: 'Rank', dataType: '' });
-    this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
-    this.columns.push({ key: 'profession', title: 'Profession', dataType: '' });
-    this.columns.push({ key: 'rate', title: 'Rate', dataType: 'input-number' });
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['custom-procs-delete'] });
+    this.columns.push({key: 'rank', title: 'Rank', dataType: ''});
+    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
+    this.columns.push({key: 'profession', title: 'Profession', dataType: ''});
+    this.columns.push({key: 'rate', title: 'Rate', dataType: 'input-number'});
+    this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['custom-procs-delete']});
   }
 
   ngOnInit(): void {
@@ -57,10 +58,8 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   add(recipe: Recipe): void {
     this.itemSearchForm.setValue('');
     CustomProcs.add(recipe);
-    this.angulartics2.eventTrack.next({
-      action: 'Added custom proc',
-      properties: { category: 'Custom proc' },
-    });
+
+    Report.send('Added custom proc', 'Custom proc');
   }
 
   getCustomProcs(): Array<CustomProc> {
@@ -76,7 +75,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
    * @param name Item name for the query
    */
   private filter(name: string): Array<Recipe> {
-    return SharedService.recipes.filter( i =>
+    return SharedService.recipes.filter(i =>
       i.name.toLowerCase().indexOf(name.toLowerCase()) !== -1).slice(0, 20);
   }
 

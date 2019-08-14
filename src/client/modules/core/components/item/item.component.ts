@@ -91,7 +91,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   ];
   private isUsing3PAPI: boolean;
 
-  constructor(private _wowDBService: WowdbService, private angulartics2: Angulartics2) {
+  constructor(private _wowDBService: WowdbService) {
   }
 
   ngOnInit(): void {
@@ -108,13 +108,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     this.subscriptions.add(
       (this.tabs as MatTabGroup)
         .selectedTabChange,
-      (event: MatTabChangeEvent) => {
-        this.angulartics2.eventTrack.next({
-          action: `Changed tab to ${event.tab.textLabel}`,
-          properties: {category: `Item detail view`},
-        });
-      }
-    );
+      (event: MatTabChangeEvent) =>
+        Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`));
 
     this.subscriptions.add(
       ItemService.itemSelection,
@@ -172,10 +167,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       window.open(url, '_blank');
     }
 
-    this.angulartics2.eventTrack.next({
-      action: `Opened ${target}`,
-      properties: {category: `Item detail view`},
-    });
+    Report.send(`Opened ${target}`, `Item detail view`);
   }
 
   /* istanbul ignore next */
@@ -201,10 +193,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
         SharedService.recipesMapPerItemKnown[SharedService.selectedItemId],
         this.shoppingCartQuantityField.value);
 
-    this.angulartics2.eventTrack.next({
-      action: 'Added to recipe shopping cart',
-      properties: {category: 'Item detail view'},
-    });
+    Report.send('Added to recipe shopping cart', 'Item detail view');
   }
 
   /* istanbul ignore next */

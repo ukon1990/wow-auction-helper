@@ -1,6 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MarketResetComponent } from './market-reset.component';
+import {MarketResetComponent} from './market-reset.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MaterialModule} from '../../../material.module';
+import {TableModule} from '../../../table/table.module';
+import {UtilModule} from '../../../util/util.module';
 
 fdescribe('MarketResetComponent', () => {
   let component: MarketResetComponent;
@@ -8,7 +12,14 @@ fdescribe('MarketResetComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MarketResetComponent ]
+      declarations: [ MarketResetComponent ],
+      imports: [
+        ReactiveFormsModule,
+        FormsModule,
+        MaterialModule,
+        TableModule,
+        UtilModule
+      ]
     })
     .compileComponents();
   }));
