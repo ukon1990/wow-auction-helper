@@ -31,33 +31,46 @@ export class ItemReset {
     let totalValue = 0;
     let itemCount = 0;
     let auctionCount = 0;
-    this.auctionItem.auctions.forEach((auction: Auction, index: number) => {
+    const auctions = this.auctionItem.auctions
+      .filter(ai => ai.buyout > 0);
+    auctions.forEach((auction: Auction, index: number) => {
       const previousBreakPoint: ItemResetBreakpoint = this.breakPoints[this.breakPoints.length - 1];
+      const previousTotalValue = totalValue;
       totalValue += auction.buyout;
       itemCount += auction.quantity;
       auctionCount++;
-      const avgBuyout = totalValue / itemCount;
-      const newBuyout = auction.buyout / auction.quantity;
-      const potentialValue = newBuyout * itemCount * Crafting.ahCutModifier;
-      const potentialProfitPercent = potentialValue / totalValue;
-
-      if (this.isGreaterThanPreviousBreakpoint(previousBreakPoint, avgBuyout) ||
-        this.isPercentBreakPointMatch(previousBreakPoint, potentialProfitPercent)) {
-        this.breakPoints.push(new ItemResetBreakpoint(
-          this.breakPoints.length + 1,
-          potentialProfitPercent,
-          potentialValue - totalValue,
-          avgBuyout,
-          newBuyout,
-          totalValue,
-          potentialValue,
-          itemCount,
-          auctionCount,
-          this.auctionItem,
-          this.auctionItem.auctions.slice(0, index)
-        ));
-      }
+      this.processAuction(
+        previousTotalValue, totalValue, itemCount, auction,
+        previousBreakPoint, index, auctionCount, auctions);
     });
+  }
+
+  private processAuction(
+    previousTotalValue: number,
+    totalValue: number, itemCount: number, auction: Auction,
+    previousBreakPoint: ItemResetBreakpoint, index: number,
+    auctionCount: number, auctions: Auction[]) {
+    const avgBuyout = totalValue / itemCount;
+    const newBuyout = auction.buyout / auction.quantity;
+    const potentialValue = newBuyout * itemCount * Crafting.ahCutModifier;
+    const potentialProfitPercent = potentialValue / totalValue;
+
+    if (this.isGreaterThanPreviousBreakpoint(previousBreakPoint, avgBuyout) ||
+      this.isPercentBreakPointMatch(previousBreakPoint, potentialProfitPercent)) {
+      this.breakPoints.push(new ItemResetBreakpoint(
+        this.breakPoints.length + 1,
+        potentialProfitPercent,
+        potentialValue - totalValue,
+        avgBuyout,
+        newBuyout,
+        previousTotalValue,
+        potentialValue,
+        itemCount,
+        auctionCount,
+        this.auctionItem,
+        auctions.slice(0, index)
+      ));
+    }
   }
 
   private isPercentBreakPointMatch(previousBreakPoint: ItemResetBreakpoint, potentialProfitPercent) {

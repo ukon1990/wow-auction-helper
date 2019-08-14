@@ -143,4 +143,8 @@ export class Filters {
     return EmptyUtil.isNullOrUndefined(profit) || profit === 0 ||
       recipe.buyout > 0 && recipe.cost > 0 && profit <= recipe.roi / recipe.cost * 100;
   }
+
+  static isXSmallerThanY(x: number, y: number) {
+    return EmptyUtil.isNullOrUndefined(y) || x < y;
+  }
 }

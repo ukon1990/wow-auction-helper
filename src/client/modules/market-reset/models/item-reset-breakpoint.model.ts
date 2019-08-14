@@ -20,8 +20,8 @@ export class ItemResetBreakpoint {
     public auctionCount: number,
     public auctionItem: AuctionItem,
     public auctions: Auction[]) {
-    this.newBuyout = this.potentialValue / this.itemCount;
     this.setPotentialSellTime();
+    this.setShoppingString();
   }
 
   private setPotentialSellTime() {
