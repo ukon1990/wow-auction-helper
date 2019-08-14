@@ -18,7 +18,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 @NgModule({
   declarations: [
     AuctionsComponent,
-    MyAuctionsComponent,
+    MyAuctionsComponent
   ],
   imports: [
     CommonModule,

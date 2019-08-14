@@ -63,7 +63,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   getBonusList = Auction.getBonusList;
   theme = ThemeUtil.current;
 
-  constructor(private angulartics2: Angulartics2) {
+  constructor() {
     this.sorter = new Sorter();
   }
 
@@ -276,21 +276,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   moveGroup(from: number, to: number): void {
     const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
     SharedService.user.watchlist.moveGroup(pagignationIndex + from, pagignationIndex + to);
-    this.angulartics2.eventTrack.next({
-      action: `Changed group position`,
-      properties: {category: 'Watchlist'},
-    });
+    Report.send(`Changed group position`, 'Watchlist');
   }
 
   removeGroup(index: number): void {
     const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
     SharedService.user.watchlist.removeGroup(pagignationIndex + index);
 
-    this.angulartics2.eventTrack.next({
-      action: 'Removed group',
-      properties: {category: 'Watchlist'},
-    });
     this.pageEvent.pageIndex = 0;
+    Report.send('Removed group', 'Watchlist');
   }
 
   removeFromList(i): void {
@@ -300,10 +294,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   removeRecipe(recipe: ShoppingCartItem, index: number): void {
     SharedService.user.shoppingCart.remove(recipe.id);
-    this.angulartics2.eventTrack.next({
-      action: 'Removed recipe',
-      properties: {category: 'Shopping cart'},
-    });
+
+    Report.send('Removed recipe', 'Shopping cart');
   }
 
   /* istanbul ignore next */

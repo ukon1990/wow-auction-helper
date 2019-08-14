@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, Input, OnChanges} from '@angular/core';
-import {AbstractControl, FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {Angulartics2} from 'angulartics2';
+import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
 import {MatSnackBar} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
 import {CharacterService} from '../../../services/character.service';
@@ -34,8 +33,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
               private realmService: RealmService,
               private craftingService: CraftingService,
               private auctionService: AuctionsService,
-              private formBuilder: FormBuilder,
-              private angulartics2: Angulartics2
+              private formBuilder: FormBuilder
   ) {
     this.form = this.formBuilder.group({
       region: SharedService.user.region,
@@ -95,10 +93,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     if (!c.error && c.status !== 'nok') {
       this.processCharacter(c);
       this.openSnackbar(`${c.name} was successfully added`);
-      this.angulartics2.eventTrack.next({
-        action: 'Added character',
-        properties: {category: 'Characters'},
-      });
+
+      Report.send('Added character', 'Characters');
     } else {
       if (c.error.status === 404) {
         ErrorReport.sendHttpError(

@@ -1,12 +1,12 @@
-import { Component, Input, OnInit , OnDestroy } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 
-import { FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { Angulartics2 } from 'angulartics2';
-import {GoldPipe} from '../../../../util/pipes/gold.pipe';
-import {SharedService} from '../../../../../services/shared.service';
-import {AuctionItem} from '../../../../auction/models/auction-item.model';
-import {Crafting} from '../../../../crafting/models/crafting';
+import {FormControl} from '@angular/forms';
+import {Subscription} from 'rxjs';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
+import {SharedService} from '../../../../services/shared.service';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {Crafting} from '../../../crafting/models/crafting';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-reset-calc',
@@ -27,13 +27,10 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
 
   formChanges: Subscription;
 
-  constructor(private angulartics2: Angulartics2) {
+  constructor() {
     this.formChanges = this.form.valueChanges.subscribe(() => {
       this.calculate();
-      this.angulartics2.eventTrack.next({
-        action: 'Calculated',
-        properties: { category: 'Reset calc' },
-      });
+      Report.send('Calculated', 'Reset calc');
     });
   }
 

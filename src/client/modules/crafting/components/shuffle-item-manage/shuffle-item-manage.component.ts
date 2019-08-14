@@ -1,14 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
-import { Angulartics2 } from 'angulartics2';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {startWith, map} from 'rxjs/operators';
+import {FormControl} from '@angular/forms';
+import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Remains, RemainsSource} from '../../../../models/item/remains.model';
 import {Item} from '../../../../models/item/item';
 import {ColumnDescription} from '../../../table/models/column-description';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-shuffle-item-manage',
@@ -23,17 +24,17 @@ export class ShuffleItemManageComponent implements OnInit {
   filteredItems: Observable<Array<Item>>;
   itemSearchForm: FormControl = new FormControl();
   itemSourceColumns: ColumnDescription[] = [
-    { key: 'name', title: 'Name', dataType: 'name' },
-    { key: 'count', title: 'Count', dataType: 'input-number'},
-    { key: '', title: 'Actions', dataType: 'action', actions: ['remove-from-list'] }
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'count', title: 'Count', dataType: 'input-number'},
+    {key: '', title: 'Actions', dataType: 'action', actions: ['remove-from-list']}
   ];
 
-  constructor(private angulartics2: Angulartics2) {
+  constructor() {
     this.filteredItems = this.itemSearchForm.valueChanges
-    .pipe(
-      startWith(''),
-      map(name => this.filter(name))
-    );
+      .pipe(
+        startWith(''),
+        map(name => this.filter(name))
+      );
   }
 
   ngOnInit() {
@@ -56,10 +57,7 @@ export class ShuffleItemManageComponent implements OnInit {
     ProspectingAndMillingUtil.save();
     this.closeEditWindow();
 
-    this.angulartics2.eventTrack.next({
-      action: `${ this.isEditing ? 'Edited' : 'Added' } - ${ this.newRemains.name }`,
-      properties: { category: `Shuffle` },
-    });
+    Report.send(`${this.isEditing ? 'Edited' : 'Added'} - ${this.newRemains.name}`, `Shuffle`);
   }
 
   setItemSource(item: Item): void {
@@ -72,9 +70,9 @@ export class ShuffleItemManageComponent implements OnInit {
   }
 
   /**
- * Such efficient, such ugh
- * @param name Item name for the query
- */
+   * Such efficient, such ugh
+   * @param name Item name for the query
+   */
   private filter(name: string): Array<Item> {
     if (name === null) {
       name = '';

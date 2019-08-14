@@ -1,15 +1,16 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
-import { Angulartics2 } from 'angulartics2';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {FormBuilder, FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {startWith, map} from 'rxjs/operators';
+import {Angulartics2} from 'angulartics2';
 
-import { SharedService } from '../../../../../services/shared.service';
-import { Item } from '../../../../../models/item/item';
-import { CustomPrice, CustomPrices } from '../../../../crafting/models/custom-price';
-import { ColumnDescription } from '../../../../table/models/column-description';
-import { Crafting } from '../../../../crafting/models/crafting';
-import { customPricesDefault } from '../../../../crafting/models/default-custom-prices';
+import {SharedService} from '../../../../../services/shared.service';
+import {Item} from '../../../../../models/item/item';
+import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
+import {ColumnDescription} from '../../../../table/models/column-description';
+import {Crafting} from '../../../../crafting/models/crafting';
+import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
+import {Report} from '../../../../../utils/report.util';
 
 @Component({
   selector: 'wah-custom-prices',
@@ -24,16 +25,16 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   saveInterval: any;
   @Input() itemID: number;
 
-  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
+  constructor(private _formBuilder: FormBuilder) {
     this.filteredItems = this.itemSearchForm.valueChanges
       .pipe(
         startWith(''),
         map(name => this.filter(name))
       );
-    this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
-    this.columns.push({ key: 'price', title: 'Price', dataType: 'gold' });
-    this.columns.push({ key: 'price', title: 'Price in copper', dataType: 'input-number' });
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['custom-price-delete'] });
+    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
+    this.columns.push({key: 'price', title: 'Price', dataType: 'gold'});
+    this.columns.push({key: 'price', title: 'Price in copper', dataType: 'input-number'});
+    this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['custom-price-delete']});
   }
 
   ngOnInit(): void {
@@ -57,10 +58,8 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   add(item: Item): void {
     CustomPrices.add(item);
     this.itemSearchForm.setValue('');
-    this.angulartics2.eventTrack.next({
-      action: 'Added custom price',
-      properties: { category: 'Custom price' },
-    });
+
+    Report.send('Added custom price', 'Custom price');
   }
 
   getCustomPrices(): Array<CustomPrice> {
@@ -76,7 +75,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
    * @param name Item name for the query
    */
   private filter(name: string): Array<Item> {
-    return SharedService.itemsUnmapped.filter( i =>
+    return SharedService.itemsUnmapped.filter(i =>
       i.name.toLowerCase().indexOf(name.toLowerCase()) !== -1).slice(0, 20);
   }
 

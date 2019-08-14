@@ -57,8 +57,7 @@ export class SetupComponent implements OnInit {
 
   sm = new SubscriptionManager();
 
-  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router,
-              private angulartics2: Angulartics2) {
+  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router) {
     this.form = this._formBuilder.group({
       region: ['eu', Validators.required],
       realm: [null, Validators.required],
@@ -109,7 +108,7 @@ export class SetupComponent implements OnInit {
   }
 
   importFromFile(fileEvent): void {
-    console.log('File', fileEvent);
+    Report.debug('File', fileEvent);
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {
@@ -119,10 +118,7 @@ export class SetupComponent implements OnInit {
 
         User.import(reader.result as string);
 
-        this.angulartics2.eventTrack.next({
-          action: 'Imported existing setup from file',
-          properties: {category: 'User registration'},
-        });
+        Report.send('Imported existing setup from file', 'User registration');
 
         this.redirectUserFromRestore();
       } catch (e) {

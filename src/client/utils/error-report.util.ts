@@ -2,6 +2,7 @@ import {Angulartics2} from 'angulartics2';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from '../services/shared.service';
 import {MatSnackBar} from '@angular/material';
+import {environment} from '../../environments/environment';
 
 declare function require(moduleName: string): any;
 
@@ -17,12 +18,13 @@ export class ErrorReport {
   }
 
   public static sendHttpError(error: HttpErrorResponse, options?: ErrorOptions): void {
-    if (error.status !== 0 && error.status !== undefined && ErrorReport.ga) {
+    if (!this.doNotReport() && error.status !== 0 && error.status !== undefined) {
       ErrorReport.ga.eventTrack.next({
         action: `${error.status} - ${error.statusText}`,
         properties: {
           category: `Http errors (${version})`,
-          label: `${error.url} - ${SharedService.user.realm}@${SharedService.user.region}`
+          label: `${error.url} - ${SharedService.user.realm}@${SharedService.user.region}`,
+          version
         },
       });
 
@@ -37,13 +39,18 @@ export class ErrorReport {
     }
   }
 
+  private static doNotReport() {
+    return !ErrorReport.ga || !environment.production;
+  }
+
   public static sendError(functionName: string, error: Error, options?: ErrorOptions): void {
-    if (ErrorReport.ga) {
+    if (!this.doNotReport()) {
       ErrorReport.ga.eventTrack.next({
         action: `Error: ${functionName}`,
         properties: {
           category: `Errors (${version})`,
-          label: `${functionName}: ${error.name} - ${error.message} - ${error.stack}`
+          label: `${functionName}: ${error.name} - ${error.message} - ${error.stack}`,
+          version
         },
       });
     }

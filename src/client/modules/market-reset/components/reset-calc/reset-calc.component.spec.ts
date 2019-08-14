@@ -1,20 +1,21 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MarketResetComponent } from './market-reset.component';
+import { ResetCalcComponent } from './reset-calc.component';
+import {TestModule} from '../../../test.module';
 
-describe('MarketResetComponent', () => {
-  let component: MarketResetComponent;
-  let fixture: ComponentFixture<MarketResetComponent>;
+describe('ResetCalcComponent', () => {
+  let component: ResetCalcComponent;
+  let fixture: ComponentFixture<ResetCalcComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MarketResetComponent ]
+      imports: [TestModule]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MarketResetComponent);
+    fixture = TestBed.createComponent(ResetCalcComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

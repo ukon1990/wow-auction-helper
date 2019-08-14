@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { Angulartics2 } from 'angulartics2';
-import {GoldPipe} from '../../../../util/pipes/gold.pipe';
-import {SharedService} from '../../../../../services/shared.service';
-import {ColumnDescription} from '../../../../table/models/column-description';
-import {MarketResetCost} from '../../../../auction/models/market-reset-cost.model';
-import {Filters} from '../../../../../utils/filtering';
-import {Crafting} from '../../../../crafting/models/crafting';
-import {AuctionItem} from '../../../../auction/models/auction-item.model';
-import {Auction} from '../../../../auction/models/auction.model';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
+import {SharedService} from '../../../../services/shared.service';
+import {ColumnDescription} from '../../../table/models/column-description';
+import {MarketResetCost} from '../../../auction/models/market-reset-cost.model';
+import {Filters} from '../../../../utils/filtering';
+import {Crafting} from '../../../crafting/models/crafting';
+import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {Auction} from '../../../auction/models/auction.model';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-market-reset',
@@ -30,7 +30,7 @@ export class MarketResetComponent implements OnInit {
     auctionsToBuy: 0
   };
 
-  constructor(private formBuilder: FormBuilder, private angulartics2: Angulartics2) {
+  constructor(private formBuilder: FormBuilder) {
     const query = localStorage['query_market_reset'] ?
       JSON.parse(localStorage['query_market_reset']) : undefined;
     this.form = this.formBuilder.group({
@@ -61,27 +61,24 @@ export class MarketResetComponent implements OnInit {
   }
 
   addColumns(): void {
-    this.columns.push({ key: 'name', title: 'Name', dataType: 'name' });
-    this.columns.push({ key: 'auctionCount', title: 'Auction count', dataType: 'number' });
-    this.columns.push({ key: 'itemCount', title: 'Item count', dataType: 'number' });
-    this.columns.push({ key: 'cost', title: 'Cost', dataType: 'gold' });
-    this.columns.push({ key: 'avgItemCost', title: 'Avg cost per item', dataType: 'gold' });
-    this.columns.push({ key: 'targetPrice', title: 'Target price', dataType: 'gold' });
-    this.columns.push({ key: 'roi', title: 'Potential profit', dataType: 'gold' });
+    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
+    this.columns.push({key: 'auctionCount', title: 'Auction count', dataType: 'number'});
+    this.columns.push({key: 'itemCount', title: 'Item count', dataType: 'number'});
+    this.columns.push({key: 'cost', title: 'Cost', dataType: 'gold'});
+    this.columns.push({key: 'avgItemCost', title: 'Avg cost per item', dataType: 'gold'});
+    this.columns.push({key: 'targetPrice', title: 'Target price', dataType: 'gold'});
+    this.columns.push({key: 'roi', title: 'Potential profit', dataType: 'gold'});
 
     if (SharedService.user.apiToUse !== 'none') {
-      this.columns.push({ key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true });
-      this.columns.push({ key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true });
+      this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+      this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     }
 
-    this.columns.push({ key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true });
+    this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
   }
 
   setResults() {
-    this.angulartics2.eventTrack.next({
-      action: 'Calculated',
-      properties: { category: 'Market reset calc' },
-    });
+    Report.send('Calculated', 'Market reset calc');
 
     let tmpItem: MarketResetCost;
     this.sum = {
@@ -138,7 +135,7 @@ export class MarketResetComponent implements OnInit {
       this.tsmShoppingString += `${
         SharedService.items[mrc.itemID].name
       }/exact/1c/${
-        this.pipe.transform(mrc.targetPrice - 1 ).replace(',', '')
+        this.pipe.transform(mrc.targetPrice - 1).replace(',', '')
       };`;
     });
 

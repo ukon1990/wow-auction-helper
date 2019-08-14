@@ -3,6 +3,7 @@ import {Angulartics2} from 'angulartics2';
 import {Subscription} from 'rxjs';
 import {Dashboard} from '../../models/dashboard.model';
 import {SharedService} from '../../../../services/shared.service';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -20,7 +21,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit 
   currentColumns;
   data;
 
-  constructor(private angulartics2: Angulartics2) {
+  constructor() {
   }
 
   ngOnInit(): void {
@@ -52,9 +53,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit 
     this.detailView = !this.detailView;
     this.setColumns();
     this.setData();
-    this.angulartics2.eventTrack.next({
-      action: `${this.dashboard.title} opened/closed`,
-      properties: {category: 'Dashboard'},
-    });
+
+    Report.send(`${this.dashboard.title} opened/closed`, 'Dashboard');
   }
 }

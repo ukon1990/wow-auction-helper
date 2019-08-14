@@ -5,9 +5,8 @@ import {UpdateComponent} from './components/update/update.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
 import {ItemComponent} from './components/item/item.component';
 import {LineChartComponent} from './components/item/line-chart/line-chart.component';
-import {ResetCalcComponent} from './components/item/reset-calc/reset-calc.component';
+import {ResetCalcComponent} from '../market-reset/components/reset-calc/reset-calc.component';
 import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
-import {MarketResetComponent} from './components/item/market-reset/market-reset.component';
 import {ItemSellerChartComponent} from './components/item/item-seller-chart/item-seller-chart.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {AddItemsComponent} from './components/update/add-items/add-items.component';
@@ -32,6 +31,7 @@ import {ThemeSelectComponent} from './components/theme-select/theme-select.compo
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {fas} from '@fortawesome/free-solid-svg-icons';
+import {MarketResetModule} from '../market-reset/market-reset.module';
 
 @NgModule({
   declarations: [
@@ -40,9 +40,7 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
     DownloadComponent,
     ItemComponent,
     LineChartComponent,
-    ResetCalcComponent,
     TradeVendorsComponent,
-    MarketResetComponent,
     ItemSellerChartComponent,
     FooterComponent,
     AddItemsComponent,
@@ -70,7 +68,8 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
     MatMenuModule,
     MatGridListModule,
     MatBadgeModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    MarketResetModule
   ],
   exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent]
 })

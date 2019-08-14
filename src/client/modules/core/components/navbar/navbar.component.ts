@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
 
   isOffline = !navigator.onLine;
 
-  constructor(private router: Router, private angulartics2: Angulartics2) {
+  constructor(private router: Router) {
     this.router.events.subscribe(change => {
       this.showMenu = false;
     });
@@ -31,9 +31,6 @@ export class NavbarComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.angulartics2.eventTrack.next({
-      properties: { category: `App version ${ version }` },
-    });
   }
 
   saveUser(evt: any): void {
