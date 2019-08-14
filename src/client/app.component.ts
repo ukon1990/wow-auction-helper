@@ -12,12 +12,11 @@ import {UpdateService} from './services/update.service';
 import {ErrorReport} from './utils/error-report.util';
 import {MatSnackBar} from '@angular/material';
 import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
-import {Subscription} from 'rxjs';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {ThemeUtil} from './modules/core/utils/theme.util';
+import {ReportService} from './services/report/report.service';
 
 @Component({
   selector: 'wah-root',
@@ -27,6 +26,7 @@ import {ThemeUtil} from './modules/core/utils/theme.util';
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
   mainWindowScrollPosition = 0;
+  shouldAskForConcent = false;
 
   constructor(public platform: Platform,
               private _router: Router,
@@ -36,12 +36,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private updateService: UpdateService,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
-              private angulartics2: Angulartics2) {
+              private angulartics2: Angulartics2,
+              private reportService: ReportService) {
     this.setLocale();
     DefaultDashboardSettings.init();
     User.restore();
-    ErrorReport.init(this.angulartics2, this.matSnackBar);
-    Report.init(this.angulartics2);
+    ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
+    Report.init(this.angulartics2, this.reportService);
     SharedService.user.shoppingCart = new ShoppingCart();
     ProspectingAndMillingUtil.restore();
 
@@ -54,6 +55,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.restorePreviousLocation();
+    this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
+    Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
   }
 
 
@@ -63,12 +66,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         `Device: ${window.navigator.platform}, ${window.navigator.vendor}`,
         `Standalone startup`
       );
-
-      this.subs.add(
-        this._router.events,
-        (event: NavigationEnd) =>
-          this.onNavigationChange(event));
     }
+
+    this.subs.add(
+      this._router.events,
+      (event: NavigationEnd) =>
+        this.onNavigationChange(event));
   }
 
   ngOnDestroy(): void {
@@ -118,9 +121,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private onNavigationChange(event: NavigationEnd) {
     this.saveCurrentRoute(event);
+    Report.navigation(event);
   }
 
   private saveCurrentRoute(event: NavigationEnd) {
+    if (!this.isStandalone()) {
+      return;
+    }
     try {
       /**
        * As iOS does not save where you are upon reload in a "installed" webapp.

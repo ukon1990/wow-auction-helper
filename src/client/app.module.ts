@@ -35,6 +35,7 @@ import {AuctionModule} from './modules/auction/auction.module';
 import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
 import {TsmModule} from './modules/tsm/tsm.module';
 import {BackgroundDownloadService} from './services/background-download.service';
+import {ReportService} from './services/report/report.service';
 
 
 @NgModule({
@@ -75,7 +76,8 @@ import {BackgroundDownloadService} from './services/background-download.service'
     WowdbService,
     PetsService,
     UpdateService,
-    BackgroundDownloadService
+    BackgroundDownloadService,
+    ReportService
   ],
   bootstrap: [AppComponent]
 })

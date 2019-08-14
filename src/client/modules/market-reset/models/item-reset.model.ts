@@ -9,7 +9,7 @@ export class ItemReset {
   public icon: string;
   public itemCount = 0;
   public auctionCount = 0;
-  public breakPoints: ItemResetBreakpoint = [];
+  public breakPoints: ItemResetBreakpoint[] = [];
 
   constructor(private auctionItem: AuctionItem) {
     this.id = auctionItem.itemID;
