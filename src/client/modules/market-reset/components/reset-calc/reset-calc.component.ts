@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs';
@@ -7,13 +7,16 @@ import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Crafting} from '../../../crafting/models/crafting';
 import {Report} from '../../../../utils/report.util';
+import {ItemReset} from '../../models/item-reset.model';
+import {ColumnDescription} from '../../../table/models/column-description';
+import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 
 @Component({
   selector: 'wah-reset-calc',
   templateUrl: './reset-calc.component.html',
   styleUrls: ['./reset-calc.component.scss']
 })
-export class ResetCalcComponent implements OnInit, OnDestroy {
+export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
   @Input() auctionItem: AuctionItem;
   pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
@@ -24,8 +27,18 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
     cost: 0,
     roi: 0
   };
+  itemReset: ItemReset;
 
   formChanges: Subscription;
+  columns: ColumnDescription[] = [
+    {key: 'id', title: '#', dataType: 'number'},
+    {key: 'potentialProfitPercent', title: 'Profit %', dataType: 'percent'},
+    {key: 'potentialProfit', title: 'Profit', dataType: 'gold'},
+    {key: 'newBuyout', title: 'New buyout', dataType: 'gold'},
+    {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
+    {key: 'sumBuyout', title: 'Total cost', dataType: 'gold'},
+    {key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'},
+  ];
 
   constructor() {
     this.formChanges = this.form.valueChanges.subscribe(() => {
@@ -37,6 +50,12 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.auctionItem) {
       this.form.setValue(this.auctionItem.mktPrice / 10000);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.auctionItem && changes.auctionItem.currentValue) {
+      this.itemReset = new ItemReset(changes.auctionItem.currentValue);
     }
   }
 
@@ -78,5 +97,9 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
     }/${
       this.pipe.transform((this.form.value * 10000) - 1).replace(',', '')
     }`;
+  }
+
+  handleRowClick(d: ItemResetBreakpoint): void {
+    this.form.setValue(d.newBuyout / 10000);
   }
 }
