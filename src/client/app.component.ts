@@ -18,6 +18,7 @@ import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ThemeUtil} from './modules/core/utils/theme.util';
+import {ReportService} from './services/report/report.service';
 
 @Component({
   selector: 'wah-root',
@@ -36,12 +37,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private updateService: UpdateService,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
-              private angulartics2: Angulartics2) {
+              private angulartics2: Angulartics2,
+              private reportService: ReportService) {
     this.setLocale();
     DefaultDashboardSettings.init();
     User.restore();
-    ErrorReport.init(this.angulartics2, this.matSnackBar);
-    Report.init(this.angulartics2);
+    ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
+    Report.init(this.angulartics2, this.reportService);
     SharedService.user.shoppingCart = new ShoppingCart();
     ProspectingAndMillingUtil.restore();
 

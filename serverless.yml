@@ -161,3 +161,10 @@ functions:
       - http:
           method: any
           path: logger
+  loggerClientEvent:
+    handler: src/lambda/controllers/logger.clientEvent
+    memorySize: 128
+    events:
+      - http:
+          method: post
+          path: logger/client-event

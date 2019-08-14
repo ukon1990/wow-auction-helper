@@ -30,6 +30,7 @@ export class User {
   watchlist: Watchlist = new Watchlist();
   shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
+  doNotReport = false;
 
   /**
    *
