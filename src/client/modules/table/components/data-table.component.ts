@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
 import {PageEvent} from '@angular/material';
 
 import {Angulartics2} from 'angulartics2';
@@ -44,6 +44,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() maxVisibleRows: number;
   @Input() disableItemsPerPage: boolean;
   @Input() filterParameter: string;
+
+  @Output() rowClicked: EventEmitter<any> = new EventEmitter<any>();
 
   filteredData = [];
   sm = new SubscriptionManager();

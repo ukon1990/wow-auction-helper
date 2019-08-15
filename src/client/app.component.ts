@@ -17,6 +17,7 @@ import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ReportService} from './services/report/report.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-root',
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
   mainWindowScrollPosition = 0;
   shouldAskForConcent = false;
+  pageTitle: string;
 
   constructor(public platform: Platform,
               private _router: Router,
@@ -37,7 +39,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
-              private reportService: ReportService) {
+              private reportService: ReportService,
+              private title: Title) {
     this.setLocale();
     DefaultDashboardSettings.init();
     User.restore();
@@ -50,6 +53,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       SharedService.events.detailPanelOpen,
       () =>
         this.scrollToTheTop());
+    this.subs.add(
+      SharedService.events.title,
+      t => {
+        this.pageTitle = t;
+        this.title.setTitle(`WAH - ${t}`);
+      });
     this.angulartics2GoogleAnalytics.startTracking();
   }
 

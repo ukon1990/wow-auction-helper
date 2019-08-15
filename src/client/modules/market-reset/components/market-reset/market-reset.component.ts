@@ -1,14 +1,15 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '../../../table/models/column-description';
-import {MarketResetCost} from '../../../auction/models/market-reset-cost.model';
 import {Filters} from '../../../../utils/filtering';
-import {Crafting} from '../../../crafting/models/crafting';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {Auction} from '../../../auction/models/auction.model';
-import {Report} from '../../../../utils/report.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {AuctionsService} from '../../../../services/auctions.service';
+import {ItemReset} from '../../models/item-reset.model';
+import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'wah-market-reset',
@@ -17,11 +18,30 @@ import {Report} from '../../../../utils/report.util';
 })
 export class MarketResetComponent implements OnInit {
   form: FormGroup;
-  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
-  data: Array<MarketResetCost> = new Array<MarketResetCost>();
-  checkInterval;
+  formDefaults = {
+    name: '',
+    timeToSell: undefined,
+    breakPointPercent: 110,
+    mktPriceUpperThreshold: 400,
+    minROI: 0,
+    minROIPercent: 125,
+    maxTotalBuyoutPerItem: undefined
+  };
+  data = [];
+  sm = new SubscriptionManager();
   tsmShoppingString = '';
   pipe = new GoldPipe();
+  columns: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'potentialProfitPercent', title: 'ROI %', dataType: 'percent'},
+    {key: 'potentialProfit', title: 'Profit', dataType: 'gold'},
+    {key: 'newBuyout', title: 'New buyout', dataType: 'gold'},
+    {key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'},
+    {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
+    {key: 'sumBuyout', title: 'Total cost', dataType: 'gold'},
+    {key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'},
+    {key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'},
+  ];
 
   sum = {
     sumCost: 0,
@@ -29,146 +49,143 @@ export class MarketResetComponent implements OnInit {
     itemsToBuy: 0,
     auctionsToBuy: 0
   };
+  rowShoppingString = '';
 
   constructor(private formBuilder: FormBuilder) {
+    SharedService.events.title.next('Market resetter');
     const query = localStorage['query_market_reset'] ?
       JSON.parse(localStorage['query_market_reset']) : undefined;
     this.form = this.formBuilder.group({
-      name: query && query.name !== undefined ? query.name : null,
-      costLimit: null, // query && query.costLimit !== undefined ? query.costLimit : null,
-      maxItemCount: null, // query && query.maxItemCount !== undefined ? query.maxItemCount : null,
-      minimumProfit: query && query.minimumProfit !== undefined ? query.minimumProfit : 30,
-      avgDailySold: query && query.avgDailySold !== undefined ? query.avgDailySold : 10,
-      saleRate: query && query.saleRate !== undefined ? query.saleRate : 20,
-      targetMVPercent: query && query.targetMVPercent !== undefined ? query.targetMVPercent : 100
+      name: new FormControl(
+        query.name || this.formDefaults.name),
+      timeToSell: new FormControl(
+        query.timeToSell || this.formDefaults.timeToSell),
+      breakPointPercent: new FormControl(
+        query.breakPointPercent || this.formDefaults.breakPointPercent),
+      mktPriceUpperThreshold: new FormControl(
+        query.mktPriceUpperThreshold || this.formDefaults.mktPriceUpperThreshold),
+      minROI: new FormControl(
+        query.minROI || this.formDefaults.minROI),
+      minROIPercent: new FormControl(
+        query.minROIPercent || this.formDefaults.minROIPercent),
+      maxTotalBuyoutPerItem: new FormControl(
+        query.maxTotalBuyoutPerItem || this.formDefaults.maxTotalBuyoutPerItem)
     });
 
-    this.form.valueChanges.subscribe(() => {
-      this.setResults();
+    this.form.valueChanges.subscribe((form) => {
       localStorage['query_market_reset'] = JSON.stringify(this.form.value);
+      this.filter(form);
     });
   }
 
   ngOnInit() {
-    this.addColumns();
-
-    this.checkInterval = setInterval(() => {
-      if (SharedService.auctions.length > 0) {
-        clearInterval(this.checkInterval);
-        setTimeout(this.setResults, 100);
-      }
-    }, 1000);
-  }
-
-  addColumns(): void {
-    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
-    this.columns.push({key: 'auctionCount', title: 'Auction count', dataType: 'number'});
-    this.columns.push({key: 'itemCount', title: 'Item count', dataType: 'number'});
-    this.columns.push({key: 'cost', title: 'Cost', dataType: 'gold'});
-    this.columns.push({key: 'avgItemCost', title: 'Avg cost per item', dataType: 'gold'});
-    this.columns.push({key: 'targetPrice', title: 'Target price', dataType: 'gold'});
-    this.columns.push({key: 'roi', title: 'Potential profit', dataType: 'gold'});
-
-    if (SharedService.user.apiToUse !== 'none') {
-      this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
-      this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    }
-
-    this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
-  }
-
-  setResults() {
-    Report.send('Calculated', 'Market reset calc');
-
-    let tmpItem: MarketResetCost;
-    this.sum = {
-      sumCost: 0,
-      potentialProfit: 0,
-      itemsToBuy: 0,
-      auctionsToBuy: 0
-    };
-
-    this.data.length = 0;
-    SharedService.auctionItems.forEach(ai => {
-      if (Filters.isNameMatch(ai.itemID, this.form.getRawValue().name) &&
-        Filters.isDailySoldMatch(ai.itemID, this.form.getRawValue().avgDailySold) &&
-        Filters.isSaleRateMatch(ai.itemID, this.form.getRawValue().saleRate)) {
-        tmpItem = new MarketResetCost();
-        tmpItem.itemID = ai.itemID;
-        tmpItem.name = ai.name;
-        tmpItem.targetPrice = this.getTargetMVPrice(ai);
-
-        ai.auctions.forEach((a, i) => {
-          if (this.isTargetPriceMatch(a, tmpItem) &&
-            this.isCountMatch(a, tmpItem) &&
-            this.isMaxCostMatch(a, tmpItem)) {
-
-            tmpItem.auctionCount++;
-            tmpItem.itemCount += a.quantity;
-            tmpItem.cost += a.buyout;
-
-            if (!this.isCountMatch(ai.auctions[i + 1], tmpItem) || !this.isMaxCostMatch(ai.auctions[i + 1], tmpItem)) {
-              tmpItem.targetPrice = ai.auctions[i + 1].buyout / ai.auctions[i + 1].quantity;
-            }
-          }
-        });
-
-        tmpItem.avgItemCost = tmpItem.cost / tmpItem.itemCount;
-        // Adding AH cut
-        tmpItem.cost = tmpItem.cost;
-
-        tmpItem.roi = tmpItem.targetPrice * tmpItem.itemCount - tmpItem.cost;
-        tmpItem.roi *= Crafting.ahCutModifier;
-
-        if (tmpItem.cost > 0 && this.isMinimumProfitPercentMatch(tmpItem)) {
-          this.sum.auctionsToBuy += tmpItem.auctionCount;
-          this.sum.itemsToBuy += tmpItem.itemCount;
-          this.sum.sumCost += tmpItem.cost;
-          this.sum.potentialProfit += tmpItem.roi;
-          this.data.push(tmpItem);
-        }
-      }
-    });
-
-    this.tsmShoppingString = '';
-    this.data.forEach(mrc => {
-      this.tsmShoppingString += `${
-        SharedService.items[mrc.itemID].name
-      }/exact/1c/${
-        this.pipe.transform(mrc.targetPrice - 1).replace(',', '')
-      };`;
-    });
-
-    if (this.tsmShoppingString.endsWith(';')) {
-      this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
-    }
-  }
-
-  getTargetMVPrice(auctionItem: AuctionItem): number {
-    return this.form.value.targetMVPercent === null ?
-      auctionItem.mktPrice : auctionItem.mktPrice * (this.form.value.targetMVPercent / 100);
-  }
-
-  isMinimumProfitPercentMatch(mrc: MarketResetCost): boolean {
-    return this.form.value.minimumProfit === null || mrc.roi / mrc.cost * 100 >= this.form.value.minimumProfit;
-  }
-
-  isTargetPriceMatch(auction: Auction, mrc: MarketResetCost): boolean {
-    return auction.buyout / auction.quantity < mrc.targetPrice;
-  }
-
-  isCountMatch(auction: Auction, mrc: MarketResetCost): boolean {
-    return this.form.value.maxItemCount === null || mrc.itemCount + auction.quantity <= this.form.value.maxItemCount;
-  }
-
-  isMaxCostMatch(auction: Auction, mrc: MarketResetCost): boolean {
-    if (this.form.value.costLimit === null || mrc.cost + auction.buyout <= this.form.value.costLimit * 10000) {
-      return true;
-    }
-    return false;
+    this.sm.add(SharedService.events.auctionUpdate,
+      (auctionItems: AuctionItem[]) => {
+        console.log('Auction event', SharedService.auctionItems.length);
+        this.filter(this.form.getRawValue());
+      });
   }
 
   hasDefinedAPI(): boolean {
     return SharedService.user.apiToUse !== 'none';
   }
+
+  private filter(query: any) {
+    const strings = [];
+
+    this.sum.auctionsToBuy = 0;
+    this.sum.itemsToBuy = 0;
+    this.sum.potentialProfit = 0;
+    this.sum.sumCost = 0;
+
+    this.data.length = 0;
+    this.tsmShoppingString = '';
+    this.rowShoppingString = '';
+
+    SharedService.auctionItems.forEach(ai => {
+      if (!Filters.isNameMatch(ai.itemID, query.name)) {
+        return;
+      }
+
+      const item: ItemReset = new ItemReset(ai, query.breakPointPercent / 100);
+      let matchPoint;
+      for (let i = 0, l = item.breakPoints.length; i < l; i++) {
+        const bp = item.breakPoints[i];
+        if (bp && bp.potentialProfit > 0) {
+
+          if (this.isSellTimeMatch(bp, query) &&
+            this.isMktPriceThreasholdMatch(bp, query, ai) &&
+            this.isMinROIMatch(query, bp) &&
+            this.isMinROIPercentMatch(query, bp) &&
+            this.isMaxTotalBuyoutPerItemMatch(query, bp)) {
+            matchPoint = {
+              itemID: item.id,
+              name: item.name,
+              icon: item.icon,
+              percentOfMkt: bp.newBuyout / ai.mktPrice,
+              ...bp
+            };
+          }
+        }
+      }
+      this.handleMatch(matchPoint, strings);
+    });
+    this.tsmShoppingString = strings.join(';');
+  }
+
+  private isSellTimeMatch(bp, query: any) {
+    if (!this.hasDefinedAPI()) {
+      return true;
+    }
+    return Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
+  }
+
+  private isMinROIMatch(query: any, bp) {
+    return Filters.isXSmallerThanOrEqualToY(
+      query.minROI ? query.minROI * 10000 : 0,
+      bp.potentialProfit);
+  }
+
+  private isMktPriceThreasholdMatch(bp, query: any, ai) {
+    if (!this.hasDefinedAPI() || query.mktPriceUpperThreshold === null || !query.mktPriceUpperThreshold) {
+      return true;
+    }
+    return Filters.isXSmallerThanOrEqualToY(bp.newBuyout, (query.mktPriceUpperThreshold / 100) * ai.mktPrice);
+  }
+
+  private isMinROIPercentMatch(query: any, bp: ItemResetBreakpoint) {
+    return Filters.isXSmallerThanOrEqualToY(
+      query.minROIPercent ? query.minROIPercent / 100 : 0,
+      bp.potentialProfitPercent);
+  }
+
+  private isMaxTotalBuyoutPerItemMatch(query: any, bp: ItemResetBreakpoint) {
+    if (query.maxTotalBuyoutPerItem === null || !query.maxTotalBuyoutPerItem) {
+      return true;
+    }
+    return Filters.isXSmallerThanOrEqualToY(
+      bp.sumBuyout,
+      query.maxTotalBuyoutPerItem ? query.maxTotalBuyoutPerItem * 10000 : undefined);
+  }
+
+  private handleMatch(bp, strings) {
+    if (bp) {
+      this.sum.auctionsToBuy += bp.auctionCount;
+      this.sum.itemsToBuy += bp.itemCount;
+      this.sum.potentialProfit += bp.potentialProfit;
+      this.sum.sumCost += bp.sumBuyout;
+
+      strings.push(bp.tsmShoppingString);
+      this.data.push(bp);
+    }
+  }
+
+  setRoShoppingString(row: ItemResetBreakpoint): void {
+    this.rowShoppingString = row.tsmShoppingString;
+  }
+
+  resetForm() {
+    this.form.reset(this.formDefaults);
+  }
+
 }
