@@ -1,52 +1,71 @@
-<form [formGroup]="form">
-  <mat-form-field>
+<p>
+  <strong>Potential profit</strong> {{ sum?.potentialProfit | gold }},
+  <strong>Sum cost:</strong> {{ sum?.sumCost | gold }},
+  <strong>Items to buy:</strong> {{ sum?.itemsToBuy | number }}
+</p>
+
+<form [formGroup]="form" class="row">
+  <mat-form-field class="col">
     <input matInput placeholder="Item name" formControlName="name">
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="col">
     <input matInput placeholder="ROI increment percent"
            formControlName="breakPointPercent"
            type="number"
-            min="101">
+           min="101">
   </mat-form-field>
+
   <ng-container *ngIf="hasDefinedAPI">
-    <mat-form-field>
+    <mat-form-field class="col">
       <input matInput
              placeholder="Est time to sell"
              formControlName="timeToSell"
              type="number"
-              min="0">
+             min="0">
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="col">
       <input matInput
              placeholder="Max mkt"
              type="number"
              formControlName="mktPriceUpperThreshold">
     </mat-form-field>
   </ng-container>
-  <mat-form-field>
+
+  <mat-form-field class="col">
     <input matInput
-           placeholder="Min ROI in gold"
+           placeholder="Min profit in gold {{ form.getRawValue().minROI * 10000 | gold }}"
            formControlName="minROI"
            type="number"
            min="0">
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field class="col">
     <input matInput
            placeholder="Min ROI in percent"
            formControlName="minROIPercent"
            type="number"
            min="0">
   </mat-form-field>
-</form>
 
-<p>
-  <strong>Potential profit</strong> {{ sum?.potentialProfit | gold }},
-  <strong>Sum cost:</strong> {{ sum?.sumCost | gold }},
-  <strong>Items to buy:</strong> {{ sum?.itemsToBuy | number }}
-</p>
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Max sum buyout per item {{ form.getRawValue().maxTotalBuyoutPerItem * 10000 | gold }}"
+           formControlName="maxTotalBuyoutPerItem"
+           type="number"
+           min="0">
+  </mat-form-field>
+
+  <div class="col">
+    <button mat-raised-button
+            color="warn"
+            type="button"
+            (click)="resetForm()">
+      Reset
+    </button>
+  </div>
+</form>
 
 <mat-form-field *ngIf="tsmShoppingString.length > 0" class="row col-md-12">
     <textarea matInput placeholder="TSM shopping string"

@@ -147,4 +147,8 @@ export class Filters {
   static isXSmallerThanY(x: number, y: number) {
     return EmptyUtil.isNullOrUndefined(y) || x < y;
   }
+
+  static isXSmallerThanOrEqualToY(x: number, y: number) {
+    return EmptyUtil.isNullOrUndefined(y) || x <= y;
+  }
 }
