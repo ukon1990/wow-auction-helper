@@ -41,6 +41,8 @@ export class MarketResetComponent implements OnInit {
     {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
     {key: 'sumBuyout', title: 'Total cost', dataType: 'gold'},
     {key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'},
+    {key: 'auctionCount', title: '# Auctions', dataType: 'number'},
+    {key: 'itemCount', title: '# Item', dataType: 'number'},
     {key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'},
   ];
 
@@ -80,6 +82,8 @@ export class MarketResetComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.filter(this.form.getRawValue());
+
     this.sm.add(SharedService.events.auctionUpdate,
       (auctionItems: AuctionItem[]) => {
         console.log('Auction event', SharedService.auctionItems.length);
@@ -89,6 +93,7 @@ export class MarketResetComponent implements OnInit {
 
   private filter(query: any) {
     const strings = [];
+    const results = [];
 
     this.sum.auctionsToBuy = 0;
     this.sum.itemsToBuy = 0;
@@ -125,9 +130,10 @@ export class MarketResetComponent implements OnInit {
           }
         }
       }
-      this.handleMatch(matchPoint, strings);
+      this.handleMatch(matchPoint, strings, results);
     });
     this.tsmShoppingString = strings.join(';');
+    this.data = [...results];
   }
 
   private isSellTimeMatch(bp, query: any) {
@@ -165,7 +171,7 @@ export class MarketResetComponent implements OnInit {
       query.maxTotalBuyoutPerItem ? query.maxTotalBuyoutPerItem * 10000 : undefined);
   }
 
-  private handleMatch(bp, strings) {
+  private handleMatch(bp: ItemResetBreakpoint, strings, results: any[]) {
     if (bp) {
       this.sum.auctionsToBuy += bp.auctionCount;
       this.sum.itemsToBuy += bp.itemCount;
@@ -173,7 +179,7 @@ export class MarketResetComponent implements OnInit {
       this.sum.sumCost += bp.sumBuyout;
 
       strings.push(bp.tsmShoppingString);
-      this.data.push(bp);
+      results.push(bp);
     }
   }
 
