@@ -292,7 +292,7 @@ export class TsmLuaUtil {
   }
 
   private handleKey(value) {
-    if (!value) {
+    if (!value || !value.split) {
       return value;
     }
 
