@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import {SharedService} from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-about',
@@ -8,8 +9,8 @@ import { Title } from '@angular/platform-browser';
 })
 export class AboutComponent implements OnInit {
 
-  constructor(private _title: Title) {
-    this._title.setTitle('WAH - About');
+  constructor() {
+    SharedService.events.title.next('About');
   }
 
   ngOnInit() {

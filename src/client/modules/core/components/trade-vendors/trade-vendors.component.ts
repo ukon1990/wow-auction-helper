@@ -23,6 +23,7 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   vendors = TRADE_VENDORS;
 
   constructor(private formBuilder: FormBuilder, private service: AuctionsService) {
+    SharedService.events.title.next('Trade vendors');
     const filter = JSON.parse(localStorage.getItem('query_trade_vendors')) || undefined;
     this.form = formBuilder.group({
       saleRate: filter && filter.saleRate !== null ?

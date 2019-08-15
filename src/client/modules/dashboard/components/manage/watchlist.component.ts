@@ -12,8 +12,7 @@ export class WatchlistComponent implements AfterViewInit {
   selectedTabIndex = 2;
   watchlist: Watchlist;
 
-  constructor(private _title: Title) {
-    this._title.setTitle('WAH - Manage dashboards');
+  constructor() {
   }
 
   ngAfterViewInit() {

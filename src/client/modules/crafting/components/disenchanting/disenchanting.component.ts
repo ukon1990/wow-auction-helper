@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {SharedService} from '../../../../services/shared.service';
 
 @Component({
   selector: 'wah-disenchanting',
@@ -10,6 +11,7 @@ export class DisenchantingComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    SharedService.events.title.next('Disenchanting');
   }
 
 }

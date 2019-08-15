@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {Remains} from '../../../../models/item/remains.model';
+import {SharedService} from '../../../../services/shared.service';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class MillingComponent implements OnInit {
   };
 
   constructor() {
+    SharedService.events.title.next('Milling & Prospecting');
   }
 
   ngOnInit() {

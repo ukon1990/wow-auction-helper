@@ -16,6 +16,7 @@ export class DashboardComponent implements OnDestroy {
     this.routeSubscription = route.events
       .subscribe((event: NavigationEnd) =>
         this.onNavigationChange(event));
+    SharedService.events.title.next('Dashboards');
   }
 
 

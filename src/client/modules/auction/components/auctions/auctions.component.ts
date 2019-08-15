@@ -26,7 +26,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   private subs = new SubscriptionManager();
 
   constructor(private formBuilder: FormBuilder, private _title: Title) {
-    this._title.setTitle('WAH - Auctions');
+    SharedService.events.title.next('Auctions');
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
     this.addColumns();
 

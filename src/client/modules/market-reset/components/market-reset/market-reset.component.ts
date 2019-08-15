@@ -17,10 +17,11 @@ import {Title} from '@angular/platform-browser';
   styleUrls: ['./market-reset.component.scss']
 })
 export class MarketResetComponent implements OnInit {
+  hasDefinedAPI = SharedService.user.apiToUse !== 'none';
   form: FormGroup;
   formDefaults = {
     name: '',
-    timeToSell: undefined,
+    timeToSell: 10,
     breakPointPercent: 110,
     mktPriceUpperThreshold: 400,
     minROI: 0,
@@ -86,10 +87,6 @@ export class MarketResetComponent implements OnInit {
       });
   }
 
-  hasDefinedAPI(): boolean {
-    return SharedService.user.apiToUse !== 'none';
-  }
-
   private filter(query: any) {
     const strings = [];
 
@@ -134,7 +131,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   private isSellTimeMatch(bp, query: any) {
-    if (!this.hasDefinedAPI()) {
+    if (!this.hasDefinedAPI) {
       return true;
     }
     return Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
@@ -147,7 +144,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   private isMktPriceThreasholdMatch(bp, query: any, ai) {
-    if (!this.hasDefinedAPI() || query.mktPriceUpperThreshold === null || !query.mktPriceUpperThreshold) {
+    if (!this.hasDefinedAPI || query.mktPriceUpperThreshold === null || !query.mktPriceUpperThreshold) {
       return true;
     }
     return Filters.isXSmallerThanOrEqualToY(bp.newBuyout, (query.mktPriceUpperThreshold / 100) * ai.mktPrice);

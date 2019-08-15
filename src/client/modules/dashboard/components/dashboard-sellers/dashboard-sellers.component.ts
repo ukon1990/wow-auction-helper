@@ -14,8 +14,7 @@ export class DashboardSellersComponent implements AfterViewInit, OnDestroy {
   dashboards: Dashboard[] = SharedService.sellerDashboards;
   subscription: Subscription;
 
-  constructor(private _title: Title) {
-    this._title.setTitle('WAH - Sellers dashboard');
+  constructor() {
   }
 
   ngAfterViewInit(): void {
