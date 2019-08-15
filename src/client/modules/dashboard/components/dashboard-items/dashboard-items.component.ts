@@ -14,8 +14,7 @@ export class DashboardItemsComponent implements AfterViewInit, OnDestroy {
   subscription: Subscription;
 
 
-  constructor(private _title: Title) {
-    this._title.setTitle('WAH - Item dashboard');
+  constructor() {
   }
 
   ngAfterViewInit(): void {

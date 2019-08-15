@@ -4,7 +4,6 @@ import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {RealmService} from '../../../../services/realm.service';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {Angulartics2} from 'angulartics2';
 import {FileService} from '../../../../services/file.service';
 import {ItemService} from '../../../../services/item.service';
 import {CraftingService} from '../../../../services/crafting.service';
@@ -29,7 +28,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   subscriptions = new SubscriptionManager();
 
   constructor(private _formBuilder: FormBuilder,
-              private angulartics2: Angulartics2,
               private _realmService: RealmService,
               private dbServie: DatabaseService,
               private itemService: ItemService,
@@ -213,10 +211,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
       User.import(reader.result.toString());
 
-      this.angulartics2.eventTrack.next({
-        action: 'Imported existing setup from file',
-        properties: {category: 'General settings'},
-      });
+      Report.send('Imported existing setup from file', 'General settings');
 
       this.saveRealmAndRegion();
     } catch (e) {

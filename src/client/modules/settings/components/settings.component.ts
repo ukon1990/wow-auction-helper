@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import {SharedService} from '../../../services/shared.service';
 
 @Component({
   selector: 'wah-settings',
@@ -8,7 +9,7 @@ import { Title } from '@angular/platform-browser';
 })
 export class SettingsComponent {
 
-  constructor(private _title: Title) {
-    this._title.setTitle('WAH - Settings');
+  constructor() {
+    SharedService.events.title.next('Settings');
   }
 }

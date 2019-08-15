@@ -48,7 +48,8 @@ export class SharedService {
     pets: new EventEmitter<boolean>(),
     realms: new EventEmitter<boolean>(),
     shopingCart: new EventEmitter<Recipe>(),
-    isUserSet: new BehaviorSubject<boolean>(false)
+    isUserSet: new BehaviorSubject<boolean>(false),
+    title: new BehaviorSubject('')
   };
   public static preScrollPosition = 0;
 

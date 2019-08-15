@@ -1,0 +1,90 @@
+<p>
+  <strong>Potential profit</strong> {{ sum?.potentialProfit | gold }},
+  <strong>Sum cost:</strong> {{ sum?.sumCost | gold }},
+  <strong>Items to buy:</strong> {{ sum?.itemsToBuy | number }}
+</p>
+
+<form [formGroup]="form" class="row">
+  <mat-form-field class="col">
+    <input matInput placeholder="Item name" formControlName="name">
+  </mat-form-field>
+
+  <mat-form-field class="col">
+    <input matInput placeholder="ROI increment percent"
+           formControlName="breakPointPercent"
+           type="number"
+           min="101">
+  </mat-form-field>
+
+  <ng-container *ngIf="hasDefinedAPI">
+    <mat-form-field class="col">
+      <input matInput
+             placeholder="Est time to sell"
+             formControlName="timeToSell"
+             type="number"
+             min="0">
+    </mat-form-field>
+
+    <mat-form-field class="col">
+      <input matInput
+             placeholder="Max mkt"
+             type="number"
+             formControlName="mktPriceUpperThreshold">
+    </mat-form-field>
+  </ng-container>
+
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Min profit in gold {{ form.getRawValue().minROI * 10000 | gold }}"
+           formControlName="minROI"
+           type="number"
+           min="0">
+  </mat-form-field>
+
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Min ROI in percent"
+           formControlName="minROIPercent"
+           type="number"
+           min="0">
+  </mat-form-field>
+
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Max sum buyout per item {{ form.getRawValue().maxTotalBuyoutPerItem * 10000 | gold }}"
+           formControlName="maxTotalBuyoutPerItem"
+           type="number"
+           min="0">
+  </mat-form-field>
+
+  <div class="col">
+    <button mat-raised-button
+            color="warn"
+            type="button"
+            (click)="resetForm()">
+      Reset
+    </button>
+  </div>
+</form>
+
+<mat-form-field *ngIf="tsmShoppingString.length > 0" class="row col-md-12">
+    <textarea matInput placeholder="TSM shopping string"
+              [value]="tsmShoppingString"></textarea>
+</mat-form-field>
+
+
+<p>Click on a row(not the name) to get the TSM string for it.</p>
+<mat-form-field *ngIf="rowShoppingString.length > 0" class="row col-md-12">
+    <textarea matInput placeholder="Shopping string for the selected row"
+              [value]="rowShoppingString"></textarea>
+</mat-form-field>
+
+<wah-data-table
+        *ngIf="data"
+        iconSize="22"
+        itemsPerPage="20"
+        id="itemID"
+        [data]="data"
+        [columns]="columns"
+        (rowClicked)="setRoShoppingString($event)">
+</wah-data-table>

@@ -2,7 +2,14 @@
 
 <div id="main" class="mt-6 container-fluid">
   <mat-card>
-    <router-outlet></router-outlet>
+    <mat-card-header *ngIf="pageTitle">
+      <mat-card-title>
+        {{ pageTitle }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <router-outlet></router-outlet>
+    </mat-card-content>
   </mat-card>
   <wah-footer></wah-footer>
 </div>

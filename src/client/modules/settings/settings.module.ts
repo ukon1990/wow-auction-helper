@@ -10,11 +10,14 @@ import {
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
-  MatFormFieldModule, MatInputModule, MatRadioModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatRadioModule,
   MatSelectModule,
   MatSlideToggleModule,
   MatStepperModule,
-  MatTabsModule, MatTooltipModule
+  MatTabsModule,
+  MatTooltipModule
 } from '@angular/material';
 import {AboutModule} from '../about/about.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';

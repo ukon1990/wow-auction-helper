@@ -45,8 +45,8 @@ export class PetsValueComponent implements OnInit, OnDestroy {
 
   petValue = 0;
 
-  constructor(private ahService: AuctionsService, private title: Title) {
-    this.title.setTitle('WAH - Pet value');
+  constructor(private ahService: AuctionsService) {
+    SharedService.events.title.next('Pet value');
   }
 
   ngOnInit() {

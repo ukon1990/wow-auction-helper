@@ -13,8 +13,8 @@ export class ReputationsComponent implements OnInit {
   charactersByRealm = [];
   charactersByRealmMapped = new Map<string, any>();
 
-  constructor(private title: Title) {
-    this.title.setTitle('WAH - Reputations');
+  constructor() {
+    SharedService.events.title.next('Reputations');
   }
 
   ngOnInit() {

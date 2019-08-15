@@ -29,7 +29,7 @@ export class SellersComponent implements OnInit {
       volume: 0,
       numOfAuctions: 0
     });
-    this._title.setTitle('WAH - Sellers');
+    SharedService.events.title.next('Sellers');
   }
 
   ngOnInit() {

@@ -54,8 +54,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
    * - Expansions
    */
 
-  constructor(private title: Title) {
-    this.title.setTitle('WAH - Summary dashboard');
+  constructor() {
   }
 
   ngOnInit() {
@@ -176,7 +175,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     SharedService.recipes.forEach((recipe: Recipe) => {
       if (filterFN(recipe) &&
         SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion) &&
-        SummaryUtil.isUnrakedOrRank3(recipe) ) {
+        SummaryUtil.isUnrakedOrRank3(recipe)) {
         const name = SummaryUtil.getProfessionNameFromRecipe(recipe);
         if (professions[name]) {
           professions[name]++;

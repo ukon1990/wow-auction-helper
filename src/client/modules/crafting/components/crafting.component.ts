@@ -43,7 +43,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   columns: Array<ColumnDescription> = [];
 
   constructor(private _formBuilder: FormBuilder, private _title: Title) {
-    this._title.setTitle('WAH - Crafting');
+    SharedService.events.title.next('Crafting');
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
 

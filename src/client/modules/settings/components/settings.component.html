@@ -23,6 +23,12 @@
      [active]="rla.isActive">
      Notifications
   </a>
+  <a mat-tab-link
+     routerLink="privacy"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    Privacy
+  </a>
 </nav>
 
 <router-outlet></router-outlet>
