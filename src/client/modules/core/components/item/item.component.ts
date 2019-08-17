@@ -102,6 +102,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     this.setRecipesForItem();
 
     Report.send('Opened', 'Item detail view');
+    Report.debug('Selected:', this.selected);
   }
 
   ngAfterViewInit(): void {
