@@ -8,7 +8,7 @@ import {FormControl} from '@angular/forms';
 import {environment} from '../../../../../environments/environment';
 import {Item} from '../../../../models/item/item';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {ItemSourceUtil} from '../../utils/item-source.util';
+import {ItemSourceUtil} from '../../../npc/utils/item-source.util';
 
 @Component({
   selector: 'wah-update',

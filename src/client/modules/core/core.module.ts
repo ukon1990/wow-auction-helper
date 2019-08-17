@@ -5,8 +5,6 @@ import {UpdateComponent} from './components/update/update.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
 import {ItemComponent} from './components/item/item.component';
 import {LineChartComponent} from './components/item/line-chart/line-chart.component';
-import {ResetCalcComponent} from '../market-reset/components/reset-calc/reset-calc.component';
-import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
 import {ItemSellerChartComponent} from './components/item/item-seller-chart/item-seller-chart.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {AddItemsComponent} from './components/update/add-items/add-items.component';
@@ -40,7 +38,6 @@ import {MarketResetModule} from '../market-reset/market-reset.module';
     DownloadComponent,
     ItemComponent,
     LineChartComponent,
-    TradeVendorsComponent,
     ItemSellerChartComponent,
     FooterComponent,
     AddItemsComponent,

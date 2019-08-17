@@ -7,7 +7,7 @@ import {DashboardComponent} from './dashboard/components/dashboard.component';
 import {UpdateComponent} from './core/components/update/update.component';
 import {AuctionsComponent} from './auction/components/auctions/auctions.component';
 import {MyAuctionsComponent} from './auction/components/my-auctions/my-auctions.component';
-import {TradeVendorsComponent} from './core/components/trade-vendors/trade-vendors.component';
+import {TradeVendorsComponent} from './npc/components/trade-vendors/trade-vendors.component';
 import {WatchlistComponent} from './dashboard/components/manage/watchlist.component';
 import {DashboardItemsComponent} from './dashboard/components/dashboard-items/dashboard-items.component';
 import {DashboardSellersComponent} from './dashboard/components/dashboard-sellers/dashboard-sellers.component';
@@ -23,6 +23,7 @@ import {SETTINGS_ROUTE} from './settings/settings.routes';
 import {ABOUT_ROUTE} from './about/about.route';
 import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-summary.component';
 import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
+import {VendorComponent} from './npc/components/vendor/vendor.component';
 
 const TOOLS_ROUTE: Route = {
   path: 'tools',
@@ -35,7 +36,8 @@ const TOOLS_ROUTE: Route = {
     {path: 'market-reset', component: MarketResetComponent},
     {path: 'milling-and-prospecting', component: MillingComponent},
     {path: 'disenchanting', component: DisenchantingComponent},
-    {path: 'reputations', component: ReputationsComponent}
+    {path: 'reputations', component: ReputationsComponent},
+    {path: 'vendors', component: VendorComponent}
   ]
 };
 

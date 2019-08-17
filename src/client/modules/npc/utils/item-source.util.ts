@@ -29,26 +29,26 @@ export class ItemSourceUtil {
           this.handleNewItemDrop(d, item);
         });
     }
-
-    if (item.itemSource.currencyFor) {
-      item.itemSource.currencyFor
-        .forEach((d: WoWHeadCurrencyFor) => {
-          if (!this.sourceMap.currencyFor.map[d.id]) {
-            this.sourceMap.currencyFor.map[d.id] = {
-              id: d.id,
-              name: d.name,
-              source: d.source,
-              sourcemore: d.sourcemore,
-              cost: d.cost,
-              currency: d.currency,
-              d
-            };
-            this.sourceMap.currencyFor.list
-              .push(
-                this.sourceMap.currencyFor.map[d.id]);
-          }
-        });
-    }
+    /*
+        if (item.itemSource.currencyFor) {
+          item.itemSource.currencyFor
+            .forEach((d: WoWHeadCurrencyFor) => {
+              if (!this.sourceMap.currencyFor.map[d.id]) {
+                this.sourceMap.currencyFor.map[d.id] = {
+                  id: d.id,
+                  name: d.name,
+                  source: d.source,
+                  sourcemore: d.sourcemore,
+                  cost: d.cost,
+                  currency: d.currency,
+                  d
+                };
+                this.sourceMap.currencyFor.list
+                  .push(
+                    this.sourceMap.currencyFor.map[d.id]);
+              }
+            });
+        }*/
 
     if (item.itemSource.soldBy) {
       item.itemSource.soldBy
@@ -60,13 +60,24 @@ export class ItemSourceUtil {
   }
 
   private static addItemToVendor(d: WoWHeadSoldBy, item: Item) {
-    this.sourceMap.soldBy.map[d.id].sells.push({
+    const npc = this.sourceMap.soldBy.map[d.id];
+    npc.items.push({
       id: item.id,
       name: item.name,
       stock: d.stock,
       cost: d.cost,
       currency: d.currency
     });
+    npc.itemCount++;
+    this.addToSellerValue(npc, d);
+  }
+
+  private static addToSellerValue(npc, d: WoWHeadSoldBy) {
+    const itemValue = SharedService.auctionItemsMap[d.id] ?
+      SharedService.auctionItemsMap[d.id].buyout - d.cost : 0;
+    if (itemValue > 0) {
+      npc.potentialValue += itemValue;
+    }
   }
 
   private static handleNewVendor(d: WoWHeadSoldBy) {
@@ -79,7 +90,9 @@ export class ItemSourceUtil {
         react: d.react,
         type: d.type,
         cost: d.cost,
-        sells: []
+        items: [],
+        itemCount: 0,
+        potentialValue: 0
       };
       this.sourceMap.soldBy.list
         .push(

@@ -35,7 +35,8 @@ export class Endpoints {
   }
 
   private static getLambdaURLForEnvironment(region: string) {
-    return environment.production ? Endpoints.LAMBDAS[region.toUpperCase()] : this.WAH_LOCAL_API;
+    // environment.production ? Endpoints.LAMBDAS[region.toUpperCase()] : this.WAH_LOCAL_API
+    return Endpoints.LAMBDAS[region.toUpperCase()];
   }
 
   public static getUrl(path: string): string {
