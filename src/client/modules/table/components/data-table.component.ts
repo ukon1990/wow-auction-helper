@@ -99,7 +99,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private handleDataChange(change) {
     this.previousLength = change.data.currentValue.length;
-    this.filteredData = change.data.currentValue;
+    this.filteredData = [...change.data.currentValue];
     this.sorter.sort(this.filteredData);
 
     if (this.filterParameter) {
@@ -113,7 +113,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   filterData(value: any): void {
     if (!this.filterParameter || !this.data) {
-      this.filteredData = this.data;
+      this.filteredData = [...this.data];
       return;
     }
 

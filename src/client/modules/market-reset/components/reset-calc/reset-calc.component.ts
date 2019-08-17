@@ -32,7 +32,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
   formChanges: Subscription;
   columns: ColumnDescription[] = [
     {key: 'id', title: '#', dataType: 'number'},
-    {key: 'potentialProfitPercent', title: 'Profit %', dataType: 'percent'},
+    {key: 'potentialProfitPercent', title: 'ROI %', dataType: 'percent'},
     {key: 'potentialProfit', title: 'Profit', dataType: 'gold'},
     {key: 'newBuyout', title: 'New buyout', dataType: 'gold'},
     {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
