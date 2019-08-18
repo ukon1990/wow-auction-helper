@@ -1,3 +1,7 @@
+<wah-vendor-detail *ngIf="currentNPC"
+        [vendor]="currentNPC"></wah-vendor-detail>
+
 <wah-data-table
   [columns]="columns"
-  [data]="vendors"></wah-data-table>
+  [data]="vendors"
+  (rowClicked)="handleRowClick($event)"></wah-data-table>

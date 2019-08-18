@@ -4,6 +4,7 @@ class VendorItem {
   cost: number;
   currency: number[];
   stock: number;
+  profit: number;
 }
 
 export class Vendor {

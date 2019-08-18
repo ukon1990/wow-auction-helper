@@ -1,1 +1,14 @@
-<p>vendor-detail works!</p>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ vendor.name }}</mat-card-title>
+    <mat-card-subtitle>{{ vendor.location }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ vendor.potentialValue | gold }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <wah-data-table
+            id="id"
+            iconSize="22"
+            [columns]="columns"
+            [data]="vendor.items"></wah-data-table>
+  </mat-card-content>
+</mat-card>

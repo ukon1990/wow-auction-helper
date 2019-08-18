@@ -106,6 +106,9 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   ngAfterViewInit(): void {
+    if (!this.tabs) {
+      return;
+    }
     this.subscriptions.add(
       (this.tabs as MatTabGroup)
         .selectedTabChange,

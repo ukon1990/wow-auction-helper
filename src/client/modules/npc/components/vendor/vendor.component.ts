@@ -14,12 +14,13 @@ export class VendorComponent implements OnInit {
   sm = new SubscriptionManager();
   vendors: Vendor[] = [];
   columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'name', title: 'Name', dataType: 'string'},
     {key: 'tag', title: 'Tag', dataType: 'string'},
     {key: 'location', title: 'Zone', dataType: 'zone'},
     {key: 'itemCount', title: '# Items', dataType: 'number'},
     {key: 'potentialValue', title: 'Potential AH value', dataType: 'gold'}
   ];
+  currentNPC: Vendor;
 
   constructor() {
     SharedService.events.title.next('Item vendor');
@@ -33,4 +34,7 @@ export class VendorComponent implements OnInit {
     });
   }
 
+  handleRowClick(npc: Vendor) {
+    this.currentNPC = npc;
+  }
 }
