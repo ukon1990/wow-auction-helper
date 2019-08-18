@@ -31,7 +31,7 @@ export class Endpoints {
         SharedService.user.region : 'eu';
     }
 
-    return `${this.getLambdaURLForEnvironment(region)}${path}`;
+    return `${Endpoints.LAMBDAS[region.toUpperCase()]}${path}`;
   }
 
   private static getLambdaURLForEnvironment(region: string) {

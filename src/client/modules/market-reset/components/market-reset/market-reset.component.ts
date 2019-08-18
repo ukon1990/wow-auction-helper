@@ -6,10 +6,9 @@ import {ColumnDescription} from '../../../table/models/column-description';
 import {Filters} from '../../../../utils/filtering';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemReset} from '../../models/item-reset.model';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
-import {Title} from '@angular/platform-browser';
+import {EmptyUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-market-reset',
@@ -22,29 +21,19 @@ export class MarketResetComponent implements OnInit {
   formDefaults = {
     name: '',
     timeToSell: 10,
-    breakPointPercent: 110,
+    breakPointPercent: 101.01,
     mktPriceUpperThreshold: 400,
     minROI: 0,
     minROIPercent: 125,
-    maxTotalBuyoutPerItem: undefined
+    maxTotalBuyoutPerItem: undefined,
+    useHighestROIResult: true,
+    newVsCurrentBuyoutPriceLimit: 400
   };
   data = [];
   sm = new SubscriptionManager();
   tsmShoppingString = '';
   pipe = new GoldPipe();
-  columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'potentialProfitPercent', title: 'ROI %', dataType: 'percent'},
-    {key: 'potentialProfit', title: 'Profit', dataType: 'gold'},
-    {key: 'newBuyout', title: 'New buyout', dataType: 'gold'},
-    {key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'},
-    {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
-    {key: 'sumBuyout', title: 'Total cost', dataType: 'gold'},
-    {key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'},
-    {key: 'auctionCount', title: '# Auctions', dataType: 'number'},
-    {key: 'itemCount', title: '# Item', dataType: 'number'},
-    {key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'},
-  ];
+  columns: ColumnDescription[] = [];
 
   sum = {
     sumCost: 0,
@@ -72,7 +61,11 @@ export class MarketResetComponent implements OnInit {
       minROIPercent: new FormControl(
         query.minROIPercent || this.formDefaults.minROIPercent),
       maxTotalBuyoutPerItem: new FormControl(
-        query.maxTotalBuyoutPerItem || this.formDefaults.maxTotalBuyoutPerItem)
+        query.maxTotalBuyoutPerItem || this.formDefaults.maxTotalBuyoutPerItem),
+      useHighestROIResult: new FormControl(
+        query.useHighestROIResult || this.formDefaults.useHighestROIResult),
+      newVsCurrentBuyoutPriceLimit: new FormControl(
+        query.newVsCurrentBuyoutPriceLimit || this.formDefaults.newVsCurrentBuyoutPriceLimit),
     });
 
     this.form.valueChanges.subscribe((form) => {
@@ -82,6 +75,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setColumns();
     this.filter(this.form.getRawValue());
 
     this.sm.add(SharedService.events.auctionUpdate,
@@ -103,6 +97,7 @@ export class MarketResetComponent implements OnInit {
     this.data.length = 0;
     this.tsmShoppingString = '';
     this.rowShoppingString = '';
+    console.log('shit', query.newVsCurrentBuyoutPriceLimit / 100);
 
     SharedService.auctionItems.forEach(ai => {
       if (!Filters.isNameMatch(ai.itemID, query.name)) {
@@ -119,7 +114,9 @@ export class MarketResetComponent implements OnInit {
             this.isMktPriceThreasholdMatch(bp, query, ai) &&
             this.isMinROIMatch(query, bp) &&
             this.isMinROIPercentMatch(query, bp) &&
-            this.isMaxTotalBuyoutPerItemMatch(query, bp)) {
+            this.isMaxTotalBuyoutPerItemMatch(query, bp) &&
+            this.isHigherROIThanPrevious(query, bp, matchPoint) &&
+            this.isNewVsCurrentBuyoutPriceLimit(query, bp)) {
             matchPoint = {
               itemID: item.id,
               name: item.name,
@@ -191,4 +188,39 @@ export class MarketResetComponent implements OnInit {
     this.form.reset(this.formDefaults);
   }
 
+  private isHigherROIThanPrevious(query: any, bp: ItemResetBreakpoint, matchPoint: any) {
+    if (!(!matchPoint || !query.useHighestROIResult || EmptyUtil.isNullOrUndefined(query.useHighestROIResult))) {
+      return bp.potentialProfitPercent > matchPoint.potentialProfitPercent;
+    } else {
+      return true;
+    }
+  }
+
+  private isNewVsCurrentBuyoutPriceLimit(query: any, bp: ItemResetBreakpoint) {
+    if (!query.newVsCurrentBuyoutPriceLimit || EmptyUtil.isNullOrUndefined(query.newVsCurrentBuyoutPriceLimit)) {
+      return true;
+    }
+    return bp.newVsCurrentBuyoutPercent < query.newVsCurrentBuyoutPriceLimit / 100;
+  }
+
+  private setColumns() {
+    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
+    this.columns.push({key: 'potentialProfitPercent', title: 'ROI %', dataType: 'percent'});
+    this.columns.push({key: 'potentialProfit', title: 'Profit', dataType: 'gold'});
+    this.columns.push({key: 'newBuyout', title: 'New buyout', dataType: 'gold'});
+
+    if (SharedService.user.apiToUse !== 'none') {
+      this.columns.push({key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'});
+    }
+    this.columns.push({key: 'newVsCurrentBuyoutPercent', title: 'New vs current', dataType: 'percent'});
+    this.columns.push({key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'});
+    this.columns.push({key: 'sumBuyout', title: 'Total cost', dataType: 'gold'});
+    this.columns.push({key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'});
+    this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
+    this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
+
+    if (SharedService.user.apiToUse !== 'none') {
+      this.columns.push({key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'});
+    }
+  }
 }

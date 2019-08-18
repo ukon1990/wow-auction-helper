@@ -27,11 +27,20 @@
 
     <mat-form-field class="col">
       <input matInput
-             placeholder="Max mkt"
+             placeholder="Max x% of market value"
              type="number"
              formControlName="mktPriceUpperThreshold">
     </mat-form-field>
   </ng-container>
+
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Max x% of current min price"
+           matTooltip="The new price can at max, be x % of the current lowest buyout price"
+           formControlName="newVsCurrentBuyoutPriceLimit"
+           type="number"
+           min="0">
+  </mat-form-field>
 
   <mat-form-field class="col">
     <input matInput
@@ -56,6 +65,12 @@
            type="number"
            min="0">
   </mat-form-field>
+
+  <mat-checkbox class="col"
+                formControlName="useHighestROIResult"
+                matTooltip="Prioritizes a better return on investment over gold earned">
+    Prioritize ROI over most gold per row
+  </mat-checkbox>
 
   <div class="col">
     <button mat-raised-button
