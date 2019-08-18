@@ -3,10 +3,7 @@ import {environment} from '../../environments/environment';
 
 export class Endpoints {
   public static readonly TSM_API = 'https://api.tradeskillmaster.com/v1/item';
-  public static readonly BNET_API = 'https://us.api.battle.net/wow/';
-  public static readonly WAH_API = 'https://wah.jonaskf.net/';
-  public static readonly WAH_LOCAL_API = 'http://localhost:3000/api/';
-  public static readonly WAH_NODE_API = 'https://wowauctionshelper-env.dvsgifqqkj.eu-west-1.elasticbeanstalk.com/api/';
+  public static readonly WAH_LOCAL_API = 'http://localhost:3000/';
   public static readonly IMAGE_PATH = 'https://render-eu.worldofwarcraft.com/';
   public static readonly IMAGE_PATH_ICONS = Endpoints.IMAGE_PATH + 'icons/56';
   // char/realm/??/??.jpg
@@ -34,11 +31,11 @@ export class Endpoints {
         SharedService.user.region : 'eu';
     }
 
-    return `${
-      Endpoints.LAMBDAS[region.toUpperCase()]
-      }${
-      path
-      }`;
+    return `${Endpoints.LAMBDAS[region.toUpperCase()]}${path}`;
+  }
+
+  private static getLambdaURLForEnvironment(region: string) {
+    return environment.production ? Endpoints.LAMBDAS[region.toUpperCase()] : this.WAH_LOCAL_API;
   }
 
   public static getUrl(path: string): string {

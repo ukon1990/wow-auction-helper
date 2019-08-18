@@ -26,7 +26,11 @@ export class LogController {
 
   constructor(public event: APIGatewayEvent, public callback: Callback) {
     console.log(this.event, this.event['identity']);
-    this.detail = this.event.requestContext['identity'];
+    if (this.event.requestContext && this.event.requestContext['identity']) {
+      this.detail = this.event.requestContext['identity'];
+    } else if (this.event['detail']) {
+      this.detail = this.event['detail'];
+    }
     this.userId = this.generateId();
   }
 
@@ -91,7 +95,7 @@ export class LogController {
 
   private generateId() {
     return crypto.createHash('sha256')
-      .update(this.detail.sourceIp)
+      .update(this.detail.sourceIp || this.detail.sourceIPAddress)
       .digest('base64');
   }
 }

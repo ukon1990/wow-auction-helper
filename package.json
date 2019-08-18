@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "3.5.2",
+  "version": "3.5.3",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -21,7 +21,9 @@
     "deploy-eu": "serverless deploy -r eu-west-1 -s prod",
     "deploy-us": "serverless deploy -r us-west-1 -s prod",
     "deploy-kr": "serverless deploy -r ap-northeast-2 -s prod",
-    "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr"
+    "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr",
+
+    "update-json-data-locally": "cd scripts/;sh update-data.sh; cd .."
   },
   "private": true,
   "dependencies": {

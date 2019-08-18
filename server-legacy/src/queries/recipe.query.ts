@@ -34,7 +34,6 @@ export class RecipeQuery {
       SELECT r.id, json, ${getLocale(req)} as name, timestamp from  recipes as r
       LEFT OUTER JOIN recipe_name_locale as l
       ON r.id = l.id
-      WHERE json NOT LIKE '%itemID":0%'
       AND timestamp > "${req.body.timestamp + ''}"
       ORDER BY timestamp desc;`;
   }
