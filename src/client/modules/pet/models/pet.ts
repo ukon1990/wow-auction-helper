@@ -1,4 +1,4 @@
-import { AuctionItem } from '../../auction/models/auction-item.model';
+import {Auction} from '../../auction/models/auction.model';
 
 export class Pet {
   speciesId: number;
@@ -8,5 +8,5 @@ export class Pet {
   icon: string;
   description: string;
   source: string;
-  auctions = new Array<AuctionItem>();
+  auctions = new Array<Auction>();
 }

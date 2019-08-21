@@ -17,7 +17,6 @@ import {Title} from '@angular/platform-browser';
 export class PetsValueComponent implements OnInit, OnDestroy {
   isDownloadingAHData = true;
   petSpecies: CollectedPet[] = [];
-  pets: CollectedPet[] = [];
   petAuctionsMap = {};
   columns: Array<ColumnDescription> = [
     {key: 'name', title: 'Name', dataType: 'name'},
@@ -50,56 +49,18 @@ export class PetsValueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.handleAHUpdate();
+
     this.sm.add(SharedService.events.auctionUpdate,
       () => this.handleAHUpdate());
 
     this.sm.add(this.ahService.events.isDownloading,
-        isDownloading =>
-      this.isDownloadingAHData = isDownloading);
+      isDownloading =>
+        this.isDownloadingAHData = isDownloading);
   }
 
   ngOnDestroy(): void {
     this.sm.unsubscribe();
-  }
-
-  setUserPets(): void {
-    this.petSpecies.length = 0;
-    this.pets.length = 0;
-    this.petAuctionsMap = {};
-    const tmpMap: Map<number, CollectedPet> = new Map<number, CollectedPet>();
-    SharedService.user.characters.forEach(char => {
-      if (!char || !char.pets || !char.pets.collected) {
-        return;
-      }
-      char.pets.collected.forEach(cp => {
-        const pet = SharedService.pets[cp.stats.speciesId];
-        if (!pet || !pet.auctions || !pet.auctions.length) {
-          return;
-        }
-        if (!tmpMap[cp.creatureId]) {
-          cp.count = 1;
-          tmpMap.set(cp.creatureId, cp);
-          this.petAuctionsMap[cp.stats.speciesId] = pet && pet.auctions ? pet.auctions : [];
-        } else {
-          tmpMap[cp.creatureId].count++;
-        }
-      });
-
-    });
-
-    Report.debug('PetsValueComponent.setUserPets', {tmpMap, species: this.petSpecies, auctionMap: this.petAuctionsMap});
-    tmpMap.forEach(pet => {
-      this.petSpecies.push(pet);
-    });
-
-    this.table.data = [];
-    this.petValue = 0;
-    this.petSpecies.forEach((species: CollectedPet) => {
-      const pet = new PetTableData(species, this.petAuctionsMap[species.stats.speciesId]);
-      this.table.data.push(pet);
-      this.petValue += pet.minBuyout * pet.userStock;
-    });
-    Report.debug('setUserPets', this.table);
   }
 
   /* istanbul ignore next */
@@ -125,7 +86,56 @@ export class PetsValueComponent implements OnInit, OnDestroy {
   }
 
   private handleAHUpdate(): void {
-    // this.petSpecies.filter(p => SharedService.pets[p.stats.speciesId]);
-    this.setUserPets();
+    this.mapUserPets();
+    this.setTable();
+    Report.debug('setUserPets', this.table);
+  }
+
+  private mapUserPets() {
+    this.petSpecies.length = 0;
+    const tmpMap = this.getUserPetSpeciesMap();
+
+    Report.debug('PetsValueComponent.setUserPets', {tmpMap, species: this.petSpecies, auctionMap: this.petAuctionsMap});
+    tmpMap.forEach(pet => {
+      this.petSpecies.push(pet);
+    });
+  }
+
+  private getUserPetSpeciesMap() {
+    this.petAuctionsMap = {};
+    const tmpMap: Map<number, CollectedPet> = new Map<number, CollectedPet>();
+    const l = [];
+    SharedService.user.characters.forEach(char => {
+      if (!char || !char.pets || !char.pets.collected) {
+        return;
+      }
+      l.push(char);
+      char.pets.collected.forEach(cp => {
+        const pet = SharedService.pets[cp.stats.speciesId];
+        if (!pet || !pet.auctions || !pet.auctions.length) {
+          return;
+        }
+        if (!tmpMap[cp.creatureId]) {
+          cp.count = 1;
+          tmpMap.set(cp.creatureId, cp);
+          this.petAuctionsMap[cp.stats.speciesId] = pet && pet.auctions ? pet.auctions : [];
+        } else {
+          tmpMap[cp.creatureId].count++;
+        }
+      });
+
+    });
+    console.log(l);
+    return tmpMap;
+  }
+
+  private setTable() {
+    this.petValue = 0;
+    this.table.data = this.petSpecies.map((species: CollectedPet) => {
+      const pet = new PetTableData(species, this.petAuctionsMap[species.stats.speciesId]);
+      this.petValue += pet.minBuyout * pet.userStock;
+      return pet;
+    });
+    Report.debug('pets', this.table.data);
   }
 }
