@@ -17,10 +17,13 @@ import {SharedService} from '../../../../services/shared.service';
 })
 export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, AfterContentInit {
   form: FormGroup;
-  filteredAuctions = [];
   itemClasses = itemClasses;
   itemQualities = itemQualities;
-  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+
+  table = {
+    columns: [],
+    data: []
+  };
   expansions = GameBuild.expansionMap;
   delayFilter = false;
   private subs = new SubscriptionManager();
@@ -78,37 +81,41 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
 
   addColumns(): void {
-    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
-    this.columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number'});
-    this.columns.push({key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true});
-    this.columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number'});
-    this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-    this.columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
+    const {columns} = this.table;
+    columns.push({key: 'name', title: 'Name', dataType: 'name'});
+    columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number'});
+    columns.push({key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true});
+    columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number'});
+    columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
+    columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
 
     if (SharedService.user.apiToUse !== 'none') {
-      this.columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
+      columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
       if (SharedService.user.apiToUse === 'tsm') {
-        this.columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
+        columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
       } else {
-        this.columns.push({key: 'avgDailyPosted', title: 'Avg daily posted', dataType: 'number', hideOnMobile: true});
+        columns.push({key: 'avgDailyPosted', title: 'Avg daily posted', dataType: 'number', hideOnMobile: true});
       }
-      this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
-      this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
+      columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+      columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     }
-    this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
+    columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
   }
 
   async filterAuctions(changes?: any) {
     if (!changes) {
       changes = this.form.getRawValue();
     }
-    console.log('changes', changes);
-    this.filteredAuctions = SharedService.auctionItems
-      .filter(i => this.isMatch(i, changes));
+
+    this.table.data = SharedService.auctionItems
+      .filter(i => this.isMatch(i, changes))
+      .map(i => {
+        return {...SharedService.pets[i.petSpeciesId], ...i };
+      });
   }
 
   isMatch(auctionItem: AuctionItem, changes): boolean {
-    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name) &&
+    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name, auctionItem.petSpeciesId) &&
       Filters.isItemClassMatch(
         auctionItem.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
       Filters.isSaleRateMatch(auctionItem.itemID, changes.saleRate) &&

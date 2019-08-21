@@ -46,33 +46,39 @@ export class MarketResetComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder) {
     SharedService.events.title.next('Market resetter');
-    const query = localStorage['query_market_reset'] ?
-      JSON.parse(localStorage['query_market_reset']) : undefined;
+    const query = this.getQuery();
     this.form = this.formBuilder.group({
       name: new FormControl(
         query.name || this.formDefaults.name),
-      timeToSell: new FormControl(
-        query.timeToSell || this.formDefaults.timeToSell),
-      breakPointPercent: new FormControl(
-        query.breakPointPercent || this.formDefaults.breakPointPercent),
-      mktPriceUpperThreshold: new FormControl(
-        query.mktPriceUpperThreshold || this.formDefaults.mktPriceUpperThreshold),
-      minROI: new FormControl(
-        query.minROI || this.formDefaults.minROI),
-      minROIPercent: new FormControl(
-        query.minROIPercent || this.formDefaults.minROIPercent),
-      maxTotalBuyoutPerItem: new FormControl(
-        query.maxTotalBuyoutPerItem || this.formDefaults.maxTotalBuyoutPerItem),
-      useHighestROIResult: new FormControl(
-        query.useHighestROIResult || this.formDefaults.useHighestROIResult),
-      newVsCurrentBuyoutPriceLimit: new FormControl(
-        query.newVsCurrentBuyoutPriceLimit || this.formDefaults.newVsCurrentBuyoutPriceLimit),
+      timeToSell: new FormControl(query.timeToSell),
+      breakPointPercent: new FormControl(query.breakPointPercent),
+      mktPriceUpperThreshold: new FormControl(query.mktPriceUpperThreshold),
+      minROI: new FormControl(query.minROI),
+      minROIPercent: new FormControl(query.minROIPercent),
+      maxTotalBuyoutPerItem: new FormControl(query.maxTotalBuyoutPerItem),
+      useHighestROIResult: new FormControl(query.useHighestROIResult),
+      newVsCurrentBuyoutPriceLimit: new FormControl(query.newVsCurrentBuyoutPriceLimit)
     });
 
     this.form.valueChanges.subscribe((form) => {
       localStorage['query_market_reset'] = JSON.stringify(this.form.value);
       this.filter(form);
     });
+  }
+
+  private getQuery() {
+    const queryString = localStorage['query_market_reset'];
+    const query = queryString ? JSON.parse(queryString) : this.formDefaults;
+
+    Object.keys(query)
+      .forEach(key => {
+        if (query[key] === undefined) {
+          query[key] = this.formDefaults[key];
+        }
+      });
+
+    Report.debug('getQuery', query);
+    return query;
   }
 
   ngOnInit() {

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {PageEvent} from '@angular/material';
 
 import {Angulartics2} from 'angulartics2';
@@ -54,7 +54,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   pageRows: Array<number> = [10, 20, 40, 80, 100];
   pageEvent: PageEvent = {pageIndex: 0, pageSize: this.itemsPerPage, length: 0};
   sorter: Sorter;
-  locale = localStorage['locale'].split('-')[0];
+  locale = (localStorage['locale'] || 'en_GB').split('-')[0];
   previousLength = 0;
   auctionDuration = {
     'VERY_LONG': '12h+',
@@ -81,25 +81,26 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   /* istanbul ignore next */
-  ngOnChanges(change) {
-    if (change && change.data && change.data.currentValue) {
+  ngOnChanges({data, itemsPerPage}: SimpleChanges) {
+    Report.debug('DataTableComponent.ngOnChanges', data);
+    if (data && data.currentValue) {
       // this.pageEvent.length = change.data.currentValue.length;
-      if (this.previousLength !== change.data.currentValue.length) {
+      if (this.previousLength !== data.currentValue.length) {
         this.pageEvent.pageIndex = 0;
       }
 
       setTimeout(() =>
-        this.handleDataChange(change));
+        this.handleDataChange(data));
     }
 
-    if (change && change.itemsPerPage && change.itemsPerPage.currentValue) {
-      this.pageEvent.pageSize = change.itemsPerPage.currentValue;
+    if (itemsPerPage && itemsPerPage.currentValue) {
+      this.pageEvent.pageSize = itemsPerPage.currentValue;
     }
   }
 
-  private handleDataChange(change) {
-    this.previousLength = change.data.currentValue.length;
-    this.filteredData = [...change.data.currentValue];
+  private handleDataChange(data) {
+    this.previousLength = data.currentValue.length;
+    this.filteredData = [...data.currentValue];
     this.sorter.sort(this.filteredData);
 
     if (this.filterParameter) {
@@ -253,6 +254,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   getPetId(pet: any): number {
     if (!SharedService.pets[pet.petSpeciesId]) {
+      Report.send('Pet missing', pet);
       return 0;
     }
     return SharedService.pets[pet.petSpeciesId].creatureId;
@@ -332,9 +334,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
    * @memberof DataTableComponent
    */
   getWHRelations(item: any): string {
-    // {{linkType ? linkType : 'npc' }}
     if (item.petSpeciesId) {
-      return 'npc=' + this.getPetId(item);
+      return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
     }
     return (this.linkType ?
       `${this.linkType}=` : 'item=') + this.getItemID(item);
