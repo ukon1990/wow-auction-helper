@@ -51,6 +51,14 @@
   </mat-card-content>
 </mat-card>
 
+<mat-card *ngIf="currentGold">
+  <mat-card-header>
+    <mat-card-title>
+      Current gold status: {{currentGold | gold}}
+    </mat-card-title>
+  </mat-card-header>
+</mat-card>
+
 <wah-data-table
         id="id"
         [iconSize]="22"
