@@ -7,6 +7,7 @@ export class ItemResetBreakpoint {
 
   public tsmShoppingString: string;
   public sellTime: number;
+  public newVsCurrentBuyoutPercent: number;
 
   constructor(
     public id: number,
@@ -22,6 +23,8 @@ export class ItemResetBreakpoint {
     public auctions: Auction[]) {
     this.setPotentialSellTime();
     this.setShoppingString();
+
+    this.newVsCurrentBuyoutPercent = newBuyout / this.auctionItem.buyout;
   }
 
   private setPotentialSellTime() {

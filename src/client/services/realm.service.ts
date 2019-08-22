@@ -10,9 +10,12 @@ import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
 import {ArrayUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
+import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
+import {Report} from '../utils/report.util';
 
 @Injectable()
 export class RealmService {
+  previousUrl;
   events = {
     realmStatus: new BehaviorSubject(undefined),
     list: new BehaviorSubject([])
@@ -45,8 +48,14 @@ export class RealmService {
   getStatus(region: string, realm: string): Promise<any> {
     return this.http.get(Endpoints.getLambdaUrl(`realm/${region}/${realm}`, region))
       .toPromise()
-      .then(status => {
+      .then((status: AuctionHouseStatus) => {
         this.events.realmStatus.next(status);
+
+        if (status.isUpdating && status.url !== this.previousUrl) {
+          this.matSnackBar.open('New auction data is being processed on the server and will be available soon.');
+          this.previousUrl = status.url;
+          Report.debug('The server is processing new auction data', status);
+        }
       })
       .catch(error => {
       });

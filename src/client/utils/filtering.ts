@@ -5,13 +5,16 @@ import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
+import {Pet} from '../modules/pet/models/pet';
 
 export class Filters {
-  public static isNameMatch(itemID: number, name: string): boolean {
+  public static isNameMatch(itemID: number, name: string, speciesId?: number): boolean {
     if (TextUtil.isEmpty(name)) {
       return true;
     }
-    return TextUtil.contains(Filters.getItemName(itemID), name);
+    const pet: Pet = SharedService.pets[speciesId],
+      nameForId = pet ? pet.name : Filters.getItemName(itemID);
+    return TextUtil.contains(nameForId, name);
   }
 
   public static isBelowMarketValue(itemID: number, marketValuePercent: number): boolean {

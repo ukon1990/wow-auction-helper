@@ -13,6 +13,7 @@ import {MatSnackBar} from '@angular/material';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {Platform} from '@angular/cdk/platform';
+import {Report} from '../utils/report.util';
 
 class ItemResponse {
   timestamp: Date;
@@ -33,14 +34,15 @@ export class ItemService {
   }
 
   addItem(itemID: number): Promise<any> {
-    console.log('Attempting to add item data for ' + itemID);
+    Report.debug('Attempting to add item data for ' + itemID);
+    Report.send('addItem', 'ItemService', itemID);
+
     return this._http.post(
       Endpoints.getLambdaUrl(`item/${itemID}`), {
         locale: localStorage['locale']
       })
       .toPromise()
       .then((item: Item) => {
-        console.log('downloaded item', item);
         SharedService.items[item.id] = (item as Item);
         if (SharedService.auctionItemsMap[item.id]) {
           SharedService.auctionItemsMap[item.id].name = item.name;

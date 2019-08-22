@@ -37,6 +37,16 @@ const TOOLS_ROUTE: Route = {
     {path: 'milling-and-prospecting', component: MillingComponent},
     {path: 'disenchanting', component: DisenchantingComponent},
     {path: 'reputations', component: ReputationsComponent},
+    {
+      path: 'tsm', component: TsmAddonDbComponent, children: [
+        {path: 'summary', component: ProfitSummaryComponent},
+        {
+          path: 'dataset', component: TsmDatasetComponent, children: [
+            {path: ':name', component: TsmDatasetComponent}
+          ]
+        }
+      ]
+    },
     {path: 'vendors', component: VendorComponent}
   ]
 };
@@ -51,11 +61,11 @@ const DASHBOARD_ROUTE: Route = {
     {path: 'sellers', component: DashboardSellersComponent},
     {path: 'ah-summary', component: AhSummaryComponent},
     {
-      path: 'tsm', component: TsmAddonDbComponent, children: [
-        {path: 'summary', component: ProfitSummaryComponent},
+      path: 'tsm', redirectTo: '/tools/tsm', children: [
+        {path: 'summary', redirectTo: '/tools/tsm/summary'},
         {
-          path: 'dataset', component: TsmDatasetComponent, children: [
-            {path: ':name', component: TsmDatasetComponent}
+          path: 'dataset', redirectTo: '/tools/tsm/dataset', children: [
+            {path: ':name', redirectTo: '/tools/tsm/dataset/:name'}
           ]
         }
       ]
