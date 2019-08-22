@@ -12,7 +12,7 @@ export class ReportService {
   constructor(private http: HttpClient) {
   }
 
-  send(action: string, category: string, version: string, type: string, label?: string): void {
+  send(action: string, category: string, version: string, type: string, label?: string | number): void {
     if (SharedService.user.doNotReport) {
       return;
     }

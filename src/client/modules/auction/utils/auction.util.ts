@@ -54,6 +54,8 @@ export class AuctionUtil {
     SharedService.auctionItems.length = 0;
     Object.keys(SharedService.auctionItemsMap).forEach(id =>
       delete SharedService.auctionItemsMap[id]);
+    Object.keys(SharedService.pets)
+      .forEach(id => delete SharedService.pets[id].auctions);
     Seller.clearSellers();
   }
 
@@ -120,11 +122,10 @@ export class AuctionUtil {
     }
 
     if (!pet.auctions) {
-      SharedService.pets[a.petSpeciesId].auctions = new Array<AuctionItem>();
+      pet.auctions = new Array<Auction>();
     }
 
-    SharedService.pets[a.petSpeciesId]
-      .auctions.push(SharedService.auctionItemsMap[petId]);
+    pet.auctions.push(a);
   }
 
   private static getPetId(a) {

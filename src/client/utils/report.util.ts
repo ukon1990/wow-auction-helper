@@ -17,7 +17,7 @@ export class Report {
     this.service = reportService;
   }
 
-  public static send(action: string, category: string, label?: string): void {
+  public static send(action: string, category: string, label?: string | number): void {
     if (!Report.ga || !environment.production || SharedService.user.doNotReport) {
       return;
     }
