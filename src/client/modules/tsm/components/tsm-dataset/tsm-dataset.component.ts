@@ -147,6 +147,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
   sm = new SubscriptionManager();
   inventoryValue: number;
   inventoryValueOnlyInDemand: number;
+  currentGold = 0;
 
   constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {
     this.form = this.formBuilder.group({
@@ -264,6 +265,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
     }
 
     this.handleInventorySet();
+    this.handleGoldLogSet();
     this.updateRoute();
   }
 
@@ -309,6 +311,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       setTimeout(() =>
         this.form.controls.character.setValue(this.characters[0]));
     }
+    this.handleGoldLogSet(realm);
   }
 
   setDataSets(data): void {
@@ -401,5 +404,34 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
     return data.filter(item =>
       Filters.isSaleRateMatch(item.id, formData.saleRate) &&
       Filters.isDailySoldMatch(item.id, formData.avgDailySold));
+  }
+
+  private handleGoldLogSet(realm?: string) {
+    if (!realm) {
+      realm = this.form.getRawValue().realm;
+    }
+
+    this.currentGold = 0;
+
+    if (this.isGoldLogSet()) {
+      console.log(this.selectedSet.data);
+      const realmData = this.selectedSet.data[realm];
+      Object.keys(realmData)
+        .forEach(name => {
+          if (name !== 'All') {
+            let latestValue = {minute: 0, copper: 0};
+            realmData[name].forEach(d => {
+              if (d.minute > latestValue.minute) {
+                latestValue = {minute: d.minute, copper: d.copper};
+              }
+            });
+            this.currentGold += latestValue.copper;
+          }
+        });
+    }
+  }
+
+  private isGoldLogSet() {
+    return this.selectedSet && this.selectedSet.name === 'goldLog' && this.selectedSet.data;
   }
 }

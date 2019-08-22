@@ -1,5 +1,4 @@
-import { AuctionItem } from '../modules/auction/models/auction-item.model';
-import { SharedService } from '../services/shared.service';
+import {SharedService} from '../services/shared.service';
 
 export class Sorter {
   readonly auctionDuration = {
