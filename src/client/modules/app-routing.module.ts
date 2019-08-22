@@ -58,16 +58,7 @@ const DASHBOARD_ROUTE: Route = {
     {path: 'items', component: DashboardItemsComponent},
     {path: 'sellers', component: DashboardSellersComponent},
     {path: 'ah-summary', component: AhSummaryComponent},
-    {
-      path: 'tsm', redirectTo: '/tools/tsm', children: [
-        {path: 'summary', redirectTo: '/tools/tsm/summary'},
-        {
-          path: 'dataset', redirectTo: '/tools/tsm/dataset', children: [
-            {path: ':name', redirectTo: '/tools/tsm/dataset/:name'}
-          ]
-        }
-      ]
-    },
+    {path: 'tsm', redirectTo: '/tools/tsm'},
     {path: 'manage-dashboards', component: WatchlistComponent}
   ]
 };
