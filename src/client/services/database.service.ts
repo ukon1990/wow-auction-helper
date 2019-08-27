@@ -175,21 +175,23 @@ export class DatabaseService {
   }
 
 
-  addAuctions(auctions: Array<Auction>): void {
-    return; // Deactivated
-    if (environment.test || this.platform === null || this.platform.WEBKIT) {
+  async addAuctions(auctions: Array<Auction>): Promise<void> {
+    if (this.doNotLoadAuctionsFromDB()) {
       return;
     }
-    this.db.table('auctions').clear();
+    await this.db.table('auctions').clear();
     this.db.table('auctions')
       .bulkAdd(auctions)
       .then(r => console.log('Successfully added auctions to local DB'))
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
+  private doNotLoadAuctionsFromDB() {
+    return environment.production || environment.test || this.platform === null || this.platform.WEBKIT;
+  }
+
   async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    return; // Deactivated
-    if (this.platform === null || this.platform.WEBKIT) {
+    if (this.doNotLoadAuctionsFromDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
 

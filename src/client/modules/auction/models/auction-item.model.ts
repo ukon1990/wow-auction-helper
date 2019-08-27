@@ -1,4 +1,5 @@
 import {Auction} from './auction.model';
+import {TSM} from './tsm.model';
 
 export class AuctionItem {
   itemID: number;
@@ -27,4 +28,20 @@ export class AuctionItem {
   past90DaysSaleRate?: number;
   totalSaleRate?: number;
   hasPersonalSaleRate: boolean;
+
+  constructor(auction?: Auction, tsm?: TSM) {
+    if (auction) {
+      this.itemID = auction.item;
+      this.petLevel = auction.petLevel;
+      this.petQualityId = auction.petQualityId;
+      this.petSpeciesId = auction.petSpeciesId;
+    }
+
+    if (tsm) {
+      this.regionSaleAvg = tsm.RegionSaleAvg;
+      this.regionSaleRate = tsm.RegionSaleRate;
+      this.avgDailySold = tsm.RegionAvgDailySold;
+
+    }
+  }
 }
