@@ -27,7 +27,10 @@ export class LuaUtil {
 
   private static handleTableKey({key, value, type}: TableKey) {
     if (type === 'TableValue') {
-      return this.handleValue(value);
+      return {
+        key: 'data',
+        data: this.handleValue(value)
+      };
     }
     return {
       key: key.value,
@@ -40,7 +43,7 @@ export class LuaUtil {
       case 'NumericLiteral':
         return value;
       case 'StringLiteral':
-        return raw;
+        return value;
       case 'TableKey':
         return this.handleTableKey(value);
       case 'TableConstructorExpression':
@@ -53,12 +56,9 @@ export class LuaUtil {
   private static handleFields(fields: TableKey[]) {
     const result = {};
     fields.forEach(field => {
-      console.log(field);
-      const fieldResult = this.handleTableKey(field);
-      if (fieldResult) {
-        result[fieldResult.key] = fieldResult.data;
-      } else {
-        console.error('Failed on field', field);
+      const {key, data} = this.handleTableKey(field);
+      if (data) {
+        result[key] = data;
       }
     });
 
