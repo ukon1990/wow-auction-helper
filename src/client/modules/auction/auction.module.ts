@@ -14,11 +14,16 @@ import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { AucScanDataImportComponent } from './components/auc-scan-data-import/auc-scan-data-import.component';
 
 @NgModule({
   declarations: [
     AuctionsComponent,
-    MyAuctionsComponent
+    MyAuctionsComponent,
+    AucScanDataImportComponent
+  ],
+  exports: [
+    AucScanDataImportComponent
   ],
   imports: [
     CommonModule,

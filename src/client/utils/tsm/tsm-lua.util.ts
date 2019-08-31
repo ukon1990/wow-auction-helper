@@ -5,7 +5,6 @@ import {AuctionItem} from '../../modules/auction/models/auction-item.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {InventoryUtil} from './inventory.util';
-import {Report} from '../report.util';
 
 export class TSMCSV {
   characterGuilds?: any;
