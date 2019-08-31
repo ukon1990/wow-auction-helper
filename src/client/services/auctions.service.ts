@@ -19,6 +19,7 @@ import {Auction} from '../modules/auction/models/auction.model';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {RealmStatus} from '../models/realm-status.model';
+import {Report} from '../utils/report.util';
 
 @Injectable()
 export class AuctionsService {
@@ -46,6 +47,11 @@ export class AuctionsService {
   }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
+    if (SharedService.user.isClassicMode) {
+      Report.debug('Not downloading AH data for classic');
+      return;
+    }
+
     const previousLastModified = SharedService.auctionResponse ?
       SharedService.auctionResponse.lastModified : undefined;
     return this.http.post(
@@ -70,6 +76,11 @@ export class AuctionsService {
   }
 
   getAuctions(): Promise<any> {
+    if (SharedService.user.isClassicMode) {
+      Report.debug('Not downloading AH data for classic');
+      return;
+    }
+
     if (SharedService.downloading.auctions) {
       return;
     }

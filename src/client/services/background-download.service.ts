@@ -139,7 +139,8 @@ export class BackgroundDownloadService {
 
   private shouldUpdateRealmStatus() {
     return !this.checkingForUpdates &&
-      this.shouldAnUpdateShouldBeAvailableSoon();
+      this.shouldAnUpdateShouldBeAvailableSoon() &&
+      !SharedService.user.isClassicMode;
   }
 
   private shouldAnUpdateShouldBeAvailableSoon() {

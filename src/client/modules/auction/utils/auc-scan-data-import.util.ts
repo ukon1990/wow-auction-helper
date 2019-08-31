@@ -4,10 +4,11 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {Auction} from '../models/auction.model';
 
 export class AucScanDataImportUtil {
-  static import(input) {
+  static import(input): any {
     const data = LuaUtil.toObject(input);
     const result = this.processData(data);
     Report.debug('AucScanDataImportUtil', data, result);
+    return result;
   }
 
   private static processData({Version, scans}: any) {
@@ -54,7 +55,7 @@ export class AucScanDataImportUtil {
     auction.item = +split[22];
     auction.bid = +split[14];
     auction.buyout = +split[16];
-    auction.owner = split[19].replace(/[\"]{1,}/, '');
+    auction.owner = split[19].replace(/[\\"]{1,}/g, '');
     auction.ownerRealm = realm;
     auction.quantity = +split[10];
     auction.timeLeft = this.getTimeLeft(+split[6]);

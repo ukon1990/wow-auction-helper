@@ -31,6 +31,7 @@ export class User {
   shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
   doNotReport = false;
+  isClassicMode = false;
 
   /**
    *
@@ -51,6 +52,10 @@ export class User {
 
     Object.keys(user).forEach(key => {
       switch (key) {
+        case 'isClassicMode':
+          localStorage.setItem(key, JSON.stringify(user.isClassicMode));
+          SharedService.user[key] = user[key];
+          break;
         case 'doNotReport':
           localStorage.setItem(key, JSON.stringify(user[key]));
           SharedService.user[key] = user[key];
@@ -202,6 +207,9 @@ export class User {
           break;
         case 'useIntermediateCrafting':
           user.useIntermediateCrafting = JSON.parse(localStorage[key]);
+          break;
+        case 'isClassicMode':
+          user.isClassicMode = JSON.parse(localStorage[key]);
           break;
         case 'notifications':
           user.notifications = new NotificationSettings(JSON.parse(localStorage[key]));
