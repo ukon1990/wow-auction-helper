@@ -105,11 +105,23 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       name: 'auctionQuantity',
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
-        {key: 'character', title: 'character.model.ts', dataType: 'seller'},
+        {key: 'character', title: 'Seller', dataType: 'seller'},
         {key: 'value', title: 'Quantity', dataType: 'number'}
       ],
       data: [],
       hasCharacters: true
+    }, {
+      title: 'Scanned Auction data',
+      name: 'csvAuctionDBScan',
+      columns: [
+        {key: 'name', title: 'Name', dataType: 'name'},
+        {key: 'numAuctions', title: '# Auctions', dataType: 'number'},
+        {key: 'quantity', title: '# Items', dataType: 'number'},
+        {key: 'minBuyout', title: 'Min buyout', dataType: 'gold'},
+        {key: 'marketValue', title: 'Market value', dataType: 'gold'}
+      ],
+      data: [],
+      hasCharacters: false
     }, {
       title: 'Inventory',
       name: 'inventory',
