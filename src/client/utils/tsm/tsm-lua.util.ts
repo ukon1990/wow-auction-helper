@@ -8,6 +8,7 @@ import {InventoryUtil} from './inventory.util';
 
 export class TSMCSV {
   characterGuilds?: any;
+  csvAuctionDBScan?: any[];
   csvCancelled?: any[];
   csvExpired?: any[];
   csvExpense?: any[];
@@ -17,6 +18,7 @@ export class TSMCSV {
   profitSummary?: any;
   inventory?: object;
   inventoryMap?: object;
+  auctionDBScanTime?: number;
 }
 
 export class TsmLuaUtil {

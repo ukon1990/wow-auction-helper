@@ -187,6 +187,18 @@ export class DatabaseService {
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
+  addClassicAuctions(auctions: Array<Auction>): void {
+    if (this.platform === null || this.platform.WEBKIT) {
+      return;
+    }
+
+    this.db.table('classic-auctions').clear();
+    this.db.table('classic-auctions')
+      .bulkAdd(auctions)
+      .then(r => console.log('Successfully added auctions to local DB'))
+      .catch(e => console.error('Could not add auctions to local DB', e));
+  }
+
   async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
     return; // Deactivated
     if (this.platform === null || this.platform.WEBKIT) {
@@ -196,20 +208,41 @@ export class DatabaseService {
     SharedService.downloading.auctions = true;
     return this.db.table('auctions')
       .toArray()
-      .then(auctions => {
-        SharedService.downloading.auctions = false;
-        auctionService.events.list.next(auctions);
-        AuctionUtil.organize(auctions, petService)
-          .then(auctionItems =>
-            auctionService.events.groupedList.next(auctionItems))
-          .catch(error =>
-            ErrorReport.sendError('getAllAuctions', error));
-        console.log('Restored auctions from local DB');
-        SharedService.events.auctionUpdate.emit();
-      }).catch(e => {
+      .then(auctions =>
+        this.handleSuccessfulAuctionDBFetch(auctions, petService, auctionService))
+      .catch(e => {
         console.error('Could not restore auctions from local DB', e);
         SharedService.downloading.auctions = false;
       });
+  }
+
+  async getClassicAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
+    if (this.platform === null || this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+
+    SharedService.downloading.auctions = true;
+    return this.db.table('classic-auctions')
+      .toArray()
+      .then(auctions =>
+        this.handleSuccessfulAuctionDBFetch(auctions, petService, auctionService))
+      .catch(e => {
+        console.error('Could not restore auctions from local DB', e);
+        SharedService.downloading.auctions = false;
+      });
+  }
+
+  private handleSuccessfulAuctionDBFetch(auctions, petService: PetsService, auctionService: AuctionsService) {
+    SharedService.downloading.auctions = false;
+    AuctionUtil.organize(auctions, petService)
+      .then(auctionItems => {
+        auctionService.events.list.next(auctions);
+        auctionService.events.groupedList.next(auctionItems);
+      })
+      .catch(error =>
+        ErrorReport.sendError('getAllAuctions', error));
+    console.log('Restored auctions from local DB');
+    SharedService.events.auctionUpdate.emit();
   }
 
   addWoWUctionItems(wowuction: Array<WoWUction>): void {
@@ -317,6 +350,16 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+    this.db.version(6).stores({
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      tsmAddonHistory: this.TSM_ADDON_HISTORY
+    });
     this.db.version(5).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,

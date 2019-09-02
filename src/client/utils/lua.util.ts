@@ -21,24 +21,26 @@ class TableKey {
 
 export class LuaUtil {
   static toObject(input): object {
-    const {fields} = lua.parse(input).body[0].init[0];
+    const { fields } = lua.parse(input).body[0].init[0];
     return this.handleFields(fields as TableKey[]);
   }
 
-  private static handleTableKey({key, value, type}: TableKey) {
+  private static handleTableKey({ key, value, type }: TableKey) {
     if (type === 'TableValue') {
       return {
         key: 'data',
+        type: 'array',
         data: this.handleValue(value)
       };
     }
     return {
       key: key.value,
+      type: 'object',
       data: this.handleValue(value)
     };
   }
 
-  private static handleValue({raw, type, value, fields}: LuaValue) {
+  private static handleValue({ raw, type, value, fields }: LuaValue) {
     switch (type) {
       case 'NumericLiteral':
         return value;
@@ -56,9 +58,19 @@ export class LuaUtil {
   private static handleFields(fields: TableKey[]) {
     const result = {};
     fields.forEach(field => {
-      const {key, data} = this.handleTableKey(field);
+      const { key, data, type } = this.handleTableKey(field);
       if (data) {
-        result[key] = data;
+        switch (type) {
+          case 'object':
+            result[key] = data;
+            break;
+          case 'array':
+            if (!result[key]) {
+              result[key] = [];
+            }
+            result[key].push(data);
+            break;
+        }
       }
     });
 
