@@ -20,11 +20,11 @@ import {AuctionItem} from '../../models/auction-item.model';
 import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
-  selector: 'wah-auc-scan-data-import',
-  templateUrl: './auc-scan-data-import.component.html',
-  styleUrls: ['./auc-scan-data-import.component.scss']
+  selector: 'wah-addon-import',
+  templateUrl: './addon-import.component.html',
+  styleUrls: ['./addon-import.component.scss']
 })
-export class AucScanDataImportComponent implements OnInit {
+export class AddonImportComponent implements OnInit {
   lastModified: number;
   result = [];
   realmControl = new FormControl();
@@ -38,6 +38,11 @@ export class AucScanDataImportComponent implements OnInit {
     TSM: 'TradeSkillMaster.lua'
   };
 
+  readonly AUCTION_DATA_SOURCES = [
+    {name: 'AHDB', fileName: this.ADDONS.AHDB},
+    {name: 'Auctioneer', fileName: this.ADDONS.Auctioneer}
+  ];
+
   constructor(
     private auctionsService: AuctionsService,
     private dbService: DatabaseService,
@@ -47,23 +52,9 @@ export class AucScanDataImportComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       realm: null,
-      isClassicMode: false
+      isClassicMode: false,
+      auctionDataSource: 1
     });
-
-    this.reader.onload = async e => {
-      try {
-        console.log(e, this.reader);
-        const result = this.reader.result;
-        Report.debug(
-          LuaUtil.toObject(result)
-        ); /*
-        this.lastModified =
-          fileEvent['srcElement']['files'][0].lastModifiedDate;*/
-        Report.send('Imported TSM addon data', 'Import');
-      } catch (error) {
-        ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
-      }
-    };
   }
 
   ngOnInit() {
@@ -102,37 +93,42 @@ export class AucScanDataImportComponent implements OnInit {
   importFromFile(fileEvent): void {
     try {
       const files = fileEvent.target.files;
-      const reader = new FileReader();
-      reader.onload = async e => {
-        this.handleFileEvent(reader, files[0], fileEvent);
-      };
-      reader.readAsText(files[0]);
+      console.log('Files', files, Object.keys(files));
+      Object.keys(files)
+        .forEach(i => {
+          const reader = new FileReader();
+          reader.onload = async e => {
+            this.handleFileEvent(reader, files[i], fileEvent);
+          };
+          reader.readAsText(files[i]);
+        });
     } catch (error) {
       ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
     }
   }
 
-  private handleFileEvent(reader: FileReader, file: File, fileEvent) {
-    Report.debug('handleFileEvent', file);
+  private handleFileEvent(reader: FileReader, {name, lastModified, webkitRelativePath}: any, fileEvent) {
     try {
+      if (webkitRelativePath) {
+        name = webkitRelativePath.replace('SavedVariables/', '');
+      }
       const result = reader.result;
-      switch (file.name) {
-        case this.ADDONS.AHDB:
-          this.handleAHDBFile(result);
-          break;
-        case this.ADDONS.Auctioneer:
-          this.handleAuctioneerFile(result);
-          break;
-        case this.ADDONS.TSM:
-          this.handleTSMFile(result);
-          break;
-        default:
-          Report.debug('Unsupported file', file.name, LuaUtil.toObject(result));
-          break;
+      const {auctionDataSource} = this.form.value;
+      const sourceFile = this.AUCTION_DATA_SOURCES[auctionDataSource].fileName;
+      const isSourceMatch = sourceFile === name;
+
+      if (name === this.ADDONS.AHDB && isSourceMatch) {
+        this.handleAHDBFile(result);
+      } else if (name === this.ADDONS.Auctioneer && isSourceMatch) {
+        this.handleAuctioneerFile(result);
+      } else if (name === this.ADDONS.TSM) {
+        this.handleTSMFile(result);
+      } else {
+        Report.debug('File data', name,  LuaUtil.toObject(result));
       }
 
-      this.lastModified = file.lastModified;
-      Report.send('Imported TSM addon data', 'Import');
+      this.lastModified = lastModified;
+      // Report.send('Imported TSM addon data', 'Import');
     } catch (error) {
       ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
     }

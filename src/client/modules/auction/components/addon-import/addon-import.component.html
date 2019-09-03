@@ -41,6 +41,20 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+
+      <mat-form-field class="col">
+        <mat-select placeholder="Select auction data source"
+                    formControlName="auctionDataSource">
+          <mat-option *ngIf="!AUCTION_DATA_SOURCES.length">
+            You must have scanned the AH first
+          </mat-option>
+          <mat-option *ngFor="let source of AUCTION_DATA_SOURCES; let i = index"
+                      [value]="i">
+            {{ source.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </form>
   </mat-card-content>
   <mat-card-actions>
@@ -51,6 +65,7 @@
              type="file"
              accept="lua"
              (change)="importFromFile($event)"
+             multiple
              #fileInput/>
     </button>
 

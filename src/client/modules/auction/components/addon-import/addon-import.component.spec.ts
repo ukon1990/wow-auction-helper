@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AucScanDataImportComponent } from './auc-scan-data-import.component';
+import { AddonImportComponent } from './addon-import.component';
 
 describe('AucScanDataImportComponent', () => {
-  let component: AucScanDataImportComponent;
-  let fixture: ComponentFixture<AucScanDataImportComponent>;
+  let component: AddonImportComponent;
+  let fixture: ComponentFixture<AddonImportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AucScanDataImportComponent ]
+      declarations: [ AddonImportComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AucScanDataImportComponent);
+    fixture = TestBed.createComponent(AddonImportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
