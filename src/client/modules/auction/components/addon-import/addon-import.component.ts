@@ -25,6 +25,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
   styleUrls: ['./addon-import.component.scss']
 })
 export class AddonImportComponent implements OnInit {
+  // Classic AH timer is 2, 8, 24
   lastModified: number;
   result = [];
   realmControl = new FormControl();
