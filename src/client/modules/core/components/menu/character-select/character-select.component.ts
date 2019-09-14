@@ -10,6 +10,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {User} from '../../../../../models/user/user';
 import {DatabaseService} from '../../../../../services/database.service';
 import {Report} from '../../../../../utils/report.util';
+import {GameBuild} from '../../../../../utils/game-build.util';
 
 @Component({
   selector: 'wah-character-select',
@@ -24,6 +25,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
   list = [];
 
   sm = new SubscriptionManager();
+  gameVersions = GameBuild.versions;
 
   constructor(
     private fb: FormBuilder, private realmService: RealmService, private dbService: DatabaseService,
@@ -31,7 +33,8 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       region: new FormControl(this.getFormValueFor('region')),
       realm: new FormControl(this.getFormValueFor('realm')),
-      faction: new FormControl(this.getFormValueFor('faction'))
+      faction: new FormControl(this.getFormValueFor('faction')),
+      gameVersion: new FormControl(this.getFormValueFor('gameVersion') || 0)
     });
   }
 

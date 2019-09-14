@@ -22,4 +22,11 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field>
+    <mat-select formControlName="gameVersion" placeholder="Game version">
+      <mat-option *ngFor="let version of gameVersions; let i = index">
+        {{version}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </form>

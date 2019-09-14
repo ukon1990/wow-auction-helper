@@ -1,13 +1,22 @@
-import { Item } from '../models/item/item';
+import {Item} from '../models/item/item';
 
 export class GameBuild {
+
+  /**
+   * The version of the game client that the user uses
+   */
+  static versions = [
+    'retail',
+    'classic'
+  ];
+
   /**
    * A list of wow expansions
    *
    * @static
    * @memberof GameBuild
    */
-  public static expansionMap = [
+  static expansionMap = [
     'Classic',
     'Burning crusade',
     'Wrath of the Lich king',
