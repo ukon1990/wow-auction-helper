@@ -6,8 +6,8 @@ export class GameBuild {
    * The version of the game client that the user uses
    */
   static versions = [
-    'retail',
-    'classic'
+    'Retail',
+    'Classic'
   ];
 
   /**

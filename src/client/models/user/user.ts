@@ -32,6 +32,7 @@ export class User {
   isDarkMode = true;
   doNotReport = false;
   isClassicMode = false;
+  gameVersion = 0;
 
   /**
    *
@@ -275,7 +276,7 @@ export class User {
       SharedService.recipesForUser[spellId] = new Array<string>();
     }
     SharedService.recipesForUser[spellId].push(
-      `${characterName} (${ faction ? 'H' : 'A'})`);
+      `${characterName} (${faction ? 'H' : 'A'})`);
   }
 
   public static slugifyString(realm: string): string {

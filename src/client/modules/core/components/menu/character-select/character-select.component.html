@@ -24,7 +24,7 @@
 
   <mat-form-field>
     <mat-select formControlName="gameVersion" placeholder="Game version">
-      <mat-option *ngFor="let version of gameVersions; let i = index">
+      <mat-option *ngFor="let version of gameVersions; let i = index" [value]="i">
         {{version}}
       </mat-option>
     </mat-select>

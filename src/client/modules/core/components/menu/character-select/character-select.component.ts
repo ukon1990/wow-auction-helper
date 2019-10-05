@@ -34,7 +34,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
       region: new FormControl(this.getFormValueFor('region')),
       realm: new FormControl(this.getFormValueFor('realm')),
       faction: new FormControl(this.getFormValueFor('faction')),
-      gameVersion: new FormControl(this.getFormValueFor('gameVersion') || 0)
+      gameVersion: new FormControl(this.getFormValueFor('gameVersion', 0))
     });
   }
 
@@ -53,17 +53,21 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
+
+    this.sm.add(
+      this.form.controls.gameVersion.valueChanges,
+      (version) => this.handleGameVersionChange(version));
   }
 
   ngOnDestroy() {
     this.sm.unsubscribe();
   }
 
-  private getFormValueFor(userField: string): any {
+  private getFormValueFor(userField: string, defaultValue: any = null): any {
     if (SharedService.user && SharedService.user[userField] !== undefined) {
       return SharedService.user[userField];
     }
-    return null;
+    return defaultValue;
   }
 
   private setRealmList(realms?: Realm[]) {
@@ -147,5 +151,10 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
 
     this.dbService.getTSMAddonData();
     Report.send('handleFactionChange', 'CharacterSelectComponent');
+  }
+
+  private handleGameVersionChange(version: number) {
+    SharedService.user.gameVersion = version;
+    User.save();
   }
 }
