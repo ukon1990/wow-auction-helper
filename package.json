@@ -13,6 +13,7 @@
     "test": "ng test --browsers ChromeHeadless --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "analyze": "source-map-explorer 'dist/*.js'",
     "ng-http-serve-prod": "ng build --prod && http-server -p 8080 -c-1 dist",
     "deploy-dev-eu": "serverless deploy -r eu-west-1 -s dev",
     "deploy-dev-us": "serverless deploy -r us-west-1 -s dev",
@@ -59,6 +60,7 @@
     "request-promise": "^4.2.4",
     "rxjs": "^6.5.3",
     "tslib": "^1.10.0",
+    "source-map-explorer": "^2.1.0",
     "words-to-numbers": "^1.5.1",
     "zlib": "^1.0.5",
     "zone.js": "^0.10.2"
