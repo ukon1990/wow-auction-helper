@@ -6,4 +6,5 @@ export class ColumnDescription {
   hideOnMobile?: boolean;
   customSort?: Function;
   cssClass?: string;
+  pipeValue?: string;
 }

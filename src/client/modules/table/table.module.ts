@@ -7,9 +7,13 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SortIconComponent} from './components/sort-icon/sort-icon.component';
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
+import {TableComponent} from './components/table/table.component';
+import {MatTableModule} from '@angular/material/table';
+import {ColumnComponent} from './components/column/column.component';
+import {MatSortModule} from '@angular/material/sort';
 
 @NgModule({
-  declarations: [DataTableComponent, MaterialsComponent, SortIconComponent],
+  declarations: [DataTableComponent, MaterialsComponent, SortIconComponent, TableComponent, ColumnComponent],
   imports: [
     CommonModule,
     MatPaginatorModule,
@@ -21,9 +25,11 @@ import {UtilModule} from '../util/util.module';
     MatButtonModule,
     IconModule,
     MatCardModule,
-    UtilModule
+    UtilModule,
+    MatTableModule,
+    MatSortModule
   ],
-  exports: [DataTableComponent, SortIconComponent, MaterialsComponent]
+  exports: [DataTableComponent, SortIconComponent, MaterialsComponent, TableComponent]
 })
 export class TableModule {
 }

@@ -1,0 +1,14 @@
+<ng-container [ngSwitch]="column.dataType">
+  <ng-container *ngSwitchCase="'number'">
+    {{row[column.key] | number: column.pipeValue}}
+  </ng-container>
+  <ng-container *ngSwitchCase="'date'">
+    {{row[column.key] | date: column.pipeValue || 'dd/MM - yyyy'}}
+  </ng-container>
+  <ng-container *ngSwitchCase="'gold'">
+    {{row[column.key] | gold: column.pipeValue}}
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    {{row[column.key]}}
+  </ng-container>
+</ng-container>

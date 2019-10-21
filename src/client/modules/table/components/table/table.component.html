@@ -1,0 +1,33 @@
+<div class="table-container mat-elevation-z8">
+  <mat-paginator [pageSizeOptions]="pageRows" showFirstLastButtons></mat-paginator>
+
+  <table mat-table matSort [dataSource]="dataSource" (matSortChange)="sortRows($event)">
+    <ng-container *ngFor="let column of columnDefs; let id = index" [matColumnDef]="'' + id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.title }}</th>
+      <td mat-cell *matCellDef="let row">
+        <wah-column
+                [id]="id"
+                [iconSize]="iconSize"
+                [showOwner]="showOwner"
+                [column]="column"
+                [row]="row"
+                [locale]="locale"
+                [useAuctionItemForName]="useAuctionItemForName"
+                [linkType]="linkType"
+                [hideCraftingDetails]="hideCraftingDetails"
+                [isCrafting]="isCrafting"></wah-column>
+      </td>
+      <ng-container *ngIf="footerRowData">
+        <td mat-footer-cell *matFooterCellDef="let row">
+          <wah-column [column]="column" [row]="footerRowData"></wah-column>
+        </td>
+      </ng-container>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnKeys; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnKeys"></tr>
+    <ng-container *ngIf="footerRowData">
+      <tr mat-footer-row *matFooterRowDef="columnKeys; sticky: true"></tr>
+    </ng-container>
+  </table>
+</div>
