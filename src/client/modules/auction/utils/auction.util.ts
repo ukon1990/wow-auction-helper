@@ -182,10 +182,11 @@ export class AuctionUtil {
 
   private static setUserSaleRateForAuction(auction: Auction) {
     const profitSummaryMain = SharedService.tsmAddonData.profitSummary;
-    if (!profitSummaryMain || !SharedService.realms) {
+    const realm = SharedService.realms[SharedService.user.realm];
+    if (!profitSummaryMain || !SharedService.realms || !realm) {
       return;
     }
-    const profitSummary: ProfitSummary = profitSummaryMain[SharedService.realms[SharedService.user.realm].name];
+    const profitSummary: ProfitSummary = profitSummaryMain[realm.name];
     if (profitSummary) {
       profitSummary.setSaleRateForItem(auction.item);
     }

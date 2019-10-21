@@ -31,7 +31,6 @@ export class User {
   shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
   doNotReport = false;
-  isClassicMode = false;
   gameVersion = 0;
 
   /**
@@ -53,10 +52,6 @@ export class User {
 
     Object.keys(user).forEach(key => {
       switch (key) {
-        case 'isClassicMode':
-          localStorage.setItem(key, JSON.stringify(user.isClassicMode));
-          SharedService.user[key] = user[key];
-          break;
         case 'doNotReport':
           localStorage.setItem(key, JSON.stringify(user[key]));
           SharedService.user[key] = user[key];
@@ -100,6 +95,10 @@ export class User {
         case 'buyoutLimit':
           localStorage['crafting_buyout_limit'] = user[key];
           SharedService.user.buyoutLimit = user[key];
+          break;
+        case 'gameVersion':
+          localStorage.setItem('gameVersion', '' + user[key]);
+          SharedService.user[key] = user[key];
           break;
         case 'characters':
           localStorage['characters'] = JSON.stringify(user[key]);
@@ -208,9 +207,6 @@ export class User {
           break;
         case 'useIntermediateCrafting':
           user.useIntermediateCrafting = JSON.parse(localStorage[key]);
-          break;
-        case 'isClassicMode':
-          user.isClassicMode = JSON.parse(localStorage[key]);
           break;
         case 'notifications':
           user.notifications = new NotificationSettings(JSON.parse(localStorage[key]));

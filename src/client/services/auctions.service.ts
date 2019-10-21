@@ -47,7 +47,7 @@ export class AuctionsService {
   }
 
   getLastModifiedTime(force?: boolean): Promise<any> {
-    if (SharedService.user.isClassicMode) {
+    if (SharedService.user.gameVersion) {
       Report.debug('Not downloading AH data for classic');
       return;
     }
@@ -76,7 +76,7 @@ export class AuctionsService {
   }
 
   getAuctions(): Promise<any> {
-    if (SharedService.user.isClassicMode) {
+    if (SharedService.user.gameVersion) {
       Report.debug('Not downloading AH data for classic');
       return;
     }

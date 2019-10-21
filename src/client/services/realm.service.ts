@@ -12,6 +12,7 @@ import {ArrayUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {Report} from '../utils/report.util';
+import {RealmStatus} from '../models/realm-status.model';
 
 @Injectable()
 export class RealmService {
@@ -26,26 +27,40 @@ export class RealmService {
               private matSnackBar: MatSnackBar) {
   }
 
-  async changeRealm(auctionsService: AuctionsService, realm: string, region?: string, updateApi?: boolean) {
-    if (region) {
-      SharedService.user.region = region;
+  async changeRealm(auctionsService: AuctionsService, newRealm: string, newRegion?: string, updateApi?: boolean) {
+    if (newRegion) {
+      SharedService.user.region = newRegion;
     }
-    SharedService.user.realm = realm;
+    SharedService.user.realm = newRealm;
+    const {realm, region, gameVersion, apiToUse} = SharedService.user;
     User.save();
 
     if (updateApi) {
-      if (SharedService.user.apiToUse === 'tsm') {
+      if (apiToUse === 'tsm') {
         await auctionsService.getTsmAuctions();
-      } else if (SharedService.user.apiToUse === 'wowuction') {
+      } else if (apiToUse === 'wowuction') {
         await auctionsService.getWoWUctionAuctions();
       }
     }
-    await this.getStatus(
-      SharedService.user.region,
-      realm);
+    if (!gameVersion) {
+      await this.getStatus(region, realm);
+    } else {
+      this.setClassicRealmAsCurrent(realm);
+    }
+  }
+
+  private setClassicRealmAsCurrent(realm) {
+    const matchingRealms: RealmStatus[] = this.events.list.value
+      .filter((r: RealmStatus) => r.slug === realm);
+    if (matchingRealms[0]) {
+      this.events.realmStatus.next(matchingRealms[0]);
+    }
   }
 
   getStatus(region: string, realm: string): Promise<any> {
+    if (SharedService.user.gameVersion) {
+      return;
+    }
     return this.http.get(Endpoints.getLambdaUrl(`realm/${region}/${realm}`, region))
       .toPromise()
       .then((status: AuctionHouseStatus) => {
@@ -62,6 +77,9 @@ export class RealmService {
   }
 
   getRealms(region?: string): Promise<any> {
+    if (SharedService.user.gameVersion) {
+      return;
+    }
     return this.http.get(Endpoints.getLambdaUrl('realm/all', region))
       .toPromise()
       .then((realms: any[]) =>
@@ -89,5 +107,15 @@ export class RealmService {
         name: 'The app could not fetch the realm data correctly', message: 'No object were found', stack: undefined
       });
     }
+  }
+
+  public getUsersClassicRealm(): RealmStatus[] {
+    const realms = localStorage.getItem('classicRealms');
+    if (realms) {
+      const list: RealmStatus[] = JSON.parse(realms);
+      this.events.list.next(list);
+      return list;
+    }
+    return [];
   }
 }

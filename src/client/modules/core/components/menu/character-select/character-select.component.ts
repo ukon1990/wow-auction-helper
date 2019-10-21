@@ -57,6 +57,11 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.form.controls.gameVersion.valueChanges,
       (version) => this.handleGameVersionChange(version));
+
+    if (SharedService.user.gameVersion) {
+      this.realmList = this.realmService.getUsersClassicRealm();
+      console.log('getUsersClassicRealm', this.realmList);
+    }
   }
 
   ngOnDestroy() {
@@ -78,6 +83,12 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     if (!SharedService.user || !SharedService.user.characters || !realms) {
       return;
     }
+
+    if (SharedService.user.gameVersion === 1) {
+      this.realmList = this.realmService.events.list.value;
+      return;
+    }
+
     const map = {};
     this.realmList.length = 0;
 
@@ -156,5 +167,10 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
   private handleGameVersionChange(version: number) {
     SharedService.user.gameVersion = version;
     User.save();
+    if (version) {
+      this.realmList = this.realmService.getUsersClassicRealm();
+    } else {
+      this.realmService.getRealms();
+    }
   }
 }

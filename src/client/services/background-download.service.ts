@@ -110,6 +110,7 @@ export class BackgroundDownloadService {
   }
 
   private updateRealmStatus(): Promise<any> {
+    console.log('Current status is', this.realmStatus);
     if (!this.realmStatus) {
       return;
     }
@@ -140,7 +141,7 @@ export class BackgroundDownloadService {
   private shouldUpdateRealmStatus() {
     return !this.checkingForUpdates &&
       this.shouldAnUpdateShouldBeAvailableSoon() &&
-      !SharedService.user.isClassicMode;
+      !SharedService.user.gameVersion;
   }
 
   private shouldAnUpdateShouldBeAvailableSoon() {

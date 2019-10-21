@@ -242,6 +242,7 @@ export class Dashboard {
   }
 
   public static addDashboards(): void {
+    const isRetail = !SharedService.user.gameVersion;
     let db: Dashboard;
     SharedService.itemDashboards.length = 0;
     SharedService.sellerDashboards.length = 0;
@@ -278,18 +279,20 @@ export class Dashboard {
       });
 
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
-        Dashboard.TYPES.MILLING);
-      if (db.data.length > 0 && !db.isDisabled) {
-        SharedService.itemDashboards.push(db);
-      }
+      if (isRetail) {
+        db = new Dashboard(
+          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.MILLING].title,
+          Dashboard.TYPES.MILLING);
+        if (db.data.length > 0 && !db.isDisabled) {
+          SharedService.itemDashboards.push(db);
+        }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
-        Dashboard.TYPES.PROSPECTING);
-      if (db.data.length > 0 && !db.isDisabled) {
-        SharedService.itemDashboards.push(db);
+        db = new Dashboard(
+          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.PROSPECTING].title,
+          Dashboard.TYPES.PROSPECTING);
+        if (db.data.length > 0 && !db.isDisabled) {
+          SharedService.itemDashboards.push(db);
+        }
       }
 
       db = new Dashboard(
@@ -328,11 +331,13 @@ export class Dashboard {
         SharedService.itemDashboards.push(db);
       }
 
-      db = new Dashboard(
-        SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.TRADE_VENDOR_VALUES].title,
-        Dashboard.TYPES.TRADE_VENDOR_VALUES);
-      if (db.data.length > 0 && !db.isDisabled) {
-        SharedService.itemDashboards.push(db);
+      if (isRetail) {
+        db = new Dashboard(
+          SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.TRADE_VENDOR_VALUES].title,
+          Dashboard.TYPES.TRADE_VENDOR_VALUES);
+        if (db.data.length > 0 && !db.isDisabled) {
+          SharedService.itemDashboards.push(db);
+        }
       }
 
       // Sellers
@@ -409,14 +414,14 @@ export class Dashboard {
         if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
           this.tsmShoppingString += `${
             item.name
-            }/exact`;
+          }/exact`;
           if (item.targetType !== SharedService.user.watchlist.TARGET_TYPES.QUANTITY &&
             item.compareTo !== SharedService.user.watchlist.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
             this.tsmShoppingString += `/${
               pipe.transform(wlVal.left).replace(',', '')
-              }/${
+            }/${
               pipe.transform(wlVal.right).replace(',', '')
-              }`;
+            }`;
           }
           this.tsmShoppingString += ';';
         }
@@ -444,9 +449,9 @@ export class Dashboard {
       if (remains.yield > 0) {
         this.tsmShoppingString += `${
           remains.name
-          }/exact/1c/${
+        }/exact/1c/${
           pipe.transform(remains.buyout + remains.yield).replace(',', '')
-          };`;
+        };`;
         return true;
       }
       return false;
@@ -533,9 +538,9 @@ export class Dashboard {
         }
         this.tsmShoppingString += `${
           ai.name
-          }/exact/1c/${
+        }/exact/1c/${
           pipe.transform(ai.vendorSell).replace(',', '')
-          };`;
+        };`;
         return true;
       }
       return false;
@@ -647,9 +652,9 @@ export class Dashboard {
         (ai.buyout / ai.mktPrice) < this.settings.minROIPercent) {
         this.tsmShoppingString += `${
           ai.name
-          }/exact/1c/${
+        }/exact/1c/${
           pipe.transform(ai.mktPrice * 0.149).replace(',', '')
-          };`;
+        };`;
         return true;
       }
       return false;

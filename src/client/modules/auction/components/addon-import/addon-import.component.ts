@@ -15,9 +15,9 @@ import {AucScanDataImportUtil} from '../../utils/auc-scan-data-import.util';
 import {AuctionUtil} from '../../utils/auction.util';
 import {AuctionDBImportUtil} from '../../utils/auction-db-import.util';
 import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
-import {TSM} from '../../models/tsm.model';
 import {AuctionItem} from '../../models/auction-item.model';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {RealmStatus} from '../../../../models/realm-status.model';
 
 @Component({
   selector: 'wah-addon-import',
@@ -52,7 +52,7 @@ export class AddonImportComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
-      realm: null,
+      realm: SharedService.user.realm,
       isClassicMode: false,
       auctionDataSource: 1
     });
@@ -61,7 +61,7 @@ export class AddonImportComponent implements OnInit {
   ngOnInit() {
     const realm = localStorage.getItem('realmClassic');
 
-    if (SharedService.user.isClassicMode) {
+    if (SharedService.user.gameVersion) {
       this.dbService
         .getClassicAuctions(this.petService, this.auctionsService)
         .then(d => console.log('Classic auctions loaded', d));
@@ -71,8 +71,8 @@ export class AddonImportComponent implements OnInit {
       this.onRealmChange(realmClassic)
     );
 
-    this.sm.add(this.form.controls.isClassicMode.valueChanges, is => {
-      SharedService.user.isClassicMode = is;
+    this.sm.add(this.form.controls.isClassicMode.valueChanges, version => {
+      SharedService.user.gameVersion = version;
       User.save();
     });
 
@@ -84,7 +84,7 @@ export class AddonImportComponent implements OnInit {
       }
     }
 
-    this.form.controls.isClassicMode.setValue(SharedService.user.isClassicMode);
+    this.form.controls.isClassicMode.setValue(SharedService.user.gameVersion);
   }
 
   private getCurrentRealmAuctions(realm) {
@@ -145,6 +145,11 @@ export class AddonImportComponent implements OnInit {
     if (this.form.value.realm) {
       this.loadData();
     }
+    const realms: RealmStatus[] = [];
+    this.result.forEach(r =>
+      realms.push(new RealmStatus(r.realm, +r.lastScan)));
+    localStorage.setItem('classicRealms', JSON.stringify(realms));
+    this.realmService.events.list.next(realms);
   }
 
   private handleTSMFile(result) {
@@ -171,8 +176,9 @@ export class AddonImportComponent implements OnInit {
   }
 
   private async onRealmChange(realm: string) {
-    localStorage.setItem('realmClassic', realm);
+    SharedService.user.realm = realm;
     this.getCurrentRealmAuctions(realm);
+    User.save();
   }
 
   async loadData() {

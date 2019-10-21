@@ -31,4 +31,6 @@ describe('CharacterSelectComponent', () => {
 
   describe('handleFactionChange', () => {
   });
+
+  describe('setClassicRealmList', () => {});
 });
