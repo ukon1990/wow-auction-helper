@@ -100,7 +100,7 @@ export class BackgroundDownloadService {
       (performance.now() - startTimestamp)
     );
     console.log(`App startup took ${loadingTime}ms`);
-    Report.send('startup', `The startup time was ${loadingTime}ms`);
+    Report.send(`${(loadingTime / 1000).toFixed(2)}`, 'startup');
   }
 
   private async startRealmStatusInterval() {
