@@ -110,7 +110,6 @@ export class BackgroundDownloadService {
   }
 
   private updateRealmStatus(): Promise<any> {
-    console.log('Current status is', this.realmStatus);
     if (!this.realmStatus) {
       return;
     }

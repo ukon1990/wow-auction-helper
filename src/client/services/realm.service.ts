@@ -18,8 +18,8 @@ import {RealmStatus} from '../models/realm-status.model';
 export class RealmService {
   previousUrl;
   events = {
-    realmStatus: new BehaviorSubject(undefined),
-    list: new BehaviorSubject([])
+    realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
+    list: new BehaviorSubject<RealmStatus[]>([])
   };
 
   constructor(private http: HttpClient,
@@ -53,7 +53,8 @@ export class RealmService {
     const matchingRealms: RealmStatus[] = this.events.list.value
       .filter((r: RealmStatus) => r.slug === realm);
     if (matchingRealms[0]) {
-      this.events.realmStatus.next(matchingRealms[0]);
+      console.log('Current classic realm', matchingRealms[0]);
+      // TODO: this.events.realmStatus.next();
     }
   }
 

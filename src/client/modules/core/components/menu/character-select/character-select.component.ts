@@ -11,6 +11,7 @@ import {User} from '../../../../../models/user/user';
 import {DatabaseService} from '../../../../../services/database.service';
 import {Report} from '../../../../../utils/report.util';
 import {GameBuild} from '../../../../../utils/game-build.util';
+import {RealmStatus} from '../../../../../models/realm-status.model';
 
 @Component({
   selector: 'wah-character-select',
@@ -75,7 +76,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     return defaultValue;
   }
 
-  private setRealmList(realms?: Realm[]) {
+  private setRealmList(realms?: RealmStatus[]) {
     if (!realms) {
       realms = this.realmService.events.list.value;
     }
@@ -92,6 +93,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     const map = {};
     this.realmList.length = 0;
 
+    this.setCurrentRealm(realms, map);
     this.setRealmsFromCharacters(map);
     this.setSlugFromRealms(realms, map);
 
@@ -101,8 +103,8 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.handleRealmChange();
   }
 
-  private setSlugFromRealms(realms: Realm[], map) {
-    realms.forEach((realm: Realm) => {
+  private setSlugFromRealms(realms: RealmStatus[], map) {
+    realms.forEach((realm: RealmStatus) => {
       if (map[realm.name]) {
         map[realm.name].slug = realm.slug;
         this.realmListMap[realm.slug] = map[realm.name];
@@ -110,7 +112,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setRealmsFromCharacters(map) {
+  private setRealmsFromCharacters(map: any) {
     SharedService.user.characters.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
@@ -128,6 +130,31 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
         map[character.realm].factions[character.faction]++;
       }
     });
+    console.log(map);
+  }
+
+  private setCurrentRealm(realms: RealmStatus[], map: any) {
+    const currentRealm = this.findCurrentRealm(realms);
+    if (currentRealm.length) {
+      const realm: RealmStatus = currentRealm[0];
+      map[realm.name] = {
+        name: realm.name,
+        slug: realm.slug,
+        factions: [],
+        characterCount: 0
+      };
+      this.realmList.push(map[realm.name]);
+    }
+  }
+
+  private findCurrentRealm(realms: RealmStatus[]) {
+    return realms.filter(r => this.isCurrentRealmAndRegion(r));
+  }
+
+  private isCurrentRealmAndRegion(realm: RealmStatus) {
+    const user = SharedService.user;
+    return realm.slug === user.realm &&
+      realm.region === user.region;
   }
 
   private handleRealmChange(slug?: string) {

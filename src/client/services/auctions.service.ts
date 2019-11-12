@@ -20,6 +20,7 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {RealmStatus} from '../models/realm-status.model';
 import {Report} from '../utils/report.util';
+import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 
 @Injectable()
 export class AuctionsService {
@@ -86,7 +87,7 @@ export class AuctionsService {
     }
     this.events.isDownloading.next(true);
     const missingItems = [],
-      realmStatus: RealmStatus = this.realmService.events.realmStatus.getValue();
+      realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.getValue();
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
