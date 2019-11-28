@@ -1,8 +1,8 @@
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
-@import './themes/themes.scss';
+@import '../../../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import 'themes/themes';
 
-@import '_bootstrap-custom.scss';
-@import './layout/layout.scss';
+@import 'bootstrap-custom';
+@import 'layout/layout';
 
 #main {
 	min-height: 100vh;

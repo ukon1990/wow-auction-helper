@@ -18,7 +18,7 @@
     ]
   },
   "exclude": [
-    "./server-legacy"
+    "../server-legacy"
   ],
   "angularCompilerOptions": {
     "enableIvy": false

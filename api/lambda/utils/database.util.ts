@@ -1,7 +1,7 @@
 import * as mysql from 'mysql';
 import {DATABASE_CREDENTIALS} from '../secrets';
 import {Connection, MysqlError} from 'mysql';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../client/src/environments/environment';
 
 export class DatabaseUtil {
   private connection: Connection;

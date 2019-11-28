@@ -1,8 +1,8 @@
-@import "bootstrap/_functions.scss";
-@import "bootstrap/_variables.scss";
+@import "bootstrap/functions";
+@import "bootstrap/variables";
 
 // Add your custom variables here
 $dropdown-bg:                       $dark;
 $dropdown-link-color:               $light;
 
-@import "bootstrap/bootstrap.scss";
+@import "bootstrap/bootstrap";
