@@ -10,44 +10,45 @@ import {WoWHeadUtil} from '../utils/wowhead.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {getLocale, LocaleUtil} from '../utils/locale.util';
 import {AuthHandler} from './auth.handler';
-
-const request = require('request');
+import * as request from 'request';
 
 export class ItemHandler {
-  async getById(event: APIGatewayEvent, callback: Callback) {
+  async getById(id: number, locale: string): Promise<Item> {
     // await AuthHandler.getToken();
-    new DatabaseUtil()
-      .query(ItemQuery.getById(
-        +event.pathParameters.id,
-        JSON.parse(event.body).locale))
-      .then((items: Item[]) => {
-        if (items[0]) {
-          Response.send(
-            ItemUtil.handleItem(items[0]), callback);
-          return;
-        }
+    return new Promise<Item>(async (resolve, reject) => {
+      new DatabaseUtil()
+        .query(ItemQuery.getById(
+          id, locale))
+        .then(async (items: Item[]) => {
+          if (items[0]) {
+            resolve(ItemUtil.handleItem(items[0]));
+            return;
+          }
 
-        this.addItem(event, callback);
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+          const item: Item = await this.addItem(id, locale);
+          if (item) {
+            resolve(item);
+          } else {
+            reject();
+          }
+        })
+        .catch(reject);
+    });
   }
 
-  update(event: APIGatewayEvent, callback: Callback) {
-    const id = +event.pathParameters.id;
-
-    this.getFreshItem(id, event)
-      .then(async item => {
-        console.log('SQL: ', ItemQuery.update(item)); // inventoryType
-        new DatabaseUtil()
-          .query(ItemQuery.update(item))
-          .then(() =>
-            Response.send(item, callback))
-          .catch(error =>
-            Response.error(callback, error, event));
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+  update(id: number, locale: string) {
+    return new Promise<Item>((resolve, reject) => {
+      this.getFreshItem(id, locale)
+        .then(async item => {
+          console.log('SQL: ', ItemQuery.update(item)); // inventoryType
+          new DatabaseUtil()
+            .query(ItemQuery.update(item))
+            .then(() =>
+              resolve(item))
+            .catch(reject);
+        })
+        .catch(reject);
+    });
   }
 
   getAllRelevant(event: APIGatewayEvent, callback: Callback) {
@@ -67,62 +68,63 @@ export class ItemHandler {
         Response.error(callback, error, event));
   }
 
-  async addItem(event: APIGatewayEvent, callback?: Callback) {
-    const id = +event.pathParameters.id;
-    await this.getFreshItem(id, event)
-      .then(item => {
-        if (callback) {
-          Response.send(item, callback);
-        }
+  async addItem(id: number, locale: string): Promise<Item> {
+    return new Promise<Item>(async (resolve, reject) => {
+      await this.getFreshItem(id, locale)
+        .then(item => {/*
+          if (callback) {
+            Response.send(item, callback);
+          }*/
+          resolve(item);
 
-        new DatabaseUtil()
-          .query(
-            ItemQuery.insert(item));
+          new DatabaseUtil()
+            .query(
+              ItemQuery.insert(item));
 
-        LocaleUtil.setLocales(
-          id,
-          'id',
-          'item_name_locale',
-          'item');
-      })
-      .catch(error => {
-        console.error(error);
-        Response.send(new Item(), callback);
-      });
+          LocaleUtil.setLocales(
+            id,
+            'id',
+            'item_name_locale',
+            'item');
+        })
+        .catch(reject);
+    });
   }
 
-  private getFreshItem(id, event: APIGatewayEvent) {
+  getFreshItem(id: number, locale: string) {
     return new Promise<Item>(async (resolve, reject) => {
       let item: Item = new Item();
+      let error;
 
       console.log('Adding missing item', id);
 
-      await this.getFromBlizzard(id, event.pathParameters.locale)
+      await this.getFromBlizzard(id, locale)
         .then((i: Item) =>
           item = i)
-        .catch(error =>
-          console.error(error));
+        .catch(e => error = e);
 
-      await this.getWowDBData(id)
-        .then(i =>
-          WoWDBItem.setItemWithWoWDBValues(i, item))
-        .catch(error =>
-          console.error(error));
-
-      await this.getWowheadData(id)
-        .then(wowhead => {
-          item.expansionId = wowhead.expansionId;
-          delete wowhead.expansionId;
-          item.itemSource = wowhead;
-        })
-        .catch(error =>
-          console.error(error));
-
-      if (item) {
-        resolve(item);
-      } else {
-        reject();
+      if (!error) {
+        await this.getWowDBData(id)
+          .then(i =>
+            WoWDBItem.setItemWithWoWDBValues(i, item))
+          .catch(e => error = e);
       }
+
+      if (!error) {
+        await this.getWowheadData(id)
+          .then(wowhead => {
+            item.expansionId = wowhead.expansionId;
+            delete wowhead.expansionId;
+            item.itemSource = wowhead;
+          })
+          .catch(e => error = e);
+      }
+
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(item);
     });
   }
 
@@ -130,9 +132,10 @@ export class ItemHandler {
     return new Promise<WoWHead>(((resolve, reject) => {
       request.get(
         `http://www.wowhead.com/item=${id}`,
+        null,
         (whError, whResponse, whBody) => {
           if (whError) {
-            reject();
+            reject(`Could not find the item with id=${id} on WoWHead`);
           }
 
           resolve(
@@ -143,13 +146,19 @@ export class ItemHandler {
 
   getWowDBData(id: number): Promise<WoWDBItem> {
     return new Promise<WoWDBItem>(((resolve, reject) => {
-      request.get(`http://wowdb.com/api/item/${id}`, (error, response, body) => {
+      request.get(`http://wowdb.com/api/item/${id}`,
+        (error, response, body) => {
+        const errorMessage = {error: `Could not get data from WoWDB for an item id=${id}`};
         if (error || !body) {
-          reject();
+          reject(errorMessage);
         } else {
-          const object = body.slice(1, body.length - 1);
-          resolve(
-            JSON.parse(object) as WoWDBItem);
+          try {
+            const object = body.slice(1, body.length - 1);
+            resolve(
+              JSON.parse(object) as WoWDBItem);
+          } catch (e) {
+            reject(errorMessage);
+          }
         }
       });
     }));
@@ -163,9 +172,9 @@ export class ItemHandler {
         new Endpoints()
           .getPath(`item/${id}?locale=${getLocale(locale)}`, region),
         (error, re, body) => {
-          // const icon = JSON.parse(body).icon;
-          if (error || !body) {
-            reject();
+          const errorMessage = `Could not find item with id=${id} from Blizzard`;
+          if (error || !body || re.statusCode === 404) {
+            reject(errorMessage);
           }
           resolve(JSON.parse(body) as Item);
         });

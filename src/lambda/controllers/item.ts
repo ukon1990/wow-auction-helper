@@ -14,16 +14,21 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 
 class ItemController {
   /* istanbul ignore next */
-  public static byId(event: APIGatewayEvent, callback: Callback) {
+  public static async byId(event: APIGatewayEvent, callback: Callback) {
     const type = event.httpMethod,
-      id = +event.pathParameters.id;
+      id = +event.pathParameters.id,
+      locale = event.pathParameters.locale || JSON.parse(event.body).locale;
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getById(event, callback);
+        new ItemHandler().getById(id, locale)
+          .then(res => Response.send(res, callback))
+          .catch(err => Response.error(callback, err, undefined, 404));
         break;
       case 'PATCH':
-        new ItemHandler().update(event, callback);
+        new ItemHandler().update(id, locale)
+          .then(res => Response.send(res, callback))
+          .catch(err => Response.error(callback, err, undefined, 404));
         break;
       default:
         Response.error(callback, 'The method you provided, is not available.', event);
@@ -39,7 +44,7 @@ class ItemController {
         new ItemHandler().getAllRelevant(event, callback);
         break;
       default:
-        Response.error(callback, 'The method you provided, is not available.', event);
+        Response.error(callback, 'The method you provided, is not available.', event, 401);
     }
   }
 }

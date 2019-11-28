@@ -19,12 +19,12 @@ export class Response {
       .catch(console.error);
   }
 
-  public static error(callback: Callback, error?, event?: APIGatewayEvent): any {
+  public static error(callback: Callback, error?, event?: APIGatewayEvent, statusCode?: number): any {
     if (error) {
       console.error(error);
     }
     return Response.send({
-      statusCode: 500,
+      statusCode: statusCode || 500,
       error: this.getErrorMessage(error),
       event: this.getEvent(event)
     }, callback);
