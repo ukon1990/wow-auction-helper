@@ -23,9 +23,12 @@ import {SETTINGS_ROUTE} from './settings/settings.routes';
 import {ABOUT_ROUTE} from './about/about.route';
 import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-summary.component';
 import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
+import {TitledRoute} from '../models/route/titled-route.model';
+import {TitledRoutes} from '../models/route/titled-routes.model';
 
-const TOOLS_ROUTE: Route = {
+const TOOLS_ROUTE: TitledRoute = {
   path: 'tools',
+  title: 'Tools',
   canActivate: [IsRegisteredService],
   children: [
     {path: 'trade-vendor', component: TradeVendorsComponent},
@@ -63,7 +66,7 @@ const DASHBOARD_ROUTE: Route = {
   ]
 };
 
-const routes: Routes = [
+export const appRoutes: TitledRoutes = [
   {path: '', component: SetupComponent},
   DASHBOARD_ROUTE,
   {path: 'crafting', component: CraftingComponent, canActivate: [IsRegisteredService]},
@@ -78,7 +81,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
