@@ -25,9 +25,6 @@ describe('ItemUtil', () => {
       expect(result.quality).toBe(3);
       expect(result.buyPrice).toBe(0);
       expect(result.sellPrice).toBe(5);
-      expect(result.itemBind).toBe(1);
-      expect(result.minFactionId).toBe(0);
-      expect(result.minReputation).toBe(0);
     });
 
     it('Returns undefined if ID is bogus', async () => {
@@ -35,5 +32,38 @@ describe('ItemUtil', () => {
         .rejects
         .toEqual('Could not find item with id=-90 from Blizzard');
     });
+  });
+
+  it('handleItems && handleItem', () => {
+    const raw = {
+      id: 0,
+      itemSource: `{
+      "containedInItem":[],
+      "containedInObject":[],
+      "currencyFor":[],
+      "soldBy":[],
+      "droppedBy":[],
+      "prospectedFrom":[],
+      "milledFrom":[]
+      }`,
+      itemSpells: `[
+        {
+          "SpellID":433,
+          "Trigger":0,
+          "Charges":-1,
+          "Cooldown":0,
+          "CategoryID":11,
+          "CooldownCategory":1000,
+          "Text":"Restores 83 health over 18 sec. Must remain seated while eating."
+        }
+      ]`,
+      timestamp: 1
+    } as unknown as Item;
+    const item: Item = ItemUtil.handleItems([raw] as Item[])[0];
+
+    expect(item.itemSpells.length).toBe(1);
+    expect(item.itemSource.containedInItem.length).toBe(0);
+    expect(item['timestamp']).toBeFalsy();
+
   });
 });

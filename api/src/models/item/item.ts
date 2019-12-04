@@ -2,6 +2,7 @@ import { ItemSpells } from './itemspells';
 import { NPC } from './wowdb';
 import { WoWHead } from './wowhead';
 import {ItemGameData} from './item-game-data.model';
+import {ItemLocale} from './item-locale';
 
 export class Item {
   id: number;
@@ -20,6 +21,7 @@ export class Item {
   minReputation: number;
   isDropped: boolean;
   expansionId: number;
+  nameLocales: ItemLocale;
 
   constructor(item?: Item) {
     if (item) {
@@ -41,6 +43,7 @@ export class Item {
   fromAPI(item: ItemGameData, locale: string = 'en_GB'): Item {
     this.id = item.id;
     this.name = item.name[locale];
+    this.nameLocales = item.name;
     this.itemLevel = item.level;
     this.itemClass = item.item_class.id;
     this.itemSubClass = item.item_subclass.id;

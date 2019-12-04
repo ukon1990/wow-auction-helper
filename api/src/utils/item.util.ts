@@ -2,9 +2,7 @@ import {Item} from '../models/item/item';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
-import {getLocale} from './locale.util';
 import {MediaGameData, ItemGameData} from '../models/item/item-game-data.model';
-import {Media} from 'aws-sdk/clients/transcribeservice';
 import {BLIZZARD} from '../secrets';
 
 export class ItemUtil {
@@ -15,6 +13,7 @@ export class ItemUtil {
   }
 
   public static handleItem(item: Item): Item {
+    console.log('ITEM', item);
     delete item['timestamp'];
     if (item.itemSource) {
       item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
@@ -33,7 +32,7 @@ export class ItemUtil {
         .getPath(`item/${id}`, region, true))
         .then(async ({body}) => {
           const raw: ItemGameData = body;
-          let item: Item = new Item().fromAPI(raw, locale);
+          const item: Item = new Item().fromAPI(raw, locale);
           item.icon = await this.getMedia(raw.media, region);
           resolve(item as Item);
         })

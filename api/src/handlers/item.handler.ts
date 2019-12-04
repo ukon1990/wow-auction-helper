@@ -81,6 +81,7 @@ export class ItemHandler {
             .query(
               ItemQuery.insert(item));
 
+          // TODO: Send in locales from item.nameLocales
           LocaleUtil.setLocales(
             id,
             'id',
@@ -98,7 +99,7 @@ export class ItemHandler {
 
       console.log('Adding missing item', id);
 
-      await this.getFromBlizzard(id, locale)
+      await ItemUtil.getFromBlizzard(id, locale)
         .then((i: Item) =>
           item = i)
         .catch(e => error = e);
