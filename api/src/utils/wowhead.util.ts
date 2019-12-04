@@ -7,6 +7,7 @@ import {
   WoWHeadProspectedFrom,
   WoWHeadSoldBy
 } from '../models/item/wowhead';
+import * as request from 'request';
 import {ArrayUtil, TextUtil} from '@ukon1990/js-utilities';
 
 export class WoWHeadUtil {
@@ -169,6 +170,22 @@ export class WoWHeadUtil {
     }
 
     return data;
+  }
+
+  public static getWowHeadData(id: number): Promise<WoWHead> {
+    return new Promise<WoWHead>(((resolve, reject) => {
+      request.get(
+        `http://www.wowhead.com/item=${id}`,
+        null,
+        (whError, whResponse, whBody) => {
+          if (whError) {
+            reject(`Could not find the item with id=${id} on WoWHead`);
+          }
+
+          resolve(
+            WoWHeadUtil.setValuesAll(whBody));
+        });
+    }));
   }
 
   private static getNewListViewData<T>(body: string, template: string, id: string): T[] {

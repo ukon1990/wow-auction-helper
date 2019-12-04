@@ -8,6 +8,7 @@ fdescribe('WoWHeadUtil', () => {
     https://www.wowhead.com/item=154123/amberblaze#prospected-from
     https://www.wowhead.com/item=153669/viridescent-pigment
    */
+  /*
   let body = `
              <script>
               WH.markup.printHtml("[ul][li][url=\\/items?filter=217;1;0]Crafting Reagent[\\/url][\\/li][li][url=https:\\/\\/theunderminejournal.com\\/#item\\/109118][tooltip=tooltip_buyoutprice]Buyout price[\\/tooltip][\\/url]: [money=8407][color=q0] (each)[\\/color][\\/li][li]Added in patch 6.0.1.18125[\\/li][li class=icon-db-link]Icon: [icondb=962047 name=true][\\/li][li]Related building: [building=61 short=true][\\/li][li]Related building: [building=62 short=true][\\/li][li]Related building: [building=63 short=true][\\/li][\\/ul]", "infobox-contents-0", {
@@ -151,45 +152,51 @@ fdescribe('WoWHeadUtil', () => {
         computeDataFunc: Listview.funcBox.initLootTable,
             data: [{"classs":7,"flags2":-2147475456,"id":152512,"level":111,"name":"7Monelite Ore","slot":0,"source":[1,2,19,23],"sourcemore":[{"c":11,"icon":"inv_ore_monalite","n":"Mass Prospect Monelite","s":755,"t":6,"ti":256611}],"subclass":7,"count":997,"outof":24406,"pctstack":""},{"classs":7,"flags2":-2147475456,"id":152513,"level":111,"name":"6Platinum Ore","slot":0,"source":[1,2,19],"sourcemore":[{"c":11,"icon":"inv_ore_platinum","n":"Mass Prospect Platinum","s":755,"t":6,"ti":256622}],"subclass":7,"count":2011,"outof":17036,"pctstack":""},{"classs":7,"flags2":-2147475456,"id":152579,"level":111,"name":"7Storm Silver Ore","slot":0,"source":[1,2,19,23],"sourcemore":[{"c":11,"icon":"inv_ore_stormsilver","n":"Mass Prospect Storm Silver","s":755,"t":6,"ti":256613}],"subclass":7,"count":1712,"outof":26384,"pctstack":""}],
     });
-</script>`;
+</script>`;*/
 
   describe('setValuesAll', () => {
-    let result: WoWHead;
+    let blackrockOre: WoWHead;
+    let amberblaze: WoWHead;
+    let viridescentPigment: WoWHead;
 
-    beforeAll(() => {
-      result = WoWHeadUtil.setValuesAll(body);
+    beforeAll(async () => {
+      // result = WoWHeadUtil.setValuesAll(body);
+      blackrockOre = await WoWHeadUtil.getWowHeadData(109118);
+      amberblaze = await WoWHeadUtil.getWowHeadData(154123);
+      viridescentPigment = await WoWHeadUtil.getWowHeadData(153669);
     });
 
     it('getExpansion', async () => {
-      expect(result.expansionId).toBe(5);
+      expect(blackrockOre.expansionId).toBe(5);
     });
 
     it('getDroppedBy', async () => {
-      expect(result.droppedBy.length).toBe(9);
+      expect(blackrockOre.droppedBy.length).toBe(8);
+      expect(amberblaze.droppedBy.length).toBe(0);
     });
 
     it('containedInObject', async () => {
-      expect(result.containedInObject.length).toBe(5);
+      expect(blackrockOre.containedInObject.length).toBe(5);
     });
 
     it('containedInItem', async () => {
-      expect(result.containedInItem.length).toBe(4);
+      expect(blackrockOre.containedInItem.length).toBe(4);
     });
 
     it('currencyFor', async () => {
-      expect(result.currencyFor.length).toBe(7);
+      expect(blackrockOre.currencyFor.length).toBe(7);
     });
 
     it('soldBy', async () => {
-      expect(result.soldBy.length).toBe(10);
+      expect(blackrockOre.soldBy.length).toBe(10);
     });
 
     it('milledFrom', async () => {
-      expect(result.milledFrom.length).toBe(7);
+      expect(viridescentPigment.milledFrom.length).toBe(7);
     });
 
     it('prospectedFrom', async () => {
-      expect(result.prospectedFrom.length).toBe(3);
+      expect(amberblaze.prospectedFrom.length).toBe(3);
     });
 
     it('Empty if not found in body or non accepted js found', () => {
