@@ -9,7 +9,7 @@ export class HttpClientUtil {
           try {
             response.body = JSON.parse(body);
 
-            if (error) {
+            if (error || !body || response.statusCode === 404) {
               reject(error);
             }
             resolve(response);
@@ -32,7 +32,7 @@ export class HttpClientUtil {
         (error, response, body) => {
           try {
 
-            if (error) {
+            if (error || !body || response.statusCode === 404) {
               reject(error);
             }
             if (ignoreHttpResponse) {

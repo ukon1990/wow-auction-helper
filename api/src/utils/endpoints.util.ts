@@ -2,8 +2,15 @@ import {BLIZZARD} from '../secrets';
 import {APIGatewayEvent} from 'aws-lambda';
 
 export class Endpoints {
-  private endpoints = {
+  private readonly COMMUNITY_ENDPOINT = {
     eu: 'https://eu.api.blizzard.com/wow/',
+    us: 'https://us.api.blizzard.com/wow/',
+    kr: 'https://kr.api.blizzard.com/wow/',
+    tw: 'https://tw.api.blizzard.com/wow/',
+    cn: 'https://gateway.battlenet.com.cn/wow/'
+  };
+  private readonly GAME_DATA_ENDPOINT = {
+    eu: 'https://eu.api.blizzard.com/data/wow/',
     us: 'https://us.api.blizzard.com/wow/',
     kr: 'https://kr.api.blizzard.com/wow/',
     tw: 'https://tw.api.blizzard.com/wow/',
@@ -43,19 +50,28 @@ export class Endpoints {
     return event.requestContext.stage;
   }
 
-  getBase(region?: string): string {
-    return region ? this.endpoints[region] : this.endpoints.eu;
+  getGameDataBase(region?: string) {
+    return region ? this.GAME_DATA_ENDPOINT[region] : this.GAME_DATA_ENDPOINT.eu;
   }
 
-  getPath(query: string, region?: string, isNotWoW?: boolean): string {
+  getBase(region?: string): string {
+    return region ? this.COMMUNITY_ENDPOINT[region] : this.COMMUNITY_ENDPOINT.eu;
+  }
+
+  getPath(query: string, region?: string, isGameData?: boolean): string {
+    if (isGameData) {
+      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region);
+    }
     return this.getBase(region) + this.addQueriesToQueries(query);
   }
 
-  private addQueriesToQueries(query: string): string {
+  private addQueriesToQueries(query: string, region?: string): string {
+    const namespace = region ? `&namespace=static-${region}` : '';
+    const base = `access_token=${BLIZZARD.ACCESS_TOKEN}${namespace}`;
     if (query.indexOf('?') > -1) {
-      return `${query}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
+      return `${query}&${base}`;
     } else {
-      return `${query}?access_token=${BLIZZARD.ACCESS_TOKEN}`;
+      return `${query}?${base}`;
     }
   }
 }
