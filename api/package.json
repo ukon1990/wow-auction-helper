@@ -6,6 +6,8 @@
   "scripts": {
     "start": "sls offline start",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:watchAll": "jest --watchAll",
     "test:coverage": "jest --coverage",
     "deploy-dev-eu": "sls deploy -r eu-west-1 -s dev",
     "deploy-dev-us": "sls deploy -r us-west-1 -s dev",
@@ -19,7 +21,7 @@
   },
   "private": true,
   "dependencies": {
-    "@ukon1990/js-utilities": "^1.6.2",
+    "@ukon1990/js-utilities": "^1.8.3",
     "@ukon1990/subscription-manager": "^1.0.2",
     "aws-sdk": "^2.516.0",
     "file-saver": "^2.0.2",
@@ -36,6 +38,7 @@
     "@types/jest": "^24.0.23",
     "@types/node": "^12.6.8",
     "@types/supertest": "^2.0.8",
+    "babel-jest": "^24.9.0",
     "jest": "^24.9.0",
     "requirejs": "^2.3.6",
     "serverless": "^1.50.0",
