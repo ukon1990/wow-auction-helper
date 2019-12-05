@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 
@@ -36,6 +36,7 @@ import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
 import {TsmModule} from './modules/tsm/tsm.module';
 import {BackgroundDownloadService} from './services/background-download.service';
 import {ReportService} from './services/report/report.service';
+import {AuthenticationInterceptor} from './auth.interceptor';
 
 
 @NgModule({
@@ -77,8 +78,10 @@ import {ReportService} from './services/report/report.service';
     PetsService,
     UpdateService,
     BackgroundDownloadService,
-    ReportService
+    ReportService,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
