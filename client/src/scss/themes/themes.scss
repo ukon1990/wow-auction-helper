@@ -3,7 +3,7 @@
 */
 
 
-@import '../../../../node_modules/@angular/material/theming';
+@import '../../../node_modules/@angular/material/theming';
 @include mat-core();
 @import 'dark-unicorn-theme';
 @import 'dark-blue-theme';
