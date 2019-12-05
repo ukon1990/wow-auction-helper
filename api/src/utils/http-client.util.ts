@@ -1,13 +1,15 @@
 const request: any = require('request');
 
 export class HttpClientUtil {
-  get(url: string): Promise<any> {
+  get(url: string, expectJSON: boolean = true): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request.get(
         url,
         (error, response, body) => {
           try {
-            response.body = JSON.parse(body);
+            if (expectJSON) {
+              response.body = JSON.parse(body);
+            }
 
             if (error || !body || response.statusCode === 404) {
               reject(error);

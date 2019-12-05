@@ -1,4 +1,4 @@
-import { Item } from './item';
+import {Item} from '../../../../client/src/client/models/item/item';
 
 export class WoWDBItem {
   ID: number;

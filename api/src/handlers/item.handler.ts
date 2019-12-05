@@ -106,7 +106,7 @@ export class ItemHandler {
         .catch(e => error = e);
 
       if (!error) {
-        await this.getWowDBData(id)
+        await ItemUtil.getWowDBData(id)
           .then(i =>
             WoWDBItem.setItemWithWoWDBValues(i, item))
           .catch(e => error = e);
@@ -126,25 +126,5 @@ export class ItemHandler {
       }
       resolve(item);
     });
-  }
-
-  getWowDBData(id: number): Promise<WoWDBItem> {
-    return new Promise<WoWDBItem>(((resolve, reject) => {
-      request.get(`http://wowdb.com/api/item/${id}`,
-        (error, response, body) => {
-          const errorMessage = {error: `Could not get data from WoWDB for an item id=${id}`};
-          if (error || !body) {
-            reject(errorMessage);
-          } else {
-            try {
-              const object = body.slice(1, body.length - 1);
-              resolve(
-                JSON.parse(object) as WoWDBItem);
-            } catch (e) {
-              reject(errorMessage);
-            }
-          }
-        });
-    }));
   }
 }

@@ -4,6 +4,7 @@ import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
 import {MediaGameData, ItemGameData} from '../models/item/item-game-data.model';
 import {BLIZZARD} from '../secrets';
+import {WoWDBItem} from '../models/item/wowdb';
 
 export class ItemUtil {
   public static handleItems(items: Item[]): Item[] {
@@ -55,6 +56,24 @@ export class ItemUtil {
        })
        .catch(() => reject('No media found'));
     });
+  }
+
+  static getWowDBData(id: number): Promise<WoWDBItem> {
+    return new Promise<WoWDBItem>(((resolve, reject) => {
+      const errorMessage = {error: `Could not get data from WoWDB for an item id=${id}`};
+
+      new HttpClientUtil().get(`http://wowdb.com/api/item/${id}`, false)
+        .then(({body}) => {
+          try {
+            const object = body.slice(1, body.length - 1);
+            resolve(
+              JSON.parse(object) as WoWDBItem);
+          } catch (e) {
+            reject(errorMessage);
+          }
+        })
+        .catch(error => reject(errorMessage));
+    }));
   }
 }
 

@@ -10,6 +10,7 @@ import {RecipeHandler} from './recipe.handler';
 import {Recipe, RecipeSpell} from '../models/crafting/recipe';
 import {AuthHandler} from './auth.handler';
 import {ItemLocale} from '../models/item/item-locale';
+import {ItemUtil} from '../utils/item.util';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -144,7 +145,7 @@ export class LocaleHandler {
             this.updateLocaleTable(table, idName, id, locale, pet.name))
           .catch(console.error);
       case 'item':
-        return new ItemHandler().getFromBlizzard(id, locale, this.localeRegionMap[locale])
+        return ItemUtil.getFromBlizzard(id, locale, this.localeRegionMap[locale])
           .then((item: Item) =>
             this.updateLocaleTable(table, idName, id, locale, item.name))
           .catch(console.error);
@@ -196,7 +197,7 @@ export class LocaleHandler {
             row[locale] = pet.name ? pet.name : '404')
           .catch(() => row[locale] = '404');
       case 'item':
-        return new ItemHandler().getFromBlizzard(id, locale, this.localeRegionMap[locale])
+        return ItemUtil.getFromBlizzard(id, locale, this.localeRegionMap[locale])
           .then((item: Item) =>
             row[locale] = item.name ? item.name : '404')
           .catch(() => row[locale] = '404');
