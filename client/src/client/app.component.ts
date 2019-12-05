@@ -32,10 +32,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(public platform: Platform,
               private _router: Router,
-              private _craftingService: CraftingService,
-              private _auctionsService: AuctionsService,
-              private _itemService: ItemService,
-              private updateService: UpdateService,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
@@ -67,7 +63,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
     Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
   }
-
 
   ngAfterViewInit(): void {
     if (this.isStandalone()) {
