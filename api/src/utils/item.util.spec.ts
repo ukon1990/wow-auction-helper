@@ -1,6 +1,6 @@
 import {environment} from '../../../client/src/environments/environment';
-import {Item} from '../models/item/item';
 import {ItemUtil} from './item.util';
+import {Item} from '../../../client/src/client/models/item/item';
 
 describe('ItemUtil', () => {
   let originalEnvironment;

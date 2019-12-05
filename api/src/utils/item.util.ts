@@ -1,4 +1,4 @@
-import {Item} from '../models/item/item';
+import {Item} from '../../../client/src/client/models/item/item';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';

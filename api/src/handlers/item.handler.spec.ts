@@ -1,6 +1,6 @@
 import {environment} from '../../../client/src/environments/environment';
 import {ItemHandler} from './item.handler';
-import {Item} from '../models/item/item';
+import {Item} from '../../../client/src/client/models/item/item';
 
 describe('ItemHandler', () => {
   let originalEnvironment;
@@ -12,7 +12,10 @@ describe('ItemHandler', () => {
     environment.test = originalEnvironment;
   });
 
-  it('', () => {
-    expect(1).toBe(1);
+  it('Can get complete item', async () => {
+    jest.setTimeout(10000);
+    const item: Item = await new ItemHandler().getFreshItem(109118, 'en_GB');
+    expect(item.itemSource.droppedBy.length).toBe(8);
+    expect(item.expansionId).toBe(5);
   });
 });

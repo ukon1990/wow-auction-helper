@@ -5,7 +5,7 @@ import {LocaleQuery} from '../queries/locale.query';
 import {PetHandler} from './pet.handler';
 import {Pet} from '../models/pet';
 import {ItemHandler} from './item.handler';
-import {Item} from '../models/item/item';
+import {Item} from '../../../client/src/client/models/item/item';
 import {RecipeHandler} from './recipe.handler';
 import {Recipe, RecipeSpell} from '../models/crafting/recipe';
 import {AuthHandler} from './auth.handler';

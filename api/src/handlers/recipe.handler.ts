@@ -6,7 +6,7 @@ import {RecipeQuery} from '../queries/recipe.query';
 import {RecipeUtil} from '../utils/recipe.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {LocaleUtil} from '../utils/locale.util';
-import {Item} from '../models/item/item';
+import {Item} from '../../../client/src/client/models/item/item';
 import {AuthHandler} from './auth.handler';
 import {ItemQuery} from '../queries/item.query';
 

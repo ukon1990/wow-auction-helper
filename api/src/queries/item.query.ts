@@ -1,4 +1,4 @@
-import {Item} from '../models/item/item';
+import {Item} from '../../../client/src/client/models/item/item';
 import {safeifyString} from '../utils/string.util';
 import {getLocale} from '../utils/locale.util';
 

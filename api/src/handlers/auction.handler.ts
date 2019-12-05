@@ -36,9 +36,9 @@ export class AuctionHandler {
         .then(token => BLIZZARD.ACCESS_TOKEN = token)
         .catch(error => console.error('Unable to fetch token'));
 
-      await this.getLatestDumpPath(region, realm)
+      apiResponse = await this.getLatestDumpPath(region, realm)
         .then(response => apiResponse = response)
-        .catch(error => console.error('Unable to fetch data'));
+        .catch(() => console.error('Unable to fetch data'));
 
       Response.send(apiResponse, callback);
     } else {

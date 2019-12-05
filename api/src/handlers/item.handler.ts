@@ -1,7 +1,6 @@
 import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {ItemQuery} from '../queries/item.query';
-import {Item} from '../models/item/item';
 import {Response} from '../utils/response.util';
 import {WoWDBItem} from '../models/item/wowdb';
 import {ItemUtil} from '../utils/item.util';
@@ -11,6 +10,8 @@ import {getLocale, LocaleUtil} from '../utils/locale.util';
 import {AuthHandler} from './auth.handler';
 import * as request from 'request';
 import {HttpClientUtil} from '../utils/http-client.util';
+import {WoWHead} from '../models/item/wowhead';
+import {Item} from '../../../client/src/client/models/item/item';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -92,7 +93,7 @@ export class ItemHandler {
     });
   }
 
-  getFreshItem(id: number, locale: string) {
+  getFreshItem(id: number, locale: string): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       let item: Item = new Item();
       let error;
@@ -113,10 +114,8 @@ export class ItemHandler {
 
       if (!error) {
         await WoWHeadUtil.getWowHeadData(id)
-          .then(wowHead => {
-            item.expansionId = wowHead.expansionId;
-            delete wowHead.expansionId;
-            item.itemSource = wowHead;
+          .then((wowHead: WoWHead) => {
+            item.setDataFromWoWHead(wowHead);
           })
           .catch(e => error = e);
       }

@@ -23,6 +23,7 @@ export class LocaleUtil {
     tw: ['zh_TW']
   };
 
+  /* istanbul ignore next */
   public static async setLocales(id: any, idName: string, tableName: string, apiPath: string): Promise<any> {
     const data: ItemLocale = new ItemLocale(id);
 
@@ -37,7 +38,8 @@ export class LocaleUtil {
     return data;
   }
 
-  private static insertToDB(tableName: string, idName: string, data: ItemLocale) {
+  /* istanbul ignore next */
+  public static insertToDB(tableName: string, idName: string, data: ItemLocale) {
     console.log('Query', LocaleQuery.insert(tableName, idName, data));
     new DatabaseUtil()
       .query(LocaleQuery.insert(tableName, idName, data))
@@ -56,12 +58,14 @@ export class LocaleUtil {
     );
   }
 
+  /* istanbul ignore next */
   private static getLocalePromises(array: string[], id: number, locales: ItemLocale, region: string, apiPath: string) {
     return array
       .map(locale =>
         LocaleUtil.getRequestPromise(apiPath, id, locale, region, locales));
   }
 
+  /* istanbul ignore next */
   private static getRequestPromise(apiPath: string, id: number, locale, region: string, locales: ItemLocale) {
     return RequestPromise.get(
       new Endpoints()
@@ -74,6 +78,7 @@ export class LocaleUtil {
       });
   }
 
+  /* istanbul ignore next */
   private static parseRegions(id: any, data: ItemLocale, apiPath: string) {
     return Object.keys(LocaleUtil.locales).map(region =>
       Promise.all(
@@ -86,6 +91,7 @@ export class LocaleUtil {
       ));
   }
 
+  /* istanbul ignore next */
   public static async addLocale(id: any, locale: string, region: string, apiPath: string, idName: string, tableName: string) {
     return new Promise(async (resolve) => {
       const localeResult: ItemLocale = new ItemLocale(id);
@@ -100,6 +106,7 @@ export class LocaleUtil {
     });
   }
 
+  /* istanbul ignore next */
   private static checkForMissingLocales(id: any, data: ItemLocale, apiPath: string) {
     return Object.keys(LocaleUtil.locales).map(region =>
       Promise.all(
@@ -112,6 +119,7 @@ export class LocaleUtil {
       ));
   }
 
+  /* istanbul ignore next */
   private static updateLocale(id: any, tableName: string, idName: string, locale: string, data: string) {
     return new Promise((resolve) => {
       new DatabaseUtil()
