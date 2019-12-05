@@ -5,6 +5,7 @@ import {Response} from '../utils/response.util';
 import {getLocale, LocaleUtil} from '../utils/locale.util';
 import {Pet} from '../models/pet';
 import {Endpoints} from '../utils/endpoints.util';
+import { PetUtil } from '../utils/pet.util';
 
 const request = require('request');
 
@@ -58,7 +59,7 @@ export class PetHandler {
   update(event: APIGatewayEvent, callback: Callback) {
     const locale = JSON.parse(event.body).locale;
     const id = +event.pathParameters.id;
-    this.getPet(id)
+    PetUtil.getPet(id)
       .then((newPet: Pet) => {
         new DatabaseUtil()
           .query(PetQuery.updatePet(newPet))
@@ -89,35 +90,5 @@ export class PetHandler {
       })
       .catch(error =>
         Response.error(callback, error, event));
-  }
-
-  reducePet(petBody: string): Pet {
-    const petRaw = JSON.parse(petBody);
-    return {
-      speciesId: petRaw.speciesId,
-      petTypeId: petRaw.petTypeId,
-      creatureId: petRaw.creatureId,
-      name: petRaw.name,
-      canBattle: petRaw.canBattle,
-      icon: petRaw.icon,
-      description: petRaw.description,
-      source: petRaw.source
-    };
-  }
-
-  getPet(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Pet> {
-    const url = new Endpoints()
-      .getPath(`pet/species/${id}?locale=${getLocale(locale)}`, region);
-    return new Promise<Pet>((resolve, reject) => {
-      request.get(url,
-        (error, response, body) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        resolve(this.reducePet(body));
-      });
-    });
   }
 }

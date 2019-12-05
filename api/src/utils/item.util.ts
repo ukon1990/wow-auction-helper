@@ -5,6 +5,7 @@ import {Endpoints} from './endpoints.util';
 import {MediaGameData, ItemGameData} from '../models/item/item-game-data.model';
 import {BLIZZARD} from '../secrets';
 import {WoWDBItem} from '../models/item/wowdb';
+import {GameMediaUtil} from './game-media.util';
 
 export class ItemUtil {
   public static handleItems(items: Item[]): Item[] {
@@ -33,7 +34,7 @@ export class ItemUtil {
         .then(async ({body}) => {
           const raw: ItemGameData = body;
           const item: Item = new Item().fromAPI(raw, locale);
-          item.icon = await this.getMedia(raw.media, region);
+          item.icon = await GameMediaUtil.getIcon(raw.media, region);
           resolve(item as Item);
         })
         .catch(() =>
@@ -41,22 +42,7 @@ export class ItemUtil {
     });
   }
 
-  private static async getMedia({key}: MediaGameData, region: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-     new HttpClientUtil().get(`${key.href}&access_token=${BLIZZARD.ACCESS_TOKEN}`)
-       .then(({body}) => {
-         if (body && body.assets && body.assets[0].key === 'icon') {
-           const icon = body.assets[0].value;
-           resolve(icon
-             .replace(`https://render-${region}.worldofwarcraft.com/icons/56/`, '')
-             .replace('.jpg', ''));
-           return;
-         }
-         reject('No media found');
-       })
-       .catch(() => reject('No media found'));
-    });
-  }
+
 
   static getWowDBData(id: number): Promise<WoWDBItem> {
     return new Promise<WoWDBItem>(((resolve, reject) => {

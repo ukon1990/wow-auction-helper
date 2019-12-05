@@ -7,7 +7,7 @@ export class DatabaseUtil {
   private connection: Connection;
 
   constructor() {
-    if (environment.test) {
+    if (!environment.test) {
       this.connection = mysql.createConnection(DATABASE_CREDENTIALS);
     }
   }
