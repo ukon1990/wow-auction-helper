@@ -53,6 +53,7 @@ export class Item {
     return this;
   }
 
+  /* istanbul ignore next */
   private getQuality(item: ItemGameData) {
     switch (item.quality.type) {
       case 'POOR':

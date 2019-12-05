@@ -13,7 +13,6 @@ export class ItemUtil {
   }
 
   public static handleItem(item: Item): Item {
-    console.log('ITEM', item);
     delete item['timestamp'];
     if (item.itemSource) {
       item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
