@@ -9,20 +9,27 @@ export class QueryIntegrity {
           const validObject = {};
           let isValid = true;
           result.forEach(({Field, Null, Type}) => {
-            if (Field === 'timestamp') {
+            if (!isValid || Field === 'timestamp') {
               return;
             }
-            if (!obj[Field] && Null === 'NO') {
-              console.log('FIELD', Field);
+            if (this.isNullButRequiered(obj, Field, Null) || this.isTypeMissMatch(obj[Field], Type)) {
               isValid = false;
-              return;
+            } else {
+              validObject[Field] = obj[Field];
             }
-            validObject[Field] = obj[Field];
           });
           resolve(isValid ? validObject : undefined);
         })
         .catch(() =>
           reject('Could not verify DB integrity'));
     });
+  }
+
+  private static isNullButRequiered(obj: object, Field, Null) {
+    return !obj[Field] && Null === 'NO';
+  }
+
+  private static isTypeMissMatch(objElement: any, Type: any) {
+    return false;
   }
 }

@@ -14,6 +14,7 @@ export class Pet {
   canBattle: boolean;
   isCapturable: boolean;
   isTradable: boolean;
+  timestamp?: number;
   assets: Asset[];
   auctions = new Array<Auction>();
 }
