@@ -15,15 +15,21 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 class PetController {
   /* istanbul ignore next */
   public static byId(event: APIGatewayEvent, callback: Callback) {
+    // `Could not get locale for ${newPet.name} (${newPet.speciesId})`, e
+    const { locale } = JSON.parse(event.body);
     const type = event.httpMethod,
       id = +event.pathParameters.id;
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new PetHandler().getById(event, callback);
+        new PetHandler().getById(id, locale)
+          .then(res => Response.send(res, callback))
+          .catch(error => Response.error(callback, error, event));
         break;
       case 'PATCH':
-        new PetHandler().update(event, callback);
+        new PetHandler().update(id, locale)
+          .then(res => Response.send(res, callback))
+          .catch(error => Response.error(callback, error, event));
         break;
       default:
         Response.error(callback, 'The method you provided, is not available.', event);
@@ -32,11 +38,16 @@ class PetController {
 
   /* istanbul ignore next */
   public static all(event: APIGatewayEvent, callback: Callback) {
+    const { locale } = JSON.parse(event.body);
+    const id = +event.pathParameters.id;
     const type = event.httpMethod;
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new PetHandler().getAllRelevant(event, callback);
+        const { locale, timestamp } = JSON.parse(event.body);
+        new PetHandler().getAllRelevant(id, timestamp, locale)
+          .then(res => Response.send(res, callback))
+          .catch(error => Response.error(callback, error, event));
         break;
       default:
         Response.error(callback, 'The method you provided, is not available.', event);

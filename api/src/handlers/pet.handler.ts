@@ -2,46 +2,45 @@ import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {PetQuery} from '../queries/pet.query';
 import {Response} from '../utils/response.util';
-import {getLocale, LocaleUtil} from '../utils/locale.util';
-import {Pet} from '../models/pet';
-import {Endpoints} from '../utils/endpoints.util';
+import {LocaleUtil} from '../utils/locale.util';
 import { PetUtil } from '../utils/pet.util';
+import {Pet} from '../../../client/src/client/modules/pet/models/pet';
+import {ApiResponse} from '../models/api-response.model';
 
 const request = require('request');
 
 export class PetHandler {
-  getById(event: APIGatewayEvent, callback: Callback) {
-    const locale = JSON.parse(event.body).locale;
-    const id = +event.pathParameters.id;
-    this.getPetFromDBById(id, locale)
-      .then((pet: Pet) => {
-        if (pet) {
-          Response.send(pet, callback);
-        } else {
-          this.getPet(id)
-            .then(async (newPet: Pet) => {
-              await new DatabaseUtil()
-                .query(PetQuery.insertInto(newPet));
+  getById(id: number, locale: string = 'en_GB'): Promise<Pet> {
+    return new Promise<Pet>((resolve, reject) => {
+      this.getPetFromDBById(id, locale)
+        .then((pet: Pet) => {
+          if (pet) {
+            resolve(pet);
+          } else {
+            PetUtil.getPet(id)
+              .then(async (newPet: Pet) => {
+                await new DatabaseUtil()
+                  .query(PetQuery.insertInto(newPet));
 
-              await LocaleUtil.setLocales(
-                newPet.speciesId,
-                'speciesId',
-                'pet_name_locale',
-                'pet/species')
-                .then(locales => {
-                  if (locales[locale]) {
-                    newPet.name = locales[locale];
-                  }
-                })
-                .catch(e =>
-                  console.error(`Could not get locale for ${newPet.name} (${newPet.speciesId})`, e));
+                await LocaleUtil.setLocales(
+                  newPet.speciesId,
+                  'speciesId',
+                  'pet_name_locale',
+                  'pet/species')
+                  .then(locales => {
+                    if (locales[locale]) {
+                      newPet.name = locales[locale];
+                    }
+                  })
+                  .catch(e =>
+                    reject(e));
 
-              Response.send(newPet, callback);
-            })
-            .catch(error =>
-              Response.error(callback, error, event));
-        }
-      });
+                resolve(newPet);
+              })
+              .catch(reject);
+          }
+        });
+    });
   }
 
   private async getPetFromDBById(id, locale) {
@@ -56,39 +55,33 @@ export class PetHandler {
     });
   }
 
-  update(event: APIGatewayEvent, callback: Callback) {
-    const locale = JSON.parse(event.body).locale;
-    const id = +event.pathParameters.id;
-    PetUtil.getPet(id)
-      .then((newPet: Pet) => {
-        new DatabaseUtil()
-          .query(PetQuery.updatePet(newPet))
-          .then(() =>
-            Response.send(newPet, callback))
-          .catch(error => Response.error(callback, error, event));
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
-
+  update(id: number, locale: string = 'en_GB'): Promise<Pet> {
+    return new Promise<Pet>((resolve, reject) => {
+      PetUtil.getPet(id, locale)
+        .then((newPet: Pet) => {
+          new DatabaseUtil()
+            .query(PetQuery.updatePet(newPet))
+            .then(() => resolve(newPet))
+            .catch(reject);
+        })
+        .catch(reject);
+    });
   }
 
-  getAllRelevant(event: APIGatewayEvent, callback: Callback) {
-    const body = JSON.parse(event.body);
-    new DatabaseUtil()
-      .query(PetQuery.selectAllForTimestampWithLocale(body.locale, body.timestamp))
-      .then((rows: any[]) => {
-        let timestamp = new Date().toJSON();
-        if (rows.length > 0) {
-          timestamp = rows[0].timestamp;
-        }
-        rows.forEach(row =>
-          delete row.timestamp);
-        Response.send({
-          timestamp: timestamp,
-          'pets': rows
-        }, callback);
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+  getAllRelevant(id: number, timestamp: number, locale: string = 'en_GB'): Promise<ApiResponse<Pet>> {
+    return new Promise<ApiResponse<Pet>>((resolve, reject) => {
+      new DatabaseUtil()
+        .query(PetQuery.selectAllForTimestampWithLocale(locale, new Date(timestamp)))
+        .then((rows: Pet[]) => {
+          let ts = timestamp;
+          if (rows.length > 0) {
+            ts = rows[0].timestamp;
+          }
+          rows.forEach(row =>
+            delete row.timestamp);
+          resolve(new ApiResponse<Pet>(ts, rows, 'pets'));
+        })
+        .catch(reject);
+    });
   }
 }
