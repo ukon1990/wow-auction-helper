@@ -67,6 +67,7 @@ export class RealmQuery {
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
                 AND autoUpdate = 1
+                AND isUpdating = 0
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 
@@ -124,6 +125,20 @@ export class RealmQuery {
             SET
               \`isUpdating\` = ${isUpdating ? 1 : 0}
                 WHERE \`id\` = ${id};`;
+  }
+  static isUpdatingByRealmAndRegion(region: string, realm: string, isUpdating: boolean) {
+    return `UPDATE \`100680-wah\`.\`auction_houses\`
+            SET
+              \`isUpdating\` = ${isUpdating ? 1 : 0}
+                WHERE \`id\` IN (
+                    SELECT ah.id as ahId, slug
+                    FROM auction_house_realm
+                    LEFT OUTER JOIN (
+                      SELECT a.id, region
+                      FROM auction_houses as a) AS ah
+                      ON ah.id = ahId
+                    WHERE region = '${region}' and slug = '${realm}';
+                );`;
   }
 
   static activateHouse(id: any): string {

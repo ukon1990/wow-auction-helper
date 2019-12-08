@@ -30,11 +30,18 @@ export class RealmListComponent implements OnInit, OnDestroy {
     {key: 'lastModified', title: 'Last updated', dataType: 'date'},
     {key: 'timeSincePreviousDump', title: 'Time since previous update', dataType: 'number'},
   ];
+  selectedDataset = {
+    columns: this.columns,
+    data: []
+  };
 
   constructor(private service: RealmService) {
     this.sm.add(
       this.service.events.list,
-      (realms: RealmStatus[]) => this.realms = realms);
+      (realms: RealmStatus[]) => {
+        this.realms = realms;
+        this.reset();
+      });
   }
 
   ngOnInit() {
@@ -48,6 +55,11 @@ export class RealmListComponent implements OnInit, OnDestroy {
     this.show = !this.show;
   }
 
+  reset(): void {
+    this.selectedDataset.columns = this.columns;
+    this.selectedDataset.data = this.realms;
+  }
+
   realmSelect(row): void {
     if (row.timeSincePreviousDump) {
       return;
@@ -57,9 +69,21 @@ export class RealmListComponent implements OnInit, OnDestroy {
     if (row.lastModified > +new Date() - 60 * 60 * 1000 * 7) {
       this.service.getLogForRealmWithId(row.ahId)
         .then(res => {
+          const first = res.entries[0];
+          res.entries = [{
+            id: first.id,
+            ahId: first.ahId,
+            lastModified: first.lastModified + res.avgTime,
+            timeSincePreviousDump: first.timeSincePreviousDump,
+            url: '',
+            size: first.size
+          }, ...res.entries];
           res.entries.forEach(entry =>
             entry.timeSincePreviousDump = this.msToMinutes(entry));
           this.updateLogForRealm = res;
+          this.selectedDataset.columns = this.logColumns;
+          this.selectedDataset.data = res.entries;
+          console.log('Result', res);
         })
         .catch(err => Report.debug('realmSelect', err));
     }
