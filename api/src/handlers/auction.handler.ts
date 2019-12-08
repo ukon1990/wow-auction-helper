@@ -262,7 +262,8 @@ export class AuctionHandler {
         .catch(e => {
           error = e;
         });
-      if (ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
+
+      if (!error && ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
         console.log(`Updating id=${dbResult.id}`);
         await this.setIsUpdating(dbResult.id, true);
         this.downloadDump(ahDumpResponse.url)
@@ -274,10 +275,14 @@ export class AuctionHandler {
               this.getSizeOfResponseInMB(r),
               this.getDelay(dbResult,
                 ahDumpResponse.lastModified))
-              .then(resolve)
+              .then(async (res) => {
+                resolve(res);
+                await this.setIsUpdating(dbResult.id, false);
+              })
               .catch(async err => {
                 reject(err);
-                await this.setIsUpdating(dbResult.id, true);
+                console.error('Could not upload to s3', err);
+                await this.setIsUpdating(dbResult.id, false);
               });
           })
           .catch(e => {
@@ -286,7 +291,7 @@ export class AuctionHandler {
             reject(e);
           });
       } else if (error) {
-        console.error(error);
+        console.error(`Could not update id=${dbResult.id}`, error);
         reject(error);
       } else {
         resolve();
