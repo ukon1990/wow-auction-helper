@@ -12,6 +12,7 @@ import {ArrayUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {Report} from '../utils/report.util';
+import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
 
 @Injectable()
 export class RealmService {
@@ -43,6 +44,11 @@ export class RealmService {
     await this.getStatus(
       SharedService.user.region,
       realm);
+  }
+
+  getLogForRealmWithId(ahId: number): Promise<AuctionUpdateLog> {
+    return this.http.get(
+      Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
   getStatus(region: string, realm: string): Promise<any> {
