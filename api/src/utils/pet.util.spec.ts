@@ -1,7 +1,5 @@
 import {PetUtil} from './pet.util';
 import {Pet} from '../../../client/src/client/modules/pet/models/pet';
-import {DatabaseService} from '../../../client/src/client/services/database.service';
-import {DatabaseUtil} from './database.util';
 
 describe('PetUtil', () => {
   describe('getPet', () => {

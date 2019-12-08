@@ -19,6 +19,8 @@ export class PetUtil {
 
   static reducePet(petRaw: any, locale: string = 'en_GB', region: string = 'eu'): Pet {
     petRaw.name.id = petRaw.id;
+    petRaw.name.pt_PT = petRaw.name.pt_BR;
+    petRaw.name.pl_PL = petRaw.name.en_GB;
     return {
       speciesId: petRaw.id,
       petTypeId: petRaw.petTypeId,

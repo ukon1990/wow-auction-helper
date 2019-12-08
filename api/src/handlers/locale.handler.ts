@@ -139,16 +139,6 @@ export class LocaleHandler {
 
   private getUpdateLocalePromises(id: number, table: string, idName: string, locale: string): Promise<any> {
     switch (table) {
-      case 'pet':
-        return new PetHandler().getPet(id, locale, this.localeRegionMap[locale])
-          .then((pet: Pet) =>
-            this.updateLocaleTable(table, idName, id, locale, pet.name))
-          .catch(console.error);
-      case 'item':
-        return ItemUtil.getFromBlizzard(id, locale, this.localeRegionMap[locale])
-          .then((item: Item) =>
-            this.updateLocaleTable(table, idName, id, locale, item.name))
-          .catch(console.error);
       case 'recipe':
         return new RecipeHandler().getProfessionForRecipe({
           spellID: id,
@@ -191,16 +181,6 @@ export class LocaleHandler {
 
   private setLocaleName(table: string, id, locale, row: ItemLocale) {
     switch (table) {
-      case 'pet':
-        return new PetHandler().getPet(id, locale, this.localeRegionMap[locale])
-          .then((pet: Pet) =>
-            row[locale] = pet.name ? pet.name : '404')
-          .catch(() => row[locale] = '404');
-      case 'item':
-        return ItemUtil.getFromBlizzard(id, locale, this.localeRegionMap[locale])
-          .then((item: Item) =>
-            row[locale] = item.name ? item.name : '404')
-          .catch(() => row[locale] = '404');
       case 'recipe':
         return new RecipeHandler().getProfessionForRecipe({
           spellID: id,
