@@ -29,6 +29,7 @@ export class RealmListComponent implements OnInit, OnDestroy {
   logColumns: ColumnDescription[] = [
     {key: 'lastModified', title: 'Last updated', dataType: 'date'},
     {key: 'timeSincePreviousDump', title: 'Time since previous update', dataType: 'number'},
+    {key: 'size', title: 'File size', dataType: 'number'}
   ];
   selectedDataset = {
     columns: this.columns,
