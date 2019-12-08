@@ -38,14 +38,12 @@ class PetController {
 
   /* istanbul ignore next */
   public static all(event: APIGatewayEvent, callback: Callback) {
-    const { locale } = JSON.parse(event.body);
-    const id = +event.pathParameters.id;
+    const { locale, timestamp } = JSON.parse(event.body);
     const type = event.httpMethod;
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        const { locale, timestamp } = JSON.parse(event.body);
-        new PetHandler().getAllRelevant(id, timestamp, locale)
+        new PetHandler().getAllRelevant(timestamp, locale)
           .then(res => Response.send(res, callback))
           .catch(error => Response.error(callback, error, event));
         break;

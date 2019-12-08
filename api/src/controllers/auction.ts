@@ -5,11 +5,18 @@ import {Response} from '../utils/response.util';
 /* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const type = event.httpMethod;
+  const body = JSON.parse(event.body),
+    region = body.region,
+    realm = body.realm,
+    timestamp = body.timestamp,
+    url = body.url;
 
   switch (type) {
     case 'OPTIONS':
     case 'POST':
-      new AuctionHandler().post(event, context, callback);
+      new AuctionHandler().post(region, realm, timestamp, url)
+        .then(res => Response.send(res, callback))
+        .catch(err => Response.error(callback, err, event));
       break;
     default:
       Response.error(callback, 'The method you provided, is not available.', event);

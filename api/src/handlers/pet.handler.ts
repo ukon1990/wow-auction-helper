@@ -69,7 +69,7 @@ export class PetHandler {
     });
   }
 
-  getAllRelevant(id: number, timestamp: number, locale: string = 'en_GB'): Promise<ApiResponse<Pet>> {
+  getAllRelevant(timestamp: number, locale: string = 'en_GB'): Promise<ApiResponse<Pet>> {
     return new Promise<ApiResponse<Pet>>((resolve, reject) => {
       new DatabaseUtil()
         .query(PetQuery.selectAllForTimestampWithLocale(locale, new Date(timestamp)))
