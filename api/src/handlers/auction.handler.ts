@@ -99,13 +99,10 @@ export class AuctionHandler {
             .insertNewDumpLogRow(ahId, r.url, lastModified, oldLastModified, size));
 
           console.log('Sending to S3');
-          const {minTime, avgTime, maxTime} = await this.getUpdateLog(ahId, 72);
           new DatabaseUtil()
             .query(RealmQuery
               .updateUrl(
-                ahId, r.url, lastModified, size, avgTime ? {
-                  lowest: minTime, avg: avgTime, highest: maxTime
-                } : delay))
+                ahId, r.url, lastModified, size, delay))
             .then(() => {
               console.log(`Successfully updated id=${ahId}`);
               resolve();
@@ -267,14 +264,14 @@ export class AuctionHandler {
         console.log(`Updating id=${dbResult.id}`);
         await this.setIsUpdating(dbResult.id, true);
         this.downloadDump(ahDumpResponse.url)
-          .then(r => {
+          .then(async r => {
             console.log('Done downloading for id=', dbResult.id);
             this.sendToS3(
               r.body, dbResult.region, dbResult.id,
               ahDumpResponse.lastModified,
               dbResult.lastModified,
               this.getSizeOfResponseInMB(r),
-              this.getDelay(dbResult,
+              await this.getDelay(dbResult,
                 ahDumpResponse.lastModified))
               .then(async (res) => {
                 console.log('Successfully uploaded to bucket for id=', dbResult.id);
@@ -308,13 +305,15 @@ export class AuctionHandler {
       .catch(console.error);
   }
 
-  private getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay }, lastModified: number) {
+  private async getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay }, lastModified: number) {
+    const {minTime, avgTime, maxTime} = await this.getUpdateLog(dbResult.id, 72);
+    /*
     const diff = Math.round((lastModified - dbResult.lastModified) / 60000);
     console.log(`The diff for ${dbResult.id} is ${diff}`, dbResult.lowestDelay, dbResult.highestDelay);
 
+
     if (diff < dbResult.lowestDelay && diff >= 1 || !dbResult.lowestDelay) {
       dbResult.lowestDelay = diff;
-      console.log(`Decreasing lowest with ${diff - dbResult.lowestDelay}`);
     }
 
 
@@ -327,10 +326,12 @@ export class AuctionHandler {
 
       if (diff > dbResult.highestDelay) {
         dbResult.highestDelay = diff;
-        console.log(`Increasing highest with ${diff - dbResult.highestDelay}`);
       }
     }
-
+    */
+    dbResult.lowestDelay = minTime > 120 ? 120 : minTime;
+    dbResult.avgDelay = avgTime;
+    dbResult.highestDelay = maxTime;
     return {
       lowest: dbResult.lowestDelay, avg: dbResult.avgDelay, highest: dbResult.highestDelay
     };
