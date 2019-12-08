@@ -8,11 +8,22 @@ import {S3Handler} from './s3.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
+import {DateUtil} from '@ukon1990/js-utilities';
+import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
 
 export class AuctionHandler {
+
+  async getUpdateLog(ahId: number, hours: number = 24): Promise<AuctionUpdateLog> {
+    const fromDate = +new Date() - hours * 60 * 60 * 1000;
+    return new Promise<AuctionUpdateLog>((resolve, reject) => {
+      new DatabaseUtil().query(RealmQuery.getUpdateHistoryForRealm(ahId, fromDate))
+        .then(res => resolve(new AuctionUpdateLog(res)))
+        .catch(reject);
+    });
+  }
 
   async post(region: string, realm: string, timestamp: number, url: string): Promise<any> {
     if (url) {
@@ -23,23 +34,23 @@ export class AuctionHandler {
   }
 
   async latestDumpPathRequest(region: string, realm: string, timestamp: number) {
-   return new Promise<any>(async (resolve, reject) => {
-     if (region && realm) {
-       let apiResponse;
+    return new Promise<any>(async (resolve, reject) => {
+      if (region && realm) {
+        let apiResponse;
 
-       await AuthHandler.getToken()
-         .then(token => BLIZZARD.ACCESS_TOKEN = token)
-         .catch(() => console.error('Unable to fetch token'));
+        await AuthHandler.getToken()
+          .then(token => BLIZZARD.ACCESS_TOKEN = token)
+          .catch(() => console.error('Unable to fetch token'));
 
-       apiResponse = await this.getLatestDumpPath(region, realm)
-         .then(response => apiResponse = response)
-         .catch(() => console.error('Unable to fetch data'));
+        apiResponse = await this.getLatestDumpPath(region, realm)
+          .then(response => apiResponse = response)
+          .catch(() => console.error('Unable to fetch data'));
 
-       resolve(apiResponse);
-     } else {
-       reject('Realm or region is missing from the request');
-     }
-   });
+        resolve(apiResponse);
+      } else {
+        reject('Realm or region is missing from the request');
+      }
+    });
   }
 
   async getAuctionDump(url: string) {
@@ -49,7 +60,7 @@ export class AuctionHandler {
           .then(({body}) => resolve(body))
           .catch(reject);
       } else {
-        reject('Could not get the auction dump, no URL were provided')
+        reject('Could not get the auction dump, no URL were provided');
       }
     });
   }
@@ -71,15 +82,8 @@ export class AuctionHandler {
     });
   }
 
-  private getAuctionLink(event: APIGatewayEvent, context: Context, callback: Callback): Promise<boolean> {
-    const url = event['url'] || JSON.parse(event.body).url;
-    return new Promise<any>((resolve, reject) => {
-      resolve();
-    });
-  }
-
   private async sendToS3(data: any, region: string, ahId: number, lastModified: number, oldLastModified: number, size: number,
-                         delay: { avg: any; highest: any; lowest: any }): Promise<any> {
+                         delay: { avg: number; highest: number; lowest: number }): Promise<any> {
     return new Promise((resolve, reject) => {
       new S3Handler().save(
         data,
@@ -92,10 +96,13 @@ export class AuctionHandler {
             .insertNewDumpLogRow(ahId, r.url, lastModified, oldLastModified, size));
 
           console.log('Sending to S3');
+          const {minTime, avgTime, maxTime} = await this.getUpdateLog(ahId, 72);
           new DatabaseUtil()
             .query(RealmQuery
               .updateUrl(
-              ahId, r.url, lastModified, size, delay ))
+                ahId, r.url, lastModified, size, avgTime ? {
+                  lowest: minTime, avg: avgTime, highest: maxTime
+                } : delay))
             .then(() => {
               console.log(`Successfully updated id=${ahId}`);
               resolve();

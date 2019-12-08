@@ -1,4 +1,11 @@
 export class RealmQuery {
+  static getUpdateHistoryForRealm(ahId: number, sinceTimestamp: number): string {
+    return `SELECT *
+            FROM auction_houses_dump_log
+            WHERE ahId = ${ahId} AND lastModified >= ${sinceTimestamp}
+            ORDER BY lastModified desc;`;
+  }
+
   static insertHouse(house): string {
     return `INSERT INTO \`100680-wah\`.\`auction_houses\`
                   (\`region\`,
@@ -78,8 +85,9 @@ export class RealmQuery {
               ${lastModified - oldLastModified},
               ${size});`;
   }
+
   static updateUrl(ahId: number, url: string, lastModified: number, size: number,
-                   delay: { avg: any; highest: any; lowest: any }): string {
+                   delay: { avg: number; highest: number; lowest: number }): string {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
               \`url\` = "${url}",
@@ -138,7 +146,7 @@ export class RealmQuery {
   static setNonRequestedHousesToNotAutoUpdate(days: number): string {
     return `UPDATE auction_houses as ah
             SET autoUpdate = 0
-            WHERE (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastRequested) / 60000 / 60 / 24 > ${ days }
+            WHERE (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastRequested) / 60000 / 60 / 24 > ${days}
                 AND autoUpdate = 1;`;
   }
 }
