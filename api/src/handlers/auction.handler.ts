@@ -14,48 +14,44 @@ const PromiseThrottle: any = require('promise-throttle');
 
 export class AuctionHandler {
 
-  async post(event: APIGatewayEvent, context: Context, callback: Callback) {
-    const body = JSON.parse(event.body),
-      region = body.region,
-      realm = body.realm,
-      timestamp = body.timestamp,
-      url = body.url;
-
+  async post(region: string, realm: string, timestamp: number, url: string): Promise<any> {
     if (url) {
-      this.getAuctionDump(url, callback);
+      return this.getAuctionDump(url);
     } else {
-      this.latestDumpPathRequest(region, realm, timestamp, callback);
+      return this.latestDumpPathRequest(region, realm, timestamp);
     }
   }
 
-  async latestDumpPathRequest(region, realm, timestamp, callback: Callback) {
-    if (region && realm) {
-      let apiResponse;
+  async latestDumpPathRequest(region: string, realm: string, timestamp: number) {
+   return new Promise<any>(async (resolve, reject) => {
+     if (region && realm) {
+       let apiResponse;
 
-      await AuthHandler.getToken()
-        .then(token => BLIZZARD.ACCESS_TOKEN = token)
-        .catch(error => console.error('Unable to fetch token'));
+       await AuthHandler.getToken()
+         .then(token => BLIZZARD.ACCESS_TOKEN = token)
+         .catch(() => console.error('Unable to fetch token'));
 
-      apiResponse = await this.getLatestDumpPath(region, realm)
-        .then(response => apiResponse = response)
-        .catch(() => console.error('Unable to fetch data'));
+       apiResponse = await this.getLatestDumpPath(region, realm)
+         .then(response => apiResponse = response)
+         .catch(() => console.error('Unable to fetch data'));
 
-      Response.send(apiResponse, callback);
-    } else {
-      Response.error(callback, 'Realm or region is missing from the request');
-    }
+       resolve(apiResponse);
+     } else {
+       reject('Realm or region is missing from the request');
+     }
+   });
   }
 
-  async getAuctionDump(url: string, callback: Callback) {
-    if (url) {
-      this.downloadDump(url)
-        .then((response) =>
-          Response.send(response.body, callback))
-        .catch(error =>
-          Response.error(callback, error));
-    } else {
-      Response.error(callback, 'Could not get the auction dump, no URL were provided');
-    }
+  async getAuctionDump(url: string) {
+    return new Promise<any>((resolve, reject) => {
+      if (url) {
+        this.downloadDump(url)
+          .then(({body}) => resolve(body))
+          .catch(reject);
+      } else {
+        reject('Could not get the auction dump, no URL were provided')
+      }
+    });
   }
 
   private getLatestDumpPath(region: string, realm: string): Promise<AHDumpResponse> {
