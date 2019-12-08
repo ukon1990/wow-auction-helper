@@ -30,7 +30,7 @@ coverage/*
 /libpeerconnection.log
 npm-debug.log
 testem.log
-/typings
+/client/typings
 *.log
 
 # e2e

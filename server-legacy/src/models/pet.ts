@@ -7,4 +7,5 @@ export class Pet {
   description: string;
   source: string;
   canBattle?: boolean;
+  timestamp?: number;
 }
