@@ -57,6 +57,7 @@ export class RealmQuery {
   }
 
   static getAllHousesWithLastModifiedOlderThanPreviousDelay() {
+    /* Not doing "AND isUpdating = 0" in case of some realms having slow download times like Draenor... */
     return `SELECT ah.id as id, region, slug, name, url, lastModified,
                 lowestDelay, avgDelay, highestDelay, (${+new Date()} - lastModified) / 60000 as timeSince
             FROM auction_houses as ah
@@ -67,7 +68,6 @@ export class RealmQuery {
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
                 AND autoUpdate = 1
-                AND isUpdating = 0
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 

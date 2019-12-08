@@ -268,6 +268,7 @@ export class AuctionHandler {
         await this.setIsUpdating(dbResult.id, true);
         this.downloadDump(ahDumpResponse.url)
           .then(r => {
+            console.log('Done downloading for id=', dbResult.id);
             this.sendToS3(
               r.body, dbResult.region, dbResult.id,
               ahDumpResponse.lastModified,
@@ -276,6 +277,7 @@ export class AuctionHandler {
               this.getDelay(dbResult,
                 ahDumpResponse.lastModified))
               .then(async (res) => {
+                console.log('Successfully uploaded to bucket for id=', dbResult.id);
                 resolve(res);
                 await this.setIsUpdating(dbResult.id, false);
               })
