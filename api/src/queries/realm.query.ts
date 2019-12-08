@@ -85,7 +85,7 @@ export class RealmQuery {
               (
               ${ahId},
               ${lastModified},
-              ${url},
+              "${url}",
               ${lastModified - oldLastModified},
               ${size});`;
   }
