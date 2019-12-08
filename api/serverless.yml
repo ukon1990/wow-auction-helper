@@ -22,6 +22,15 @@ functions:
           path: auction
           cors:
             origin: '*'
+  auctionUpdateLogForRealm:
+    handler: src/controllers/auction.getUpdateLogForRealm
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: auction/log/{id}
+          cors:
+            origin: '*'
   auctionsS3:
     handler: src/controllers/auction.s3
     events:

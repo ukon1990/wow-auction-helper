@@ -50,3 +50,11 @@ exports.updateOne = (event: APIGatewayEvent, context: Context, callback: Callbac
 /* istanbul ignore next */
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
   new AuctionHandler().deactivateInactiveHouses(event, callback);
+
+/* istanbul ignore next */
+exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const id = +event.pathParameters.id;
+  new AuctionHandler().getUpdateLog(id, 24 * 7)
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 401));
+};
