@@ -16,7 +16,8 @@ export class QueryIntegrity {
             }
             if (this.isNullButRequired(obj, Field, Null) || !this.isTypeMatch(obj[Field], Type)) {
               isValid = false;
-            } else {
+            } else if (obj[Field]) {
+              // We only wish to return a field if it has data
               validObject[Field] = obj[Field];
             }
           });

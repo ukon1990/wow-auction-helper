@@ -3,9 +3,11 @@ import {DatabaseUtil} from '../utils/database.util';
 import {PetQuery} from '../queries/pet.query';
 import {Response} from '../utils/response.util';
 import {LocaleUtil} from '../utils/locale.util';
-import { PetUtil } from '../utils/pet.util';
+import {PetUtil} from '../utils/pet.util';
 import {Pet} from '../../../client/src/client/modules/pet/models/pet';
 import {ApiResponse} from '../models/api-response.model';
+import {Item} from '../../../client/src/client/models/item/item';
+import {QueryIntegrity} from '../queries/integrity.query';
 
 const request = require('request');
 
@@ -19,21 +21,20 @@ export class PetHandler {
           } else {
             PetUtil.getPet(id)
               .then(async (newPet: Pet) => {
-                await new DatabaseUtil()
-                  .query(PetQuery.insertInto(newPet));
+                const friendlyPet: Pet = await QueryIntegrity.getVerified('pets', newPet);
 
-                await LocaleUtil.setLocales(
-                  newPet.speciesId,
-                  'speciesId',
+                if (!friendlyPet) {
+                  reject('The pet did not follow the data model - ' + newPet.speciesId);
+                  return;
+                }
+
+                await new DatabaseUtil()
+                  .query(PetQuery.insertInto(friendlyPet));
+
+                await LocaleUtil.insertToDB(
                   'pet_name_locale',
-                  'pet/species')
-                  .then(locales => {
-                    if (locales[locale]) {
-                      newPet.name = locales[locale];
-                    }
-                  })
-                  .catch(e =>
-                    reject(e));
+                  'speciesId',
+                  newPet.nameLocales);
 
                 resolve(newPet);
               })

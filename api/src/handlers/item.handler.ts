@@ -12,6 +12,7 @@ import * as request from 'request';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {WoWHead} from '../models/item/wowhead';
 import {Item} from '../../../client/src/client/models/item/item';
+import {QueryIntegrity} from '../queries/integrity.query';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -75,19 +76,24 @@ export class ItemHandler {
   async addItem(id: number, locale: string): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await this.getFreshItem(id, locale)
-        .then(item => {
+        .then(async item => {
           resolve(item);
+
+          const friendlyItem: Item = await QueryIntegrity.getVerified('items', item);
+
+          if (!friendlyItem) {
+            reject('The item did not follow the data model - ' + item.id);
+            return;
+          }
 
           new DatabaseUtil()
             .query(
-              ItemQuery.insert(item));
+              ItemQuery.insert(friendlyItem));
 
-          // TODO: Send in locales from item.nameLocales
-          LocaleUtil.setLocales(
-            id,
-            'id',
+          LocaleUtil.insertToDB(
             'item_name_locale',
-            'item');
+            'id',
+            item.nameLocales);
         })
         .catch(reject);
     });

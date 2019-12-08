@@ -1,5 +1,4 @@
 import {Endpoints} from './endpoints.util';
-import {getLocale} from './locale.util';
 import {Pet} from '../../../client/src/client/modules/pet/models/pet';
 import {HttpClientUtil} from './http-client.util';
 import {AuthHandler} from '../handlers/auth.handler';
@@ -19,6 +18,7 @@ export class PetUtil {
   }
 
   static reducePet(petRaw: any, locale: string = 'en_GB', region: string = 'eu'): Pet {
+    petRaw.name.id = petRaw.id;
     return {
       speciesId: petRaw.id,
       petTypeId: petRaw.petTypeId,

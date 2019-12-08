@@ -29,6 +29,8 @@ export class Item {
 
   /* istanbul ignore next */
   fromAPI(item: ItemGameData, locale: string = 'en_GB'): Item {
+    item.name.id = item.id;
+
     this.id = item.id;
     this.name = item.name[locale];
     this.nameLocales = item.name;
