@@ -3,9 +3,9 @@
 # compiled output
 /server-legacy/dist
 /server-legacy/src/public
-/tmp
-/public
-/dist
+tmp
+public
+dist
 .webpack
 .serverless
 coverage

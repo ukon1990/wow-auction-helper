@@ -10,7 +10,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   memorySize: 200
-  timeout: 30
+  timeout: 59
 
 functions:
   auctions:
