@@ -91,19 +91,21 @@ export class AuctionHandler {
         {
           region, ahId, lastModified, size
         })
-        .then((r => {
-          const query = RealmQuery.updateUrl(
-            ahId, r.url, lastModified, oldLastModified, size, delay
-          );
+        .then(async r => {
+          await new DatabaseUtil().query(RealmQuery
+            .insertNewDumpLogRow(ahId, r.url, lastModified, oldLastModified, size));
+
           console.log('Sending to S3');
           new DatabaseUtil()
-            .query(query)
+            .query(RealmQuery
+              .updateUrl(
+              ahId, r.url, lastModified, size, delay ))
             .then(() => {
               console.log(`Successfully updated id=${ahId}`);
               resolve();
             })
             .catch(reject);
-        }))
+        })
         .catch(reject);
     });
   }
