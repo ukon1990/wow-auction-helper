@@ -82,7 +82,7 @@ export class AuctionHandler {
     });
   }
 
-  private async sendToS3(data: any, region: string, ahId: number, lastModified: number, size: number,
+  private async sendToS3(data: any, region: string, ahId: number, lastModified: number, oldLastModified: number, size: number,
                          delay: { avg: any; highest: any; lowest: any }): Promise<any> {
     return new Promise((resolve, reject) => {
       new S3Handler().save(
@@ -93,7 +93,7 @@ export class AuctionHandler {
         })
         .then((r => {
           const query = RealmQuery.updateUrl(
-            ahId, r.url, lastModified, size, delay
+            ahId, r.url, lastModified, oldLastModified, size, delay
           );
           console.log('Sending to S3');
           new DatabaseUtil()
@@ -260,6 +260,7 @@ export class AuctionHandler {
             this.sendToS3(
               r.body, dbResult.region, dbResult.id,
               ahDumpResponse.lastModified,
+              dbResult.lastModified,
               this.getSizeOfResponseInMB(r),
               this.getDelay(dbResult,
                 ahDumpResponse.lastModified))

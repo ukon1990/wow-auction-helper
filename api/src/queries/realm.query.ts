@@ -63,7 +63,7 @@ export class RealmQuery {
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
   }
 
-  static updateUrl(ahId: number, url: string, lastModified: number, size: number,
+  static updateUrl(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number,
                    delay: { avg: any; highest: any; lowest: any }): string {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
@@ -74,7 +74,20 @@ export class RealmQuery {
               \`lowestDelay\` = ${delay.lowest},
               \`avgDelay\` = ${delay.avg},
               \`highestDelay\` = ${delay.highest}
-                WHERE \`id\` = ${ahId};`;
+                WHERE \`id\` = ${ahId};
+            INSERT INTO \`100680-wah\`.\`auction_houses_dump_log\`
+              (\`ahId\`,
+              \`lastModified\`,
+              \`url\`,
+              \`timeSincePreviousDump\`,
+              \`size\`)
+              VALUES
+              (
+              ${ahId},
+              ${lastModified},
+              ${url},
+              ${lastModified - oldLastModified},
+              ${size});`;
   }
 
   static getHouse(id: number): string {
