@@ -163,7 +163,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   /* istanbul ignore next */
   setSelectedSeller(seller: Seller) {
-    console.log('Clicked seller', seller);
+    Report.debug('Clicked seller', seller);
     SharedService.preScrollPosition = window.scrollY;
     SharedService.selectedSeller = SharedService.sellersMap[seller.name];
     SharedService.events.detailPanelOpen.emit(true);
@@ -176,7 +176,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.setSelectedPet(item);
     ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
-    console.log('clicked', item);
+    Report.debug('clicked', item);
   }
 
   /* istanbul ignore next */

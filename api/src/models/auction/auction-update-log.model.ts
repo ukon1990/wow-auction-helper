@@ -32,7 +32,7 @@ export class AuctionUpdateLog {
     this.avgTime = avgBase / this.entries.length;
   }
 
-  private msToMinutes({timeSincePreviousDump}: AuctionUpdateLogEntry) {
+  msToMinutes({timeSincePreviousDump}: AuctionUpdateLogEntry): number {
     return Math.round(timeSincePreviousDump / 1000 / 60);
   }
 }

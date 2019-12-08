@@ -30,6 +30,7 @@ import {CustomProcComponent} from './components/crafting-settings/custom-proc/cu
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';
+import {MatListModule} from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import {CoreModule} from '../core/core.module';
     IconModule,
     UtilModule,
     CoreModule,
-    MatRadioModule
+    MatRadioModule,
+    MatListModule
   ],
   exports: [RealmListComponent]
 })

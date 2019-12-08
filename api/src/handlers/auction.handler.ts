@@ -70,14 +70,17 @@ export class AuctionHandler {
     return new Promise<AHDumpResponse>((resolve, reject) => {
       request.get(
         url,
-        (error, response, body) => {
-          body = JSON.parse(body);
+        async (error, response, body) => {
+          try {
+            body = JSON.parse(body);
 
-          if (error) {
-            // TODO: Logic
+            if (error) {
+              reject(error);
+            }
+            resolve(body.files[0]);
+          } catch (error) {
             reject(error);
           }
-          resolve(body.files[0]);
         });
     });
   }
@@ -256,7 +259,9 @@ export class AuctionHandler {
       await this.getLatestDumpPath(dbResult.region, dbResult.slug)
         .then((r: AHDumpResponse) =>
           ahDumpResponse = r)
-        .catch(e => error = e);
+        .catch(e => {
+          error = e;
+        });
       if (ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
         console.log(`Updating id=${dbResult.id}`);
         await this.setIsUpdating(dbResult.id, true);
@@ -270,7 +275,10 @@ export class AuctionHandler {
               this.getDelay(dbResult,
                 ahDumpResponse.lastModified))
               .then(resolve)
-              .catch(reject);
+              .catch(async err => {
+                reject(err);
+                await this.setIsUpdating(dbResult.id, true);
+              });
           })
           .catch(e => {
             this.setIsUpdating(dbResult.id, false)
