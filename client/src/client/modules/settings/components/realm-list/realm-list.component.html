@@ -1,0 +1,54 @@
+<button mat-raised-button (click)="toggle()" *ngIf="!show; else tableTemplate">
+  Display the statuses of all realms in a table
+</button>
+
+<ng-template #tableTemplate>
+  <mat-card class="full-screen">
+    <mat-card-header>
+      <div class="action-icon mat-elevation-z5" (click)="toggle()" matTooltip="Click to open/close the full window.">
+        <button mat-raised-button class="btn btn-sm">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <mat-card-title>
+        Realm list
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        If no users have used a realm for 14 days or more, that realm is no longer auto updating. A realm is activated, once someone selects that realm in the app.
+      </mat-card-subtitle><!--
+      <mat-card-subtitle>
+        Click on a realm that has been active withing the past 7 days, to get a log over the AH update interval.
+      </mat-card-subtitle>
+      <mat-card-subtitle *ngIf="updateLogForRealm">
+          <strong>Highest delay:</strong> {{ updateLogForRealm.maxTime | number}} min |
+          <strong>Avg delay:</strong> {{ updateLogForRealm.avgTime | number}} min |
+          <strong>Lowest delay:</strong> {{ updateLogForRealm.minTime | number}} min
+      </mat-card-subtitle>-->
+    </mat-card-header>
+    <mat-card-content>
+      {{selectedDataset.data.length | number}}
+      <wah-data-table
+              filterParameter="name"
+              [numOfRows]="10"
+              [columns]="selectedDataset.columns"
+              [data]="selectedDataset.data"
+              (rowClicked)="realmSelect($event)">
+      </wah-data-table>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button
+              (click)="service.getRealms()">
+        Update
+      </button>
+
+      <button *ngIf="updateLogForRealm" mat-raised-button
+              (click)="reset()">
+        Back to realm list
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  <div class="backdrop" (click)="toggle()">
+  </div>
+</ng-template>

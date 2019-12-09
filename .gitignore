@@ -3,9 +3,9 @@
 # compiled output
 /server-legacy/dist
 /server-legacy/src/public
-/tmp
-/public
-/dist
+tmp
+public
+dist
 .webpack
 .serverless
 coverage
@@ -30,7 +30,7 @@ coverage/*
 /libpeerconnection.log
 npm-debug.log
 testem.log
-/typings
+/client/typings
 *.log
 
 # e2e
