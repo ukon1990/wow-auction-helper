@@ -74,13 +74,15 @@ export class RealmListComponent implements OnInit, OnDestroy {
           res.entries = [{
             id: first.id,
             ahId: first.ahId,
-            lastModified: first.lastModified + res.avgTime,
+            lastModified: first.lastModified + res.avgTime * 1000 * 60,
             timeSincePreviousDump: first.timeSincePreviousDump,
             url: '',
             size: first.size
           }, ...res.entries];
-          res.entries.forEach(entry =>
-            entry.timeSincePreviousDump = this.msToMinutes(entry));
+          res.entries.forEach(entry => {
+            entry.timeSincePreviousDump = this.msToMinutes(entry);
+            entry['name'] = row.name;
+          });
           this.updateLogForRealm = res;
           this.selectedDataset.columns = this.logColumns;
           this.selectedDataset.data = res.entries;

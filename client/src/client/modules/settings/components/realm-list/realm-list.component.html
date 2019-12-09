@@ -28,6 +28,7 @@
       </mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
+      {{selectedDataset.data.length | number}}
       <wah-data-table
               filterParameter="name"
               [numOfRows]="10"
