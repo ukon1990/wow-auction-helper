@@ -8,12 +8,16 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
   memorySize: 200
-  timeout: 59
+  timeout: 30
+  tags:
+    Project: WAH
 
 functions:
   auctions:
+    tags:
+      Lambda: Wah-auctions
     handler: src/controllers/auction.handler
     memorySize: 512
     events:
@@ -23,6 +27,8 @@ functions:
           cors:
             origin: '*'
   auctionUpdateLogForRealm:
+    tags:
+      Lambda: Wah-auctionUpdateLogForRealm
     handler: src/controllers/auction.getUpdateLogForRealm
     memorySize: 128
     events:
@@ -32,6 +38,8 @@ functions:
           cors:
             origin: '*'
   auctionsS3:
+    tags:
+      Lambda: Wah-auctionsS3
     handler: src/controllers/auction.s3
     events:
       - http:
@@ -40,6 +48,8 @@ functions:
           cors:
             origin: '*'
   updateAllHouses:
+    tags:
+      Lambda: Wah-updateAllHouses
     handler: src/controllers/auction.updateAll
     memorySize: 200
     events:
@@ -50,6 +60,8 @@ functions:
             origin: '*'
 
   deactivateInactiveHouses:
+    tags:
+      Lambda: Wah-deactivateInactiveHouses
     handler: src/controllers/auction.deactivateInactiveHouses
     memorySize: 200
     events:
@@ -60,6 +72,8 @@ functions:
             origin: '*'
 
   updateSpesificHouse:
+    tags:
+      Lambda: Wah-updateSpesificHouse
     handler: src/controllers/auction.updateOne
     memorySize: 512
     events:
@@ -69,6 +83,8 @@ functions:
           cors:
             origin: '*'
   locales:
+    tags:
+      Lambda: Wah-locales
     handler: src/controllers/locale.handler
     events:
       - http:
@@ -77,6 +93,8 @@ functions:
           cors:
             origin: 'localhost:3000'
   items:
+    tags:
+      Lambda: Wah-items
     handler: src/controllers/item.handler
     memorySize: 160
     events:
@@ -92,6 +110,8 @@ functions:
           cors:
             origin: '*'
   pets:
+    tags:
+      Lambda: Wah-pets
     handler: src/controllers/pet.handler
     memorySize: 128
     events:
@@ -107,6 +127,8 @@ functions:
           cors:
             origin: '*'
   recipes:
+    tags:
+      Lambda: Wah-recipes
     handler: src/controllers/recipe.handler
     memorySize: 128
     events:
@@ -122,6 +144,8 @@ functions:
           cors:
             origin: '*'
   character:
+    tags:
+      Lambda: Wah-character
     handler: src/controllers/character.handler
     memorySize: 128
     events:
@@ -131,6 +155,8 @@ functions:
           cors:
             origin: '*'
   realm:
+    tags:
+      Lambda: Wah-realm
     handler: src/controllers/realm.handler
     events:
       - http:
@@ -139,6 +165,8 @@ functions:
           cors:
             origin: '*'
   realmAllRegions:
+    tags:
+      Lambda: Wah-realmAllRegions
     handler: src/controllers/realm.handleGetAll
     memorySize: 128
     events:
@@ -148,6 +176,8 @@ functions:
           cors:
             origin: '*'
   getByRegionAndName:
+    tags:
+      Lambda: Wah-getByRegionAndName
     handler: src/controllers/realm.getByRegionAndName
     memorySize: 128
     events:
@@ -157,6 +187,8 @@ functions:
           cors:
             origin: '*'
   test:
+    tags:
+      Lambda: Wah-test
     handler: src/controllers/test.handler
     events:
       - http:
@@ -164,6 +196,8 @@ functions:
           path: test
 
   logger:
+    tags:
+      Lambda: Wah-logger
     handler: src/controllers/logger.handler
     memorySize: 128
     events:
@@ -171,6 +205,8 @@ functions:
           method: any
           path: logger
   loggerClientEvent:
+    tags:
+      Lambda: Wah-loggerClientEvent
     handler: src/controllers/logger.clientEvent
     memorySize: 128
     events:
@@ -179,6 +215,8 @@ functions:
           path: logger/client-event
 
   loggerClientDelete:
+    tags:
+      Lambda: Wah-loggerClientDelete
     handler: src/controllers/logger.clientDelete
     memorySize: 128
     events:
