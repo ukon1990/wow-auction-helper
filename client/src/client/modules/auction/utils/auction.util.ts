@@ -34,6 +34,9 @@ export class AuctionUtil {
   }
 
   private static groupAuctions(auctions: Array<Auction>, petService: PetsService) {
+    if (!auctions) {
+      return;
+    }
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
 
     // Sorting by buyout, before we do the grouping for less processing.

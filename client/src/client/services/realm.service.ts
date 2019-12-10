@@ -83,10 +83,10 @@ export class RealmService {
       });
   }
 
-  getRealms(region?: string): Promise<any> {
+  getRealms(region?: string): Promise<any> {/*
     if (SharedService.user.gameVersion) {
       return;
-    }
+    }*/
     return this.http.get(Endpoints.getLambdaUrl('realm/all', region))
       .toPromise()
       .then((realms: any[]) =>

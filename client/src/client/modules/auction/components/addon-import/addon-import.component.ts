@@ -63,7 +63,7 @@ export class AddonImportComponent implements OnInit {
 
     if (SharedService.user.gameVersion) {
       this.dbService
-        .getClassicAuctions(this.petService, this.auctionsService)
+        .getClassicAuctions(this.form.value.realm, this.petService, this.auctionsService)
         .then(d => console.log('Classic auctions loaded', d));
     }
 
@@ -78,9 +78,9 @@ export class AddonImportComponent implements OnInit {
 
     if (realm) {
       this.form.controls.realm.setValue(realm);
-      const auctions = this.getCurrentRealmAuctions(realm);
-      if (auctions) {
-        this.dbService.addClassicAuctions(auctions);
+      const realmData = this.getCurrentRealmAuctions(realm);
+      if (realmData) {
+        this.dbService.addClassicAuctions(realmData);
       }
     }
 
@@ -103,6 +103,7 @@ export class AddonImportComponent implements OnInit {
           };
           reader.readAsText(files[i]);
         });
+      this.loadData();
     } catch (error) {
       ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
     }
@@ -179,13 +180,14 @@ export class AddonImportComponent implements OnInit {
     SharedService.user.realm = realm;
     this.getCurrentRealmAuctions(realm);
     User.save();
+    this.loadData();
   }
 
   async loadData() {
     const realm = this.getCurrentRealmAuctions(this.form.value.realm);
     if (realm) {
       this.auctionsService.events.list.next(realm.auctions);
-      this.dbService.addClassicAuctions(realm.auctions);
+      this.dbService.addClassicAuctions(realm);
       await AuctionUtil.organize(realm.auctions, this.petService);
       const status = new AuctionHouseStatus();
       status.lastModified = realm.lastScan;

@@ -82,7 +82,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   /* istanbul ignore next */
   ngOnChanges({data, itemsPerPage}: SimpleChanges) {
-    Report.debug('DataTableComponent.ngOnChanges', data);
     if (data && data.currentValue) {
       // this.pageEvent.length = change.data.currentValue.length;
       if (this.previousLength !== data.currentValue.length) {

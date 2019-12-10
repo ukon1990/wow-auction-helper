@@ -15,40 +15,6 @@ import {Crafting} from '../../crafting/models/crafting';
 import {ErrorReport} from '../../../utils/error-report.util';
 
 export class Dashboard {
-  public static fails = [];
-  public static readonly TYPES = {
-    TOP_SELLERS_BY_AUCTIONS_FOR_CLASS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS_FOR_CLASS',
-    TOP_SELLERS_BY_AUCTIONS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS',
-    TOP_SELLERS_BY_VOLUME: 'DASHBOARD_TOP_SELLERS_BY_VOLUME',
-    TOP_SELLERS_BY_LIQUIDITY: 'DASHBOARD_TOP_SELLERS_BY_LIQUIDITY',
-    MOST_AVAILABLE_ITEMS: 'DASHBOARD_AVAILABLE_ITEMS',
-    PROFITABLE_CRAFTS: 'DASHBOARD_PROFITABLE_CRAFTS',
-    PROFITABLE_KNOWN_CRAFTS: 'DASHBOARD_MOST_PROFITABLE_KNOWN_CRAFTS',
-    POTENTIAL_DEALS: 'DASHBOARD_POTENTIAL_DEALS',
-    CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'DASHBOARD_CHEAP_BIDS_WITH_LOW_TIME_LEFT',
-    CHEAP_BIDS: 'DASHBOARD_CHEAP_BIDS',
-    CHEAPER_THAN_VENDOR_SELL: 'DASHBOARD_CHEAPER_THAN_VENDOR_SELL',
-    TRADE_VENDOR_VALUES: 'DASHBOARD_TRADE_VENDOR_VALUES',
-    WATCH_LIST: 'DASHBOARD_WATCH_LIST',
-    WATCH_LIST_CRAFTS: 'DASHBOARD_WATCH_LIST_CRAFTS',
-    PROSPECTING: 'DASHBOARD_PROSPECTING',
-    MILLING: 'DASHBOARD_MILLING',
-    // The users pets, that maybe could be sold for something
-    POSSIBLE_PROFIT_FROM_PETS: 'DASHBOARD_POSSIBLE_PROFIT_FROM_PETS'
-  };
-
-  public static itemEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
-  public static sellerEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
-
-  idParam: string;
-  title: string;
-  tsmShoppingString: string;
-  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
-  data: Array<any> = new Array<any>();
-  message: string;
-  isCrafting = false;
-  isDisabled = false;
-  settings?: DefaultDashboardSettings;
 
   constructor(title: string, type: string, array?: Array<any>) {
     this.title = title;
@@ -215,6 +181,40 @@ export class Dashboard {
         break;
     }
   }
+  public static fails = [];
+  public static readonly TYPES = {
+    TOP_SELLERS_BY_AUCTIONS_FOR_CLASS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS_FOR_CLASS',
+    TOP_SELLERS_BY_AUCTIONS: 'DASHBOARD_TOP_SELLERS_BY_AUCTIONS',
+    TOP_SELLERS_BY_VOLUME: 'DASHBOARD_TOP_SELLERS_BY_VOLUME',
+    TOP_SELLERS_BY_LIQUIDITY: 'DASHBOARD_TOP_SELLERS_BY_LIQUIDITY',
+    MOST_AVAILABLE_ITEMS: 'DASHBOARD_AVAILABLE_ITEMS',
+    PROFITABLE_CRAFTS: 'DASHBOARD_PROFITABLE_CRAFTS',
+    PROFITABLE_KNOWN_CRAFTS: 'DASHBOARD_MOST_PROFITABLE_KNOWN_CRAFTS',
+    POTENTIAL_DEALS: 'DASHBOARD_POTENTIAL_DEALS',
+    CHEAP_BIDS_WITH_LOW_TIME_LEFT: 'DASHBOARD_CHEAP_BIDS_WITH_LOW_TIME_LEFT',
+    CHEAP_BIDS: 'DASHBOARD_CHEAP_BIDS',
+    CHEAPER_THAN_VENDOR_SELL: 'DASHBOARD_CHEAPER_THAN_VENDOR_SELL',
+    TRADE_VENDOR_VALUES: 'DASHBOARD_TRADE_VENDOR_VALUES',
+    WATCH_LIST: 'DASHBOARD_WATCH_LIST',
+    WATCH_LIST_CRAFTS: 'DASHBOARD_WATCH_LIST_CRAFTS',
+    PROSPECTING: 'DASHBOARD_PROSPECTING',
+    MILLING: 'DASHBOARD_MILLING',
+    // The users pets, that maybe could be sold for something
+    POSSIBLE_PROFIT_FROM_PETS: 'DASHBOARD_POSSIBLE_PROFIT_FROM_PETS'
+  };
+
+  public static itemEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
+  public static sellerEvents: EventEmitter<Dashboard[]> = new EventEmitter(true);
+
+  idParam: string;
+  title: string;
+  tsmShoppingString: string;
+  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+  data: Array<any> = new Array<any>();
+  message: string;
+  isCrafting = false;
+  isDisabled = false;
+  settings?: DefaultDashboardSettings;
 
   public static addLoadingDashboards(): void {
     const columns = [
@@ -302,7 +302,7 @@ export class Dashboard {
         SharedService.itemDashboards.push(db);
       }
 
-      if (SharedService.user.apiToUse !== 'none') {
+      if (this.shouldUseThirdPartyAPI()) {
         db = new Dashboard(
           SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
           Dashboard.TYPES.POTENTIAL_DEALS);
@@ -378,8 +378,12 @@ export class Dashboard {
     Dashboard.sellerEvents.emit(SharedService.sellerDashboards);
   }
 
+  private static shouldUseThirdPartyAPI() {
+    return SharedService.user.apiToUse !== 'none' && !SharedService.user.gameVersion;
+  }
+
   private addAPIColumnsAtPosition(index: number): void {
-    if (SharedService.user.apiToUse !== 'none') {
+    if (Dashboard.shouldUseThirdPartyAPI()) {
       this.columns.splice(index, 0, {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
       this.columns.splice(index, 0, {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
       this.columns.splice(index, 0, {key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
@@ -533,7 +537,7 @@ export class Dashboard {
 
       if (ai.buyout !== 0 && ai.buyout < ai.vendorSell) {
         value += ai.vendorSell - ai.buyout;
-        if (SharedService.user.apiToUse !== 'none') {
+        if (Dashboard.shouldUseThirdPartyAPI()) {
           mvValue += ai.mktPrice - ai.vendorSell;
         }
         this.tsmShoppingString += `${
@@ -554,7 +558,7 @@ export class Dashboard {
 
       this.message = `Profit if vendored: ${pipe.transform(value)}`;
 
-      if (SharedService.user.apiToUse !== 'none') {
+      if (Dashboard.shouldUseThirdPartyAPI()) {
         this.message += `. Profit if resold at MV: ${pipe.transform(mvValue)}`;
       }
 
@@ -583,7 +587,7 @@ export class Dashboard {
         match = false;
       }
 
-      if (match && SharedService.user.apiToUse !== 'none' &&
+      if (match && Dashboard.shouldUseThirdPartyAPI() &&
         SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
         SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
@@ -618,7 +622,7 @@ export class Dashboard {
         match = false;
       }
 
-      if (match && SharedService.user.apiToUse !== 'none' &&
+      if (match && Dashboard.shouldUseThirdPartyAPI() &&
         SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
         SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
@@ -683,7 +687,7 @@ export class Dashboard {
         if (onlyKnown && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
           return false;
         }
-        if (SharedService.user.apiToUse !== 'none') {
+        if (Dashboard.shouldUseThirdPartyAPI()) {
           if (this.getAuctionItem(recipe.itemID).avgDailySold <= this.settings.avgDailySold ||
             this.getAuctionItem(recipe.itemID).regionSaleRate <= this.settings.regionSaleRate) {
             return false;

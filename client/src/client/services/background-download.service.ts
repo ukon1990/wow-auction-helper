@@ -159,6 +159,7 @@ export class BackgroundDownloadService {
         console.error(error);
       });
     await this.itemService.getItems();
+    console.log('loadItems', SharedService.itemsUnmapped);
   }
 
   private async loadPets() {
@@ -190,6 +191,10 @@ export class BackgroundDownloadService {
   }
 
   private async loadThirdPartyAPI() {
+    if (SharedService.user.gameVersion) {
+      // Classic does not really have this data, or?
+      return;
+    }
     if (SharedService.user.apiToUse === 'tsm') {
       if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
         await this.auctionsService.getTsmAuctions();

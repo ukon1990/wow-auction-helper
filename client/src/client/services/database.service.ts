@@ -187,14 +187,14 @@ export class DatabaseService {
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
-  addClassicAuctions(auctions: Array<Auction>): void {
+  addClassicAuctions(realmData: {realm: string, auctions: Auction[]}): void {
     if (this.platform === null || this.platform.WEBKIT) {
       return;
     }
 
-    this.db.table('classic-auctions').clear();
+    // this.db.table('classic-auctions').clear();
     this.db.table('classic-auctions')
-      .bulkAdd(auctions)
+      .put(realmData)
       .then(r => console.log('Successfully added auctions to local DB'))
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
@@ -216,23 +216,22 @@ export class DatabaseService {
       });
   }
 
-  async getClassicAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
-    }
-
+  async getClassicAuctions(realm: string, petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
+    console.log('input to DB fetch', realm)
     SharedService.downloading.auctions = true;
     return this.db.table('classic-auctions')
+      .where('realm')
+      .equals(realm)
       .toArray()
-      .then(auctions =>
-        this.handleSuccessfulAuctionDBFetch(auctions, petService, auctionService))
+      .then(realmData =>
+        this.handleSuccessfulAuctionDBFetch(realmData[0].auctions, petService, auctionService))
       .catch(e => {
         console.error('Could not restore auctions from local DB', e);
         SharedService.downloading.auctions = false;
       });
   }
 
-  private handleSuccessfulAuctionDBFetch(auctions, petService: PetsService, auctionService: AuctionsService) {
+  private handleSuccessfulAuctionDBFetch(auctions: Auction[], petService: PetsService, auctionService: AuctionsService) {
     SharedService.downloading.auctions = false;
     AuctionUtil.organize(auctions, petService)
       .then(auctionItems => {
@@ -350,6 +349,16 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+    this.db.version(7).stores({
+      'classic-auctions': 'realm,auctions',
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      tsmAddonHistory: this.TSM_ADDON_HISTORY
+    });
     this.db.version(6).stores({
       'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
       auctions: this.AUCTIONS_TABLE_COLUMNS,
