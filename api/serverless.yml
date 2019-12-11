@@ -13,6 +13,9 @@ provider:
   timeout: 30
   tags:
     Project: WAH
+  tracing:
+    apiGateway: true
+    lambda: true
 
 functions:
   auctions:
