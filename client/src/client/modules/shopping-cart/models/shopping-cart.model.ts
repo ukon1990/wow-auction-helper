@@ -123,7 +123,7 @@ export class ShoppingCart {
       if (!doNotSave) {
         this.save();
       }
-      SharedService.events.shopingCart.emit();
+      SharedService.events.shoppingCart.emit();
       Report.send('Added recipe to shopping cart', 'Shopping cart');
     } catch (error) {
       ErrorReport.sendError('ShoppingCart.add', error);
@@ -189,7 +189,7 @@ export class ShoppingCart {
       this.setSources();
       this.calculateCosts();
       this.save();
-      SharedService.events.shopingCart.emit();
+      SharedService.events.shoppingCart.emit();
       Report.send('Removed recipe from shopping cart', 'Shopping cart');
     } catch (error) {
       ErrorReport.sendError('ShoppingCart.remove', error);
