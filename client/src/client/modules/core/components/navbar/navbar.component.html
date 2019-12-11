@@ -48,11 +48,17 @@
           </li>
           <li class="nav-item" *ngIf="isRegisteredUser()"
               matTooltip="The percentage, represents the percent of undercut auctions.">
-            <a class="nav-link" routerLink="my-auctions" routerLinkActive="active">
+            <a class="nav-link" routerLink="auctions/my-auctions" routerLinkActive="active">
               My auctions
               <span *ngIf="getUserAuctions().auctions.length > 0">
               ({{ getUserAuctions().undercutAuctions / getUserAuctions().auctions.length | percent }})
             </span>
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isRegisteredUser()">
+            <a class="nav-link" routerLink="auctions/resell-history" routerLinkActive="active">
+             Resell history
             </a>
           </li>
           <li class="nav-item dropdown" *ngIf="isRegisteredUser()">

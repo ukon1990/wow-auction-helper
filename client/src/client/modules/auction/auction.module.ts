@@ -14,11 +14,13 @@ import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { ResellHistoryComponent } from './components/resell-history/resell-history.component';
 
 @NgModule({
   declarations: [
     AuctionsComponent,
-    MyAuctionsComponent
+    MyAuctionsComponent,
+    ResellHistoryComponent
   ],
   imports: [
     CommonModule,
