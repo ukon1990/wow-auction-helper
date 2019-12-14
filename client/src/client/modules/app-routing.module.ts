@@ -25,7 +25,6 @@ import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-sum
 import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
 import {TitledRoute} from '../models/route/titled-route.model';
 import {TitledRoutes} from '../models/route/titled-routes.model';
-import {ResellHistoryComponent} from './auction/components/resell-history/resell-history.component';
 
 const TOOLS_ROUTE: TitledRoute = {
   path: 'tools',
@@ -78,7 +77,7 @@ const DASHBOARD_ROUTE: TitledRoute = {
   component: DashboardComponent,
   canActivate: [IsRegisteredService],
   children: [
-    {path: '', component: DashboardItemsComponent},
+    {path: '', pathMatch: 'full', redirectTo: 'items'},
     {
       title: 'Item', path: 'items', component: DashboardItemsComponent
     },
@@ -107,8 +106,7 @@ export const appRoutes: TitledRoutes = [
       {title: 'Browse auctions', path: '', component: AuctionsComponent},
       {
         title: 'My auctions', path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService]
-      },
-      {title: 'Resell history', path: 'resell-history', component: ResellHistoryComponent}
+      }
     ]
   },
   {

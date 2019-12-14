@@ -11,25 +11,26 @@ import {ChangelogComponent} from './components/changelog/changelog.component';
 import {TitledRoute} from '../../models/route/titled-route.model';
 
 export const ABOUT_ROUTE: TitledRoute = {
+    title: 'About',
     path: 'about',
     component: AboutComponent,
     children: [
       {path: '', pathMatch: 'full', redirectTo: 'what-is'},
       {
-        title: 'About | What is WAH?', path: 'what-is', component: AboutWhatIsComponent},
+        title: 'What is WAH?', path: 'what-is', component: AboutWhatIsComponent},
       {
-        title: 'About | Crafting', path: 'crafting', component: AboutCraftingComponent},
+        title: 'Crafting', path: 'crafting', component: AboutCraftingComponent},
       {
-        title: 'About | Where is the data collected from?', path: 'where-is-the-data-from', component: AboutDataComponent},
+        title: 'Where is the data collected from?', path: 'where-is-the-data-from', component: AboutDataComponent},
       {
-        title: 'About | Privacy', path: 'privacy', component: AboutPrivacyComponent},
+        title: 'Privacy', path: 'privacy', component: AboutPrivacyComponent},
       {
-        title: 'About | Technology', path: 'technology', component: TechnologyComponent},
+        title: 'Technology', path: 'technology', component: TechnologyComponent},
       {
-        title: 'About | Contributors', path: 'contributors', component: ContributorsComponent},
+        title: 'Contributors', path: 'contributors', component: ContributorsComponent},
       {
-        title: 'About | Issues', path: 'issues', component: IssuesComponent},
+        title: 'Issues', path: 'issues', component: IssuesComponent},
       {
-        title: 'About | Changelog', path: 'changelog', component: ChangelogComponent}
+        title: 'Changelog', path: 'changelog', component: ChangelogComponent}
     ]
   };

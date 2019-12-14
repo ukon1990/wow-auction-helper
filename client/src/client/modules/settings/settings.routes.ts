@@ -10,31 +10,32 @@ import {NotificationSettingsComponent} from './components/notification-settings/
 import {TitledRoute} from '../../models/route/titled-route.model';
 
 export const SETTINGS_ROUTE: TitledRoute = {
+  title: 'Settings',
   path: 'settings',
   component: SettingsComponent,
   canActivate: [IsRegisteredService],
   children: [
     {
-      title: 'Settings | General', path: '', component: GeneralSettingsComponent
+      title: 'General', path: '', component: GeneralSettingsComponent
     },
     {path: 'general', component: GeneralSettingsComponent},
     {
       path: 'crafting', component: CraftingSettingsComponent, children: [
         {
-          title: 'Settings | Custom prices', path: '', component: CustomPricesComponent
+          title: 'Custom prices', path: '', component: CustomPricesComponent
         },
         {
-          title: 'Settings | Custom prices', path: 'custom-prices', component: CustomPricesComponent
+          title: 'Custom prices', path: 'custom-prices', component: CustomPricesComponent
         },
         {
-          title: 'Settings | Custom proc rates', path: 'custom-proc', component: CustomProcComponent
+          title: 'Custom proc rates', path: 'custom-proc', component: CustomProcComponent
         }
       ]
     },
     {
-      title: 'Settings | Characters', path: 'characters', component: CharactersComponent
+      title: 'Characters', path: 'characters', component: CharactersComponent
     },
     {
-      title: 'Settings | Notifications', path: 'notifications', component: NotificationSettingsComponent
+      title: 'Notifications', path: 'notifications', component: NotificationSettingsComponent
     }]
 };
