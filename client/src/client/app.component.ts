@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   pageTitle: string;
 
   constructor(public platform: Platform,
-              private _router: Router,
+              private router: Router,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
@@ -73,7 +73,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.subs.add(
-      this._router.events,
+      this.router.events,
       (event: NavigationEnd) =>
         this.onNavigationChange(event));
   }
@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private restorePreviousLocation() {
     if (this.isStandalone() && localStorage['current_path']) {
-      this._router.navigateByUrl(localStorage['current_path']);
+      this.router.navigateByUrl(localStorage['current_path']);
     }
   }
 

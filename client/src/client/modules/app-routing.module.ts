@@ -25,6 +25,7 @@ import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-sum
 import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
 import {TitledRoute} from '../models/route/titled-route.model';
 import {TitledRoutes} from '../models/route/titled-routes.model';
+import {environment} from '../../environments/environment';
 
 const TOOLS_ROUTE: TitledRoute = {
   path: 'tools',
@@ -41,7 +42,7 @@ const TOOLS_ROUTE: TitledRoute = {
       title: 'Sellers', path: 'sellers', component: SellersComponent
     },
     {
-      title: 'Pet value', path: 'pet-value', component: PetsValueComponent
+      title: 'Pet value', path: 'pet-value', component: PetsValueComponent, isHidden: environment.production
     },
     {
       title: 'Market reset', path: 'market-reset', component: MarketResetComponent
@@ -116,7 +117,7 @@ export const appRoutes: TitledRoutes = [
   SETTINGS_ROUTE,
   ABOUT_ROUTE,
   {
-    title: 'App data updater', path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService]
+    title: 'App data updater', path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService], isHidden: environment.production
   },
   {path: '**', redirectTo: ''}
 ];
