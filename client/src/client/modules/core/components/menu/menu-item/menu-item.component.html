@@ -1,9 +1,9 @@
-<button *ngIf="!item.children.length; else dropdownTemplate"
-  mat-button
+<a *ngIf="!item.children.length; else dropdownTemplate"
+  mat-menu-item
   [routerLink]="item.routerLink"
   routerLinkActive="mat-accent">
   {{ item.text }}
-</button>
+</a>
 <ng-template #dropdownTemplate>
   <wah-menu-dropdown
     [parentPath]="item.routerLink"

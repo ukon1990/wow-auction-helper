@@ -68,6 +68,13 @@ const TOOLS_ROUTE: TitledRoute = {
           ]
         }
       ]
+    },
+    {
+      title: 'App data updater',
+      path: 'ud',
+      component: UpdateComponent,
+      canActivate: [IsRegisteredService],
+      isHidden: environment.production
     }
   ]
 };
@@ -82,9 +89,10 @@ const DASHBOARD_ROUTE: TitledRoute = {
     {
       title: 'Item', path: 'items', component: DashboardItemsComponent
     },
+    /*
     {
       title: 'Seller', path: 'sellers', component: DashboardSellersComponent
-    },
+    },*/
     {
       title: 'AH summary', path: 'ah-summary', component: AhSummaryComponent
     },
@@ -102,24 +110,20 @@ export const appRoutes: TitledRoutes = [
     title: 'Crafting', path: 'crafting', component: CraftingComponent, canActivate: [IsRegisteredService]
   },
   {
-    title: 'Auctions', path: 'auctions', canActivate: [IsRegisteredService],
+    title: 'Auctions', path: 'auctions', canActivate: [IsRegisteredService], component: AuctionsComponent/*,
     children: [
+      {title: 'Browse auctions', path: '', component: AuctionsComponent},
       {
         title: 'My auctions', path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService]
-      },
-      {title: 'Browse auctions', path: '**', component: AuctionsComponent},
-    ]
+      }
+    ]*/
   },
-  {path: 'my-auctions', redirectTo: '/auctions/my-auctions', pathMatch: 'full'},
   {
-    title: 'Trade vendors', path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [IsRegisteredService]
+    path: 'trade-vendor', pathMatch: 'full', redirectTo: 'tools/trade-vendor'
   },
   TOOLS_ROUTE,
   SETTINGS_ROUTE,
   ABOUT_ROUTE,
-  {
-    title: 'App data updater', path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService], isHidden: environment.production
-  },
   {path: '**', redirectTo: ''}
 ];
 
