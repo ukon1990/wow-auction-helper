@@ -1,22 +1,22 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SharedService} from '../../../../../services/shared.service';
+import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {RealmService} from '../../../../../services/realm.service';
-import {Realm} from '../../../../../models/realm';
+import {RealmService} from '../../../../services/realm.service';
+import {Realm} from '../../../../models/realm';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {CharacterService} from '../../../../../services/character.service';
-import {AuctionsService} from '../../../../../services/auctions.service';
+import {CharacterService} from '../../../../services/character.service';
+import {AuctionsService} from '../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {User} from '../../../../../models/user/user';
-import {DatabaseService} from '../../../../../services/database.service';
-import {Report} from '../../../../../utils/report.util';
+import {User} from '../../../../models/user/user';
+import {DatabaseService} from '../../../../services/database.service';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-character-select',
-  templateUrl: './character-select.component.html',
-  styleUrls: ['./character-select.component.scss']
+  templateUrl: './realm-quick-select.component.html',
+  styleUrls: ['./realm-quick-select.component.scss']
 })
-export class CharacterSelectComponent implements OnInit, OnDestroy {
+export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   form: FormGroup;
   realmList = [];
   realmListMap = {};

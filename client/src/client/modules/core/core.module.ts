@@ -26,7 +26,7 @@ import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MenuComponent} from './components/menu/menu.component';
 import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
-import {CharacterSelectComponent} from './components/menu/character-select/character-select.component';
+import {RealmQuickSelectComponent} from './components/realm-quick-select/realm-quick-select.component';
 import {ThemeSelectComponent} from './components/theme-select/theme-select.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {library} from '@fortawesome/fontawesome-svg-core';
@@ -50,7 +50,7 @@ import {MarketResetModule} from '../market-reset/market-reset.module';
     CharacterReputationComponent,
     AppUpdateComponent,
     MenuComponent,
-    CharacterSelectComponent,
+    RealmQuickSelectComponent,
     ThemeSelectComponent],
   imports: [
     CommonModule,
