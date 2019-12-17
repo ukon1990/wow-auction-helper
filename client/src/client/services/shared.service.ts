@@ -47,7 +47,7 @@ export class SharedService {
     recipes: new EventEmitter<boolean>(),
     pets: new EventEmitter<boolean>(),
     realms: new EventEmitter<boolean>(),
-    shopingCart: new EventEmitter<Recipe>(),
+    shoppingCart: new EventEmitter<Recipe>(),
     isUserSet: new BehaviorSubject<boolean>(false),
     title: new BehaviorSubject('')
   };

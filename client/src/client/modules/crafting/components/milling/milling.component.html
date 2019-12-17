@@ -2,6 +2,17 @@
   I intend on updating this feature in the future, where it then would be globally synchronized (if users wish).
   This then might mean, that I might not be able to save all milling and prospecting history that you might have modified.
 </em>
+<form [formGroup]="form">
+  <mat-form-field>
+    <input matInput formControlName="minROI" placeholder="Minimum ROI in gold" type="number"/>
+  </mat-form-field><!--
+  <mat-form-field>
+    <mat-select formControlName="type" placeholder="ROI type">
+      <mat-option [value]="0">Gold</mat-option>
+      <mat-option [value]="1">Percent</mat-option>
+    </mat-select>
+  </mat-form-field>-->
+</form>
 <mat-tab-group>
   <mat-tab label="Milling">
     <button class="mr-2 mt-2"
@@ -10,12 +21,12 @@
     </button>
     <wah-data-boards
       [columns]="columns"
-      [data]="getMills()"
+      [data]="data.milling"
       [type]="types.MILLING">
     </wah-data-boards>
     <wah-shuffle-item-manage
       *ngIf="isEditingType === editingType.MILLING"
-      [sourceList]="getMills()"
+      [sourceList]="data.milling"
       (close)="closeEditWindow()">
     </wah-shuffle-item-manage>
   </mat-tab>
@@ -26,12 +37,12 @@
     </button>
     <wah-data-boards
       [columns]="columns"
-      [data]="getProspects()"
+      [data]="data.prospecting"
       [type]="types.PROSPECTING">
     </wah-data-boards>
     <wah-shuffle-item-manage
       *ngIf="isEditingType === editingType.PROSPECTING"
-      [sourceList]="getProspects()"
+      [sourceList]="data.prospecting"
       (close)="closeEditWindow()">
     </wah-shuffle-item-manage>
   </mat-tab>

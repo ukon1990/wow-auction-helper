@@ -8,19 +8,29 @@ import {TechnologyComponent} from './components/technology/technology.component'
 import {ContributorsComponent} from './components/contributors/contributors.component';
 import {IssuesComponent} from './components/issues/issues.component';
 import {ChangelogComponent} from './components/changelog/changelog.component';
+import {TitledRoute} from '../../models/route/titled-route.model';
 
-export const ABOUT_ROUTE: Route = {
+export const ABOUT_ROUTE: TitledRoute = {
+    title: 'About',
     path: 'about',
     component: AboutComponent,
     children: [
-      {path: '', component: AboutWhatIsComponent},
-      {path: 'what-is', component: AboutWhatIsComponent},
-      {path: 'crafting', component: AboutCraftingComponent},
-      {path: 'where-is-the-data-from', component: AboutDataComponent},
-      {path: 'privacy', component: AboutPrivacyComponent},
-      {path: 'technology', component: TechnologyComponent},
-      {path: 'contributors', component: ContributorsComponent},
-      {path: 'issues', component: IssuesComponent},
-      {path: 'changelog', component: ChangelogComponent}
+      {path: '', pathMatch: 'full', redirectTo: 'what-is'},
+      {
+        title: 'What is WAH?', path: 'what-is', component: AboutWhatIsComponent},
+      {
+        title: 'Crafting', path: 'crafting', component: AboutCraftingComponent},
+      {
+        title: 'Where is the data collected from?', path: 'where-is-the-data-from', component: AboutDataComponent},
+      {
+        title: 'Privacy', path: 'privacy', component: AboutPrivacyComponent},
+      {
+        title: 'Technology', path: 'technology', component: TechnologyComponent},
+      {
+        title: 'Contributors', path: 'contributors', component: ContributorsComponent},
+      {
+        title: 'Issues', path: 'issues', component: IssuesComponent},
+      {
+        title: 'Changelog', path: 'changelog', component: ChangelogComponent}
     ]
   };

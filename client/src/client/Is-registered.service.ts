@@ -6,13 +6,15 @@ import { SharedService } from './services/shared.service';
 @Injectable()
 export class IsRegisteredService implements CanActivate {
 
-  constructor(private _ruter: Router) { }
+  constructor(private router: Router) { }
 
   canActivate(): boolean {
     if (SharedService.user.realm && SharedService.user.region) {
       return true;
     }
-    this._ruter.navigateByUrl('');
+    if (this.router) {
+      this.router.navigateByUrl('');
+    }
     return false;
   }
 }

@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {Route, RouterModule, Routes} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {SetupComponent} from './settings/components/setup/setup.component';
 import {CraftingComponent} from './crafting/components/crafting.component';
 import {IsRegisteredService} from '../Is-registered.service';
@@ -25,58 +25,106 @@ import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-sum
 import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
 import {TitledRoute} from '../models/route/titled-route.model';
 import {TitledRoutes} from '../models/route/titled-routes.model';
+import {environment} from '../../environments/environment';
 
 const TOOLS_ROUTE: TitledRoute = {
   path: 'tools',
   title: 'Tools',
   canActivate: [IsRegisteredService],
   children: [
-    {path: 'trade-vendor', component: TradeVendorsComponent},
-    {path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'},
-    {path: 'sellers', component: SellersComponent},
-    {path: 'pet-value', component: PetsValueComponent},
-    {path: 'market-reset', component: MarketResetComponent},
-    {path: 'milling-and-prospecting', component: MillingComponent},
-    {path: 'disenchanting', component: DisenchantingComponent},
-    {path: 'reputations', component: ReputationsComponent},
+    {
+      title: 'Trade vendors', path: 'trade-vendor', component: TradeVendorsComponent
+    },
+    {
+      title: 'Manage Dashboards', path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'
+    },
+    /*
+    {
+      title: 'Sellers', path: 'sellers', component: SellersComponent
+    },*/
+    {
+      title: 'Pet value', path: 'pet-value', component: PetsValueComponent, isHidden: environment.production
+    },
+    {
+      title: 'Market reset', path: 'market-reset', component: MarketResetComponent
+    },
+    {
+      title: 'Milling & Prospecting', path: 'milling-and-prospecting', component: MillingComponent
+    },
+    {
+      title: 'Disenchanting', path: 'disenchanting', component: DisenchantingComponent
+    },
+    {
+      title: 'Reputations', path: 'reputations', component: ReputationsComponent
+    },
     {
       path: 'tsm', component: TsmAddonDbComponent, children: [
-        {path: 'summary', component: ProfitSummaryComponent},
         {
+          title: 'TSM Profit summary', path: 'summary', component: ProfitSummaryComponent
+        },
+        {
+          title: 'TSM Data sets',
           path: 'dataset', component: TsmDatasetComponent, children: [
             {path: ':name', component: TsmDatasetComponent}
           ]
         }
       ]
+    },
+    {
+      title: 'App data updater',
+      path: 'ud',
+      component: UpdateComponent,
+      canActivate: [IsRegisteredService],
+      isHidden: environment.production
     }
   ]
 };
 
-const DASHBOARD_ROUTE: Route = {
+const DASHBOARD_ROUTE: TitledRoute = {
+  title: 'Dashboard',
   path: 'dashboard',
   component: DashboardComponent,
   canActivate: [IsRegisteredService],
   children: [
-    {path: '', component: DashboardItemsComponent},
-    {path: 'items', component: DashboardItemsComponent},
-    {path: 'sellers', component: DashboardSellersComponent},
-    {path: 'ah-summary', component: AhSummaryComponent},
+    {path: '', pathMatch: 'full', redirectTo: 'items'},
+    {
+      title: 'Item', path: 'items', component: DashboardItemsComponent
+    },
+    /*
+    {
+      title: 'Seller', path: 'sellers', component: DashboardSellersComponent
+    },*/
+    {
+      title: 'AH summary', path: 'ah-summary', component: AhSummaryComponent
+    },
     {path: 'tsm', redirectTo: '/tools/tsm'},
-    {path: 'manage-dashboards', component: WatchlistComponent}
+    {
+      title: 'Manage', path: 'manage-dashboards', component: WatchlistComponent
+    }
   ]
 };
 
 export const appRoutes: TitledRoutes = [
   {path: '', component: SetupComponent},
   DASHBOARD_ROUTE,
-  {path: 'crafting', component: CraftingComponent, canActivate: [IsRegisteredService]},
-  {path: 'auctions', component: AuctionsComponent, canActivate: [IsRegisteredService]},
-  {path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService]},
-  {path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [IsRegisteredService]},
+  {
+    title: 'Crafting', path: 'crafting', component: CraftingComponent, canActivate: [IsRegisteredService]
+  },
+  {
+    title: 'Auctions', path: 'auctions', canActivate: [IsRegisteredService], component: AuctionsComponent/*,
+    children: [
+      {title: 'Browse auctions', path: '', component: AuctionsComponent},
+      {
+        title: 'My auctions', path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService]
+      }
+    ]*/
+  },
+  {
+    path: 'trade-vendor', pathMatch: 'full', redirectTo: 'tools/trade-vendor'
+  },
   TOOLS_ROUTE,
   SETTINGS_ROUTE,
   ABOUT_ROUTE,
-  {path: 'ud', component: UpdateComponent, canActivate: [IsRegisteredService]},
   {path: '**', redirectTo: ''}
 ];
 

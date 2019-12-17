@@ -7,21 +7,35 @@ import {CustomPricesComponent} from './components/crafting-settings/custom-price
 import {CustomProcComponent} from './components/crafting-settings/custom-proc/custom-proc.component';
 import {CharactersComponent} from '../character/components/characters.component';
 import {NotificationSettingsComponent} from './components/notification-settings/notification-settings.component';
+import {TitledRoute} from '../../models/route/titled-route.model';
 
-export const SETTINGS_ROUTE: Route = {
+export const SETTINGS_ROUTE: TitledRoute = {
+  title: 'Settings',
   path: 'settings',
   component: SettingsComponent,
   canActivate: [IsRegisteredService],
   children: [
-    {path: '', component: GeneralSettingsComponent},
-    {path: 'general', component: GeneralSettingsComponent},
     {
-      path: 'crafting', component: CraftingSettingsComponent, children: [
-        {path: '', component: CustomPricesComponent},
-        {path: 'custom-prices', component: CustomPricesComponent},
-        {path: 'custom-proc', component: CustomProcComponent}
+      path: '', redirectTo: 'settings/general', pathMatch: 'full'
+    },
+    {title: 'General', path: 'general', component: GeneralSettingsComponent},
+    {
+      title: 'Crafting', path: 'crafting', component: CraftingSettingsComponent, children: [
+        {
+          title: 'Custom prices', path: '', component: CustomPricesComponent
+        },
+        {
+          title: 'Custom prices', path: 'custom-prices', component: CustomPricesComponent
+        },
+        {
+          title: 'Custom proc rates', path: 'custom-proc', component: CustomProcComponent
+        }
       ]
     },
-    {path: 'characters', component: CharactersComponent},
-    {path: 'notifications', component: NotificationSettingsComponent}]
+    {
+      title: 'Characters', path: 'characters', component: CharactersComponent
+    },
+    {
+      title: 'Notifications', path: 'notifications', component: NotificationSettingsComponent
+    }]
 };

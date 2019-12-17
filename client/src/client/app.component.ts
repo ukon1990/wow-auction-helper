@@ -2,13 +2,9 @@ import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {User} from './models/user/user';
 import {SharedService} from './services/shared.service';
-import {CraftingService} from './services/crafting.service';
-import {AuctionsService} from './services/auctions.service';
-import {ItemService} from './services/item.service';
 import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
 import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
-import {UpdateService} from './services/update.service';
 import {ErrorReport} from './utils/error-report.util';
 import {MatSnackBar} from '@angular/material';
 import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
@@ -18,6 +14,8 @@ import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ReportService} from './services/report/report.service';
 import {Title} from '@angular/platform-browser';
+import {RoutingUtil} from './modules/core/utils/routing.util';
+import {MenuItem} from './modules/core/models/menu-item.model';
 
 @Component({
   selector: 'wah-root',
@@ -31,7 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   pageTitle: string;
 
   constructor(public platform: Platform,
-              private _router: Router,
+              private router: Router,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
@@ -51,9 +49,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scrollToTheTop());
     this.subs.add(
       SharedService.events.title,
-      t => {
+      t => {/*
         this.pageTitle = t;
         this.title.setTitle(`WAH - ${t}`);
+        */
       });
     this.angulartics2GoogleAnalytics.startTracking();
   }
@@ -73,7 +72,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.subs.add(
-      this._router.events,
+      this.router.events,
       (event: NavigationEnd) =>
         this.onNavigationChange(event));
   }
@@ -84,7 +83,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private restorePreviousLocation() {
     if (this.isStandalone() && localStorage['current_path']) {
-      this._router.navigateByUrl(localStorage['current_path']);
+      this.router.navigateByUrl(localStorage['current_path']);
     }
   }
 
@@ -125,6 +124,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private onNavigationChange(event: NavigationEnd) {
     this.saveCurrentRoute(event);
+    const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);
+    if (menuItem) {
+      this.pageTitle = menuItem.title;
+      this.title.setTitle(`WAH - ${menuItem.title}`);
+    }
     Report.navigation(event);
   }
 
