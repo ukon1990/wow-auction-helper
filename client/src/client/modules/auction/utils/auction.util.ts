@@ -4,7 +4,6 @@ import {AuctionItem} from '../models/auction-item.model';
 import {Crafting} from '../../crafting/models/crafting';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {TradeVendors} from '../../../models/item/trade-vendors';
-import {Seller} from '../../../models/seller';
 import {AuctionPet} from '../models/auction-pet.model';
 import {WoWUction} from '../models/wowuction.model';
 import {PetsService} from '../../../services/pets.service';
@@ -58,7 +57,6 @@ export class AuctionUtil {
       delete SharedService.auctionItemsMap[id]);
     Object.keys(SharedService.pets)
       .forEach(id => delete SharedService.pets[id].auctions);
-    Seller.clearSellers();
   }
 
   private static calculateCosts(t0) {
@@ -68,9 +66,6 @@ export class AuctionUtil {
     TradeVendors.setValues();
 
     Crafting.calculateCost();
-
-    // Grouping auctions by seller
-    Seller.setItemClasses();
 
     // ProspectingAndMillingUtil.setCosts();
 
@@ -110,11 +105,6 @@ export class AuctionUtil {
     } else {
       AuctionUtil.updateAuctionItem(a);
     }
-
-    SharedService.userAuctions.addAuction(
-      a, SharedService.auctionItemsMap[Auction.getAuctionItemId(a)]);
-
-    Seller.setSellerData(a);
   }
 
   private static handlePetAuction(a: Auction, petId) {

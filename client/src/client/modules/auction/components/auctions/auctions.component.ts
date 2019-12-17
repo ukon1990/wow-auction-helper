@@ -84,7 +84,6 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     const {columns} = this.table;
     columns.push({key: 'name', title: 'Name', dataType: 'name'});
     columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number'});
-    columns.push({key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true});
     columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number'});
     columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
