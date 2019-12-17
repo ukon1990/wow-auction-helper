@@ -8,6 +8,7 @@ export class Remains {
   buyout?: number;
   yield?: number;
   sources: RemainsSource[] = [];
+  saleRate?: number;
 
   constructor(item: Item) {
     this.id = item.id;

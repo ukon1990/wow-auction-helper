@@ -11,6 +11,7 @@ import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {Pet} from '../../pet/models/pet';
+import {Report} from '../../../utils/report.util';
 
 export class AuctionUtil {
   /**
@@ -26,6 +27,7 @@ export class AuctionUtil {
         this.groupAuctions(auctions, petService);
         this.calculateCosts(t0);
         SharedService.events.auctionUpdate.emit(true);
+        Report.debug('AuctionUtil.organize', SharedService.auctionItems);
         resolve(SharedService.auctionItems);
       } catch (e) {
         reject(e);
