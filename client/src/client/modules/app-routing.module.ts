@@ -38,9 +38,10 @@ const TOOLS_ROUTE: TitledRoute = {
     {
       title: 'Manage Dashboards', path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'
     },
+    /*
     {
       title: 'Sellers', path: 'sellers', component: SellersComponent
-    },
+    },*/
     {
       title: 'Pet value', path: 'pet-value', component: PetsValueComponent, isHidden: environment.production
     },

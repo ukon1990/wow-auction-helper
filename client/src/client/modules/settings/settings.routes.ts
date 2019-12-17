@@ -16,11 +16,11 @@ export const SETTINGS_ROUTE: TitledRoute = {
   canActivate: [IsRegisteredService],
   children: [
     {
-      title: 'General', path: '', component: GeneralSettingsComponent
+      path: '', redirectTo: 'settings/general', pathMatch: 'full'
     },
-    {path: 'general', component: GeneralSettingsComponent},
+    {title: 'General', path: 'general', component: GeneralSettingsComponent},
     {
-      path: 'crafting', component: CraftingSettingsComponent, children: [
+      title: 'Crafting', path: 'crafting', component: CraftingSettingsComponent, children: [
         {
           title: 'Custom prices', path: '', component: CustomPricesComponent
         },
