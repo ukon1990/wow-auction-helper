@@ -12,7 +12,9 @@ export class IsRegisteredService implements CanActivate {
     if (SharedService.user.realm && SharedService.user.region) {
       return true;
     }
-    this.router.navigateByUrl('');
+    if (this.router) {
+      this.router.navigateByUrl('');
+    }
     return false;
   }
 }

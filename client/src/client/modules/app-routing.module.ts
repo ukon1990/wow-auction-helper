@@ -104,12 +104,13 @@ export const appRoutes: TitledRoutes = [
   {
     title: 'Auctions', path: 'auctions', canActivate: [IsRegisteredService],
     children: [
-      {title: 'Browse auctions', path: '', component: AuctionsComponent},
       {
         title: 'My auctions', path: 'my-auctions', component: MyAuctionsComponent, canActivate: [IsRegisteredService]
-      }
+      },
+      {title: 'Browse auctions', path: '**', component: AuctionsComponent},
     ]
   },
+  {path: 'my-auctions', redirectTo: '/auctions/my-auctions', pathMatch: 'full'},
   {
     title: 'Trade vendors', path: 'trade-vendor', component: TradeVendorsComponent, canActivate: [IsRegisteredService]
   },
