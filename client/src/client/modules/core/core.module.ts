@@ -32,6 +32,8 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {fas} from '@fortawesome/free-solid-svg-icons';
 import {MarketResetModule} from '../market-reset/market-reset.module';
+import {MenuItemComponent} from './components/menu/menu-item/menu-item.component';
+import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,10 @@ import {MarketResetModule} from '../market-reset/market-reset.module';
     AppUpdateComponent,
     MenuComponent,
     RealmQuickSelectComponent,
-    ThemeSelectComponent],
+    ThemeSelectComponent,
+    MenuItemComponent,
+    MenuDropdownComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
