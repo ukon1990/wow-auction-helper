@@ -42,18 +42,20 @@ export class MillingComponent implements OnInit, OnDestroy {
   sm = new SubscriptionManager();
 
   constructor(private fb: FormBuilder, private auctionService: AuctionsService) {
-    SharedService.events.title.next('Milling & Prospecting');
+    const filter = JSON.parse(localStorage.getItem('query_destroy')) || undefined;
     this.form = fb.group({
-      minROI: new FormControl(),
+      minROI: filter && filter.minROI ? filter.minROI : null,
       type: new FormControl(0)
     });
   }
 
   ngOnInit() {
     this.sm.add(this.form.valueChanges, ({minROI, type}) => {
+      localStorage['query_destroy'] = JSON.stringify(this.form.value);
       this.filterData(minROI, type);
     });
 
+    /* TODO: When I've got time and remember to do it
     if (Filters.isUsingAPI()) {
       this.columns.push({key: 'saleRate', title: 'Sale rate', dataType: 'percent'});
       this.sm.add(SharedService.events.auctionUpdate, () => {
@@ -68,7 +70,11 @@ export class MillingComponent implements OnInit, OnDestroy {
         const {minROI, type} = this.form.value;
         this.filterData(minROI, type);
       });
-    }
+    }*/
+    this.sm.add(SharedService.events.auctionUpdate, () => {
+      const {minROI, type} = this.form.value;
+      this.filterData(minROI, type);
+    });
   }
 
   private filterData(minROI: number, type: number) {
