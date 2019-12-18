@@ -29,7 +29,10 @@ export class MenuComponent implements OnDestroy, OnInit {
         this.numberOfUndercutAuctions = SharedService.userAuctions.undercutAuctions);
     this.sm.add(
       SharedService.events.isUserSet,
-      isSet => this.isUserSet = isSet);
+      isSet => {
+        this.isUserSet = isSet;
+        this.ngOnInit();
+      });
     Report.send('startup', `App version ${version}`);
   }
 

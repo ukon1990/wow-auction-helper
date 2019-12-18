@@ -47,14 +47,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       SharedService.events.detailPanelOpen,
       () =>
         this.scrollToTheTop());
+
     this.subs.add(
-      SharedService.events.title,
-      t => {/*
-        this.pageTitle = t;
-        this.title.setTitle(`WAH - ${t}`);
-        */
-      });
+      this.router.events,
+      (event: NavigationEnd) =>
+        this.onNavigationChange(event));
     this.angulartics2GoogleAnalytics.startTracking();
+  }
+
+  private redirectToCorrectPath(url: string) {
+    console.log('shit', url);
+    if (url === '/') {
+      if (SharedService.user.realm && SharedService.user.region) {
+        this.router.navigateByUrl('dashboard');
+      } else {
+        this.router.navigateByUrl('setup');
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -70,11 +79,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         `Standalone startup`
       );
     }
-
-    this.subs.add(
-      this.router.events,
-      (event: NavigationEnd) =>
-        this.onNavigationChange(event));
   }
 
   ngOnDestroy(): void {
@@ -123,6 +127,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onNavigationChange(event: NavigationEnd) {
+    this.redirectToCorrectPath(event.url);
     this.saveCurrentRoute(event);
     const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);
     if (menuItem) {
