@@ -1,7 +1,9 @@
-import {appRoutes} from '../../app-routing.module';
+import {appRoutes, ROUTE_HIDDEN_FLAGS} from '../../app-routing.module';
 import {TitledRoute} from '../../../models/route/titled-route.model';
 import {MenuItem} from '../models/menu-item.model';
 import {TitledRoutes} from '../../../models/route/titled-routes.model';
+import {environment} from '../../../../environments/environment';
+import {SharedService} from '../../../services/shared.service';
 
 export class RoutingUtil {
   private static map = {};
@@ -35,13 +37,28 @@ export class RoutingUtil {
   static getMenu(routes?: TitledRoutes) {
     const menuItems = [];
     (routes || appRoutes).forEach((route: TitledRoute) => {
-      if ((route.title || route.children) && route.path && !route.isHidden && this.canActivate(route.canActivate)) {
+      if ((route.title || route.children) && route.path && !this.getIsHidden(route) && this.canActivate(route.canActivate)) {
         const item: MenuItem = this.getMenuItem(route);
         menuItems.push(item);
       }
     });
     this.list = menuItems;
     return menuItems;
+  }
+
+  private static getIsHidden({isHidden}: TitledRoute) {
+    switch (isHidden) {
+      case ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP:
+        return environment.production;
+      case ROUTE_HIDDEN_FLAGS.IS_REGISTERED:
+        return SharedService.events.isUserSet.value;
+      case ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED:
+        return !SharedService.events.isUserSet.value;
+      case ROUTE_HIDDEN_FLAGS.ALWAYS:
+        return true;
+      default:
+        return false;
+    }
   }
 
   private static getMenuItem({title, path, children, canActivate}: TitledRoute, parent?: MenuItem) {
@@ -52,7 +69,7 @@ export class RoutingUtil {
       title, routeTitle, childMenuItems, path, routerLinkFullPath);
     if (children) {
       children.forEach(child => {
-        if (child.title && !child.isHidden && this.canActivate(child.canActivate)) { // Use Can activate also
+        if (child.title && !this.getIsHidden(child) && this.canActivate(child.canActivate)) { // Use Can activate also
           childMenuItems.push(this.getMenuItem(child, menuItem));
         }
       });

@@ -1,21 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Angulartics2} from 'angulartics2';
-
-import {RealmService} from '../../../../services/realm.service';
 import {SharedService} from '../../../../services/shared.service';
 import {Realm} from '../../../../models/realm';
 import {Router} from '@angular/router';
 import {User} from '../../../../models/user/user';
 import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {BackgroundDownloadService} from '../../../../services/background-download.service';
 
 @Component({
   selector: 'wah-setup',
   templateUrl: './setup.component.html',
   styleUrls: ['./setup.component.scss']
 })
-export class SetupComponent implements OnInit {
+export class SetupComponent {
   form: FormGroup;
   locales = SharedService.locales;
   imagesForRoll = [
@@ -57,8 +55,8 @@ export class SetupComponent implements OnInit {
 
   sm = new SubscriptionManager();
 
-  constructor(private _formBuilder: FormBuilder, private _realmService: RealmService, private _router: Router) {
-    this.form = this._formBuilder.group({
+  constructor(private fb: FormBuilder, private router: Router, private service: BackgroundDownloadService) {
+    this.form = this.fb.group({
       region: ['eu', Validators.required],
       realm: [null, Validators.required],
       tsmKey: '',
@@ -72,12 +70,6 @@ export class SetupComponent implements OnInit {
       locale => {
         localStorage['locale'] = locale;
       });
-  }
-
-  ngOnInit() {
-    if (SharedService.user.realm && SharedService.user.region) {
-      this._router.navigateByUrl('dashboard');
-    }
   }
 
   isWithinSupported3RDPartyAPIRegion(): boolean {
@@ -129,7 +121,7 @@ export class SetupComponent implements OnInit {
   }
 
   redirectUserFromRestore(): void {
-    this._router.navigateByUrl('/crafting');
+    this.router.navigateByUrl('/crafting');
     Report.send('Imported existing setup', 'User registration');
   }
 
@@ -152,7 +144,8 @@ export class SetupComponent implements OnInit {
       localStorage['timestamp_news'] = new Date().toLocaleDateString();
 
       User.restore();
-      this._router.navigateByUrl('/dashboard');
+      this.service.init();
+      this.router.navigateByUrl('/dashboard');
       Report.send('New user registered', 'User registration');
     }
   }

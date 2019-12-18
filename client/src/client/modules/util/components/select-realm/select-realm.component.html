@@ -13,6 +13,10 @@
     <strong>Timezone: </strong> {{ currentRealm.timezone }} <br>
     <strong>Battlegroup: </strong>  {{ currentRealm.battlegroup }} <br>
     <strong>Realm locale: </strong>  {{ currentRealm.locale }}
+    <ng-container *ngIf="currentRealm.avgDelay < 150">
+      <br>
+      <strong>Update interval: </strong> {{ currentRealm.lowestDelay | number }}(min) - {{ currentRealm.avgDelay | number }}(avg) - {{ currentRealm.highestDelay | number }}(max)
+    </ng-container>
   </mat-card-content>
   <mat-card-actions>
     <ng-content></ng-content>

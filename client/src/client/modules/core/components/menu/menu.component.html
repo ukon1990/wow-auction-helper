@@ -7,7 +7,7 @@
                   *ngTemplateOutlet="brandingTemplate">
           </ng-container>
 
-          <ng-container *ngIf="!isSmallScreen() && isUserSet" >
+          <ng-container *ngIf="!isSmallScreen()" >
             <ng-container
                     *ngTemplateOutlet="navElementsTemplate">
             </ng-container>
@@ -29,8 +29,8 @@
 </ng-template>
 
 <ng-template #mobileMenuTemplate>
-  <ng-container *ngIf="isSmallScreen() && isUserSet">
-    <wah-download></wah-download>
+  <ng-container *ngIf="isSmallScreen()">
+    <wah-download *ngIf="isUserSet"></wah-download>
 
     <div class="flex-spacer"></div>
 
@@ -51,11 +51,11 @@
   <div class="flex-spacer"></div>
 
 
-  <wah-shopping-cart *ngIf="!displayExtraMenu()"></wah-shopping-cart>
+  <wah-shopping-cart *ngIf="!displayExtraMenu() && isUserSet"></wah-shopping-cart>
 
-  <wah-download></wah-download>
+  <wah-download *ngIf="isUserSet"></wah-download>
 
-  <wah-character-select *ngIf="!displayExtraMenu()"></wah-character-select>
+  <wah-character-select *ngIf="!displayExtraMenu() && isUserSet"></wah-character-select>
 
   <wah-theme-select></wah-theme-select>
 
@@ -65,24 +65,25 @@
 </ng-template>
 
 <ng-template #extraMenuTemplate>
-  <button mat-icon-button [matMenuTriggerFor]="menu"
-          aria-label="Display the extra menu"
-          matTooltip="Display the extra menu">
-    <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <ng-container></ng-container>
-    <div class="p-3">
-      <wah-shopping-cart></wah-shopping-cart>
-      <wah-character-select></wah-character-select>
-    </div>
-  </mat-menu>
+  <ng-container *ngIf="isUserSet">
+    <button mat-icon-button [matMenuTriggerFor]="menu"
+            aria-label="Display the extra menu"
+            matTooltip="Display the extra menu">
+      <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <ng-container></ng-container>
+      <div class="p-3">
+        <wah-shopping-cart></wah-shopping-cart>
+        <wah-character-select></wah-character-select>
+      </div>
+    </mat-menu>
+  </ng-container>
 </ng-template>
 
 
 <!-- Material Menu item templates -->
 <mat-menu #mobileMenuDropdown="matMenu">
-
   <wah-menu-item *ngFor="let menuItem of menuItems"
           [item]="menuItem"></wah-menu-item>
 </mat-menu>
