@@ -33,17 +33,17 @@ const TOOLS_ROUTE: TitledRoute = {
   canActivate: [IsRegisteredService],
   children: [
     {
-      title: 'Trade vendors', path: 'trade-vendor', component: TradeVendorsComponent
-    },
-    {
-      title: 'Manage Dashboards', path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'
-    },
-    /*
-    {
-      title: 'Sellers', path: 'sellers', component: SellersComponent
-    },*/
-    {
-      title: 'Pet value', path: 'pet-value', component: PetsValueComponent, isHidden: environment.production
+      title: 'TSM Addon', path: 'tsm', component: TsmAddonDbComponent, children: [
+        {
+          title: 'Profit summary', path: 'summary', component: ProfitSummaryComponent, isHidden: true
+        },
+        {
+          title: 'Data sets', isHidden: true,
+          path: 'dataset', component: TsmDatasetComponent, children: [
+            {path: ':name', component: TsmDatasetComponent}
+          ]
+        }
+      ]
     },
     {
       title: 'Market reset', path: 'market-reset', component: MarketResetComponent
@@ -52,23 +52,22 @@ const TOOLS_ROUTE: TitledRoute = {
       title: 'Milling & Prospecting', path: 'milling-and-prospecting', component: MillingComponent
     },
     {
-      title: 'Disenchanting', path: 'disenchanting', component: DisenchantingComponent
+      title: 'Manage Dashboards', path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'
     },
     {
       title: 'Reputations', path: 'reputations', component: ReputationsComponent
+    }, {
+      title: 'Pet value', path: 'pet-value', component: PetsValueComponent
     },
     {
-      path: 'tsm', component: TsmAddonDbComponent, children: [
-        {
-          title: 'TSM Profit summary', path: 'summary', component: ProfitSummaryComponent
-        },
-        {
-          title: 'TSM Data sets',
-          path: 'dataset', component: TsmDatasetComponent, children: [
-            {path: ':name', component: TsmDatasetComponent}
-          ]
-        }
-      ]
+      title: 'Trade vendors', path: 'trade-vendor', component: TradeVendorsComponent
+    },
+    /*
+    {
+      title: 'Sellers', path: 'sellers', component: SellersComponent
+    },*/
+    {
+      title: 'Disenchanting', path: 'disenchanting', component: DisenchantingComponent, isHidden: environment.production
     },
     {
       title: 'App data updater',
