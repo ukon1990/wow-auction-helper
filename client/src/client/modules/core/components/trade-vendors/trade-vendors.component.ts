@@ -1,14 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TradeVendor, TradeVendorItem} from '../../../../models/item/trade-vendor';
-import {TRADE_VENDORS} from '../../../../models/item/trade-vendors';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Filters} from '../../../../utils/filtering';
-import {FormGroup, FormBuilder} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {TRADE_VENDORS} from '../../../../data/trade-vendors';
 
 @Component({
   selector: 'wah-trade-vendors',
@@ -23,7 +22,6 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   vendors = TRADE_VENDORS;
 
   constructor(private formBuilder: FormBuilder, private service: AuctionsService) {
-    SharedService.events.title.next('Trade vendors');
     const filter = JSON.parse(localStorage.getItem('query_trade_vendors')) || undefined;
     this.form = formBuilder.group({
       saleRate: filter && filter.saleRate !== null ?

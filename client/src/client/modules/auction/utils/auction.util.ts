@@ -3,7 +3,7 @@ import {Auction} from '../models/auction.model';
 import {AuctionItem} from '../models/auction-item.model';
 import {Crafting} from '../../crafting/models/crafting';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
-import {TradeVendors} from '../../../models/item/trade-vendors';
+import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
 import {WoWUction} from '../models/wowuction.model';
 import {PetsService} from '../../../services/pets.service';

@@ -27,7 +27,25 @@ export class ItemQuery {
 
   public static insert(item: Item) {
     return `
-      INSERT INTO items VALUES(${
+      INSERT INTO items(\`id\`,
+                        \`name\`,
+                        \`icon\`,
+                        \`itemLevel\`,
+                        \`itemClass\`,
+                        \`itemSubClass\`,
+                        \`quality\`,
+                        \`itemSpells\`,
+                        \`itemSource\`,
+                        \`buyPrice\`,
+                        \`sellPrice\`,
+                        \`itemBind\`,
+                        \`minFactionId\`,
+                        \`minReputation\`,
+                        \`isDropped\`,
+                        \`timestamp\`,
+                        \`expansionId\`,
+                        \`nameDescription\`)
+    VALUES(${
       item.id
       },"${
       safeifyString(item.name)
