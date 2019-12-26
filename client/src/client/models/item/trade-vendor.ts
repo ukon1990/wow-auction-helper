@@ -1,4 +1,5 @@
 export class TradeVendor {
+  id?: number[];
   itemID: number;
   name: string;
   useForCrafting = true;

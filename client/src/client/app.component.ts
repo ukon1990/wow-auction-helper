@@ -56,7 +56,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private redirectToCorrectPath(url: string) {
-    console.log('shit', url);
     if (url === '/') {
       if (SharedService.user.realm && SharedService.user.region) {
         this.router.navigateByUrl('dashboard');
