@@ -13,6 +13,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {WoWHead} from '../models/item/wowhead';
 import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
+import {QueryUtil} from '../utils/query.util';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -82,18 +83,25 @@ export class ItemHandler {
           const friendlyItem: Item = await QueryIntegrity.getVerified('items', item);
 
           if (!friendlyItem) {
+            console.log(`Failed to add item: ${id} did not match the model`);
             reject('The item did not follow the data model - ' + item.id);
             return;
           }
 
-          new DatabaseUtil()
-            .query(
-              ItemQuery.insert(friendlyItem));
-
-          LocaleUtil.insertToDB(
-            'item_name_locale',
-            'id',
-            item.nameLocales);
+          const query = new QueryUtil('items').insert(friendlyItem);
+          console.log('Insert item SQL:', query);
+          await new DatabaseUtil()
+            .query(query)
+            .then(async itemSuccess => {
+              console.log(`Successfully added ${friendlyItem.name} (${id})`, itemSuccess);
+              await LocaleUtil.insertToDB(
+                'item_name_locale',
+                'id',
+                item.nameLocales)
+                .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
+                .catch(console.error);
+            })
+            .catch(console.error);
         })
         .catch(reject);
     });

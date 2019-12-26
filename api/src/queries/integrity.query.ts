@@ -15,12 +15,16 @@ export class QueryIntegrity {
               return;
             }
             if (this.isNullButRequired(obj, Field, Null) || !this.isTypeMatch(obj[Field], Type)) {
+              console.error(`Datatype missmatch for ${Field} = ${obj[Field]} of type it should be `,
+                Type, 'but was ', typeof obj[Field], this.contains(Type, 'tinyint'),
+                this.isNullButRequired(obj, Field, Null), !this.isTypeMatch(obj[Field], Type));
               isValid = false;
             } else if (obj[Field]) {
               // We only wish to return a field if it has data
               validObject[Field] = obj[Field];
             }
           });
+          console.log('getVerified', Object.keys(result).length, Object.keys(validObject).length);
           resolve(isValid ? validObject : undefined);
         })
         .catch(() =>
@@ -29,7 +33,7 @@ export class QueryIntegrity {
   }
 
   private static isNullButRequired(obj: object, Field, Null) {
-    return !obj[Field] && Null === 'NO';
+    return obj[Field] === undefined && Null === 'NO';
   }
 
   private static isTypeMatch(parameter: any, Type: any) {
