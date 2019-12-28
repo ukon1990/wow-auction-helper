@@ -1,5 +1,3 @@
-import { Item } from '../models/item/item';
-
 export class GameBuild {
   /**
    * A list of wow expansions
@@ -16,5 +14,16 @@ export class GameBuild {
     'Warlords of Draenor',
     'Legion',
     'Battle for Azeroth'
+  ];
+
+  static expansionMaxLevel = [
+    60,
+    70,
+    80,
+    85,
+    90,
+    100,
+    110,
+    120
   ];
 }

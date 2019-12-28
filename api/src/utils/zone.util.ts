@@ -1,37 +1,146 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
+import {GameBuild} from '../../../client/src/client/utils/game-build.util';
+
+class ZoneLanguage {
+  locales: string[];
+  type: string;
+  key: string;
+  territory: string;
+}
 
 export class Zone {
   id: number;
-  name: ItemLocale;
-  patch: string;
-  type: ItemLocale;
-  territory: ItemLocale;
-  level: number;
+  name: ItemLocale = new ItemLocale();
+  patch?: string;
+  typeId: number;
+  parentId?: number;
+  parentName?: string;
+  territoryId: number;
+  minLevel: number;
+  maxLevel: number;
+
+  constructor(id: number) {
+    this.id = id;
+  }
+
+  setData(body: { name: string, tooltip: string }, language: ZoneLanguage): void {
+    language.locales.forEach(locale => {
+      this.setName(body.name, locale);
+    });
+
+    if (language.key === 'en') {
+      this.setTooltipData(body.tooltip);
+    }
+  }
+
+  private setName(name: string, locale = 'en_GB'): void {
+    this.name[locale] = name;
+  }
+
+  private setTooltipData(tooltip: string): void {
+    this.setTerritoryId(tooltip);
+    this.setTypeId(tooltip);
+    this.setLevel(tooltip);
+    this.setParentName(tooltip);
+  }
+
+  private setTerritoryId(tooltip: string): void {
+    const territoryRegex = new RegExp('Territory: [\\w ]{1,10}', 'gm'),
+      territory = territoryRegex.exec(tooltip)[0].replace('Territory: ', '');
+    switch (territory) {
+      case 'Alliance':
+        this.territoryId = 0;
+        break;
+      case 'Horde':
+        this.territoryId = 1;
+        break;
+      case 'Contested':
+        this.territoryId = 2;
+        break;
+      case 'World PvP':
+        this.territoryId = 3;
+        break;
+      default:
+        console.log('Territory type not accounted for: ' + territory);
+        this.territoryId = -1;
+        break;
+    }
+  }
+
+  private setTypeId(tooltip: string): void {
+    const typeRegex = new RegExp('Type: [\\w ]{1,10}', 'gm'),
+      type = typeRegex.exec(tooltip)[0].replace('Type: ', '');
+    switch (type) {
+      case 'Zone':
+        this.typeId = 0;
+        break;
+      case 'City':
+        this.typeId = 1;
+        break;
+      case 'Dungeon':
+        this.typeId = 2;
+        break;
+      case 'Raid':
+        this.typeId = 3;
+        break;
+      default:
+        console.log('Type was not accounted for: ', type);
+        this.typeId = -1;
+        break;
+    }
+  }
+
+  private setLevel(tooltip: string): void {
+    const expansionMaxLevel = GameBuild.expansionMaxLevel,
+      levelRegex = new RegExp(/Level [\d]{1,3}(-[\d]{1,3}){0,2}/gm),
+      levelRange = levelRegex.exec(tooltip)[0].replace('Level ', ''),
+      splitRange = levelRange.split('-');
+
+    this.minLevel = +splitRange[0];
+    this.maxLevel = +splitRange[1] || expansionMaxLevel[expansionMaxLevel.length - 1];
+  }
+
+  private setParentName(tooltip: string) {
+    const locationRegex = new RegExp('Location: [\\w ]{1,10}', 'gm'),
+      location = locationRegex.exec(tooltip);
+    if (location) {
+      this.parentName = location[0].replace('Location: ', '');
+      this.parentId = -1;
+    }
+  }
 }
 
 export class ZoneUtil {
+  static languages = [
+    {key: 'en', locales: ['en_GB', 'en_US', 'pl_PL'], type: 'Type: ', territory: 'Territory: '},
+    {key: 'fr', locales: ['fr_FR'], type: 'Type: ', territory: 'Territoire: '},
+    {key: 'es', locales: ['es_MX', 'es_ES'], type: 'Tipo: ', territory: 'Territorio: '},
+    {key: 'pt', locales: ['pt_PT', 'pt_BR'], type: 'Tipo: ', territory: 'Território: '},
+    {key: 'de', locales: ['de_DE'], type: 'Art: ', territory: 'Territorium: '},
+    {key: 'ru', locales: ['ru_RU'], type: 'Тип: ', territory: 'Территория: '},
+    {key: 'kr', locales: ['ko_KR'], type: '유형: ', territory: '영토: '},
+    {key: 'cn', locales: ['zh_TW'], type: '类型: ', territory: '地域: '}
+  ];
+
   static getById(id: number): Promise<Zone> {
-    // https://www.wowhead.com/zone=8717/boralus-harbor
     return new Promise<Zone>((resolve, reject) => {
-      new HttpClientUtil().get(`https://www.wowhead.com/zone=${id}`, false)
-        .then(({ body }) => resolve(this.extractZoneData(id, body)))
-        .catch(() => reject('The zone could not be found'));
+      const zone: Zone = new Zone(id),
+        promises: Promise<any>[] = [];
+      // Gotta be done once per locale to fetch all locales
+      this.languages
+        .forEach(lang => promises.push(this.getZoneDataForLocale(id, lang, zone)));
+      Promise.all(promises)
+        .then(() => resolve(zone))
+        .catch(reject);
     });
   }
 
-  private static extractZoneData(id: number, body: string) {
-    const zone = new Zone();
-    zone.id = id;
-    zone.name = this.getName(body);
-    return zone;
+  private static getZoneDataForLocale(id: number, language: ZoneLanguage, zone: Zone): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      new HttpClientUtil().get(`https://www.wowhead.com/tooltip/zone/${id}?locale=${language.key}`, true)
+        .then(({body}) => resolve(zone.setData(body, language)))
+        .catch(reject);
+    });
   }
-
-  private static getName(body: string): ItemLocale {
-      const nameRegex = new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}/g),
-        name = nameRegex.exec(body);
-      const locale = new ItemLocale();
-      locale.en_GB = name[0];
-      return locale;
-    }
 }
