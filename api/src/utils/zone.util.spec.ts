@@ -10,7 +10,7 @@ describe('ZoneUtil', () => {
     expect(zone.typeId).toBe(0); // Zone
     expect(zone.parentName).toBeFalsy();
     expect(zone.minLevel).toBe(115);
-    expect(zone.maxLevel).toBe(120);
+    expect(zone.maxLevel).toBe(undefined);
   });
 
   it('getById returns Baradin hold and type = World PvP territory = Contested', async () => {
@@ -22,7 +22,7 @@ describe('ZoneUtil', () => {
     expect(zone.typeId).toBe(0); // Zone
     expect(zone.parentName).toBeFalsy();
     expect(zone.minLevel).toBe(85);
-    expect(zone.maxLevel).toBe(120);
+    expect(zone.maxLevel).toBe(undefined);
   });
 
   it('getById returns Baradin hold and type = Raid territory = Contested', async () => {
@@ -34,7 +34,7 @@ describe('ZoneUtil', () => {
     expect(zone.typeId).toBe(3); // Raid
     expect(zone.parentName).toBe('Tol Barad');
     expect(zone.minLevel).toBe(85);
-    expect(zone.maxLevel).toBe(120);
+    expect(zone.maxLevel).toBe(undefined);
   });
 
   it('getById returns Deadmines and type = Dungeon territory = Alliance', async () => {
@@ -59,5 +59,17 @@ describe('ZoneUtil', () => {
     expect(zone.parentName).toBe('Durotar');
     expect(zone.minLevel).toBe(1);
     expect(zone.maxLevel).toBe(120);
+  });
+
+  it('getById returns Deadmines and type = Dungeon territory = Alliance', async () => {
+    const zoneId = 3457;
+    const zone: Zone = await ZoneUtil.getById(zoneId);
+    expect(zone.id).toBe(zoneId);
+    expect(zone.name.en_GB).toBe('Karazhan');
+    expect(zone.territoryId).toBe(2); // Contested
+    expect(zone.typeId).toBe(3); // Raid
+    expect(zone.parentName).toBe('Deadwind Pass');
+    expect(zone.minLevel).toBe(70);
+    expect(zone.maxLevel).toBeFalsy();
   });
 });

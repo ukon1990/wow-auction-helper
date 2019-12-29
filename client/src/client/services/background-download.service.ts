@@ -15,6 +15,7 @@ import {Dashboard} from '../modules/dashboard/models/dashboard.model';
 import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {Crafting} from '../modules/crafting/models/crafting';
 import {Auction} from '../modules/auction/models/auction.model';
+import {ItemExtract} from '../utils/item-extract.util';
 
 @Injectable({
   providedIn: 'root'
@@ -160,6 +161,7 @@ export class BackgroundDownloadService {
         console.error(error);
       });
     await this.itemService.getItems();
+    console.log('Processed items mapped', ItemExtract.fromItems(SharedService.itemsUnmapped));
   }
 
   private async loadPets() {

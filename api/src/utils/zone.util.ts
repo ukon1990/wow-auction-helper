@@ -1,6 +1,8 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
-import {GameBuild} from '../../../client/src/client/utils/game-build.util';
+import {zones} from '../static-data/zone.data';
+
+const PromiseThrottle: any = require('promise-throttle');
 
 class ZoneLanguage {
   locales: string[];
@@ -17,14 +19,14 @@ export class Zone {
   parentId?: number;
   parentName?: string;
   territoryId: number;
-  minLevel: number;
-  maxLevel: number;
+  minLevel?: number;
+  maxLevel?: number;
 
   constructor(id: number) {
     this.id = id;
   }
 
-  setData(body: { name: string, tooltip: string }, language: ZoneLanguage): void {
+  setData?(body: { name: string, tooltip: string }, language: ZoneLanguage): void {
     language.locales.forEach(locale => {
       this.setName(body.name, locale);
     });
@@ -34,19 +36,19 @@ export class Zone {
     }
   }
 
-  private setName(name: string, locale = 'en_GB'): void {
+  private setName?(name: string, locale = 'en_GB'): void {
     this.name[locale] = name;
   }
 
-  private setTooltipData(tooltip: string): void {
+  private setTooltipData?(tooltip: string): void {
     this.setTerritoryId(tooltip);
     this.setTypeId(tooltip);
     this.setLevel(tooltip);
     this.setParentName(tooltip);
   }
 
-  private setTerritoryId(tooltip: string): void {
-    const territoryRegex = new RegExp('Territory: [\\w ]{1,10}', 'gm'),
+  private setTerritoryId?(tooltip: string): void {
+    const territoryRegex = new RegExp('Territory: [\\w ]{1,128}', 'gm'),
       territory = territoryRegex.exec(tooltip)[0].replace('Territory: ', '');
     switch (territory) {
       case 'Alliance':
@@ -61,6 +63,12 @@ export class Zone {
       case 'World PvP':
         this.territoryId = 3;
         break;
+      case 'Sanctuary':
+        this.territoryId = 4;
+        break;
+      case 'PvP':
+        this.territoryId = 5;
+        break;
       default:
         console.log('Territory type not accounted for: ' + territory);
         this.territoryId = -1;
@@ -68,8 +76,8 @@ export class Zone {
     }
   }
 
-  private setTypeId(tooltip: string): void {
-    const typeRegex = new RegExp('Type: [\\w ]{1,10}', 'gm'),
+  private setTypeId?(tooltip: string): void {
+    const typeRegex = new RegExp('Type: [\\w ]{1,128}', 'gm'),
       type = typeRegex.exec(tooltip)[0].replace('Type: ', '');
     switch (type) {
       case 'Zone':
@@ -84,6 +92,15 @@ export class Zone {
       case 'Raid':
         this.typeId = 3;
         break;
+      case 'Scenario':
+        this.typeId = 4;
+        break;
+      case 'Artifact Acquisition':
+        this.typeId = 5;
+        break;
+      case 'Battleground':
+        this.typeId = 6;
+        break;
       default:
         console.log('Type was not accounted for: ', type);
         this.typeId = -1;
@@ -91,18 +108,19 @@ export class Zone {
     }
   }
 
-  private setLevel(tooltip: string): void {
-    const expansionMaxLevel = GameBuild.expansionMaxLevel,
-      levelRegex = new RegExp(/Level [\d]{1,3}(-[\d]{1,3}){0,2}/gm),
-      levelRange = levelRegex.exec(tooltip)[0].replace('Level ', ''),
-      splitRange = levelRange.split('-');
+  private setLevel?(tooltip: string): void {
+    const levelRegex = new RegExp(/Level [\d]{1,3}(-[\d]{1,3}){0,2}/gm),
+      levelRange = levelRegex.exec(tooltip);
 
-    this.minLevel = +splitRange[0];
-    this.maxLevel = +splitRange[1] || expansionMaxLevel[expansionMaxLevel.length - 1];
+    if (levelRange) {
+      const splitRange = levelRange[0].replace('Level ', '').split('-');
+      this.minLevel = +splitRange[0];
+      this.maxLevel = +splitRange[1] || undefined;
+    }
   }
 
-  private setParentName(tooltip: string) {
-    const locationRegex = new RegExp('Location: [\\w ]{1,10}', 'gm'),
+  private setParentName?(tooltip: string) {
+    const locationRegex = new RegExp(/Location: [\w'\- ]{1,128}/gm),
       location = locationRegex.exec(tooltip);
     if (location) {
       this.parentName = location[0].replace('Location: ', '');
@@ -115,6 +133,7 @@ export class ZoneUtil {
   static languages = [
     {key: 'en', locales: ['en_GB', 'en_US', 'pl_PL'], type: 'Type: ', territory: 'Territory: '},
     {key: 'fr', locales: ['fr_FR'], type: 'Type: ', territory: 'Territoire: '},
+    {key: 'it', locales: ['it_IT'], type: 'Tipo: ', territory: 'Territorio: '},
     {key: 'es', locales: ['es_MX', 'es_ES'], type: 'Tipo: ', territory: 'Territorio: '},
     {key: 'pt', locales: ['pt_PT', 'pt_BR'], type: 'Tipo: ', territory: 'Território: '},
     {key: 'de', locales: ['de_DE'], type: 'Art: ', territory: 'Territorium: '},
@@ -123,13 +142,39 @@ export class ZoneUtil {
     {key: 'cn', locales: ['zh_TW'], type: '类型: ', territory: '地域: '}
   ];
 
+  /* Istanbul ignore next */
+  static setParentValuesAndAddToDB(): Promise<Zone[]> {
+    return new Promise<Zone[]>((resolve, reject) => {
+      const list: Zone[] = zones.map(zone => {
+        if (zone.parentName) {
+          const parentMatch: Zone[] = zones.filter(parentZone =>
+            parentZone.name.en_GB === zone.parentName);
+          if (parentMatch && parentMatch.length) {
+            zone.parentId = parentMatch[0].id;
+            delete zone.parentName;
+          } else {
+            console.log('Could not find ', zone.parentName);
+          }
+        }
+        return zone;
+      });
+
+      resolve(list);
+    });
+  }
+
   static getById(id: number): Promise<Zone> {
     return new Promise<Zone>((resolve, reject) => {
       const zone: Zone = new Zone(id),
         promises: Promise<any>[] = [];
-      // Gotta be done once per locale to fetch all locales
+
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 25,
+        promiseImplementation: Promise
+      });
       this.languages
-        .forEach(lang => promises.push(this.getZoneDataForLocale(id, lang, zone)));
+        .forEach(lang => promises.push(
+          promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
       Promise.all(promises)
         .then(() => resolve(zone))
         .catch(reject);
@@ -140,7 +185,13 @@ export class ZoneUtil {
     return new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(`https://www.wowhead.com/tooltip/zone/${id}?locale=${language.key}`, true)
         .then(({body}) => resolve(zone.setData(body, language)))
-        .catch(reject);
+        .catch((error) => {
+          console.error({
+            id,
+            error
+          });
+          resolve(undefined);
+        });
     });
   }
 }
