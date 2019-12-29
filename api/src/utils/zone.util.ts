@@ -1,6 +1,10 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
-import {zones} from '../static-data/zone.data';
+import {QueryIntegrity} from '../queries/integrity.query';
+import {QueryUtil} from './query.util';
+import {LocaleUtil} from './locale.util';
+import {DatabaseUtil} from './database.util';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -143,7 +147,7 @@ export class ZoneUtil {
   ];
 
   /* Istanbul ignore next */
-  static setParentValuesAndAddToDB(): Promise<Zone[]> {
+  static setParentValuesAndAddToDB(zones: Zone[]): Promise<Zone[]> {
     return new Promise<Zone[]>((resolve, reject) => {
       const list: Zone[] = zones.map(zone => {
         if (zone.parentName) {
@@ -157,10 +161,59 @@ export class ZoneUtil {
           }
         }
         return zone;
+      }).sort((a, b) => a.parentId && !b.parentId ? 1 : -1);
+      const promises = [];
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 25,
+        promiseImplementation: Promise
       });
-
+      list.forEach(zone => promises.push(
+        promiseThrottle.add(() => this.insertZoneIntoDB(zone))));
+      Promise.all(promises)
+        .then(() => console.log('Success!'))
+        .catch((error) => {
+          console.error(error);
+        });
       resolve(list);
     });
+  }
+
+  /* Istanbul ignore next */
+  static getFromDB(locale = 'en_GB'): Promise<Zone[]> {
+    return new DatabaseUtil().query(`
+    SELECT
+             i.id,
+             COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+             territoryId,
+             typeId,
+             parentId,
+             minLevel,
+             maxLevel
+             timestamp
+      FROM zone as i
+      LEFT OUTER JOIN zoneName as l
+      ON i.id = l.id;`);
+  }
+
+  private static insertZoneIntoDB(zone: Zone): Promise<any> {
+    const insert = {
+      id: zone.id,
+      territoryId: zone.territoryId,
+      typeId: zone.typeId,
+      minLevel: zone.minLevel,
+      maxLevel: zone.maxLevel
+    };
+    if (zone.parentId) {
+      insert['parentId'] = zone.parentId;
+    }
+    return new DatabaseUtil().query(
+      new QueryUtil('zone').insert(insert)).then(() =>
+      LocaleUtil.insertToDB('zoneName', 'id', {id: zone.id, ...zone.name}))
+      .catch((error) => {
+        if (!TextUtil.contains(error.error, 'ER_DUP_ENTRY:')) {
+          console.error('Failed with: ' + insert.id, error);
+        }
+      });
   }
 
   static getById(id: number): Promise<Zone> {
