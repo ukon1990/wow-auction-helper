@@ -45,8 +45,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true},
     {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
     {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
-    {key: 'quantity', title: 'Size', dataType: ''},
-    {key: 'owner', title: 'Owner', dataType: 'seller', hideOnMobile: true}
+    {key: 'quantity', title: 'Size', dataType: ''}
   ];
 
   recipeColumns: Array<ColumnDescription> = [

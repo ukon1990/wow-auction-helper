@@ -1,20 +1,20 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {CharacterSelectComponent} from './character-select.component';
+import {RealmQuickSelectComponent} from './realm-quick-select.component';
 
 describe('CharacterSelectComponent', () => {
-  let component: CharacterSelectComponent;
-  let fixture: ComponentFixture<CharacterSelectComponent>;
+  let component: RealmQuickSelectComponent;
+  let fixture: ComponentFixture<RealmQuickSelectComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CharacterSelectComponent]
+      declarations: [RealmQuickSelectComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CharacterSelectComponent);
+    fixture = TestBed.createComponent(RealmQuickSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

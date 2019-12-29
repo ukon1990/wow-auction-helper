@@ -1,24 +1,22 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SharedService} from '../../../../../services/shared.service';
+import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {RealmService} from '../../../../../services/realm.service';
-import {Realm} from '../../../../../models/realm';
+import {RealmService} from '../../../../services/realm.service';
+import {Realm} from '../../../../models/realm';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {CharacterService} from '../../../../../services/character.service';
-import {AuctionsService} from '../../../../../services/auctions.service';
+import {CharacterService} from '../../../../services/character.service';
+import {AuctionsService} from '../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {User} from '../../../../../models/user/user';
-import {DatabaseService} from '../../../../../services/database.service';
-import {Report} from '../../../../../utils/report.util';
-import {GameBuild} from '../../../../../utils/game-build.util';
-import {RealmStatus} from '../../../../../models/realm-status.model';
+import {User} from '../../../../models/user/user';
+import {DatabaseService} from '../../../../services/database.service';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-character-select',
-  templateUrl: './character-select.component.html',
-  styleUrls: ['./character-select.component.scss']
+  templateUrl: './realm-quick-select.component.html',
+  styleUrls: ['./realm-quick-select.component.scss']
 })
-export class CharacterSelectComponent implements OnInit, OnDestroy {
+export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   form: FormGroup;
   realmList = [];
   realmListMap = {};
@@ -26,7 +24,6 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
   list = [];
 
   sm = new SubscriptionManager();
-  gameVersions = GameBuild.versions;
 
   constructor(
     private fb: FormBuilder, private realmService: RealmService, private dbService: DatabaseService,
@@ -34,8 +31,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       region: new FormControl(this.getFormValueFor('region')),
       realm: new FormControl(this.getFormValueFor('realm')),
-      faction: new FormControl(this.getFormValueFor('faction')),
-      gameVersion: new FormControl(this.getFormValueFor('gameVersion', 0))
+      faction: new FormControl(this.getFormValueFor('faction'))
     });
   }
 
@@ -54,29 +50,20 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
-
-    this.sm.add(
-      this.form.controls.gameVersion.valueChanges,
-      (version) => this.handleGameVersionChange(version));
-
-    if (SharedService.user.gameVersion) {
-      this.realmList = this.realmService.getUsersClassicRealm();
-      console.log('getUsersClassicRealm', this.realmList);
-    }
   }
 
   ngOnDestroy() {
     this.sm.unsubscribe();
   }
 
-  private getFormValueFor(userField: string, defaultValue: any = null): any {
+  private getFormValueFor(userField: string): any {
     if (SharedService.user && SharedService.user[userField] !== undefined) {
       return SharedService.user[userField];
     }
-    return defaultValue;
+    return null;
   }
 
-  private setRealmList(realms?: RealmStatus[]) {
+  private setRealmList(realms?: Realm[]) {
     if (!realms) {
       realms = this.realmService.events.list.value;
     }
@@ -84,16 +71,9 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     if (!SharedService.user || !SharedService.user.characters || !realms) {
       return;
     }
-
-    if (SharedService.user.gameVersion === 1) {
-      this.realmList = this.realmService.events.list.value;
-      return;
-    }
-
     const map = {};
     this.realmList.length = 0;
 
-    this.setCurrentRealm(realms, map);
     this.setRealmsFromCharacters(map);
     this.setSlugFromRealms(realms, map);
 
@@ -103,8 +83,8 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     this.handleRealmChange();
   }
 
-  private setSlugFromRealms(realms: RealmStatus[], map) {
-    realms.forEach((realm: RealmStatus) => {
+  private setSlugFromRealms(realms: Realm[], map) {
+    realms.forEach((realm: Realm) => {
       if (map[realm.name]) {
         map[realm.name].slug = realm.slug;
         this.realmListMap[realm.slug] = map[realm.name];
@@ -112,7 +92,7 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setRealmsFromCharacters(map: any) {
+  private setRealmsFromCharacters(map) {
     SharedService.user.characters.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
@@ -130,31 +110,6 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
         map[character.realm].factions[character.faction]++;
       }
     });
-    console.log(map);
-  }
-
-  private setCurrentRealm(realms: RealmStatus[], map: any) {
-    const currentRealm = this.findCurrentRealm(realms);
-    if (currentRealm.length) {
-      const realm: RealmStatus = currentRealm[0];
-      map[realm.name] = {
-        name: realm.name,
-        slug: realm.slug,
-        factions: [],
-        characterCount: 0
-      };
-      this.realmList.push(map[realm.name]);
-    }
-  }
-
-  private findCurrentRealm(realms: RealmStatus[]) {
-    return realms.filter(r => this.isCurrentRealmAndRegion(r));
-  }
-
-  private isCurrentRealmAndRegion(realm: RealmStatus) {
-    const user = SharedService.user;
-    return realm.slug === user.realm &&
-      realm.region === user.region;
   }
 
   private handleRealmChange(slug?: string) {
@@ -189,15 +144,5 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
 
     this.dbService.getTSMAddonData();
     Report.send('handleFactionChange', 'CharacterSelectComponent');
-  }
-
-  private handleGameVersionChange(version: number) {
-    SharedService.user.gameVersion = version;
-    User.save();
-    if (version) {
-      this.realmList = this.realmService.getUsersClassicRealm();
-    } else {
-      this.realmService.getRealms();
-    }
   }
 }

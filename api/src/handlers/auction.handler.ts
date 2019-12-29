@@ -1,4 +1,4 @@
-import {APIGatewayEvent, Callback, Context, Handler} from 'aws-lambda';
+import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
 import {AHDumpResponse} from '../models/auction/ah-dump-response.model';
 import {AuthHandler} from './auth.handler';
@@ -8,7 +8,6 @@ import {S3Handler} from './s3.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
-import {DateUtil} from '@ukon1990/js-utilities';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 
 const request: any = require('request');
@@ -211,14 +210,17 @@ export class AuctionHandler {
   }
 
   async deactivateInactiveHouses(event: APIGatewayEvent, callback: Callback): Promise<void> {
-    new DatabaseUtil()
-      .query(RealmQuery.setNonRequestedHousesToNotAutoUpdate(14))
+    const query = RealmQuery.setNonRequestedHousesToNotAutoUpdate(14);
+    console.log('AuctionHandler.x', query);
+    await new DatabaseUtil()
+      .query(query)
       .then(dbResponse => {
         Response.send('Successfully deactivated unused houses', callback);
         console.log('Successfully deactivated unused houses', dbResponse);
       })
-      .catch(error =>
-        Response.error(callback, error, event));
+      .catch(error => {
+        Response.error(callback, error, event);
+      });
   }
 
   private addUpdateHousePromise(promises, promiseThrottle, row, event: APIGatewayEvent) {

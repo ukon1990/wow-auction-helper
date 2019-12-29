@@ -14,6 +14,8 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
 import {Dashboard} from '../modules/dashboard/models/dashboard.model';
 import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {Crafting} from '../modules/crafting/models/crafting';
+import {Auction} from '../modules/auction/models/auction.model';
+import {ItemExtract} from '../utils/item-extract.util';
 
 @Injectable({
   providedIn: 'root'
@@ -86,8 +88,9 @@ export class BackgroundDownloadService {
       .catch(console.error);
 
     await this.startRealmStatusInterval();
-    await AuctionUtil.organize(
-      this.auctionsService.events.list.value);
+    const auctions: Auction[] = this.auctionsService.events.list.value;
+    await AuctionUtil.organize(auctions);
+    this.auctionsService.reTriggerEvents();
     this.auctionsService.doNotOrganize = false;
 
     await this.dbService.getTSMAddonData();
@@ -159,7 +162,7 @@ export class BackgroundDownloadService {
         console.error(error);
       });
     await this.itemService.getItems();
-    console.log('loadItems', SharedService.itemsUnmapped);
+    console.log('Processed items mapped', ItemExtract.fromItems(SharedService.itemsUnmapped));
   }
 
   private async loadPets() {

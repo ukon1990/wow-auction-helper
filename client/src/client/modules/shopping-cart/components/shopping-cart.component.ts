@@ -65,7 +65,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.subscriptions.add(
-      SharedService.events.shopingCart,
+      SharedService.events.shoppingCart,
       (data) => this.handleShoppingCartUpdate(data)
     );
 

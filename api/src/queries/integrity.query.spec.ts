@@ -8,14 +8,19 @@ import {ItemHandler} from '../handlers/item.handler';
 
 describe('QueryIntegrity', () => {
   it('It will return back only values that has a column in DB', async () => {
+    jest.setTimeout(60000);
     const pet: Pet = await PetUtil.getPet(39);
     const result = await QueryIntegrity.getVerified('pets', pet);
     expect(Object.keys(result).length).toBe(5);
 
-    const item: Item = await new ItemHandler().getFreshItem(109118, 'en_GB');
-    const okItem = await QueryIntegrity.getVerified('items', item);
-    console.log('Item ok', okItem);
+    let item: Item = await new ItemHandler().getFreshItem(109118, 'en_GB');
+    let okItem = await QueryIntegrity.getVerified('items', item);
     expect(Object.keys(okItem).length).toBe(12);
+
+
+    item = await new ItemHandler().getFreshItem(165023, 'en_GB');
+    okItem = await QueryIntegrity.getVerified('items', item);
+    expect(Object.keys(okItem).length).toBe(9);
   });
 
   it('Returns falsy if there is no data integrity', async () => {

@@ -25,9 +25,28 @@ export class ItemQuery {
       WHERE id = ${item.id};`;
   }
 
+  /* Depricated
   public static insert(item: Item) {
     return `
-      INSERT INTO items VALUES(${
+      INSERT INTO items(\`id\`,
+                        \`name\`,
+                        \`icon\`,
+                        \`itemLevel\`,
+                        \`itemClass\`,
+                        \`itemSubClass\`,
+                        \`quality\`,
+                        \`itemSpells\`,
+                        \`itemSource\`,
+                        \`buyPrice\`,
+                        \`sellPrice\`,
+                        \`itemBind\`,
+                        \`minFactionId\`,
+                        \`minReputation\`,
+                        \`isDropped\`,
+                        \`timestamp\`,
+                        \`expansionId\`,
+                        \`nameDescription\`)
+    VALUES(${
       item.id
       },"${
       safeifyString(item.name)
@@ -62,7 +81,7 @@ export class ItemQuery {
         ,${
     item.expansionId || 0
       });`;
-  }
+  } */
 
   public static getById(id: number, locale: string) {
     return `

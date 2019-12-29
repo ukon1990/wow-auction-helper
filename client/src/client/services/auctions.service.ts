@@ -100,6 +100,7 @@ export class AuctionsService {
         if (!this.doNotOrganize) {
           await AuctionUtil.organize(a['auctions'], this.petService);
         }
+        console.log('Auction service', this.doNotOrganize);
         this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
@@ -273,5 +274,10 @@ export class AuctionsService {
         'WAH - You have been undercut',
         `${undercutAuctions} of your auctions were undercut.`);
     }
+  }
+
+  reTriggerEvents() {
+    this.events.list.next(this.events.list.value);
+    this.events.groupedList.next(SharedService.auctionItems);
   }
 }

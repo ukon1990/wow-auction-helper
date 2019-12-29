@@ -146,6 +146,17 @@ functions:
           path: recipe/{id}
           cors:
             origin: '*'
+  zone:
+    tags:
+      Lambda: Wah-zone
+    handler: src/controllers/zone.getByIds
+    memorySize: 256
+    events:
+      - http:
+          method: post
+          path: zone
+          cors:
+            origin: '*'
   character:
     tags:
       Lambda: Wah-character
