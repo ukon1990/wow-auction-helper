@@ -26,8 +26,12 @@ class DroppedItem {
   dropChance: number;
 
   static setFromBody(body: string): DroppedItem[] {
-    const drops = WoWHeadUtil.getNewListViewData(body, 'item', 'drops');
-    console.log('Drops', drops);
+    const drops = WoWHeadUtil.getNewListViewData(body, 'item', 'drops').map(({id, modes}) => ({
+      id,
+      dropped: modes[1].count,
+      outOf: modes[1].outof,
+      dropChance: modes[1].count / modes[1].outof
+    }) as DroppedItem);
     return drops as DroppedItem[];
   }
 }
