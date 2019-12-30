@@ -3,6 +3,7 @@ import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 import {ItemLocale} from '../models/item/item-locale';
 import {WoWHeadUtil} from './wowhead.util';
+import {classBody} from '@babel/types';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -17,6 +18,33 @@ export interface Map {
 }
 
 class VendorItem {
+  id: number;
+  price: number;
+  unitPrice: number;
+  currency: number;
+  stock: number;
+  stackSize: number;
+
+  static setFromBody(body: string): VendorItem[] {
+    return WoWHeadUtil.getNewListViewData(body, 'item', 'sells')
+      .map(({id, standing, react, stack, cost, avail}) => {
+        let price = cost[0];
+        let currency: number;
+        if (cost[2]) {
+          price = cost[2][0][1];
+          currency = cost[2][0][0];
+        }
+        return {
+          id,
+          standing,
+          stock: avail,
+          price,
+          unitPrice: price / stack[0],
+          currency,
+          stackSize: stack[0]
+        };
+      });
+  }
 }
 
 class DroppedItem {
@@ -26,13 +54,12 @@ class DroppedItem {
   dropChance: number;
 
   static setFromBody(body: string): DroppedItem[] {
-    const drops = WoWHeadUtil.getNewListViewData(body, 'item', 'drops').map(({id, modes}) => ({
+    return WoWHeadUtil.getNewListViewData(body, 'item', 'drops').map(({id, modes}) => ({
       id,
       dropped: modes[1].count,
       outOf: modes[1].outof,
       dropChance: modes[1].count / modes[1].outof
     }) as DroppedItem);
-    return drops as DroppedItem[];
   }
 }
 
@@ -44,6 +71,8 @@ export class NPC {
   sells: VendorItem[] = [];
   drops: DroppedItem[] = [];
   expansionId?: number;
+  isAlliance: boolean;
+  isHorde: boolean;
 
   constructor(public id: number) {
   }
@@ -116,6 +145,7 @@ export class NPCUtil {
         .then(({body}) => {
           npc.expansionId = WoWHeadUtil.getExpansion(body);
           npc.drops = DroppedItem.setFromBody(body);
+          npc.sells = VendorItem.setFromBody(body);
           resolve(npc);
         })
         .catch(reject);
