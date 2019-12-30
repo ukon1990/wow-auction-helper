@@ -3,7 +3,6 @@ import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 import {ItemLocale} from '../models/item/item-locale';
 import {WoWHeadUtil} from './wowhead.util';
-import {classBody} from '@babel/types';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -73,6 +72,9 @@ export class NPC {
   expansionId?: number;
   isAlliance: boolean;
   isHorde: boolean;
+  minLevel?: number;
+  maxLevel?: number;
+  tag: ItemLocale = new ItemLocale();
 
   constructor(public id: number) {
   }
@@ -96,6 +98,39 @@ export class NPC {
     return this;
   }
 
+  setFromWowHead(body: string, language: Language) {
+    const regex = new RegExp(`(g_npcs\\[${this.id}\\],[\\n\\r ]{0,}\\{[\\s\\S]*?(\\);)$){1,}`, 'gm');
+    const regexResult = regex.exec(body);
+    if (regexResult && regexResult.length) {
+      const resString = regexResult[0]
+        .replace(new RegExp(`g_npcs\\[${this.id}\\], `, 'gm'), '')
+        .replace(/(\);)$/gm, '');
+      try {
+        const {maxlevel, minlevel, react, tag} = JSON.parse(`${resString}`);
+        language.locales.forEach(locale => {
+          this.tag[locale] = tag;
+        });
+
+        if (language.key === 'en') {
+          this.minLevel = minlevel;
+          this.maxLevel = maxlevel;
+          this.isAlliance = react[0] === 1;
+          this.isHorde = react[1] === 1;
+        }
+      } catch (e) {
+        if (language.key === 'en') {
+          console.error(resString, e);
+        }
+      }
+    }
+
+    if (language.key === 'en') {
+      this.expansionId = WoWHeadUtil.getExpansion(body);
+      this.drops = DroppedItem.setFromBody(body);
+      this.sells = VendorItem.setFromBody(body);
+    }
+  }
+
   private setName?(name: string, locale = 'en_GB'): void {
     this.name[locale] = name;
   }
@@ -117,8 +152,6 @@ export class NPCUtil {
       languages
         .forEach(lang => promises.push(
           promiseThrottle.add(() => this.getNpcDataWithLocale(id, lang, npc))));
-      promises.push(promiseThrottle.add(() =>
-        this.getHtmlAndSetNPCData(id, npc)));
       Promise.all(promises)
         .then(() => resolve(npc))
         .catch(reject);
@@ -128,7 +161,10 @@ export class NPCUtil {
   private static getNpcDataWithLocale(id: number, language: Language, npc: NPC) {
     return new Promise<NPC>((resolve, reject) => {
       new HttpClientUtil().get(`https://www.wowhead.com/tooltip/npc/${id}?locale=${language.key}`, true)
-        .then(({body}) => resolve(npc.setData(body, language)))
+        .then(async ({body}) => {
+          await this.getHtmlAndSetNPCData(id, npc, language);
+          resolve(npc.setData(body, language));
+        })
         .catch((error) => {
           console.error({
             id,
@@ -139,13 +175,12 @@ export class NPCUtil {
     });
   }
 
-  private static getHtmlAndSetNPCData(id: number, npc: NPC) {
+  private static getHtmlAndSetNPCData(id: number, npc: NPC, language: Language) {
     return new Promise<any>((resolve, reject) => {
-      new HttpClientUtil().get(`https://www.wowhead.com/npc=${id}`, false)
+      const urlPrefix = language.key === 'en' ? 'www' : language.key;
+      new HttpClientUtil().get(`https://${urlPrefix}.wowhead.com/npc=${id}`, false)
         .then(({body}) => {
-          npc.expansionId = WoWHeadUtil.getExpansion(body);
-          npc.drops = DroppedItem.setFromBody(body);
-          npc.sells = VendorItem.setFromBody(body);
+          npc.setFromWowHead(body, language);
           resolve(npc);
         })
         .catch(reject);

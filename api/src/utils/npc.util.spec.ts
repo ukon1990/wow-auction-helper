@@ -66,6 +66,12 @@ describe('NPCUtil', () => {
     const npc: NPC = await NPCUtil.getById(npcId);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Vizzklick');
+    expect(npc.isAlliance).toBeTruthy();
+    expect(npc.isHorde).toBeTruthy();
+    expect(npc.minLevel).toBe(43);
+    expect(npc.maxLevel).toBe(60);
+    expect(npc.tag.de_DE).toBe('Schneiderbedarf');
+    expect(npc.tag.en_GB).toBe('Tailoring Supplies');
     expect(npc.map.zoneId).toBe(440);
     expect(npc.map.coordinates[0].x).toBe(50.6);
     expect(npc.map.coordinates[0].y).toBe(28.6);
