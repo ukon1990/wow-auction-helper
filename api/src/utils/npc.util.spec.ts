@@ -7,9 +7,9 @@ describe('NPCUtil', () => {
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Felbound Wolf');
     expect(npc.name.fr_FR).toBe('Loup gangre-lié');
-    expect(npc.map.coordinates[0].x).toBe(25.4);
-    expect(npc.map.coordinates[0].y).toBe(76.4);
-    expect(npc.map.coordinates.length).toBe(23);
+    expect(npc.coordinates[0].x).toBe(25.4);
+    expect(npc.coordinates[0].y).toBe(76.4);
+    expect(npc.coordinates.length).toBe(23);
     expect(npc.expansionId).toBe(5);
     expect(npc.drops.length).toBe(182);
     const tanaanJungleTooth = npc.drops.filter(d => d.id === 128438)[0];
@@ -25,9 +25,9 @@ describe('NPCUtil', () => {
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Trak\'gen');
     expect(npc.name.fr_FR).toBe('Trak\'gen');
-    expect(npc.map.coordinates[0].x).toBe(53.4);
-    expect(npc.map.coordinates[0].y).toBe(82);
-    expect(npc.map.coordinates.length).toBe(2);
+    expect(npc.coordinates[0].x).toBe(53.4);
+    expect(npc.coordinates[0].y).toBe(82);
+    expect(npc.coordinates.length).toBe(2);
     expect(npc.expansionId).toBe(0);
     expect(npc.sells.length).toBe(16);
 
@@ -45,10 +45,10 @@ describe('NPCUtil', () => {
     const npc: NPC = await NPCUtil.getById(npcId);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Krystel');
-    expect(npc.map.zoneId).toBe(5840);
-    expect(npc.map.coordinates[0].x).toBe(84.6);
-    expect(npc.map.coordinates[0].y).toBe(60.4);
-    expect(npc.map.coordinates.length).toBe(2);
+    expect(npc.zoneId).toBe(5840);
+    expect(npc.coordinates[0].x).toBe(84.6);
+    expect(npc.coordinates[0].y).toBe(60.4);
+    expect(npc.coordinates.length).toBe(2);
     expect(npc.expansionId).toBe(4);
     expect(npc.sells.length).toBe(14);
 
@@ -72,10 +72,10 @@ describe('NPCUtil', () => {
     expect(npc.maxLevel).toBe(60);
     expect(npc.tag.de_DE).toBe('Schneiderbedarf');
     expect(npc.tag.en_GB).toBe('Tailoring Supplies');
-    expect(npc.map.zoneId).toBe(440);
-    expect(npc.map.coordinates[0].x).toBe(50.6);
-    expect(npc.map.coordinates[0].y).toBe(28.6);
-    expect(npc.map.coordinates.length).toBe(1);
+    expect(npc.zoneId).toBe(440);
+    expect(npc.coordinates[0].x).toBe(50.6);
+    expect(npc.coordinates[0].y).toBe(28.6);
+    expect(npc.coordinates.length).toBe(1);
     expect(npc.expansionId).toBe(0);
     expect(npc.sells.length).toBe(18);
 

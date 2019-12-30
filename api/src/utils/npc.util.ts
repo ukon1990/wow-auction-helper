@@ -3,6 +3,13 @@ import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 import {ItemLocale} from '../models/item/item-locale';
 import {WoWHeadUtil} from './wowhead.util';
+import {Zone} from './zone.util';
+import {QueryUtil} from './query.util';
+import {DatabaseUtil} from './database.util';
+import {LocaleUtil} from './locale.util';
+import {TextUtil} from '@ukon1990/js-utilities';
+import {ItemUtil} from './item.util';
+import {ItemHandler} from '../handlers/item.handler';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -65,7 +72,8 @@ class DroppedItem {
 export class NPC {
   name: ItemLocale = new ItemLocale();
   tooltip: string;
-  map: Map;
+  zoneId: number;
+  coordinates: Coordinates[] = [];
   completion_category: number;
   sells: VendorItem[] = [];
   drops: DroppedItem[] = [];
@@ -77,6 +85,8 @@ export class NPC {
   tag: ItemLocale = new ItemLocale();
 
   constructor(public id: number) {
+    this.name.id = id;
+    this.tag.id = id;
   }
 
   setData?({name, tooltip, map}: { name: string, tooltip: string, map: any }, language: Language): NPC {
@@ -86,14 +96,14 @@ export class NPC {
 
     if (language.key === 'en') {
       this.setTooltipData(tooltip);
-
-      this.map = {
-        zoneId: map.zone,
-        coordinates: map.coords[0].map(coords => ({
+      this.zoneId = map.zone;
+      Object.keys(map.coords).forEach(k => {
+        const list = map.coords[k].map(coords => ({
           x: coords[0],
           y: coords[1]
-        }))
-      };
+        }));
+        this.coordinates = [...this.coordinates, ...list];
+      });
     }
     return this;
   }
@@ -185,5 +195,120 @@ export class NPCUtil {
         })
         .catch(reject);
     });
+  }
+
+  static insertEntriesIntoDB(npcs: NPC[]): Promise<NPC[]> {
+    return new Promise<NPC[]>((resolve, reject) => {
+      const promises = [];
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 25,
+        promiseImplementation: Promise
+      });
+      npcs.forEach(npc => promises.push(
+        promiseThrottle.add(() => this.insertNPCIntoDB(npc))));
+      Promise.all(promises)
+        .then(() => console.log('Success!'))
+        .catch((error) => {
+          console.error(error);
+        });
+      resolve(npcs);
+    });
+  }
+
+  private static async insertNPCIntoDB(npc: NPC) {
+    return new Promise<NPC>(async (resolve, reject) => {
+
+      await this.insertNpcIntoDB(npc);
+      await this.insertNameIntoDB(npc);
+      await this.insertTagIntoDB(npc);
+      await this.insertCoordsIntoDB(npc);
+      await this.insertSellsIntoDB(npc);
+      await this.insertDropsIntoDB(npc);
+      resolve(npc);
+    });
+  }
+
+  private static async insertNpcIntoDB(npc: NPC) {
+    const sql = new QueryUtil('npc').insert({
+      id: npc.id,
+      isAlliance: npc.isAlliance,
+      isHorde: npc.isHorde,
+      minLevel: npc.minLevel,
+      maxLevel: npc.maxLevel,
+      zoneId: npc.zoneId,
+      expansionId: npc.expansionId
+    });
+    try {
+      await new DatabaseUtil().query(sql);
+    } catch (e) {
+      this.loggIfNotDuplicateError(e, sql);
+    }
+  }
+
+  private static async insertDropsIntoDB(npc: NPC) {
+    for (const drops of npc.drops) {
+      const sql = new QueryUtil('npcDrops').insert({
+        npcId: npc.id,
+        ...drops
+      });
+      try {
+        await new DatabaseUtil().query(sql);
+      } catch (e) {
+        this.loggIfNotDuplicateError(e, sql);
+      }
+    }
+  }
+
+  private static async insertSellsIntoDB(npc: NPC) {
+    for (const sells of npc.sells) {
+      const sql = new QueryUtil('npcSells').insert({
+        npcId: npc.id,
+        ...sells
+      });
+      try {
+        await new DatabaseUtil().query(sql);
+      } catch (e) {
+        this.loggIfNotDuplicateError(e, sql);
+        if (TextUtil.contains(e.error, 'FOREIGN KEY (`id`) REFERENCES `items` (`id`)')) {
+          await new ItemHandler().getById(sells.id, 'en_GB');
+        }
+      }
+    }
+  }
+
+  private static async insertCoordsIntoDB(npc: NPC) {
+    for (const coords of npc.coordinates) {
+      const sql = new QueryUtil('npcCoordinates').insert({
+        id: npc.id,
+        ...coords
+      });
+      try {
+        await new DatabaseUtil().query(sql);
+      } catch (e) {
+        this.loggIfNotDuplicateError(e, sql);
+      }
+    }
+  }
+
+  private static async insertNameIntoDB(npc: NPC) {
+    try {
+      await LocaleUtil.insertToDB('npcName', 'id', npc.name);
+    } catch (e) {
+    }
+  }
+
+  private static async insertTagIntoDB(npc: NPC) {
+    if (npc.tag && npc.tag.en_GB) {
+      try {
+        await LocaleUtil.insertToDB('npcTag', 'id', npc.tag);
+      } catch (e) {
+      }
+    }
+  }
+
+  private static loggIfNotDuplicateError(e, sql: string) {
+    if (!TextUtil.contains(e.error, 'ER_DUP_ENTRY:')) {
+      console.error('Failed with: ' + sql, e);
+    }
   }
 }

@@ -13,7 +13,10 @@ export class NpcHandler {
       ids.forEach(id => promises.push(
         promiseThrottle.add(() => NPCUtil.getById(id))));
       Promise.all(promises)
-        .then((res: NPC[]) => resolve(res))
+        .then((npcs: NPC[]) => {
+          resolve(npcs);
+          NPCUtil.insertEntriesIntoDB(npcs);
+        })
         .catch(reject);
     });
   }
