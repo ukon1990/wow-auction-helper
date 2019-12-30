@@ -1,19 +1,13 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
-import {QueryIntegrity} from '../queries/integrity.query';
+import {languages} from '../static-data/language.data';
 import {QueryUtil} from './query.util';
 import {LocaleUtil} from './locale.util';
 import {DatabaseUtil} from './database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {Language} from '../models/language.model';
 
 const PromiseThrottle: any = require('promise-throttle');
-
-class ZoneLanguage {
-  locales: string[];
-  type: string;
-  key: string;
-  territory: string;
-}
 
 export class Zone {
   id: number;
@@ -30,7 +24,7 @@ export class Zone {
     this.id = id;
   }
 
-  setData?(body: { name: string, tooltip: string }, language: ZoneLanguage): void {
+  setData?(body: { name: string, tooltip: string }, language: Language): void {
     language.locales.forEach(locale => {
       this.setName(body.name, locale);
     });
@@ -134,18 +128,6 @@ export class Zone {
 }
 
 export class ZoneUtil {
-  static languages = [
-    {key: 'en', locales: ['en_GB', 'en_US', 'pl_PL'], type: 'Type: ', territory: 'Territory: '},
-    {key: 'fr', locales: ['fr_FR'], type: 'Type: ', territory: 'Territoire: '},
-    {key: 'it', locales: ['it_IT'], type: 'Tipo: ', territory: 'Territorio: '},
-    {key: 'es', locales: ['es_MX', 'es_ES'], type: 'Tipo: ', territory: 'Territorio: '},
-    {key: 'pt', locales: ['pt_PT', 'pt_BR'], type: 'Tipo: ', territory: 'Território: '},
-    {key: 'de', locales: ['de_DE'], type: 'Art: ', territory: 'Territorium: '},
-    {key: 'ru', locales: ['ru_RU'], type: 'Тип: ', territory: 'Территория: '},
-    {key: 'kr', locales: ['ko_KR'], type: '유형: ', territory: '영토: '},
-    {key: 'cn', locales: ['zh_TW'], type: '类型: ', territory: '地域: '}
-  ];
-
   /* Istanbul ignore next */
   static setParentValuesAndAddToDB(zones: Zone[]): Promise<Zone[]> {
     return new Promise<Zone[]>((resolve, reject) => {
@@ -225,7 +207,7 @@ export class ZoneUtil {
         requestsPerSecond: 25,
         promiseImplementation: Promise
       });
-      this.languages
+      languages
         .forEach(lang => promises.push(
           promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
       Promise.all(promises)
@@ -234,7 +216,7 @@ export class ZoneUtil {
     });
   }
 
-  private static getZoneDataForLocale(id: number, language: ZoneLanguage, zone: Zone): Promise<void> {
+  private static getZoneDataForLocale(id: number, language: Language, zone: Zone): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(`https://www.wowhead.com/tooltip/zone/${id}?locale=${language.key}`, true)
         .then(({body}) => resolve(zone.setData(body, language)))

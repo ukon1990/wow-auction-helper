@@ -30,7 +30,7 @@ export class WoWHeadUtil {
     return wh;
   }
 
-  private static getExpansion(body: string): number {
+  static getExpansion(body: string): number {
     const expansionRegex = new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}/g),
       addedIn = expansionRegex.exec(body);
     if (addedIn && addedIn[0]) {
@@ -188,7 +188,7 @@ export class WoWHeadUtil {
     }));
   }
 
-  private static getNewListViewData<T>(body: string, template: string, id: string): T[] {
+  public static getNewListViewData<T>(body: string, template: string, id: string): T[] {
     const firstRegex = new RegExp(`new Listview\\({[\\n\\r ]{0,}template: '${
       template
       }',[\\n\\r ]{0,}id: '${
@@ -200,19 +200,18 @@ export class WoWHeadUtil {
     if (!ArrayUtil.isArray(result) || result.length < 2) {
       return [];
     }
-
-    const rows = result[1].split(/[\n\r]{1,}/);
-    let res = null;
-
-    rows.forEach(r => {
-      if (TextUtil.contains(r, 'data:')) {
-        res = r.replace('data: ', '');
-      }
-    });
     try {
-      return eval(res
-        .replace(/,$/g, ''));
+
+      const dataRegex = /(data:[ \r\n]{0,1}\[\{[\s\S]*?(\}\][,]{0,1})$){1,}/gm;
+      const dataResult = dataRegex.exec(result[1]);
+      if (dataResult && dataResult.length) {
+        // tslint:disable-next-line:no-eval
+        return eval(dataResult[0].replace('data: ', '')
+          .replace(/,$/g, ''));
+      }
+      return [];
     } catch (e) {
+      console.error('err', e);
       return [];
     }
   }
