@@ -3,12 +3,10 @@ import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 import {ItemLocale} from '../models/item/item-locale';
 import {WoWHeadUtil} from './wowhead.util';
-import {Zone} from './zone.util';
 import {QueryUtil} from './query.util';
 import {DatabaseUtil} from './database.util';
 import {LocaleUtil} from './locale.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {ItemUtil} from './item.util';
 import {ItemHandler} from '../handlers/item.handler';
 
 const PromiseThrottle: any = require('promise-throttle');
@@ -96,14 +94,18 @@ export class NPC {
 
     if (language.key === 'en') {
       this.setTooltipData(tooltip);
-      this.zoneId = map.zone;
-      Object.keys(map.coords).forEach(k => {
-        const list = map.coords[k].map(coords => ({
-          x: coords[0],
-          y: coords[1]
-        }));
-        this.coordinates = [...this.coordinates, ...list];
-      });
+      if (map && map.zone) {
+        this.zoneId = map.zone;
+      }
+      if (map && map.coords) {
+        Object.keys(map.coords).forEach(k => {
+          const list = map.coords[k].map(coords => ({
+            x: coords[0],
+            y: coords[1]
+          }));
+          this.coordinates = [...this.coordinates, ...list];
+        });
+      }
     }
     return this;
   }
@@ -156,7 +158,7 @@ export class NPCUtil {
         promises: Promise<any>[] = [];
 
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 25,
+        requestsPerSecond: 5,
         promiseImplementation: Promise
       });
       languages

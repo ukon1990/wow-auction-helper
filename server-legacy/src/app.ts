@@ -15,6 +15,7 @@ import * as auctionController from './controllers/auction.controller';
 import * as characterController from './controllers/character.controller';
 import {getRealmStatus} from './controllers/realm.controller';
 import {AuthUtil} from './util/auth.util';
+import {postNPCS} from './controllers/npc.controller';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({path: '.env.example'});
@@ -92,6 +93,8 @@ app.post('/api/character', characterController.postCharacter);
 // Realm status
 app.get('/api/realm/:region', getRealmStatus);
 
+app.post('/npc', postNPCS);
+
 /**
  * Primary app routes.
  */
@@ -110,7 +113,8 @@ app.get('*', (req, res) => {
 });
 
 app.post('*', (req, res) => {
-  console.log(`Attempted post vulnerability check @ ${new Date().toString()}. Contents was ${JSON.stringify(req.body)}`);
+  console.log(`Attempted post vulnerability check @ ${new Date().toString()}. Contents was ${
+    JSON.stringify(req.body)} for url: ${req.originalUrl}`);
   res.status(404).send('Not found');
 });
 

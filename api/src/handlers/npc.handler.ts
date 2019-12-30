@@ -1,5 +1,5 @@
 import {NPC, NPCUtil} from '../utils/npc.util';
-import {languages} from '../static-data/language.data';
+
 const PromiseThrottle: any = require('promise-throttle');
 
 export class NpcHandler {

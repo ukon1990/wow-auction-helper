@@ -11,9 +11,8 @@ export class ItemExtract {
         zoneMap[npcMap[k].zoneId] = npcMap[k].zoneId;
         return npcMap[k];
       });
-    console.log('NPCs from items',
-      list.sort((a, b) => this.sort(a, b)),
-      Object.keys(zoneMap).map(id => +id));
+    console.log('NPCs from IDS',
+      JSON.stringify(Object.keys(npcMap).map(id => +id)));
   }
 
   private static sort(a, b) {
