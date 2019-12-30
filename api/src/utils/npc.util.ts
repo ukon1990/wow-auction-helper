@@ -255,6 +255,7 @@ export class NPCUtil {
         await new DatabaseUtil().query(sql);
       } catch (e) {
         this.loggIfNotDuplicateError(e, sql);
+        this.addItemIfMissing(e, drops);
       }
     }
   }
@@ -269,10 +270,16 @@ export class NPCUtil {
         await new DatabaseUtil().query(sql);
       } catch (e) {
         this.loggIfNotDuplicateError(e, sql);
-        if (TextUtil.contains(e.error, 'FOREIGN KEY (`id`) REFERENCES `items` (`id`)')) {
-          await new ItemHandler().getById(sells.id, 'en_GB');
-        }
+        this.addItemIfMissing(e, sells);
       }
+    }
+  }
+
+  private static addItemIfMissing({error}, {id}: VendorItem | DroppedItem) {
+    if (TextUtil.contains(error, '`items` (`id`)')) {
+      new ItemHandler().getById(id, 'en_GB')
+        .then(() => console.log('Item added?'))
+        .catch(console.error);
     }
   }
 
