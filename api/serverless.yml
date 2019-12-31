@@ -151,19 +151,41 @@ functions:
       Lambda: Wah-zone
     handler: src/controllers/zone.getByIds
     memorySize: 256
-    timeout: 600
+    timeout: 60
     events:
       - http:
           method: post
           path: zone
           cors:
             origin: 'http://localhost:4200'
-  npc:
+  npcGetAll:
+    tags:
+      Lambda: Wah-npc-by-id
+    handler: src/controllers/npc.getById
+    memorySize: 120
+    events:
+      - http:
+          method: post
+          path: npc/{id}
+          cors:
+            origin: '*'
+  npcGetById:
+    tags:
+      Lambda: Wah-npc-by-id
+    handler: src/controllers/npc.getAll
+    memorySize: 1024
+    events:
+      - http:
+          method: post
+          path: npc/all
+          cors:
+            origin: 'http://localhost:4200'
+  npcGetByIds:
     tags:
       Lambda: Wah-npc
     handler: src/controllers/npc.getByIds
     memorySize: 256
-    timeout: 600
+    timeout: 60
     events:
       - http:
           method: post

@@ -110,7 +110,7 @@ export class NPC {
     return this;
   }
 
-  setFromWowHead(body: string, language: Language) {
+  setFromWowHead?(body: string, language: Language) {
     const regex = new RegExp(`(g_npcs\\[${this.id}\\],[\\n\\r ]{0,}\\{[\\s\\S]*?(\\);)$){1,}`, 'gm');
     const regexResult = regex.exec(body);
     if (regexResult && regexResult.length) {
@@ -157,6 +157,8 @@ export class NPC {
 }
 
 export class NPCUtil {
+  private static ignoreItemIds = {};
+
   static getById(id: number, progress?: { processed: number, length: number }) {
     return new Promise<NPC>((resolve, reject) => {
       const npc: NPC = new NPC(id),
@@ -267,7 +269,7 @@ export class NPCUtil {
   }
 
   private static insertNpcIntoDB(npc: NPC) {
-    return new Promise<any> ((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       const sql = new QueryUtil('npc').insert({
         id: npc.id,
         isAlliance: npc.isAlliance,
@@ -290,39 +292,45 @@ export class NPCUtil {
 
   private static async insertDropsIntoDB(npc: NPC) {
     for (const drops of npc.drops) {
-      const sql = new QueryUtil('npcDrops').insert({
-        npcId: npc.id,
-        ...drops
-      });
-      try {
-        await new DatabaseUtil().query(sql);
-      } catch (e) {
-        this.loggIfNotDuplicateError(e, sql);
-        // this.addItemIfMissing(e, drops);
+      if (!this.ignoreItemIds[drops.id]) {
+        const sql = new QueryUtil('npcDrops').insert({
+          npcId: npc.id,
+          ...drops
+        });
+        try {
+          await new DatabaseUtil().query(sql);
+        } catch (e) {
+          this.loggIfNotDuplicateError(e, sql);
+          this.addItemIfMissing(e, drops);
+        }
       }
     }
   }
 
   private static async insertSellsIntoDB(npc: NPC) {
     for (const sells of npc.sells) {
-      const sql = new QueryUtil('npcSells').insert({
-        npcId: npc.id,
-        ...sells
-      });
-      try {
-        await new DatabaseUtil().query(sql);
-      } catch (e) {
-        this.loggIfNotDuplicateError(e, sql);
-        // this.addItemIfMissing(e, sells);
+      if (!this.ignoreItemIds[sells.id]) {
+        const sql = new QueryUtil('npcSells').insert({
+          npcId: npc.id,
+          ...sells
+        });
+        try {
+          await new DatabaseUtil().query(sql);
+        } catch (e) {
+          this.loggIfNotDuplicateError(e, sql);
+          this.addItemIfMissing(e, sells);
+        }
       }
     }
   }
 
   private static addItemIfMissing({error}, {id}: VendorItem | DroppedItem) {
     if (TextUtil.contains(error, '`items` (`id`)')) {
+      this.ignoreItemIds[id] = true;
+      /*
       new ItemHandler().getById(id, 'en_GB')
         .then(() => console.log('Item added?'))
-        .catch(console.error);
+        .catch(console.error);*/
     }
   }
 

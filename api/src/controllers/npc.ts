@@ -9,3 +9,15 @@ exports.getByIds = (event: APIGatewayEvent, context: Context, callback: Callback
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, event, 500));
 };
+
+exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  NpcHandler.getAll(JSON.parse(event.body).locale)
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, event, 500));
+};
+
+exports.getById = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  NpcHandler.getById(+event.pathParameters.id, JSON.parse(event.body).locale)
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, event, 500));
+};

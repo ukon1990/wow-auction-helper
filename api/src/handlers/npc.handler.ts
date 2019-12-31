@@ -1,4 +1,6 @@
 import {NPC, NPCUtil} from '../utils/npc.util';
+import {DatabaseUtil} from '../utils/database.util';
+import {ItemLocale} from '../models/item/item-locale';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -23,5 +25,166 @@ export class NpcHandler {
         })
         .catch(reject);
     });
+  }
+
+  static getAll(locale?: string): Promise<NPC[]> {
+    return new Promise<NPC[]>(async (resolve, reject) => {
+      const result = [],
+        npcMap = {},
+        tagMap = {},
+        coordMap = {},
+        dropMap = {},
+        sellMap = {};
+      await new DatabaseUtil().query(`SELECT * FROM npc`)
+        .then((list: any[]) => {
+          list.forEach(row => {
+            delete row.timestamp;
+            npcMap[row.id] = row;
+            result.push(row);
+          });
+        });
+      await new DatabaseUtil().query(`SELECT * FROM npcName`)
+        .then((list: any[]) => {
+          list.forEach(row => {
+            npcMap[row.id]['name'] = row;
+            delete row.id;
+          });
+        });
+      await new DatabaseUtil().query(`SELECT * FROM npcTag`)
+        .then((list: any[]) => {
+          list.forEach(row => {
+            npcMap[row.id]['tag'] = row;
+            delete row.id;
+          });
+        });
+      await new DatabaseUtil().query(`SELECT * FROM npcCoordinates`)
+        .then((list: any[]) => {
+          list.forEach(row => {
+            delete row.timestamp;
+            if (!npcMap[row.id]['coordinates']) {
+              npcMap[row.id]['coordinates'] = [];
+            }
+            npcMap[row.id]['coordinates'].push(row);
+            delete row.id;
+          });
+        });
+      await new DatabaseUtil().query(`SELECT * FROM npcDrops`)
+        .then((list: any[]) => {
+          list.forEach(row => {
+            if (!npcMap[row.id]) {
+              return;
+            }
+            delete row.timestamp;
+            if (!npcMap[row.id]['drops']) {
+              npcMap[row.id]['drops'] = [];
+            }
+            npcMap[row.id]['drops'].push(row);
+            delete row.id;
+          });
+        });
+      await new DatabaseUtil().query(`SELECT * FROM npcSells`)
+        .then((list: any[]) => {
+          list.forEach(row => {
+            if (!npcMap[row.id]) {
+              return;
+            }
+            delete row.timestamp;
+            if (!npcMap[row.id]['sells']) {
+              npcMap[row.id]['sells'] = [];
+            }
+            npcMap[row.id]['sells'].push(row);
+            delete row.id;
+          });
+        });
+      resolve(result);
+    });
+  }
+
+  /* Fetching NPC from DB if exists */
+  static getById(id: number, locale?: string): Promise<NPC> {
+    return new Promise<NPC>((resolve, reject) => {
+      new DatabaseUtil().query(`SELECT * FROM npc WHERE id = ${id}`)
+        .then(async result => {
+          if (result && result[0]) {
+            const npc = await this.processNpcData(id, result[0], locale);
+            resolve(npc);
+          } else {
+            reject();
+          }
+        })
+        .catch(reject);
+    });
+  }
+
+  private static async processNpcData(id: number, res, locale: string) {
+    const npc: NPC = new NPC(id);
+    npc.zoneId = res.zoneId;
+    npc.isAlliance = res.isAlliance === 1;
+    npc.isHorde = res.isHorde === 1;
+    npc.minLevel = res.minLevel;
+    npc.maxLevel = res.maxLevel;
+    npc.expansionId = res.expansionId;
+    await this.getNameForNpc(id, npc, locale);
+    await this.getTagForNpc(id, npc, locale);
+    await this.getDropsForNpc(id, npc);
+    await this.getSellsForNpc(id, npc);
+    await new DatabaseUtil().query(`select * from npcCoordinates where id = ${id}`)
+      .then(sellerResult => {
+        if (sellerResult) {
+          npc.coordinates = sellerResult.map(coords => {
+            delete coords.id;
+            delete coords.timestamp;
+            return coords;
+          });
+        }
+      })
+      .catch(() => npc.coordinates = []);
+    return npc;
+  }
+
+  private static async getSellsForNpc(id: number, npc: NPC) {
+    await new DatabaseUtil().query(`select * from npcSells where npcId = ${id}`)
+      .then(sellerResult => {
+        if (sellerResult) {
+          npc.sells = sellerResult.map(item => {
+            delete item.npcId;
+            delete item.timestamp;
+            return item;
+          });
+        }
+      })
+      .catch(() => npc.sells = []);
+  }
+
+  private static async getNameForNpc(id: number, npc: NPC, locale: string) {
+    await new DatabaseUtil().query(`select * from npcName where id = ${id}`)
+      .then((name: ItemLocale) => {
+        delete name[0].id;
+        npc.name = locale ? name[0][locale] : name[0];
+      });
+  }
+
+  private static async getTagForNpc(id: number, npc: NPC, locale: string) {
+    await new DatabaseUtil().query(`select * from npcTag where id = ${id}`)
+      .then((tag: ItemLocale) => {
+        if (tag && tag[0]) {
+          delete tag[0].id;
+          npc.tag = locale ? tag[0][locale] : tag[0];
+        }
+      });
+  }
+
+  private static async getDropsForNpc(id: number, npc: NPC) {
+    await new DatabaseUtil().query(`select * from npcDrops where npcId = ${id}`)
+      .then(dropResult => {
+        if (dropResult) {
+          npc.drops = dropResult.map(item => {
+            delete item.npcId;
+            delete item.timestamp;
+            return item;
+          });
+        }
+      })
+      .catch(() => npc.drops = []);
   }
 }

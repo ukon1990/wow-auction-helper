@@ -1,10 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {PageEvent} from '@angular/material';
-
-import {Angulartics2} from 'angulartics2';
 import {ItemService} from '../../../services/item.service';
 import {FormControl} from '@angular/forms';
-import {Subscription} from 'rxjs';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription} from '../models/column-description';
 import {Sorter} from '../../../models/sorter';

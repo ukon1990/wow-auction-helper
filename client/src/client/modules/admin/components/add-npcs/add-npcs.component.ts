@@ -5,6 +5,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {ItemExtract} from '../../../../utils/item-extract.util';
 import {FormControl, FormGroup} from '@angular/forms';
 import {ColumnDescription} from '../../../table/models/column-description';
+import {GameBuild} from '../../../../utils/game-build.util';
 
 @Component({
   selector: 'wah-add-npcs',
@@ -24,8 +25,13 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'string'},
     {key: 'tag', title: 'Tag', dataType: 'string'},
+    {key: 'minLevel', title: 'Min level', dataType: 'number'},
+    {key: 'maxLevel', title: 'Min level', dataType: 'number'},
     {key: 'sellCount', title: 'Sell #', dataType: 'number'},
-    {key: 'dropCount', title: 'Drop #', dataType: 'number'}
+    {key: 'dropCount', title: 'Drop #', dataType: 'number'},
+    {key: 'expansion', title: 'Expansion', dataType: 'string'},
+    {key: 'isAlliance', title: 'Alliance', dataType: 'boolean'},
+    {key: 'isHorde', title: 'Horde', dataType: 'boolean'}
   ];
 
   constructor(private service: NpcService) {
@@ -75,7 +81,12 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
           name: npc.name.en_GB,
           tag: npc.tag.en_GB,
           sellCount: npc.sells.length,
-          dropCount: npc.drops.length
+          dropCount: npc.drops.length,
+          isAlliance: npc.isAlliance,
+          isHorde: npc.isHorde,
+          minLevel: npc.minLevel,
+          maxLevel: npc.maxLevel,
+          expansion: npc.expansionId ? GameBuild.expansionMap[npc.expansionId] : '-1'
         })), ...this.addedNpcs, ];
         console.log('Completed batch', index, this.addedNpcs);
         this.form.controls.index.setValue(index + 1);
