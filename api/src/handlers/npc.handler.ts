@@ -10,8 +10,12 @@ export class NpcHandler {
         promiseImplementation: Promise
       });
       const promises = [];
+      const progress = {
+        processed: 0,
+        length: ids.length
+      };
       ids.forEach(id => promises.push(
-        promiseThrottle.add(() => NPCUtil.getById(id))));
+        promiseThrottle.add(() => NPCUtil.getById(id, progress))));
       Promise.all(promises)
         .then((npcs: NPC[]) => {
           resolve(npcs);

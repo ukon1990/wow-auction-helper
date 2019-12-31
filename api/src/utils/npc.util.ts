@@ -126,8 +126,13 @@ export class NPC {
         if (language.key === 'en') {
           this.minLevel = minlevel;
           this.maxLevel = maxlevel;
-          this.isAlliance = react[0] === 1;
-          this.isHorde = react[1] === 1;
+          if (react && react.length) {
+            this.isAlliance = react[0] === 1;
+            this.isHorde = react[1] === 1;
+          } else {
+            this.isAlliance = false;
+            this.isHorde = false;
+          }
         }
       } catch (e) {
         if (language.key === 'en') {
@@ -152,7 +157,7 @@ export class NPC {
 }
 
 export class NPCUtil {
-  static getById(id: number) {
+  static getById(id: number, progress?: { processed: number, length: number }) {
     return new Promise<NPC>((resolve, reject) => {
       const npc: NPC = new NPC(id),
         promises: Promise<any>[] = [];
@@ -165,8 +170,23 @@ export class NPCUtil {
         .forEach(lang => promises.push(
           promiseThrottle.add(() => this.getNpcDataWithLocale(id, lang, npc))));
       Promise.all(promises)
-        .then(() => resolve(npc))
-        .catch(reject);
+        .then(() => {
+          if (progress) {
+            progress.processed++;
+            console.log(`NPC fetch progress: ${
+              Math.round((progress.processed / progress.length) * 100)}% (${
+              progress.processed} of ${progress.length}) - ${npc.name.en_GB}`);
+          }
+          resolve(npc);
+        })
+        .catch((error) => {
+          if (progress) {
+            progress.processed++;
+            console.log(`NPC fetch progress: ${
+              Math.round((progress.processed / progress.length) * 100)}% (${progress.processed} of ${progress.length}) - Error`);
+          }
+          reject(error);
+        });
     });
   }
 

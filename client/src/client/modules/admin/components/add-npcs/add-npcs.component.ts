@@ -19,7 +19,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   storageName = 'admin-add-npcs-map';
   addedNpcs = [];
   form: FormGroup = new FormGroup({
-    index: new FormControl(0)
+    index: new FormControl()
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
@@ -29,18 +29,19 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   ];
 
   constructor(private service: NpcService) {
+    let previousIndex = 0;
+    const fromStorage = localStorage.getItem(this.storageName);
+    if (fromStorage) {
+      previousIndex = +fromStorage;
+    }
+    this.form.controls.index.setValue(previousIndex);
     this.sm.add(SharedService.events.items, () => {
       this.list = ItemExtract.fromItems(SharedService.itemsUnmapped);
-      this.npcBatchedIds = [];
-      for (let i = 0; i < this.list.length; i++) {
-        const batchIndex = Math.ceil(i / this.batchSize) - 1;
-        if (!this.npcBatchedIds[batchIndex]) {
-          this.npcBatchedIds[batchIndex] = [];
-        }
-        this.npcBatchedIds[batchIndex].push(this.list[i].id);
-      }
+      this.groupIdsIntoBatches();
+    });
 
-      console.log('NPC id batches', this.npcBatchedIds);
+    this.sm.add(this.form.controls.index.valueChanges, (index) => {
+      localStorage.setItem(this.storageName, index);
     });
   }
 
@@ -49,6 +50,19 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sm.unsubscribe();
+  }
+
+  private groupIdsIntoBatches() {
+    this.npcBatchedIds = [];
+    for (let i = 0; i < this.list.length; i++) {
+      const batchIndex = Math.ceil(i / this.batchSize) - 1;
+      if (!this.npcBatchedIds[batchIndex]) {
+        this.npcBatchedIds[batchIndex] = [];
+      }
+      this.npcBatchedIds[batchIndex].push(this.list[i].id);
+    }
+
+    console.log('NPC id batches', this.npcBatchedIds);
   }
 
   addNpcs() {
