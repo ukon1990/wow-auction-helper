@@ -2,7 +2,7 @@
   <mat-form-field>
     <mat-select formControlName="index">
       <mat-option *ngFor="let ids of npcBatchedIds; let i = index" [value]="i">
-        Batch ID = {{ i | number }}
+        Batch ID = {{ i | number }} / {{ npcBatchedIds.length | number }}
       </mat-option>
     </mat-select>
   </mat-form-field>

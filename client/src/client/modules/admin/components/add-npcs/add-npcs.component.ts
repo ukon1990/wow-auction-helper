@@ -22,10 +22,10 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
     index: new FormControl()
   });
   columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'name', title: 'Name', dataType: 'string'},
     {key: 'tag', title: 'Tag', dataType: 'string'},
-    {key: 'sellsCount', title: 'Sell #', dataType: 'number'},
-    {key: 'dropsCount', title: 'Drop #', dataType: 'number'}
+    {key: 'sellCount', title: 'Sell #', dataType: 'number'},
+    {key: 'dropCount', title: 'Drop #', dataType: 'number'}
   ];
 
   constructor(private service: NpcService) {
@@ -66,15 +66,20 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   }
 
   addNpcs() {
-    this.service.getIds(this.npcBatchedIds[this.form.value.index])
+    const index = this.form.value.index;
+    console.log('Starding on barch ', index);
+    this.service.getIds(this.npcBatchedIds[index])
       .then((response: any[]) => {
         console.log(response);
-        this.addedNpcs = [...this.addedNpcs, response.map(npc => ({
+        this.addedNpcs = [...response.map(npc => ({
           name: npc.name.en_GB,
           tag: npc.tag.en_GB,
           sellCount: npc.sells.length,
           dropCount: npc.drops.length
-        }))];
+        })), ...this.addedNpcs, ];
+        console.log('Completed batch', index, this.addedNpcs);
+        this.form.controls.index.setValue(index + 1);
+        this.addNpcs();
       })
       .catch(console.error);
   }

@@ -28,7 +28,7 @@ export class DatabaseUtil {
           return;
         }
 
-        console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
+        // console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
         this.connection.query(query, (err: MysqlError, rows: any[]) => {
           this.connection.end();
 

@@ -163,7 +163,7 @@ export class NPCUtil {
         promises: Promise<any>[] = [];
 
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5,
+        requestsPerSecond: languages.length,
         promiseImplementation: Promise
       });
       languages
@@ -178,6 +178,11 @@ export class NPCUtil {
               progress.processed} of ${progress.length}) - ${npc.name.en_GB}`);
           }
           resolve(npc);
+          this.insertNPCIntoDB(npc)
+            .then(() => {
+              // console.log(`Added ${npc.name.en_GB} to db`);
+            })
+            .catch(console.error);
         })
         .catch((error) => {
           if (progress) {
@@ -194,8 +199,13 @@ export class NPCUtil {
     return new Promise<NPC>((resolve, reject) => {
       new HttpClientUtil().get(`https://www.wowhead.com/tooltip/npc/${id}?locale=${language.key}`, true)
         .then(async ({body}) => {
-          await this.getHtmlAndSetNPCData(id, npc, language);
-          resolve(npc.setData(body, language));
+          try {
+            await this.getHtmlAndSetNPCData(id, npc, language);
+            resolve(npc.setData(body, language));
+          } catch (e) {
+            console.error(e);
+            resolve(npc);
+          }
         })
         .catch((error) => {
           console.error({
@@ -240,31 +250,42 @@ export class NPCUtil {
   private static async insertNPCIntoDB(npc: NPC) {
     return new Promise<NPC>(async (resolve, reject) => {
 
-      await this.insertNpcIntoDB(npc);
-      await this.insertNameIntoDB(npc);
-      await this.insertTagIntoDB(npc);
-      await this.insertCoordsIntoDB(npc);
-      await this.insertSellsIntoDB(npc);
-      await this.insertDropsIntoDB(npc);
-      resolve(npc);
+      this.insertNpcIntoDB(npc)
+        .then(async () => {
+          await this.insertNameIntoDB(npc);
+          await this.insertTagIntoDB(npc);
+          await this.insertCoordsIntoDB(npc);
+          await this.insertSellsIntoDB(npc);
+          await this.insertDropsIntoDB(npc);
+
+          resolve(npc);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
 
-  private static async insertNpcIntoDB(npc: NPC) {
-    const sql = new QueryUtil('npc').insert({
-      id: npc.id,
-      isAlliance: npc.isAlliance,
-      isHorde: npc.isHorde,
-      minLevel: npc.minLevel,
-      maxLevel: npc.maxLevel,
-      zoneId: npc.zoneId,
-      expansionId: npc.expansionId
+  private static insertNpcIntoDB(npc: NPC) {
+    return new Promise<any> ((resolve, reject) => {
+      const sql = new QueryUtil('npc').insert({
+        id: npc.id,
+        isAlliance: npc.isAlliance,
+        isHorde: npc.isHorde,
+        minLevel: npc.minLevel,
+        maxLevel: npc.maxLevel,
+        zoneId: npc.zoneId,
+        expansionId: npc.expansionId
+      });
+      try {
+        new DatabaseUtil().query(sql)
+          .then(resolve)
+          .catch(reject);
+      } catch (e) {
+        reject(e);
+        this.loggIfNotDuplicateError(e, sql);
+      }
     });
-    try {
-      await new DatabaseUtil().query(sql);
-    } catch (e) {
-      this.loggIfNotDuplicateError(e, sql);
-    }
   }
 
   private static async insertDropsIntoDB(npc: NPC) {
@@ -277,7 +298,7 @@ export class NPCUtil {
         await new DatabaseUtil().query(sql);
       } catch (e) {
         this.loggIfNotDuplicateError(e, sql);
-        this.addItemIfMissing(e, drops);
+        // this.addItemIfMissing(e, drops);
       }
     }
   }
@@ -292,7 +313,7 @@ export class NPCUtil {
         await new DatabaseUtil().query(sql);
       } catch (e) {
         this.loggIfNotDuplicateError(e, sql);
-        this.addItemIfMissing(e, sells);
+        // this.addItemIfMissing(e, sells);
       }
     }
   }

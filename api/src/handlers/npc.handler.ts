@@ -6,7 +6,7 @@ export class NpcHandler {
   static getByIds(ids: number[]): Promise<NPC[]> {
     return new Promise<NPC[]>((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 25,
+        requestsPerSecond: 10,
         promiseImplementation: Promise
       });
       const promises = [];
@@ -19,7 +19,7 @@ export class NpcHandler {
       Promise.all(promises)
         .then((npcs: NPC[]) => {
           resolve(npcs);
-          NPCUtil.insertEntriesIntoDB(npcs);
+          // NPCUtil.insertEntriesIntoDB(npcs);
         })
         .catch(reject);
     });
