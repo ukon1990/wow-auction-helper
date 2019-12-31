@@ -4,7 +4,7 @@ import {SetupComponent} from './settings/components/setup/setup.component';
 import {CraftingComponent} from './crafting/components/crafting.component';
 import {IsRegisteredService} from '../Is-registered.service';
 import {DashboardComponent} from './dashboard/components/dashboard.component';
-import {UpdateComponent} from './core/components/update/update.component';
+import {UpdateComponent} from './admin/components/update/update.component';
 import {AuctionsComponent} from './auction/components/auctions/auctions.component';
 import {TradeVendorsComponent} from './core/components/trade-vendors/trade-vendors.component';
 import {WatchlistComponent} from './dashboard/components/manage/watchlist.component';
@@ -28,6 +28,7 @@ import {CustomPricesComponent} from './settings/components/crafting-settings/cus
 import {CustomProcComponent} from './settings/components/crafting-settings/custom-proc/custom-proc.component';
 import {CharactersComponent} from './character/components/characters.component';
 import {NotificationSettingsComponent} from './settings/components/notification-settings/notification-settings.component';
+import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -79,13 +80,6 @@ const TOOLS_ROUTE: TitledRoute = {
       title: 'Disenchanting',
       path: 'disenchanting',
       component: DisenchantingComponent,
-      isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP
-    },
-    {
-      title: 'App data updater',
-      path: 'ud',
-      component: UpdateComponent,
-      canActivate: [IsRegisteredService],
       isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP
     }
   ]
@@ -148,6 +142,25 @@ const SETTINGS_ROUTE: TitledRoute = {
     }]
 };
 
+const ADMIN_ROUTE: TitledRoute = {
+  title: 'Admin',
+  path: 'admin',
+  isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
+  canActivate: [IsRegisteredService],
+  children: [
+    {
+      title: 'Update and add items',
+      component: UpdateComponent,
+      path: 'update-or-add'
+    },
+    {
+      title: 'Add NPCs',
+      component: AddNpcsComponent,
+      path: 'add-npcs'
+    }
+  ]
+};
+
 export const appRoutes: TitledRoutes = [
   /*
     Handeling dashboard or setup rediret in the app.component constructor
@@ -185,6 +198,7 @@ export const appRoutes: TitledRoutes = [
   TOOLS_ROUTE,
   SETTINGS_ROUTE,
   ABOUT_ROUTE,
+  ADMIN_ROUTE,
   {path: '**', redirectTo: ''}
 ];
 

@@ -156,10 +156,10 @@ functions:
           method: post
           path: zone
           cors:
-            origin: 'localhost:4200'
+            origin: 'http://localhost:4200'
   npc:
     tags:
-      Lambda: Wah-zone
+      Lambda: Wah-npc
     handler: src/controllers/npc.getByIds
     memorySize: 256
     events:
@@ -167,7 +167,7 @@ functions:
           method: post
           path: npc
           cors:
-            origin: 'localhost:4200'
+            origin: 'http://localhost:4200'
   character:
     tags:
       Lambda: Wah-character

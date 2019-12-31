@@ -4,7 +4,6 @@ import {CraftingService} from '../../../../services/crafting.service';
 import {Recipe} from '../../../crafting/models/recipe';
 import {ItemService} from '../../../../services/item.service';
 import {Filters} from '../../../../utils/filtering';
-import {FormControl} from '@angular/forms';
 import {environment} from '../../../../../environments/environment';
 import {Item} from '../../../../models/item/item';
 import {AuctionItem} from '../../../auction/models/auction-item.model';

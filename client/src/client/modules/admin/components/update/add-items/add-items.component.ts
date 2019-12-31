@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ItemService} from '../../../../../services/item.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
+import {ItemExtract} from '../../../../../utils/item-extract.util';
 
 @Component({
   selector: 'wah-add-items',
