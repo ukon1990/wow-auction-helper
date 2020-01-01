@@ -9,6 +9,10 @@ export class NpcService {
   constructor(private http: HttpClient) {
   }
 
+  getAll(): Promise<any[]> {
+    return this.http.post('http://localhost:3000/npc/all', {locale: 'en_GB'}).toPromise() as Promise<any[]>;
+  }
+
   getIds(ids: number[]) {
     return this.http.post('http://localhost:3000/npc', {ids}).toPromise();
   }

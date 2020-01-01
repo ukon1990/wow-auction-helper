@@ -21,7 +21,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   storageName = 'admin-add-npcs-map';
   addedNpcs = [];
   form: FormGroup = new FormGroup({
-    index: new FormControl()
+    index: new FormControl(0)
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'string'},
@@ -34,14 +34,10 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
     {key: 'isAlliance', title: 'Alliance', dataType: 'boolean'},
     {key: 'isHorde', title: 'Horde', dataType: 'boolean'}
   ];
+  existingNPCsMap = {};
+  stop = false;
 
   constructor(private service: NpcService) {
-    let previousIndex = 0;
-    const fromStorage = localStorage.getItem(this.storageName);
-    if (fromStorage) {
-      previousIndex = +fromStorage;
-    }
-    this.form.controls.index.setValue(previousIndex);
     this.sm.add(SharedService.events.items, () => {
       this.list = ItemExtract.fromItems(SharedService.itemsUnmapped);
       this.groupIdsIntoBatches();
@@ -50,9 +46,22 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
     this.sm.add(this.form.controls.index.valueChanges, (index) => {
       localStorage.setItem(this.storageName, index);
     });
+
+    this.getAllNPCSFromDBAndSetBatches();
+  }
+
+  getAllNPCSFromDBAndSetBatches() {
+    this.service.getAll()
+      .then((result) => {
+        result.forEach(npc => this.existingNPCsMap[npc.id] = npc);
+        console.log('NPC get all', result);
+        this.groupIdsIntoBatches();
+      })
+      .catch(console.error);
   }
 
   ngOnInit() {
+
   }
 
   ngOnDestroy(): void {
@@ -61,18 +70,23 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
 
   private groupIdsIntoBatches() {
     this.npcBatchedIds = [];
-    for (let i = 0; i < this.list.length; i++) {
-      const batchIndex = Math.ceil(i / this.batchSize) - 1;
-      if (!this.npcBatchedIds[batchIndex]) {
-        this.npcBatchedIds[batchIndex] = [];
-      }
-      this.npcBatchedIds[batchIndex].push(this.list[i].id);
+    const list = this.list.filter(npc => !this.existingNPCsMap[npc.id]);
+    for (let i = 0; i < list.length; i++) {
+       const batchIndex = Math.ceil(i / this.batchSize) - 1;
+       if (!this.npcBatchedIds[batchIndex]) {
+         this.npcBatchedIds[batchIndex] = [];
+       }
+       this.npcBatchedIds[batchIndex].push(list[i].id);
     }
 
     console.log('NPC id batches', this.npcBatchedIds);
   }
 
   addNpcs() {
+    if (this.stop) {
+      this.stop = false;
+      return;
+    }
     const index = this.form.value.index;
     console.log('Starding on barch ', index);
     this.service.getIds(this.npcBatchedIds[index])
@@ -89,7 +103,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
           minLevel: npc.minLevel,
           maxLevel: npc.maxLevel,
           expansion: npc.expansionId ? GameBuild.expansionMap[npc.expansionId] : '-1'
-        })), ...this.addedNpcs, ];
+        })), ...this.addedNpcs];
         console.log('Completed batch', index, this.addedNpcs);
         setTimeout(() => {
           this.form.controls.index.setValue(index + 1);
@@ -99,7 +113,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
       .catch((error) => {
         this.consecutiveFailedAttempts++;
         const delay = this.getRandomMS() + this.getRandomMS() * this.consecutiveFailedAttempts;
-        console.error(`Retrying batch after ${ delay }- Error: `, error);
+        console.error(`Retrying batch after ${delay}- Error: `, error);
         setTimeout(() => {
           this.addNpcs();
         }, delay);

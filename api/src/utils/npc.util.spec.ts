@@ -87,4 +87,21 @@ describe('NPCUtil', () => {
     expect(crimsonRobePattern.unitPrice).toBe(5000);
     expect(crimsonRobePattern.currency).toBeFalsy();
   });
+
+  it('Can handle skinning', async () => {
+    const npcId = 135510;
+    const npc: NPC = await NPCUtil.getById(npcId);
+    expect(npc.id).toBe(npcId);
+    expect(npc.name.en_GB).toBe('Azuresail the Ancient');
+    expect(npc.isAlliance).toBeFalsy();
+    expect(npc.isHorde).toBeFalsy();
+    expect(npc.minLevel).toBe(115);
+    expect(npc.maxLevel).toBe(120);
+    expect(npc.tag.en_GB).toBeFalsy();
+    expect(npc.skinning.length).toBe(6);
+
+    const shimmerScale = npc.skinning.filter(d => d.id === 153050)[0];
+    expect(shimmerScale.id).toBe(153050);
+    expect(shimmerScale.dropChance).toBe(1);
+  });
 });

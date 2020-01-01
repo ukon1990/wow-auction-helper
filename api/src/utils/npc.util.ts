@@ -67,6 +67,36 @@ class DroppedItem {
   }
 }
 
+class SkinnedItem {
+  id: number;
+  count: number;
+  dropChance: number;
+
+  static setFromBody(body: string): SkinnedItem[] {
+    return WoWHeadUtil.getNewListViewData(body, 'item', 'skinning')
+      .map(({id, pctstack, count, totalCount}) => {/*
+        let dropChance = 0;
+        console.log(pctstack);
+        try {
+          if (pctstack) {
+            // tslint:disable-next-line:no-eval
+            const stackChance = eval(pctstack);
+            Object.keys(stackChance)
+              .forEach(size => dropChance += stackChance[size]);
+            console.log(stackChance, dropChance);
+          }
+        } catch (e) {
+        }*/
+        return {
+          id,
+          count,
+          totalCount,
+          dropChance: count / totalCount
+        };
+      });
+  }
+}
+
 export class NPC {
   name: ItemLocale = new ItemLocale();
   tooltip: string;
@@ -75,6 +105,7 @@ export class NPC {
   completion_category: number;
   sells: VendorItem[] = [];
   drops: DroppedItem[] = [];
+  skinning: SkinnedItem[] = [];
   expansionId?: number;
   isAlliance: boolean;
   isHorde: boolean;
@@ -145,6 +176,7 @@ export class NPC {
       this.expansionId = WoWHeadUtil.getExpansion(body);
       this.drops = DroppedItem.setFromBody(body);
       this.sells = VendorItem.setFromBody(body);
+      this.skinning = SkinnedItem.setFromBody(body);
     }
   }
 

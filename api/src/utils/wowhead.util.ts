@@ -194,26 +194,38 @@ export class WoWHeadUtil {
       }',[\\n\\r ]{0,}id: '${
       id
       }',([\\s\\S]*?)}\\);`, 'g');
-    // const dataRegex = new RegExp(/data: \[([\s\S]*?)\}\]/g);
     const result = firstRegex.exec(body);
 
     if (!ArrayUtil.isArray(result) || result.length < 2) {
       return [];
     }
     try {
-
       const dataRegex = /(data:[ \r\n]{0,1}\[\{[\s\S]*?(\}\][,]{0,1})$){1,}/gm;
       const dataResult = dataRegex.exec(result[1]);
       if (dataResult && dataResult.length) {
+        const totalCount = this.getTotalCount(result);
         // tslint:disable-next-line:no-eval
         return eval(dataResult[0].replace('data: ', '')
-          .replace(/,$/g, ''));
+          .replace(/,$/g, '')).map(entry => ({
+          ...entry, totalCount
+        }));
       }
       return [];
     } catch (e) {
       console.error('err', e);
       return [];
     }
+  }
+
+  private static getTotalCount(result: RegExpExecArray) {
+    const totalCountRegex = /totalCount:[ ]{0,}[\d]{1,100},/gm;
+    const totalCountResult = totalCountRegex.exec(result[1]);
+    if (totalCountResult && totalCountResult.length) {
+      return +totalCountResult[0]
+        .replace(/totalCount:[ ]{0,}/g, '')
+        .replace(/,$/g, '');
+    }
+    return undefined;
   }
 
   public static cleanName(name: string): string {

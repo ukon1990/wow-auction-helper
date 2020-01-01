@@ -6,8 +6,14 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <button mat-raised-button (click)="addNpcs()">
+  <button class="ml-2" mat-raised-button (click)="addNpcs()">
     Process batch
+  </button>
+  <button class="ml-2" mat-raised-button color="accent" (click)="stop = true">
+    Stop
+  </button>
+  <button class="ml-2" mat-raised-button color="primary" (click)="getAllNPCSFromDBAndSetBatches()">
+    Generate batches
   </button>
 </form>
 

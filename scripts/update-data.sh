@@ -17,6 +17,7 @@ for i in ${locales[@]}; do
     gzip < 'json/recipes-'$i'.json' > 'gzip/recipes-'$i'.json.gz'
     curl --header "Content-Type: application/json" --request POST --data '{"timestamp": "2000-06-30T00:00:00.000Z"}' 'http://localhost:3000/api/pet?locale='$i'' --output 'json/pets-'$i'.json'
     gzip < 'json/pets-'$i'.json' > 'gzip/pets-'$i'.json.gz'
+    curl -d '{"locale":"'$i'"}' -H "Content-Type: application/json" -X POST 'http://localhost:3000/npc/all' -o 'gzip/npc-'$i'.json'
 done
 
 #mv json/*.gzip gzip/
