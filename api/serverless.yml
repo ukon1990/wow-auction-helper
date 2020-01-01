@@ -149,8 +149,8 @@ functions:
   zone:
     tags:
       Lambda: Wah-zone
-    handler: src/controllers/zone.getByIds
-    memorySize: 256
+    handler: src/controllers/zone.getAll
+    memorySize: 128
     timeout: 60
     events:
       - http:
@@ -162,7 +162,7 @@ functions:
     tags:
       Lambda: Wah-npc-by-id
     handler: src/controllers/npc.getById
-    memorySize: 120
+    memorySize: 128
     events:
       - http:
           method: post

@@ -1,6 +1,10 @@
 import {Zone, ZoneUtil} from '../utils/zone.util';
 
 export class ZoneHandler {
+  static getAll(locale: string): Promise<Zone[]> {
+    return ZoneUtil.getFromDB(locale);
+  }
+
   static getById(id: number): Promise<Zone> {
     return ZoneUtil.getById(id);
   }
