@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.20",
-    "@angular/cli": "8.3.20",
+    "@angular/cli": "8.3.21",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "~8.2.14",
     "@types/aws-lambda": "8.10.31",
@@ -79,9 +79,6 @@
     "karma-jasmine-html-reporter": "^1.4.2",
     "protractor": "~5.4.2",
     "requirejs": "^2.3.6",
-    "serverless": "^1.50.0",
-    "serverless-offline": "^5.10.1",
-    "serverless-webpack": "^5.3.1",
     "source-map-support": "^0.5.13",
     "supervisor": "^0.12.0",
     "ts-loader": "^6.0.4",
