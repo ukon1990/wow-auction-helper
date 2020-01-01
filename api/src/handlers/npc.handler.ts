@@ -31,75 +31,95 @@ export class NpcHandler {
     return new Promise<NPC[]>(async (resolve, reject) => {
       const conn = new DatabaseUtil(false),
         result = [],
-        npcMap = {},
-        tagMap = {},
-        coordMap = {},
-        dropMap = {},
-        sellMap = {};
-      await conn.query(`SELECT * FROM npc;`)
-        .then((list: any[]) => {
-          list.forEach(row => {
-            delete row.timestamp;
-            npcMap[row.id] = row;
-            result.push(row);
-          });
-        });
-      await conn.query(`SELECT * FROM npcName`)
-        .then((list: any[]) => {
-          list.forEach(row => {
-            npcMap[row.id]['name'] = locale ? row[locale] : row;
-            delete row.id;
-          });
-        });
-      await conn.query(`SELECT * FROM npcTag`)
-        .then((list: any[]) => {
-          list.forEach(row => {
-            npcMap[row.id]['tag'] = locale ? row[locale] : row;
-            delete row.id;
-          });
-        });
-      await conn.query(`SELECT * FROM npcCoordinates`)
-        .then((list: any[]) => {
-          list.forEach(row => {
-            delete row.timestamp;
-            if (!npcMap[row.id]['coordinates']) {
-              npcMap[row.id]['coordinates'] = [];
-            }
-            npcMap[row.id]['coordinates'].push(row);
-            delete row.id;
-          });
-        });
-      await conn.query(`SELECT * FROM npcDrops`)
-        .then((list: any[]) => {
-          list.forEach(row => {
-            if (!npcMap[row.npcId]) {
-              return;
-            }
-            delete row.timestamp;
-            if (!npcMap[row.npcId]['drops']) {
-              npcMap[row.npcId]['drops'] = [];
-            }
-            npcMap[row.npcId]['drops'].push(row);
-            delete row.npcId;
-          });
-        });
-      await conn.query(`SELECT * FROM npcSells`)
-        .then((list: any[]) => {
-          list.forEach(row => {
-            if (!npcMap[row.npcId]) {
-              return;
-            }
-            delete row.timestamp;
-            if (!npcMap[row.npcId]['sells']) {
-              npcMap[row.npcId]['sells'] = [];
-            }
-            npcMap[row.npcId]['sells'].push(row);
-            delete row.npcId;
-          });
-        });
+        npcMap = {};
+      await this.getAllNPCs(conn, npcMap, result);
+      await this.getAllNPCNames(conn, npcMap, locale);
+      await this.getAllTags(conn, npcMap, locale);
+      await this.getAllCoordinates(conn, npcMap);
+      await this.getAllNPCDrops(conn, npcMap);
+      await this.getAllNPCSoldItems(conn, npcMap);
       conn.end();
       resolve(result);
     });
+  }
+
+  private static async getAllNPCSoldItems(conn: DatabaseUtil, npcMap: {}) {
+    await conn.query(`SELECT * FROM npcSells`)
+      .then((list: any[]) => {
+        list.forEach(row => {
+          if (!npcMap[row.npcId]) {
+            return;
+          }
+          delete row.timestamp;
+          if (!npcMap[row.npcId]['sells']) {
+            npcMap[row.npcId]['sells'] = [];
+          }
+          npcMap[row.npcId]['sells'].push(row);
+          delete row.npcId;
+        });
+      });
+  }
+
+  private static async getAllNPCDrops(conn: DatabaseUtil, npcMap: {}) {
+    await conn.query(`SELECT * FROM npcDrops`)
+      .then((list: any[]) => {
+        list.forEach(row => {
+          if (!npcMap[row.npcId]) {
+            return;
+          }
+          delete row.timestamp;
+          if (!npcMap[row.npcId]['drops']) {
+            npcMap[row.npcId]['drops'] = [];
+          }
+          npcMap[row.npcId]['drops'].push(row);
+          delete row.npcId;
+        });
+      });
+  }
+
+  private static async getAllCoordinates(conn: DatabaseUtil, npcMap: {}) {
+    await conn.query(`SELECT * FROM npcCoordinates`)
+      .then((list: any[]) => {
+        list.forEach(row => {
+          delete row.timestamp;
+          if (!npcMap[row.id]['coordinates']) {
+            npcMap[row.id]['coordinates'] = [];
+          }
+          npcMap[row.id]['coordinates'].push(row);
+          delete row.id;
+        });
+      });
+  }
+
+  private static async getAllTags(conn: DatabaseUtil, npcMap: {}, locale: string) {
+    await conn.query(`SELECT * FROM npcTag`)
+      .then((list: any[]) => {
+        list.forEach(row => {
+          npcMap[row.id]['tag'] = locale ? row[locale] : row;
+          delete row.id;
+        });
+      });
+  }
+
+  private static async getAllNPCNames(conn: DatabaseUtil, npcMap: {}, locale: string) {
+    await conn.query(`SELECT * FROM npcName`)
+      .then((list: any[]) => {
+        list.forEach(row => {
+          npcMap[row.id]['name'] = locale ? row[locale] : row;
+          delete row.id;
+        });
+      });
+  }
+
+  private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result: any[]) {
+    await conn.query(`SELECT * FROM npc;`)
+      .then((list: any[]) => {
+        list.forEach(row => {
+          delete row.timestamp;
+          npcMap[row.id] = row;
+          result.push(row);
+        });
+      });
   }
 
   /* Fetching NPC from DB if exists */

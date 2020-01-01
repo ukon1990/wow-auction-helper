@@ -18,6 +18,8 @@ export class ItemUtil {
     delete item['timestamp'];
     if (item.itemSource) {
       item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
+      delete item.itemSource.soldBy;
+      delete item.itemSource.droppedBy;
     }
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
     if (item.itemSpells) {

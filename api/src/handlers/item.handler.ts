@@ -64,11 +64,15 @@ export class ItemHandler {
     new DatabaseUtil()
       .query(
         ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
-      .then((rows: any[]) =>
+      .then((rows: any[]) => {
+        const items = ItemUtil.handleItems(rows);
         Response.send({
           timestamp: rows[0] ? rows[0].timestamp : new Date().toJSON(),
-          items: ItemUtil.handleItems(rows)
-        }, callback))
+          items
+        }, callback);
+        items.length = 0;
+        rows.length = 0;
+      })
       .catch(error =>
         Response.error(callback, error, event));
   }

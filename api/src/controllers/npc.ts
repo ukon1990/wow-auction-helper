@@ -12,7 +12,10 @@ exports.getByIds = (event: APIGatewayEvent, context: Context, callback: Callback
 
 exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   NpcHandler.getAll(JSON.parse(event.body).locale)
-    .then(result => Response.send(result, callback))
+    .then(result => {
+      Response.send(result, callback);
+      result.length = 0;
+    })
     .catch(error => Response.error(callback, error, event, 500));
 };
 

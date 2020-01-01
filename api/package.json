@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
-    "start": "sls offline start",
+    "start": "sls offline start --useSeparateProcesses",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:watchAll": "jest --watchAll",
