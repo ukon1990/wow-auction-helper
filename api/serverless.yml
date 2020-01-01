@@ -185,7 +185,7 @@ functions:
       Lambda: Wah-npc
     handler: src/controllers/npc.getByIds
     memorySize: 256
-    timeout: 60
+    timeout: 30
     events:
       - http:
           method: post

@@ -187,14 +187,18 @@ export class NPCUtil {
             .catch(console.error);
         })
         .catch((error) => {
-          if (progress) {
-            progress.processed++;
-            console.log(`NPC fetch progress: ${
-              Math.round((progress.processed / progress.length) * 100)}% (${progress.processed} of ${progress.length}) - Error`);
-          }
+          this.addErrorToProgress(progress, 'Not found');
           reject(error);
         });
     });
+  }
+
+  private static addErrorToProgress(progress: { processed: number; length: number }, msg: string) {
+    if (progress) {
+      progress.processed++;
+      console.log(`NPC fetch progress: ${
+        Math.round((progress.processed / progress.length) * 100)}% (${progress.processed} of ${progress.length}) - Error: ${msg}`);
+    }
   }
 
   private static getNpcDataWithLocale(id: number, language: Language, npc: NPC) {
@@ -350,6 +354,9 @@ export class NPCUtil {
 
   private static async insertNameIntoDB(npc: NPC) {
     try {
+      if (Object.keys(npc.name).filter(k => npc.name[k] === undefined).length > 0) {
+        return;
+      }
       await LocaleUtil.insertToDB('npcName', 'id', npc.name);
     } catch (e) {
     }

@@ -15,7 +15,8 @@ import {GameBuild} from '../../../../utils/game-build.util';
 export class AddNpcsComponent implements OnInit, OnDestroy {
   list = [];
   npcBatchedIds = [];
-  batchSize = 100;
+  batchSize = 25;
+  consecutiveFailedAttempts = 0;
   sm = new SubscriptionManager();
   storageName = 'admin-add-npcs-map';
   addedNpcs = [];
@@ -77,6 +78,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
     this.service.getIds(this.npcBatchedIds[index])
       .then((response: any[]) => {
         console.log(response);
+        this.consecutiveFailedAttempts = 0;
         this.addedNpcs = [...response.map(npc => ({
           name: npc.name.en_GB,
           tag: npc.tag.en_GB,
@@ -89,9 +91,22 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
           expansion: npc.expansionId ? GameBuild.expansionMap[npc.expansionId] : '-1'
         })), ...this.addedNpcs, ];
         console.log('Completed batch', index, this.addedNpcs);
-        this.form.controls.index.setValue(index + 1);
-        this.addNpcs();
+        setTimeout(() => {
+          this.form.controls.index.setValue(index + 1);
+          this.addNpcs();
+        }, this.getRandomMS());
       })
-      .catch(console.error);
+      .catch((error) => {
+        this.consecutiveFailedAttempts++;
+        const delay = this.getRandomMS() + this.getRandomMS() * this.consecutiveFailedAttempts;
+        console.error(`Retrying batch after ${ delay }- Error: `, error);
+        setTimeout(() => {
+          this.addNpcs();
+        }, delay);
+      });
+  }
+
+  private getRandomMS() {
+    return Math.round(Math.random() * 1000);
   }
 }
