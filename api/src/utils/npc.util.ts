@@ -112,6 +112,9 @@ export class NPC {
   minLevel?: number;
   maxLevel?: number;
   tag: ItemLocale = new ItemLocale();
+  type: number;
+  classification: number;
+  avgGoldDrop: number; // Can not be used reliably as raw gold dropped.
 
   constructor(public id: number) {
     this.name.id = id;
@@ -149,7 +152,7 @@ export class NPC {
         .replace(new RegExp(`g_npcs\\[${this.id}\\], `, 'gm'), '')
         .replace(/(\);)$/gm, '');
       try {
-        const {maxlevel, minlevel, react, tag} = JSON.parse(`${resString}`);
+        const {maxlevel, minlevel, react, tag, classification, type} = JSON.parse(`${resString}`);
         language.locales.forEach(locale => {
           this.tag[locale] = tag;
         });
@@ -164,6 +167,14 @@ export class NPC {
             this.isAlliance = false;
             this.isHorde = false;
           }
+
+          if (type !== undefined) {
+            this.type = type;
+          }
+
+          if (classification !== undefined) {
+            this.classification = classification;
+          }
         }
       } catch (e) {
         if (language.key === 'en') {
@@ -174,6 +185,7 @@ export class NPC {
 
     if (language.key === 'en') {
       this.expansionId = WoWHeadUtil.getExpansion(body);
+      this.avgGoldDrop = this.getGoldDrop(body);
       this.drops = DroppedItem.setFromBody(body);
       this.sells = VendorItem.setFromBody(body);
       this.skinning = SkinnedItem.setFromBody(body);
@@ -185,6 +197,16 @@ export class NPC {
   }
 
   private setTooltipData?(tooltip: string): void {
+  }
+
+  private getGoldDrop?(body: string): number {
+    const goldRegex = /money=[\d]{1,}/gm,
+      goldResult = goldRegex.exec(body);
+    if (goldResult && goldResult[0]) {
+      return +goldResult[0]
+        .replace(/money=/, '');
+    }
+    return 0;
   }
 }
 

@@ -1,12 +1,19 @@
 import {NPC, NPCUtil} from './npc.util';
+import {environment} from '../../../client/src/environments/environment';
 
 describe('NPCUtil', () => {
+  beforeAll(() => {
+    environment.test = true;
+  });
   it('Can fetch data for mob', async () => {
     const npcId = 90517;
     const npc: NPC = await NPCUtil.getById(npcId);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Felbound Wolf');
     expect(npc.name.fr_FR).toBe('Loup gangre-lié');
+    expect(npc.avgGoldDrop).toBe(6521);
+    expect(npc.type).toBe(15); // Aberration
+    expect(npc.classification).toBe(0);
     expect(npc.coordinates[0].x).toBe(25.4);
     expect(npc.coordinates[0].y).toBe(76.4);
     expect(npc.coordinates.length).toBe(23);
@@ -25,6 +32,9 @@ describe('NPCUtil', () => {
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Trak\'gen');
     expect(npc.name.fr_FR).toBe('Trak\'gen');
+    expect(npc.avgGoldDrop).toBe(0);
+    expect(npc.type).toBe(7); // Humanoid
+    expect(npc.classification).toBe(0);
     expect(npc.coordinates[0].x).toBe(53.4);
     expect(npc.coordinates[0].y).toBe(82);
     expect(npc.coordinates.length).toBe(2);
@@ -103,5 +113,16 @@ describe('NPCUtil', () => {
     const shimmerScale = npc.skinning.filter(d => d.id === 153050)[0];
     expect(shimmerScale.id).toBe(153050);
     expect(shimmerScale.dropChance).toBe(1);
+  });
+
+  it('Can handle worth if present', async () => {
+    const npcId = 152364;
+    const npc: NPC = await NPCUtil.getById(npcId);
+    expect(npc.id).toBe(npcId);
+    expect(npc.name.en_GB).toBe('Radiance of Azshara');
+    expect(npc.classification).toBe(1);
+    expect(npc.minLevel).toBe(9999);
+    expect(npc.maxLevel).toBe(9999);
+    expect(npc.avgGoldDrop).toBe(599824); // 59g 98s 24c
   });
 });

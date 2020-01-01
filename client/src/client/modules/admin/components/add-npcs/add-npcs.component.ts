@@ -40,6 +40,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   constructor(private service: NpcService) {
     this.sm.add(SharedService.events.items, () => {
       this.list = ItemExtract.fromItems(SharedService.itemsUnmapped);
+      console.log(this.list);
       this.groupIdsIntoBatches();
     });
 
