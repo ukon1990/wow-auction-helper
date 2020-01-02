@@ -6,6 +6,7 @@ import {LocaleUtil} from './locale.util';
 import {DatabaseUtil} from './database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {Language} from '../models/language.model';
+import {ApiResponse} from '../models/api-response.model';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -161,8 +162,9 @@ export class ZoneUtil {
   }
 
   /* Istanbul ignore next */
-  static getFromDB(locale = 'en_GB'): Promise<Zone[]> {
-    return new DatabaseUtil().query(`
+  static getFromDB(locale = 'en_GB'): Promise<ApiResponse<Zone>> {
+    return new Promise<ApiResponse<Zone>>((resolve, reject) => {
+      new DatabaseUtil().query(`
     SELECT
              i.id,
              COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
@@ -170,11 +172,34 @@ export class ZoneUtil {
              typeId,
              parentId,
              minLevel,
-             maxLevel
+             maxLevel,
              timestamp
       FROM zone as i
       LEFT OUTER JOIN zoneName as l
-      ON i.id = l.id;`);
+      ON i.id = l.id;`)
+        .then((list) => {
+          let timestamp;
+          list.forEach(row => {
+            if (!timestamp || +new Date(row.timestamp) > +new Date(timestamp)) {
+              timestamp = row.timestamp;
+            }
+
+            if (row.minLevel === 'undefined') {
+              row.minLevel = undefined;
+            } else {
+              row.minLevel = +row.minLevel;
+            }
+            if (row.maxLevel === 'undefined') {
+              row.maxLevel = undefined;
+            } else {
+              row.maxLevel = +row.maxLevel;
+            }
+            delete row.timestamp;
+          });
+          resolve(new ApiResponse<Zone>(timestamp, list, 'zones'));
+        })
+        .catch(reject);
+    });
   }
 
   private static insertZoneIntoDB(zone: Zone): Promise<any> {

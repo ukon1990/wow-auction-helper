@@ -66,7 +66,7 @@ export class ItemService {
       this.dbService.clearItems();
       SharedService.itemsUnmapped.length = 0;
       this.openSnackbar('Downloading the item DB for first time use. This might take a couple minutes(~27 MB).');
-      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/items-${locale}.json.gz`)
+      await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz`)
         .toPromise()
         .then((response: ItemResponse) => {
           SharedService.itemsUnmapped = [];

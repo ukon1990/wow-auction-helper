@@ -1,6 +1,7 @@
 import {NPC, NPCUtil} from '../utils/npc.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {ItemLocale} from '../models/item/item-locale';
+import {ApiResponse} from '../models/api-response.model';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -27,10 +28,13 @@ export class NpcHandler {
     });
   }
 
-  static getAll(locale?: string): Promise<NPC[]> {
-    return new Promise<NPC[]>(async (resolve, reject) => {
+  static getAll(locale?: string, timestamp?: string): Promise<ApiResponse<NPC>> {
+    return new Promise<ApiResponse<NPC>>(async (resolve, reject) => {
       const conn = new DatabaseUtil(false),
-        result = [],
+        result = {
+          timestamp: timestamp,
+          list: []
+        },
         npcMap = {};
       await this.getAllNPCs(conn, npcMap, result);
       await this.getAllNPCNames(conn, npcMap, locale);
@@ -39,7 +43,7 @@ export class NpcHandler {
       await this.getAllNPCDrops(conn, npcMap);
       await this.getAllNPCSoldItems(conn, npcMap);
       conn.end();
-      resolve(result);
+      resolve(new ApiResponse<NPC>(result.timestamp, result.list, 'npcs'));
     });
   }
 
@@ -111,13 +115,16 @@ export class NpcHandler {
       });
   }
 
-  private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result: any[]) {
+  private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result) {
     await conn.query(`SELECT * FROM npc;`)
-      .then((list: any[]) => {
+      .then((list) => {
         list.forEach(row => {
-          delete row.timestamp;
           npcMap[row.id] = row;
-          result.push(row);
+          result.list.push(row);
+          if (!result.timestamp || +new Date(result.timestamp) < +new Date(result.timestamp)) {
+            result.timestamp = row.timestamp;
+          }
+          delete row.timestamp;
         });
       });
   }
@@ -126,7 +133,7 @@ export class NpcHandler {
   static getById(id: number, locale?: string): Promise<NPC> {
     return new Promise<NPC>((resolve, reject) => {
       const conn = new DatabaseUtil(false);
-        conn.query(`SELECT * FROM npc WHERE id = ${id}`)
+      conn.query(`SELECT * FROM npc WHERE id = ${id}`)
         .then(async result => {
           if (result && result[0]) {
             const npc = await this.processNpcData(id, result[0], locale, conn);

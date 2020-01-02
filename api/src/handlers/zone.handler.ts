@@ -1,7 +1,8 @@
 import {Zone, ZoneUtil} from '../utils/zone.util';
+import {ApiResponse} from '../models/api-response.model';
 
 export class ZoneHandler {
-  static getAll(locale: string): Promise<Zone[]> {
+  static getAll(locale: string): Promise<ApiResponse<Zone>> {
     return ZoneUtil.getFromDB(locale);
   }
 
@@ -23,9 +24,9 @@ export class ZoneHandler {
   private static getFetchMissingIdsFrom(ids: number[]) {
     return new Promise<Zone[]>((resolve, reject) => {
       ZoneUtil.getFromDB()
-        .then((zones) => {
+        .then((response) => {
           const zoneIdMap = {};
-          zones.forEach(z => zoneIdMap[z.id] = z.id);
+          response['zones'].forEach(z => zoneIdMap[z.id] = z.id);
 
           const missingIds = ids.filter(id => !zoneIdMap[id]);
 

@@ -53,7 +53,7 @@ export class CraftingService {
 
     if (!timestamp) {
       this.dbService.clearRecipes();
-      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${locale}.json.gz`)
+      await this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz`)
         .toPromise()
         .then((result: RecipeResponse) => {
           timestamp = result.timestamp;

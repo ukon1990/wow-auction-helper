@@ -27,7 +27,7 @@ export class PetsService {
     let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
 
     if (!timestamp) {
-      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/pets-${ locales }.json.gz`)
+      await this._http.get(`${Endpoints.S3_BUCKET}/pet/${ locales }.json.gz`)
         .toPromise()
         .then((response: PetResponse) => {
           timestamp = response.timestamp;
