@@ -26,4 +26,7 @@ export class GameBuild {
     110,
     120
   ];
+  static territories = ['Alliance', 'Horde', 'Contested', 'Word PvP', 'Sanctuary', 'PvP'];
+
+  static zoneType = ['Zone', 'City', 'Dungeon', 'Raid', 'Scenario', 'Artifact Acquisition', 'Battleground'];
 }

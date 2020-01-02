@@ -2,34 +2,32 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {BehaviorSubject} from 'rxjs';
-import {NPC} from '../models/npc.model';
+import {Zone} from '../models/zone.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NpcService {
-  private storageName = 'timestamp_npcs';
-  isLoading = false;
-  list: BehaviorSubject<NPC[]> = new BehaviorSubject<NPC[]>([]);
-  mapped: BehaviorSubject<any> = new BehaviorSubject<any>({});
+export class ZoneService {
+  private storageName = 'timestamp_zone';
+  list: BehaviorSubject<Zone[]> = new BehaviorSubject([]);
+  mapped: BehaviorSubject<Map<number, Zone>> = new BehaviorSubject(new Map());
 
   constructor(private http: HttpClient) {
   }
 
-  getAll(): Promise<NPC[]> {
+  getAll(): Promise<any[]> {
     const locale = localStorage['locale'];
-    this.isLoading = true;
     return new Promise<any[]>((resolve, reject) => {
-      this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz`)
+      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz`)
         .toPromise()
         .then((response) => {
-          const list = response['npcs'],
-            map = {};
-          this.isLoading = false;
+          const list = response['zones'],
+            map = new Map();
           localStorage[this.storageName] = response['timestamp'];
-          list.forEach(npc => map[npc.id] = npc);
-          this.list.next(list);
+          list.forEach(zone =>
+            map.set(zone.id, zone));
           this.mapped.next(map);
+          this.list.next(list);
           resolve(list);
         })
         .catch(console.error);

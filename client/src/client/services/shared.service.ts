@@ -17,7 +17,6 @@ import { AuctionPet } from '../modules/auction/models/auction-pet.model';
 import { Notification } from '../models/user/notification';
 import { CustomProc } from '../modules/crafting/models/custom-proc';
 import { WoWUction } from '../modules/auction/models/wowuction.model';
-import { Zone } from '../models/zone.model';
 import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
 import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
@@ -95,7 +94,6 @@ export class SharedService {
   public static selectedItemId: number;
   public static selectedPetSpeciesId: AuctionPet;
   public static selectedSeller: Seller;
-  public static zoneMap: Map<number, Zone>;
 
 
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();

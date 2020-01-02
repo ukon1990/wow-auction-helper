@@ -61,7 +61,7 @@ export class RealmListComponent implements OnInit, OnDestroy {
     this.selectedDataset.data = this.realms;
   }
 
-  realmSelect(row): void {
+  realmSelect({row}): void {
     if (row.timeSincePreviousDump) {
       return;
     }

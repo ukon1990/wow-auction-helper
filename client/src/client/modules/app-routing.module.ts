@@ -29,6 +29,8 @@ import {CustomProcComponent} from './settings/components/crafting-settings/custo
 import {CharactersComponent} from './character/components/characters.component';
 import {NotificationSettingsComponent} from './settings/components/notification-settings/notification-settings.component';
 import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
+import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/details.component';
+import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -81,6 +83,23 @@ const TOOLS_ROUTE: TitledRoute = {
       path: 'disenchanting',
       component: DisenchantingComponent,
       isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP
+    },
+    {
+      title: 'Vendors and mobs(NPCs)',
+      path: 'npc',
+      isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
+      children: [
+        {
+          title: 'List',
+          path: '',
+          component: NpcListComponent,
+        },
+        {
+          title: 'NPC Details',
+          path: ':id',
+          component: NpcDetailsComponent
+        }
+      ]
     }
   ]
 };

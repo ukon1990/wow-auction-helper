@@ -21,10 +21,9 @@
   </thead>
   <tbody>
   <tr *ngFor="let d of filteredData | slice: getFromValue():getToValue(); let i = index"
-      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}"
-      (click)="rowClicked.emit(d)">
+      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
     <ng-container *ngFor="let c of columns;">
-      <td [class]="c.cssClass" *ngIf="displayColumn(c)">
+      <td [class]="c.cssClass" *ngIf="displayColumn(c)" (click)="this.rowClickEvent(c, d)">
           <span [ngSwitch]="c.dataType">
             <span *ngSwitchCase="'name'"
                   [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''" (click)="select(d)">

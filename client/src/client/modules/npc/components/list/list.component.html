@@ -1,0 +1,19 @@
+NPC!
+<mat-tab-group>
+  <mat-tab label="Lootable mobs ({{ table.dropped.data.length | number }})">
+    <wah-data-table
+            [id]="'id'"
+            [columns]="table.dropped.columns"
+            [data]="table.dropped.data"
+            [numOfRows]="20"
+            (rowClicked)="onRowClick($event)"></wah-data-table>
+  </mat-tab>
+  <mat-tab label="Vendors ({{ table.sold.data.length | number }})">
+    <wah-data-table
+            [id]="'id'"
+            [columns]="table.sold.columns"
+            [data]="table.sold.data"
+            [numOfRows]="20"
+            (rowClicked)="onRowClick($event)"></wah-data-table>
+  </mat-tab>
+</mat-tab-group>

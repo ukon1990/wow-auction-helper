@@ -16,6 +16,8 @@ import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {Crafting} from '../modules/crafting/models/crafting';
 import {Auction} from '../modules/auction/models/auction.model';
 import {ItemExtract} from '../utils/item-extract.util';
+import {NpcService} from '../modules/npc/services/npc.service';
+import {ZoneService} from '../modules/zone/service/zone.service';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +44,8 @@ export class BackgroundDownloadService {
     private craftingService: CraftingService,
     private auctionsService: AuctionsService,
     private petService: PetsService,
+    private npcService: NpcService,
+    private zoneService: ZoneService,
     private dbService: DatabaseService) {
 
 
@@ -81,7 +85,9 @@ export class BackgroundDownloadService {
     await Promise.all([
       this.loadItems(),
       this.loadPets(),
+      this.loadNpc(),
       this.loadRecipes(),
+      this.loadZones(),
       this.loadThirdPartyAPI(),
       this.realmService.getStatus(SharedService.user.region, SharedService.user.realm)
     ])
@@ -209,5 +215,13 @@ export class BackgroundDownloadService {
           });
       }
     }
+  }
+
+  private loadNpc() {
+    return this.npcService.getAll();
+  }
+
+  private loadZones() {
+    return this.zoneService.getAll();
   }
 }

@@ -19,6 +19,7 @@ import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart.model';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {RowClickEvent} from '../models/row-click-event.model';
 
 @Component({
   selector: 'wah-data-table',
@@ -42,7 +43,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() disableItemsPerPage: boolean;
   @Input() filterParameter: string;
 
-  @Output() rowClicked: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowClicked: EventEmitter<RowClickEvent<any>> = new EventEmitter();
 
   filteredData = [];
   sm = new SubscriptionManager();
@@ -398,5 +399,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       return SharedService.recipesMapPerItemKnown[id];
     }
     return false;
+  }
+
+  rowClickEvent(c: ColumnDescription, d: any): void {
+    this.rowClicked.emit(new RowClickEvent(c, d));
   }
 }
