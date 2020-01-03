@@ -31,7 +31,7 @@ export class QueryUtil<T> {
     Object.keys(object)
       .forEach(k => {
         const value = this.getSQLFriendlyString(object[k]);
-        if (object[k] && typeof value !== 'boolean') {
+        if (object[k] !== undefined && typeof value !== 'boolean') {
           columns.push(k);
           values.push(value);
         }
