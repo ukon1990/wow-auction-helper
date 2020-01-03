@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ItemService} from '../../../../../services/item.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
-import {ItemExtract} from '../../../../../utils/item-extract.util';
+import {NpcService} from '../../../../npc/services/npc.service';
+import {Item} from '../../../../../models/item/item';
 
 @Component({
   selector: 'wah-add-items',
@@ -24,8 +25,12 @@ export class AddItemsComponent implements OnInit {
   input: FormControl = new FormControl();
   columns = [
     {title: 'ID', key: 'id', dataType: 'string'},
-    {title: 'Name', key: 'name', dataType: 'string'},
+    {title: 'Name', key: 'name', dataType: 'name'},
     {title: 'Is new', key: 'isNew', dataType: 'boolean'}
+  ];
+  columnsFailedItem = [
+    {title: 'ID', key: 'id', dataType: 'string'},
+    {title: 'Message', key: 'message', dataType: 'string'},
   ];
   columnsFailed = [
     {title: 'ID', key: 'spellID', dataType: 'string'},
@@ -33,7 +38,7 @@ export class AddItemsComponent implements OnInit {
   ];
   form: FormGroup;
 
-  constructor(private service: ItemService, private fb: FormBuilder) {
+  constructor(private service: ItemService, private fb: FormBuilder, private npcService: NpcService) {
     this.form = this.fb.group({
       input: new FormControl(),
       action: new FormControl(this.dbActions[0])
@@ -69,7 +74,17 @@ export class AddItemsComponent implements OnInit {
   }
 
   async addItem(index: number) {
-    const id = this.progress.ids[index];
+    const concurrentLimit = 20;
+    const ids = this.progress.ids.slice(index, index + concurrentLimit);
+    await Promise.all(ids.map(async id =>
+      await this.processItem(id)));
+    index = index + concurrentLimit;
+    if (index < this.progress.ids.length) {
+      setTimeout(() => this.addItem(index));
+    }
+  }
+
+  private async processItem(id) {
     if (this.shouldUpdate()) {
       await this.service.updateItem(id)
         .then((item) =>
@@ -79,7 +94,8 @@ export class AddItemsComponent implements OnInit {
         });
     } else {
       if (SharedService.items[id] && !this.shouldUpdate()) {
-        this.progress.existing.push({id: id, name: SharedService.items[id].name, isNew: false});
+        const {name, icon}: Item = SharedService.items[id];
+        this.progress.existing.push({id: id, name, icon, isNew: false});
       } else {
         await this.service.addItem(id)
           .then((item) =>
@@ -89,18 +105,15 @@ export class AddItemsComponent implements OnInit {
           });
       }
     }
-    index++;
-    if (index < this.progress.ids.length) {
-      this.addItem(index);
-    }
   }
 
-  private handleServiceResult(item, id) {
-    if (item['error']) {
-      this.progress.failed.push({id: id, message: item['error']});
+  private handleServiceResult({error, name, icon}, id) {
+    if (error) {
+      this.progress.failed = [{id, message: error}, ...this.progress.failed];
       return;
     }
-    this.progress.new.push({id: id, name: item.name, isNew: true});
+    this.progress.new = [{id, name, isNew: true, icon}, ...this.progress.new];
+    console.log('Progress report', this.progress);
   }
 
   getProgress(): number {
@@ -113,5 +126,28 @@ export class AddItemsComponent implements OnInit {
 
   private shouldUpdate() {
     return this.dbActions[1] === this.form.getRawValue().action;
+  }
+
+  addMissingNPCItems() {
+    const map = {};
+    this.npcService.list.value.forEach(npc => {
+      if (npc.sells) {
+        npc.sells.forEach(({id}) => {
+          if (!SharedService.items[id]) {
+            map[id] = id;
+          }
+        });
+      }
+      if (npc.drops) {
+        npc.drops.forEach(({id}) => {
+          if (!SharedService.items[id]) {
+            map[id] = id;
+          }
+        });
+      }
+    });
+
+    console.log('Missing from NPC count', Object.keys(map).length);
+    this.form.controls.input.setValue(Object.keys(map).join(','));
   }
 }

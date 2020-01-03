@@ -90,12 +90,10 @@ const TOOLS_ROUTE: TitledRoute = {
       isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
       children: [
         {
-          title: 'List',
           path: '',
           component: NpcListComponent,
         },
         {
-          title: 'NPC Details',
           path: ':id',
           component: NpcDetailsComponent
         }

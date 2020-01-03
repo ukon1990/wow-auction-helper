@@ -23,9 +23,15 @@
       </mat-form-field>
       <button class="col" mat-raised-button type="submit">
         Add
-      </button> <button class="col" mat-raised-button type="button" (click)="setMissingReagentItems()">
-      Get from missing reagents
-    </button>
+      </button>
+      <button class="col" mat-raised-button type="button" (click)="setMissingReagentItems()">
+        Get from missing reagents
+      </button>
+      <button class="col"
+              type="button"
+              mat-raised-button (click)="addMissingNPCItems()">
+        Get from Vendors and mobs
+      </button>
     </form>
   </mat-card-actions>
 
@@ -46,6 +52,7 @@
       <mat-tab label="New ({{progress.new.length}})">
         <wah-data-table
                 [id]="'id'"
+                [iconSize]="22"
                 [columns]="columns"
                 [data]="progress.new"
         ></wah-data-table>
@@ -53,6 +60,7 @@
       <mat-tab label="Existing ({{progress.existing.length}})">
         <wah-data-table
                 [id]="'id'"
+                [iconSize]="22"
                 [columns]="columns"
                 [data]="progress.existing"
         ></wah-data-table>
@@ -60,7 +68,8 @@
       <mat-tab label="Failed ({{progress.failed.length}})">
         <wah-data-table
                 [id]="'id'"
-                [columns]="columnsFailed"
+                [iconSize]="22"
+                [columns]="columnsFailedItem"
                 [data]="progress.failed"
         ></wah-data-table>
       </mat-tab>

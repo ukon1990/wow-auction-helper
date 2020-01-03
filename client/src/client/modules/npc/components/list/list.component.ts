@@ -2,12 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NpcService} from '../../services/npc.service';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {NPC} from '../../models/npc.model';
+import {DroppedItem, NPC, VendorItem} from '../../models/npc.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {Zone} from '../../../zone/models/zone.model';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
 import {Router} from '@angular/router';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {Filters} from '../../../../utils/filtering';
 
 @Component({
   selector: 'wah-list',
@@ -24,31 +26,45 @@ export class ListComponent implements OnInit, OnDestroy {
     {key: 'maxLevel', title: 'Max level', dataType: 'number'}
   ];
   table = {
-    dropped: { columns: [
+    dropped: {
+      columns: [
         ...this.commonColumns,
         {key: 'dropCount', title: 'Drop#', dataType: 'number'},
         {key: 'vendorValue', title: 'Vendor value', dataType: 'gold'},
         {key: 'buyoutValue', title: 'AH value', dataType: 'gold'},
         {key: 'score', title: 'Score', dataType: 'number'}
-      ], data: []},
-    sold: { columns: [
+      ], data: []
+    },
+    sold: {
+      columns: [
         ...this.commonColumns,
         {key: 'sellCount', title: 'Sell#', dataType: 'number'},
         {key: 'limitedSupplyCount', title: 'Limited supply', dataType: 'number'},
         {key: 'roi', title: 'Potential profit', dataType: 'gold'},
-      ], data: []}
+      ], data: []
+    }
   };
   sm = new SubscriptionManager();
+  form: FormGroup;
 
   constructor(private service: NpcService, private auctionService: AuctionsService, private zoneService: ZoneService,
-              private router: Router) {
+              private router: Router, private fb: FormBuilder) {
+    this.form = fb.group({
+      minSaleRate: null,
+      minAvgDailySold: null,
+      minAHValue: 0,
+      minVendorValue: 0
+    });
     this.sm.add(this.service.list, (data: NPC[]) => {
       this.list = data;
       this.mapDataToTable(data);
     });
     this.sm.add(this.auctionService.events.groupedList, () => {
-      this.mapDataToTable(this.service.list.value);
+      this.mapDataToTable();
     });
+
+    this.sm.add(
+      this.form.valueChanges, () => this.mapDataToTable());
   }
 
   ngOnInit() {
@@ -58,12 +74,14 @@ export class ListComponent implements OnInit, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  private mapDataToTable(data: NPC[]) {
+  private mapDataToTable(data: NPC[] = this.service.list.value) {
     this.table.dropped.data = [];
     this.table.sold.data = [];
     data.forEach((npc) => {
-      const {score, buyoutValue, vendorValue} = NPC.calculateValueOfDrops(npc.drops);
-      const {limitedSupplyCount, roi} = NPC.calculateVendorValue(npc.sells);
+      const drops = npc.drops && npc.drops.filter(item => this.filter(item)) || [];
+      const sells = npc.sells && npc.sells.filter(item => this.filter(item)) || [];
+      const {score, buyoutValue, vendorValue} = NPC.calculateValueOfDrops(drops);
+      const {limitedSupplyCount, roi} = NPC.calculateVendorValue(sells);
       const obj = {
         id: npc.id,
         name: npc.name,
@@ -72,22 +90,28 @@ export class ListComponent implements OnInit, OnDestroy {
         locations: npc.coordinates ? npc.coordinates.length : 0,
         minLevel: npc.minLevel,
         maxLevel: npc.maxLevel,
-        dropCount: npc.drops ? npc.drops.length : 0,
-        sellCount: npc.sells ? npc.sells.length : 0,
+        dropCount: drops.length,
+        sellCount: sells.length,
         buyoutValue,
         vendorValue,
         score,
         limitedSupplyCount,
         roi
       };
-      if (npc.drops && npc.drops.length > 0) {
+      if (drops && drops.length > 0) {
         this.table.dropped.data.push(obj);
       }
-      if (npc.sells && npc.sells.length > 0) {
+      if (sells && sells.length > 0) {
         this.table.sold.data.push(obj);
       }
     });
     console.log('NPCs', this.table);
+  }
+
+  private filter({id}: DroppedItem | VendorItem) {
+    const {minSaleRate, minAvgDailySold} = this.form.value;
+    return Filters.isSaleRateMatch(id, minSaleRate) &&
+      Filters.isDailySoldMatch(id, minAvgDailySold);
   }
 
   private getZoneName(npc: NPC) {

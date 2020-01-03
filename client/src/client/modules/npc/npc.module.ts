@@ -8,6 +8,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {RouterModule} from '@angular/router';
 import {MatButtonModule} from '@angular/material/button';
 import {UtilModule} from '../util/util.module';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material/input';
 
 
 
@@ -20,7 +22,9 @@ import {UtilModule} from '../util/util.module';
     MatTabsModule,
     RouterModule,
     MatButtonModule,
-    UtilModule
+    UtilModule,
+    ReactiveFormsModule,
+    MatInputModule
   ]
 })
 export class NpcModule { }

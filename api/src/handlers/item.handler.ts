@@ -65,9 +65,10 @@ export class ItemHandler {
       .query(
         ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
       .then((rows: any[]) => {
-        const items = ItemUtil.handleItems(rows);
+        const ts = rows[0] ? rows[0].timestamp : new Date().toJSON(),
+          items = ItemUtil.handleItems(rows);
         Response.send({
-          timestamp: rows[0] ? rows[0].timestamp : new Date().toJSON(),
+          timestamp: ts,
           items
         }, callback);
         items.length = 0;
@@ -82,30 +83,35 @@ export class ItemHandler {
     return new Promise<Item>(async (resolve, reject) => {
       await this.getFreshItem(id, locale)
         .then(async item => {
-          resolve(item);
 
-          const friendlyItem: Item = await QueryIntegrity.getVerified('items', item);
+          await QueryIntegrity.getVerified('items', item)
+            .then((friendlyItem) => {
+              if (!friendlyItem) {
+                console.log(`Failed to add item: ${id} did not match the model`);
+                reject('The item did not follow the data model - ' + item.id);
+                return;
+              }
 
-          if (!friendlyItem) {
-            console.log(`Failed to add item: ${id} did not match the model`);
-            reject('The item did not follow the data model - ' + item.id);
-            return;
-          }
-
-          const query = new QueryUtil('items').insert(friendlyItem);
-          console.log('Insert item SQL:', query);
-          await new DatabaseUtil()
-            .query(query)
-            .then(async itemSuccess => {
-              console.log(`Successfully added ${friendlyItem.name} (${id})`, itemSuccess);
-              await LocaleUtil.insertToDB(
-                'item_name_locale',
-                'id',
-                item.nameLocales)
-                .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
-                .catch(console.error);
+              const query = new QueryUtil('items').insert(friendlyItem);
+              console.log('Insert item SQL:', query);
+              new DatabaseUtil()
+                .query(query)
+                .then(async itemSuccess => {
+                  resolve(item);
+                  console.log(`Successfully added ${friendlyItem.name} (${id})`);
+                  await LocaleUtil.insertToDB(
+                    'item_name_locale',
+                    'id',
+                    item.nameLocales)
+                    .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
+                    .catch(console.error);
+                })
+                .catch((error) => {
+                  reject(error);
+                  console.error(`Could not add item to DB! ${id} - ${friendlyItem.name}`, error);
+                });
             })
-            .catch(console.error);
+            .catch(reject);
         })
         .catch(reject);
     });

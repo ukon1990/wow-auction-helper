@@ -16,15 +16,23 @@ export class ItemUtil {
 
   public static handleItem(item: Item): Item {
     delete item['timestamp'];
-    if (item.itemSource) {
-      item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
-      delete item.itemSource.soldBy;
-      delete item.itemSource.droppedBy;
-    }
+      try {
+        if (item.itemSource) {
+          item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
+          delete item.itemSource.soldBy;
+          delete item.itemSource.droppedBy;
+        }
+      } catch (e) {
+        console.log(`Malformed source JSON for item ${item.id} - ${item.name}`);
+      }
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
-    if (item.itemSpells) {
-      item.itemSpells = JSON.parse(item.itemSpells as any);
-    }
+   try {
+     if (item.itemSpells) {
+       item.itemSpells = JSON.parse(item.itemSpells as any);
+     }
+   } catch (e) {
+     console.log(`Malformed spells JSON for item ${item.id} - ${item.name}`);
+   }
     return item;
   }
 
