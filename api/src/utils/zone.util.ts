@@ -223,22 +223,52 @@ export class ZoneUtil {
       });
   }
 
-  static getById(id: number): Promise<Zone> {
-    return new Promise<Zone>((resolve, reject) => {
-      const zone: Zone = new Zone(id),
-        promises: Promise<any>[] = [];
+  static getById(id: number, locale = 'en_GB'): Promise<Zone> {
+    return new Promise<Zone>(async (resolve, reject) => {
+      let zone: Zone;
+      const promises: Promise<any>[] = [];
 
-      const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 25,
-        promiseImplementation: Promise
-      });
-      languages
-        .forEach(lang => promises.push(
-          promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
+      zone = await this.getByIdFromDB(locale, id);
+
+      if (!zone) {
+        zone = new Zone(id);
+        const promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 25,
+          promiseImplementation: Promise
+        });
+        languages
+          .forEach(lang => promises.push(
+            promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
+      }
       Promise.all(promises)
         .then(() => resolve(zone))
         .catch(reject);
     });
+  }
+
+  private static async getByIdFromDB(locale: string, id: number): Promise<Zone> {
+    let zone: Zone;
+    await new DatabaseUtil().query(`
+       SELECT
+               i.id,
+               COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+               territoryId,
+               typeId,
+               parentId,
+               minLevel,
+               maxLevel,
+               timestamp
+        FROM zone as i
+        WHERE id = ${id}
+        LEFT OUTER JOIN zoneName as l
+        ON i.id = l.id;`)
+      .then((res: any[]) => {
+        if (res && res.length) {
+          zone = res[0];
+        }
+      })
+      .catch(console.error);
+    return zone;
   }
 
   private static getZoneDataForLocale(id: number, language: Language, zone: Zone): Promise<void> {

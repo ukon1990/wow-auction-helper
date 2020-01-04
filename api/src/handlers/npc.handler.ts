@@ -6,7 +6,7 @@ import {ApiResponse} from '../models/api-response.model';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class NpcHandler {
-  static getByIds(ids: number[]): Promise<NPC[]> {
+  static addNewNPCsByIds(ids: number[]): Promise<NPC[]> {
     return new Promise<NPC[]>((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 10,
@@ -28,7 +28,7 @@ export class NpcHandler {
     });
   }
 
-  static getAll(locale?: string, timestamp?: string): Promise<ApiResponse<NPC>> {
+  static getAll(locale?: string, timestamp: string = new Date().toJSON()): Promise<ApiResponse<NPC>> {
     return new Promise<ApiResponse<NPC>>(async (resolve, reject) => {
       const conn = new DatabaseUtil(false),
         result = {
@@ -36,14 +36,33 @@ export class NpcHandler {
           list: []
         },
         npcMap = {};
-      await this.getAllNPCs(conn, npcMap, result);
-      await this.getAllNPCNames(conn, npcMap, locale);
-      await this.getAllTags(conn, npcMap, locale);
-      await this.getAllCoordinates(conn, npcMap);
-      await this.getAllNPCDrops(conn, npcMap);
-      await this.getAllNPCSoldItems(conn, npcMap);
+      await this.getAllNPCs(conn, npcMap, result, timestamp);
+      if (result.list.length) {
+        await this.getAllNPCNames(conn, npcMap, locale);
+        await this.getAllTags(conn, npcMap, locale);
+        await this.getAllCoordinates(conn, npcMap);
+        await this.getAllNPCDrops(conn, npcMap);
+        await this.getAllNPCSoldItems(conn, npcMap);
+      }
       conn.end();
       resolve(new ApiResponse<NPC>(result.timestamp, result.list, 'npcs'));
+    });
+  }
+
+  static addNPCIfMissing(ids: number[]): Promise<NPC[]> {
+
+    return new Promise<NPC[]>(async (resolve, reject) => {
+      await new DatabaseUtil().query(`SELECT id FROM npc WHERE id not in (${ids.join(',')})`)
+        .then(async (newIds: number[]) => {
+          let result = [];
+          if (newIds && newIds.length) {
+            console.log(`Adding ${newIds.length} new NPCs to the DB`);
+            result = await this.addNewNPCsByIds(newIds);
+          }
+          resolve(result);
+        })
+        .catch(() => {
+        });
     });
   }
 
@@ -115,8 +134,8 @@ export class NpcHandler {
       });
   }
 
-  private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result) {
-    await conn.query(`SELECT * FROM npc;`)
+  private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
+    await conn.query(`SELECT * FROM npc WHERE timestamp > ${timestamp};`)
       .then((list) => {
         list.forEach(row => {
           npcMap[row.id] = row;

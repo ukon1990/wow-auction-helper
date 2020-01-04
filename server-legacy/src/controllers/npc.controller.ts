@@ -6,7 +6,7 @@ import {NpcHandler} from '../../../api/src/handlers/npc.handler';
  */
 export const postNPCS = (req, res) => {
   const body = req.body;
-  NpcHandler.getByIds(body.ids)
+  NpcHandler.addNewNPCsByIds(body.ids)
     .then(console.log)
     .catch(console.error);
   res.send(body);

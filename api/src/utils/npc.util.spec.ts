@@ -125,4 +125,11 @@ describe('NPCUtil', () => {
     expect(npc.maxLevel).toBe(9999);
     expect(npc.avgGoldDrop).toBe(599824); // 59g 98s 24c
   });
+
+  it('Can add missing locale', async () => {
+    environment.test = false;
+    jest.setTimeout(120000);
+    const res = await NPCUtil.updateMissingLocale();
+    expect(res.length).toBe(0);
+  });
 });

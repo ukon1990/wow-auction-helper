@@ -8,6 +8,7 @@ import {DatabaseUtil} from './database.util';
 import {LocaleUtil} from './locale.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {ItemHandler} from '../handlers/item.handler';
+import {ZoneUtil} from './zone.util';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -247,6 +248,107 @@ export class NPCUtil {
     });
   }
 
+  static updateMissingLocale(): Promise<ItemLocale[]> {
+    return new Promise<ItemLocale[]>(async (resolve, reject) => {
+      const conn = new DatabaseUtil(false);
+      let updateIds, insertIds;
+      const locales: ItemLocale[] = [],
+        promises = [];
+      try {
+        updateIds = await conn.query(
+            `SELECT id
+                  FROM npcName
+                  WHERE
+                    en_GB LIKE '%undefined%' OR
+                    fr_FR LIKE '%undefined%' OR
+                    es_ES LIKE '%undefined%' OR
+                    de_DE LIKE '%undefined%' OR
+                    it_IT LIKE '%undefined%' OR
+                    pt_PT LIKE '%undefined%' OR
+                    ru_RU LIKE '%undefined%' OR
+                    ko_KR LIKE '%undefined%' OR
+                    zh_TW LIKE '%undefined%';`);
+      } catch (e) {
+        console.error(e);
+      }
+
+      try {
+        insertIds = await conn.query(
+          `SELECT id FROM npc WHERE id NOT IN (SELECT id FROM npcName);`);
+      } catch (e) {
+
+      }
+      let count = 0;
+      const sum = updateIds.length + insertIds.length;
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 10,
+        promiseImplementation: Promise
+      });
+      updateIds
+        .forEach(row => promises.push(
+          promiseThrottle.add(async () => {
+            await this.getLocaleForId(row.id)
+              .then(async locale => {
+                locales.push(locale);
+                await conn.query(new QueryUtil('npcName', false).update(row.id, locale));
+                await conn.query(new QueryUtil('npc').update(row.id, {id: row.id}));
+              })
+              .catch(console.error);
+            count++;
+            console.log(`Updated ${count} of ${sum} (${row.id})`, locales[locales.length - 1].en_GB);
+          })));
+      insertIds
+        .forEach(row => promises.push(
+          promiseThrottle.add(async () => {
+            await this.getLocaleForId(row.id)
+              .then(async locale => {
+                locales.push(locale);
+                await conn.query(new QueryUtil('npcName', false).insert(locale));
+                await conn.query(new QueryUtil('npc').update(row.id, {id: row.id}));
+              })
+              .catch(console.error);
+            count++;
+            console.log(`Updated ${count} of ${sum} (${row.id})`, locales[locales.length - 1].en_GB);
+          })));
+      await Promise.all(promises)
+        .then(() => {
+          resolve(locales);
+          conn.end();
+        }).catch(reject);
+
+    });
+  }
+
+  private static getLocaleForId(id: number): Promise<ItemLocale> {
+    return new Promise<ItemLocale>((resolve, reject) => {
+      const locale: ItemLocale = new ItemLocale(id),
+        promises: Promise<any>[] = [];
+
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: languages.length,
+        promiseImplementation: Promise
+      });
+      languages
+        .forEach(lang => promises.push(
+          promiseThrottle.add(() => {
+            return new Promise<ItemLocale>((res, rej) => {
+              new HttpClientUtil().get(
+                `https://www.wowhead.com/tooltip/npc/${id}?locale=${lang.key}`, true)
+                .then(({body}) => {
+                  if (body && body.name) {
+                    lang.locales.forEach(loc => locale[loc] = body.name);
+                  }
+                  res();
+                })
+                .catch(res);
+            });
+          })));
+      Promise.all(promises)
+        .then(() => resolve(locale))
+        .catch(reject);
+    });
+  }
+
   private static addErrorToProgress(progress: { processed: number; length: number }, msg: string) {
     if (progress) {
       progress.processed++;
@@ -309,6 +411,8 @@ export class NPCUtil {
 
   private static async insertNPCIntoDB(npc: NPC) {
     return new Promise<NPC>(async (resolve, reject) => {
+      // Need to add the zone if it is missing
+      await ZoneUtil.getById(npc.id);
 
       this.insertNpcIntoDB(npc)
         .then(async () => {

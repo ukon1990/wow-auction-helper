@@ -14,6 +14,8 @@ import {WoWHead} from '../models/item/wowhead';
 import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
+import {NPCUtil} from '../utils/npc.util';
+import {NpcHandler} from './npc.handler';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -105,6 +107,17 @@ export class ItemHandler {
                     item.nameLocales)
                     .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
                     .catch(console.error);
+                  const map = {};
+                  item.itemSource.droppedBy
+                    .forEach((drop) => map[drop.id] = drop.id);
+                  item.itemSource.soldBy
+                    .forEach((vendor) => map[vendor.id] = vendor.id);
+                  try {
+                    await NpcHandler.addNPCIfMissing(
+                      Object.keys(map).map(npcId => +npcId));
+                  } catch (e) {
+                    console.error('addItem failed at adding missing NPCs', e);
+                  }
                 })
                 .catch((error) => {
                   reject(error);

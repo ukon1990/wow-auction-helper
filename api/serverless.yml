@@ -183,7 +183,7 @@ functions:
   npcGetByIds:
     tags:
       Lambda: Wah-npc
-    handler: src/controllers/npc.getByIds
+    handler: src/controllers/npc.addNewNPCsByIds
     memorySize: 256
     timeout: 30
     events:
