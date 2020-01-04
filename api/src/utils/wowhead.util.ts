@@ -217,6 +217,22 @@ export class WoWHeadUtil {
     }
   }
 
+  static getArrayVariable(variableName: string, body: string) {
+    const regex = new RegExp(`var ${variableName} = \\[([\\s\\S]*?)];`, 'gm'),
+      result = regex.exec(body);
+    try {
+      if (result && result[0]) {
+        // tslint:disable-next-line:no-eval
+        return eval(result[0]
+          .replace('var ' + variableName + ' =', '')
+          .replace(/;$/g, ''));
+      }
+    } catch (e) {
+
+    }
+    return [];
+  }
+
   private static getTotalCount(result: RegExpExecArray) {
     const totalCountRegex = /totalCount:[ ]{0,}[\d]{1,100},/gm;
     const totalCountResult = totalCountRegex.exec(result[1]);

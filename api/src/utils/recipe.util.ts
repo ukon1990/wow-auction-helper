@@ -2,6 +2,7 @@ import {Recipe} from '../models/crafting/recipe';
 import {Reagent} from '../models/crafting/reagent';
 import {HttpClientUtil} from './http-client.util';
 import {WoWHeadUtil} from './wowhead.util';
+import {GameBuild} from '../../../client/src/client/utils/game-build.util';
 
 export class RecipeUtil {
   public static convert(wowDB): Recipe {
@@ -27,10 +28,7 @@ export class RecipeUtil {
   }
 
   static getRecipeListForPatch(patchNumber: number): Promise<Recipe[]> {
-    const professions = [
-      {key: 'enchanting', name: 'Enchanting'},
-      {key: 'alchemy', name: 'Alchemy'},
-    ];
+    const professions = GameBuild.professions;
     return new Promise<any>((resolve, reject) => {
       Promise.all(professions.map(profession =>
         this.getRecipeListForPatchAndProfession(patchNumber, profession)))
@@ -43,14 +41,20 @@ export class RecipeUtil {
     });
   }
 
-  static getRecipeListForPatchAndProfession(patchNumber: number, {key, name}: {key, name}): Promise<Recipe[]> {
+  static getRecipeListForPatchAndProfession(patchNumber: number, profession: string): Promise<Recipe[]> {
     return new Promise<Recipe[]>((resolve, reject) => {
-      new HttpClientUtil().get(`https://ptr.wowhead.com/${key}-spells?filter=21;2;${patchNumber}`, false)
+      const urlName = profession === 'Cooking' ? `cooking-recipe` : profession;
+      const url = `https://ptr.wowhead.com/${
+        urlName.toLocaleLowerCase()}-spells?filter=21;2;${patchNumber}`;
+      new HttpClientUtil().get(url, false)
         .then(async ({body}) => {
-          const list = this.getSpellList(body);
-          resolve(await this.mapResultToRecipe(list, name));
+          const list = WoWHeadUtil.getArrayVariable('listviewspells', body);
+          resolve(this.mapResultToRecipe(list, profession));
         })
-        .catch(reject);
+        .catch((error) => {
+          console.log(error);
+          resolve([]);
+        });
     });
   }
 
@@ -58,13 +62,22 @@ export class RecipeUtil {
     const recipes = [];
     for (const recipe of list) {
       const {id, creates, name, reagents} = recipe;
-      const rank: number = await this.getRankForRecipe(id);
+      let rank: number;
+      try {
+        await this.getRankForRecipe(id)
+          .then(r => rank = r)
+          .catch(console.error);
+      } catch (e) {
+        console.error(e);
+      }
+      const minCount = creates[1],
+        maxCount = creates[1];
       recipes.push({
         spellID: id,
         itemID: creates[0],
         name,
-        minCount: creates[1],
-        maxCount: creates[2],
+        minCount: minCount ? minCount : 1,
+        maxCount: maxCount ? maxCount : 1,
         rank,
         profession,
         reagents: reagents.map(reagent => ({
@@ -77,22 +90,6 @@ export class RecipeUtil {
       });
     }
     return recipes;
-  }
-
-  private static getSpellList(body: string) {
-    const regex = /var listviewspells = \[([\s\S]*?)];/gm,
-      result = regex.exec(body);
-    try {
-      if (result && result[0]) {
-        // tslint:disable-next-line:no-eval
-        return eval(result[0]
-          .replace(/var listviewspells =/g, '')
-          .replace(/;$/g, ''));
-      }
-    } catch (e) {
-
-    }
-    return [];
   }
 
   private static getRankForRecipe(id: number): Promise<number> {
