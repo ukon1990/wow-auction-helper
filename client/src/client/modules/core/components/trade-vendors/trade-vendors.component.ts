@@ -8,6 +8,8 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {TRADE_VENDORS} from '../../../../data/trade-vendors';
+import {Zone} from '../../../zone/models/zone.model';
+import {ZoneService} from '../../../zone/service/zone.service';
 
 @Component({
   selector: 'wah-trade-vendors',
@@ -20,8 +22,9 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   form: FormGroup;
   sm = new SubscriptionManager();
   vendors = TRADE_VENDORS;
+  zones: Map<number, Zone> = new Map<number, Zone>();
 
-  constructor(private formBuilder: FormBuilder, private service: AuctionsService) {
+  constructor(private formBuilder: FormBuilder, private service: AuctionsService, private zoneService: ZoneService) {
     const filter = JSON.parse(localStorage.getItem('query_trade_vendors')) || undefined;
     this.form = formBuilder.group({
       saleRate: filter && filter.saleRate !== null ?
@@ -43,6 +46,10 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.service.events.groupedList,
       () => this.filterVendors());
+
+    this.sm.add(zoneService.mapped, (map) => {
+      this.zones = map;
+    });
   }
 
   ngOnInit() {

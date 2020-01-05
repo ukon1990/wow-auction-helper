@@ -23,12 +23,16 @@
       <mat-card>
         <mat-card-header>
           <mat-card-title>
-            <a rel="domain={{ locale }},item={{ tv.itemID }}"
-               routerLink="."
+            <!-- rel="domain={{ locale }},item={{ tv.itemID }}" -->
+            <div
                (click)="select(tv)">
               {{ tv.name }}
-            </a>
+            </div>
           </mat-card-title>
+          <mat-card-subtitle>
+            <strong>Sold by: </strong>
+            <span *ngFor="let v of tv.vendors">{{v.name}}({{zones.get(v.zoneId)?.name}}), </span>
+          </mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>

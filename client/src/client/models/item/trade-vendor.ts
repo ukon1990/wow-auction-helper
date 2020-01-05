@@ -1,3 +1,5 @@
+import {NPC} from '../../modules/npc/models/npc.model';
+
 export class TradeVendor {
   id?: number[];
   itemID: number;
@@ -5,6 +7,10 @@ export class TradeVendor {
   useForCrafting = true;
   items: Array<TradeVendorItem>;
   itemsFiltered: Array<TradeVendorItem> = [];
+  vendors?: NPC[] = [];
+  expansionId?: number;
+  isAlliance: boolean;
+  isHorde: boolean;
 }
 
 export class TradeVendorItem {

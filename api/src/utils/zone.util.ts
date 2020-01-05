@@ -165,26 +165,23 @@ export class ZoneUtil {
   static getFromDB(locale = 'en_GB', timestamp = new Date().toJSON()): Promise<ApiResponse<Zone>> {
     return new Promise<ApiResponse<Zone>>((resolve, reject) => {
       new DatabaseUtil().query(`
-    SELECT
-             i.id,
-             COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
-             territoryId,
-             typeId,
-             parentId,
-             minLevel,
-             maxLevel,
-             timestamp
-      FROM zone as i
-      LEFT OUTER JOIN zoneName as l
-      ON i.id = l.id
-      WHERE timestamp > "${timestamp}";`)
+            SELECT
+                   i.id,
+                   COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+                   territoryId,
+                   typeId,
+                   parentId,
+                   minLevel,
+                   maxLevel,
+                   timestamp
+            FROM zone as i
+            LEFT OUTER JOIN zoneName as l
+            ON i.id = l.id
+            WHERE timestamp > "${timestamp}"
+            ORDER BY timestamp desc;`)
         .then((list) => {
-          let ts = timestamp;
+          const ts = list[0].timestamp;
           list.forEach(row => {
-            if (!ts || +new Date(row.timestamp) > +new Date(ts)) {
-              ts = row.timestamp;
-            }
-
             if (row.minLevel === 'undefined') {
               row.minLevel = undefined;
             } else {

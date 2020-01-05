@@ -6,6 +6,7 @@ import {ItemExtract} from '../../../../utils/item-extract.util';
 import {FormControl, FormGroup} from '@angular/forms';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {GameBuild} from '../../../../utils/game-build.util';
+import {NPC} from '../../../npc/models/npc.model';
 
 @Component({
   selector: 'wah-add-npcs',
@@ -48,15 +49,18 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
       localStorage.setItem(this.storageName, index);
     });
 
+    this.sm.add(this.service.list, (npcs) => {
+      npcs.forEach(npc => this.existingNPCsMap[npc.id] = npc);
+      console.log('NPC get all', npcs);
+      this.groupIdsIntoBatches();
+    });
+
     this.getAllNPCSFromDBAndSetBatches();
   }
 
   getAllNPCSFromDBAndSetBatches() {
-    this.service.getAll()
-      .then((result) => {
-        result.forEach(npc => this.existingNPCsMap[npc.id] = npc);
-        console.log('NPC get all', result);
-        this.groupIdsIntoBatches();
+    this.service.getAllAfterTimestamp()
+      .then(() => {
       })
       .catch(console.error);
   }
@@ -71,13 +75,18 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
 
   private groupIdsIntoBatches() {
     this.npcBatchedIds = [];
-    const list = this.list.filter(npc => !this.existingNPCsMap[npc.id]);
+    const list = this.list.filter(npc => {
+      const existing: NPC = this.existingNPCsMap[npc.id];
+      return !existing ||
+        (existing.sells && existing.sells.length < npc.sells.length) ||
+        (existing.drops && existing.drops.length < npc.drops.length);
+    });
     for (let i = 0; i < list.length; i++) {
-       const batchIndex = Math.ceil(i / this.batchSize) - 1;
-       if (!this.npcBatchedIds[batchIndex]) {
-         this.npcBatchedIds[batchIndex] = [];
-       }
-       this.npcBatchedIds[batchIndex].push(list[i].id);
+      const batchIndex = Math.ceil(i / this.batchSize) - 1;
+      if (!this.npcBatchedIds[batchIndex]) {
+        this.npcBatchedIds[batchIndex] = [];
+      }
+      this.npcBatchedIds[batchIndex].push(list[i].id);
     }
 
     console.log('NPC id batches', this.npcBatchedIds);

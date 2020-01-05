@@ -2,6 +2,12 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
 import {Item} from '../../../models/item/item';
 import {TSM} from '../../auction/models/tsm.model';
+import {TradeVendor, TradeVendorItem} from '../../../models/item/trade-vendor';
+import {TRADE_VENDORS} from '../../../data/trade-vendors';
+import {Currency} from '../../core/models/currency.model';
+import {currencyMap} from '../../../data/currency.data';
+import {Report} from '../../../utils/report.util';
+import {CraftingService} from '../../../services/crafting.service';
 
 export class VendorItem {
   id: number;
@@ -49,7 +55,7 @@ export class DroppedItem {
       if (vendorValue < buyoutValue) {
         goldValue = (buyoutValue / mktValue < 3 ? buyoutValue : mktValue) / 1000000;
       }
-      return  goldValue * (avgDailySold * saleRate);
+      return goldValue * (avgDailySold * saleRate);
     }
     return 0;
   }
@@ -83,7 +89,7 @@ export class NPC {
     let buyoutValue = 0, score = 0, vendorValue = 0;
     if (drops) {
       drops.forEach(item => {
-       const scored = DroppedItem.getScoredItem(item);
+        const scored = DroppedItem.getScoredItem(item);
         score += scored.score;
         buyoutValue = scored.buyoutValue;
         vendorValue = scored.vendorValue;
@@ -125,5 +131,64 @@ export class NPC {
       roi,
       buyout: auctionItem && auctionItem.buyout || 0
     };
+  }
+
+  static getTradeVendors(list: NPC[]): void {
+    const tradeVendorsItemMap = {},
+      tradeVendorItemMap = {},
+      npcVendorMap = {};
+    TRADE_VENDORS.length = 0;
+    const missingIds = {};
+    list.forEach(npc => {
+      if (!this.isFactionMatch(npc)) {
+        return;
+      }
+      if (npc.sells && npc.sells.length) {
+        const locale = localStorage.getItem('locale') || 'en_GB';
+        npc.sells.forEach(item => {
+          const i: Item = SharedService.items[item.currency];
+          if (item.currency && (!i || i && i.itemClass !== 4)) {
+            const currency: Currency = currencyMap.get(item.currency);
+            let tradeVendor: TradeVendor = tradeVendorsItemMap[item.currency];
+            const id = `${item.currency}${item.id}`,
+              vendorId = `${item.currency}${npc.id}`;
+            if (!tradeVendor) {
+              if (!i) {
+                missingIds[item.currency] = item.currency;
+                console.log('Loco', currency, item.currency);
+              }
+              tradeVendor = new TradeVendor();
+              tradeVendor.itemID = item.currency;
+              tradeVendor.name = (currency && currency.name[locale] || npc.name) + '- ' + item.currency;
+              tradeVendor.items = [];
+              tradeVendor.expansionId = npc.expansionId;
+              tradeVendor.useForCrafting = CraftingService.map.value.get(item.id) !== undefined;
+              tradeVendorsItemMap[item.currency] = tradeVendor;
+              TRADE_VENDORS.push(tradeVendor);
+            }
+
+            if (!tradeVendorItemMap[id]) {
+              tradeVendor.items.push(new TradeVendorItem(item.id, item.stackSize / item.price));
+              tradeVendorItemMap[id] = true;
+            }
+            if (!npcVendorMap[vendorId]) {
+              tradeVendor.vendors.push(npc);
+              npcVendorMap[vendorId] = true;
+            }
+          }
+        });
+      }
+    });
+
+    if (Object.keys(missingIds).length) {
+      Report.debug('Missing NPC item currencies', Object.keys(missingIds).map(k => +k));
+    }
+  }
+
+  private static isFactionMatch(npc: NPC) {
+    if (npc.isAlliance && SharedService.user.faction === 0) {
+      return true;
+    }
+    return npc.isHorde && SharedService.user.faction === 1;
   }
 }

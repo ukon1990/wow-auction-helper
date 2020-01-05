@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {BehaviorSubject} from 'rxjs';
 import {NPC} from '../models/npc.model';
+import {Report} from '../../../utils/report.util';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +20,8 @@ export class NpcService {
   getAll(): Promise<NPC[]> {
     const locale = localStorage['locale'];
     this.isLoading = true;
-    return new Promise<any[]>((resolve, reject) => {
-      this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz`)
+    return new Promise<any[]>(async (resolve, reject) => {
+      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz`)
         .toPromise()
         .then((response) => {
           const list = response['npcs'],
@@ -31,10 +32,28 @@ export class NpcService {
           this.list.next(list);
           this.mapped.next(map);
           resolve(list);
+          NPC.getTradeVendors(this.list.value);
+          Report.debug('NPC trade vendors',);
         })
         .catch(console.error);
     });
-    // return this.http.post('http://localhost:3000/npc/all', {locale: 'en_GB'}).toPromise() as Promise<any[]>;
+  }
+
+  getAllAfterTimestamp(): Promise<NPC[]> {
+    return new Promise<NPC[]>((resolve, reject) => {
+      this.http.post('http://localhost:3000/npc/all',
+        {locale: 'en_GB', timestamp: localStorage.getItem(this.storageName)})
+        .toPromise()
+        .then((response) => {
+          // TODO: Set timestamp
+          const list = [...response['npcs'], ...this.list.value],
+            map = {};
+          list.forEach(npc => map[npc.id] = npc);
+          this.list.next(list);
+          this.mapped.next(map);
+        })
+        .catch(console.error);
+    });
   }
 
   getIds(ids: number[]) {

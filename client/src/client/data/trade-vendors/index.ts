@@ -26,6 +26,5 @@ const inkTrader: TradeVendor = {
     new TradeVendorItem(39469, 1)
   ]
 };
-
-export const TRADE_VENDORS = [...legionTradeVendors, inkTrader, ...draenorTradeVendors, ...mopTradeVendors, ...wotlkTradeVendors
-];
+// ...legionTradeVendors, inkTrader, ...draenorTradeVendors, ...mopTradeVendors, ...wotlkTradeVendors
+export const TRADE_VENDORS = [];

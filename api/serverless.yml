@@ -274,3 +274,14 @@ functions:
           path: logger/client-event
           cors:
             origin: '*'
+  currency:
+    tags:
+      Lambda: Wah-currencies
+    handler: src/controllers/currency.handler
+    memorySize: 128
+    events:
+      - http:
+          method: any
+          path: currency
+          cors:
+            origin: 'http://localhost:4200'
