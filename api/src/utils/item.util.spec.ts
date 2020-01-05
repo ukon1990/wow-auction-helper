@@ -68,7 +68,7 @@ describe('ItemUtil', () => {
   });
 
   it('getItemsByQualityForPatch', async () => {
-    jest.setTimeout(10000);
+    jest.setTimeout(30000);
     const list = await ItemUtil.getNewItemsForPatch(80300);
     expect(list.length).toBe(1915);
   });

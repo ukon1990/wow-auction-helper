@@ -2,8 +2,8 @@ import {Zone, ZoneUtil} from '../utils/zone.util';
 import {ApiResponse} from '../models/api-response.model';
 
 export class ZoneHandler {
-  static getAll(locale: string): Promise<ApiResponse<Zone>> {
-    return ZoneUtil.getFromDB(locale);
+  static getAll(locale: string, timestamp: string): Promise<ApiResponse<Zone>> {
+    return ZoneUtil.getFromDB(locale, timestamp);
   }
 
   static getById(id: number): Promise<Zone> {

@@ -4,14 +4,14 @@ import {Response} from '../utils/response.util';
 
 
 exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const {ids, locale} = JSON.parse(event.body);
+  const {ids, locale, timestamp} = JSON.parse(event.body);
 
   if (ids) {
     ZoneHandler.getByIds(ids)
       .then(result => Response.send(result, callback))
       .catch(error => Response.error(callback, error, event, 500));
   } else if (locale) {
-    ZoneHandler.getAll(locale)
+    ZoneHandler.getAll(locale, timestamp)
       .then(result => Response.send(result, callback))
       .catch(error => Response.error(callback, error, event, 500));
   }

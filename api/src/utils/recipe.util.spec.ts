@@ -2,7 +2,7 @@ import {RecipeUtil} from './recipe.util';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {
-    jest.setTimeout(10000);
+    jest.setTimeout(30000);
   });
 
   it('getRecipeListForPatch', async () => {

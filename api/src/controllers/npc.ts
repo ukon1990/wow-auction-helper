@@ -11,7 +11,8 @@ exports.getByIds = (event: APIGatewayEvent, context: Context, callback: Callback
 };
 
 exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  NpcHandler.getAll(JSON.parse(event.body).locale)
+  const {locale, timestamp} = JSON.parse(event.body);
+  NpcHandler.getAll(locale, timestamp)
     .then(result => {
       Response.send(result, callback);
       result['npcs'].length = 0;

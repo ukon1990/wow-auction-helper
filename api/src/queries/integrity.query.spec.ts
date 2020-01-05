@@ -3,7 +3,6 @@ import {QueryIntegrity} from './integrity.query';
 import {ItemLocale} from '../models/item/item-locale';
 import {PetUtil} from '../utils/pet.util';
 import {Item} from '../../../client/src/client/models/item/item';
-import {ItemUtil} from '../utils/item.util';
 import {ItemHandler} from '../handlers/item.handler';
 
 describe('QueryIntegrity', () => {
@@ -34,7 +33,7 @@ describe('QueryIntegrity', () => {
     pet.isCapturable = true;
     pet.isTradable = true;
     pet.assets = [];
-    pet.timestamp = 3;
+    pet.timestamp = '3';
     const result = await QueryIntegrity.getVerified('pets', pet);
     expect(result).toBeFalsy();
   });

@@ -29,7 +29,7 @@ export class NpcHandler {
   }
 
   static getAll(locale?: string, timestamp: string = new Date().toJSON()): Promise<ApiResponse<NPC>> {
-    return new Promise<ApiResponse<NPC>>(async (resolve, reject) => {
+    return new Promise<ApiResponse<NPC>>(async (resolve) => {
       const conn = new DatabaseUtil(false),
         result = {
           timestamp: timestamp,
@@ -135,8 +135,9 @@ export class NpcHandler {
   }
 
   private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
-    await conn.query(`SELECT * FROM npc WHERE timestamp > ${timestamp};`)
+    await conn.query(`SELECT * FROM npc WHERE timestamp > "${timestamp}";`)
       .then((list) => {
+        console.log('Len', list.length);
         list.forEach(row => {
           npcMap[row.id] = row;
           result.list.push(row);
@@ -145,7 +146,8 @@ export class NpcHandler {
           }
           delete row.timestamp;
         });
-      });
+      })
+      .catch(console.error);
   }
 
   /* Fetching NPC from DB if exists */
@@ -203,7 +205,10 @@ export class NpcHandler {
           });
         }
       })
-      .catch(() => npc.sells = []);
+      .catch((error) => {
+        npc.sells = [];
+        console.error(error);
+      });
   }
 
   private static async getNameForNpc(id: number, npc: NPC, locale: string, conn: DatabaseUtil) {
@@ -211,7 +216,8 @@ export class NpcHandler {
       .then((name: ItemLocale) => {
         delete name[0].id;
         npc.name = locale ? name[0][locale] : name[0];
-      });
+      })
+      .catch(console.error);
   }
 
   private static async getTagForNpc(id: number, npc: NPC, locale: string, conn: DatabaseUtil) {
@@ -221,7 +227,8 @@ export class NpcHandler {
           delete tag[0].id;
           npc.tag = locale ? tag[0][locale] : tag[0];
         }
-      });
+      })
+      .catch(console.error);
   }
 
   private static async getDropsForNpc(id: number, npc: NPC, conn: DatabaseUtil) {
@@ -235,6 +242,9 @@ export class NpcHandler {
           });
         }
       })
-      .catch(() => npc.drops = []);
+      .catch((error) => {
+        npc.drops = [];
+        console.error(error);
+      });
   }
 }

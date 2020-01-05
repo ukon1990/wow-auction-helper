@@ -162,7 +162,7 @@ export class ZoneUtil {
   }
 
   /* Istanbul ignore next */
-  static getFromDB(locale = 'en_GB'): Promise<ApiResponse<Zone>> {
+  static getFromDB(locale = 'en_GB', timestamp = new Date().toJSON()): Promise<ApiResponse<Zone>> {
     return new Promise<ApiResponse<Zone>>((resolve, reject) => {
       new DatabaseUtil().query(`
     SELECT
@@ -176,12 +176,13 @@ export class ZoneUtil {
              timestamp
       FROM zone as i
       LEFT OUTER JOIN zoneName as l
-      ON i.id = l.id;`)
+      ON i.id = l.id
+      WHERE timestamp > "${timestamp}";`)
         .then((list) => {
-          let timestamp;
+          let ts = timestamp;
           list.forEach(row => {
-            if (!timestamp || +new Date(row.timestamp) > +new Date(timestamp)) {
-              timestamp = row.timestamp;
+            if (!ts || +new Date(row.timestamp) > +new Date(ts)) {
+              ts = row.timestamp;
             }
 
             if (row.minLevel === 'undefined') {
@@ -196,7 +197,7 @@ export class ZoneUtil {
             }
             delete row.timestamp;
           });
-          resolve(new ApiResponse<Zone>(timestamp, list, 'zones'));
+          resolve(new ApiResponse<Zone>(ts, list, 'zones'));
         })
         .catch(reject);
     });
