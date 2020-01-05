@@ -1,6 +1,7 @@
 import {TradeVendor, TradeVendorItem} from '../../models/item/trade-vendor';
 
 const frozenOrb: TradeVendor = {
+  isAlliance: false, isHorde: false,
   itemID: 43102,
   name: 'Frozen Orb',
   useForCrafting: false,

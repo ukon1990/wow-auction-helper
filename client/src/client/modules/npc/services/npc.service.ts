@@ -33,7 +33,8 @@ export class NpcService {
           this.mapped.next(map);
           resolve(list);
           NPC.getTradeVendors(this.list.value);
-          Report.debug('NPC trade vendors',);
+          Report.debug('NPC trade vendors');
+          this.getAllAfterTimestamp().then().catch();
         })
         .catch(console.error);
     });

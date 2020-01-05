@@ -22,7 +22,7 @@ export interface Map {
   coordinates: Coordinates[];
 }
 
-class VendorItem {
+export class VendorItem {
   id: number;
   price: number;
   unitPrice: number;
@@ -32,12 +32,18 @@ class VendorItem {
 
   static setFromBody(body: string): VendorItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'sells')
-      .map(({id, standing, react, stack, cost, avail}) => {
+      .map(({id, standing, stack, cost, avail}) => {
         let price = cost[0];
         let currency: number;
-        if (cost[2]) {
-          price = cost[2][0][1];
-          currency = cost[2][0][0];
+        const cost1 = cost[1], cost2 = cost[2];
+        if (cost2[0] && cost2[0].length >= 2) {
+          const c = cost2[0];
+          price = c && c[1] || 1;
+          currency = c && c[0] || 1;
+        } else if (cost1[0] && cost1[0].length >= 2) {
+          const c = cost1[0];
+          price = c && c[1] || 1;
+          currency = c && c[0] || 1;
         }
         return {
           id,
@@ -52,7 +58,7 @@ class VendorItem {
   }
 }
 
-class DroppedItem {
+export class DroppedItem {
   id: number;
   dropped: number;
   outOf: number;
@@ -68,7 +74,7 @@ class DroppedItem {
   }
 }
 
-class SkinnedItem {
+export class SkinnedItem {
   id: number;
   count: number;
   dropChance: number;
@@ -214,6 +220,7 @@ export class NPC {
 export class NPCUtil {
   private static ignoreItemIds = {};
 
+  // 86777,87202,87204,86776,86778,86683,87203,87201
   static getById(id: number, progress?: { processed: number, length: number }) {
     return new Promise<NPC>((resolve, reject) => {
       const npc: NPC = new NPC(id),
@@ -274,7 +281,7 @@ export class NPCUtil {
 
       try {
         insertIds = await conn.query(
-          `SELECT id FROM npc WHERE id NOT IN (SELECT id FROM npcName);`);
+            `SELECT id FROM npc WHERE id NOT IN (SELECT id FROM npcName);`);
       } catch (e) {
 
       }
@@ -412,25 +419,27 @@ export class NPCUtil {
   private static async insertNPCIntoDB(npc: NPC) {
     return new Promise<NPC>(async (resolve, reject) => {
       // Need to add the zone if it is missing
-      await ZoneUtil.getById(npc.id);
-
-      this.insertNpcIntoDB(npc)
+      await ZoneUtil.getById(npc.zoneId);
+      const conn = new DatabaseUtil(false);
+      this.insertNpcIntoDB(npc, conn)
         .then(async () => {
-          await this.insertNameIntoDB(npc);
-          await this.insertTagIntoDB(npc);
-          await this.insertCoordsIntoDB(npc);
-          await this.insertSellsIntoDB(npc);
-          await this.insertDropsIntoDB(npc);
+          await this.insertNameIntoDB(npc).catch(console.error);
+          await this.insertTagIntoDB(npc).catch(console.error);
+          await this.insertCoordsIntoDB(npc, conn).catch(console.error);
+          await this.insertSellsIntoDB(npc, conn).catch(console.error);
+          await this.insertDropsIntoDB(npc, conn).catch(console.error);
+          conn.end();
 
           resolve(npc);
         })
         .catch((error) => {
+          conn.end();
           reject(error);
         });
     });
   }
 
-  private static insertNpcIntoDB(npc: NPC) {
+  private static insertNpcIntoDB(npc: NPC, conn: DatabaseUtil) {
     return new Promise<any>((resolve, reject) => {
       const sql = new QueryUtil('npc').insert({
         id: npc.id,
@@ -441,47 +450,46 @@ export class NPCUtil {
         zoneId: npc.zoneId,
         expansionId: npc.expansionId
       });
-      try {
-        new DatabaseUtil().query(sql)
-          .then(resolve)
-          .catch(reject);
-      } catch (e) {
-        reject(e);
-        this.loggIfNotDuplicateError(e, sql);
-      }
+      conn.query(sql)
+        .then(resolve)
+        .catch((e) => {
+          this.loggIfNotDuplicateError(e, sql);
+          if (!this.isDuplicateError(e)) {
+            reject(e);
+            return;
+          }
+          resolve(npc);
+        });
     });
   }
 
-  private static async insertDropsIntoDB(npc: NPC) {
+  private static async insertDropsIntoDB(npc: NPC, conn: DatabaseUtil) {
     for (const drops of npc.drops) {
-      if (!this.ignoreItemIds[drops.id]) {
-        const sql = new QueryUtil('npcDrops').insert({
-          npcId: npc.id,
-          ...drops
-        });
-        try {
-          await new DatabaseUtil().query(sql);
-        } catch (e) {
-          this.loggIfNotDuplicateError(e, sql);
-          this.addItemIfMissing(e, drops);
-        }
+      const sql = new QueryUtil('npcDrops').insert({
+        npcId: npc.id,
+        ...drops
+      });
+      try {
+        await conn.query(sql);
+        await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
+      } catch (e) {
+        this.loggIfNotDuplicateError(e, sql);
       }
     }
   }
 
-  private static async insertSellsIntoDB(npc: NPC) {
+  private static async insertSellsIntoDB(npc: NPC, conn: DatabaseUtil) {
     for (const sells of npc.sells) {
-      if (!this.ignoreItemIds[sells.id]) {
-        const sql = new QueryUtil('npcSells').insert({
-          npcId: npc.id,
-          ...sells
-        });
-        try {
-          await new DatabaseUtil().query(sql);
-        } catch (e) {
-          this.loggIfNotDuplicateError(e, sql);
-          this.addItemIfMissing(e, sells);
-        }
+      const sql = new QueryUtil('npcSells').insert({
+        npcId: npc.id,
+        ...sells
+      });
+      try {
+        await conn.query(sql);
+        await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
+      } catch (e) {
+        console.log(e);
+        this.loggIfNotDuplicateError(e, sql);
       }
     }
   }
@@ -496,14 +504,15 @@ export class NPCUtil {
     }
   }
 
-  private static async insertCoordsIntoDB(npc: NPC) {
+  private static async insertCoordsIntoDB(npc: NPC, conn: DatabaseUtil) {
     for (const coords of npc.coordinates) {
       const sql = new QueryUtil('npcCoordinates').insert({
         id: npc.id,
         ...coords
       });
       try {
-        await new DatabaseUtil().query(sql);
+        await conn.query(sql);
+        await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
       } catch (e) {
         this.loggIfNotDuplicateError(e, sql);
       }
@@ -530,8 +539,12 @@ export class NPCUtil {
   }
 
   private static loggIfNotDuplicateError(e, sql: string) {
-    if (!TextUtil.contains(e.error, 'ER_DUP_ENTRY:')) {
+    if (!this.isDuplicateError(e)) {
       console.error('Failed with: ' + sql, e);
     }
+  }
+
+  private static isDuplicateError(e) {
+    return TextUtil.contains(e.error, 'ER_DUP_ENTRY');
   }
 }

@@ -149,9 +149,11 @@ export class NPC {
           const i: Item = SharedService.items[item.currency];
           if (item.currency && (!i || i && i.itemClass !== 4)) {
             const currency: Currency = currencyMap.get(item.currency);
-            let tradeVendor: TradeVendor = tradeVendorsItemMap[item.currency];
-            const id = `${item.currency}${item.id}`,
-              vendorId = `${item.currency}${npc.id}`;
+            const garrisonResourceIdExtra = item.currency === 824 ? '' + npc.id : '';
+            const id = `${item.currency}${item.id}${garrisonResourceIdExtra}`,
+              npcId = `${item.currency}${npc.id}${garrisonResourceIdExtra}`,
+              tradeVendorId = item.currency + garrisonResourceIdExtra;
+            let tradeVendor: TradeVendor = tradeVendorsItemMap[tradeVendorId];
             if (!tradeVendor) {
               if (!i) {
                 missingIds[item.currency] = item.currency;
@@ -159,11 +161,13 @@ export class NPC {
               }
               tradeVendor = new TradeVendor();
               tradeVendor.itemID = item.currency;
-              tradeVendor.name = (currency && currency.name[locale] || npc.name) + '- ' + item.currency;
+              tradeVendor.name = garrisonResourceIdExtra.length ?
+                `${npc.name} (${currency && currency.name[locale]})` :
+                (currency && currency.name[locale] || npc.name) + '- ' + item.currency;
               tradeVendor.items = [];
               tradeVendor.expansionId = npc.expansionId;
-              tradeVendor.useForCrafting = CraftingService.map.value.get(item.id) !== undefined;
-              tradeVendorsItemMap[item.currency] = tradeVendor;
+              tradeVendor.useForCrafting = i && i.itemBind !== 0;
+              tradeVendorsItemMap[tradeVendorId] = tradeVendor;
               TRADE_VENDORS.push(tradeVendor);
             }
 
@@ -171,13 +175,15 @@ export class NPC {
               tradeVendor.items.push(new TradeVendorItem(item.id, item.stackSize / item.price));
               tradeVendorItemMap[id] = true;
             }
-            if (!npcVendorMap[vendorId]) {
+            if (!npcVendorMap[npcId]) {
               tradeVendor.vendors.push(npc);
-              npcVendorMap[vendorId] = true;
+              npcVendorMap[npcId] = true;
             }
           }
         });
       }
+
+      TRADE_VENDORS.sort((a, b) => b.expansionId - a.expansionId);
     });
 
     if (Object.keys(missingIds).length) {

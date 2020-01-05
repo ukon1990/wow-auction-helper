@@ -22,7 +22,8 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   storageName = 'admin-add-npcs-map';
   addedNpcs = [];
   form: FormGroup = new FormGroup({
-    index: new FormControl(0)
+    index: new FormControl(0),
+    ids: new FormControl('')
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'string'},
@@ -47,6 +48,10 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
 
     this.sm.add(this.form.controls.index.valueChanges, (index) => {
       localStorage.setItem(this.storageName, index);
+    });
+
+    this.sm.add(this.form.controls.ids.valueChanges, (ids: string) => {
+      this.npcBatchedIds[0] = ids.split(',');
     });
 
     this.sm.add(this.service.list, (npcs) => {
@@ -77,9 +82,15 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
     this.npcBatchedIds = [];
     const list = this.list.filter(npc => {
       const existing: NPC = this.existingNPCsMap[npc.id];
-      return !existing ||
-        (existing.sells && existing.sells.length < npc.sells.length) ||
-        (existing.drops && existing.drops.length < npc.drops.length);
+      if (!existing) {
+        return true;
+      }
+      if (existing.sells && existing.sells.length < npc.sells.length) {
+        return true;
+      }
+      if ((existing.drops && existing.drops.length < npc.drops.length)) {
+        return true;
+      }
     });
     for (let i = 0; i < list.length; i++) {
       const batchIndex = Math.ceil(i / this.batchSize) - 1;
@@ -93,11 +104,11 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   }
 
   addNpcs() {
-    if (this.stop) {
+    const index = this.form.value.index;
+    if (this.stop || index >= this.npcBatchedIds.length) {
       this.stop = false;
       return;
     }
-    const index = this.form.value.index;
     console.log('Starding on barch ', index);
     this.service.getIds(this.npcBatchedIds[index])
       .then((response: any[]) => {

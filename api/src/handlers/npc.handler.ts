@@ -1,4 +1,4 @@
-import {NPC, NPCUtil} from '../utils/npc.util';
+import {DroppedItem, NPC, NPCUtil, VendorItem} from '../utils/npc.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {ItemLocale} from '../models/item/item-locale';
 import {ApiResponse} from '../models/api-response.model';
@@ -38,11 +38,11 @@ export class NpcHandler {
         npcMap = {};
       await this.getAllNPCs(conn, npcMap, result, timestamp);
       if (result.list.length) {
-        await this.getAllNPCNames(conn, npcMap, locale);
-        await this.getAllTags(conn, npcMap, locale);
-        await this.getAllCoordinates(conn, npcMap);
-        await this.getAllNPCDrops(conn, npcMap);
-        await this.getAllNPCSoldItems(conn, npcMap);
+        await this.getAllNPCNames(conn, npcMap, locale, timestamp);
+        await this.getAllTags(conn, npcMap, locale, timestamp);
+        await this.getAllCoordinates(conn, npcMap, timestamp);
+        await this.getAllNPCDrops(conn, npcMap, timestamp);
+        await this.getAllNPCSoldItems(conn, npcMap, timestamp);
       }
       conn.end();
       resolve(new ApiResponse<NPC>(result.timestamp, result.list, 'npcs'));
@@ -66,8 +66,8 @@ export class NpcHandler {
     });
   }
 
-  private static async getAllNPCSoldItems(conn: DatabaseUtil, npcMap: {}) {
-    await conn.query(`SELECT * FROM npcSells`)
+  private static async getAllNPCSoldItems(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
+    await conn.query(`SELECT * FROM npcSells WHERE npcId in (select id from npc where timestamp >= "${timestamp}");`)
       .then((list: any[]) => {
         list.forEach(row => {
           if (!npcMap[row.npcId]) {
@@ -83,8 +83,8 @@ export class NpcHandler {
       });
   }
 
-  private static async getAllNPCDrops(conn: DatabaseUtil, npcMap: {}) {
-    await conn.query(`SELECT * FROM npcDrops`)
+  private static async getAllNPCDrops(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
+    await conn.query(`SELECT * FROM npcDrops WHERE npcId in (select id from npc where timestamp >= "${timestamp}");`)
       .then((list: any[]) => {
         list.forEach(row => {
           if (!npcMap[row.npcId]) {
@@ -100,8 +100,8 @@ export class NpcHandler {
       });
   }
 
-  private static async getAllCoordinates(conn: DatabaseUtil, npcMap: {}) {
-    await conn.query(`SELECT * FROM npcCoordinates`)
+  private static async getAllCoordinates(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
+    await conn.query(`SELECT * FROM npcCoordinates WHERE id in (select id from npc where timestamp >= "${timestamp}");`)
       .then((list: any[]) => {
         list.forEach(row => {
           delete row.timestamp;
@@ -114,8 +114,8 @@ export class NpcHandler {
       });
   }
 
-  private static async getAllTags(conn: DatabaseUtil, npcMap: {}, locale: string) {
-    await conn.query(`SELECT * FROM npcTag`)
+  private static async getAllTags(conn: DatabaseUtil, npcMap: {}, locale: string, timestamp: string) {
+    await conn.query(`SELECT * FROM npcTag WHERE id in (select id from npc where timestamp >= "${timestamp}");`)
       .then((list: any[]) => {
         list.forEach(row => {
           npcMap[row.id]['tag'] = locale ? row[locale] : row;
@@ -124,8 +124,8 @@ export class NpcHandler {
       });
   }
 
-  private static async getAllNPCNames(conn: DatabaseUtil, npcMap: {}, locale: string) {
-    await conn.query(`SELECT * FROM npcName`)
+  private static async getAllNPCNames(conn: DatabaseUtil, npcMap: {}, locale: string, timestamp: string) {
+    await conn.query(`SELECT * FROM npcName WHERE id in (select id from npc where timestamp >= "${timestamp}");`)
       .then((list: any[]) => {
         list.forEach(row => {
           npcMap[row.id]['name'] = locale ? row[locale] : row;
@@ -137,7 +137,8 @@ export class NpcHandler {
   private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
     await conn.query(`SELECT * FROM npc WHERE timestamp > "${timestamp}" ORDER BY timestamp desc;`)
       .then((list) => {
-        result.timestamp = list[0].timestamp;
+        console.log('Len', list.length);
+        result.timestamp = list[0] ? list[0].timestamp : timestamp;
         list.forEach(row => {
           npcMap[row.id] = row;
           result.list.push(row);
@@ -145,6 +146,73 @@ export class NpcHandler {
         });
       })
       .catch(console.error);
+  }
+
+  private static async getAllNPCsLeftOuterJoin(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
+    await conn.query(`SELECT npc.id as id, isAlliance, isHorde, minLevel, maxLevel, zoneId, expansionId,
+                              npc.timestamp as timestamp, COALESCE(locale.en_GB, 'Missing name') as name, COALESCE(tag.en_GB, '') as tag,
+                              sells.id as sellId, sells.standing, sells.stock, sells.price,
+                              sells.unitPrice, sells.stackSize, sells.currency,
+                              drops.id as dropId, drops.dropped, drops.outOf, drops.dropChance,
+                              coords.x, coords.y
+                            FROM npc AS npc
+                            LEFT OUTER JOIN npcName AS locale ON npc.id = locale.id
+                            LEFT OUTER JOIN npcTag AS tag ON npc.id = tag.id
+                            LEFT OUTER JOIN npcSells AS sells ON npc.id = sells.npcId
+                            LEFT OUTER JOIN npcDrops AS drops ON npc.id = drops.npcId
+                            LEFT OUTER JOIN npcCoordinates AS coords ON npc.id = coords.id
+                            WHERE npc.timestamp > "${timestamp}" ORDER BY timestamp desc;`)
+      .then((list) => {
+        result.timestamp = list[0].timestamp;
+        list.forEach(row => {
+          const npc: NPC = this.setNPCBaseValues(npcMap[row.id], row, npcMap, result.list);
+          if (row.x && row.y) {
+            npc.coordinates.push({x: row.x, y: row.y});
+          }
+
+          if (row.dropId) {
+            const item = new DroppedItem();
+            item.id = row.dropId;
+            item.dropped = row.dropped;
+            item.outOf = row.outOf;
+            item.dropChance = row.dropChance;
+            npc.drops.push(item);
+          }
+
+          if (row.sellId) {
+            const item = new VendorItem();
+            item.id = row.sellId;
+            item.stackSize = row.stackSize;
+            item.price = row.price;
+            item.currency = row.currency;
+            item.unitPrice = row.unitPrice;
+            item.stock = row.stock;
+            npc.sells.push(item);
+          }
+          delete row.timestamp;
+        });
+      })
+      .catch(console.error);
+  }
+
+  private static setNPCBaseValues(npc, row, npcMap: {}, list: any[]) {
+    if (!npc) {
+      npc = new NPC(row.id);
+      npc.isAlliance = row.isAlliance;
+      npc.isHorde = row.isHorde;
+      npc.minLevel = row.minLevel;
+      npc.maxLevel = row.maxLevel;
+      npc.name = row.name;
+      npc.tag = row.tag;
+      npc.zoneId = row.zoneId;
+      npc.expansionId = row.expansionId;
+      npc.sells = [];
+      npc.drops = [];
+      npc.coordinates = [];
+      npcMap[row.id] = npc;
+      list.push(npc);
+    }
+    return npc;
   }
 
   /* Fetching NPC from DB if exists */

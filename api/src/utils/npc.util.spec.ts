@@ -126,6 +126,19 @@ describe('NPCUtil', () => {
     expect(npc.avgGoldDrop).toBe(599824); // 59g 98s 24c
   });
 
+  it('Can get WOD garrison vendor', async () => {
+    const npcId = 87201;
+    const npc: NPC = await NPCUtil.getById(npcId);
+    console.log(npc);
+    expect(npc.id).toBe(npcId);
+    expect(npc.name.en_GB).toBe('Pyxni Pennypocket');
+    for (const item of npc.sells) {
+      expect(item.price).toBeTruthy();
+      expect(item.currency).toBeTruthy();
+      expect(item.stackSize).toBeTruthy();
+    }
+  });
+
   it('Can add missing locale', async () => {
     environment.test = false;
     jest.setTimeout(120000);

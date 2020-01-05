@@ -225,8 +225,9 @@ export class ZoneUtil {
     return new Promise<Zone>(async (resolve, reject) => {
       let zone: Zone;
       const promises: Promise<any>[] = [];
-
-      zone = await this.getByIdFromDB(locale, id);
+      await this.getByIdFromDB(locale, id)
+        .then(z => zone = z)
+          .catch(console.error);
 
       if (!zone) {
         zone = new Zone(id);
@@ -257,9 +258,9 @@ export class ZoneUtil {
                maxLevel,
                timestamp
         FROM zone as i
-        WHERE id = ${id}
         LEFT OUTER JOIN zoneName as l
-        ON i.id = l.id;`)
+        ON i.id = l.id
+        WHERE i.id = ${id};`)
       .then((res: any[]) => {
         if (res && res.length) {
           zone = res[0];

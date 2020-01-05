@@ -23,11 +23,11 @@
       <mat-card>
         <mat-card-header>
           <mat-card-title>
-            <!-- rel="domain={{ locale }},item={{ tv.itemID }}" -->
-            <div
+            <a rel="domain={{ locale }},item={{ tv.itemID }}"
+               routerLink="."
                (click)="select(tv)">
               {{ tv.name }}
-            </div>
+            </a>
           </mat-card-title>
           <mat-card-subtitle>
             <strong>Sold by: </strong>

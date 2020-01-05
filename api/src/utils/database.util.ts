@@ -35,7 +35,10 @@ export class DatabaseUtil {
             resolve(rows);
           });
         })
-        .catch(console.error);
+        .catch((error) => {
+          console.error(error);
+          reject();
+        });
     });
   }
 

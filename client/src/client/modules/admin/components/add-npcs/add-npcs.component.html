@@ -1,10 +1,13 @@
 <form [formGroup]="form">
   <mat-form-field>
-    <mat-select formControlName="index">
+    <mat-select placeholder="Batch indexes" formControlName="index">
       <mat-option *ngFor="let ids of npcBatchedIds; let i = index" [value]="i">
         Batch ID = {{ i | number }} / {{ npcBatchedIds.length | number }}
       </mat-option>
     </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="ids" placeholder="Ids" matInput/>
   </mat-form-field>
   <button class="ml-2" mat-raised-button (click)="addNpcs()">
     Process batch
