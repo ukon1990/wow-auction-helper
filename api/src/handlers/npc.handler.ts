@@ -135,14 +135,13 @@ export class NpcHandler {
   }
 
   private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
-    await conn.query(`SELECT * FROM npc WHERE timestamp > "${timestamp}" ORDER BY timestamp desc;`)
+    await conn.query(`SELECT * FROM npc WHERE timestamp > "${new Date(timestamp).toJSON()}" ORDER BY timestamp desc;`)
       .then((list) => {
-        console.log('Len', list.length);
         result.timestamp = list[0] ? list[0].timestamp : timestamp;
         list.forEach(row => {
           npcMap[row.id] = row;
           result.list.push(row);
-          delete row.timestamp;
+          // delete row.timestamp;
         });
       })
       .catch(console.error);

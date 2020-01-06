@@ -13,6 +13,7 @@ import {EventEmitter} from '@angular/core';
 import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {Crafting} from '../../crafting/models/crafting';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {TradeVendorItem} from '../../../models/item/trade-vendor';
 
 export class Dashboard {
   public static fails = [];
@@ -190,7 +191,8 @@ export class Dashboard {
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name'},
           {key: 'bestValueName', title: 'Target', dataType: 'name'},
-          {key: 'value', title: 'Value', dataType: 'gold'}
+          {key: 'value', title: 'Value', dataType: 'gold'},
+          {key: 'roi', title: 'Roi', dataType: 'gold'}
         ];
         this.setTradeVendorValues();
         break;
@@ -385,8 +387,9 @@ export class Dashboard {
     this.data.length = 0;
     Object.keys(SharedService.tradeVendorItemMap)
       .forEach(key => {
-        if (!this.isExpansionMissMatch(parseInt(key, 10))) {
-          this.data.push(SharedService.tradeVendorItemMap[key]);
+        const item: TradeVendorItem = SharedService.tradeVendorItemMap[key];
+        if (!this.isExpansionMissMatch(parseInt(key, 10)) && item.value > 0) {
+          this.data.push(item);
         }
       });
     this.data.sort((a, b) => b.value - a.value);

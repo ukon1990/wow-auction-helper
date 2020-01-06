@@ -22,6 +22,7 @@ export class TradeVendorItem {
   mktPrice = 0;
   avgSold = 0;
   buyout = 0;
+  roi = 0;
 
   constructor(itemID: number, quantity: number) {
     this.itemID = itemID;

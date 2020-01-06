@@ -225,7 +225,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   deleteUser(): void {
     localStorage.clear();
-    this.dbServie.clearDB();
+    this.dbServie.deleteDB();
     setTimeout(() => {
       location.reload();
     }, 2000);

@@ -48,7 +48,7 @@ export class ItemService {
           SharedService.auctionItemsMap[item.id].name = item.name;
           SharedService.auctionItemsMap[item.id].vendorSell = item.sellPrice;
         }
-        this.dbService.addItem(item);
+        this.dbService.addItems([item]);
         return item;
       }).catch(error => {
         console.error('Could not get item with ID ' + itemID, error);

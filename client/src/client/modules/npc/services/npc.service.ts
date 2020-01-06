@@ -4,6 +4,8 @@ import {Endpoints} from '../../../services/endpoints';
 import {BehaviorSubject} from 'rxjs';
 import {NPC} from '../models/npc.model';
 import {Report} from '../../../utils/report.util';
+import {DatabaseService} from '../../../services/database.service';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +16,31 @@ export class NpcService {
   list: BehaviorSubject<NPC[]> = new BehaviorSubject<NPC[]>([]);
   mapped: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private db: DatabaseService) {
   }
 
   getAll(): Promise<NPC[]> {
+    return new Promise<NPC[]>(async (resolve) => {
+      await this.db.getAllNPCs()
+        .then(list => {
+          this.mapAndSetNextValueForNPCs(list);
+        })
+        .catch(console.error);
+
+      if (!this.list.value.length) {
+        await this.getAllFromS3()
+          .catch(console.error);
+      }
+
+      await this.getAllAfterTimestamp()
+        .catch(console.error);
+
+      NPC.getTradeVendors(this.list.value);
+      resolve(this.list.value);
+    });
+  }
+
+  private getAllFromS3(): Promise<NPC[]> {
     const locale = localStorage['locale'];
     this.isLoading = true;
     return new Promise<any[]>(async (resolve, reject) => {
@@ -28,33 +51,42 @@ export class NpcService {
             map = {};
           this.isLoading = false;
           localStorage[this.storageName] = response['timestamp'];
-          list.forEach(npc => map[npc.id] = npc);
-          this.list.next(list);
-          this.mapped.next(map);
+          this.mapAndSetNextValueForNPCs(response['npcs']);
+          this.db.addNPCs(response['npcs'])
+            .catch(console.error);
           resolve(list);
-          NPC.getTradeVendors(this.list.value);
-          Report.debug('NPC trade vendors');
-          this.getAllAfterTimestamp().then().catch();
         })
         .catch(console.error);
     });
   }
 
   getAllAfterTimestamp(): Promise<NPC[]> {
+    const locale = localStorage['locale'];
     return new Promise<NPC[]>((resolve, reject) => {
-      this.http.post('http://localhost:3000/npc/all',
-        {locale: 'en_GB', timestamp: localStorage.getItem(this.storageName)})
+      this.http.post(Endpoints.getLambdaUrl('npc/all'),
+        {locale, timestamp: localStorage.getItem(this.storageName)})
         .toPromise()
         .then((response) => {
-          // TODO: Set timestamp
-          const list = [...response['npcs'], ...this.list.value],
-            map = {};
-          list.forEach(npc => map[npc.id] = npc);
-          this.list.next(list);
-          this.mapped.next(map);
+          localStorage[this.storageName] = response['timestamp'];
+          this.mapAndSetNextValueForNPCs(response['npcs']);
+          this.db.addNPCs(response['npcs'])
+            .catch(console.error);
+          resolve(this.list.value);
         })
-        .catch(console.error);
+        .catch((error) => {
+          ErrorReport.sendHttpError(error);
+          resolve(this.list.value);
+      });
     });
+  }
+
+  private mapAndSetNextValueForNPCs(newData: NPC[]) {
+    const map = {},
+      list = [...newData, ...this.list.value];
+    this.list.next(list);
+    this.list.value.forEach(npc =>
+      map[npc.id] = npc);
+    this.mapped.next(map);
   }
 
   getIds(ids: number[]) {
