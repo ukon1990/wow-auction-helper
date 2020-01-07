@@ -45,10 +45,12 @@ export class MenuComponent implements OnDestroy, OnInit {
   }
 
   isSmallScreen(): boolean {
+    // @ts-ignore
     return window.innerWidth < 991.98;
   }
 
   displayExtraMenu(): boolean {
+    // @ts-ignore
     return window.innerWidth < 1534;
   }
 }
