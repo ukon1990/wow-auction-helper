@@ -3,7 +3,7 @@ import {SharedService} from '../../../services/shared.service';
 import {Notification} from '../../../models/user/notification';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {WatchlistGroup, WatchlistItem} from './watchlist.model';
-import {Seller} from '../../../models/seller';
+import {Seller} from '../../sellers/models/seller.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Filters} from '../../../utils/filtering';
 import {FormBuilder} from '@angular/forms';

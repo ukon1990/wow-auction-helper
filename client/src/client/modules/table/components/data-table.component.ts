@@ -7,19 +7,19 @@ import {ColumnDescription} from '../models/column-description';
 import {Sorter} from '../../../models/sorter';
 import {Auction} from '../../auction/models/auction.model';
 import {SharedService} from '../../../services/shared.service';
-import {Seller} from '../../../models/seller';
+import {Seller} from '../../sellers/models/seller.model';
 import {AuctionPet} from '../../auction/models/auction-pet.model';
 import {CustomPrices} from '../../crafting/models/custom-price';
-import {CustomProcs} from '../../crafting/models/custom-proc';
 import {Recipe} from '../../crafting/models/recipe';
 import {User} from '../../../models/user/user';
 import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart.model';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
+import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
+import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
 
 @Component({
   selector: 'wah-data-table',
@@ -201,8 +201,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     return CustomPrices;
   }
 
-  customProcs(): CustomProcs {
-    return CustomProcs;
+  customProcs(): CustomProcUtil {
+    return CustomProcUtil;
   }
 
   /* istanbul ignore next */

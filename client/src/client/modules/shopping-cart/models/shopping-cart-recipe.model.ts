@@ -1,4 +1,4 @@
-import {ShoppingCartReagent} from './shopping-cart';
+import {ShoppingCartReagent} from './shopping-cart-reagent.model';
 
 export class ShoppingCartRecipe {
   spellID: number;

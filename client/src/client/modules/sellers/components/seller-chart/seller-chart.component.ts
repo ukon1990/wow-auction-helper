@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Input, OnChanges } from '@angular/core';
 import { Chart } from 'chart.js';
 import * as distinctColors from 'distinct-colors';
-import { Seller } from '../../../../models/seller';
+import { Seller } from '../../models/seller.model';
 import { itemClasses } from '../../../../models/item/item-classes';
 import { Auction } from '../../../auction/models/auction.model';
 import { SharedService } from '../../../../services/shared.service';

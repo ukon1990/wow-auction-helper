@@ -3,11 +3,11 @@ import {SharedService} from '../../../services/shared.service';
 import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
-import {CustomProcs} from './custom-proc';
 import {ItemSpells} from '../../../models/item/itemspells';
 import {Spell} from '../../../models/spell';
 import {Reagent} from './reagent';
 import wordsToNumbers from 'words-to-numbers';
+import {CustomProcUtil} from '../utils/custom-proc.util';
 
 export class Crafting {
   public static ahCutModifier = 0.95;
@@ -134,9 +134,9 @@ export class Crafting {
         if (SharedService.user.useIntermediateCrafting && re) {
           if (re.reagents.length > 0) {
             let tmpCost = 0;
-            const regularCost = this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
+            const regularCost = this.getCost(r.itemID, r.count) / CustomProcUtil.get(recipe);
             re.reagents.forEach(rea => {
-              tmpCost += this.getCost(rea.itemID, rea.count) / CustomProcs.get(re) * r.count;
+              tmpCost += this.getCost(rea.itemID, rea.count) / CustomProcUtil.get(re) * r.count;
             });
 
             if (tmpCost < regularCost) {
@@ -148,7 +148,7 @@ export class Crafting {
             }
           }
         } else {
-          recipe.cost += this.getCost(r.itemID, r.count) / CustomProcs.get(recipe);
+          recipe.cost += this.getCost(r.itemID, r.count) / CustomProcUtil.get(recipe);
         }
       });
 

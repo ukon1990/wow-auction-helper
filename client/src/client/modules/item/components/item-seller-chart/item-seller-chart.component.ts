@@ -1,8 +1,9 @@
-import { Component, AfterViewInit, Input, OnChanges } from '@angular/core';
-import { Chart } from 'chart.js';
+import {AfterViewInit, Component, Input, OnChanges} from '@angular/core';
+import {Chart} from 'chart.js';
 import * as distinctColors from 'distinct-colors';
-import { FormControl } from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {Auction} from '../../../auction/models/auction.model';
+import {ItemSeller} from '../../../sellers/models/item-seller.model';
 
 @Component({
   selector: 'wah-item-seller-chart',
@@ -81,16 +82,5 @@ export class ItemSellerChartComponent implements OnChanges, AfterViewInit {
 
   save(): void {
     localStorage[this.storageName] = this.chartTypeForm.value;
-  }
-}
-
-class ItemSeller {
-  sellerID: string;
-  name: string;
-  quantity = 1;
-
-  constructor(item: Auction) {
-    this.sellerID = `${ item.owner }-${ item.ownerRealm }`;
-    this.name = item.owner;
   }
 }

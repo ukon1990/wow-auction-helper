@@ -8,10 +8,11 @@ import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-pric
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {Crafting} from '../../../../crafting/models/crafting';
 import {Angulartics2} from 'angulartics2';
-import {CustomProc, CustomProcs} from '../../../../crafting/models/custom-proc';
+import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {customProcsDefault} from '../../../../crafting/models/default-custom-procs';
 import {Report} from '../../../../../utils/report.util';
+import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -42,7 +43,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.saveInterval = setInterval(() => {
       if (JSON.stringify(SharedService.user.customProcs) !== localStorage['custom_procs']) {
-        CustomProcs.save();
+        CustomProcUtil.save();
         Crafting.calculateCost();
       }
     }, 500);
@@ -56,7 +57,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
 
   add(recipe: Recipe): void {
     this.itemSearchForm.setValue('');
-    CustomProcs.add(recipe);
+    CustomProcUtil.add(recipe);
 
     Report.send('Added custom proc', 'Custom proc');
   }
@@ -65,8 +66,8 @@ export class CustomProcComponent implements OnInit, OnDestroy {
     return SharedService.user.customProcs;
   }
 
-  customProcs(): CustomProcs {
-    return CustomProcs;
+  customProcs(): CustomProcUtil {
+    return CustomProcUtil;
   }
 
   /**

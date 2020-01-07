@@ -1,7 +1,8 @@
-import { SharedService } from '../../../services/shared.service';
-import { Recipe } from './recipe';
+import {Recipe} from '../models/recipe';
+import {SharedService} from '../../../services/shared.service';
+import {CustomProc} from '../models/custom-proc.model';
 
-export class CustomProcs {
+export class CustomProcUtil {
 
   public static get(recipe: Recipe): number {
     return SharedService.customProcsMap[recipe.spellID] ?
@@ -13,14 +14,14 @@ export class CustomProcs {
       const customProc = new CustomProc(recipe);
       SharedService.customProcsMap[recipe.spellID] = customProc;
       SharedService.user.customProcs.unshift(customProc);
-      CustomProcs.save();
+      CustomProcUtil.save();
     }
   }
 
   public static remove(customProc: CustomProc, index: number): void {
     SharedService.user.customProcs.splice(index, 1);
     delete SharedService.customProcsMap[customProc.spellID];
-    CustomProcs.save();
+    CustomProcUtil.save();
   }
 
   public static createMap(customProcs: Array<CustomProc>): void {
@@ -30,25 +31,5 @@ export class CustomProcs {
 
   public static save(): void {
     localStorage['custom_procs'] = JSON.stringify(SharedService.user.customProcs);
-  }
-}
-
-export class CustomProc {
-  spellID: number;
-  itemID: number;
-  name: string;
-  profession: string;
-  rank: string;
-  rate: number;
-
-  constructor(recipe?: Recipe) {
-    if (recipe) {
-      this.spellID = recipe.spellID;
-      this.itemID = recipe.itemID;
-      this.name = recipe.name;
-      this.profession = recipe.profession;
-      this.rank = recipe.rank;
-      this.rate = recipe.minCount;
-    }
   }
 }
