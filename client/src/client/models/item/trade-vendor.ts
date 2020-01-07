@@ -15,7 +15,7 @@ export class TradeVendor {
 
 export class TradeVendorItem {
   itemID: number;
-  quantity: number; // Numers of items per parent item
+  quantity: number; // Numbers of items per parent item
   value = 0;
   estDemand = 0;
   regionSaleAvg = 0;
@@ -23,6 +23,8 @@ export class TradeVendorItem {
   avgSold = 0;
   buyout = 0;
   roi = 0;
+  sourceBuyout = 0;
+  sourceID?: number;
 
   constructor(itemID: number, quantity: number) {
     this.itemID = itemID;

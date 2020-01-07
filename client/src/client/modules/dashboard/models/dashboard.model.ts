@@ -189,9 +189,11 @@ export class Dashboard {
       case Dashboard.TYPES.TRADE_VENDOR_VALUES:
         this.idParam = 'itemID';
         this.columns = [
-          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
+          {key: 'sourceBuyout', title: 'Source buyout', dataType: 'gold'},
           {key: 'bestValueName', title: 'Target', dataType: 'name'},
           {key: 'value', title: 'Value', dataType: 'gold'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
           {key: 'roi', title: 'Roi', dataType: 'gold'}
         ];
         this.setTradeVendorValues();
@@ -388,10 +390,11 @@ export class Dashboard {
     Object.keys(SharedService.tradeVendorItemMap)
       .forEach(key => {
         const item: TradeVendorItem = SharedService.tradeVendorItemMap[key];
-        if (!this.isExpansionMissMatch(parseInt(key, 10)) && item.value > 0) {
+        if (!this.isExpansionMissMatch(parseInt(key, 10)) && item.value > 0 && item.sourceBuyout > 0) {
           this.data.push(item);
         }
       });
+    console.log(this.data);
     this.data.sort((a, b) => b.value - a.value);
   }
 
@@ -412,14 +415,14 @@ export class Dashboard {
         if (wlVal.left > 0 && wlVal.right > 0 && item.criteria === 'below') {
           this.tsmShoppingString += `${
             item.name
-            }/exact`;
+          }/exact`;
           if (item.targetType !== SharedService.user.watchlist.TARGET_TYPES.QUANTITY &&
             item.compareTo !== SharedService.user.watchlist.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
             this.tsmShoppingString += `/${
               pipe.transform(wlVal.left).replace(',', '')
-              }/${
+            }/${
               pipe.transform(wlVal.right).replace(',', '')
-              }`;
+            }`;
           }
           this.tsmShoppingString += ';';
         }
@@ -447,9 +450,9 @@ export class Dashboard {
       if (remains.yield > 0) {
         this.tsmShoppingString += `${
           remains.name
-          }/exact/1c/${
+        }/exact/1c/${
           pipe.transform(remains.buyout + remains.yield).replace(',', '')
-          };`;
+        };`;
         return true;
       }
       return false;
@@ -536,9 +539,9 @@ export class Dashboard {
         }
         this.tsmShoppingString += `${
           ai.name
-          }/exact/1c/${
+        }/exact/1c/${
           pipe.transform(ai.vendorSell).replace(',', '')
-          };`;
+        };`;
         return true;
       }
       return false;
@@ -650,9 +653,9 @@ export class Dashboard {
         (ai.buyout / ai.mktPrice) < this.settings.minROIPercent) {
         this.tsmShoppingString += `${
           ai.name
-          }/exact/1c/${
+        }/exact/1c/${
           pipe.transform(ai.mktPrice * 0.149).replace(',', '')
-          };`;
+        };`;
         return true;
       }
       return false;

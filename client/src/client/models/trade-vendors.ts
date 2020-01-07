@@ -33,17 +33,22 @@ export class TradeVendors {
   }
 
   private static updateTradeVendorItemMap(key) {
+    const {sourceID, sourceBuyout, value, roi, itemID} = SharedService.tradeVendorMap[key].items[0] as TradeVendorItem;
     const item = {
-      itemID: SharedService.tradeVendorMap[key].items[0].itemID,
+      sourceID,
+      itemID,
+      sourceBuyout,
       name: SharedService.tradeVendorMap[key].name,
       bestValueName: TradeVendors.getItem(key).name,
-      value: SharedService.tradeVendorMap[key].items[0].value,
-      tradeVendor: SharedService.tradeVendorMap[key]
+      value,
+      tradeVendor: SharedService.tradeVendorMap[key],
+      roi
     };
     SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
   }
 
   private static setItemValue(item: TradeVendorItem, vendor: TradeVendor) {
+    item.sourceID = vendor.itemID;
     const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID],
       vendorAuctionItem: AuctionItem = SharedService.auctionItemsMap[vendor.itemID];
     item.value = auctionItem !== undefined ?
@@ -52,6 +57,7 @@ export class TradeVendors {
       auctionItem.buyout : 0;
     item.roi = vendorAuctionItem ? item.value - vendorAuctionItem.buyout : item.value;
     if (vendorAuctionItem) {
+      item.sourceBuyout = vendorAuctionItem.buyout;
       // console.log('Buyout', item.roi, item.value - vendorAuctionItem.buyout) ;
     }
     if (SharedService.user.apiToUse !== 'none') {
