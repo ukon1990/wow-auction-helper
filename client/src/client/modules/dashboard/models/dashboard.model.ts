@@ -390,7 +390,7 @@ export class Dashboard {
     Object.keys(SharedService.tradeVendorItemMap)
       .forEach(key => {
         const item: TradeVendorItem = SharedService.tradeVendorItemMap[key];
-        if (!this.isExpansionMissMatch(parseInt(key, 10)) && item.value > 0 && item.sourceBuyout > 0) {
+        if (!this.isExpansionMissMatch(parseInt(key, 10)) && item.value > 0 && item.sourceBuyout > 0 && item.roi > 0) {
           this.data.push(item);
         }
       });
