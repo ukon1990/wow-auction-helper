@@ -14,6 +14,7 @@ import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {Crafting} from '../../crafting/models/crafting';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
+import {TSM} from '../../auction/models/tsm.model';
 
 export class Dashboard {
   public static fails = [];
@@ -190,11 +191,11 @@ export class Dashboard {
         this.idParam = 'itemID';
         this.columns = [
           {key: 'name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
-          {key: 'sourceBuyout', title: 'Source buyout', dataType: 'gold'},
           {key: 'bestValueName', title: 'Target', dataType: 'name'},
+          {key: 'roi', title: 'Roi', dataType: 'gold'},
           {key: 'value', title: 'Value', dataType: 'gold'},
-          {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-          {key: 'roi', title: 'Roi', dataType: 'gold'}
+          {key: 'sourceBuyout', title: 'Source buyout', dataType: 'gold'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'}
         ];
         this.setTradeVendorValues();
         break;
@@ -388,13 +389,15 @@ export class Dashboard {
   private setTradeVendorValues(): void {
     this.data.length = 0;
     Object.keys(SharedService.tradeVendorItemMap)
-      .forEach(key => {
-        const item: TradeVendorItem = SharedService.tradeVendorItemMap[key];
-        if (!this.isExpansionMissMatch(parseInt(key, 10)) && item.value > 0 && item.sourceBuyout > 0 && item.roi > 0) {
+      .forEach(id => {
+        const item: TradeVendorItem = SharedService.tradeVendorItemMap[id],
+          tsm: TSM = SharedService.tsm[id],
+          hasValueAndProfit = item.value > 0 && item.sourceBuyout > 0 && item.roi > 0,
+          doesAtLeastRegionSaleRateOf10Percent = (!tsm || tsm.RegionSaleRate > .1);
+        if (!this.isExpansionMissMatch(+id) && hasValueAndProfit && doesAtLeastRegionSaleRateOf10Percent) {
           this.data.push(item);
         }
       });
-    console.log(this.data);
     this.data.sort((a, b) => b.value - a.value);
   }
 
