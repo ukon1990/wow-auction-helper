@@ -51,7 +51,7 @@
     "push.js": "^1.0.12",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "rxjs": "^6.5.3",
+    "rxjs": "^6.5.4",
     "source-map-explorer": "^2.1.0",
     "tslib": "^1.9.3",
     "words-to-numbers": "^1.5.1",
@@ -59,8 +59,8 @@
     "zone.js": "^0.10.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.803.20",
-    "@angular/cli": "8.3.20",
+    "@angular-devkit/build-angular": "^0.803.21",
+    "@angular/cli": "8.3.21",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "~8.2.14",
     "@types/aws-lambda": "8.10.31",
