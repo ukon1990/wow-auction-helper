@@ -46,6 +46,7 @@ const TOOLS_ROUTE: TitledRoute = {
   children: [
     {
       title: 'TSM Addon', path: 'tsm', component: TsmAddonDbComponent, children: [
+        {path: '', redirectTo: 'summary', pathMatch: 'full'},
         {
           title: 'Profit summary', path: 'summary', component: ProfitSummaryComponent, isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS
         },
