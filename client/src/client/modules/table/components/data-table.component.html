@@ -26,7 +26,8 @@
       <td [class]="c.cssClass" *ngIf="displayColumn(c)" (click)="this.rowClickEvent(c, d)">
           <span [ngSwitch]="c.dataType">
             <span *ngSwitchCase="'name'"
-                  [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''" (click)="select(d, c)">
+                  [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''"
+                  (click)="select(d, c)">
               <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
                 getWHRelations(d, c)
                 }}">
@@ -68,7 +69,7 @@
               </span>
             </span>
             <span *ngSwitchCase="'gold-per-item'">
-              {{ d[c.key] / d.quantity | gold}}
+              {{ d[c.key] / d.quantity | gold }}
             </span>
             <span *ngSwitchCase="'vendor-currency'">
               <span *ngIf="!d.currency; else itemCurrency">

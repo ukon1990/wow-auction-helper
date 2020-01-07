@@ -4,6 +4,27 @@ import {SharedService} from '../../../services/shared.service';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {CustomProcs} from '../../crafting/models/custom-proc';
 
+
+export class ShoppingCartReagent {
+  itemID: number;
+  intermediateCount = 0;
+  quantity: number;
+
+  constructor(itemID: number, quantity: number) {
+    this.itemID = itemID;
+    this.quantity = quantity;
+  }
+}
+
+export class ShoppingCartItem {
+  itemID: number;
+  quantity = 1;
+
+  constructor(itemID: number) {
+    this.itemID = itemID;
+  }
+}
+
 /**
  * Local storage value: shopping_cart
  */
@@ -16,7 +37,7 @@ export class ShoppingCartOld {
   reagents: Array<ShoppingCartReagent> = new Array<ShoppingCartReagent>();
   reagentsMap: Map<number, ShoppingCartReagent> = new Map<number, ShoppingCartReagent>();
   items: Array<ShoppingCartItem> = new Array<ShoppingCartItem>();
-  itemsMap: Map<number, ShoppingCartItem> = new Map<number, ShoppingCartItem>();
+  itemsMap = new Map<number, ShoppingCartItem>();
 
   cost = 0;
   buyout = 0;
@@ -227,26 +248,6 @@ export class ShoppingCartRecipe {
 
   constructor(spellID: number, itemID: number) {
     this.spellID = spellID;
-    this.itemID = itemID;
-  }
-}
-
-export class ShoppingCartReagent {
-  itemID: number;
-  intermediateCount = 0;
-  quantity: number;
-
-  constructor(itemID: number, quantity: number) {
-    this.itemID = itemID;
-    this.quantity = quantity;
-  }
-}
-
-export class ShoppingCartItem {
-  itemID: number;
-  quantity = 1;
-
-  constructor(itemID: number) {
     this.itemID = itemID;
   }
 }
