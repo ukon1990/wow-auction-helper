@@ -1,15 +1,10 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NavbarComponent} from './components/navbar/navbar.component';
-import {UpdateComponent} from '../admin/components/update/update.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
-import {ItemComponent} from './components/item/item.component';
-import {LineChartComponent} from './components/item/line-chart/line-chart.component';
+import {ItemComponent} from '../item/components/item.component';
 import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
-import {ItemSellerChartComponent} from './components/item/item-seller-chart/item-seller-chart.component';
 import {FooterComponent} from './components/footer/footer.component';
-import {AddItemsComponent} from '../admin/components/update/add-items/add-items.component';
-import {AddRecipesComponent} from '../admin/components/update/add-recipes/add-recipes.component';
 import {ReputationsComponent} from './components/reputations/reputations.component';
 import {CharacterReputationComponent} from './components/reputations/character-reputation/character-reputation.component';
 import {AppUpdateComponent} from './components/app-update/app-update.component';
@@ -38,10 +33,7 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
   declarations: [
     NavbarComponent,
     DownloadComponent,
-    ItemComponent,
-    LineChartComponent,
     TradeVendorsComponent,
-    ItemSellerChartComponent,
     FooterComponent,
     ReputationsComponent,
     CharacterReputationComponent,
@@ -71,7 +63,7 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
     FontAwesomeModule,
     MarketResetModule
   ],
-  exports: [NavbarComponent, FooterComponent, ItemComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent]
+  exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent]
 })
 export class CoreModule {
   constructor() {

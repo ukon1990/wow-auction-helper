@@ -2,8 +2,8 @@ import {FormControl} from '@angular/forms';
 import {AfterContentInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Chart} from 'chart.js';
 import {Subscription} from 'rxjs';
-import {SharedService} from '../../../../../services/shared.service';
-import {Auction} from '../../../../auction/models/auction.model';
+import {SharedService} from '../../../../services/shared.service';
+import {Auction} from '../../../auction/models/auction.model';
 
 // Replace with : http://www.chartjs.org/samples/latest/
 declare let $: Function;

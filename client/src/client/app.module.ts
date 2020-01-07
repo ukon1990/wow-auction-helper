@@ -39,6 +39,7 @@ import {ReportService} from './services/report/report.service';
 import {AuthenticationInterceptor} from './auth.interceptor';
 import {ZoneService} from './modules/zone/service/zone.service';
 import {NpcService} from './modules/npc/services/npc.service';
+import {ItemModule} from './modules/item/item.module';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import {NpcService} from './modules/npc/services/npc.service';
     CraftingModule,
     AuctionModule,
     ShoppingCartModule,
-    TsmModule
+    TsmModule,
+    ItemModule
   ],
   providers: [
     RealmService,
