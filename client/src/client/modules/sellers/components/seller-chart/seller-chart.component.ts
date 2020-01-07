@@ -7,6 +7,7 @@ import { Auction } from '../../../auction/models/auction.model';
 import { SharedService } from '../../../../services/shared.service';
 import { Item } from '../../../../models/item/item';
 import { FormControl } from '@angular/forms';
+import {AuctionClassGroup} from '../../models/auction-class-group.model';
 
 @Component({
   selector: 'wah-seller-chart',
@@ -99,18 +100,5 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
 
   save(): void {
     localStorage[this.storageName] = this.chartTypeForm.value;
-  }
-}
-
-class AuctionClassGroup {
-  itemClass: number;
-  itemSubClass: number;
-  name = '';
-  auctions: Array<Auction> = new Array<Auction>();
-  quantity = 1;
-
-  constructor(item: Item) {
-    this.itemClass = item.itemClass;
-    this.itemSubClass = item.itemSubClass;
   }
 }

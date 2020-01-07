@@ -31,9 +31,7 @@
     <ul class="list-group">
       <li class="list-group-item list-group-item-primary">
         <strong>Progress:</strong>
-        {{ getCompletedCount() }}/{{
-          progress.ids.length
-        }}
+        {{ getCompletedCount() }}/{{ progress.ids.length }}
         ({{ getProgress() | percent }})
         <br />
         <mat-progress-bar

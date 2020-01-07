@@ -3,10 +3,10 @@
     <a mat-raised-button routerLink="/tools/npc">Back to the list</a>
   </mat-card-actions>
   <mat-card-header *ngIf="npc">
-    <mat-card-title>{{npc.name}}</mat-card-title>
-    <mat-card-subtitle *ngIf="npc.tag">{{npc.tag}}</mat-card-subtitle>
+    <mat-card-title>{{ npc.name }}</mat-card-title>
+    <mat-card-subtitle *ngIf="npc.tag">{{ npc.tag }}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="zone">
-      Found in: {{zone?.name}} ({{ territories[zone.territoryId] }}
+      Found in: {{ zone?.name }} ({{ territories[zone.territoryId] }}
       - {{ zoneTypes[zone.typeId] }})
     </mat-card-subtitle>
     <mat-card-subtitle>

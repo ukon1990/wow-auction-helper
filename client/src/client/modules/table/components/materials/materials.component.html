@@ -18,7 +18,7 @@
       <div class="ml-3 mr-1 mb-1" *ngFor="let subR of r.recipe.reagents" (click)="setSelectedItem(subR)">
         <a rel="item={{ subR.itemID }}" [ngClass]="{'not-found': !isEnoughAtAH(subR.itemID, subR.count) }" matTooltip="There are currently {{ getAtAHCount(subR.itemID) | number }} at the auction house. Click for details.">
           <wah-icon *ngIf="subR.itemID" class="float-left" size="22" [id]="subR.itemID"></wah-icon>
-          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }} x {{ getItemName(subR.itemID)}} - 
+          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }} x {{ getItemName(subR.itemID) }} - 
           <span class="float-right" [matTooltip]="usingVendor(subR) ? vendorTooltip(subR) : ''">
             {{ getItemValue(subR.itemID) | gold }} 
             {{ getReagentFromVendorString(subR) }}

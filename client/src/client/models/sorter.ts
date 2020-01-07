@@ -1,5 +1,12 @@
 import {SharedService} from '../services/shared.service';
 
+export class Key {
+  constructor(
+    public key: string, public desc: boolean, public divideByQuantity: boolean,
+    public byPercent?: boolean, public percentOf?: string
+  ) { }
+}
+
 export class Sorter {
   readonly auctionDuration = {
     'VERY_LONG': 4,
@@ -94,11 +101,4 @@ export class Sorter {
   getKey(key: string): Key {
     return this.keys[this.findKeyIndex(key)];
   }
-}
-
-export class Key {
-  constructor(
-    public key: string, public desc: boolean, public divideByQuantity: boolean,
-    public byPercent?: boolean, public percentOf?: string
-  ) { }
 }

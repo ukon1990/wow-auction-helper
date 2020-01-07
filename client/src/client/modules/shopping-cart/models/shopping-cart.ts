@@ -3,27 +3,9 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {CustomProcs} from '../../crafting/models/custom-proc';
-
-
-export class ShoppingCartReagent {
-  itemID: number;
-  intermediateCount = 0;
-  quantity: number;
-
-  constructor(itemID: number, quantity: number) {
-    this.itemID = itemID;
-    this.quantity = quantity;
-  }
-}
-
-export class ShoppingCartItem {
-  itemID: number;
-  quantity = 1;
-
-  constructor(itemID: number) {
-    this.itemID = itemID;
-  }
-}
+import {ShoppingCartRecipe} from './shopping-cart-recipe.model';
+import {ShoppingCartReagent} from './shopping-cart-reagent.model';
+import {ShoppingCartItem} from './shopping-cart-item.model';
 
 /**
  * Local storage value: shopping_cart
@@ -236,18 +218,5 @@ export class ShoppingCartOld {
     if (this.tsmShoppingString.length > 0 && this.tsmShoppingString.endsWith(';')) {
       this.tsmShoppingString = this.tsmShoppingString.slice(0, this.tsmShoppingString.length - 1);
     }
-  }
-}
-
-export class ShoppingCartRecipe {
-  spellID: number;
-  itemID: number;
-  quantity = 1;
-  intermediateCount = 0;
-  reagents: Array<ShoppingCartReagent> = Array<ShoppingCartReagent>();
-
-  constructor(spellID: number, itemID: number) {
-    this.spellID = spellID;
-    this.itemID = itemID;
   }
 }

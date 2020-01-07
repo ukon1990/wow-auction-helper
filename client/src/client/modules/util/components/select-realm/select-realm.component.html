@@ -37,13 +37,7 @@
         <mat-option (onSelectionChange)="onOptionSelected(realm.realm)"
                     *ngFor="let realm of filteredRealms"
                     [value]="realm.value">
-          {{
-            realm.match.start
-          }}<u><strong>{{
-            realm.match.match
-          }}</strong></u>{{
-            realm.match.end
-          }}
+          {{ realm.match.start }}<u><strong>{{ realm.match.match }}</strong></u>{{ realm.match.end }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>

@@ -59,7 +59,7 @@
             </span>
             <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
             <span *ngSwitchCase="'gold'">
-              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold }}
               <span *ngIf="c.key === 'buyout' && d.mktPrice">
                 ({{ d.buyout / d.mktPrice | percent }} of MV)
               </span>
@@ -100,10 +100,10 @@
               </a>
             </span>
             <span *ngSwitchCase="'percent'">
-              {{(d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
             </span>
             <span *ngSwitchCase="'number'">
-              {{(d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
             </span>
             <span *ngSwitchCase="'zone'">
               <a *ngFor="let zone of d[c.key] | slice:0:1" data-wh-rename-link="true"
@@ -186,7 +186,7 @@
                 <i class="fas fa-trash-alt"></i>
               </button>
             </span>
-            <span *ngSwitchDefault>{{(d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
+            <span *ngSwitchDefault>{{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
           </span>
       </td>
     </ng-container>

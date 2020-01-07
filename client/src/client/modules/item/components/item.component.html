@@ -34,7 +34,7 @@
       <div class="col-md-4" *ngIf="selected.auctionItem">
         <strong>Expansion: </strong> {{ expansions[selected.item.expansionId] }}
         <br>
-        <strong>Lowest buyout per item:</strong> {{ selected.auctionItem.buyout | gold}}
+        <strong>Lowest buyout per item:</strong> {{ selected.auctionItem.buyout | gold }}
         <span *ngIf="isUsing3PAPI && !selected.auctionItem.petSpeciesId">({{ selected.auctionItem.buyout / selected.auctionItem.mktPrice | percent }}
           MV)</span>
         <br>
