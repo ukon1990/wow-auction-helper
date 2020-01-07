@@ -1,0 +1,43 @@
+<strong>Lowest buyout per item:</strong> {{ item.buyout | gold }}
+<span *ngIf="isUsing3PAPI && !item.petSpeciesId">({{ item.buyout / item.mktPrice | percent }}
+  MV)</span>
+<br>
+<strong>Market value:</strong> {{ item.mktPrice | gold }}
+<br>
+<strong>Stock:</strong> {{ item.quantityTotal | number }} pcs
+<br>
+<div *ngIf="isUsing3PAPI && !item.petSpeciesId" class="clearfix">
+  <strong>Avg daily sold:</strong> {{ item.avgDailySold | number }}
+  <br>
+  <span *ngIf="isUsing3PAPI">
+              <strong>Avg sale price:</strong> {{ item.regionSaleAvg | gold }}
+            </span>
+  <br>
+</div>
+<mat-card class="mt-3 mb-3"
+          *ngIf="item.regionSaleRate !== undefined || item?.hasPersonalSaleRate">
+  <mat-card-header>
+    <mat-card-subtitle>
+      Sale rate
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="item.regionSaleRate !== undefined">
+      <strong>Regional sale rate: </strong>
+      {{ item.regionSaleRate | percent }}
+    </div>
+
+    <ng-container *ngIf="item?.hasPersonalSaleRate">
+      <strong>Last 24 hours: </strong> {{ item.past24HoursSaleRate | percent }}<br>
+      <strong>Last 7 days: </strong> {{ item.past7DaysSaleRate | percent }}<br>
+      <strong>Last 14 days: </strong> {{ item.past14DaysSaleRate | percent }}<br>
+      <strong>Last 30 days: </strong> {{ item.past30DaysSaleRate | percent }}<br>
+      <strong>Last 90 days: </strong> {{ item.past90DaysSaleRate | percent }}<br>
+      <strong>Overall: </strong> {{ item.totalSaleRate | percent }}
+    </ng-container>
+  </mat-card-content>
+</mat-card>
+
+<wah-line-chart *ngIf="item && !isMobile()" [data]="item.auctions">
+</wah-line-chart>

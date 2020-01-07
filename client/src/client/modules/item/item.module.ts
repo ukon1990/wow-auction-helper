@@ -12,19 +12,27 @@ import {
   MatTabsModule,
   MatCheckboxModule,
   MatButtonModule,
-  MatTooltipModule, MatSelectModule
+  MatTooltipModule, MatSelectModule, MatInputModule
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {IconModule} from '../icon/icon.module';
 import {TsmModule} from '../tsm/tsm.module';
 import {UtilModule} from '../util/util.module';
+import { AuctionItemDetailsComponent } from './components/auction-item-details/auction-item-details.component';
+import { TsmTabComponent } from './components/tsm-tab/tsm-tab.component';
+import { SoldByTabComponent } from './components/sold-by-tab/sold-by-tab.component';
+import { DroppedByTabComponent } from './components/dropped-by-tab/dropped-by-tab.component';
 
 
 @NgModule({
   declarations: [
     ItemComponent,
     LineChartComponent,
-    ItemSellerChartComponent
+    ItemSellerChartComponent,
+    AuctionItemDetailsComponent,
+    TsmTabComponent,
+    SoldByTabComponent,
+    DroppedByTabComponent
   ],
   imports: [
     CommonModule,
@@ -41,7 +49,8 @@ import {UtilModule} from '../util/util.module';
     MatTooltipModule,
     MatSelectModule,
     TsmModule,
-    UtilModule
+    UtilModule,
+    MatInputModule
   ],
   exports: [
     ItemComponent

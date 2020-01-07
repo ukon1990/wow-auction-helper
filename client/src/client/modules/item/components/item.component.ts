@@ -12,6 +12,9 @@ import {Report} from '../../../utils/report.util';
 import {AuctionPet} from '../../auction/models/auction-pet.model';
 import {Endpoints} from '../../../services/endpoints';
 import {Pet} from '../../pet/models/pet';
+import {ItemNpcDetails} from '../models/item-npc-details.model';
+import {NpcService} from '../../npc/services/npc.service';
+import {ZoneService} from '../../zone/service/zone.service';
 
 @Component({
   selector: 'wah-item',
@@ -21,20 +24,18 @@ import {Pet} from '../../pet/models/pet';
 export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs', {static: false}) tabs;
   expansions = GameBuild.expansionMap;
-  wowDBItem: any;
-  factionId: number;
   targetBuyoutValue: number;
   materialFor: Array<Recipe> = new Array<Recipe>();
   createdBy: Array<Recipe>;
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
-  personalSaleRate;
   selected = {
     item: undefined,
     auctionItem: undefined,
     seller: undefined
   };
+  itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
   subscriptions = new SubscriptionManager();
   columns: Array<ColumnDescription> = [
@@ -63,14 +64,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
-  droppedByColumns: Array<ColumnDescription> = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
-    {key: 'location', title: 'Zone', dataType: 'zone'},
-    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
-    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
-  ];
-
   containedInColumns: Array<ColumnDescription> = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
@@ -78,21 +71,13 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
 
-  soldByColumns: Array<ColumnDescription> = [
-    {key: 'name', title: 'Name', dataType: ''},
-    {key: 'tag', title: 'Tag', dataType: ''},
-    {key: 'location', title: 'Zone', dataType: 'zone'},
-    {key: 'cost', title: 'Price', dataType: 'vendor-currency'},
-    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
-    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
-  ];
   private isUsing3PAPI: boolean;
 
-  constructor(private _wowDBService: WowdbService) {
+  constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
+    this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
   }
 
   ngOnInit(): void {
-    this.factionId = SharedService.user.faction;
     this.isUsing3PAPI = SharedService.user.apiToUse !== 'none';
     this.setItemData();
     this.setAuctionItem();
@@ -125,18 +110,16 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     this.subscriptions.unsubscribe();
   }
 
-  setPersonalSaleRate(saleRate: number): void {
-    this.personalSaleRate = saleRate;
-  }
-
   setItemData(): void {
-    if (!SharedService.selectedItemId) {
+    const id: number = SharedService.selectedItemId;
+    if (!id) {
       return;
     }
 
-    if (SharedService.items[SharedService.selectedItemId]) {
-      this.selected.item = SharedService.items[SharedService.selectedItemId];
+    if (SharedService.items[id]) {
+      this.selected.item = SharedService.items[id];
       this.setMaterialFor();
+      this.itemNpcDetails.setForItemId(id);
     }
   }
 
@@ -255,9 +238,5 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   setTabChange(index: number, tabName: string): void {
     this.selectedTab = index;
     localStorage[this.indexStoredName] = index;
-  }
-
-  emitSelectedTab(seller: string) {
-    // TODO: Forgotten?
   }
 }

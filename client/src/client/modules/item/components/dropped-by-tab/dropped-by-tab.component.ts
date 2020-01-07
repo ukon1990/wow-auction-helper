@@ -1,0 +1,25 @@
+import {Component, Input, OnInit} from '@angular/core';
+import {ItemDroppedByRow} from '../../models/item-dropped-by-row.model';
+import {ColumnDescription} from '../../../table/models/column-description';
+
+@Component({
+  selector: 'wah-dropped-by-tab',
+  templateUrl: './dropped-by-tab.component.html',
+  styleUrls: ['./dropped-by-tab.component.scss']
+})
+export class DroppedByTabComponent implements OnInit {
+  @Input() droppedBy: ItemDroppedByRow[];
+  droppedByColumns: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
+    {key: 'zoneName', title: 'Zone', dataType: 'zone', options: {idName: 'zoneId'}},
+    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
+    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
+  ];
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}
