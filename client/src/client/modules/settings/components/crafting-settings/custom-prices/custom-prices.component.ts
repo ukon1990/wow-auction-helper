@@ -41,7 +41,6 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
     if (!this.itemID) {
       this.saveInterval = setInterval(() => {
         if (JSON.stringify(SharedService.user.customPrices) !== localStorage['custom_prices']) {
-          console.log('Saving change to custom price and recalculating costs');
           CustomPrices.save();
           Crafting.calculateCost();
         }

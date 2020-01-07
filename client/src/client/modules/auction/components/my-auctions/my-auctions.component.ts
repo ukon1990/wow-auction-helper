@@ -23,7 +23,6 @@ export class MyAuctionsComponent implements OnInit {
   constructor(private service: AuctionsService) {
     SharedService.events.title.next('My auctions');
     this.sm.add(service.events.groupedList, () => {
-      console.log('UserAuctions', SharedService.userAuctions);
       this.userAuctions = SharedService.userAuctions;
     });
   }

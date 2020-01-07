@@ -119,7 +119,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
       Crafting.calculateCost();
     }
 
-    console.log('chagnes', changes);
     this.filtered = SharedService.recipes
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {

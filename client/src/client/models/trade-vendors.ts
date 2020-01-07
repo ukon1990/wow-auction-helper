@@ -58,7 +58,6 @@ export class TradeVendors {
     item.roi = vendorAuctionItem ? item.value - vendorAuctionItem.buyout : item.value;
     if (vendorAuctionItem) {
       item.sourceBuyout = vendorAuctionItem.buyout;
-      // console.log('Buyout', item.roi, item.value - vendorAuctionItem.buyout) ;
     }
     if (SharedService.user.apiToUse !== 'none') {
       this.setItemApiValues(item);

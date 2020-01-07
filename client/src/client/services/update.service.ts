@@ -9,7 +9,6 @@ export class UpdateService {
   constructor(private swUpdate: SwUpdate, private matSnackBar: MatSnackBar) {
     this.swUpdate.available.subscribe((evt: UpdateAvailableEvent) => {
       UpdateService.events.emit(evt);
-      console.log('There is a new update available', evt);
       const snack = this.matSnackBar
         .open(
           'There is an update Available!',

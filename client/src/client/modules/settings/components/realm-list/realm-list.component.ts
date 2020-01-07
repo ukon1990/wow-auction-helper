@@ -66,7 +66,6 @@ export class RealmListComponent implements OnInit, OnDestroy {
       return;
     }
     this.updateLogForRealm = undefined;
-    console.log('Row clicked', row, new Date(+new Date() - 60 * 60 * 1000 * 7));
     if (row.lastModified > +new Date() - 60 * 60 * 1000 * 7) {
       this.service.getLogForRealmWithId(row.ahId)
         .then(res => {
@@ -86,7 +85,6 @@ export class RealmListComponent implements OnInit, OnDestroy {
           this.updateLogForRealm = res;
           this.selectedDataset.columns = this.logColumns;
           this.selectedDataset.data = res.entries;
-          console.log('Result', res);
         })
         .catch(err => Report.debug('realmSelect', err));
     }

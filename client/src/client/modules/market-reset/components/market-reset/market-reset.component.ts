@@ -88,7 +88,6 @@ export class MarketResetComponent implements OnInit {
 
     this.sm.add(SharedService.events.auctionUpdate,
       (auctionItems: AuctionItem[]) => {
-        console.log('Auction event', SharedService.auctionItems.length);
         this.filter(this.form.getRawValue());
       });
   }

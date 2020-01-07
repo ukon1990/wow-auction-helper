@@ -43,7 +43,6 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
     setTimeout(() => {
       this.colors = distinctColors({ count: this.itemClasses.length });
       this.setData();
-      console.log(this.itemClassesMap);
       this.setChart(this.itemClasses);
     }, 100);
   }

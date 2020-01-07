@@ -157,7 +157,6 @@ export class NPC {
             if (!tradeVendor) {
               if (!i) {
                 missingIds[item.currency] = item.currency;
-                console.log('Loco', currency, item.currency);
               }
               tradeVendor = new TradeVendor();
               tradeVendor.itemID = item.currency;

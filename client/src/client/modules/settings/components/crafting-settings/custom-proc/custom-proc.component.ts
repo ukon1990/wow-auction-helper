@@ -42,7 +42,6 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.saveInterval = setInterval(() => {
       if (JSON.stringify(SharedService.user.customProcs) !== localStorage['custom_procs']) {
-        console.log('Saving change to custom procs and recalculating costs');
         CustomProcs.save();
         Crafting.calculateCost();
       }

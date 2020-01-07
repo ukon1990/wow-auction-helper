@@ -125,7 +125,6 @@ export class PetsValueComponent implements OnInit, OnDestroy {
       });
 
     });
-    console.log(l);
     return tmpMap;
   }
 

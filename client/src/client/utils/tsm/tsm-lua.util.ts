@@ -36,7 +36,7 @@ export class TsmLuaUtil {
         .forEach(key =>
           SharedService.tsmAddonData[key] = result[key]);
 
-      console.log('Imported TSM history', result);
+      Report.debug('Imported TSM history', result);
     } catch (error) {
       ErrorReport.sendError('TsmLuaUtil.convertList', error);
     }

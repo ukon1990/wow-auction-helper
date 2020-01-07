@@ -158,7 +158,6 @@ export class CraftingService {
     }
     SharedService.events.recipes.emit(true);
     CraftingService.list.next([...recipes.recipes, ...CraftingService.list.value]);
-    console.log('List length', SharedService.recipes.length);
   }
 
   /**

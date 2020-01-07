@@ -27,7 +27,6 @@ export class Crafting {
     if (missingRecipes.length < 100) {
       craftingService.addRecipes(missingRecipes);
     } else {
-      // console.log('Missing over 100 recipes', missingRecipes.toString());
     }
   }
 

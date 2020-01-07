@@ -194,7 +194,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   importFromFile(fileEvent): void {
-    console.log('File', fileEvent);
     const files = fileEvent.target.files;
     const reader = new FileReader();
     reader.onload = () => {
@@ -204,7 +203,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   private onFileLoaded(reader) {
-    console.log(reader.result);
     try {
       SharedService.user.watchlist
         .attemptRestoreFromString(reader.result);

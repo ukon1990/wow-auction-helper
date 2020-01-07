@@ -33,7 +33,7 @@ export class MenuComponent implements OnDestroy, OnInit {
         this.isUserSet = isSet;
         this.ngOnInit();
       });
-    Report.send('startup', `App version ${version}`);
+    Report.send('startup', `App version ${version}`, `API in use: ${SharedService.user.apiToUse}`);
   }
 
   ngOnInit(): void {
