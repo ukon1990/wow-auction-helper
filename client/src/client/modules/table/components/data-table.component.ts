@@ -127,7 +127,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
   }
 
-  select(item): void {
+  select(item, column: ColumnDescription): void {
     SharedService.selectedItemId = undefined;
     SharedService.selectedPetSpeciesId = undefined;
     SharedService.selectedSeller = undefined;
@@ -135,15 +135,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.id === 'name') {
       this.setSelectedSeller(item);
     } else {
-      this.setSelectedItem(item);
+      this.setSelectedItem(item, column);
     }
   }
 
   isUsersAuction(auction: any): boolean {
     if (this.showOwner) {
       const a = SharedService.auctionItemsMap[auction.item ? Auction.getAuctionItemId(auction) : auction.itemID];
-      return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
-      SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? true : false;
+      return !!(SharedService.userAuctions.charactersMap[a.ownerRealm] &&
+        SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner]);
     }
     return false;
   }
@@ -167,9 +167,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   /* istanbul ignore next */
-  setSelectedItem(item: any): void {
+  setSelectedItem(item: any, column: ColumnDescription): void {
     SharedService.preScrollPosition = window.scrollY;
-    SharedService.selectedItemId = item.item || item.itemID || item.id;
+    SharedService.selectedItemId = this.getItemID(item, column);
     this.setSelectedPet(item);
     ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
@@ -263,7 +263,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       SharedService.items[itemID] : new Item();
   }
 
-  getItemID(item: any): number {
+  getItemID(item: any, column?: ColumnDescription): number {
+    if (column && column.options && column.options.idName) {
+      return item[column.options.idName];
+    }
     return item[this.id] ? item[this.id] : item.itemID;
   }
 
@@ -330,12 +333,12 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
    * @returns {string}
    * @memberof DataTableComponent
    */
-  getWHRelations(item: any): string {
+  getWHRelations(item: any, column: ColumnDescription): string {
     if (item.petSpeciesId) {
       return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
     }
     return (this.linkType ?
-      `${this.linkType}=` : 'item=') + this.getItemID(item);
+      `${this.linkType}=` : 'item=') + this.getItemID(item, column);
   }
 
   getCartCount(item: any, column: ColumnDescription): number {
