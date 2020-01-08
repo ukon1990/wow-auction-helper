@@ -20,6 +20,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
 import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'wah-data-table',
@@ -63,7 +64,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   getBonusList = Auction.getBonusList;
   theme = ThemeUtil.current;
 
-  constructor() {
+  constructor(private router: Router) {
     this.sorter = new Sorter();
   }
 
@@ -131,11 +132,24 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     SharedService.selectedItemId = undefined;
     SharedService.selectedPetSpeciesId = undefined;
     SharedService.selectedSeller = undefined;
+    const type = this.getColumnLinkType(column);
 
     if (this.id === 'name') {
       this.setSelectedSeller(item);
     } else {
-      this.setSelectedItem(item, column);
+      switch (type) {
+        case 'npc':
+          const id = column.options && column.options.idName || this.id;
+          this.router.navigateByUrl(`/tools/npc/${item[id]}`);
+          break;
+        case 'zone':
+          //
+          break;
+        case 'item':
+        default:
+          this.setSelectedItem(item, column);
+          break;
+      }
     }
   }
 
@@ -337,9 +351,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (item.petSpeciesId) {
       return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
     }
-    const type = column.options && column.options.tooltipType || this.linkType;
+    const type = this.getColumnLinkType(column);
     return (type ?
       `${type}=` : 'item=') + this.getItemID(item, column);
+  }
+
+  private getColumnLinkType(column: ColumnDescription) {
+    return column.options && column.options.tooltipType || this.linkType;
   }
 
   getCartCount(item: any, column: ColumnDescription): number {

@@ -30,8 +30,10 @@
                   (click)="select(d, c)">
               <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
                 getWHRelations(d, c)
-                }}">
-                <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left" [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
+                }}"
+                 routerLink=".">
+                <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left"
+                          [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
                           [petSpeciesId]="d?.petSpeciesId"></wah-icon>
                 {{ getItemName(d[c.key], d) }}
               </a>
@@ -109,7 +111,8 @@
                href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
                target="_blank">
                 {{ d[c.key] }}
-              </a>
+              <i class="fas fa-external-link-square-alt"></i>
+            </a>
             <span *ngSwitchCase="'array'">
               {{ d[c.key] ? d[c.key].toString() : '' }}
             </span>

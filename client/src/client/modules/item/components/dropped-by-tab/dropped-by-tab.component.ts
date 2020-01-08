@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ItemDroppedByRow} from '../../models/item-dropped-by-row.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 

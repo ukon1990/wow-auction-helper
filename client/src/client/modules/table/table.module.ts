@@ -7,6 +7,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SortIconComponent} from './components/sort-icon/sort-icon.component';
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [DataTableComponent, MaterialsComponent, SortIconComponent],
@@ -21,7 +22,8 @@ import {UtilModule} from '../util/util.module';
     MatButtonModule,
     IconModule,
     MatCardModule,
-    UtilModule
+    UtilModule,
+    RouterModule
   ],
   exports: [DataTableComponent, SortIconComponent, MaterialsComponent]
 })
