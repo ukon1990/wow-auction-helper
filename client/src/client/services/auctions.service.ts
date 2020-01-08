@@ -88,7 +88,6 @@ export class AuctionsService {
         if (!this.doNotOrganize) {
           await AuctionUtil.organize(a['auctions'], this.petService);
         }
-        console.log('Auction service', this.doNotOrganize);
         this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
@@ -243,7 +242,6 @@ export class AuctionsService {
 
   private handleNotifications() {
     this.sendNewAuctionDataAvailable();
-    this.sendUndercutNotification();
   }
 
   private sendNewAuctionDataAvailable() {
@@ -252,15 +250,6 @@ export class AuctionsService {
       Notifications.send(
         'WAH - New auction data',
         `There are new auctions available for ${SharedService.user.realm}.`);
-    }
-  }
-
-  private sendUndercutNotification() {
-    const undercutAuctions = SharedService.userAuctions.undercutAuctions;
-    if (SharedService.user.notifications.isUndercut && undercutAuctions > 0) {
-      Notifications.send(
-        'WAH - You have been undercut',
-        `${undercutAuctions} of your auctions were undercut.`);
     }
   }
 

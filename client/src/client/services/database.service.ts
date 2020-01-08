@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {Item} from '../models/item/item';
 import {Auction} from '../modules/auction/models/auction.model';
@@ -11,10 +11,12 @@ import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
-import {TSMCSV, TsmLuaUtil} from '../utils/tsm/tsm-lua.util';
+import {TsmLuaUtil} from '../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../utils/error-report.util';
-import {Report} from '../utils/report.util';
 import {AuctionsService} from './auctions.service';
+import {NPC} from '../modules/npc/models/npc.model';
+import {Zone} from '../modules/zone/models/zone.model';
+import {BehaviorSubject} from 'rxjs';
 
 /**
  * A Class for handeling the indexedDB
@@ -33,6 +35,10 @@ export class DatabaseService {
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
   readonly TSM_ADDON_HISTORY = 'timestamp,data';
+  readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
+    'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
+  readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
+  databaseIsReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(public platform: Platform) {
     if (environment.test) {
@@ -41,15 +47,20 @@ export class DatabaseService {
     this.db = new Dexie('wah-db');
     this.setDbVersions();
     this.db.open()
-      .then(() => {
+      .then(async (dx) => {
+        const storageName = 'previousDBVersion';
+        const previousVersion = localStorage.getItem(storageName);
+        if (!previousVersion || +previousVersion < dx.verno) {
+          // There might be a new schema in the DB model, so we should re-fetch all data to be safe
+          await this.clearWowDataFromDB();
+          localStorage.setItem(storageName, '' + dx.verno);
+          console.log(`The database version is updated from schema ${previousVersion} to ${dx.verno}. Data is thus cleared.`);
+        }
+        this.databaseIsReady.next(true);
         console.log('wah-db successfully started');
       }).catch(error => {
       console.log('Unable to start indexedDB', error);
     });
-  }
-
-  addItem(item: Item): void {
-    // logic inc
   }
 
   addItems(items: Array<Item>): void {
@@ -95,6 +106,42 @@ export class DatabaseService {
 
   clearItems(): void {
     this.db.table('items').clear();
+  }
+
+  async addNPCs(list: NPC[]): Promise<void> {
+    if (this.platform === null || this.platform.WEBKIT) {
+      return;
+    }
+    await this.db.table('npcs').bulkPut(list);
+  }
+
+  async getAllNPCs(): Dexie.Promise<NPC[]> {
+    if (this.platform === null || this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+    return this.db.table('npcs').toArray();
+  }
+
+  async clearNPCs(): Promise<void> {
+    await this.db.table('npcs').clear();
+  }
+
+  async addZones(list: Zone[]): Promise<void> {
+    if (this.platform === null || this.platform.WEBKIT) {
+      return;
+    }
+    await this.db.table('zones').bulkPut(list);
+  }
+
+  async getAllZones(): Dexie.Promise<Zone[]> {
+    if (this.platform === null || this.platform.WEBKIT) {
+      return new Dexie.Promise<any>((resolve, reject) => reject());
+    }
+    return this.db.table('zones').toArray();
+  }
+
+  async clearZones(): Promise<void> {
+    await this.db.table('zones').clear();
   }
 
   addPets(pets: Array<Pet>): void {
@@ -312,11 +359,32 @@ export class DatabaseService {
       });
   }
 
-  clearDB(): void {
+  async clearWowDataFromDB(): Promise<void> {
+    this.clearAuctions();
+    this.clearItems();
+    await this.clearNPCs();
+    this.clearPets();
+    this.clearRecipes();
+    await this.clearZones();
+  }
+
+  deleteDB(): void {
     this.db.delete();
   }
 
   setDbVersions(): void {
+    this.db.version(6).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      tsmAddonHistory: this.TSM_ADDON_HISTORY
+    });
+
     this.db.version(5).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,

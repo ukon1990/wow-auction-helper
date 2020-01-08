@@ -1,37 +1,286 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
+import {languages} from '../static-data/language.data';
+import {QueryUtil} from './query.util';
+import {LocaleUtil} from './locale.util';
+import {DatabaseUtil} from './database.util';
+import {TextUtil} from '@ukon1990/js-utilities';
+import {Language} from '../models/language.model';
+import {ApiResponse} from '../models/api-response.model';
+
+const PromiseThrottle: any = require('promise-throttle');
 
 export class Zone {
   id: number;
-  name: ItemLocale;
-  patch: string;
-  type: ItemLocale;
-  territory: ItemLocale;
-  level: number;
+  name: ItemLocale = new ItemLocale();
+  patch?: string;
+  typeId: number;
+  parentId?: number;
+  parentName?: string;
+  territoryId: number;
+  minLevel?: number;
+  maxLevel?: number;
+
+  constructor(id: number) {
+    this.id = id;
+  }
+
+  setData?(body: { name: string, tooltip: string }, language: Language): void {
+    language.locales.forEach(locale => {
+      this.setName(body.name, locale);
+    });
+
+    if (language.key === 'en') {
+      this.setTooltipData(body.tooltip);
+    }
+  }
+
+  private setName?(name: string, locale = 'en_GB'): void {
+    this.name[locale] = name;
+  }
+
+  private setTooltipData?(tooltip: string): void {
+    this.setTerritoryId(tooltip);
+    this.setTypeId(tooltip);
+    this.setLevel(tooltip);
+    this.setParentName(tooltip);
+  }
+
+  private setTerritoryId?(tooltip: string): void {
+    const territoryRegex = new RegExp('Territory: [\\w ]{1,128}', 'gm'),
+      territory = territoryRegex.exec(tooltip)[0].replace('Territory: ', '');
+    switch (territory) {
+      case 'Alliance':
+        this.territoryId = 0;
+        break;
+      case 'Horde':
+        this.territoryId = 1;
+        break;
+      case 'Contested':
+        this.territoryId = 2;
+        break;
+      case 'World PvP':
+        this.territoryId = 3;
+        break;
+      case 'Sanctuary':
+        this.territoryId = 4;
+        break;
+      case 'PvP':
+        this.territoryId = 5;
+        break;
+      default:
+        console.log('Territory type not accounted for: ' + territory);
+        this.territoryId = -1;
+        break;
+    }
+  }
+
+  private setTypeId?(tooltip: string): void {
+    const typeRegex = new RegExp('Type: [\\w ]{1,128}', 'gm'),
+      type = typeRegex.exec(tooltip)[0].replace('Type: ', '');
+    switch (type) {
+      case 'Zone':
+        this.typeId = 0;
+        break;
+      case 'City':
+        this.typeId = 1;
+        break;
+      case 'Dungeon':
+        this.typeId = 2;
+        break;
+      case 'Raid':
+        this.typeId = 3;
+        break;
+      case 'Scenario':
+        this.typeId = 4;
+        break;
+      case 'Artifact Acquisition':
+        this.typeId = 5;
+        break;
+      case 'Battleground':
+        this.typeId = 6;
+        break;
+      default:
+        console.log('Type was not accounted for: ', type);
+        this.typeId = -1;
+        break;
+    }
+  }
+
+  private setLevel?(tooltip: string): void {
+    const levelRegex = new RegExp(/Level [\d]{1,3}(-[\d]{1,3}){0,2}/gm),
+      levelRange = levelRegex.exec(tooltip);
+
+    if (levelRange) {
+      const splitRange = levelRange[0].replace('Level ', '').split('-');
+      this.minLevel = +splitRange[0];
+      this.maxLevel = +splitRange[1] || undefined;
+    }
+  }
+
+  private setParentName?(tooltip: string) {
+    const locationRegex = new RegExp(/Location: [\w'\- ]{1,128}/gm),
+      location = locationRegex.exec(tooltip);
+    if (location) {
+      this.parentName = location[0].replace('Location: ', '');
+      this.parentId = -1;
+    }
+  }
 }
 
 export class ZoneUtil {
-  static getById(id: number): Promise<Zone> {
-    // https://www.wowhead.com/zone=8717/boralus-harbor
-    return new Promise<Zone>((resolve, reject) => {
-      new HttpClientUtil().get(`https://www.wowhead.com/zone=${id}`, false)
-        .then(({ body }) => resolve(this.extractZoneData(id, body)))
-        .catch(() => reject('The zone could not be found'));
+  /* Istanbul ignore next */
+  static setParentValuesAndAddToDB(zones: Zone[]): Promise<Zone[]> {
+    return new Promise<Zone[]>((resolve, reject) => {
+      const list: Zone[] = zones.map(zone => {
+        if (zone.parentName) {
+          const parentMatch: Zone[] = zones.filter(parentZone =>
+            parentZone.name.en_GB === zone.parentName);
+          if (parentMatch && parentMatch.length) {
+            zone.parentId = parentMatch[0].id;
+            delete zone.parentName;
+          } else {
+            console.log('Could not find ', zone.parentName);
+          }
+        }
+        return zone;
+      }).sort((a, b) => a.parentId && !b.parentId ? 1 : -1);
+      const promises = [];
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 25,
+        promiseImplementation: Promise
+      });
+      list.forEach(zone => promises.push(
+        promiseThrottle.add(() => this.insertZoneIntoDB(zone))));
+      Promise.all(promises)
+        .then(() => console.log('Success!'))
+        .catch((error) => {
+          console.error(error);
+        });
+      resolve(list);
     });
   }
 
-  private static extractZoneData(id: number, body: string) {
-    const zone = new Zone();
-    zone.id = id;
-    zone.name = this.getName(body);
+  /* Istanbul ignore next */
+  static getFromDB(locale = 'en_GB', timestamp = new Date().toJSON()): Promise<ApiResponse<Zone>> {
+    return new Promise<ApiResponse<Zone>>((resolve, reject) => {
+      new DatabaseUtil().query(`
+            SELECT
+                   i.id,
+                   COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+                   territoryId,
+                   typeId,
+                   parentId,
+                   minLevel,
+                   maxLevel,
+                   timestamp
+            FROM zone as i
+            LEFT OUTER JOIN zoneName as l
+            ON i.id = l.id
+            WHERE timestamp > "${timestamp}"
+            ORDER BY timestamp desc;`)
+        .then((list) => {
+          const ts = list[0].timestamp;
+          list.forEach(row => {
+            if (row.minLevel === 'undefined') {
+              row.minLevel = undefined;
+            } else {
+              row.minLevel = +row.minLevel;
+            }
+            if (row.maxLevel === 'undefined') {
+              row.maxLevel = undefined;
+            } else {
+              row.maxLevel = +row.maxLevel;
+            }
+            delete row.timestamp;
+          });
+          resolve(new ApiResponse<Zone>(ts, list, 'zones'));
+        })
+        .catch(reject);
+    });
+  }
+
+  private static insertZoneIntoDB(zone: Zone): Promise<any> {
+    const insert = {
+      id: zone.id,
+      territoryId: zone.territoryId,
+      typeId: zone.typeId,
+      minLevel: zone.minLevel,
+      maxLevel: zone.maxLevel
+    };
+    if (zone.parentId) {
+      insert['parentId'] = zone.parentId;
+    }
+    return new DatabaseUtil().query(
+      new QueryUtil('zone').insert(insert)).then(() =>
+      LocaleUtil.insertToDB('zoneName', 'id', {id: zone.id, ...zone.name}))
+      .catch((error) => {
+        if (!TextUtil.contains(error.error, 'ER_DUP_ENTRY:')) {
+          console.error('Failed with: ' + insert.id, error);
+        }
+      });
+  }
+
+  static getById(id: number, locale = 'en_GB'): Promise<Zone> {
+    return new Promise<Zone>(async (resolve, reject) => {
+      let zone: Zone;
+      const promises: Promise<any>[] = [];
+      await this.getByIdFromDB(locale, id)
+        .then(z => zone = z)
+          .catch(console.error);
+
+      if (!zone) {
+        zone = new Zone(id);
+        const promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 25,
+          promiseImplementation: Promise
+        });
+        languages
+          .forEach(lang => promises.push(
+            promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
+      }
+      Promise.all(promises)
+        .then(() => resolve(zone))
+        .catch(reject);
+    });
+  }
+
+  private static async getByIdFromDB(locale: string, id: number): Promise<Zone> {
+    let zone: Zone;
+    await new DatabaseUtil().query(`
+       SELECT
+               i.id,
+               COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+               territoryId,
+               typeId,
+               parentId,
+               minLevel,
+               maxLevel,
+               timestamp
+        FROM zone as i
+        LEFT OUTER JOIN zoneName as l
+        ON i.id = l.id
+        WHERE i.id = ${id};`)
+      .then((res: any[]) => {
+        if (res && res.length) {
+          zone = res[0];
+        }
+      })
+      .catch(console.error);
     return zone;
   }
 
-  private static getName(body: string): ItemLocale {
-      const nameRegex = new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}/g),
-        name = nameRegex.exec(body);
-      const locale = new ItemLocale();
-      locale.en_GB = name[0];
-      return locale;
-    }
+  private static getZoneDataForLocale(id: number, language: Language, zone: Zone): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      new HttpClientUtil().get(`https://www.wowhead.com/tooltip/zone/${id}?locale=${language.key}`, true)
+        .then(({body}) => resolve(zone.setData(body, language)))
+        .catch((error) => {
+          console.error({
+            id,
+            error
+          });
+          resolve(undefined);
+        });
+    });
+  }
 }

@@ -66,4 +66,10 @@ describe('ItemUtil', () => {
     expect(item['timestamp']).toBeFalsy();
 
   });
+
+  xit('getItemsByQualityForPatch', async () => {
+    jest.setTimeout(30000);
+    const list = await ItemUtil.getNewItemsForPatch(80300);
+    expect(list.length).toBe(1915);
+  });
 });

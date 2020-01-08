@@ -43,7 +43,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    <strong>Total:</strong> {{inventoryValue | gold}}
+    <strong>Total:</strong> {{ inventoryValue | gold }}
     <span *ngIf="inventoryValueOnlyInDemand">
       <br>
       <strong>With regional est daily sold > 1: </strong> {{ inventoryValueOnlyInDemand | gold }}
@@ -54,7 +54,7 @@
 <mat-card *ngIf="currentGold">
   <mat-card-header>
     <mat-card-title>
-      Current gold status: {{currentGold | gold}}
+      Current gold status: {{ currentGold | gold }}
     </mat-card-title>
   </mat-card-header>
 </mat-card>

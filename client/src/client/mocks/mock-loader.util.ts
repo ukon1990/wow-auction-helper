@@ -35,7 +35,7 @@ export class MockLoaderUtil {
 
   setAuctionData(): void {
     const auctions = this.getFile('auctions');
-    const service = new PetsService(null, null, null, null)
+    const service = new PetsService(null, null, null, null);
     AuctionUtil.organize(auctions['auctions'], service);
   }
 

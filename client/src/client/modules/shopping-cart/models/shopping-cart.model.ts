@@ -5,8 +5,9 @@ import {Item, ItemInventory, ItemPurchase} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Auction} from '../../auction/models/auction.model';
 import {Report} from '../../../utils/report.util';
-import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {ProfitSummary} from '../../tsm/models/profit-summary.model';
+import {ShoppingCartItem} from './shopping-cart-item.model';
 
 
 export class ShoppingCart {
@@ -506,33 +507,4 @@ export class ShoppingCart {
   }
 }
 
-export class ShoppingCartItem {
-  subCraft: ShoppingCartItem;
-  cost = 0;
-  avgCost = 0;
-  totalCost = 0;
-  totalCount = 0;
 
-  inventoryValue = 0;
-  inventoryQuantity = 0;
-  characters?: any[];
-
-  constructor(public id: number, public quantity: number, private subRecipe?: Recipe, public itemID?: number) {
-    if (subRecipe) {
-      // this.subCraft = new ShoppingCartItem(subRecipe.spellID, );
-    }
-  }
-
-  increment(quantity: number): void {
-    this.quantity += quantity;
-  }
-
-  decrement(quantity: number): number {
-    this.quantity -= quantity;
-    return this.quantity;
-  }
-
-  setCharacters(characters: any[]): void {
-    this.characters = characters;
-  }
-}

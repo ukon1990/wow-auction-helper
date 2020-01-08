@@ -1,6 +1,7 @@
 import {TradeVendor, TradeVendorItem} from '../../models/item/trade-vendor';
 
 const spiritOfHarmony: TradeVendor = {
+  isAlliance: false, isHorde: false,
   itemID: 76061,
   name: 'Spirit of Harmony',
   useForCrafting: false,

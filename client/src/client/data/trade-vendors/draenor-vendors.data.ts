@@ -1,6 +1,7 @@
 import {TradeVendor, TradeVendorItem} from '../../models/item/trade-vendor';
 
 const krixelPinchwhistle: TradeVendor = {
+  isAlliance: false, isHorde: false,
   id: [0],
   itemID: 0,
   name: 'Krixel Pinchwhistle',
@@ -40,6 +41,7 @@ const garrisonVendors: TradeVendor[] = [
 ];
 
 const primalSpirit: TradeVendor = {
+  isAlliance: false, isHorde: false,
   'itemID': 120945,
   'name': 'Primal spirit',
   useForCrafting: true,

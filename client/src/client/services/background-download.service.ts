@@ -15,6 +15,10 @@ import {Dashboard} from '../modules/dashboard/models/dashboard.model';
 import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {Crafting} from '../modules/crafting/models/crafting';
 import {Auction} from '../modules/auction/models/auction.model';
+import {ItemExtract} from '../utils/item-extract.util';
+import {NpcService} from '../modules/npc/services/npc.service';
+import {ZoneService} from '../modules/zone/service/zone.service';
+import {ErrorReport} from '../utils/error-report.util';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +45,8 @@ export class BackgroundDownloadService {
     private craftingService: CraftingService,
     private auctionsService: AuctionsService,
     private petService: PetsService,
+    private npcService: NpcService,
+    private zoneService: ZoneService,
     private dbService: DatabaseService) {
 
 
@@ -49,6 +55,12 @@ export class BackgroundDownloadService {
       (status) =>
         this.realmStatus = status);
 
+    Dashboard.addLoadingDashboards();
+    this.subs.add(this.dbService.databaseIsReady, async (isReady) => {
+      if (isReady) {
+        await this.init();
+      }
+    });
 
     setInterval(() => {
       this.timestamps.items = localStorage['timestamp_items'];
@@ -58,12 +70,9 @@ export class BackgroundDownloadService {
       this.timestamps.tsm = localStorage['timestamp_tsm'];
       this.timestamps.wowuction = localStorage['timestamp_wowuction'];
     }, 1000);
-
-    this.init();
   }
 
   async init(): Promise<void> {
-    Dashboard.addLoadingDashboards();
 
     if (!SharedService.user.region || !SharedService.user.realm) {
       return;
@@ -80,7 +89,9 @@ export class BackgroundDownloadService {
     await Promise.all([
       this.loadItems(),
       this.loadPets(),
+      this.loadNpc(),
       this.loadRecipes(),
+      this.loadZones(),
       this.loadThirdPartyAPI(),
       this.realmService.getStatus(SharedService.user.region, SharedService.user.realm)
     ])
@@ -91,8 +102,8 @@ export class BackgroundDownloadService {
     await AuctionUtil.organize(auctions);
     this.auctionsService.reTriggerEvents();
     this.auctionsService.doNotOrganize = false;
-
     await this.dbService.getTSMAddonData();
+
     this.loggLoadingTime(startTimestamp);
     this.isLoading.next(false);
   }
@@ -160,6 +171,7 @@ export class BackgroundDownloadService {
         console.error(error);
       });
     await this.itemService.getItems();
+    console.log('Processed items mapped', ItemExtract.fromItems(SharedService.itemsUnmapped));
   }
 
   private async loadPets() {
@@ -207,5 +219,18 @@ export class BackgroundDownloadService {
           });
       }
     }
+  }
+
+  private async loadNpc() {
+    await this.npcService.getAll()
+      .then(() => console.log('Done loading NPC data'))
+      .catch(console.error);
+    console.log('loadNpc');
+  }
+
+  private async loadZones() {
+    await this.zoneService.getAll()
+      .then(() => console.log('Done loading zone data'))
+      .catch(console.error);
   }
 }

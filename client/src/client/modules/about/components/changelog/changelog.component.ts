@@ -15,7 +15,6 @@ export class ChangelogComponent implements OnInit {
   ngOnInit() {
     this.service.getChangeLogs()
       .then(changeLogs => {
-        console.log(changeLogs);
         this.changeLogs = changeLogs;
       })
       .catch(error => console.error('getChangelog', error));

@@ -2,6 +2,7 @@ import {Report} from '../report.util';
 import {ItemInventory} from '../../models/item/item';
 import {ErrorReport} from '../error-report.util';
 import {SharedService} from '../../services/shared.service';
+import {RealmStatus} from '../../models/realm-status.model';
 
 export class InventoryUtil {
   static organize(inventory): void {
@@ -10,9 +11,10 @@ export class InventoryUtil {
 
   public static calculateInventory(inventory): void {
     try {
-      const currentRealm = SharedService.realms[SharedService.user.realm].name;
-
-      this.calculateRealmInventory(inventory, currentRealm);
+      const currentRealm: RealmStatus = SharedService.realms[SharedService.user.realm];
+      if (currentRealm) {
+        this.calculateRealmInventory(inventory, currentRealm.name);
+      }
     } catch (error) {
       ErrorReport.sendError('TsmLuaUtil.calculateInventory', error);
     }

@@ -28,7 +28,6 @@ afterEach(() => {
 describe('Watchlist', () => {
   it('Can restore from localStorage', () => {
     wl.addGroup(group);
-    console.log(wl, group, localStorage['watchlist']);
     wl.save();
     const wl2 = new Watchlist();
     wl2.restore();

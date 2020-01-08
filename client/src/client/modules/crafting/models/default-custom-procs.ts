@@ -1,4 +1,4 @@
-import { CustomProc } from './custom-proc';
+import { CustomProc } from './custom-proc.model';
 
 export const customProcsDefault: Array<CustomProc> = [
     {

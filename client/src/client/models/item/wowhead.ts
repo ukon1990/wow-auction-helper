@@ -21,6 +21,8 @@ export class WoWHeadSoldBy {
   location: number[];
   react: number[];
   type: number;
+  minLevel: number;
+  maxLevel: number;
   cost: any;
   stock: number;
   currency: number;
@@ -42,6 +44,8 @@ export class WoWHeadDroppedBy {
   outof: number;
   dropChance: number;
   personal_loot: number;
+  minLevel: number;
+  maxLevel: number;
   pctstack: WoWHeadPctStack;
 }
 

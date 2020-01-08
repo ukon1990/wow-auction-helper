@@ -105,7 +105,6 @@ export class WatchlistItemBatchComponent implements OnInit, OnDestroy {
         this.items = SharedService.itemsUnmapped
           .filter(i =>
             this.isMatch(i, changes));
-        console.log(this.items);
         if (this.cd) {
           this.cd.detectChanges();
         }

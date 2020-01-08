@@ -2,7 +2,7 @@ import {ArrayUtil, EmptyUtil} from '@ukon1990/js-utilities';
 import {safeifyString} from './string.util';
 
 export class QueryUtil<T> {
-  constructor(private table: string) {
+  constructor(private table: string, private setTimestamp = true) {
   }
 
   update(id: number, object: T): string {
@@ -14,14 +14,20 @@ export class QueryUtil<T> {
         `${column} = ${cv.values[index]}`)
       .join(',');
 
-    query += ',timestamp = CURRENT_TIMESTAMP';
+    if (this.setTimestamp) {
+      query += ',timestamp = CURRENT_TIMESTAMP';
+    }
 
     return `${query} WHERE id = ${id};`;
   }
 
   insert(object: T): string {
     const cv = this.getColumnsAndValues(object);
-    return `INSERT INTO ${this.table}(${cv.columns.join(',')},timestamp) VALUES(${cv.values.join(',')},CURRENT_TIMESTAMP);`;
+    return `INSERT INTO ${this.table
+    }(${
+      cv.columns.join(',')
+    }${ this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.join(',')
+    }${ this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''});`;
   }
 
   private getColumnsAndValues(object: T) {
@@ -31,7 +37,7 @@ export class QueryUtil<T> {
     Object.keys(object)
       .forEach(k => {
         const value = this.getSQLFriendlyString(object[k]);
-        if (typeof value !== 'boolean') {
+        if (object[k] !== undefined && typeof value !== 'boolean') {
           columns.push(k);
           values.push(value);
         }
@@ -51,7 +57,7 @@ export class QueryUtil<T> {
       case 'object':
         return this.handleObject(value);
       default:
-        return `"${value}"`;
+        return `"${safeifyString(value)}"`;
     }
   }
 

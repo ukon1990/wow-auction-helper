@@ -4,10 +4,11 @@ import {Character} from '../../modules/character/models/character.model';
 import {Watchlist} from '../../modules/dashboard/models/watchlist.model';
 import {CustomPrice, CustomPrices} from '../../modules/crafting/models/custom-price';
 import {customPricesDefault} from '../../modules/crafting/models/default-custom-prices';
-import {CustomProc, CustomProcs} from '../../modules/crafting/models/custom-proc';
+import {CustomProc} from '../../modules/crafting/models/custom-proc.model';
 import {customProcsDefault} from '../../modules/crafting/models/default-custom-procs';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
+import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
 
 
 export class User {
@@ -189,7 +190,7 @@ export class User {
         case 'custom_procs':
           user.customProcs = JSON.parse(localStorage[key]);
 
-          CustomProcs.createMap(user.customProcs);
+          CustomProcUtil.createMap(user.customProcs);
           break;
         case 'api_to_use':
           user.apiToUse = localStorage[key];

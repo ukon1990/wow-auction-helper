@@ -1,6 +1,8 @@
 import {SharedService} from '../services/shared.service';
 import {Item} from './item/item';
 import {TRADE_VENDORS} from '../data/trade-vendors';
+import {TradeVendor, TradeVendorItem} from './item/trade-vendor';
+import {AuctionItem} from '../modules/auction/models/auction-item.model';
 
 export class TradeVendors {
   public static setValues(): void {
@@ -14,14 +16,14 @@ export class TradeVendors {
       });
   }
 
-  private static setVendorValues(vendor) {
-// Re-setting the item name in case of locale is not English
+  private static setVendorValues(vendor: TradeVendor) {
+    // Re-setting the item name in case of locale is not English
     if (SharedService.items[vendor.itemID]) {
       vendor.name = SharedService.items[vendor.itemID].name;
     }
 
     vendor.items.forEach(item => {
-      this.setItemValue(item);
+      this.setItemValue(item, vendor);
     });
     vendor.items.sort(function (a, b) {
       return b.value - a.value;
@@ -31,27 +33,38 @@ export class TradeVendors {
   }
 
   private static updateTradeVendorItemMap(key) {
+    const {sourceID, sourceBuyout, value, roi, itemID} = SharedService.tradeVendorMap[key].items[0] as TradeVendorItem;
     const item = {
-      itemID: SharedService.tradeVendorMap[key].items[0].itemID,
+      sourceID,
+      itemID,
+      sourceBuyout,
       name: SharedService.tradeVendorMap[key].name,
       bestValueName: TradeVendors.getItem(key).name,
-      value: SharedService.tradeVendorMap[key].items[0].value,
-      tradeVendor: SharedService.tradeVendorMap[key]
+      value,
+      tradeVendor: SharedService.tradeVendorMap[key],
+      roi
     };
     SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
   }
 
-  private static setItemValue(item) {
-    item.value = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-      SharedService.auctionItemsMap[item.itemID].buyout * item.quantity : 0;
-    item.buyout = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-      SharedService.auctionItemsMap[item.itemID].buyout : 0;
+  private static setItemValue(item: TradeVendorItem, vendor: TradeVendor) {
+    item.sourceID = vendor.itemID;
+    const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID],
+      vendorAuctionItem: AuctionItem = SharedService.auctionItemsMap[vendor.itemID];
+    item.value = auctionItem !== undefined ?
+      auctionItem.buyout * item.quantity : 0;
+    item.buyout = auctionItem !== undefined ?
+      auctionItem.buyout : 0;
+    item.roi = vendorAuctionItem ? item.value - vendorAuctionItem.buyout : item.value;
+    if (vendorAuctionItem) {
+      item.sourceBuyout = vendorAuctionItem.buyout;
+    }
     if (SharedService.user.apiToUse !== 'none') {
       this.setItemApiValues(item);
     }
   }
 
-  private static setItemApiValues(item) {
+  private static setItemApiValues(item: TradeVendorItem) {
     item.estDemand = SharedService.auctionItemsMap[item.itemID] !== undefined ?
       SharedService.auctionItemsMap[item.itemID].estDemand : 0;
     item.regionSaleAvg = SharedService.auctionItemsMap[item.itemID] !== undefined ?

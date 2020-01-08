@@ -21,17 +21,19 @@
   </thead>
   <tbody>
   <tr *ngFor="let d of filteredData | slice: getFromValue():getToValue(); let i = index"
-      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}"
-      (click)="rowClicked.emit(d)">
+      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
     <ng-container *ngFor="let c of columns;">
-      <td [class]="c.cssClass" *ngIf="displayColumn(c)">
+      <td [class]="c.cssClass" *ngIf="displayColumn(c)" (click)="this.rowClickEvent(c, d)">
           <span [ngSwitch]="c.dataType">
             <span *ngSwitchCase="'name'"
-                  [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''" (click)="select(d)">
+                  [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''"
+                  (click)="select(d, c)">
               <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
-                getWHRelations(d)
-                }}">
-                <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36" [id]="d[id]"
+                getWHRelations(d, c)
+                }}"
+                 [routerLink]="getRouterLink(d, c)">
+                <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left"
+                          [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
                           [petSpeciesId]="d?.petSpeciesId"></wah-icon>
                 {{ getItemName(d[c.key], d) }}
               </a>
@@ -59,7 +61,7 @@
             </span>
             <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
             <span *ngSwitchCase="'gold'">
-              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold}}
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold }}
               <span *ngIf="c.key === 'buyout' && d.mktPrice">
                 ({{ d.buyout / d.mktPrice | percent }} of MV)
               </span>
@@ -69,16 +71,16 @@
               </span>
             </span>
             <span *ngSwitchCase="'gold-per-item'">
-              {{ d[c.key] / d.quantity | gold}}
+              {{ d[c.key] / d.quantity | gold }}
             </span>
             <span *ngSwitchCase="'vendor-currency'">
               <span *ngIf="!d.currency; else itemCurrency">
-                {{ d.cost | gold }}
+                {{ d[c.key] | gold }}
               </span>
               <ng-template #itemCurrency>
                 <a rel="domain={{ locale }},item={{ d.currency }}">
                   <div class="float-left">
-                    {{ d.cost | number }} x
+                    {{ d[c.key] | number }} x
                   </div>
                   <wah-icon *ngIf="id" class="float-left ml-1" [size]="22" [id]="d.currency"></wah-icon>
                 </a>
@@ -100,19 +102,17 @@
               </a>
             </span>
             <span *ngSwitchCase="'percent'">
-              {{(d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
             </span>
             <span *ngSwitchCase="'number'">
-              {{(d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
+              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
             </span>
-            <span *ngSwitchCase="'zone'">
-              <a *ngFor="let zone of d[c.key] | slice:0:1" data-wh-rename-link="true"
-                 href="http://www.wowhead.com/zone={{ d[c.key] }}"
-                 target="_blank">
-                {{ zone }}
-                <i class="fas fa-external-link-square-alt"></i>
-              </a>
-            </span>
+            <a *ngSwitchCase="'zone'"
+               href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
+               target="_blank">
+                {{ d[c.key] }}
+              <i class="fas fa-external-link-square-alt"></i>
+            </a>
             <span *ngSwitchCase="'array'">
               {{ d[c.key] ? d[c.key].toString() : '' }}
             </span>
@@ -186,7 +186,7 @@
                 <i class="fas fa-trash-alt"></i>
               </button>
             </span>
-            <span *ngSwitchDefault>{{(d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
+            <span *ngSwitchDefault>{{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
           </span>
       </td>
     </ng-container>

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
@@ -12,11 +12,11 @@ import {DatabaseService} from '../../../../services/database.service';
 import {Report} from '../../../../utils/report.util';
 
 @Component({
-  selector: 'wah-character-select',
+  selector: 'wah-realm-quick-select',
   templateUrl: './realm-quick-select.component.html',
   styleUrls: ['./realm-quick-select.component.scss']
 })
-export class RealmQuickSelectComponent implements OnInit, OnDestroy {
+export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
   form: FormGroup;
   realmList = [];
   realmListMap = {};
@@ -35,7 +35,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.sm.add(this.realmService.events.list,
       (realms) => this.setRealmList(realms));
 

@@ -1,11 +1,11 @@
 import * as lua from 'luaparse';
 import {SharedService} from '../../services/shared.service';
 import {ErrorReport} from '../error-report.util';
-import {AuctionItem} from '../../modules/auction/models/auction-item.model';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {InventoryUtil} from './inventory.util';
 import {Report} from '../report.util';
+import {ProfitSummary} from '../../modules/tsm/models/profit-summary.model';
 
 export class TSMCSV {
   characterGuilds?: any;
@@ -36,7 +36,7 @@ export class TsmLuaUtil {
         .forEach(key =>
           SharedService.tsmAddonData[key] = result[key]);
 
-      console.log('Imported TSM history', result);
+      Report.debug('Imported TSM history', result);
     } catch (error) {
       ErrorReport.sendError('TsmLuaUtil.convertList', error);
     }
@@ -357,7 +357,7 @@ export class TsmLuaUtil {
     }
   }
 
-  private isCurrentRealm(realm) {
+  private isCurrentRealm(realm: string) {
     const r = SharedService.realms[SharedService.user.realm];
     if (!r) {
       return false;
@@ -365,7 +365,7 @@ export class TsmLuaUtil {
     return realm === r.name;
   }
 
-  private addUpProfits(profitSummary, row, type: string) {
+  private addUpProfits(profitSummary: ProfitSummary, row, type: string) {
     profitSummary.past24Hours.add(row, type);
     profitSummary.past7Days.add(row, type);
     profitSummary.past14Days.add(row, type);
@@ -374,219 +374,12 @@ export class TsmLuaUtil {
     profitSummary.total.add(row, type);
   }
 
-  private setAndSortItemList(profitSummary, type: string) {
+  private setAndSortItemList(profitSummary: ProfitSummary, type: string) {
     profitSummary.past24Hours[type].setAndSortItemList();
     profitSummary.past7Days[type].setAndSortItemList();
     profitSummary.past14Days[type].setAndSortItemList();
     profitSummary.past30Days[type].setAndSortItemList();
     profitSummary.past90Days[type].setAndSortItemList();
     profitSummary.total[type].setAndSortItemList();
-  }
-}
-
-export class ProfitSummary {
-  past24Hours: UserProfit;
-  past7Days: UserProfit;
-  past14Days: UserProfit;
-  past90Days: UserProfit;
-  past30Days: UserProfit;
-  total: UserProfit;
-
-  constructor(realm: string, characters: any) {
-    this.past24Hours = new UserProfit(1, characters[realm]);
-    this.past7Days = new UserProfit(7, characters[realm]);
-    this.past14Days = new UserProfit(14, characters[realm]);
-    this.past30Days = new UserProfit(30, characters[realm]);
-    this.past90Days = new UserProfit(90, characters[realm]);
-    this.total = new UserProfit(undefined, characters[realm]);
-  }
-
-  setSaleRates(): void {
-    Object.keys(SharedService.items)
-      .forEach(id =>
-        this.setSaleRateForItem(+id));
-  }
-
-  setSaleRateForItem(id: number) {
-    this.past24Hours.setSaleRateForItem(id, 'past24Hours');
-    this.past7Days.setSaleRateForItem(id, 'past7Days');
-    this.past14Days.setSaleRateForItem(id, 'past14Days');
-    this.past30Days.setSaleRateForItem(id, 'past30Days');
-    this.past90Days.setSaleRateForItem(id, 'past90Days');
-    this.total.setSaleRateForItem(id, 'total');
-  }
-}
-
-export class UserProfit {
-  expired: UserProfitValue = new UserProfitValue('Expired');
-  cancelled: UserProfitValue = new UserProfitValue('Cancelled');
-  expenses: UserProfitValue = new UserProfitValue('Expenses');
-  sales: UserProfitValue = new UserProfitValue('Sales');
-  income: UserProfitValue = new UserProfitValue('Income');
-  purchases: UserProfitValue = new UserProfitValue('Purchases');
-  profit = 0;
-
-  constructor(public daysSince: number, private characters: any) {
-  }
-
-  add(value: { amount: number; time: number; price: number; }, type: string): void {
-    try {
-      const thenVsNow = new Date().getTime() - value.time;
-      if (this.isTimeMatch(thenVsNow) && !this.excludeUserCharacters(value)) {
-        switch (type) {
-          case 'expired':
-          case 'cancelled':
-            this[type].add(value);
-            break;
-          case 'expenses':
-            this[type].add(value);
-            this.profit -= value.amount;
-            break;
-          case 'income':
-            this[type].add(value);
-            this.profit += value.amount;
-            break;
-          case 'sales':
-            this[type].add(value);
-            this.profit += value.price * value['quantity'];
-            break;
-          case 'purchases':
-            this[type].add(value);
-            this.profit -= value.price * value['quantity'];
-            break;
-        }
-      }
-    } catch (error) {
-      ErrorReport.sendError('UserProfit.add', error);
-    }
-  }
-
-  private isTimeMatch(thenVsNow) {
-    return this.getDaysFromMS(thenVsNow) <= this.daysSince || !this.daysSince;
-  }
-
-  excludeUserCharacters(v: any): boolean {
-    if (!this.characters) {
-      return false;
-    }
-    return this.characters[v.player] && this.characters[v.otherPlayer];
-  }
-
-  getDaysFromMS(ms: number): number {
-    const day = 86400000;
-    return ms / day;
-  }
-
-  setSaleRateForItem(itemId: number, fieldName: string): void {
-    const sales = this.sales.itemMap[itemId],
-      expired = this.expired.itemMap[itemId],
-      cancelled = this.cancelled.itemMap[itemId],
-      auctionItem: AuctionItem = SharedService.auctionItemsMap[itemId];
-    let total = 0, plus = 0, saleRate = 0;
-
-    if (sales) {
-      plus += sales.quantity;
-      total += sales.quantity;
-    }
-
-    if (expired) {
-      total += expired.quantity;
-    }
-
-    if (cancelled) {
-      total += cancelled.quantity;
-    }
-
-    saleRate = plus / (total || 1);
-
-    if (auctionItem) {
-      auctionItem[fieldName + 'SaleRate'] = saleRate;
-      auctionItem.hasPersonalSaleRate = true;
-    }
-  }
-}
-
-export class UserProfitValue {
-  quantity = 0;
-  copper = 0;
-  itemMap = {};
-  items = [];
-
-  constructor(public category: string) {
-  }
-
-  add(value): void {
-    try {
-      if (value.quantity) {
-        this.quantity += value.quantity;
-        this.copper += this.getCopperValue(value) * value.quantity;
-        this.addItem(value);
-      } else {
-        this.quantity++;
-        this.copper += this.getCopperValue(value);
-      }
-    } catch (error) {
-      ErrorReport.sendError('UserProfitValue.add', error);
-    }
-  }
-
-  private addItem(value): void {
-    try {
-      let i = this.itemMap[value.id];
-      if (!i) {
-        this.itemMap[value.id] = {
-          id: value.id,
-          name: value.name,
-          quantity: 0,
-          totalPrice: 0,
-          maxPrice: 0,
-          minPrice: 0,
-          avgPrice: 0,
-          category: this.category,
-          history: []
-        };
-        i = this.itemMap[value.id];
-      }
-      if (value.quantity) {
-        i.quantity += value.quantity;
-      } else {
-        i.quantity++;
-      }
-      i.history.push({
-        buyout: this.getCopperValue(value),
-        quantity: value.quantity,
-        timestamp: value.time
-      });
-
-      if (this.getCopperValue(value) > i.maxPrice) {
-        i.maxPrice = this.getCopperValue(value);
-      }
-
-      if (i.minPrice === 0 || this.getCopperValue(value) < i.minPrice) {
-        i.minPrice = this.getCopperValue(value);
-      }
-
-      i.totalPrice += this.getCopperValue(value) * (value.quantity || 1);
-      i.avgPrice = i.totalPrice / i.quantity;
-    } catch (error) {
-      ErrorReport.sendError('UserProfitValue.addItem', error);
-    }
-  }
-
-  setAndSortItemList(): void {
-    try {
-      Object.keys(this.itemMap)
-        .forEach(id =>
-          this.items.push(this.itemMap[id]));
-
-      this.items.sort((a, b) =>
-        b.totalPrice - a.totalPrice);
-    } catch (error) {
-      ErrorReport.sendError('UserProfitValue.setAndSortItemList', error);
-    }
-  }
-
-  private getCopperValue(value) {
-    return value.amount || value.price || 0;
   }
 }

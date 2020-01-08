@@ -1,12 +1,9 @@
-import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {PetQuery} from '../queries/pet.query';
-import {Response} from '../utils/response.util';
 import {LocaleUtil} from '../utils/locale.util';
 import {PetUtil} from '../utils/pet.util';
 import {Pet} from '../../../client/src/client/modules/pet/models/pet';
 import {ApiResponse} from '../models/api-response.model';
-import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
 
 const request = require('request');
@@ -69,12 +66,13 @@ export class PetHandler {
     });
   }
 
-  getAllRelevant(timestamp: number, locale: string = 'en_GB'): Promise<ApiResponse<Pet>> {
+  getAllRelevant(timestamp: string, locale: string = 'en_GB'): Promise<ApiResponse<Pet>> {
     return new Promise<ApiResponse<Pet>>((resolve, reject) => {
       new DatabaseUtil()
-        .query(PetQuery.selectAllForTimestampWithLocale(locale, new Date(timestamp)))
+        .query(PetQuery.selectAllForTimestampWithLocale(locale, timestamp))
         .then((rows: Pet[]) => {
-          let ts = timestamp;
+          console.log('Pets', rows.length);
+          let ts: string = timestamp;
           if (rows.length > 0) {
             ts = rows[0].timestamp;
           }

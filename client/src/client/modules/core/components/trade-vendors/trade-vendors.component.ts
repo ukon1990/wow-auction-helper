@@ -8,6 +8,9 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {TRADE_VENDORS} from '../../../../data/trade-vendors';
+import {Zone} from '../../../zone/models/zone.model';
+import {ZoneService} from '../../../zone/service/zone.service';
+import {Item} from '../../../../models/item/item';
 
 @Component({
   selector: 'wah-trade-vendors',
@@ -20,10 +23,13 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   form: FormGroup;
   sm = new SubscriptionManager();
   vendors = TRADE_VENDORS;
+  zones: Map<number, Zone> = new Map<number, Zone>();
 
-  constructor(private formBuilder: FormBuilder, private service: AuctionsService) {
+  constructor(private formBuilder: FormBuilder, private service: AuctionsService, private zoneService: ZoneService) {
     const filter = JSON.parse(localStorage.getItem('query_trade_vendors')) || undefined;
     this.form = formBuilder.group({
+      name: filter && filter.name !== null ?
+        filter.name : null,
       saleRate: filter && filter.saleRate !== null ?
         parseFloat(filter.saleRate) : 0,
       avgDailySold: filter && filter.avgDailySold !== null ?
@@ -38,11 +44,15 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
       this.form.valueChanges,
       ((change) => {
         localStorage['query_trade_vendors'] = JSON.stringify(change);
-        this.filterVendors();
+        this.filterVendors(change);
       }));
     this.sm.add(
       this.service.events.groupedList,
-      () => this.filterVendors());
+      () => this.filterVendors(this.form.getRawValue()));
+
+    this.sm.add(zoneService.mapped, (map) => {
+      this.zones = map;
+    });
   }
 
   ngOnInit() {
@@ -52,12 +62,12 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
 
     if (SharedService.user.apiToUse !== 'none') {
-      this.columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold'});
       this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number'});
       this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'});
     }
+    this.columns.push({key: 'roi', title: 'ROI', dataType: 'gold'});
 
-    this.filterVendors();
+    this.filterVendors(this.form.getRawValue());
   }
 
   ngOnDestroy() {
@@ -68,24 +78,24 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     SharedService.selectedItemId = tv.itemID;
   }
 
-  filterVendors(): void {
+  filterVendors(formData): void {
     this.vendors
       .forEach((vendor: TradeVendor) =>
-        this.filteredTradeVendorItems(vendor));
+        this.filteredTradeVendorItems(vendor, formData));
   }
 
-  filteredTradeVendorItems(tv: TradeVendor): void {
+  filteredTradeVendorItems(tv: TradeVendor, formData): void {
     tv.itemsFiltered = tv.items
       .filter(i =>
-        this.isMatch(i, tv));
+        this.isMatch(i, tv, formData));
   }
 
-  isMatch(item: TradeVendorItem, vendor: TradeVendor): boolean {
+  isMatch(item: TradeVendorItem, vendor: TradeVendor, {saleRate, avgDailySold, onlyPotentiallyProfitable, onlyBuyableSource}): boolean {
     try {
-      return this.isOnlyBuyableSourceMatch(vendor) &&
-        this.onlyPotentiallyProfitableMatch(item, vendor) &&
-        Filters.isSaleRateMatch(item.itemID, this.form.getRawValue().saleRate) &&
-        Filters.isDailySoldMatch(item.itemID, this.form.getRawValue().avgDailySold);
+      return this.isNotBOP(vendor, onlyBuyableSource) &&
+        this.onlyPotentiallyProfitableMatch(item, vendor, onlyPotentiallyProfitable) &&
+        Filters.isSaleRateMatch(item.itemID, saleRate) &&
+        Filters.isDailySoldMatch(item.itemID, avgDailySold);
     } catch (e) {
       console.error(e, item);
       return false;
@@ -102,16 +112,15 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     return SharedService.user.apiToUse !== 'none';
   }
 
-  private isOnlyBuyableSourceMatch(vendor: TradeVendor): boolean {
-    return !this.form.getRawValue().onlyBuyableSource ||
-      !vendor.useForCrafting &&
-      this.form.getRawValue().onlyBuyableSource;
+  private isNotBOP(vendor: TradeVendor, onlyBuyableSource: boolean): boolean {
+    const sourceItem: AuctionItem = SharedService.auctionItemsMap[vendor.itemID];
+    return !onlyBuyableSource ||
+      sourceItem !== undefined;
   }
 
-  private onlyPotentiallyProfitableMatch(item: TradeVendorItem, vendor: TradeVendor): boolean {
-    return !this.form.getRawValue().onlyPotentiallyProfitable ||
-      this.isCheaperThanSourceFromAH(vendor, item) &&
-      this.form.getRawValue().onlyPotentiallyProfitable;
+  private onlyPotentiallyProfitableMatch(item: TradeVendorItem, vendor: TradeVendor, onlyPotentiallyProfitable): boolean {
+    return !onlyPotentiallyProfitable ||
+      this.isCheaperThanSourceFromAH(vendor, item) && onlyPotentiallyProfitable;
   }
 
   private isCheaperThanSourceFromAH(vendor: TradeVendor, item: TradeVendorItem) {

@@ -25,6 +25,7 @@ export class ItemQuery {
       WHERE id = ${item.id};`;
   }
 
+  /* Depricated
   public static insert(item: Item) {
     return `
       INSERT INTO items(\`id\`,
@@ -80,7 +81,7 @@ export class ItemQuery {
         ,${
     item.expansionId || 0
       });`;
-  }
+  } */
 
   public static getById(id: number, locale: string) {
     return `

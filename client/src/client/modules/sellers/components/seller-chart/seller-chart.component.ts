@@ -1,12 +1,13 @@
 import { Component, AfterViewInit, Input, OnChanges } from '@angular/core';
 import { Chart } from 'chart.js';
 import * as distinctColors from 'distinct-colors';
-import { Seller } from '../../../../models/seller';
+import { Seller } from '../../models/seller.model';
 import { itemClasses } from '../../../../models/item/item-classes';
 import { Auction } from '../../../auction/models/auction.model';
 import { SharedService } from '../../../../services/shared.service';
 import { Item } from '../../../../models/item/item';
 import { FormControl } from '@angular/forms';
+import {AuctionClassGroup} from '../../models/auction-class-group.model';
 
 @Component({
   selector: 'wah-seller-chart',
@@ -43,7 +44,6 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
     setTimeout(() => {
       this.colors = distinctColors({ count: this.itemClasses.length });
       this.setData();
-      console.log(this.itemClassesMap);
       this.setChart(this.itemClasses);
     }, 100);
   }
@@ -100,18 +100,5 @@ export class SellerChartComponent implements OnChanges, AfterViewInit {
 
   save(): void {
     localStorage[this.storageName] = this.chartTypeForm.value;
-  }
-}
-
-class AuctionClassGroup {
-  itemClass: number;
-  itemSubClass: number;
-  name = '';
-  auctions: Array<Auction> = new Array<Auction>();
-  quantity = 1;
-
-  constructor(item: Item) {
-    this.itemClass = item.itemClass;
-    this.itemSubClass = item.itemSubClass;
   }
 }

@@ -24,16 +24,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   subs = new SubscriptionManager();
   itemClasses = itemClasses;
   professions = [
-    'Blacksmithing',
-    'Leatherworking',
-    'Alchemy',
-    'Cooking',
-    'Mining',
-    'Tailoring',
-    'Engineering',
-    'Enchanting',
-    'Jewelcrafting',
-    'Inscription',
+    ...GameBuild.professions,
     'none'
   ].sort();
   expansions = GameBuild.expansionMap;
@@ -128,7 +119,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
       Crafting.calculateCost();
     }
 
-    console.log('chagnes', changes);
     this.filtered = SharedService.recipes
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {

@@ -16,7 +16,7 @@ export const getLocale = (locale: string) => {
 };
 
 export class LocaleUtil {
-  private static locales = {
+  static locales = {
     eu: ['en_GB', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_PT', 'ru_RU'],
     us: ['en_US', 'es_MX', 'pt_BR'],
     kr: ['ko_KR'],
@@ -40,11 +40,9 @@ export class LocaleUtil {
 
   /* istanbul ignore next */
   public static async insertToDB(tableName: string, idName: string, data: ItemLocale) {
-    console.log('Query', LocaleQuery.insert(tableName, idName, data));
     return await new DatabaseUtil()
       .query(LocaleQuery.insert(tableName, idName, data))
-      .then(result =>
-        console.log(`Locale added to db for ${data.en_GB}`))
+      .then(result => {}) // console.log(`Locale added to db for ${data.en_GB}`)
       .catch(error =>
         console.error(`Locale not added to db for ${data.en_GB}`, error));
   }

@@ -89,7 +89,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   private addCharacter(c) {
-    console.log('Character data:', c);
     if (!c.error && c.status !== 'nok') {
       this.processCharacter(c);
       this.openSnackbar(`${c.name} was successfully added`);

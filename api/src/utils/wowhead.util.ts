@@ -30,7 +30,7 @@ export class WoWHeadUtil {
     return wh;
   }
 
-  private static getExpansion(body: string): number {
+  static getExpansion(body: string): number {
     const expansionRegex = new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}/g),
       addedIn = expansionRegex.exec(body);
     if (addedIn && addedIn[0]) {
@@ -188,33 +188,60 @@ export class WoWHeadUtil {
     }));
   }
 
-  private static getNewListViewData<T>(body: string, template: string, id: string): T[] {
+  public static getNewListViewData<T>(body: string, template: string, id: string): T[] {
     const firstRegex = new RegExp(`new Listview\\({[\\n\\r ]{0,}template: '${
       template
       }',[\\n\\r ]{0,}id: '${
       id
       }',([\\s\\S]*?)}\\);`, 'g');
-    // const dataRegex = new RegExp(/data: \[([\s\S]*?)\}\]/g);
     const result = firstRegex.exec(body);
 
     if (!ArrayUtil.isArray(result) || result.length < 2) {
       return [];
     }
-
-    const rows = result[1].split(/[\n\r]{1,}/);
-    let res = null;
-
-    rows.forEach(r => {
-      if (TextUtil.contains(r, 'data:')) {
-        res = r.replace('data: ', '');
-      }
-    });
     try {
-      return eval(res
-        .replace(/,$/g, ''));
+      const dataRegex = /(data:[ \r\n]{0,1}\[\{[\s\S]*?(\}\][,]{0,1})$){1,}/gm;
+      const dataResult = dataRegex.exec(result[1]);
+      if (dataResult && dataResult.length) {
+        const totalCount = this.getTotalCount(result);
+        // tslint:disable-next-line:no-eval
+        return eval(dataResult[0].replace('data: ', '')
+          .replace(/,$/g, '')).map(entry => ({
+          ...entry, totalCount
+        }));
+      }
+      return [];
     } catch (e) {
+      console.error('err', e);
       return [];
     }
+  }
+
+  static getArrayVariable(variableName: string, body: string) {
+    const regex = new RegExp(`var ${variableName} = \\[([\\s\\S]*?)];`, 'gm'),
+      result = regex.exec(body);
+    try {
+      if (result && result[0]) {
+        // tslint:disable-next-line:no-eval
+        return eval(result[0]
+          .replace('var ' + variableName + ' =', '')
+          .replace(/;$/g, ''));
+      }
+    } catch (e) {
+
+    }
+    return [];
+  }
+
+  private static getTotalCount(result: RegExpExecArray) {
+    const totalCountRegex = /totalCount:[ ]{0,}[\d]{1,100},/gm;
+    const totalCountResult = totalCountRegex.exec(result[1]);
+    if (totalCountResult && totalCountResult.length) {
+      return +totalCountResult[0]
+        .replace(/totalCount:[ ]{0,}/g, '')
+        .replace(/,$/g, '');
+    }
+    return undefined;
   }
 
   public static cleanName(name: string): string {

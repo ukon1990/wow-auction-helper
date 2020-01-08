@@ -12,15 +12,15 @@ import { AuctionResponse } from '../modules/auction/models/auctions-response.mod
 import { TradeVendor, TradeVendorItemValue } from '../models/item/trade-vendor';
 import { UserAuctions } from '../modules/auction/models/user-auctions.model';
 import { CustomPrice } from '../modules/crafting/models/custom-price';
-import { Seller, ItemClassGroup } from '../models/seller';
+import { Seller} from '../modules/sellers/models/seller.model';
 import { AuctionPet } from '../modules/auction/models/auction-pet.model';
 import { Notification } from '../models/user/notification';
-import { CustomProc } from '../modules/crafting/models/custom-proc';
+import { CustomProc } from '../modules/crafting/models/custom-proc.model';
 import { WoWUction } from '../modules/auction/models/wowuction.model';
-import { Zone } from '../models/zone.model';
 import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
 import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
+import {ItemClassGroup} from '../modules/sellers/models/item-class-group.model';
 
 @Injectable()
 export class SharedService {
@@ -95,7 +95,6 @@ export class SharedService {
   public static selectedItemId: number;
   public static selectedPetSpeciesId: AuctionPet;
   public static selectedSeller: Seller;
-  public static zoneMap: Map<number, Zone>;
 
 
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();

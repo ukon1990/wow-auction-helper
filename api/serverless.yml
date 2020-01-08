@@ -146,6 +146,52 @@ functions:
           path: recipe/{id}
           cors:
             origin: '*'
+  zone:
+    tags:
+      Lambda: Wah-zone
+    handler: src/controllers/zone.getAll
+    memorySize: 128
+    timeout: 60
+    events:
+      - http:
+          method: post
+          path: zone
+          cors:
+            origin: 'http://localhost:4200'
+  npcGetById:
+    tags:
+      Lambda: Wah-npc-by-id
+    handler: src/controllers/npc.getById
+    memorySize: 128
+    events:
+      - http:
+          method: post
+          path: npc/{id}
+          cors:
+            origin: '*'
+  npcGetAll:
+    tags:
+      Lambda: Wah-npc-get-all
+    handler: src/controllers/npc.getAll
+    memorySize: 1024
+    events:
+      - http:
+          method: post
+          path: npc/all
+          cors:
+            origin: 'http://localhost:4200'
+  npcGetByIds:
+    tags:
+      Lambda: Wah-npc
+    handler: src/controllers/npc.addNewNPCsByIds
+    memorySize: 256
+    timeout: 30
+    events:
+      - http:
+          method: post
+          path: npc
+          cors:
+            origin: 'http://localhost:4200'
   character:
     tags:
       Lambda: Wah-character
@@ -228,3 +274,14 @@ functions:
           path: logger/client-event
           cors:
             origin: '*'
+  currency:
+    tags:
+      Lambda: Wah-currencies
+    handler: src/controllers/currency.handler
+    memorySize: 128
+    events:
+      - http:
+          method: any
+          path: currency
+          cors:
+            origin: 'http://localhost:4200'

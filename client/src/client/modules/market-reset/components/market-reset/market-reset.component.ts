@@ -10,6 +10,7 @@ import {ItemReset} from '../../models/item-reset.model';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
+import {RowClickEvent} from '../../../table/models/row-click-event.model';
 
 @Component({
   selector: 'wah-market-reset',
@@ -87,7 +88,6 @@ export class MarketResetComponent implements OnInit {
 
     this.sm.add(SharedService.events.auctionUpdate,
       (auctionItems: AuctionItem[]) => {
-        console.log('Auction event', SharedService.auctionItems.length);
         this.filter(this.form.getRawValue());
       });
   }
@@ -188,7 +188,7 @@ export class MarketResetComponent implements OnInit {
     }
   }
 
-  setRoShoppingString(row: ItemResetBreakpoint): void {
+  setRoShoppingString({row}: RowClickEvent<ItemResetBreakpoint>): void {
     this.rowShoppingString = row.tsmShoppingString;
   }
 

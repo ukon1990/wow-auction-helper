@@ -43,6 +43,5 @@ export class SummaryCardComponent implements OnInit, OnChanges {
   }
 
   selection(id: number) {
-    console.log('selected', id);
   }
 }

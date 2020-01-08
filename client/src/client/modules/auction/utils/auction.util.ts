@@ -8,9 +8,9 @@ import {AuctionPet} from '../models/auction-pet.model';
 import {WoWUction} from '../models/wowuction.model';
 import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
-import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
+import {ProfitSummary} from '../../tsm/models/profit-summary.model';
 
 export class AuctionUtil {
   /**

@@ -14,6 +14,8 @@ import {WoWHead} from '../models/item/wowhead';
 import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
+import {NPCUtil} from '../utils/npc.util';
+import {NpcHandler} from './npc.handler';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -64,11 +66,16 @@ export class ItemHandler {
     new DatabaseUtil()
       .query(
         ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
-      .then((rows: any[]) =>
+      .then((rows: any[]) => {
+        const ts = rows[0] ? rows[0].timestamp : new Date().toJSON(),
+          items = ItemUtil.handleItems(rows);
         Response.send({
-          timestamp: rows[0] ? rows[0].timestamp : new Date().toJSON(),
-          items: ItemUtil.handleItems(rows)
-        }, callback))
+          timestamp: ts,
+          items
+        }, callback);
+        items.length = 0;
+        rows.length = 0;
+      })
       .catch(error =>
         Response.error(callback, error, event));
   }
@@ -78,30 +85,46 @@ export class ItemHandler {
     return new Promise<Item>(async (resolve, reject) => {
       await this.getFreshItem(id, locale)
         .then(async item => {
-          resolve(item);
 
-          const friendlyItem: Item = await QueryIntegrity.getVerified('items', item);
+          await QueryIntegrity.getVerified('items', item)
+            .then((friendlyItem) => {
+              if (!friendlyItem) {
+                console.log(`Failed to add item: ${id} did not match the model`);
+                reject('The item did not follow the data model - ' + item.id);
+                return;
+              }
 
-          if (!friendlyItem) {
-            console.log(`Failed to add item: ${id} did not match the model`);
-            reject('The item did not follow the data model - ' + item.id);
-            return;
-          }
-
-          const query = new QueryUtil('items').insert(friendlyItem);
-          console.log('Insert item SQL:', query);
-          await new DatabaseUtil()
-            .query(query)
-            .then(async itemSuccess => {
-              console.log(`Successfully added ${friendlyItem.name} (${id})`, itemSuccess);
-              await LocaleUtil.insertToDB(
-                'item_name_locale',
-                'id',
-                item.nameLocales)
-                .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
-                .catch(console.error);
+              const query = new QueryUtil('items').insert(friendlyItem);
+              console.log('Insert item SQL:', query);
+              new DatabaseUtil()
+                .query(query)
+                .then(async itemSuccess => {
+                  resolve(item);
+                  console.log(`Successfully added ${friendlyItem.name} (${id})`);
+                  await LocaleUtil.insertToDB(
+                    'item_name_locale',
+                    'id',
+                    item.nameLocales)
+                    .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
+                    .catch(console.error);
+                  const map = {};
+                  item.itemSource.droppedBy
+                    .forEach((drop) => map[drop.id] = drop.id);
+                  item.itemSource.soldBy
+                    .forEach((vendor) => map[vendor.id] = vendor.id);
+                  try {
+                    await NpcHandler.addNPCIfMissing(
+                      Object.keys(map).map(npcId => +npcId));
+                  } catch (e) {
+                    console.error('addItem failed at adding missing NPCs', e);
+                  }
+                })
+                .catch((error) => {
+                  reject(error);
+                  console.error(`Could not add item to DB! ${id} - ${friendlyItem.name}`, error);
+                });
             })
-            .catch(console.error);
+            .catch(reject);
         })
         .catch(reject);
     });

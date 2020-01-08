@@ -113,7 +113,6 @@ export class Watchlist {
       });
       shouldSave = true;
     }
-    console.log(wl);
     if (wl.groups) {
       this.groups = wl.groups;
       this.groups.forEach(g => {
