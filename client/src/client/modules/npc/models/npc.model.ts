@@ -110,6 +110,9 @@ export class NPC {
         if (item.stock > 0) {
           limitedSupplyCount++;
         }
+        if (!item.unitPrice || item.unitPrice === 0) {
+          item.unitPrice = item.price / item.stackSize;
+        }
         roi = this.calculateSellerVendorItemROI(item, roi).roi;
       });
     }
@@ -133,7 +136,7 @@ export class NPC {
     };
   }
 
-  static getTradeVendors(list: NPC[]): void {
+  static getTradeVendorsAndSetUnitPriceIfMissing(list: NPC[]): void {
     const tradeVendorsItemMap = {},
       tradeVendorItemMap = {},
       npcVendorMap = {};
@@ -147,6 +150,7 @@ export class NPC {
         const locale = localStorage.getItem('locale') || 'en_GB';
         npc.sells.forEach(item => {
           const i: Item = SharedService.items[item.currency];
+          this.setUnitPrice(item);
           if (item.currency && (!i || i && i.itemClass !== 4)) {
             const currency: Currency = currencyMap.get(item.currency);
             const garrisonResourceIdExtra = item.currency === 824 ? '' + npc.id : '';
@@ -187,6 +191,12 @@ export class NPC {
 
     if (Object.keys(missingIds).length) {
       Report.debug('Missing NPC item currencies', Object.keys(missingIds).map(k => +k));
+    }
+  }
+
+  private static setUnitPrice(item: VendorItem) {
+    if (!item.unitPrice || item.unitPrice === 0 && item.price > 0) {
+      item.unitPrice = item.price / item.stackSize;
     }
   }
 

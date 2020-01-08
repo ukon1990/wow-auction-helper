@@ -35,7 +35,7 @@ export class NpcService {
       await this.getAllAfterTimestamp()
         .catch(console.error);
 
-      NPC.getTradeVendors(this.list.value);
+      NPC.getTradeVendorsAndSetUnitPriceIfMissing(this.list.value);
       resolve(this.list.value);
     });
   }
