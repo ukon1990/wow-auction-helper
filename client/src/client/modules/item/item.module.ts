@@ -22,6 +22,7 @@ import { AuctionItemDetailsComponent } from './components/auction-item-details/a
 import { TsmTabComponent } from './components/tsm-tab/tsm-tab.component';
 import { SoldByTabComponent } from './components/sold-by-tab/sold-by-tab.component';
 import { DroppedByTabComponent } from './components/dropped-by-tab/dropped-by-tab.component';
+import { ContainedInTabComponent } from './components/contained-in-tab/contained-in-tab.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { DroppedByTabComponent } from './components/dropped-by-tab/dropped-by-ta
     AuctionItemDetailsComponent,
     TsmTabComponent,
     SoldByTabComponent,
-    DroppedByTabComponent
+    DroppedByTabComponent,
+    ContainedInTabComponent
   ],
   imports: [
     CommonModule,

@@ -11,10 +11,10 @@ export class SoldByTabComponent {
   @Input() soldBy: ItemSoldByRow[];
 
   soldByColumns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: ''},
+    {key: 'name', title: 'Name', dataType: 'name', options: {noIcon: true}},
     {key: 'tag', title: 'Tag', dataType: ''},
     {key: 'zoneName', title: 'Zone', dataType: 'zone', options: {idName: 'zoneId'}},
-    {key: 'cost', title: 'Price', dataType: 'vendor-currency'},
+    {key: 'unitPrice', title: 'Unit price', dataType: 'vendor-currency'},
     {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];

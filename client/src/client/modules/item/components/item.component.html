@@ -79,15 +79,14 @@
 
           <mat-tab label="Contained in object"
                    *ngIf="selected.item.itemSource && selected.item.itemSource.containedInObject && selected.item.itemSource.containedInObject.length > 0">
-            <wah-data-table linkType="object" [id]="'id'" iconSize="22" [columns]="droppedByColumns"
-                            [data]="selected.item.itemSource.containedInObject" filterParameter="name" [numOfRows]="20">
-            </wah-data-table>
+              <wah-contained-in-tab
+                      [isObjects]="true"
+                      [items]="selected.item.itemSource.containedInObject"></wah-contained-in-tab>
           </mat-tab>
           <mat-tab label="Contained in item"
                    *ngIf="selected.item.itemSource && selected.item.itemSource.containedInItem && selected.item.itemSource.containedInItem.length > 0">
-            <wah-data-table linkType="item" [id]="'id'" iconSize="22" [columns]="containedInColumns"
-                            [data]="selected.item.itemSource.containedInItem" filterParameter="name" [numOfRows]="20">
-            </wah-data-table>
+            <wah-contained-in-tab
+                    [items]="selected.item.itemSource.containedInItem"></wah-contained-in-tab>
           </mat-tab>
           <mat-tab label="Prospected from"
                    *ngIf="selected.item.itemSource && selected.item.itemSource.prospectedFrom && selected.item.itemSource.prospectedFrom.length > 0">

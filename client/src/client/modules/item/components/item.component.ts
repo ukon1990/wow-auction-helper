@@ -64,13 +64,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
-  containedInColumns: Array<ColumnDescription> = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
-    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
-    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
-  ];
-
   private isUsing3PAPI: boolean;
 
   constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {

@@ -7,7 +7,7 @@
   <mat-card-content>
     <mat-list dense>
       <mat-list-item>
-        Sum value: {{ item.inventory[factionId].quantity * auctionItem.buyout | gold }}
+        Sum value: {{ (auctionItem ? item.inventory[factionId].quantity * auctionItem.buyout : 0) | gold }}
         total.
       </mat-list-item>
       <mat-list-item>

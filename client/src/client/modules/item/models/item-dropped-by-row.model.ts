@@ -5,4 +5,5 @@ export interface ItemDroppedByRow {
   zoneId: number;
   zoneName: string;
   dropChance: number;
+  levelRange: string;
 }
