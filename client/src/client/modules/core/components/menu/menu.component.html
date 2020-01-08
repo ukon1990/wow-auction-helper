@@ -55,7 +55,7 @@
 
   <wah-download *ngIf="isUserSet"></wah-download>
 
-  <wah-character-select *ngIf="!displayExtraMenu() && isUserSet"></wah-character-select>
+  <wah-realm-quick-select *ngIf="!displayExtraMenu() && isUserSet"></wah-realm-quick-select>
 
   <wah-theme-select></wah-theme-select>
 
@@ -75,7 +75,7 @@
       <ng-container></ng-container>
       <div class="p-3">
         <wah-shopping-cart></wah-shopping-cart>
-        <wah-character-select></wah-character-select>
+        <wah-realm-quick-select></wah-realm-quick-select>
       </div>
     </mat-menu>
   </ng-container>
