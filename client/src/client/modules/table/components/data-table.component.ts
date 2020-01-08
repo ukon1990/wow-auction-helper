@@ -337,8 +337,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (item.petSpeciesId) {
       return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
     }
-    return (this.linkType ?
-      `${this.linkType}=` : 'item=') + this.getItemID(item, column);
+    const type = column.options && column.options.tooltipType || this.linkType;
+    return (type ?
+      `${type}=` : 'item=') + this.getItemID(item, column);
   }
 
   getCartCount(item: any, column: ColumnDescription): number {

@@ -7,6 +7,8 @@ export class ColumnDescription {
   customSort?: Function;
   cssClass?: string;
   options?: {
-    idName: string;
+    idName?: string;
+    noIcon?: boolean;
+    tooltipType?: string;
   };
 }

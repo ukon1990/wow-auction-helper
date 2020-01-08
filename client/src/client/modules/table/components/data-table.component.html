@@ -31,7 +31,7 @@
               <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
                 getWHRelations(d, c)
                 }}">
-                <wah-icon *ngIf="id" class="float-left" [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
+                <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left" [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
                           [petSpeciesId]="d?.petSpeciesId"></wah-icon>
                 {{ getItemName(d[c.key], d) }}
               </a>
