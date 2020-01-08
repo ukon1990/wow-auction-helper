@@ -1,5 +1,5 @@
 <em>
-  This tool is currently still in the development phase, and should be considered subject to change.
+  This tool is currently still in the development phase, and everything should be considered subject to change.
 </em>
 <form [formGroup]="form">
   <mat-form-field>
@@ -13,6 +13,7 @@
   <mat-tab label="Lootable mobs ({{ table.dropped.data.length | number }})">
     <wah-data-table
             [id]="'id'"
+            [iconSize]="22"
             [columns]="table.dropped.columns"
             [data]="table.dropped.data"
             [numOfRows]="20"
@@ -21,6 +22,7 @@
   <mat-tab label="Vendors ({{ table.sold.data.length | number }})">
     <wah-data-table
             [id]="'id'"
+            [iconSize]="22"
             [columns]="table.sold.columns"
             [data]="table.sold.data"
             [numOfRows]="20"

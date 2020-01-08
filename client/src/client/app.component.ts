@@ -93,7 +93,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private scrollToTheTop() {
     // making sure that we are scrolled back to the correct position after opening the detail panel
     if (!this.isPanelOpen()) {
-      window.scrollTo(0, SharedService.preScrollPosition);
+      window.scroll(0, SharedService.preScrollPosition);
     }
   }
 

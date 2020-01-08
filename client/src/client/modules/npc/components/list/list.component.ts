@@ -19,7 +19,7 @@ import {Filters} from '../../../../utils/filtering';
 export class ListComponent implements OnInit, OnDestroy {
   list: any[] = [];
   commonColumns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'string'},
+    {key: 'name', title: 'Name', dataType: 'name', options: {tooltipType: 'npc', noIcon: true}},
     {key: 'tag', title: 'Tag', dataType: 'string'},
     {key: 'zone', title: 'Zone', dataType: 'string'},
     {key: 'minLevel', title: 'Min level', dataType: 'number'},

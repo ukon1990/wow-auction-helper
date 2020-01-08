@@ -88,7 +88,6 @@ const TOOLS_ROUTE: TitledRoute = {
     {
       title: '[W.I.P] Vendors and mobs(NPCs)',
       path: 'npc',
-      isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
       children: [
         {
           path: '',

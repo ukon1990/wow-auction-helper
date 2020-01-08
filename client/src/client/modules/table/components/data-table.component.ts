@@ -139,17 +139,28 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     } else {
       switch (type) {
         case 'npc':
-          const id = column.options && column.options.idName || this.id;
-          this.router.navigateByUrl(`/tools/npc/${item[id]}`);
+          window.scroll(0, 0);
           break;
         case 'zone':
-          //
           break;
         case 'item':
         default:
           this.setSelectedItem(item, column);
           break;
       }
+    }
+  }
+
+  getRouterLink(item, column: ColumnDescription): string {
+    const type = this.getColumnLinkType(column);
+    switch (type) {
+      case 'npc':
+        const id = column.options && column.options.idName || this.id;
+        return `/tools/npc/${item[id]}`;
+      case 'zone':
+      case 'item':
+      default:
+        return '.';
     }
   }
 

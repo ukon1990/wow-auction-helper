@@ -1,3 +1,6 @@
+<em>
+  This tool is currently still in the development phase, and everything should be considered subject to change.
+</em>
 <mat-card>
   <mat-card-actions>
     <a mat-raised-button routerLink="/tools/npc">Back to the list</a>
@@ -5,6 +8,7 @@
   <mat-card-header *ngIf="npc">
     <mat-card-title>{{ npc.name }}</mat-card-title>
     <mat-card-subtitle *ngIf="npc.tag">{{ npc.tag }}</mat-card-subtitle>
+    <mat-card-subtitle>Level range: {{npc.minLevel}} - {{npc.maxLevel}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="zone">
       Found in: {{ zone?.name }} ({{ territories[zone.territoryId] }}
       - {{ zoneTypes[zone.typeId] }})

@@ -65,19 +65,29 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.territories = GameBuild.territories;
     this.zoneTypes = GameBuild.zoneType;
-    this.npcId = +this.route.snapshot.paramMap.get('id');
     console.log('Route', this.route.snapshot.paramMap);
+
+
+    this.sm.add(this.route.params, ({id}) => {
+      this.npcId = +id;
+      this.setTableData();
+    });
+
     this.sm.add(this.npcService.mapped, (map) => {
       this.setTableData(map);
     });
     this.sm.add(this.auctionService.events.list, (list) => {
       if (list.length > 0) {
-        this.setTableData(this.npcService.mapped.value);
+        this.setTableData();
       }
     });
+
   }
 
-  private setTableData(map) {
+  private setTableData(map?) {
+    if (!map) {
+      map = this.npcService.mapped.value;
+    }
     this.npc = map[this.npcId];
     this.zone = undefined;
     this.potentialValue.vendor = 0;
