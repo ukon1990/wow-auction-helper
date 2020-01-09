@@ -8,6 +8,7 @@ import {Spell} from '../../../models/spell';
 import {Reagent} from './reagent';
 import wordsToNumbers from 'words-to-numbers';
 import {CustomProcUtil} from '../utils/custom-proc.util';
+import {Filters} from '../../../utils/filtering';
 
 export class Crafting {
   public static ahCutModifier = 0.95;
@@ -229,7 +230,7 @@ export class Crafting {
     }*/
 
   private static existsInTSM(itemID: number): boolean {
-    return SharedService.user.apiToUse !== 'none' && SharedService.tsm[itemID];
+    return Filters.isUsingAPI() && SharedService.tsm[itemID];
   }
 
   private static isBelowMktBuyoutValue(itemID: number): boolean {

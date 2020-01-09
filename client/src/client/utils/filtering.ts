@@ -100,6 +100,10 @@ export class Filters {
     return !iSubClass || subClassForId === iSubClass.subclass;
   }
 
+  public static isUsingAPI(): boolean {
+    return true; // SharedService.user.apiToUse !== 'none';
+  }
+
   /* istanbul ignore next */
   private static getItemName(itemID): string {
     return SharedService.items[itemID] ?

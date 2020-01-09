@@ -213,7 +213,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'potentialProfit', title: 'Profit', dataType: 'gold'});
     this.columns.push({key: 'newBuyout', title: 'New buyout', dataType: 'gold'});
 
-    if (SharedService.user.apiToUse !== 'none') {
+    if (Filters.isUsingAPI()) {
       this.columns.push({key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'});
     }
     this.columns.push({key: 'newVsCurrentBuyoutPercent', title: 'New vs current', dataType: 'percent'});
@@ -223,7 +223,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
 
-    if (SharedService.user.apiToUse !== 'none') {
+    if (Filters.isUsingAPI()) {
       this.columns.push({key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'});
     }
   }
