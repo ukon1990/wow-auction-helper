@@ -88,10 +88,6 @@ export class User {
           localStorage['custom_procs'] = JSON.stringify(user[key]);
           SharedService.user.customProcs = user[key];
           break;
-        case 'apiToUse':
-          localStorage['api_to_use'] = user[key];
-          SharedService.user.apiToUse = user[key];
-          break;
         case 'buyoutLimit':
           localStorage['crafting_buyout_limit'] = user[key];
           SharedService.user.buyoutLimit = user[key];

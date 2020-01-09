@@ -37,11 +37,9 @@ export class GeneralSettingsComponent implements OnDestroy {
     this.form = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
       realm: [SharedService.user.realm, Validators.required],
-      apiTsm: SharedService.user.apiTsm,
       importString: '',
       exportString: '',
-      locale: localStorage['locale'],
-      updateAPIOnRealmChange: this.getUpdateAPIOnRealmChange()
+      locale: localStorage['locale']
     });
 
     this.setOriginalUserObject();
@@ -53,9 +51,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   private addSubscriptions() {
-    this.subscriptions.add(
-      this.form.controls.updateAPIOnRealmChange.valueChanges,
-      (value) => this.setUpdateAPIOnRealmChange(value));
 
     this.subscriptions.add(
       this.form.valueChanges,
@@ -75,15 +70,6 @@ export class GeneralSettingsComponent implements OnDestroy {
       .forEach(field =>
         differenceMap.set(field.name, field));
     return differenceMap;
-  }
-
-  private setUpdateAPIOnRealmChange(value: boolean): void {
-    localStorage.setItem('updateAPIOnRealmChange', value.toString());
-  }
-
-  private getUpdateAPIOnRealmChange() {
-    const value = localStorage.getItem('updateAPIOnRealmChange');
-    return value ? JSON.parse(value) : false;
   }
 
   isWithinSupported3RDPartyAPIRegion(): boolean {
@@ -119,8 +105,7 @@ export class GeneralSettingsComponent implements OnDestroy {
       await this._realmService.changeRealm(
         this._auctionService,
         this.form.value.realm,
-        this.form.value.region,
-        false);
+        this.form.value.region);
     }
     this.setOriginalUserObject();
   }
@@ -138,22 +123,6 @@ export class GeneralSettingsComponent implements OnDestroy {
       });
     });
     SharedService.user.watchlist.save();
-  }
-
-  isUsingTSM(): boolean {
-    return SharedService.user.apiToUse === 'tsm';
-  }
-
-  saveTSMKey(): void {
-    SharedService.user.apiTsm = this.form.value.apiTsm;
-    if (SharedService.user.apiTsm.length > 0) {
-      SharedService.user.apiToUse = 'tsm';
-      this._auctionService.getTsmAuctions();
-    } else {
-      SharedService.user.apiToUse = 'none';
-    }
-    User.save();
-    this.setOriginalUserObject();
   }
 
   private setOriginalUserObject() {

@@ -9,7 +9,6 @@ import {SharedService} from '../../../../services/shared.service';
 })
 export class AuctionItemDetailsComponent implements OnInit {
   @Input() item: AuctionItem;
-  isUsing3PAPI: boolean = SharedService.user.apiToUse !== 'none';
 
   constructor() { }
 

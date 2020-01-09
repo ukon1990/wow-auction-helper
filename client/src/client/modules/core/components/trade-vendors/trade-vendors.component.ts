@@ -60,11 +60,8 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     this.columns.push({key: 'value', title: 'Value', dataType: 'gold'});
     this.columns.push({key: 'quantity', title: 'Yield', dataType: 'number'});
     this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-
-    if (SharedService.user.apiToUse !== 'none') {
-      this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number'});
-      this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'});
-    }
+    this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number'});
+    this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'});
     this.columns.push({key: 'roi', title: 'ROI', dataType: 'gold'});
 
     this.filterVendors(this.form.getRawValue());
@@ -105,11 +102,6 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   getAuctionItem(tradeVendor: TradeVendor): AuctionItem {
     return SharedService.auctionItemsMap[tradeVendor.itemID] ?
       SharedService.auctionItemsMap[tradeVendor.itemID] : new AuctionItem();
-  }
-
-  /* istanbul ignore next */
-  isUsinAPI(): boolean {
-    return SharedService.user.apiToUse !== 'none';
   }
 
   private isNotBOP(vendor: TradeVendor, onlyBuyableSource: boolean): boolean {

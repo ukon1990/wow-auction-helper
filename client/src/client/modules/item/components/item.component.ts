@@ -64,14 +64,11 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
-  private isUsing3PAPI: boolean;
-
   constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
   }
 
   ngOnInit(): void {
-    this.isUsing3PAPI = SharedService.user.apiToUse !== 'none';
     this.setItemData();
     this.setAuctionItem();
     this.setRecipesForItem();
@@ -183,16 +180,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       return SharedService.selectedPetSpeciesId.auctionId;
     }
     return SharedService.selectedItemId;
-  }
-
-  /* istanbul ignore next */
-  isUsingTSM(): boolean {
-    return SharedService.user.apiToUse === 'tsm';
-  }
-
-  /* istanbul ignore next */
-  isUsingWoWUction(): boolean {
-    return SharedService.user.apiToUse === 'wowuction';
   }
 
   /* istanbul ignore next */

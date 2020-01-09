@@ -21,7 +21,6 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
   @Input() auctionItem: AuctionItem;
   pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
-  usingAPI = SharedService.user.apiToUse !== 'none';
   resetPrice = {
     numOfAuctions: 0,
     numOfItems: 0,

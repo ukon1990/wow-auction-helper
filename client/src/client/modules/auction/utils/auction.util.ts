@@ -163,11 +163,9 @@ export class AuctionUtil {
   private static newAuctionItem(auction: Auction): AuctionItem {
     const tmpAuc = AuctionUtil.getTempAuctionItem(auction);
 
-    if (AuctionUtil.useTSM() && SharedService.tsm[auction.item]) {
+    if (SharedService.tsm[auction.item]) {
       AuctionUtil.setTSMData(auction, tmpAuc);
 
-    } else if (AuctionUtil.useWoWUction() && SharedService.wowUction[auction.item]) {
-      AuctionUtil.setWowuctionData(auction, tmpAuc);
     }
     return tmpAuc;
   }
@@ -181,14 +179,6 @@ export class AuctionUtil {
     if (profitSummary) {
       profitSummary.setSaleRateForItem(auction.item);
     }
-  }
-
-  private static setWowuctionData(auction: Auction, tmpAuc) {
-    const wowuItem: WoWUction = SharedService.wowUction[auction.item];
-    tmpAuc.regionSaleRate = wowuItem.estDemand;
-    tmpAuc.mktPrice = wowuItem.mktPrice;
-    tmpAuc.avgDailySold = wowuItem.avgDailySold;
-    tmpAuc.avgDailyPosted = wowuItem.avgDailyPosted;
   }
 
   private static setTSMData(auction: Auction, tmpAuc) {
@@ -216,13 +206,5 @@ export class AuctionUtil {
     tmpAuc.vendorSell = SharedService.items[tmpAuc.itemID] ? SharedService.items[tmpAuc.itemID].sellPrice : 0;
     tmpAuc.auctions.push(auction);
     return tmpAuc;
-  }
-
-  private static useTSM(): boolean {
-    return SharedService.user.apiToUse === 'tsm';
-  }
-
-  private static useWoWUction(): boolean {
-    return SharedService.user.apiToUse === 'wowuction';
   }
 }
