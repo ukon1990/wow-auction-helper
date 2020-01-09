@@ -2,7 +2,7 @@ import {NPC, NPCUtil} from './npc.util';
 import {environment} from '../../../client/src/environments/environment';
 
 describe('NPCUtil', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     environment.test = true;
   });
   it('Can fetch data for mob', async () => {
@@ -29,6 +29,7 @@ describe('NPCUtil', () => {
   it('Can fetch data for vendor', async () => {
     const npcId = 3313;
     const npc: NPC = await NPCUtil.getById(npcId);
+    console.log(npc);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Trak\'gen');
     expect(npc.name.fr_FR).toBe('Trak\'gen');
@@ -129,7 +130,6 @@ describe('NPCUtil', () => {
   it('Can get WOD garrison vendor', async () => {
     const npcId = 87201;
     const npc: NPC = await NPCUtil.getById(npcId);
-    console.log(npc);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Pyxni Pennypocket');
     for (const item of npc.sells) {

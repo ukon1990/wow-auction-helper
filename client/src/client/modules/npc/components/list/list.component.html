@@ -13,6 +13,7 @@
   <mat-tab label="Lootable mobs ({{ table.dropped.data.length | number }})">
     <wah-data-table
             [id]="'id'"
+            filterParameter="name"
             [iconSize]="22"
             [columns]="table.dropped.columns"
             [data]="table.dropped.data"
@@ -22,6 +23,7 @@
   <mat-tab label="Vendors ({{ table.sold.data.length | number }})">
     <wah-data-table
             [id]="'id'"
+            filterParameter="name"
             [iconSize]="22"
             [columns]="table.sold.columns"
             [data]="table.sold.data"

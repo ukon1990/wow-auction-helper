@@ -36,14 +36,20 @@ export class VendorItem {
         let price = cost[0];
         let currency: number;
         const cost1 = cost[1], cost2 = cost[2];
-        if (cost2[0] && cost2[0].length >= 2) {
-          const c = cost2[0];
-          price = c && c[1] || 1;
-          currency = c && c[0] || 1;
-        } else if (cost1[0] && cost1[0].length >= 2) {
-          const c = cost1[0];
-          price = c && c[1] || 1;
-          currency = c && c[0] || 1;
+        try {
+          if (cost2 && cost2[0] && cost2[0].length >= 2) {
+            const c = cost2[0];
+            price = c && c[1] || 1;
+            currency = c && c[0] || 1;
+          } else if (cost1 && cost1[0] && cost1[0].length >= 2) {
+            const c = cost1[0];
+            price = c && c[1] || 1;
+            currency = c && c[0] || 1;
+          } else if (cost && cost.length === 1) {
+            price = cost[0];
+          }
+        } catch (e) {
+          console.error('NPCUtil.setFromBody: cost', cost,  e);
         }
         return {
           id,

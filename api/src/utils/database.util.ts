@@ -43,6 +43,9 @@ export class DatabaseUtil {
   }
 
   end(): void {
+    if (environment.test) {
+      return;
+    }
     this.connection.end();
   }
 

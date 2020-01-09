@@ -56,8 +56,11 @@ export class RealmQuery {
             WHERE ah.id = realm.ahId;`;
   }
 
-  static getAllHousesWithLastModifiedOlderThanPreviousDelay() {
-    /* Not doing "AND isUpdating = 0" in case of some realms having slow download times like Draenor... */
+  /*
+  * Updating Any house that probably has an update incoming or that has not received an update in 1 day
+  */
+  static getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay() {
+    /* Not doing "AND isUpdating = 0" as the lambda will time out after 30 seconds and the update check interval is once per minute... */
     return `SELECT ah.id as id, region, slug, name, url, lastModified,
                 lowestDelay, avgDelay, highestDelay, (${+new Date()} - lastModified) / 60000 as timeSince
             FROM auction_houses as ah
@@ -67,8 +70,9 @@ export class RealmQuery {
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId
-                AND autoUpdate = 1
-                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay;`;
+                AND (autoUpdate = 1
+                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
+                OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
