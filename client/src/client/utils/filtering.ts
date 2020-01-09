@@ -101,7 +101,7 @@ export class Filters {
   }
 
   public static isUsingAPI(): boolean {
-    return SharedService.user.apiToUse !== 'none';
+    return true; // SharedService.user.apiToUse !== 'none';
   }
 
   /* istanbul ignore next */
