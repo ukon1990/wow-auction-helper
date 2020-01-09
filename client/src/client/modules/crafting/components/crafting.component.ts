@@ -29,7 +29,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
   ].sort();
   expansions = GameBuild.expansionMap;
   delayFilter = false;
-  isUsing3PApi = false;
 
   columns: Array<ColumnDescription> = [];
 
@@ -58,7 +57,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.setIsUsing3PAPI();
     this.addColumns();
     this.filter();
 
@@ -82,10 +80,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
         this.filter(changes));
   }
 
-  private setIsUsing3PAPI() {
-    this.isUsing3PApi = SharedService.user.apiToUse !== 'none';
-  }
-
   ngOnDestroy() {
     this.subs.unsubscribe();
   }
@@ -95,16 +89,10 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.columns.push({key: 'reagents', title: 'Materials', dataType: 'materials', hideOnMobile: true});
     this.columns.push({key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true});
     this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-
-    if (this.isUsing3PApi) {
-      this.columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
-    }
-
+    this.columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
     this.columns.push({key: 'roi', title: 'Profit', dataType: 'gold'});
-    if (this.isUsing3PApi) {
-      this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
-      this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    }
+    this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+    this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     this.columns.push({key: undefined, title: 'In cart', dataType: 'cart-recipe-count'});
   }
 

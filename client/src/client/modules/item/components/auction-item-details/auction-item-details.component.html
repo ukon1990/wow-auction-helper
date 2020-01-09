@@ -1,17 +1,15 @@
 <strong>Lowest buyout per item:</strong> {{ item.buyout | gold }}
-<span *ngIf="isUsing3PAPI && !item.petSpeciesId">({{ item.buyout / item.mktPrice | percent }}
+<span *ngIf="!item.petSpeciesId">({{ item.buyout / item.mktPrice | percent }}
   MV)</span>
 <br>
 <strong>Market value:</strong> {{ item.mktPrice | gold }}
 <br>
 <strong>Stock:</strong> {{ item.quantityTotal | number }} pcs
 <br>
-<div *ngIf="isUsing3PAPI && !item.petSpeciesId" class="clearfix">
+<div *ngIf="!item.petSpeciesId" class="clearfix">
   <strong>Avg daily sold:</strong> {{ item.avgDailySold | number }}
   <br>
-  <span *ngIf="isUsing3PAPI">
-              <strong>Avg sale price:</strong> {{ item.regionSaleAvg | gold }}
-            </span>
+  <strong>Avg sale price:</strong> {{ item.regionSaleAvg | gold }}
   <br>
 </div>
 <mat-card class="mt-3 mb-3"

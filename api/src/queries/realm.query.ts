@@ -37,11 +37,13 @@ export class RealmQuery {
   }
 
   static getAll(): string {
-    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, url,
-                lastModified, lowestDelay, avgDelay, highestDelay, ah.size as size
+    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, ah.url as url,
+                   ah.lastModified as lastModified, lowestDelay, avgDelay, highestDelay, ah.size as size, tsm.url as tsmUrl
             FROM auction_house_realm AS realm
-            LEFT OUTER JOIN auction_houses AS ah
-            ON ah.id = realm.ahId
+                     LEFT OUTER JOIN auction_houses AS ah
+                                     ON ah.id = realm.ahId
+                     LEFT OUTER JOIN tsmDump AS tsm
+                                     ON tsm.id = realm.ahId
             ORDER BY name;`;
   }
 
@@ -72,7 +74,8 @@ export class RealmQuery {
             WHERE ah.id = realm.ahId
                 AND (autoUpdate = 1
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
-                OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1;`;
+                OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1
+            LIMIT 50;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
@@ -115,9 +118,12 @@ export class RealmQuery {
   }
 
   static getHouseForRealm(region: string, realmSlug: string): string {
-    return `SELECT *
-            FROM auction_houses
-            WHERE id IN (
+    return `SELECT ah.id as id, region, ah.url as url, tsm.url as tsmUrl, ah.lastModified as lastModified,
+                    isUpdating, isActive, autoUpdate, size, lowestDelay, avgDelay, highestDelay, firstRequested, lastRequested
+            FROM auction_houses as ah
+              LEFT OUTER JOIN tsmDump as tsm
+              ON ah.id = tsm.id
+            WHERE ah.id IN (
                   SELECT ahId
                   FROM auction_house_realm
                   WHERE slug = "${realmSlug}")

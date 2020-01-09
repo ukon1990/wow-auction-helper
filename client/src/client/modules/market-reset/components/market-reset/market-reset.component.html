@@ -16,22 +16,20 @@
            min="101">
   </mat-form-field>
 
-  <ng-container *ngIf="hasDefinedAPI">
-    <mat-form-field class="col">
-      <input matInput
-             placeholder="Est days to sell"
-             formControlName="timeToSell"
-             type="number"
-             min="0">
-    </mat-form-field>
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Est days to sell"
+           formControlName="timeToSell"
+           type="number"
+           min="0">
+  </mat-form-field>
 
-    <mat-form-field class="col">
-      <input matInput
-             placeholder="Max x% of market value"
-             type="number"
-             formControlName="mktPriceUpperThreshold">
-    </mat-form-field>
-  </ng-container>
+  <mat-form-field class="col">
+    <input matInput
+           placeholder="Max x% of market value"
+           type="number"
+           formControlName="mktPriceUpperThreshold">
+  </mat-form-field>
 
   <mat-form-field class="col">
     <input matInput

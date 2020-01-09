@@ -133,6 +133,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pageTitle = menuItem.title;
       this.title.setTitle(`WAH - ${menuItem.title}`);
     }
+    window.scroll(0, 0);
     Report.navigation(event);
   }
 

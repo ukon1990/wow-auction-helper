@@ -203,21 +203,19 @@ export class BackgroundDownloadService {
   }
 
   private async loadThirdPartyAPI() {
-    if (SharedService.user.apiToUse === 'tsm') {
-      if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-        await this.auctionsService.getTsmAuctions();
-      } else {
-        await this.dbService.getTSMItems()
-          .then(async r => {
-            if (Object.keys(SharedService.tsm).length === 0) {
-              await this.auctionsService.getTsmAuctions();
-            }
-          })
-          .catch(async e => {
-            console.error('Could not restore TSM data', e);
+    if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
+      await this.auctionsService.getTsmAuctions();
+    } else {
+      await this.dbService.getTSMItems()
+        .then(async r => {
+          if (Object.keys(SharedService.tsm).length === 0) {
             await this.auctionsService.getTsmAuctions();
-          });
-      }
+          }
+        })
+        .catch(async e => {
+          console.error('Could not restore TSM data', e);
+          await this.auctionsService.getTsmAuctions();
+        });
     }
   }
 

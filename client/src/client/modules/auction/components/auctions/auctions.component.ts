@@ -87,17 +87,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number'});
     columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
-
-    if (SharedService.user.apiToUse !== 'none') {
-      columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
-      if (SharedService.user.apiToUse === 'tsm') {
-        columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
-      } else {
-        columns.push({key: 'avgDailyPosted', title: 'Avg daily posted', dataType: 'number', hideOnMobile: true});
-      }
-      columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
-      columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    }
+    columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
+    columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
+    columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+    columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
   }
 
@@ -124,11 +117,6 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
       Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
       Filters.isExpansionMatch(auctionItem.itemID, changes.expansion);
-  }
-
-  /* istanbul ignore next */
-  isUsinAPI(): boolean {
-    return SharedService.user.apiToUse !== 'none';
   }
 
   /* istanbul ignore next */

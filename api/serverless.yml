@@ -157,7 +157,7 @@ functions:
           method: post
           path: zone
           cors:
-            origin: 'http://localhost:4200'
+            origin: '*'
   npcGetById:
     tags:
       Lambda: Wah-npc-by-id
@@ -173,13 +173,13 @@ functions:
     tags:
       Lambda: Wah-npc-get-all
     handler: src/controllers/npc.getAll
-    memorySize: 1024
+    memorySize: 256
     events:
       - http:
           method: post
           path: npc/all
           cors:
-            origin: 'http://localhost:4200'
+            origin: '*'
   npcGetByIds:
     tags:
       Lambda: Wah-npc
@@ -285,3 +285,8 @@ functions:
           path: currency
           cors:
             origin: 'http://localhost:4200'
+  updateTSMDumpData:
+    tags:
+      Lambda: Wah-updateTSMDumpData
+    handler: src/controllers/tsm.handler
+    memorySize: 256

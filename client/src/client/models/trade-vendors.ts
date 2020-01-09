@@ -59,9 +59,7 @@ export class TradeVendors {
     if (vendorAuctionItem) {
       item.sourceBuyout = vendorAuctionItem.buyout;
     }
-    if (SharedService.user.apiToUse !== 'none') {
-      this.setItemApiValues(item);
-    }
+    this.setItemApiValues(item);
   }
 
   private static setItemApiValues(item: TradeVendorItem) {

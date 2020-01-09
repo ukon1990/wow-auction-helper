@@ -4,15 +4,13 @@
     <input matInput placeholder="Currency name" formControlName="name" />
   </mat-form-field>
   -->
-  <ng-container *ngIf="isUsinAPI()">
-    <mat-form-field class="col">
-      <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
-             matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
-    </mat-form-field>
-    <mat-form-field class="col">
-      <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
-    </mat-form-field>
-  </ng-container>
+  <mat-form-field class="col">
+    <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
+           matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
+  </mat-form-field>
+  <mat-form-field class="col">
+    <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
+  </mat-form-field>
 
   <mat-checkbox class="col" formControlName="onlyBuyableSource">
     Only sources that are found at the AH

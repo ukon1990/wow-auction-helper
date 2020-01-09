@@ -1,0 +1,99 @@
+import {DatabaseUtil} from '../utils/database.util';
+import {TSM_KEY} from '../secrets';
+import {HttpClientUtil} from '../utils/http-client.util';
+import {S3Handler} from './s3.handler';
+import {QueryUtil} from '../utils/query.util';
+
+export class TSMHandler {
+  getAndStartAllRealmsToUpdate(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      const hourInterval = 12;
+      new DatabaseUtil().query(`
+        SELECT ah.id as id, region, slug, tsm.lastModified as lastModified
+        FROM auction_houses as ah
+        LEFT OUTER JOIN (
+          SELECT ahId, slug, name
+        FROM auction_house_realm
+        GROUP BY ahId) as realm
+        ON ah.id = realm.ahId
+        LEFT OUTER JOIN (
+          SELECT *
+          FROM tsmDump as ah
+      ) as tsm ON tsm.id = ah.id
+        WHERE
+          (region = 'eu' OR region = 'us') AND (
+          ah.id NOT IN (SELECT id FROM tsmDump) OR
+          (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > ${hourInterval})
+        LIMIT 20;
+      `)
+        .then(async (rows: { id, slug, region, lastModified }[]) => {
+          if (!rows.length) {
+            resolve();
+            return;
+          }
+
+          for (const row of rows) {
+            try {
+              await this.updateRealm(row.id, row.region, row.slug);
+            } catch (e) {
+              console.error('getAndStartAllRealmsToUpdate', e);
+            }
+          }
+          resolve();
+        })
+        .catch(reject);
+    });
+  }
+
+  updateRealm(id: number, region: string, name: string): Promise<void> {
+    console.log('TSMHandler.updateRealm starting', id, region, name);
+    return new Promise<void>(async (resolve, reject) => {
+      await this.fetchTSMDump(region, name)
+        .then(({body}) => {
+          console.log('TSMHandler.updateRealm saving to s3');
+          new S3Handler().save(body, `tsm/${region}/${id}.json.gz`, {region, url: ''})
+            .then(async queryData => {
+              this.handleUploadSuccess(id, queryData)
+                .then(resolve)
+                .catch(reject);
+            })
+            .catch(reject);
+        })
+        .catch(error => {
+          console.error(`Could not get TSM api data`, error);
+          reject(error);
+        });
+    });
+  }
+
+  // Rate limit is 50 per hour
+  private async fetchTSMDump(region: any, name: any) {
+    const url = `https://api.tradeskillmaster.com/v1/item/${region}/${name}?format=json&apiKey=${TSM_KEY
+    }&fields=Id,MarketValue,HistoricalPrice,RegionMarketAvg,RegionHistoricalPrice,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`;
+    return new Promise<any>((resolve, reject) => {
+      new HttpClientUtil().get(url, true)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  private async handleUploadSuccess(id: number, {url}: { url }) {
+    console.log('TSMHandler.updateRealm saved to S3 @ URL', url);
+    await new DatabaseUtil().query(`SELECT * from tsmDump where id = ${id};`)
+      .then(async (rows: any[]) => {
+        if (rows.length) {
+          await new DatabaseUtil()
+            .query(
+              new QueryUtil('tsmDump', false)
+                .update(id, {id, url, lastModified: +new Date()}))
+            .catch(console.error);
+        } else {
+          await new DatabaseUtil()
+            .query(
+              new QueryUtil('tsmDump', false)
+                .insert({id, url, lastModified: +new Date()}))
+            .catch(console.error);
+        }
+      });
+  }
+}
