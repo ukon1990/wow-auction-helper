@@ -405,8 +405,20 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
-    this.db.version(6).stores({
+    this.db.version(7).stores({
       'classic-auctions': 'realm,auctions',
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      wowuction: this.WOWUCTION_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      tsmAddonHistory: this.TSM_ADDON_HISTORY
+    });
+
+    this.db.version(6).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,
