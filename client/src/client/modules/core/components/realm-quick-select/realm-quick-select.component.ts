@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
@@ -10,16 +10,19 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {User} from '../../../../models/user/user';
 import {DatabaseService} from '../../../../services/database.service';
 import {Report} from '../../../../utils/report.util';
+import {RealmStatus} from '../../../../models/realm-status.model';
+import {GameBuild} from '../../../../utils/game-build.util';
 
 @Component({
-  selector: 'wah-character-select',
+  selector: 'wah-realm-quick-select',
   templateUrl: './realm-quick-select.component.html',
   styleUrls: ['./realm-quick-select.component.scss']
 })
-export class RealmQuickSelectComponent implements OnInit, OnDestroy {
+export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
   form: FormGroup;
   realmList = [];
   realmListMap = {};
+  gameVersions = GameBuild.versions;
 
   list = [];
 
@@ -31,11 +34,12 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       region: new FormControl(this.getFormValueFor('region')),
       realm: new FormControl(this.getFormValueFor('realm')),
-      faction: new FormControl(this.getFormValueFor('faction'))
+      faction: new FormControl(this.getFormValueFor('faction')),
+      gameVersion: new FormControl(this.getFormValueFor('gameVersion'))
     });
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.sm.add(this.realmService.events.list,
       (realms) => this.setRealmList(realms));
 
@@ -63,7 +67,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  private setRealmList(realms?: Realm[]) {
+  private setRealmList(realms?: RealmStatus[]) {
     if (!realms) {
       realms = this.realmService.events.list.value;
     }
@@ -83,8 +87,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.handleRealmChange();
   }
 
-  private setSlugFromRealms(realms: Realm[], map) {
-    realms.forEach((realm: Realm) => {
+  private setSlugFromRealms(realms: RealmStatus[], map) {
+    realms.forEach((realm: RealmStatus) => {
       if (map[realm.name]) {
         map[realm.name].slug = realm.slug;
         this.realmListMap[realm.slug] = map[realm.name];

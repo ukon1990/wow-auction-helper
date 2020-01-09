@@ -13,6 +13,7 @@ export class HttpClientUtil {
 
             if (error || !body || response.statusCode === 404) {
               reject(error);
+              console.log('Http error for', url, error);
             }
             resolve(response);
           } catch (e) {

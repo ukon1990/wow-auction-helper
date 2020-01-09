@@ -3,7 +3,7 @@ import {SharedService} from '../../../services/shared.service';
 import {Notification} from '../../../models/user/notification';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {WatchlistGroup, WatchlistItem} from './watchlist.model';
-import {Seller} from '../../../models/seller';
+import {Seller} from '../../sellers/models/seller.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Filters} from '../../../utils/filtering';
 import {FormBuilder} from '@angular/forms';
@@ -13,6 +13,8 @@ import {EventEmitter} from '@angular/core';
 import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {Crafting} from '../../crafting/models/crafting';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {TradeVendorItem} from '../../../models/item/trade-vendor';
+import {TSM} from '../../auction/models/tsm.model';
 
 export class Dashboard {
 
@@ -154,9 +156,12 @@ export class Dashboard {
       case Dashboard.TYPES.TRADE_VENDOR_VALUES:
         this.idParam = 'itemID';
         this.columns = [
-          {key: 'name', title: 'Name', dataType: 'name'},
+          {key: 'name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
           {key: 'bestValueName', title: 'Target', dataType: 'name'},
-          {key: 'value', title: 'Value', dataType: 'gold'}
+          {key: 'roi', title: 'Roi', dataType: 'gold'},
+          {key: 'value', title: 'Value', dataType: 'gold'},
+          {key: 'sourceBuyout', title: 'Source buyout', dataType: 'gold'},
+          {key: 'buyout', title: 'Buyout', dataType: 'gold'}
         ];
         this.setTradeVendorValues();
         break;
@@ -393,9 +398,13 @@ export class Dashboard {
   private setTradeVendorValues(): void {
     this.data.length = 0;
     Object.keys(SharedService.tradeVendorItemMap)
-      .forEach(key => {
-        if (!this.isExpansionMissMatch(parseInt(key, 10))) {
-          this.data.push(SharedService.tradeVendorItemMap[key]);
+      .forEach(id => {
+        const item: TradeVendorItem = SharedService.tradeVendorItemMap[id],
+          tsm: TSM = SharedService.tsm[id],
+          hasValueAndProfit = item.value > 0 && item.sourceBuyout > 0 && item.roi > 0,
+          doesAtLeastRegionSaleRateOf10Percent = (!tsm || tsm.RegionSaleRate > .1);
+        if (!this.isExpansionMissMatch(+id) && hasValueAndProfit && doesAtLeastRegionSaleRateOf10Percent) {
+          this.data.push(item);
         }
       });
     this.data.sort((a, b) => b.value - a.value);

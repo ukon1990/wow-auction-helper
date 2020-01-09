@@ -22,10 +22,14 @@ export class Endpoints {
       'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/' :
       'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/dev/'
   };
+  public static readonly S3_BUCKET = `https://s3-eu-west-1.amazonaws.com/wah-data`;
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public static getLambdaUrl(path: string, region?: string): string {
+    if (!environment.production) {
+      return 'http://localhost:3000/' + path;
+    }
     if (!region) {
       region = SharedService.user && SharedService.user.region ?
         SharedService.user.region : 'eu';

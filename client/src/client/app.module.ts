@@ -37,6 +37,9 @@ import {TsmModule} from './modules/tsm/tsm.module';
 import {BackgroundDownloadService} from './services/background-download.service';
 import {ReportService} from './services/report/report.service';
 import {AuthenticationInterceptor} from './auth.interceptor';
+import {ZoneService} from './modules/zone/service/zone.service';
+import {NpcService} from './modules/npc/services/npc.service';
+import {ItemModule} from './modules/item/item.module';
 
 
 @NgModule({
@@ -63,7 +66,8 @@ import {AuthenticationInterceptor} from './auth.interceptor';
     CraftingModule,
     AuctionModule,
     ShoppingCartModule,
-    TsmModule
+    TsmModule,
+    ItemModule
   ],
   providers: [
     RealmService,
@@ -79,6 +83,8 @@ import {AuthenticationInterceptor} from './auth.interceptor';
     UpdateService,
     BackgroundDownloadService,
     ReportService,
+    ZoneService,
+    NpcService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

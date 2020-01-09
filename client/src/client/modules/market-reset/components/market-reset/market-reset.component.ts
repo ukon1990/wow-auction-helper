@@ -10,6 +10,7 @@ import {ItemReset} from '../../models/item-reset.model';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
+import {RowClickEvent} from '../../../table/models/row-click-event.model';
 
 @Component({
   selector: 'wah-market-reset',
@@ -17,7 +18,6 @@ import {Report} from '../../../../utils/report.util';
   styleUrls: ['./market-reset.component.scss']
 })
 export class MarketResetComponent implements OnInit {
-  hasDefinedAPI = SharedService.user.apiToUse !== 'none';
   form: FormGroup;
   formDefaults = {
     name: '',
@@ -87,7 +87,6 @@ export class MarketResetComponent implements OnInit {
 
     this.sm.add(SharedService.events.auctionUpdate,
       (auctionItems: AuctionItem[]) => {
-        console.log('Auction event', SharedService.auctionItems.length);
         this.filter(this.form.getRawValue());
       });
   }
@@ -142,9 +141,6 @@ export class MarketResetComponent implements OnInit {
   }
 
   private isSellTimeMatch(bp, query: any) {
-    if (!this.hasDefinedAPI) {
-      return true;
-    }
     return Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
   }
 
@@ -155,7 +151,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   private isMktPriceThreasholdMatch(bp, query: any, ai) {
-    if (!this.hasDefinedAPI || query.mktPriceUpperThreshold === null || !query.mktPriceUpperThreshold) {
+    if (query.mktPriceUpperThreshold === null || !query.mktPriceUpperThreshold) {
       return true;
     }
     return Filters.isXSmallerThanOrEqualToY(bp.newBuyout, (query.mktPriceUpperThreshold / 100) * ai.mktPrice);
@@ -188,7 +184,7 @@ export class MarketResetComponent implements OnInit {
     }
   }
 
-  setRoShoppingString(row: ItemResetBreakpoint): void {
+  setRoShoppingString({row}: RowClickEvent<ItemResetBreakpoint>): void {
     this.rowShoppingString = row.tsmShoppingString;
   }
 

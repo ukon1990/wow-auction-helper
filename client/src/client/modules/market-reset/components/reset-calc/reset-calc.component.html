@@ -17,7 +17,7 @@
     <strong>Auctions to buy: </strong> {{ resetPrice.numOfAuctions | number }} ({{ resetPrice.numOfItems | number }}
     items).
   </div>
-  <div *ngIf="usingAPI" class="col-md-12">
+  <div class="col-md-12">
     <strong>Wild guess at minimum sell
       time:</strong> {{ resetPrice.numOfItems / auctionItem.regionSaleRate / auctionItem.avgDailySold | number }} days
     (items / regional sale rate / regional avg daily sold).

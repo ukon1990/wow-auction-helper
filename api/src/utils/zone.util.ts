@@ -1,19 +1,14 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
-import {QueryIntegrity} from '../queries/integrity.query';
+import {languages} from '../static-data/language.data';
 import {QueryUtil} from './query.util';
 import {LocaleUtil} from './locale.util';
 import {DatabaseUtil} from './database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {Language} from '../models/language.model';
+import {ApiResponse} from '../models/api-response.model';
 
 const PromiseThrottle: any = require('promise-throttle');
-
-class ZoneLanguage {
-  locales: string[];
-  type: string;
-  key: string;
-  territory: string;
-}
 
 export class Zone {
   id: number;
@@ -30,7 +25,7 @@ export class Zone {
     this.id = id;
   }
 
-  setData?(body: { name: string, tooltip: string }, language: ZoneLanguage): void {
+  setData?(body: { name: string, tooltip: string }, language: Language): void {
     language.locales.forEach(locale => {
       this.setName(body.name, locale);
     });
@@ -134,18 +129,6 @@ export class Zone {
 }
 
 export class ZoneUtil {
-  static languages = [
-    {key: 'en', locales: ['en_GB', 'en_US', 'pl_PL'], type: 'Type: ', territory: 'Territory: '},
-    {key: 'fr', locales: ['fr_FR'], type: 'Type: ', territory: 'Territoire: '},
-    {key: 'it', locales: ['it_IT'], type: 'Tipo: ', territory: 'Territorio: '},
-    {key: 'es', locales: ['es_MX', 'es_ES'], type: 'Tipo: ', territory: 'Territorio: '},
-    {key: 'pt', locales: ['pt_PT', 'pt_BR'], type: 'Tipo: ', territory: 'Território: '},
-    {key: 'de', locales: ['de_DE'], type: 'Art: ', territory: 'Territorium: '},
-    {key: 'ru', locales: ['ru_RU'], type: 'Тип: ', territory: 'Территория: '},
-    {key: 'kr', locales: ['ko_KR'], type: '유형: ', territory: '영토: '},
-    {key: 'cn', locales: ['zh_TW'], type: '类型: ', territory: '地域: '}
-  ];
-
   /* Istanbul ignore next */
   static setParentValuesAndAddToDB(zones: Zone[]): Promise<Zone[]> {
     return new Promise<Zone[]>((resolve, reject) => {
@@ -179,20 +162,42 @@ export class ZoneUtil {
   }
 
   /* Istanbul ignore next */
-  static getFromDB(locale = 'en_GB'): Promise<Zone[]> {
-    return new DatabaseUtil().query(`
-    SELECT
-             i.id,
-             COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
-             territoryId,
-             typeId,
-             parentId,
-             minLevel,
-             maxLevel
-             timestamp
-      FROM zone as i
-      LEFT OUTER JOIN zoneName as l
-      ON i.id = l.id;`);
+  static getFromDB(locale = 'en_GB', timestamp = new Date().toJSON()): Promise<ApiResponse<Zone>> {
+    return new Promise<ApiResponse<Zone>>((resolve, reject) => {
+      new DatabaseUtil().query(`
+            SELECT
+                   i.id,
+                   COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+                   territoryId,
+                   typeId,
+                   parentId,
+                   minLevel,
+                   maxLevel,
+                   timestamp
+            FROM zone as i
+            LEFT OUTER JOIN zoneName as l
+            ON i.id = l.id
+            WHERE timestamp > "${timestamp}"
+            ORDER BY timestamp desc;`)
+        .then((list) => {
+          const ts = list[0].timestamp;
+          list.forEach(row => {
+            if (row.minLevel === 'undefined') {
+              row.minLevel = undefined;
+            } else {
+              row.minLevel = +row.minLevel;
+            }
+            if (row.maxLevel === 'undefined') {
+              row.maxLevel = undefined;
+            } else {
+              row.maxLevel = +row.maxLevel;
+            }
+            delete row.timestamp;
+          });
+          resolve(new ApiResponse<Zone>(ts, list, 'zones'));
+        })
+        .catch(reject);
+    });
   }
 
   private static insertZoneIntoDB(zone: Zone): Promise<any> {
@@ -216,25 +221,56 @@ export class ZoneUtil {
       });
   }
 
-  static getById(id: number): Promise<Zone> {
-    return new Promise<Zone>((resolve, reject) => {
-      const zone: Zone = new Zone(id),
-        promises: Promise<any>[] = [];
+  static getById(id: number, locale = 'en_GB'): Promise<Zone> {
+    return new Promise<Zone>(async (resolve, reject) => {
+      let zone: Zone;
+      const promises: Promise<any>[] = [];
+      await this.getByIdFromDB(locale, id)
+        .then(z => zone = z)
+          .catch(console.error);
 
-      const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 25,
-        promiseImplementation: Promise
-      });
-      this.languages
-        .forEach(lang => promises.push(
-          promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
+      if (!zone) {
+        zone = new Zone(id);
+        const promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 25,
+          promiseImplementation: Promise
+        });
+        languages
+          .forEach(lang => promises.push(
+            promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
+      }
       Promise.all(promises)
         .then(() => resolve(zone))
         .catch(reject);
     });
   }
 
-  private static getZoneDataForLocale(id: number, language: ZoneLanguage, zone: Zone): Promise<void> {
+  private static async getByIdFromDB(locale: string, id: number): Promise<Zone> {
+    let zone: Zone;
+    await new DatabaseUtil().query(`
+       SELECT
+               i.id,
+               COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
+               territoryId,
+               typeId,
+               parentId,
+               minLevel,
+               maxLevel,
+               timestamp
+        FROM zone as i
+        LEFT OUTER JOIN zoneName as l
+        ON i.id = l.id
+        WHERE i.id = ${id};`)
+      .then((res: any[]) => {
+        if (res && res.length) {
+          zone = res[0];
+        }
+      })
+      .catch(console.error);
+    return zone;
+  }
+
+  private static getZoneDataForLocale(id: number, language: Language, zone: Zone): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       new HttpClientUtil().get(`https://www.wowhead.com/tooltip/zone/${id}?locale=${language.key}`, true)
         .then(({body}) => resolve(zone.setData(body, language)))

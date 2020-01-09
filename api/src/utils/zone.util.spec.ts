@@ -1,6 +1,10 @@
 import {Zone, ZoneUtil} from './zone.util';
+import {environment} from '../../../client/src/environments/environment';
 
 describe('ZoneUtil', () => {
+  beforeAll(() => {
+    environment.test = true;
+  });
   it('getById returns Stormsong Valley and type = Zone territory = Contested', async () => {
     const zoneId = 9042;
     const zone: Zone = await ZoneUtil.getById(zoneId);

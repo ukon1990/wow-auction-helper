@@ -1,27 +1,26 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {PageEvent} from '@angular/material';
-
-import {Angulartics2} from 'angulartics2';
 import {ItemService} from '../../../services/item.service';
 import {FormControl} from '@angular/forms';
-import {Subscription} from 'rxjs';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription} from '../models/column-description';
 import {Sorter} from '../../../models/sorter';
 import {Auction} from '../../auction/models/auction.model';
 import {SharedService} from '../../../services/shared.service';
-import {Seller} from '../../../models/seller';
+import {Seller} from '../../sellers/models/seller.model';
 import {AuctionPet} from '../../auction/models/auction-pet.model';
 import {CustomPrices} from '../../crafting/models/custom-price';
-import {CustomProcs} from '../../crafting/models/custom-proc';
 import {Recipe} from '../../crafting/models/recipe';
 import {User} from '../../../models/user/user';
 import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart.model';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {RowClickEvent} from '../models/row-click-event.model';
+import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
+import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'wah-data-table',
@@ -45,7 +44,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() disableItemsPerPage: boolean;
   @Input() filterParameter: string;
 
-  @Output() rowClicked: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowClicked: EventEmitter<RowClickEvent<any>> = new EventEmitter();
 
   filteredData = [];
   sm = new SubscriptionManager();
@@ -65,7 +64,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   getBonusList = Auction.getBonusList;
   theme = ThemeUtil.current;
 
-  constructor() {
+  constructor(private router: Router) {
     this.sorter = new Sorter();
   }
 
@@ -129,23 +128,47 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
   }
 
-  select(item): void {
+  select(item, column: ColumnDescription): void {
     SharedService.selectedItemId = undefined;
     SharedService.selectedPetSpeciesId = undefined;
     SharedService.selectedSeller = undefined;
+    const type = this.getColumnLinkType(column);
 
     if (this.id === 'name') {
       this.setSelectedSeller(item);
     } else {
-      this.setSelectedItem(item);
+      switch (type) {
+        case 'npc':
+          window.scroll(0, 0);
+          break;
+        case 'zone':
+          break;
+        case 'item':
+        default:
+          this.setSelectedItem(item, column);
+          break;
+      }
+    }
+  }
+
+  getRouterLink(item, column: ColumnDescription): string {
+    const type = this.getColumnLinkType(column);
+    switch (type) {
+      case 'npc':
+        const id = column.options && column.options.idName || this.id;
+        return `/tools/npc/${item[id]}`;
+      case 'zone':
+      case 'item':
+      default:
+        return '.';
     }
   }
 
   isUsersAuction(auction: any): boolean {
     if (this.showOwner) {
       const a = SharedService.auctionItemsMap[auction.item ? Auction.getAuctionItemId(auction) : auction.itemID];
-      return SharedService.userAuctions.charactersMap[a.ownerRealm] &&
-      SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner] ? true : false;
+      return !!(SharedService.userAuctions.charactersMap[a.ownerRealm] &&
+        SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner]);
     }
     return false;
   }
@@ -169,9 +192,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   /* istanbul ignore next */
-  setSelectedItem(item: any): void {
+  setSelectedItem(item: any, column: ColumnDescription): void {
     SharedService.preScrollPosition = window.scrollY;
-    SharedService.selectedItemId = item.item || item.itemID || item.id;
+    SharedService.selectedItemId = this.getItemID(item, column);
     this.setSelectedPet(item);
     ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
@@ -203,8 +226,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     return CustomPrices;
   }
 
-  customProcs(): CustomProcs {
-    return CustomProcs;
+  customProcs(): CustomProcUtil {
+    return CustomProcUtil;
   }
 
   /* istanbul ignore next */
@@ -265,7 +288,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       SharedService.items[itemID] : new Item();
   }
 
-  getItemID(item: any): number {
+  getItemID(item: any, column?: ColumnDescription): number {
+    if (column && column.options && column.options.idName) {
+      return item[column.options.idName];
+    }
     return item[this.id] ? item[this.id] : item.itemID;
   }
 
@@ -332,12 +358,17 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
    * @returns {string}
    * @memberof DataTableComponent
    */
-  getWHRelations(item: any): string {
+  getWHRelations(item: any, column: ColumnDescription): string {
     if (item.petSpeciesId) {
       return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
     }
-    return (this.linkType ?
-      `${this.linkType}=` : 'item=') + this.getItemID(item);
+    const type = this.getColumnLinkType(column);
+    return (type ?
+      `${type}=` : 'item=') + this.getItemID(item, column);
+  }
+
+  private getColumnLinkType(column: ColumnDescription) {
+    return column.options && column.options.tooltipType || this.linkType;
   }
 
   getCartCount(item: any, column: ColumnDescription): number {
@@ -401,5 +432,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       return SharedService.recipesMapPerItemKnown[id];
     }
     return false;
+  }
+
+  rowClickEvent(c: ColumnDescription, d: any): void {
+    this.rowClicked.emit(new RowClickEvent(c, d));
   }
 }

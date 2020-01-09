@@ -16,12 +16,7 @@ export class TsmAddonDbComponent {
   lastModified: Date = localStorage['timestamp_tsm_addon_import'] ?
     new Date(localStorage['timestamp_tsm_addon_import']) : undefined;
 
-  constructor(private formBuilder: FormBuilder, private dbService: DatabaseService, private route: Router) {
-    const urlParts = this.route.url.split('/');
-    if (urlParts.length < 4) {
-      this.route.navigateByUrl(`${route.url}/summary`);
-    }
-
+  constructor(private formBuilder: FormBuilder, private dbService: DatabaseService) {
   }
 
   importFromFile(fileEvent): void {

@@ -10,6 +10,7 @@ import {Report} from '../../../../utils/report.util';
 import {ItemReset} from '../../models/item-reset.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
+import {RowClickEvent} from '../../../table/models/row-click-event.model';
 
 @Component({
   selector: 'wah-reset-calc',
@@ -20,7 +21,6 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
   @Input() auctionItem: AuctionItem;
   pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
-  usingAPI = SharedService.user.apiToUse !== 'none';
   resetPrice = {
     numOfAuctions: 0,
     numOfItems: 0,
@@ -99,7 +99,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
     }`;
   }
 
-  handleRowClick(d: ItemResetBreakpoint): void {
-    this.form.setValue(d.newBuyout / 10000);
+  handleRowClick({row}: RowClickEvent<ItemResetBreakpoint>): void {
+    this.form.setValue(row.newBuyout / 10000);
   }
 }

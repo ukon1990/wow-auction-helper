@@ -87,7 +87,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
 
     this.realms
       .forEach((status: RealmStatus) => {
-        if (form.region === status.region && (name || form.realm) === status.slug) {
+        if (form.region === status.region && form.realm === status.slug) {
           this.currentRealm = status;
           this.autocompleteField
             .setValue(this.getRealmNameAndRegion(status));

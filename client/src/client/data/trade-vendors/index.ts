@@ -5,6 +5,7 @@ import {wotlkTradeVendors} from './wotlk-vendors.data';
 import {mopTradeVendors} from './mop-vendors.data';
 
 const inkTrader: TradeVendor = {
+  isAlliance: false, isHorde: false,
   itemID: 129032,
   name: 'Ink trader',
   useForCrafting: false,
@@ -26,6 +27,5 @@ const inkTrader: TradeVendor = {
     new TradeVendorItem(39469, 1)
   ]
 };
-
-export const TRADE_VENDORS = [...legionTradeVendors, inkTrader, ...draenorTradeVendors, ...mopTradeVendors, ...wotlkTradeVendors
-];
+// ...legionTradeVendors, inkTrader, ...draenorTradeVendors, ...mopTradeVendors, ...wotlkTradeVendors
+export const TRADE_VENDORS = [];

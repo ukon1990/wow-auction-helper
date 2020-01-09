@@ -8,9 +8,9 @@ import {AuctionPet} from '../models/auction-pet.model';
 import {WoWUction} from '../models/wowuction.model';
 import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
-import {ProfitSummary} from '../../../utils/tsm/tsm-lua.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
+import {ProfitSummary} from '../../tsm/models/profit-summary.model';
 
 export class AuctionUtil {
   /**
@@ -166,11 +166,9 @@ export class AuctionUtil {
   private static newAuctionItem(auction: Auction): AuctionItem {
     const tmpAuc = AuctionUtil.getTempAuctionItem(auction);
 
-    if (AuctionUtil.useTSM() && SharedService.tsm[auction.item]) {
+    if (SharedService.tsm[auction.item]) {
       AuctionUtil.setTSMData(auction, tmpAuc);
 
-    } else if (AuctionUtil.useWoWUction() && SharedService.wowUction[auction.item]) {
-      AuctionUtil.setWowuctionData(auction, tmpAuc);
     }
     return tmpAuc;
   }
@@ -185,14 +183,6 @@ export class AuctionUtil {
     if (profitSummary) {
       profitSummary.setSaleRateForItem(auction.item);
     }
-  }
-
-  private static setWowuctionData(auction: Auction, tmpAuc) {
-    const wowuItem: WoWUction = SharedService.wowUction[auction.item];
-    tmpAuc.regionSaleRate = wowuItem.estDemand;
-    tmpAuc.mktPrice = wowuItem.mktPrice;
-    tmpAuc.avgDailySold = wowuItem.avgDailySold;
-    tmpAuc.avgDailyPosted = wowuItem.avgDailyPosted;
   }
 
   private static setTSMData(auction: Auction, tmpAuc) {
@@ -220,13 +210,5 @@ export class AuctionUtil {
     tmpAuc.vendorSell = SharedService.items[tmpAuc.itemID] ? SharedService.items[tmpAuc.itemID].sellPrice : 0;
     tmpAuc.auctions.push(auction);
     return tmpAuc;
-  }
-
-  private static useTSM(): boolean {
-    return SharedService.user.apiToUse === 'tsm';
-  }
-
-  private static useWoWUction(): boolean {
-    return SharedService.user.apiToUse === 'wowuction';
   }
 }

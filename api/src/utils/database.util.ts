@@ -4,9 +4,10 @@ import {Connection, MysqlError} from 'mysql';
 import {environment} from '../../../client/src/environments/environment';
 
 export class DatabaseUtil {
-  private connection: Connection;
+  private readonly connection: Connection;
+  private isConnectionActive = false;
 
-  constructor() {
+  constructor(private autoTerminate: boolean = true) {
     if (!environment.test) {
       this.connection = mysql.createConnection(DATABASE_CREDENTIALS);
     }
@@ -18,8 +19,51 @@ export class DatabaseUtil {
         resolve([]);
         return;
       }
+      this.enqueueHandshake()
+        .then(() => {
+          // console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
+          this.connection.query(query, (err: MysqlError, rows: any[]) => {
+            if (this.autoTerminate) {
+              this.end();
+            }
+
+            if (err) {
+              reject({message: `Failed to execute the query: ${ query }`, error: err.stack});
+              return;
+            }
+
+            resolve(rows);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          reject();
+        });
+    });
+  }
+
+  end(): void {
+    if (environment.test) {
+      return;
+    }
+    this.connection.end();
+  }
+
+  private enqueueHandshake(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (!this.connection) {
+        reject('No connection is available');
+        return;
+      }
+
+      if (this.isConnectionActive) {
+        resolve();
+        return;
+      }
+
       this.connection.connect((error) => {
         if (error) {
+          this.isConnectionActive = false;
           reject({
             message: 'Could not connect to the database',
             error: 'Could not connect to the database',
@@ -27,18 +71,8 @@ export class DatabaseUtil {
           });
           return;
         }
-
-        console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
-        this.connection.query(query, (err: MysqlError, rows: any[]) => {
-          this.connection.end();
-
-          if (err) {
-            reject({message: 'Failed to execute the query', error: err.stack});
-            return;
-          }
-
-          resolve(rows);
-        });
+        this.isConnectionActive = true;
+        resolve();
       });
     });
   }

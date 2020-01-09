@@ -28,23 +28,19 @@ export class RealmService {
               private matSnackBar: MatSnackBar) {
   }
 
-  async changeRealm(auctionsService: AuctionsService, newRealm: string, newRegion?: string, updateApi?: boolean) {
+  async changeRealm(auctionsService: AuctionsService, newRealm: string, newRegion?: string) {
     if (newRegion) {
       SharedService.user.region = newRegion;
     }
     SharedService.user.realm = newRealm;
-    const {realm, region, gameVersion, apiToUse} = SharedService.user;
+    const {realm, region, gameVersion} = SharedService.user;
     User.save();
 
-    if (updateApi) {
-      if (apiToUse === 'tsm') {
-        await auctionsService.getTsmAuctions();
-      } else if (apiToUse === 'wowuction') {
-        await auctionsService.getWoWUctionAuctions();
-      }
-    }
     if (!gameVersion) {
-      await this.getStatus(region, realm);
+    await auctionsService.getTsmAuctions();
+    await this.getStatus(
+      region,
+      realm);
     } else {
       this.setClassicRealmAsCurrent(realm);
     }

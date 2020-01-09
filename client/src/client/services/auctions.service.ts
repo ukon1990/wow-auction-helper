@@ -100,7 +100,6 @@ export class AuctionsService {
         if (!this.doNotOrganize) {
           await AuctionUtil.organize(a['auctions'], this.petService);
         }
-        console.log('Auction service', this.doNotOrganize);
         this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
@@ -150,13 +149,12 @@ export class AuctionsService {
       console.log('Downloading TSM data');
       SharedService.downloading.tsmAuctions = true;
       this.openSnackbar('Downloading TSM data');
-      return this.http.get(`${Endpoints.TSM_API}/${
-        SharedService.user.region
-      }/${
-        SharedService.user.realm
-      }?format=json&apiKey=${
-        SharedService.user.apiTsm
-      }&fields=Id,MarketValue,RegionSaleAvg,RegionAvgDailySold,RegionSaleRate`) // 'assets/mock/tsm.json'
+      const realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.getValue();
+      if (!realmStatus.tsmUrl) {
+        // Regions such as Taiwan and Korea is not supported by TSM.
+        return;
+      }
+      return this.http.get(realmStatus.tsmUrl)
         .toPromise()
         .then(tsm => {
           localStorage['timestamp_tsm'] = new Date().toDateString();
@@ -255,7 +253,6 @@ export class AuctionsService {
 
   private handleNotifications() {
     this.sendNewAuctionDataAvailable();
-    this.sendUndercutNotification();
   }
 
   private sendNewAuctionDataAvailable() {
@@ -264,15 +261,6 @@ export class AuctionsService {
       Notifications.send(
         'WAH - New auction data',
         `There are new auctions available for ${SharedService.user.realm}.`);
-    }
-  }
-
-  private sendUndercutNotification() {
-    const undercutAuctions = SharedService.userAuctions.undercutAuctions;
-    if (SharedService.user.notifications.isUndercut && undercutAuctions > 0) {
-      Notifications.send(
-        'WAH - You have been undercut',
-        `${undercutAuctions} of your auctions were undercut.`);
     }
   }
 

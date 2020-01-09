@@ -2,6 +2,7 @@ export class AuctionHouseStatus {
   id: number;
   region: string;
   url: string;
+  tsmUrl: string;
   lastModified: number;
   isUpdating: number;
   isActive: number;

@@ -84,7 +84,6 @@ export class WatchlistItemManagerComponent implements OnInit {
       }
     }
 
-    console.log(this.item, this.form.value);
     SharedService.user.watchlist.save();
     this.close.emit('');
   }

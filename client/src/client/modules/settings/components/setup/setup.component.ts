@@ -59,8 +59,6 @@ export class SetupComponent {
     this.form = this.fb.group({
       region: ['eu', Validators.required],
       realm: [null, Validators.required],
-      tsmKey: '',
-      wowUctionKey: '',
       importString: '',
       locale: localStorage['locale']
     });
@@ -130,17 +128,6 @@ export class SetupComponent {
       localStorage['region'] = this.form.value.region;
       localStorage['realm'] = this.form.value.realm;
       localStorage['character'] = this.form.value.name;
-
-      localStorage['api_tsm'] = this.form.value.tsmKey;
-      localStorage['api_wowuction'] = this.form.value.wowUctionKey;
-      if (this.form.value.tsmKey.length > 0) {
-        localStorage['api_to_use'] = 'tsm';
-      } else if (this.form.value.wowUctionKey.length > 0) {
-        localStorage['api_to_use'] = 'wowuction';
-      } else {
-        localStorage['api_to_use'] = 'none';
-      }
-
       localStorage['timestamp_news'] = new Date().toLocaleDateString();
 
       User.restore();

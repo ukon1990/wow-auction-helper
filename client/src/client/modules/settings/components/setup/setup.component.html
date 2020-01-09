@@ -54,7 +54,7 @@
             <a routerLink="/about">here</a>.
           </li>
           <li>
-            The only data you need to input is your realm and region, anything else is optional.
+            The only data you need to input is your realm and region, anything else is optional. But to get the best experience, I recommend adding your characters(crafting).
           </li>
         </ul>
       </div>
@@ -141,48 +141,9 @@
         <i class="fas fa-arrow-left"></i>
         Back
       </button>
-      <button class="float-right" mat-button matStepperNext [disabled]="!isValid()" *ngIf="isWithinSupported3RDPartyAPIRegion(); else completeButtonTemplate">
-        Next
-      </button>
-      <ng-template #completeButtonTemplate>
-        <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
-          Complete the setup
-        </button>
-      </ng-template>
-    </form>
-  </mat-step>
-
-  <mat-step *ngIf="isWithinSupported3RDPartyAPIRegion()">
-    <form [formGroup]="form">
-      <ng-template matStepLabel>API and settings (optional)</ng-template>
-      <strong>Your API key (optional)</strong>
-      <p>
-        Supplying the app with an API key, allows it to display statistical data like Market value, estimated demand etc.
-      </p>
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            TSM
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-form-field class="col-md-12">
-            <input matInput placeholder="Tradeskillmaster API key" formControlName="tsmKey">
-          </mat-form-field>
-          If you don't have a TSM account you can
-          <a href="https://www.tradeskillmaster.com/user/register" target="_blank">create one by clicking this link</a>. Once you've done that, you can find your API key in the bottom of your
-          <a href="https://www.tradeskillmaster.com/user" target="_blank">account page</a>.
-        </mat-card-content>
-      </mat-card>
-    </form>
-    <div>
-      <button class="float-left" mat-button matStepperPrevious>
-        <i class="fas fa-arrow-left"></i>
-        Back
-      </button>
       <button class="float-right" mat-button [disabled]="!isValid()" (click)="completeSetup()">
         Complete the setup
       </button>
-    </div>
+    </form>
   </mat-step>
 </mat-horizontal-stepper>

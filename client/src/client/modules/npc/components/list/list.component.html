@@ -1,0 +1,33 @@
+<em>
+  This tool is currently still in the development phase, and everything should be considered subject to change.
+</em>
+<form [formGroup]="form">
+  <mat-form-field>
+    <input matInput placeholder="Minimum sale rate" formControlName="minSaleRate" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Minimum avg regional daily sold" formControlName="minAvgDailySold" />
+  </mat-form-field>
+</form>
+<mat-tab-group>
+  <mat-tab label="Lootable mobs ({{ table.dropped.data.length | number }})">
+    <wah-data-table
+            [id]="'id'"
+            filterParameter="name"
+            [iconSize]="22"
+            [columns]="table.dropped.columns"
+            [data]="table.dropped.data"
+            [numOfRows]="20"
+            (rowClicked)="onRowClick($event)"></wah-data-table>
+  </mat-tab>
+  <mat-tab label="Vendors ({{ table.sold.data.length | number }})">
+    <wah-data-table
+            [id]="'id'"
+            filterParameter="name"
+            [iconSize]="22"
+            [columns]="table.sold.columns"
+            [data]="table.sold.data"
+            [numOfRows]="20"
+            (rowClicked)="onRowClick($event)"></wah-data-table>
+  </mat-tab>
+</mat-tab-group>

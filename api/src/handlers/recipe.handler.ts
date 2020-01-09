@@ -51,7 +51,6 @@ export class RecipeHandler {
             // Enchants does not have itemID set as creates in WoWDB, so don't overwrite 0 itemID's
             if (oldVersion.itemID && !currentRecipe.itemID) {
               currentRecipe.itemID = oldVersion.itemID;
-
             }
 
             await this.setItemIdIfMissing(currentRecipe);

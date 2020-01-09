@@ -54,11 +54,11 @@
     <input matInput placeholder="Minimum profit %" formControlName="profit" type="number" matTooltip="Minimum return on investment">
   </mat-form-field>
 
-  <mat-form-field class="col" *ngIf="isUsing3PApi">
+  <mat-form-field class="col">
     <input matInput placeholder="Sale rate % (default 0)" formControlName="demand" type="number" matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
   </mat-form-field>
 
-  <mat-form-field class="col" *ngIf="isUsing3PApi">
+  <mat-form-field class="col">
     <input matInput placeholder="Minimum avg daily sold" formControlName="minSold" type="number">
   </mat-form-field>
 

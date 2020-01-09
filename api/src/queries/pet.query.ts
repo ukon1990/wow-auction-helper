@@ -3,7 +3,7 @@ import {Pet} from '../models/pet';
 import {safeifyString} from '../utils/string.util';
 
 export class PetQuery {
-  public static selectAllForTimestampWithLocale(locale: string, timestamp: Date): string {
+  public static selectAllForTimestampWithLocale(locale: string, timestamp: string): string {
     let query = `
       SELECT p.speciesId, petTypeId, creatureId, ${getLocale(locale)} as name, icon, description, source, timestamp
       FROM pets as p, pet_name_locale as l

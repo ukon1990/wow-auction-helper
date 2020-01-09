@@ -94,16 +94,6 @@ export class DownloadComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  isUsingTSM(): boolean {
-    return SharedService.user.apiToUse === 'tsm';
-  }
-
-  /* istanbul ignore next */
-  isUsingWowUction(): boolean {
-    return SharedService.user.apiToUse === 'wowuction';
-  }
-
-  /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
   }

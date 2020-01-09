@@ -3,9 +3,9 @@ import {Reagent} from '../../../crafting/models/reagent';
 import {SharedService} from '../../../../services/shared.service';
 import {Crafting} from '../../../crafting/models/crafting';
 import {Recipe} from '../../../crafting/models/recipe';
-import {CustomProcs} from '../../../crafting/models/custom-proc';
 import {ItemService} from '../../../../services/item.service';
 import {Item} from '../../../../models/item/item';
+import {CustomProcUtil} from '../../../crafting/utils/custom-proc.util';
 
 @Component({
   selector: 'wah-materials',
@@ -60,7 +60,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   getMinCount(recipe: Recipe): number {
-    return CustomProcs.get(recipe);
+    return CustomProcUtil.get(recipe);
   }
 
   vendorTooltip(reagent: Reagent): string {

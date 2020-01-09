@@ -2,10 +2,10 @@ import {Item} from '../../../client/src/client/models/item/item';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
-import {MediaGameData, ItemGameData} from '../models/item/item-game-data.model';
-import {BLIZZARD} from '../secrets';
+import {ItemGameData} from '../models/item/item-game-data.model';
 import {WoWDBItem} from '../models/item/wowdb';
 import {GameMediaUtil} from './game-media.util';
+import {WoWHeadUtil} from './wowhead.util';
 
 export class ItemUtil {
   public static handleItems(items: Item[]): Item[] {
@@ -16,13 +16,23 @@ export class ItemUtil {
 
   public static handleItem(item: Item): Item {
     delete item['timestamp'];
-    if (item.itemSource) {
-      item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
-    }
+      try {
+        if (item.itemSource) {
+          item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
+          delete item.itemSource.soldBy;
+          delete item.itemSource.droppedBy;
+        }
+      } catch (e) {
+        console.log(`Malformed source JSON for item ${item.id} - ${item.name}`);
+      }
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
-    if (item.itemSpells) {
-      item.itemSpells = JSON.parse(item.itemSpells as any);
-    }
+   try {
+     if (item.itemSpells) {
+       item.itemSpells = JSON.parse(item.itemSpells as any);
+     }
+   } catch (e) {
+     console.log(`Malformed spells JSON for item ${item.id} - ${item.name}`);
+   }
     return item;
   }
 
@@ -42,8 +52,6 @@ export class ItemUtil {
     });
   }
 
-
-
   static getWowDBData(id: number): Promise<WoWDBItem> {
     return new Promise<WoWDBItem>(((resolve, reject) => {
       const errorMessage = {error: `Could not get data from WoWDB for an item id=${id}`};
@@ -60,6 +68,32 @@ export class ItemUtil {
         })
         .catch(error => reject(errorMessage));
     }));
+  }
+
+  static getNewItemsForPatch(patchNumber: number): Promise<any[]> {
+    return new Promise<any[]>(async(resolve) => {
+      let items = [];
+      for (let i = 0; i < 6; i++) {
+        await this.getItemsByQualityForPatch(patchNumber, i)
+          .then(list => items = [...items, ...list])
+          .catch(console.error);
+      }
+      resolve(items);
+    });
+  }
+
+  private static getItemsByQualityForPatch(patchNumber: number, quality: number): Promise<any> {
+    return new Promise<any>((resolve) => {
+      new HttpClientUtil().get(`https://ptr.wowhead.com/items/quality:${
+        quality}?filter=82:161;2:1;${patchNumber}:0`, false)
+        .then(({body}) => {
+          resolve(WoWHeadUtil.getArrayVariable('listviewitems', body));
+        })
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
+    });
   }
 }
 

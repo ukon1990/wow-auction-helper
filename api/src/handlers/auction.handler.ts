@@ -179,7 +179,7 @@ export class AuctionHandler {
 
     new DatabaseUtil()
       .query(RealmQuery
-        .getAllHousesWithLastModifiedOlderThanPreviousDelay()) // This is the lowest dump update frequency found in EU and US
+        .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
       .then(async rows => {
         const promiseThrottle = new PromiseThrottle({
             requestsPerSecond: 50,

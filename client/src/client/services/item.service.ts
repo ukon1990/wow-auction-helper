@@ -48,7 +48,7 @@ export class ItemService {
           SharedService.auctionItemsMap[item.id].name = item.name;
           SharedService.auctionItemsMap[item.id].vendorSell = item.sellPrice;
         }
-        this.dbService.addItem(item);
+        this.dbService.addItems([item]);
         return item;
       }).catch(error => {
         console.error('Could not get item with ID ' + itemID, error);
@@ -62,11 +62,11 @@ export class ItemService {
     let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
     console.log('Downloading items');
     SharedService.downloading.items = true;
-    if (!timestamp) {
+    if (this.isTimestampNotDefined(timestamp)) {
       this.dbService.clearItems();
       SharedService.itemsUnmapped.length = 0;
       this.openSnackbar('Downloading the item DB for first time use. This might take a couple minutes(~27 MB).');
-      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/items-${locale}.json.gz`)
+      await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz`)
         .toPromise()
         .then((response: ItemResponse) => {
           SharedService.itemsUnmapped = [];
@@ -84,7 +84,7 @@ export class ItemService {
       Endpoints.getLambdaUrl(`item`),
       {
         locale: locale,
-        timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
+        timestamp: !this.isTimestampNotDefined(timestamp) ? timestamp : new Date('2000-06-30').toJSON()
       })
       .toPromise()
       .then(items => this.handleItems(items as ItemResponse))
@@ -227,5 +227,9 @@ export class ItemService {
 
   private openSnackbar(message: string): void {
     this.snackBar.open(message, 'Ok', {duration: 3000});
+  }
+
+  private isTimestampNotDefined(timestamp: string) {
+    return timestamp === undefined || timestamp === 'undefined';
   }
 }

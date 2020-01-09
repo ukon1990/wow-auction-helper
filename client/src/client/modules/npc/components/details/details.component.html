@@ -1,0 +1,48 @@
+<em>
+  This tool is currently still in the development phase, and everything should be considered subject to change.
+</em>
+<mat-card>
+  <mat-card-actions>
+    <a mat-raised-button routerLink="/tools/npc">Back to the list</a>
+  </mat-card-actions>
+  <mat-card-header *ngIf="npc">
+    <mat-card-title>{{ npc.name }}</mat-card-title>
+    <mat-card-subtitle *ngIf="npc.tag">{{ npc.tag }}</mat-card-subtitle>
+    <mat-card-subtitle>Level range: {{npc.minLevel}} - {{npc.maxLevel}}</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="zone">
+      Found in: {{ zone?.name }} ({{ territories[zone.territoryId] }}
+      - {{ zoneTypes[zone.typeId] }})
+    </mat-card-subtitle>
+    <mat-card-subtitle>
+      Potential value: {{ potentialValue.vendor | gold }} vs {{ potentialValue.ah | gold }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content *ngIf="npc">
+    <mat-tab-group>
+      <!--<mat-tab *ngIf="npc.coordinates" label="Map ({{ npc.coordinates.length | number }})"></mat-tab>-->
+      <mat-tab *ngIf="npc.drops" label="Drops">
+        <wah-data-table
+                [id]="'id'"
+                iconSize="22"
+                [columns]="table.drops.columns"
+                [data]="table.drops.data"></wah-data-table>
+      </mat-tab>
+      <mat-tab *ngIf="npc.sells" label="Sells">
+        <wah-data-table
+                [id]="'id'"
+                iconSize="22"
+                [columns]="table.sells.columns"
+                [data]="table.sells.data"></wah-data-table>
+      </mat-tab>
+      <mat-tab *ngIf="npc.skinning" label="Skinning">
+        <wah-data-table
+                [id]="'id'"
+                iconSize="22"
+                [columns]="table.skinning.columns"
+                [data]="table.skinning.data"></wah-data-table>
+        >
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

@@ -6,4 +6,9 @@ export class ColumnDescription {
   hideOnMobile?: boolean;
   customSort?: Function;
   cssClass?: string;
+  options?: {
+    idName?: string;
+    noIcon?: boolean;
+    tooltipType?: string;
+  };
 }

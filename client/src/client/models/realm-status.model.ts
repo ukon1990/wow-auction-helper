@@ -7,6 +7,7 @@ export class RealmStatus {
   locale: string;
   timezone: string;
   url: string;
+  tsmUrl: string;
   lastModified: any;
   size: number;
   lowestDelay: number;

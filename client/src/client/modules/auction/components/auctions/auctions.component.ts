@@ -87,17 +87,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number'});
     columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
-
-    if (SharedService.user.apiToUse !== 'none') {
-      columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
-      if (SharedService.user.apiToUse === 'tsm') {
-        columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
-      } else {
-        columns.push({key: 'avgDailyPosted', title: 'Avg daily posted', dataType: 'number', hideOnMobile: true});
-      }
-      columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
-      columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    }
+    columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
+    columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
+    columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+    columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
   }
 
@@ -113,22 +106,17 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       });
   }
 
-  isMatch(auctionItem: AuctionItem, changes): boolean {
-    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name, auctionItem.petSpeciesId) &&
-      Filters.isItemClassMatch(
-        auctionItem.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
-      Filters.isSaleRateMatch(auctionItem.itemID, changes.saleRate) &&
-      Filters.isBelowMarketValue(auctionItem.itemID, changes.mktPrice) &&
-      Filters.isDailySoldMatch(auctionItem.itemID, changes.avgDailySold) &&
-      Filters.isBelowSellToVendorPrice(auctionItem.itemID, changes.onlyVendorSellable) &&
-      Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
-      Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
-      Filters.isExpansionMatch(auctionItem.itemID, changes.expansion);
-  }
-
-  /* istanbul ignore next */
-  isUsinAPI(): boolean {
-    return SharedService.user.apiToUse !== 'none';
+  isMatch({itemID, petSpeciesId}: AuctionItem, {name, itemClass,
+    itemSubClass, saleRate, mktPrice, avgDailySold, onlyVendorSellable, minItemQuality, minItemLevel, expansion }): boolean {
+    return Filters.isNameMatch(itemID, name, petSpeciesId) &&
+      Filters.isItemClassMatch(itemID, itemClass, itemSubClass) &&
+      Filters.isSaleRateMatch(itemID, saleRate) &&
+      Filters.isBelowMarketValue(itemID, mktPrice) &&
+      Filters.isDailySoldMatch(itemID, avgDailySold) &&
+      Filters.isBelowSellToVendorPrice(itemID, onlyVendorSellable) &&
+      Filters.isItemAboveQuality(itemID, minItemQuality) &&
+      Filters.isAboveItemLevel(itemID, minItemLevel) &&
+      Filters.isExpansionMatch(itemID, expansion);
   }
 
   /* istanbul ignore next */

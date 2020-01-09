@@ -8,6 +8,7 @@ import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {Platform} from '@angular/cdk/platform';
+import {BehaviorSubject} from 'rxjs';
 
 class RecipeResponse {
   timestamp: Date;
@@ -16,6 +17,11 @@ class RecipeResponse {
 
 @Injectable()
 export class CraftingService {
+  static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
+  static map: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
+  static itemRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
+  static reagentRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
+
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
   constructor(private _http: HttpClient,
@@ -53,7 +59,7 @@ export class CraftingService {
 
     if (!timestamp) {
       this.dbService.clearRecipes();
-      await this._http.get(`https://s3-eu-west-1.amazonaws.com/wah-data/recipes-${locale}.json.gz`)
+      await this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz`)
         .toPromise()
         .then((result: RecipeResponse) => {
           timestamp = result.timestamp;
@@ -130,7 +136,6 @@ export class CraftingService {
           SharedService.recipes.push(recipe);
         }
       });
-      console.log('List length', list.length, SharedService.recipes.length, Object.keys(map).length);
     }
     console.log('Recipe download is completed');
 
@@ -152,7 +157,7 @@ export class CraftingService {
       console.error(error);
     }
     SharedService.events.recipes.emit(true);
-    console.log('List length', SharedService.recipes.length);
+    CraftingService.list.next([...recipes.recipes, ...CraftingService.list.value]);
   }
 
   /**

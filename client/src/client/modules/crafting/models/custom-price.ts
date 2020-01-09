@@ -1,6 +1,20 @@
 import { SharedService } from '../../../services/shared.service';
 import { Item } from '../../../models/item/item';
 
+export class CustomPrice {
+  itemID: number;
+  name: string;
+  price: number;
+
+  constructor(item?: Item) {
+    if (item) {
+      this.itemID = item.id;
+      this.name = item.name;
+      this.price = 0;
+    }
+  }
+}
+
 export class CustomPrices {
   public static add(item: Item): void {
     if (!SharedService.customPricesMap[item.id]) {
@@ -32,19 +46,5 @@ export class CustomPrices {
 
   public static save(): void {
     localStorage['custom_prices'] = JSON.stringify(SharedService.user.customPrices);
-  }
-}
-
-export class CustomPrice {
-  itemID: number;
-  name: string;
-  price: number;
-
-  constructor(item?: Item) {
-    if (item) {
-      this.itemID = item.id;
-      this.name = item.name;
-      this.price = 0;
-    }
   }
 }

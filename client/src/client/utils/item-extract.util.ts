@@ -6,14 +6,11 @@ export class ItemExtract {
     const zoneMap = {};
     const npcMap = {};
     items.forEach(item => this.fromItem(item, npcMap));
-    const list = Object.keys(npcMap)
+    return Object.keys(npcMap)
       .map(k => {
         zoneMap[npcMap[k].zoneId] = npcMap[k].zoneId;
         return npcMap[k];
       });
-    console.log('NPCs from items',
-      list.sort((a, b) => this.sort(a, b)),
-      Object.keys(zoneMap).map(id => +id));
   }
 
   private static sort(a, b) {

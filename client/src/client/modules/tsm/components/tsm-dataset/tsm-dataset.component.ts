@@ -408,7 +408,6 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
 
   private handleFactionChange(faction: number) {
     this.setTableData(this.form.value.realm, undefined, faction);
-    console.log('FactionChange');
     this.handleInventorySet(faction);
   }
 
@@ -426,7 +425,6 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
     this.currentGold = 0;
 
     if (this.isGoldLogSet()) {
-      console.log(this.selectedSet.data);
       const realmData = this.selectedSet.data[realm];
       Object.keys(realmData)
         .forEach(name => {

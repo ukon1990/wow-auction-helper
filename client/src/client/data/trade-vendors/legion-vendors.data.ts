@@ -1,6 +1,7 @@
 import {TradeVendor, TradeVendorItem} from '../../models/item/trade-vendor';
 
 const primalSargerite: TradeVendor = {
+  isAlliance: false, isHorde: false,
   itemID: 151568,
   name: 'Primal Sargerite',
   useForCrafting: true,
@@ -20,6 +21,7 @@ const primalSargerite: TradeVendor = {
 };
 
 const bloodOfSargeras: TradeVendor = {
+  isAlliance: false, isHorde: false,
   itemID: 124124,
   name: 'Blood of Sargeras',
   useForCrafting: true,

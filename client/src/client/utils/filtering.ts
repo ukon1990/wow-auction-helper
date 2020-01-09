@@ -19,7 +19,7 @@ export class Filters {
 
   public static isBelowMarketValue(itemID: number, marketValuePercent: number): boolean {
     const auctionItem: AuctionItem = SharedService.auctionItemsMap[itemID];
-    if (Filters.isUsingAPI() && auctionItem) {
+    if (auctionItem) {
       if (EmptyUtil.isNullOrUndefined(marketValuePercent) || marketValuePercent === 0) {
         return true;
       }
@@ -59,7 +59,7 @@ export class Filters {
   }
 
   public static isSaleRateMatch(itemID: number, saleRate: number): boolean {
-    if (EmptyUtil.isNullOrUndefined(saleRate) || !Filters.isUsingAPI()) {
+    if (EmptyUtil.isNullOrUndefined(saleRate)) {
       return true;
     }
     const item: AuctionItem = SharedService.auctionItemsMap[itemID],
@@ -72,7 +72,7 @@ export class Filters {
       return false;
     }
 
-    if (Filters.isUsingAPI() && avgDailySold && avgDailySold > 0) {
+    if (avgDailySold && avgDailySold > 0) {
       return SharedService.auctionItemsMap[itemID].avgDailySold >= avgDailySold;
     }
     return true;
@@ -98,10 +98,6 @@ export class Filters {
     const iSubClass = subClasses[itemSubClassIndex];
 
     return !iSubClass || subClassForId === iSubClass.subclass;
-  }
-
-  public static isUsingAPI(): boolean {
-    return SharedService.user.apiToUse !== 'none';
   }
 
   /* istanbul ignore next */
