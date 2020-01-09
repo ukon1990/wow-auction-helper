@@ -304,7 +304,7 @@ export class Dashboard {
         SharedService.itemDashboards.push(db);
       }
 
-      if (SharedService.user.apiToUse !== 'none') {
+      if (Filters.isUsingAPI()) {
         db = new Dashboard(
           SharedService.defaultDashboardSettingsListMap[Dashboard.TYPES.POTENTIAL_DEALS].title,
           Dashboard.TYPES.POTENTIAL_DEALS);
@@ -379,7 +379,7 @@ export class Dashboard {
   }
 
   private addAPIColumnsAtPosition(index: number): void {
-    if (SharedService.user.apiToUse !== 'none') {
+    if (Filters.isUsingAPI()) {
       this.columns.splice(index, 0, {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
       this.columns.splice(index, 0, {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
       this.columns.splice(index, 0, {key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
@@ -537,7 +537,7 @@ export class Dashboard {
 
       if (ai.buyout !== 0 && ai.buyout < ai.vendorSell) {
         value += ai.vendorSell - ai.buyout;
-        if (SharedService.user.apiToUse !== 'none') {
+        if (Filters.isUsingAPI()) {
           mvValue += ai.mktPrice - ai.vendorSell;
         }
         this.tsmShoppingString += `${
@@ -558,7 +558,7 @@ export class Dashboard {
 
       this.message = `Profit if vendored: ${pipe.transform(value)}`;
 
-      if (SharedService.user.apiToUse !== 'none') {
+      if (Filters.isUsingAPI()) {
         this.message += `. Profit if resold at MV: ${pipe.transform(mvValue)}`;
       }
 
@@ -587,7 +587,7 @@ export class Dashboard {
         match = false;
       }
 
-      if (match && SharedService.user.apiToUse !== 'none' &&
+      if (match && Filters.isUsingAPI() &&
         SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
         SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
@@ -622,7 +622,7 @@ export class Dashboard {
         match = false;
       }
 
-      if (match && SharedService.user.apiToUse !== 'none' &&
+      if (match && Filters.isUsingAPI() &&
         SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
         SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
@@ -687,7 +687,7 @@ export class Dashboard {
         if (onlyKnown && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
           return false;
         }
-        if (SharedService.user.apiToUse !== 'none') {
+        if (Filters.isUsingAPI()) {
           if (this.getAuctionItem(recipe.itemID).avgDailySold <= this.settings.avgDailySold ||
             this.getAuctionItem(recipe.itemID).regionSaleRate <= this.settings.regionSaleRate) {
             return false;
