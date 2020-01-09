@@ -35,6 +35,7 @@ export class DatabaseService {
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
   readonly TSM_ADDON_HISTORY = 'timestamp,data';
+  readonly ADDON = 'id,timestamp,data';
   readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
     'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
   readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
@@ -234,7 +235,7 @@ export class DatabaseService {
       .catch(e => console.error('Could not add auctions to local DB', e));
   }
 
-  addClassicAuctions(realmData: {realm: string, auctions: Auction[]}): void {
+  addClassicAuctions(realmData: { realm: string, auctions: Auction[] }): void {
     if (this.platform === null || this.platform.WEBKIT) {
       return;
     }
@@ -264,7 +265,7 @@ export class DatabaseService {
   }
 
   async getClassicAuctions(realm: string, petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    console.log('input to DB fetch', realm)
+    console.log('input to DB fetch', realm);
     SharedService.downloading.auctions = true;
     return this.db.table('classic-auctions')
       .where('realm')
@@ -316,6 +317,15 @@ export class DatabaseService {
       .catch(e => {
         console.error('Could not restore WoWUction data', e);
         SharedService.downloading.wowUctionAuctions = false;
+      });
+  }
+
+  async addAddonData(addon, data, lastModified: Date): Promise<void> {
+    await this.db.table('addon')
+      .put({
+        id: SharedService.user.gameVersion,
+        data,
+        lastModified
       });
   }
 
@@ -408,7 +418,6 @@ export class DatabaseService {
     this.db.version(7).stores({
       'classic-auctions': 'realm,auctions',
       auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: this.WOWUCTION_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
