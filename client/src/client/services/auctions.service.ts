@@ -19,13 +19,15 @@ import {Auction} from '../modules/auction/models/auction.model';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {RealmStatus} from '../models/realm-status.model';
+import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 
 @Injectable()
 export class AuctionsService {
   events = {
     isDownloading: new BehaviorSubject<boolean>(true),
     list: new BehaviorSubject<Auction[]>([]),
-    groupedList: new BehaviorSubject<AuctionItem[]>([])
+    groupedList: new BehaviorSubject<AuctionItem[]>([]),
+    tsm: new BehaviorSubject<Map<number, TSM>>(new Map<number, TSM>())
   };
   subs = new SubscriptionManager();
   doNotOrganize = false;
@@ -132,42 +134,57 @@ export class AuctionsService {
   }
 
   getTsmAuctions(): Promise<any> {
-    const region = SharedService.user.region;
-    if (region === 'eu' || region === 'us') {
-      console.log('Downloading TSM data');
-      SharedService.downloading.tsmAuctions = true;
-      this.openSnackbar('Downloading TSM data');
-      const realmStatus: RealmStatus = this.realmService.events.realmStatus.getValue();
-      if (!realmStatus.tsmUrl) {
-        // Regions such as Taiwan and Korea is not supported by TSM.
-        return;
+
+    return new Promise((resolve, reject) => {
+      const region = SharedService.user.region;
+      if (region === 'eu' || region === 'us') {
+        console.log('Downloading TSM data');
+        this.openSnackbar('Downloading TSM data');
+        const realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.value;
+        if (!realmStatus || !realmStatus.tsmUrl) {
+          // Regions such as Taiwan and Korea is not supported by TSM.
+          console.log('The realm is missing TSM data');
+          resolve();
+          return;
+        }
+        SharedService.downloading.tsmAuctions = true;
+        this.http.get(realmStatus.tsmUrl)
+          .toPromise()
+          .then(tsm => {
+            if (!tsm || tsm['error']) {
+              ErrorReport.sendHttpError(tsm['error']);
+              resolve();
+              return;
+            }
+            console.log(tsm);
+            localStorage['timestamp_tsm'] = new Date().toDateString();
+            (<TSM[]>tsm).forEach(a => {
+              this.events.tsm.value.set(a.Id, a);
+              SharedService.tsm[a.Id] = a;
+            });
+            SharedService.downloading.tsmAuctions = false;
+            console.log('TSM data download is complete');
+            this._dbService.addTSMItems(tsm as Array<TSM>);
+            this.openSnackbar('Completed TSM download');
+            resolve();
+          })
+          .catch(e => {
+            this.openSnackbar(
+              `Could not completed TSM download. One reason that this could happen, is if you have used all your requests.`);
+            console.error('Unable to download TSM data', e);
+            SharedService.downloading.tsmAuctions = false;
+            this._dbService.getTSMItems().then(r => {
+              this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
+            }).catch(error => {
+              console.error('Could not restore TSM auctions from local DB', error);
+              ErrorReport.sendHttpError(error);
+            });
+            resolve();
+          });
+      } else {
+        resolve();
       }
-      return this.http.get(realmStatus.tsmUrl)
-        .toPromise()
-        .then(tsm => {
-          localStorage['timestamp_tsm'] = new Date().toDateString();
-          (<TSM[]>tsm).forEach(a => {
-            SharedService.tsm[a.Id] = a;
-          });
-          SharedService.downloading.tsmAuctions = false;
-          console.log('TSM data download is complete');
-          this._dbService.addTSMItems(tsm as Array<TSM>);
-          this.openSnackbar('Completed TSM download');
-        })
-        .catch(e => {
-          this.openSnackbar(`Could not completed TSM download. One reason that this could happen, is if you have used all your requests.`);
-          console.error('Unable to download TSM data', e);
-          SharedService.downloading.tsmAuctions = false;
-          this._dbService.getTSMItems().then(r => {
-            this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
-          }).catch(error => {
-            console.error('Could not restore TSM auctions from local DB', error);
-            ErrorReport.sendHttpError(error);
-          });
-        });
-    } else {
-      return new Promise((resolve) => []);
-    }
+    });
   }
 
   getWoWUctionAuctions(): Promise<any> {

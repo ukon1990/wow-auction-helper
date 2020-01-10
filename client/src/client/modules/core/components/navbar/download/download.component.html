@@ -129,37 +129,6 @@
         </tr>
         </tbody>
       </table>
-
-      <div>
-        Realm data:
-      </div>
-      <!--
-      <table *ngIf="getUserRealm()" class="table table-hover table-bordered table-striped table-sm"
-        [ngClass]="{'table-dark': isDarkmode()}">
-        <tbody>
-          <tr>
-            <td>Connected to</td>
-            <td>
-              <span *ngFor="let realm of getUserRealm().connected_realms; let i = index">
-                {{ realm }}
-                <span *ngIf="i < getUserRealm().connected_realms.length - 1">, </span>
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td>Population</td>
-            <td>{{ getUserRealm().population }}</td>
-          </tr>
-          <tr>
-            <td>Queue</td>
-            <td>{{ getUserRealm().queue }}</td>
-          </tr>
-          <tr>
-            <td>Realm status</td>
-            <td>{{ getUserRealm().status }}</td>
-          </tr>
-        </tbody>
-      </table>-->
     </mat-card-content>
   </mat-card>
 </mat-menu>

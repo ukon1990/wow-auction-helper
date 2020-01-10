@@ -7,7 +7,7 @@ import {QueryUtil} from '../utils/query.util';
 export class TSMHandler {
   getAndStartAllRealmsToUpdate(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      const hourInterval = 12;
+      const hourInterval = 5;
       new DatabaseUtil().query(`
         SELECT ah.id as id, region, slug, tsm.lastModified as lastModified
         FROM auction_houses as ah
@@ -24,7 +24,7 @@ export class TSMHandler {
           (region = 'eu' OR region = 'us') AND (
           ah.id NOT IN (SELECT id FROM tsmDump) OR
           (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > ${hourInterval})
-        LIMIT 20;
+        LIMIT 5;
       `)
         .then(async (rows: { id, slug, region, lastModified }[]) => {
           if (!rows.length) {
@@ -50,6 +50,11 @@ export class TSMHandler {
     return new Promise<void>(async (resolve, reject) => {
       await this.fetchTSMDump(region, name)
         .then(({body}) => {
+          if (body.error) {
+            console.error('Could not get realm API data due to error', body.error);
+            reject();
+            return;
+          }
           console.log('TSMHandler.updateRealm saving to s3');
           new S3Handler().save(body, `tsm/${region}/${id}.json.gz`, {region, url: ''})
             .then(async queryData => {
@@ -85,7 +90,7 @@ export class TSMHandler {
           await new DatabaseUtil()
             .query(
               new QueryUtil('tsmDump', false)
-                .update(id, {id, url, lastModified: +new Date()}))
+                .update(id, {id, lastModified: +new Date()}))
             .catch(console.error);
         } else {
           await new DatabaseUtil()
