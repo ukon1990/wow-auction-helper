@@ -20,6 +20,7 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {RealmStatus} from '../models/realm-status.model';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
+import {Report} from '../utils/report.util';
 
 @Injectable()
 export class AuctionsService {
