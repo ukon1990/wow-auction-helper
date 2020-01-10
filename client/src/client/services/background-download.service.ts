@@ -73,8 +73,9 @@ export class BackgroundDownloadService {
   }
 
   async init(): Promise<void> {
+    const {realm, region} = SharedService.user;
 
-    if (!SharedService.user.region || !SharedService.user.realm) {
+    if (!region || !realm) {
       return;
     }
 
@@ -83,6 +84,7 @@ export class BackgroundDownloadService {
     console.log('Starting to load data');
     await this.realmService.getRealms()
       .catch(error => console.error(error));
+    await this.realmService.getStatus(region, realm);
 
     this.auctionsService.doNotOrganize = true;
 
@@ -92,8 +94,7 @@ export class BackgroundDownloadService {
       this.loadNpc(),
       this.loadRecipes(),
       this.loadZones(),
-      this.loadThirdPartyAPI(),
-      this.realmService.getStatus(SharedService.user.region, SharedService.user.realm)
+      this.loadThirdPartyAPI()
     ])
       .catch(console.error);
 
