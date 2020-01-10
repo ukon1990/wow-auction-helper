@@ -4,6 +4,7 @@ import {environment} from '../../../client/src/environments/environment';
 describe('NPCUtil', () => {
   beforeEach(() => {
     environment.test = true;
+    jest.setTimeout(5000);
   });
   it('Can fetch data for mob', async () => {
     const npcId = 90517;
