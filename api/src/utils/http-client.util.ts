@@ -4,7 +4,10 @@ export class HttpClientUtil {
   get(url: string, expectJSON: boolean = true): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request.get(
-        url,
+        {
+          url,
+          headers: {'User-Agent': 'Mozilla/5.0'}
+        },
         (error, response, body) => {
           try {
             if (expectJSON) {
