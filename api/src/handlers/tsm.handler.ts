@@ -6,8 +6,8 @@ import {QueryUtil} from '../utils/query.util';
 
 export class TSMHandler {
   getAndStartAllRealmsToUpdate(): Promise<boolean> {
+    console.log('Checking for new realms to update');
     return new Promise<boolean>((resolve, reject) => {
-      const hourInterval = 5;
       new DatabaseUtil().query(`
         SELECT ah.id as id, region, slug, tsm.lastModified as lastModified
         FROM auction_houses as ah
@@ -23,11 +23,13 @@ export class TSMHandler {
         WHERE
           (region = 'eu' OR region = 'us') AND (
           ah.id NOT IN (SELECT id FROM tsmDump) OR
-          (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > ${hourInterval})
-        LIMIT 5;
+          (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > 12)
+        ORDER BY autoUpdate desc, lastModified desc
+        LIMIT 2;
       `)
         .then(async (rows: { id, slug, region, lastModified }[]) => {
           if (!rows.length) {
+            console.log('There are no realms that need updating');
             resolve();
             return;
           }
