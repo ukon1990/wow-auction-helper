@@ -1,4 +1,6 @@
 import {RecipeUtil} from './recipe.util';
+import {S3Handler} from '../handlers/s3.handler';
+import {languages} from '../static-data/language.data';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {
@@ -33,5 +35,38 @@ describe('RecipeUtil', () => {
     expect(enchantingItemRank1.rank).toBe(1);
     expect(enchantingItemRank2.rank).toBe(2);
     expect(enchantingItemRank3.rank).toBe(3);
+  });
+
+  it('Can get all classic recipes', async () => {
+    jest.setTimeout(9000000);
+    const recipes = await RecipeUtil.getRecipeListForPatch(0, 'classic');
+    console.log('DOne fetching all recipes', recipes[0]);
+    if (recipes[0].name['en_GB']) {
+      languages.forEach(language => {
+        language.locales.forEach(async locale => {
+          console.log('Processing locale', locale);
+          const list = recipes.map(recipe => ({
+            spellID: recipe.spellID,
+            itemID: recipe.itemID,
+            name: recipe.name[locale],
+            minCount: recipe.minCount,
+            maxCount: recipe.maxCount,
+            rank: recipe.rank,
+            profession: recipe.profession,
+            reagents: recipe.reagents,
+            expansion: recipe.expansion
+          }));
+
+          await new S3Handler().save(list, `classic/recipes/${locale}.json.gz`,
+            {region: '', url: ''})
+            .then((success) => {
+              console.log('Success!', success);
+            })
+            .catch(console.error);
+        });
+      });
+    }
+
+    expect(recipes.length).toBeGreaterThan(0);
   });
 });
