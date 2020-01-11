@@ -72,5 +72,10 @@ This will then upload everything to AWS, and set up the API Gateway etc and outp
 The events that I have set for this application goes as follows:
 * Auto check for new auctions every 1 minute (updateAllHouses)
 * Check if there are any realms that have not been requested the past 14 days (deactivateInactiveHouses)
-* Fetch TSM api data per realm for 2 realms at a time on an interval of 15 minutes (updateTSMDumpData).
-So each realms TSM data is updated about once per 24 hours.
+* Fetch TSM api data per realm for 1 per hour (updateTSMDumpData). 
+A TSM key can only fetch 25 times per 24 hour period.
+When you set up the event:
+    1. set it to "Schedule"
+    2. add "Target"
+    3. select the "updateTSMDumpData" function
+    4. configure input as JSON with the body: {"key": "your tsm key"}
