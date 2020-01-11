@@ -2,6 +2,8 @@ import {BLIZZARD} from '../secrets';
 import {APIGatewayEvent} from 'aws-lambda';
 
 export class Endpoints {
+  static STAGE: string;
+
   private readonly COMMUNITY_ENDPOINT = {
     eu: 'https://eu.api.blizzard.com/wow/',
     us: 'https://us.api.blizzard.com/wow/',
@@ -37,17 +39,17 @@ export class Endpoints {
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
-  public getLambdaUrl(path: string, region: string, event: APIGatewayEvent): string {
-    const stage = this.getStage(event);
-    return `${
-      this.LAMBDAS[region.toUpperCase()][stage]}${path}`;
+
+  static setStage(event: APIGatewayEvent) {
+    if (!event || !event.requestContext) {
+      this.STAGE = 'prod';
+    }
+    this.STAGE = event.requestContext.stage;
   }
 
-  private getStage(event: APIGatewayEvent) {
-    if (!event || !event.requestContext) {
-      return 'prod';
-    }
-    return event.requestContext.stage;
+  public getLambdaUrl(path: string, region: string): string {
+    return `${
+      this.LAMBDAS[region.toUpperCase()][Endpoints.STAGE]}${path}`;
   }
 
   getGameDataBase(region?: string) {

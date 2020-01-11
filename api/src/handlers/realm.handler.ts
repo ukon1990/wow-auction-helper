@@ -24,35 +24,35 @@ export class RealmHandler {
 
   }
 
-  getRealmByRegionAndName(event: APIGatewayEvent, callback: Callback) {
-    const params = event.pathParameters;
-    new DatabaseUtil()
-      .query(
-        RealmQuery.getHouseForRealm(params.region, params.realm))
-      .then(async rows => {
-        if (rows.length > 0) {
-          if (rows[0].autoUpdate === 0) {
-            await new DatabaseUtil().query(
-              RealmQuery.activateHouse(rows[0].id))
-              .then(() => console.log('Successfully activated id=', rows[0].id))
+  getRealmByRegionAndName(region: string, realm: string) {
+    return new Promise((resolve, reject) => {
+      new DatabaseUtil()
+        .query(
+          RealmQuery.getHouseForRealm(region, realm))
+        .then(async rows => {
+          if (rows.length > 0) {
+            if (rows[0].autoUpdate === 0) {
+              await new DatabaseUtil().query(
+                RealmQuery.activateHouse(rows[0].id))
+                .then(() => console.log('Successfully activated id=', rows[0].id))
+                .catch(console.error);
+              new HttpClientUtil()
+                .post(new Endpoints()
+                    .getLambdaUrl('auction/update-one', rows[0].region),
+                  rows[0],
+                  true);
+            }
+            new DatabaseUtil().query(
+              RealmQuery.updateLastRequested(rows[0].id))
+              .then(() => {})
               .catch(console.error);
-            new HttpClientUtil()
-              .post(new Endpoints()
-                .getLambdaUrl('auction/update-one', rows[0].region, event),
-                rows[0],
-                true);
+            resolve(rows[0]);
+          } else {
+            resolve({});
           }
-          Response.send(rows[0], callback);
-          new DatabaseUtil().query(
-            RealmQuery.updateLastRequested(rows[0].id))
-            .then(() => {})
-            .catch(console.error);
-        } else {
-          Response.send({}, callback);
-        }
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+        })
+        .catch(reject);
+    });
   }
 
   getAllRealms(event: APIGatewayEvent, callback: Callback) {

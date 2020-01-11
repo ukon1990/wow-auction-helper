@@ -9,6 +9,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
+import {RealmHandler} from './realm.handler';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -104,7 +105,13 @@ export class AuctionHandler {
                 ahId, r.url, lastModified, size, delay))
             .then(() => {
               console.log(`Successfully updated id=${ahId}`);
+
               resolve();
+              this.createLastModifiedFile(ahId, region);
+              new S3Handler().save(
+                data, `auctions/${region}/${ahId}/auctions.json.gz`,
+                {region, ahId, lastModified, size})
+                .catch(console.error);
             })
             .catch(reject);
         })
@@ -231,7 +238,7 @@ export class AuctionHandler {
           .bind(
             this,
             new Endpoints()
-              .getLambdaUrl('auction/update-one', row.region, event),
+              .getLambdaUrl('auction/update-one', row.region),
             row,
             true)));
   }
@@ -307,35 +314,25 @@ export class AuctionHandler {
       .catch(console.error);
   }
 
-  private async getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay }, lastModified: number) {
+  private async getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay },
+                         lastModified: number) {
     const {minTime, avgTime, maxTime} = await this.getUpdateLog(dbResult.id, 72);
-    /*
-    const diff = Math.round((lastModified - dbResult.lastModified) / 60000);
-    console.log(`The diff for ${dbResult.id} is ${diff}`, dbResult.lowestDelay, dbResult.highestDelay);
 
-
-    if (diff < dbResult.lowestDelay && diff >= 1 || !dbResult.lowestDelay) {
-      dbResult.lowestDelay = diff;
-    }
-
-
-    if (diff < 120) {
-      if (diff !== dbResult.avgDelay && dbResult.avgDelay) {
-        dbResult.avgDelay = (dbResult.avgDelay + diff) / 2;
-      } else if (!dbResult.avgDelay) {
-        dbResult.avgDelay = diff;
-      }
-
-      if (diff > dbResult.highestDelay) {
-        dbResult.highestDelay = diff;
-      }
-    }
-    */
     dbResult.lowestDelay = minTime > 120 ? 120 : minTime;
     dbResult.avgDelay = avgTime;
     dbResult.highestDelay = maxTime;
     return {
       lowest: dbResult.lowestDelay, avg: dbResult.avgDelay, highest: dbResult.highestDelay
     };
+  }
+
+  private async createLastModifiedFile(ahId: number, region: string) {
+    new DatabaseUtil().query(RealmQuery.activateHouse(ahId))
+      .then(async data => {
+        await new S3Handler().save(data, `auctions/${region}/${ahId}/lastModified.json.gz`, {url: '', region})
+          .then(uploaded => console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`))
+          .catch(console.error);
+      })
+      .catch(console.error);
   }
 }
