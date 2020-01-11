@@ -108,13 +108,13 @@ export class RealmQuery {
                 WHERE \`id\` = ${ahId};`;
   }
 
-  static getHouse(id: number): string {
+  static getHouse(id: number, limit = 1): string {
     return `SELECT ahId as id, region, slug, name, battlegroup, locale, timezone, url, lastModified
             FROM auction_house_realm as realm
             LEFT OUTER JOIN auction_houses as ah
             ON ah.id = realm.ahId
             WHERE ahid = ${id}
-            LIMIT 1;`;
+            ${limit ? `LIMIT ${limit}` : ''};`;
   }
 
   static getHouseForRealm(region: string, realmSlug: string): string {

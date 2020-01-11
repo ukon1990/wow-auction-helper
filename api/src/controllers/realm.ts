@@ -21,11 +21,13 @@ exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callbac
   new RealmHandler()
     .getRealmByRegionAndName(region, realm)
     .then((response) => Response.send(response, callback))
-    .catch(Response.error);
+    .catch((error) => Response.error(callback, error, event));
 };
 
 /* istanbul ignore next */
 exports.handleGetAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   new RealmHandler()
-    .getAllRealms(event, callback);
+    .getAllRealms()
+    .then((res) => Response.send(res, callback))
+    .catch(error => Response.error(callback, error, event));
 };

@@ -55,13 +55,13 @@ export class RealmHandler {
     });
   }
 
-  getAllRealms(event: APIGatewayEvent, callback: Callback) {
-    new DatabaseUtil()
-      .query(RealmQuery.getAll())
-      .then(res =>
-        Response.send(res, callback))
-      .catch(error =>
-        Response.error(callback, error, event));
+  getAllRealms() {
+    return new Promise((resolve, reject) => {
+      new DatabaseUtil()
+        .query(RealmQuery.getAll())
+        .then(resolve)
+        .catch(reject);
+    });
   }
 
   async getAllRealmsGrouped(event: APIGatewayEvent, callback: Callback) {

@@ -107,16 +107,32 @@ export class AuctionHandler {
               console.log(`Successfully updated id=${ahId}`);
 
               resolve();
-              await this.createLastModifiedFile(ahId, region);
-              await new S3Handler().save(
-                data, `auctions/${region}/${ahId}/auctions.json.gz`,
-                {region, ahId, lastModified, size})
-                .then(console.log)
+              Promise.all([
+                this.createAuctionsFile(data, region, ahId, lastModified, size),
+                this.createLastModifiedFile(ahId, region),
+                this.updateAllStatuses(region)
+              ])
                 .catch(console.error);
             })
             .catch(reject);
         })
         .catch(reject);
+    });
+  }
+
+  private async createAuctionsFile(data: any, region: string, ahId: number, lastModified: number, size: number) {
+    return new Promise((resolve) => {
+      new S3Handler().save(
+        data, `auctions/${region}/${ahId}/auctions.json.gz`,
+        {region, ahId, lastModified, size})
+        .then((res) => {
+          console.log(res);
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          resolve();
+        });
     });
   }
 
@@ -328,12 +344,41 @@ export class AuctionHandler {
   }
 
   private async createLastModifiedFile(ahId: number, region: string) {
-    await new DatabaseUtil().query(RealmQuery.getHouse(ahId))
-      .then(async data => {
-        await new S3Handler().save(data, `auctions/${region}/${ahId}/lastModified.json.gz`, {url: '', region})
-          .then(uploaded => console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`))
-          .catch(console.error);
-      })
-      .catch(console.error);
+    return new Promise((resolve) => {
+      new DatabaseUtil().query(RealmQuery.getHouse(ahId, 0))
+        .then(async rows => {
+          if (rows) {
+            for (const realm of rows) {
+              await new S3Handler().save(realm, `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
+                .then(uploaded => {
+                  console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`);
+                })
+                .catch(error => {
+                  console.error(error);
+                });
+            }
+          }
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          resolve();
+        });
+    });
+  }
+
+  private async updateAllStatuses(region: string) {
+    return new Promise((resolve, reject) => {
+      new RealmHandler().getAllRealms()
+        .then((realms) => {
+          new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
+            .then((data) => {
+              console.log('Updated realm statuses', data);
+              resolve();
+            })
+            .catch(resolve);
+        })
+        .catch(resolve);
+    });
   }
 }
