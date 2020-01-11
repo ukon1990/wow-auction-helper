@@ -22,8 +22,8 @@ export class TSMHandler {
         WHERE
           (region = 'eu' OR region = 'us') AND (
           ah.id NOT IN (SELECT id FROM tsmDump) OR
-          (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > 12)
-        ORDER BY autoUpdate desc, lastModified desc
+          (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > 24)
+        ORDER BY lastModified desc
         LIMIT 1;
       `)
         .then(async (rows: { id, slug, region, lastModified }[]) => {
