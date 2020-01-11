@@ -38,7 +38,8 @@ export class RealmQuery {
 
   static getAll(): string {
     return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, ah.url as url,
-                   ah.lastModified as lastModified, lowestDelay, avgDelay, highestDelay, ah.size as size, tsm.url as tsmUrl
+                   ah.lastModified as lastModified, lowestDelay, avgDelay, highestDelay,
+       ah.size as size, tsm.url as tsmUrl, ah.autoUpdate as autoUpdate
             FROM auction_house_realm AS realm
                      LEFT OUTER JOIN auction_houses AS ah
                                      ON ah.id = realm.ahId

@@ -31,3 +31,11 @@ exports.handleGetAll = (event: APIGatewayEvent, context: Context, callback: Call
     .then((res) => Response.send(res, callback))
     .catch(error => Response.error(callback, error, event));
 };
+
+exports.realmS3GetEvent = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  Endpoints.setStage(event);
+  const {bucketName, key} = event['detail'].requestParameters;
+  new RealmHandler().checkIfRealmIsInactive(bucketName, key)
+    .then((res) => Response.send(res, callback))
+    .catch(error => Response.error(callback, error, event));
+};

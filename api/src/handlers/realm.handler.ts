@@ -8,6 +8,9 @@ import {LocaleHandler} from './locale.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
+import {S3Handler} from './s3.handler';
+import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
+import {GzipUtil} from '../utils/gzip.util';
 
 export class RealmHandler {
 
@@ -163,4 +166,31 @@ export class RealmHandler {
     }
   }
 
+  async checkIfRealmIsInactive(bucket: string, fileName: string) {
+    return new Promise((resolve, reject) => {
+      const regex = /auctions\/[a-z]{2}\/[\w]{1,30}\.json\.gz/gi;
+      if (fileName.indexOf('status.json.gz') === -1 && regex.exec(fileName)) {
+        const [auctions, region, realm] = fileName.split('/');
+        console.log('Files', {auctions, region, realm});
+        new S3Handler().get(bucket, `${auctions}/${region}/status.json.gz`)
+          .then(async (data: Buffer) => {
+            await new GzipUtil().decompress(data)
+              .then((statuses) => {
+                console.log('statuses', statuses);
+              })
+              .catch(console.error);
+            /*
+            statuses.forEach(status => {
+              if (status.slug === realm && status.region === region) {
+                console.log('Found the realm!', status);
+              }
+            });*/
+            resolve();
+          })
+          .catch(reject);
+      } else {
+        resolve();
+      }
+    });
+  }
 }

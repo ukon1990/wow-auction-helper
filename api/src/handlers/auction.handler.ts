@@ -91,7 +91,7 @@ export class AuctionHandler {
     return new Promise((resolve, reject) => {
       new S3Handler().save(
         data,
-        `auctions/${region}/${ahId}/${lastModified}.json.gz`,
+        `auctions/${region}/${ahId}/${lastModified}-lastModified.json.gz`,
         {
           region, ahId, lastModified, size
         })
@@ -189,43 +189,43 @@ export class AuctionHandler {
     });
   }
 
-  async updateAllHouses(event: APIGatewayEvent, callback: Callback) {
-    const region = event.body ?
-      JSON.parse(event.body).region : undefined;
+  async updateAllHouses(region: string): Promise<any> {
     await AuthHandler.getToken()
       .catch(console.error);
     console.log('Starting AH updates');
 
-    new DatabaseUtil()
-      .query(RealmQuery
-        .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
-      .then(async rows => {
-        const promiseThrottle = new PromiseThrottle({
-            requestsPerSecond: 50,
-            promiseImplementation: Promise
-          }),
-          promises = [];
-        console.log(`Updating ${rows.length} houses.`);
+    return new Promise((resolve, reject) => {
+      new DatabaseUtil()
+        .query(RealmQuery
+          .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
+        .then(async rows => {
+          const promiseThrottle = new PromiseThrottle({
+              requestsPerSecond: 50,
+              promiseImplementation: Promise
+            }),
+            promises = [];
+          console.log(`Updating ${rows.length} houses.`);
 
-        Response.send({
-          message: `Updating ${rows.length} houses.`,
-          rows
-        }, callback);
 
-        rows.forEach(row => {
-          if (region && row.region !== region) {
-            return;
-          }
-          this.addUpdateHousePromise(promises, promiseThrottle, row, event);
-        });
+          rows.forEach(row => {
+            if (region && row.region !== region) {
+              return;
+            }
+            this.addUpdateHousePromise(promises, promiseThrottle, row);
+          });
 
-        await Promise.all(promises)
-          .then(() =>
-            console.log('Done initiating AH updates'))
-          .catch(console.error);
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+          await Promise.all(promises)
+            .then(() =>
+              console.log('Done initiating AH updates'))
+            .catch(console.error);
+
+          resolve({
+            message: `Updating ${rows.length} houses.`,
+            rows
+          });
+        })
+        .catch(reject);
+    });
   }
 
   async deactivateInactiveHouses(event: APIGatewayEvent, callback: Callback): Promise<void> {
@@ -242,7 +242,7 @@ export class AuctionHandler {
       });
   }
 
-  private addUpdateHousePromise(promises, promiseThrottle, row, event: APIGatewayEvent) {
+  private addUpdateHousePromise(promises, promiseThrottle, row) {
     promises.push(
       promiseThrottle.add(
         new HttpClientUtil()
@@ -344,13 +344,18 @@ export class AuctionHandler {
         .then(async rows => {
           if (rows) {
             for (const realm of rows) {
-              await new S3Handler().save(realm, `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
-                .then(uploaded => {
-                  console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`);
+              await new DatabaseUtil().query(
+                RealmQuery.getHouseForRealm(realm.region, realm.slug))
+                .then(async (data) => {
+                  await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
+                    .then(uploaded => {
+                      console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`);
+                    })
+                    .catch(error => {
+                      console.error(error);
+                    });
                 })
-                .catch(error => {
-                  console.error(error);
-                });
+                .catch(console.error);
             }
           }
           resolve();
@@ -379,7 +384,6 @@ export class AuctionHandler {
 
   updateStaticS3Data(records: EventRecord[]) {
     return new Promise(async (resolve, reject) => {
-      console.log('Event', records);
       for (const record of records) {
         try {
           await this.processS3Record(record.s3);
@@ -395,7 +399,7 @@ export class AuctionHandler {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
-      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}\.json\.gz/gi;
+      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');

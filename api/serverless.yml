@@ -196,6 +196,7 @@ functions:
           path: realm
           cors:
             origin: '*'
+
   realmAllRegions:
     tags:
       Lambda: Wah-realmAllRegions

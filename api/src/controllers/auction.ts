@@ -28,7 +28,11 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 /* istanbul ignore next */
 exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   Endpoints.setStage(event);
-  new AuctionHandler().updateAllHouses(event, callback);
+  const region = event.body ?
+    JSON.parse(event.body).region : undefined;
+  new AuctionHandler().updateAllHouses(region)
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err));
 };
 
 /* istanbul ignore next */

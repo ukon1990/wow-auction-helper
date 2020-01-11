@@ -4,10 +4,8 @@ import {Endpoints} from '../utils/endpoints.util';
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   Endpoints.setStage(event);
-  console.log('Event', event, event['s3']);
-
-  event['Records'].forEach(r => {
-    console.log('Record', r.s3); // awsRegion
-  });
+  const detail = event['detail'];
+  console.log('requestParameters', detail.requestParameters);
+  console.log('Resources', detail.resources);
   Response.send(event, callback);
 };

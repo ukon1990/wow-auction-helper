@@ -14,4 +14,16 @@ export class GzipUtil {
         });
     });
   }
+
+  decompress(input: Buffer): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      zlib.unzip(input, (error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
 }
