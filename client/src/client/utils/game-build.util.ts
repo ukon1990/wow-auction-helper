@@ -50,4 +50,16 @@ export class GameBuild {
     'Jewelcrafting',
     'Inscription',
   ];
+
+  static professionsClassic: string[] = [
+    'Blacksmithing',
+    'Leatherworking',
+    'Alchemy',
+    'Cooking',
+    'Mining',
+    'Tailoring',
+    'Engineering',
+    'Enchanting',
+    'First aid',
+  ];
 }
