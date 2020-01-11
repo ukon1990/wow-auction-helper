@@ -103,14 +103,15 @@ export class AuctionHandler {
             .query(RealmQuery
               .updateUrl(
                 ahId, r.url, lastModified, size, delay))
-            .then(() => {
+            .then(async () => {
               console.log(`Successfully updated id=${ahId}`);
 
               resolve();
-              this.createLastModifiedFile(ahId, region);
-              new S3Handler().save(
+              await this.createLastModifiedFile(ahId, region);
+              await new S3Handler().save(
                 data, `auctions/${region}/${ahId}/auctions.json.gz`,
                 {region, ahId, lastModified, size})
+                .then(console.log)
                 .catch(console.error);
             })
             .catch(reject);
@@ -327,7 +328,7 @@ export class AuctionHandler {
   }
 
   private async createLastModifiedFile(ahId: number, region: string) {
-    new DatabaseUtil().query(RealmQuery.activateHouse(ahId))
+    await new DatabaseUtil().query(RealmQuery.getHouse(ahId))
       .then(async data => {
         await new S3Handler().save(data, `auctions/${region}/${ahId}/lastModified.json.gz`, {url: '', region})
           .then(uploaded => console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`))

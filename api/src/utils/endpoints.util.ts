@@ -41,10 +41,14 @@ export class Endpoints {
 
 
   static setStage(event: APIGatewayEvent) {
-    if (!event || !event.requestContext) {
+    try {
+      if (!event || !event.requestContext || !event.requestContext.stage) {
+        this.STAGE = 'prod';
+      }
+      this.STAGE = event.requestContext.stage;
+    } catch (e) {
       this.STAGE = 'prod';
     }
-    this.STAGE = event.requestContext.stage;
   }
 
   public getLambdaUrl(path: string, region: string): string {
