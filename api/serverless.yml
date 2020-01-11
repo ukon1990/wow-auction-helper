@@ -40,6 +40,11 @@ functions:
           path: auction/log/{id}
           cors:
             origin: '*'
+  auctionsUpdateStaticS3Data:
+    tags:
+      Lambda: Wah-auctions
+    handler: src/controllers/auction.updateStaticS3Data
+    memorySize: 512
   updateAllHouses:
     tags:
       Lambda: Wah-updateAllHouses
@@ -217,10 +222,6 @@ functions:
     tags:
       Lambda: Wah-test
     handler: src/controllers/test.handler
-    events:
-      - http:
-          method: any
-          path: test
 
   logger:
     tags:

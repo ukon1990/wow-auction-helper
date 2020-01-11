@@ -10,6 +10,7 @@ import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {RealmHandler} from './realm.handler';
+import {EventObject, EventRecord, EventSchema} from '../models/s3/event-record.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -107,12 +108,6 @@ export class AuctionHandler {
               console.log(`Successfully updated id=${ahId}`);
 
               resolve();
-              Promise.all([
-                this.createAuctionsFile(data, region, ahId, lastModified, size),
-                this.createLastModifiedFile(ahId, region),
-                this.updateAllStatuses(region)
-              ])
-                .catch(console.error);
             })
             .catch(reject);
         })
@@ -379,6 +374,45 @@ export class AuctionHandler {
             .catch(resolve);
         })
         .catch(resolve);
+    });
+  }
+
+  updateStaticS3Data(records: EventRecord[]) {
+    return new Promise(async (resolve, reject) => {
+      console.log('Event', records);
+      for (const record of records) {
+        try {
+          await this.processS3Record(record.s3);
+        } catch (e) {
+        }
+      }
+      resolve();
+    });
+  }
+
+  private processS3Record(record: EventSchema) {
+    return new Promise(async (resolve, reject) => {
+      if (!record || !record.object || !record.object.key) {
+        resolve();
+      }
+      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}\.json\.gz/gi;
+      if (regex.exec(record.object.key)) {
+        const splitted = record.object.key.split('/');
+        console.log('Processing S3 auction data update');
+        const [auctions, region, ahId] = splitted;
+        await Promise.all([
+          this.updateAllStatuses(region),
+          this.createLastModifiedFile(+ahId, region),
+          await new S3Handler().copy(
+            record.object.key,
+            `${auctions}/${region}/${ahId}/auctions.json.gz`,
+            record.bucket.name)
+            .then(() => console.log(`Successfully copied to auctions`))
+            .catch(console.error)
+        ])
+          .catch(console.error);
+      }
+      resolve();
     });
   }
 }

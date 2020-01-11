@@ -49,3 +49,10 @@ exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callba
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 401));
 };
+
+exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  Endpoints.setStage(event);
+  new AuctionHandler().updateStaticS3Data(event['Records'])
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 401));
+};
