@@ -40,39 +40,22 @@ functions:
           path: auction/log/{id}
           cors:
             origin: '*'
-  auctionsS3:
+  auctionsUpdateStaticS3Data:
     tags:
-      Lambda: Wah-auctionsS3
-    handler: src/controllers/auction.s3
-    events:
-      - http:
-          method: post
-          path: auction/s3
-          cors:
-            origin: '*'
+      Lambda: Wah-auctions
+    handler: src/controllers/auction.updateStaticS3Data
+    memorySize: 512
   updateAllHouses:
     tags:
       Lambda: Wah-updateAllHouses
     handler: src/controllers/auction.updateAll
     memorySize: 200
-    events:
-      - http:
-          method: any
-          path: auction/update
-          cors:
-            origin: '*'
 
   deactivateInactiveHouses:
     tags:
       Lambda: Wah-deactivateInactiveHouses
     handler: src/controllers/auction.deactivateInactiveHouses
     memorySize: 200
-    events:
-      - http:
-          method: any
-          path: auction/deactivate
-          cors:
-            origin: '*'
 
   updateSpesificHouse:
     tags:
@@ -213,6 +196,7 @@ functions:
           path: realm
           cors:
             origin: '*'
+
   realmAllRegions:
     tags:
       Lambda: Wah-realmAllRegions
@@ -239,10 +223,6 @@ functions:
     tags:
       Lambda: Wah-test
     handler: src/controllers/test.handler
-    events:
-      - http:
-          method: any
-          path: test
 
   logger:
     tags:

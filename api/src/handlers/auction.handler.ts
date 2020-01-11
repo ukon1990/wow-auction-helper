@@ -9,6 +9,8 @@ import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
+import {RealmHandler} from './realm.handler';
+import {EventObject, EventRecord, EventSchema} from '../models/s3/event-record.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -89,7 +91,7 @@ export class AuctionHandler {
     return new Promise((resolve, reject) => {
       new S3Handler().save(
         data,
-        `auctions/${region}/${ahId}/${lastModified}.json.gz`,
+        `auctions/${region}/${ahId}/${lastModified}-lastModified.json.gz`,
         {
           region, ahId, lastModified, size
         })
@@ -102,13 +104,30 @@ export class AuctionHandler {
             .query(RealmQuery
               .updateUrl(
                 ahId, r.url, lastModified, size, delay))
-            .then(() => {
+            .then(async () => {
               console.log(`Successfully updated id=${ahId}`);
+
               resolve();
             })
             .catch(reject);
         })
         .catch(reject);
+    });
+  }
+
+  private async createAuctionsFile(data: any, region: string, ahId: number, lastModified: number, size: number) {
+    return new Promise((resolve) => {
+      new S3Handler().save(
+        data, `auctions/${region}/${ahId}/auctions.json.gz`,
+        {region, ahId, lastModified, size})
+        .then((res) => {
+          console.log(res);
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          resolve();
+        });
     });
   }
 
@@ -170,43 +189,43 @@ export class AuctionHandler {
     });
   }
 
-  async updateAllHouses(event: APIGatewayEvent, callback: Callback) {
-    const region = event.body ?
-      JSON.parse(event.body).region : undefined;
+  async updateAllHouses(region: string): Promise<any> {
     await AuthHandler.getToken()
       .catch(console.error);
     console.log('Starting AH updates');
 
-    new DatabaseUtil()
-      .query(RealmQuery
-        .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
-      .then(async rows => {
-        const promiseThrottle = new PromiseThrottle({
-            requestsPerSecond: 50,
-            promiseImplementation: Promise
-          }),
-          promises = [];
-        console.log(`Updating ${rows.length} houses.`);
+    return new Promise((resolve, reject) => {
+      new DatabaseUtil()
+        .query(RealmQuery
+          .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
+        .then(async rows => {
+          const promiseThrottle = new PromiseThrottle({
+              requestsPerSecond: 50,
+              promiseImplementation: Promise
+            }),
+            promises = [];
+          console.log(`Updating ${rows.length} houses.`);
 
-        Response.send({
-          message: `Updating ${rows.length} houses.`,
-          rows
-        }, callback);
 
-        rows.forEach(row => {
-          if (region && row.region !== region) {
-            return;
-          }
-          this.addUpdateHousePromise(promises, promiseThrottle, row, event);
-        });
+          rows.forEach(row => {
+            if (region && row.region !== region) {
+              return;
+            }
+            this.addUpdateHousePromise(promises, promiseThrottle, row);
+          });
 
-        await Promise.all(promises)
-          .then(() =>
-            console.log('Done initiating AH updates'))
-          .catch(console.error);
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+          await Promise.all(promises)
+            .then(() =>
+              console.log('Done initiating AH updates'))
+            .catch(console.error);
+
+          resolve({
+            message: `Updating ${rows.length} houses.`,
+            rows
+          });
+        })
+        .catch(reject);
+    });
   }
 
   async deactivateInactiveHouses(event: APIGatewayEvent, callback: Callback): Promise<void> {
@@ -223,7 +242,7 @@ export class AuctionHandler {
       });
   }
 
-  private addUpdateHousePromise(promises, promiseThrottle, row, event: APIGatewayEvent) {
+  private addUpdateHousePromise(promises, promiseThrottle, row) {
     promises.push(
       promiseThrottle.add(
         new HttpClientUtil()
@@ -231,7 +250,7 @@ export class AuctionHandler {
           .bind(
             this,
             new Endpoints()
-              .getLambdaUrl('auction/update-one', row.region, event),
+              .getLambdaUrl('auction/update-one', row.region),
             row,
             true)));
   }
@@ -307,35 +326,97 @@ export class AuctionHandler {
       .catch(console.error);
   }
 
-  private async getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay }, lastModified: number) {
+  private async getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay },
+                         lastModified: number) {
     const {minTime, avgTime, maxTime} = await this.getUpdateLog(dbResult.id, 72);
-    /*
-    const diff = Math.round((lastModified - dbResult.lastModified) / 60000);
-    console.log(`The diff for ${dbResult.id} is ${diff}`, dbResult.lowestDelay, dbResult.highestDelay);
 
-
-    if (diff < dbResult.lowestDelay && diff >= 1 || !dbResult.lowestDelay) {
-      dbResult.lowestDelay = diff;
-    }
-
-
-    if (diff < 120) {
-      if (diff !== dbResult.avgDelay && dbResult.avgDelay) {
-        dbResult.avgDelay = (dbResult.avgDelay + diff) / 2;
-      } else if (!dbResult.avgDelay) {
-        dbResult.avgDelay = diff;
-      }
-
-      if (diff > dbResult.highestDelay) {
-        dbResult.highestDelay = diff;
-      }
-    }
-    */
     dbResult.lowestDelay = minTime > 120 ? 120 : minTime;
     dbResult.avgDelay = avgTime;
     dbResult.highestDelay = maxTime;
     return {
       lowest: dbResult.lowestDelay, avg: dbResult.avgDelay, highest: dbResult.highestDelay
     };
+  }
+
+  private async createLastModifiedFile(ahId: number, region: string) {
+    return new Promise((resolve) => {
+      new DatabaseUtil().query(RealmQuery.getHouse(ahId, 0))
+        .then(async rows => {
+          if (rows) {
+            for (const realm of rows) {
+              await new DatabaseUtil().query(
+                RealmQuery.getHouseForRealm(realm.region, realm.slug))
+                .then(async (data) => {
+                  await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
+                    .then(uploaded => {
+                      console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`);
+                    })
+                    .catch(error => {
+                      console.error(error);
+                    });
+                })
+                .catch(console.error);
+            }
+          }
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          resolve();
+        });
+    });
+  }
+
+  private async updateAllStatuses(region: string) {
+    return new Promise((resolve, reject) => {
+      new RealmHandler().getAllRealms()
+        .then((realms) => {
+          new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
+            .then((data) => {
+              console.log('Updated realm statuses', data);
+              resolve();
+            })
+            .catch(resolve);
+        })
+        .catch(resolve);
+    });
+  }
+
+  updateStaticS3Data(records: EventRecord[]) {
+    return new Promise(async (resolve, reject) => {
+      for (const record of records) {
+        try {
+          await this.processS3Record(record.s3);
+        } catch (e) {
+        }
+      }
+      resolve();
+    });
+  }
+
+  private processS3Record(record: EventSchema) {
+    return new Promise(async (resolve, reject) => {
+      if (!record || !record.object || !record.object.key) {
+        resolve();
+      }
+      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
+      if (regex.exec(record.object.key)) {
+        const splitted = record.object.key.split('/');
+        console.log('Processing S3 auction data update');
+        const [auctions, region, ahId] = splitted;
+        await Promise.all([
+          this.updateAllStatuses(region),
+          this.createLastModifiedFile(+ahId, region),
+          await new S3Handler().copy(
+            record.object.key,
+            `${auctions}/${region}/${ahId}/auctions.json.gz`,
+            record.bucket.name)
+            .then(() => console.log(`Successfully copied to auctions`))
+            .catch(console.error)
+        ])
+          .catch(console.error);
+      }
+      resolve();
+    });
   }
 }

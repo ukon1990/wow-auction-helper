@@ -16,6 +16,45 @@ export class S3Handler {
     });
   }
 
+  get(bucket: string, file: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const s3 = new AWS.S3({
+        accessKeyId: AWS_DETAILS.ACCESS_KEY,
+        secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
+      });
+      s3.getObject({
+        Bucket: bucket,
+        Key: file
+      }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  copy(origin: string, target: string, bucket: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const s3 = new AWS.S3({
+        accessKeyId: AWS_DETAILS.ACCESS_KEY,
+        secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
+      });
+      s3.copyObject({
+        Bucket: bucket,
+        CopySource: `${bucket}/${origin}`,
+        Key: target
+      }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
   private uploadGzip(path: string, buffer: Buffer, queryData: any) {
     return new Promise<any>((resolve, reject) => {
       const s3 = new AWS.S3({

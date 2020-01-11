@@ -1,6 +1,7 @@
 import {APIGatewayEvent, Callback, Context, Handler} from 'aws-lambda';
 import {AuctionHandler} from '../handlers/auction.handler';
 import {Response} from '../utils/response.util';
+import {Endpoints} from '../utils/endpoints.util';
 
 /* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
@@ -10,6 +11,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
     realm = body.realm,
     timestamp = body.timestamp,
     url = body.url;
+  Endpoints.setStage(event);
 
   switch (type) {
     case 'OPTIONS':
@@ -24,26 +26,18 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 /* istanbul ignore next */
-exports.s3 = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const type = event.httpMethod;
-
-  switch (type) {
-    case 'OPTIONS':
-    case 'POST':
-      new AuctionHandler().s3(event, context, callback);
-      break;
-    default:
-      Response.error(callback, 'The method you provided, is not available.', event);
-  }
-};
-
-/* istanbul ignore next */
 exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new AuctionHandler().updateAllHouses(event, callback);
+  Endpoints.setStage(event);
+  const region = event.body ?
+    JSON.parse(event.body).region : undefined;
+  new AuctionHandler().updateAllHouses(region)
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err));
 };
 
 /* istanbul ignore next */
 exports.updateOne = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  Endpoints.setStage(event);
   new AuctionHandler().updateHouseRequest(event, callback);
 };
 
@@ -54,7 +48,15 @@ exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, ca
 /* istanbul ignore next */
 exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const id = +event.pathParameters.id;
+  Endpoints.setStage(event);
   new AuctionHandler().getUpdateLog(id, 24 * 7)
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 401));
+};
+
+exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  Endpoints.setStage(event);
+  new AuctionHandler().updateStaticS3Data(event['Records'])
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 401));
 };
