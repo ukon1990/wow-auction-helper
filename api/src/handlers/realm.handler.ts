@@ -28,33 +28,47 @@ export class RealmHandler {
   }
 
   getRealmByRegionAndName(region: string, realm: string) {
+    console.log('Fetching realm status for ', region, realm);
+    const conn = new DatabaseUtil(false);
     return new Promise((resolve, reject) => {
-      new DatabaseUtil()
-        .query(
+      conn.query(
           RealmQuery.getHouseForRealm(region, realm))
         .then(async rows => {
+          console.log('Found', rows.length, 'realms');
           if (rows.length > 0) {
-            if (rows[0].autoUpdate === 0) {
-              await new DatabaseUtil().query(
-                RealmQuery.activateHouse(rows[0].id))
-                .then(() => console.log('Successfully activated id=', rows[0].id))
+            try {
+              if (rows[0].autoUpdate === 0) {
+                console.log('Attempting ah activation id=', rows[0].id);
+                await conn.query(
+                  RealmQuery.activateHouse(rows[0].id))
+                  .then(() => console.log('Successfully activated id=', rows[0].id))
+                  .catch(console.error);
+                new HttpClientUtil()
+                  .post(new Endpoints()
+                      .getLambdaUrl('auction/update-one', rows[0].region),
+                    rows[0],
+                    true);
+              }
+              console.log('updateLastRequested id=', rows[0].id);
+              await conn.query(
+                RealmQuery.updateLastRequested(rows[0].id))
+                .then(() => {})
                 .catch(console.error);
-              new HttpClientUtil()
-                .post(new Endpoints()
-                    .getLambdaUrl('auction/update-one', rows[0].region),
-                  rows[0],
-                  true);
+            } catch (e) {
+              console.error('Error', e);
             }
-            new DatabaseUtil().query(
-              RealmQuery.updateLastRequested(rows[0].id))
-              .then(() => {})
-              .catch(console.error);
+            conn.end();
             resolve(rows[0]);
           } else {
+            conn.end();
             resolve({});
           }
         })
-        .catch(reject);
+        .catch((error) => {
+          console.log('Could not fetch realm status for ', region, realm);
+          conn.end();
+          reject(error);
+        });
     });
   }
 

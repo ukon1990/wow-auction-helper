@@ -25,7 +25,7 @@ exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callbac
 };
 
 /* istanbul ignore next */
-exports.handleGetAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+exports.realmAllRegions = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   new RealmHandler()
     .getAllRealms()
     .then((res) => Response.send(res, callback))
