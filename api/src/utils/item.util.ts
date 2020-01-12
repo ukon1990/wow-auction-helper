@@ -84,8 +84,10 @@ export class ItemUtil {
 
   private static getItemsByQualityForPatch(patchNumber: number, quality: number): Promise<any> {
     return new Promise<any>((resolve) => {
-      new HttpClientUtil().get(`https://ptr.wowhead.com/items/quality:${
-        quality}?filter=82:161;2:1;${patchNumber}:0`, false)
+      const url = `https://ptr.wowhead.com/items/quality:${
+        quality}?filter=82:161;2:1;${patchNumber}:0`;
+      console.log('getItemsByQualityForPatch', url);
+      new HttpClientUtil().get(url, false)
         .then(({body}) => {
           resolve(WoWHeadUtil.getArrayVariable('listviewitems', body));
         })

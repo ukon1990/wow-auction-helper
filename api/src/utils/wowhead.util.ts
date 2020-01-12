@@ -8,7 +8,7 @@ import {
   WoWHeadSoldBy
 } from '../models/item/wowhead';
 import * as request from 'request';
-import {ArrayUtil, TextUtil} from '@ukon1990/js-utilities';
+import {ArrayUtil} from '@ukon1990/js-utilities';
 
 export class WoWHeadUtil {
 
@@ -189,13 +189,12 @@ export class WoWHeadUtil {
   }
 
   public static getNewListViewData<T>(body: string, template: string, id: string): T[] {
-    const firstRegex = new RegExp(`new Listview\\({[\\n\\r ]{0,}template: '${
+    const firstRegex = new RegExp(`new Listview\\({[\\n\\r ]{0,}template: ['"]{1,1}${
       template
-      }',[\\n\\r ]{0,}id: '${
+    }['"]{1,1},[\\n\\r ]{0,}id: ['"]{1,1}${
       id
-      }',([\\s\\S]*?)}\\);`, 'g');
+    }['"]{1,1},([\\s\\S]*?)}\\);`, 'g');
     const result = firstRegex.exec(body);
-
     if (!ArrayUtil.isArray(result) || result.length < 2) {
       return [];
     }

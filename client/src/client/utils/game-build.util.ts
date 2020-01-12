@@ -1,11 +1,20 @@
 export class GameBuild {
+
+  /**
+   * The version of the game client that the user uses
+   */
+  static versions = [
+    'Retail',
+    'Classic'
+  ];
+
   /**
    * A list of wow expansions
    *
    * @static
    * @memberof GameBuild
    */
-  public static expansionMap = [
+  static expansionMap = [
     'Classic',
     'Burning crusade',
     'Wrath of the Lich king',
@@ -40,5 +49,17 @@ export class GameBuild {
     'Enchanting',
     'Jewelcrafting',
     'Inscription',
+  ];
+
+  static professionsClassic: string[] = [
+    'Blacksmithing',
+    'Leatherworking',
+    'Alchemy',
+    'Cooking',
+    'Mining',
+    'Tailoring',
+    'Engineering',
+    'Enchanting',
+    'First aid',
   ];
 }
