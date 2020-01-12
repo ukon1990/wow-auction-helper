@@ -128,6 +128,7 @@ export class NPC {
   type: number;
   classification: number;
   avgGoldDrop: number; // Can not be used reliably as raw gold dropped.
+  patch: string;
 
   constructor(public id: number) {
     this.name.id = id;
@@ -197,7 +198,9 @@ export class NPC {
     }
 
     if (language.key === 'en') {
-      this.expansionId = WoWHeadUtil.getExpansion(body);
+      const patchAndExpansion = WoWHeadUtil.getExpansion(body);
+      this.expansionId = patchAndExpansion.expansionId;
+      this.patch = patchAndExpansion.patch;
       this.avgGoldDrop = this.getGoldDrop(body);
       this.drops = DroppedItem.setFromBody(body);
       this.sells = VendorItem.setFromBody(body);
@@ -454,7 +457,8 @@ export class NPCUtil {
         minLevel: npc.minLevel,
         maxLevel: npc.maxLevel,
         zoneId: npc.zoneId,
-        expansionId: npc.expansionId
+        expansionId: npc.expansionId,
+        patch: npc.patch
       });
       conn.query(sql)
         .then(resolve)

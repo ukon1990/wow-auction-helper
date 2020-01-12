@@ -4,9 +4,9 @@ import {TextUtil} from '@ukon1990/js-utilities';
 export class QueryIntegrity {
   private static contains: Function = TextUtil.contains;
 
-  static async getVerified(table: string, obj: object): Promise<any> {
+  static async getVerified(table: string, obj: object, connection: DatabaseUtil = new DatabaseUtil()): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      new DatabaseUtil().query(`describe ${table};`)
+      connection.query(`describe ${table};`)
         .then((result) => {
           const validObject = {};
           let isValid = true;

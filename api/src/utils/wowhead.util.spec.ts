@@ -17,6 +17,7 @@ fdescribe('WoWHeadUtil', () => {
 
     it('getExpansion', async () => {
       expect(blackrockOre.expansionId).toBe(5);
+      expect(blackrockOre.patch).toBe('6.0.1.18125');
     });
 
     it('getDroppedBy', async () => {

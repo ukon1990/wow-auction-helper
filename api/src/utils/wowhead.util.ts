@@ -17,7 +17,9 @@ export class WoWHeadUtil {
   // .replace(/,["]{0,1}pctstack["]{0,1}:{([\s\S]*?)}/g, 'tiss');
   public static setValuesAll(body: string): WoWHead {
     const wh: WoWHead = new WoWHead();
-    wh.expansionId = WoWHeadUtil.getExpansion(body);
+    const patchAndExpansion = WoWHeadUtil.getExpansion(body);
+    wh.expansionId = patchAndExpansion.expansionId;
+    wh.patch = patchAndExpansion.patch;
     // wh.createdBy = undefined;
     wh.containedInItem = WoWHeadUtil.getContainedInItem(body);
     wh.containedInObject = WoWHeadUtil.getContainedInObject(body); // contained-in-object
@@ -30,13 +32,20 @@ export class WoWHeadUtil {
     return wh;
   }
 
-  static getExpansion(body: string): number {
-    const expansionRegex = new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}/g),
+  static getExpansion(body: string): { patch: string; expansionId: number; } {
+    const expansionRegex = new RegExp(/Added in patch [0-9]{1,2}\.[0-9]{1,2}.[0-9]{1,8}.[0-9]{1,8}/g),
       addedIn = expansionRegex.exec(body);
     if (addedIn && addedIn[0]) {
-      return parseInt(addedIn[0].replace('Added in patch ', '').split('.')[0], 10) - 1;
+      const patch = addedIn[0].replace('Added in patch ', '');
+      return {
+        patch,
+        expansionId: parseInt(patch.split('.')[0], 10) - 1
+      };
     }
-    return 0;
+    return {
+      patch: '',
+      expansionId: 0
+    };
   }
 
   private static getMilledFrom(body: string): WoWHeadProspectedFrom[] {
