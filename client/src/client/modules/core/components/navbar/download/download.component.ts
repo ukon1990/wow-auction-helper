@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Angulartics2} from 'angulartics2';
 import {SharedService} from '../../../../../services/shared.service';
 import {ItemService} from '../../../../../services/item.service';
 import {CraftingService} from '../../../../../services/crafting.service';
@@ -11,8 +10,6 @@ import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
-import {Dashboard} from '../../../../dashboard/models/dashboard.model';
-import {Crafting} from '../../../../crafting/models/crafting';
 import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {BackgroundDownloadService} from '../../../../../services/background-download.service';
@@ -30,6 +27,7 @@ export class DownloadComponent implements OnInit {
   timeSinceUpdate = 0;
   realmControl: FormControl = new FormControl();
   downloadProgress = '';
+  gameVersion: number;
   subs = new SubscriptionManager();
 
   timestamps = {
@@ -53,6 +51,7 @@ export class DownloadComponent implements OnInit {
 
     this.timestamps = service.timestamps;
 
+
     this.subs.add(
       this._realmService.events.realmStatus,
       (status) => this.setRealmStatus(status));
@@ -61,6 +60,10 @@ export class DownloadComponent implements OnInit {
       this.service.timeSinceUpdate,
       time =>
         this.timeSinceUpdate = time);
+
+    this.subs.add(
+      this._realmService.events.gameVersion,
+      version => this.gameVersion = version);
   }
 
   private setRealmStatus(status: RealmStatus) {

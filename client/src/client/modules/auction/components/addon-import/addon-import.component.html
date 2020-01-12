@@ -1,76 +1,84 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Import manually scanned auction data(W.I.P)</mat-card-title>
-    <mat-card-subtitle>
-      <strong>Locate: </strong>
-      <em>
-        World of Warcraft/_classic_/WTF/Account/"account name"/SavedVariables/Auc-ScanData.lua
-      </em>
-    </mat-card-subtitle>
-    <mat-card-subtitle>
-      <strong>Last updated:</strong> {{ lastModified | date: 'dd.MMM yyyy HH:mm:ss' }}
-    </mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    For now, this feature uses the Auctioneer addon, as it also provides seller name.
-    To import the auction data that you've gathered, you simply do /reload in-game and import the file again
-    after you have let the addon update the AH data.
-    The data is stored in your browser, but you will need to manually update like this, every time.
-    <br>
+<button mat-button (click)="fileInput.click()" *ngIf="minimal; else bigTemplate">
+  <i class="fas fa-upload"></i>
+  Import addon data
+  <input class="d-none"
+         type="file"
+         accept="lua"
+         (change)="importFromFile($event)"
+         multiple
+         #fileInput/>
+</button>
 
-    <form [formGroup]="form" class="row">
-      <mat-form-field class="col">
-        <mat-select placeholder="Activate classic mode"
-                    formControlName="isClassicMode">
-          <mat-option [value]="0">Disabled</mat-option>
-          <mat-option [value]="1">Enabled(The app will not look for retail AH data)</mat-option>
-        </mat-select>
-      </mat-form-field>
+<ng-template #bigTemplate>
+  <mat-card >
+    <mat-card-header>
+      <mat-card-title>Import manually scanned auction data(W.I.P)</mat-card-title>
+      <mat-card-subtitle>
+        <strong>Locate: </strong>
+        <em>
+          World of Warcraft/_classic_/WTF/Account/"account name"/SavedVariables/Auc-ScanData.lua
+        </em>
+      </mat-card-subtitle>
+      <mat-card-subtitle>
+        <strong>Last updated:</strong> {{ lastModified | date: 'dd.MMM yyyy HH:mm:ss' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      For now, this feature uses the Auctioneer addon, as it also provides seller name.
+      To import the auction data that you've gathered, you simply do /reload in-game and import the file again
+      after you have let the addon update the AH data.
+      The data is stored in your browser, but you will need to manually update like this, every time.
+      <br>
 
-      <mat-form-field class="col">
-        <mat-select placeholder="Select realm"
-                    formControlName="realm">
-          <mat-option *ngIf="!result.length">
-            You must have scanned the AH first
-          </mat-option>
-          <mat-option>
-            no
-          </mat-option>
-          <mat-option *ngFor="let r of result" [value]="r.realm">
-            {{ r.realm }} ({{ r.lastScan| date: 'HH:mm M/d/yy' }})
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <form [formGroup]="form" class="row">
+
+        <mat-form-field class="col">
+          <mat-select placeholder="Select realm"
+                      formControlName="realm">
+            <mat-option *ngIf="!result.length">
+              You must have scanned the AH first
+            </mat-option>
+            <mat-option>
+              no
+            </mat-option>
+            <mat-option *ngFor="let r of result" [value]="r.realm">
+              {{ r.realm }} ({{ r.lastScan| date: 'HH:mm M/d/yy' }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
 
-      <mat-form-field class="col">
-        <mat-select placeholder="Select auction data source"
-                    formControlName="auctionDataSource">
-          <mat-option *ngIf="!AUCTION_DATA_SOURCES.length">
-            You must have scanned the AH first
-          </mat-option>
-          <mat-option *ngFor="let source of AUCTION_DATA_SOURCES; let i = index"
-                      [value]="i">
-            {{ source.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </form>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-button (click)="fileInput.click()">
-      <i class="fas fa-upload"></i>
-      Import "Auc-ScanData.lua"
-      <input class="d-none"
-             type="file"
-             accept="lua"
-             (change)="importFromFile($event)"
-             multiple
-             #fileInput/>
-    </button>
+        <mat-form-field class="col">
+          <mat-select placeholder="Select auction data source"
+                      formControlName="auctionDataSource">
+            <mat-option *ngIf="!AUCTION_DATA_SOURCES.length">
+              You must have scanned the AH first
+            </mat-option>
+            <mat-option *ngFor="let source of AUCTION_DATA_SOURCES; let i = index"
+                        [value]="i">
+              {{ source.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="fileInput.click()">
+        <i class="fas fa-upload"></i>
+        Import "Auc-ScanData.lua"
+        <input class="d-none"
+               type="file"
+               accept="lua"
+               (change)="importFromFile($event)"
+               multiple
+               #fileInput/>
+      </button>
 
-    <button mat-raised-button (click)="loadData()">
-      Reload saved data
-    </button>
-  </mat-card-actions>
-</mat-card>
+      <button mat-raised-button (click)="loadData()">
+        Reload saved data
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+</ng-template>
+

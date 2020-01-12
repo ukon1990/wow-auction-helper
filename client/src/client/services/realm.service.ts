@@ -21,15 +21,27 @@ export class RealmService {
   events = {
     realmStatus: new BehaviorSubject(undefined),
     list: new BehaviorSubject([]),
-    map: new BehaviorSubject(new Map<number, RealmStatus>())
+    map: new BehaviorSubject(new Map<number, RealmStatus>()),
+    classicList: new BehaviorSubject([]),
+    classicMap: new BehaviorSubject(new Map<number, RealmStatus>()),
+    gameVersion: new BehaviorSubject(0)
   };
 
   constructor(private http: HttpClient,
               private angulartics2: Angulartics2,
               private matSnackBar: MatSnackBar) {
+    const gameVersion = localStorage.getItem('gameVersion');
+    if (gameVersion !== undefined) {
+      this.events.gameVersion.next(+gameVersion);
+    }
+  }
+
+  setClassicRealms(): void {
+
   }
 
   async changeRealm(auctionsService: AuctionsService, newRealm: string, newRegion?: string) {
+    console.log('stuff', newRealm, newRegion);
     if (newRegion) {
       SharedService.user.region = newRegion;
     }
@@ -38,10 +50,10 @@ export class RealmService {
     User.save();
 
     if (!gameVersion) {
-    await this.getStatus(
-      region,
-      realm);
-    await auctionsService.getTsmAuctions();
+      await this.getStatus(
+        region,
+        realm);
+      await auctionsService.getTsmAuctions();
     } else {
       this.setClassicRealmAsCurrent(realm);
     }

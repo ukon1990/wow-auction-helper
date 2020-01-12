@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {User} from '../../../../models/user/user';
@@ -25,6 +25,7 @@ import {RealmStatus} from '../../../../models/realm-status.model';
   styleUrls: ['./addon-import.component.scss']
 })
 export class AddonImportComponent implements OnInit {
+  @Input() minimal: boolean;
   // Classic AH timer is 2, 8, 24
   lastModified: number;
   result = [];
@@ -53,7 +54,6 @@ export class AddonImportComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       realm: SharedService.user.realm,
-      isClassicMode: false,
       auctionDataSource: 1
     });
   }
@@ -71,11 +71,6 @@ export class AddonImportComponent implements OnInit {
       this.onRealmChange(realmClassic)
     );
 
-    this.sm.add(this.form.controls.isClassicMode.valueChanges, version => {
-      SharedService.user.gameVersion = version;
-      User.save();
-    });
-
     if (realm) {
       this.form.controls.realm.setValue(realm);
       const realmData = this.getCurrentRealmAuctions(realm);
@@ -83,8 +78,6 @@ export class AddonImportComponent implements OnInit {
         this.dbService.addClassicAuctions(realmData);
       }
     }
-
-    this.form.controls.isClassicMode.setValue(SharedService.user.gameVersion);
   }
 
   private getCurrentRealmAuctions(realm) {

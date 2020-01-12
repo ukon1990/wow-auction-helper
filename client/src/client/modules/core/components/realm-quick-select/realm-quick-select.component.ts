@@ -54,6 +54,10 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
+
+    this.sm.add(
+      this.form.controls.gameVersion.valueChanges,
+      (version) => this.handleGameVersionChange(version));
   }
 
   ngOnDestroy() {
@@ -78,8 +82,19 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     const map = {};
     this.realmList.length = 0;
 
-    this.setRealmsFromCharacters(map);
-    this.setSlugFromRealms(realms, map);
+    if (this.form.controls.gameVersion.value) {
+      const storedClassicRealms = localStorage.getItem('classicRealms');
+      if (storedClassicRealms) {
+        const list: RealmStatus[] = JSON.parse(storedClassicRealms);
+        list.forEach(realm => {
+          this.realmListMap[realm.slug] = {...realm, factions: [0, 0]};
+          this.realmList.push(realm);
+        });
+      }
+    } else {
+      this.setRealmsFromCharacters(map);
+      this.setSlugFromRealms(realms, map);
+    }
 
     this.realmList.sort((a, b) =>
       b.characterCount - a.characterCount);
@@ -124,6 +139,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     if (TextUtil.isEmpty(slug)) {
       return;
     }
+
     const realm = this.realmListMap[slug];
     const faction = SharedService.user.faction;
     if (realm && (!this.isCurrentRealm(slug) || faction === undefined)) {
@@ -135,7 +151,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     if (!this.isCurrentRealm(slug)) {
       this.realmService.changeRealm(this.auctionsService, slug);
     }
-    Report.send('handleRealmChange', 'CharacterSelectComponent');
+    Report.send('handleRealmChange', 'RealmQuickSelectComponent');
   }
 
   private isCurrentRealm(slug: string) {
@@ -147,6 +163,14 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     User.save();
 
     this.dbService.getTSMAddonData();
-    Report.send('handleFactionChange', 'CharacterSelectComponent');
+    Report.send('handleFactionChange', 'RealmQuickSelectComponent');
+  }
+
+  private handleGameVersionChange(version: number) {
+    SharedService.user.gameVersion = version;
+    this.realmService.events.gameVersion.next(version);
+    User.save();
+
+    Report.send('handleGameVersionChange', 'RealmQuickSelectComponent', this.gameVersions[version]);
   }
 }
