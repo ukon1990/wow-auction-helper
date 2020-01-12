@@ -2,12 +2,13 @@ import {RecipeUtil} from './recipe.util';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {
-    jest.setTimeout(30000);
+    jest.setTimeout(90000);
   });
 
-  it('getRecipeListForPatch', async () => {
+  xit('getRecipeListForPatch', async () => {
     const list = await RecipeUtil.getRecipeListForPatch(80300);
     expect(list.length).toBe(155);
+    console.log('ids', list.map(l => l.spellID).join(','));
 
     list.forEach(recipe => {
       expect(recipe.spellID).toBeTruthy();
@@ -29,7 +30,7 @@ describe('RecipeUtil', () => {
     expect(enchantingItemRank1.itemID).toBe(170312);
     expect(enchantingItemRank1.minCount).toBe(1);
     expect(enchantingItemRank1.maxCount).toBe(1);
-    expect(enchantingItemRank1.name).toBe('Uncanny Combatant\'s Sorcerous Scepter');
+    expect(enchantingItemRank1.name['en_GB']).toBe('Uncanny Combatant\'s Sorcerous Scepter');
     expect(enchantingItemRank1.rank).toBe(1);
     expect(enchantingItemRank2.rank).toBe(2);
     expect(enchantingItemRank3.rank).toBe(3);

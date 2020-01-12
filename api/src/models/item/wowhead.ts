@@ -10,6 +10,7 @@ export class WoWHead {
   currencyFor: WoWHeadCurrencyFor[];
   prospectedFrom: WoWHeadProspectedFrom[];
   milledFrom: WoWHeadProspectedFrom[];
+  patch: string;
   // objectiveOf: WoWHeadObjectiveOf[];
 }
 

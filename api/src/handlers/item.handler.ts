@@ -46,12 +46,29 @@ export class ItemHandler {
     return new Promise<Item>((resolve, reject) => {
       this.getFreshItem(id, locale)
         .then(async item => {
-          console.log('SQL: ', ItemQuery.update(item)); // inventoryType
-          new DatabaseUtil()
-            .query(ItemQuery.update(item))
-            .then(() =>
-              resolve(item))
-            .catch(reject);
+          const conn = new DatabaseUtil(false);
+          await QueryIntegrity.getVerified('items', item, conn)
+            .then((friendlyItem) => {
+              if (!friendlyItem) {
+                console.log(`Failed to add item: ${id} did not match the model`);
+                reject('The item did not follow the data model - ' + item.id);
+                return;
+              }
+              console.log('SQL: ', ItemQuery.update(item));
+              conn.query(new QueryUtil('items').update(item.id, friendlyItem))
+                .then(() => {
+                  conn.end();
+                  resolve(item);
+                })
+                .catch(error => {
+                  conn.end();
+                  reject(error);
+                });
+            })
+            .catch(error => {
+              conn.end();
+              reject(error);
+            });
         })
         .catch(reject);
     });

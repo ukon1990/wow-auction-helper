@@ -1,9 +1,10 @@
 import {Reagent} from './reagent';
+import {ItemLocale} from '../item/item-locale';
 
 export class Recipe {
   spellID: number;
   itemID: number;
-  name = 'Missing recipe data';
+  name: string | ItemLocale = 'Missing recipe data';
   profession?: string;
   rank?: string;
   minCount: number;

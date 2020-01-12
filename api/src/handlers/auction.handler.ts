@@ -214,7 +214,7 @@ export class AuctionHandler {
             this.addUpdateHousePromise(promises, promiseThrottle, row);
           });
 
-          await Promise.all(promises)
+          Promise.all(promises)
             .then(() =>
               console.log('Done initiating AH updates'))
             .catch(console.error);

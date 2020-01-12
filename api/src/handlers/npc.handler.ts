@@ -2,6 +2,7 @@ import {DroppedItem, NPC, NPCUtil, VendorItem} from '../utils/npc.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {ItemLocale} from '../models/item/item-locale';
 import {ApiResponse} from '../models/api-response.model';
+import {NPCQuery} from '../queries/npc.query';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -135,7 +136,8 @@ export class NpcHandler {
   }
 
   private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
-    await conn.query(`SELECT * FROM npc WHERE timestamp > "${new Date(timestamp).toJSON()}" ORDER BY timestamp desc;`)
+    console.log(`SELECT * FROM npc WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp)} ORDER BY timestamp desc;`);
+    await conn.query(NPCQuery.getAllAfterTimestamp(timestamp))
       .then((list) => {
         result.timestamp = list[0] ? list[0].timestamp : timestamp;
         list.forEach(row => {
@@ -148,19 +150,7 @@ export class NpcHandler {
   }
 
   private static async getAllNPCsLeftOuterJoin(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
-    await conn.query(`SELECT npc.id as id, isAlliance, isHorde, minLevel, maxLevel, zoneId, expansionId,
-                              npc.timestamp as timestamp, COALESCE(locale.en_GB, 'Missing name') as name, COALESCE(tag.en_GB, '') as tag,
-                              sells.id as sellId, sells.standing, sells.stock, sells.price,
-                              sells.unitPrice, sells.stackSize, sells.currency,
-                              drops.id as dropId, drops.dropped, drops.outOf, drops.dropChance,
-                              coords.x, coords.y
-                            FROM npc AS npc
-                            LEFT OUTER JOIN npcName AS locale ON npc.id = locale.id
-                            LEFT OUTER JOIN npcTag AS tag ON npc.id = tag.id
-                            LEFT OUTER JOIN npcSells AS sells ON npc.id = sells.npcId
-                            LEFT OUTER JOIN npcDrops AS drops ON npc.id = drops.npcId
-                            LEFT OUTER JOIN npcCoordinates AS coords ON npc.id = coords.id
-                            WHERE npc.timestamp > "${timestamp}" ORDER BY timestamp desc;`)
+    await conn.query(NPCQuery.getAllJoinedAfterTimestamp(timestamp))
       .then((list) => {
         result.timestamp = list[0].timestamp;
         list.forEach(row => {
