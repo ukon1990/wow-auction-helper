@@ -14,13 +14,15 @@ import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status
 import {Report} from '../utils/report.util';
 import {RealmStatus} from '../models/realm-status.model';
 import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
+import {RealmStatus} from '../models/realm-status.model';
 
 @Injectable()
 export class RealmService {
   previousUrl;
   events = {
-    realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
-    list: new BehaviorSubject<RealmStatus[]>([])
+    realmStatus: new BehaviorSubject(undefined),
+    list: new BehaviorSubject([]),
+    map: new BehaviorSubject(new Map<number, RealmStatus>())
   };
 
   constructor(private http: HttpClient,
@@ -37,10 +39,10 @@ export class RealmService {
     User.save();
 
     if (!gameVersion) {
-    await auctionsService.getTsmAuctions();
     await this.getStatus(
       region,
       realm);
+    await auctionsService.getTsmAuctions();
     } else {
       this.setClassicRealmAsCurrent(realm);
     }
@@ -64,10 +66,15 @@ export class RealmService {
     if (SharedService.user.gameVersion) {
       return;
     }
-    return this.http.get(Endpoints.getLambdaUrl(`realm/${region}/${realm}`, region))
+    // Endpoints.getS3URL(region, 'auctions', realm)
+    return this.http.get(Endpoints.getS3URL(region, 'auctions', realm))
       .toPromise()
-      .then((status: AuctionHouseStatus) => {
+      .then(async (status: AuctionHouseStatus) => {
         this.events.realmStatus.next(status);
+
+        if (!this.events.map.value.get(status.id)['autoUpdate'] && !status.autoUpdate) {
+          await this.activateInactiveRealm(region, realm);
+        }
 
         if (status.isUpdating && status.url !== this.previousUrl) {
           this.matSnackBar.open('New auction data is being processed on the server and will be available soon.');
@@ -79,11 +86,23 @@ export class RealmService {
       });
   }
 
-  getRealms(region?: string): Promise<any> {/*
-    if (SharedService.user.gameVersion) {
-      return;
-    }*/
-    return this.http.get(Endpoints.getLambdaUrl('realm/all', region))
+  private activateInactiveRealm(region, realm): Promise<any> {
+    this.openSnackbar('Your realm is currently inactive, it will now be activated');
+    return this.http.get(Endpoints.getLambdaUrl(`realm/${region}/${realm}`, region))
+      .toPromise()
+      .then((status: AuctionHouseStatus) => {
+        if (status.autoUpdate) {
+          this.openSnackbar('Your realm is currently inactive, it will now be activated');
+        }
+      })
+      .catch(error => {
+        this.openSnackbar('Something went wrong, with activating your realm');
+        ErrorReport.sendHttpError(error);
+      });
+  }
+
+  getRealms(region?: string): Promise<any> {
+    return this.http.get(Endpoints.getS3URL(region, 'auctions', 'status')) // Endpoints.getLambdaUrl('realm/all', region)
       .toPromise()
       .then((realms: any[]) =>
         this.handleRealms(realms))
@@ -99,7 +118,8 @@ export class RealmService {
       Object.keys(SharedService.realms).forEach(key => {
         delete SharedService.realms[key];
       });
-      realms.forEach((realm: Realm) => {
+      realms.forEach((realm: RealmStatus) => {
+        this.events.map.value.set(realm.ahId, realm);
         SharedService.realms[realm.slug] = realm;
       });
       Realm.gatherRealms();

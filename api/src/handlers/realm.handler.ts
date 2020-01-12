@@ -8,6 +8,9 @@ import {LocaleHandler} from './locale.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
+import {S3Handler} from './s3.handler';
+import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
+import {GzipUtil} from '../utils/gzip.util';
 
 export class RealmHandler {
 
@@ -24,44 +27,58 @@ export class RealmHandler {
 
   }
 
-  getRealmByRegionAndName(event: APIGatewayEvent, callback: Callback) {
-    const params = event.pathParameters;
-    new DatabaseUtil()
-      .query(
-        RealmQuery.getHouseForRealm(params.region, params.realm))
-      .then(async rows => {
-        if (rows.length > 0) {
-          if (rows[0].autoUpdate === 0) {
-            await new DatabaseUtil().query(
-              RealmQuery.activateHouse(rows[0].id))
-              .then(() => console.log('Successfully activated id=', rows[0].id))
-              .catch(console.error);
-            new HttpClientUtil()
-              .post(new Endpoints()
-                .getLambdaUrl('auction/update-one', rows[0].region, event),
-                rows[0],
-                true);
+  getRealmByRegionAndName(region: string, realm: string) {
+    console.log('Fetching realm status for ', region, realm);
+    const conn = new DatabaseUtil(false);
+    return new Promise((resolve, reject) => {
+      conn.query(
+          RealmQuery.getHouseForRealm(region, realm))
+        .then(async rows => {
+          console.log('Found', rows.length, 'realms');
+          if (rows.length > 0) {
+            try {
+              if (rows[0].autoUpdate === 0) {
+                console.log('Attempting ah activation id=', rows[0].id);
+                await conn.query(
+                  RealmQuery.activateHouse(rows[0].id))
+                  .then(() => console.log('Successfully activated id=', rows[0].id))
+                  .catch(console.error);
+                new HttpClientUtil()
+                  .post(new Endpoints()
+                      .getLambdaUrl('auction/update-one', rows[0].region),
+                    rows[0],
+                    true);
+              }
+              console.log('updateLastRequested id=', rows[0].id);
+              await conn.query(
+                RealmQuery.updateLastRequested(rows[0].id))
+                .then(() => {})
+                .catch(console.error);
+            } catch (e) {
+              console.error('Error', e);
+            }
+            conn.end();
+            resolve(rows[0]);
+          } else {
+            conn.end();
+            resolve({});
           }
-          Response.send(rows[0], callback);
-          new DatabaseUtil().query(
-            RealmQuery.updateLastRequested(rows[0].id))
-            .then(() => {})
-            .catch(console.error);
-        } else {
-          Response.send({}, callback);
-        }
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+        })
+        .catch((error) => {
+          console.log('Could not fetch realm status for ', region, realm);
+          conn.end();
+          reject(error);
+        });
+    });
   }
 
-  getAllRealms(event: APIGatewayEvent, callback: Callback) {
-    new DatabaseUtil()
-      .query(RealmQuery.getAll())
-      .then(res =>
-        Response.send(res, callback))
-      .catch(error =>
-        Response.error(callback, error, event));
+  getAllRealms() {
+    return new Promise((resolve, reject) => {
+      new DatabaseUtil()
+        .query(RealmQuery.getAll())
+        .then(resolve)
+        .catch(reject);
+    });
   }
 
   async getAllRealmsGrouped(event: APIGatewayEvent, callback: Callback) {
@@ -163,4 +180,31 @@ export class RealmHandler {
     }
   }
 
+  async checkIfRealmIsInactive(bucket: string, fileName: string) {
+    return new Promise((resolve, reject) => {
+      const regex = /auctions\/[a-z]{2}\/[\w]{1,30}\.json\.gz/gi;
+      if (fileName.indexOf('status.json.gz') === -1 && regex.exec(fileName)) {
+        const [auctions, region, realm] = fileName.split('/');
+        console.log('Files', {auctions, region, realm});
+        new S3Handler().get(bucket, `${auctions}/${region}/status.json.gz`)
+          .then(async (data: Buffer) => {
+            await new GzipUtil().decompress(data)
+              .then((statuses) => {
+                console.log('statuses', statuses);
+              })
+              .catch(console.error);
+            /*
+            statuses.forEach(status => {
+              if (status.slug === realm && status.region === region) {
+                console.log('Found the realm!', status);
+              }
+            });*/
+            resolve();
+          })
+          .catch(reject);
+      } else {
+        resolve();
+      }
+    });
+  }
 }

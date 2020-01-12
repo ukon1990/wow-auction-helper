@@ -23,6 +23,7 @@ export class Item {
   vendorBoughtLimit?: number;
   isBoughtForGold?: boolean;
   expansionId = 0;
+  patch: string;
   nameLocales: ItemLocale;
 
   inventory: ItemInventory;
@@ -47,6 +48,7 @@ export class Item {
 
   setDataFromWoWHead(wowHead: any) {
     this.expansionId = wowHead.expansionId;
+    this.patch = wowHead.patch;
     delete wowHead.expansionId;
     this.itemSource = wowHead;
   }

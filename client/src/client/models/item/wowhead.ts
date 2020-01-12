@@ -11,6 +11,7 @@ export class WoWHead {
   prospectedFrom: WoWHeadProspectedFrom[];
   milledFrom: WoWHeadProspectedFrom[];
   // objectiveOf: WoWHeadObjectiveOf[];
+  patch: string;
 }
 
 export class WoWHeadSoldBy {

@@ -1,5 +1,4 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {ZoneHandler} from '../handlers/zone.handler';
 import {Response} from '../utils/response.util';
 import {TSMHandler} from '../handlers/tsm.handler';
 

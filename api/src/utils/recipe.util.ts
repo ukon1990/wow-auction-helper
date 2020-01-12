@@ -52,6 +52,7 @@ export class RecipeUtil {
     return new Promise<Recipe[]>((resolve, reject) => {
       const urlName = this.getUrlName(this.slugifyString(profession), gameVersion);
       const url = this.getUrl(gameVersion, urlName, patchNumber);
+      console.log(url);
       new HttpClientUtil().get(url, false)
         .then(async ({body}) => {
           const list = this.getList(gameVersion, body);
@@ -72,12 +73,12 @@ export class RecipeUtil {
   }
 
   private static getUrlName(profession: string, gameVersion: string) {
-    return profession === 'Cooking' && !gameVersion ? `cooking-recipe` : profession;
+    return profession.toLowerCase() === 'cooking' && !gameVersion ? `cooking-recipe` : profession;
   }
 
   private static getUrl(gameVersion: string, urlName: string, patchNumber: number) {
-    return `https://${gameVersion.length ? gameVersion : 'ptr'}.wowhead.com/${
-      urlName.toLocaleLowerCase()}${gameVersion === '' ? '-spells' : ''}?filter=21;2;${patchNumber}`;
+    return `https://${gameVersion ? gameVersion : 'ptr'}.wowhead.com/${
+      urlName.toLocaleLowerCase()}${!gameVersion ? '-spells' : ''}?filter=21;2;${patchNumber}`;
   }
 
   private static async mapResultToRecipe(list, profession: string, gameVersion?: string) {
