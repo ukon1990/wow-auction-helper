@@ -39,7 +39,7 @@ export class RecipeQuery {
       SELECT r.id, json, ${getLocale(locale)} as name, timestamp from  recipes as r
       LEFT OUTER JOIN recipe_name_locale as l
       ON r.id = l.id
-      WHERE timestamp > "${timestamp + ''}"
+      WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000}
       ORDER BY timestamp desc;`;
   }
 

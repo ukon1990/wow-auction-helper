@@ -87,7 +87,7 @@ export class ItemHandler {
         const ts = rows[0] ? rows[0].timestamp : new Date().toJSON(),
           items = ItemUtil.handleItems(rows);
         Response.send({
-          timestamp: timestamp || ts,
+          timestamp: ts,
           items
         }, callback);
         items.length = 0;

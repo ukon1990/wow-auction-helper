@@ -7,6 +7,7 @@ import {DatabaseUtil} from './database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {Language} from '../models/language.model';
 import {ApiResponse} from '../models/api-response.model';
+import {ZoneQuery} from '../queries/zone.query';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -164,23 +165,9 @@ export class ZoneUtil {
   /* Istanbul ignore next */
   static getFromDB(locale = 'en_GB', timestamp = new Date().toJSON()): Promise<ApiResponse<Zone>> {
     return new Promise<ApiResponse<Zone>>((resolve, reject) => {
-      new DatabaseUtil().query(`
-            SELECT
-                   i.id,
-                   COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,
-                   territoryId,
-                   typeId,
-                   parentId,
-                   minLevel,
-                   maxLevel,
-                   timestamp
-            FROM zone as i
-            LEFT OUTER JOIN zoneName as l
-            ON i.id = l.id
-            WHERE timestamp > "${timestamp}"
-            ORDER BY timestamp desc;`)
+      new DatabaseUtil().query(ZoneQuery.getAllAfterTimestamp(locale, timestamp))
         .then((list) => {
-          const ts = list[0].timestamp;
+          const ts = list[0] ? list[0].timestamp : timestamp;
           list.forEach(row => {
             if (row.minLevel === 'undefined') {
               row.minLevel = undefined;

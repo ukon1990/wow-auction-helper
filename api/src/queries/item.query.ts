@@ -137,7 +137,7 @@ export class ItemQuery {
     FROM items as i
     LEFT OUTER JOIN item_name_locale as l
     ON i.id = l.id
-    WHERE timestamp > "${timestamp}"
+    WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000}
     ORDER BY timestamp desc;`;
   }
 
