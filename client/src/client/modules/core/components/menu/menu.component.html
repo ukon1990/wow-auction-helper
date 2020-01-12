@@ -71,11 +71,11 @@
             matTooltip="Display the extra menu">
       <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
     </button>
-    <mat-menu #menu="matMenu">
+    <mat-menu #menu="matMenu" (closed)="doNotClose($event)">
       <ng-container></ng-container>
       <div class="p-3">
-        <wah-shopping-cart></wah-shopping-cart>
-        <wah-realm-quick-select></wah-realm-quick-select>
+        <wah-shopping-cart (click)="doNotClose($event)"></wah-shopping-cart>
+        <wah-realm-quick-select (click)="doNotClose($event)"></wah-realm-quick-select>
       </div>
     </mat-menu>
   </ng-container>

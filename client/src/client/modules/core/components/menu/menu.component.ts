@@ -53,4 +53,11 @@ export class MenuComponent implements OnDestroy, OnInit {
     // @ts-ignore
     return window.innerWidth < 1534;
   }
+
+  doNotClose(event: MouseEvent): void {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
 }

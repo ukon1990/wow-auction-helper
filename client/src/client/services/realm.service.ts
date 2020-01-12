@@ -14,7 +14,6 @@ import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status
 import {Report} from '../utils/report.util';
 import {RealmStatus} from '../models/realm-status.model';
 import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
-import {RealmStatus} from '../models/realm-status.model';
 
 @Injectable()
 export class RealmService {
