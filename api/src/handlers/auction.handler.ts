@@ -11,6 +11,8 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {RealmHandler} from './realm.handler';
 import {EventObject, EventRecord, EventSchema} from '../models/s3/event-record.model';
+import {GzipUtil} from '../utils/gzip.util';
+import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -403,20 +405,50 @@ export class AuctionHandler {
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
-        const [auctions, region, ahId] = splitted;
+        const [auctions, region, ahId, fileName] = splitted;
         await Promise.all([
           this.updateAllStatuses(region),
           this.createLastModifiedFile(+ahId, region),
-          await new S3Handler().copy(
-            record.object.key,
-            `${auctions}/${region}/${ahId}/auctions.json.gz`,
-            record.bucket.name)
-            .then(() => console.log(`Successfully copied to auctions`))
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
+          this.processAuctions(record, +ahId, fileName)
             .catch(console.error)
         ])
           .catch(console.error);
       }
       resolve();
     });
+  }
+
+  private async processAuctions(record: EventSchema, ahId: number, fileName: string) {
+    return new Promise<void>((resolve, reject) => {
+      new S3Handler().get(record.bucket.name, record.object.key)
+        .then(async data => {
+          const start = +new Date();
+          await new GzipUtil().decompress(data['Body'])
+            .then(({auctions}) => {
+              console.log(`Decompressing auctions took ${+new Date() - start} ms`);
+              const query = AuctionProcessorUtil.process(
+                auctions, +fileName.split('-')[0], ahId);
+              const insertStart = +new Date();
+              new DatabaseUtil().query(query)
+                .then(ok => {
+                  console.log(`Completed item price stat import in ${+new Date() - insertStart} ms`, ok);
+                  resolve();
+                })
+                .catch(reject);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  private async copyAuctionsToNewFile(record: EventSchema, auctions: string, region: string, ahId: string) {
+    await new S3Handler().copy(
+      record.object.key,
+      `${auctions}/${region}/${ahId}/auctions.json.gz`,
+      record.bucket.name)
+      .then(() => console.log(`Successfully copied to auctions`))
+      .catch(console.error);
   }
 }
