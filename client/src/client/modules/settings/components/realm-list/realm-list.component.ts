@@ -5,6 +5,7 @@ import {RealmStatus} from '../../../../models/realm-status.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {AuctionUpdateLog, AuctionUpdateLogEntry} from '../../../../../../../api/src/models/auction/auction-update-log.model';
 import {Report} from '../../../../utils/report.util';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-realm-list',
@@ -21,9 +22,12 @@ export class RealmListComponent implements OnInit, OnDestroy {
     {key: 'battlegroup', title: 'Battlegroup', dataType: 'text'},
     {key: 'timezone', title: 'Timezone', dataType: 'text'},
     {key: 'locale', title: 'Locale', dataType: 'text'},
+    {key: 'autoUpdate', title: 'Is activated', dataType: 'boolean'},
     {key: 'lowestDelay', title: 'Minutes per update', dataType: 'number'},
     {key: 'size', title: 'Size in MB', dataType: 'number'},
-    {key: 'lastModified', title: 'Last updated', dataType: 'date'}
+    {key: 'lastModified', title: 'Last updated', dataType: 'date'},
+    {key: 'timeLeft', title: 'Time left', dataType: 'number'},
+    {key: 'nextUpdate', title: 'Next expected update', dataType: 'date'}
   ];
   show: boolean;
   logColumns: ColumnDescription[] = [
@@ -40,7 +44,14 @@ export class RealmListComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.service.events.list,
       (realms: RealmStatus[]) => {
-        this.realms = realms;
+        this.realms = realms.map(status => {
+          const nextUpdate = status.lastModified + status.lowestDelay * 1000 * 60;
+          return {
+            ...status,
+            timeLeft: DateUtil.timeSince(new Date(nextUpdate), 'm') * -1,
+            nextUpdate: nextUpdate
+          };
+        });
         this.reset();
       });
   }

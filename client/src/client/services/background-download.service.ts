@@ -89,12 +89,12 @@ export class BackgroundDownloadService {
     this.auctionsService.doNotOrganize = true;
 
     await Promise.all([
-      this.loadItems(),
-      this.loadPets(),
-      this.loadNpc(),
-      this.loadRecipes(),
-      this.loadZones(),
-      this.loadThirdPartyAPI()
+      this.loadItems().catch(console.error),
+      this.loadPets().catch(console.error),
+      this.loadNpc().catch(console.error),
+      this.loadRecipes().catch(console.error),
+      this.loadZones().catch(console.error),
+      this.loadThirdPartyAPI().catch(console.error)
     ])
       .catch(console.error);
 
