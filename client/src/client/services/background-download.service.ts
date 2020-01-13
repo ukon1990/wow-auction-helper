@@ -33,7 +33,9 @@ export class BackgroundDownloadService {
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
-    wowuction: localStorage['timestamp_wowuction']
+    wowuction: localStorage['timestamp_wowuction'],
+    npc: localStorage.getItem('timestamp_npcs'),
+    zone: localStorage.getItem('timestamp_zone')
   };
   private checkingForUpdates: boolean;
   private realmStatus: RealmStatus;
@@ -69,6 +71,8 @@ export class BackgroundDownloadService {
       this.timestamps.auctions = localStorage['timestamp_auctions'];
       this.timestamps.tsm = localStorage['timestamp_tsm'];
       this.timestamps.wowuction = localStorage['timestamp_wowuction'];
+      this.timestamps.npc = localStorage.getItem('timestamp_npcs');
+      this.timestamps.zone = localStorage.getItem('timestamp_zone');
     }, 1000);
   }
 

@@ -55,7 +55,8 @@ export class RealmService {
         this.events.realmStatus.next(status);
 
         if (!this.events.map.value.get(status.id)['autoUpdate'] && !status.autoUpdate) {
-          await this.activateInactiveRealm(region, realm);
+          this.activateInactiveRealm(region, realm)
+            .catch(error => ErrorReport.sendHttpError(error));
         }
 
         if (status.isUpdating && status.url !== this.previousUrl) {

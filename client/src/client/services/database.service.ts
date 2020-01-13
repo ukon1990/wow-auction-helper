@@ -130,7 +130,8 @@ export class DatabaseService {
     if (this.platform === null || this.platform.WEBKIT) {
       return;
     }
-    await this.db.table('zones').bulkPut(list);
+    await this.db.table('zones').bulkPut(list)
+      .catch(console.error);
   }
 
   async getAllZones(): Dexie.Promise<Zone[]> {

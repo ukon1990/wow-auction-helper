@@ -5,6 +5,7 @@ import {BehaviorSubject} from 'rxjs';
 import {Zone} from '../models/zone.model';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {SharedService} from '../../../services/shared.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,10 @@ export class ZoneService {
   constructor(private http: HttpClient, private dbService: DatabaseService) {
   }
 
-  getAll(): Promise<Zone[]> {
+  getAll(forceUpdate = false): Promise<Zone[]> {
+    if (forceUpdate) {
+      localStorage.removeItem(this.storageName);
+    }
     const locale = localStorage['locale'];
     return new Promise<Zone[]>(async (resolve, reject) => {
       await this.dbService.getAllZones()
@@ -34,16 +38,20 @@ export class ZoneService {
   }
 
   private getAllFromS3(): Promise<any[]> {
+    SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
     return new Promise<any[]>((resolve, reject) => {
       this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz`)
         .toPromise()
-        .then((response) => {
+        .then(async (response) => {
+          SharedService.downloading.zone = false;
           localStorage[this.storageName] = response['timestamp'];
           this.mapAndSetNextValueForZones(response['zones']);
+          await this.dbService.addZones(response['zones']);
           resolve(this.list.value);
         })
         .catch(error => {
+          SharedService.downloading.zone = false;
           ErrorReport.sendHttpError(error);
           resolve(this.list.value);
         });
@@ -51,17 +59,21 @@ export class ZoneService {
   }
 
   private async getAllAfterTimestamp() {
+    SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
     return new Promise<Zone[]>((resolve) => {
 
       this.http.post(Endpoints.getLambdaUrl('zone'),
         {locale, timestamp: localStorage.getItem(this.storageName)})
         .toPromise()
-        .then(response => {
+        .then(async response => {
+          SharedService.downloading.zone = false;
           localStorage[this.storageName] = response['timestamp'];
           this.mapAndSetNextValueForZones(response['zones']);
+          await this.dbService.addZones(response['zones']);
           resolve(this.list.value);
         }).catch(error => {
+        SharedService.downloading.zone = false;
         ErrorReport.sendHttpError(error);
         resolve(this.list.value);
       });

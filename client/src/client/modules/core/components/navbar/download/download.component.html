@@ -92,6 +92,32 @@
         </tr>
         <tr>
           <td>
+            <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
+          </td>
+          <td>NPCs</td>
+          <td>{{ timestamps.npc | date: 'HH:mm M/d/yy' }}</td>
+          <td>
+            <button mat-icon-button (click)="download('npc', true)"
+                    matTooltip="Re-download npc data">
+              <i class="fas fa-download"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <mat-spinner *ngIf="getDownloading().zone" class="float-left mr-2"></mat-spinner>
+          </td>
+          <td>Zones</td>
+          <td>{{ timestamps.zone | date: 'HH:mm M/d/yy' }}</td>
+          <td>
+            <button mat-icon-button (click)="download('zone', true)"
+                    matTooltip="Re-download zone data">
+              <i class="fas fa-download"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
           </td>
           <td>Auctions</td>
