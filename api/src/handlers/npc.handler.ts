@@ -3,6 +3,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {ItemLocale} from '../models/item/item-locale';
 import {ApiResponse} from '../models/api-response.model';
 import {NPCQuery} from '../queries/npc.query';
+import {QueryUtil} from '../utils/query.util';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -68,7 +69,7 @@ export class NpcHandler {
   }
 
   private static async getAllNPCSoldItems(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
-    await conn.query(`SELECT * FROM npcSells WHERE npcId in (select id from npc where timestamp >= "${timestamp}");`)
+    await conn.query(`SELECT * FROM npcSells WHERE npcId in (select id from npc where ${QueryUtil.unixTimestamp(timestamp)});`)
       .then((list: any[]) => {
         list.forEach(row => {
           if (!npcMap[row.npcId]) {
@@ -85,7 +86,7 @@ export class NpcHandler {
   }
 
   private static async getAllNPCDrops(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
-    await conn.query(`SELECT * FROM npcDrops WHERE npcId in (select id from npc where timestamp >= "${timestamp}");`)
+    await conn.query(`SELECT * FROM npcDrops WHERE npcId in (select id from npc where ${QueryUtil.unixTimestamp(timestamp)});`)
       .then((list: any[]) => {
         list.forEach(row => {
           if (!npcMap[row.npcId]) {
@@ -102,7 +103,7 @@ export class NpcHandler {
   }
 
   private static async getAllCoordinates(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
-    await conn.query(`SELECT * FROM npcCoordinates WHERE id in (select id from npc where timestamp >= "${timestamp}");`)
+    await conn.query(`SELECT * FROM npcCoordinates WHERE id in (select id from npc where ${QueryUtil.unixTimestamp(timestamp)});`)
       .then((list: any[]) => {
         list.forEach(row => {
           delete row.timestamp;
@@ -116,7 +117,7 @@ export class NpcHandler {
   }
 
   private static async getAllTags(conn: DatabaseUtil, npcMap: {}, locale: string, timestamp: string) {
-    await conn.query(`SELECT * FROM npcTag WHERE id in (select id from npc where timestamp >= "${timestamp}");`)
+    await conn.query(`SELECT * FROM npcTag WHERE id in (select id from npc where ${QueryUtil.unixTimestamp(timestamp)});`)
       .then((list: any[]) => {
         list.forEach(row => {
           npcMap[row.id]['tag'] = locale ? row[locale] : row;
@@ -126,7 +127,7 @@ export class NpcHandler {
   }
 
   private static async getAllNPCNames(conn: DatabaseUtil, npcMap: {}, locale: string, timestamp: string) {
-    await conn.query(`SELECT * FROM npcName WHERE id in (select id from npc where timestamp >= "${timestamp}");`)
+    await conn.query(`SELECT * FROM npcName WHERE id in (select id from npc where ${QueryUtil.unixTimestamp(timestamp)});`)
       .then((list: any[]) => {
         list.forEach(row => {
           npcMap[row.id]['name'] = locale ? row[locale] : row;
@@ -136,7 +137,7 @@ export class NpcHandler {
   }
 
   private static async getAllNPCs(conn: DatabaseUtil, npcMap: {}, result, timestamp: string) {
-    console.log(`SELECT * FROM npc WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp)} ORDER BY timestamp desc;`);
+    console.log(`SELECT * FROM npc WHERE ${QueryUtil.unixTimestamp(timestamp)} ORDER BY timestamp desc;`);
     await conn.query(NPCQuery.getAllAfterTimestamp(timestamp))
       .then((list) => {
         result.timestamp = list[0] ? list[0].timestamp : timestamp;
