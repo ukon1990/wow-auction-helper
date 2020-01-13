@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Angulartics2} from 'angulartics2';
 import {SharedService} from '../../../../../services/shared.service';
 import {ItemService} from '../../../../../services/item.service';
 import {CraftingService} from '../../../../../services/crafting.service';
@@ -11,12 +10,12 @@ import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
-import {Dashboard} from '../../../../dashboard/models/dashboard.model';
-import {Crafting} from '../../../../crafting/models/crafting';
 import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {BackgroundDownloadService} from '../../../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
+import {NpcService} from '../../../../npc/services/npc.service';
+import {ZoneService} from '../../../../zone/service/zone.service';
 
 @Component({
   selector: 'wah-download',
@@ -38,7 +37,9 @@ export class DownloadComponent implements OnInit {
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
-    wowuction: localStorage['timestamp_wowuction']
+    wowuction: localStorage['timestamp_wowuction'],
+    npc: localStorage.getItem('timestamp_npcs'),
+    zone: localStorage.getItem('timestamp_zone')
   };
   private realmStatus: RealmStatus;
 
@@ -48,6 +49,8 @@ export class DownloadComponent implements OnInit {
     private _craftingService: CraftingService,
     private _auctionsService: AuctionsService,
     private _petService: PetsService,
+    private npcService: NpcService,
+    private zoneService: ZoneService,
     private _dbService: DatabaseService,
     private service: BackgroundDownloadService) {
 
@@ -123,6 +126,13 @@ export class DownloadComponent implements OnInit {
       case 'recipes':
         this.downloadRecipes(forceUpdate);
         break;
+      case 'npc':
+        this.npcService.getAll(true)
+          .catch(console.error);
+        break;
+      case 'zone':
+        this.zoneService.getAll(true)
+          .catch(console.error);
     }
   }
 

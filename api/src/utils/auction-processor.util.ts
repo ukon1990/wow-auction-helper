@@ -42,6 +42,9 @@ export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number): string {
     const start = +new Date();
     const list: AuctionItemStat[] = [], map = {}, queries = [];
+    if (!auctions) {
+      return '';
+    }
     for (let i = 0, l = auctions.length; i < l; ++i) {
       this.processAuction(map, list, auctions[i], lastModified, ahId);
     }

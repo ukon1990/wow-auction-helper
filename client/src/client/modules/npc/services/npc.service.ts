@@ -6,6 +6,7 @@ import {NPC} from '../models/npc.model';
 import {Report} from '../../../utils/report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {SharedService} from '../../../services/shared.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,10 @@ export class NpcService {
   constructor(private http: HttpClient, private db: DatabaseService) {
   }
 
-  getAll(): Promise<NPC[]> {
+  getAll(forceUpdate = false): Promise<NPC[]> {
+    if (forceUpdate) {
+      localStorage.removeItem(this.storageName);
+    }
     return new Promise<NPC[]>(async (resolve) => {
       await this.db.getAllNPCs()
         .then(list => {
@@ -41,12 +45,14 @@ export class NpcService {
   }
 
   private getAllFromS3(): Promise<NPC[]> {
+    SharedService.downloading.npc = true;
     const locale = localStorage['locale'];
     this.isLoading = true;
     return new Promise<any[]>(async (resolve, reject) => {
       await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz`)
         .toPromise()
         .then((response) => {
+          SharedService.downloading.npc = false;
           const list = response['npcs'],
             map = {};
           this.isLoading = false;
@@ -56,17 +62,22 @@ export class NpcService {
             .catch(console.error);
           resolve(list);
         })
-        .catch(console.error);
+        .catch(error => {
+          SharedService.downloading.npc = false;
+          console.error(error);
+        });
     });
   }
 
   getAllAfterTimestamp(): Promise<NPC[]> {
+    SharedService.downloading.npc = true;
     const locale = localStorage['locale'];
     return new Promise<NPC[]>((resolve, reject) => {
       this.http.post(Endpoints.getLambdaUrl('npc/all'),
         {locale, timestamp: localStorage.getItem(this.storageName)})
         .toPromise()
         .then((response) => {
+          SharedService.downloading.npc = false;
           localStorage[this.storageName] = response['timestamp'];
           this.mapAndSetNextValueForNPCs(response['npcs']);
           this.db.addNPCs(response['npcs'])
@@ -74,6 +85,7 @@ export class NpcService {
           resolve(this.list.value);
         })
         .catch((error) => {
+          SharedService.downloading.npc = false;
           ErrorReport.sendHttpError(error);
           resolve(this.list.value);
       });

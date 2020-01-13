@@ -109,7 +109,9 @@ export class SharedService {
     items: false,
     pets: false,
     recipes: false,
-    characterData: false
+    characterData: false,
+    zone: false,
+    npc: false
   };
 
   /* istanbul ignore next */

@@ -419,16 +419,17 @@ export class AuctionHandler {
     });
   }
 
-  private async processAuctions(record: EventSchema, ahId: number, fileName: string) {
+  async processAuctions(record: EventSchema, ahId: number, fileName: string) {
     return new Promise<void>((resolve, reject) => {
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
           const start = +new Date();
           await new GzipUtil().decompress(data['Body'])
             .then(({auctions}) => {
-              console.log(`Decompressing auctions took ${+new Date() - start} ms`);
+              const lastModified = +fileName.split('-')[0];
+              console.log(`Decompressing auctions took ${+new Date() - start} ms for ${lastModified} @ id=${ahId}`);
               const query = AuctionProcessorUtil.process(
-                auctions, +fileName.split('-')[0], ahId);
+                auctions, lastModified, ahId);
               const insertStart = +new Date();
               new DatabaseUtil().query(query)
                 .then(ok => {
