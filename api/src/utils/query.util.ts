@@ -2,6 +2,11 @@ import {ArrayUtil, EmptyUtil} from '@ukon1990/js-utilities';
 import {safeifyString} from './string.util';
 
 export class QueryUtil<T> {
+
+  static unixTimestamp(timestamp): string {
+    return `UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp)}`;
+  }
+
   constructor(private table: string, private setTimestamp = true) {
   }
 
@@ -26,8 +31,8 @@ export class QueryUtil<T> {
     return `INSERT INTO ${this.table
     }(${
       cv.columns.join(',')
-    }${ this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.join(',')
-    }${ this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''});`;
+    }${this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.join(',')
+    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''});`;
   }
 
   private getColumnsAndValues(object: T) {
