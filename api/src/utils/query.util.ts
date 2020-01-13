@@ -35,6 +35,23 @@ export class QueryUtil<T> {
     }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''});`;
   }
 
+  /* Need to have the same column count */
+  multiInsert(list: T[]): string {
+    let queries = '';
+    for (let i = 0, l = list.length; i < l; ++i) {
+      const cv = this.getColumnsAndValues(list[i]);
+      if (!i) {
+        queries = `INSERT INTO ${this.table
+        }(${
+          cv.columns.join(',')
+        }) VALUES(${cv.values.join(',')})`;
+      } else {
+        queries += `,(${cv.values.join(',')})`;
+      }
+    }
+    return queries + ';';
+  }
+
   private getColumnsAndValues(object: T) {
     const columns = [];
     const values = [];
