@@ -16,7 +16,7 @@
       </mat-card-title>
 
       <mat-card-subtitle>
-        If no users have used a realm for 14 days or more, that realm is no longer auto updating. A realm is activated, once someone selects that realm in the app.
+        A realm has auto update set, if a user requests that realm. If it is not set to auto update, it's only kept ut to date once per day. Clicking on a row displays It's update history.
       </mat-card-subtitle><!--
       <mat-card-subtitle>
         Click on a realm that has been active withing the past 7 days, to get a log over the AH update interval.
@@ -28,10 +28,9 @@
       </mat-card-subtitle>-->
     </mat-card-header>
     <mat-card-content>
-      {{ selectedDataset.data.length | number }}
       <wah-data-table
               filterParameter="name"
-              [numOfRows]="10"
+              [numOfRows]="100"
               [columns]="selectedDataset.columns"
               [data]="selectedDataset.data"
               (rowClicked)="realmSelect($event)">
