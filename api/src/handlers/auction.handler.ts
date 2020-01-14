@@ -10,9 +10,9 @@ import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {RealmHandler} from './realm.handler';
-import {EventObject, EventRecord, EventSchema} from '../models/s3/event-record.model';
+import {EventRecord, EventSchema} from '../models/s3/event-record.model';
 import {GzipUtil} from '../utils/gzip.util';
-import {AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionProcessorUtil, AuctionItemStat} from '../utils/auction-processor.util';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -409,9 +409,9 @@ export class AuctionHandler {
         await Promise.all([
           this.updateAllStatuses(region),
           this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
-          this.processAuctions(record, +ahId, fileName)
-            .catch(console.error)
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId)/*,
+          this.processDayForHouse(record.bucket.name, +ahId, region)
+            .catch(console.error)*/
         ])
           .catch(console.error);
       }
@@ -419,7 +419,8 @@ export class AuctionHandler {
     });
   }
 
-  async processAuctions(record: EventSchema, ahId: number, fileName: string) {
+  /*
+  private async processAuctions(record: EventSchema, ahId: number, fileName: string) {
     return new Promise<void>((resolve, reject) => {
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
@@ -443,6 +444,89 @@ export class AuctionHandler {
         .catch(reject);
     });
   }
+*/
+  async processDayForHouse(bucket: string, id: number, region: string, date = new Date().toISOString().split('T')[0]): Promise<any> {
+    /* TODO: Don't process all files, but the previous file of the day and the newly processed items
+    * */
+    console.log(`${date}T00:00Z`);
+    const bucketRegion = bucket.split('-')[2];
+    return new Promise((resolve, reject) => {
+      const s3 = new S3Handler();
+      s3.list(bucket, `auctions/${bucketRegion}/${id}`)
+        .then(async ({Contents}) => {
+          const startDay = +new Date(`${date}T00:00Z`),
+            endDay = +new Date(`${date}T23:59:59Z`);
+          const promises = [];
+          const promiseThrottle = new PromiseThrottle({
+            requestsPerSecond: 100000,
+            promiseImplementation: Promise
+          });
+          Contents.map(async file => {
+            if (+new Date(file.LastModified) >= startDay && +new Date(file.LastModified) <= endDay) {
+              promises.push(
+                promiseThrottle.add(() => this.getProcessedFile(bucket, file.Key)));
+            }
+          });
+          await Promise.all(promises)
+            .then((l) => {
+              this.groupProcesseItemsAndUpload(bucket, startDay, l, id, region)
+                .then(() => {
+                  console.log('Done processing today\'s auctions for id=', id);
+                  resolve();
+                })
+                .catch(reject);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  private groupProcesseItemsAndUpload(bucket: string, startDay: number, l: unknown[], id: number, region: string) {
+    return new Promise((resolve, reject) => {
+      const date = new Date(startDay),
+        year = date.getFullYear(),
+        month = date.getMonth() + 1,
+        day = date.getDate(),
+        s3 = new S3Handler(),
+        promises = [],
+        promiseThrottle = new PromiseThrottle({
+          requestsPerSecond: 1000000,
+          promiseImplementation: Promise
+        });
+      const map = new Map<string, AuctionItemStat[]>();
+      l.map((statMap: Map<string, AuctionItemStat>) => {
+        Object.keys(statMap)
+          .forEach(mapId => {
+            const item = statMap[mapId];
+            if (!map[item.itemId]) {
+              map[item.itemId] = {};
+            }
+            if (!map[item.itemId][mapId]) {
+              map[item.itemId][mapId] = [];
+            }
+            map[item.itemId][mapId].push(item);
+          });
+      });
+
+      console.log('Item count', Object.keys(map).length);
+
+      Object.keys(map).forEach(mapId => {
+        promises.push(
+          promiseThrottle.add(async () =>
+            await s3.save(
+              map[mapId], `auctions/${region}/history/${id}/${year}/${month}/${day}/${mapId}.json.gz`,
+              {region, url: ''}, false)
+              .catch(console.error)));
+      });
+      Promise.all(promises)
+        .then(() => {
+          console.log('Files processed', l.length);
+          resolve();
+        })
+        .catch(reject);
+    });
+  }
 
   private async copyAuctionsToNewFile(record: EventSchema, auctions: string, region: string, ahId: string) {
     await new S3Handler().copy(
@@ -451,5 +535,27 @@ export class AuctionHandler {
       record.bucket.name)
       .then(() => console.log(`Successfully copied to auctions`))
       .catch(console.error);
+  }
+
+  private getProcessedFile(bucket: string, key: string) {
+    return new Promise((resolve, reject) => {
+      const splitted = key.split('/');
+      const [_, region, ahId, fileName] = splitted;
+      const lastModified = +fileName.replace('.json.gz', '').split('-')[0];
+      new S3Handler().get(bucket, key)
+        .then(({Body}) => {
+          new GzipUtil().decompress(Body)
+            .then(({auctions}) => {
+              if (auctions && auctions.length) {
+                const items = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
+                resolve(items);
+              } else {
+                resolve([]);
+              }
+            })
+            .catch(console.error);
+        })
+        .catch(reject);
+    });
   }
 }

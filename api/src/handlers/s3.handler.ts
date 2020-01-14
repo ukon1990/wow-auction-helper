@@ -4,21 +4,17 @@ import {AWS_DETAILS} from '../secrets';
 const AWS = require('aws-sdk');
 
 export class S3Handler {
+  s3  = new AWS.S3({
+    accessKeyId: AWS_DETAILS.ACCESS_KEY,
+    secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
+  });
 
-  private getS3() {
-    const s3 = new AWS.S3({
-      accessKeyId: AWS_DETAILS.ACCESS_KEY,
-      secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
-    });
-    return s3;
-  }
-
-  save(data: any, path: string, queryData: any): Promise<any> {
+  save(data: any, path: string, queryData: any, logStart = true): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       new GzipUtil()
         .compress(data)
         .then(result =>
-          this.uploadGzip(path, result, queryData)
+          this.uploadGzip(path, result, queryData, logStart)
             .then(resolve)
             .catch(reject))
         .catch(reject);
@@ -27,8 +23,7 @@ export class S3Handler {
 
   list(bucket: string, prefix: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      const s3 = this.getS3();
-      s3.listObjectsV2({
+      this.s3.listObjectsV2({
         Bucket: bucket,
         Prefix: prefix
       }, (error, data) => {
@@ -43,8 +38,7 @@ export class S3Handler {
 
   get(bucket: string, file: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      const s3 = this.getS3();
-      s3.getObject({
+      this.s3.getObject({
         Bucket: bucket,
         Key: file
       }, (err, data) => {
@@ -59,8 +53,7 @@ export class S3Handler {
 
   copy(origin: string, target: string, bucket: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      const s3 = this.getS3();
-      s3.copyObject({
+      this.s3.copyObject({
         Bucket: bucket,
         CopySource: `${bucket}/${origin}`,
         Key: target
@@ -74,13 +67,14 @@ export class S3Handler {
     });
   }
 
-  private uploadGzip(path: string, buffer: Buffer, queryData: any) {
+  private uploadGzip(path: string, buffer: Buffer, queryData: any, logStart = true) {
     return new Promise<any>((resolve, reject) => {
-      const s3 = this.getS3(),
-        region = queryData.region;
+      const region = queryData.region;
 
-      console.log(`Uploading to s3 -> ${path}`);
-      s3.upload({
+      if (logStart) {
+        console.log(`Uploading to s3 -> ${path}`);
+      }
+      this.s3.upload({
         Bucket: this.getBucketName(region),
         Key: path,
         Body: buffer,
