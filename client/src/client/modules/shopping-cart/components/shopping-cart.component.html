@@ -32,7 +32,8 @@
       <h4 class="col-md-12">Overview:</h4>
       <div class="col-lg-4">
         <strong class="row col-md-12">Recipes:</strong>
-        <wah-data-table [id]="'itemID'"
+        <wah-data-table *ngIf="cart.recipes && cart.recipes.length"
+                        [id]="'itemID'"
                         [iconSize]="22"
                         [columns]="columns.recipes"
                         [data]="cart.recipes">
@@ -40,7 +41,8 @@
       </div>
       <div class="col-lg-4">
         <strong class="row col-md-12">Reagents needed:</strong>
-        <wah-data-table [id]="'id'"
+        <wah-data-table *ngIf="cart.reagents && cart.reagents.length"
+                        [id]="'id'"
                         [iconSize]="22"
                         [columns]="columns.neededReagents"
                         [data]="cart.reagents"></wah-data-table>
@@ -115,11 +117,12 @@
       </div>
     </div>
 
-    <div class="row col-md-12">
+    <div class="row col-md-12" *ngIf="cart.sources">
       <h4 class="col-md-12">Sources:</h4>
       <div class="col-md-12">
         <strong class="row col-md-12">From your inventory:</strong>
-        <wah-data-table [id]="'id'"
+        <wah-data-table *ngIf="cart.sources.inventory && cart.sources.inventory.length"
+                        [id]="'id'"
                         [iconSize]="22"
                         [columns]="columns.inventory"
                         [data]="cart.sources.inventory"></wah-data-table>
@@ -127,7 +130,8 @@
 
       <div class="col-lg-4">
         <strong class="row col-md-12">From AH:</strong>
-        <wah-data-table [id]="'id'"
+        <wah-data-table *ngIf="cart.sources.ah && cart.sources.ah.length"
+                        [id]="'id'"
                         [iconSize]="22"
                         [columns]="columns.ah"
                         [data]="cart.sources.ah"></wah-data-table>
@@ -135,7 +139,8 @@
 
       <div class="col-lg-4">
         <strong class="row col-md-12">From vendor:</strong>
-        <wah-data-table [id]="'id'"
+        <wah-data-table *ngIf="cart.sources.vendor && cart.sources.vendor.length"
+                        [id]="'id'"
                         [iconSize]="22"
                         [columns]="columns.vendor"
                         [data]="cart.sources.vendor"></wah-data-table>
@@ -143,7 +148,8 @@
 
       <div class="col-lg-4">
         <strong class="row col-md-12">To farm:</strong>
-        <wah-data-table [id]="'id'"
+        <wah-data-table *ngIf="cart.sources.farm && cart.sources.farm.length"
+                        [id]="'id'"
                         [iconSize]="22"
                         [columns]="columns.farm"
                         [data]="cart.sources.farm"></wah-data-table>
