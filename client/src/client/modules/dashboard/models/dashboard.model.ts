@@ -574,6 +574,10 @@ export class Dashboard {
     this.data.length = 0;
     SharedService.auctions.forEach(a => {
       let match = true;
+
+      if (!a.bid) {
+        match = false;
+      }
       if (this.isExpansionMissMatch(a.item)) {
         match = false;
       }
@@ -612,6 +616,9 @@ export class Dashboard {
     this.data.length = 0;
     SharedService.auctions.forEach(a => {
       let match = true;
+      if (!a.bid) {
+        match = false;
+      }
 
       if (this.isExpansionMissMatch(a.item)) {
         match = false;

@@ -45,7 +45,7 @@ export class ZoneService {
         .toPromise()
         .then(async (response) => {
           SharedService.downloading.zone = false;
-          localStorage[this.storageName] = response['timestamp'];
+          this.setTimestamp(response);
           this.mapAndSetNextValueForZones(response['zones']);
           await this.dbService.addZones(response['zones']);
           resolve(this.list.value);
@@ -58,6 +58,13 @@ export class ZoneService {
     });
   }
 
+  private setTimestamp(response: Object) {
+    if (!response['timestamp']) {
+      return;
+    }
+    localStorage[this.storageName] = response['timestamp'];
+  }
+
   private async getAllAfterTimestamp() {
     SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
@@ -68,7 +75,7 @@ export class ZoneService {
         .toPromise()
         .then(async response => {
           SharedService.downloading.zone = false;
-          localStorage[this.storageName] = response['timestamp'];
+          this.setTimestamp(response);
           this.mapAndSetNextValueForZones(response['zones']);
           await this.dbService.addZones(response['zones']);
           resolve(this.list.value);

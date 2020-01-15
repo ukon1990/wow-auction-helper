@@ -56,7 +56,7 @@ export class NpcService {
           const list = response['npcs'],
             map = {};
           this.isLoading = false;
-          localStorage[this.storageName] = response['timestamp'];
+          this.setTimestamp(response);
           this.mapAndSetNextValueForNPCs(response['npcs']);
           this.db.addNPCs(response['npcs'])
             .catch(console.error);
@@ -78,7 +78,7 @@ export class NpcService {
         .toPromise()
         .then((response) => {
           SharedService.downloading.npc = false;
-          localStorage[this.storageName] = response['timestamp'];
+          this.setTimestamp(response);
           this.mapAndSetNextValueForNPCs(response['npcs']);
           this.db.addNPCs(response['npcs'])
             .catch(console.error);
@@ -90,6 +90,13 @@ export class NpcService {
           resolve(this.list.value);
       });
     });
+  }
+
+  private setTimestamp(response: Object) {
+    if (response['timestamp']) {
+      return;
+    }
+    localStorage[this.storageName] = response['timestamp'];
   }
 
   private mapAndSetNextValueForNPCs(newData: NPC[]) {

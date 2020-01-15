@@ -49,7 +49,7 @@ export class AuctionProcessorUtil {
       this.processAuction(map, list, auctions[i], lastModified, ahId);
     }
     console.log(`Processed ${auctions.length} in ${+new Date() - start} ms`);
-    return new QueryUtil('itemPriceLog', false).multiInsert(list);
+    return new QueryUtil('itemPriceHistory', false).multiInsert(list);
   }
 
   private static processAuction(map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number) {

@@ -202,7 +202,7 @@ export class AuctionHandler {
           .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 50,
+              requestsPerSecond: 5,
               promiseImplementation: Promise
             }),
             promises = [];
@@ -409,9 +409,9 @@ export class AuctionHandler {
         await Promise.all([
           this.updateAllStatuses(region),
           this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId)/*,
           this.processAuctions(record, +ahId, fileName)
-            .catch(console.error)
+            .catch(console.error)*/
         ])
           .catch(console.error);
       }
@@ -419,7 +419,7 @@ export class AuctionHandler {
     });
   }
 
-  async processAuctions(record: EventSchema, ahId: number, fileName: string) {
+  async processAuctions(record: EventSchema, ahId: number, fileName: string, conn = new DatabaseUtil()) {
     return new Promise<void>((resolve, reject) => {
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
@@ -431,7 +431,7 @@ export class AuctionHandler {
               const query = AuctionProcessorUtil.process(
                 auctions, lastModified, ahId);
               const insertStart = +new Date();
-              new DatabaseUtil().query(query)
+              conn.query(query)
                 .then(ok => {
                   console.log(`Completed item price stat import in ${+new Date() - insertStart} ms`, ok);
                   resolve();

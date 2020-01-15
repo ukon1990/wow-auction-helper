@@ -46,6 +46,12 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
     {key: 'quantity', title: 'Size', dataType: ''}
   ];
+  droppedByColumns: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
+    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
+    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
+  ];
 
   recipeColumns: Array<ColumnDescription> = [
     {key: 'name', title: 'Name', dataType: 'name'},

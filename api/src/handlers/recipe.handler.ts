@@ -9,6 +9,8 @@ import {LocaleUtil} from '../utils/locale.util';
 import {Item} from '../../../client/src/client/models/item/item';
 import {AuthHandler} from './auth.handler';
 import {ItemQuery} from '../queries/item.query';
+import {ItemLocale} from '../models/item/item-locale';
+import {QueryUtil} from '../utils/query.util';
 
 const request = require('request');
 
@@ -94,23 +96,27 @@ export class RecipeHandler {
       this.getProfessionForRecipe(recipe)
         .then(async spell => {
           recipe.profession = spell.profession;
-          await this.setItemIdIfMissing(recipe);
+          await this.setItemIdIfMissing(recipe)
+            .catch(console.error);
 
-          await new DatabaseUtil().query(RecipeQuery.insert(id, recipe));
-
-          await LocaleUtil.setLocales(
-            recipe.spellID,
-            'id',
-            'recipe_name_locale',
-            'spell'
-          )
-            .then(locales => {
-              if (locales[locale]) {
-                recipe.name = locales[locale];
+          await RecipeUtil.getLocalesForRecipe(id)
+            .then(async recipeName => {
+              if (!recipeName || Object.keys(recipeName).length !== 14) {
+                Response.error(callback, 'Locale not found:' + Object.keys(recipeName).length, event);
+                return;
               }
+              const conn = new DatabaseUtil(false);
+              await conn.query(RecipeQuery.insert(id, recipe));
+              await conn.query(new QueryUtil('recipe_name_locale', false).insert(recipeName))
+                .then(console.log)
+                .catch((error) => {
+                  console.error(error);
+                });
+              conn.end();
+              recipe.name = recipeName[locale];
+              Response.send(recipe, callback);
             })
             .catch(error => Response.error(callback, error, event));
-          Response.send(recipe, callback);
         })
         .catch(error => Response.error(callback, error, event));
     });
@@ -199,7 +205,6 @@ export class RecipeHandler {
     return new Promise<RecipeSpell>((resolve, reject) => {
       request.get(url, (err, r, body) => {
         try {
-          console.log('Res', body);
           const spell = JSON.parse(body) as RecipeSpell;
           resolve(spell);
         } catch (e) {
