@@ -2,6 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {UpdateService} from '../../../../services/update.service';
 import {UpdateActivatedEvent} from '@angular/service-worker';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-app-update',
@@ -12,11 +13,13 @@ export class AppUpdateComponent implements OnDestroy {
   subscriptions = new SubscriptionManager();
   updateAvailable: boolean;
 
-  constructor() {
+  constructor(private service: UpdateService) {
     this.subscriptions.add(
-      UpdateService.events,
-      (evt: UpdateActivatedEvent) =>
-        this.updateAvailable = true);
+      service.events,
+      (evt: UpdateActivatedEvent) => {
+        this.updateAvailable = true;
+        Report.send('Popup displayed', 'Update available');
+      });
   }
 
   ngOnDestroy() {
@@ -24,10 +27,11 @@ export class AppUpdateComponent implements OnDestroy {
   }
 
   reload(): void {
-    window.location.reload();
+    this.service.update();
   }
 
   close(): void {
     this.updateAvailable = false;
+    Report.send('Popup closed', 'Update available');
   }
 }

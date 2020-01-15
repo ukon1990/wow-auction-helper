@@ -48,7 +48,6 @@ export class RealmService {
   }
 
   getStatus(region: string, realm: string): Promise<any> {
-    // Endpoints.getS3URL(region, 'auctions', realm)
     return this.http.get(Endpoints.getS3URL(region, 'auctions', realm))
       .toPromise()
       .then(async (status: AuctionHouseStatus) => {

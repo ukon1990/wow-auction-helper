@@ -3,11 +3,13 @@
     <mat-card class="w-100 mt-2 mb-2">
       <mat-card-header>
         <mat-card-title>
-          {{ entry.title }}
+          {{ entry.changes[0]?.title }}
         </mat-card-title>
+        <mat-card-subtitle>
+          {{ entry.title }}
+        </mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content *ngFor="let change of entry.changes">
-        <mat-card class="line-shift" [innerHTML]="change.message"></mat-card>
+      <mat-card-content class="line-shift" [innerHTML]="entry.changes[0]?.message">
       </mat-card-content>
     </mat-card>
   </div>

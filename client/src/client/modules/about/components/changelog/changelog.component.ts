@@ -16,6 +16,7 @@ export class ChangelogComponent implements OnInit {
     this.service.getChangeLogs()
       .then(changeLogs => {
         this.changeLogs = changeLogs;
+        console.log(this.changeLogs);
       })
       .catch(error => console.error('getChangelog', error));
   }

@@ -65,35 +65,38 @@ export class NpcService {
         .catch(error => {
           SharedService.downloading.npc = false;
           console.error(error);
+          ErrorReport.sendHttpError(error);
         });
     });
   }
 
   getAllAfterTimestamp(): Promise<NPC[]> {
     SharedService.downloading.npc = true;
-    const locale = localStorage['locale'];
+    const locale = localStorage['locale'],
+      timestamp = localStorage.getItem(this.storageName);
+
+    if (!timestamp) {
+      return this.getAllFromS3();
+    }
     return new Promise<NPC[]>((resolve, reject) => {
       this.http.post(Endpoints.getLambdaUrl('npc/all'),
-        {locale, timestamp: localStorage.getItem(this.storageName)})
+        {locale, timestamp})
         .toPromise()
         .then((response) => {
           SharedService.downloading.npc = false;
-          this.setTimestamp(response);
-          this.mapAndSetNextValueForNPCs(response['npcs']);
-          this.db.addNPCs(response['npcs'])
-            .catch(console.error);
+
           resolve(this.list.value);
         })
         .catch((error) => {
           SharedService.downloading.npc = false;
           ErrorReport.sendHttpError(error);
           resolve(this.list.value);
-      });
+        });
     });
   }
 
   private setTimestamp(response: Object) {
-    if (response['timestamp']) {
+    if (!response['timestamp']) {
       return;
     }
     localStorage[this.storageName] = response['timestamp'];
