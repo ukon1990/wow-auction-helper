@@ -12,6 +12,7 @@ import {Crafting} from '../models/crafting';
 import {Filters} from '../../../utils/filtering';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-crafting',
@@ -106,15 +107,16 @@ export class CraftingComponent implements OnInit, OnDestroy {
       User.save();
       Crafting.calculateCost();
     }
+    console.log(changes);
 
     this.filtered = SharedService.recipes
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {
           return this.isKnownRecipe(recipe)
-          && this.isNameMatch(recipe)
+          && this.isNameMatch(recipe, changes.searchQuery)
           && Filters.isProfitMatch(recipe, undefined, changes.profit)
-          && Filters.isSaleRateMatch(recipe.itemID, changes.demand)
-          && Filters.isDailySoldMatch(recipe.itemID, changes.minSold)
+          && Filters.isSaleRateMatch(recipe.itemID, changes.demand, false)
+          && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
           && Filters.isProfessionMatch(recipe.itemID, changes.profession)
           && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
           && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
@@ -127,14 +129,15 @@ export class CraftingComponent implements OnInit, OnDestroy {
     return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.spellID] || !recipe.profession;
   }
 
-  isNameMatch(recipe: Recipe): boolean {
-    return this.searchForm.value.searchQuery === null ||
-      this.searchForm.value.searchQuery.length === 0 ||
-      recipe.name.toLowerCase()
-        .indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1 ||
-      (SharedService.items[recipe.itemID] &&
-        SharedService.items[recipe.itemID].name.toLowerCase()
-          .indexOf(this.searchForm.value.searchQuery.toLowerCase()) > -1);
+  isNameMatch(recipe: Recipe, name: string): boolean {
+    if (EmptyUtil.isNullOrUndefined(name)) {
+      return true;
+    }
+    if (TextUtil.contains(recipe.name, name)) {
+      return true;
+    }
+    const item =  SharedService.items[recipe.itemID];
+    return item && TextUtil.contains(item.name, name);
   }
 
 

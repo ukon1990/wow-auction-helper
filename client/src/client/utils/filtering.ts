@@ -58,22 +58,30 @@ export class Filters {
     return item && item.itemLevel >= minItemLevel;
   }
 
-  public static isSaleRateMatch(itemID: number, saleRate: number): boolean {
+  public static isSaleRateMatch(itemID: number, saleRate: number, requirePresence = true): boolean {
     if (EmptyUtil.isNullOrUndefined(saleRate) || !Filters.isUsingAPI()) {
       return true;
     }
     const item: AuctionItem = SharedService.auctionItemsMap[itemID],
       minSaleRatePercent = saleRate / 100;
+    if (!item && !requirePresence && !saleRate) {
+      return true;
+    }
     return item && item.regionSaleRate >= minSaleRatePercent;
   }
 
-  public static isDailySoldMatch(itemID: number, avgDailySold: number): boolean {
-    if (!SharedService.auctionItemsMap[itemID]) {
+  public static isDailySoldMatch(itemID: number, avgDailySold: number, requirePresence = true): boolean {
+    if (EmptyUtil.isNullOrUndefined(avgDailySold) || !Filters.isUsingAPI()) {
+      return true;
+    }
+
+    const auctionItem: AuctionItem = SharedService.auctionItemsMap[itemID];
+    if (!auctionItem && requirePresence) {
       return false;
     }
 
-    if (Filters.isUsingAPI() && avgDailySold && avgDailySold > 0) {
-      return SharedService.auctionItemsMap[itemID].avgDailySold >= avgDailySold;
+    if (auctionItem && Filters.isUsingAPI() && avgDailySold && avgDailySold > 0) {
+      return auctionItem.avgDailySold >= avgDailySold;
     }
     return true;
   }
