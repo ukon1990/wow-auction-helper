@@ -51,11 +51,20 @@
   <div class="flex-spacer"></div>
 
 
-  <wah-shopping-cart *ngIf="!displayExtraMenu() && isUserSet"></wah-shopping-cart>
+  <wah-shopping-cart
+          *ngIf="!displayExtraMenu() && isUserSet"
+          (click)="doNotClose($event)">
+  </wah-shopping-cart>
 
-  <wah-download *ngIf="isUserSet"></wah-download>
+  <wah-download
+          *ngIf="isUserSet"
+          (click)="doNotClose($event)">
+  </wah-download>
 
-  <wah-realm-quick-select *ngIf="!displayExtraMenu() && isUserSet"></wah-realm-quick-select>
+  <wah-realm-quick-select
+          *ngIf="!displayExtraMenu() && isUserSet"
+          (click)="doNotClose($event)">
+  </wah-realm-quick-select>
 
   <wah-theme-select></wah-theme-select>
 
@@ -74,8 +83,10 @@
     <mat-menu #menu="matMenu">
       <ng-container></ng-container>
       <div class="p-3">
-        <wah-shopping-cart></wah-shopping-cart>
-        <wah-realm-quick-select></wah-realm-quick-select>
+        <wah-shopping-cart
+                (click)="doNotClose($event)"></wah-shopping-cart>
+        <wah-realm-quick-select
+                (click)="doNotClose($event)"></wah-realm-quick-select>
       </div>
     </mat-menu>
   </ng-container>
@@ -85,5 +96,6 @@
 <!-- Material Menu item templates -->
 <mat-menu #mobileMenuDropdown="matMenu">
   <wah-menu-item *ngFor="let menuItem of menuItems"
+          (click)="doNotClose($event)"
           [item]="menuItem"></wah-menu-item>
 </mat-menu>
