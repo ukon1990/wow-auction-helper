@@ -83,8 +83,8 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   addColumns(): void {
     const {columns} = this.table;
     columns.push({key: 'name', title: 'Name', dataType: 'name'});
-    columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number'});
-    columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number'});
+    columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true});
+    columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
@@ -102,7 +102,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.table.data = SharedService.auctionItems
       .filter(i => this.isMatch(i, changes))
       .map(i => {
-        return {...SharedService.pets[i.petSpeciesId], ...i };
+        return {...SharedService.pets[i.petSpeciesId], ...i};
       });
   }
 

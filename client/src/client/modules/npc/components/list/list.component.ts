@@ -20,25 +20,24 @@ export class ListComponent implements OnInit, OnDestroy {
   list: any[] = [];
   commonColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name', options: {tooltipType: 'npc', noIcon: true}},
-    {key: 'tag', title: 'Tag', dataType: 'string'},
+    {key: 'tag', title: 'Tag', dataType: 'string', hideOnMobile: true},
     {key: 'zone', title: 'Zone', dataType: 'string'},
-    {key: 'minLevel', title: 'Min level', dataType: 'number'},
-    {key: 'maxLevel', title: 'Max level', dataType: 'number'}
+    {key: 'minLevel', title: 'Min level', dataType: 'number', hideOnMobile: true},
+    {key: 'maxLevel', title: 'Max level', dataType: 'number', hideOnMobile: true}
   ];
   table = {
     dropped: {
       columns: [
         ...this.commonColumns,
-        {key: 'dropCount', title: 'Drop#', dataType: 'number'},
+        {key: 'dropCount', title: 'Drop#', dataType: 'number', hideOnMobile: true},
         {key: 'vendorValue', title: 'Vendor value', dataType: 'gold'},
-        {key: 'buyoutValue', title: 'AH value', dataType: 'gold'},
-        {key: 'score', title: 'Score', dataType: 'number'}
+        {key: 'buyoutValue', title: 'AH value', dataType: 'gold'}
       ], data: []
     },
     sold: {
       columns: [
         ...this.commonColumns,
-        {key: 'sellCount', title: 'Sell#', dataType: 'number'},
+        {key: 'sellCount', title: 'Sell#', dataType: 'number', hideOnMobile: true},
         {key: 'limitedSupplyCount', title: 'Limited supply', dataType: 'number'},
         {key: 'roi', title: 'Potential profit', dataType: 'gold'},
       ], data: []

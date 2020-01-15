@@ -1,64 +1,62 @@
-<div class="full-screen">
+<div class="full-screen mt-6">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>
-        <div *ngIf="newRemains; else select">
-          <wah-icon class="float-left"
-            *ngIf="newRemains" size="22"
-            [id]="newRemains.id">
-          </wah-icon>
-          <a rel="item={{ newRemains.id }}">
-            {{ newRemains.name }}
-          </a>
-        </div>
-        
-        <ng-template #select>
-          <mat-form-field>
-            <input type="text"
-              placeholder="Search for the origin item (eg. Starlight rose)"
-              matInput [formControl]="itemSearchForm"
-              [matAutocomplete]="auto">
-          </mat-form-field>
-  
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let item of filteredItems | async"
-              class="h-2em"
-              (click)="setItemSource(item)"
-              [value]="item.name">
-              <wah-icon size="36" [id]="item.id"></wah-icon>
-              {{ item.name }}
-            </mat-option>
-          </mat-autocomplete>
-        </ng-template>
+      <mat-card-title *ngIf="newRemains">
+        <wah-icon class="float-left"
+                  *ngIf="newRemains" size="22"
+                  [id]="newRemains.id">
+        </wah-icon>
+        <a rel="item={{ newRemains.id }}">
+          {{ newRemains.name }}
+        </a>
       </mat-card-title>
     </mat-card-header>
+    <mat-card-content *ngIf="!newRemains">
+      <mat-form-field class="row col-md-12">
+        <input type="text"
+               placeholder="Search for the origin item (eg. Starlight rose)"
+               matInput [formControl]="itemSearchForm"
+               [matAutocomplete]="auto">
+      </mat-form-field>
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let item of filteredItems | async"
+                    class="h-2em"
+                    (click)="setItemSource(item)"
+                    [value]="item.name">
+          <wah-icon size="36" [id]="item.id"></wah-icon>
+          {{ item.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-card-content>
 
     <mat-card-content *ngIf="newRemains">
 
       <mat-form-field>
         <input placeholder="Number of {{ newRemains.name }} milled"
-          [(ngModel)]="newRemains.outOf" type="number" matInput>
+               [(ngModel)]="newRemains.outOf" type="number" matInput>
       </mat-form-field>
 
       <mat-form-field class="w-100">
         <input class="w-100"
-          type="text"
-          placeholder="Item search"
-          matInput [formControl]="itemSearchForm"
-          [matAutocomplete]="searchTarget">
+               type="text"
+               placeholder="Item search"
+               matInput [formControl]="itemSearchForm"
+               [matAutocomplete]="searchTarget">
       </mat-form-field>
-    
+
       <mat-autocomplete #searchTarget="matAutocomplete">
         <mat-option *ngFor="let item of filteredItems | async"
-          class="h-2em"
-          (click)="addSource(item)"
-          [value]="item.name">
+                    class="h-2em"
+                    (click)="addSource(item)"
+                    [value]="item.name">
           <wah-icon size="36" [id]="item.id"></wah-icon>
           {{ item.name }}
         </mat-option>
       </mat-autocomplete>
 
-      <wah-data-table [id]="'id'" [iconSize]="22" [columns]="itemSourceColumns" [data]="newRemains.sources"></wah-data-table>
+      <wah-data-table [id]="'id'" [iconSize]="22" [columns]="itemSourceColumns"
+                      [data]="newRemains.sources"></wah-data-table>
     </mat-card-content>
     <mat-card-actions>
       <button (click)="save()" mat-raised-button>

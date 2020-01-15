@@ -92,10 +92,10 @@ export class ShoppingCart {
         inventory = inventoryMap[realm.name][faction];
       }
 
-      this.sources.ah.length = 0;
-      this.sources.inventory.length = 0;
-      this.sources.vendor.length = 0;
-      this.sources.farm.length = 0;
+      this.sources.ah = [];
+      this.sources.inventory = [];
+      this.sources.vendor = [];
+      this.sources.farm = [];
       this.reagents
         .forEach((reagent: ShoppingCartItem) =>
           this.setSourcesForReagent(reagent, inventory));
@@ -462,19 +462,9 @@ export class ShoppingCart {
   }
 
   clear() {
-    this.recipes.length = 0;
-    this.reagents.length = 0;
-    this.reagentMap = {};
-    this.recipeMap = {};
+    this.recipes.forEach(recipe =>
+      this.remove(recipe.id, recipe.quantity));
     this.tsmShoppingString = '';
-    this.sumTotalCost = 0;
-    this.sumCost = 0;
-    this.profit = 0;
-
-    this.sources.vendor.length = 0;
-    this.sources.ah.length = 0;
-    this.sources.farm.length = 0;
-    this.sources.inventory.length = 0;
 
     this.calculateCosts();
     this.save();

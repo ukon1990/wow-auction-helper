@@ -170,4 +170,11 @@ wah-character {
     max-height: 18em;
     overflow-y: scroll;
   }
+  .mat-menu-panel {
+    max-width: 100% !important;;
+    width: 100% !important;;
+    a, button {
+      width: 100% !important;
+    }
+  }
 }

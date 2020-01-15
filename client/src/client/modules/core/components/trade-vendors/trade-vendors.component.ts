@@ -58,10 +58,10 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
     this.columns.push({key: 'value', title: 'Value', dataType: 'gold'});
-    this.columns.push({key: 'quantity', title: 'Yield', dataType: 'number'});
-    this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-    this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number'});
-    this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'});
+    this.columns.push({key: 'quantity', title: 'Yield', dataType: 'number', hideOnMobile: true});
+    this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true});
+    this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
+    this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     this.columns.push({key: 'roi', title: 'ROI', dataType: 'gold'});
 
     this.filterVendors(this.form.getRawValue());

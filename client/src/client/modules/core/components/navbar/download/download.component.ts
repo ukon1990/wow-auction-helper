@@ -68,9 +68,6 @@ export class DownloadComponent implements OnInit {
 
   private setRealmStatus(status: RealmStatus) {
     this.realmStatus = status;
-    /*if (timeSince < 15) {
-      return;
-    }*/
   }
 
   async ngOnInit() {
