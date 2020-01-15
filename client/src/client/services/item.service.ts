@@ -65,7 +65,6 @@ export class ItemService {
     if (this.isTimestampNotDefined(timestamp)) {
       this.dbService.clearItems();
       SharedService.itemsUnmapped.length = 0;
-      this.openSnackbar('Downloading the item DB for first time use. This might take a couple minutes(~27 MB).');
       await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz`)
         .toPromise()
         .then((response: ItemResponse) => {

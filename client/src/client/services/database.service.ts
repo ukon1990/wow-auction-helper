@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {Item} from '../models/item/item';
 import {Auction} from '../modules/auction/models/auction.model';
@@ -24,6 +24,7 @@ import {BehaviorSubject} from 'rxjs';
 @Injectable()
 export class DatabaseService {
   private db: Dexie;
+  private unsupported: boolean;
 
   readonly TSM_TABLE_COLUMNS = 'Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,'
     + 'RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,'
@@ -42,6 +43,7 @@ export class DatabaseService {
 
   constructor(public platform: Platform) {
     if (environment.test) {
+      this.databaseIsReady.next(true);
       return;
     }
     this.db = new Dexie('wah-db');
@@ -59,19 +61,21 @@ export class DatabaseService {
         this.databaseIsReady.next(true);
         console.log('wah-db successfully started');
       }).catch(error => {
+      this.unsupported = true;
+      this.databaseIsReady.next(true);
       console.log('Unable to start indexedDB', error);
     });
   }
 
   addItems(items: Array<Item>): void {
-    if (environment.test) {
+    if (environment.test || this.unsupported) {
       return;
     }
     this.db.table('items').bulkPut(items);
   }
 
   async getAllItems(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT) {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
 
@@ -109,15 +113,15 @@ export class DatabaseService {
   }
 
   async addNPCs(list: NPC[]): Promise<void> {
-    if (this.platform === null || this.platform.WEBKIT) {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     await this.db.table('npcs').bulkPut(list);
   }
 
   async getAllNPCs(): Dexie.Promise<NPC[]> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
     return this.db.table('npcs').toArray();
   }
@@ -127,7 +131,7 @@ export class DatabaseService {
   }
 
   async addZones(list: Zone[]): Promise<void> {
-    if (this.platform === null || this.platform.WEBKIT) {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     await this.db.table('zones').bulkPut(list)
@@ -135,8 +139,8 @@ export class DatabaseService {
   }
 
   async getAllZones(): Dexie.Promise<Zone[]> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
     return this.db.table('zones').toArray();
   }
@@ -146,15 +150,15 @@ export class DatabaseService {
   }
 
   addPets(pets: Array<Pet>): void {
-    if (environment.test) {
+    if (environment.test || this.unsupported) {
       return;
     }
     this.db.table('pets').bulkPut(pets);
   }
 
   getAllPets(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
 
     SharedService.downloading.pets = true;
@@ -177,15 +181,15 @@ export class DatabaseService {
   }
 
   addRecipes(recipes: Array<Recipe>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT) {
+    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     this.db.table('recipes').bulkPut(recipes);
   }
 
   getAllRecipes(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
 
     SharedService.downloading.recipes = true;
@@ -208,7 +212,7 @@ export class DatabaseService {
 
 
   addAuction(auction: Auction): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT) {
+    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     this.db.table('auctions').add(auction)
@@ -225,7 +229,7 @@ export class DatabaseService {
 
   addAuctions(auctions: Array<Auction>): void {
     return; // Deactivated
-    if (environment.test || this.platform === null || this.platform.WEBKIT) {
+    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     this.db.table('auctions').clear();
@@ -237,7 +241,7 @@ export class DatabaseService {
 
   async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
     return; // Deactivated
-    if (this.platform === null || this.platform.WEBKIT) {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
 
@@ -261,7 +265,7 @@ export class DatabaseService {
   }
 
   addWoWUctionItems(wowuction: Array<WoWUction>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT) {
+    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     this.db.table('wowuction').clear();
@@ -289,7 +293,7 @@ export class DatabaseService {
   }
 
   addTSMAddonData(tsm: any, lastModified: Date): void {
-    if (this.platform === null || this.platform.WEBKIT) {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
 
@@ -309,8 +313,8 @@ export class DatabaseService {
 
 
   getTSMAddonData(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve) => resolve([]));
     }
 
     return this.db.table('tsmAddonHistory')
@@ -329,7 +333,7 @@ export class DatabaseService {
   }
 
   addTSMItems(tsm: Array<TSM>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT) {
+    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
     this.db.table('tsm').clear();
@@ -340,8 +344,8 @@ export class DatabaseService {
   }
 
   getTSMItems(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
 
     SharedService.downloading.tsmAuctions = true;

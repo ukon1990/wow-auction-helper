@@ -88,7 +88,8 @@ export class BackgroundDownloadService {
     console.log('Starting to load data');
     await this.realmService.getRealms()
       .catch(error => console.error(error));
-    await this.realmService.getStatus(region, realm);
+    await this.realmService.getStatus(region, realm)
+      .catch(console.error);
 
     this.auctionsService.doNotOrganize = true;
 
@@ -173,6 +174,7 @@ export class BackgroundDownloadService {
         }
       })
       .catch(async error => {
+        delete localStorage['timestamp_items'];
         console.error(error);
       });
     await this.itemService.getItems();

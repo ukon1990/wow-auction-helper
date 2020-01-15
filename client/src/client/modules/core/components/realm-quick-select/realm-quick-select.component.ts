@@ -10,6 +10,8 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {User} from '../../../../models/user/user';
 import {DatabaseService} from '../../../../services/database.service';
 import {Report} from '../../../../utils/report.util';
+import {RealmStatus} from '../../../../models/realm-status.model';
+import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -39,6 +41,8 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     this.sm.add(this.realmService.events.list,
       (realms) => this.setRealmList(realms));
 
+    this.sm.add(this.realmService.events.realmStatus,
+      () => this.setRealmList());
 
     this.sm.add(this.characterService.events,
       () => this.setRealmList());
@@ -93,6 +97,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
   }
 
   private setRealmsFromCharacters(map) {
+    // this.pupulateDropdownWithCurrentRealm(map);
     SharedService.user.characters.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
@@ -110,6 +115,22 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
         map[character.realm].factions[character.faction]++;
       }
     });
+  }
+
+  private pupulateDropdownWithCurrentRealm(map) {
+    const status: AuctionHouseStatus = this.realmService.events.realmStatus.value;
+    if (status) {
+      const currentRealm: RealmStatus = this.realmService.events.map.value[status.id];
+      if (currentRealm) {
+        map[currentRealm.name] = {
+          name: currentRealm.name,
+          slug: currentRealm.slug,
+          factions: [0, 0],
+          characterCount: 0
+        };
+        this.realmList.push(map[currentRealm.name]);
+      }
+    }
   }
 
   private handleRealmChange(slug?: string) {

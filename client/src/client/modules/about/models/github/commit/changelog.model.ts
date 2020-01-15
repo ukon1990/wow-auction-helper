@@ -25,7 +25,7 @@ export class ChangeLog {
       if (changelogMap[commit.sha]) {
         previousTag = changelogMap[commit.sha];
         previousTag.title = `${ new Date(commit.commit.author.date).toLocaleDateString() } - version ${ previousTag.tag }`;
-        previousTag.changes.push(commit.commit);
+        previousTag.changes.push(new GithubSubCommit(commit.commit));
       }
     });
 
