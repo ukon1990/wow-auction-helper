@@ -117,6 +117,21 @@ export class RecipeUtil {
     return recipe;
   }
 
+  static async getLocalesForRecipe(id): Promise<ItemLocale> {
+    return new Promise<ItemLocale>(async (resolve, reject) => {
+      const tmpRecipe = {name:  new ItemLocale(id), rank: undefined};
+      for (const language of languages) {
+        await this.getRecipeTooltip(id, language, '', tmpRecipe)
+          .catch(console.error);
+      }
+      if (Object.keys(tmpRecipe.name).length === 14) {
+        resolve(tmpRecipe.name);
+      } else {
+        reject('Not enough recipe name keys: ' + Object.keys(tmpRecipe.name).length);
+      }
+    });
+  }
+
   private static async getRecipeTooltip(id, language, gameVersion: string, recipe) {
     await new Promise<number>((resolve, reject) => {
       new HttpClientUtil().get(
