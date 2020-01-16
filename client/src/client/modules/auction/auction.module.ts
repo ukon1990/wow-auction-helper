@@ -9,7 +9,7 @@ import {CharacterModule} from '../character/character.module';
 import {IconModule} from '../icon/icon.module';
 import {RouterModule} from '@angular/router';
 import {UtilModule} from '../util/util.module';
-import {TsmModule} from '../tsm/tsm.module';
+import {AddonModule} from '../addon/addon.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
@@ -30,7 +30,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     IconModule,
     RouterModule,
     UtilModule,
-    TsmModule,
+    AddonModule,
     ShoppingCartModule,
     AboutModule,
     MatMenuModule,

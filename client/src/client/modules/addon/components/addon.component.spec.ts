@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TsmDatasetComponent } from './tsm-dataset.component';
+import { AddonComponent } from './addon.component';
 
-describe('TsmDatasetComponent', () => {
-  let component: TsmDatasetComponent;
-  let fixture: ComponentFixture<TsmDatasetComponent>;
+describe('TsmAddonDbComponent', () => {
+  let component: AddonComponent;
+  let fixture: ComponentFixture<AddonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TsmDatasetComponent ]
+      declarations: [ AddonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TsmDatasetComponent);
+    fixture = TestBed.createComponent(AddonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -14,7 +14,7 @@ import {
 import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';
-import {TsmModule} from '../tsm/tsm.module';
+import {AddonModule} from '../addon/addon.module';
 
 @NgModule({
   declarations: [
@@ -31,7 +31,7 @@ import {TsmModule} from '../tsm/tsm.module';
     MatListModule,
     MatButtonModule,
     MatTooltipModule,
-    TsmModule,
+    AddonModule,
     MatBadgeModule
   ],
   exports: [ShoppingCartComponent]

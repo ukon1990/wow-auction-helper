@@ -32,6 +32,8 @@ export class User {
   shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
   doNotReport = false;
+  gameVersion = 0;
+  classicRealm: string;
 
   /**
    *
@@ -57,28 +59,17 @@ export class User {
           SharedService.user[key] = user[key];
           break;
         case 'faction':
-          localStorage['faction'] = user[key];
-          SharedService.user.faction = +user[key];
+        case 'gameVersion':
+          // Number values
+          localStorage.setItem(key, '' + user[key]);
+          SharedService.user[key] = +user[key];
           break;
         case 'region':
-          localStorage['region'] = user[key];
-          SharedService.user.region = user[key];
-          break;
         case 'realm':
-          localStorage['realm'] = user[key];
-          SharedService.user.realm = user[key];
-          break;
+        case 'classicRealm':
         case 'character':
-          localStorage['character'] = user[key];
-          SharedService.user.character = user[key];
-          break;
-        case 'apiTsm':
-          localStorage['api_tsm'] = user[key];
-          SharedService.user.apiTsm = user[key];
-          break;
-        case 'apiWoWu':
-          localStorage['api_wowuction'] = user[key];
-          SharedService.user.apiWoWu = user[key];
+          localStorage[key] = user[key];
+          SharedService.user[key] = user[key];
           break;
         case 'customPrices':
           localStorage['custom_prices'] = JSON.stringify(user[key]);
@@ -93,24 +84,18 @@ export class User {
           SharedService.user.buyoutLimit = user[key];
           break;
         case 'characters':
-          localStorage['characters'] = JSON.stringify(user[key]);
-          SharedService.user.characters = user[key];
+          this.setStringifiedValues(key, user);
+          break;
+        case 'notifications':
+          this.setStringifiedValues(key, user);
+          break;
+        case 'useVendorPriceForCraftingIfAvailable':
+        case 'isDarkMode':
+          this.setStringifiedValues(key, user);
           break;
         case 'useIntermediateCrafting':
           localStorage['use_intermediate_crafting'] = JSON.stringify(user[key]);
           SharedService.user.useIntermediateCrafting = user[key];
-          break;
-        case 'notifications':
-          localStorage['notifications'] = JSON.stringify(user[key]);
-          SharedService.user.notifications = user[key];
-          break;
-        case 'useVendorPriceForCraftingIfAvailable':
-          localStorage['useVendorPriceForCraftingIfAvailable'] = JSON.stringify(user[key]);
-          SharedService.user.useVendorPriceForCraftingIfAvailable = user[key];
-          break;
-        case 'isDarkMode':
-          localStorage['isDarkMode'] = JSON.stringify(user[key]);
-          SharedService.user.isDarkMode = user[key];
           break;
         case ProspectingAndMillingUtil.TYPES.MILLING:
           ProspectingAndMillingUtil.mills = user[key];
@@ -119,11 +104,7 @@ export class User {
         case ProspectingAndMillingUtil.TYPES.PROSPECTING:
           ProspectingAndMillingUtil.prospecting = user[key];
           ProspectingAndMillingUtil.save();
-          break;  /*
-        case 'watchlist':
-          localStorage[key] = JSON.stringify({ groups: SharedService.user.watchlist.groups });
-          SharedService.user.watchlist = new Watchlist();
-          break;*/
+          break;
       }
     });
 
@@ -133,6 +114,11 @@ export class User {
     } else {
       SharedService.events.isUserSet.next(false);
     }
+  }
+
+  private static setStringifiedValues(key: string, user: User) {
+    localStorage[key] = JSON.stringify(user[key]);
+    SharedService.user[key] = user[key];
   }
 
   public static restore(): void {
@@ -155,23 +141,15 @@ export class User {
 
     Object.keys(localStorage).forEach(key => {
       switch (key) {
+        case 'gameVersion':
         case 'faction':
-          user.faction = +localStorage[key];
+          user[key] = +localStorage[key];
           break;
         case 'region':
-          user.region = localStorage[key];
-          break;
         case 'realm':
-          user.realm = localStorage[key];
-          break;
+        case 'classicRealm':
         case 'character':
-          user.character = localStorage[key];
-          break;
-        case 'api_tsm':
-          user.apiTsm = localStorage[key];
-          break;
-        case 'api_wowuction':
-          user.apiWoWu = localStorage[key];
+          user[key] = localStorage[key];
           break;
         case 'custom_prices':
           const cp = JSON.parse(localStorage[key]);
@@ -188,17 +166,12 @@ export class User {
 
           CustomProcUtil.createMap(user.customProcs);
           break;
-        case 'api_to_use':
-          user.apiToUse = localStorage[key];
-          break;
         case 'crafting_buyout_limit':
           user.buyoutLimit = parseFloat(localStorage[key]);
           break;
         case 'characters':
-          user.characters = JSON.parse(localStorage[key]);
-          break;
         case 'useIntermediateCrafting':
-          user.useIntermediateCrafting = JSON.parse(localStorage[key]);
+          user[key] = JSON.parse(localStorage[key]);
           break;
         case 'notifications':
           user.notifications = new NotificationSettings(JSON.parse(localStorage[key]));

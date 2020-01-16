@@ -15,10 +15,10 @@ import {MillingComponent} from './crafting/components/milling/milling.component'
 import {DisenchantingComponent} from './crafting/components/disenchanting/disenchanting.component';
 import {AhSummaryComponent} from './dashboard/components/ah-summary/ah-summary.component';
 import {ReputationsComponent} from './core/components/reputations/reputations.component';
-import {TsmAddonDbComponent} from './tsm/components/tsm-addon-db.component';
+import {AddonComponent} from './addon/components/addon.component';
 import {ABOUT_ROUTE} from './about/about.route';
-import {ProfitSummaryComponent} from './tsm/components/profit-summary/profit-summary.component';
-import {TsmDatasetComponent} from './tsm/components/tsm-dataset/tsm-dataset.component';
+import {ProfitSummaryComponent} from './addon/components/profit-summary/profit-summary.component';
+import {AddonDatasetComponent} from './addon/components/addon-dataset/addon-dataset.component';
 import {TitledRoute} from '../models/route/titled-route.model';
 import {TitledRoutes} from '../models/route/titled-routes.model';
 import {SettingsComponent} from './settings/components/settings.component';
@@ -45,15 +45,23 @@ const TOOLS_ROUTE: TitledRoute = {
   isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
   children: [
     {
-      title: 'TSM Addon', path: 'tsm', component: TsmAddonDbComponent, children: [
+      path: 'tsm', redirectTo: 'addon/tsm'
+    }, {
+      title: 'Addon data & import',
+      path: 'addon',
+      component: AddonComponent,
+      children: [
         {path: '', redirectTo: 'summary', pathMatch: 'full'},
         {
-          title: 'Profit summary', path: 'summary', component: ProfitSummaryComponent, isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS
+          title: 'Profit summary',
+          path: 'summary',
+          component: ProfitSummaryComponent,
+          isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS
         },
         {
           title: 'Data sets', isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS,
-          path: 'dataset', component: TsmDatasetComponent, children: [
-            {path: ':name', component: TsmDatasetComponent}
+          path: 'dataset', component: AddonDatasetComponent, children: [
+            {path: ':name', component: AddonDatasetComponent}
           ]
         }
       ]

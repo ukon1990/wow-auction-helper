@@ -5,10 +5,11 @@ import {ObjectUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {InventoryUtil} from './inventory.util';
 import {Report} from '../report.util';
-import {ProfitSummary} from '../../modules/tsm/models/profit-summary.model';
+import {ProfitSummary} from '../../modules/addon/models/profit-summary.model';
 
 export class TSMCSV {
   characterGuilds?: any;
+  csvAuctionDBScan?: any[];
   csvCancelled?: any[];
   csvExpired?: any[];
   csvExpense?: any[];
@@ -18,6 +19,7 @@ export class TSMCSV {
   profitSummary?: any;
   inventory?: object;
   inventoryMap?: object;
+  auctionDBScanTime?: number;
 }
 
 export class TsmLuaUtil {

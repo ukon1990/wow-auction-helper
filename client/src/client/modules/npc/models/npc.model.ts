@@ -5,7 +5,7 @@ import {TSM} from '../../auction/models/tsm.model';
 import {TradeVendor, TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TRADE_VENDORS} from '../../../data/trade-vendors';
 import {Currency} from '../../core/models/currency.model';
-import {currencyMap} from '../../../data/currency.data';
+import {currency, currencyMap} from '../../../data/currency.data';
 import {Report} from '../../../utils/report.util';
 import {CraftingService} from '../../../services/crafting.service';
 
@@ -124,11 +124,14 @@ export class NPC {
 
   static calculateSellerVendorItemROI(item: VendorItem, roi: number = 0) {
     const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.id],
-      tsm: TSM = SharedService.tsm[item.id];
-    if (auctionItem && item.unitPrice < auctionItem.buyout) {
-      roi += auctionItem.buyout - item.unitPrice;
-    } else if (!auctionItem && tsm && item.unitPrice < tsm.RegionMarketAvg) {
-      roi += tsm.RegionMarketAvg - item.unitPrice;
+      tsm: TSM = SharedService.tsm[item.id],
+      currencyAuctionItem: AuctionItem = SharedService.auctionItemsMap[item.currency];
+    const unitPrice = currencyAuctionItem ?
+      (currencyAuctionItem.buyout || currencyAuctionItem.regionSaleAvg) * item.unitPrice : item.unitPrice;
+    if (auctionItem && unitPrice < auctionItem.buyout) {
+      roi += auctionItem.buyout - unitPrice;
+    } else if (!auctionItem && tsm && unitPrice < tsm.RegionMarketAvg) {
+      roi += tsm.RegionMarketAvg - unitPrice;
     }
     return {
       roi,

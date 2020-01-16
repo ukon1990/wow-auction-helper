@@ -43,7 +43,7 @@ export class DatabaseUtil {
   }
 
   end(): void {
-    if (environment.test) {
+    if (environment.test || this.autoTerminate) {
       return;
     }
     this.connection.end();

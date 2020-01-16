@@ -13,10 +13,10 @@ import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-tsm-dataset',
-  templateUrl: './tsm-dataset.component.html',
-  styleUrls: ['./tsm-dataset.component.scss']
+  templateUrl: './addon-dataset.component.html',
+  styleUrls: ['./addon-dataset.component.scss']
 })
-export class TsmDatasetComponent implements OnDestroy, OnInit {
+export class AddonDatasetComponent implements OnDestroy, OnInit {
   columns = {
     amount: [
       {key: 'type', title: 'Source', dataType: 'string'},
@@ -118,7 +118,12 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
         {key: 'characters', title: 'Character', dataType: 'array'},
         {key: 'quantity', title: 'Quantity', dataType: 'number'},
         {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-        {key: 'sumBuyout', title: 'Total buyout', dataType: 'gold'}
+        {key: 'sumBuyout', title: 'Total buyout', dataType: 'gold'},
+        {key: 'regionSaleAvg', title: 'Regional sale avg', dataType: 'gold'},
+        {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
+        {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
+        {key: 'past14DaysSaleRate', title: 'Personal sale rate(14)', dataType: 'percent'},
+        {key: 'totalSaleRate', title: 'Personal sale rate(total)', dataType: 'percent'},
       ],
       data: [],
       hasCharacters: false
@@ -326,7 +331,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
 
     this.table.columns = this.selectedSet.columns;
     if (realm && character) {
-      Report.debug('TsmDatasetComponent.setTableData', this.selectedSet, realm, character);
+      Report.debug('AddonDatasetComponent.setTableData', this.selectedSet, realm, character);
       this.table.data = this.selectedSet.data[realm][character];
     } else if (realm && !EmptyUtil.isNullOrUndefined(faction)) {
       const realmData = this.selectedSet.data[realm];
@@ -343,7 +348,7 @@ export class TsmDatasetComponent implements OnDestroy, OnInit {
       this.table.data = list;
     }
     this.sortTableByTime();
-    Report.debug('TsmDatasetComponent.setTableData', this.table);
+    Report.debug('AddonDatasetComponent.setTableData', this.table);
   }
 
   private sortTableByTime() {

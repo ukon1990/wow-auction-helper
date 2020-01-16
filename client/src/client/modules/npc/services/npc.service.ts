@@ -84,7 +84,9 @@ export class NpcService {
         .toPromise()
         .then((response) => {
           SharedService.downloading.npc = false;
-
+          this.db.addNPCs(response['npcs'])
+            .catch(console.error);
+          this.mapAndSetNextValueForNPCs(response['npcs']);
           resolve(this.list.value);
         })
         .catch((error) => {

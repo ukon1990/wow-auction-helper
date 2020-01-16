@@ -173,11 +173,11 @@
 
             <ng-container *ngSwitchCase="'cart-recipe-count'">
               <mat-form-field class="input-column" *ngIf="isKnownRecipe(d)">
-              <input matInput
-                     type="number"
-                     [value]="getCartCount(d, c)"
-                     (change)="setCartCount(d, c, $event)">
-            </mat-form-field>
+                <input matInput
+                       type="number"
+                       [value]="getCartCount(d, c)"
+                       (change)="setCartCount(d, c, $event)"/>
+              </mat-form-field>
             </ng-container>
 
             <span *ngSwitchCase="'cart-delete'">

@@ -58,6 +58,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'reagents', title: 'Materials', dataType: 'materials'},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
+    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
+    {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
@@ -67,6 +69,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'profession', title: 'Source', dataType: ''},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
+    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
+    {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 

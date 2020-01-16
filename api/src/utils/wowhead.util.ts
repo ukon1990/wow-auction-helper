@@ -255,4 +255,13 @@ export class WoWHeadUtil {
   public static cleanName(name: string): string {
     return name.replace(/^[0-9]{0,1}/g, '');
   }
+
+  static getLevel(body: string): number {
+    const levelRegex = /Level:[ ]{0,}[\d]{1,100}/gm;
+    const levelResultResult = levelRegex.exec(body);
+    if (levelResultResult && levelResultResult[0]) {
+      return +levelResultResult[0].replace(/Level:[ ]{1,}/, '');
+    }
+    return undefined;
+  }
 }

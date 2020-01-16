@@ -2,12 +2,20 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {GoldPipe} from './pipes/gold.pipe';
 import {ChartsComponent} from './components/charts/charts.component';
-import {MatAutocompleteModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule} from '@angular/material';
+import {
+  MatAutocompleteModule,
+  MatButtonModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatSelectModule, MatTooltipModule
+} from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {SelectRealmComponent} from './components/select-realm/select-realm.component';
+import { AddonImportComponent } from './components/addon-import/addon-import.component';
 
 @NgModule({
-  declarations: [GoldPipe, ChartsComponent, SelectRealmComponent],
+  declarations: [GoldPipe, ChartsComponent, SelectRealmComponent, AddonImportComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -15,8 +23,10 @@ import {SelectRealmComponent} from './components/select-realm/select-realm.compo
     ReactiveFormsModule,
     MatCardModule,
     MatAutocompleteModule,
-    MatInputModule
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule
   ],
-  exports: [GoldPipe, ChartsComponent, SelectRealmComponent]
+  exports: [GoldPipe, ChartsComponent, SelectRealmComponent, AddonImportComponent]
 })
 export class UtilModule { }

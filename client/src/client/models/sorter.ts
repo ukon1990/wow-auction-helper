@@ -78,7 +78,8 @@ export class Sorter {
   }
 
   private getAuctionItem(item: any): any {
-    return SharedService.auctionItemsMap[item.item ? item.item : item.itemID];
+    const id = item.item || item.itemID || item.id;
+    return SharedService.auctionItemsMap[id];
   }
 
   private isString(object: any, index): boolean {

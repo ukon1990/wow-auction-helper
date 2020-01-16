@@ -24,17 +24,17 @@ export interface Map {
 
 export class VendorItem {
   id: number;
-  price: number;
-  unitPrice: number;
-  currency: number;
-  stock: number;
-  stackSize: number;
+  price: number = null;
+  unitPrice: number = null;
+  currency: number = null;
+  stock: number = null;
+  stackSize: number = null;
 
   static setFromBody(body: string): VendorItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'sells')
       .map(({id, standing, stack, cost, avail}) => {
         let price = cost[0];
-        let currency: number;
+        let currency: number = null;
         const cost1 = cost[1], cost2 = cost[2];
         try {
           if (cost2 && cost2[0] && cost2[0].length >= 2) {
@@ -66,9 +66,9 @@ export class VendorItem {
 
 export class DroppedItem {
   id: number;
-  dropped: number;
-  outOf: number;
-  dropChance: number;
+  dropped: number = null;
+  outOf: number = null;
+  dropChance: number = null;
 
   static setFromBody(body: string): DroppedItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'drops').map(({id, modes}) => ({
@@ -82,8 +82,8 @@ export class DroppedItem {
 
 export class SkinnedItem {
   id: number;
-  count: number;
-  dropChance: number;
+  count: number = null;
+  dropChance: number = null;
 
   static setFromBody(body: string): SkinnedItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'skinning')
@@ -199,12 +199,20 @@ export class NPC {
 
     if (language.key === 'en') {
       const patchAndExpansion = WoWHeadUtil.getExpansion(body);
+      const level = WoWHeadUtil.getLevel(body);
       this.expansionId = patchAndExpansion.expansionId;
       this.patch = patchAndExpansion.patch;
       this.avgGoldDrop = this.getGoldDrop(body);
       this.drops = DroppedItem.setFromBody(body);
       this.sells = VendorItem.setFromBody(body);
       this.skinning = SkinnedItem.setFromBody(body);
+
+      if (!this.minLevel) {
+        this.minLevel = level;
+      }
+      if (!this.maxLevel) {
+        this.maxLevel = level;
+      }
     }
   }
 
@@ -229,7 +237,7 @@ export class NPC {
 export class NPCUtil {
   private static ignoreItemIds = {};
 
-  // 86777,87202,87204,86776,86778,86683,87203,87201
+  // 160711
   static getById(id: number, progress?: { processed: number, length: number }) {
     return new Promise<NPC>((resolve, reject) => {
       const npc: NPC = new NPC(id),
@@ -243,19 +251,19 @@ export class NPCUtil {
         .forEach(lang => promises.push(
           promiseThrottle.add(() => this.getNpcDataWithLocale(id, lang, npc))));
       Promise.all(promises)
-        .then(() => {
+        .then(async () => {
           if (progress) {
             progress.processed++;
             console.log(`NPC fetch progress: ${
               Math.round((progress.processed / progress.length) * 100)}% (${
               progress.processed} of ${progress.length}) - ${npc.name.en_GB}`);
           }
-          resolve(npc);
-          this.insertNPCIntoDB(npc)
+          await this.insertNPCIntoDB(npc)
             .then(() => {
               // console.log(`Added ${npc.name.en_GB} to db`);
             })
             .catch(console.error);
+          resolve(npc);
         })
         .catch((error) => {
           this.addErrorToProgress(progress, 'Not found');
@@ -425,26 +433,29 @@ export class NPCUtil {
     });
   }
 
-  private static async insertNPCIntoDB(npc: NPC) {
+  private static async insertNPCIntoDB(npc: NPC, conn?: DatabaseUtil) {
     return new Promise<NPC>(async (resolve, reject) => {
       // Need to add the zone if it is missing
-      await ZoneUtil.getById(npc.zoneId);
-      const conn = new DatabaseUtil(false);
-      this.insertNpcIntoDB(npc, conn)
-        .then(async () => {
-          await this.insertNameIntoDB(npc).catch(console.error);
-          await this.insertTagIntoDB(npc).catch(console.error);
-          await this.insertCoordsIntoDB(npc, conn).catch(console.error);
-          await this.insertSellsIntoDB(npc, conn).catch(console.error);
-          await this.insertDropsIntoDB(npc, conn).catch(console.error);
-          conn.end();
+      await ZoneUtil.getById(npc.zoneId)
+        .then(() => {
+          conn = new DatabaseUtil(false);
+          this.insertNpcIntoDB(npc, conn)
+            .then(async () => {
+              await this.insertNameIntoDB(npc).catch(console.error);
+              await this.insertTagIntoDB(npc).catch(console.error);
+              await this.insertCoordsIntoDB(npc, conn).catch(console.error);
+              await this.insertSellsIntoDB(npc, conn).catch(console.error);
+              await this.insertDropsIntoDB(npc, conn).catch(console.error);
+              conn.end();
 
-          resolve(npc);
+              resolve(npc);
+            })
+            .catch((error) => {
+              conn.end();
+              reject(error);
+            });
         })
-        .catch((error) => {
-          conn.end();
-          reject(error);
-        });
+        .catch(reject);
     });
   }
 
@@ -474,34 +485,28 @@ export class NPCUtil {
   }
 
   private static async insertDropsIntoDB(npc: NPC, conn: DatabaseUtil) {
-    for (const drops of npc.drops) {
-      const sql = new QueryUtil('npcDrops').insert({
-        npcId: npc.id,
-        ...drops
-      });
-      try {
-        await conn.query(sql);
-        await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
-      } catch (e) {
+    const drops = npc.drops.map(drop => ({
+      npcId: npc.id,
+      ...drop
+    }));
+    const sql = new QueryUtil('npcDrops').multiInsert(drops);
+    await conn.query(sql)
+      .catch(e => {
         this.loggIfNotDuplicateError(e, sql);
-      }
-    }
+      });
   }
 
   private static async insertSellsIntoDB(npc: NPC, conn: DatabaseUtil) {
-    for (const sells of npc.sells) {
-      const sql = new QueryUtil('npcSells').insert({
-        npcId: npc.id,
-        ...sells
-      });
-      try {
-        await conn.query(sql);
-        await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
-      } catch (e) {
+    const sellers = npc.sells.map(sells => ({
+      npcId: npc.id,
+      ...sells
+    }));
+    const sql = new QueryUtil('npcSells').multiInsert(sellers);
+    await conn.query(sql)
+      .catch(e => {
         console.log(e);
         this.loggIfNotDuplicateError(e, sql);
-      }
-    }
+      });
   }
 
   private static addItemIfMissing({error}, {id}: VendorItem | DroppedItem) {
@@ -515,17 +520,16 @@ export class NPCUtil {
   }
 
   private static async insertCoordsIntoDB(npc: NPC, conn: DatabaseUtil) {
-    for (const coords of npc.coordinates) {
-      const sql = new QueryUtil('npcCoordinates').insert({
-        id: npc.id,
-        ...coords
-      });
-      try {
-        await conn.query(sql);
-        await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
-      } catch (e) {
-        this.loggIfNotDuplicateError(e, sql);
-      }
+    const coordinates = npc.coordinates.map(coords => ({
+      id: npc.id,
+      ...coords
+    }));
+    const sql = new QueryUtil('npcCoordinates').multiInsert(coordinates);
+    try {
+      await conn.query(sql);
+      await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
+    } catch (e) {
+      this.loggIfNotDuplicateError(e, sql);
     }
   }
 

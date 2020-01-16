@@ -10,7 +10,7 @@ import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
-import {ProfitSummary} from '../../tsm/models/profit-summary.model';
+import {ProfitSummary} from '../../addon/models/profit-summary.model';
 
 export class AuctionUtil {
   /**
@@ -36,6 +36,11 @@ export class AuctionUtil {
 
   private static groupAuctions(auctions: Array<Auction>, petService: PetsService) {
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
+    Object.keys(SharedService.tsm).forEach(id => {
+      const auction = new Auction();
+      auction.item = +id;
+      this.addNewAuctionItem(auction, false);
+    });
 
     // Sorting by buyout, before we do the grouping for less processing.
     auctions.sort((a, b) => {
@@ -99,12 +104,16 @@ export class AuctionUtil {
         this.handlePetAuction(a, petId);
       }
     } else if (!SharedService.auctionItemsMap[a.item]) {
-      SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a);
-      SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
-      AuctionUtil.setUserSaleRateForAuction(a);
+      this.addNewAuctionItem(a);
     } else {
       AuctionUtil.updateAuctionItem(a);
     }
+  }
+
+  private static addNewAuctionItem(a, addAuction = true) {
+    SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a, addAuction);
+    SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
+    AuctionUtil.setUserSaleRateForAuction(a);
   }
 
   private static handlePetAuction(a: Auction, petId) {
@@ -151,17 +160,21 @@ export class AuctionUtil {
     const id = auction.petSpeciesId ?
       new AuctionPet(auction.petSpeciesId, auction.petLevel, auction.petQualityId).auctionId : auction.item,
       ai = SharedService.auctionItemsMap[id];
-    if (ai.buyout === 0 || (ai.buyout > auction.buyout && auction.buyout > 0)) {
+    if (!ai.buyout || (ai.buyout > auction.buyout && auction.buyout > 0)) {
       ai.owner = auction.owner;
       ai.buyout = auction.buyout / auction.quantity;
+    }
+
+    if (!ai.bid || (ai.bid > auction.bid && auction.bid > 0)) {
       ai.bid = auction.bid / auction.quantity;
     }
+
     ai.quantityTotal += auction.quantity;
     ai.auctions.push(auction);
   }
 
-  private static newAuctionItem(auction: Auction): AuctionItem {
-    const tmpAuc = AuctionUtil.getTempAuctionItem(auction);
+  private static newAuctionItem(auction: Auction, addAuction = true): AuctionItem {
+    const tmpAuc = AuctionUtil.getTempAuctionItem(auction, addAuction);
 
     if (SharedService.tsm[auction.item]) {
       AuctionUtil.setTSMData(auction, tmpAuc);
@@ -189,7 +202,7 @@ export class AuctionUtil {
     tmpAuc.regionSaleAvg = tsmItem.RegionSaleAvg;
   }
 
-  private static getTempAuctionItem(auction: Auction) {
+  private static getTempAuctionItem(auction: Auction, addAuction = true) {
     const tmpAuc = new AuctionItem();
     tmpAuc.itemID = auction.item;
     tmpAuc.petSpeciesId = auction.petSpeciesId;
@@ -204,7 +217,9 @@ export class AuctionUtil {
     tmpAuc.bid = auction.bid / auction.quantity;
     tmpAuc.quantityTotal += auction.quantity;
     tmpAuc.vendorSell = SharedService.items[tmpAuc.itemID] ? SharedService.items[tmpAuc.itemID].sellPrice : 0;
-    tmpAuc.auctions.push(auction);
+    if (addAuction) {
+      tmpAuc.auctions.push(auction);
+    }
     return tmpAuc;
   }
 }

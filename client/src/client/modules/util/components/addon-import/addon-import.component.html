@@ -1,0 +1,98 @@
+<button mat-button (click)="fileInput.click()"
+        [matTooltip]="addonPathText"
+        *ngIf="minimal; else bigTemplate">
+  <i class="fas fa-upload"></i>
+  Import addon data
+  <input class="d-none"
+         type="file"
+         accept="lua"
+         (change)="importFromFile($event)"
+         multiple
+         #fileInput/>
+</button>
+
+<ng-template #bigTemplate>
+  <mat-card >
+    <mat-card-header>
+      <mat-card-title>Import addon data</mat-card-title>
+      <mat-card-subtitle>
+        <strong>Locate: </strong>
+        <em>
+          {{addonPathText}}
+        </em>
+      </mat-card-subtitle>
+      <mat-card-subtitle>
+        <strong>Last import time:</strong> {{ lastModified | date: 'dd.MMM yyyy HH:mm:ss' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- TODO: Activate
+      For now, this feature uses the Auctioneer addon, as it also provides seller name.
+      To import the auction data that you've gathered, you simply do /reload in-game and import the file again
+      after you have let the addon update the AH data.
+      The data is stored in your browser, but you will need to manually update like this, every time.
+      <br>
+
+      <form [formGroup]="form" class="row">
+        <mat-form-field class="col" *ngIf="form.value.auctionDataSource >= 0">
+          <mat-select placeholder="Select realm"
+                      formControlName="realm">
+            <mat-option *ngIf="!result.length">
+              You must have scanned the AH first
+            </mat-option>
+            <mat-option>
+              no
+            </mat-option>
+            <mat-option *ngFor="let r of result" [value]="r.realm">
+              {{ r.realm }} ({{ r.lastScan| date: 'HH:mm M/d/yy' }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field class="col">
+          <mat-select placeholder="Select auction data source"
+                      formControlName="auctionDataSource">
+            <mat-option [value]="-1">
+              Do not import auctions
+            </mat-option>
+            <mat-option *ngFor="let source of AUCTION_DATA_SOURCES; let i = index"
+                        [value]="i">
+              {{ source.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="col">
+          <mat-select placeholder="Game version"
+                      formControlName="gameVersion">
+            <mat-option *ngFor="let version of gameVersions, let i = index" [value]="i">
+              {{version}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+      -->
+      <p>
+        <strong>Currently supported addons:</strong> {{ ADDON_LIST }}
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="fileInput.click()">
+        <i class="fas fa-upload"></i>
+        Import one or more .lua files
+        <input class="d-none"
+               type="file"
+               accept="lua"
+               (change)="importFromFile($event)"
+               multiple
+               #fileInput/>
+      </button>
+
+      <button mat-raised-button (click)="loadData()">
+        Reload saved data
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+</ng-template>

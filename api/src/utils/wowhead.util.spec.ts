@@ -34,7 +34,7 @@ fdescribe('WoWHeadUtil', () => {
     });
 
     it('currencyFor', async () => {
-      expect(blackrockOre.currencyFor.length).toBe(7);
+      expect(blackrockOre.currencyFor.length).toBe(8);
     });
 
     it('soldBy', async () => {

@@ -17,6 +17,9 @@ import {AuctionsService} from './auctions.service';
 import {NPC} from '../modules/npc/models/npc.model';
 import {Zone} from '../modules/zone/models/zone.model';
 import {BehaviorSubject} from 'rxjs';
+import {Report} from '../utils/report.util';
+import {GameBuild} from '../utils/game-build.util';
+import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
 
 /**
  * A Class for handeling the indexedDB
@@ -36,6 +39,7 @@ export class DatabaseService {
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
   readonly TSM_ADDON_HISTORY = 'timestamp,data';
+  readonly ADDON = 'id,name,gameVersion,timestamp,data';
   readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
     'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
   readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
@@ -71,7 +75,8 @@ export class DatabaseService {
     if (environment.test || this.unsupported) {
       return;
     }
-    this.db.table('items').bulkPut(items);
+    this.db.table('items').bulkPut(items)
+      .catch(console.error);
   }
 
   async getAllItems(): Dexie.Promise<any> {
@@ -210,9 +215,20 @@ export class DatabaseService {
     this.db.table('recipes').clear();
   }
 
+  addClassicAuctions(realmData: { realm: string, auctions: Auction[] }): void {
+    if (this.isUnsupportedBrowser()) {
+      return;
+    }
+
+    // this.db.table('classic-auctions').clear();
+    this.db.table('classic-auctions')
+      .put(realmData)
+      .then(r => console.log('Successfully added auctions to local DB'))
+      .catch(e => console.error('Could not add auctions to local DB', e));
+  }
 
   addAuction(auction: Auction): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.isUnsupportedBrowser()) {
       return;
     }
     this.db.table('auctions').add(auction)
@@ -220,6 +236,10 @@ export class DatabaseService {
         console.log('Successfully added auctions to local DB'))
       .catch(e =>
         console.error('Could not add auctions to local DB', e));
+  }
+
+  private isUnsupportedBrowser() {
+    return environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported;
   }
 
   clearAuctions(): void {
@@ -264,6 +284,34 @@ export class DatabaseService {
       });
   }
 
+  async getClassicAuctions(realm: string, petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
+    console.log('input to DB fetch', realm);
+    SharedService.downloading.auctions = true;
+    return this.db.table('classic-auctions')
+      .where('realm')
+      .equals(realm)
+      .toArray()
+      .then(realmData =>
+        this.handleSuccessfulAuctionDBFetch(realmData[0].auctions, petService, auctionService))
+      .catch(e => {
+        console.error('Could not restore auctions from local DB', e);
+        SharedService.downloading.auctions = false;
+      });
+  }
+
+  private handleSuccessfulAuctionDBFetch(auctions: Auction[], petService: PetsService, auctionService: AuctionsService) {
+    SharedService.downloading.auctions = false;
+    AuctionUtil.organize(auctions, petService)
+      .then(auctionItems => {
+        auctionService.events.list.next(auctions);
+        auctionService.events.groupedList.next(auctionItems);
+      })
+      .catch(error =>
+        ErrorReport.sendError('getAllAuctions', error));
+    console.log('Restored auctions from local DB');
+    SharedService.events.auctionUpdate.emit();
+  }
+
   addWoWUctionItems(wowuction: Array<WoWUction>): void {
     if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
@@ -292,19 +340,22 @@ export class DatabaseService {
       });
   }
 
-  addTSMAddonData(tsm: any, lastModified: Date): void {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+  addAddonData(name: string, data: any, gameVersion: number, lastModified: number): void {
+    if (this.isUnsupportedBrowser()) {
       return;
     }
+    localStorage.setItem('timestamp_addons', '' + +new Date());
 
-    this.db.table('tsmAddonHistory').clear();
-    this.db.table('tsmAddonHistory')
+    this.db.table('addons')
       .put({
+        id: `${gameVersion}-${name}`,
+        name,
         timestamp: lastModified,
-        data: tsm
+        gameVersion,
+        data: data
       })
       .then(r => {
-        localStorage['timestamp_tsm_addon_import'] = lastModified;
+        localStorage[`timestamp_addon_import_${name}`] = lastModified;
         console.log('Successfully added tsm addon history data to local DB');
       })
       .catch(error =>
@@ -312,18 +363,40 @@ export class DatabaseService {
   }
 
 
-  getTSMAddonData(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+  getAddonData(): Dexie.Promise<any> {
+    if (this.isUnsupportedBrowser()) {
       return new Dexie.Promise<any>((resolve) => resolve([]));
     }
 
-    return this.db.table('tsmAddonHistory')
+    return this.db.table('addons')
       .toArray()
-      .then(tsm => {
-        if (!tsm[0]) {
+      .then(addons => {
+        Report.debug('addon', addons);
+        if (!addons[0]) {
           return;
         }
-        new TsmLuaUtil().convertList(tsm[0].data);
+        Report.debug('Addon data', addons);
+        addons.forEach(({id, name, gameVersion, data, lastModified}) => {
+          if (!SharedService.addonData[gameVersion]) {
+            SharedService.addonData[gameVersion] = {};
+          }
+
+          const ADDONS = GameBuild.ADDONS,
+            addonData = SharedService.addonData[gameVersion];
+
+          Report.debug('addon', {
+            id, name, gameVersion, data, lastModified
+          }, addons);
+
+          switch (name) {
+            case ADDONS.TSM.file:
+              addonData[ADDONS[name]] = new TsmLuaUtil().convertList(data);
+              break;
+            case ADDONS.Auctioneer.file:
+              AucScanDataImportUtil.import(data);
+              break;
+          }
+        });
         console.log('Restored TSM addon historical data from local DB');
       })
       .catch(e => {
@@ -378,6 +451,17 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+    this.db.version(7).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      addons: this.ADDON
+    });
     this.db.version(6).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,

@@ -14,12 +14,12 @@ describe('QueryIntegrity', () => {
 
     let item: Item = await new ItemHandler().getFreshItem(109118, 'en_GB');
     let okItem = await QueryIntegrity.getVerified('items', item);
-    expect(Object.keys(okItem).length).toBe(12);
+    expect(Object.keys(okItem).length).toBe(13);
 
 
     item = await new ItemHandler().getFreshItem(165023, 'en_GB');
     okItem = await QueryIntegrity.getVerified('items', item);
-    expect(Object.keys(okItem).length).toBe(9);
+    expect(Object.keys(okItem).length).toBe(10);
   });
 
   it('Returns falsy if there is no data integrity', async () => {

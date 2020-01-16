@@ -16,7 +16,7 @@ import {
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {IconModule} from '../icon/icon.module';
-import {TsmModule} from '../tsm/tsm.module';
+import {AddonModule} from '../addon/addon.module';
 import {UtilModule} from '../util/util.module';
 import { AuctionItemDetailsComponent } from './components/auction-item-details/auction-item-details.component';
 import { TsmTabComponent } from './components/tsm-tab/tsm-tab.component';
@@ -50,7 +50,7 @@ import { ContainedInTabComponent } from './components/contained-in-tab/contained
     MatButtonModule,
     MatTooltipModule,
     MatSelectModule,
-    TsmModule,
+    AddonModule,
     UtilModule,
     MatInputModule
   ],

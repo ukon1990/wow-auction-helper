@@ -4,7 +4,7 @@ import {safeifyString} from './string.util';
 export class QueryUtil<T> {
 
   static unixTimestamp(timestamp): string {
-    return `UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp)}`;
+    return `UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000}`;
   }
 
   constructor(private table: string, private setTimestamp = true) {
