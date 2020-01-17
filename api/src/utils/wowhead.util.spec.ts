@@ -21,7 +21,7 @@ fdescribe('WoWHeadUtil', () => {
     });
 
     it('getDroppedBy', async () => {
-      expect(blackrockOre.droppedBy.length).toBe(8);
+      expect(blackrockOre.droppedBy.length).toBe(10);
       expect(amberblaze.droppedBy.length).toBe(0);
     });
 

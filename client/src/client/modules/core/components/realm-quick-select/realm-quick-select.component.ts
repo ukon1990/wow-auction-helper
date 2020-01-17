@@ -163,7 +163,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     SharedService.user.faction = faction;
     User.save();
 
-    this.dbService.getTSMAddonData();
+    this.dbService.getAddonData();
     Report.send('handleFactionChange', 'CharacterSelectComponent');
   }
 }

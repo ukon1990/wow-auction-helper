@@ -33,7 +33,7 @@ import {CraftingModule} from './modules/crafting/crafting.module';
 import {PetModule} from './modules/pet/pet.module';
 import {AuctionModule} from './modules/auction/auction.module';
 import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
-import {TsmModule} from './modules/tsm/tsm.module';
+import {AddonModule} from './modules/addon/addon.module';
 import {BackgroundDownloadService} from './services/background-download.service';
 import {ReportService} from './services/report/report.service';
 import {AuthenticationInterceptor} from './auth.interceptor';
@@ -66,7 +66,7 @@ import {ItemModule} from './modules/item/item.module';
     CraftingModule,
     AuctionModule,
     ShoppingCartModule,
-    TsmModule,
+    AddonModule,
     ItemModule
   ],
   providers: [

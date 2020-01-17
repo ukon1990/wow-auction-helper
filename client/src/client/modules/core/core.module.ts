@@ -15,7 +15,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {CharacterModule} from '../character/character.module';
 import {UtilModule} from '../util/util.module';
-import {TsmModule} from '../tsm/tsm.module';
+import {AddonModule} from '../addon/addon.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MenuComponent} from './components/menu/menu.component';
@@ -54,7 +54,7 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
     IconModule,
     RouterModule,
     UtilModule,
-    TsmModule,
+    AddonModule,
     ShoppingCartModule,
     AboutModule,
     MatMenuModule,

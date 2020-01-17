@@ -24,7 +24,7 @@ describe('NPCUtil', () => {
     // console.log(tanaanJungleTooth);
     expect(tanaanJungleTooth.id).toBe(128438);
     expect(tanaanJungleTooth.dropped).toBe(242007);
-    expect(tanaanJungleTooth.dropChance).toBe(.4612697129918003);
+    expect(+tanaanJungleTooth.dropChance.toFixed(2)).toBe(.46);
   });
 
   it('Can fetch data for vendor', async () => {
@@ -80,8 +80,8 @@ describe('NPCUtil', () => {
     expect(npc.name.en_GB).toBe('Vizzklick');
     expect(npc.isAlliance).toBeTruthy();
     expect(npc.isHorde).toBeTruthy();
-    expect(npc.minLevel).toBe(43);
-    expect(npc.maxLevel).toBe(60);
+    expect(npc.minLevel).toBeFalsy();
+    expect(npc.maxLevel).toBeFalsy();
     expect(npc.tag.de_DE).toBe('Schneiderbedarf');
     expect(npc.tag.en_GB).toBe('Tailoring Supplies');
     expect(npc.zoneId).toBe(440);
@@ -107,7 +107,7 @@ describe('NPCUtil', () => {
     expect(npc.name.en_GB).toBe('Azuresail the Ancient');
     expect(npc.isAlliance).toBeFalsy();
     expect(npc.isHorde).toBeFalsy();
-    expect(npc.minLevel).toBe(115);
+    expect(npc.minLevel).toBe(120);
     expect(npc.maxLevel).toBe(120);
     expect(npc.tag.en_GB).toBeFalsy();
     expect(npc.skinning.length).toBe(6);
@@ -125,7 +125,7 @@ describe('NPCUtil', () => {
     expect(npc.classification).toBe(1);
     expect(npc.minLevel).toBe(9999);
     expect(npc.maxLevel).toBe(9999);
-    expect(npc.avgGoldDrop).toBe(599824); // 59g 98s 24c
+    expect(npc.avgGoldDrop).toBe(599677);
   });
 
   it('Can get WOD garrison vendor', async () => {

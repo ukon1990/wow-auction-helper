@@ -24,6 +24,7 @@ export class Zone {
 
   constructor(id: number) {
     this.id = id;
+    this.name.id = id;
   }
 
   setData?(body: { name: string, tooltip: string }, language: Language): void {
@@ -208,15 +209,15 @@ export class ZoneUtil {
       });
   }
 
-  static getById(id: number, locale = 'en_GB'): Promise<Zone> {
+  static getById(id: number, locale = 'en_GB', conn?: DatabaseUtil): Promise<Zone> {
     return new Promise<Zone>(async (resolve, reject) => {
       let zone: Zone;
       const promises: Promise<any>[] = [];
-      await this.getByIdFromDB(locale, id)
+      await this.getByIdFromDB(locale, id, conn)
         .then(z => zone = z)
-          .catch(console.error);
+        .catch(console.error);
 
-      if (!zone) {
+      if (!zone || ('' + zone.name) === 'MISSING THE LOCALE IN DB!') {
         zone = new Zone(id);
         const promiseThrottle = new PromiseThrottle({
           requestsPerSecond: 25,
@@ -225,16 +226,47 @@ export class ZoneUtil {
         languages
           .forEach(lang => promises.push(
             promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
+        await Promise.all(promises)
+          .then(async () => {
+            const localeSQL = new QueryUtil('zoneName', false).insert(zone.name);
+            if (!conn) {
+              conn = new DatabaseUtil(false);
+            }
+            if (zone.parentName) {
+              await conn.query(`
+                  SELECT id
+                  FROM zoneName
+                  WHERE en_GB = ${zone.parentName}`)
+                .then(ids => {
+                  if (ids && ids[0]) {
+                    zone.parentId = ids[0].id;
+                  }
+                })
+                .catch(console.log);
+            }
+            await conn.query(
+              new QueryUtil('zone').insert({
+                id: zone.id,
+                territoryId: zone.territoryId,
+                typeId: zone.typeId,
+                parentId: null,
+                minLevel: zone.minLevel,
+                maxLevel: zone.maxLevel
+              }))
+              .catch(console.error);
+            await conn.query(localeSQL)
+              .catch(console.error);
+            conn.end();
+          })
+          .catch(reject);
       }
-      Promise.all(promises)
-        .then(() => resolve(zone))
-        .catch(reject);
+      resolve(zone);
     });
   }
 
-  private static async getByIdFromDB(locale: string, id: number): Promise<Zone> {
+  private static async getByIdFromDB(locale: string, id: number, conn = new DatabaseUtil()): Promise<Zone> {
     let zone: Zone;
-    await new DatabaseUtil().query(`
+    await conn.query(`
        SELECT
                i.id,
                COALESCE(${locale}, 'MISSING THE LOCALE IN DB!') as name,

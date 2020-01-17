@@ -56,6 +56,7 @@ describe('ZoneUtil', () => {
   it('getById returns Orgrimmar and type = Zone territory = Horde', async () => {
     const zoneId = 1637;
     const zone: Zone = await ZoneUtil.getById(zoneId);
+    console.log(zone);
     expect(zone.id).toBe(zoneId);
     expect(zone.name.en_GB).toBe('Orgrimmar');
     expect(zone.territoryId).toBe(1); // Horde

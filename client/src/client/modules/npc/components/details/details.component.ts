@@ -32,21 +32,22 @@ export class DetailsComponent implements OnInit, OnDestroy {
         {key: 'vendorValue', title: 'Vendor value', dataType: 'gold'},
         {key: 'buyoutValue', title: 'Buyout value', dataType: 'gold'},
         {key: 'mktValue', title: 'Market price', dataType: 'gold'},
-        {key: 'saleRate', title: 'Regional avg sale rate', dataType: 'percent'},
-        {key: 'score', title: 'Score', dataType: 'number'},
+        {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
+        {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
       ], data: []
     },
     sells: {
       columns: [
         {key: 'name', title: 'Name', dataType: 'name'},
         {key: 'stock', title: 'Stock', dataType: 'number'},
-        {key: 'price', title: 'Stack price', dataType: 'gold'},
+        {key: 'price', title: 'Stack price', dataType: 'vendor-currency'},
         {key: 'stackSize', title: 'Stack size', dataType: 'number'},
-        {key: 'unitPrice', title: 'Unit price', dataType: 'gold'},
+        {key: 'unitPrice', title: 'Unit price', dataType: 'vendor-currency'},
         {key: 'buyout', title: 'Buyout', dataType: 'gold'},
         {key: 'roi', title: 'Potential profit', dataType: 'gold'},
-        {key: 'mktValue', title: 'Market price', dataType: 'gold'},
-        {key: 'saleRate', title: 'Regional avg sale rate', dataType: 'percent'},
+        {key: 'mktPrice', title: 'Market price', dataType: 'gold'},
+        {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
+        {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
       ], data: []
     },
     skinning: {columns: [], data: []}

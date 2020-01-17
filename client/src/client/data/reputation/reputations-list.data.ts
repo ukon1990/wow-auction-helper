@@ -10,6 +10,8 @@ import {theHonorbound} from './bfa/the-honorbound.data';
 import {theUnshackled} from './bfa/the-unshackeled.data';
 import {wavebladeAnkoan} from './bfa/waveblade-ankoan.data';
 import {rustboltResistance} from './bfa/rustbolt-resistance.data';
+import {theUldumAccord} from './bfa/the-uldum-accord.data';
+import {theRajani} from './bfa/the-rajani.data';
 
 export class ReputationVendorsData {
   public static bfa = [
@@ -24,6 +26,8 @@ export class ReputationVendorsData {
     zandalariEmpire,
     talanjisExpedition,
     voldunai,
-    theHonorbound
+    theHonorbound,
+    theUldumAccord,
+    theRajani,
   ];
 }

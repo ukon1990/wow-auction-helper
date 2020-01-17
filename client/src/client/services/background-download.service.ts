@@ -108,7 +108,7 @@ export class BackgroundDownloadService {
     await AuctionUtil.organize(auctions);
     this.auctionsService.reTriggerEvents();
     this.auctionsService.doNotOrganize = false;
-    await this.dbService.getTSMAddonData();
+    await this.dbService.getAddonData();
 
     this.loggLoadingTime(startTimestamp);
     this.isLoading.next(false);

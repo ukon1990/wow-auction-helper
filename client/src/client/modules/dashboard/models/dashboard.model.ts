@@ -683,7 +683,7 @@ export class Dashboard {
     this.data.length = 0;
     this.data = SharedService.recipes
       .filter(recipe => {
-        if (this.isExpansionMissMatch(recipe.itemID)) {
+        if (this.isExpansionMissMatch(recipe.itemID) || !recipe || !recipe.roi) {
           return false;
         }
 

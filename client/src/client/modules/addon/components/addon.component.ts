@@ -7,11 +7,11 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'wah-tsm-addon-db',
-  templateUrl: './tsm-addon-db.component.html',
-  styleUrls: ['./tsm-addon-db.component.scss']
+  selector: 'wah-addon',
+  templateUrl: './addon.component.html',
+  styleUrls: ['./addon.component.scss']
 })
-export class TsmAddonDbComponent {
+export class AddonComponent {
   @Input() importMode: boolean;
   lastModified: Date = localStorage['timestamp_tsm_addon_import'] ?
     new Date(localStorage['timestamp_tsm_addon_import']) : undefined;
@@ -27,15 +27,15 @@ export class TsmAddonDbComponent {
         try {
           new TsmLuaUtil().convertList(reader.result);
           this.lastModified = fileEvent['srcElement']['files'][0].lastModifiedDate;
-          this.dbService.addTSMAddonData(reader.result, this.lastModified);
+          // this.dbService.addTSMAddonData(reader.result, this.lastModified);
           Report.send('Imported TSM addon data', 'Import');
         } catch (error) {
-          ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
+          ErrorReport.sendError('AddonComponent.importFromFile', error);
         }
       };
       reader.readAsText(files[0]);
     } catch (error) {
-      ErrorReport.sendError('TsmAddonDbComponent.importFromFile', error);
+      ErrorReport.sendError('AddonComponent.importFromFile', error);
     }
   }
 }

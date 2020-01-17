@@ -427,11 +427,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       return false;
     }
 
-    const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id];
+    const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id],
+      recipe: Recipe = SharedService.itemRecipeMap[id];
     if (SharedService.recipesMapPerItemKnown[id]) {
       return SharedService.recipesMapPerItemKnown[id];
     }
-    return false;
+    return recipe && recipe.profession === 'none';
+
   }
 
   rowClickEvent(c: ColumnDescription, d: any): void {

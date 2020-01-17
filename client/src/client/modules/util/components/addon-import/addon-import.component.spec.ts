@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TsmAddonDbComponent } from './tsm-addon-db.component';
+import { AddonImportComponent } from './addon-import.component';
 
-describe('TsmAddonDbComponent', () => {
-  let component: TsmAddonDbComponent;
-  let fixture: ComponentFixture<TsmAddonDbComponent>;
+describe('AddonImportComponent', () => {
+  let component: AddonImportComponent;
+  let fixture: ComponentFixture<AddonImportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TsmAddonDbComponent ]
+      declarations: [ AddonImportComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TsmAddonDbComponent);
+    fixture = TestBed.createComponent(AddonImportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

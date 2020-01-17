@@ -115,6 +115,7 @@ export class SharedService {
   };
 
   /* istanbul ignore next */
+  static addonData = {};
   public static isDownloading(): boolean {
     return SharedService.downloading.auctions ||
       SharedService.downloading.tsmAuctions ||

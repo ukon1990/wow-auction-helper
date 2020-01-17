@@ -3,10 +3,16 @@ export class GameBuild {
   /**
    * The version of the game client that the user uses
    */
-  static versions = [
+  static readonly versions = [
     'Retail',
     'Classic'
   ];
+
+  static readonly ADDONS = {
+    AHDB: {file: 'AuctionDB.lua', name: 'AHDB'},
+    Auctioneer: {file: 'Auc-ScanData.lua', name: 'Auctioneer'},
+    TSM: {file: 'TradeSkillMaster.lua', name: 'TSM'}
+  };
 
   /**
    * A list of wow expansions

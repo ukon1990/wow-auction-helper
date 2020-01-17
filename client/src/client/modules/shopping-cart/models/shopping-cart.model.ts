@@ -6,7 +6,7 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Auction} from '../../auction/models/auction.model';
 import {Report} from '../../../utils/report.util';
 import {ErrorReport} from '../../../utils/error-report.util';
-import {ProfitSummary} from '../../tsm/models/profit-summary.model';
+import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {ShoppingCartItem} from './shopping-cart-item.model';
 
 
