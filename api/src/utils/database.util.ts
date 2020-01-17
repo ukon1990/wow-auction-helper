@@ -21,13 +21,15 @@ export class DatabaseUtil {
       }
       this.enqueueHandshake()
         .then(() => {
-          // console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
+          console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
+          console.log('SQL:', query);
           this.connection.query(query, (err: MysqlError, rows: any[]) => {
             if (this.autoTerminate) {
               this.end();
             }
 
             if (err) {
+              console.error(err);
               reject({message: `Failed to execute the query: ${ query }`, error: err.stack});
               return;
             }
@@ -37,13 +39,14 @@ export class DatabaseUtil {
         })
         .catch((error) => {
           console.error(error);
+          console.error(error);
           reject();
         });
     });
   }
 
   end(): void {
-    if (environment.test || this.autoTerminate) {
+    if (environment.test) {
       return;
     }
     this.connection.end();
@@ -61,9 +64,11 @@ export class DatabaseUtil {
         return;
       }
 
+      console.log('Creating a new connection to the DB');
       this.connection.connect((error) => {
         if (error) {
           this.isConnectionActive = false;
+          console.error(error);
           reject({
             message: 'Could not connect to the database',
             error: 'Could not connect to the database',

@@ -21,7 +21,7 @@ fdescribe('WoWHeadUtil', () => {
     });
 
     it('getDroppedBy', async () => {
-      expect(blackrockOre.droppedBy.length).toBe(8);
+      expect(blackrockOre.droppedBy.length).toBe(10);
       expect(amberblaze.droppedBy.length).toBe(0);
     });
 
@@ -34,7 +34,7 @@ fdescribe('WoWHeadUtil', () => {
     });
 
     it('currencyFor', async () => {
-      expect(blackrockOre.currencyFor.length).toBe(8);
+      expect(blackrockOre.currencyFor.length).toBe(7);
     });
 
     it('soldBy', async () => {
