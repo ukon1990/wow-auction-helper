@@ -201,7 +201,7 @@ functions:
     tags:
       FunctionName: Wah-realmAllRegions
     handler: src/controllers/realm.realmAllRegions
-    memorySize: 128
+    memorySize: 200
     events:
       - http:
           method: get
@@ -212,7 +212,7 @@ functions:
     tags:
       FunctionName: Wah-getByRegionAndName
     handler: src/controllers/realm.getByRegionAndName
-    memorySize: 128
+    memorySize: 200
     events:
       - http:
           method: get

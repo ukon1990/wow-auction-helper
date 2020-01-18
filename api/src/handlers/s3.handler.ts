@@ -6,11 +6,10 @@ const AWS = require('aws-sdk');
 export class S3Handler {
 
   private getS3() {
-    const s3 = new AWS.S3({
+    return new AWS.S3({
       accessKeyId: AWS_DETAILS.ACCESS_KEY,
       secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
     });
-    return s3;
   }
 
   save(data: any, path: string, queryData: any): Promise<any> {

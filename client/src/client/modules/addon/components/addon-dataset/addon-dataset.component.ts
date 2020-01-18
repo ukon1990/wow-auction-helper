@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {Filters} from '../../../../utils/filtering';
 import {Report} from '../../../../utils/report.util';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-tsm-dataset',
@@ -154,7 +155,7 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
   inventoryValueOnlyInDemand: number;
   currentGold = 0;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute, private auctionService: AuctionsService) {
     this.form = this.formBuilder.group({
       dataset: new FormControl(0),
       realm: new FormControl(),
@@ -203,6 +204,10 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
       this.inventoryFilterForm.valueChanges,
       (formData) =>
         this.handleInventorySet(this.form.getRawValue().faction, formData));
+
+    this.sm.add(
+      this.auctionService.events.list,
+      () => this.initContent());
   }
 
   initContent(): void {
