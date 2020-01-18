@@ -82,7 +82,7 @@ functions:
     tags:
       FunctionName: Wah-items
     handler: src/controllers/item.handler
-    memorySize: 160
+    memorySize: 300
     events:
       - http:
           method: any
