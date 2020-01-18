@@ -6,11 +6,10 @@ const AWS = require('aws-sdk');
 export class S3Handler {
 
   private getS3() {
-    const s3 = new AWS.S3({
+    return new AWS.S3({
       accessKeyId: AWS_DETAILS.ACCESS_KEY,
       secretAccessKey: AWS_DETAILS.SECRET_ACCESS_KEY
     });
-    return s3;
   }
 
   save(data: any, path: string, queryData: any): Promise<any> {
@@ -42,19 +41,11 @@ export class S3Handler {
   }
 
   get(bucket: string, file: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const s3 = this.getS3();
-      s3.getObject({
-        Bucket: bucket,
-        Key: file
-      }, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
+    const s3 = this.getS3();
+    return s3.getObject({
+      Bucket: bucket,
+      Key: file
+    }).promise();
   }
 
   copy(origin: string, target: string, bucket: string): Promise<any> {

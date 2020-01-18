@@ -11,6 +11,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {S3Handler} from './s3.handler';
 import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
 import {GzipUtil} from '../utils/gzip.util';
+import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
 
 export class RealmHandler {
 
@@ -29,46 +30,46 @@ export class RealmHandler {
 
   getRealmByRegionAndName(region: string, realm: string) {
     console.log('Fetching realm status for ', region, realm);
-    const conn = new DatabaseUtil(false);
     return new Promise((resolve, reject) => {
-      conn.query(
-          RealmQuery.getHouseForRealm(region, realm))
-        .then(async rows => {
-          console.log('Found', rows.length, 'realms');
-          if (rows.length > 0) {
-            try {
-              if (rows[0].autoUpdate === 0) {
-                console.log('Attempting ah activation id=', rows[0].id);
-                await conn.query(
-                  RealmQuery.activateHouse(rows[0].id))
-                  .then(() => console.log('Successfully activated id=', rows[0].id))
-                  .catch(console.error);
-                new HttpClientUtil()
-                  .post(new Endpoints()
-                      .getLambdaUrl('auction/update-one', rows[0].region),
-                    rows[0],
-                    true);
-              }
-              console.log('updateLastRequested id=', rows[0].id);
-              await conn.query(
-                RealmQuery.updateLastRequested(rows[0].id))
-                .then(() => {})
-                .catch(console.error);
-            } catch (e) {
-              console.error('Error', e);
-            }
-            conn.end();
-            resolve(rows[0]);
-          } else {
-            conn.end();
-            resolve({});
+      new S3Handler().get(`wah-data-${region}`, `auctions/${region}/${realm}.json.gz`)
+        .then(async (data) => {
+
+          const house: AuctionHouseStatus = await new GzipUtil().decompress(data['Body'])
+              .catch(console.error),
+            conn = new DatabaseUtil(false);
+          if (!house.autoUpdate) {
+            console.log('Attempting ah activation id=', house.id);
+            await conn.query(
+              RealmQuery.activateHouse(house.id))
+              .then(() => console.log('Successfully activated id=', house.id))
+              .catch(console.error);
+            new HttpClientUtil()
+              .post(new Endpoints()
+                  .getLambdaUrl('auction/update-one', region),
+                house,
+                true);
+            house.autoUpdate = 1;
+            house.isUpdating = 1;
           }
-        })
-        .catch((error) => {
-          console.log('Could not fetch realm status for ', region, realm);
+          await conn.query(
+            RealmQuery.updateLastRequested(house.id))
+            .then(() => {
+            })
+            .catch(console.error);
           conn.end();
-          reject(error);
-        });
+          resolve(house);
+        })
+        .catch(reject);
+    });
+  }
+
+  getAllRealmsFromS3(region = 'eu') {
+    return new Promise((resolve, reject) => {
+      new S3Handler().get(`wah-data-${region}`, `auctions/${region}/status.json.gz`)
+        .then((data) => {
+          resolve(data['Body']);
+        })
+        .catch(reject);
     });
   }
 
