@@ -1,10 +1,8 @@
-import generateUUID from './utils/uuid.util';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {SharedService} from './services/shared.service';
-import {AuthService} from './modules/core/auth.service';
+import {AuthService} from '../service/auth.service';
 
 @Injectable()
 export class AuthenticationInterceptor implements HttpInterceptor {

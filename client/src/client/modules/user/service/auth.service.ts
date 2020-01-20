@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs';
-import {BLIZZARD} from '../../../../../api/src/secrets';
-import {Endpoints} from '../../services/endpoints';
-import {SharedService} from '../../services/shared.service';
-import {Report} from '../../utils/report.util';
-import {ErrorReport} from '../../utils/error-report.util';
+import {Endpoints} from '../../../services/endpoints';
+import {SharedService} from '../../../services/shared.service';
+import {Report} from '../../../utils/report.util';
+import {ErrorReport} from '../../../utils/error-report.util';
 import {EmptyUtil} from '@ukon1990/js-utilities';
+import {CLIENT_PUBLIC_KEY} from '../../../secrets';
 
 @Injectable({
   providedIn: 'root'
@@ -76,7 +76,7 @@ export class AuthService {
       'response_type=code' +
       '&redirect_uri=' + location.origin +
       '&scope=wow.profile&' +
-      'client_id=' + BLIZZARD.CLIENT_ID;
+      'client_id=' + CLIENT_PUBLIC_KEY;
     console.log('url', url);
     this.authorizationTab = this.openNewTab(url);
   }

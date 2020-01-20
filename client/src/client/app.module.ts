@@ -36,7 +36,7 @@ import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
 import {AddonModule} from './modules/addon/addon.module';
 import {BackgroundDownloadService} from './services/background-download.service';
 import {ReportService} from './services/report/report.service';
-import {AuthenticationInterceptor} from './auth.interceptor';
+import {AuthenticationInterceptor} from './modules/user/interceptor/auth.interceptor';
 import {ZoneService} from './modules/zone/service/zone.service';
 import {NpcService} from './modules/npc/services/npc.service';
 import {ItemModule} from './modules/item/item.module';
