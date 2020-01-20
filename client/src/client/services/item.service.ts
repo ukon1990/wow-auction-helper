@@ -43,6 +43,10 @@ export class ItemService {
       })
       .toPromise()
       .then((item: Item) => {
+        if (item['error']) {
+          ErrorReport.sendHttpError(item['error']);
+          return;
+        }
         SharedService.items[item.id] = (item as Item);
         if (SharedService.auctionItemsMap[item.id]) {
           SharedService.auctionItemsMap[item.id].name = item.name;

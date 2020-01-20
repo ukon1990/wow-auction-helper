@@ -23,7 +23,7 @@ describe('NPCUtil', () => {
     const tanaanJungleTooth = npc.drops.filter(d => d.id === 128438)[0];
     // console.log(tanaanJungleTooth);
     expect(tanaanJungleTooth.id).toBe(128438);
-    expect(tanaanJungleTooth.dropped).toBe(242007);
+    expect(tanaanJungleTooth.dropped).toBeTruthy();
     expect(+tanaanJungleTooth.dropChance.toFixed(2)).toBe(.46);
   });
 
@@ -114,7 +114,7 @@ describe('NPCUtil', () => {
 
     const shimmerScale = npc.skinning.filter(d => d.id === 153050)[0];
     expect(shimmerScale.id).toBe(153050);
-    expect(shimmerScale.dropChance).toBe(1);
+    expect(shimmerScale.dropChance.toFixed(2)).toBe('1.00');
   });
 
   it('Can handle worth if present', async () => {

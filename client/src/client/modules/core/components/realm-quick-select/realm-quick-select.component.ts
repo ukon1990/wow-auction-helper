@@ -67,7 +67,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     return null;
   }
 
-  private setRealmList(realms?: Realm[]) {
+  private setRealmList(realms?: RealmStatus[]) {
     if (!realms) {
       realms = this.realmService.events.list.value;
     }
@@ -87,8 +87,8 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     this.handleRealmChange();
   }
 
-  private setSlugFromRealms(realms: Realm[], map) {
-    realms.forEach((realm: Realm) => {
+  private setSlugFromRealms(realms: RealmStatus[], map) {
+    realms.forEach((realm: RealmStatus) => {
       if (map[realm.name]) {
         map[realm.name].slug = realm.slug;
         this.realmListMap[realm.slug] = map[realm.name];
@@ -134,8 +134,12 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleRealmChange(slug?: string) {
+    const currentRealm = this.realmService.events.list.value
+      .filter((status: RealmStatus) =>
+        status.ahId === this.realmService.events.realmStatus.value.id);
     if (!slug) {
-      slug = this.form.getRawValue().realm;
+      slug = currentRealm && currentRealm.length ?
+        currentRealm[0].slug : this.form.getRawValue().realm;
     }
 
     if (TextUtil.isEmpty(slug)) {

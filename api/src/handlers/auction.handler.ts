@@ -285,39 +285,50 @@ export class AuctionHandler {
 
       if (!error && ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
         console.log(`Updating id=${dbResult.id}`);
-        await this.setIsUpdating(dbResult.id, true);
-        this.downloadDump(ahDumpResponse.url)
-          .then(async r => {
-            console.log('Done downloading for id=', dbResult.id);
-            this.sendToS3(
-              r.body, dbResult.region, dbResult.id,
-              ahDumpResponse.lastModified,
-              dbResult.lastModified,
-              this.getSizeOfResponseInMB(r),
-              await this.getDelay(dbResult,
-                ahDumpResponse.lastModified))
-              .then(async (res) => {
-                console.log('Successfully uploaded to bucket for id=', dbResult.id);
-                resolve(res);
-                await this.setIsUpdating(dbResult.id, false);
-              })
-              .catch(async err => {
-                reject(err);
-                console.error('Could not upload to s3', err);
-                await this.setIsUpdating(dbResult.id, false);
-              });
-          })
-          .catch(e => {
-            this.setIsUpdating(dbResult.id, false)
-              .catch(console.error);
-            reject(e);
-          });
+        await Promise.all([
+          // await this.setIsUpdating(dbResult.id, true).catch(console.error),
+          this.getAndUploadAuctionDump(ahDumpResponse, dbResult)
+        ])
+          .then(resolve)
+          .catch(reject);
       } else if (error) {
         console.error(`Could not update id=${dbResult.id}`, error);
         reject(error);
       } else {
         resolve();
       }
+    });
+  }
+
+  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, dbResult: {
+    id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay
+  }) {
+    return new Promise((resolve, reject) => {
+      this.downloadDump(ahDumpResponse.url)
+        .then(async r => {
+          console.log('Done downloading for id=', dbResult.id);
+          this.sendToS3(
+            r.body, dbResult.region, dbResult.id,
+            ahDumpResponse.lastModified,
+            dbResult.lastModified,
+            this.getSizeOfResponseInMB(r),
+            await this.getDelay(dbResult,
+              ahDumpResponse.lastModified))
+            .then(async (res) => {
+              console.log('Successfully uploaded to bucket for id=', dbResult.id);
+              resolve(res);
+              // await this.setIsUpdating(dbResult.id, false);
+            })
+            .catch(async err => {
+              console.error('Could not upload to s3', err);
+             //  await this.setIsUpdating(dbResult.id, false);
+            });
+        })
+        .catch(e => {
+         // this.setIsUpdating(dbResult.id, false)
+         //   .catch(console.error);
+          reject(e);
+        });
     });
   }
 
