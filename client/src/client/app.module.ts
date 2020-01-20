@@ -40,6 +40,7 @@ import {AuthenticationInterceptor} from './modules/user/interceptor/auth.interce
 import {ZoneService} from './modules/zone/service/zone.service';
 import {NpcService} from './modules/npc/services/npc.service';
 import {ItemModule} from './modules/item/item.module';
+import {UserModule} from './modules/user/user.module';
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import {ItemModule} from './modules/item/item.module';
     AuctionModule,
     ShoppingCartModule,
     AddonModule,
-    ItemModule
+    ItemModule,
+    UserModule
   ],
   providers: [
     RealmService,

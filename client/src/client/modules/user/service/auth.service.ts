@@ -7,6 +7,7 @@ import {Report} from '../../../utils/report.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {CLIENT_PUBLIC_KEY} from '../../../secrets';
+import {NavigationEnd, Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +16,10 @@ export class AuthService {
   public static authTokenEvent = new BehaviorSubject<any>(undefined);
   private authorizationTab;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private route: Router) {
     Report.debug('AuthService.constructor');
 
     this.setAuthCodeSubscriptionEvent();
-    // this.checkToken();
   }
 
   private setAuthCodeSubscriptionEvent() {
@@ -60,8 +60,8 @@ export class AuthService {
   }
 
   checkToken() {
-    const region = 'eu';
-    this.http.post(Endpoints.getLambdaUrl('/auth/verify'), {
+    const region = SharedService.user.region;
+    this.http.post(Endpoints.getLambdaUrl('auth/verify'), {
       token: this.getAccessToken(),
       region
     }).toPromise()
@@ -118,6 +118,16 @@ export class AuthService {
       return a.dispatchEvent(dispatch);
     } else {
       return window.open(url, '_blank');
+    }
+  }
+
+  handleCodeRouteEvent(event: NavigationEnd): void {
+    if (event instanceof NavigationEnd) {
+      const result = /code=[a-zA-Z0-9]{3,40}/.exec((event as NavigationEnd).urlAfterRedirects);
+      if (result && result.length) {
+        const code = result[0].replace('code=', '');
+        this.setAuthCode(code);
+      }
     }
   }
 }

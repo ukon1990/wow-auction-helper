@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from '../../service/auth.service';
 
 @Component({
   selector: 'wah-login',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthService) {
+  }
 
   ngOnInit() {
   }
 
+  login(): void {
+    this.authService.authRequest();
+  }
 }

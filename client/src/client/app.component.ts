@@ -16,6 +16,7 @@ import {ReportService} from './services/report/report.service';
 import {Title} from '@angular/platform-browser';
 import {RoutingUtil} from './modules/core/utils/routing.util';
 import {MenuItem} from './modules/core/models/menu-item.model';
+import {AuthService} from './modules/user/service/auth.service';
 
 @Component({
   selector: 'wah-root',
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
               private reportService: ReportService,
+              private authService: AuthService,
               private title: Title) {
     this.setLocale();
     DefaultDashboardSettings.init();
@@ -42,6 +44,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     Report.init(this.angulartics2, this.reportService);
     SharedService.user.shoppingCart = new ShoppingCart();
     ProspectingAndMillingUtil.restore();
+    this.authService.checkToken();
 
     this.subs.add(
       SharedService.events.detailPanelOpen,
@@ -127,6 +130,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private onNavigationChange(event: NavigationEnd) {
     this.redirectToCorrectPath(event.url);
+    this.authService.handleCodeRouteEvent(event);
     this.saveCurrentRoute(event);
     const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);
     if (menuItem) {

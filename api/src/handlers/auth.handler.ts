@@ -27,6 +27,18 @@ export class AuthHandler {
     });
   }
 
+  static verifyToken(region: string, token: string): Promise<any> {
+    return new Promise<any>(((resolve, reject) =>
+      http.get(
+        `https://${region}.battle.net/oauth/check_token?token=${token}`, (error, response, body) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(JSON.parse(body));
+        })));
+  }
+
   public static isAuthorizedIdentity(event: APIGatewayEvent): boolean {
     const requestIp = event.requestContext.identity.sourceIp,
       localIp = '127.0.0.1';
@@ -56,7 +68,7 @@ export class AuthHandler {
           if (err) {
             reject(err);
           } else {
-            resolve(body);
+            resolve(JSON.parse(body));
           }
         });
     });
@@ -68,17 +80,5 @@ export class AuthHandler {
         .then(resolve)
         .catch(reject);
     });
-  }
-
-  static verifyToken(region: string, token: string): Promise<any> {
-    return new Promise<any>(((resolve, reject) =>
-      http.get(
-        `https://${region}.battle.net/oauth/check_token?token=${token}`, (error, response, body) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          resolve(body);
-        })));
   }
 }
