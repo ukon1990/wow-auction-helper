@@ -21,32 +21,32 @@ fdescribe('WoWHeadUtil', () => {
     });
 
     it('getDroppedBy', async () => {
-      expect(blackrockOre.droppedBy.length).toBe(10);
-      expect(amberblaze.droppedBy.length).toBe(0);
+      expect(blackrockOre.droppedBy.length).toBeTruthy();
+      expect(amberblaze.droppedBy.length).toBeFalsy();
     });
 
     it('containedInObject', async () => {
-      expect(blackrockOre.containedInObject.length).toBe(5);
+      expect(blackrockOre.containedInObject.length).toBeTruthy();
     });
 
     it('containedInItem', async () => {
-      expect(blackrockOre.containedInItem.length).toBe(4);
+      expect(blackrockOre.containedInItem.length).toBeTruthy();
     });
 
     it('currencyFor', async () => {
-      expect(blackrockOre.currencyFor.length).toBe(7);
+      expect(blackrockOre.currencyFor.length).toBeTruthy();
     });
 
     it('soldBy', async () => {
-      expect(blackrockOre.soldBy.length).toBe(10);
+      expect(blackrockOre.soldBy.length).toBeTruthy();
     });
 
     it('milledFrom', async () => {
-      expect(viridescentPigment.milledFrom.length).toBe(7);
+      expect(viridescentPigment.milledFrom.length).toBeTruthy();
     });
 
     it('prospectedFrom', async () => {
-      expect(amberblaze.prospectedFrom.length).toBe(3);
+      expect(amberblaze.prospectedFrom.length).toBeTruthy();
     });
 
     it('Empty if not found in body or non accepted js found', () => {

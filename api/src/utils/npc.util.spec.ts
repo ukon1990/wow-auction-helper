@@ -114,7 +114,7 @@ describe('NPCUtil', () => {
 
     const shimmerScale = npc.skinning.filter(d => d.id === 153050)[0];
     expect(shimmerScale.id).toBe(153050);
-    expect(shimmerScale.dropChance).toBe(1);
+    expect(shimmerScale.dropChance.toFixed(2)).toBe('1.00');
   });
 
   it('Can handle worth if present', async () => {
