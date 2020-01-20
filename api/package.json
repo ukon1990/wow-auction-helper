@@ -24,6 +24,7 @@
     "@ukon1990/js-utilities": "^1.9.3",
     "@ukon1990/subscription-manager": "^1.0.2",
     "aws-sdk": "^2.516.0",
+    "btoa": "^1.2.1",
     "file-saver": "^2.0.2",
     "mysql": "^2.17.1",
     "promise-throttle": "^1.0.1",

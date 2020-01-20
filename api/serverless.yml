@@ -270,3 +270,19 @@ functions:
       FunctionName: Wah-updateTSMDumpData
     handler: src/controllers/tsm.handler
     memorySize: 256
+  authGetAccessToken:
+    handler: src/controllers/auth.getAccessToken
+    events:
+      - http:
+          method: post
+          path: auth
+          cors:
+            origin: '*'
+  authvVerifyToken:
+    handler: src/controllers/auth.checkTokenHandler
+    events:
+      - http:
+          method: post
+          path: auth/verify
+          cors:
+            origin: '*'
