@@ -2,6 +2,7 @@ import * as http from 'request';
 import {APIGatewayEvent, Callback} from 'aws-lambda';
 import * as btoa from 'btoa';
 import {BLIZZARD, AWS_DETAILS} from '../secrets';
+import {HttpClientUtil} from '../utils/http-client.util';
 
 export class AuthHandler {
   public static getToken(): Promise<string> {
@@ -77,6 +78,20 @@ export class AuthHandler {
   checkToken(region: string, token: string): Promise<any> {
     return new Promise((resolve, reject) => {
       AuthHandler.verifyToken(region, token)
+        .then((res) => {
+          console.log('Res', res);
+          resolve(res);
+        })
+        .catch(reject);
+    });
+  }
+
+  getUserInfo(region: string, token: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      const header =  {
+        Authorization: `Basic ${token}`
+      };
+      new HttpClientUtil().get(`https://${region}.battle.net/oauth/userinfo`, true, header)
         .then(resolve)
         .catch(reject);
     });

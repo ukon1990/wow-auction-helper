@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../service/auth.service';
+import {UserService} from '../../service/user.service';
 
 @Component({
   selector: 'wah-login',
@@ -8,7 +9,7 @@ import {AuthService} from '../../service/auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private userService: UserService) {
   }
 
   ngOnInit() {
@@ -16,5 +17,10 @@ export class LoginComponent implements OnInit {
 
   login(): void {
     this.authService.authRequest();
+  }
+
+  getUserInfo(): void {
+    this.userService.getUserInfo()
+      .catch(console.error);
   }
 }

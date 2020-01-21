@@ -1,12 +1,12 @@
 const request: any = require('request');
 
 export class HttpClientUtil {
-  get(url: string, expectJSON: boolean = true): Promise<any> {
+  get(url: string, expectJSON: boolean = true, header?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request.get(
         {
           url,
-          headers: {'User-Agent': 'Mozilla/5.0'}
+          headers: header || {'User-Agent': 'Mozilla/5.0'}
         },
         (error, response, body) => {
           try {
