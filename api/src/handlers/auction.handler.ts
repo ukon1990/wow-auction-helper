@@ -14,6 +14,7 @@ import {EventRecord, EventSchema} from '../models/s3/event-record.model';
 import {GzipUtil} from '../utils/gzip.util';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
+import {AuctionResponse} from '../models/auction/auctions-response';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -272,50 +273,53 @@ export class AuctionHandler {
         .catch(e => {
           error = e;
         });
-      console.log(`Fetching ah dump url took ${+new Date() - startGetDumpPath}ms`);
+      console.log(`Fetching ah dump url took ${+new Date() - startGetDumpPath}ms`, ahDumpResponse);
 
       if (!error && ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
-        console.log(`Updating id=${dbResult.id}`);
-        await Promise.all([
-          // await this.setIsUpdating(dbResult.id, true).catch(console.error),
-          this.getAndUploadAuctionDump(ahDumpResponse, dbResult)
-        ])
-          .then(resolve)
-          .catch(reject);
+        console.log('Starting upload');
+        new S3Handler().save(ahDumpResponse, `auctions/${dbResult.region}/${dbResult.id}/dump-path.json.gz`,
+          {region: dbResult.region})
+          .then((res) => {
+            console.log('Successfully uploaded:', res);
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject(err);
+          });
       } else if (error) {
         console.error(`Could not update id=${dbResult.id}`, error);
         reject(error);
       } else {
+        console.log('No new update available');
         resolve();
       }
     });
   }
 
-  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, dbResult: {
-    id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay
-  }) {
+  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, id, region) {
     const dumpDownloadStart = +new Date();
-    console.log(`Downloading dump for ${dbResult.id} with url=${ahDumpResponse.url}`);
+    console.log(`Downloading dump for ${id} with url=${ahDumpResponse.url}`);
     return new Promise((resolve, reject) => {
       this.downloadDump(ahDumpResponse.url)
         .then(async r => {
-          console.log(`Done downloading for id=${dbResult.id} (${+new Date() - dumpDownloadStart}ms)`);
+          console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
           this.sendToS3(
-            r.body, dbResult.region, dbResult.id,
+            r.body, region, id,
             ahDumpResponse.lastModified)
             .then(async (res) => {
-              console.log('Successfully uploaded to bucket for id=', dbResult.id);
+              console.log('Successfully uploaded to bucket for id=', id);
               resolve(res);
               // await this.setIsUpdating(dbResult.id, false);
             })
             .catch(async err => {
               console.error('Could not upload to s3', err);
-             //  await this.setIsUpdating(dbResult.id, false);
+              //  await this.setIsUpdating(dbResult.id, false);
             });
         })
         .catch(e => {
-         // this.setIsUpdating(dbResult.id, false)
-         //   .catch(console.error);
+          // this.setIsUpdating(dbResult.id, false)
+          //   .catch(console.error);
           reject(e);
         });
     });
@@ -481,6 +485,33 @@ export class AuctionHandler {
 
         })
         .catch(reject);
+    });
+  }
+
+  downloadAndSaveAuctionDump(records: EventRecord[]) {
+    return new Promise(async (resolve, reject) => {
+      for (const record of records) {
+        try {
+          const s3 = record.s3;
+          await new S3Handler().get(s3.bucket.name, s3.object.key)
+            .then(async ({Body}) => {
+              const splitted = s3.object.key.split('/');
+              const [auctions, region, ahId, fileName] = splitted;
+              const ahDumpResponse: AuctionResponse = await new GzipUtil().decompress(Body);
+              console.log(ahDumpResponse);
+              console.log(`Updating id=${ahId}`);
+              await Promise.all([
+                this.getAndUploadAuctionDump(ahDumpResponse, ahId, region)
+              ])
+                .catch(console.error);
+            })
+            .catch(console.error);
+          console.log('record.s3', record.s3);
+          // await this.processS3Record(record.s3);
+        } catch (e) {
+        }
+      }
+      resolve();
     });
   }
 }

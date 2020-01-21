@@ -76,7 +76,7 @@ export class RealmQuery {
                 AND (autoUpdate = 1
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
                 OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1
-            LIMIT 10;`;
+            LIMIT 50;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
