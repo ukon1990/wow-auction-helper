@@ -2,21 +2,33 @@ import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {GzipUtil} from './gzip.util';
 
 export class Response {
-  public static async send(body: any, callback: Callback) {
-    new GzipUtil().compress(body)
-      .then(obj =>
-        callback(null, {
-          statusCode: 200,
-          body: obj.toString('base64'),
-          isBase64Encoded: true,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-            'Content-Encoding': 'gzip',
-            'Character-Encoding': 'UTF8'
-          }
-        }))
-      .catch(console.error);
+  public static async send(body: any, callback: Callback, needsEncoding = true) {
+    try {
+      if (!needsEncoding) {
+        callback(null, this.getResponse(body));
+      } else {
+        new GzipUtil().compress(body)
+          .then(obj =>
+            callback(null, this.getResponse(obj)))
+          .catch(console.error);
+      }
+    } catch (e) {
+      Response.error(callback, e);
+    }
+  }
+
+  private static getResponse(obj: Buffer) {
+    return {
+      statusCode: 200,
+      body: obj.toString('base64'),
+      isBase64Encoded: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+        'Content-Encoding': 'gzip',
+        'Character-Encoding': 'UTF8'
+      }
+    };
   }
 
   public static error(callback: Callback, error?, event?: APIGatewayEvent, statusCode?: number): any {

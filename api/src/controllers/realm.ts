@@ -2,6 +2,7 @@ import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
 import {RealmHandler} from '../handlers/realm.handler';
 import {Endpoints} from '../utils/endpoints.util';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 /* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
@@ -26,9 +27,22 @@ exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callbac
 
 /* istanbul ignore next */
 exports.realmAllRegions = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const host = event.headers.Host;
+  let region;
+  if (TextUtil.contains(host, '.eu-')) {
+    region = 'eu';
+  }
+  if (TextUtil.contains(host, '.us-')) {
+    region = 'us';
+  }
+  if (TextUtil.contains(host, '.ap-')) {
+    region = 'ap';
+  }
   new RealmHandler()
-    .getAllRealms()
-    .then((res) => Response.send(res, callback))
+    .getAllRealmsFromS3(region)
+    .then((res) => {
+      Response.send(res, callback, false);
+    })
     .catch(error => Response.error(callback, error, event));
 };
 

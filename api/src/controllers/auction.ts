@@ -60,3 +60,10 @@ exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 401));
 };
+
+exports.auctionsDownloadAndSave = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  Endpoints.setStage(event);
+  new AuctionHandler().downloadAndSaveAuctionDump(event['Records'])
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 401));
+};
