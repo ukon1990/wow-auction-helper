@@ -5,6 +5,7 @@ export class AppUser {
   scope: string[];
   settings: any;
   registered: number;
+  lastModified: number;
 
   constructor(private res) {
     this.id = res.user_name;
