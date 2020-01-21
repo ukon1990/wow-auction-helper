@@ -11,9 +11,11 @@ export class AuctionUpdateLog {
   public minTime = 0;
   public avgTime = 0;
   public maxTime = 0;
+  public lastModified: number;
 
   constructor(public entries: AuctionUpdateLogEntry[]) {
     this.calculateDiff();
+    this.lastModified = this.entries[0].lastModified;
   }
 
   private calculateDiff() {

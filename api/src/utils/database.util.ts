@@ -64,6 +64,7 @@ export class DatabaseUtil {
         return;
       }
 
+      this.isConnectionActive = true;
       console.log('Creating a new connection to the DB');
       this.connection.connect((error) => {
         if (error) {

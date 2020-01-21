@@ -10,19 +10,21 @@ import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {RealmHandler} from './realm.handler';
-import {EventObject, EventRecord, EventSchema} from '../models/s3/event-record.model';
+import {EventRecord, EventSchema} from '../models/s3/event-record.model';
 import {GzipUtil} from '../utils/gzip.util';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
+import {AuctionResponse} from '../models/auction/auctions-response';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
 
 export class AuctionHandler {
 
-  async getUpdateLog(ahId: number, hours: number = 24): Promise<AuctionUpdateLog> {
+  async getUpdateLog(ahId: number, hours: number = 24, conn = new DatabaseUtil()): Promise<AuctionUpdateLog> {
     const fromDate = +new Date() - hours * 60 * 60 * 1000;
     return new Promise<AuctionUpdateLog>((resolve, reject) => {
-      new DatabaseUtil().query(RealmQuery.getUpdateHistoryForRealm(ahId, fromDate))
+      conn.query(RealmQuery.getUpdateHistoryForRealm(ahId, fromDate))
         .then(res => resolve(new AuctionUpdateLog(res)))
         .catch(reject);
     });
@@ -88,30 +90,18 @@ export class AuctionHandler {
     });
   }
 
-  private async sendToS3(data: any, region: string, ahId: number, lastModified: number, oldLastModified: number, size: number,
-                         delay: { avg: number; highest: number; lowest: number }): Promise<any> {
+  private async sendToS3(data: any, region: string, ahId: number, lastModified: number): Promise<any> {
     return new Promise((resolve, reject) => {
+      console.log('Sending to S3');
       new S3Handler().save(
         data,
         `auctions/${region}/${ahId}/${lastModified}-lastModified.json.gz`,
         {
-          region, ahId, lastModified, size
+          region, ahId, lastModified
         })
-        .then(async r => {
-          await new DatabaseUtil().query(RealmQuery
-            .insertNewDumpLogRow(ahId, r.url, lastModified, oldLastModified, size));
-
-          console.log('Sending to S3');
-          new DatabaseUtil()
-            .query(RealmQuery
-              .updateUrl(
-                ahId, r.url, lastModified, size, delay))
-            .then(async () => {
-              console.log(`Successfully updated id=${ahId}`);
-
-              resolve();
-            })
-            .catch(reject);
+        .then(r => {
+          console.log('Successfully uploaded id=', ahId);
+          resolve(r);
         })
         .catch(reject);
     });
@@ -276,57 +266,60 @@ export class AuctionHandler {
   private async updateHouse(dbResult: { id, region, slug, name, lastModified, url, lowestDelay, avgDelay, highestDelay }): Promise<any> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
+      const startGetDumpPath = +new Date();
       await this.getLatestDumpPath(dbResult.region, dbResult.slug)
         .then((r: AHDumpResponse) =>
           ahDumpResponse = r)
         .catch(e => {
           error = e;
         });
+      console.log(`Fetching ah dump url took ${+new Date() - startGetDumpPath}ms`, ahDumpResponse);
 
       if (!error && ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
-        console.log(`Updating id=${dbResult.id}`);
-        await Promise.all([
-          // await this.setIsUpdating(dbResult.id, true).catch(console.error),
-          this.getAndUploadAuctionDump(ahDumpResponse, dbResult)
-        ])
-          .then(resolve)
-          .catch(reject);
+        console.log('Starting upload');
+        new S3Handler().save(ahDumpResponse, `auctions/${dbResult.region}/${dbResult.id}/dump-path.json.gz`,
+          {region: dbResult.region})
+          .then((res) => {
+            console.log('Successfully uploaded:', res);
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject(err);
+          });
       } else if (error) {
         console.error(`Could not update id=${dbResult.id}`, error);
         reject(error);
       } else {
+        console.log('No new update available');
         resolve();
       }
     });
   }
 
-  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, dbResult: {
-    id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay
-  }) {
+  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, id, region) {
+    const dumpDownloadStart = +new Date();
+    console.log(`Downloading dump for ${id} with url=${ahDumpResponse.url}`);
     return new Promise((resolve, reject) => {
       this.downloadDump(ahDumpResponse.url)
         .then(async r => {
-          console.log('Done downloading for id=', dbResult.id);
+          console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
           this.sendToS3(
-            r.body, dbResult.region, dbResult.id,
-            ahDumpResponse.lastModified,
-            dbResult.lastModified,
-            this.getSizeOfResponseInMB(r),
-            await this.getDelay(dbResult,
-              ahDumpResponse.lastModified))
+            r.body, region, id,
+            ahDumpResponse.lastModified)
             .then(async (res) => {
-              console.log('Successfully uploaded to bucket for id=', dbResult.id);
+              console.log('Successfully uploaded to bucket for id=', id);
               resolve(res);
               // await this.setIsUpdating(dbResult.id, false);
             })
             .catch(async err => {
               console.error('Could not upload to s3', err);
-             //  await this.setIsUpdating(dbResult.id, false);
+              //  await this.setIsUpdating(dbResult.id, false);
             });
         })
         .catch(e => {
-         // this.setIsUpdating(dbResult.id, false)
-         //   .catch(console.error);
+          // this.setIsUpdating(dbResult.id, false)
+          //   .catch(console.error);
           reject(e);
         });
     });
@@ -339,15 +332,12 @@ export class AuctionHandler {
       .catch(console.error);
   }
 
-  private async getDelay(dbResult: { id; region; slug; name; lastModified; url; lowestDelay; avgDelay; highestDelay },
-                         lastModified: number) {
-    const {minTime, avgTime, maxTime} = await this.getUpdateLog(dbResult.id, 72);
+  private async getDelay(id, conn = new DatabaseUtil()) {
+    const {minTime, avgTime, maxTime} = await this.getUpdateLog(id, 72, conn);
 
-    dbResult.lowestDelay = minTime > 120 ? 120 : minTime;
-    dbResult.avgDelay = avgTime;
-    dbResult.highestDelay = maxTime;
+    const lowestDelay = minTime > 120 ? 120 : minTime;
     return {
-      lowest: dbResult.lowestDelay, avg: dbResult.avgDelay, highest: dbResult.highestDelay
+      lowest: lowestDelay, avg: avgTime, highest: maxTime
     };
   }
 
@@ -380,9 +370,9 @@ export class AuctionHandler {
     });
   }
 
-  private async updateAllStatuses(region: string) {
+  private async updateAllStatuses(region: string, conn: DatabaseUtil) {
     return new Promise((resolve, reject) => {
-      new RealmHandler().getAllRealms()
+      new RealmHandler().getAllRealms(conn)
         .then((realms) => {
           new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
             .then((data) => {
@@ -412,20 +402,23 @@ export class AuctionHandler {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
+      const conn = new DatabaseUtil(false);
       const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
         const [auctions, region, ahId, fileName] = splitted;
         await Promise.all([
-          this.updateAllStatuses(region),
+          this.updateAllStatuses(region, conn),
           this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId)/*,
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
+          this.updateDBEntries(record, region, +ahId, fileName, conn)/*,
           this.processAuctions(record, +ahId, fileName)
             .catch(console.error)*/
         ])
           .catch(console.error);
       }
+      conn.end();
       resolve();
     });
   }
@@ -434,11 +427,11 @@ export class AuctionHandler {
     return new Promise<void>((resolve, reject) => {
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
-          const start = +new Date();
+          const processStart = +new Date();
           await new GzipUtil().decompress(data['Body'])
             .then(({auctions}) => {
               const lastModified = +fileName.split('-')[0];
-              console.log(`Decompressing auctions took ${+new Date() - start} ms for ${lastModified} @ id=${ahId}`);
+              console.log(`Decompressing auctions took ${+new Date() - processStart} ms for ${lastModified} @ id=${ahId}`);
               const query = AuctionProcessorUtil.process(
                 auctions, lastModified, ahId);
               const insertStart = +new Date();
@@ -462,5 +455,63 @@ export class AuctionHandler {
       record.bucket.name)
       .then(() => console.log(`Successfully copied to auctions`))
       .catch(console.error);
+  }
+
+  private updateDBEntries(record: EventSchema, region: string, ahId: number, fileName: string, conn: DatabaseUtil) {
+    const lastModified = +fileName.split('-')[0],
+      fileSize = +(record.object.size / 1000000).toFixed(2),
+      url = `${S3Handler.getBucketUrlForRegion(region, `auctions/${region}/${ahId}/${fileName}`)}`;
+
+    return new Promise(async (resolve, reject) => {
+      conn.query(RealmQuery.getHouse(ahId))
+        .then(async (ah: AuctionHouseStatus) => {
+          console.log('updateDBEntries', {
+            fileName, lastModified, ah: ah[0]
+          });
+          Promise.all([
+            conn.query(RealmQuery
+              .insertNewDumpLogRow(ahId, url, lastModified, ah[0].lastModified, fileSize))
+              .catch(console.error),
+            conn.query(RealmQuery
+              .updateUrl(
+                ahId, url, lastModified, fileSize, await this.getDelay(ahId, conn)))
+              .then(async () => {
+                console.log(`Successfully updated id=${ahId}`);
+              })
+              .catch(console.error)
+          ])
+            .then(() => resolve())
+            .catch(reject);
+
+        })
+        .catch(reject);
+    });
+  }
+
+  downloadAndSaveAuctionDump(records: EventRecord[]) {
+    return new Promise(async (resolve, reject) => {
+      for (const record of records) {
+        try {
+          const s3 = record.s3;
+          await new S3Handler().get(s3.bucket.name, s3.object.key)
+            .then(async ({Body}) => {
+              const splitted = s3.object.key.split('/');
+              const [auctions, region, ahId, fileName] = splitted;
+              const ahDumpResponse: AuctionResponse = await new GzipUtil().decompress(Body);
+              console.log(ahDumpResponse);
+              console.log(`Updating id=${ahId}`);
+              await Promise.all([
+                this.getAndUploadAuctionDump(ahDumpResponse, ahId, region)
+              ])
+                .catch(console.error);
+            })
+            .catch(console.error);
+          console.log('record.s3', record.s3);
+          // await this.processS3Record(record.s3);
+        } catch (e) {
+        }
+      }
+      resolve();
+    });
   }
 }

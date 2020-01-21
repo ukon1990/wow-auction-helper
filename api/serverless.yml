@@ -40,6 +40,12 @@ functions:
           path: auction/log/{id}
           cors:
             origin: '*'
+  auctionsDownloadAndSave:
+    tags:
+      FunctionName: Wah-auctionsDownloadAndSave
+    handler: src/controllers/auction.auctionsDownloadAndSave
+    memorySize: 512
+    timeout: 120
   auctionsUpdateStaticS3Data:
     tags:
       FunctionName: Wah-auctions
