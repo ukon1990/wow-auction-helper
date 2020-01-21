@@ -79,3 +79,28 @@ When you set up the event:
     2. add "Target"
     3. select the "updateTSMDumpData" function
     4. configure input as JSON with the body: {"key": "your tsm key"}
+
+## AWS S3 events
+There are two events for S3.
+
+One for detecting if there are new file updates, for AH dumps.
+
+And one for when a AH dump is downloaded.
+
+The reason for this, is that a lambda that goes through API gateway is 
+limited to 30 seconds and it makes my logs cleaner I think. I then also 
+have the option of reducing dedicated resources to that part of the job.
+
+Anyways:
+1. Go to AWS S3 and open the bucket(s)
+2. Go to properties and then events
+3. Create a new event (dump download)
+    1. Use the name you wish.
+    2. Set it to "put" requests, 
+    3. Set the prefix to "auctions/eu/" and suffix to "dump-path.json.gz"
+    4. Under "Send to" choose Lambda and locate the "auctionsDownloadAndSave" function
+4. Create a new event (what to do after a dump fetch)
+1. Use the name you wish.
+    2. Set it to "All object create events" requests, 
+    3. Set the prefix to "auctions/" and suffix to "-lastModified.json.gz"
+    4. Under "Send to" choose Lambda and locate the "auctionsUpdateStaticS3Data" function
