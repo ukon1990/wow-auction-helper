@@ -5,6 +5,18 @@ const AWS = require('aws-sdk');
 
 export class S3Handler {
 
+  static getBucketUrlForRegion(region: string, path: string): string {
+    switch (region) {
+      case 'eu':
+        return `https://wah-data-eu.s3.eu-west-1.amazonaws.com/` + path;
+      case 'us':
+        return `https://wah-data-us.s3-us-west-1.amazonaws.com/` + path;
+      case 'kr':
+      case 'tw':
+        return `https://wah-data-as.s3.ap-northeast-2.amazonaws.com/` + path;
+    }
+  }
+
   private getS3() {
     return new AWS.S3({
       accessKeyId: AWS_DETAILS.ACCESS_KEY,

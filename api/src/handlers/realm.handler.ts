@@ -73,10 +73,9 @@ export class RealmHandler {
     });
   }
 
-  getAllRealms() {
+  getAllRealms(conn =  new DatabaseUtil()) {
     return new Promise((resolve, reject) => {
-      new DatabaseUtil()
-        .query(RealmQuery.getAll())
+      conn.query(RealmQuery.getAll())
         .then(resolve)
         .catch(reject);
     });
