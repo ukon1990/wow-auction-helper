@@ -122,6 +122,15 @@
                 <input matInput type="number" [(ngModel)]="d[c.key]">
               </mat-form-field>
             </span>
+            <ng-container *ngSwitchCase="'input-gold'">
+              <mat-form-field class="row col-md-12">
+                <input
+                        matInput
+                        [ngModel]="d[c.key] | gold"
+                        (ngModelChange)="setNewInputGoldValue(d, c.key, $event)"
+                />
+              </mat-form-field>
+            </ng-container>
             <span *ngSwitchCase="'input-text'">
               <mat-form-field class="row col-md-12">
                 <input matInput type="text" [(ngModel)]="d[c.key]">

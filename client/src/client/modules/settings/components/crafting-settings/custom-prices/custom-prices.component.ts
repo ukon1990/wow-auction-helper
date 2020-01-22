@@ -11,6 +11,7 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {Crafting} from '../../../../crafting/models/crafting';
 import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
 import {Report} from '../../../../../utils/report.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-custom-prices',
@@ -20,38 +21,26 @@ import {Report} from '../../../../../utils/report.util';
 export class CustomPricesComponent implements OnInit, OnDestroy {
 
   itemSearchForm: FormControl = new FormControl();
-  filteredItems: Observable<any>;
-  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
-  saveInterval: any;
+  filteredItems: Item[];
+  columns: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'price', title: 'Price', dataType: 'input-gold'},
+    {key: '', title: 'Actions', dataType: 'action', actions: ['custom-price-delete']}
+  ];
   @Input() itemID: number;
+  sm = new SubscriptionManager();
 
-  constructor(private _formBuilder: FormBuilder) {
-    this.filteredItems = this.itemSearchForm.valueChanges
-      .pipe(
-        startWith(''),
-        map(name => this.filter(name))
-      );
-    this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
-    this.columns.push({key: 'price', title: 'Price', dataType: 'gold'});
-    this.columns.push({key: 'price', title: 'Price in copper', dataType: 'input-number'});
-    this.columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['custom-price-delete']});
+  constructor() {
+    this.sm.add(this.itemSearchForm.valueChanges, (name) => this.filter(name));
   }
 
   ngOnInit(): void {
-    if (!this.itemID) {
-      this.saveInterval = setInterval(() => {
-        if (JSON.stringify(SharedService.user.customPrices) !== localStorage['custom_prices']) {
-          CustomPrices.save();
-          Crafting.calculateCost();
-        }
-      }, 500);
-    }
   }
 
   ngOnDestroy(): void {
-    if (!this.itemID) {
-      clearInterval(this.saveInterval);
-    }
+    this.sm.unsubscribe();
+    CustomPrices.save();
+    Crafting.calculateCost();
   }
 
   add(item: Item): void {
@@ -73,8 +62,8 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
    * Such efficient, such ugh
    * @param name Item name for the query
    */
-  private filter(name: string): Array<Item> {
-    return SharedService.itemsUnmapped.filter(i =>
+  private filter(name: string): void {
+    this.filteredItems = SharedService.itemsUnmapped.filter(i =>
       i.name.toLowerCase().indexOf(name.toLowerCase()) !== -1).slice(0, 20);
   }
 

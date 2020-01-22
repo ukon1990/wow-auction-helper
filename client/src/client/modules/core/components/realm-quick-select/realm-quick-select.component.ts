@@ -156,7 +156,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     if (!this.isCurrentRealm(slug)) {
       this.realmService.changeRealm(this.auctionsService, slug);
     }
-    Report.send('handleRealmChange', 'CharacterSelectComponent');
+    Report.send('handleRealmChange', 'RealmQuickSelectComponent');
   }
 
   private isCurrentRealm(slug: string) {
@@ -168,6 +168,6 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     User.save();
 
     this.dbService.getAddonData();
-    Report.send('handleFactionChange', 'CharacterSelectComponent');
+    Report.send('handleFactionChange', 'RealmQuickSelectComponent');
   }
 }

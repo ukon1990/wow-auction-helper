@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {RealmQuickSelectComponent} from './realm-quick-select.component';
 
-describe('CharacterSelectComponent', () => {
+describe('RealmQuickSelectComponent', () => {
   let component: RealmQuickSelectComponent;
   let fixture: ComponentFixture<RealmQuickSelectComponent>;
 
