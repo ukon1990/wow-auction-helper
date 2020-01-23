@@ -5,7 +5,7 @@
              [matAutocomplete]="auto"
              [formControl]="itemSearchForm">
       <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let item of filteredItems | async" [value]="item.name"
+        <mat-option *ngFor="let item of filteredItems" [value]="item.name"
           (click)="add(item)"
           [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
           <wah-icon [size]="36" [id]="item.id"></wah-icon>

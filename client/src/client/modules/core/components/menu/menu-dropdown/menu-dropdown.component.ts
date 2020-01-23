@@ -8,4 +8,11 @@ import {MenuItem} from '../../../models/menu-item.model';
 export class MenuDropdownComponent {
   @Input() items: MenuItem[];
   @Input() parentPath: string;
+
+  doNotClose(event: MouseEvent): void {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
 }

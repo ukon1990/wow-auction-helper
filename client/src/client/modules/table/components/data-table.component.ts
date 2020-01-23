@@ -21,6 +21,7 @@ import {RowClickEvent} from '../models/row-click-event.model';
 import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
 import {Router} from '@angular/router';
+import {GoldPipe} from '../../util/pipes/gold.pipe';
 
 @Component({
   selector: 'wah-data-table',
@@ -63,6 +64,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   };
   getBonusList = Auction.getBonusList;
   theme = ThemeUtil.current;
+  private isTyping: boolean;
+  private lastCharacterTyped: number;
 
   constructor(private router: Router) {
     this.sorter = new Sorter();
@@ -438,5 +441,16 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   rowClickEvent(c: ColumnDescription, d: any): void {
     this.rowClicked.emit(new RowClickEvent(c, d));
+  }
+
+  setNewInputGoldValue(d: any, key: string, newValue: any) {
+    const interval = 500;
+    this.lastCharacterTyped = +new Date();
+    setTimeout(() => {
+      if (+new Date() - this.lastCharacterTyped >= interval) {
+        d[key] = GoldPipe.toCopper(newValue);
+        this.lastCharacterTyped = undefined;
+      }
+    }, interval);
   }
 }

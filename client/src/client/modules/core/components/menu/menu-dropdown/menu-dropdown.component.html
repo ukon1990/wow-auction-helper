@@ -1,17 +1,22 @@
 <button mat-stroked-button [matMenuTriggerFor]="menu">
   <ng-content></ng-content>
 </button>
-<mat-menu #menu="matMenu" yPosition="below" xPosition="after">
+<mat-menu
+    #menu="matMenu"
+        yPosition="below"
+        xPosition="after"
+        (click)="doNotClose($event)">
   <ng-container
-    *ngFor="let i of items">
+          *ngFor="let i of items">
     <a *ngIf="!i.children.length; else dropdownTemplate"
-      mat-menu-item
-      [routerLink]="parentPath + '/' + i.routerLink">
+            mat-menu-item
+            [routerLink]="i.routerLinkFull">
       {{ i.text }}
     </a>
 
     <ng-template #dropdownTemplate>
-      <wah-menu-dropdown [items]="i.children">
+      <wah-menu-dropdown [items]="i.children"
+              (click)="doNotClose($event)">
         {{ i.text }}
       </wah-menu-dropdown>
     </ng-template>

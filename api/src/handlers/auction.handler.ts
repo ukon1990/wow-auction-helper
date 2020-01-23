@@ -408,11 +408,12 @@ export class AuctionHandler {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
         const [auctions, region, ahId, fileName] = splitted;
+        await this.updateDBEntries(record, region, +ahId, fileName, conn)
+          .catch(console.error);
         await Promise.all([
           this.updateAllStatuses(region, conn),
           this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
-          this.updateDBEntries(record, region, +ahId, fileName, conn)/*,
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId)/*,
           this.processAuctions(record, +ahId, fileName)
             .catch(console.error)*/
         ])
