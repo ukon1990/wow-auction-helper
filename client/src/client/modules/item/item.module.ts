@@ -23,6 +23,7 @@ import { TsmTabComponent } from './components/tsm-tab/tsm-tab.component';
 import { SoldByTabComponent } from './components/sold-by-tab/sold-by-tab.component';
 import { DroppedByTabComponent } from './components/dropped-by-tab/dropped-by-tab.component';
 import { ContainedInTabComponent } from './components/contained-in-tab/contained-in-tab.component';
+import { AuctionsChartComponent } from './components/auctions-chart/auctions-chart.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { ContainedInTabComponent } from './components/contained-in-tab/contained
     TsmTabComponent,
     SoldByTabComponent,
     DroppedByTabComponent,
-    ContainedInTabComponent
+    ContainedInTabComponent,
+    AuctionsChartComponent
   ],
   imports: [
     CommonModule,

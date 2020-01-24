@@ -21,9 +21,9 @@
   right: 5%;
   left: 5%;
   top: 10%;
-  bottom: 5%;
+  /*bottom: 5%;*/
 
-  height: 85%;
+  max-height: 85%;
   width: 90%;
   position: fixed !important;
 
@@ -41,12 +41,12 @@
   }
 
   & > mat-card-header {
-    height: 3em;
+    /* height: 3em; */
   }
 
   & > mat-card-content {
     overflow-y: scroll;
-    height: calc(100% - 8em);
+    max-height: calc(80vh - 8em);
   }
 
   & > mat-card-actions {

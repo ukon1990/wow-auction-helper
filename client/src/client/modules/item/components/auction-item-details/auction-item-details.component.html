@@ -37,5 +37,5 @@
   </mat-card-content>
 </mat-card>
 
-<wah-line-chart *ngIf="item && !isMobile()" [data]="item.auctions">
-</wah-line-chart>
+<wah-auctions-chart [auctions]="item.auctions">
+</wah-auctions-chart>

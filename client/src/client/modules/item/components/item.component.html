@@ -34,11 +34,6 @@
       </div>
       <div [ngClass]="{'col-md-8': selected.auctionItem, 'col-md-12': !selected.auctionItem}">
         <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" #tabs>
-          <mat-tab *ngIf="selected.auctionItem && isMobile()" label="Auction price chart">
-            <wah-line-chart [data]="selected.auctionItem.auctions"
-                            *ngIf="tabs && tabs.selectedIndex === isMobile() ? 1 : 0">
-            </wah-line-chart>
-          </mat-tab>
           <mat-tab label="Auctions" *ngIf="selected.auctionItem">
             <wah-data-table [columns]="columns"
                             [data]="selected.auctionItem.auctions"
