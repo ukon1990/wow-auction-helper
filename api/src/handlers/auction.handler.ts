@@ -413,9 +413,9 @@ export class AuctionHandler {
         await Promise.all([
           this.updateAllStatuses(region, conn),
           this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId)/*,
-          this.processAuctions(record, +ahId, fileName)
-            .catch(console.error)*/
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
+          this.processAuctions(record, +ahId, fileName, conn)
+            .catch(console.error)
         ])
           .catch(console.error);
       }
