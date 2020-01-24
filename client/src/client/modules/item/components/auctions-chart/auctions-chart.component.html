@@ -1,0 +1,17 @@
+<wah-charts *ngIf="chartData.data.length > 0"
+            [defaultType]="'line'"
+            datasetLabel="Purchase history"
+            storageName="purchases-summary-chart"
+            [labels]="chartData.labels"
+            [dataMap]="chartData.dataMap"
+            [allowTypeChange]="false">
+</wah-charts>
+<em>
+  The chart displays the auction price variation. Excluding auctions, that exceed the auctions unit price median({{ medianPrice * 10000 | gold}}) *
+  <mat-form-field>
+    <input matInput
+            placeholder="Upper price threshold = {{(medianPercentLimit.value * medianPrice * 10000) | gold}}"
+            [formControl]="medianPercentLimit"
+            type="number"/>
+  </mat-form-field>
+</em>
