@@ -77,7 +77,7 @@ export class AuctionsService {
     }
     this.events.isDownloading.next(true);
     const missingItems = [],
-      realmStatus: RealmStatus = this.realmService.events.realmStatus.getValue();
+      realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.getValue();
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);

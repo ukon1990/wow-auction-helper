@@ -14,6 +14,8 @@ import {ItemOverrides} from '../overrides/item.overrides';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
+import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
+import {RealmService} from './realm.service';
 
 class ItemResponse {
   timestamp: Date;
@@ -30,6 +32,7 @@ export class ItemService {
               private dbService: DatabaseService,
               public snackBar: MatSnackBar,
               private angulartics2: Angulartics2,
+              private realmService: RealmService,
               public platform: Platform) {
   }
 
@@ -179,6 +182,15 @@ export class ItemService {
       Endpoints.getLambdaUrl(`item/${itemID}`),
       {locale: 'en_GB'})
       .toPromise() as Promise<any>;
+  }
+
+  getPriceHistory(itemId: number): Promise<ItemPriceEntry[]> {
+    return this._http.post(Endpoints.getLambdaUrl('item/history'),
+      {
+        id: itemId,
+        ahId: this.realmService.events.realmStatus.value.id
+      })
+      .toPromise() as Promise<ItemPriceEntry[]>;
   }
 
   /**

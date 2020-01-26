@@ -39,7 +39,7 @@
     "@ukon1990/subscription-manager": "^1.0.2",
     "angulartics2": "^8.0.0",
     "aws-sdk": "^2.516.0",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.3",
     "core-js": "^3.2.1",
     "dexie": "^2.0.4",
     "distinct-colors": "^1.0.4",

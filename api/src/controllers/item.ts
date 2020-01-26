@@ -12,6 +12,13 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
   }
 };
 
+exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const {ahId, id} = JSON.parse(event.body);
+  new ItemHandler().getPriceHistoryFor(ahId, id)
+    .then(history => Response.send(history, callback))
+    .catch(error => Response.error(callback, error, event));
+};
+
 class ItemController {
   /* istanbul ignore next */
   public static async byId(event: APIGatewayEvent, callback: Callback) {

@@ -47,16 +47,18 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
     this.chartData.labels.length = 0;
     this.chartData.clearEntries();
 
-    this.auctions.sort((a, b) =>
-      a.buyout / a.quantity - b.buyout / b.quantity);
-    const middleAuction: Auction = this.auctions[Math.round(this.auctions.length / 2)];
-    this.medianPrice = (middleAuction.buyout / middleAuction.quantity) / 10000;
-    this.auctions.forEach((a, i) => {
-      const value = (a.buyout / a.quantity) / 10000;
-      if (value <= this.medianPrice * medianPercentLimit) {
-        this.chartData.addEntry(i, value);
-        this.chartData.labels.push(new ChartData(i, a.quantity));
-      }
-    });
+    if (this.auctions && this.auctions.length) {
+      this.auctions.sort((a, b) =>
+        a.buyout / a.quantity - b.buyout / b.quantity);
+      const middleAuction: Auction = this.auctions[Math.round(this.auctions.length / 2)];
+      this.medianPrice = (middleAuction.buyout / middleAuction.quantity) / 10000;
+      this.auctions.forEach((a, i) => {
+        const value = (a.buyout / a.quantity) / 10000;
+        if (value <= this.medianPrice * medianPercentLimit) {
+          this.chartData.addEntry(i, value);
+          this.chartData.labels.push(new ChartData(i, a.quantity));
+        }
+      });
+    }
   }
 }

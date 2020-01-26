@@ -12,7 +12,7 @@ import {
   MatTabsModule,
   MatCheckboxModule,
   MatButtonModule,
-  MatTooltipModule, MatSelectModule, MatInputModule
+  MatTooltipModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {IconModule} from '../icon/icon.module';
@@ -24,6 +24,7 @@ import { SoldByTabComponent } from './components/sold-by-tab/sold-by-tab.compone
 import { DroppedByTabComponent } from './components/dropped-by-tab/dropped-by-tab.component';
 import { ContainedInTabComponent } from './components/contained-in-tab/contained-in-tab.component';
 import { AuctionsChartComponent } from './components/auctions-chart/auctions-chart.component';
+import { ItemPriceHistoryComponent } from './components/item-price-history/item-price-history.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { AuctionsChartComponent } from './components/auctions-chart/auctions-cha
     SoldByTabComponent,
     DroppedByTabComponent,
     ContainedInTabComponent,
-    AuctionsChartComponent
+    AuctionsChartComponent,
+    ItemPriceHistoryComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +56,8 @@ import { AuctionsChartComponent } from './components/auctions-chart/auctions-cha
     MatSelectModule,
     AddonModule,
     UtilModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     ItemComponent

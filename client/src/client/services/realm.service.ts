@@ -19,7 +19,7 @@ import {RealmStatus} from '../models/realm-status.model';
 export class RealmService {
   previousUrl;
   events = {
-    realmStatus: new BehaviorSubject(undefined),
+    realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
     list: new BehaviorSubject([]),
     map: new BehaviorSubject(new Map<number, RealmStatus>())
   };
