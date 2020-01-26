@@ -101,6 +101,17 @@ functions:
           path: item/{id}
           cors:
             origin: '*'
+  getPriceHistoryForItem:
+    tags:
+      FunctionName: Wah-item-history
+    handler: src/controllers/item.getPriceHistoryForItem
+    memorySize: 256
+    events:
+      - http:
+          method: post
+          path: item/history
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   pets:
     tags:
       FunctionName: Wah-pets

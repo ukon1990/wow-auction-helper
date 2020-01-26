@@ -72,11 +72,14 @@ export class RealmQuery {
               FROM auction_house_realm
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
-            WHERE ah.id = realm.ahId
-                AND (autoUpdate = 1
-                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
-                OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1
+            WHERE (${+new Date()} - lastModified) / 60000 >= lowestDelay
+              OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1
             LIMIT 50;`;
+
+    /**
+     AND (autoUpdate = 1
+     AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
+     */
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
