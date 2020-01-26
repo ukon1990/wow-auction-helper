@@ -22,7 +22,6 @@ export class DatabaseUtil {
       this.enqueueHandshake()
         .then(() => {
           console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
-          console.log('SQL:', query);
           this.connection.query(query, (err: MysqlError, rows: any[]) => {
             if (this.autoTerminate) {
               this.end();

@@ -437,8 +437,14 @@ export class AuctionHandler {
                 auctions, lastModified, ahId);
               const insertStart = +new Date();
               conn.query(query)
-                .then(ok => {
+                .then(async ok => {
                   console.log(`Completed item price stat import in ${+new Date() - insertStart} ms`, ok);
+                  await conn.query(`SELECT *
+                                    FROM itemPriceHistory
+                                    WHERE ahId = ${ahId}
+                                      AND itemId = 10009
+                                    LIMIT 1;`)
+                    .catch(console.error);
                   resolve();
                 })
                 .catch(reject);
