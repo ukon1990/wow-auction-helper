@@ -21,6 +21,9 @@ export class AuctionUpdateLog {
   private calculateDiff() {
     let avgBase = 0;
     this.entries.forEach(entry => {
+      if (!entry.timeSincePreviousDump) {
+        return;
+      }
       if (!this.minTime || this.minTime > this.msToMinutes(entry)) {
         this.minTime = this.msToMinutes(entry);
       }
