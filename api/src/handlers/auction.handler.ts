@@ -522,7 +522,7 @@ export class AuctionHandler {
 
   private getCleanedUpBody({realms, auctions}: {realms: string[], auctions: Auction[]}) {
     const list = auctions.filter(a => {
-      return a.timeLeft !== 'SHORT' && a.buyout / a.quantity > 100;
+      return a.timeLeft !== 'SHORT' || a.buyout / a.quantity <= 100;
     });
     return {
       realms, auctions: list
