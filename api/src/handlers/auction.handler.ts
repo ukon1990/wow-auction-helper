@@ -92,7 +92,7 @@ export class AuctionHandler {
 
   private async sendToS3(data: any, region: string, ahId: number, lastModified: number): Promise<any> {
     return new Promise((resolve, reject) => {
-      console.log('Sending to S3');
+      console.log(`Sending ${ahId} to S3`);
       new S3Handler().save(
         data,
         `auctions/${region}/${ahId}/${lastModified}-lastModified.json.gz`,
@@ -113,7 +113,6 @@ export class AuctionHandler {
         data, `auctions/${region}/${ahId}/auctions.json.gz`,
         {region, ahId, lastModified, size})
         .then((res) => {
-          console.log(res);
           resolve();
         })
         .catch(error => {
@@ -165,15 +164,15 @@ export class AuctionHandler {
       request.get(url,
         (error, response, body) => {
           if (error || !response) {
-            console.log('In download dump error', error);
+            console.log('Could not download AH dump', error);
             reject(error);
           } else {
             try {
               response['body'] = JSON.parse(body);
-              console.log('In download dump complete');
+              console.log('Successfully downloaded AH dump');
               resolve(response);
             } catch (exception) {
-              console.log('In download dump fail');
+              console.log('Could not turn AH dump to JSON', exception);
               reject(exception);
             }
           }
@@ -222,7 +221,6 @@ export class AuctionHandler {
 
   async deactivateInactiveHouses(event: APIGatewayEvent, callback: Callback): Promise<void> {
     const query = RealmQuery.setNonRequestedHousesToNotAutoUpdate(14);
-    console.log('AuctionHandler.x', query);
     await new DatabaseUtil()
       .query(query)
       .then(dbResponse => {
@@ -375,8 +373,8 @@ export class AuctionHandler {
       new RealmHandler().getAllRealms(conn)
         .then((realms) => {
           new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
-            .then((data) => {
-              console.log('Updated realm statuses', data);
+            .then(() => {
+              console.log('Updated realm statuses');
               resolve();
             })
             .catch(resolve);
@@ -505,16 +503,13 @@ export class AuctionHandler {
               const splitted = s3.object.key.split('/');
               const [auctions, region, ahId, fileName] = splitted;
               const ahDumpResponse: AuctionResponse = await new GzipUtil().decompress(Body);
-              console.log(ahDumpResponse);
-              console.log(`Updating id=${ahId}`);
+              console.log(`Updating id=${ahId}`, ahDumpResponse);
               await Promise.all([
                 this.getAndUploadAuctionDump(ahDumpResponse, ahId, region)
               ])
                 .catch(console.error);
             })
             .catch(console.error);
-          console.log('record.s3', record.s3);
-          // await this.processS3Record(record.s3);
         } catch (e) {
         }
       }
