@@ -41,14 +41,15 @@
             </wah-data-table>
           </mat-tab>
 
+          <!-- TODO: Make available once the AH dumps work again
           <mat-tab label="History" *ngIf="selected.auctionItem?.auctions">
             <wah-item-price-history *ngIf="selectedTab === 1"
                                     [item]="selected.item">
             </wah-item-price-history>
-          </mat-tab>
+          </mat-tab>-->
 
           <mat-tab label="Data from TSM">
-            <wah-tsm-tab *ngIf="selectedTab === 2"
+            <wah-tsm-tab *ngIf="selectedTab === 1"
                     [item]="selected?.item"
                     [auctionItem]="selected.auctionItem"></wah-tsm-tab>
           </mat-tab>

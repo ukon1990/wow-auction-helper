@@ -44,7 +44,7 @@ functions:
     tags:
       FunctionName: Wah-auctionsDownloadAndSave
     handler: src/controllers/auction.auctionsDownloadAndSave
-    memorySize: 600
+    memorySize: 450
     timeout: 50
   auctionsUpdateStaticS3Data:
     tags:

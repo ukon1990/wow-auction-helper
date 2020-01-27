@@ -36,7 +36,10 @@ export class AddonImportComponent implements OnInit {
   sm = new SubscriptionManager();
   reader = new FileReader();
 
-  readonly ADDONS = {TSM: GameBuild.ADDONS.TSM};
+  readonly ADDONS = {
+    TSM: GameBuild.ADDONS.TSM,
+    // Auctioneer: GameBuild.ADDONS.Auctioneer
+  };
   readonly ADDON_LIST: string = Object.keys(this.ADDONS).map(k => `${k} (${this.ADDONS[k].file})`).join(', ');
 
   readonly AUCTION_DATA_SOURCES = [
@@ -134,10 +137,25 @@ export class AddonImportComponent implements OnInit {
         this.handleAHDBFile(result, +new Date(lastModified));
       } else if (name === this.ADDONS.Auctioneer.file && isSourceMatch) {
         this.handleAuctioneerFile(result, +new Date(lastModified));
-      } else*/ if (name === this.ADDONS.TSM.file) {
+      } else*/
+      /*
+      if (name === this.ADDONS.TSM.file) {
         this.handleTSMFile(result, gameVersion, +new Date(lastModified));
       } else {
         Report.debug('File data', name, LuaUtil.toObject(result));
+      }*/
+
+      switch (name) {
+        case this.ADDONS.TSM.file:
+          this.handleTSMFile(result, gameVersion, +new Date(lastModified));
+          break;
+          /*
+        case this.ADDONS.Auctioneer:
+          AuctioneerStatsOverTimeUtil.import(result);
+          break;*/
+        default:
+          Report.debug('File data', name, LuaUtil.toObject(result));
+          break;
       }
 
       this.lastModified = +new Date();

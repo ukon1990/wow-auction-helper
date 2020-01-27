@@ -10,7 +10,8 @@ export class GameBuild {
 
   static readonly ADDONS = {
     AHDB: {file: 'AuctionDB.lua', name: 'AHDB'},
-    Auctioneer: {file: 'Auc-ScanData.lua', name: 'Auctioneer'},
+    AuctioneerClassic: {file: 'Auc-ScanData.lua', name: 'Auctioneer classic'},
+    Auctioneer: {file: 'Auctioneer_Stats_OverTime.lua', name: 'Auctioneer retail'},
     TSM: {file: 'TradeSkillMaster.lua', name: 'TSM'}
   };
 

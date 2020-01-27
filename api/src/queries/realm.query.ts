@@ -72,8 +72,10 @@ export class RealmQuery {
               FROM auction_house_realm
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
-            WHERE (${+new Date()} - lastModified) / 60000 >= lowestDelay
+            WHERE (autoUpdate = 1
+                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 24 > 1
+            ORDER BY (${+new Date()} - lastModified) / 60000 desc
             LIMIT 50;`;
 
     /**
