@@ -181,4 +181,13 @@ export class ItemHandler {
       resolve(item);
     });
   }
+
+  /* istanbul ignore next */
+  getPriceHistoryFor(ahId: number, id: number): Promise<any> {
+    return new DatabaseUtil()
+      .query(`SELECT *
+                FROM itemPriceHistory
+                WHERE ahId = ${ahId}
+                  and itemId = ${id};`);
+  }
 }

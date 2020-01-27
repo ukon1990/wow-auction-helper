@@ -29,7 +29,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   createdBy: Array<Recipe>;
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
-  selectedTab = localStorage[this.indexStoredName] ? localStorage[this.indexStoredName] : 1;
+  selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
   selected = {
     item: undefined,
     auctionItem: undefined,

@@ -1,10 +1,11 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, OnDestroy, ViewChild} from '@angular/core';
 import {Chart} from 'chart.js';
 import * as distinctColors from 'distinct-colors';
 import {FormControl} from '@angular/forms';
 import {Item} from '../../../../models/item/item';
 import {ChartData} from '../../../../models/chart-data.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-charts',
@@ -15,7 +16,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() dataMap: Map<any, ChartData>;
   @Input() labels: ChartData[];
   @Input() datasetLabel: string;
-  @Input() storageName;
+  @Input() storageName: string;
   @Input() defaultType = 'doughnut';
   @Input() allowTypeChange = true;
   @Output() selection = new EventEmitter<number>();
@@ -46,8 +47,10 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes): void {
     setTimeout(() => {
-      this.colors = distinctColors({count: this.labels.length});
-      this.setChart();
+      if (this.labels && this.labels.length) {
+        this.colors = distinctColors({count: this.labels.length});
+        this.setChart();
+      }
     }, 100);
   }
 
@@ -56,10 +59,19 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   setChart(): void {
-    if (this.chart) {
-      this.chart.destroy();
+    if (!this.storageName) {
+      Report.debug('Chart is missing storageName');
+      return;
     }
-    this.chart = new Chart(this.storageName, this.getChartConfig());
+    try {
+      if (this.chart) {
+        this.chart.destroy();
+      }
+      Report.debug({id: this.storageName, config: this.getChartConfig()});
+      this.chart = new Chart(this.storageName, this.getChartConfig());
+    } catch (e) {
+      Report.debug(e);
+    }
   }
 
   private getChartConfig() {

@@ -1,0 +1,13 @@
+<wah-charts *ngIf="!isLoading ; else loadingTemplate"
+            storageName="item-price-history-chart"
+            [defaultType]="'line'"
+            datasetLabel="Price history"
+            [labels]="chartData.labels"
+            [dataMap]="chartData.dataMap"
+            [allowTypeChange]="true">
+</wah-charts>
+
+<ng-template #loadingTemplate>
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  Loading historical price data
+</ng-template>

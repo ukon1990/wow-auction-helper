@@ -1,7 +1,7 @@
 <wah-charts *ngIf="chartData.data.length > 0"
+            storageName="current-auction-price-chart"
             [defaultType]="'line'"
-            datasetLabel="Purchase history"
-            storageName="purchases-summary-chart"
+            datasetLabel="Current price variations"
             [labels]="chartData.labels"
             [dataMap]="chartData.dataMap"
             [allowTypeChange]="false">
