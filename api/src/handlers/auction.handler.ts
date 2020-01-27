@@ -15,6 +15,7 @@ import {GzipUtil} from '../utils/gzip.util';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
 import {AuctionResponse} from '../models/auction/auctions-response';
+import {Auction} from '../models/auction/auction';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -304,8 +305,10 @@ export class AuctionHandler {
       this.downloadDump(ahDumpResponse.url)
         .then(async r => {
           console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
+          // TODO: Remove when the AH is fixed...
+          const auction = this.getCleanedUpBody(r.body);
           this.sendToS3(
-            r.body, region, id,
+            auction, region, id,
             ahDumpResponse.lastModified)
             .then(async (res) => {
               console.log('Successfully uploaded to bucket for id=', id);
@@ -520,5 +523,12 @@ export class AuctionHandler {
       }
       resolve();
     });
+  }
+
+  private getCleanedUpBody({realms, auctions}: {realms: string[], auctions: Auction[]}) {
+    const list = auctions.filter(a => a.timeLeft !== 'SHORT');
+    return {
+      realms, auctions: list
+    };
   }
 }
