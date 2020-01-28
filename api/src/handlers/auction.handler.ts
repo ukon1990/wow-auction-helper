@@ -303,10 +303,8 @@ export class AuctionHandler {
       this.downloadDump(ahDumpResponse.url)
         .then(async r => {
           console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
-          // TODO: Remove when the AH is fixed...
-          const auction = this.getCleanedUpBody(r.body);
           this.sendToS3(
-            auction, region, id,
+            r.body, region, id,
             ahDumpResponse.lastModified)
             .then(async (res) => {
               console.log('Successfully uploaded to bucket for id=', id);
@@ -518,14 +516,5 @@ export class AuctionHandler {
       }
       resolve();
     });
-  }
-
-  private getCleanedUpBody({realms, auctions}: {realms: string[], auctions: Auction[]}) {
-    const list = auctions.filter(a => {
-      return a.timeLeft !== 'SHORT' || a.buyout / a.quantity <= 100;
-    });
-    return {
-      realms, auctions: list
-    };
   }
 }
