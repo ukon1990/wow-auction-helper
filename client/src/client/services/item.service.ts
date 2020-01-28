@@ -16,6 +16,7 @@ import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
 import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
+import {BehaviorSubject} from 'rxjs';
 
 class ItemResponse {
   timestamp: Date;
@@ -24,8 +25,9 @@ class ItemResponse {
 
 @Injectable()
 export class ItemService {
-  public static missingQueue: Map<string, number> = new Map<string, number>();
-  public static itemSelection: EventEmitter<number> = new EventEmitter<number>();
+  static missingQueue: Map<string, number> = new Map<string, number>();
+  static itemSelection: EventEmitter<number> = new EventEmitter<number>();
+  private historyMap: BehaviorSubject<Map<number, Map<number, ItemPriceEntry[]>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
 
   constructor(private _http: HttpClient,
@@ -184,13 +186,34 @@ export class ItemService {
       .toPromise() as Promise<any>;
   }
 
-  getPriceHistory(itemId: number): Promise<ItemPriceEntry[]> {
+  getPriceHistory(id: number): Promise<ItemPriceEntry[]> {
+    const startTime = +new Date();
+    const ahId = this.realmService.events.realmStatus.value.id,
+      realmMap = this.historyMap.value;
+    if (realmMap.get(ahId) && realmMap.get(ahId).get(id)) {
+      return new Promise<ItemPriceEntry[]>(resolve => {
+        Report.send('getPriceHistory', 'ItemService',
+          `Time to fetch history from memory, for ahId=${ahId} and item id = ${id} was ${+new Date() - startTime}ms`);
+        resolve(realmMap.get(ahId).get(id));
+      });
+    }
     return this._http.post(Endpoints.getLambdaUrl('item/history'),
       {
-        id: itemId,
-        ahId: this.realmService.events.realmStatus.value.id
+        id,
+        ahId
       })
-      .toPromise() as Promise<ItemPriceEntry[]>;
+      .toPromise()
+      .then((entries: ItemPriceEntry[]) => {
+        if (!realmMap.has(ahId)) {
+          realmMap.set(ahId, new Map());
+        }
+        realmMap.get(ahId).set(id, entries);
+        Report.send('getPriceHistory', 'ItemService',
+          `Time to fetch history from DB, for ahId=${ahId} and item id = ${id} was ${+new Date() - startTime}ms`);
+        this.historyMap.next(realmMap);
+        return entries;
+      })
+      .catch(console.error) as Promise<ItemPriceEntry[]>;
   }
 
   /**

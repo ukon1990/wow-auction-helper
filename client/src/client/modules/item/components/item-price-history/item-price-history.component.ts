@@ -19,7 +19,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   sm = new SubscriptionManager();
   chartData: SummaryCard = new SummaryCard('', '');
   priceHistory: ItemPriceEntry[] = [];
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(private service: ItemService) {
   }
@@ -49,7 +49,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
         a.timestamp - b.timestamp);
       this.priceHistory.forEach((entry) => {
         this.chartData.addEntry(entry.timestamp, entry.min / 10000);
-        this.chartData.labels.push(new ChartData(entry.timestamp, new Date(entry.timestamp).toLocaleDateString()));
+        this.chartData.labels.push(new ChartData(entry.timestamp, new Date(entry.timestamp).toLocaleString()));
       });
     }
     console.log({chart: this.chartData, data: this.priceHistory});
