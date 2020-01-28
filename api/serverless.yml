@@ -11,6 +11,7 @@ provider:
   runtime: nodejs12.x
   memorySize: 200
   timeout: 30
+  versionFunctions: false
   tags:
     Project: WAH
   tracing:
@@ -44,13 +45,13 @@ functions:
     tags:
       FunctionName: Wah-auctionsDownloadAndSave
     handler: src/controllers/auction.auctionsDownloadAndSave
-    memorySize: 512
+    memorySize: 350
     timeout: 50
   auctionsUpdateStaticS3Data:
     tags:
       FunctionName: Wah-auctions
     handler: src/controllers/auction.updateStaticS3Data
-    memorySize: 512
+    memorySize: 350
   updateAllHouses:
     tags:
       FunctionName: Wah-updateAllHouses
@@ -67,7 +68,7 @@ functions:
     tags:
       FunctionName: Wah-updateSpesificHouse
     handler: src/controllers/auction.updateOne
-    memorySize: 512
+    memorySize: 200
     events:
       - http:
           method: post

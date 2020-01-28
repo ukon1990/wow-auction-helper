@@ -5,6 +5,8 @@ import {ChartData} from '../../../../models/chart-data.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Auction} from '../../../auction/models/auction.model';
 import {FormControl} from '@angular/forms';
+import {NumberUtil} from '../../../util/utils/number.util';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
 
 @Component({
   selector: 'wah-auctions-chart',
@@ -48,17 +50,34 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
     this.chartData.clearEntries();
 
     if (this.auctions && this.auctions.length) {
-      this.auctions.sort((a, b) =>
-        a.buyout / a.quantity - b.buyout / b.quantity);
+      const unitPriceMap = {},
+      unitPrices = [];
       const middleAuction: Auction = this.auctions[Math.round(this.auctions.length / 2)];
       this.medianPrice = (middleAuction.buyout / middleAuction.quantity) / 10000;
       this.auctions.forEach((a, i) => {
         const value = (a.buyout / a.quantity) / 10000;
         if (value <= this.medianPrice * medianPercentLimit) {
-          this.chartData.addEntry(i, value);
-          this.chartData.labels.push(new ChartData(i, a.quantity));
+          if (!unitPriceMap[value]) {
+            unitPriceMap[value] = {price: value, quantity: a.quantity};
+            unitPrices.push(unitPriceMap[value]);
+          } else {
+            unitPriceMap[value].quantity += a.quantity;
+          }
         }
       });
+      unitPrices
+        .sort((a, b) => b.price - a.price)
+        .forEach(({quantity, price}) => {
+        this.chartData.addEntry(price, price);
+        this.chartData.labels.push(new ChartData(price, NumberUtil.format(quantity)));
+      });
     }
+  }
+
+  tooltipCallback(items, data): string {
+    const {index, datasetIndex} = items;
+    console.log('Dataset', data);
+    return `Price: ${new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000)
+      } |  Quantity: ${NumberUtil.format(data.labels[index])}`;
   }
 }

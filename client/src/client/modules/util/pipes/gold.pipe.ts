@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {split} from 'ts-node';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {NumberUtil} from '../utils/number.util';
 
 @Pipe({
   name: 'gold'
@@ -36,7 +37,7 @@ export class GoldPipe implements PipeTransform {
     // Silver
     result[1] = copper % 100;
     // Gold
-    result[2] = ((copper - result[1]) / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    result[2] = NumberUtil.format(((copper - result[1]) / 100));
 
     return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
   }

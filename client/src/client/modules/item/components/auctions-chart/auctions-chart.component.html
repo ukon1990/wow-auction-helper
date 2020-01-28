@@ -1,9 +1,10 @@
 <wah-charts *ngIf="chartData.data.length > 0"
             storageName="current-auction-price-chart"
             [defaultType]="'line'"
-            datasetLabel="Current price variations"
+            datasetLabel="Current unit prices"
             [labels]="chartData.labels"
             [dataMap]="chartData.dataMap"
+            [tooltipCallback]="tooltipCallback"
             [allowTypeChange]="false">
 </wah-charts>
 <em>
