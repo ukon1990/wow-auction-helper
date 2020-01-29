@@ -432,6 +432,10 @@ export class AuctionHandler {
           await new GzipUtil().decompress(data['Body'])
             .then(({auctions}) => {
               const lastModified = +fileName.split('-')[0];
+              if (!lastModified) {
+                resolve();
+                return;
+              }
               console.log(`Decompressing auctions took ${+new Date() - processStart} ms for ${lastModified} @ id=${ahId}`);
               const query = AuctionProcessorUtil.process(
                 auctions, lastModified, ahId);
@@ -512,41 +516,6 @@ export class AuctionHandler {
         }
       }
       resolve();
-    });
-  }
-
-  updateHistoricalData(region: string, ahId: number, conn = new DatabaseUtil()) {
-    return new Promise((resolve, reject) => {
-      conn.query(`SELECT itemId, min, quantity, timestamp FROM itemPriceHistory WHERE ahId = ${ahId} and itemId = 152877;`)
-        .then((data: ItemPriceEntry[]) => {
-          const map = {},
-            entryList = [];
-          console.log('Entry count', data.length);
-          data.forEach(entry => {
-            let mapEntry = map[entry.itemId];
-            if (!mapEntry) {
-              mapEntry = {
-                id: entry.itemId,
-                list: []
-              };
-              map[entry.itemId] = mapEntry;
-              entryList.push(mapEntry);
-            }
-
-            if (mapEntry) {
-              delete entry.itemId;
-              mapEntry.list.push(entry);
-            }
-          });
-          new S3Handler().save(data, `auctions/${region}/${ahId}/price-statistics.json.gz`, {region})
-            .then((res) => {
-              console.log(`Successfully updated the price statistics for ${ahId}`);
-              resolve(res);
-            })
-            .catch(reject);
-          // resolve(entryList);
-        })
-        .catch(reject);
     });
   }
 }
