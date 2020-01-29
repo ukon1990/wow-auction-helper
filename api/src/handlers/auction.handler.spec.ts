@@ -35,7 +35,7 @@ describe('AuctionHandler', () => {
       conn = new DatabaseUtil(false),
       region = 'eu',
       bucket = 'wah-data-' + region,
-      id = '69';
+      id = '1';
     const list = await s3.list(bucket, 'auctions/eu/' + id)
       .catch(console.log);
 
@@ -49,30 +49,44 @@ describe('AuctionHandler', () => {
      *   }
      */
     const startDay = +new Date('1/1/2020'),
-      endDay = +new Date('1/2/2020'),
+      endDay = +new Date('1/29/2020'),
       filteredFiles = list.Contents.filter(file =>
         +new Date(file.LastModified) >= startDay &&
         +new Date(file.LastModified) <= endDay);
     console.log(`Starting to process: ${filteredFiles.length} / ${list.Contents.length}`);
 
     let processed = 0;
-
+    const promises = [];
     for (const file of filteredFiles) {
-      const splitted = file.Key.split('/');
-      const [auctions, region1, ahId, fileName] = splitted;
-      await new AuctionHandler().processAuctions(region,
-        {
-          bucket: {name: bucket},
-          object: {key: file.Key, size: 0},
-          s3SchemaVersion: '',
-          configurationId: ''
-        }, ahId,
-        fileName.replace('.json.gz', ''),
-        conn)
-        .catch(console.error);
-      processed++;
-      console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
+      promises.push(new Promise((resolve) => {
+        const splitted = file.Key.split('/');
+        const [auctions, region1, ahId, fileName] = splitted;
+        new AuctionHandler().processAuctions(region,
+          {
+            bucket: {name: bucket},
+            object: {key: file.Key, size: 0},
+            s3SchemaVersion: '',
+            configurationId: ''
+          }, ahId,
+          fileName.replace('.json.gz', ''),
+          conn)
+          .then(() => {
+            processed++;
+            console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
+            resolve();
+          })
+          .catch((error) => {
+            processed++;
+            console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
+            console.error(error);
+            resolve();
+          });
+      }));
     }
+
+    await Promise.all(promises)
+      .catch(console.error);
+
     conn.end();
     expect(1).toBe(1);
   });
