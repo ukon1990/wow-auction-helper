@@ -16,6 +16,7 @@ import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
 import {AuctionResponse} from '../models/auction/auctions-response';
 import {Auction} from '../models/auction/auction';
+import {ItemPriceEntry} from '../../../client/src/client/modules/item/models/item-price-entry.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -413,7 +414,7 @@ export class AuctionHandler {
           this.updateAllStatuses(region, conn),
           this.createLastModifiedFile(+ahId, region),
           await this.copyAuctionsToNewFile(record, auctions, region, ahId),
-          this.processAuctions(record, +ahId, fileName, conn)
+          this.processAuctions(region, record, +ahId, fileName, conn)
             .catch(console.error)
         ])
           .catch(console.error);
@@ -423,7 +424,7 @@ export class AuctionHandler {
     });
   }
 
-  async processAuctions(record: EventSchema, ahId: number, fileName: string, conn = new DatabaseUtil()) {
+  async processAuctions(region: string, record: EventSchema, ahId: number, fileName: string, conn = new DatabaseUtil()) {
     return new Promise<void>((resolve, reject) => {
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
@@ -438,12 +439,8 @@ export class AuctionHandler {
               conn.query(query)
                 .then(async ok => {
                   console.log(`Completed item price stat import in ${+new Date() - insertStart} ms`, ok);
-                  await conn.query(`SELECT *
-                                    FROM itemPriceHistory
-                                    WHERE ahId = ${ahId}
-                                      AND itemId = 10009
-                                    LIMIT 1;`)
-                    .catch(console.error);
+                  /*await this.updateHistoricalData(region, ahId, conn)
+                    .catch(console.error);*/
                   resolve();
                 })
                 .catch(reject);
@@ -515,6 +512,41 @@ export class AuctionHandler {
         }
       }
       resolve();
+    });
+  }
+
+  updateHistoricalData(region: string, ahId: number, conn = new DatabaseUtil()) {
+    return new Promise((resolve, reject) => {
+      conn.query(`SELECT itemId, min, quantity, timestamp FROM itemPriceHistory WHERE ahId = ${ahId} and itemId = 152877;`)
+        .then((data: ItemPriceEntry[]) => {
+          const map = {},
+            entryList = [];
+          console.log('Entry count', data.length);
+          data.forEach(entry => {
+            let mapEntry = map[entry.itemId];
+            if (!mapEntry) {
+              mapEntry = {
+                id: entry.itemId,
+                list: []
+              };
+              map[entry.itemId] = mapEntry;
+              entryList.push(mapEntry);
+            }
+
+            if (mapEntry) {
+              delete entry.itemId;
+              mapEntry.list.push(entry);
+            }
+          });
+          new S3Handler().save(data, `auctions/${region}/${ahId}/price-statistics.json.gz`, {region})
+            .then((res) => {
+              console.log(`Successfully updated the price statistics for ${ahId}`);
+              resolve(res);
+            })
+            .catch(reject);
+          // resolve(entryList);
+        })
+        .catch(reject);
     });
   }
 }
