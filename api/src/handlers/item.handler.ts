@@ -183,11 +183,37 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  getPriceHistoryFor(ahId: number, id: number): Promise<any> {
-    return new DatabaseUtil()
-      .query(`SELECT *
-                FROM itemPriceHistory
+  getPriceHistoryFor(ahId: number, id: number): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      new DatabaseUtil()
+        .query(`SELECT *
+                FROM itemPriceHistoryPerHour
                 WHERE ahId = ${ahId}
-                  and itemId = ${id};`);
+                  AND itemId = ${id}
+                  AND UNIX_TIMESTAMP(date) > 1579824000;`)
+        .then((result => {
+          const list = [];
+          result.forEach(entry => {
+            for (let i = 0, maxHours = 23; i <= maxHours; i++) {
+              const date: Date = new Date(+entry.date);
+              date.setUTCHours(i);
+              const hour = i < 10 ? '0' + i : i,
+                price = entry[`price${hour}`],
+                quantity = entry[`quantity${hour}`];
+              if (price) {
+                list.push({
+                  timestamp: +date,
+                  petSpeciesId: entry.petSpeciesId,
+                  bonusIds: entry.bonusIds,
+                  min: price,
+                  quantity: quantity
+                });
+              }
+            }
+          });
+          resolve(list);
+        }))
+        .catch(() => resolve([]));
+    });
   }
 }

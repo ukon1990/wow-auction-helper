@@ -35,24 +35,17 @@ describe('AuctionHandler', () => {
       conn = new DatabaseUtil(false),
       region = 'eu',
       bucket = 'wah-data-' + region,
-      id = '1';
+      id = '69/';
     const list = await s3.list(bucket, 'auctions/eu/' + id)
       .catch(console.log);
 
-    /**
-     * {
-          Key: 'classic/recipes/de_DE.json.gz',
-          LastModified: 2020-01-11T11:15:05.000Z,
-          ETag: '"a840bc3149a1177800d1da01185990f2"',
-          Size: 30861,
-          StorageClass: 'STANDARD'
-     *   }
-     */
-    const startDay = +new Date('1/1/2020'),
-      endDay = +new Date('1/29/2020'),
+    const startDay = +new Date('1/1/2019'),
+      endDay = +new Date('1/24/2020'),
       filteredFiles = list.Contents.filter(file =>
         +new Date(file.LastModified) >= startDay &&
-        +new Date(file.LastModified) <= endDay);
+        +new Date(file.LastModified) <= endDay)
+        .sort((a, b) =>
+          +new Date(b.LastModified) - +new Date(a.LastModified));
     console.log(`Starting to process: ${filteredFiles.length} / ${list.Contents.length}`);
 
     let processed = 0;
