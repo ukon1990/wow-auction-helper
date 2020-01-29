@@ -32,53 +32,57 @@ describe('AuctionHandler', () => {
   it('Adding stuff to db', async () => {
     jest.setTimeout(1000000000);
     const s3 = new S3Handler(),
-      conn = new DatabaseUtil(false),
-      region = 'eu',
-      bucket = 'wah-data-' + region,
-      id = '69/';
-    const list = await s3.list(bucket, 'auctions/eu/' + id)
-      .catch(console.log);
+      conn = new DatabaseUtil(false);
+    for (const s3Region of [{id: 'eu', list: ['eu']}, {id: 'us', list: ['us']}, {id: 'as', list: ['kr', 'tw']}]) {
+      for (const region of s3Region.list) {
+        for (let id = 1; id <= 260; id++) {
+          const bucket = 'wah-data-' + s3Region.id;
+          const list = await s3.list(bucket, `auctions/${region}/${id}/`)
+            .catch(console.error);
 
-    const startDay = +new Date('1/1/2019'),
-      endDay = +new Date('1/24/2020'),
-      filteredFiles = list.Contents.filter(file =>
-        +new Date(file.LastModified) >= startDay &&
-        +new Date(file.LastModified) <= endDay)
-        .sort((a, b) =>
-          +new Date(b.LastModified) - +new Date(a.LastModified));
-    console.log(`Starting to process: ${filteredFiles.length} / ${list.Contents.length}`);
+          const startDay = +new Date('1/28/2020'),
+            endDay = +new Date('1/29/2020'),
+            filteredFiles = list.Contents.filter(file =>
+              +new Date(file.LastModified) >= startDay &&
+              +new Date(file.LastModified) <= endDay)
+              .sort((a, b) =>
+                +new Date(b.LastModified) - +new Date(a.LastModified));
+          console.log(`Starting to process: ${filteredFiles.length} / ${list.Contents.length}`);
 
-    let processed = 0;
-    const promises = [];
-    for (const file of filteredFiles) {
-      promises.push(new Promise((resolve) => {
-        const splitted = file.Key.split('/');
-        const [auctions, region1, ahId, fileName] = splitted;
-        new AuctionHandler().processAuctions(region,
-          {
-            bucket: {name: bucket},
-            object: {key: file.Key, size: 0},
-            s3SchemaVersion: '',
-            configurationId: ''
-          }, ahId,
-          fileName.replace('.json.gz', ''),
-          conn)
-          .then(() => {
-            processed++;
-            console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
-            resolve();
-          })
-          .catch((error) => {
-            processed++;
-            console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
-            console.error(error);
-            resolve();
-          });
-      }));
+          let processed = 0;
+          const promises = [];
+          for (const file of filteredFiles) {
+            promises.push(new Promise((resolve) => {
+              const splitted = file.Key.split('/');
+              const [auctions, region1, ahId, fileName] = splitted;
+              new AuctionHandler().processAuctions(region,
+                {
+                  bucket: {name: bucket},
+                  object: {key: file.Key, size: 0},
+                  s3SchemaVersion: '',
+                  configurationId: ''
+                }, ahId,
+                fileName.replace('.json.gz', ''),
+                conn)
+                .then(() => {
+                  processed++;
+                  console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
+                  resolve();
+                })
+                .catch((error) => {
+                  processed++;
+                  console.log(`Processed count: ${processed} of ${filteredFiles.length}`);
+                  console.error(error);
+                  resolve();
+                });
+            }));
+          }
+
+          await Promise.all(promises)
+            .catch(console.error);
+        }
+      }
     }
-
-    await Promise.all(promises)
-      .catch(console.error);
 
     conn.end();
     expect(1).toBe(1);
