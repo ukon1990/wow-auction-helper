@@ -7,6 +7,8 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {ChartData} from '../../../../models/chart-data.model';
 import {ErrorReport} from '../../../../utils/error-report.util';
+import {Report} from '../../../../utils/report.util';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
 
 @Component({
   selector: 'wah-item-price-history',
@@ -19,7 +21,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   sm = new SubscriptionManager();
   chartData: SummaryCard = new SummaryCard('', '');
   priceHistory: ItemPriceEntry[] = [];
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(private service: ItemService) {
   }
@@ -45,13 +47,19 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     this.chartData.clearEntries();
 
     if (this.priceHistory && this.priceHistory.length) {
-      this.priceHistory.sort((a, b) =>
+      this.priceHistory = this.priceHistory.sort((a, b) =>
         a.timestamp - b.timestamp);
       this.priceHistory.forEach((entry) => {
         this.chartData.addEntry(entry.timestamp, entry.min / 10000);
-        this.chartData.labels.push(new ChartData(entry.timestamp, new Date(entry.timestamp).toLocaleDateString()));
+        this.chartData.labels.push(new ChartData(entry.timestamp, new Date(entry.timestamp).toLocaleString()));
       });
     }
-    console.log({chart: this.chartData, data: this.priceHistory});
+    Report.debug('setAuctionAndDataset', {chart: this.chartData, data: this.priceHistory});
+  }
+
+  tooltipCallback(items, data): string {
+    const {index, datasetIndex} = items;
+    return 'Price: ' + new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000); /*+
+      ' | Quantity: ' + NumberUtil.format(this.priceHistory[index].quantity);*/
   }
 }

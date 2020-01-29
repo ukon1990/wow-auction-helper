@@ -19,6 +19,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() storageName: string;
   @Input() defaultType = 'doughnut';
   @Input() allowTypeChange = true;
+  @Input() tooltipCallback: Function;
   @Output() selection = new EventEmitter<number>();
 
   chart: Chart;
@@ -75,7 +76,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private getChartConfig() {
-    return {
+    const config = {
       type: this.chartTypeForm.value,
       data: {
         datasets: [{
@@ -86,11 +87,30 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
         labels: this.getLabels()
       },
       options: {
+        elements: {
+          line: {
+            tension: 0
+          }
+        },
+        // showLines: false,
+        animation: {duration: 0},
+        hover: {animationDuration: 0},
+        responsiveAnimationDuration: 0,
         scales: this.getScales(),
         onClick: (elements, chartItem) =>
-          this.onClick(elements, chartItem)
+          this.onClick(elements, chartItem),
       }
     };
+
+    if (this.tooltipCallback) {
+      config.options['tooltips'] = {
+        enabled: true,
+        mode: 'single',
+        callbacks: {label: this.tooltipCallback}
+      };
+    }
+
+    return config;
   }
 
   private getScales() {
@@ -101,7 +121,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
     return {
       yAxes: [{
         ticks: {
-          beginAtZero: false,
+          beginAtZero: true,
           callback: function (value, index, values) {
             return value.toLocaleString();
           }
