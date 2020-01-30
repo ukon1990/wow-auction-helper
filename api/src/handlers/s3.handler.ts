@@ -41,7 +41,8 @@ export class S3Handler {
       const s3 = this.getS3();
       s3.listObjectsV2({
         Bucket: bucket,
-        Prefix: prefix
+        Prefix: prefix,
+        MaxKeys: 999999
       }, (error, data) => {
         if (error) {
           reject(error);
