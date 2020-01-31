@@ -13,9 +13,11 @@ import {
 import {ReactiveFormsModule} from '@angular/forms';
 import {SelectRealmComponent} from './components/select-realm/select-realm.component';
 import { AddonImportComponent } from './components/addon-import/addon-import.component';
+import { ChartsDataSetsComponent } from './components/charts-datasets/charts-datasets.component';
+import {ChartsDataSetsComponent} from './components/charts-datasets/charts-data-sets.component';
 
 @NgModule({
-  declarations: [GoldPipe, ChartsComponent, SelectRealmComponent, AddonImportComponent],
+  declarations: [GoldPipe, ChartsComponent, SelectRealmComponent, AddonImportComponent, ChartsDataSetsComponent, ChartsDataSetsComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -27,6 +29,6 @@ import { AddonImportComponent } from './components/addon-import/addon-import.com
     MatButtonModule,
     MatTooltipModule
   ],
-  exports: [GoldPipe, ChartsComponent, SelectRealmComponent, AddonImportComponent]
+  exports: [GoldPipe, ChartsComponent, SelectRealmComponent, AddonImportComponent, ChartsDataSetsComponent]
 })
 export class UtilModule { }

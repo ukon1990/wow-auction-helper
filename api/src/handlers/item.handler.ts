@@ -186,6 +186,7 @@ export class ItemHandler {
   /* istanbul ignore next */
   getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<any[]> {
     return new Promise((resolve, reject) => {
+      const fourteenDays = 60 * 60 * 24 * 1000 * 14;
       new DatabaseUtil()
         .query(`SELECT *
                 FROM itemPriceHistoryPerHour
@@ -193,7 +194,7 @@ export class ItemHandler {
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
                   AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)}
-                  AND UNIX_TIMESTAMP(date) > 1579824000;`)
+                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
         .then((result => {
           const list = [];
           result.forEach(entry => {
