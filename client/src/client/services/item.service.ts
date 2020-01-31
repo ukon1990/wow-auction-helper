@@ -17,6 +17,7 @@ import {Report} from '../utils/report.util';
 import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
+import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
 
 class ItemResponse {
   timestamp: Date;
@@ -27,7 +28,7 @@ class ItemResponse {
 export class ItemService {
   static missingQueue: Map<string, number> = new Map<string, number>();
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
-  private historyMap: BehaviorSubject<Map<number, Map<number, ItemPriceEntry[]>>> = new BehaviorSubject(new Map());
+  private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntry[]>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
 
   constructor(private _http: HttpClient,
@@ -186,30 +187,33 @@ export class ItemService {
       .toPromise() as Promise<any>;
   }
 
-  getPriceHistory(id: number): Promise<ItemPriceEntry[]> {
+  getPriceHistory(id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<ItemPriceEntry[]> {
+    const storedId = `${id}-${petSpeciesId}-${AuctionItemStat.bonusId(bonusIds)}`;
     const startTime = +new Date();
     const ahId = this.realmService.events.realmStatus.value.id,
       realmMap = this.historyMap.value;
-    if (realmMap.get(ahId) && realmMap.get(ahId).get(id)) {
+    if (realmMap.get(ahId) && realmMap.get(ahId).get(storedId)) {
       return new Promise<ItemPriceEntry[]>(resolve => {
         Report.send('getPriceHistory', 'ItemService',
           `Time to fetch history from memory, for ahId=${ahId} and item id = ${id} was ${+new Date() - startTime}ms`);
-        resolve(realmMap.get(ahId).get(id));
+        resolve(realmMap.get(ahId).get(storedId));
       });
     }
     return this._http.post(Endpoints.getLambdaUrl('item/history'),
       {
         id,
-        ahId
+        ahId,
+        petSpeciesId,
+        bonusIds
       })
       .toPromise()
       .then((entries: ItemPriceEntry[]) => {
         if (!realmMap.has(ahId)) {
           realmMap.set(ahId, new Map());
         }
-        realmMap.get(ahId).set(id, entries);
+        realmMap.get(ahId).set(storedId, entries);
         Report.send('getPriceHistory', 'ItemService',
-          `Time to fetch history from DB, for ahId=${ahId} and item id = ${id} was ${+new Date() - startTime}ms`);
+          `Time to fetch history from DB, for ahId=${ahId} and item id = ${storedId} was ${+new Date() - startTime}ms`);
         this.historyMap.next(realmMap);
         return entries;
       })

@@ -28,7 +28,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.isLoading = true;
-    this.service.getPriceHistory(this.item.id)
+    this.service.getPriceHistory(this.item.id, this.auctionItem.petSpeciesId, this.auctionItem.bonusIds)
       .then((history) => {
         this.priceHistory = history;
         this.setAuctionAndDataset();
@@ -50,8 +50,9 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
       this.priceHistory = this.priceHistory.sort((a, b) =>
         a.timestamp - b.timestamp);
       this.priceHistory.forEach((entry) => {
+        const date = new Date(entry.timestamp);
         this.chartData.addEntry(entry.timestamp, entry.min / 10000);
-        this.chartData.labels.push(new ChartData(entry.timestamp, new Date(entry.timestamp).toLocaleString()));
+        this.chartData.labels.push(new ChartData(entry.timestamp, date.toLocaleDateString() + ' - ' + date.getHours()));
       });
     }
     Report.debug('setAuctionAndDataset', {chart: this.chartData, data: this.priceHistory});

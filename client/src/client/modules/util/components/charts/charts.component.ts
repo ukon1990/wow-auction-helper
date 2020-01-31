@@ -89,7 +89,7 @@ export class ChartsComponent implements AfterViewInit, OnChanges, OnDestroy {
       options: {
         elements: {
           line: {
-            tension: 0
+            tension: .1
           }
         },
         // showLines: false,

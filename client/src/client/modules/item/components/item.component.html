@@ -41,9 +41,10 @@
             </wah-data-table>
           </mat-tab>
 
-          <mat-tab label="History" *ngIf="selected.auctionItem?.auctions">
+          <mat-tab label="Price history(14 days)" *ngIf="selected.auctionItem?.auctions">
             <wah-item-price-history *ngIf="selectedTab === 1"
-                                    [item]="selected.item">
+                                    [item]="selected.item"
+                                    [auctionItem]="selected.auctionItem">
             </wah-item-price-history>
           </mat-tab>
 
