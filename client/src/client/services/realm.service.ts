@@ -8,7 +8,7 @@ import {User} from '../models/user/user';
 import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
 import {MatSnackBar} from '@angular/material';
-import {ArrayUtil} from '@ukon1990/js-utilities';
+import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {Report} from '../utils/report.util';
@@ -48,7 +48,11 @@ export class RealmService {
   }
 
   getStatus(region: string, realm: string): Promise<any> {
-    return this.http.get(Endpoints.getS3URL(region, 'auctions', realm))
+    const realmStatus = this.events.realmStatus.value,
+      timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
+        realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,
+      versionId = timeSince && timeSince > 1 ? '?timeDiff=' + timeSince : '';
+    return this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
       .toPromise()
       .then(async (status: AuctionHouseStatus) => {
         this.events.realmStatus.next(status);

@@ -16,42 +16,6 @@ import {BackgroundDownloadService} from '../../../../services/background-downloa
 export class SetupComponent {
   form: FormGroup;
   locales = SharedService.locales;
-  imagesForRoll = [
-    {
-      src: 'assets/img/auctions-default.jpg',
-      alt: 'Default auctions window'
-    }, {
-      src: 'assets/img/auctions.jpg',
-      alt: 'Searching for auctions'
-    }, {
-      src: 'assets/img/cart-darkmode.jpg',
-      alt: 'Shopping cart in darkmode'
-    }, {
-      src: 'assets/img/cart-lightmode.jpg',
-      alt: 'Shopping cart in light mode'
-    }, {
-      src: 'assets/img/crafting.jpg',
-      alt: 'The crafting window'
-    }, {
-      src: 'assets/img/dashboard.jpg',
-      alt: 'The dashboard'
-    }, {
-      src: 'assets/img/download.jpg',
-      alt: 'Data download panel'
-    }, {
-      src: 'assets/img/my-auctions.jpg',
-      alt: 'My auctions panel'
-    }, {
-      src: 'assets/img/trade-vendors.jpg',
-      alt: 'Trade vendors window'
-    }, {
-      src: 'assets/img/watchlist-groups.jpg',
-      alt: 'Watchlist'
-    }, {
-      src: 'assets/img/locale-support.jpg',
-      alt: 'Support for different locales'
-    }
-  ];
 
   sm = new SubscriptionManager();
 

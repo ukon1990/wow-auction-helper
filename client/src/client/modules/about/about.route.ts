@@ -29,7 +29,7 @@ export const ABOUT_ROUTE: TitledRoute = {
       {
         title: 'Contributors', path: 'contributors', component: ContributorsComponent},
       {
-        title: 'Issues', path: 'issues', component: IssuesComponent},
+        title: 'Issues/Backlog', path: 'issues', component: IssuesComponent},
       {
         title: 'Changelog', path: 'changelog', component: ChangelogComponent}
     ]

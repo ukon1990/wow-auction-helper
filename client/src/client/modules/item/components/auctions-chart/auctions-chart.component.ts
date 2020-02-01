@@ -94,7 +94,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
         .forEach(({quantity, price}, index) => {
           this.datasets.datasets[0].data.push(price);
           this.datasets.datasets[1].data.push(NumberUtil.format(quantity));
-          this.datasets.labels.push(index);
+          this.datasets.labels.push('');
       });
     }
   }

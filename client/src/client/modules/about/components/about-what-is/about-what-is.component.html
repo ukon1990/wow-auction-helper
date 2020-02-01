@@ -1,5 +1,5 @@
 <p>
-  This is a web application, developed with the intention of helping the user earn gold. Be it by crafting, snatching up bargans, resetting a market,
+  This is a web application, developed with the intention of helping the user earn gold. Be it by crafting, snatching up bargans, checking out price trends, resetting a market,
   Or maybe just checking out the trade vendors.
 </p>
 
@@ -15,7 +15,7 @@
       give some useful information.
     </p>
     <p>
-      You can define rules in the <a routerLink="/watchlist">watchlist</a> page, for that dashboard.
+      You can define rules in the <a routerLink="/dashboard/manage-dashboards">watchlist</a> page, for that dashboard.
       By default, there comes a couple groups and items with rules defined. You might want to tweak these for your realm.
       Only the items that meet your criteria are visible on the dashboard page.
     </p>
@@ -27,15 +27,43 @@
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Displaying across your characters
+        Crafting
       </mat-panel-title>
     </mat-expansion-panel-header>
     <p>
-      In the my auctions section, you can see all of the auctions on this realm for the registered characters.
+      In the crafting section, you can filter recipes by profit, regional sale rate, profession etc. You can also hide any recipes you don't have; given that you have added characters to the app.
     </p>
 
     <p>
       You can add more characters in <a routerLink="/settings/characters">character settings</a>.
     </p>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Item details and statistical item data
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <p>
+      By clicking on an items, recipe or pet name in any table, you will get a popup with more information about that item.
+    </p>
+    <p>
+      Here you can get information like
+    </p>
+    <ul>
+      <li>Market value and sale rate via the TSM api</li>
+      <li>Your personal sale rate(if TSM addon data is imported), a chart over your past sales and purchases of that item.</li>
+      <li>Price and quantity statistics/history for the past 14 days</li>
+      <li>Sources like created by, sold by, dropped by, milled by etc</li>
+    </ul>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Import of TSM addon data
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <p>Doing this will allow you to get inventory, sale, purchase and expenses stats. This information can be used to calculate crafting costs for the shopping cart etc.</p>
   </mat-expansion-panel>
 </mat-accordion>
