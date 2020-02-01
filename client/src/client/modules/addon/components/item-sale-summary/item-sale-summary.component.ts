@@ -201,7 +201,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
   tooltipCallback(items, data): string {
     const {index, datasetIndex} = items;
     const dataset = data.datasets[datasetIndex];
-    if (datasetIndex === 1 || datasetIndex === 3) {
+    if (datasetIndex === 1) {
       return dataset.label + ': ' +
         NumberUtil.format(dataset.data[index]);
     }
