@@ -14,7 +14,6 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
   @Input() datasets: ChartData;
   @Input() datasetLabel: string;
   @Input() storageName: string;
-  @Input() tooltipCallback: Function;
   @Output() selection = new EventEmitter<number>();
 
   chart: Chart;
@@ -76,11 +75,15 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
       }
     };
 
-    if (this.tooltipCallback) {
+    if (this.datasets.labelCallback) {
       config.options['tooltips'] = {
         enabled: true,
-        mode: 'single',
-        callbacks: {label: this.tooltipCallback}
+        mode: 'label',
+        callbacks: {label: this.datasets.labelCallback}
+      };
+    } else {
+      config.options['tooltips'] = {
+        mode: 'label'
       };
     }
 

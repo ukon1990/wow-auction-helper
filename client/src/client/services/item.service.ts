@@ -18,6 +18,7 @@ import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 class ItemResponse {
   timestamp: Date;
@@ -30,6 +31,7 @@ export class ItemService {
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
   private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntry[]>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
+  private sm = new SubscriptionManager();
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
@@ -37,6 +39,9 @@ export class ItemService {
               private angulartics2: Angulartics2,
               private realmService: RealmService,
               public platform: Platform) {
+    this.sm.add(this.realmService.events.realmStatus, () => {
+      this.historyMap.next(new Map());
+    });
   }
 
   addItem(itemID: number): Promise<any> {

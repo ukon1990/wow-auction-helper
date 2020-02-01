@@ -23,7 +23,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   fourteenDayHourByHour: ChartData = {
     labels: [],
     datasets: [],
-    labelCallback: this.tooltipCallback
+    labelCallback: this.tooltipCallbackHourly
   };
   fourteenDayByHourTable = {
     columns: [
@@ -35,7 +35,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   dateData: ChartData = {
     labels: [],
     datasets: [],
-    labelCallback: this.tooltipCallback
+    labelCallback: this.tooltipCallbackDaily
   };
   groupedByDateTable = {
     columns: [
@@ -190,9 +190,25 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     });
   }
 
-  tooltipCallback(items, data): string {
+  tooltipCallbackDaily(items, data): string {
     const {index, datasetIndex} = items;
-    return 'Price: ' + new GoldPipe().transform(data.datasets[0].data[index] * 10000) +
-      ' | Quantity: ' + NumberUtil.format(data.datasets[1].data[index]);
+    const dataset = data.datasets[datasetIndex];
+    if (datasetIndex === 3) {
+      return dataset.label + ': ' +
+        NumberUtil.format(dataset.data[index]);
+    }
+    return dataset.label + ': ' +
+      new GoldPipe().transform(dataset.data[index] * 10000);
+  }
+
+  tooltipCallbackHourly(items, data): string {
+    const {index, datasetIndex} = items;
+    const dataset = data.datasets[datasetIndex];
+    if (datasetIndex === 1) {
+      return dataset.label + ': ' +
+        NumberUtil.format(data.datasets[datasetIndex].data[index]);
+    }
+    return dataset.label + ': ' +
+      new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000);
   }
 }
