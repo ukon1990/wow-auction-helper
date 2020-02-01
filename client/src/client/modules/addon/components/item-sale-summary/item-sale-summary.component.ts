@@ -9,6 +9,8 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ProfitSummary} from '../../models/profit-summary.model';
 import {UserProfit} from '../../models/user-profit.model';
+import {NumberUtil} from '../../../util/utils/number.util';
+import {GoldPipe} from '../../../util/pipes/gold.pipe';
 
 @Component({
   selector: 'wah-item-sale-summary',
@@ -44,6 +46,17 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     sales: SummaryCard; purchases: SummaryCard;
   } = {sales: undefined, purchases: undefined};
   personalSaleRate = 0;
+  purchaseDatasets = {
+    labels: [],
+    datasets: [],
+    labelCallback: this.tooltipCallback
+  };
+
+  saleDatasets = {
+    labels: [],
+    datasets: [],
+    labelCallback: this.tooltipCallback
+  };
 
   constructor() {
     this.subscriptions.add(
@@ -71,25 +84,59 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     this.subscriptions.unsubscribe();
   }
 
+  private resetDailyChartData() {
+    this.saleDatasets.labels.length = 0;
+    this.saleDatasets.datasets = [];
+    this.saleDatasets.datasets.push({
+      label: 'Purchase price',
+      data: [],
+      type: 'line',
+      yAxisID: 'yAxes-1',
+      backgroundColor: 'rgba(0, 255, 22, 0.4)'
+    });
+    this.saleDatasets.datasets.push({
+      label: 'Purchased quantity',
+      data: [],
+      type: 'line',
+      yAxisID: 'yAxes-2',
+      backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
+    });
+
+    this.purchaseDatasets.labels.length = 0;
+    this.purchaseDatasets.datasets = [];
+    this.purchaseDatasets.datasets.push({
+      label: 'Sale price',
+      data: [],
+      type: 'line',
+      yAxisID: 'yAxes-1',
+      backgroundColor: 'rgba(0, 255, 22, 0.4)'
+    });
+    this.purchaseDatasets.datasets.push({
+      label: 'Sold quantity',
+      data: [],
+      type: 'line',
+      yAxisID: 'yAxes-2',
+      backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
+    });
+  }
+
   setData(setKey: string): void {
     try {
       if (!this.realm) {
         return;
       }
-      const realms = SharedService.tsmAddonData['profitSummary'];
+      const realms = SharedService.tsmAddonData.profitSummary;
       localStorage[this.LOCAL_STORAGE_KEY] = setKey;
 
       if (realms && realms[this.realm]) {
         const dataset: UserProfit = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit);
+        console.log('dataset', dataset, setKey);
         this.data.length = 0;
+        this.resetDailyChartData();
         this.setChartData(dataset);
+        this.addDatasetData(dataset);
 
-        this.addChartData(dataset, 'sales');
-
-        this.addChartData(dataset, 'purchases');
-
-
-        Report.debug('setData dataset', dataset, this.chartData);
+        Report.debug('setData dataset', dataset, this.chartData, this.data);
 
         this.saleRate.emit(this.personalSaleRate);
       }
@@ -120,21 +167,39 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     }
   }
 
-  private addChartData(dataset: UserProfit, type: string) {
-    const item = dataset[type].itemMap[this.itemId];
-    this.chartData[type] = new SummaryCard('', 'line');
-    if (!item) {
-      return;
+  private addDatasetData(dataset: UserProfit) {
+    const purchases = dataset.purchases.itemMap[this.itemId],
+      sales = dataset.sales.itemMap[this.itemId];
+    purchases.history.sort((a, b) =>
+      a.timestamp - b.timestamp)
+      .forEach(({buyout, quantity, timestamp}) => {
+        this.purchaseDatasets.labels.push(new Date(timestamp).toLocaleString());
+        this.purchaseDatasets.datasets[0].data.push(buyout / 10000);
+        this.purchaseDatasets.datasets[1].data.push(quantity);
+      });
+
+    sales.history.sort((a, b) =>
+      a.timestamp - b.timestamp)
+      .forEach(({buyout, quantity, timestamp}) => {
+        this.saleDatasets.labels.push(new Date(timestamp).toLocaleString());
+        this.saleDatasets.datasets[0].data.push(buyout / 10000);
+        this.saleDatasets.datasets[1].data.push(quantity);
+      });
+
+    console.log({
+      sale: this.saleDatasets,
+      purchase: this.purchaseDatasets
+    });
+  }
+
+  tooltipCallback(items, data): string {
+    const {index, datasetIndex} = items;
+    const dataset = data.datasets[datasetIndex];
+    if (datasetIndex === 1 || datasetIndex === 3) {
+      return dataset.label + ': ' +
+        NumberUtil.format(dataset.data[index]);
     }
-
-    item.history
-      .forEach(h =>
-        this.chartData[type].addEntry(h.timestamp, h.buyout / 10000));
-    this.chartData[type].data.sort((a: ChartData, b: ChartData) =>
-      a.id - b.id);
-
-    this.chartData[type].data.forEach((data, i) =>
-      this.chartData[type].labels.push(
-        new ChartData(data.id, new Date(data.id).toLocaleString())));
+    return dataset.label + ': ' +
+      new GoldPipe().transform(dataset.data[index] * 10000);
   }
 }

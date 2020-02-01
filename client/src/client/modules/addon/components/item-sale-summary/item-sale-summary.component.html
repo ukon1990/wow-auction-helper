@@ -22,23 +22,15 @@
       <strong>Sold vs expired and cancellations</strong> {{ personalSaleRate | percent }}
     </div>
 
-    <wah-charts *ngIf="chartData?.sales?.labels?.length > 0"
-                [defaultType]="'line'"
-                datasetLabel="Sale history"
-                storageName="sale-summary-chart"
-                [labels]="chartData?.sales?.labels"
-                [dataMap]="chartData?.sales?.dataMap"
-                [allowTypeChange]="false">
-    </wah-charts>
+    <wah-charts-data-sets
+            storageName="sale-summary-chart"
+            [datasets]="saleDatasets">
+    </wah-charts-data-sets>
 
-    <wah-charts *ngIf="chartData?.purchases?.labels?.length > 0"
-                [defaultType]="'line'"
-                datasetLabel="Purchase history"
-                storageName="purchases-summary-chart"
-                [labels]="chartData?.purchases?.labels"
-                [dataMap]="chartData?.purchases?.dataMap"
-                [allowTypeChange]="false">
-    </wah-charts>
+    <wah-charts-data-sets
+            storageName="purchase-summary-chart"
+            [datasets]="purchaseDatasets">
+    </wah-charts-data-sets>
 
     <ng-template #noDataTemplate>
       <p>You have no gathered data for this item.</p>
