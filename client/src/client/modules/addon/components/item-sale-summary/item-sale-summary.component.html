@@ -13,24 +13,25 @@
       </mat-select>
     </mat-form-field>
 
-    <wah-data-table *ngIf="data.length > 0; else noDataTemplate"
-                    [itemsPerPage]="10"
-                    [columns]="columns"
-                    [data]="data"></wah-data-table>
+    <ng-container *ngIf="data.length > 0; else noDataTemplate">
+      <div *ngIf="personalSaleRate > 0">
+        <strong>Sold vs expired and cancellations</strong> {{ personalSaleRate | percent }}
+      </div>
+      <wah-data-table
+              [itemsPerPage]="10"
+              [columns]="columns"
+              [data]="data"></wah-data-table>
 
-    <div *ngIf="data.length > 0 && personalSaleRate > 0">
-      <strong>Sold vs expired and cancellations</strong> {{ personalSaleRate | percent }}
-    </div>
+      <wah-charts-data-sets
+              storageName="sale-summary-chart"
+              [datasets]="saleDatasets">
+      </wah-charts-data-sets>
 
-    <wah-charts-data-sets
-            storageName="sale-summary-chart"
-            [datasets]="saleDatasets">
-    </wah-charts-data-sets>
-
-    <wah-charts-data-sets
-            storageName="purchase-summary-chart"
-            [datasets]="purchaseDatasets">
-    </wah-charts-data-sets>
+      <wah-charts-data-sets
+              storageName="purchase-summary-chart"
+              [datasets]="purchaseDatasets">
+      </wah-charts-data-sets>
+    </ng-container>
 
     <ng-template #noDataTemplate>
       <p>You have no gathered data for this item.</p>

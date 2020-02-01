@@ -85,39 +85,41 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
   }
 
   private resetDailyChartData() {
-    this.saleDatasets.labels.length = 0;
-    this.saleDatasets.datasets = [];
-    this.saleDatasets.datasets.push({
-      label: 'Purchase price',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 255, 22, 0.4)'
-    });
-    this.saleDatasets.datasets.push({
-      label: 'Purchased quantity',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
-    });
+    this.saleDatasets = {
+      labels: [],
+      datasets: [{
+        label: 'Purchase price',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-1',
+        backgroundColor: 'rgba(0, 255, 22, 0.4)'
+      }, {
+        label: 'Purchased quantity',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-2',
+        backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
+      }],
+      labelCallback: this.tooltipCallback
+    };
 
-    this.purchaseDatasets.labels.length = 0;
-    this.purchaseDatasets.datasets = [];
-    this.purchaseDatasets.datasets.push({
-      label: 'Sale price',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 255, 22, 0.4)'
-    });
-    this.purchaseDatasets.datasets.push({
-      label: 'Sold quantity',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
-    });
+    this.purchaseDatasets = {
+      labels: [],
+      datasets: [{
+        label: 'Sale price',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-1',
+        backgroundColor: 'rgba(0, 255, 22, 0.4)'
+      }, {
+        label: 'Sold quantity',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-2',
+        backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
+      }],
+      labelCallback: this.tooltipCallback
+    };
   }
 
   setData(setKey: string): void {
@@ -131,7 +133,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
       if (realms && realms[this.realm]) {
         const dataset: UserProfit = ((realms[this.realm] as ProfitSummary)[setKey] as UserProfit);
         console.log('dataset', dataset, setKey);
-        this.data.length = 0;
+        this.data = [];
         this.resetDailyChartData();
         this.setChartData(dataset);
         this.addDatasetData(dataset);
@@ -170,23 +172,27 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
   private addDatasetData(dataset: UserProfit) {
     const purchases = dataset.purchases.itemMap[this.itemId],
       sales = dataset.sales.itemMap[this.itemId];
-    purchases.history.sort((a, b) =>
-      a.timestamp - b.timestamp)
-      .forEach(({buyout, quantity, timestamp}) => {
-        this.purchaseDatasets.labels.push(new Date(timestamp).toLocaleString());
-        this.purchaseDatasets.datasets[0].data.push(buyout / 10000);
-        this.purchaseDatasets.datasets[1].data.push(quantity);
-      });
+    if (purchases) {
+      purchases.history.sort((a, b) =>
+        a.timestamp - b.timestamp)
+        .forEach(({buyout, quantity, timestamp}) => {
+          this.purchaseDatasets.labels.push(new Date(timestamp).toLocaleString());
+          this.purchaseDatasets.datasets[0].data.push(buyout / 10000);
+          this.purchaseDatasets.datasets[1].data.push(quantity);
+        });
+    }
 
-    sales.history.sort((a, b) =>
-      a.timestamp - b.timestamp)
-      .forEach(({buyout, quantity, timestamp}) => {
-        this.saleDatasets.labels.push(new Date(timestamp).toLocaleString());
-        this.saleDatasets.datasets[0].data.push(buyout / 10000);
-        this.saleDatasets.datasets[1].data.push(quantity);
-      });
+    if (sales) {
+      sales.history.sort((a, b) =>
+        a.timestamp - b.timestamp)
+        .forEach(({buyout, quantity, timestamp}) => {
+          this.saleDatasets.labels.push(new Date(timestamp).toLocaleString());
+          this.saleDatasets.datasets[0].data.push(buyout / 10000);
+          this.saleDatasets.datasets[1].data.push(quantity);
+        });
+    }
 
-    console.log({
+    console.log('addDatasetData', {
       sale: this.saleDatasets,
       purchase: this.purchaseDatasets
     });
