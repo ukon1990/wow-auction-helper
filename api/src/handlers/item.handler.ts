@@ -187,14 +187,15 @@ export class ItemHandler {
   getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<any[]> {
     return new Promise((resolve, reject) => {
       const fourteenDays = 60 * 60 * 24 * 1000 * 14;
-      new DatabaseUtil()
-        .query(`SELECT *
+      const sql = `SELECT *
                 FROM itemPriceHistoryPerHour
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
                   AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)}
-                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
+                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`;
+      new DatabaseUtil()
+        .query(sql)
         .then((result => {
           const list = [];
           result.forEach(entry => {

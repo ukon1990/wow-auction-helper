@@ -1,9 +1,16 @@
 <em>This is still a work in progress. But Il'l make it available for now, as data is being collected.</em>
-<wah-charts-data-sets *ngIf="!isLoading ; else loadingTemplate"
-            storageName="item-price-history-chart"
-            [datasets]="dailyData"
-            [tooltipCallback]="tooltipCallback">
-</wah-charts-data-sets>
+<ng-container *ngIf="!isLoading ; else loadingTemplate">
+  <wah-charts-data-sets
+          storageName="item-price-daily-history-chart"
+          [datasets]="dateData"
+          [tooltipCallback]="tooltipCallback">
+  </wah-charts-data-sets>
+  <wah-charts-data-sets
+                        storageName="item-price-history-chart"
+                        [datasets]="fourteenDayHourByHour"
+                        [tooltipCallback]="tooltipCallback">
+  </wah-charts-data-sets>
+</ng-container>
 
 <ng-template #loadingTemplate>
   <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>

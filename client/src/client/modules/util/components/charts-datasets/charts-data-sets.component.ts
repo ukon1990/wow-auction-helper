@@ -67,7 +67,7 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
 
   private getChartConfig() {
     const config = {
-      type: this.chartTypeForm.value,
+      type: 'line',
       data: this.datasets,
       options: {
         elements: {
@@ -97,10 +97,6 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
   }
 
   private getScales() {
-    const type = this.chartTypeForm.value;
-    if (type !== 'line' && type !== 'bar') {
-      return undefined;
-    }
     return {
       yAxes: [{
         id: 'yAxes-1',
