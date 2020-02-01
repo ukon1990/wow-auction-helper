@@ -70,15 +70,6 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
       type: 'line',
       data: this.datasets,
       options: {
-        elements: {
-          line: {
-            tension: .1
-          }
-        },
-        // showLines: false,
-        animation: {duration: 0},
-        hover: {animationDuration: 0},
-        responsiveAnimationDuration: 0,
         scales: this.getScales(),
         onClick: (elements, chartItem) =>
           this.onClick(elements, chartItem),

@@ -4,13 +4,11 @@ import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {ItemPriceEntry} from '../../models/item-price-entry.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {SummaryCard} from '../../../../models/summary-card.model';
 import {ErrorReport} from '../../../../utils/error-report.util';
-import {Report} from '../../../../utils/report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
-import {Dataset} from '../../../util/models/dataset.model';
 import {ChartData} from '../../../util/models/chart.model';
 import {NumberUtil} from '../../../util/utils/number.util';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-item-price-history',
@@ -21,17 +19,33 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
   sm = new SubscriptionManager();
-  chartData: SummaryCard = new SummaryCard('', '');
   priceHistory: ItemPriceEntry[] = [];
   fourteenDayHourByHour: ChartData = {
     labels: [],
     datasets: [],
     labelCallback: this.tooltipCallback
   };
+  fourteenDayByHourTable = {
+    columns: [
+      {key: 'timestamp', title: 'Time', dataType: 'date'},
+      {key: 'min', title: 'Price', dataType: 'gold'}
+    ],
+    data: []
+  };
   dateData: ChartData = {
     labels: [],
     datasets: [],
     labelCallback: this.tooltipCallback
+  };
+  groupedByDateTable = {
+    columns: [
+      {key: 'date', title: 'Date', dataType: 'string'},
+      {key: 'min', title: 'Lowest min price', dataType: 'gold'},
+      {key: 'avg', title: 'Avg min price', dataType: 'gold'},
+      {key: 'max', title: 'Highest min price', dataType: 'gold'},
+      {key: 'avgQuantity', title: 'Avg quantity', dataType: 'number'}
+    ],
+    data: []
   };
   isLoading = true;
 
@@ -39,6 +53,10 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    Report.debug(
+      'ItemPriceHistoryComponent',
+      'Item detail view',
+      `Price history tab for ${this.auctionItem.itemID} - ${this.auctionItem.name}`);
     this.isLoading = true;
     this.service.getPriceHistory(this.item.id, this.auctionItem.petSpeciesId, this.auctionItem.bonusIds)
       .then((history) => {
@@ -56,6 +74,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
 
   private setAuctionAndDataset() {
     this.fourteenDayHourByHour.labels.length = 0;
+    this.fourteenDayByHourTable.data.length = 0;
     this.fourteenDayHourByHour.datasets = [];
     this.fourteenDayHourByHour.datasets.push({
       label: 'Price',
@@ -86,13 +105,13 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
         this.calculateHourlyValues(minGold, entry, date);
       });
       this.populateDailyChartData(dates);
-      console.log(dates, this.dateData);
     }
-    Report.debug('setAuctionAndDataset', {chart: this.chartData, data: this.priceHistory});
   }
 
   private populateDailyChartData(dates: any[]) {
+    this.groupedByDateTable.data.length = 0;
     dates.forEach(date => {
+      this.groupedByDateTable.data.push(date);
       this.dateData.labels.push(date.date);
       this.dateData.datasets[0].data.push(date.min);
       this.dateData.datasets[1].data.push(date.avg);
@@ -105,6 +124,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     this.fourteenDayHourByHour.datasets[0].data.push(minGold);
     this.fourteenDayHourByHour.datasets[1].data.push(entry.quantity);
     this.fourteenDayHourByHour.labels.push(date.toLocaleString());
+    this.fourteenDayByHourTable.data.push(entry);
   }
 
   private calculateDailyValues(date: Date, dateMap: {}, dates: any[], minGold: number, entry: ItemPriceEntry) {

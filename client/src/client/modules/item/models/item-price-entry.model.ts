@@ -5,7 +5,5 @@ export interface ItemPriceEntry {
   petSpeciesId: number;
   bonusIds: number;
   min: number;
-  avg: number;
-  max: number;
   timestamp: number;
 }
