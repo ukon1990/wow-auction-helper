@@ -10,7 +10,7 @@ export class Endpoints {
   public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
   public static readonly LAMBDAS = {
     EU: environment.production ?
-      'https://lcrz8vcw36.execute-api.eu-west-1.amazonaws.com/prod/' :
+      'https://dto8jvfie1.execute-api.eu-west-1.amazonaws.com/prod/' :
       'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
     US: environment.production ?
       'https://w7r88eeid9.execute-api.us-west-1.amazonaws.com/prod/' :
