@@ -14,6 +14,10 @@
     </p>
 
     <p>
+      The charts in the app is created with <a href="https://www.chartjs.org" target="_blank">Charts.js</a>.
+    </p>
+
+    <p>
       The client is hosted in an AWS S3 bucket.
     </p>
   </mat-expansion-panel>
@@ -25,13 +29,21 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <p>
-      The current backend is written with NodeJS with TypeScript, and is created as AWS Lambdas. 
+      The current backend is written with NodeJS with TypeScript, and is created as AWS Lambdas.
       This is the third iteration of the back-end. Originally it was in PHP, then NodeJS with ExpressJS, and now it's moved to AWS Lambda.
     </p>
 
     <p>
-      For the database that stores all the recipes, items and pets it uses MariaDB.
+      For the database that stores all the item price data, recipes, items and pets it uses MariaDB.
     </p>
+
+    <p>
+      Instead of querying the database for static data, this is stored on AWS s3 as compressed JSON files.
+      This reduces the hosting costs, as the app don't have to waste compute resources when it does not need to.
+      I do for now, store all auctions for the past 30 days on S3, and keep price history over the past 14 days in the database.
+    </p>
+
+    <p>For more details on this, feel free to check out the readme or code on Github (linked in the next section)</p>
   </mat-expansion-panel>
 
   <mat-expansion-panel>

@@ -20,6 +20,11 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
   medianPercentLimit: FormControl;
   medianPrice: number;
   localStorageName = 'wah-auctions-chart-median-percent';
+  datasets = {
+    labels: [],
+    datasets: [],
+    labelCallback: this.tooltipCallback
+  };
 
   constructor(private auctionsService: AuctionsService) {
     const medianPercentLimit = localStorage.getItem(this.localStorageName);
@@ -44,10 +49,29 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
     this.sm.unsubscribe();
   }
 
+  private resetDailyChartData() {
+    this.datasets = {
+      labels: [],
+      datasets: [{
+        label: 'Min price',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-1',
+        backgroundColor: 'rgba(0, 255, 22, 0.4)'
+      }, {
+        label: 'Quantity',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-2',
+        backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
+      }],
+      labelCallback: this.tooltipCallback
+    };
+  }
+
   private setAuctionAndDataset(medianPercentLimit: number = this.medianPercentLimit.value) {
     localStorage.setItem(this.localStorageName, '' + medianPercentLimit);
-    this.chartData.labels.length = 0;
-    this.chartData.clearEntries();
+    this.resetDailyChartData();
 
     if (this.auctions && this.auctions.length) {
       const unitPriceMap = {},
@@ -67,17 +91,22 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
       });
       unitPrices
         .sort((a, b) => b.price - a.price)
-        .forEach(({quantity, price}) => {
-        this.chartData.addEntry(price, price);
-        this.chartData.labels.push(new ChartData(price, NumberUtil.format(quantity)));
+        .forEach(({quantity, price}, index) => {
+          this.datasets.datasets[0].data.push(price);
+          this.datasets.datasets[1].data.push(NumberUtil.format(quantity));
+          this.datasets.labels.push('');
       });
     }
   }
 
   tooltipCallback(items, data): string {
     const {index, datasetIndex} = items;
-    console.log('Dataset', data);
-    return `Price: ${new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000)
-      } |  Quantity: ${NumberUtil.format(data.labels[index])}`;
+    const dataset = data.datasets[datasetIndex];
+    if (datasetIndex === 1) {
+      return dataset.label + ': ' +
+        NumberUtil.format(dataset.data[index]);
+    }
+    return dataset.label + ': ' +
+      new GoldPipe().transform(dataset.data[index] * 10000);
   }
 }

@@ -20,7 +20,7 @@ export class Endpoints {
   };
   readonly LAMBDAS = {
     EU: {
-      prod: 'https://lcrz8vcw36.execute-api.eu-west-1.amazonaws.com/prod/',
+      prod: 'https://dto8jvfie1.execute-api.eu-west-1.amazonaws.com/prod/',
       dev: 'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/'
     },
     US: {

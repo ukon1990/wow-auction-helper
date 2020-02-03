@@ -16,6 +16,7 @@ import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
 import {NPCUtil} from '../utils/npc.util';
 import {NpcHandler} from './npc.handler';
+import {AuctionItemStat} from '../utils/auction-processor.util';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -183,14 +184,18 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  getPriceHistoryFor(ahId: number, id: number): Promise<any[]> {
+  getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      new DatabaseUtil()
-        .query(`SELECT *
+      const fourteenDays = 60 * 60 * 24 * 1000 * 14;
+      const sql = `SELECT *
                 FROM itemPriceHistoryPerHour
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
-                  AND UNIX_TIMESTAMP(date) > 1579824000;`)
+                  AND petSpeciesId = ${petSpeciesId}
+                  AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)}
+                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`;
+      new DatabaseUtil()
+        .query(sql)
         .then((result => {
           const list = [];
           result.forEach(entry => {

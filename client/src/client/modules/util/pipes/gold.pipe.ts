@@ -37,7 +37,7 @@ export class GoldPipe implements PipeTransform {
     // Silver
     result[1] = copper % 100;
     // Gold
-    result[2] = NumberUtil.format(((copper - result[1]) / 100));
+    result[2] = NumberUtil.format(((copper - result[1]) / 100), false);
 
     return result[2] + 'g ' + result[1] + 's ' + result[0] + 'c';
   }

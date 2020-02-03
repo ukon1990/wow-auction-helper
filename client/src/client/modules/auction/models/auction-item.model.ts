@@ -27,4 +27,5 @@ export class AuctionItem {
   past90DaysSaleRate?: number;
   totalSaleRate?: number;
   hasPersonalSaleRate: boolean;
+  bonusIds: number[];
 }

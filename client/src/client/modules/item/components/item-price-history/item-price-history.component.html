@@ -1,13 +1,36 @@
-<em>This is still a work in progress. But Il'l make it available for now, as data is being collected.</em>
-<wah-charts *ngIf="!isLoading ; else loadingTemplate"
-            storageName="item-price-history-chart"
-            [defaultType]="'line'"
-            datasetLabel="Price history"
-            [labels]="chartData.labels"
-            [dataMap]="chartData.dataMap"
-            [tooltipCallback]="tooltipCallback"
-            [allowTypeChange]="true">
-</wah-charts>
+<ng-container *ngIf="!isLoading ; else loadingTemplate">
+  <h4>Prices grouped by day</h4>
+  <mat-tab-group>
+    <mat-tab label="Chart">
+      <wah-charts-data-sets
+              storageName="item-price-daily-history-chart"
+              [datasets]="dateData">
+      </wah-charts-data-sets>
+    </mat-tab>
+    <mat-tab label="Table">
+      <wah-data-table
+              [columns]="groupedByDateTable.columns"
+              [data]="groupedByDateTable.data">
+      </wah-data-table>
+    </mat-tab>
+  </mat-tab-group>
+
+  <h4>Prices grouped by hour</h4>
+  <mat-tab-group>
+    <mat-tab label="Chart">
+      <wah-charts-data-sets
+              storageName="item-price-history-chart"
+              [datasets]="fourteenDayHourByHour">
+      </wah-charts-data-sets>
+    </mat-tab>
+    <mat-tab label="Table">
+      <wah-data-table
+              [columns]="fourteenDayByHourTable.columns"
+              [data]="fourteenDayByHourTable.data">
+      </wah-data-table>
+    </mat-tab>
+  </mat-tab-group>
+</ng-container>
 
 <ng-template #loadingTemplate>
   <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
