@@ -34,7 +34,7 @@ functions:
     tags:
       FunctionName: Wah-auctionUpdateLogForRealm
     handler: src/controllers/auction.getUpdateLogForRealm
-    memorySize: 128
+    memorySize: 200
     events:
       - http:
           method: get
@@ -75,6 +75,12 @@ functions:
           path: auction/update-one
           cors:
             origin: '*'
+  deleteOldPriceDataForRealm:
+    tags:
+      FunctionName: Wah-deleteOldPriceDataForRealm
+    handler: src/controllers/auction.deleteOldPriceDataForRealm
+    memorySize: 200
+    timeout: 60
   locales:
     tags:
       FunctionName: Wah-locales

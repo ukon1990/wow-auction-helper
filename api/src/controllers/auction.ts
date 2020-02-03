@@ -67,3 +67,9 @@ exports.auctionsDownloadAndSave = (event: APIGatewayEvent, context: Context, cal
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 401));
 };
+
+exports.deleteOldPriceDataForRealm = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new AuctionHandler().deleteOldPriceHistoryForRealm()
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 500));
+};

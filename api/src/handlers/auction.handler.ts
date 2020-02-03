@@ -17,6 +17,7 @@ import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/mod
 import {AuctionResponse} from '../models/auction/auctions-response';
 import {Auction} from '../models/auction/auction';
 import {ItemPriceEntry} from '../../../client/src/client/modules/item/models/item-price-entry.model';
+import {NumberUtil} from '../../../client/src/client/modules/util/utils/number.util';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -516,6 +517,64 @@ export class AuctionHandler {
         }
       }
       resolve();
+    });
+  }
+
+  /*
+  * Add a new column to the AH table indicating when the last delete was ran
+  * Run once each 6-10 minute
+  * Limit 1 order by time since asc (to get the oldest first)
+  * */
+  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
+    const day = 1000 * 60 * 60 * 24;
+    const now = new Date();
+    now.setUTCHours(0);
+    now.setUTCMinutes(0);
+    now.setUTCMilliseconds(0);
+    return new Promise((resolve, reject) => {
+      conn.query(`SELECT *
+                        FROM auction_houses
+                        WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}
+                        ORDER BY lastHistoryDeleteEvent
+                        LIMIT 1;`)
+        .then((res) => {
+          if (res.length) {
+          const {id, lastHistoryDeleteEvent} = res[0];
+          const sql = `DELETE FROM itemPriceHistoryPerHour
+                        WHERE ahId = ${id} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`;
+          console.log('Delete query', {sql, lastHistoryDeleteEvent});
+          conn.query(sql)
+            .then((deleteResult) => {
+              deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
+              conn.query(`UPDATE auction_houses
+                                SET lastHistoryDeleteEvent = ${+new Date()}
+                                WHERE id = ${id};`)
+                .then(() => {
+                  console.log('Successfully deleted old price data', deleteResult);
+                  conn.end();
+                  resolve();
+                })
+                .catch(error => {
+                  console.error(error);
+                  conn.end();
+                  reject(error);
+                });
+            })
+            .catch(error => {
+              console.error(error);
+              conn.end();
+              reject(error);
+            });
+          } else {
+            resolve();
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          conn.end();
+          reject(error);
+        });
+
     });
   }
 }
