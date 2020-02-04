@@ -14,6 +14,7 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
   @Input() datasets: ChartData;
   @Input() datasetLabel: string;
   @Input() storageName: string;
+  @Input() height = 20;
   @Output() selection = new EventEmitter<number>();
 
   chart: Chart;
@@ -69,6 +70,8 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
       type: 'line',
       data: this.datasets,
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         scales: this.getScales(),
         onClick: (elements, chartItem) =>
           this.onClick(elements, chartItem),

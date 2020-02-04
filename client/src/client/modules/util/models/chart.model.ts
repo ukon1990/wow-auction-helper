@@ -2,6 +2,6 @@ import {Dataset} from './dataset.model';
 
 export interface ChartData {
   labels: string[];
-  labelCallback: Function;
+  labelCallback?: Function;
   datasets: Dataset[];
 }
