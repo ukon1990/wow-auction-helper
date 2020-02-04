@@ -566,6 +566,7 @@ export class AuctionHandler {
               reject(error);
             });
           } else {
+            conn.end();
             resolve();
           }
         })
