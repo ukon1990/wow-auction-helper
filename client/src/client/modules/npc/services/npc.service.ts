@@ -7,6 +7,8 @@ import {Report} from '../../../utils/report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {SharedService} from '../../../services/shared.service';
+import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
+import {ZoneService} from '../../zone/service/zone.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,7 @@ export class NpcService {
   list: BehaviorSubject<NPC[]> = new BehaviorSubject<NPC[]>([]);
   mapped: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
-  constructor(private http: HttpClient, private db: DatabaseService) {
+  constructor(private http: HttpClient, private db: DatabaseService, private zoneService: ZoneService) {
   }
 
   getAll(forceUpdate = false): Promise<NPC[]> {
@@ -40,6 +42,8 @@ export class NpcService {
         .catch(console.error);
 
       NPC.getTradeVendorsAndSetUnitPriceIfMissing(this.list.value);
+
+      this.mapNPCsToItems();
       resolve(this.list.value);
     });
   }
@@ -115,5 +119,26 @@ export class NpcService {
 
   getIds(ids: number[]) {
     return this.http.post('http://localhost:3000/npc', {ids}).toPromise();
+  }
+
+  private mapNPCsToItems() {
+    const map: Map<number, ItemNpcDetails> = new Map();
+    this.list.value.forEach(npc => {
+      (npc.drops || []).forEach(item => {
+        if (!map.has(item.id)) {
+          map.set(item.id, new ItemNpcDetails(this, this.zoneService));
+        }
+        map.get(item.id).addDroppedBy(item, npc);
+      });
+
+      (npc.sells || []).forEach(item => {
+        if (!map.has(item.id)) {
+          map.set(item.id, new ItemNpcDetails(this, this.zoneService));
+        }
+        map.get(item.id).addSoldBy(item, npc);
+      });
+    });
+
+    SharedService.itemNpcMap = map;
   }
 }
