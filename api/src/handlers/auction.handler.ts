@@ -551,11 +551,18 @@ export class AuctionHandler {
             }
             list.push(result);
           });
+          if (!list.length) {
+            resolve();
+            return;
+          }
 
           console.log('Done updating daily price data');
           conn.query(AuctionQuery.multiInsertOrUpdateDailyPrices(list, dayOfMonth))
             .then(resolve)
-            .catch(reject);
+            .catch(error => {
+              console.error('SQL error for id=', id);
+              reject(error);
+            });
         })
         .catch(reject);
     });
@@ -563,16 +570,16 @@ export class AuctionHandler {
 
   private handlePriceForDayOfMonth(result: any, dayOfMonth: string, price: number, hour: string) {
     if (!result[`min${dayOfMonth}`] || result[`min${dayOfMonth}`] > price) {
-      result[`min${dayOfMonth}`] = price;
-      result[`minHour${dayOfMonth}`] = hour;
+      result[`min${dayOfMonth}`] = price || 0;
+      result[`minHour${dayOfMonth}`] = hour || 0;
     }
 
     if (!result[`max${dayOfMonth}`] || result[`max${dayOfMonth}`] < price) {
-      result[`max${dayOfMonth}`] = price;
+      result[`max${dayOfMonth}`] = price || 0;
     }
 
     if (!result[`avg${dayOfMonth}`]) {
-      result[`avg${dayOfMonth}`] = price;
+      result[`avg${dayOfMonth}`] = price || 0;
     } else {
       result[`avg${dayOfMonth}`] = (result[`avg${dayOfMonth}`] + price) / 2;
     }
@@ -580,15 +587,15 @@ export class AuctionHandler {
 
   private handleQuantityForDayOfMonth(result: any, dayOfMonth: string, quantity) {
     if (!result[`minQuantity${dayOfMonth}`] || result[`minQuantity${dayOfMonth}`] > quantity) {
-      result[`minQuantity${dayOfMonth}`] = quantity;
+      result[`minQuantity${dayOfMonth}`] = quantity || 0;
     }
 
     if (!result[`maxQuantity${dayOfMonth}`] || result[`maxQuantity${dayOfMonth}`] < quantity) {
-      result[`maxQuantity${dayOfMonth}`] = quantity;
+      result[`maxQuantity${dayOfMonth}`] = quantity || 0;
     }
 
     if (!result[`avgQuantity${dayOfMonth}`]) {
-      result[`avgQuantity${dayOfMonth}`] = quantity;
+      result[`avgQuantity${dayOfMonth}`] = quantity || 0;
     } else {
       result[`avgQuantity${dayOfMonth}`] = (result[`avgQuantity${dayOfMonth}`] + quantity) / 2;
     }
