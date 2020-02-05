@@ -25,7 +25,7 @@
       </mat-expansion-panel>
     </mat-accordion>
 
-    <div class="row col-md-12" *ngIf="profitSummary[form.value.realm]">
+    <div class="row mt-4" *ngIf="profitSummary[form.value.realm]">
       <wah-profit-summary-card class="col-md-6 mb-2"
                                [userProfit]="profitSummary[form.value.realm].past24Hours">
       </wah-profit-summary-card>
