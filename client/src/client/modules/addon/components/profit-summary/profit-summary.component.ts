@@ -14,6 +14,7 @@ export class ProfitSummaryComponent implements OnInit, OnDestroy {
   form: FormGroup;
   sm = new SubscriptionManager();
   profitSummary = {};
+  chart = {};
 
   constructor(private formBuilder: FormBuilder) {
     this.form = formBuilder.group({
@@ -51,6 +52,7 @@ export class ProfitSummaryComponent implements OnInit, OnDestroy {
     if (!data) {
       return;
     }
+    this.realms.length = 0;
 
     this.profitSummary = data.profitSummary;
 

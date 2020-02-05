@@ -21,6 +21,7 @@ import { DefaultDashboardSettings } from '../modules/dashboard/models/default-da
 import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
 import {ItemClassGroup} from '../modules/sellers/models/item-class-group.model';
+import {ItemNpcDetails} from '../modules/item/models/item-npc-details.model';
 
 @Injectable()
 export class SharedService {
@@ -86,6 +87,7 @@ export class SharedService {
   public static itemsUnmapped: Array<Item> = new Array<Item>();
   public static tradeVendorItemMap: Map<number, TradeVendorItemValue> = new Map<number, TradeVendorItemValue>();
   public static tradeVendorMap: Map<number, TradeVendor> = new Map<number, TradeVendor>();
+  public static itemNpcMap: Map<number, ItemNpcDetails> = new Map();
 
   public static pets: Map<number, Pet> = new Map<number, Pet>();
 

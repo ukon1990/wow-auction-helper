@@ -66,9 +66,9 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       }));
     this.subs.add(
       SharedService.events.auctionUpdate,
-      ((changes) => {
-        this.filterAuctions(changes);
-      }));
+      () => {
+        this.filterAuctions();
+      });
   }
 
   async ngAfterContentInit() {
@@ -94,10 +94,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
   }
 
-  async filterAuctions(changes?: any) {
-    if (!changes) {
-      changes = this.form.getRawValue();
-    }
+  async filterAuctions(changes = this.form.value) {
 
     this.table.data = SharedService.auctionItems
       .filter(i => this.isMatch(i, changes))

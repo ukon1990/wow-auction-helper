@@ -180,7 +180,7 @@ functions:
     tags:
       FunctionName: Wah-npc-get-all
     handler: src/controllers/npc.getAll
-    memorySize: 256
+    memorySize: 400
     events:
       - http:
           method: post

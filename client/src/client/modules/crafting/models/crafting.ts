@@ -9,6 +9,7 @@ import {Reagent} from './reagent';
 import wordsToNumbers from 'words-to-numbers';
 import {CustomProcUtil} from '../utils/custom-proc.util';
 import {Filters} from '../../../utils/filtering';
+import {NpcService} from '../../npc/services/npc.service';
 
 export class Crafting {
   public static ahCutModifier = 0.95;
@@ -196,23 +197,25 @@ export class Crafting {
   }
 
   private static getNeededBuyPriceFromVendor(itemID: number, count: number) {
-    if (this.getItem(itemID)) {
-      if (this.getItem(itemID).vendorBoughtLimit && SharedService.items[itemID].vendorBoughtLimit < count) {
-        return (SharedService.items[itemID] as Item).buyPrice * SharedService.items[itemID].vendorBoughtLimit +
+    const itemNpcDetails = SharedService.itemNpcMap.get(itemID);
+    if (itemNpcDetails) {
+      if (itemNpcDetails.vendorAvailable > 0 && itemNpcDetails.vendorAvailable < count) {
+        return itemNpcDetails.vendorBuyPrice * itemNpcDetails.vendorAvailable +
           (SharedService.auctionItemsMap[itemID] ?
-            SharedService.auctionItemsMap[itemID].buyout * (count - SharedService.items[itemID].vendorBoughtLimit) : 0);
+            SharedService.auctionItemsMap[itemID].buyout * (count - itemNpcDetails.vendorAvailable) : 0);
       }
-      return (this.getItem(itemID).buyPrice * count);
+      return (itemNpcDetails.vendorBuyPrice * count);
     }
     return 0;
   }
 
   public static isVendorCheaperThanAH(itemID: number): boolean {
-    if (this.getItem(itemID)) {
-      if (this.getItem(itemID).isBoughtForGold && SharedService.user.useVendorPriceForCraftingIfAvailable) {
+    const itemNpcDetails = SharedService.itemNpcMap.get(itemID);
+    if (itemNpcDetails) {
+      if (itemNpcDetails.soldBy.length && SharedService.user.useVendorPriceForCraftingIfAvailable) {
         if (!SharedService.auctionItemsMap[itemID]) {
           return true;
-        } else if (SharedService.items[itemID].buyPrice < SharedService.auctionItemsMap[itemID].buyout) {
+        } else if (itemNpcDetails.vendorBuyPrice < SharedService.auctionItemsMap[itemID].buyout) {
           return true;
         }
       }

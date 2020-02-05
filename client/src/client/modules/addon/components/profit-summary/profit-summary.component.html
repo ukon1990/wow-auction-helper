@@ -12,28 +12,38 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
     </form>
 
-    <div class="row col-md-12" *ngIf="profitSummary[form.getRawValue().realm]">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          Profit and gold log chart
+        </mat-expansion-panel-header>
+
+        <wah-profit-summary-chart [realm]="form.value.realm"></wah-profit-summary-chart>
+        <wah-gold-summary-chart [realm]="form.value.realm"></wah-gold-summary-chart>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <div class="row mt-4" *ngIf="profitSummary[form.value.realm]">
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="profitSummary[form.getRawValue().realm].past24Hours">
+                               [userProfit]="profitSummary[form.value.realm].past24Hours">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="profitSummary[form.getRawValue().realm].past7Days">
+                               [userProfit]="profitSummary[form.value.realm].past7Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="profitSummary[form.getRawValue().realm].past30Days">
+                               [userProfit]="profitSummary[form.value.realm].past30Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="profitSummary[form.getRawValue().realm].past90Days">
+                               [userProfit]="profitSummary[form.value.realm].past90Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
-                               [userProfit]="profitSummary[form.getRawValue().realm].total">
+                               [userProfit]="profitSummary[form.value.realm].total">
       </wah-profit-summary-card>
     </div>
 

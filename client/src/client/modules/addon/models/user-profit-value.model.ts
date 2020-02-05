@@ -9,19 +9,23 @@ export class UserProfitValue {
   constructor(public category: string) {
   }
 
-  add(value): void {
+  add(value): number {
+    let copper;
     try {
+      copper = this.getCopperValue(value);
       if (value.quantity) {
+        copper = copper * value.quantity;
         this.quantity += value.quantity;
-        this.copper += this.getCopperValue(value) * value.quantity;
+        this.copper += copper;
         this.addItem(value);
       } else {
         this.quantity++;
-        this.copper += this.getCopperValue(value);
+        this.copper += copper;
       }
     } catch (error) {
       ErrorReport.sendError('UserProfitValue.add', error);
     }
+    return copper;
   }
 
   private addItem(value): void {

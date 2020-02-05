@@ -77,8 +77,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       SharedService.events.auctionUpdate,
-      (changes) =>
-        this.filter(changes));
+      () =>
+        this.filter());
   }
 
   ngOnDestroy() {
@@ -97,10 +97,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.columns.push({key: undefined, title: 'In cart', dataType: 'cart-recipe-count'});
   }
 
-  filter(changes?: any): void {
-    if (!changes) {
-      changes = this.searchForm.getRawValue();
-    }
+  filter(changes = this.searchForm.value): void {
     if (SharedService.user.useIntermediateCrafting !== changes.intermediate) {
       // We need to update those crafting costs as we changed our strategy
       SharedService.user.useIntermediateCrafting = changes.intermediate;

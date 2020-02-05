@@ -11,6 +11,10 @@ export class UserProfit {
   income: UserProfitValue = new UserProfitValue('Income');
   purchases: UserProfitValue = new UserProfitValue('Purchases');
   profit = 0;
+  daily = {
+    map: {},
+    list: []
+  };
 
   constructor(public daysSince: number, private characters: any) {
   }
@@ -19,25 +23,46 @@ export class UserProfit {
     try {
       const thenVsNow = new Date().getTime() - value.time;
       if (this.isTimeMatch(thenVsNow) && !this.excludeUserCharacters(value)) {
+        const date = this.getDate(value),
+          dateString = date.toLocaleDateString();
+        let forDay =  this.daily.map[dateString];
+        if (!this.daily.map[dateString]) {
+          this.daily.map[dateString] = {
+            date,
+            expired: 0,
+            cancelled: 0,
+            expenses: 0,
+            sales: 0,
+            income: 0,
+            purchases: 0,
+            profit: 0
+          };
+          forDay = this.daily.map[dateString];
+          this.daily.list.push(this.daily.map[dateString]);
+        }
         switch (type) {
           case 'expired':
           case 'cancelled':
-            this[type].add(value);
+            forDay[type] = this[type].add(value);
             break;
           case 'expenses':
-            this[type].add(value);
+            forDay[type] = this[type].add(value);
+            forDay.profit -= value.amount;
             this.profit -= value.amount;
             break;
           case 'income':
-            this[type].add(value);
+            forDay[type] = this[type].add(value);
+            forDay.profit += value.amount;
             this.profit += value.amount;
             break;
           case 'sales':
-            this[type].add(value);
+            forDay[type] = this[type].add(value);
+            forDay.profit += value.price * value['quantity'];
             this.profit += value.price * value['quantity'];
             break;
           case 'purchases':
-            this[type].add(value);
+            forDay[type] = this[type].add(value);
+            forDay.profit -= value.price * value['quantity'];
             this.profit -= value.price * value['quantity'];
             break;
         }
@@ -45,6 +70,15 @@ export class UserProfit {
     } catch (error) {
       ErrorReport.sendError('UserProfit.add', error);
     }
+  }
+
+  private getDate(value: { amount: number; time: number; price: number }) {
+    const date = new Date(value.time);
+    date.setMilliseconds(0);
+    date.setSeconds(0);
+    date.setMinutes(0);
+    date.setHours(0);
+    return date;
   }
 
   private isTimeMatch(thenVsNow) {
