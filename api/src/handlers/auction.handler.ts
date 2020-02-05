@@ -15,9 +15,8 @@ import {GzipUtil} from '../utils/gzip.util';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
 import {AuctionResponse} from '../models/auction/auctions-response';
-import {Auction} from '../models/auction/auction';
-import {ItemPriceEntry} from '../../../client/src/client/modules/item/models/item-price-entry.model';
 import {NumberUtil} from '../../../client/src/client/modules/util/utils/number.util';
+import {AuctionQuery} from '../queries/auction.query';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -520,12 +519,95 @@ export class AuctionHandler {
     });
   }
 
+  compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<any> {
+    console.log('Updating daily price data');
+    const dayOfMonth = this.getDateNumber(date.getUTCDate());
+    const sql = `SELECT *
+                FROM itemPriceHistoryPerHour
+                WHERE ahId = ${id} and date = '${date.getUTCFullYear()}-${
+      this.getDateNumber(date.getUTCMonth() + 1)}-${dayOfMonth}'`;
+    return new Promise<any>((resolve, reject) => {
+      conn.query(sql)
+        .then(rows => {
+          const list = [];
+          rows.forEach(row => {
+            const result = {
+              ahId: id,
+              itemId: row.itemId,
+              petSpeciesId: row.petSpeciesId,
+              bonusIds: row.bonusIds,
+              date: `${date.getUTCFullYear()}-${this.getDateNumber(date.getUTCMonth() + 1)}-15`
+            };
+            for (let i = 0, maxHours = 23; i <= maxHours; i++) {
+              date.setUTCHours(i);
+              const hour = i < 10 ? '0' + i : '' + i,
+                price = row[`price${hour}`],
+                quantity = row[`quantity${hour}`];
+              if (price) {
+                this.handlePriceForDayOfMonth(result, dayOfMonth, price, hour);
+
+                this.handleQuantityForDayOfMonth(result, dayOfMonth, quantity);
+              }
+            }
+            list.push(result);
+          });
+
+          console.log('Done updating daily price data');
+          conn.query(AuctionQuery.multiInsertOrUpdateDailyPrices(list, dayOfMonth))
+            .then(resolve)
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  private handlePriceForDayOfMonth(result: any, dayOfMonth: string, price: number, hour: string) {
+    if (!result[`min${dayOfMonth}`] || result[`min${dayOfMonth}`] > price) {
+      result[`min${dayOfMonth}`] = price;
+      result[`minHour${dayOfMonth}`] = hour;
+    }
+
+    if (!result[`max${dayOfMonth}`] || result[`max${dayOfMonth}`] < price) {
+      result[`max${dayOfMonth}`] = price;
+    }
+
+    if (!result[`avg${dayOfMonth}`]) {
+      result[`avg${dayOfMonth}`] = price;
+    } else {
+      result[`avg${dayOfMonth}`] = (result[`avg${dayOfMonth}`] + price) / 2;
+    }
+  }
+
+  private handleQuantityForDayOfMonth(result: any, dayOfMonth: string, quantity) {
+    if (!result[`minQuantity${dayOfMonth}`] || result[`minQuantity${dayOfMonth}`] > quantity) {
+      result[`minQuantity${dayOfMonth}`] = quantity;
+    }
+
+    if (!result[`maxQuantity${dayOfMonth}`] || result[`maxQuantity${dayOfMonth}`] < quantity) {
+      result[`maxQuantity${dayOfMonth}`] = quantity;
+    }
+
+    if (!result[`avgQuantity${dayOfMonth}`]) {
+      result[`avgQuantity${dayOfMonth}`] = quantity;
+    } else {
+      result[`avgQuantity${dayOfMonth}`] = (result[`avgQuantity${dayOfMonth}`] + quantity) / 2;
+    }
+  }
+
+  private getDateNumber(input: number): string {
+    return input < 10 ? '0' + input : '' + input;
+  }
+
+  private getYesterday(): Date {
+    return new Date(+new Date() - 1000 * 60 * 60 * 24);
+  }
+
   /*
   * Add a new column to the AH table indicating when the last delete was ran
   * Run once each 6-10 minute
   * Limit 1 order by time since asc (to get the oldest first)
   * */
-  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
+  deleteOldPriceHistoryForRealmAndSetDailyPrice(conn = new DatabaseUtil(false)): Promise<any> {
     const day = 1000 * 60 * 60 * 24;
     const now = new Date();
     now.setUTCHours(0);
@@ -537,34 +619,38 @@ export class AuctionHandler {
                         WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}
                         ORDER BY lastHistoryDeleteEvent
                         LIMIT 1;`)
-        .then((res) => {
+        .then(async (res) => {
           if (res.length) {
-          const {id, lastHistoryDeleteEvent} = res[0];
-          const sql = `DELETE FROM itemPriceHistoryPerHour
+            const {id, lastHistoryDeleteEvent} = res[0];
+            const sql = `DELETE FROM itemPriceHistoryPerHour
                         WHERE ahId = ${id} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`;
-          console.log('Delete query', {sql, lastHistoryDeleteEvent});
-          conn.query(sql)
-            .then((deleteResult) => {
-              deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
-              conn.query(`UPDATE auction_houses
+            console.log('Delete query', {sql, lastHistoryDeleteEvent});
+
+            await this.compileDailyAuctionData(id, conn)
+              .catch(console.error);
+
+            conn.query(sql)
+              .then((deleteResult) => {
+                deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
+                conn.query(`UPDATE auction_houses
                                 SET lastHistoryDeleteEvent = ${+new Date()}
                                 WHERE id = ${id};`)
-                .then(() => {
-                  console.log('Successfully deleted old price data', deleteResult);
-                  conn.end();
-                  resolve();
-                })
-                .catch(error => {
-                  console.error(error);
-                  conn.end();
-                  reject(error);
-                });
-            })
-            .catch(error => {
-              console.error(error);
-              conn.end();
-              reject(error);
-            });
+                  .then(() => {
+                    console.log('Successfully deleted old price data', deleteResult);
+                    conn.end();
+                    resolve();
+                  })
+                  .catch(error => {
+                    console.error(error);
+                    conn.end();
+                    reject(error);
+                  });
+              })
+              .catch(error => {
+                console.error(error);
+                conn.end();
+                reject(error);
+              });
           } else {
             conn.end();
             resolve();

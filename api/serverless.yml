@@ -75,11 +75,11 @@ functions:
           path: auction/update-one
           cors:
             origin: '*'
-  deleteOldPriceDataForRealm:
+  deleteOldPriceHistoryForRealmAndSetDailyPrice:
     tags:
-      FunctionName: Wah-deleteOldPriceDataForRealm
-    handler: src/controllers/auction.deleteOldPriceDataForRealm
-    memorySize: 200
+      FunctionName: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
+    handler: src/controllers/auction.deleteOldPriceHistoryForRealmAndSetDailyPrice
+    memorySize: 450
     timeout: 60
   locales:
     tags:
