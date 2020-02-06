@@ -41,14 +41,14 @@ describe('AuctionHandler', () => {
     });
     const promises = [];
     let processed = 0;
-    const date = '2020-01-28';
-    for (let id = 1; id <= 242; id++) {// 242
+    const date = '2020-02-05'; // 02-04
+    for (let id = 1; id <= 260; id++) {// 242
         promises.push(promiseThrottle.add(() =>
           new Promise((resolve) => {
             new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
               .then(() => {
                 processed++;
-                console.log(`Processed count: ${processed} of ${242}`);
+                console.log(`Processed count: ${processed} of ${260}`);
                 resolve();
               })
               .catch((error) => {
@@ -70,9 +70,9 @@ describe('AuctionHandler', () => {
     for (let i = 1; i < 32; i++) {
       const day = i < 10 ? '0' + i : '' + i;
       str += '`minHour' + day + '` SMALLINT(2) NULL,\n';
-      str += '`min' + day + '` SMALLINT(2) NULL,\n';
-      str += '`avg' + day + '` SMALLINT(2) NULL,\n';
-      str += '`max' + day + '` SMALLINT(2) NULL,\n';
+      str += '`min' + day + '` BIGINT(20) NULL,\n';
+      str += '`avg' + day + '` BIGINT(20) NULL,\n';
+      str += '`max' + day + '` BIGINT(20) NULL,\n';
       str += '`minQuantity' + day + '` MEDIUMINT NULL,\n';
       str += '`avgQuantity' + day + '` MEDIUMINT NULL,\n';
       str += '`maxQuantity' + day + '` MEDIUMINT NULL,\n';
