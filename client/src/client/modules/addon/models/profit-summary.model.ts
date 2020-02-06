@@ -5,8 +5,9 @@ export class ProfitSummary {
   past24Hours: UserProfit;
   past7Days: UserProfit;
   past14Days: UserProfit;
-  past90Days: UserProfit;
   past30Days: UserProfit;
+  past60Days: UserProfit;
+  past90Days: UserProfit;
   total: UserProfit;
 
   constructor(realm: string, characters: any) {
@@ -14,6 +15,7 @@ export class ProfitSummary {
     this.past7Days = new UserProfit(7, characters[realm]);
     this.past14Days = new UserProfit(14, characters[realm]);
     this.past30Days = new UserProfit(30, characters[realm]);
+    this.past60Days = new UserProfit(60, characters[realm]);
     this.past90Days = new UserProfit(90, characters[realm]);
     this.total = new UserProfit(undefined, characters[realm]);
   }
@@ -29,6 +31,7 @@ export class ProfitSummary {
     this.past7Days.setSaleRateForItem(id, 'past7Days');
     this.past14Days.setSaleRateForItem(id, 'past14Days');
     this.past30Days.setSaleRateForItem(id, 'past30Days');
+    this.past60Days.setSaleRateForItem(id, 'past60Days');
     this.past90Days.setSaleRateForItem(id, 'past90Days');
     this.total.setSaleRateForItem(id, 'total');
   }

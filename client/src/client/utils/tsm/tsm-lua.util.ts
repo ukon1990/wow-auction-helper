@@ -372,6 +372,7 @@ export class TsmLuaUtil {
     profitSummary.past7Days.add(row, type);
     profitSummary.past14Days.add(row, type);
     profitSummary.past30Days.add(row, type);
+    profitSummary.past60Days.add(row, type);
     profitSummary.past90Days.add(row, type);
     profitSummary.total.add(row, type);
   }
@@ -381,6 +382,7 @@ export class TsmLuaUtil {
     profitSummary.past7Days[type].setAndSortItemList();
     profitSummary.past14Days[type].setAndSortItemList();
     profitSummary.past30Days[type].setAndSortItemList();
+    profitSummary.past60Days[type].setAndSortItemList();
     profitSummary.past90Days[type].setAndSortItemList();
     profitSummary.total[type].setAndSortItemList();
   }
