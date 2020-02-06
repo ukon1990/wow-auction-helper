@@ -1,17 +1,17 @@
-import {Recipe} from './recipe';
+import {Recipe} from '../models/recipe';
 import {SharedService} from '../../../services/shared.service';
 import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {ItemSpells} from '../../../models/item/itemspells';
 import {Spell} from '../../../models/spell';
-import {Reagent} from './reagent';
+import {Reagent} from '../models/reagent';
 import wordsToNumbers from 'words-to-numbers';
-import {CustomProcUtil} from '../utils/custom-proc.util';
+import {CustomProcUtil} from './custom-proc.util';
 import {Filters} from '../../../utils/filtering';
 import {NpcService} from '../../npc/services/npc.service';
 
-export class Crafting {
+export class CraftingUtil {
   public static ahCutModifier = 0.95;
 
   public static checkForMissingRecipes(craftingService: CraftingService): void {
@@ -42,7 +42,7 @@ export class Crafting {
   public static setOnUseCraftsWithNoReagents(): void {
     let tmpList = [];
     SharedService.itemsUnmapped.forEach(i =>
-      tmpList = tmpList.concat(Crafting.getItemForSpellsThatAreRecipes(i)));
+      tmpList = tmpList.concat(CraftingUtil.getItemForSpellsThatAreRecipes(i)));
 
     tmpList.forEach(recipe => {
       SharedService.recipes.push(recipe);
@@ -157,7 +157,7 @@ export class Crafting {
       // Adding AH cut
       recipe.cost = recipe.cost;
       // Doing the cost math
-      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * Crafting.ahCutModifier;
+      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * CraftingUtil.ahCutModifier;
     } catch (e) {
       console.error('Calc issue with recipe', e, recipe);
     }
@@ -183,13 +183,13 @@ export class Crafting {
   public static getCost(itemID: number, count: number): number {
     if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
       return (SharedService.customPricesMap[itemID].price * count);
-    } else if (Crafting.isVendorCheaperThanAH(itemID)) {
+    } else if (CraftingUtil.isVendorCheaperThanAH(itemID)) {
       return this.getNeededBuyPriceFromVendor(itemID, count);
     } else if (SharedService.tradeVendorItemMap[itemID] && SharedService.tradeVendorMap[itemID].useForCrafting) {
       return (SharedService.tradeVendorItemMap[itemID].value * count);
-    } else if (SharedService.auctionItemsMap[itemID] && !Crafting.isBelowMktBuyoutValue(itemID)) {
+    } else if (SharedService.auctionItemsMap[itemID] && !CraftingUtil.isBelowMktBuyoutValue(itemID)) {
       return SharedService.auctionItemsMap[itemID].buyout * count;
-    } else if (Crafting.existsInTSM(itemID)) {
+    } else if (CraftingUtil.existsInTSM(itemID)) {
       // Using the tsm list, so that we can get mktPrice if an item is not @ AH
       return (SharedService.tsm[itemID].MarketValue * count);
     }
@@ -237,7 +237,7 @@ export class Crafting {
   }
 
   private static isBelowMktBuyoutValue(itemID: number): boolean {
-    return Crafting.existsInTSM(itemID) && SharedService.auctionItemsMap[itemID].buyout /
+    return CraftingUtil.existsInTSM(itemID) && SharedService.auctionItemsMap[itemID].buyout /
       SharedService.tsm[itemID].MarketValue * 100 >=
       SharedService.user.buyoutLimit;
   }

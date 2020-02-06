@@ -3,7 +3,7 @@ import {ItemResetBreakpoint} from './item-reset-breakpoint.model';
 import {SharedService} from '../../../services/shared.service';
 import {Item} from '../../../models/item/item';
 import {Auction} from '../../auction/models/auction.model';
-import {Crafting} from '../../crafting/models/crafting';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 
 export class ItemReset {
   public id: number;
@@ -52,7 +52,7 @@ export class ItemReset {
     auctionCount: number, auctions: Auction[]) {
     const avgBuyout = totalValue / itemCount;
     const newBuyout = auction.buyout / auction.quantity;
-    const potentialValue = newBuyout * itemCount * Crafting.ahCutModifier;
+    const potentialValue = newBuyout * itemCount * CraftingUtil.ahCutModifier;
     const potentialProfitPercent = potentialValue / totalValue;
 
     if (this.isGreaterThanPreviousBreakpoint(previousBreakPoint, avgBuyout) ||

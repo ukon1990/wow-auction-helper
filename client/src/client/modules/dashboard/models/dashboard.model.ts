@@ -11,7 +11,7 @@ import {Remains} from '../../../models/item/remains.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {EventEmitter} from '@angular/core';
 import {DefaultDashboardSettings} from './default-dashboard-settings.model';
-import {Crafting} from '../../crafting/models/crafting';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TSM} from '../../auction/models/tsm.model';
@@ -587,7 +587,7 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * Crafting.ahCutModifier < this.settings.minROIPercent + 1)) {
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
@@ -598,7 +598,7 @@ export class Dashboard {
       }
 
       if (match) {
-        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * Crafting.ahCutModifier;
+        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * CraftingUtil.ahCutModifier;
         sumROI += a.roi;
         this.data.push(a);
       }
@@ -625,7 +625,7 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * Crafting.ahCutModifier < this.settings.minROIPercent + 1)) {
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
@@ -636,7 +636,7 @@ export class Dashboard {
       }
 
       if (match) {
-        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * Crafting.ahCutModifier;
+        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * CraftingUtil.ahCutModifier;
         sumROI += a.roi;
         this.data.push(a);
       }

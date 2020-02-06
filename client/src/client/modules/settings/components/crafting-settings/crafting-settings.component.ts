@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import { SharedService } from '../../../../services/shared.service';
 import { User } from '../../../../models/user/user';
-import {Crafting} from '../../../crafting/models/crafting';
+import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 
 @Component({
   selector: 'wah-crafting-settings',
@@ -25,7 +25,7 @@ export class CraftingSettingsComponent {
         Object.keys(data).forEach(key =>
           SharedService.user[key] = data[key]);
         User.save();
-        Crafting.calculateCost();
+        CraftingUtil.calculateCost();
       });
   }
 }

@@ -8,7 +8,7 @@ import {SharedService} from '../../../../../services/shared.service';
 import {Item} from '../../../../../models/item/item';
 import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
 import {ColumnDescription} from '../../../../table/models/column-description';
-import {Crafting} from '../../../../crafting/models/crafting';
+import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
 import {Report} from '../../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
@@ -40,7 +40,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sm.unsubscribe();
     CustomPrices.save();
-    Crafting.calculateCost();
+    CraftingUtil.calculateCost();
   }
 
   add(item: Item): void {

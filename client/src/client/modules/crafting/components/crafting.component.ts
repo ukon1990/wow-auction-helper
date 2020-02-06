@@ -8,7 +8,7 @@ import {itemClasses} from '../../../models/item/item-classes';
 import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
-import {Crafting} from '../models/crafting';
+import {CraftingUtil} from '../utils/crafting.util';
 import {Filters} from '../../../utils/filtering';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
@@ -102,7 +102,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       // We need to update those crafting costs as we changed our strategy
       SharedService.user.useIntermediateCrafting = changes.intermediate;
       User.save();
-      Crafting.calculateCost();
+      CraftingUtil.calculateCost();
     }
     console.log(changes);
 

@@ -6,7 +6,7 @@ import {SharedService} from '../../../../../services/shared.service';
 import {Subscription} from 'rxjs';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {User} from '../../../../../models/user/user';
-import {Crafting} from '../../../../crafting/models/crafting';
+import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
 import {CharacterService} from '../../../../../services/character.service';
@@ -157,7 +157,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
         });
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
         User.updateRecipesForRealm();
-        Crafting.checkForMissingRecipes(this.craftingService);
+        CraftingUtil.checkForMissingRecipes(this.craftingService);
 
         if (SharedService.user.region && SharedService.user.realm) {
           AuctionUtil.organize(SharedService.auctions);
