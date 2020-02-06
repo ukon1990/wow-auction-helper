@@ -1,11 +1,11 @@
 import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {CraftingUtil} from './crafting';
+import {CraftingUtil} from './crafting.util';
 import {TSM} from '../../auction/models/tsm.model';
 import {Recipe} from '../models/recipe';
 import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
 
-describe('Crafting', () => {
+fdescribe('CraftingUtil', () => {
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     const recipe = new Recipe();
