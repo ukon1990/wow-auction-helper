@@ -29,7 +29,7 @@ class ItemResponse {
 export class ItemService {
   static missingQueue: Map<string, number> = new Map<string, number>();
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
-  private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntry[]>>> = new BehaviorSubject(new Map());
+  private historyMap: BehaviorSubject<Map<number, Map<string, any>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   private sm = new SubscriptionManager();
 
@@ -192,7 +192,7 @@ export class ItemService {
       .toPromise() as Promise<any>;
   }
 
-  getPriceHistory(id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<ItemPriceEntry[]> {
+  getPriceHistory(id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<any> {
     const storedId = `${id}-${petSpeciesId}-${AuctionItemStat.bonusId(bonusIds)}`;
     const startTime = +new Date();
     const ahId = this.realmService.events.realmStatus.value.id,
@@ -209,7 +209,8 @@ export class ItemService {
         id,
         ahId,
         petSpeciesId,
-        bonusIds
+        bonusIds,
+        onlyHourly: false
       })
       .toPromise()
       .then((entries: ItemPriceEntry[]) => {

@@ -13,8 +13,8 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const {ahId, id, petSpeciesId, bonusIds} = JSON.parse(event.body);
-  new ItemHandler().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds)
+  const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = JSON.parse(event.body);
+  new ItemHandler().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly)
     .then(history => Response.send(history, callback))
     .catch(error => Response.error(callback, error, event));
 };
