@@ -18,13 +18,13 @@
 
 .full-screen {
   z-index: 501;
-  right: 5%;
-  left: 5%;
-  top: 10%;
+  right: 1%;
+  left: 1%;
+  top: 3em;
   /*bottom: 5%;*/
 
-  max-height: 85%;
-  width: 90%;
+  max-height: calc(100vh - 3.5em);
+  width: 98%;
   position: fixed !important;
 
   .mat-card-content .mat-tab-body {
@@ -46,7 +46,7 @@
 
   & > mat-card-content {
     overflow-y: scroll;
-    max-height: calc(80vh - 8em);
+    max-height: calc(100vh - 8em - 3.5em);
   }
 
   & > mat-card-actions {
