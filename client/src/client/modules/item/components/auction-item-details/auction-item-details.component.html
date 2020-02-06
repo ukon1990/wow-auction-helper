@@ -26,16 +26,37 @@
       {{ item.regionSaleRate | percent }}
     </div>
 
-    <ng-container *ngIf="item?.hasPersonalSaleRate">
-      <strong>Last 24 hours: </strong> {{ item.past24HoursSaleRate | percent }}<br>
-      <strong>Last 7 days: </strong> {{ item.past7DaysSaleRate | percent }}<br>
-      <strong>Last 14 days: </strong> {{ item.past14DaysSaleRate | percent }}<br>
-      <strong>Last 30 days: </strong> {{ item.past30DaysSaleRate | percent }}<br>
-      <strong>Last 90 days: </strong> {{ item.past90DaysSaleRate | percent }}<br>
-      <strong>Overall: </strong> {{ item.totalSaleRate | percent }}
+    <ng-container *ngIf="item?.hasPersonalSaleRate && item?.totalSaleRate; else noPersonalSaleDataTemplate">
+      <ng-container *ngIf="item.past24HoursSaleRate">
+        <strong>Last 24 hours: </strong> {{ item.past24HoursSaleRate | percent }}<br>
+      </ng-container>
+      <ng-container *ngIf="item.past7DaysSaleRate">
+        <strong>Last 7 days: </strong> {{ (item.past7DaysSaleRate | percent)  || ''}}<br>
+      </ng-container>
+      <ng-container *ngIf="item.past14DaysSaleRate">
+        <strong>Last 14 days: </strong> {{ item.past14DaysSaleRate | percent }}<br>
+      </ng-container>
+      <ng-container *ngIf="item.past30DaysSaleRate">
+        <strong>Last 30 days: </strong> {{ item.past30DaysSaleRate | percent }}<br>
+      </ng-container>
+      <ng-container *ngIf="item.past60DaysSaleRate">
+        <strong>Last 60 days: </strong> {{ item.past60DaysSaleRate | percent }}<br>
+      </ng-container>
+      <ng-container *ngIf="item.past90DaysSaleRate">
+        <strong>Last 90 days: </strong> {{ item.past90DaysSaleRate | percent }}<br>
+      </ng-container>
+      <ng-container *ngIf="item.totalSaleRate">
+        <strong>Overall: </strong> {{ item.totalSaleRate | percent }}
+      </ng-container>
     </ng-container>
+    <ng-template #noPersonalSaleDataTemplate>
+      You have no personal sale data for this item.
+    </ng-template>
+    <br/>
+    <wah-addon-import [minimal]="true"></wah-addon-import>
   </mat-card-content>
 </mat-card>
 
-<wah-auctions-chart [auctions]="item.auctions">
+<wah-auctions-chart *ngIf="item.auctions.length > 1"
+                    [auctions]="item.auctions">
 </wah-auctions-chart>

@@ -5,6 +5,7 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
+
     <mat-form-field>
       <mat-select placeholder="Timespan" [formControl]="field">
         <mat-option *ngFor="let set of dataSets" [value]="set.key">
@@ -22,20 +23,21 @@
               [columns]="columns"
               [data]="data"></wah-data-table>
 
-      <wah-charts-data-sets
-              storageName="sale-summary-chart"
-              [datasets]="saleDatasets">
+      <wah-charts-data-sets *ngIf="saleDatasets && saleDatasets.datasets[0].data.length"
+                            storageName="sale-summary-chart"
+                            [datasets]="saleDatasets">
       </wah-charts-data-sets>
 
-      <wah-charts-data-sets
-              storageName="purchase-summary-chart"
-              [datasets]="purchaseDatasets">
+      <wah-charts-data-sets *ngIf="purchaseDatasets && purchaseDatasets.datasets[0].data.length"
+                            storageName="purchase-summary-chart"
+                            [datasets]="purchaseDatasets">
       </wah-charts-data-sets>
     </ng-container>
 
     <ng-template #noDataTemplate>
       <p>You have no gathered data for this item.</p>
     </ng-template>
+    <wah-addon-import [minimal]="true"></wah-addon-import>
   </mat-card-content>
 </mat-card>
 

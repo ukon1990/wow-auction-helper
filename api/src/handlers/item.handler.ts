@@ -184,41 +184,142 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<any[]> {
+  async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true): Promise<any> {
+    console.log(`getPriceHistoryFor ahId=${ahId} item=${id} pet=${petSpeciesId}`);
+    const conn = new DatabaseUtil(false);
+    if (onlyHourly) {
+      return new Promise((resolve, reject) => {
+        this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+          .then(r => {
+            conn.end();
+            resolve(r);
+          })
+          .catch(e => {
+            console.error(e);
+            conn.end();
+            resolve([]);
+          });
+      });
+    }
+    const result = {
+      hourly: [],
+      daily: [],
+    };
+    return new Promise((resolve, reject) => {
+      try {
+        Promise.all([
+          this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+            .then(r => result.hourly = r)
+            .catch(console.error),
+          this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
+            .then(r => result.daily = r)
+            .catch(console.error)
+        ])
+          .then(() => {
+            conn.end();
+            resolve(result);
+          })
+          .catch(err => {
+            console.error(err);
+            conn.end();
+            resolve(result);
+          });
+      } catch (e) {
+        console.error(e);
+        reject(e);
+      }
+    });
+  }
+
+  private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: any[], conn: DatabaseUtil): Promise<any> {
     return new Promise((resolve, reject) => {
       const fourteenDays = 60 * 60 * 24 * 1000 * 14;
-      const sql = `SELECT *
+      conn.query(`SELECT *
                 FROM itemPriceHistoryPerHour
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
                   AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)}
-                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`;
-      new DatabaseUtil()
-        .query(sql)
+                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
         .then((result => {
-          const list = [];
-          result.forEach(entry => {
-            for (let i = 0, maxHours = 23; i <= maxHours; i++) {
-              const date: Date = new Date(+entry.date);
-              date.setUTCHours(i);
-              const hour = i < 10 ? '0' + i : i,
-                price = entry[`price${hour}`],
-                quantity = entry[`quantity${hour}`];
-              if (price) {
-                list.push({
-                  timestamp: +date,
-                  petSpeciesId: entry.petSpeciesId,
-                  bonusIds: entry.bonusIds,
-                  min: price,
-                  quantity: quantity
-                });
-              }
-            }
-          });
-          resolve(list);
+          resolve(this.processHourlyPriceData(result));
         }))
-        .catch(() => resolve([]));
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
     });
+  }
+
+  private processHourlyPriceData(result) {
+    const list = [];
+    result.forEach(entry => {
+      for (let i = 0, maxHours = 23; i <= maxHours; i++) {
+        const date: Date = new Date(+entry.date);
+        date.setUTCHours(i);
+        const hour = i < 10 ? '0' + i : i,
+          price = entry[`price${hour}`],
+          quantity = entry[`quantity${hour}`];
+        if (price) {
+          list.push({
+            timestamp: +date,
+            petSpeciesId: entry.petSpeciesId,
+            bonusIds: entry.bonusIds,
+            min: price,
+            quantity: quantity
+          });
+        }
+      }
+    });
+    return list;
+  }
+
+  private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: any[], conn: DatabaseUtil): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      conn.query(`SELECT *
+                FROM itemPriceHistoryPerDay
+                WHERE ahId = ${ahId}
+                  AND itemId = ${id}
+                  AND petSpeciesId = ${petSpeciesId}
+                  AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)};`)
+        .then((result => {
+          resolve(this.processDailyPriceData(result));
+        }))
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
+    });
+  }
+
+  private processDailyPriceData(result) {
+    const list = [];
+    result.forEach(entry => {
+      for (let i = 1, maxDays = 31; i <= maxDays; i++) {
+        const date: Date = new Date(+entry.date);
+        date.setUTCDate(i);
+        date.setUTCHours(12);
+        date.setUTCMinutes(1);
+        date.setUTCSeconds(1);
+        date.setUTCMilliseconds(1);
+        const day = i < 10 ? '0' + i : i,
+          min = entry[`min${day}`];
+        if (min) {
+          list.push({
+            timestamp: +date,
+            petSpeciesId: entry.petSpeciesId,
+            bonusIds: entry.bonusIds,
+            min,
+            minHour: entry[`minHour${day}`],
+            minQuantity: entry[`minQuantity${day}`],
+            avg: entry[`avg${day}`],
+            avgQuantity: entry[`avgQuantity${day}`],
+            max: entry[`max${day}`],
+            maxQuantity: entry[`maxQuantity${day}`]
+          });
+        }
+      }
+    });
+    return list;
   }
 }

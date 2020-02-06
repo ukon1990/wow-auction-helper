@@ -25,8 +25,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   @ViewChild('tabs', {static: false}) tabs;
   expansions = GameBuild.expansionMap;
   targetBuyoutValue: number;
-  materialFor: Array<Recipe> = new Array<Recipe>();
-  createdBy: Array<Recipe>;
+  materialFor: Recipe[] = [];
+  createdBy: Recipe[];
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
@@ -38,7 +38,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
   subscriptions = new SubscriptionManager();
-  columns: Array<ColumnDescription> = [
+  columns: ColumnDescription[] = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
     {key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true},
@@ -53,7 +53,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
 
-  recipeColumns: Array<ColumnDescription> = [
+  recipeColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'reagents', title: 'Materials', dataType: 'materials'},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
@@ -63,7 +63,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
-  recipeColumnsSimple: Array<ColumnDescription> = [
+  recipeColumnsSimple: ColumnDescription[] = [
     {key: 'rank', title: 'Rank', dataType: ''},
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'profession', title: 'Source', dataType: ''},

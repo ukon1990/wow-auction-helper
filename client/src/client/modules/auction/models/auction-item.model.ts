@@ -24,6 +24,7 @@ export class AuctionItem {
   past7DaysSaleRate?: number;
   past14DaysSaleRate?: number;
   past30DaysSaleRate?: number;
+  past60DaysSaleRate?: number;
   past90DaysSaleRate?: number;
   totalSaleRate?: number;
   hasPersonalSaleRate: boolean;

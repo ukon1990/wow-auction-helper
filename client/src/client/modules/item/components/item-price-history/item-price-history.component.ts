@@ -19,7 +19,10 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
   sm = new SubscriptionManager();
-  priceHistory: ItemPriceEntry[] = [];
+  priceHistory: {hourly: ItemPriceEntry[], daily: any[]} = {
+    hourly: [],
+    daily: []
+  };
   fourteenDayHourByHour: ChartData = {
     labels: [],
     datasets: [],
@@ -41,9 +44,11 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     columns: [
       {key: 'date', title: 'Date', dataType: 'string'},
       {key: 'min', title: 'Lowest min price', dataType: 'gold'},
+      {key: 'minQuantity', title: 'Min quantity', dataType: 'number'},
       {key: 'avg', title: 'Avg min price', dataType: 'gold'},
+      {key: 'avgQuantity', title: 'Avg quantity', dataType: 'number'},
       {key: 'max', title: 'Highest min price', dataType: 'gold'},
-      {key: 'avgQuantity', title: 'Avg quantity', dataType: 'number'}
+      {key: 'maxQuantity', title: 'Max quantity', dataType: 'number'}
     ],
     data: []
   };
@@ -67,12 +72,49 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
       .catch((error) => {
         this.setAuctionAndDataset();
         this.isLoading = false;
-        this.priceHistory = [];
+        this.priceHistory.daily = [];
+        this.priceHistory.hourly = [];
         ErrorReport.sendHttpError(error);
       });
   }
 
   private setAuctionAndDataset() {
+    this.resetHourlyChart();
+    this.resetDailyChartData();
+
+    if (this.priceHistory && this.priceHistory.hourly.length) {
+      this.processHourlyData();
+    }
+    if (this.priceHistory && this.priceHistory.daily.length) {
+      this.processDailyData();
+    }
+  }
+
+  private processDailyData() {
+    this.priceHistory.daily = this.priceHistory.daily.sort((a, b) =>
+      a.timestamp - b.timestamp);
+    this.priceHistory.daily.forEach((entry) => {
+      this.calculateDailyValues(entry);
+    });
+    this.groupedByDateTable.data.sort((a, b) =>
+      b.timestamp - a.timestamp);
+  }
+
+  private processHourlyData() {
+    this.priceHistory.hourly = this.priceHistory.hourly.sort((a, b) =>
+      a.timestamp - b.timestamp);
+    const dateMap = {},
+      dates = [];
+    this.priceHistory.hourly.forEach((entry) => {
+      const date = new Date(entry.timestamp);
+      this.calculateHourlyValues(entry.min / 10000, entry, date);
+    });
+    this.populateDailyChartData(dates);
+    this.fourteenDayByHourTable.data.sort((a, b) =>
+      b.timestamp - a.timestamp);
+  }
+
+  private resetHourlyChart() {
     this.fourteenDayHourByHour.labels.length = 0;
     this.fourteenDayByHourTable.data.length = 0;
     this.fourteenDayHourByHour.datasets = [];
@@ -90,22 +132,6 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
       yAxisID: 'yAxes-2',
       backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
     });
-    this.resetDailyChartData();
-
-    if (this.priceHistory && this.priceHistory.length) {
-      this.priceHistory = this.priceHistory.sort((a, b) =>
-        a.timestamp - b.timestamp);
-      const dateMap = {},
-        dates = [];
-      this.priceHistory.forEach((entry) => {
-        const date = new Date(entry.timestamp),
-          minGold = entry.min / 10000;
-        this.calculateDailyValues(date, dateMap, dates, minGold, entry);
-
-        this.calculateHourlyValues(minGold, entry, date);
-      });
-      this.populateDailyChartData(dates);
-    }
   }
 
   private populateDailyChartData(dates: any[]) {
@@ -116,7 +142,9 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
       this.dateData.datasets[0].data.push(date.min);
       this.dateData.datasets[1].data.push(date.avg);
       this.dateData.datasets[2].data.push(date.max);
-      this.dateData.datasets[3].data.push(date.avgQuantity);
+      this.dateData.datasets[3].data.push(date.minQuantity);
+      this.dateData.datasets[4].data.push(date.avgQuantity);
+      this.dateData.datasets[5].data.push(date.maxQuantity);
     });
   }
 
@@ -127,31 +155,19 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     this.fourteenDayByHourTable.data.push(entry);
   }
 
-  private calculateDailyValues(date: Date, dateMap: {}, dates: any[], minGold: number, entry: ItemPriceEntry) {
-    const id = date.toLocaleDateString();
-    if (!dateMap[id]) {
-      dateMap[id] = {date: id, min: 0, avg: 0, max: 0, avgQuantity: 0};
-      dates.push(dateMap[id]);
-    }
-    if (!dateMap[id].min || dateMap[id].min > minGold) {
-      dateMap[id].min = minGold;
-    }
-
-    if (!dateMap[id].max || dateMap[id].max < minGold) {
-      dateMap[id].max = minGold;
-    }
-
-    if (!dateMap[id].avg) {
-      dateMap[id].avg = minGold;
-    } else {
-      dateMap[id].avg = (minGold + dateMap[id].avg) / 2;
-    }
-
-    if (!dateMap[id].avgQuantity) {
-      dateMap[id].avgQuantity = entry.quantity;
-    } else {
-      dateMap[id].avgQuantity = (entry.quantity + dateMap[id].avgQuantity) / 2;
-    }
+  private calculateDailyValues(entry) {
+    const date = new Date(entry.timestamp).toLocaleDateString();
+    this.dateData.datasets[0].data.push(entry.min / 10000);
+    this.dateData.datasets[1].data.push(entry.avg / 10000);
+    this.dateData.datasets[2].data.push(entry.max / 10000);
+    this.dateData.datasets[3].data.push(entry.minQuantity);
+    this.dateData.datasets[4].data.push(entry.avgQuantity);
+    this.dateData.datasets[5].data.push(entry.maxQuantity);
+    this.dateData.labels.push(date);
+    this.groupedByDateTable.data.push({
+      ...entry,
+      date
+    });
   }
 
   private resetDailyChartData() {
@@ -182,18 +198,32 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
       backgroundColor: 'rgba(0, 173, 255, 0.61)'
     });
     this.dateData.datasets.push({
-      label: 'Quantity',
+      label: 'Min quantity',
       data: [],
-      type: 'line',
+      type: 'bar',
+      yAxisID: 'yAxes-2',
+      backgroundColor: 'hsla(9,100%,50%,0.33)'
+    });
+    this.dateData.datasets.push({
+      label: 'Avg quantity',
+      data: [],
+      type: 'bar',
       yAxisID: 'yAxes-2',
       backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
+    });
+    this.dateData.datasets.push({
+      label: 'Max quantity',
+      data: [],
+      type: 'bar',
+      yAxisID: 'yAxes-2',
+      backgroundColor: 'hsla(0,100%,17%,0.33)'
     });
   }
 
   tooltipCallbackDaily(items, data): string {
     const {index, datasetIndex} = items;
     const dataset = data.datasets[datasetIndex];
-    if (datasetIndex === 3) {
+    if (datasetIndex > 2) {
       return dataset.label + ': ' +
         NumberUtil.format(dataset.data[index]);
     }

@@ -12,4 +12,18 @@ export class AuctionQuery {
       price${formattedHour} = VALUES(price${formattedHour}),
       quantity${formattedHour} = VALUES(quantity${formattedHour});`;
   }
+
+  static multiInsertOrUpdateDailyPrices(list: AuctionItemStat[], day: string): string {
+    const insert = new QueryUtil('itemPriceHistoryPerDay')
+      .multiInsert(list)
+      .replace(';', '');
+    return `${insert} ON DUPLICATE KEY UPDATE
+      min${day} = VALUES(min${day}),
+      minHour${day} = VALUES(minHour${day}),
+      avg${day} = VALUES(avg${day}),
+      max${day} = VALUES(max${day}),
+      minQuantity${day} = VALUES(minQuantity${day}),
+      avgQuantity${day} = VALUES(avgQuantity${day}),
+      maxQuantity${day} = VALUES(maxQuantity${day});`;
+  }
 }

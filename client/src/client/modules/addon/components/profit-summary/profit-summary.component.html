@@ -35,7 +35,16 @@
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"
+                               [userProfit]="profitSummary[form.value.realm].past14Days">
+      </wah-profit-summary-card>
+
+      <wah-profit-summary-card class="col-md-6 mb-2"
                                [userProfit]="profitSummary[form.value.realm].past30Days">
+      </wah-profit-summary-card>
+
+
+      <wah-profit-summary-card class="col-md-6 mb-2"
+                               [userProfit]="profitSummary[form.value.realm].past60Days">
       </wah-profit-summary-card>
 
       <wah-profit-summary-card class="col-md-6 mb-2"

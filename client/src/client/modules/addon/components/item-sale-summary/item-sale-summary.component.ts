@@ -88,13 +88,13 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     this.saleDatasets = {
       labels: [],
       datasets: [{
-        label: 'Purchase price',
+        label: 'Sale price',
         data: [],
         type: 'line',
         yAxisID: 'yAxes-1',
         backgroundColor: 'rgba(0, 255, 22, 0.4)'
       }, {
-        label: 'Purchased quantity',
+        label: 'Sold quantity',
         data: [],
         type: 'line',
         yAxisID: 'yAxes-2',
@@ -106,13 +106,13 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     this.purchaseDatasets = {
       labels: [],
       datasets: [{
-        label: 'Sale price',
+        label: 'Purchase price',
         data: [],
         type: 'line',
         yAxisID: 'yAxes-1',
         backgroundColor: 'rgba(0, 255, 22, 0.4)'
       }, {
-        label: 'Sold quantity',
+        label: 'Purchased quantity',
         data: [],
         type: 'line',
         yAxisID: 'yAxes-2',

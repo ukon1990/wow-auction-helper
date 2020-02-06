@@ -1,21 +1,5 @@
 <ng-container *ngIf="!isLoading ; else loadingTemplate">
-  <h4>Prices grouped by day</h4>
-  <mat-tab-group>
-    <mat-tab label="Chart">
-      <wah-charts-data-sets
-              storageName="item-price-daily-history-chart"
-              [datasets]="dateData">
-      </wah-charts-data-sets>
-    </mat-tab>
-    <mat-tab label="Table">
-      <wah-data-table
-              [columns]="groupedByDateTable.columns"
-              [data]="groupedByDateTable.data">
-      </wah-data-table>
-    </mat-tab>
-  </mat-tab-group>
-
-  <h4>Prices grouped by hour</h4>
+  <h5>Prices grouped by hour the past 14 days</h5>
   <mat-tab-group>
     <mat-tab label="Chart">
       <wah-charts-data-sets
@@ -27,6 +11,22 @@
       <wah-data-table
               [columns]="fourteenDayByHourTable.columns"
               [data]="fourteenDayByHourTable.data">
+      </wah-data-table>
+    </mat-tab>
+  </mat-tab-group>
+
+  <h5>Prices grouped by day</h5>
+  <mat-tab-group>
+    <mat-tab label="Chart">
+      <wah-charts-data-sets
+              storageName="item-price-daily-history-chart"
+              [datasets]="dateData">
+      </wah-charts-data-sets>
+    </mat-tab>
+    <mat-tab label="Table">
+      <wah-data-table
+              [columns]="groupedByDateTable.columns"
+              [data]="groupedByDateTable.data">
       </wah-data-table>
     </mat-tab>
   </mat-tab-group>

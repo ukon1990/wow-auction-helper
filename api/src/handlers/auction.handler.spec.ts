@@ -32,6 +32,55 @@ describe('AuctionHandler', () => {
     });
   });
 
+  it('can add daily data from hourly', async () => {
+    jest.setTimeout(1000000000);
+    const conn = new DatabaseUtil(false);
+    const promiseThrottle = new PromiseThrottle({
+      requestsPerSecond: 1,
+      promiseImplementation: Promise
+    });
+    const promises = [];
+    let processed = 0;
+    const date = '2020-02-05'; // 02-04
+    for (let id = 1; id <= 260; id++) {// 242
+        promises.push(promiseThrottle.add(() =>
+          new Promise((resolve) => {
+            new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
+              .then(() => {
+                processed++;
+                console.log(`Processed count: ${processed} of ${260}`);
+                resolve();
+              })
+              .catch((error) => {
+                processed++;
+                console.error(`ah=${id} date=${date}`, error);
+                resolve();
+              });
+          })));
+    }
+
+    await Promise.all(promises)
+      .catch(console.error);
+    conn.end();
+    expect(1).toBeTruthy();
+  });
+
+  xit('Generate daily fields', () => {
+    let str = '';
+    for (let i = 1; i < 32; i++) {
+      const day = i < 10 ? '0' + i : '' + i;
+      str += '`minHour' + day + '` SMALLINT(2) NULL,\n';
+      str += '`min' + day + '` BIGINT(20) NULL,\n';
+      str += '`avg' + day + '` BIGINT(20) NULL,\n';
+      str += '`max' + day + '` BIGINT(20) NULL,\n';
+      str += '`minQuantity' + day + '` MEDIUMINT NULL,\n';
+      str += '`avgQuantity' + day + '` MEDIUMINT NULL,\n';
+      str += '`maxQuantity' + day + '` MEDIUMINT NULL,\n';
+    }
+    console.log(str);
+    expect(str).toBeTruthy();
+  });
+
   xit('Adding stuff to db', async () => {
     jest.setTimeout(1000000000);
     const promiseThrottle = new PromiseThrottle({
