@@ -185,32 +185,49 @@ export class ItemHandler {
 
   /* istanbul ignore next */
   async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true): Promise<any> {
+    console.log(`getPriceHistoryFor ahId=${ahId} item=${id} pet=${petSpeciesId}`);
     const conn = new DatabaseUtil(false);
     if (onlyHourly) {
-      return this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn);
+      return new Promise((resolve, reject) => {
+        this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+          .then(r => {
+            conn.end();
+            resolve(r);
+          })
+          .catch(e => {
+            console.error(e);
+            conn.end();
+            resolve([]);
+          });
+      });
     }
     const result = {
       hourly: [],
       daily: [],
     };
     return new Promise((resolve, reject) => {
-      Promise.all([
-        this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
-          .then(r => result.hourly = r)
-          .catch(console.error),
-        this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
-          .then(r => result.daily = r)
-          .catch(console.error)
-      ])
-        .then(() => {
-          conn.end();
-          resolve(result);
-        })
-        .catch(err => {
-          console.error(err);
-          conn.end();
-          resolve(result);
-        });
+      try {
+        Promise.all([
+          this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+            .then(r => result.hourly = r)
+            .catch(console.error),
+          this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
+            .then(r => result.daily = r)
+            .catch(console.error)
+        ])
+          .then(() => {
+            conn.end();
+            resolve(result);
+          })
+          .catch(err => {
+            console.error(err);
+            conn.end();
+            resolve(result);
+          });
+      } catch (e) {
+        console.error(e);
+        reject(e);
+      }
     });
   }
 
@@ -227,7 +244,10 @@ export class ItemHandler {
         .then((result => {
           resolve(this.processHourlyPriceData(result));
         }))
-        .catch(() => resolve([]));
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
     });
   }
 
@@ -265,7 +285,10 @@ export class ItemHandler {
         .then((result => {
           resolve(this.processDailyPriceData(result));
         }))
-        .catch(() => resolve([]));
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
     });
   }
 
