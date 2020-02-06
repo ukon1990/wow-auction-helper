@@ -1,15 +1,21 @@
-<button mat-button (click)="fileInput.click()"
-        [matTooltip]="addonPathText"
+<ng-template #importButtonTemplate>
+  <button mat-button (click)="fileInput.click()">
+    <i class="fas fa-upload"></i>
+    {{minimal ?
+      'Import addon data' : 'Import one or more .lua files'}}
+    <input class="d-none"
+           type="file"
+           accept="lua"
+           (change)="importFromFile($event)"
+           multiple
+           #fileInput/>
+  </button>
+</ng-template>
+
+<ng-container
         *ngIf="minimal; else bigTemplate">
-  <i class="fas fa-upload"></i>
-  Import addon data
-  <input class="d-none"
-         type="file"
-         accept="lua"
-         (change)="importFromFile($event)"
-         multiple
-         #fileInput/>
-</button>
+  <ng-container *ngTemplateOutlet="importButtonTemplate"></ng-container>
+</ng-container>
 
 <ng-template #bigTemplate>
   <mat-card >
@@ -78,16 +84,7 @@
       </p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button (click)="fileInput.click()">
-        <i class="fas fa-upload"></i>
-        Import one or more .lua files
-        <input class="d-none"
-               type="file"
-               accept="lua"
-               (change)="importFromFile($event)"
-               multiple
-               #fileInput/>
-      </button>
+      <ng-container *ngTemplateOutlet="importButtonTemplate"></ng-container>
 
       <button mat-raised-button (click)="loadData()">
         Reload saved data
