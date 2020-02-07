@@ -519,6 +519,43 @@ export class AuctionHandler {
     });
   }
 
+  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false)): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 5,
+        promiseImplementation: Promise
+      });
+      const promises = [];
+      let processed = 0;
+      for (let id = start; id <= end; id++) {// 242
+        promises.push(promiseThrottle.add(() =>
+          new Promise((ok) => {
+            new AuctionHandler().compileDailyAuctionData(id, conn)
+              .then(() => {
+                processed++;
+                console.log(`Processed count: ${processed} of ${end - start} - date=${this.getYesterday().toString()}`);
+                ok();
+              })
+              .catch((error) => {
+                processed++;
+                console.error(`ah=${id} date=${this.getYesterday().toString()}`, error);
+                ok();
+              });
+          })));
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          conn.end();
+          resolve();
+        })
+        .catch(error => {
+          conn.end();
+          reject();
+        });
+    });
+  }
+
   compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<any> {
     console.log('Updating daily price data');
     const dayOfMonth = this.getDateNumber(date.getUTCDate());
@@ -633,8 +670,9 @@ export class AuctionHandler {
                         WHERE ahId = ${id} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`;
             console.log('Delete query', {sql, lastHistoryDeleteEvent});
 
+            /*
             await this.compileDailyAuctionData(id, conn)
-              .catch(console.error);
+              .catch(console.error);*/
 
             conn.query(sql)
               .then((deleteResult) => {
