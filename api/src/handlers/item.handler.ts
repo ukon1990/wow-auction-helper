@@ -16,7 +16,7 @@ import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
 import {NPCUtil} from '../utils/npc.util';
 import {NpcHandler} from './npc.handler';
-import {AuctionItemStat} from '../utils/auction-processor.util';
+import {AuctionItemStat, AuctionProcessorUtil} from '../utils/auction-processor.util';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -217,6 +217,7 @@ export class ItemHandler {
         ])
           .then(() => {
             conn.end();
+            AuctionProcessorUtil.setCurrentDayFromHourly(result);
             resolve(result);
           })
           .catch(err => {
@@ -242,36 +243,13 @@ export class ItemHandler {
                   AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)}
                   AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
         .then((result => {
-          resolve(this.processHourlyPriceData(result));
+          resolve(AuctionProcessorUtil.processHourlyPriceData(result));
         }))
         .catch((error) => {
           console.error(error);
           resolve([]);
         });
     });
-  }
-
-  private processHourlyPriceData(result) {
-    const list = [];
-    result.forEach(entry => {
-      for (let i = 0, maxHours = 23; i <= maxHours; i++) {
-        const date: Date = new Date(+entry.date);
-        date.setUTCHours(i);
-        const hour = i < 10 ? '0' + i : i,
-          price = entry[`price${hour}`],
-          quantity = entry[`quantity${hour}`];
-        if (price) {
-          list.push({
-            timestamp: +date,
-            petSpeciesId: entry.petSpeciesId,
-            bonusIds: entry.bonusIds,
-            min: price,
-            quantity: quantity
-          });
-        }
-      }
-    });
-    return list;
   }
 
   private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: any[], conn: DatabaseUtil): Promise<any[]> {
@@ -283,43 +261,12 @@ export class ItemHandler {
                   AND petSpeciesId = ${petSpeciesId}
                   AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)};`)
         .then((result => {
-          resolve(this.processDailyPriceData(result));
+          resolve(AuctionProcessorUtil.processDailyPriceData(result));
         }))
         .catch((error) => {
           console.error(error);
           resolve([]);
         });
     });
-  }
-
-  private processDailyPriceData(result) {
-    const list = [];
-    result.forEach(entry => {
-      for (let i = 1, maxDays = 31; i <= maxDays; i++) {
-        const date: Date = new Date(+entry.date);
-        date.setUTCDate(i);
-        date.setUTCHours(12);
-        date.setUTCMinutes(1);
-        date.setUTCSeconds(1);
-        date.setUTCMilliseconds(1);
-        const day = i < 10 ? '0' + i : i,
-          min = entry[`min${day}`];
-        if (min) {
-          list.push({
-            timestamp: +date,
-            petSpeciesId: entry.petSpeciesId,
-            bonusIds: entry.bonusIds,
-            min,
-            minHour: entry[`minHour${day}`],
-            minQuantity: entry[`minQuantity${day}`],
-            avg: entry[`avg${day}`],
-            avgQuantity: entry[`avgQuantity${day}`],
-            max: entry[`max${day}`],
-            maxQuantity: entry[`maxQuantity${day}`]
-          });
-        }
-      }
-    });
-    return list;
   }
 }

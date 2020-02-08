@@ -558,35 +558,17 @@ export class AuctionHandler {
 
   compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<any> {
     console.log('Updating daily price data');
-    const dayOfMonth = this.getDateNumber(date.getUTCDate());
+    const dayOfMonth = AuctionProcessorUtil.getDateNumber(date.getUTCDate());
     const sql = `SELECT *
                 FROM itemPriceHistoryPerHour
                 WHERE ahId = ${id} and date = '${date.getUTCFullYear()}-${
-      this.getDateNumber(date.getUTCMonth() + 1)}-${dayOfMonth}'`;
+      AuctionProcessorUtil.getDateNumber(date.getUTCMonth() + 1)}-${dayOfMonth}'`;
     return new Promise<any>((resolve, reject) => {
       conn.query(sql)
         .then(rows => {
           const list = [];
           rows.forEach(row => {
-            const result = {
-              ahId: id,
-              itemId: row.itemId,
-              petSpeciesId: row.petSpeciesId,
-              bonusIds: row.bonusIds,
-              date: `${date.getUTCFullYear()}-${this.getDateNumber(date.getUTCMonth() + 1)}-15`
-            };
-            for (let i = 0, maxHours = 23; i <= maxHours; i++) {
-              date.setUTCHours(i);
-              const hour = i < 10 ? '0' + i : '' + i,
-                price = row[`price${hour}`],
-                quantity = row[`quantity${hour}`];
-              if (price) {
-                this.handlePriceForDayOfMonth(result, dayOfMonth, price, hour);
-
-                this.handleQuantityForDayOfMonth(result, dayOfMonth, quantity);
-              }
-            }
-            list.push(result);
+            AuctionProcessorUtil.compilePricesForDay(id, row, date, dayOfMonth, list);
           });
           if (!list.length) {
             resolve();
@@ -603,43 +585,6 @@ export class AuctionHandler {
         })
         .catch(reject);
     });
-  }
-
-  private handlePriceForDayOfMonth(result: any, dayOfMonth: string, price: number, hour: string) {
-    if (!result[`min${dayOfMonth}`] || result[`min${dayOfMonth}`] > price) {
-      result[`min${dayOfMonth}`] = price || 0;
-      result[`minHour${dayOfMonth}`] = hour || 0;
-    }
-
-    if (!result[`max${dayOfMonth}`] || result[`max${dayOfMonth}`] < price) {
-      result[`max${dayOfMonth}`] = price || 0;
-    }
-
-    if (!result[`avg${dayOfMonth}`]) {
-      result[`avg${dayOfMonth}`] = price || 0;
-    } else {
-      result[`avg${dayOfMonth}`] = (result[`avg${dayOfMonth}`] + price) / 2;
-    }
-  }
-
-  private handleQuantityForDayOfMonth(result: any, dayOfMonth: string, quantity) {
-    if (!result[`minQuantity${dayOfMonth}`] || result[`minQuantity${dayOfMonth}`] > quantity) {
-      result[`minQuantity${dayOfMonth}`] = quantity || 0;
-    }
-
-    if (!result[`maxQuantity${dayOfMonth}`] || result[`maxQuantity${dayOfMonth}`] < quantity) {
-      result[`maxQuantity${dayOfMonth}`] = quantity || 0;
-    }
-
-    if (!result[`avgQuantity${dayOfMonth}`]) {
-      result[`avgQuantity${dayOfMonth}`] = quantity || 0;
-    } else {
-      result[`avgQuantity${dayOfMonth}`] = (result[`avgQuantity${dayOfMonth}`] + quantity) / 2;
-    }
-  }
-
-  private getDateNumber(input: number): string {
-    return input < 10 ? '0' + input : '' + input;
   }
 
   private getYesterday(): Date {
@@ -669,10 +614,6 @@ export class AuctionHandler {
             const sql = `DELETE FROM itemPriceHistoryPerHour
                         WHERE ahId = ${id} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`;
             console.log('Delete query', {sql, lastHistoryDeleteEvent});
-
-            /*
-            await this.compileDailyAuctionData(id, conn)
-              .catch(console.error);*/
 
             conn.query(sql)
               .then((deleteResult) => {
