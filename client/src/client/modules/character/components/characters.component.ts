@@ -9,7 +9,7 @@ import {AuctionsService} from '../../../services/auctions.service';
 import {SharedService} from '../../../services/shared.service';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
 import {Character} from '../models/character.model';
-import {Crafting} from '../../crafting/models/crafting';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Report} from '../../../utils/report.util';
 import {Realm} from '../../../models/realm';
@@ -128,7 +128,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
     User.updateRecipesForRealm();
-    Crafting.checkForMissingRecipes(this.craftingService);
+    CraftingUtil.checkForMissingRecipes(this.craftingService);
 
     this.downloading = false;
     Realm.gatherRealms();
@@ -150,7 +150,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
           SharedService.user.characters[index] = c;
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
           User.updateRecipesForRealm();
-          Crafting.checkForMissingRecipes(this.craftingService);
+          CraftingUtil.checkForMissingRecipes(this.craftingService);
 
           if (SharedService.user.region && SharedService.user.realm) {
             AuctionUtil.organize(

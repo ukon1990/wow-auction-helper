@@ -1,10 +1,10 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {MenuItemComponent} from './menu-item.component';
-import {MenuItem} from '../../../../models/menu-item.model';
 import {DebugElement} from '@angular/core';
-import {CoreModule} from '../../../../core.module';
 import {RouterTestingModule} from '@angular/router/testing';
+import {CoreModule} from '../../../core.module';
+import {MenuItem} from '../../../models/menu-item.model';
 
 describe('MenuItemComponent', () => {
   let component: MenuItemComponent;
@@ -20,7 +20,7 @@ describe('MenuItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MenuItemComponent);
     component = fixture.componentInstance;
-    component.item = new MenuItem('The testing name', [], '');
+    component.item = new MenuItem('The testing name', ':)', [], '');
     fixture.detectChanges();
 
   });
@@ -42,9 +42,9 @@ describe('MenuItemComponent', () => {
 
     it('Should display dropdown if children are present, but also not render text', () => {
 
-      component.item = new MenuItem('The testing name', [
-        new MenuItem('1', [], '1'),
-        new MenuItem('1', [], '1')
+      component.item = new MenuItem('The testing name',  ':)', [
+        new MenuItem('1', ':)', [], '1'),
+        new MenuItem('1', ':)', [], '1')
       ], '');
       fixture.detectChanges();
 

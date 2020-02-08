@@ -13,7 +13,7 @@ import {RealmStatus} from '../models/realm-status.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Dashboard} from '../modules/dashboard/models/dashboard.model';
 import {AuctionUtil} from '../modules/auction/utils/auction.util';
-import {Crafting} from '../modules/crafting/models/crafting';
+import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {Auction} from '../modules/auction/models/auction.model';
 import {ItemExtract} from '../utils/item-extract.util';
 import {NpcService} from '../modules/npc/services/npc.service';
@@ -205,8 +205,8 @@ export class BackgroundDownloadService {
       });
 
     await this.craftingService.getRecipes();
-    await Crafting.checkForMissingRecipes(this.craftingService);
-    Crafting.setOnUseCraftsWithNoReagents();
+    await CraftingUtil.checkForMissingRecipes(this.craftingService);
+    CraftingUtil.setOnUseCraftsWithNoReagents();
   }
 
   private async loadThirdPartyAPI() {

@@ -1,11 +1,11 @@
 import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Crafting} from './crafting';
+import {CraftingUtil} from './crafting.util';
 import {TSM} from '../../auction/models/tsm.model';
-import {Recipe} from './recipe';
+import {Recipe} from '../models/recipe';
 import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
 
-describe('Crafting', () => {
+describe('CraftingUtil', () => {
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     const recipe = new Recipe();
@@ -39,7 +39,7 @@ describe('Crafting', () => {
         count: 3,
         dropped: false
       });
-      Crafting.calculateCost();
+      CraftingUtil.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(30);
       expect(SharedService.recipes[0].roi).toEqual(-10);
     });
@@ -57,7 +57,7 @@ describe('Crafting', () => {
         count: 10,
         dropped: false
       });
-      Crafting.calculateCost();
+      CraftingUtil.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(330);
       expect(SharedService.recipes[0].roi).toEqual(-310);
     });
@@ -75,7 +75,7 @@ describe('Crafting', () => {
         count: 10,
         dropped: false
       });
-      Crafting.calculateCost();
+      CraftingUtil.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(300);
       expect(SharedService.recipes[0].roi).toEqual(-280);
     });
@@ -105,7 +105,7 @@ describe('Crafting', () => {
 
       // 100
       SharedService.tsm[20].MarketValue = 15;
-      Crafting.calculateCost();
+      CraftingUtil.calculateCost();
       expect(SharedService.recipes[0].cost).toEqual(180);
     });
 

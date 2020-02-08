@@ -1,7 +1,7 @@
 import * as lua from 'luaparse';
 import {TsmLuaUtil} from './tsm-lua.util';
 
-fdescribe('TSMLuaUtil', () => {
+describe('TSMLuaUtil', () => {
   it('getCharacterDataForField', () => {
     const data = new TsmLuaUtil().processLuaData(
       `TradeSkillMasterDB = {

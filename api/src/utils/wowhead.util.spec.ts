@@ -1,7 +1,7 @@
 import {WoWHeadUtil} from './wowhead.util';
 import {WoWHead} from '../models/item/wowhead';
 
-fdescribe('WoWHeadUtil', () => {
+describe('WoWHeadUtil', () => {
   describe('setValuesAll', () => {
     let blackrockOre: WoWHead;
     let amberblaze: WoWHead;

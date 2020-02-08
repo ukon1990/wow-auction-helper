@@ -1,8 +1,9 @@
 import {RoutingUtil} from './routing.util';
 import {MenuItem} from '../models/menu-item.model';
 import {TitledRoutes} from '../../../models/route/titled-routes.model';
+import {ROUTE_HIDDEN_FLAGS} from '../../app-routing.module';
 
-fdescribe('RoutingUtil', () => {
+describe('RoutingUtil', () => {
   let routes: TitledRoutes;
 
   beforeEach(() => {
@@ -12,7 +13,7 @@ fdescribe('RoutingUtil', () => {
           {title: 'Child route', path: 'child-route'}
         ]
       },
-      {title: 'Conditional', path: 'conditional', isHidden: false, canActivate: []}
+      {title: 'Conditional', path: 'conditional', canActivate: []}
     ];
   });
   it('Can generate the menu from routes', () => {
@@ -27,7 +28,7 @@ fdescribe('RoutingUtil', () => {
     expect(menu[0].children[0].routerLinkFull).toBe('/test/child-route');
     expect(menu[1].text).toBe('Conditional');
     expect(menu.length).toBe(2);
-    routes[1].isHidden = true;
+    routes[1].isHidden = ROUTE_HIDDEN_FLAGS.ALWAYS;
     expect(RoutingUtil.getMenu(routes).length).toBe(1);
   });
 

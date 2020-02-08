@@ -1,7 +1,7 @@
 import {SharedService} from '../../../services/shared.service';
 import {Auction} from '../models/auction.model';
 import {AuctionItem} from '../models/auction-item.model';
-import {Crafting} from '../../crafting/models/crafting';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
@@ -70,7 +70,7 @@ export class AuctionUtil {
     // Trade vendors has to be done before crafting calc
     TradeVendors.setValues();
 
-    Crafting.calculateCost();
+    CraftingUtil.calculateCost();
 
     // ProspectingAndMillingUtil.setCosts();
 

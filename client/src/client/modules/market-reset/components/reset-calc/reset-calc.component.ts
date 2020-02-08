@@ -5,7 +5,7 @@ import {Subscription} from 'rxjs';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {Crafting} from '../../../crafting/models/crafting';
+import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {Report} from '../../../../utils/report.util';
 import {ItemReset} from '../../models/item-reset.model';
 import {ColumnDescription} from '../../../table/models/column-description';
@@ -86,7 +86,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
     this.resetPrice.cost = this.resetPrice.cost;
 
     this.resetPrice.roi = (this.form.value * 10000) * this.resetPrice.numOfItems - this.resetPrice.cost;
-    this.resetPrice.roi *= Crafting.ahCutModifier;
+    this.resetPrice.roi *= CraftingUtil.ahCutModifier;
   }
 
   getShoppingString(): string {

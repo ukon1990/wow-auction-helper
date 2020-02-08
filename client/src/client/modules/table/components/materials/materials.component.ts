@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Reagent} from '../../../crafting/models/reagent';
 import {SharedService} from '../../../../services/shared.service';
-import {Crafting} from '../../../crafting/models/crafting';
+import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {Recipe} from '../../../crafting/models/recipe';
 import {ItemService} from '../../../../services/item.service';
 import {Item} from '../../../../models/item/item';
@@ -22,7 +22,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   getItemValue(itemID: number) {
-    return Crafting.getCost(itemID, 1);
+    return CraftingUtil.getCost(itemID, 1);
   }
 
   getItemName(itemID): string {
@@ -77,7 +77,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   usingVendor(reagent: Reagent): boolean {
-    return Crafting.isVendorCheaperThanAH(reagent.itemID) ? true : false;
+    return CraftingUtil.isVendorCheaperThanAH(reagent.itemID) ? true : false;
   }
 
   getReagentFromVendorString(reagent: Reagent): string | boolean {

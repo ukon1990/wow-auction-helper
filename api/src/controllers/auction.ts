@@ -73,3 +73,11 @@ exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent,
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 500));
 };
+
+exports.updateAllRealmDailyData = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const start = event['start'],
+    end = event['end'];
+  new AuctionHandler().updateAllRealmDailyData(start, end)
+    .then(() => Response.send({}, callback))
+    .catch(error => Response.error(callback, error, event, 500));
+}

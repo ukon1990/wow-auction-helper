@@ -6,7 +6,7 @@ import {SharedService} from '../../../../../services/shared.service';
 import {Item} from '../../../../../models/item/item';
 import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
 import {ColumnDescription} from '../../../../table/models/column-description';
-import {Crafting} from '../../../../crafting/models/crafting';
+import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {Angulartics2} from 'angulartics2';
 import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
@@ -44,7 +44,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
     this.saveInterval = setInterval(() => {
       if (JSON.stringify(SharedService.user.customProcs) !== localStorage['custom_procs']) {
         CustomProcUtil.save();
-        Crafting.calculateCost();
+        CraftingUtil.calculateCost();
       }
     }, 500);
   }

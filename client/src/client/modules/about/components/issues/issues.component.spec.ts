@@ -4,7 +4,7 @@ import {IssuesComponent} from './issues.component';
 import {TestModule} from '../../../test.module';
 import {GithubIssue} from '../../models/github/issues/github-issue.model';
 
-fdescribe('IssuesComponent', () => {
+describe('IssuesComponent', () => {
   let component: IssuesComponent;
   let fixture: ComponentFixture<IssuesComponent>;
 
