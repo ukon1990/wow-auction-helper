@@ -1,7 +1,6 @@
 import {Auction} from './auction.model';
 
 export class AuctionItem {
-  itemID: number;
   petSpeciesId?: number;
   name = 'Unavailable';
   itemLevel = 0;
@@ -29,4 +28,7 @@ export class AuctionItem {
   totalSaleRate?: number;
   hasPersonalSaleRate: boolean;
   bonusIds: number[];
+
+  constructor(public itemID?: number) {
+  }
 }
