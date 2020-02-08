@@ -3,7 +3,7 @@ import {MenuItem} from '../models/menu-item.model';
 import {TitledRoutes} from '../../../models/route/titled-routes.model';
 import {ROUTE_HIDDEN_FLAGS} from '../../app-routing.module';
 
-fdescribe('RoutingUtil', () => {
+describe('RoutingUtil', () => {
   let routes: TitledRoutes;
 
   beforeEach(() => {

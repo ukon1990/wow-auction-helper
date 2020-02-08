@@ -5,7 +5,7 @@ import {TSM} from '../../auction/models/tsm.model';
 import {Recipe} from '../models/recipe';
 import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
 
-fdescribe('CraftingUtil', () => {
+describe('CraftingUtil', () => {
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     const recipe = new Recipe();

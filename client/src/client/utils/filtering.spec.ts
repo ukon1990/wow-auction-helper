@@ -6,7 +6,7 @@ import {Recipe} from '../modules/crafting/models/recipe';
 import {itemClasses} from '../models/item/item-classes';
 import {MockLoaderUtil} from '../mocks/mock-loader.util';
 
-fdescribe('Filters', () => {
+describe('Filters', () => {
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     console.log('SharedService', {

@@ -26,35 +26,35 @@ export class MockLoaderUtil {
     this.setAuctionData();
   }
 
-  setTSMData(): void {
+  setTSMData(): void {/*
     const tsm = this.getFile('tsm');
     (<TSM[]>tsm).forEach(a => {
       SharedService.tsm[a.Id] = a;
-    });
+    });*/
   }
 
-  setAuctionData(): void {
+  setAuctionData(): void {/*
     const auctions = this.getFile('auctions');
     const service = new PetsService(null, null, null, null);
-    AuctionUtil.organize(auctions['auctions'], service);
+    AuctionUtil.organize(auctions['auctions'], service);*/
   }
 
-  setPets(): void {
+  setPets(): void {/*
     const pets = this.getFile('pets');
     const service = new PetsService(null, null, null, null);
-    service.handlePets(pets);
+    service.handlePets(pets);*/
   }
 
-  setItems(): void {
+  setItems(): void {/*
     const items = this.getFile('items');
     const service = new ItemService(null, null, null, null, null, null);
     SharedService.itemsUnmapped.length = 0;
-    service.handleItems(items);
+    service.handleItems(items);*/
   }
 
-  setRecipes(): void {
+  setRecipes(): void {/*
     const service = new CraftingService(null, null, null, null, null);
-    service.handleRecipes(this.getFile('recipes'));
+    service.handleRecipes(this.getFile('recipes'));*/
   }
 
   getFile(name: string): any {

@@ -6,7 +6,7 @@ import {MaterialModule} from '../../../material.module';
 import {TableModule} from '../../../table/table.module';
 import {UtilModule} from '../../../util/util.module';
 
-fdescribe('MarketResetComponent', () => {
+describe('MarketResetComponent', () => {
   let component: MarketResetComponent;
   let fixture: ComponentFixture<MarketResetComponent>;
 
