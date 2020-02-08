@@ -7,7 +7,8 @@ import {CustomProcUtil} from './custom-proc.util';
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
     OPTIMISTIC: 0,
-    PESSIMISTIC: 1
+    NEEDED: 1,
+    PESSIMISTIC: 2
   };
   static readonly STRATEGY_LIST = [
     {id: 0, name: 'Optimistic', description: ''},
@@ -37,6 +38,10 @@ export abstract class BaseCraftingUtil {
         }
       } else {
         price = this.getPrice(r.itemID, r.count);
+        console.log(this.getPrice(r.itemID, r.count));
+      }
+      if (!price) {
+        price = this.getFallbackPrice(r.itemID, r.count);
       }
       recipe.cost += price / recipe.procRate;
     });

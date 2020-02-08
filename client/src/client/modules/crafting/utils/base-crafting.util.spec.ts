@@ -36,16 +36,16 @@ fdescribe('BaseCraftingUtil', () => {
 
     item2.auctions = [
       new Auction(0, 2, 50, 5),
-      new Auction(0, 2, 55, 3),
-      new Auction(0, 2, 90, 50)
+      new Auction(0, 2, 45, 3),
+      new Auction(0, 2, 1000, 50)
     ];
     item2.buyout = 50 / 5;
     item2.quantityTotal = 58;
 
     item3.auctions = [
       new Auction(0, 3, 1, 1),
-      new Auction(0, 3, 20, 40),
-      new Auction(0, 3, 25, 900)
+      new Auction(0, 3, 80, 40),
+      new Auction(0, 3, 2700, 900)
     ];
     item3.buyout = 1;
     item3.quantityTotal = 941;
@@ -66,17 +66,28 @@ fdescribe('BaseCraftingUtil', () => {
 
   describe('OptimisticCraftingUtil', () => {
     it('Can calculate', () => {
+      const cost = 101;
       new OptimisticCraftingUtil().calculate([recipe]);
-      expect(recipe.cost).toBe(101);
-      expect(recipe.roi).toBe(899);
+      expect(recipe.cost).toBe(cost);
+      expect(recipe.roi).toBe(SharedService.auctionItemsMap[1].buyout - cost);
     });
   });
 
   describe('NeededCraftingUtil', () => {
     it('Can calculate', () => {
+      const cost = 159;
       new NeededCraftingUtil().calculate([recipe]);
-      expect(recipe.cost).toBe(101);
-      expect(recipe.roi).toBe(1000);
+      expect(recipe.cost).toBe(cost);
+      expect(recipe.roi).toBe(SharedService.auctionItemsMap[1].buyout - cost);
+    });
+  });
+
+  describe('PessimisticCraftingUtil', () => {
+    it('Can calculate', () => {
+      const cost = 161;
+      new NeededCraftingUtil().calculate([recipe]);
+      expect(recipe.cost).toBe(cost);
+      expect(recipe.roi).toBe(SharedService.auctionItemsMap[1].buyout - cost);
     });
   });
 });
