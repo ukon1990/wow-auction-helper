@@ -15,6 +15,7 @@ export abstract class BaseCraftingUtil {
     {id: 1, name: 'Semioptimistic', description: ''},
     {id: 2, name: 'Pessimistic', description: ''}
   ];
+  private ahCutModifier = 0.95;
 
   calculate(recipes: Recipe[]): void {
     recipes.forEach(r => this.calculateOne(r));
@@ -25,8 +26,9 @@ export abstract class BaseCraftingUtil {
     recipe.procRate = CustomProcUtil.get(recipe);
     recipe.reagents.forEach(r => {
       let price;
-      const vendor = this.getVendorPriceDetails(r.itemID);
-      const overridePrice = this.getOverridePrice(r.itemID);
+      const vendor = this.getVendorPriceDetails(r.itemID),
+        overridePrice = this.getOverridePrice(r.itemID),
+        tradeVendorPrice = this.getTradeVendorPrice(r.itemID);
       if (overridePrice) {
         price = overridePrice * r.count;
       } else if (vendor) {
@@ -36,23 +38,25 @@ export abstract class BaseCraftingUtil {
         } else {
           price = vendor.price * r.count;
         }
+      } else if (tradeVendorPrice) {
+        price = tradeVendorPrice * r.count;
       } else {
         price = this.getPrice(r.itemID, r.count);
-        console.log(this.getPrice(r.itemID, r.count));
       }
       if (!price) {
         price = this.getFallbackPrice(r.itemID, r.count);
       }
+      r.avgPrice = price / r.count;
       recipe.cost += price / recipe.procRate;
     });
     if (auctionItem) {
-      recipe.buyout = auctionItem.buyout;
+      recipe.buyout = auctionItem.buyout * this.ahCutModifier;
     }
-    console.log(recipe);
     recipe.roi = recipe.buyout - recipe.cost;
   }
 
   getFallbackPrice(id: number, quantity: number): number {
+    console.error('getFallbackPrice is not implemented!');
     return 0;
   }
 
