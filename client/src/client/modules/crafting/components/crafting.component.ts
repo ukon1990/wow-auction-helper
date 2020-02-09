@@ -154,4 +154,11 @@ export class CraftingComponent implements OnInit, OnDestroy {
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
   }
+
+  resetForm() {
+    this.searchForm.reset({
+      strategy: SharedService.user.craftingStrategy,
+      intermediate: SharedService.user.useIntermediateCrafting
+    });
+  }
 }

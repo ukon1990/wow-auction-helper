@@ -55,7 +55,9 @@ export abstract class BaseCraftingUtil {
         price = this.getPrice(r.itemID, r.count);
       }
       if (!price) {
-        price = this.getFallbackPrice(r.itemID, r.count);
+        const fallback = this.getFallbackPrice(r.itemID, r.count);
+        price = fallback.cost;
+        r.intermediateEligible = fallback.intermediateEligible;
       }
       r.avgPrice = price / r.count;
       recipe.cost += price / recipe.procRate;
@@ -123,12 +125,22 @@ export abstract class BaseCraftingUtil {
     }
   }
 
-  getFallbackPrice(id: number, quantity: number): number {
-    const item: AuctionItem = SharedService.auctionItems[id];
-    if (item) {
-      return item.regionSaleAvg * quantity;
+  getFallbackPrice(id: number, quantity: number): {cost: number, intermediateEligible: boolean} {
+    const result = {
+      cost: 0,
+      intermediateEligible: false
+    };
+    const item: AuctionItem = SharedService.auctionItems[id],
+      recipe: Recipe = SharedService.recipesMapPerItemKnown[id];
+    if (recipe) {
+      recipe.reagents.forEach(r => {
+        result.cost += this.getPrice(r.itemID, r.count * quantity);
+      });
+      result.intermediateEligible = true;
+    } else if (item) {
+      result.cost = item.regionSaleAvg * quantity;
     }
-    return 0;
+    return result;
   }
 
   getTradeVendorPrice(id: number): number {
