@@ -55,7 +55,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   recipeColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'reagents', title: 'Materials', dataType: 'materials'},
+    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials'},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},

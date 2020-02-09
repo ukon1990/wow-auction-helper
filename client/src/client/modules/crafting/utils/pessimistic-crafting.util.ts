@@ -16,7 +16,7 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
    * @param threshold Price threshold to trigger not using the cheapest auction
    * @param checkPercent The percent of the total quantity of an item available to check
    */
-  constructor(public threshold: number = 1.05, public checkPercent: number = 0.1) {
+  constructor(private threshold: number = 1.05, private checkPercent: number = 0.1) {
     super();
   }
 
@@ -34,7 +34,7 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
 
       for (let i = startPrice && startPrice.index || 0; i < auctions.length && foundCount <= quantity; i++) {
         const auc = auctions[i],
-          unitPrice = auc.buyout / auc.quantity;
+          unitPrice = auc ? auc.buyout / auc.quantity : 0;
 
         foundCount += auc.quantity;
 
@@ -50,6 +50,11 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
   }
 
   private setStartPrice(auctionItem: AuctionItem, auctions: Auction[], id: number, startPrice: StartPrice) {
+    if (!auctions || !auctions[0]) {
+      startPrice = new StartPrice(0, 0);
+      this.startPriceMap.set(id, startPrice);
+      return startPrice;
+    }
     const quantityToCheck = Math.round(auctionItem.quantityTotal * this.checkPercent),
       priceHigherThan = (auctions[0].buyout / auctions[0].quantity) * this.threshold;
     let checkedQuantity = 0;

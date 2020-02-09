@@ -13,6 +13,7 @@ import {Filters} from '../../../utils/filtering';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {BaseCraftingUtil} from '../utils/base-crafting.util';
 
 @Component({
   selector: 'wah-crafting',
@@ -29,6 +30,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     'none'
   ].sort();
   expansions = GameBuild.expansionMap;
+  strategies = BaseCraftingUtil.STRATEGY_LIST;
   delayFilter = false;
 
   columns: Array<ColumnDescription> = [];
@@ -49,6 +51,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
         SharedService.user.useIntermediateCrafting : true,
       itemClass: query ? query.itemClass : '-1',
       itemSubClass: query ? query.itemSubClass : '-1',
+      strategy: SharedService.user.craftingStrategy,
 
       // Disenchanting
       selectedDEMaterial: query && query.selectedDisenchanting ? query.selectedDisenchanting : 0,
@@ -60,6 +63,16 @@ export class CraftingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.addColumns();
     this.filter();
+
+    this.subs.add(
+      this.searchForm.controls.strategy.valueChanges,
+      c => {
+        SharedService.user.craftingStrategy = c;
+        User.save();
+        CraftingUtil.calculateCost();
+        this.filter();
+      }
+    );
 
     this.subs.add(
       this.searchForm.valueChanges,
@@ -87,7 +100,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   addColumns(): void {
     this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
-    this.columns.push({key: 'reagents', title: 'Materials', dataType: 'materials', hideOnMobile: true});
+    this.columns.push({key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true});
     this.columns.push({key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true});
     this.columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
     this.columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
@@ -104,7 +117,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
       User.save();
       CraftingUtil.calculateCost();
     }
-    console.log(changes);
 
     this.filtered = SharedService.recipes
       .filter(recipe => {
