@@ -21,7 +21,7 @@
           {{ subR.count * r.count / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }} x {{ getItemName(subR.itemID) }} -
           <span class="float-right" [matTooltip]="usingVendor(subR) ? vendorTooltip(subR) : ''">
             {{ getItemValue(subR.itemID) | gold }}
-            {{ getReagentFromVendorString(subR) }}
+            {{ getReagentFromVendorString(subR) }} / {{subR.avgPrice | gold}}
           </span>
         </a>
       </div>

@@ -66,8 +66,18 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       this.searchForm.controls.strategy.valueChanges,
-      c => {
-        SharedService.user.craftingStrategy = c;
+      value => {
+        SharedService.user.craftingStrategy = value;
+        User.save();
+        CraftingUtil.calculateCost(true);
+        this.filter();
+      }
+    );
+
+    this.subs.add(
+      this.searchForm.controls.intermediate.valueChanges,
+      value => {
+        SharedService.user.useIntermediateCrafting = value;
         User.save();
         CraftingUtil.calculateCost();
         this.filter();
@@ -111,13 +121,6 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   filter(changes = this.searchForm.value): void {
-    if (SharedService.user.useIntermediateCrafting !== changes.intermediate) {
-      // We need to update those crafting costs as we changed our strategy
-      SharedService.user.useIntermediateCrafting = changes.intermediate;
-      User.save();
-      CraftingUtil.calculateCost();
-    }
-
     this.filtered = SharedService.recipes
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {

@@ -17,6 +17,7 @@ import {NeededCraftingUtil} from './needed-crafting.util';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
+  public static strategy: BaseCraftingUtil;
 
   public static checkForMissingRecipes(craftingService: CraftingService): void {
     const missingRecipes = [];
@@ -109,25 +110,23 @@ export class CraftingUtil {
     return list;
   }
 
-  public static calculateCost(): void {
-    Object.keys(SharedService.itemRecipeMap).forEach(key => {
-      SharedService.itemRecipeMap[key].length = 0;
-    });
+  public static calculateCost(strategyHasChanged = false): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY;
-    let strategy: BaseCraftingUtil;
-    switch (SharedService.user.craftingStrategy) {
-      case STRATEGY.OPTIMISTIC:
-        strategy = new OptimisticCraftingUtil();
-        break;
-      case STRATEGY.PESSIMISTIC:
-        strategy = new PessimisticCraftingUtil();
-        break;
-      default:
-        strategy = new NeededCraftingUtil();
-        break;
+    if (!this.strategy || strategyHasChanged) {
+      switch (SharedService.user.craftingStrategy) {
+        case STRATEGY.OPTIMISTIC:
+          this.strategy = new OptimisticCraftingUtil();
+          break;
+        case STRATEGY.PESSIMISTIC:
+          this.strategy = new PessimisticCraftingUtil();
+          break;
+        default:
+          this.strategy = new NeededCraftingUtil();
+          break;
+      }
     }
 
-    strategy.calculate(SharedService.recipes);
+    this.strategy.calculate(SharedService.recipes);
   }
 
   private static costForRecipe(recipe: Recipe, strategy: BaseCraftingUtil): void {

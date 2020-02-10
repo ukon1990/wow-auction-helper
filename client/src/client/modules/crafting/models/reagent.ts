@@ -6,6 +6,7 @@ export class Reagent {
   intermediateEligible?: boolean;
   recipe?: Recipe;
   avgPrice?: number;
+  intermediateCount = 0;
 
   constructor(public itemID?: number, public count?: number) {
   }
