@@ -62,7 +62,7 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
       const auc = auctionItem.auctions[i],
         unitPrice = auc.buyout / auc.quantity;
       checkedQuantity += auc.quantity;
-      if (unitPrice > priceHigherThan) {
+      if (unitPrice > priceHigherThan && (auc.quantity > 1 || quantityToCheck === 1)) {
         startPrice = new StartPrice(unitPrice, i);
         this.startPriceMap.set(id, startPrice);
         return startPrice;
