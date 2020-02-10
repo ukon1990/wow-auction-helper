@@ -13,8 +13,8 @@ export class Recipe {
   flaggedAsBugged?: boolean;
 
   // Applied after cost calculation
-  cost?: number;
-  roi?: number;
+  cost = 0;
+  roi = 0;
 
   // Fetched for the current auctions
   mktPrice = 0;
@@ -23,4 +23,5 @@ export class Recipe {
   regionSaleRate = 0;
   buyout = 0;
   quantityTotal = 0;
+  procRate = 1;
 }

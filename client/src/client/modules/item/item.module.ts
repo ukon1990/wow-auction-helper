@@ -25,6 +25,7 @@ import { DroppedByTabComponent } from './components/dropped-by-tab/dropped-by-ta
 import { ContainedInTabComponent } from './components/contained-in-tab/contained-in-tab.component';
 import { AuctionsChartComponent } from './components/auctions-chart/auctions-chart.component';
 import { ItemPriceHistoryComponent } from './components/item-price-history/item-price-history.component';
+import {CraftingModule} from '../crafting/crafting.module';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import { ItemPriceHistoryComponent } from './components/item-price-history/item-
     AddonModule,
     UtilModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CraftingModule
   ],
   exports: [
     ItemComponent

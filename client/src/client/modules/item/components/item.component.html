@@ -55,6 +55,7 @@
           </mat-tab>
 
           <mat-tab label="Created by" *ngIf="createdBy">
+            <wah-crafting-config></wah-crafting-config>
             <wah-data-table [id]="'itemID'"
                             [columns]="recipeColumns"
                             [data]="createdBy"

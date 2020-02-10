@@ -138,7 +138,7 @@ export class Filters {
       return false;
     }
 
-    return profession === recipes[0].profession ||
+    return TextUtil.isEqualIgnoreCase(recipes[0].profession, profession) ||
       !recipes[0].profession && profession === 'none';
   }
 

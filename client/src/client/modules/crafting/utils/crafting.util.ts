@@ -10,9 +10,14 @@ import wordsToNumbers from 'words-to-numbers';
 import {CustomProcUtil} from './custom-proc.util';
 import {Filters} from '../../../utils/filtering';
 import {NpcService} from '../../npc/services/npc.service';
+import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
+import {BaseCraftingUtil} from './base-crafting.util';
+import {OptimisticCraftingUtil} from './optimistic-crafting.util';
+import {NeededCraftingUtil} from './needed-crafting.util';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
+  public static strategy: BaseCraftingUtil;
 
   public static checkForMissingRecipes(craftingService: CraftingService): void {
     const missingRecipes = [];
@@ -105,21 +110,32 @@ export class CraftingUtil {
     return list;
   }
 
-  public static calculateCost(): void {
-    Object.keys(SharedService.itemRecipeMap).forEach(key => {
-      SharedService.itemRecipeMap[key].length = 0;
-    });
+  public static calculateCost(strategyHasChanged = false): void {
+    const STRATEGY = BaseCraftingUtil.STRATEGY;
+    if (!this.strategy || strategyHasChanged) {
+      switch (SharedService.user.craftingStrategy) {
+        case STRATEGY.OPTIMISTIC:
+          this.strategy = new OptimisticCraftingUtil();
+          break;
+        case STRATEGY.PESSIMISTIC:
+          this.strategy = new PessimisticCraftingUtil();
+          break;
+        default:
+          this.strategy = new NeededCraftingUtil();
+          break;
+      }
+    }
 
-    SharedService.recipes
-      .forEach(r => this.costForRecipe(r));
+    this.strategy.calculate(SharedService.recipes);
   }
 
-  private static costForRecipe(recipe: Recipe): void {
+  private static costForRecipe(recipe: Recipe, strategy: BaseCraftingUtil): void {
     if (recipe === null || recipe === undefined) {
       return;
     }
 
     try {
+      /*
       recipe.cost = 0;
       recipe.roi = 0;
       if (SharedService.auctionItemsMap[recipe.itemID]) {
@@ -157,26 +173,9 @@ export class CraftingUtil {
       // Adding AH cut
       recipe.cost = recipe.cost;
       // Doing the cost math
-      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * CraftingUtil.ahCutModifier;
+      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * CraftingUtil.ahCutModifier;*/
     } catch (e) {
       console.error('Calc issue with recipe', e, recipe);
-    }
-
-    if (!SharedService.itemRecipeMap[recipe.itemID]) {
-      SharedService.itemRecipeMap[recipe.itemID] = new Array<Recipe>();
-    }
-    SharedService.itemRecipeMap[recipe.itemID].push(recipe);
-
-    // The user should see item combination items as "known"
-    if (recipe.profession === 'none') {
-      SharedService.recipesForUser[recipe.spellID] = ['Item'];
-    }
-
-    // For intermediate crafting
-    if (SharedService.recipesForUser[recipe.spellID]) {
-      if (!SharedService.recipesMapPerItemKnown[recipe.itemID] || SharedService.recipesMapPerItemKnown[recipe.itemID].cost > recipe.cost) {
-        SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
-      }
     }
   }
 

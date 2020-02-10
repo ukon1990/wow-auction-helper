@@ -42,18 +42,34 @@ export class AuctionUtil {
       this.addNewAuctionItem(auction, false);
     });
 
-    // Sorting by buyout, before we do the grouping for less processing.
-    auctions.sort((a, b) => {
-      return a.buyout / a.quantity - b.buyout / b.quantity;
-    });
-
     SharedService.auctions = auctions;
     auctions.forEach((a: Auction) =>
       this.processAuction(a, petService));
 
+    SharedService.auctionItems.forEach(ai => {
+      ai.auctions = ai.auctions.sort((a, b) => {
+        return a.buyout / a.quantity - b.buyout / b.quantity;
+      });
+      const lowest = this.getLowest(ai);
+      if (lowest) {
+        ai.buyout = lowest.buyout / lowest.quantity;
+      }
+    });
+
     // Checking if we have been undercutted etc
     SharedService.userAuctions
       .countUndercuttedAuctions(SharedService.auctionItemsMap);
+  }
+
+  private static getLowest(ai: AuctionItem) {
+    let lowest = ai.auctions[0];
+    for (let i = 0; i < ai.auctions.length; i++) {
+      if (ai.auctions[i].buyout > ai.auctions[i].bid) {
+        lowest = ai.auctions[i];
+        return lowest;
+      }
+    }
+    return lowest;
   }
 
   private static clearOldData() {

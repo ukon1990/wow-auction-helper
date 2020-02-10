@@ -9,6 +9,7 @@ import {customProcsDefault} from '../../modules/crafting/models/default-custom-p
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
+import {BaseCraftingUtil} from '../../modules/crafting/utils/base-crafting.util';
 
 
 export class User {
@@ -34,6 +35,7 @@ export class User {
   doNotReport = false;
   gameVersion = 0;
   classicRealm: string;
+  craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
 
   /**
    *
@@ -60,6 +62,7 @@ export class User {
           break;
         case 'faction':
         case 'gameVersion':
+        case 'craftingStrategy':
           // Number values
           localStorage.setItem(key, '' + user[key]);
           SharedService.user[key] = +user[key];
@@ -143,6 +146,7 @@ export class User {
       switch (key) {
         case 'gameVersion':
         case 'faction':
+        case 'craftingStrategy':
           user[key] = +localStorage[key];
           break;
         case 'region':
