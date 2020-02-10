@@ -48,15 +48,7 @@
     </mat-form-field>
   </div>
   <div class="row">
-    <mat-form-field class="col">
-      <mat-select [disableOptionCentering]="true" placeholder="Crafting strategy" formControlName="strategy">
-        <mat-option *ngFor="let strategy of strategies" [value]="strategy.id"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-          {{ strategy.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
+    <wah-crafting-config (changed)="filter()"></wah-crafting-config>
     <mat-form-field class="col">
       <input matInput placeholder="Minimum profit %" formControlName="profit" type="number"
              matTooltip="Minimum return on investment">
@@ -77,10 +69,6 @@
               matTooltip="Displays only those recipes your character for this realm knows">
         Only known recipes
       </mat-checkbox>
-    </div>
-
-    <div class="col">
-      <mat-checkbox formControlName="intermediate">Intermediate crafting</mat-checkbox>
     </div>
 
     <div class="col">

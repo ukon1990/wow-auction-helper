@@ -1,0 +1,14 @@
+<form [formGroup]="form" class="row col">
+  <mat-form-field class="col-md-6">
+    <mat-select [disableOptionCentering]="true" placeholder="Crafting strategy" formControlName="strategy">
+      <mat-option *ngFor="let strategy of strategies" [value]="strategy.id"
+                  [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        {{ strategy.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="col-md-6">
+    <mat-checkbox formControlName="intermediate">Intermediate crafting</mat-checkbox>
+  </div>
+</form>

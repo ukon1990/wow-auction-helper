@@ -18,6 +18,7 @@ import {IconModule} from '../icon/icon.module';
 import {TableModule} from '../table/table.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UtilModule} from '../util/util.module';
+import { ConfigComponent } from './components/config/config.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,11 @@ import {UtilModule} from '../util/util.module';
     MillingComponent,
     DisenchantingComponent,
     DataBoardsComponent,
-    ShuffleItemManageComponent],
+    ShuffleItemManageComponent,
+    ConfigComponent],
+  exports: [
+    ConfigComponent
+  ],
   imports: [
     CommonModule,
     MatTabsModule,

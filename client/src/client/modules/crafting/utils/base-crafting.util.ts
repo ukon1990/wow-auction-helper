@@ -202,9 +202,14 @@ export abstract class BaseCraftingUtil {
 
   private shouldUseIntermediateForReagent(knownRecipe: Recipe, reagent: Reagent) {
     return knownRecipe &&
-      !TextUtil.contains(knownRecipe.name, 'mass mill') &&
+      this.isNotMillingOrProspecting(knownRecipe) &&
       knownRecipe.cost < reagent.avgPrice &&
       SharedService.user &&
       SharedService.user.useIntermediateCrafting;
+  }
+
+  private isNotMillingOrProspecting(knownRecipe: Recipe) {
+    return !TextUtil.contains(knownRecipe.name, 'mass mill') &&
+      !TextUtil.contains(knownRecipe.name, 'mass prospect');
   }
 }
