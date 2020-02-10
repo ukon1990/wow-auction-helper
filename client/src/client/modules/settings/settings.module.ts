@@ -31,6 +31,7 @@ import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';
 import {MatListModule} from '@angular/material/list';
+import {CraftingModule} from '../crafting/crafting.module';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import {MatListModule} from '@angular/material/list';
     UtilModule,
     CoreModule,
     MatRadioModule,
-    MatListModule
+    MatListModule,
+    CraftingModule
   ],
   exports: [RealmListComponent]
 })

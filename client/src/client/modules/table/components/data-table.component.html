@@ -1,15 +1,13 @@
-<div class="row">
-  <mat-form-field *ngIf="filterParameter !== undefined" class="float-left col-md-3">
-    <input matInput placeholder="Search by name" [formControl]="searchField">
-  </mat-form-field>
+<mat-form-field *ngIf="filterParameter !== undefined" class="float-left">
+  <input matInput placeholder="Search by name" [formControl]="searchField">
+</mat-form-field>
 
-  <ng-content></ng-content>
+<ng-content></ng-content>
 
-  <mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" class="float-right col-md-4"
-                 [length]="filteredData.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
-                 [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
-  </mat-paginator>
-</div>
+<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" class="float-right"
+               [length]="filteredData.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
+               [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
+</mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
   <thead>
   <tr>

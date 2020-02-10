@@ -1,3 +1,4 @@
+<!--
 <form [formGroup]="form">
     <mat-form-field>
         <input type="number"
@@ -9,23 +10,45 @@
         Use vendor price, for crafting if available.
     </mat-checkbox>
 </form>
+-->
 
-<nav mat-tab-nav-bar>
-    <a mat-tab-link
-       routerLink="custom-prices"
-       routerLinkActive #rla="routerLinkActive"
-       [active]="rla.isActive">
-        Custom prices
-    </a>
-    <a mat-tab-link
-       routerLink="custom-proc"
-       routerLinkActive #rla="routerLinkActive"
-       [active]="rla.isActive">
-        Custom proc rates
-    </a>
-</nav>
-
-<router-outlet></router-outlet>
-
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    Crafting calculation
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <wah-crafting-config></wah-crafting-config>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="col-md-6">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    Custom prices
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <wah-custom-prices></wah-custom-prices>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="col-md-6">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    Custom procs
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <wah-custom-proc></wah-custom-proc>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
 
 

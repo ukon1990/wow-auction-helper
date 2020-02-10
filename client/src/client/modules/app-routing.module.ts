@@ -147,14 +147,14 @@ const SETTINGS_ROUTE: TitledRoute = {
     },
     {title: 'General', path: 'general', component: GeneralSettingsComponent},
     {
-      title: 'Crafting', path: 'crafting', children: [
+      title: 'Crafting', path: 'crafting', component: CraftingSettingsComponent/*, children: [
         {
           title: 'Custom prices', path: 'custom-prices', component: CustomPricesComponent
         },
         {
           title: 'Custom proc rates', path: 'custom-proc', component: CustomProcComponent
         }
-      ]
+      ]*/
     },
     {
       title: 'Characters', path: 'characters', component: CharactersComponent
