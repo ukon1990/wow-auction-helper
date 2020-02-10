@@ -6,6 +6,7 @@ import {Recipe} from '../../../crafting/models/recipe';
 import {ItemService} from '../../../../services/item.service';
 import {Item} from '../../../../models/item/item';
 import {CustomProcUtil} from '../../../crafting/utils/custom-proc.util';
+import {NumberUtil} from '../../../util/utils/number.util';
 
 @Component({
   selector: 'wah-materials',
@@ -65,7 +66,7 @@ export class MaterialsComponent implements OnInit {
 
   vendorTooltip(reagent: Reagent): string {
     if (this.usingVendor) {
-      const item: Item = SharedService.items[reagent.itemID];
+      const item: Item = SharedService.itemNpcMap[reagent.itemID];
       if (!this.vendorHasEnough(reagent) && item) {
         const vendorCount = item.vendorBoughtLimit;
         return `You need to buy ${reagent.count - vendorCount} from AH and ${
@@ -87,5 +88,10 @@ export class MaterialsComponent implements OnInit {
   vendorHasEnough(reagent: Reagent) {
     return SharedService.items[reagent.itemID] &&
       SharedService.items[reagent.itemID].vendorBoughtLimit >= reagent.count;
+  }
+
+  getAhCountTooltip(id: number) {
+    return `There are currently ${
+      NumberUtil.format(this.getAtAHCount(id)) } at the auction house. Click for details.`;
   }
 }
