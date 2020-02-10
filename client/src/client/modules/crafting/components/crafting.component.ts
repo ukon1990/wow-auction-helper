@@ -14,6 +14,7 @@ import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {BaseCraftingUtil} from '../utils/base-crafting.util';
+import {AuctionsService} from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-crafting',
@@ -35,7 +36,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   columns: Array<ColumnDescription> = [];
 
-  constructor(private _formBuilder: FormBuilder, private _title: Title) {
+  constructor(private _formBuilder: FormBuilder, private _title: Title, private service: AuctionsService) {
     SharedService.events.title.next('Crafting');
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
@@ -99,7 +100,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       }));
 
     this.subs.add(
-      SharedService.events.auctionUpdate,
+      this.service.events.groupedList,
       () =>
         this.filter());
   }
