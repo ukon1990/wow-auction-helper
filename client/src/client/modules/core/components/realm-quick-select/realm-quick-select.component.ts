@@ -134,9 +134,13 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleRealmChange(slug?: string) {
+    const realmStatus = this.realmService.events.realmStatus.value;
+    if (!realmStatus) {
+      return;
+    }
     const currentRealm = this.realmService.events.list.value
       .filter((status: RealmStatus) =>
-        status.ahId === this.realmService.events.realmStatus.value.id);
+        status.ahId === realmStatus.id);
     if (!slug) {
       slug = currentRealm && currentRealm.length ?
         currentRealm[0].slug : this.form.getRawValue().realm;
