@@ -6,6 +6,7 @@ import {CraftingUtil} from '../../utils/crafting.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Dashboard} from '../../../dashboard/models/dashboard.model';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-crafting-config',
@@ -34,6 +35,13 @@ export class ConfigComponent implements OnDestroy {
         User.save();
         CraftingUtil.calculateCost(strategyChanged);
         Dashboard.addDashboards();
+        if (strategyChanged) {
+          const strategyObj = BaseCraftingUtil.STRATEGY_LIST[strategy];
+          Report.send(
+            'Crafting strategy changed',
+            'ConfigComponent',
+            'Crafting strategy: ' + strategyObj ? strategyObj.name : strategy);
+        }
       }
     );
   }

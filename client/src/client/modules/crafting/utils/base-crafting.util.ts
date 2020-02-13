@@ -59,8 +59,8 @@ export abstract class BaseCraftingUtil {
 
     if (overridePrice) {
       price = overridePrice.price * r.count;
-    } else if (vendor && vendor.price) {
-      price = this.getCostFromVendor(vendor, r, price);
+    } else if (vendor && vendor.price && vendor.stock > 0) {
+      price = this.getCostFromVendor(vendor, r);
     } else if (tradeVendorPrice) {
       price = tradeVendorPrice * r.count;
     } else {
@@ -96,7 +96,8 @@ export abstract class BaseCraftingUtil {
     }
   }
 
-  private getCostFromVendor(vendor: { price: number; stock: number }, r: Reagent, price) {
+  private getCostFromVendor(vendor: { price: number; stock: number }, r: Reagent) {
+    let price = 0;
     if (vendor && vendor.stock && vendor.stock < r.count) {
       price = vendor.price * vendor.stock;
       price += this.getPrice(r.itemID, r.count - vendor.stock);
