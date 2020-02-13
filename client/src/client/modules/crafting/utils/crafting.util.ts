@@ -14,6 +14,7 @@ import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
 import {BaseCraftingUtil} from './base-crafting.util';
 import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {NeededCraftingUtil} from './needed-crafting.util';
+import {Report} from '../../../utils/report.util';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
@@ -111,9 +112,10 @@ export class CraftingUtil {
   }
 
   public static calculateCost(strategyHasChanged = false): void {
-    const STRATEGY = BaseCraftingUtil.STRATEGY;
+    const STRATEGY = BaseCraftingUtil.STRATEGY,
+      selectedStrategy = SharedService.user.craftingStrategy;
     if (!this.strategy || strategyHasChanged) {
-      switch (SharedService.user.craftingStrategy) {
+      switch (selectedStrategy) {
         case STRATEGY.OPTIMISTIC:
           this.strategy = new OptimisticCraftingUtil();
           break;
@@ -124,6 +126,10 @@ export class CraftingUtil {
           this.strategy = new NeededCraftingUtil();
           break;
       }
+      Report.send(
+        'calculateCost',
+        'CraftingUtil',
+        'Calculated with strategy: ' + BaseCraftingUtil.STRATEGY_LIST[selectedStrategy].name);
     }
 
     this.strategy.calculate(SharedService.recipes);
