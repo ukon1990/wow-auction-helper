@@ -13,10 +13,10 @@ export class Endpoints {
   };
   private readonly GAME_DATA_ENDPOINT = {
     eu: 'https://eu.api.blizzard.com/data/wow/',
-    us: 'https://us.api.blizzard.com/wow/',
-    kr: 'https://kr.api.blizzard.com/wow/',
-    tw: 'https://tw.api.blizzard.com/wow/',
-    cn: 'https://gateway.battlenet.com.cn/wow/'
+    us: 'https://us.api.blizzard.com/data/wow/',
+    kr: 'https://kr.api.blizzard.com/data/wow/',
+    tw: 'https://tw.api.blizzard.com/data/wow/',
+    cn: 'https://gateway.battlenet.com.cn/data/wow/'
   };
   readonly LAMBDAS = {
     EU: {

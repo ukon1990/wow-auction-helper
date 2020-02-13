@@ -253,6 +253,12 @@ functions:
     tags:
       FunctionName: Wah-test
     handler: src/controllers/test.handler
+    events:
+      - http:
+          method: get
+          path: test
+          cors:
+            origin: '*'
 
   logger:
     tags:
