@@ -4,13 +4,13 @@ import {SharedService} from '../../../../services/shared.service';
 import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {Report} from '../../../../utils/report.util';
-import {ChartData} from '../../../../models/chart-data.model';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ProfitSummary} from '../../models/profit-summary.model';
 import {UserProfit} from '../../models/user-profit.model';
 import {NumberUtil} from '../../../util/utils/number.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
+import {ChartData} from '../../../util/models/chart.model';
 
 @Component({
   selector: 'wah-item-sale-summary',
@@ -46,16 +46,21 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
     sales: SummaryCard; purchases: SummaryCard;
   } = {sales: undefined, purchases: undefined};
   personalSaleRate = 0;
-  purchaseDatasets = {
+  purchaseDatasets: ChartData = {
     labels: [],
     datasets: [],
     labelCallback: this.tooltipCallback
   };
 
-  saleDatasets = {
+  saleDatasets: ChartData = {
     labels: [],
     datasets: [],
     labelCallback: this.tooltipCallback
+  };
+  private axisLabels = {
+    yAxis1: 'Price',
+    yAxis2: 'Quantity',
+    xAxis: 'Time'
   };
 
   constructor() {
@@ -87,6 +92,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
   private resetDailyChartData() {
     this.saleDatasets = {
       labels: [],
+      axisLabels: this.axisLabels,
       datasets: [{
         label: 'Sale price',
         data: [],
@@ -105,6 +111,7 @@ export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, On
 
     this.purchaseDatasets = {
       labels: [],
+      axisLabels: this.axisLabels,
       datasets: [{
         label: 'Purchase price',
         data: [],

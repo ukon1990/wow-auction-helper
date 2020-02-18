@@ -60,6 +60,11 @@ export class ProfitSummaryChartComponent implements OnInit, OnChanges, OnDestroy
   private handleRealmChange(realm: string) {
     this.datasets = {
       labels: [],
+      axisLabels: {
+        yAxis1: 'Gold',
+        yAxis2: 'Daily profit',
+        xAxis: 'Date'
+      },
       datasets: [],
       labelCallback: this.tooltipCallback
     };
