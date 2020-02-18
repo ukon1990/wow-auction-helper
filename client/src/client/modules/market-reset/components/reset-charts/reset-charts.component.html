@@ -1,4 +1,13 @@
-<wah-charts-data-sets
-        [storageName]="namePrefix + '-price-reset-chart'"
-        [datasets]="datasets">
-</wah-charts-data-sets>
+<div [class]="sideBySide ? 'row' : ''">
+  <wah-charts-data-sets
+          [class]="sideBySide ? 'col-md-6' : ''"
+          [storageName]="namePrefix + '-price-reset-chart'"
+          [datasets]="datasets">
+  </wah-charts-data-sets>
+
+  <wah-charts-data-sets
+          [class]="sideBySide ? 'col-md-6' : ''"
+          [storageName]="namePrefix + 'break-point-price-reset-chart'"
+          [datasets]="datasetsBreakpoints">
+  </wah-charts-data-sets>
+</div>

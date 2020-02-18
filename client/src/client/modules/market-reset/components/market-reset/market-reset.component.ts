@@ -186,7 +186,6 @@ export class MarketResetComponent implements OnInit {
   }
 
   setRoShoppingString({row}: RowClickEvent<ItemResetBreakpoint>): void {
-    console.log('Shopping', row);
     this.itemResetBreakpoint = row;
   }
 

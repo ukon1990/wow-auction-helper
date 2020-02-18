@@ -16,6 +16,7 @@ export class ResetChartsComponent implements OnChanges {
   @Input() itemID: number;
   @Input() newBuyout: number;
   @Input() namePrefix: string;
+  @Input() sideBySide = false;
   @Output() resetPriceChange: EventEmitter<any> = new EventEmitter<any>();
   @Output()itemResetChange: EventEmitter<ItemReset> = new EventEmitter<ItemReset>();
   itemReset: ItemReset;
@@ -32,6 +33,8 @@ export class ResetChartsComponent implements OnChanges {
     roi: 0,
     breakEvenQuantity: 0
   };
+  datasetsBreakpoints: ChartData;
+  private goldPipe = new GoldPipe();
 
   constructor() {
   }
@@ -73,6 +76,7 @@ export class ResetChartsComponent implements OnChanges {
     this.resetPrice.breakEvenQuantity = Math.ceil(this.resetPrice.cost / newBuyout);
 
     this.setChartData(newBuyout);
+    this.setBreakpointsChart();
     this.resetPriceChange.emit(this.resetPrice);
   }
 
@@ -140,5 +144,57 @@ export class ResetChartsComponent implements OnChanges {
       this.datasets.datasets[1].data.push((newPrice * quantity) / 10000);
       this.datasets.datasets[2].data.push(((newPrice * quantity) - this.resetPrice.cost) / 10000);
     }
+  }
+
+  private setBreakpointsChart() {
+    this.datasetsBreakpoints = {
+      labels: [],
+      axisLabels: {
+        yAxis1: 'Gold',
+        yAxis2: 'Quantity',
+        xAxis: 'Target price'
+      },
+      datasets: [
+        {
+          label: 'ROI',
+          data: [],
+          type: 'line',
+          yAxisID: 'yAxes-1',
+          backgroundColor: 'hsla(132,100%,17%,0.5)'
+        },
+        {
+          label: 'Cost',
+          data: [],
+          type: 'line',
+          yAxisID: 'yAxes-1',
+          backgroundColor: 'hsla(0,100%,17%,0.33)'
+        },
+        {
+          label: 'Quantity',
+          data: [],
+          type: 'line',
+          yAxisID: 'yAxes-2',
+          backgroundColor: 'hsla(194,100%,17%,0.71)'
+        },
+      ],
+      labelCallback: this.tooltipCallback
+    };
+    this.itemReset.breakPoints.forEach(point => {
+      this.datasetsBreakpoints.labels.push(this.goldPipe.transform(point.newBuyout));
+      this.datasetsBreakpoints.datasets[0].data.push(point.potentialValue / 10000);
+      this.datasetsBreakpoints.datasets[1].data.push(point.sumBuyout / 10000);
+      this.datasetsBreakpoints.datasets[2].data.push(point.itemCount);
+    });
+  }
+
+  tooltipCallbackBreakPoints(items, data): string {
+    const {index, datasetIndex} = items,
+      dataset = data.datasets[datasetIndex],
+     value = data.datasets[datasetIndex].data[index];
+    if (datasetIndex === 2) {
+      return NumberUtil.format(value);
+    }
+    return dataset.label + ': ' +
+      new GoldPipe().transform(value * 10000);
   }
 }
