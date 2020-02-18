@@ -59,7 +59,7 @@ export abstract class BaseCraftingUtil {
 
     if (overridePrice) {
       price = overridePrice.price * r.count;
-    } else if (vendor && vendor.price && vendor.stock > 0) {
+    } else if (vendor && vendor.price && !vendor.stock) {
       price = this.getCostFromVendor(vendor, r);
     } else if (tradeVendorPrice) {
       price = tradeVendorPrice * r.count;
