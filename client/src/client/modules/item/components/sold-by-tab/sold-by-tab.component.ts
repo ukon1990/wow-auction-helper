@@ -15,6 +15,7 @@ export class SoldByTabComponent {
     {key: 'tag', title: 'Tag', dataType: ''},
     {key: 'zoneName', title: 'Zone', dataType: 'zone', options: {idName: 'zoneId'}},
     {key: 'unitPrice', title: 'Unit price', dataType: 'vendor-currency'},
+    {key: 'stock', title: 'Limited supply', dataType: 'boolean'},
     {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
     {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
   ];
