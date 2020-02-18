@@ -37,10 +37,14 @@
   </mat-form-field>
 </div>
 
-<wah-charts-data-sets
-        storageName="item-price-reset-chart"
-        [datasets]="datasets">
-</wah-charts-data-sets>
+
+<wah-reset-charts
+        [newBuyout]="this.form.value * 10000"
+        [itemID]="auctionItem.itemID"
+        namePrefix="item"
+        (itemResetChange)="itemReset = $event"
+        (resetPriceChange)="resetPrice = $event"
+></wah-reset-charts>
 
 <wah-data-table *ngIf="itemReset"
                 [columns]="columns"

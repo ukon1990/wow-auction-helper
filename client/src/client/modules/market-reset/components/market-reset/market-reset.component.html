@@ -81,16 +81,26 @@
 </form>
 
 <mat-form-field *ngIf="tsmShoppingString.length > 0" class="row col-md-12">
-    <textarea matInput placeholder="TSM shopping string"
+    <textarea matInput
+              placeholder="TSM shopping string"
               [value]="tsmShoppingString"></textarea>
 </mat-form-field>
 
 
 <p>Click on a row(not the name) to get the TSM string for it.</p>
-<mat-form-field *ngIf="rowShoppingString.length > 0" class="row col-md-12">
-    <textarea matInput placeholder="Shopping string for the selected row"
-              [value]="rowShoppingString"></textarea>
-</mat-form-field>
+<ng-container *ngIf="itemResetBreakpoint && itemResetBreakpoint.tsmShoppingString.length > 0">
+  <mat-form-field class="row col-md-12">
+    <textarea matInput
+              placeholder="Shopping string for the selected row"
+              [value]="itemResetBreakpoint.tsmShoppingString"></textarea>
+  </mat-form-field>
+
+  <wah-reset-charts
+          namePrefix="market"
+          [newBuyout]="itemResetBreakpoint.newBuyout"
+          [itemID]="itemResetBreakpoint.itemID"
+  ></wah-reset-charts>
+</ng-container>
 
 <wah-data-table
         *ngIf="data"

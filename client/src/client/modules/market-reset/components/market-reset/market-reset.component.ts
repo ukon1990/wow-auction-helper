@@ -43,6 +43,7 @@ export class MarketResetComponent implements OnInit {
     auctionsToBuy: 0
   };
   rowShoppingString = '';
+  itemResetBreakpoint: ItemResetBreakpoint;
 
   constructor(private formBuilder: FormBuilder) {
     SharedService.events.title.next('Market resetter');
@@ -185,7 +186,8 @@ export class MarketResetComponent implements OnInit {
   }
 
   setRoShoppingString({row}: RowClickEvent<ItemResetBreakpoint>): void {
-    this.rowShoppingString = row.tsmShoppingString;
+    console.log('Shopping', row);
+    this.itemResetBreakpoint = row;
   }
 
   resetForm() {

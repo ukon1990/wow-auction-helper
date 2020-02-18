@@ -94,9 +94,19 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
   }
 
   private getScales() {
+    let yAxis1, yAxis2, xAxis;
+    if (this.datasets.axisLabels) {
+      yAxis1 = this.datasets.axisLabels.yAxis1;
+      yAxis2 = this.datasets.axisLabels.yAxis2;
+      xAxis = this.datasets.axisLabels.xAxis;
+    }
     return {
       yAxes: [{
         id: 'yAxes-1',
+        scaleLabel: {
+          display: !!yAxis1,
+          labelString: yAxis1 || '',
+        },
         type: 'linear',
         ticks: {
           beginAtZero: true,
@@ -110,6 +120,10 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
         },
       }, {
         id: 'yAxes-2',
+        scaleLabel: {
+          display: !!yAxis2,
+          labelString: yAxis2 || '',
+        },
         type: 'linear',
         ticks: {
           beginAtZero: true,
@@ -121,6 +135,12 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
         gridLines: {
           drawOnChartArea: false
         },
+      }],
+      xAxes: [{
+        scaleLabel: {
+          display: !!xAxis,
+          labelString: xAxis || '',
+        }
       }]
     };
   }
