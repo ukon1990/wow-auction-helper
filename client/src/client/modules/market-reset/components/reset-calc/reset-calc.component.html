@@ -10,6 +10,9 @@
     <strong>Avg cost per item: </strong> {{ resetPrice.cost / resetPrice.numOfItems | gold }}
   </div>
   <div class="col-md-12">
+    <strong>Break-even quantity:</strong> {{ resetPrice.breakEvenQuantity | number }}
+  </div>
+  <div class="col-md-12">
     <strong>Potential ROI: </strong> {{ resetPrice.roi | gold }} ({{ 1 + (resetPrice.roi / resetPrice.cost) | percent }}
     )
   </div>
@@ -22,12 +25,22 @@
       time:</strong> {{ resetPrice.numOfItems / auctionItem.regionSaleRate / auctionItem.avgDailySold | number }} days
     (items / regional sale rate / regional avg daily sold).
   </div>
+  <div class="col-md-12">
+    <strong>Wild guess at minimum sell
+      time to break-even:</strong> {{ resetPrice.breakEvenQuantity / auctionItem.regionSaleRate / auctionItem.avgDailySold | number }} days
+    (break-even quantity / regional sale rate / regional avg daily sold).
+  </div>
 
   <mat-form-field *ngIf="getShoppingString()" class="mt-3 col-md-12">
     <textarea matInput placeholder="TSM shopping string"
               [value]="getShoppingString()"></textarea>
   </mat-form-field>
 </div>
+
+<wah-charts-data-sets
+        storageName="item-price-reset-chart"
+        [datasets]="datasets">
+</wah-charts-data-sets>
 
 <wah-data-table *ngIf="itemReset"
                 [columns]="columns"

@@ -222,6 +222,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'});
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
+    this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
 
     if (Filters.isUsingAPI()) {
       this.columns.push({key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'});
