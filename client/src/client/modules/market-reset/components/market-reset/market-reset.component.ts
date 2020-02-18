@@ -43,6 +43,7 @@ export class MarketResetComponent implements OnInit {
     auctionsToBuy: 0
   };
   rowShoppingString = '';
+  itemResetBreakpoint: ItemResetBreakpoint;
 
   constructor(private formBuilder: FormBuilder) {
     SharedService.events.title.next('Market resetter');
@@ -185,7 +186,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   setRoShoppingString({row}: RowClickEvent<ItemResetBreakpoint>): void {
-    this.rowShoppingString = row.tsmShoppingString;
+    this.itemResetBreakpoint = row;
   }
 
   resetForm() {
@@ -222,6 +223,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'potentialValue', title: 'Sum potential value', dataType: 'gold'});
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
+    this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
 
     if (Filters.isUsingAPI()) {
       this.columns.push({key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'});

@@ -3,7 +3,6 @@ import * as distinctColors from 'distinct-colors';
 import {TSMCSV, TsmLuaUtil} from '../../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ChartData} from '../../../../util/models/chart.model';
-import {NumberUtil} from '../../../../util/utils/number.util';
 import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 
 @Component({
@@ -54,6 +53,10 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.datasets = {
       labels: [],
+      axisLabels: {
+        yAxis1: 'Sum gold',
+        xAxis: 'Date'
+      },
       datasets: [],
       labelCallback: this.tooltipCallback
     };

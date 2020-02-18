@@ -11,13 +11,15 @@ import {ItemReset} from '../../models/item-reset.model';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
+import {ChartData} from '../../../util/models/chart.model';
+import {NumberUtil} from '../../../util/utils/number.util';
 
 @Component({
   selector: 'wah-reset-calc',
   templateUrl: './reset-calc.component.html',
   styleUrls: ['./reset-calc.component.scss']
 })
-export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
+export class ResetCalcComponent implements OnInit, OnDestroy {
   @Input() auctionItem: AuctionItem;
   pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
@@ -25,9 +27,11 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
     numOfAuctions: 0,
     numOfItems: 0,
     cost: 0,
-    roi: 0
+    roi: 0,
+    breakEvenQuantity: 0
   };
   itemReset: ItemReset;
+
 
   formChanges: Subscription;
   columns: ColumnDescription[] = [
@@ -42,51 +46,19 @@ export class ResetCalcComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor() {
     this.formChanges = this.form.valueChanges.subscribe(() => {
-      this.calculate();
+      // this.calculate();
       Report.send('Calculated', 'Reset calc');
     });
   }
 
   ngOnInit(): void {
     if (this.auctionItem) {
-      this.form.setValue(this.auctionItem.mktPrice / 10000);
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.auctionItem && changes.auctionItem.currentValue) {
-      this.itemReset = new ItemReset(changes.auctionItem.currentValue);
+      this.form.setValue(this.auctionItem.mktPrice * 1.5 / 10000);
     }
   }
 
   ngOnDestroy(): void {
     this.formChanges.unsubscribe();
-  }
-
-  calculate(): void {
-    if (!this.form.value) {
-      return;
-    }
-    this.resetPrice.numOfAuctions = 0;
-    this.resetPrice.numOfItems = 0;
-    this.resetPrice.cost = 0;
-    this.resetPrice.roi = 0;
-
-    this.auctionItem.auctions.forEach((a) => {
-      if (a.buyout / a.quantity < (this.form.value * 10000)) {
-        this.resetPrice.cost += a.buyout;
-        this.resetPrice.numOfItems += a.quantity;
-        this.resetPrice.numOfAuctions++;
-      } else {
-        return;
-      }
-    });
-
-    // Adding AH cut to the cost value
-    this.resetPrice.cost = this.resetPrice.cost;
-
-    this.resetPrice.roi = (this.form.value * 10000) * this.resetPrice.numOfItems - this.resetPrice.cost;
-    this.resetPrice.roi *= CraftingUtil.ahCutModifier;
   }
 
   getShoppingString(): string {

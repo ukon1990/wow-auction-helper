@@ -53,6 +53,11 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     data: []
   };
   isLoading = true;
+  private axisLabels = {
+    yAxis1: 'Price',
+    yAxis2: 'Quantity',
+    xAxis: 'Date'
+  };
 
   constructor(private service: ItemService) {
   }
@@ -118,6 +123,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
     this.fourteenDayHourByHour.labels.length = 0;
     this.fourteenDayByHourTable.data.length = 0;
     this.fourteenDayHourByHour.datasets = [];
+    this.fourteenDayHourByHour.axisLabels = this.axisLabels;
     this.fourteenDayHourByHour.datasets.push({
       label: 'Price',
       data: [],
@@ -173,6 +179,7 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   private resetDailyChartData() {
     this.dateData.labels.length = 0;
     this.dateData.datasets = [];
+    this.dateData.axisLabels = this.axisLabels;
     this.dateData.datasets.push({
       label: 'Min price',
       data: [],

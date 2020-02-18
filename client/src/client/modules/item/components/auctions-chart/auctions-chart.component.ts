@@ -1,12 +1,12 @@
 import {AfterContentInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {SummaryCard} from '../../../../models/summary-card.model';
-import {ChartData} from '../../../../models/chart-data.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Auction} from '../../../auction/models/auction.model';
 import {FormControl} from '@angular/forms';
 import {NumberUtil} from '../../../util/utils/number.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
+import {ChartData} from '../../../util/models/chart.model';
 
 @Component({
   selector: 'wah-auctions-chart',
@@ -20,11 +20,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
   medianPercentLimit: FormControl;
   medianPrice: number;
   localStorageName = 'wah-auctions-chart-median-percent';
-  datasets = {
-    labels: [],
-    datasets: [],
-    labelCallback: this.tooltipCallback
-  };
+  datasets: ChartData;
 
   constructor(private auctionsService: AuctionsService) {
     const medianPercentLimit = localStorage.getItem(this.localStorageName);
@@ -52,6 +48,10 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
   private resetDailyChartData() {
     this.datasets = {
       labels: [],
+      axisLabels: {
+        yAxis1: 'Price',
+        yAxis2: 'Quantity'
+      },
       datasets: [{
         label: 'Min price',
         data: [],
@@ -75,7 +75,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
 
     if (this.auctions && this.auctions.length) {
       const unitPriceMap = {},
-      unitPrices = [];
+        unitPrices = [];
       const middleAuction: Auction = this.auctions[Math.round(this.auctions.length / 2)];
       this.medianPrice = (middleAuction.buyout / middleAuction.quantity) / 10000;
       this.auctions.forEach((a, i) => {
@@ -95,7 +95,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
           this.datasets.datasets[0].data.push(price);
           this.datasets.datasets[1].data.push(quantity);
           this.datasets.labels.push('');
-      });
+        });
     }
   }
 
