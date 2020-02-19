@@ -7,7 +7,6 @@ import {customPricesDefault} from '../../modules/crafting/models/default-custom-
 import {CustomProc} from '../../modules/crafting/models/custom-proc.model';
 import {customProcsDefault} from '../../modules/crafting/models/default-custom-procs';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
-import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
 import {BaseCraftingUtil} from '../../modules/crafting/utils/base-crafting.util';
 
@@ -30,7 +29,6 @@ export class User {
   crafters: any[];
   notifications: NotificationSettings = new NotificationSettings();
   watchlist: Watchlist = new Watchlist();
-  shoppingCart: ShoppingCart = new ShoppingCart();
   isDarkMode = true;
   doNotReport = false;
   gameVersion = 0;

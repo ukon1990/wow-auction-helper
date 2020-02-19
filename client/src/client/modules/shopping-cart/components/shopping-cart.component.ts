@@ -6,6 +6,7 @@ import {Report} from '../../../utils/report.util';
 import {ShoppingCart} from '../models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
+import {ShoppingCartUtil} from '../utils/shopping-cart.util';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -13,7 +14,7 @@ import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
   styleUrls: ['./shopping-cart.component.scss']
 })
 export class ShoppingCartComponent implements OnInit, OnDestroy {
-  cart: ShoppingCart = SharedService.user.shoppingCart;
+  cart: ShoppingCart = ShoppingCartUtil.cart;
 
   show: boolean;
   columns = {
@@ -86,10 +87,10 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   }
 
   private setCart() {
-    SharedService.user.shoppingCart = new ShoppingCart();
-    this.cart = SharedService.user.shoppingCart;
+    ShoppingCartUtil.cart = new ShoppingCart();
     this.cart.setSources();
     this.cart.calculateCosts();
+    this.cart = ShoppingCartUtil.cart;
   }
 
   ngOnDestroy(): void {
