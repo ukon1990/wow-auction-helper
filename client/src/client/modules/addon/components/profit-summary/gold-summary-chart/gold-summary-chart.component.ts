@@ -92,11 +92,11 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
       .sort((a, b) => dateLabelMap[a] - dateLabelMap[b])
       .forEach(day => {
         const dataset = this.datasets.datasets[index];
-        if (character[day] === undefined && dataset.data.length) {
-          dataset.data.push(dataset.data[dataset.data.length - 1]);
-        }
-        if (character[day] !== undefined) {
-          this.datasets.datasets[index].data.push(character[day].copper / 10000);
+        if (character[day] === undefined) {
+          const gold = dataset.data[dataset.data.length - 1];
+          dataset.data.push(gold || 0);
+        } else {
+          dataset.data.push(character[day].copper / 10000);
         }
       });
   }

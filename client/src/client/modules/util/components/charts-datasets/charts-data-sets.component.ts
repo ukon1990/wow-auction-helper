@@ -82,11 +82,13 @@ export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChan
       config.options['tooltips'] = {
         enabled: true,
         mode: 'label',
+        position: 'nearest',
         callbacks: {label: this.datasets.labelCallback}
       };
     } else {
       config.options['tooltips'] = {
-        mode: 'label'
+        mode: 'label',
+        position: 'nearest'
       };
     }
 
