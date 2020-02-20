@@ -43,25 +43,25 @@ export class UserProfit {
         switch (type) {
           case 'expired':
           case 'cancelled':
-            forDay[type] = this[type].add(value);
+            forDay[type] += this[type].add(value);
             break;
           case 'expenses':
-            forDay[type] = this[type].add(value);
+            forDay[type] += this[type].add(value);
             forDay.profit -= value.amount;
             this.profit -= value.amount;
             break;
           case 'income':
-            forDay[type] = this[type].add(value);
+            forDay[type] += this[type].add(value);
             forDay.profit += value.amount;
             this.profit += value.amount;
             break;
           case 'sales':
-            forDay[type] = this[type].add(value);
+            forDay[type] += this[type].add(value);
             forDay.profit += value.price * value['quantity'];
             this.profit += value.price * value['quantity'];
             break;
           case 'purchases':
-            forDay[type] = this[type].add(value);
+            forDay[type] += this[type].add(value);
             forDay.profit -= value.price * value['quantity'];
             this.profit -= value.price * value['quantity'];
             break;

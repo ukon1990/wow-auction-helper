@@ -95,10 +95,6 @@ export class ProfitSummaryChartComponent implements OnInit, OnChanges, OnDestroy
   tooltipCallback(items, data): string {
     const {index, datasetIndex} = items;
     const dataset = data.datasets[datasetIndex];
-    if (datasetIndex === 1) {
-      return dataset.label + ': ' +
-        NumberUtil.format(dataset.data[index]);
-    }
     return dataset.label + ': ' +
       new GoldPipe().transform(dataset.data[index] * 10000);
   }

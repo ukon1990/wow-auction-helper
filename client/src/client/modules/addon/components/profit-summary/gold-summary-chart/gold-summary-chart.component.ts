@@ -75,13 +75,13 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
           });
 
       });
-    const colors = distinctColors({count: Object.keys(charMap).length});
+    const colors = distinctColors({count: Object.keys(charMap).length + 1});
+    this.addDataset('Sum', colors[0].rgba(), 'yAxes-1');
     Object.keys(charMap)
       .forEach((char, index) => {
-        this.populateDatasetsWithCharacterData(charMap, char, colors, index, dateLabelMap);
+        this.populateDatasetsWithCharacterData(charMap, char, colors, index + 1, dateLabelMap);
       });
     const datasetCount = this.datasets.datasets.length;
-    this.addDataset('Sum', [200, 30, 90], 'yAxes-1');
     this.populateGoldChart(datasetCount);
   }
 
@@ -122,13 +122,13 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
   private populateGoldChart(datasetCount: number) {
     this.datasets.labels.forEach((l, index) => {
       let gold = 0;
-      for (let i = 0; i < datasetCount; i++) {
+      for (let i = 1; i < datasetCount; i++) {
         const value = this.datasets.datasets[i].data[index];
         if (value !== undefined) {
           gold += value;
         }
       }
-      this.datasets.datasets[datasetCount].data.push(gold);
+      this.datasets.datasets[0].data.push(gold);
     });
   }
 
