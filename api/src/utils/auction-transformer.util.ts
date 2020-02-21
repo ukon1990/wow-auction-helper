@@ -1,25 +1,30 @@
 import {AuctionV2} from '../models/auction/auction-v2.model';
+import {Auction} from '../models/auction/auction';
 
 export class AuctionTransformerUtil {
   static transform({auctions}: any) {
-    const keyMap = {
-      unit_price: 1,
-      buyout: 1,
-      bid: 1
-    };
-    auctions.forEach((auc: AuctionV2) => {
-      if (auc.buyout && auc.quantity && auc.quantity > keyMap.buyout) {
-        keyMap.buyout = auc.quantity;
-      }
+    const list: Auction[] = [];
+    for (let i = 0, length = auctions.length; i < length; i++) {
+      const auction: Auction = new Auction(),
+        auc: AuctionV2 = auctions[i];
 
-      if (auc.unit_price && auc.quantity && auc.quantity > keyMap.unit_price) {
-        keyMap.unit_price = auc.quantity;
+      auction.auc = auc.id;
+      auction.item = auc.item.id;
+      auction.bid = auc.bid || 0;
+      auction.buyout = auc.unit_price || auc.buyout;
+      auction.quantity = auc.quantity;
+      auction.timeLeft = auc.time_left;
+      auction.context = auc.item.context;
+      auction.petSpeciesId = auc.item.pet_species_id;
+      auction.petBreedId = auc.item.pet_breed_id;
+      auction.petLevel = auc.item.pet_level;
+      auction.petQualityId = auc.item.pet_quality_id;
+      if (auc.item.bonus_lists) {
+        auction.bonusLists = auc.item.bonus_lists.map(id => ({bonusListId: id}));
       }
-
-      if (auc.bid && auc.quantity && auc.quantity > keyMap.bid) {
-        keyMap.bid = auc.quantity;
-      }
-    });
-    return keyMap;
+      auction.modifiers = auc.item.modifiers;
+      list.push(auction);
+    }
+    return list;
   }
 }
