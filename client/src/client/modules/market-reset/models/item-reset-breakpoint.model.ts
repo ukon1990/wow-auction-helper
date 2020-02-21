@@ -5,9 +5,11 @@ import {GoldPipe} from '../../util/pipes/gold.pipe';
 export class ItemResetBreakpoint {
   private pipe = new GoldPipe();
 
+  public itemID: number;
   public tsmShoppingString: string;
   public sellTime: number;
   public newVsCurrentBuyoutPercent: number;
+  public breakEvenQuantity = 0;
 
   constructor(
     public id: number,
@@ -25,6 +27,8 @@ export class ItemResetBreakpoint {
     this.setShoppingString();
 
     this.newVsCurrentBuyoutPercent = newBuyout / this.auctionItem.buyout;
+    this.breakEvenQuantity = Math.ceil(this.sumBuyout / newBuyout);
+    this.itemID = this.auctionItem.itemID;
   }
 
   private setPotentialSellTime() {

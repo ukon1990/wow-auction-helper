@@ -3,7 +3,6 @@ import * as distinctColors from 'distinct-colors';
 import {TSMCSV, TsmLuaUtil} from '../../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {ChartData} from '../../../../util/models/chart.model';
-import {NumberUtil} from '../../../../util/utils/number.util';
 import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 
 @Component({
@@ -54,6 +53,10 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.datasets = {
       labels: [],
+      axisLabels: {
+        yAxis1: 'Sum gold',
+        xAxis: 'Date'
+      },
       datasets: [],
       labelCallback: this.tooltipCallback
     };
@@ -72,13 +75,13 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
           });
 
       });
-    const colors = distinctColors({count: Object.keys(charMap).length});
+    const colors = distinctColors({count: Object.keys(charMap).length + 1});
+    this.addDataset('Sum', colors[0].rgba(), 'yAxes-1');
     Object.keys(charMap)
       .forEach((char, index) => {
-        this.populateDatasetsWithCharacterData(charMap, char, colors, index, dateLabelMap);
+        this.populateDatasetsWithCharacterData(charMap, char, colors, index + 1, dateLabelMap);
       });
     const datasetCount = this.datasets.datasets.length;
-    this.addDataset('Sum', [200, 30, 90], 'yAxes-1');
     this.populateGoldChart(datasetCount);
   }
 
@@ -89,11 +92,11 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
       .sort((a, b) => dateLabelMap[a] - dateLabelMap[b])
       .forEach(day => {
         const dataset = this.datasets.datasets[index];
-        if (character[day] === undefined && dataset.data.length) {
-          dataset.data.push(dataset.data[dataset.data.length - 1]);
-        }
-        if (character[day] !== undefined) {
-          this.datasets.datasets[index].data.push(character[day].copper / 10000);
+        if (character[day] === undefined) {
+          const gold = dataset.data[dataset.data.length - 1];
+          dataset.data.push(gold || 0);
+        } else {
+          dataset.data.push(character[day].copper / 10000);
         }
       });
   }
@@ -119,13 +122,13 @@ export class GoldSummaryChartComponent implements OnInit, OnChanges, OnDestroy {
   private populateGoldChart(datasetCount: number) {
     this.datasets.labels.forEach((l, index) => {
       let gold = 0;
-      for (let i = 0; i < datasetCount; i++) {
+      for (let i = 1; i < datasetCount; i++) {
         const value = this.datasets.datasets[i].data[index];
         if (value !== undefined) {
           gold += value;
         }
       }
-      this.datasets.datasets[datasetCount].data.push(gold);
+      this.datasets.datasets[0].data.push(gold);
     });
   }
 

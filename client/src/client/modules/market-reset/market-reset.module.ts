@@ -7,12 +7,14 @@ import {TableModule} from '../table/table.module';
 import {IconModule} from '../icon/icon.module';
 import {UtilModule} from '../util/util.module';
 import {ResetCalcComponent} from './components/reset-calc/reset-calc.component';
+import { ResetChartsComponent } from './components/reset-charts/reset-charts.component';
 
 
 @NgModule({
   declarations: [
     MarketResetComponent,
-    ResetCalcComponent
+    ResetCalcComponent,
+    ResetChartsComponent
   ],
   imports: [
     CommonModule,

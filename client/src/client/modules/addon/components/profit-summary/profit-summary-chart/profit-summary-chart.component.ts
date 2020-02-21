@@ -60,6 +60,11 @@ export class ProfitSummaryChartComponent implements OnInit, OnChanges, OnDestroy
   private handleRealmChange(realm: string) {
     this.datasets = {
       labels: [],
+      axisLabels: {
+        yAxis1: 'Gold',
+        yAxis2: 'Daily profit',
+        xAxis: 'Date'
+      },
       datasets: [],
       labelCallback: this.tooltipCallback
     };
@@ -90,10 +95,6 @@ export class ProfitSummaryChartComponent implements OnInit, OnChanges, OnDestroy
   tooltipCallback(items, data): string {
     const {index, datasetIndex} = items;
     const dataset = data.datasets[datasetIndex];
-    if (datasetIndex === 1) {
-      return dataset.label + ': ' +
-        NumberUtil.format(dataset.data[index]);
-    }
     return dataset.label + ': ' +
       new GoldPipe().transform(dataset.data[index] * 10000);
   }
