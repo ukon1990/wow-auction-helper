@@ -11,7 +11,7 @@ export class AuctionTransformerUtil {
       auction.auc = auc.id;
       auction.item = auc.item.id;
       auction.bid = auc.bid || 0;
-      auction.buyout = auc.unit_price || auc.buyout;
+      auction.buyout = (auc.unit_price || auc.buyout) * auc.quantity;
       auction.quantity = auc.quantity;
       auction.timeLeft = auc.time_left;
       auction.context = auc.item.context;

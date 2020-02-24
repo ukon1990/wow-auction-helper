@@ -4,6 +4,7 @@ import {Endpoints} from '../utils/endpoints.util';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuthHandler} from '../handlers/auth.handler';
 import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
+import {AuctionHandler} from '../handlers/auction.handler';
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   // Endpoints.setStage(event);
@@ -12,16 +13,12 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
   console.log('requestParameters', detail.requestParameters);
   console.log('Resources', detail.resources);*/
 
-  AuthHandler.getToken()
-    .then(() => {
-      const url = new Endpoints().getPath('connected-realm/1146/auctions?namespace=dynamic-us&locale=en_US', 'us', true);
-      new HttpClientUtil().get(url)
-        .then(({body}) => {
-          console.log('Got response', AuctionTransformerUtil.transform(body));
-          Response.send(AuctionTransformerUtil.transform(body), callback);
+  // /wow/realm/status
+  new AuctionHandler().getAuctionDumpV2(1146, 'us', 'en_US', +new Date('Fri, 21 Feb 2020 21:41:25 GMT'))
+    .then((res) => {
+          Response.send(res, callback);
         })
         .catch(err => {
           Response.error(callback, err, event);
         });
-    });
 };
