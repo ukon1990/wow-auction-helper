@@ -1,8 +1,5 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {FormBuilder, FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {startWith, map} from 'rxjs/operators';
-import {Angulartics2} from 'angulartics2';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
 
 import {SharedService} from '../../../../../services/shared.service';
 import {Item} from '../../../../../models/item/item';
@@ -19,7 +16,6 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
   styleUrls: ['./custom-prices.component.scss']
 })
 export class CustomPricesComponent implements OnInit, OnDestroy {
-
   itemSearchForm: FormControl = new FormControl();
   filteredItems: Item[];
   columns: ColumnDescription[] = [
@@ -29,9 +25,11 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   ];
   @Input() itemID: number;
   sm = new SubscriptionManager();
+  customPrices: CustomPrice[] = [];
 
   constructor() {
     this.sm.add(this.itemSearchForm.valueChanges, (name) => this.filter(name));
+    this.setCustomPrices();
   }
 
   ngOnInit(): void {
@@ -46,16 +44,9 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   add(item: Item): void {
     CustomPrices.add(item);
     this.itemSearchForm.setValue('');
+    this.setCustomPrices();
 
     Report.send('Added custom price', 'Custom price');
-  }
-
-  getCustomPrices(): Array<CustomPrice> {
-    return SharedService.user.customPrices;
-  }
-
-  customPrices(): CustomPrices {
-    return CustomPrices;
   }
 
   /**
@@ -74,5 +65,9 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
 
   resetToDefault(): void {
     SharedService.user.customPrices = customPricesDefault;
+  }
+
+  setCustomPrices() {
+    this.customPrices = [...SharedService.user.customPrices];
   }
 }
