@@ -135,56 +135,6 @@ export class CraftingUtil {
     this.strategy.calculate(SharedService.recipes);
   }
 
-  private static costForRecipe(recipe: Recipe, strategy: BaseCraftingUtil): void {
-    if (recipe === null || recipe === undefined) {
-      return;
-    }
-
-    try {
-      /*
-      recipe.cost = 0;
-      recipe.roi = 0;
-      if (SharedService.auctionItemsMap[recipe.itemID]) {
-        recipe.mktPrice = SharedService.auctionItemsMap[recipe.itemID].mktPrice;
-        recipe.buyout = SharedService.auctionItemsMap[recipe.itemID].buyout;
-        recipe.avgDailySold = SharedService.auctionItemsMap[recipe.itemID].avgDailySold;
-        recipe.regionSaleRate = SharedService.auctionItemsMap[recipe.itemID].regionSaleRate;
-        recipe.quantityTotal = SharedService.auctionItemsMap[recipe.itemID].quantityTotal;
-        recipe.regionSaleAvg = SharedService.auctionItemsMap[recipe.itemID].regionSaleAvg;
-      }
-      recipe.reagents.forEach(r => {
-        const re = SharedService.recipesMapPerItemKnown[r.itemID];
-        // If this is a intermediate craft
-        if (SharedService.user.useIntermediateCrafting && re) {
-          if (re.reagents.length > 0) {
-            let tmpCost = 0;
-            const regularCost = this.getCost(r.itemID, r.count) / CustomProcUtil.get(recipe);
-            re.reagents.forEach(rea => {
-              tmpCost += this.getCost(rea.itemID, rea.count) / CustomProcUtil.get(re) * r.count;
-            });
-
-            if (tmpCost < regularCost) {
-              recipe.cost += tmpCost;
-              r.intermediateEligible = true;
-              r.recipe = re;
-            } else {
-              recipe.cost += regularCost;
-            }
-          }
-        } else {
-          recipe.cost += this.getCost(r.itemID, r.count) / CustomProcUtil.get(recipe);
-        }
-      });
-
-      // Adding AH cut
-      recipe.cost = recipe.cost;
-      // Doing the cost math
-      recipe.roi = this.getROI(recipe.cost, SharedService.auctionItemsMap[recipe.itemID]) * CraftingUtil.ahCutModifier;*/
-    } catch (e) {
-      console.error('Calc issue with recipe', e, recipe);
-    }
-  }
-
   public static getCost(itemID: number, count: number): number {
     if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
       return (SharedService.customPricesMap[itemID].price * count);

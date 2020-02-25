@@ -17,6 +17,7 @@ export interface ItemGameData {
   is_equippable: boolean;
   is_stackable: boolean;
   description: ItemLocale;
+  preview_item: PreviewItem;
 }
 
 interface ItemClass {
@@ -42,4 +43,45 @@ interface Links {
 
 interface Self {
   href: string;
+}
+
+export interface Durability {
+  value: number;
+  display_string: string;
+}
+
+export interface Requirements {
+  reputation: {
+    faction: { name: string; id: number; };
+    min_reputation_level: number;
+    display_string: string;
+  };
+}
+
+export interface PreviewItemRegent {
+  reagent: {
+    id: number;
+    name: string;
+  };
+  quantity: number;
+}
+
+export interface PreviewItemSpells {
+  spell: {
+    id: number;
+    name: string;
+  };
+  description: string;
+}
+
+export interface PreviewItem {
+  item: { id: number };
+  quality: Quality;
+  name: string;
+  binding: Quality;
+  sell_price: { value: number };
+  requirements: Requirements;
+  reagents: PreviewItemRegent[];
+  spells: PreviewItemSpells[];
+  durability: Durability;
 }
