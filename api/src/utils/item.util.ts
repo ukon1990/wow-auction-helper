@@ -39,8 +39,10 @@ export class ItemUtil {
   static getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
-      new HttpClientUtil().get(new Endpoints()
-        .getPath(`item/${id}`, region, true))
+      const url = new Endpoints()
+        .getPath(`item/${id}`, region, true);
+      console.log('URL', url);
+      new HttpClientUtil().get(url)
         .then(async ({body}) => {
           const raw: ItemGameData = body;
           const item: Item = new Item().fromAPI(raw, locale);
