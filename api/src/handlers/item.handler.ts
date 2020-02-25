@@ -55,8 +55,10 @@ export class ItemHandler {
                 reject('The item did not follow the data model - ' + item.id);
                 return;
               }
-              console.log('SQL: ', ItemQuery.update(item));
-              conn.query(new QueryUtil('items').update(item.id, friendlyItem))
+              const sql = new QueryUtil('items').update(item.id, friendlyItem);
+              console.log('SQL: ', sql);
+              delete friendlyItem.itemSpells;
+              conn.query(sql)
                 .then(() => {
                   conn.end();
                   resolve(item);
