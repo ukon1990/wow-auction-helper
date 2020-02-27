@@ -11,6 +11,7 @@ import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
+import {AuctionItemStat, AuctionProcessorUtil} from '../../../../../../api/src/utils/auction-processor.util';
 
 export class AuctionUtil {
   /**
@@ -39,7 +40,7 @@ export class AuctionUtil {
     Object.keys(SharedService.tsm).forEach(id => {
       const auction = new Auction();
       auction.item = +id;
-      this.addNewAuctionItem(auction, false);
+      this.addNewAuctionItem(auction, false, '' + auction.item);
     });
 
     SharedService.auctions = auctions;
@@ -102,7 +103,8 @@ export class AuctionUtil {
     console.log(`Prices calc time ${t2 - t1} ms`);
   }
 
-  private static processAuction(a, petService: PetsService) {
+  private static processAuction(a: Auction, petService: PetsService) {
+    const id = a.item + AuctionItemStat.bonusId(a.bonusLists);
     if (a.petSpeciesId && AuctionUtil.isPetNotInList(a)) {
       const petId = AuctionUtil.getPetId(a);
       SharedService.auctionItemsMap[petId] = this.newAuctionItem(a);
@@ -119,16 +121,16 @@ export class AuctionUtil {
       } else {
         this.handlePetAuction(a, petId);
       }
-    } else if (!SharedService.auctionItemsMap[a.item]) {
-      this.addNewAuctionItem(a);
+    } else if (!SharedService.auctionItemsMap[id]) {
+      this.addNewAuctionItem(a, true, id);
     } else {
-      AuctionUtil.updateAuctionItem(a);
+      AuctionUtil.updateAuctionItem(a, id);
     }
   }
 
-  private static addNewAuctionItem(a, addAuction = true) {
-    SharedService.auctionItemsMap[a.item] = this.newAuctionItem(a, addAuction);
-    SharedService.auctionItems.push(SharedService.auctionItemsMap[a.item]);
+  private static addNewAuctionItem(a, addAuction = true, id: string) {
+    SharedService.auctionItemsMap[id] = this.newAuctionItem(a, addAuction);
+    SharedService.auctionItems.push(SharedService.auctionItemsMap[id]);
     AuctionUtil.setUserSaleRateForAuction(a);
   }
 
@@ -168,13 +170,13 @@ export class AuctionUtil {
       SharedService.items[auction.item].name : 'Item name missing';
   }
 
-  private static updateAuctionItem(auction: Auction): void {
+  private static updateAuctionItem(auction: Auction, auctionItemIdBase: string): void {
     /* TODO: Should this, or should it not be excluded?
     if (auction.buyout === 0) {
       return;
     }*/
     const id = auction.petSpeciesId ?
-      new AuctionPet(auction.petSpeciesId, auction.petLevel, auction.petQualityId).auctionId : auction.item,
+      new AuctionPet(auction.petSpeciesId, auction.petLevel, auction.petQualityId).auctionId : auctionItemIdBase,
       ai = SharedService.auctionItemsMap[id];
     if (!ai.buyout || (ai.buyout > auction.buyout && auction.buyout > 0)) {
       ai.owner = auction.owner;
@@ -225,6 +227,9 @@ export class AuctionUtil {
     tmpAuc.petLevel = auction.petLevel;
     tmpAuc.petQualityId = auction.petQualityId;
     tmpAuc.name = AuctionUtil.getItemName(auction);
+    if (auction.bonusLists) {
+      tmpAuc.bonusIds = auction.bonusLists.map(b => b.bonusListId);
+    }
     tmpAuc.itemLevel = SharedService.items[auction.item] ?
       SharedService.items[auction.item].itemLevel : 0;
     tmpAuc.owner = auction.owner;
