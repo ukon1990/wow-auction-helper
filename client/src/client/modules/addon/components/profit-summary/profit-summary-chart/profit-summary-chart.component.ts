@@ -108,4 +108,10 @@ export class ProfitSummaryChartComponent implements OnInit, OnChanges, OnDestroy
       backgroundColor
     });
   }
+
+  handleSelection(index: number) {
+    if (this.datasets) {
+      console.log('Clicked date', this.datasets.labels[index]);
+    }
+  }
 }

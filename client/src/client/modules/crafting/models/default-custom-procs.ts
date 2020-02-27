@@ -2,6 +2,38 @@ import {CustomProc} from './custom-proc.model';
 
 export const customProcsDefault: CustomProc[] = [
   {
+    spellID: 298752,
+    itemID: 168500,
+    name: 'Superior Battle Potion of Strength',
+    profession: 'Alchemy',
+    rank: 'Rank 3',
+    rate: 1.5
+  },
+  {
+    spellID: 298749,
+    itemID: 168499,
+    name: 'Superior Battle Potion of Stamina',
+    profession: 'Alchemy',
+    rank: 'Rank 3',
+    rate: 1.5
+  },
+  {
+    spellID: 298743,
+    itemID: 168498,
+    name: 'Superior Battle Potion of Intellect',
+    profession: 'Alchemy',
+    rank: 'Rank 3',
+    rate: 1.5
+  },
+  {
+    spellID: 298731,
+    itemID: 168489,
+    name: 'Superior Battle Potion of Agility',
+    profession: 'Alchemy',
+    rank: 'Rank 3',
+    rate: 1
+  },
+  {
     spellID: 298855,
     itemID: 168654,
     name: 'Greater Flask of the Undertow',

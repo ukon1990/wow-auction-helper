@@ -20,6 +20,10 @@ export class ProfitSummary {
     this.total = new UserProfit(undefined, characters[realm]);
   }
 
+  getUserProfitForDateRange(): UserProfit {
+    return null;
+  }
+
   setSaleRates(): void {
     Object.keys(SharedService.items)
       .forEach(id =>

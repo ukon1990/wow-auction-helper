@@ -61,6 +61,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   private getDifferenceMap(value) {
     const differenceMap = new Map<string, any>();
+    console.log('Diff', differenceMap);
     ObjectUtil
       .getDifference(
         this.originalUserObject,

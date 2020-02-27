@@ -2,4 +2,6 @@
         class="chart"
         [height]="20"
         storageName="profit-summary-chart"
-        [datasets]="datasets"></wah-charts-data-sets>
+        [datasets]="datasets"
+        (selection)="handleSelection($event)"
+></wah-charts-data-sets>

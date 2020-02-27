@@ -30,6 +30,11 @@
       </wah-data-table>
     </mat-tab>
   </mat-tab-group>
+
+  <wah-price-heat-map
+    [dailyData]="groupedByDateTable.data"
+    [hourlyData]="fourteenDayByHourTable.data"
+  ></wah-price-heat-map>
 </ng-container>
 
 <ng-template #loadingTemplate>
