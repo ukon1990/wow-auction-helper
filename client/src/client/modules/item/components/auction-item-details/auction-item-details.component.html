@@ -4,6 +4,8 @@
 <br>
 <strong>Market value:</strong> {{ item.mktPrice | gold }}
 <br>
+<strong>Vendor value:</strong> {{ item.vendorSell | gold }}
+<br>
 <strong>Stock:</strong> {{ item.quantityTotal | number }} pcs
 <br>
 <div *ngIf="!item.petSpeciesId" class="clearfix">

@@ -1,7 +1,7 @@
 import {ItemSpells} from './itemspells';
 import {WoWHead} from './wowhead';
 import {ItemLocale} from '../../../../../api/src/models/item/item-locale';
-import {ItemGameData} from '../../../../../api/src/models/item/item-game-data.model';
+import {ItemGameData, PreviewItemSpells} from '../../../../../api/src/models/item/item-game-data.model';
 
 export class Item {
   id: number;
@@ -42,7 +42,14 @@ export class Item {
     this.itemSubClass = item.item_subclass.id;
     this.quality = this.getQuality(item);
     this.buyPrice = item.purchase_price;
-    this.sellPrice = item.sell_price;
+    this.setSellPrice(item);
+    if (item.preview_item.requirements &&
+      item.preview_item.requirements.reputation &&
+      item.preview_item.requirements.reputation.faction) {
+      this.minFactionId = '' + item.preview_item.requirements.reputation.faction.id;
+      this.minReputation = item.preview_item.requirements.reputation.min_reputation_level;
+    }
+    // TODO: this.itemSpells = this.getItemSpellsFromGameData(item.preview_item.spells);
     return this;
   }
 
@@ -68,6 +75,24 @@ export class Item {
         return 4;
       case 'LEGENDARY':
         return 5;
+    }
+  }
+
+  private getItemSpellsFromGameData(spells: PreviewItemSpells[]) {
+    return spells.map(spell => ({
+      SpellId: spell.spell.id,
+      Text: spell.description
+    }));
+  }
+
+  private setSellPrice(item: ItemGameData) {
+    const baseSellPrice = item.sell_price,
+      previewSellPrice = item.preview_item.sell_price.value;
+
+    if (baseSellPrice < previewSellPrice) {
+      this.sellPrice = baseSellPrice;
+    } else {
+      this.sellPrice = previewSellPrice;
     }
   }
 }

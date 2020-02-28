@@ -1,18 +1,17 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {startWith, map} from 'rxjs/operators';
+import {map, startWith} from 'rxjs/operators';
 import {SharedService} from '../../../../../services/shared.service';
-import {Item} from '../../../../../models/item/item';
-import {CustomPrice, CustomPrices} from '../../../../crafting/models/custom-price';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
-import {Angulartics2} from 'angulartics2';
 import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {customProcsDefault} from '../../../../crafting/models/default-custom-procs';
 import {Report} from '../../../../../utils/report.util';
 import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -20,19 +19,19 @@ import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
   styleUrls: ['./custom-proc.component.scss']
 })
 export class CustomProcComponent implements OnInit, OnDestroy {
-
-  itemSearchForm: FormControl = new FormControl();
-  filteredItems: Observable<any>;
-  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
-  saveInterval: any;
   @Input() itemID: number;
 
+  itemSearchForm: FormControl = new FormControl();
+  filteredItems: any[];
+  columns: Array<ColumnDescription> = new Array<ColumnDescription>();
+  customProcs: CustomProc[] = [];
+  sm = new SubscriptionManager();
+
   constructor(private _formBuilder: FormBuilder) {
-    this.filteredItems = this.itemSearchForm.valueChanges
-      .pipe(
-        startWith(''),
-        map(name => this.filter(name))
-      );
+
+    this.sm.add(this.itemSearchForm.valueChanges, (name) => {
+      this.filteredItems = this.filter(name);
+    });
     this.columns.push({key: 'rank', title: 'Rank', dataType: ''});
     this.columns.push({key: 'name', title: 'Name', dataType: 'name'});
     this.columns.push({key: 'profession', title: 'Profession', dataType: ''});
@@ -41,33 +40,25 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.saveInterval = setInterval(() => {
-      if (JSON.stringify(SharedService.user.customProcs) !== localStorage['custom_procs']) {
-        CustomProcUtil.save();
-        CraftingUtil.calculateCost();
-      }
-    }, 500);
+    this.setCustomProcs();
   }
 
   ngOnDestroy(): void {
-    if (!this.itemID) {
-      clearInterval(this.saveInterval);
-    }
+    this.sm.unsubscribe();
+    CustomProcUtil.save();
+    CraftingUtil.calculateCost();
   }
 
   add(recipe: Recipe): void {
     this.itemSearchForm.setValue('');
     CustomProcUtil.add(recipe);
-
+    this.setCustomProcs();
     Report.send('Added custom proc', 'Custom proc');
   }
 
-  getCustomProcs(): Array<CustomProc> {
-    return SharedService.user.customProcs;
-  }
-
-  customProcs(): CustomProcUtil {
-    return CustomProcUtil;
+  setCustomProcs(): void {
+    this.customProcs = [...SharedService.user.customProcs];
+    console.log('Custom procs', JSON.stringify(this.customProcs));
   }
 
   /**
@@ -76,7 +67,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
    */
   private filter(name: string): Array<Recipe> {
     return SharedService.recipes.filter(i =>
-      i.name.toLowerCase().indexOf(name.toLowerCase()) !== -1).slice(0, 20);
+      TextUtil.contains(i.name, name)).slice(0, 20);
   }
 
   /* istanbul ignore next */

@@ -701,14 +701,14 @@ export class Dashboard {
           }
         }
 
-        sumROI += recipe.roi;
+        sumROI += (recipe.roi * recipe.avgDailySold);
         return true;
       })
       .sort((a, b) => {
         return b.roi - a.roi;
       });
     if (this.data.length > 0) {
-      this.message = `Crafting 1 of each may yeild a ROI of ${pipe.transform(sumROI)}`;
+      this.message = `Crafting avg regional daily sold of each, may yeild a ROI of ~${pipe.transform(sumROI)}`;
     }
   }
 

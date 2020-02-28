@@ -6,7 +6,7 @@
     <input matInput placeholder="The name of the recipe to add to custom proc rate for" aria-label="Recipe"
            [matAutocomplete]="auto" [formControl]="itemSearchForm">
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let recipe of filteredItems | async" [value]="recipe.name"
+      <mat-option *ngFor="let recipe of filteredItems" [value]="recipe.name"
                   (click)="add(recipe)"
                   [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
         <wah-icon size="36" [id]="recipe.itemID"></wah-icon>
@@ -16,6 +16,11 @@
   </mat-form-field>
 </form>
 
-<wah-data-table [id]="'itemID'" iconSize="22" [columns]="columns" [data]="getCustomProcs()"></wah-data-table>
+<wah-data-table
+        [id]="'itemID'"
+        iconSize="22"
+        [columns]="columns"
+        [data]="customProcs"
+        (rowClicked)="setCustomProcs()"></wah-data-table>
 
 <button (click)="resetToDefault()" mat-raised-button>Restore default</button>
