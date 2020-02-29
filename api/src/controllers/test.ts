@@ -14,7 +14,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
   console.log('Resources', detail.resources);*/
 
   // /wow/realm/status
-  new AuctionHandler().getAuctionDumpV2(1146, 'us', 'en_US', +new Date('Fri, 21 Feb 2020 21:41:25 GMT'))
+  new AuctionHandler().getAuctionDumpV2(1403, 'eu', 'en_GB', +new Date('Fri, 21 Feb 2020 21:41:25 GMT'))
     .then((res) => {
           Response.send(res, callback);
         })

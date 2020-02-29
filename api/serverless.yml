@@ -253,6 +253,7 @@ functions:
     tags:
       FunctionName: Wah-test
     handler: src/controllers/test.handler
+    memorySize: 512
     events:
       - http:
           method: get

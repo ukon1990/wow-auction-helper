@@ -45,20 +45,26 @@ export class AuctionHandler {
   async getAuctionDumpV2(id: number, region: string, locale: string, lastModified: number) {
     return new Promise((resolve, reject) => {
       AuthHandler.getToken()
-        .then(() => {
-          const url = new Endpoints().getPath(`connected-realm/${id}/auctions?namespace=dynamic-${
-            region}&locale=${locale}`, region, true);
-          new HttpClientUtil().get(url, true, {
-            'If-Modified-Since': lastModified
-          })
-            .then(({headers, body}) => {
-              const newLastModified = headers['last-modified'];
-              console.log('Last modified:', newLastModified, +new Date(newLastModified));
-              if (body) {
-                resolve({auctions: AuctionTransformerUtil.transform(body)});
-              } else {
-                resolve({auctions: []});
-              }
+        .then(async () => {
+          await new DatabaseUtil().query(
+            RealmQuery.getHouseForRealm(region, 'draenor'))
+            .then(() => {
+              const url = new Endpoints().getPath(`connected-realm/${id}/auctions?namespace=dynamic-${
+                region}&locale=${locale}`, region, true);
+                console.log('URL', url);
+              new HttpClientUtil().get(url, true, {
+                'If-Modified-Since': lastModified
+              })
+                .then(({headers, body}) => {
+                  const newLastModified = headers['last-modified'];
+                  console.log('Last modified:', newLastModified, +new Date(newLastModified));
+                  if (body) {
+                    resolve({auctions: AuctionTransformerUtil.transform(body)});
+                  } else {
+                    resolve({auctions: []});
+                  }
+                })
+                .catch(reject);
             })
             .catch(reject);
         });
