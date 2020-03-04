@@ -88,6 +88,7 @@ export class SharedService {
   public static tradeVendorItemMap: Map<number, TradeVendorItemValue> = new Map<number, TradeVendorItemValue>();
   public static tradeVendorMap: Map<number, TradeVendor> = new Map<number, TradeVendor>();
   public static itemNpcMap: Map<number, ItemNpcDetails> = new Map();
+  static bonusIdMap: any = {};
 
   public static pets: Map<number, Pet> = new Map<number, Pet>();
 
