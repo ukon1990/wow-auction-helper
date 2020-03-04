@@ -76,11 +76,14 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
+    this.subscriptions.add(
+      SharedService.events.detailSelection,
+        item => this.setSelection(item));
   }
 
   ngOnInit(): void {
     this.setItemData();
-    this.setAuctionItem();
+    // TODO: this.setAuctionItem();
     this.setRecipesForItem();
 
     Report.send('Opened', 'Item detail view');
@@ -111,7 +114,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   setItemData(): void {
-    const id: number = SharedService.selectedItemId;
+    const id: number = this.selected.item.id;
     if (!id) {
       return;
     }
@@ -127,7 +130,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     this.materialFor.length = 0;
     SharedService.recipes.forEach(recipe => {
       recipe.reagents.forEach(reagent => {
-        if (reagent.itemID === SharedService.selectedItemId) {
+        if (reagent.itemID === this.selected.item.id) {
           this.materialFor.push(recipe);
         }
       });
@@ -158,11 +161,11 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
 
   setRecipesForItem(): void {
-    this.createdBy = SharedService.itemRecipeMap[SharedService.selectedItemId];
+    this.createdBy = SharedService.itemRecipeMap[this.selected.item.id];
   }
 
   userHasRecipeForItem(): boolean {
-    return !!SharedService.recipesMapPerItemKnown[SharedService.selectedItemId];
+    return !!SharedService.recipesMapPerItemKnown[this.selected.item.id];
   }
 
   addEntryToCart(): void {
@@ -171,7 +174,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     }
     SharedService.user.shoppingCart
       .add(
-        SharedService.recipesMapPerItemKnown[SharedService.selectedItemId],
+        SharedService.recipesMapPerItemKnown[this.selected.item.id],
         this.shoppingCartQuantityField.value);
 
     Report.send('Added to recipe shopping cart', 'Item detail view');
@@ -185,24 +188,24 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     Report.debug('setAuctionItem', this.selected.auctionItem);
   }
 
-  getAuctionId(): any {
+  getAuctionId(): any {/*
     if (SharedService.selectedPetSpeciesId !== undefined) {
       return SharedService.selectedPetSpeciesId.auctionId;
-    }
-    return SharedService.selectedItemId;
+    }*/
+    return this.selected.item.id;
   }
 
   /* istanbul ignore next */
-  getPet(): Pet {
+  getPet(): Pet {/*
     if (!SharedService.selectedPetSpeciesId) {
       return undefined;
-    }
-    return SharedService.pets[SharedService.selectedPetSpeciesId.petSpeciesId];
+    }*/
+    return ; // TODO: SharedService.pets[SharedService.selectedPetSpeciesId.petSpeciesId];
   }
 
   /* istanbul ignore next */
   getSelectedPet(): AuctionPet {
-    return SharedService.selectedPetSpeciesId;
+    return; // TODO: SharedService.selectedPetSpeciesId;
   }
 
   getTUJUrl(): string {
@@ -210,15 +213,17 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   /* istanbul ignore next */
-  close(): void {
+  close(): void {/*
     SharedService.selectedItemId = undefined;
-    SharedService.selectedPetSpeciesId = undefined;
+    SharedService.selectedPetSpeciesId = undefined;*/
     SharedService.events.detailPanelOpen.emit(false);
+    Object.keys(this.selected).forEach(key =>
+      this.selected[key] = undefined);
   }
 
   /* istanbul ignore next */
   auctionItemExists(): boolean {
-    return SharedService.auctionItemsMap[SharedService.selectedItemId] ? true : false;
+    return SharedService.auctionItemsMap[this.selected.item.id] ? true : false;
   }
 
   isMobile(): boolean {
@@ -228,5 +233,16 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   setTabChange(index: number, tabName: string): void {
     this.selectedTab = index;
     localStorage[this.indexStoredName] = index;
+  }
+
+  private setSelection(item: any) {
+    if (item.auctions) {
+      this.selected.auctionItem = item;
+      this.selected.item = SharedService.items[item.itemID];
+    } else if (item.itemID) {
+      this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
+      this.selected.item = SharedService.items[item.itemID];
+    }
+    this.ngOnInit();
   }
 }

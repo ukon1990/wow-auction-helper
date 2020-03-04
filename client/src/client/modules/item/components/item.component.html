@@ -13,7 +13,7 @@
               getPet() ?
               ('npc=' + getPet().creatureId) : ('item=' + selected.item.id)
             }}">
-            {{ getPet() ? getPet().name : selected.item?.name }}
+            {{ getPet() ? getPet().name : selected.auctionItem?.name || selected.item?.name }}
           </a>
         </span>
     </mat-card-title>

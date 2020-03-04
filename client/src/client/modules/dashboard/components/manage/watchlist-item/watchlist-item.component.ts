@@ -51,8 +51,7 @@ export class WatchlistItemComponent implements OnInit {
 
     /* istanbul ignore next */
   setSelectedItem(item: any): void {
-    SharedService.selectedItemId = item.itemID;
-    SharedService.selectedSeller = undefined;
+    SharedService.events.detailSelection.emit(SharedService.items[item.itemID]);
   }
 
   getAlertValueInGold(): number {

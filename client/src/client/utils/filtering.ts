@@ -8,12 +8,15 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Pet} from '../modules/pet/models/pet';
 
 export class Filters {
-  public static isNameMatch(itemID: number, name: string, speciesId?: number): boolean {
+  public static isNameMatch(itemID: number, name: string, speciesId?: number, aiId?: string): boolean {
     if (TextUtil.isEmpty(name)) {
       return true;
     }
-    const pet: Pet = SharedService.pets[speciesId],
-      nameForId = pet ? pet.name : Filters.getItemName(itemID);
+    const pet: Pet = SharedService.pets[speciesId];
+    let nameForId = pet ? pet.name : Filters.getItemName(itemID);
+    if (aiId && SharedService.auctionItemsMap[aiId]) {
+      nameForId = SharedService.auctionItemsMap[aiId].name;
+    }
     return TextUtil.contains(nameForId, name);
   }
 

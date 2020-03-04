@@ -12,7 +12,6 @@ import { AuctionResponse } from '../modules/auction/models/auctions-response.mod
 import { TradeVendor, TradeVendorItemValue } from '../models/item/trade-vendor';
 import { UserAuctions } from '../modules/auction/models/user-auctions.model';
 import { CustomPrice } from '../modules/crafting/models/custom-price';
-import { Seller} from '../modules/sellers/models/seller.model';
 import { AuctionPet } from '../modules/auction/models/auction-pet.model';
 import { Notification } from '../models/user/notification';
 import { CustomProc } from '../modules/crafting/models/custom-proc.model';
@@ -20,7 +19,6 @@ import { WoWUction } from '../modules/auction/models/wowuction.model';
 import { DefaultDashboardSettings } from '../modules/dashboard/models/default-dashboard-settings.model';
 import {TSMCSV} from '../utils/tsm/tsm-lua.util';
 import {BehaviorSubject} from 'rxjs';
-import {ItemClassGroup} from '../modules/sellers/models/item-class-group.model';
 import {ItemNpcDetails} from '../modules/item/models/item-npc-details.model';
 
 @Injectable()
@@ -43,6 +41,7 @@ export class SharedService {
 
   public static events = {
     detailPanelOpen: new EventEmitter<boolean>(),
+    detailSelection: new EventEmitter<Item | AuctionItem | Pet | AuctionPet>(),
     auctionUpdate: new EventEmitter<boolean>(),
     items: new EventEmitter<boolean>(),
     recipes: new EventEmitter<boolean>(),
@@ -62,10 +61,6 @@ export class SharedService {
     lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static userAuctions: UserAuctions = new UserAuctions();
-  public static sellersByItemClassesMap = new Map<number, ItemClassGroup>();
-  public static sellersByItemClass = new Array<ItemClassGroup>();
-  public static sellersMap: Map<string, Seller> = new Map<string, Seller>();
-  public static sellers: Array<Seller> = new Array<Seller>();
 
   public static auctionItemsMap: Map<number, AuctionItem> = new Map<number, AuctionItem>();
   public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();
@@ -95,9 +90,10 @@ export class SharedService {
   public static realms: Map<string, Realm> = new Map<string, Realm>();
   public static userRealms: Array<Realm> = new Array<Realm>();
 
+  /*
   public static selectedItemId: number;
   public static selectedPetSpeciesId: AuctionPet;
-  public static selectedSeller: Seller;
+  public static selectedSeller: Seller;*/
 
 
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();

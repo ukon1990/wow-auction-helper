@@ -24,7 +24,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {PlatformModule} from '@angular/cdk/platform';
 import {SettingsModule} from './modules/settings/settings.module';
 import {TableModule} from './modules/table/table.module';
-import {SellersModule} from './modules/sellers/sellers.module';
 import {CoreModule} from './modules/core/core.module';
 import {MatCardModule} from '@angular/material';
 import {AboutModule} from './modules/about/about.module';
@@ -58,7 +57,6 @@ import {ItemModule} from './modules/item/item.module';
     CoreModule,
     SettingsModule,
     TableModule,
-    SellersModule,
     MatCardModule,
     AboutModule,
     DashboardModule,
