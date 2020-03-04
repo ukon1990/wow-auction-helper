@@ -27,9 +27,9 @@ export class AuctionItemStat {
     }
   }
 
-  static bonusId(ids: Bonus[]): string {
+  static bonusId(ids: Bonus[], alwaysHaveAValue = true): string {
     if (!ids) {
-      return '-1';
+      return alwaysHaveAValue ? '-1' : '';
     }
     return ids.map(id => id.bonusListId)
       .sort((a, b) => a - b)
