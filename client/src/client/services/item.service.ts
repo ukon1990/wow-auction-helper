@@ -44,6 +44,14 @@ export class ItemService {
     });
   }
 
+  getBonusIds(): Promise<void> {
+    return this._http.get('/assets/data/bonusIds.json').toPromise()
+      .then((data) => {
+        SharedService.bonusIdMap = data;
+      })
+      .catch(console.error);
+  }
+
   addItem(itemID: number): Promise<any> {
     Report.debug('Attempting to add item data for ' + itemID);
     Report.send('addItem', 'ItemService', itemID);

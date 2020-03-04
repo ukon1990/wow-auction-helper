@@ -99,7 +99,8 @@ export class BackgroundDownloadService {
       this.loadNpc().catch(console.error),
       this.loadRecipes().catch(console.error),
       this.loadZones().catch(console.error),
-      this.loadThirdPartyAPI().catch(console.error)
+      this.loadThirdPartyAPI().catch(console.error),
+      this.itemService.getBonusIds()
     ])
       .catch(console.error);
 
