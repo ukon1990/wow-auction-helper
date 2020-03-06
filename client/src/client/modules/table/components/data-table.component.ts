@@ -183,10 +183,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   /* istanbul ignore next */
   setSelectedItem(item: any, column: ColumnDescription): void {
     SharedService.preScrollPosition = window.scrollY;
-    // SharedService.selectedItemId = this.getItemID(item, column);
     SharedService.events.detailSelection.emit(item);
     this.setSelectedPet(item);
-    // ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
     Report.debug('clicked', item);
   }

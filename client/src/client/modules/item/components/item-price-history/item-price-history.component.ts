@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Item} from '../../../../models/item/item';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
@@ -15,7 +15,7 @@ import {Report} from '../../../../utils/report.util';
   templateUrl: './item-price-history.component.html',
   styleUrls: ['./item-price-history.component.scss']
 })
-export class ItemPriceHistoryComponent implements AfterViewInit {
+export class ItemPriceHistoryComponent implements OnChanges {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
   sm = new SubscriptionManager();
@@ -62,25 +62,31 @@ export class ItemPriceHistoryComponent implements AfterViewInit {
   constructor(private service: ItemService) {
   }
 
-  ngAfterViewInit() {
-    Report.debug(
-      'ItemPriceHistoryComponent',
-      'Item detail view',
-      `Price history tab for ${this.auctionItem.itemID} - ${this.auctionItem.name}`);
-    this.isLoading = true;
-    this.service.getPriceHistory(this.item.id, this.auctionItem.petSpeciesId, this.auctionItem.bonusIds)
-      .then((history) => {
-        this.priceHistory = history;
-        this.setAuctionAndDataset();
-        this.isLoading = false;
-      })
-      .catch((error) => {
-        this.setAuctionAndDataset();
-        this.isLoading = false;
-        this.priceHistory.daily = [];
-        this.priceHistory.hourly = [];
-        ErrorReport.sendHttpError(error);
-      });
+  ngOnChanges({item, auctionItem}: SimpleChanges) {
+    if (auctionItem && auctionItem.currentValue) {
+      const ai = auctionItem.currentValue;
+      this.resetDailyChartData();
+      this.resetHourlyChart();
+
+      Report.debug(
+        'ItemPriceHistoryComponent',
+        'Item detail view',
+        `Price history tab for ${ai.itemID} - ${ai.name}`);
+      this.isLoading = true;
+      this.service.getPriceHistory(this.item.id, ai.petSpeciesId, ai.bonusIds)
+        .then((history) => {
+          this.priceHistory = history;
+          this.setAuctionAndDataset();
+          this.isLoading = false;
+        })
+        .catch((error) => {
+          this.setAuctionAndDataset();
+          this.isLoading = false;
+          this.priceHistory.daily = [];
+          this.priceHistory.hourly = [];
+          ErrorReport.sendHttpError(error);
+        });
+    }
   }
 
   private setAuctionAndDataset() {

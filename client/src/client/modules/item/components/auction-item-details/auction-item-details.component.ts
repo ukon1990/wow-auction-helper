@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SharedService} from '../../../../services/shared.service';
 
@@ -7,12 +7,13 @@ import {SharedService} from '../../../../services/shared.service';
   templateUrl: './auction-item-details.component.html',
   styleUrls: ['./auction-item-details.component.scss']
 })
-export class AuctionItemDetailsComponent implements OnInit {
+export class AuctionItemDetailsComponent implements OnChanges {
   @Input() item: AuctionItem;
 
-  constructor() { }
-
-  ngOnInit() {
+  ngOnChanges({item}: SimpleChanges): void {
+    if (item && item.currentValue) {
+      // TODO: Fetch every version of this item
+    }
   }
 
   isMobile(): boolean {

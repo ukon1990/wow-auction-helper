@@ -90,12 +90,6 @@ export class SharedService {
   public static realms: Map<string, Realm> = new Map<string, Realm>();
   public static userRealms: Array<Realm> = new Array<Realm>();
 
-  /*
-  public static selectedItemId: number;
-  public static selectedPetSpeciesId: AuctionPet;
-  public static selectedSeller: Seller;*/
-
-
   public static itemDashboards: Array<Dashboard> = new Array<Dashboard>();
   public static sellerDashboards: Array<Dashboard> = new Array<Dashboard>();
 

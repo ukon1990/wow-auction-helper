@@ -23,6 +23,9 @@ import {ZoneService} from '../../zone/service/zone.service';
 })
 export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs', {static: false}) tabs;
+  ignoreNextSelectionHistoryFormChange = false;
+  itemSelectionHistoryForm: FormControl = new FormControl(0);
+  selectionHistory: any[] = [];
   expansions = GameBuild.expansionMap;
   targetBuyoutValue: number;
   materialFor: Recipe[] = [];
@@ -76,9 +79,18 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
+
     this.subscriptions.add(
       SharedService.events.detailSelection,
-        item => this.setSelection(item));
+      item => this.setSelection(item));
+
+    this.subscriptions.add(this.itemSelectionHistoryForm.valueChanges, index => {
+      const target = this.selectionHistory[index].auctionItem || this.selectionHistory[index].item;
+      if (this.selectionHistory.length > 1 && !this.ignoreNextSelectionHistoryFormChange) {
+        this.selectionHistory.splice(index, 1);
+      }
+      this.setSelection(target);
+    });
   }
 
   ngOnInit(): void {
@@ -114,6 +126,9 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   setItemData(): void {
+    if (!this.selected.item) {
+      return;
+    }
     const id: number = this.selected.item.id;
     if (!id) {
       return;
@@ -161,7 +176,10 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
 
   setRecipesForItem(): void {
-    this.createdBy = SharedService.itemRecipeMap[this.selected.item.id];
+    this.createdBy = undefined;
+    if (this.selected.item) {
+      this.createdBy = SharedService.itemRecipeMap[this.selected.item.id];
+    }
   }
 
   userHasRecipeForItem(): boolean {
@@ -200,7 +218,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     if (!SharedService.selectedPetSpeciesId) {
       return undefined;
     }*/
-    return ; // TODO: SharedService.pets[SharedService.selectedPetSpeciesId.petSpeciesId];
+    return; // TODO: SharedService.pets[SharedService.selectedPetSpeciesId.petSpeciesId];
   }
 
   /* istanbul ignore next */
@@ -236,13 +254,26 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   private setSelection(item: any) {
+    console.log('this.ignoreNextSelectionHistoryFormChange', this.ignoreNextSelectionHistoryFormChange);
+    if (this.ignoreNextSelectionHistoryFormChange) {
+      this.ignoreNextSelectionHistoryFormChange = false;
+      return;
+    }
+    Report.debug('setSelection', item);
     if (item.auctions) {
       this.selected.auctionItem = item;
       this.selected.item = SharedService.items[item.itemID];
     } else if (item.itemID) {
       this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
       this.selected.item = SharedService.items[item.itemID];
+    } else if (item.id) {
+      this.selected.auctionItem = SharedService.auctionItemsMap[item.id];
+      this.selected.item = SharedService.items[item.id];
     }
+    this.selectionHistory = [{...this.selected}, ...this.selectionHistory];
     this.ngOnInit();
+
+    this.ignoreNextSelectionHistoryFormChange = true;
+    this.itemSelectionHistoryForm.setValue(0);
   }
 }
