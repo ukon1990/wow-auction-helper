@@ -28,9 +28,7 @@
             <span *ngSwitchCase="'name'"
                   [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''"
                   (click)="select(d, c)">
-              <a rel="domain={{ locale }},bonus={{ getBonusList(d) }}{{
-                getWHRelations(d, c)
-                }}"
+              <a wahItemTooltip [item]="d" [rel]="getRelData(c, d)"
                  [routerLink]="getRouterLink(d, c)">
                 <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left"
                           [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"

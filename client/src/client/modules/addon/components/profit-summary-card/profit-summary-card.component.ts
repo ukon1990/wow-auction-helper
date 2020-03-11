@@ -9,15 +9,6 @@ import {ColumnDescription} from '../../../table/models/column-description';
 export class ProfitSummaryCardComponent implements OnInit {
   @Input() userProfit;
 
-  /**
-   avgPrice: 3610950
-   id: 154127
-   maxPrice: 1289625
-   minPrice: 1289625
-   name: "Quick Owlseye"
-   quantity: 10
-   totalPrice: 36109500
-   */
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'quantity', title: 'Quantity', dataType: 'number'},

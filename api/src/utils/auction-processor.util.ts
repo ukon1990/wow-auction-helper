@@ -27,12 +27,18 @@ export class AuctionItemStat {
     }
   }
 
-  static bonusId(ids: Bonus[]): string {
+  static bonusId(ids: Bonus[], alwaysHaveAValue = true): string {
     if (!ids) {
-      return '-1';
+      return alwaysHaveAValue ? '-1' : '';
     }
-    return ids.map(id => id.bonusListId)
-      .sort((a, b) => a - b)
+    return this.bonusIdRaw(ids.map(id => id.bonusListId), alwaysHaveAValue);
+  }
+
+  static bonusIdRaw(ids: number[], alwaysHaveAValue = true): string {
+    if (!ids) {
+      return alwaysHaveAValue ? '-1' : '';
+    }
+    return ids.sort((a, b) => a - b)
       .join(',');
   }
 }
