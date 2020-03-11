@@ -1,9 +1,11 @@
 import {Auction} from './auction.model';
 
 export class AuctionItem {
+  id: string;
   petSpeciesId?: number;
   name = 'Unavailable';
   itemLevel = 0;
+  quality: number;
   buyout = 0;
   bid = 0;
   owner: string;

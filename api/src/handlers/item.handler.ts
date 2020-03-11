@@ -5,16 +5,11 @@ import {Response} from '../utils/response.util';
 import {WoWDBItem} from '../models/item/wowdb';
 import {ItemUtil} from '../utils/item.util';
 import {WoWHeadUtil} from '../utils/wowhead.util';
-import {Endpoints} from '../utils/endpoints.util';
-import {getLocale, LocaleUtil} from '../utils/locale.util';
-import {AuthHandler} from './auth.handler';
-import * as request from 'request';
-import {HttpClientUtil} from '../utils/http-client.util';
+import {LocaleUtil} from '../utils/locale.util';
 import {WoWHead} from '../models/item/wowhead';
 import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
-import {NPCUtil} from '../utils/npc.util';
 import {NpcHandler} from './npc.handler';
 import {AuctionItemStat, AuctionProcessorUtil} from '../utils/auction-processor.util';
 
@@ -234,7 +229,7 @@ export class ItemHandler {
     });
   }
 
-  private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: any[], conn: DatabaseUtil): Promise<any> {
+  private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any> {
     return new Promise((resolve, reject) => {
       const fourteenDays = 60 * 60 * 24 * 1000 * 14;
       conn.query(`SELECT *
@@ -242,7 +237,7 @@ export class ItemHandler {
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)}
+                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
                   AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
         .then((result => {
           resolve(AuctionProcessorUtil.processHourlyPriceData(result));
@@ -254,14 +249,14 @@ export class ItemHandler {
     });
   }
 
-  private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: any[], conn: DatabaseUtil): Promise<any[]> {
+  private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any[]> {
     return new Promise((resolve, reject) => {
       conn.query(`SELECT *
                 FROM itemPriceHistoryPerDay
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = ${AuctionItemStat.bonusId(bonusIds)};`)
+                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`)
         .then((result => {
           resolve(AuctionProcessorUtil.processDailyPriceData(result));
         }))

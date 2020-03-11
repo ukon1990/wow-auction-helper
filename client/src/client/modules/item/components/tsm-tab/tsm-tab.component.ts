@@ -18,10 +18,12 @@ export class TsmTabComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    Report.debug(
-      'TsmTabComponent',
-      'Item detail view',
-      `TSM tab for ${this.auctionItem.itemID} - ${this.auctionItem.name}`);
+    if (this.auctionItem) {
+      Report.debug(
+        'TsmTabComponent',
+        'Item detail view',
+        `TSM tab for ${this.auctionItem.itemID} - ${this.auctionItem.name}`);
+    }
     this.factionId = SharedService.user.faction;
   }
 

@@ -104,7 +104,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   }
 
   isMatch(auctionItem: AuctionItem, changes): boolean {
-    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name, auctionItem.petSpeciesId) &&
+    return Filters.isNameMatch(auctionItem.itemID, this.form.getRawValue().name, auctionItem.petSpeciesId, auctionItem.id) &&
       Filters.isItemClassMatch(
         auctionItem.itemID, this.form.getRawValue().itemClass, changes.itemSubClass) &&
       Filters.isSaleRateMatch(auctionItem.itemID, changes.saleRate) &&

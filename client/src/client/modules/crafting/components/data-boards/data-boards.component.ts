@@ -26,8 +26,7 @@ export class DataBoardsComponent implements OnInit {
   }
 
   setSelectedItem(item: Remains): void {
-    SharedService.selectedItemId = item.id;
-    SharedService.selectedSeller = undefined;
+    SharedService.events.detailSelection = SharedService.items[item.id];
   }
 
   /* istanbul ignore next */
