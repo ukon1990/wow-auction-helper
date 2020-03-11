@@ -99,13 +99,14 @@ export class BackgroundDownloadService {
       this.loadNpc().catch(console.error),
       this.loadRecipes().catch(console.error),
       this.loadZones().catch(console.error),
-      this.loadThirdPartyAPI().catch(console.error)
+      this.loadThirdPartyAPI().catch(console.error),
+      this.itemService.getBonusIds()
     ])
       .catch(console.error);
 
     await this.startRealmStatusInterval();
     const auctions: Auction[] = this.auctionsService.events.list.value;
-    await AuctionUtil.organize(auctions);
+    await AuctionUtil.organize(auctions, this.petService);
     this.auctionsService.reTriggerEvents();
     this.auctionsService.doNotOrganize = false;
     await this.dbService.getAddonData();

@@ -92,9 +92,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private scrollToTheTop() {
     // making sure that we are scrolled back to the correct position after opening the detail panel
+    /* TODO: Remove if it actually isnt needed
     if (!this.isPanelOpen()) {
       window.scroll(0, SharedService.preScrollPosition);
-    }
+    }*/
   }
 
   private setLocale() {
@@ -152,12 +153,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  isPanelOpen(): boolean {
-    return SharedService.selectedSeller !== undefined ||
-      SharedService.selectedItemId !== undefined ||
-      SharedService.selectedPetSpeciesId !== undefined;
-  }
-
   isStandalone(): boolean {
     return window.navigator['standalone'] || window.matchMedia('(display-mode: standalone)').matches;
   }
@@ -165,15 +160,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
-  }
-
-  /* istanbul ignore next */
-  isItemSelected(): boolean {
-    return !!SharedService.selectedItemId;
-  }
-
-  /* istanbul ignore next */
-  isSellerSelected(): boolean {
-    return !!SharedService.selectedSeller;
   }
 }

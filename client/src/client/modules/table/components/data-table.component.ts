@@ -1,13 +1,11 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {PageEvent} from '@angular/material';
-import {ItemService} from '../../../services/item.service';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription} from '../models/column-description';
 import {Sorter} from '../../../models/sorter';
 import {Auction} from '../../auction/models/auction.model';
 import {SharedService} from '../../../services/shared.service';
-import {Seller} from '../../sellers/models/seller.model';
 import {AuctionPet} from '../../auction/models/auction-pet.model';
 import {CustomPrices} from '../../crafting/models/custom-price';
 import {Recipe} from '../../crafting/models/recipe';
@@ -132,13 +130,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   select(item, column: ColumnDescription): void {
-    SharedService.selectedItemId = undefined;
-    SharedService.selectedPetSpeciesId = undefined;
-    SharedService.selectedSeller = undefined;
     const type = this.getColumnLinkType(column);
 
     if (this.id === 'name') {
-      this.setSelectedSeller(item);
     } else {
       switch (type) {
         case 'npc':
@@ -187,19 +181,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   /* istanbul ignore next */
-  setSelectedSeller(seller: Seller) {
-    Report.debug('Clicked seller', seller);
-    SharedService.preScrollPosition = window.scrollY;
-    SharedService.selectedSeller = SharedService.sellersMap[seller.name];
-    SharedService.events.detailPanelOpen.emit(true);
-  }
-
-  /* istanbul ignore next */
   setSelectedItem(item: any, column: ColumnDescription): void {
     SharedService.preScrollPosition = window.scrollY;
-    SharedService.selectedItemId = this.getItemID(item, column);
+    SharedService.events.detailSelection.emit(item);
     this.setSelectedPet(item);
-    ItemService.itemSelection.emit(SharedService.selectedItemId);
     SharedService.events.detailPanelOpen.emit(true);
     Report.debug('clicked', item);
   }
@@ -208,7 +193,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   setSelectedPet(pet: any) {
     if (pet.petSpeciesId) {
       const id = new AuctionPet(pet.petSpeciesId, pet.petLevel, pet.petQualityId);
-      SharedService.selectedPetSpeciesId = id;
+      // SharedService.selectedPetSpeciesId = id;
     }
   }
 
@@ -358,12 +343,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
    * Gets a string of the relevant relations for an item
    *
    * @param {*} item
+   * @param column
    * @returns {string}
    * @memberof DataTableComponent
    */
   getWHRelations(item: any, column: ColumnDescription): string {
-    if (item.petSpeciesId) {
-      return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
+    if (item.petSpeciesId || item.speciesId) {
+      return 'npc=' + (item.creatureId ? item.creatureId : this.getPetId(item));
     }
     const type = this.getColumnLinkType(column);
     return (type ?
@@ -452,5 +438,22 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.lastCharacterTyped = undefined;
       }
     }, interval);
+  }
+
+  getRelData(column: ColumnDescription, data: any) {
+    const whRelations = this.getWHRelations(data, column),
+      bonusIds = this.getBonusList(data);
+    const result = [];
+    if (this.locale) {
+      result.push(`domain=${this.locale}`);
+    }
+    if (bonusIds) {
+      result.push(`bonus=${bonusIds}`);
+    }
+
+    if (whRelations) {
+      result.push(whRelations);
+    }
+    return result.join(',');
   }
 }

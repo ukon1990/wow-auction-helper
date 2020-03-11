@@ -23,15 +23,18 @@ export class PetUtil {
     petRaw.name.pl_PL = petRaw.name.en_GB;
     return {
       speciesId: petRaw.id,
-      petTypeId: petRaw.petTypeId,
-      creatureId: petRaw.creatureId,
+      petTypeId: -1, // TODO: Re-map typeId! petRaw.battle_pet_type.TYPE,
+      creatureId: petRaw.creature.id,
       name: petRaw.name[locale],
-      nameLocales: petRaw.name,
+      nameLocales: {
+        speciesId: petRaw.id,
+        ...petRaw.name
+      },
       canBattle: petRaw.is_battlepet,
       isCapturable: petRaw.is_capturable,
       isTradable: petRaw.is_tradable,
       icon: GameMediaUtil.getRawIconFileName(petRaw.icon, region),
-      description: petRaw.description,
+      description: petRaw.description['en_GB'],
       source: petRaw.source.type
     } as Pet;
   }
