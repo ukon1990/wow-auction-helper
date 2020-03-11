@@ -41,6 +41,12 @@ export class AuctionHandler {
     }
   }
 
+  /*
+  *  TODO: Update "is new version available check
+  *  TODO: Add a new column in DB, with connected realm ID
+  *  TODO: Use the existing event upon new file flow
+  * */
+
   // TODO: Modify last modified to look like: 'Fri, 21 Feb 2020 21:41:25 GMT'
   async getAuctionDumpV2(id: number, region: string, locale: string, lastModified: number) {
     return new Promise((resolve, reject) => {
@@ -51,7 +57,7 @@ export class AuctionHandler {
             .then(() => {
               const url = new Endpoints().getPath(`connected-realm/${id}/auctions?namespace=dynamic-${
                 region}&locale=${locale}`, region, true);
-                console.log('URL', url);
+              console.log('URL', url);
               new HttpClientUtil().get(url, true, {
                 'If-Modified-Since': lastModified
               })
