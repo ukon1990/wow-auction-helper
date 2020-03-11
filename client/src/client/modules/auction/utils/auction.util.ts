@@ -15,13 +15,13 @@ import {AuctionItemStat, AuctionProcessorUtil} from '../../../../../../api/src/u
 import {ItemService} from '../../../services/item.service';
 
 export class AuctionUtil {
+  private static missingPetMap = {};
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
    * @param auctions A raw auction array
    */
   public static organize(auctions: Array<Auction>, petService?: PetsService): Promise<any> {
-    console.log('Bonuses', SharedService.bonusIdMap);
     return new Promise<AuctionItem[]>((resolve, reject) => {
       try {
         const t0 = performance.now();
@@ -160,7 +160,15 @@ export class AuctionUtil {
   }
 
   private static isPetMissing(a, petService: PetsService) {
-    return !SharedService.pets[a.petSpeciesId] && petService;
+    const isMissing = !SharedService.pets[a.petSpeciesId] && petService;
+    if (isMissing && !this.missingPetMap[a.petSpeciesId]) {
+      petService.getPet(a.petSpeciesId)
+        .then(() =>
+          this.missingPetMap[a.petSpeciesId] = a.petSpeciesId)
+        .catch(() =>
+          this.missingPetMap[a.petSpeciesId] = a.petSpeciesId);
+    }
+    return isMissing;
   }
 
   private static getItemName(auction: Auction, useSuffix = true): string {

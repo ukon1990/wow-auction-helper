@@ -106,7 +106,7 @@ export class BackgroundDownloadService {
 
     await this.startRealmStatusInterval();
     const auctions: Auction[] = this.auctionsService.events.list.value;
-    await AuctionUtil.organize(auctions);
+    await AuctionUtil.organize(auctions, this.petService);
     this.auctionsService.reTriggerEvents();
     this.auctionsService.doNotOrganize = false;
     await this.dbService.getAddonData();
