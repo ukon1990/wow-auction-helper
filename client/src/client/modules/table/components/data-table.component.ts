@@ -343,12 +343,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
    * Gets a string of the relevant relations for an item
    *
    * @param {*} item
+   * @param column
    * @returns {string}
    * @memberof DataTableComponent
    */
   getWHRelations(item: any, column: ColumnDescription): string {
-    if (item.petSpeciesId) {
-      return 'npc=' + item.creatureId ? item.creatureId : this.getPetId(item);
+    if (item.petSpeciesId || item.speciesId) {
+      return 'npc=' + (item.creatureId ? item.creatureId : this.getPetId(item));
     }
     const type = this.getColumnLinkType(column);
     return (type ?
@@ -437,5 +438,22 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.lastCharacterTyped = undefined;
       }
     }, interval);
+  }
+
+  getRelData(column: ColumnDescription, data: any) {
+    const whRelations = this.getWHRelations(data, column),
+      bonusIds = this.getBonusList(data);
+    const result = [];
+    if (this.locale) {
+      result.push(`domain=${this.locale}`);
+    }
+    if (bonusIds) {
+      result.push(`bonus=${bonusIds}`);
+    }
+
+    if (whRelations) {
+      result.push(whRelations);
+    }
+    return result.join(',');
   }
 }

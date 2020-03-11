@@ -15,6 +15,7 @@ import {Pet} from '../../pet/models/pet';
 import {ItemNpcDetails} from '../models/item-npc-details.model';
 import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
+import {AuctionItem} from '../../auction/models/auction-item.model';
 
 @Component({
   selector: 'wah-item',
@@ -36,7 +37,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   selected = {
     item: undefined,
     auctionItem: undefined,
-    seller: undefined
+    seller: undefined,
+    pet: undefined
   };
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
@@ -214,11 +216,12 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   /* istanbul ignore next */
-  getPet(): Pet {/*
-    if (!SharedService.selectedPetSpeciesId) {
+  getPet(): Pet {
+    const speciesId = (this.selected.auctionItem as AuctionItem).petSpeciesId;
+    if (!speciesId) {
       return undefined;
-    }*/
-    return; // TODO: SharedService.pets[SharedService.selectedPetSpeciesId.petSpeciesId];
+    }
+    return SharedService.pets[speciesId];
   }
 
   /* istanbul ignore next */
@@ -259,21 +262,49 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       this.ignoreNextSelectionHistoryFormChange = false;
       return;
     }
+    this.selected.pet = undefined;
+
     Report.debug('setSelection', item);
     if (item.auctions) {
-      this.selected.auctionItem = item;
-      this.selected.item = SharedService.items[item.itemID];
+      this.handleAuctionItem(item);
     } else if (item.itemID) {
-      this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
-      this.selected.item = SharedService.items[item.itemID];
+      this.handleItemWithItemID(item);
     } else if (item.id) {
-      this.selected.auctionItem = SharedService.auctionItemsMap[item.id];
-      this.selected.item = SharedService.items[item.id];
+      this.handleItemWithId(item);
+    } else if (item.speciesId) {
+      this.handlePet(item);
     }
     this.selectionHistory = [{...this.selected}, ...this.selectionHistory];
     this.ngOnInit();
 
     this.ignoreNextSelectionHistoryFormChange = true;
     this.itemSelectionHistoryForm.setValue(0);
+  }
+
+  private handleAuctionItem(item: any) {
+    this.selected.auctionItem = item;
+    this.selected.item = SharedService.items[item.itemID];
+    this.selected.pet = SharedService.pets[item.petSpeciesId];
+  }
+
+  private handleItemWithItemID(item: any) {
+    this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
+    this.selected.item = SharedService.items[item.itemID];
+  }
+
+  private handleItemWithId(item: any) {
+    this.selected.auctionItem = SharedService.auctionItemsMap[item.id];
+    this.selected.item = SharedService.items[item.id];
+  }
+
+  private handlePet(item: any) {
+    this.selected.pet = SharedService.pets[item.speciesId];
+    for (let i = 0, length = SharedService.auctionItems.length; i < length; i++) {
+      if (SharedService.auctionItems[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
+        this.selected.auctionItem = SharedService.auctionItems[i];
+        this.selected.item = SharedService.items[this.selected.auctionItem.itemID];
+        return;
+      }
+    }
   }
 }

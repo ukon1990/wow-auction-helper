@@ -15,6 +15,7 @@ export class WowheadDirective {
   }
 
   @HostListener('mouseenter') getTooltip() {
+    /* TODO: Fix custom tooltip
     console.log('Item is', this.item);
     let id, bonusIds;
     if ((this.item as AuctionItem)) {
@@ -26,9 +27,10 @@ export class WowheadDirective {
     }
 
     if (id) {
+      //
       this.service.getTooltip(id, bonusIds)
         .then(console.log)
         .catch(console.error);
-    }
+    }*/
   }
 }
