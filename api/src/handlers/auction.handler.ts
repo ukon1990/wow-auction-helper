@@ -33,14 +33,6 @@ export class AuctionHandler {
     });
   }
 
-  async post(region: string, realm: string, timestamp: number, url: string): Promise<any> {
-    if (url) {
-      return this.getAuctionDump(url);
-    } else {
-      return this.latestDumpPathRequest(region, realm, timestamp);
-    }
-  }
-
   /*
   *  TODO: Update "is new version available check
   *  TODO: Add a new column in DB, with connected realm ID
@@ -77,7 +69,7 @@ export class AuctionHandler {
     });
   }
 
-  async latestDumpPathRequest(region: string, realm: string, timestamp: number) {
+  async latestDumpPathRequest(connectedId, region: string, realm: string, timestamp: number) {
     return new Promise<any>(async (resolve, reject) => {
       if (region && realm) {
         let apiResponse;
@@ -86,7 +78,7 @@ export class AuctionHandler {
           .then(token => BLIZZARD.ACCESS_TOKEN = token)
           .catch(() => console.error('Unable to fetch token'));
 
-        apiResponse = await this.getLatestDumpPath(region, realm)
+        apiResponse = await this.getLatestDumpPath(connectedId, region)
           .then(response => apiResponse = response)
           .catch(() => console.error('Unable to fetch data'));
 
@@ -101,7 +93,7 @@ export class AuctionHandler {
     return new Promise<any>((resolve, reject) => {
       if (url) {
         this.downloadDump(url)
-          .then(({body}) => resolve(body))
+          .then(({body}) => resolve({auctions: AuctionTransformerUtil.transform(body)}))
           .catch(reject);
       } else {
         reject('Could not get the auction dump, no URL were provided');
@@ -109,7 +101,24 @@ export class AuctionHandler {
     });
   }
 
-  private getLatestDumpPath(region: string, realm: string): Promise<AHDumpResponse> {
+  getLatestDumpPath(id: number, region: string): Promise<AHDumpResponse> {
+    return new Promise<AHDumpResponse>((resolve, reject) => {
+      const url = new Endpoints().getPath(`connected-realm/${id}/auctions`, region, true, 'dynamic');
+      new HttpClientUtil().get(url, false, {
+        'If-Modified-Since': 'Sat, 14 Mar 3000 20:07:10 GMT'
+      })
+        .then(({headers}) => {
+          const newLastModified = headers['last-modified'];
+          resolve({
+            lastModified: +new Date(newLastModified),
+            url: url.replace(`access_token=${BLIZZARD.ACCESS_TOKEN}&`, '')
+          });
+        })
+        .catch(reject);
+    });
+  }
+
+  getLatestDumpPathOld(region: string, realm: string): Promise<AHDumpResponse> {
     const url = new Endpoints().getPath(`auction/data/${realm}`, region);
     return new Promise<AHDumpResponse>((resolve, reject) => {
       request.get(
@@ -200,21 +209,21 @@ export class AuctionHandler {
 
   private downloadDump(url: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      request.get(url,
-        (error, response, body) => {
-          if (error || !response) {
-            console.log('Could not download AH dump', error);
-            reject(error);
+      new HttpClientUtil().get(`${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`)
+        .then(({body}) => {
+          if (body) {
+            console.log('Successfully downloaded AH dump');
+            resolve({auctions: AuctionTransformerUtil.transform(body)});
           } else {
-            try {
-              response['body'] = JSON.parse(body);
-              console.log('Successfully downloaded AH dump');
-              resolve(response);
-            } catch (exception) {
-              console.log('Could not turn AH dump to JSON', exception);
-              reject(exception);
-            }
+            reject({
+              message: 'The body was empty, so there is likely no new data',
+              url
+            });
           }
+        })
+        .catch(err => {
+          console.error('Could not download AH dump with url:', url, err);
+          reject(err);
         });
     });
   }
@@ -286,25 +295,28 @@ export class AuctionHandler {
 
   async updateHouseRequest(event: APIGatewayEvent, callback: Callback) {
     const body = JSON.parse(event.body);
-    Response.send({
-      message: 'started updateHouseRequest',
-      request: body
-    }, callback);
 
     await AuthHandler.getToken()
       .catch(console.error);
 
-    this.updateHouse(body)
+    await this.updateHouse(body)
       .then(() => {
       })
       .catch(console.error);
+
+    Response.send({
+      message: 'started updateHouseRequest',
+      request: body
+    }, callback);
   }
 
-  private async updateHouse(dbResult: { id, region, slug, name, lastModified, url, lowestDelay, avgDelay, highestDelay }): Promise<any> {
+  private async updateHouse({
+                              id, connectedId, region, slug, name, lastModified, url, lowestDelay, avgDelay, highestDelay
+                            }): Promise<any> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
       const startGetDumpPath = +new Date();
-      await this.getLatestDumpPath(dbResult.region, dbResult.slug)
+      await this.getLatestDumpPath(connectedId, region)
         .then((r: AHDumpResponse) =>
           ahDumpResponse = r)
         .catch(e => {
@@ -312,10 +324,10 @@ export class AuctionHandler {
         });
       console.log(`Fetching ah dump url took ${+new Date() - startGetDumpPath}ms`, ahDumpResponse);
 
-      if (!error && ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
+      if (!error && ahDumpResponse && ahDumpResponse.lastModified > lastModified) {
         console.log('Starting upload');
-        new S3Handler().save(ahDumpResponse, `auctions/${dbResult.region}/${dbResult.id}/dump-path.json.gz`,
-          {region: dbResult.region})
+        new S3Handler().save(ahDumpResponse, `auctions/${region}/${id}/dump-path.json.gz`,
+          {region})
           .then((res) => {
             console.log('Successfully uploaded:', res);
             resolve();
@@ -325,7 +337,7 @@ export class AuctionHandler {
             reject(err);
           });
       } else if (error) {
-        console.error(`Could not update id=${dbResult.id}`, error);
+        console.error(`Could not update id=${id}`, error);
         reject(error);
       } else {
         console.log('No new update available');

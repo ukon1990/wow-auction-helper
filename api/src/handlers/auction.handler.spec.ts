@@ -11,6 +11,18 @@ describe('AuctionHandler', () => {
   beforeEach(() => environment.test = false);
   afterEach(() => environment.test = true);
 
+  describe('getLatestDumpPathV2', () => {
+    it('Can convert game data response to the old type', async () => {
+      await AuthHandler.getToken();
+      const handler = new AuctionHandler(),
+        region = 'eu',
+        newPath = await handler.getLatestDumpPath(1403, region),
+        oldPath = await handler.getLatestDumpPathOld(region, 'draenor');
+      console.log(newPath);
+      expect(newPath.lastModified).toEqual(oldPath.lastModified);
+    });
+  });
+
   describe('getUpdateLog', () => {
     it('Can get the last 3 hours', async () => {
       const log: AuctionUpdateLog = await new AuctionHandler().getUpdateLog(69, 3);
@@ -31,7 +43,7 @@ describe('AuctionHandler', () => {
     });
   });
 
-  it('can add daily data from hourly', async () => {
+  xit('can add daily data from hourly', async () => {
     jest.setTimeout(1000000000);
     const conn = new DatabaseUtil(false);
     const promiseThrottle = new PromiseThrottle({
@@ -42,20 +54,20 @@ describe('AuctionHandler', () => {
     let processed = 0;
     const date = '2020-02-05'; // 02-04
     for (let id = 1; id <= 260; id++) {// 242
-        promises.push(promiseThrottle.add(() =>
-          new Promise((resolve) => {
-            new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
-              .then(() => {
-                processed++;
-                console.log(`Processed count: ${processed} of ${260}`);
-                resolve();
-              })
-              .catch((error) => {
-                processed++;
-                console.error(`ah=${id} date=${date}`, error);
-                resolve();
-              });
-          })));
+      promises.push(promiseThrottle.add(() =>
+        new Promise((resolve) => {
+          new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
+            .then(() => {
+              processed++;
+              console.log(`Processed count: ${processed} of ${260}`);
+              resolve();
+            })
+            .catch((error) => {
+              processed++;
+              console.error(`ah=${id} date=${date}`, error);
+              resolve();
+            });
+        })));
     }
 
     await Promise.all(promises)
