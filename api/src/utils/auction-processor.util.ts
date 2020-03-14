@@ -3,7 +3,6 @@
   Is to gather price statistics for the lowest, highest and avg prices
 */
 import {Auction} from '../models/auction/auction';
-import {QueryUtil} from './query.util';
 import {AuctionQuery} from '../queries/auction.query';
 
 class Bonus {

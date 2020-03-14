@@ -36,8 +36,20 @@ export class RealmQuery {
               "${realm.locale}");`;
   }
 
+  static getAllMinimal(): string {
+    return `SELECT ah.id as id, region, slug, connectedId
+            FROM auction_houses as ah
+            LEFT OUTER JOIN (
+              SELECT ahId, slug, name
+              FROM auction_house_realm
+              GROUP BY ahId) as realm
+            ON ah.id = realm.ahId
+            WHERE ah.id = realm.ahId AND connectedId IS NULL
+            ORDER BY lastRequested DESC;`;
+  }
+
   static getAll(): string {
-    return `SELECT ahId, region, slug, name, battlegroup, locale, timezone, ah.url as url,
+    return `SELECT ahId, connectedId, region, slug, name, battlegroup, locale, timezone, ah.url as url,
                    ah.lastModified as lastModified, lowestDelay, avgDelay, highestDelay,
        ah.size as size, tsm.url as tsmUrl, ah.autoUpdate as autoUpdate
             FROM auction_house_realm AS realm
@@ -49,7 +61,7 @@ export class RealmQuery {
   }
 
   static getAllHouses(): string {
-    return `SELECT ah.id as id, region, slug, name, url, lastModified, lowestDelay, avgDelay, highestDelay
+    return `SELECT ah.id, connectedId as id, region, slug, name, url, lastModified, lowestDelay, avgDelay, highestDelay
             FROM auction_houses as ah
             LEFT OUTER JOIN (
                 SELECT ahId, slug, name
@@ -65,7 +77,7 @@ export class RealmQuery {
   static getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay() {
     /* Not doing "AND isUpdating = 0" as the lambda will time out after 30 seconds and the update check interval is once per minute... */
     const hours = 4; // old: 24
-    return `SELECT ah.id as id, region, slug, name, url, lastModified,
+    return `SELECT ah.id as id, connectedId, region, slug, name, url, lastModified,
                 lowestDelay, avgDelay, highestDelay, (${+new Date()} - lastModified) / 60000 as timeSince
             FROM auction_houses as ah
             LEFT OUTER JOIN (
@@ -116,7 +128,7 @@ export class RealmQuery {
   }
 
   static getHouse(id: number, limit = 1): string {
-    return `SELECT ahId as id, region, slug, name, battlegroup, locale, timezone, url, lastModified
+    return `SELECT ahId as id, connectedId, region, slug, name, battlegroup, locale, timezone, url, lastModified
             FROM auction_house_realm as realm
             LEFT OUTER JOIN auction_houses as ah
             ON ah.id = realm.ahId
@@ -125,7 +137,7 @@ export class RealmQuery {
   }
 
   static getHouseForRealm(region: string, realmSlug: string): string {
-    return `SELECT ah.id as id, region, ah.url as url, tsm.url as tsmUrl, ah.lastModified as lastModified,
+    return `SELECT ah.id as id, connectedId, region, ah.url as url, tsm.url as tsmUrl, ah.lastModified as lastModified,
                     isUpdating, isActive, autoUpdate, size, lowestDelay, avgDelay, highestDelay, firstRequested, lastRequested
             FROM auction_houses as ah
               LEFT OUTER JOIN tsmDump as tsm
