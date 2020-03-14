@@ -4,6 +4,7 @@ import {S3Handler} from './s3.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {environment} from '../../../client/src/environments/environment';
 import {AuthHandler} from './auth.handler';
+import {BLIZZARD} from '../secrets';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -18,7 +19,7 @@ describe('AuctionHandler', () => {
         region = 'eu',
         newPath = await handler.getLatestDumpPath(1403, region),
         oldPath = await handler.getLatestDumpPathOld(region, 'draenor');
-      console.log(newPath);
+      console.log(newPath, BLIZZARD);
       expect(newPath.lastModified).toEqual(oldPath.lastModified);
     });
   });

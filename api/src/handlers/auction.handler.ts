@@ -172,12 +172,18 @@ export class AuctionHandler {
   }
 
   private downloadDump(url: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      new HttpClientUtil().get(`${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`)
-        .then(({body}) => {
+    return new Promise<any>(async (resolve, reject) => {
+      await AuthHandler.getToken();
+      const fullUrl = `${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
+      console.log('Full dump URL', fullUrl);
+      new HttpClientUtil().get(fullUrl)
+        .then(({body, headers}) => {
+          console.log('Header', headers);
           if (body) {
-            console.log('Successfully downloaded AH dump');
-            resolve({auctions: AuctionTransformerUtil.transform(body)});
+            const data = {auctions: AuctionTransformerUtil.transform(body)};
+            if (data && data.auctions.length) {
+              resolve(data);
+            }
           } else {
             reject({
               message: 'The body was empty, so there is likely no new data',
@@ -315,24 +321,32 @@ export class AuctionHandler {
     console.log(`Downloading dump for ${id} with url=${ahDumpResponse.url}`);
     return new Promise((resolve, reject) => {
       this.downloadDump(ahDumpResponse.url)
-        .then(async r => {
-          console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
-          this.sendToS3(
-            r.body, region, id,
-            ahDumpResponse.lastModified)
-            .then(async (res) => {
-              console.log('Successfully uploaded to bucket for id=', id);
-              resolve(res);
-              // await this.setIsUpdating(dbResult.id, false);
-            })
-            .catch(async err => {
-              console.error('Could not upload to s3', err);
-              //  await this.setIsUpdating(dbResult.id, false);
-            });
+        .then(async (body) => {
+          console.log('Body', body);
+          if (body && body.auctions) {
+            console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
+            this.sendToS3(
+              body, region, id,
+              ahDumpResponse.lastModified)
+              .then(async (res) => {
+                console.log('Successfully uploaded to bucket for id=', id);
+                resolve(res);
+                // await this.setIsUpdating(dbResult.id, false);
+              })
+              .catch(async err => {
+                console.error('Could not upload to s3', err);
+                //  await this.setIsUpdating(dbResult.id, false);
+              });
+          } else {
+            const message = 'The body was empty.';
+            console.log(message);
+            reject({message });
+          }
         })
         .catch(e => {
           // this.setIsUpdating(dbResult.id, false)
           //   .catch(console.error);
+          console.error('downloadDump', e);
           reject(e);
         });
     });
@@ -424,10 +438,14 @@ export class AuctionHandler {
         await this.updateDBEntries(record, region, +ahId, fileName, conn)
           .catch(console.error);
         await Promise.all([
-          this.updateAllStatuses(region, conn),
-          this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
+          this.updateAllStatuses(region, conn)
+            .catch(err => console.error('Could not updateAllStatuses', err)),
+          this.createLastModifiedFile(+ahId, region)
+            .catch(err => console.error('Could not createLastModifiedFile', err)),
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId)
+            .catch(err => console.error('Could not copyAuctionsToNewFile', err)),
           this.processAuctions(region, record, +ahId, fileName, conn)
+            .catch(err => console.error('Could not processAuctions', err))
             .catch(console.error)
         ])
           .catch(console.error);
@@ -439,6 +457,7 @@ export class AuctionHandler {
 
   async processAuctions(region: string, record: EventSchema, ahId: number, fileName: string, conn = new DatabaseUtil()) {
     return new Promise<void>((resolve, reject) => {
+      console.log('processAuctions', record);
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
           const processStart = +new Date();

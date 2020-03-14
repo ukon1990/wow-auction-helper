@@ -17,10 +17,14 @@ export class GzipUtil {
   decompress(input: Buffer): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       zlib.gunzip(input, (error, data) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(JSON.parse(data.toString()));
+        try {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(JSON.parse(data.toString()));
+          }
+        } catch (e) {
+          reject(e);
         }
       });
     });
