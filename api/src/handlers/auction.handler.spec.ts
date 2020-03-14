@@ -1,10 +1,9 @@
 import {AuctionHandler} from './auction.handler';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
-import {DateUtil} from '@ukon1990/js-utilities';
 import {S3Handler} from './s3.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {environment} from '../../../client/src/environments/environment';
-import {NPCUtil} from '../utils/npc.util';
+import {AuthHandler} from './auth.handler';
 
 const PromiseThrottle: any = require('promise-throttle');
 
