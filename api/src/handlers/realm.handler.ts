@@ -9,7 +9,6 @@ import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {S3Handler} from './s3.handler';
-import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
 import {GzipUtil} from '../utils/gzip.util';
 import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/models/auction-house-status.model';
 
