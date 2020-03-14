@@ -19,17 +19,6 @@ provider:
     lambda: true
 
 functions:
-  auctions:
-    tags:
-      FunctionName: Wah-auctions
-    handler: src/controllers/auction.handler
-    memorySize: 512
-    events:
-      - http:
-          method: post
-          path: auction
-          cors:
-            origin: '*'
   auctionUpdateLogForRealm:
     tags:
       FunctionName: Wah-auctionUpdateLogForRealm
