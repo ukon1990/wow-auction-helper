@@ -13,13 +13,20 @@ export class HttpClientUtil {
         },
         (error, response, body) => {
           try {
-            if (expectJSON) {
-              response.body = JSON.parse(body);
+
+            if (!error && response.statusCode === 304) {
+              resolve(response);
+              return;
             }
 
             if (error || !body || response.statusCode === 404) {
               reject(error);
               console.log('Http error for', url, error);
+              return;
+            }
+
+            if (expectJSON) {
+              response.body = JSON.parse(body);
             }
             resolve(response);
           } catch (e) {
@@ -32,8 +39,8 @@ export class HttpClientUtil {
   head(url: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       request({
-        method: 'HEAD',
-        url,
+          method: 'HEAD',
+          url,
         },
         (error, response) => {
           try {
