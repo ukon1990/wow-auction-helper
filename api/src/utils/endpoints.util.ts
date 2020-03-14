@@ -64,15 +64,15 @@ export class Endpoints {
     return region ? this.COMMUNITY_ENDPOINT[region] : this.COMMUNITY_ENDPOINT.eu;
   }
 
-  getPath(query: string, region?: string, isGameData?: boolean): string {
+  getPath(query: string, region?: string, isGameData?: boolean, namespaceType?: string): string {
     if (isGameData) {
-      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region);
+      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region, namespaceType);
     }
-    return this.getBase(region) + this.addQueriesToQueries(query);
+    return this.getBase(region) + this.addQueriesToQueries(query, undefined, namespaceType);
   }
 
-  private addQueriesToQueries(query: string, region?: string): string {
-    const namespace = region ? `&namespace=static-${region}` : '';
+  private addQueriesToQueries(query: string, region?: string, namespaceType?: string,): string {
+    const namespace = region ? `&namespace=${namespaceType || 'static'}-${region}` : '';
     const base = `access_token=${BLIZZARD.ACCESS_TOKEN}${namespace}`;
     if (query.indexOf('?') > -1) {
       return `${query}&${base}`;
