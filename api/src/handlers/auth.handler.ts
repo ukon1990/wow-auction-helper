@@ -1,6 +1,6 @@
-import * as http from "request";
-import { BLIZZARD, AWS_DETAILS } from "../secrets";
-import { APIGatewayEvent } from "aws-lambda";
+import * as http from 'request';
+import { BLIZZARD, AWS_DETAILS } from '../secrets';
+import { APIGatewayEvent } from 'aws-lambda';
 
 export class AuthHandler {
   public static getToken(): Promise<string> {
@@ -28,8 +28,8 @@ export class AuthHandler {
 
   public static isAuthorizedIdentity(event: APIGatewayEvent): boolean {
     const requestIp = event.requestContext.identity.sourceIp,
-      localIp = "127.0.0.1";
-    const requestDomain = event.requestContext["domainName"],
+      localIp = '127.0.0.1';
+    const requestDomain = event.requestContext['domainName'],
       allowedDomain = AWS_DETAILS.ALLOWED_DOMAIN;
 
     return true;
