@@ -45,7 +45,7 @@ functions:
     tags:
       FunctionName: Wah-updateAllHouses
     handler: src/controllers/auction.updateAll
-    memorySize: 200
+    memorySize: 256
     timeout: 59
 
   deactivateInactiveHouses:

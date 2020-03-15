@@ -198,19 +198,17 @@ export class AuctionHandler {
     });
   }
 
-  async updateAllHouses(region: string): Promise<any> {
+  async updateAllHouses(region: string, conn: DatabaseUtil): Promise<any> {
     await AuthHandler.getToken()
       .catch(console.error);
     console.log('Starting AH updates');
 
-    return new Promise((resolve, reject) => {
-      const conn = new DatabaseUtil();
-
+    return new Promise(async (resolve, reject) => {
       conn.query(RealmQuery
         .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 1,
+              requestsPerSecond: 2,
               promiseImplementation: Promise
             }),
             promises = [];
@@ -224,7 +222,7 @@ export class AuctionHandler {
             this.addUpdateHousePromise(promises, promiseThrottle, row);
           });
 
-          Promise.all(promises)
+          await Promise.all(promises)
             .then(() =>
               console.log('Done initiating AH updates'))
             .catch(console.error);
@@ -403,10 +401,9 @@ export class AuctionHandler {
     });
   }
 
-  updateStaticS3Data(records: EventRecord[]) {
+  updateStaticS3Data(records: EventRecord[], conn: DatabaseUtil) {
     return new Promise(async (resolve) => {
-      const conn = new DatabaseUtil(false),
-        promises = [];
+      const promises = [];
       for (const record of records) {
         promises.push(this.processS3Record(record.s3, conn));
       }
@@ -416,7 +413,6 @@ export class AuctionHandler {
         .catch(err => {
           console.error('One or more of the records failed', err);
         });
-      conn.end();
       resolve();
     });
   }
