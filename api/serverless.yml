@@ -35,7 +35,7 @@ functions:
       FunctionName: Wah-auctionsDownloadAndSave
     handler: src/controllers/auction.auctionsDownloadAndSave
     memorySize: 350
-    timeout: 50
+    timeout: 59
   auctionsUpdateStaticS3Data:
     tags:
       FunctionName: Wah-auctions
@@ -45,7 +45,8 @@ functions:
     tags:
       FunctionName: Wah-updateAllHouses
     handler: src/controllers/auction.updateAll
-    memorySize: 200
+    memorySize: 256
+    timeout: 59
 
   deactivateInactiveHouses:
     tags:
