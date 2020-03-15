@@ -89,7 +89,7 @@ export class RealmQuery {
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / ${hours} > 1
             ORDER BY (${+new Date()} - lastModified) / 60000 desc
-            LIMIT 10;`;
+            LIMIT 50;`;
 
     /**
      AND (autoUpdate = 1

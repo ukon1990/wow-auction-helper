@@ -204,12 +204,13 @@ export class AuctionHandler {
     console.log('Starting AH updates');
 
     return new Promise((resolve, reject) => {
-      new DatabaseUtil()
-        .query(RealmQuery
-          .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
+      const conn = new DatabaseUtil();
+
+      conn.query(RealmQuery
+        .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 5,
+              requestsPerSecond: 1,
               promiseImplementation: Promise
             }),
             promises = [];
@@ -250,17 +251,9 @@ export class AuctionHandler {
       });
   }
 
-  private addUpdateHousePromise(promises, promiseThrottle, row) {
+  private addUpdateHousePromise(promises: Promise<any>[], promiseThrottle, row) {
     promises.push(
-      promiseThrottle.add(
-        new HttpClientUtil()
-          .post
-          .bind(
-            this,
-            new Endpoints()
-              .getLambdaUrl('auction/update-one', row.region),
-            row,
-            true)));
+      promiseThrottle.add(this.updateHouse.bind(this, row)));
   }
 
   async updateHouseRequest(event: APIGatewayEvent, callback: Callback) {
@@ -280,9 +273,7 @@ export class AuctionHandler {
     }, callback);
   }
 
-  private async updateHouse({
-                              id, connectedId, region, slug, name, lastModified, url, lowestDelay, avgDelay, highestDelay
-                            }): Promise<any> {
+  private async updateHouse({id, connectedId, region, lastModified}): Promise<any> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
       const startGetDumpPath = +new Date();
@@ -340,7 +331,7 @@ export class AuctionHandler {
           } else {
             const message = 'The body was empty.';
             console.log(message);
-            reject({message });
+            reject({message});
           }
         })
         .catch(e => {
@@ -413,23 +404,28 @@ export class AuctionHandler {
   }
 
   updateStaticS3Data(records: EventRecord[]) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
+      const conn = new DatabaseUtil(false),
+        promises = [];
       for (const record of records) {
-        try {
-          await this.processS3Record(record.s3);
-        } catch (e) {
-        }
+        promises.push(this.processS3Record(record.s3, conn));
       }
+      await Promise.all(promises)
+        .then(() =>
+          console.log(`Successfully processed ${records.length} records.`))
+        .catch(err => {
+          console.error('One or more of the records failed', err);
+        });
+      conn.end();
       resolve();
     });
   }
 
-  private processS3Record(record: EventSchema) {
+  private processS3Record(record: EventSchema, conn: DatabaseUtil) {
     return new Promise(async (resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
-      const conn = new DatabaseUtil(false);
       const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
@@ -450,7 +446,6 @@ export class AuctionHandler {
         ])
           .catch(console.error);
       }
-      conn.end();
       resolve();
     });
   }
