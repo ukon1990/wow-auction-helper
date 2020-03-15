@@ -368,13 +368,13 @@ export class AuctionHandler {
     };
   }
 
-  private async createLastModifiedFile(ahId: number, region: string) {
+  private async createLastModifiedFile(ahId: number, region: string, conn: DatabaseUtil = new DatabaseUtil()) {
     return new Promise((resolve) => {
-      new DatabaseUtil().query(RealmQuery.getHouse(ahId, 0))
+      conn.query(RealmQuery.getHouse(ahId, 0))
         .then(async rows => {
           if (rows) {
             for (const realm of rows) {
-              await new DatabaseUtil().query(
+              await conn.query(
                 RealmQuery.getHouseForRealm(realm.region, realm.slug))
                 .then(async (data) => {
                   await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
@@ -440,7 +440,7 @@ export class AuctionHandler {
         await Promise.all([
           this.updateAllStatuses(region, conn)
             .catch(err => console.error('Could not updateAllStatuses', err)),
-          this.createLastModifiedFile(+ahId, region)
+          this.createLastModifiedFile(+ahId, region, conn)
             .catch(err => console.error('Could not createLastModifiedFile', err)),
           await this.copyAuctionsToNewFile(record, auctions, region, ahId)
             .catch(err => console.error('Could not copyAuctionsToNewFile', err)),
