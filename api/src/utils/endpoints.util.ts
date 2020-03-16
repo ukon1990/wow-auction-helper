@@ -59,7 +59,7 @@ export class Endpoints {
   getGameDataBase(region: string, namespaceType: string) {
     let suffix = 'data/wow/';
     if (namespaceType === 'profile') {
-      suffix = 'profile/user/wow';
+      suffix = 'profile/wow/';
     }
     return (region ? this.GAME_DATA_ENDPOINT[region] : this.GAME_DATA_ENDPOINT.eu) + suffix;
   }
