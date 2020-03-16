@@ -2,37 +2,36 @@ import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {Endpoints} from '../utils/endpoints.util';
 import {Response} from '../utils/response.util';
 import {AuthHandler} from './auth.handler';
+import {bool} from 'aws-sdk/clients/signer';
+import {HttpClientUtil} from '../utils/http-client.util';
 
 const request = require('request');
 
 export class CharacterHandler {
-  async get(event: APIGatewayEvent, callback: Callback) {
+  async get(region: string, realm: string, name: string, withFields: boolean, locale: string) {
     await AuthHandler.getToken();
-
-    const body = JSON.parse(event.body);
-    const url = new Endpoints()
-      .getPath(
-        `character/${
-          encodeURIComponent(body.realm)
+    return new Promise((resolve, reject) => {
+      const url = new Endpoints()
+        .getPath(
+          `character/${
+            encodeURIComponent(realm)
           }/${
-          encodeURIComponent(body.name)
+            encodeURIComponent(name)
           }?${
-          this.getFields(body.withFields)
+            this.getFields(withFields)
           }locale=${
-          body.locale
+            locale
           }`,
-        body.region);
-
-    request.get(url,
-      body.region,
-      (error, response, responseBody) => {
-        if (error) {
-          Response.error(callback, error, event);
+          region, 'profile');
+      new HttpClientUtil().get(url)
+        .then(data => {
+          resolve(data);
+        })
+        .catch(error => {
           console.error('could not get character', error);
-          return;
-        }
-        Response.send(JSON.parse(responseBody), callback);
-      });
+          reject(error);
+        });
+    });
   }
 
   private getFields(withFields) {

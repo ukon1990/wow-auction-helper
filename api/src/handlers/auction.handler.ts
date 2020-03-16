@@ -67,7 +67,7 @@ export class AuctionHandler {
 
   getLatestDumpPath(id: number, region: string): Promise<AHDumpResponse> {
     return new Promise<AHDumpResponse>((resolve, reject) => {
-      const url = new Endpoints().getPath(`connected-realm/${id}/auctions`, region, true, 'dynamic');
+      const url = new Endpoints().getPath(`connected-realm/${id}/auctions`, region, 'dynamic');
       new HttpClientUtil().get(url, false, {
         'If-Modified-Since': 'Sat, 14 Mar 3000 20:07:10 GMT'
       })

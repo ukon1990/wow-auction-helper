@@ -64,11 +64,8 @@ export class Endpoints {
     return region ? this.COMMUNITY_ENDPOINT[region] : this.COMMUNITY_ENDPOINT.eu;
   }
 
-  getPath(query: string, region?: string, isGameData?: boolean, namespaceType?: string): string {
-    if (isGameData) {
-      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region, namespaceType);
-    }
-    return this.getBase(region) + this.addQueriesToQueries(query, undefined, namespaceType);
+  getPath(query: string, region?: string, namespaceType?: string): string {
+    return this.getGameDataBase(region) + this.addQueriesToQueries(query, region, namespaceType);
   }
 
   private addQueriesToQueries(query: string, region?: string, namespaceType?: string,): string {
