@@ -17,6 +17,7 @@ import {AuctionHouseStatus} from '../../../client/src/client/modules/auction/mod
 import {AuctionResponse} from '../models/auction/auctions-response';
 import {NumberUtil} from '../../../client/src/client/modules/util/utils/number.util';
 import {AuctionQuery} from '../queries/auction.query';
+import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -32,15 +33,7 @@ export class AuctionHandler {
     });
   }
 
-  async post(region: string, realm: string, timestamp: number, url: string): Promise<any> {
-    if (url) {
-      return this.getAuctionDump(url);
-    } else {
-      return this.latestDumpPathRequest(region, realm, timestamp);
-    }
-  }
-
-  async latestDumpPathRequest(region: string, realm: string, timestamp: number) {
+  async latestDumpPathRequest(connectedId, region: string, realm: string, timestamp: number) {
     return new Promise<any>(async (resolve, reject) => {
       if (region && realm) {
         let apiResponse;
@@ -49,7 +42,7 @@ export class AuctionHandler {
           .then(token => BLIZZARD.ACCESS_TOKEN = token)
           .catch(() => console.error('Unable to fetch token'));
 
-        apiResponse = await this.getLatestDumpPath(region, realm)
+        apiResponse = await this.getLatestDumpPath(connectedId, region)
           .then(response => apiResponse = response)
           .catch(() => console.error('Unable to fetch data'));
 
@@ -64,7 +57,7 @@ export class AuctionHandler {
     return new Promise<any>((resolve, reject) => {
       if (url) {
         this.downloadDump(url)
-          .then(({body}) => resolve(body))
+          .then(({body}) => resolve({auctions: AuctionTransformerUtil.transform(body)}))
           .catch(reject);
       } else {
         reject('Could not get the auction dump, no URL were provided');
@@ -72,7 +65,24 @@ export class AuctionHandler {
     });
   }
 
-  private getLatestDumpPath(region: string, realm: string): Promise<AHDumpResponse> {
+  getLatestDumpPath(id: number, region: string): Promise<AHDumpResponse> {
+    return new Promise<AHDumpResponse>((resolve, reject) => {
+      const url = new Endpoints().getPath(`connected-realm/${id}/auctions`, region, true, 'dynamic');
+      new HttpClientUtil().get(url, false, {
+        'If-Modified-Since': 'Sat, 14 Mar 3000 20:07:10 GMT'
+      })
+        .then(({headers}) => {
+          const newLastModified = headers['last-modified'];
+          resolve({
+            lastModified: +new Date(newLastModified),
+            url: url.replace(`access_token=${BLIZZARD.ACCESS_TOKEN}&`, '')
+          });
+        })
+        .catch(reject);
+    });
+  }
+
+  getLatestDumpPathOld(region: string, realm: string): Promise<AHDumpResponse> {
     const url = new Endpoints().getPath(`auction/data/${realm}`, region);
     return new Promise<AHDumpResponse>((resolve, reject) => {
       request.get(
@@ -162,38 +172,43 @@ export class AuctionHandler {
   }
 
   private downloadDump(url: string): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      request.get(url,
-        (error, response, body) => {
-          if (error || !response) {
-            console.log('Could not download AH dump', error);
-            reject(error);
-          } else {
-            try {
-              response['body'] = JSON.parse(body);
-              console.log('Successfully downloaded AH dump');
-              resolve(response);
-            } catch (exception) {
-              console.log('Could not turn AH dump to JSON', exception);
-              reject(exception);
+    return new Promise<any>(async (resolve, reject) => {
+      await AuthHandler.getToken();
+      const fullUrl = `${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
+      console.log('Full dump URL', fullUrl);
+      new HttpClientUtil().get(fullUrl)
+        .then(({body, headers}) => {
+          console.log('Header', headers);
+          if (body) {
+            const data = {auctions: AuctionTransformerUtil.transform(body)};
+            if (data && data.auctions.length) {
+              resolve(data);
             }
+          } else {
+            reject({
+              message: 'The body was empty, so there is likely no new data',
+              url
+            });
           }
+        })
+        .catch(err => {
+          console.error('Could not download AH dump with url:', url, err);
+          reject(err);
         });
     });
   }
 
-  async updateAllHouses(region: string): Promise<any> {
+  async updateAllHouses(region: string, conn: DatabaseUtil): Promise<any> {
     await AuthHandler.getToken()
       .catch(console.error);
     console.log('Starting AH updates');
 
-    return new Promise((resolve, reject) => {
-      new DatabaseUtil()
-        .query(RealmQuery
-          .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
+    return new Promise(async (resolve, reject) => {
+      conn.query(RealmQuery
+        .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 5,
+              requestsPerSecond: 1,
               promiseImplementation: Promise
             }),
             promises = [];
@@ -207,7 +222,7 @@ export class AuctionHandler {
             this.addUpdateHousePromise(promises, promiseThrottle, row);
           });
 
-          Promise.all(promises)
+          await Promise.all(promises)
             .then(() =>
               console.log('Done initiating AH updates'))
             .catch(console.error);
@@ -234,40 +249,33 @@ export class AuctionHandler {
       });
   }
 
-  private addUpdateHousePromise(promises, promiseThrottle, row) {
+  private addUpdateHousePromise(promises: Promise<any>[], promiseThrottle, row) {
     promises.push(
-      promiseThrottle.add(
-        new HttpClientUtil()
-          .post
-          .bind(
-            this,
-            new Endpoints()
-              .getLambdaUrl('auction/update-one', row.region),
-            row,
-            true)));
+      promiseThrottle.add(this.updateHouse.bind(this, row)));
   }
 
   async updateHouseRequest(event: APIGatewayEvent, callback: Callback) {
     const body = JSON.parse(event.body);
-    Response.send({
-      message: 'started updateHouseRequest',
-      request: body
-    }, callback);
 
     await AuthHandler.getToken()
       .catch(console.error);
 
-    this.updateHouse(body)
+    await this.updateHouse(body)
       .then(() => {
       })
       .catch(console.error);
+
+    Response.send({
+      message: 'started updateHouseRequest',
+      request: body
+    }, callback);
   }
 
-  private async updateHouse(dbResult: { id, region, slug, name, lastModified, url, lowestDelay, avgDelay, highestDelay }): Promise<any> {
+  private async updateHouse({id, connectedId, region, lastModified}): Promise<any> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
       const startGetDumpPath = +new Date();
-      await this.getLatestDumpPath(dbResult.region, dbResult.slug)
+      await this.getLatestDumpPath(connectedId, region)
         .then((r: AHDumpResponse) =>
           ahDumpResponse = r)
         .catch(e => {
@@ -275,10 +283,10 @@ export class AuctionHandler {
         });
       console.log(`Fetching ah dump url took ${+new Date() - startGetDumpPath}ms`, ahDumpResponse);
 
-      if (!error && ahDumpResponse && ahDumpResponse.lastModified > dbResult.lastModified) {
+      if (!error && ahDumpResponse && ahDumpResponse.lastModified > lastModified) {
         console.log('Starting upload');
-        new S3Handler().save(ahDumpResponse, `auctions/${dbResult.region}/${dbResult.id}/dump-path.json.gz`,
-          {region: dbResult.region})
+        new S3Handler().save(ahDumpResponse, `auctions/${region}/${id}/dump-path.json.gz`,
+          {region})
           .then((res) => {
             console.log('Successfully uploaded:', res);
             resolve();
@@ -288,7 +296,7 @@ export class AuctionHandler {
             reject(err);
           });
       } else if (error) {
-        console.error(`Could not update id=${dbResult.id}`, error);
+        console.error(`Could not update id=${id}`, error);
         reject(error);
       } else {
         console.log('No new update available');
@@ -297,29 +305,37 @@ export class AuctionHandler {
     });
   }
 
-  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, id, region) {
+  getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, id, region) {
     const dumpDownloadStart = +new Date();
     console.log(`Downloading dump for ${id} with url=${ahDumpResponse.url}`);
     return new Promise((resolve, reject) => {
       this.downloadDump(ahDumpResponse.url)
-        .then(async r => {
-          console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
-          this.sendToS3(
-            r.body, region, id,
-            ahDumpResponse.lastModified)
-            .then(async (res) => {
-              console.log('Successfully uploaded to bucket for id=', id);
-              resolve(res);
-              // await this.setIsUpdating(dbResult.id, false);
-            })
-            .catch(async err => {
-              console.error('Could not upload to s3', err);
-              //  await this.setIsUpdating(dbResult.id, false);
-            });
+        .then(async (body) => {
+          console.log('Body', body);
+          if (body && body.auctions) {
+            console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
+            this.sendToS3(
+              body, region, id,
+              ahDumpResponse.lastModified)
+              .then(async (res) => {
+                console.log('Successfully uploaded to bucket for id=', id);
+                resolve(res);
+                // await this.setIsUpdating(dbResult.id, false);
+              })
+              .catch(async err => {
+                console.error('Could not upload to s3', err);
+                //  await this.setIsUpdating(dbResult.id, false);
+              });
+          } else {
+            const message = 'The body was empty.';
+            console.log(message);
+            reject({message});
+          }
         })
         .catch(e => {
           // this.setIsUpdating(dbResult.id, false)
           //   .catch(console.error);
+          console.error('downloadDump', e);
           reject(e);
         });
     });
@@ -341,13 +357,13 @@ export class AuctionHandler {
     };
   }
 
-  private async createLastModifiedFile(ahId: number, region: string) {
+  private async createLastModifiedFile(ahId: number, region: string, conn: DatabaseUtil = new DatabaseUtil()) {
     return new Promise((resolve) => {
-      new DatabaseUtil().query(RealmQuery.getHouse(ahId, 0))
+      conn.query(RealmQuery.getHouse(ahId, 0))
         .then(async rows => {
           if (rows) {
             for (const realm of rows) {
-              await new DatabaseUtil().query(
+              await conn.query(
                 RealmQuery.getHouseForRealm(realm.region, realm.slug))
                 .then(async (data) => {
                   await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
@@ -385,24 +401,29 @@ export class AuctionHandler {
     });
   }
 
-  updateStaticS3Data(records: EventRecord[]) {
-    return new Promise(async (resolve, reject) => {
+  updateStaticS3Data(records: EventRecord[], conn: DatabaseUtil) {
+    return new Promise(async (resolve) => {
+      const promises = [];
       for (const record of records) {
-        try {
-          await this.processS3Record(record.s3);
-        } catch (e) {
-        }
+        promises.push(this.processS3Record(record.s3, conn));
       }
-      resolve();
+      Promise.all(promises)
+        .then(() => {
+          resolve();
+          console.log(`Successfully processed ${records.length} records.`);
+        })
+        .catch(err => {
+          resolve();
+          console.error('One or more of the records failed', err);
+        });
     });
   }
 
-  private processS3Record(record: EventSchema) {
+  private processS3Record(record: EventSchema, conn: DatabaseUtil) {
     return new Promise(async (resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
-      const conn = new DatabaseUtil(false);
       const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
@@ -411,21 +432,25 @@ export class AuctionHandler {
         await this.updateDBEntries(record, region, +ahId, fileName, conn)
           .catch(console.error);
         await Promise.all([
-          this.updateAllStatuses(region, conn),
-          this.createLastModifiedFile(+ahId, region),
-          await this.copyAuctionsToNewFile(record, auctions, region, ahId),
+          this.updateAllStatuses(region, conn)
+            .catch(err => console.error('Could not updateAllStatuses', err)),
+          this.createLastModifiedFile(+ahId, region, conn)
+            .catch(err => console.error('Could not createLastModifiedFile', err)),
+          await this.copyAuctionsToNewFile(record, auctions, region, ahId)
+            .catch(err => console.error('Could not copyAuctionsToNewFile', err)),
           this.processAuctions(region, record, +ahId, fileName, conn)
+            .catch(err => console.error('Could not processAuctions', err))
             .catch(console.error)
         ])
           .catch(console.error);
       }
-      conn.end();
       resolve();
     });
   }
 
   async processAuctions(region: string, record: EventSchema, ahId: number, fileName: string, conn = new DatabaseUtil()) {
     return new Promise<void>((resolve, reject) => {
+      console.log('processAuctions', record);
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
           const processStart = +new Date();

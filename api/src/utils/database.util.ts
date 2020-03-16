@@ -21,7 +21,6 @@ export class DatabaseUtil {
       }
       this.enqueueHandshake()
         .then(() => {
-          // console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
           this.connection.query(query, (err: MysqlError, rows: any[]) => {
             if (this.autoTerminate) {
               this.end();
@@ -48,6 +47,7 @@ export class DatabaseUtil {
     if (environment.test) {
       return;
     }
+    console.log('Closing the DB connection on thread on:' + this.connection.threadId);
     this.connection.end();
   }
 
@@ -74,9 +74,11 @@ export class DatabaseUtil {
             stack: error.stack
           });
           return;
+        } else {
+          console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
+          this.isConnectionActive = true;
+          resolve();
         }
-        this.isConnectionActive = true;
-        resolve();
       });
     });
   }

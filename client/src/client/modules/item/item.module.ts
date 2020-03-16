@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ItemComponent} from './components/item.component';
 import {LineChartComponent} from './components/line-chart/line-chart.component';
-import {ItemSellerChartComponent} from './components/item-seller-chart/item-seller-chart.component';
 import {TableModule} from '../table/table.module';
 import {MarketResetModule} from '../market-reset/market-reset.module';
 import {
@@ -36,7 +35,6 @@ import {PriceHeatMapComponent} from './components/item-price-history/price-heat-
   declarations: [
     ItemComponent,
     LineChartComponent,
-    ItemSellerChartComponent,
     AuctionItemDetailsComponent,
     TsmTabComponent,
     SoldByTabComponent,

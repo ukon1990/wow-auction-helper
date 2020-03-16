@@ -19,17 +19,6 @@ provider:
     lambda: true
 
 functions:
-  auctions:
-    tags:
-      FunctionName: Wah-auctions
-    handler: src/controllers/auction.handler
-    memorySize: 512
-    events:
-      - http:
-          method: post
-          path: auction
-          cors:
-            origin: '*'
   auctionUpdateLogForRealm:
     tags:
       FunctionName: Wah-auctionUpdateLogForRealm
@@ -46,17 +35,19 @@ functions:
       FunctionName: Wah-auctionsDownloadAndSave
     handler: src/controllers/auction.auctionsDownloadAndSave
     memorySize: 350
-    timeout: 50
+    timeout: 59
   auctionsUpdateStaticS3Data:
     tags:
       FunctionName: Wah-auctions
     handler: src/controllers/auction.updateStaticS3Data
     memorySize: 350
+    timeout: 59
   updateAllHouses:
     tags:
       FunctionName: Wah-updateAllHouses
     handler: src/controllers/auction.updateAll
-    memorySize: 200
+    memorySize: 256
+    timeout: 59
 
   deactivateInactiveHouses:
     tags:
@@ -253,6 +244,13 @@ functions:
     tags:
       FunctionName: Wah-test
     handler: src/controllers/test.handler
+    memorySize: 512
+    events:
+      - http:
+          method: get
+          path: test
+          cors:
+            origin: '*'
 
   logger:
     tags:

@@ -72,7 +72,7 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   }
 
   select(tv: TradeVendor): void {
-    SharedService.selectedItemId = tv.itemID;
+    SharedService.events.detailSelection.emit(SharedService.items[tv.itemID]);
   }
 
   filterVendors(formData): void {

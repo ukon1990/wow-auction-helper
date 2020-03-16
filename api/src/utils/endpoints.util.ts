@@ -13,10 +13,10 @@ export class Endpoints {
   };
   private readonly GAME_DATA_ENDPOINT = {
     eu: 'https://eu.api.blizzard.com/data/wow/',
-    us: 'https://us.api.blizzard.com/wow/',
-    kr: 'https://kr.api.blizzard.com/wow/',
-    tw: 'https://tw.api.blizzard.com/wow/',
-    cn: 'https://gateway.battlenet.com.cn/wow/'
+    us: 'https://us.api.blizzard.com/data/wow/',
+    kr: 'https://kr.api.blizzard.com/data/wow/',
+    tw: 'https://tw.api.blizzard.com/data/wow/',
+    cn: 'https://gateway.battlenet.com.cn/data/wow/'
   };
   readonly LAMBDAS = {
     EU: {
@@ -64,15 +64,15 @@ export class Endpoints {
     return region ? this.COMMUNITY_ENDPOINT[region] : this.COMMUNITY_ENDPOINT.eu;
   }
 
-  getPath(query: string, region?: string, isGameData?: boolean): string {
+  getPath(query: string, region?: string, isGameData?: boolean, namespaceType?: string): string {
     if (isGameData) {
-      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region);
+      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region, namespaceType);
     }
-    return this.getBase(region) + this.addQueriesToQueries(query);
+    return this.getBase(region) + this.addQueriesToQueries(query, undefined, namespaceType);
   }
 
-  private addQueriesToQueries(query: string, region?: string): string {
-    const namespace = region ? `&namespace=static-${region}` : '';
+  private addQueriesToQueries(query: string, region?: string, namespaceType?: string,): string {
+    const namespace = region ? `&namespace=${namespaceType || 'static'}-${region}` : '';
     const base = `access_token=${BLIZZARD.ACCESS_TOKEN}${namespace}`;
     if (query.indexOf('?') > -1) {
       return `${query}&${base}`;

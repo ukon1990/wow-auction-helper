@@ -44,6 +44,27 @@ export class ItemService {
     });
   }
 
+  getBonusIds(): Promise<void> {
+    return this._http.get('/assets/data/bonusIds.json').toPromise()
+      .then((data) => {
+        SharedService.bonusIdMap = data;
+      })
+      .catch(console.error);
+  }
+
+  getTooltip(id: number, bonusIds: number[]): Promise<string> {
+    let url = 'https://www.wowhead.com/tooltip/item/' + id + '?';
+    if (bonusIds && bonusIds.length) {
+      url += 'bonus=' + bonusIds.join(':');
+    }
+    return new Promise((resolve, reject) => {
+      this._http.get(url)
+        .toPromise()
+        .then(r => resolve(r['tooltip']))
+        .catch(reject);
+    });
+  }
+
   addItem(itemID: number): Promise<any> {
     Report.debug('Attempting to add item data for ' + itemID);
     Report.send('addItem', 'ItemService', itemID);

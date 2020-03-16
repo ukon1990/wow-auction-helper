@@ -46,7 +46,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   setSelectedItem(reagent: Reagent): void {
-    SharedService.selectedItemId = reagent.itemID;
+    SharedService.events.detailSelection.emit(SharedService.items[reagent.itemID]);
     ItemService.itemSelection.emit(reagent.itemID);
   }
 

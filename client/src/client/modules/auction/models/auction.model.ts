@@ -1,3 +1,4 @@
+import {AuctionItem} from './auction-item.model';
 
 export class Auction {
   auc: number;
@@ -49,9 +50,9 @@ export class Auction {
     return auction.item;
   }
 
-  public static getBonusList(auction: Auction): string {
-    if (auction.bonusLists) {
-      return auction.bonusLists.join(':');
+  public static getBonusList(auction: AuctionItem): string {
+    if (auction.bonusIds) {
+      return auction.bonusIds.join(':');
     }
     return [].join(':');
   }

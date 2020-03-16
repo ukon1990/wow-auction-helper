@@ -9,7 +9,7 @@ import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
 
-fdescribe('BaseCraftingUtil', () => {
+describe('BaseCraftingUtil', () => {
   let recipe: Recipe;
   beforeEach(() => {
     recipe = new Recipe();

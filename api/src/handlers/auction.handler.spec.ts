@@ -1,16 +1,28 @@
 import {AuctionHandler} from './auction.handler';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
-import {DateUtil} from '@ukon1990/js-utilities';
 import {S3Handler} from './s3.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {environment} from '../../../client/src/environments/environment';
-import {NPCUtil} from '../utils/npc.util';
+import {AuthHandler} from './auth.handler';
+import {BLIZZARD} from '../secrets';
 
 const PromiseThrottle: any = require('promise-throttle');
 
 describe('AuctionHandler', () => {
   beforeEach(() => environment.test = false);
   afterEach(() => environment.test = true);
+
+  describe('getLatestDumpPathV2', () => {
+    it('Can convert game data response to the old type', async () => {
+      await AuthHandler.getToken();
+      const handler = new AuctionHandler(),
+        region = 'eu',
+        newPath = await handler.getLatestDumpPath(1403, region),
+        oldPath = await handler.getLatestDumpPathOld(region, 'draenor');
+      console.log(newPath, BLIZZARD);
+      expect(newPath.lastModified).toEqual(oldPath.lastModified);
+    });
+  });
 
   describe('getUpdateLog', () => {
     it('Can get the last 3 hours', async () => {
@@ -32,7 +44,18 @@ describe('AuctionHandler', () => {
     });
   });
 
-  it('can add daily data from hourly', async () => {
+  xit('Testing the behavior of shit', async () => {
+    jest.setTimeout(100000);
+    await new AuctionHandler().getAndUploadAuctionDump({
+      lastModified: 1584374830000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/1329/auctions?namespace=dynamic-eu'
+    }, 113, 'eu');
+    await new AuctionHandler().getAndUploadAuctionDump({
+      lastModified: 1584374834000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/3391/auctions?namespace=dynamic-eu'
+    }, 115, 'eu');
+    expect(1).toBe(1);
+  });
+
+  xit('can add daily data from hourly', async () => {
     jest.setTimeout(1000000000);
     const conn = new DatabaseUtil(false);
     const promiseThrottle = new PromiseThrottle({
@@ -43,20 +66,20 @@ describe('AuctionHandler', () => {
     let processed = 0;
     const date = '2020-02-05'; // 02-04
     for (let id = 1; id <= 260; id++) {// 242
-        promises.push(promiseThrottle.add(() =>
-          new Promise((resolve) => {
-            new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
-              .then(() => {
-                processed++;
-                console.log(`Processed count: ${processed} of ${260}`);
-                resolve();
-              })
-              .catch((error) => {
-                processed++;
-                console.error(`ah=${id} date=${date}`, error);
-                resolve();
-              });
-          })));
+      promises.push(promiseThrottle.add(() =>
+        new Promise((resolve) => {
+          new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
+            .then(() => {
+              processed++;
+              console.log(`Processed count: ${processed} of ${260}`);
+              resolve();
+            })
+            .catch((error) => {
+              processed++;
+              console.error(`ah=${id} date=${date}`, error);
+              resolve();
+            });
+        })));
     }
 
     await Promise.all(promises)
@@ -97,13 +120,13 @@ describe('AuctionHandler', () => {
         // 95
         // Alt frem til og med id=20
         const realmId = 21;
-        for (let id = 141; id <= 141; id++) {// 242
+        for (let id = 91; id <= 120; id++) {// 242
           const bucket = 'wah-data-' + s3Region.id;
           const list = await s3.list(bucket, `auctions/${region}/${id}/`)
             .catch(console.error);
-          const day = 20; // 17
-          const startDay = +new Date(`1/${day}/2020`),
-            endDay = +new Date(`1/31/2020`), // max: 1/21/2020
+          const day = 15; // 17
+          const startDay = +new Date(`3/${day}/2020`),
+            endDay = +new Date(`3/16/2020`), // max: 1/21/2020
             filteredFiles = list.Contents.filter(file =>
               +new Date(file.LastModified) >= startDay &&
               +new Date(file.LastModified) <= endDay)
