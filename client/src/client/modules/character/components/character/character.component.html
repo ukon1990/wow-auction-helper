@@ -1,6 +1,6 @@
 <mat-card class="character-bg" [style.background-image]="getBackgroundImage()">
   <mat-card-header>
-    <div mat-card-avatar *ngIf="character.thumbnail" [style.background-image]="getAvatar()"
+    <div mat-card-avatar *ngIf="character.media" [style.background-image]="getAvatar()"
       [style.background-size]="'cover'"></div>
     <mat-card-title *ngIf="character.name">
         {{ character.level }} {{ character.name }} @ {{ character.realm }}

@@ -8,7 +8,7 @@ export class PetUtil {
   static async getPet(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Pet> {
     await AuthHandler.getToken();
     const url = new Endpoints()
-      .getPath(`pet/${id}`, region, true);
+      .getPath(`pet/${id}`, region);
     return new Promise<Pet>((resolve, reject) => {
       new HttpClientUtil().get(url)
         .then(({body}) =>

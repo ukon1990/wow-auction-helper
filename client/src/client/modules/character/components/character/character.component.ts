@@ -17,20 +17,13 @@ export class CharacterComponent {
   @Output() remove: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
 
-  getAvatar(img: string): string {// thumbnail
-    return `url(https://render-${
-      this.getRegion()
-      }.worldofwarcraft.com/character/${
-      this.character.thumbnail
-      })`;
+  getAvatar(): string {
+    return `url(${this.character.media.avatarUrl})`;
   }
 
   getBackgroundImage() {
-    if (this.character.thumbnail) {
-      const url = `https://render-${this.getRegion()}.worldofwarcraft.com/character/${
-        this.character.thumbnail.replace('avatar', 'main')
-        }`;
-      return 'url(' + url + ')';
+    if (this.character.media) {
+      return 'url(' + this.character.media.renderUrl + ')';
     }
     return '';
   }

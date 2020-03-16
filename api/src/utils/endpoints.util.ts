@@ -12,11 +12,11 @@ export class Endpoints {
     cn: 'https://gateway.battlenet.com.cn/wow/'
   };
   private readonly GAME_DATA_ENDPOINT = {
-    eu: 'https://eu.api.blizzard.com/data/wow/',
-    us: 'https://us.api.blizzard.com/data/wow/',
-    kr: 'https://kr.api.blizzard.com/data/wow/',
-    tw: 'https://tw.api.blizzard.com/data/wow/',
-    cn: 'https://gateway.battlenet.com.cn/data/wow/'
+    eu: 'https://eu.api.blizzard.com/',
+    us: 'https://us.api.blizzard.com/',
+    kr: 'https://kr.api.blizzard.com/',
+    tw: 'https://tw.api.blizzard.com/',
+    cn: 'https://gateway.battlenet.com.cn/'
   };
   readonly LAMBDAS = {
     EU: {
@@ -56,22 +56,24 @@ export class Endpoints {
       this.LAMBDAS[region.toUpperCase()][Endpoints.STAGE]}${path}`;
   }
 
-  getGameDataBase(region?: string) {
-    return region ? this.GAME_DATA_ENDPOINT[region] : this.GAME_DATA_ENDPOINT.eu;
+  getGameDataBase(region: string, namespaceType: string) {
+    let suffix = 'data/wow/';
+    if (namespaceType === 'profile') {
+      suffix = 'profile/wow/';
+    }
+    return (region ? this.GAME_DATA_ENDPOINT[region] : this.GAME_DATA_ENDPOINT.eu) + suffix;
   }
 
   getBase(region?: string): string {
     return region ? this.COMMUNITY_ENDPOINT[region] : this.COMMUNITY_ENDPOINT.eu;
   }
 
-  getPath(query: string, region?: string, isGameData?: boolean, namespaceType?: string): string {
-    if (isGameData) {
-      return this.getGameDataBase(region) + this.addQueriesToQueries(query, region, namespaceType);
-    }
-    return this.getBase(region) + this.addQueriesToQueries(query, undefined, namespaceType);
+  getPath(query: string, region?: string, namespaceType?: string): string {
+    return this.getGameDataBase(region, namespaceType) +
+      this.addQueriesToQueries(query, region, namespaceType);
   }
 
-  private addQueriesToQueries(query: string, region?: string, namespaceType?: string,): string {
+  private addQueriesToQueries(query: string, region?: string, namespaceType?: string): string {
     const namespace = region ? `&namespace=${namespaceType || 'static'}-${region}` : '';
     const base = `access_token=${BLIZZARD.ACCESS_TOKEN}${namespace}`;
     if (query.indexOf('?') > -1) {

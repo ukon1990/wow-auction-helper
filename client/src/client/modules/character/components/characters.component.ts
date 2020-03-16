@@ -102,9 +102,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
             true,
             `${
               this.form.value.name
-              } could not be found on the realm ${
+            } could not be found on the realm ${
               this.form.value.realm
-              }.`));
+            }.`));
       }
     }
     this.downloading = false;
@@ -114,7 +114,11 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     const character = new Character();
     character.name = this.form.value.name;
     character.realm = SharedService.realms[this.form.value.realm].name;
-    character.thumbnail = '';
+    character.media = {
+      renderUrl: '',
+      avatarUrl: '',
+      bustUrl: '',
+    };
     character.level = 0;
 
     Report.send('Added a lower than level 10 character', 'Characters');
@@ -139,14 +143,20 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   updateCharacter(index: number): void {
-    if (SharedService.user.characters[index].level) {
-      SharedService.user.characters[index]['downloading'] = true;
+    const character: Character = SharedService.user.characters[index],
+      professions = character.professions;
+    if (character.level) {
+      character['downloading'] = true;
       this._characterService.getCharacter(
         SharedService.user.characters[index].name,
         User.slugifyString(SharedService.user.characters[index].realm),
         this.form.value.region
       ).then(c => {
-        if (!c.error) {
+        if (c && !c.error) {
+          if (!c.professions) {
+            c.professions = professions;
+          }
+
           SharedService.user.characters[index] = c;
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
           User.updateRecipesForRealm();
