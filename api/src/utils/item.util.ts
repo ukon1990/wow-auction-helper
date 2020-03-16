@@ -40,7 +40,7 @@ export class ItemUtil {
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints()
-        .getPath(`item/${id}`, region, true);
+        .getPath(`item/${id}`, region);
       console.log('URL', url);
       new HttpClientUtil().get(url)
         .then(async ({body}) => {

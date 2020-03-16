@@ -1,3 +1,5 @@
+import {Reputation} from '../../../../../../api/src/models/character/character-reputations-game-data.model';
+
 export class Character {
   lastModified: number;
   name: string;
@@ -9,7 +11,11 @@ export class Character {
   level: number;
   achievementPoints: number;
   totalHonorableKills: number;
-  thumbnail: string;
+  media: {
+    bustUrl: string;
+    avatarUrl: string;
+    renderUrl: string;
+  };
   calcClass: string;
   faction: number; // 0 = ally, 1 = horde
   professions: {
@@ -25,6 +31,8 @@ export class Character {
   pets?: UserPets;
   petSlots?: PetSlot[];
   downloading?: boolean;
+  guild?: string;
+  reputations: Reputation[];
 
   constructor(realm?: string, name?: string) {
     if (realm) {
