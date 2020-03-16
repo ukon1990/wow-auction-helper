@@ -44,6 +44,15 @@ describe('AuctionHandler', () => {
     });
   });
 
+  xit('Testing the behavior of shit', async () => {
+    jest.setTimeout(10000);
+    await new AuctionHandler().getAndUploadAuctionDump({
+      lastModified: 1584371216000,
+      url: 'https://eu.api.blizzard.com/data/wow/connected-realm/1624/auctions?namespace=dynamic-eu'
+    }, 17, 'eu');
+    expect(1).toBe(1);
+  });
+
   xit('can add daily data from hourly', async () => {
     jest.setTimeout(1000000000);
     const conn = new DatabaseUtil(false);
