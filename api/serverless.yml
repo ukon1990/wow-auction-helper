@@ -41,7 +41,7 @@ functions:
       FunctionName: Wah-auctions
     handler: src/controllers/auction.updateStaticS3Data
     memorySize: 350
-    timeout: 30
+    timeout: 59
   updateAllHouses:
     tags:
       FunctionName: Wah-updateAllHouses

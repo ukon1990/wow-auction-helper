@@ -88,8 +88,8 @@ export class RealmQuery {
             WHERE (autoUpdate = 1
                 AND (${+new Date()} - lastModified) / 60000 >= lowestDelay)
               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / ${hours} > 1
-            ORDER BY (${+new Date()} - lastModified) / 60000 desc
-            LIMIT 60;`;
+            ORDER BY autoUpdate DESC, (${+new Date()} - lastModified) / 60000 DESC
+            LIMIT 40;`;
 
     /**
      AND (autoUpdate = 1

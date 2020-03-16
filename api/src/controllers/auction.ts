@@ -37,18 +37,17 @@ exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callba
 };
 
 exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const conn = new DatabaseUtil(false);
-  // context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = false;
   Endpoints.setStage(event);
-  new AuctionHandler().updateStaticS3Data(event['Records'], conn)
+  new AuctionHandler().updateStaticS3Data(event['Records'], connection)
     .then(res => {
       console.log('Promise returned in then for static data');
-      conn.end();
+      // conn.end();
       Response.send(res, callback);
     })
     .catch(err => {
       console.log('Promise returned in catch for static data');
-      conn.end();
+      // conn.end();
       Response.error(callback, err, event, 401);
     });
 };
