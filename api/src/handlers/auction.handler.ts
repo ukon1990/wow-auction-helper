@@ -208,7 +208,7 @@ export class AuctionHandler {
         .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 2,
+              requestsPerSecond: 1,
               promiseImplementation: Promise
             }),
             promises = [];
@@ -305,7 +305,7 @@ export class AuctionHandler {
     });
   }
 
-  private getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, id, region) {
+  getAndUploadAuctionDump(ahDumpResponse: AHDumpResponse, id, region) {
     const dumpDownloadStart = +new Date();
     console.log(`Downloading dump for ${id} with url=${ahDumpResponse.url}`);
     return new Promise((resolve, reject) => {
@@ -407,13 +407,15 @@ export class AuctionHandler {
       for (const record of records) {
         promises.push(this.processS3Record(record.s3, conn));
       }
-      await Promise.all(promises)
-        .then(() =>
-          console.log(`Successfully processed ${records.length} records.`))
+      Promise.all(promises)
+        .then(() => {
+          resolve();
+          console.log(`Successfully processed ${records.length} records.`);
+        })
         .catch(err => {
+          resolve();
           console.error('One or more of the records failed', err);
         });
-      resolve();
     });
   }
 

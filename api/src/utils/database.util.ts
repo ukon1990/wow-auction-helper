@@ -47,6 +47,7 @@ export class DatabaseUtil {
     if (environment.test) {
       return;
     }
+    console.log('Closing the DB connection on thread on:' + this.connection.threadId);
     this.connection.end();
   }
 

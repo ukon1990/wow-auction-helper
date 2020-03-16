@@ -44,6 +44,17 @@ describe('AuctionHandler', () => {
     });
   });
 
+  xit('Testing the behavior of shit', async () => {
+    jest.setTimeout(100000);
+    await new AuctionHandler().getAndUploadAuctionDump({
+      lastModified: 1584374830000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/1329/auctions?namespace=dynamic-eu'
+    }, 113, 'eu');
+    await new AuctionHandler().getAndUploadAuctionDump({
+      lastModified: 1584374834000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/3391/auctions?namespace=dynamic-eu'
+    }, 115, 'eu');
+    expect(1).toBe(1);
+  });
+
   xit('can add daily data from hourly', async () => {
     jest.setTimeout(1000000000);
     const conn = new DatabaseUtil(false);
@@ -109,13 +120,13 @@ describe('AuctionHandler', () => {
         // 95
         // Alt frem til og med id=20
         const realmId = 21;
-        for (let id = 141; id <= 141; id++) {// 242
+        for (let id = 91; id <= 120; id++) {// 242
           const bucket = 'wah-data-' + s3Region.id;
           const list = await s3.list(bucket, `auctions/${region}/${id}/`)
             .catch(console.error);
-          const day = 20; // 17
-          const startDay = +new Date(`1/${day}/2020`),
-            endDay = +new Date(`1/31/2020`), // max: 1/21/2020
+          const day = 15; // 17
+          const startDay = +new Date(`3/${day}/2020`),
+            endDay = +new Date(`3/16/2020`), // max: 1/21/2020
             filteredFiles = list.Contents.filter(file =>
               +new Date(file.LastModified) >= startDay &&
               +new Date(file.LastModified) <= endDay)
