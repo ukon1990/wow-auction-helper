@@ -51,7 +51,7 @@ export class RealmUtil {
   static getConnectedRealmIdForHouse(id: number, region: string, slug: string): Promise<number> {
     return new Promise<any>(async (resolve, reject) => {
       await AuthHandler.getToken();
-      const path = new Endpoints().getPath(`realm/${slug}`, region, true, 'dynamic');
+      const path = new Endpoints().getPath(`realm/${slug}`, region, 'dynamic');
       new HttpClientUtil().get(path)
         .then(({body}) => {
           const url: string = body['connected_realm']['href'],
