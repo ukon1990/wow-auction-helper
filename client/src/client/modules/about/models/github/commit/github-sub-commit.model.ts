@@ -14,11 +14,15 @@ export class GithubSubCommit {
 
   setTitle(message: string) {
     let isList = false;
-    const split = message.split(/[\n]{1,}/gi);
+    console.log(message);
+    const split = message.split(/[\n]{1,1}/gi);
     this.title = split[0];
     this.message = '';
     split.slice(1, split.length)
-      .forEach(line => {
+      .forEach((line, index) => {
+        if (!line && index === 0) {
+          return;
+        }
         if (line.indexOf('- ') === 0) {
           if (!isList) {
             isList = true;
@@ -29,9 +33,11 @@ export class GithubSubCommit {
         } else if (isList) {
           this.message += `</ul>`;
           isList = false;
+        } else if (line.indexOf(':') === line.length -1) {
+          this.message += `<strong>${line}</strong>\n`;
+          return;
         }
         this.message += `${line}\n`;
       });
-    // this.message = .join('\n');
   }
 }
