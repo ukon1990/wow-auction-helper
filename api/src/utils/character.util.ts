@@ -69,7 +69,8 @@ export class CharacterUtil {
   static setProfileBaseData(gameData: CharacterGameData, character: Character): void {
     character.name = gameData.name;
     character.faction = this.getFaction(gameData.faction);
-    character.realm = gameData.realm.slug;
+    character.slug = gameData.realm.slug;
+    character.realm = gameData.realm.name;
     character.guild = gameData.guild.name;
     character.level = gameData.level;
     character.lastModified = gameData.last_login_timestamp;

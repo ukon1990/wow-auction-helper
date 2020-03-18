@@ -33,6 +33,7 @@ export class Character {
   downloading?: boolean;
   guild?: string;
   reputations: Reputation[];
+  slug: string;
 
   constructor(realm?: string, name?: string) {
     if (realm) {
