@@ -15,11 +15,16 @@ export class UserProfit {
     map: {},
     list: []
   };
+  private ignoreMap = {163042: 'Long boi'};
 
   constructor(public daysSince: number, private characters: any) {
   }
 
-  add(value: { amount: number; time: number; price: number; }, type: string): void {
+  add(value: { id, amount: number; time: number; price: number; }, type: string): void {
+    if (this.ignoreMap[value.id]) {
+      // TODO: Make it optional? And maybe not to affect profit summary only the chart?
+      return;
+    }
     try {
       const thenVsNow = new Date().getTime() - value.time;
       if (this.isTimeMatch(thenVsNow) && !this.excludeUserCharacters(value)) {
