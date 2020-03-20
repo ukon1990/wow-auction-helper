@@ -1,40 +1,47 @@
 <ng-container *ngIf="!isLoading ; else loadingTemplate">
-  <h5>Prices grouped by hour the past 14 days</h5>
-  <mat-tab-group>
-    <mat-tab label="Chart">
-      <wah-charts-data-sets
-              storageName="item-price-history-chart"
-              [datasets]="fourteenDayHourByHour">
-      </wah-charts-data-sets>
+  <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" >
+    <mat-tab label="Weekdays" *ngIf="selectedTab === 0">
+      <wah-price-heat-map
+              [dailyData]="groupedByDateTable.data"
+              [hourlyData]="fourteenDayByHourTable.data"
+      ></wah-price-heat-map>
     </mat-tab>
-    <mat-tab label="Table">
-      <wah-data-table
-              [columns]="fourteenDayByHourTable.columns"
-              [data]="fourteenDayByHourTable.data">
-      </wah-data-table>
+    <mat-tab label="14 day and overall charts" *ngIf="selectedTab === 1">
+      <h5>Prices grouped by hour the past 14 days</h5>
+      <mat-tab-group>
+        <mat-tab label="Chart">
+
+
+          <wah-charts-data-sets
+                  storageName="item-price-history-chart"
+                  [datasets]="fourteenDayHourByHour">
+          </wah-charts-data-sets>
+        </mat-tab>
+        <mat-tab label="Table">
+          <wah-data-table
+                  [columns]="fourteenDayByHourTable.columns"
+                  [data]="fourteenDayByHourTable.data">
+          </wah-data-table>
+        </mat-tab>
+      </mat-tab-group>
+
+      <h5>Prices grouped by day</h5>
+      <mat-tab-group>
+        <mat-tab label="Chart">
+          <wah-charts-data-sets
+                  storageName="item-price-daily-history-chart"
+                  [datasets]="dateData">
+          </wah-charts-data-sets>
+        </mat-tab>
+        <mat-tab label="Table">
+          <wah-data-table
+                  [columns]="groupedByDateTable.columns"
+                  [data]="groupedByDateTable.data">
+          </wah-data-table>
+        </mat-tab>
+      </mat-tab-group>
     </mat-tab>
   </mat-tab-group>
-
-  <h5>Prices grouped by day</h5>
-  <mat-tab-group>
-    <mat-tab label="Chart">
-      <wah-charts-data-sets
-              storageName="item-price-daily-history-chart"
-              [datasets]="dateData">
-      </wah-charts-data-sets>
-    </mat-tab>
-    <mat-tab label="Table">
-      <wah-data-table
-              [columns]="groupedByDateTable.columns"
-              [data]="groupedByDateTable.data">
-      </wah-data-table>
-    </mat-tab>
-  </mat-tab-group>
-
-  <wah-price-heat-map
-    [dailyData]="groupedByDateTable.data"
-    [hourlyData]="fourteenDayByHourTable.data"
-  ></wah-price-heat-map>
 </ng-container>
 
 <ng-template #loadingTemplate>

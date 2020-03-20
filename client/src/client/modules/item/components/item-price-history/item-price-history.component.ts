@@ -58,6 +58,8 @@ export class ItemPriceHistoryComponent implements OnChanges {
     yAxis2: 'Quantity',
     xAxis: 'Date'
   };
+  private indexStoredName = 'price-history-tabs';
+  selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
 
   constructor(private service: ItemService) {
   }
@@ -253,5 +255,10 @@ export class ItemPriceHistoryComponent implements OnChanges {
     }
     return dataset.label + ': ' +
       new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000);
+  }
+
+  setTabChange(index: number, s: string) {
+    this.selectedTab = index;
+    localStorage[this.indexStoredName] = index;
   }
 }

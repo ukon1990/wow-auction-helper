@@ -1,4 +1,28 @@
-<wah-data-table
-  [columns]="hourlyByDayTable.columns"
-  [data]="hourlyByDayTable.data"
-  [numOfRows]="24"></wah-data-table>
+<wah-charts-data-sets
+        storageName="item-price-weekdays-history-chart"
+        [datasets]="chartDataDay">
+</wah-charts-data-sets>
+<mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" #tabs>
+  <mat-tab *ngFor="let day of dayList; let i = index" label="{{ days[i] }}s">
+
+    <div class="row">
+      <div class="col">
+        Min: {{ day.min | gold }} ({{ day.minTimeOfDay | number }})
+      </div>
+      <div class="col">
+        Avg: {{ day.avg | gold }}
+      </div>
+      <div class="col">
+        Price trend: {{ day.avgPriceChange | gold }}
+      </div>
+      <div class="col">
+        Max: {{ day.max | gold }} ({{ day.maxTimeOfDay | number }})
+      </div>
+    </div>
+
+    <wah-charts-data-sets *ngIf="selectedTab === i"
+            storageName="item-price-{{i}}-weekdays-history-chart"
+            [datasets]="chartDataPerDay[i]">
+    </wah-charts-data-sets>
+  </mat-tab>
+</mat-tab-group>
