@@ -311,7 +311,6 @@ export class AuctionHandler {
     return new Promise((resolve, reject) => {
       this.downloadDump(ahDumpResponse.url)
         .then(async (body) => {
-          console.log('Body', body);
           if (body && body.auctions) {
             console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
             this.sendToS3(
