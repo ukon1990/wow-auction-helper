@@ -1,21 +1,21 @@
-import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
-import {FormControl} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {GameBuild} from '../../../utils/game-build.util';
-import {Recipe} from '../../crafting/models/recipe';
-import {ColumnDescription} from '../../table/models/column-description';
-import {WowdbService} from '../../../services/wowdb.service';
-import {ItemService} from '../../../services/item.service';
-import {SharedService} from '../../../services/shared.service';
-import {Report} from '../../../utils/report.util';
-import {AuctionPet} from '../../auction/models/auction-pet.model';
-import {Endpoints} from '../../../services/endpoints';
-import {Pet} from '../../pet/models/pet';
-import {ItemNpcDetails} from '../models/item-npc-details.model';
-import {NpcService} from '../../npc/services/npc.service';
-import {ZoneService} from '../../zone/service/zone.service';
-import {AuctionItem} from '../../auction/models/auction-item.model';
+import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
+import { FormControl } from '@angular/forms';
+import { SubscriptionManager } from '@ukon1990/subscription-manager/dist/subscription-manager';
+import { GameBuild } from '../../../utils/game-build.util';
+import { Recipe } from '../../crafting/models/recipe';
+import { ColumnDescription } from '../../table/models/column-description';
+import { WowdbService } from '../../../services/wowdb.service';
+import { ItemService } from '../../../services/item.service';
+import { SharedService } from '../../../services/shared.service';
+import { Report } from '../../../utils/report.util';
+import { AuctionPet } from '../../auction/models/auction-pet.model';
+import { Endpoints } from '../../../services/endpoints';
+import { Pet } from '../../pet/models/pet';
+import { ItemNpcDetails } from '../models/item-npc-details.model';
+import { NpcService } from '../../npc/services/npc.service';
+import { ZoneService } from '../../zone/service/zone.service';
+import { AuctionItem } from '../../auction/models/auction-item.model';
 
 @Component({
   selector: 'wah-item',
@@ -23,7 +23,7 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
-  @ViewChild('tabs', {static: false}) tabs;
+  @ViewChild('tabs', { static: false }) tabs;
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
   selectionHistory: any[] = [];
@@ -44,39 +44,39 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   shoppingCartQuantityField: FormControl = new FormControl(1);
   subscriptions = new SubscriptionManager();
   columns: ColumnDescription[] = [
-    {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
-    {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true},
-    {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
-    {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
-    {key: 'quantity', title: 'Size', dataType: ''}
+    { key: 'timeLeft', title: 'Time left', dataType: 'time-left' },
+    { key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item' },
+    { key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true },
+    { key: 'bid', title: 'Bid/item', dataType: 'gold-per-item' },
+    { key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true },
+    { key: 'quantity', title: 'Size', dataType: '' }
   ];
   droppedByColumns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
-    {key: 'id', title: 'WoWDB', dataType: 'wdb-link'},
-    {key: 'id', title: 'WoWHead', dataType: 'whead-link'}
+    { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'dropChance', title: 'Drop chance', dataType: 'percent' },
+    { key: 'id', title: 'WoWDB', dataType: 'wdb-link' },
+    { key: 'id', title: 'WoWHead', dataType: 'whead-link' }
   ];
 
   recipeColumns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials'},
-    {key: 'cost', title: 'Cost', dataType: 'gold'},
-    {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
-    {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
-    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
+    { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials' },
+    { key: 'cost', title: 'Cost', dataType: 'gold' },
+    { key: 'roi', title: 'ROI', dataType: 'gold' },
+    { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+    { key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number' },
+    { key: undefined, title: 'In cart', dataType: 'cart-recipe-count' }
   ];
 
   recipeColumnsSimple: ColumnDescription[] = [
-    {key: 'rank', title: 'Rank', dataType: ''},
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'profession', title: 'Source', dataType: ''},
-    {key: 'cost', title: 'Cost', dataType: 'gold'},
-    {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
-    {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
-    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
+    { key: 'rank', title: 'Rank', dataType: '' },
+    { key: 'name', title: 'Name', dataType: 'name' },
+    { key: 'profession', title: 'Source', dataType: '' },
+    { key: 'cost', title: 'Cost', dataType: 'gold' },
+    { key: 'roi', title: 'ROI', dataType: 'gold' },
+    { key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent' },
+    { key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number' },
+    { key: undefined, title: 'In cart', dataType: 'cart-recipe-count' }
   ];
 
   constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
@@ -105,12 +105,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   ngAfterViewInit(): void {
-    this.subscriptions.add(
-      (this.tabs as MatTabGroup)
-        .selectedTabChange,
-      (event: MatTabChangeEvent) =>
-        Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`));
-
     this.subscriptions.add(
       ItemService.itemSelection,
       () => this.ngOnInit()
@@ -254,6 +248,9 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   setTabChange(index: number, tabName: string): void {
     this.selectedTab = index;
     localStorage[this.indexStoredName] = index;
+    try {
+      Report.send(`Changed tab to ${(this.tabs as MatTabGroup)._tabs['_results'][index].textLabel}`, `Item detail view`);
+    } catch (e) {}
   }
 
   private setSelection(item: any) {
@@ -274,7 +271,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     } else if (item.speciesId) {
       this.handlePet(item);
     }
-    this.selectionHistory = [{...this.selected}, ...this.selectionHistory];
+    this.selectionHistory = [{ ...this.selected }, ...this.selectionHistory];
     this.ngOnInit();
 
     this.ignoreNextSelectionHistoryFormChange = true;

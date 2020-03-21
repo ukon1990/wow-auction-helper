@@ -1,13 +1,11 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ColumnDescription} from '../../../../table/models/column-description';
-import {ItemPriceEntry} from '../../../models/item-price-entry.model';
-import {ChartData} from '../../../../util/models/chart.model';
-import {NumberUtil} from '../../../../util/utils/number.util';
-import {GoldPipe} from '../../../../util/pipes/gold.pipe';
-import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
-import {Report} from '../../../../../utils/report.util';
-import {ItemService} from '../../../../../services/item.service';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ColumnDescription } from '../../../../table/models/column-description';
+import { ItemPriceEntry } from '../../../models/item-price-entry.model';
+import { ChartData } from '../../../../util/models/chart.model';
+import { GoldPipe } from '../../../../util/pipes/gold.pipe';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
+import { Report } from '../../../../../utils/report.util';
+import { SubscriptionManager } from '@ukon1990/subscription-manager/dist/subscription-manager';
 
 @Component({
   selector: 'wah-price-heat-map',
@@ -19,17 +17,17 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
   @Input() hourlyData: any[];
 
 
-  @ViewChild('tabs', {static: false}) tabs;
+  @ViewChild('tabs', { static: false }) tabs;
 
   columns: ColumnDescription[] = [
-    {key: 'hour', title: 'Hour', dataType: 'string'},
-    {key: '0', title: 'Monday', dataType: 'gold'}, // TODO: Might be not be a good idea to hard-code
-    {key: '1', title: 'Tuesday', dataType: 'gold'},
-    {key: '2', title: 'Wednesday', dataType: 'gold'},
-    {key: '3', title: 'Thursday', dataType: 'gold'},
-    {key: '4', title: 'Friday', dataType: 'gold'},
-    {key: '5', title: 'Saturday', dataType: 'gold'},
-    {key: '6', title: 'Sunday', dataType: 'gold'}
+    { key: 'hour', title: 'Hour', dataType: 'string' },
+    { key: '0', title: 'Monday', dataType: 'gold' }, // TODO: Might be not be a good idea to hard-code
+    { key: '1', title: 'Tuesday', dataType: 'gold' },
+    { key: '2', title: 'Wednesday', dataType: 'gold' },
+    { key: '3', title: 'Thursday', dataType: 'gold' },
+    { key: '4', title: 'Friday', dataType: 'gold' },
+    { key: '5', title: 'Saturday', dataType: 'gold' },
+    { key: '6', title: 'Sunday', dataType: 'gold' }
   ];
 
   dayList = [];
@@ -56,7 +54,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
   private indexStoredName = 'price-history-by-weekdays-tabs';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
 
-  ngOnChanges({dailyData, hourlyData}: SimpleChanges): void {
+  ngOnChanges({ dailyData, hourlyData }: SimpleChanges): void {
     if (hourlyData && hourlyData.currentValue) {
       this.processHourly(hourlyData.currentValue);
     }
@@ -73,7 +71,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
   private processHourly(data: ItemPriceEntry[]) {
     const dayMap = {};
     this.dayList = [];
-    data.forEach(({timestamp, min, quantity}, index) => {
+    data.forEach(({ timestamp, min, quantity }, index) => {
       const date = new Date(timestamp),
         day = date.getDay(),
         hour = date.getHours();
@@ -140,7 +138,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
     }
 
     this.setGroupedByWeekdayChartData();
-    console.log('dayMap', {dayMap, list: this.dayList});
+    console.log('dayMap', { dayMap, list: this.dayList });
   }
 
   private setGroupedByWeekdayChartData() {
@@ -164,8 +162,15 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
     });
   }
 
+  daySelection(index: number) {
+    console.log('Day index', index, this.days[index]);
+    this.setTabChange(index);
+  }
+
   private setPerHourForDayOfWeek(hour: number, index: number, day, datasetsForDay: ChartData) {
-    let prev;
+    const labelText = (hour > 10 ? hour : ('0' + hour)) + ':00';
+    try {
+      let prev;
     if (!hour) {
       const dayIndex = !index ? 6 : (index - 1);
       prev = this.dayList[dayIndex].hour[23];
@@ -173,7 +178,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
       prev = day.hour[hour - 1];
     }
 
-    datasetsForDay.labels.push('' + hour);
+    datasetsForDay.labels.push(labelText);
     datasetsForDay.datasets[0].data.push(day.hour[hour].min.price / 10000);
     datasetsForDay.datasets[1].data.push(day.hour[hour].avg.price / 10000);
     datasetsForDay.datasets[2].data.push(day.hour[hour].max.price / 10000);
@@ -181,23 +186,26 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
       const change = day.hour[hour].avg.price - prev.avg.price;
       datasetsForDay.datasets[3].data.push(change / 10000);
     }
+    } catch(e){}
   }
 
   private calculateAndSetAvgPriceChange(hour: number, index: number, day) {
-    let prev;
-    if (!hour) {
-      const dayIndex = !index ? 6 : (index - 1);
-      prev = this.dayList[dayIndex].hour[23];
-    } else if (hour) {
-      prev = day.hour[hour - 1];
-    }
-    const change = day.hour[hour].avg.price - prev.avg.price;
-    console.log(index, hour, day.hour[hour].avg.price + ' - ' + prev.avg.price + ' = ' + change);
-    if (day.avgPriceChange === undefined) {
-      day.avgPriceChange = (day.avgPriceChange + change) / 2;
-    } else {
-      day.avgPriceChange = change;
-    }
+    try {
+      let prev;
+      if (!hour) {
+        const dayIndex = !index ? 6 : (index - 1);
+        prev = this.dayList[dayIndex].hour[23];
+      } else if (hour) {
+        prev = day.hour[hour - 1];
+      }
+      const change = day.hour[hour].avg.price - prev.avg.price;
+      console.log(index, hour, day.hour[hour].avg.price + ' - ' + prev.avg.price + ' = ' + change);
+      if (day.avgPriceChange === undefined) {
+        day.avgPriceChange = (day.avgPriceChange + change) / 2;
+      } else {
+        day.avgPriceChange = change;
+      }
+    } catch (e) { }
   }
 
   private setDatasetForGroupedByWeekDayChart() {
@@ -237,11 +245,13 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
         hour: hour < 10 ? '0' + hour : hour
       });
     }
-    this.hourlyByDayTable.data[hour][day] = dayMap[day].hour[hour].avg.price;
+    if (dayMap[day].hour[hour]) {
+      this.hourlyByDayTable.data[hour][day] = dayMap[day].hour[hour].avg.price;
+    }
   }
 
   tooltipCallbackHourly(items, data): string {
-    const {index, datasetIndex} = items;
+    const { index, datasetIndex } = items;
     const dataset = data.datasets[datasetIndex];
     return dataset.label + ': ' +
       new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000);
@@ -287,7 +297,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
     return list;
   }
 
-  setTabChange(index: number, s: string) {
+  setTabChange(index: number) {
     this.selectedTab = index;
     localStorage[this.indexStoredName] = index;
   }

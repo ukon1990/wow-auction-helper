@@ -1,13 +1,17 @@
+<p>
+  This is based on an avg for the past 2 weeks.
+</p>
 <wah-charts-data-sets
         storageName="item-price-weekdays-history-chart"
-        [datasets]="chartDataDay">
+        [datasets]="chartDataDay"
+        (selection)="daySelection($event)">
 </wah-charts-data-sets>
-<mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" #tabs>
+<mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event)" #tabs>
   <mat-tab *ngFor="let day of dayList; let i = index" label="{{ days[i] }}s">
 
     <div class="row">
       <div class="col">
-        Min: {{ day.min | gold }} ({{ day.minTimeOfDay | number }})
+        Min: {{ day.min | gold }} ({{ day.minTimeOfDay | number }}:00)
       </div>
       <div class="col">
         Avg: {{ day.avg | gold }}
@@ -16,7 +20,7 @@
         Price trend: {{ day.avgPriceChange | gold }}
       </div>
       <div class="col">
-        Max: {{ day.max | gold }} ({{ day.maxTimeOfDay | number }})
+        Max: {{ day.max | gold }} ({{ day.maxTimeOfDay | number }}:00)
       </div>
     </div>
 
