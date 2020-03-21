@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
 import { ColumnDescription } from '../../../../table/models/column-description';
 import { ItemPriceEntry } from '../../../models/item-price-entry.model';
 import { ChartData } from '../../../../util/models/chart.model';
@@ -12,12 +13,13 @@ import { SubscriptionManager } from '@ukon1990/subscription-manager/dist/subscri
   templateUrl: './price-heat-map.component.html',
   styleUrls: ['./price-heat-map.component.scss']
 })
-export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
+export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() dailyData: any[];
   @Input() hourlyData: any[];
 
-
   @ViewChild('tabs', { static: false }) tabs;
+
+  numberOfWeeksFormControl: FormControl = new FormControl(2);
 
   columns: ColumnDescription[] = [
     { key: 'hour', title: 'Hour', dataType: 'string' },
@@ -46,10 +48,12 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
   };
   chartDataPerDay = this.setChartDataPerDayList();
 
-  hourlyByDayTable = {
-    columns: this.columns,
-    data: []
-  };
+  constructor() {
+    this.sm.add(this.numberOfWeeksFormControl.valueChanges,
+      value =>
+        this.processHourly(this.hourlyData, value));
+  }
+
   private sm = new SubscriptionManager();
   private indexStoredName = 'price-history-by-weekdays-tabs';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
@@ -68,10 +72,19 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
 
   }
 
-  private processHourly(data: ItemPriceEntry[]) {
-    const dayMap = {};
+  ngOnDestroy() {
+    this.sm.unsubscribe();
+  }
+
+  private processHourly(data: ItemPriceEntry[], numberOfWeeks: number = this.numberOfWeeksFormControl.value) {
+    console.log('Number of weeks', numberOfWeeks);
+    const dayMap = {},
+      nWeeksAgo = +new Date() - 1000 * 60 * 60 * 24 * 7 * numberOfWeeks;
     this.dayList = [];
     data.forEach(({ timestamp, min, quantity }, index) => {
+      if (timestamp <= nWeeksAgo) {
+        return;
+      }
       const date = new Date(timestamp),
         day = date.getDay(),
         hour = date.getHours();
@@ -131,14 +144,9 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
       }
     });
     this.dailyData = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let day = 0; day < 7; day++) {
-        this.addDayForHoursTable(day, hour, dayMap);
-      }
-    }
 
     this.setGroupedByWeekdayChartData();
-    console.log('dayMap', { dayMap, list: this.dayList });
+    Report.debug('dayMap', { dayMap, list: this.dayList });
   }
 
   private setGroupedByWeekdayChartData() {
@@ -171,22 +179,22 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
     const labelText = (hour > 10 ? hour : ('0' + hour)) + ':00';
     try {
       let prev;
-    if (!hour) {
-      const dayIndex = !index ? 6 : (index - 1);
-      prev = this.dayList[dayIndex].hour[23];
-    } else {
-      prev = day.hour[hour - 1];
-    }
+      if (!hour) {
+        const dayIndex = !index ? 6 : (index - 1);
+        prev = this.dayList[dayIndex].hour[23];
+      } else {
+        prev = day.hour[hour - 1];
+      }
 
-    datasetsForDay.labels.push(labelText);
-    datasetsForDay.datasets[0].data.push(day.hour[hour].min.price / 10000);
-    datasetsForDay.datasets[1].data.push(day.hour[hour].avg.price / 10000);
-    datasetsForDay.datasets[2].data.push(day.hour[hour].max.price / 10000);
-    if (prev) {
-      const change = day.hour[hour].avg.price - prev.avg.price;
-      datasetsForDay.datasets[3].data.push(change / 10000);
-    }
-    } catch(e){}
+      datasetsForDay.labels.push(labelText);
+      datasetsForDay.datasets[0].data.push(day.hour[hour].min.price / 10000);
+      datasetsForDay.datasets[1].data.push(day.hour[hour].avg.price / 10000);
+      datasetsForDay.datasets[2].data.push(day.hour[hour].max.price / 10000);
+      if (prev) {
+        const change = day.hour[hour].avg.price - prev.avg.price;
+        datasetsForDay.datasets[3].data.push(change / 10000);
+      }
+    } catch (e) { }
   }
 
   private calculateAndSetAvgPriceChange(hour: number, index: number, day) {
@@ -199,7 +207,6 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
         prev = day.hour[hour - 1];
       }
       const change = day.hour[hour].avg.price - prev.avg.price;
-      console.log(index, hour, day.hour[hour].avg.price + ' - ' + prev.avg.price + ' = ' + change);
       if (day.avgPriceChange === undefined) {
         day.avgPriceChange = (day.avgPriceChange + change) / 2;
       } else {
@@ -209,45 +216,39 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit {
   }
 
   private setDatasetForGroupedByWeekDayChart() {
-    this.chartDataDay.datasets.push({
-      label: 'Min',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 255, 22, 0.4)'
-    });
-    this.chartDataDay.datasets.push({
-      label: 'Avg',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(255, 144, 0, 0.78)'
-    });
-    this.chartDataDay.datasets.push({
-      label: 'Max',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 173, 255, 0.61)'
-    });
-    this.chartDataDay.datasets.push({
-      label: 'Avg price change',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(9,100%,50%,0.33)'
-    });
-  }
-
-  private addDayForHoursTable(day: number, hour: number, dayMap: {}) {
-    if (!this.hourlyByDayTable.data[hour]) {
-      this.hourlyByDayTable.data.push({
-        hour: hour < 10 ? '0' + hour : hour
-      });
-    }
-    if (dayMap[day].hour[hour]) {
-      this.hourlyByDayTable.data[hour][day] = dayMap[day].hour[hour].avg.price;
-    }
+    this.chartDataDay = {
+      labels: [],
+      datasets: [{
+        label: 'Min',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-1',
+        backgroundColor: 'rgba(0, 255, 22, 0.4)'
+      }, {
+        label: 'Avg',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-1',
+        backgroundColor: 'rgba(255, 144, 0, 0.78)'
+      }, {
+        label: 'Max',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-1',
+        backgroundColor: 'rgba(0, 173, 255, 0.61)'
+      }, {
+        label: 'Avg price change',
+        data: [],
+        type: 'line',
+        yAxisID: 'yAxes-2',
+        backgroundColor: 'hsla(9,100%,50%,0.33)'
+      }],
+      axisLabels: {
+        yAxis1: 'Min/Avg/Max',
+        yAxis2: 'Avg change'
+      },
+      labelCallback: this.tooltipCallbackHourly
+    };
   }
 
   tooltipCallbackHourly(items, data): string {
