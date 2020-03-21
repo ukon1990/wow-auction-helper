@@ -20,7 +20,8 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestro
 
   @ViewChild('tabs', {static: false}) tabs;
 
-  numberOfWeeksFormControl: FormControl = new FormControl(2);
+  numberOfWeeksFormControl: FormControl;
+  storageName = 'item-price-per-weekday-number-of-weeks';
 
   columns: ColumnDescription[] = [
     {key: 'hour', title: 'Hour', dataType: 'string'},
@@ -48,9 +49,13 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestro
   chartDataPerDay = this.setChartDataPerDayList();
 
   constructor() {
+    const numberOfWeeks = localStorage.getItem(this.storageName) || 2;
+    this.numberOfWeeksFormControl = new FormControl(+numberOfWeeks);
     this.sm.add(this.numberOfWeeksFormControl.valueChanges,
-      value =>
-        this.processHourly(this.hourlyData, value));
+      value => {
+        this.processHourly(this.hourlyData, value);
+        localStorage.setItem(this.storageName, value);
+      });
   }
 
   private sm = new SubscriptionManager();
