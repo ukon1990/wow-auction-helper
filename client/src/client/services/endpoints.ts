@@ -2,7 +2,6 @@ import {SharedService} from './shared.service';
 import {environment} from '../../environments/environment';
 
 export class Endpoints {
-  public static readonly TSM_API = 'https://api.tradeskillmaster.com/v1/item';
   public static readonly WAH_LOCAL_API = 'http://localhost:3000/';
   public static readonly IMAGE_PATH = 'https://render-eu.worldofwarcraft.com/';
   public static readonly IMAGE_PATH_ICONS = Endpoints.IMAGE_PATH + 'icons/56';
@@ -43,10 +42,10 @@ export class Endpoints {
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
-  public static getLambdaUrl(path: string, region?: string): string {
+  public static getLambdaUrl(path: string, region?: string): string {/*
     if (!environment.production) {
       return 'http://localhost:3000/' + path;
-    }
+    }*/
     if (!region) {
       region = SharedService.user && SharedService.user.region ?
         SharedService.user.region : 'eu';
