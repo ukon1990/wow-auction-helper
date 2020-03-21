@@ -1,12 +1,13 @@
-import { FormControl } from '@angular/forms';
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
-import { ColumnDescription } from '../../../../table/models/column-description';
-import { ItemPriceEntry } from '../../../models/item-price-entry.model';
-import { ChartData } from '../../../../util/models/chart.model';
-import { GoldPipe } from '../../../../util/pipes/gold.pipe';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
-import { Report } from '../../../../../utils/report.util';
-import { SubscriptionManager } from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {FormControl} from '@angular/forms';
+import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
+import {ColumnDescription} from '../../../../table/models/column-description';
+import {ItemPriceEntry} from '../../../models/item-price-entry.model';
+import {ChartData} from '../../../../util/models/chart.model';
+import {GoldPipe} from '../../../../util/pipes/gold.pipe';
+import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
+import {Report} from '../../../../../utils/report.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {PriceSummaryUtil} from '../../../utils/price-summary.util';
 
 @Component({
   selector: 'wah-price-heat-map',
@@ -17,25 +18,23 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestro
   @Input() dailyData: any[];
   @Input() hourlyData: any[];
 
-  @ViewChild('tabs', { static: false }) tabs;
+  @ViewChild('tabs', {static: false}) tabs;
 
   numberOfWeeksFormControl: FormControl = new FormControl(2);
 
   columns: ColumnDescription[] = [
-    { key: 'hour', title: 'Hour', dataType: 'string' },
-    { key: '0', title: 'Monday', dataType: 'gold' }, // TODO: Might be not be a good idea to hard-code
-    { key: '1', title: 'Tuesday', dataType: 'gold' },
-    { key: '2', title: 'Wednesday', dataType: 'gold' },
-    { key: '3', title: 'Thursday', dataType: 'gold' },
-    { key: '4', title: 'Friday', dataType: 'gold' },
-    { key: '5', title: 'Saturday', dataType: 'gold' },
-    { key: '6', title: 'Sunday', dataType: 'gold' }
+    {key: 'hour', title: 'Hour', dataType: 'string'},
+    {key: '0', title: 'Monday', dataType: 'gold'}, // TODO: Might be not be a good idea to hard-code
+    {key: '1', title: 'Tuesday', dataType: 'gold'},
+    {key: '2', title: 'Wednesday', dataType: 'gold'},
+    {key: '3', title: 'Thursday', dataType: 'gold'},
+    {key: '4', title: 'Friday', dataType: 'gold'},
+    {key: '5', title: 'Saturday', dataType: 'gold'},
+    {key: '6', title: 'Sunday', dataType: 'gold'}
   ];
 
   dayList = [];
-  days = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-  ];
+  days = PriceSummaryUtil.days;
 
   chartDataDay: ChartData = {
     labels: [],
@@ -58,7 +57,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestro
   private indexStoredName = 'price-history-by-weekdays-tabs';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
 
-  ngOnChanges({ dailyData, hourlyData }: SimpleChanges): void {
+  ngOnChanges({dailyData, hourlyData}: SimpleChanges): void {
     if (hourlyData && hourlyData.currentValue) {
       this.processHourly(hourlyData.currentValue);
     }
@@ -78,141 +77,24 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestro
 
   private processHourly(data: ItemPriceEntry[], numberOfWeeks: number = this.numberOfWeeksFormControl.value) {
     console.log('Number of weeks', numberOfWeeks);
-    const dayMap = {},
-      nWeeksAgo = +new Date() - 1000 * 60 * 60 * 24 * 7 * numberOfWeeks;
-    this.dayList = [];
-    data.forEach(({ timestamp, min, quantity }, index) => {
-      if (timestamp <= nWeeksAgo) {
-        return;
-      }
-      const date = new Date(timestamp),
-        day = date.getDay(),
-        hour = date.getHours();
-      if (!dayMap[day]) {
-        dayMap[day] = {
-          min: min,
-          avg: min,
-          max: min,
-          avgQuantity: quantity,
-          minTimeOfDay: hour,
-          maxTimeOfDay: hour,
-          avgPriceChange: undefined,
-          hour: {}
-        };
-        this.dayList.push(dayMap[day]);
-      } else {
-        const dayData = dayMap[day];
-        if (dayData.min > min) {
-          dayMap[day].min = min;
-          dayMap[day].minTimeOfDay = hour;
-        }
-        if (dayData.max < min) {
-          dayMap[day].max = min;
-          dayMap[day].maxTimeOfDay = hour;
-        }
 
-        dayMap[day].avg = (dayMap[day].avg + min) / 2;
-        dayMap[day].avgQuantity = (dayMap[day].avgQuantity + quantity) / 2;
-      }
+    this.dayList = PriceSummaryUtil.processHourly(data, numberOfWeeks);
 
-      if (!dayMap[day].hour[hour]) {
-        dayMap[day].hour[hour] = {
-          min: {
-            price: min,
-            quantity
-          },
-          avg: {
-            price: min,
-            quantity
-          },
-          max: {
-            price: min,
-            quantity
-          },
-          change: data[index - 1] ? data[index].min - data[index - 1].min : 0
-        };
-      } else {
-        const hourData = dayMap[day].hour[hour];
-        hourData.avg.price = (hourData.avg.price + min) / 2;
-        if (hourData.min.price > min) {
-          hourData.min.price = min;
-        }
-        if (hourData.max.price < min) {
-          hourData.max.price = min;
-        }
-        hourData.change = data[index].min - data[index - 1].min;
-      }
-    });
     this.dailyData = [];
-
     this.setGroupedByWeekdayChartData();
-    Report.debug('dayMap', { dayMap, list: this.dayList });
   }
 
   private setGroupedByWeekdayChartData() {
     this.setDatasetForGroupedByWeekDayChart();
     this.chartDataPerDay = this.setChartDataPerDayList();
 
-    this.dayList.forEach((day, index) => {
-      const groupedDaysSets = this.chartDataDay.datasets,
-        datasetsForDay = this.chartDataPerDay[index];
-
-      for (let hour = 0; hour < 24; hour++) {
-        this.calculateAndSetAvgPriceChange(hour, index, day);
-
-        this.setPerHourForDayOfWeek(hour, index, day, datasetsForDay);
-      }
-      this.chartDataDay.labels.push(this.days[index]);
-      groupedDaysSets[0].data.push(day.min / 10000);
-      groupedDaysSets[1].data.push(day.avg / 10000);
-      groupedDaysSets[2].data.push(day.max / 10000);
-      groupedDaysSets[3].data.push(day.avgPriceChange / 10000);
-    });
+    this.dayList.forEach((day, index) =>
+      PriceSummaryUtil.processAndSetWeekdayData(
+        index, day, this.dayList, this.chartDataPerDay[index], this.chartDataDay));
   }
 
   daySelection(index: number) {
-    console.log('Day index', index, this.days[index]);
     this.setTabChange(index);
-  }
-
-  private setPerHourForDayOfWeek(hour: number, index: number, day, datasetsForDay: ChartData) {
-    const labelText = (hour > 10 ? hour : ('0' + hour)) + ':00';
-    try {
-      let prev;
-      if (!hour) {
-        const dayIndex = !index ? 6 : (index - 1);
-        prev = this.dayList[dayIndex].hour[23];
-      } else {
-        prev = day.hour[hour - 1];
-      }
-
-      datasetsForDay.labels.push(labelText);
-      datasetsForDay.datasets[0].data.push(day.hour[hour].min.price / 10000);
-      datasetsForDay.datasets[1].data.push(day.hour[hour].avg.price / 10000);
-      datasetsForDay.datasets[2].data.push(day.hour[hour].max.price / 10000);
-      if (prev) {
-        const change = day.hour[hour].avg.price - prev.avg.price;
-        datasetsForDay.datasets[3].data.push(change / 10000);
-      }
-    } catch (e) { }
-  }
-
-  private calculateAndSetAvgPriceChange(hour: number, index: number, day) {
-    try {
-      let prev;
-      if (!hour) {
-        const dayIndex = !index ? 6 : (index - 1);
-        prev = this.dayList[dayIndex].hour[23];
-      } else if (hour) {
-        prev = day.hour[hour - 1];
-      }
-      const change = day.hour[hour].avg.price - prev.avg.price;
-      if (day.avgPriceChange === undefined) {
-        day.avgPriceChange = (day.avgPriceChange + change) / 2;
-      } else {
-        day.avgPriceChange = change;
-      }
-    } catch (e) { }
   }
 
   private setDatasetForGroupedByWeekDayChart() {
@@ -252,7 +134,7 @@ export class PriceHeatMapComponent implements OnChanges, AfterViewInit, OnDestro
   }
 
   tooltipCallbackHourly(items, data): string {
-    const { index, datasetIndex } = items;
+    const {index, datasetIndex} = items;
     const dataset = data.datasets[datasetIndex];
     return dataset.label + ': ' +
       new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000);
