@@ -26,6 +26,10 @@ exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Call
   new LogController(event, callback, connection).deleteClient();
 };
 
+exports.getLog = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new LogController(event, callback, connection).getLog();
+};
+
 export class LogController {
   detail;
   userId: string;
@@ -42,21 +46,21 @@ export class LogController {
 
   handleS3AccessLog(): void {
     const params = this.detail.requestParameters;
-    // example: auctions/eu/69/1558442417000.json.gz
     const path = params.key.split('/');
 
     const requestData = {
       bucketName: params.bucketName,
       type: path[0],
       region: path[1],
-      ahId: path[2],
-      fileName: path[3],
+      ahId: isNaN(path[2]) ? null : path[2],
+      fileName: path[path.length - 1],
       ipObfuscated: this.userId
     };
     const sql = LogQuery.s3Event(requestData);
+    /*
     console.log('S3 accessed event:', {
-      requestData, sql, params
-    });
+      requestData, sql, params, event: this.detail
+    });*/
     this.conn
       .query(sql)
       .then(() => {
@@ -107,5 +111,9 @@ export class LogController {
     return crypto.createHash('sha256')
       .update(this.detail.sourceIp || this.detail.sourceIPAddress)
       .digest('base64');
+  }
+
+  getLog() {
+    // connection.query(LogQuery)
   }
 }
