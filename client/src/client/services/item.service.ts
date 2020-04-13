@@ -114,12 +114,16 @@ export class ItemService {
           ErrorReport.sendHttpError(error);
         });
     }
+    if (this.isTimestampNotDefined(timestamp)) {
+      ErrorReport.sendError('getItems', {message: 'No timestamp retrieved after S3 fetch!'} as Error);
+      return null;
+    }
     SharedService.downloading.items = true;
     return this._http.post(
       Endpoints.getLambdaUrl(`item`),
       {
         locale: locale,
-        timestamp: !this.isTimestampNotDefined(timestamp) ? timestamp : new Date('2000-06-30').toJSON()
+        timestamp: !this.isTimestampNotDefined(timestamp) ? timestamp : new Date('2020-01-01').toJSON()
       })
       .toPromise()
       .then(items => this.handleItems(items as ItemResponse))
