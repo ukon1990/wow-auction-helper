@@ -299,7 +299,6 @@ export class AuctionHandler {
         console.error(`Could not update id=${id}`, error);
         reject(error);
       } else {
-        console.log('No new update available');
         resolve();
       }
     });
@@ -319,11 +318,9 @@ export class AuctionHandler {
               .then(async (res) => {
                 console.log('Successfully uploaded to bucket for id=', id);
                 resolve(res);
-                // await this.setIsUpdating(dbResult.id, false);
               })
               .catch(async err => {
                 console.error('Could not upload to s3', err);
-                //  await this.setIsUpdating(dbResult.id, false);
               });
           } else {
             const message = 'The body was empty.';
@@ -332,19 +329,10 @@ export class AuctionHandler {
           }
         })
         .catch(e => {
-          // this.setIsUpdating(dbResult.id, false)
-          //   .catch(console.error);
           console.error('downloadDump', e);
           reject(e);
         });
     });
-  }
-
-  private setIsUpdating(ahId: number, isUpdating) {
-    return new DatabaseUtil()
-      .query(RealmQuery.isUpdating(ahId, isUpdating))
-      .then()
-      .catch(console.error);
   }
 
   private async getDelay(id, conn = new DatabaseUtil()) {
@@ -449,10 +437,8 @@ export class AuctionHandler {
 
   async processAuctions(region: string, record: EventSchema, ahId: number, fileName: string, conn = new DatabaseUtil()) {
     return new Promise<void>((resolve, reject) => {
-      console.log('processAuctions', record);
       new S3Handler().get(record.bucket.name, record.object.key)
         .then(async data => {
-          const processStart = +new Date();
           await new GzipUtil().decompress(data['Body'])
             .then(({auctions}) => {
               const lastModified = +fileName.split('-')[0];
@@ -460,15 +446,12 @@ export class AuctionHandler {
                 resolve();
                 return;
               }
-              console.log(`Decompressing auctions took ${+new Date() - processStart} ms for ${lastModified} @ id=${ahId}`);
               const query = AuctionProcessorUtil.process(
                 auctions, lastModified, ahId);
               const insertStart = +new Date();
               conn.query(query)
                 .then(async ok => {
                   console.log(`Completed item price stat import in ${+new Date() - insertStart} ms`, ok);
-                  /*await this.updateHistoricalData(region, ahId, conn)
-                    .catch(console.error);*/
                   resolve();
                 })
                 .catch(reject);
@@ -496,9 +479,6 @@ export class AuctionHandler {
     return new Promise(async (resolve, reject) => {
       conn.query(RealmQuery.getHouse(ahId))
         .then(async (ah: AuctionHouseStatus) => {
-          console.log('updateDBEntries', {
-            fileName, lastModified, ah: ah[0]
-          });
           Promise.all([
             conn.query(RealmQuery
               .insertNewDumpLogRow(ahId, url, lastModified, ah[0].lastModified, fileSize))
