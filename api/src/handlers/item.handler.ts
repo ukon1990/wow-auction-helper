@@ -15,10 +15,9 @@ import {AuctionItemStat, AuctionProcessorUtil} from '../utils/auction-processor.
 
 export class ItemHandler {
   /* istanbul ignore next */
-  async getById(id: number, locale: string): Promise<Item> {
+  async getById(id: number, locale: string, conn: DatabaseUtil): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
-      new DatabaseUtil()
-        .query(ItemQuery.getById(
+      conn.query(ItemQuery.getById(
           id, locale))
         .then(async (items: Item[]) => {
           if (items[0]) {
@@ -38,11 +37,10 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  update(id: number, locale: string) {
+  update(id: number, locale: string, conn: DatabaseUtil) {
     return new Promise<Item>((resolve, reject) => {
       this.getFreshItem(id, locale)
         .then(async item => {
-          const conn = new DatabaseUtil(false);
           await QueryIntegrity.getVerified('items', item, conn)
             .then((friendlyItem) => {
               if (!friendlyItem) {
@@ -51,20 +49,16 @@ export class ItemHandler {
                 return;
               }
               const sql = new QueryUtil('items').update(item.id, friendlyItem);
-              console.log('SQL: ', sql);
               delete friendlyItem.itemSpells;
               conn.query(sql)
                 .then(() => {
-                  conn.end();
                   resolve(item);
                 })
                 .catch(error => {
-                  conn.end();
                   reject(error);
                 });
             })
             .catch(error => {
-              conn.end();
               reject(error);
             });
         })
@@ -73,26 +67,26 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  getAllRelevant(event: APIGatewayEvent, callback: Callback) {
-    const body = JSON.parse(event.body),
-      timestamp = body.timestamp,
-      locale = body.locale;
-
-    new DatabaseUtil()
-      .query(
-        ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp))
-      .then((rows: any[]) => {
-        const ts = rows[0] ? rows[0].timestamp : new Date().toJSON(),
-          items = ItemUtil.handleItems(rows);
-        Response.send({
-          timestamp: ts,
-          items
-        }, callback);
-        items.length = 0;
-        rows.length = 0;
-      })
-      .catch(error =>
-        Response.error(callback, error, event));
+  getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
+    return new Promise((resolve, reject) => {
+      const sql = ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp);
+      console.log('Item fetch', sql);
+      conn.query(sql)
+        .then((rows: any[]) => {
+          const ts = rows[0] ? rows[0].timestamp : new Date().toJSON(),
+            items = ItemUtil.handleItems(rows);
+          resolve({
+            timestamp: ts,
+            items
+          });
+          items.length = 0;
+          rows.length = 0;
+        })
+        .catch((error) => {
+          console.error('getAllRelevant failed for', {timestamp, locale}, 'with error', error);
+          reject(error);
+        });
+    });
   }
 
   /* istanbul ignore next */
@@ -181,19 +175,17 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true): Promise<any> {
+  async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true,
+                           conn: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
     console.log(`getPriceHistoryFor ahId=${ahId} item=${id} pet=${petSpeciesId}`);
-    const conn = new DatabaseUtil(false);
     if (onlyHourly) {
       return new Promise((resolve, reject) => {
         this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
           .then(r => {
-            conn.end();
             resolve(r);
           })
           .catch(e => {
             console.error(e);
-            conn.end();
             resolve([]);
           });
       });
@@ -213,13 +205,11 @@ export class ItemHandler {
             .catch(console.error)
         ])
           .then(() => {
-            conn.end();
             AuctionProcessorUtil.setCurrentDayFromHourly(result);
             resolve(result);
           })
           .catch(err => {
             console.error(err);
-            conn.end();
             resolve(result);
           });
       } catch (e) {

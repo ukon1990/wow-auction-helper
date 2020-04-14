@@ -5,26 +5,36 @@ import {LogEntry} from '../models/log-entry.model';
 import {LogQuery} from '../queries/log.query';
 
 const crypto = require('crypto');
+const connection = new DatabaseUtil(false);
 
 /* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new LogController(event, callback).handleS3AccessLog();
+  context.callbackWaitsForEmptyEventLoop = false;
+  new LogController(event, callback, connection).handleS3AccessLog();
 };
 
 /* istanbul ignore next */
-exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) =>
-  new LogController(event, callback).clientEvent();
+exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  new LogController(event, callback, connection).clientEvent();
+};
 
 
 /* istanbul ignore next */
-exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Callback) =>
-  new LogController(event, callback).deleteClient();
+exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  new LogController(event, callback, connection).deleteClient();
+};
+
+exports.getLog = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new LogController(event, callback, connection).getLog();
+};
 
 export class LogController {
   detail;
   userId: string;
 
-  constructor(public event: APIGatewayEvent, public callback: Callback) {
+  constructor(public event: APIGatewayEvent, public callback: Callback, private conn: DatabaseUtil) {
     console.log(this.event, this.event['identity']);
     if (this.event.requestContext && this.event.requestContext['identity']) {
       this.detail = this.event.requestContext['identity'];
@@ -36,26 +46,30 @@ export class LogController {
 
   handleS3AccessLog(): void {
     const params = this.detail.requestParameters;
-    // example: auctions/eu/69/1558442417000.json.gz
     const path = params.key.split('/');
 
     const requestData = {
       bucketName: params.bucketName,
       type: path[0],
       region: path[1],
-      ahId: path[2],
-      fileName: path[3],
+      ahId: isNaN(path[2]) ? null : path[2],
+      fileName: path[path.length - 1],
       ipObfuscated: this.userId
     };
     const sql = LogQuery.s3Event(requestData);
-    console.log('S3 accessed event:', requestData, 'sql: ', sql);
-    new DatabaseUtil()
-      .query(
-        sql)
+    /*
+    console.log('S3 accessed event:', {
+      requestData, sql, params, event: this.detail
+    });*/
+    this.conn
+      .query(sql)
       .then(() => {
+        Response.send({message: 'success'}, this.callback);
       })
-      .catch(console.error);
-    Response.send({message: 'success'}, this.callback);
+      .catch(err => {
+        console.error(err);
+        Response.error(this.callback, {message: 'error'});
+      });
   }
 
   clientEvent(): void {
@@ -97,5 +111,9 @@ export class LogController {
     return crypto.createHash('sha256')
       .update(this.detail.sourceIp || this.detail.sourceIPAddress)
       .digest('base64');
+  }
+
+  getLog() {
+    // connection.query(LogQuery)
   }
 }

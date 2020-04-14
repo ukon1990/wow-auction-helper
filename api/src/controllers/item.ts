@@ -1,9 +1,12 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
 import {ItemHandler} from '../handlers/item.handler';
+import {DatabaseUtil} from '../utils/database.util';
 
+const connection = new DatabaseUtil(false);
 /* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
 
   if (event.pathParameters && event.pathParameters.id) {
     ItemController.byId(event, callback);
@@ -13,8 +16,9 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = JSON.parse(event.body);
-  new ItemHandler().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly)
+  new ItemHandler().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly, connection)
     .then(history => Response.send(history, callback))
     .catch(error => Response.error(callback, error, event));
 };
@@ -28,12 +32,12 @@ class ItemController {
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getById(id, locale)
+        new ItemHandler().getById(id, locale, connection)
           .then(res => Response.send(res, callback))
           .catch(err => Response.error(callback, err, undefined, 404));
         break;
       case 'PATCH':
-        new ItemHandler().update(id, locale)
+        new ItemHandler().update(id, locale, connection)
           .then(res => Response.send(res, callback))
           .catch(err => Response.error(callback, err, undefined, 404));
         break;
@@ -48,7 +52,12 @@ class ItemController {
     switch (type) {
       case 'OPTIONS':
       case 'POST':
-        new ItemHandler().getAllRelevant(event, callback);
+        const {timestamp, locale} = JSON.parse(event.body);
+        new ItemHandler().getAllRelevant(timestamp, locale, connection)
+          .then(res =>
+            Response.send(res, callback))
+          .catch(error =>
+            Response.error(callback, error, event));
         break;
       default:
         Response.error(callback, 'The method you provided, is not available.', event, 401);
