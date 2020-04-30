@@ -43,10 +43,10 @@ export class Endpoints {
 
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
-  public static getLambdaUrl(path: string, region?: string): string {
+  public static getLambdaUrl(path: string, region?: string): string {/*
     if (!environment.production) {
       return 'http://localhost:3000/' + path;
-    }
+    }*/
     if (!region) {
       region = SharedService.user && SharedService.user.region ?
         SharedService.user.region : 'eu';
