@@ -33,7 +33,7 @@ export class ErrorReport {
           version
         },
       });
-      this.service.send(action, category, version, 'error-http', label);
+      // this.service.send(action, category, version, 'error-http', label);
 
       console.error(error.name, error.error);
 
@@ -64,7 +64,7 @@ export class ErrorReport {
           version
         },
       });
-      this.service.send(action, category, version, 'error-runtime', label);
+      // this.service.send(action, category, version, 'error-runtime', label);
     }
 
     console.error(functionName, error);

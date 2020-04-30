@@ -25,7 +25,7 @@ export class Report {
       action: action,
       properties: {category, version, label},
     });
-    this.service.send(action, category, version, 'user-event', label);
+    // this.service.send(action, category, version, 'user-event', label);
   }
 
   public static debug(message?: any, ...optionalParams: any[]): void {
