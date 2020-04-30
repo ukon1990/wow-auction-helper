@@ -117,7 +117,11 @@
             <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
             <span *ngSwitchCase="'input-number'">
               <mat-form-field class="row col-md-12">
-                <input matInput type="number" [(ngModel)]="d[c.key]">
+                <input
+                        matInput type="number"
+
+                        [ngModel]="d[c.key]"
+                        (ngModelChange)="onInputChange(d, c, $event)">
               </mat-form-field>
             </span>
             <ng-container *ngSwitchCase="'input-gold'">
@@ -125,15 +129,31 @@
                 <input
                         matInput
                         [ngModel]="d[c.key] | gold"
-                        (ngModelChange)="setNewInputGoldValue(d, c.key, $event)"
+                        (ngModelChange)="setNewInputGoldValue(d, c, $event)"
                 />
               </mat-form-field>
             </ng-container>
             <span *ngSwitchCase="'input-text'">
               <mat-form-field class="row col-md-12">
-                <input matInput type="text" [(ngModel)]="d[c.key]">
+                <input
+                        matInput type="text"
+                        [ngModel]="d[c.key]"
+                        (ngModelChange)="onInputChange(d, c, $event)"
+                />
               </mat-form-field>
             </span>
+
+            <ng-container *ngSwitchCase="'row-actions'">
+              <ng-container *ngFor="let action of c.actions">
+                <button mat-icon-button
+                        [matTooltip]="action.tooltip"
+                        (click)="action.callback(d, getPageIndex(i))">
+                    <i [class]="action.icon"></i>
+                  {{ action.text }}
+                  </button>
+              </ng-container>
+            </ng-container>
+
             <span *ngSwitchCase="'action'">
               <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
                 <i class="fas fa-eye"></i>
@@ -141,10 +161,6 @@
 
               <ng-container *ngFor="let action of c.actions">
                 <span [ngSwitch]="action">
-                  <button *ngSwitchCase="'watchlist-group-delete'" mat-icon-button
-                          matTooltip="Removes the watchlistgroup and it's items" (click)="removeGroup(i)">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
 
                   <button *ngSwitchCase="'remove-from-list'" mat-icon-button
                           matTooltip="Removes this item from the list" (click)="removeFromList(i)">
@@ -159,16 +175,6 @@
                   <button *ngSwitchCase="'custom-procs-delete'" mat-icon-button (click)="customProcs().remove(d, i)"
                           matTooltip="Remove from custom procs list">
                     <i class="fas fa-trash-alt"></i>
-                  </button>
-
-                  <button *ngSwitchCase="'watchlist-group-move-up'" mat-icon-button (click)="moveGroup(i, i - 1)"
-                          matTooltip="Move the group up. This will also change it's order in the dashboard.">
-                    <i class="fas fa-chevron-up"></i>
-                  </button>
-
-                  <button *ngSwitchCase="'watchlist-group-move-down'" mat-icon-button (click)="moveGroup(i, i + 1)"
-                          matTooltip="Move the group down. This will also change it's order in the dashboard.">
-                    <i class="fas fa-chevron-down"></i>
                   </button>
                 </span>
               </ng-container>
