@@ -289,10 +289,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
   }
 
-  moveGroup(from: number, to: number): void {
-    const pagignationIndex = this.pageEvent.pageIndex * this.pageEvent.pageSize;
-    SharedService.user.watchlist.moveGroup(pagignationIndex + from, pagignationIndex + to);
-    Report.send(`Changed group position`, 'Watchlist');
+  onInputChange(row, column: ColumnDescription, value): void {
+    row[column.key] = value;
+    if (column.options && column.options.onModelChange) {
+      column.options.onModelChange(row, column.key, value);
+    }
+  }
+
+  getPageIndex(index: number): number {
+    return (this.pageEvent.pageIndex * this.pageEvent.pageSize) + index;
   }
 
   removeGroup(index: number): void {
@@ -429,12 +434,12 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.rowClicked.emit(new RowClickEvent(c, d));
   }
 
-  setNewInputGoldValue(d: any, key: string, newValue: any) {
+  setNewInputGoldValue(d: any, column: ColumnDescription, newValue: any) {
     const interval = 500;
     this.lastCharacterTyped = +new Date();
     setTimeout(() => {
       if (+new Date() - this.lastCharacterTyped >= interval) {
-        d[key] = GoldPipe.toCopper(newValue);
+        this.onInputChange(d, column, GoldPipe.toCopper(newValue));
         this.lastCharacterTyped = undefined;
       }
     }, interval);

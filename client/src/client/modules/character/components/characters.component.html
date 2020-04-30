@@ -3,6 +3,11 @@
   Adding characters, allows you to see if they have been undercut and also allows you to only display recipes known to them
   in the crafting section.
 </p>
+<em>
+  There are have been an issue where the recipe part of the character data has been missing, since blizzard updated their API endpoint.
+  It is now back, but they've made some changes, that makes it so that I have to do more work to get it back again (recipe id change).
+  I'm sorry for the inconvenience this has and is causing some.
+</em>
 <!-- Form -->
 <form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="form">
   <wah-select-realm
@@ -16,7 +21,7 @@
   </mat-form-field>
   <mat-checkbox formControlName="characterBelowLevelTen" class="mr-2"
     matTooltip="
-      If the character is lower than level 10, it will not be found on the armory. 
+      If the character is lower than level 10, it will not be found on the armory.
       The app can then not get any crafting information etc for that character.">
     Below level 10
   </mat-checkbox>
