@@ -266,12 +266,13 @@ functions:
       FunctionName: Wah-loggerClientEvent
     handler: src/controllers/logger.clientEvent
     memorySize: 128
-    events:
-      - http:
-          method: post
-          path: logger/client-event
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+   # TODO: See if this affects costs
+   # events:
+   #   - http:
+   #       method: post
+   #       path: logger/client-event
+   #       cors:
+   #         origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
   loggerClientDelete:
     tags:
