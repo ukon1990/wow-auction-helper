@@ -16,7 +16,8 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 /* istanbul ignore next */
 exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  new LogController(event, callback, connection).clientEvent();
+  Response.send({success: true, userId: null}, callback);
+  // new LogController(event, callback, connection).clientEvent();
 };
 
 
