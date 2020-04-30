@@ -29,7 +29,7 @@ functions:
           method: get
           path: auction/log/{id}
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   auctionsDownloadAndSave:
     tags:
       FunctionName: Wah-auctionsDownloadAndSave
@@ -45,7 +45,7 @@ functions:
   updateAllHouses:
     tags:
       FunctionName: Wah-updateAllHouses
-    handler: src/controllers/auction.updateAll
+    handler: src/controllers/auction-pooled-connections.updateAll
     memorySize: 256
     timeout: 59
 
@@ -65,7 +65,7 @@ functions:
           method: post
           path: auction/update-one
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   deleteOldPriceHistoryForRealmAndSetDailyPrice:
     tags:
       FunctionName: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
@@ -98,13 +98,13 @@ functions:
           method: any
           path: item
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
       - http:
           method: any
           path: item/{id}
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getPriceHistoryForItem:
     tags:
       FunctionName: Wah-item-history
@@ -126,13 +126,13 @@ functions:
           method: any
           path: pet
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
       - http:
           method: any
           path: pet/{id}
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   recipes:
     tags:
       FunctionName: Wah-recipes
@@ -143,13 +143,13 @@ functions:
           method: any
           path: recipe
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
       - http:
           method: any
           path: recipe/{id}
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   zone:
     tags:
       FunctionName: Wah-zone
@@ -161,7 +161,7 @@ functions:
           method: post
           path: zone
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetById:
     tags:
       FunctionName: Wah-npc-by-id
@@ -172,7 +172,7 @@ functions:
           method: post
           path: npc/{id}
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetAll:
     tags:
       FunctionName: Wah-npc-get-all
@@ -183,7 +183,7 @@ functions:
           method: post
           path: npc/all
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetByIds:
     tags:
       FunctionName: Wah-npc
@@ -206,7 +206,7 @@ functions:
           method: post
           path: character
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   realm:
     tags:
       FunctionName: Wah-realm
@@ -216,7 +216,7 @@ functions:
           method: post
           path: realm
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
   realmAllRegions:
     tags:
@@ -228,7 +228,7 @@ functions:
           method: get
           path: realm/all
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getByRegionAndName:
     tags:
       FunctionName: Wah-getByRegionAndName
@@ -239,7 +239,7 @@ functions:
           method: get
           path: realm/{region}/{realm}
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   test:
     tags:
       FunctionName: Wah-test
@@ -250,7 +250,7 @@ functions:
           method: get
           path: test
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
   logger:
     tags:
@@ -270,6 +270,8 @@ functions:
       - http:
           method: post
           path: logger/client-event
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
   loggerClientDelete:
     tags:
@@ -281,7 +283,7 @@ functions:
           method: delete
           path: logger/client-event
           cors:
-            origin: '*'
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   currency:
     tags:
       FunctionName: Wah-currencies
