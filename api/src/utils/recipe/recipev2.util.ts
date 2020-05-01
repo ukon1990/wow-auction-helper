@@ -28,8 +28,9 @@ export class RecipeV2Util {
                                         \`data\`)
                                         VALUES
                                         (${recipe.id},
-                                        "${safeifyString(JSON.stringify(recipe))}");
-        `).then(resolve).catch(reject);
+                                        "${safeifyString(JSON.stringify(recipe))}");`)
+                        .then(() => resolve(recipe))
+                        .catch(reject);
                 })
                 .catch(reject);
         });
