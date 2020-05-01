@@ -1,96 +1,33 @@
+import {ItemLocale} from '../item/item-locale';
+import {Key} from '../game-data/Key.model';
 
-export interface Self {
-  href: string;
-}
-
-export interface Links {
-  self: Self;
-}
-
-export interface Name {
-  en_US: string;
-  es_MX: string;
-  pt_BR: string;
-  de_DE: string;
-  en_GB: string;
-  es_ES: string;
-  fr_FR: string;
-  it_IT: string;
-  ru_RU: string;
-  ko_KR: string;
-  zh_TW: string;
-  zh_CN: string;
-}
-
-export interface Key {
-  href: string;
-}
-
-export interface Media {
-  key: Key;
-  id: number;
-}
-
-export interface Key2 {
-  href: string;
-}
-
-export interface Name2 {
-  en_US: string;
-  es_MX: string;
-  pt_BR: string;
-  de_DE: string;
-  en_GB: string;
-  es_ES: string;
-  fr_FR: string;
-  it_IT: string;
-  ru_RU: string;
-  ko_KR: string;
-  zh_TW: string;
-  zh_CN: string;
-}
-
-export interface CraftedItem {
-  key: Key2;
-  name: Name2;
-  id: number;
-}
-
-export interface Key3 {
-  href: string;
-}
-
-export interface Name3 {
-  en_US: string;
-  es_MX: string;
-  pt_BR: string;
-  de_DE: string;
-  en_GB: string;
-  es_ES: string;
-  fr_FR: string;
-  it_IT: string;
-  ru_RU: string;
-  ko_KR: string;
-  zh_TW: string;
-  zh_CN: string;
-}
-
-export interface Reagent2 {
-  key: Key3;
-  name: Name3;
-  id: number;
-}
-
-export interface Reagent {
-  reagent: Reagent2;
-  quantity: number;
+export interface CreatedItem {
+    id: number;
+    key: Key;
+    name: ItemLocale | string;
 }
 
 export interface Recipev2 {
-  _links: Links;
-  id: number;
-  name: Name;
-  media: Media;
-  crafted_item: CraftedItem;
-  reagents: Reagent[];
+    id: number;
+    name: ItemLocale | string;
+    media: {
+        id: number;
+        key: Key
+    };
+    _links: {
+        self: Key;
+    };
+    reagents: {
+        reagent: {
+            id: number;
+            key: Key;
+            name: ItemLocale | string;
+        };
+        quantity: number;
+    }[];
+    crafted_item?: CreatedItem;
+    description: ItemLocale | string;
+    rank?: number;
+    horde_crafted_item?: CreatedItem;
+    alliance_crafted_item?: CreatedItem;
 }
