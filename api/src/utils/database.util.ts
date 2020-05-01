@@ -63,11 +63,15 @@ export class DatabaseUtil {
   private enqueueHandshake(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.connection) {
+        console.error('No connection is available');
         reject('No connection is available');
         return;
       }
+      const isAuthenticated = this.connection.state === 'authenticated';
 
-      if (this.isConnectionActive) {
+      console.log('Connection status', this.connection.state);
+
+      if (this.isConnectionActive && isAuthenticated) {
         resolve();
         return;
       }
@@ -76,10 +80,11 @@ export class DatabaseUtil {
       this.connection.connect((error) => {
         if (error) {
           this.isConnectionActive = false;
-          console.error(error);
+          const msg = 'Could not connect to the database';
+          console.error(msg, error);
           reject({
-            message: 'Could not connect to the database',
-            error: 'Could not connect to the database',
+            message: msg,
+            error: msg,
             stack: error.stack
           });
           return;
