@@ -45,7 +45,7 @@ functions:
   updateAllHouses:
     tags:
       FunctionName: Wah-updateAllHouses
-    handler: src/controllers/auction-pooled-connections.updateAll
+    handler: src/controllers/auction.updateAll
     memorySize: 256
     timeout: 59
 

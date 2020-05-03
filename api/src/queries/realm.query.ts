@@ -91,7 +91,7 @@ export class RealmQuery {
                 )
               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / ${hours} > 1
             ORDER BY autoUpdate DESC, (${+new Date()} - lastModified) / 60000 DESC
-            LIMIT 50;`;
+            LIMIT 45;`;
 
     /**
      AND (autoUpdate = 1
