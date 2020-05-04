@@ -601,12 +601,18 @@ export class AuctionHandler {
   * Limit 1 order by time since asc (to get the oldest first)
   * */
   deleteOldPriceHistoryForRealmAndSetDailyPrice(conn = new DatabaseUtil(false)): Promise<any> {
-    const day = 1000 * 60 * 60 * 24;
-    const now = new Date();
-    now.setUTCHours(0);
-    now.setUTCMinutes(0);
-    now.setUTCMilliseconds(0);
     return new Promise((resolve, reject) => {
+
+      const day = 1000 * 60 * 60 * 24;
+      const now = new Date();
+      if (now.getMinutes() < 30 && now.getMinutes() > 0) {
+        resolve();
+        return;
+      }
+      now.setUTCHours(0);
+      now.setUTCMinutes(0);
+      now.setUTCMilliseconds(0);
+
       conn.query(`SELECT *
                         FROM auction_houses
                         WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}
