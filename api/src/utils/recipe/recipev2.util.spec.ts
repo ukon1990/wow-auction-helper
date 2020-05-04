@@ -2,7 +2,7 @@ import {RecipeV2Util} from './recipev2.util';
 import {Recipev2} from '../../models/crafting/recipev2.model';
 import {DatabaseUtil} from '../database.util';
 
-function setKeyMap(res: any, keyMap: {} = {}) {
+const setKeyMap = (res: any, keyMap: {} = {}) => {
     Object.keys(res).forEach(key => {
         const type = typeof res[key];
         if (type === 'object' && key !== 'name' && key !== 'description') {
@@ -21,15 +21,15 @@ function setKeyMap(res: any, keyMap: {} = {}) {
         }
     });
     return keyMap;
-}
+};
 
 describe('Recipev2Util', () => {
-    it('Can get recipe', async () => {
+    xit('Can get recipe', async () => {
         const recipe: Recipev2 = await RecipeV2Util.getRecipeFromAPI(1631);
         expect(recipe.id).toBe(1631);
     });
 
-    it('add for range', async () => {
+    xit('"bruteforce" recipes', async () => {
         jest.setTimeout(10000000);
         const conn = new DatabaseUtil(false),
             increment = 200000,
@@ -62,7 +62,7 @@ describe('Recipev2Util', () => {
             keyMap = {};
         await new DatabaseUtil().query(`
             SELECT data
-            FROM recipe;`)
+            FROM recipe_raw;`)
             .then(r => {
                 r.forEach(recipe => {
                     const res: Recipev2 = JSON.parse(recipe.data);
@@ -74,4 +74,6 @@ describe('Recipev2Util', () => {
         console.log('Map is', JSON.stringify(keyMap));
         expect(recipes.length).toBe(7210);
     });
+
+
 });

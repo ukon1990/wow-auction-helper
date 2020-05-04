@@ -10,6 +10,7 @@ export class RecipeV2Util {
     static getRecipeFromAPI(id: number): Promise<Recipev2> {
         return new Promise(async (resolve, reject) => {
             await AuthHandler.getToken();
+            // TODO: Fetch media
             const url = new Endpoints().getPath(`recipe/${id}`, 'eu', 'static');
             new HttpClientUtil().get(url)
                 .then(({body}) => resolve(body))
