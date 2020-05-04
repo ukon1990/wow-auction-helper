@@ -39,19 +39,33 @@ export class RealmQuery {
   static getAllMinimal(): string {
     return `SELECT ah.id as id, region, slug, connectedId
             FROM auction_houses as ah
-            LEFT OUTER JOIN (
-              SELECT ahId, slug, name
-              FROM auction_house_realm
-              GROUP BY ahId) as realm
-            ON ah.id = realm.ahId
-            WHERE ah.id = realm.ahId AND connectedId IS NULL
+                     LEFT OUTER JOIN (
+                SELECT ahId, slug, name
+                FROM auction_house_realm
+                GROUP BY ahId) as realm
+                                     ON ah.id = realm.ahId
+            WHERE ah.id = realm.ahId
+              AND connectedId IS NULL
             ORDER BY lastRequested DESC;`;
   }
 
   static getAll(): string {
-    return `SELECT ahId, connectedId, region, slug, name, battlegroup, locale, timezone, ah.url as url,
-                   ah.lastModified as lastModified, lowestDelay, avgDelay, highestDelay,
-       ah.size as size, tsm.url as tsmUrl, ah.autoUpdate as autoUpdate
+    return `SELECT ahId,
+                   connectedId,
+                   region,
+                   slug,
+                   name,
+                   battlegroup,
+                   locale,
+                   timezone,
+                   ah.url          as url,
+                   ah.lastModified as lastModified,
+                   lowestDelay,
+                   avgDelay,
+                   highestDelay,
+                   ah.size         as size,
+                   tsm.url         as tsmUrl,
+                   ah.autoUpdate   as autoUpdate
             FROM auction_house_realm AS realm
                      LEFT OUTER JOIN auction_houses AS ah
                                      ON ah.id = realm.ahId
@@ -61,13 +75,22 @@ export class RealmQuery {
   }
 
   static getAllHouses(): string {
-    return `SELECT ah.id, connectedId as id, region, slug, name, url, lastModified, lowestDelay, avgDelay, highestDelay
+    return `SELECT ah.id,
+                   connectedId as id,
+                   region,
+                   slug,
+                   name,
+                   url,
+                   lastModified,
+                   lowestDelay,
+                   avgDelay,
+                   highestDelay
             FROM auction_houses as ah
-            LEFT OUTER JOIN (
+                     LEFT OUTER JOIN (
                 SELECT ahId, slug, name
                 FROM auction_house_realm
                 GROUP BY ahId) as realm
-            ON ah.id = realm.ahId
+                                     ON ah.id = realm.ahId
             WHERE ah.id = realm.ahId;`;
   }
 
@@ -158,6 +181,7 @@ export class RealmQuery {
               \`isUpdating\` = ${isUpdating ? 1 : 0}
                 WHERE \`id\` = ${id};`;
   }
+
   static isUpdatingByRealmAndRegion(region: string, realm: string, isUpdating: boolean) {
     return `UPDATE \`100680-wah\`.\`auction_houses\`
             SET
