@@ -43,17 +43,17 @@ exports.updateAllRealmDailyData = (event: APIGatewayEvent, context: Context, cal
 
 /* istanbul ignore next */
 exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const conn = new DatabaseUtil(false);
+  const conn = new DatabaseUtil(true);
   Endpoints.setStage(event);
   const region = event.body ?
     JSON.parse(event.body).region : undefined;
   new AuctionHandler().updateAllHouses(region, conn)
     .then(res => {
-      conn.end();
+      // conn.end();
       Response.send(res, callback);
     })
     .catch(err => {
-      conn.end();
+      // conn.end();
       Response.error(callback, err);
     });
 };
