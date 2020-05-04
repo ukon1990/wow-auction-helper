@@ -27,8 +27,8 @@ export class DatabaseUtil {
             }
 
             if (err) {
-              this.handleSQLError(err);
-              reject({message: `Failed to execute the query: ${ query }`, error: err.stack});
+              const msg = this.handleSQLError(err);
+              reject({message: `Failed to execute the query: ${query}`, error: msg.stack});
               return;
             }
 
@@ -49,7 +49,16 @@ export class DatabaseUtil {
     if (msg.sql) {
       msg.sql = msg.sql.slice(0, 256);
     }
+
+    if (msg.message) {
+      msg.message = msg.message.slice(0, 256);
+    }
+
+    if (msg.stack) {
+      msg.stack = msg.stack.slice(0, 256);
+    }
     console.error(msg);
+    return msg;
   }
 
   end(): void {
