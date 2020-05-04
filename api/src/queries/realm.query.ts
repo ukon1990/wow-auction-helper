@@ -76,7 +76,7 @@ export class RealmQuery {
   */
   static getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay() {
     /* Not doing "AND isUpdating = 0" as the lambda will time out after 30 seconds and the update check interval is once per minute... */
-    const hours = 4; // old: 24
+    const hours = 1; // old: 24
     return `SELECT ah.id as id, connectedId, region, slug, name, url, lastModified,
                 lowestDelay, avgDelay, highestDelay, (${+new Date()} - lastModified) / 60000 as timeSince
             FROM auction_houses as ah
@@ -85,13 +85,14 @@ export class RealmQuery {
               FROM auction_house_realm
                 GROUP BY ahId) as realm
             ON ah.id = realm.ahId
-            WHERE (autoUpdate = 1
-                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay
+            WHERE ((${+new Date()} - lastModified) / 60000 >= lowestDelay
                 AND (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 > 30
                 )
-              OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / ${hours} > 1
             ORDER BY autoUpdate DESC, (${+new Date()} - lastModified) / 60000 DESC
-            LIMIT 45;`;
+            LIMIT 40;`;
+    // autoUpdate = 1
+    // AND
+    // OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / ${hours} > 1
 
     /**
      AND (autoUpdate = 1
