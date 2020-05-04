@@ -389,7 +389,7 @@ export class AuctionHandler {
   }
 
   updateStaticS3Data(records: EventRecord[], conn: DatabaseUtil) {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       const promises = [];
       for (const record of records) {
         promises.push(this.processS3Record(record.s3, conn));
@@ -400,8 +400,8 @@ export class AuctionHandler {
           console.log(`Successfully processed ${records.length} records.`);
         })
         .catch(err => {
-          resolve();
           console.error('One or more of the records failed', err);
+          reject();
         });
     });
   }
