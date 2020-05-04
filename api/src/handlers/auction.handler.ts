@@ -208,7 +208,7 @@ export class AuctionHandler {
         .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 0.70,
+              requestsPerSecond: rows.length / (60 - 2) || 1,
               promiseImplementation: Promise
             }),
             promises = [];
