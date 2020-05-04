@@ -426,8 +426,7 @@ export class AuctionHandler {
           await this.copyAuctionsToNewFile(record, auctions, region, ahId)
             .catch(err => console.error('Could not copyAuctionsToNewFile', err)),
           this.processAuctions(region, record, +ahId, fileName, conn)
-            .catch(err => console.error('Could not processAuctions', err))
-            .catch(console.error)
+            .catch(err => console.error('Could not processAuctions'))
         ])
           .catch(console.error);
       }
