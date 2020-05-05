@@ -1,9 +1,9 @@
+import {format} from 'sqlstring';
 import {Endpoints} from '../endpoints.util';
 import {HttpClientUtil} from '../http-client.util';
 import {Recipev2} from '../../models/crafting/recipev2.model';
 import {AuthHandler} from '../../handlers/auth.handler';
-import {DatabaseUtil} from "../database.util";
-import {safeifyString} from "../string.util";
+import {DatabaseUtil} from '../database.util';
 
 export class RecipeV2Util {
 
@@ -23,18 +23,24 @@ export class RecipeV2Util {
         return new Promise(async (resolve, reject) => {
             RecipeV2Util.getRecipeFromAPI(id)
                 .then(async recipe => {
-                    await conn.query(`
+                    const sql = format(`
                             INSERT INTO \`wah\`.\`recipe\`
                                         (\`id\`,
                                         \`data\`)
                                         VALUES
-                                        (${recipe.id},
-                                        "${safeifyString(JSON.stringify(recipe))}");`)
+                                        (?, ?);`, [recipe.id, JSON.stringify(recipe)]);
+
+                    console.log('SQL', sql);
+                    await conn.query(sql)
                         .then(() => resolve(recipe))
                         .catch(reject);
                 })
                 .catch(reject);
         });
+    }
+
+    static mapToRecipe(recipe: Recipev2) {
+        return undefined;
     }
 }
 
