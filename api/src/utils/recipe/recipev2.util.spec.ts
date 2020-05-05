@@ -52,8 +52,8 @@ describe('Recipev2Util', () => {
                 .catch(() => {
                 });
             completed++;
-            console.log('Procesed', completed, '/', increment,
-                `(${((completed / increment) * 100).toFixed(2)}%) id=${i
+            console.log('Procesed', completed, '/', end - start,
+                `(${((completed / (end - start)) * 100).toFixed(2)}%) id=${i
                 } found=${found
                 } last id was=${lastId
                 }`);

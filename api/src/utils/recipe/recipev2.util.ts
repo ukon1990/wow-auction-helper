@@ -29,8 +29,6 @@ export class RecipeV2Util {
                                         \`data\`)
                                         VALUES
                                         (?, ?);`, [recipe.id, JSON.stringify(recipe)]);
-
-                    console.log('SQL', sql);
                     await conn.query(sql)
                         .then(() => resolve(recipe))
                         .catch(reject);
