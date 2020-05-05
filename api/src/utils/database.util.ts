@@ -69,7 +69,7 @@ export class DatabaseUtil {
     this.connection.end();
   }
 
-  private enqueueHandshake(): Promise<void> {
+  enqueueHandshake(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.connection) {
         console.error('No connection is available');
