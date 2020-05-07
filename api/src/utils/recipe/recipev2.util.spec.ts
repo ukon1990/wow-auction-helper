@@ -25,7 +25,7 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
 };
 
 describe('Recipev2Util', () => {
-    it('Can get recipe', async () => {
+    xit('Can get recipe', async () => {
         const recipe: Recipev2 = await RecipeV2Util.getRecipeFromAPI(39416),
             recipeMapped: Recipe = RecipeV2Util.mapToRecipe(recipe);
         await RecipeV2Util.addToDB(39416, new DatabaseUtil())
@@ -35,7 +35,7 @@ describe('Recipev2Util', () => {
         expect(recipeMapped.icon).toBe('asd');
     });
 
-    it('"bruteforce" recipes', async () => {
+    xit('"bruteforce" recipes', async () => {
         jest.setTimeout(10000000);
         const conn = new DatabaseUtil(false),
             increment = 200000,
