@@ -207,8 +207,10 @@ export class AuctionHandler {
       conn.query(RealmQuery
         .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
+          const basePerSecond = 0.7,
+            requestsPerSecond = rows.length > 20 ? rows.length / (60 - 2) || basePerSecond : basePerSecond;
           const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond: 0.90,
+              requestsPerSecond,
               promiseImplementation: Promise
             }),
             promises = [];
@@ -389,7 +391,7 @@ export class AuctionHandler {
   }
 
   updateStaticS3Data(records: EventRecord[], conn: DatabaseUtil) {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       const promises = [];
       for (const record of records) {
         promises.push(this.processS3Record(record.s3, conn));
@@ -400,8 +402,8 @@ export class AuctionHandler {
           console.log(`Successfully processed ${records.length} records.`);
         })
         .catch(err => {
-          resolve();
           console.error('One or more of the records failed', err);
+          reject();
         });
     });
   }
@@ -426,8 +428,7 @@ export class AuctionHandler {
           await this.copyAuctionsToNewFile(record, auctions, region, ahId)
             .catch(err => console.error('Could not copyAuctionsToNewFile', err)),
           this.processAuctions(region, record, +ahId, fileName, conn)
-            .catch(err => console.error('Could not processAuctions', err))
-            .catch(console.error)
+            .catch(err => console.error('Could not processAuctions'))
         ])
           .catch(console.error);
       }
@@ -601,12 +602,18 @@ export class AuctionHandler {
   * Limit 1 order by time since asc (to get the oldest first)
   * */
   deleteOldPriceHistoryForRealmAndSetDailyPrice(conn = new DatabaseUtil(false)): Promise<any> {
-    const day = 1000 * 60 * 60 * 24;
-    const now = new Date();
-    now.setUTCHours(0);
-    now.setUTCMinutes(0);
-    now.setUTCMilliseconds(0);
     return new Promise((resolve, reject) => {
+
+      const day = 1000 * 60 * 60 * 24;
+      const now = new Date();
+      if (now.getMinutes() < 30 && now.getMinutes() > 0) {
+        resolve();
+        return;
+      }
+      now.setUTCHours(0);
+      now.setUTCMinutes(0);
+      now.setUTCMilliseconds(0);
+
       conn.query(`SELECT *
                         FROM auction_houses
                         WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}

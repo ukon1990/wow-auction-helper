@@ -119,14 +119,14 @@ describe('AuctionHandler', () => {
       for (const region of s3Region.list) {
         // 95
         // Alt frem til og med id=20
-        const realmId = 21;
-        for (let id = 91; id <= 120; id++) {// 242
+        const realmId = 207, interval = 40;
+        for (let id = realmId; id <= realmId + interval; id++) {// 242
           const bucket = 'wah-data-' + s3Region.id;
           const list = await s3.list(bucket, `auctions/${region}/${id}/`)
             .catch(console.error);
-          const day = 15; // 17
-          const startDay = +new Date(`3/${day}/2020`),
-            endDay = +new Date(`3/16/2020`), // max: 1/21/2020
+          const day = 3;
+          const startDay = +new Date(`5/${day}/2020`),
+            endDay = +new Date(`5/4/2020`), // max: 1/21/2020
             filteredFiles = list.Contents.filter(file =>
               +new Date(file.LastModified) >= startDay &&
               +new Date(file.LastModified) <= endDay)

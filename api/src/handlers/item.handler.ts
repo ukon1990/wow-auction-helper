@@ -194,8 +194,10 @@ export class ItemHandler {
       hourly: [],
       daily: [],
     };
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        await conn.enqueueHandshake()
+          .catch(console.error);
         Promise.all([
           this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
             .then(r => result.hourly = r)

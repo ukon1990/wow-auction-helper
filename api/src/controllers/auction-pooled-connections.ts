@@ -16,3 +16,28 @@ exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callbac
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err));
 };
+
+exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  new AuctionHandler().deleteOldPriceHistoryForRealmAndSetDailyPrice(connection)
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 500));
+};
+
+
+exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  // const conn = new DatabaseUtil(false);
+  Endpoints.setStage(event);
+  new AuctionHandler().updateStaticS3Data(event['Records'], connection)
+    .then(res => {
+      console.log('Promise returned in then for static data');
+      // conn.end();
+      Response.send(res, callback);
+    })
+    .catch(err => {
+      console.log('Promise returned in catch for static data');
+      // conn.end();
+      Response.error(callback, err, event, 401);
+    });
+};

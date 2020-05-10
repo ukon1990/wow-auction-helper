@@ -45,7 +45,7 @@ functions:
   updateAllHouses:
     tags:
       FunctionName: Wah-updateAllHouses
-    handler: src/controllers/auction-pooled-connections.updateAll
+    handler: src/controllers/auction.updateAll
     memorySize: 256
     timeout: 59
 
@@ -71,7 +71,7 @@ functions:
       FunctionName: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
     handler: src/controllers/auction.deleteOldPriceHistoryForRealmAndSetDailyPrice
     memorySize: 450
-    timeout: 60
+    timeout: 120
   updateAllRealmDailyData:
     tags:
       FunctionName: Wah-updateAllRealmDailyData
