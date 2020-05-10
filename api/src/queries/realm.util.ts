@@ -33,7 +33,8 @@ export class RealmUtil {
 
   private static async handleRealmConnectedId({ id, region, slug}, conn: DatabaseUtil) {
     return new Promise(async (resolve) => {
-      const connectedId = await this.getConnectedRealmIdForHouse(id, region, slug);
+      const connectedId = await this.getConnectedRealmIdForHouse(id, region, slug)
+        .catch(console.error);
       if (connectedId) {
         await conn.query(
           new QueryUtil(`auction_houses`, false)
