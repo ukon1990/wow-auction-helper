@@ -1,7 +1,7 @@
 import {RecipeV2Util} from './recipev2.util';
 import {Recipev2} from '../../models/crafting/recipev2.model';
 import {DatabaseUtil} from '../database.util';
-import {Recipe} from "../../../../client/src/client/modules/crafting/models/recipe";
+import {Recipe} from '../../../../client/src/client/modules/crafting/models/recipe';
 
 const setKeyMap = (res: any, keyMap: {} = {}) => {
     Object.keys(res).forEach(key => {
@@ -63,7 +63,7 @@ describe('Recipev2Util', () => {
         expect(completed).toBe(increment);
     });
 
-    it('map all recipe keys', async () => {
+    xit('map all recipe keys', async () => {
         const recipes: Recipev2[] = [],
             keyMap = {};
         await new DatabaseUtil().query(`
@@ -82,4 +82,9 @@ describe('Recipev2Util', () => {
     });
 
 
+    it('getAndMapProfessions',  async() => {
+        const mapped = await RecipeV2Util.getAndMapProfessions();
+        console.log('mapped', mapped);
+        expect(mapped).toBeTruthy();
+    });
 });

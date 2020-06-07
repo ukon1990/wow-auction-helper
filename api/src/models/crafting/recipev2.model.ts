@@ -30,4 +30,9 @@ export interface Recipev2 {
     rank?: number;
     horde_crafted_item?: CreatedItem;
     alliance_crafted_item?: CreatedItem;
+    crafted_quantity: {
+        minimum?: number;
+        maximum?: number;
+        value?: number;
+    };
 }
