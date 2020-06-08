@@ -9,8 +9,8 @@ export interface CreatedItem {
 
 export interface Recipev2 {
     id: number;
-    name: ItemLocale | string;
-    description: ItemLocale | string;
+    name: ItemLocale;
+    description: ItemLocale;
     media: {
         id: number;
         key: Key
@@ -29,5 +29,7 @@ export interface Recipev2 {
     alliance_crafted_item?: CreatedItem;
     crafted_quantity: {
         value: number;
+        maximum: number;
+        minimum: number;
     };
 }
