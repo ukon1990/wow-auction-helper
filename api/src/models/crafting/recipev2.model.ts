@@ -10,12 +10,10 @@ export interface CreatedItem {
 export interface Recipev2 {
     id: number;
     name: ItemLocale | string;
+    description: ItemLocale | string;
     media: {
         id: number;
         key: Key
-    };
-    _links: {
-        self: Key;
     };
     reagents: {
         reagent: {
@@ -26,13 +24,10 @@ export interface Recipev2 {
         quantity: number;
     }[];
     crafted_item?: CreatedItem;
-    description: ItemLocale | string;
     rank?: number;
     horde_crafted_item?: CreatedItem;
     alliance_crafted_item?: CreatedItem;
     crafted_quantity: {
-        minimum?: number;
-        maximum?: number;
-        value?: number;
+        value: number;
     };
 }

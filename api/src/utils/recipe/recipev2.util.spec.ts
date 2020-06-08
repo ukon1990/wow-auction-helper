@@ -15,10 +15,18 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
                     listOf: arrayMap
                 };
             } else {
-                keyMap[key] = setKeyMap(res[key]);
+                keyMap[key] = setKeyMap(res[key], keyMap[key]);
             }
         } else {
-            keyMap[key] =  type;
+            if (type === 'number' && key !== 'id') {
+                if (keyMap[key]) {
+                    keyMap[key] = keyMap[key] < res[key] ? res[key] : keyMap[key];
+                } else {
+                    keyMap[key] = res[key];
+                }
+            } else {
+                keyMap[key] =  type;
+            }
         }
     });
     return keyMap;
@@ -64,7 +72,7 @@ describe('Recipev2Util', () => {
             expect(completed).toBe(increment);
         });
 
-        it('Updating existing', async () => {
+        xit('Updating existing', async () => {
             jest.setTimeout(9999999);
             const db = new DatabaseUtil(false);
             const ids = await db.query('SELECT id FROM recipe;');
@@ -79,12 +87,12 @@ describe('Recipev2Util', () => {
             expect(completed).toBe(ids.length);
         });
 
-        xit('map all recipe keys', async () => {
+        it('map all recipe keys', async () => {
             const recipes: Recipev2[] = [],
                 keyMap = {};
             await new DatabaseUtil().query(`
             SELECT data
-            FROM wah.recipe;`)
+            FROM recipe;`)
                 .then(r => {
                     r.forEach(recipe => {
                         const res: Recipev2 = JSON.parse(recipe.data);
@@ -94,7 +102,9 @@ describe('Recipev2Util', () => {
                 })
                 .catch(console.error);
             console.log('Map is', JSON.stringify(keyMap));
-            expect(recipes.length).toBe(7210);
+            expect(keyMap['crafted_quantity'].maximum).toBeTruthy();
+            expect(keyMap['crafted_quantity'].minimum).toBeTruthy();
+            expect(recipes.length).toBe(7339);
         });
 
 
