@@ -33,17 +33,7 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
 };
 
 describe('Recipev2Util', () => {
-    describe('Not really tests', () => {
-        xit('Can get recipe', async () => {
-            const recipe: Recipev2 = await RecipeV2Util.getRecipeFromAPI(39416),
-                recipeMapped: Recipe = RecipeV2Util.mapToRecipe(recipe);
-            await RecipeV2Util.addToDB(39416, new DatabaseUtil())
-                .catch(() => {
-                });
-            expect(recipe.id).toBe(1631);
-            expect(recipeMapped.icon).toBe('asd');
-        });
-
+    describe('Not really tests', () => {/*
         xit('"bruteforce" recipes', async () => {
             jest.setTimeout(10000000);
             const conn = new DatabaseUtil(false),
@@ -70,6 +60,32 @@ describe('Recipev2Util', () => {
             conn.end();
 
             expect(completed).toBe(increment);
+        });*/
+
+        it('insert all', async () => {
+            jest.setTimeout(9999999);
+            const db = new DatabaseUtil(false);
+            await db.query(`
+            SELECT data
+            FROM recipe;`)
+              .then(async r => {
+                  for (const recipe of r) {
+                      const res: Recipev2 = JSON.parse(recipe.data);
+                      await RecipeV2Util.generateQuery(res)
+                        .then(async queries => {
+
+                            for (const q of queries) {
+                                await db.query(q)
+                                  .catch(console.error);
+                            }
+                        })
+                        .catch(console.error);
+                  }
+              })
+              .catch(console.error);
+
+            db.end();
+            expect(1).toBe(2);
         });
 
         xit('Updating existing', async () => {
@@ -87,7 +103,7 @@ describe('Recipev2Util', () => {
             expect(completed).toBe(ids.length);
         });
 
-        it('map all recipe keys', async () => {
+        xit('map all recipe keys', async () => {
             const recipes: Recipev2[] = [],
                 keyMap = {};
             await new DatabaseUtil().query(`
@@ -105,6 +121,11 @@ describe('Recipev2Util', () => {
             expect(keyMap['crafted_quantity'].maximum).toBeTruthy();
             expect(keyMap['crafted_quantity'].minimum).toBeTruthy();
             expect(recipes.length).toBe(7339);
+        });
+
+        it('getIcon', async () => {
+            const icon = await RecipeV2Util.getIcon(1631);
+            expect(icon).toBe('https://render-eu.worldofwarcraft.com/icons/56/inv_stone_sharpeningstone_01.jpg');
         });
 
 
