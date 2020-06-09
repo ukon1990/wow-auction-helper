@@ -62,21 +62,12 @@ export class RecipeV2Util {
                     ${recipe.crafted_item ? recipe.crafted_item.id : null},
                     ${recipe.horde_crafted_item ? recipe.horde_crafted_item.id : null},
                     ${recipe.alliance_crafted_item ? recipe.alliance_crafted_item.id : null},
-                    ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : null},
-                    ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : null},
+                    ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
+                    ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
                     1,
                     CURRENT_TIMESTAMP,
                     null);
               `,
-            ...recipe.reagents.map(r => format(`
-                INSERT INTO reagents
-                VALUES (?, ?, ?, ?);
-            `, [
-              recipe.id,
-              r.reagent.id,
-              r.quantity,
-              0
-            ])),
             new QueryUtil('recipesName', false).insert({
                 id: recipe.id,
                 ...recipe.name
@@ -84,7 +75,15 @@ export class RecipeV2Util {
           ];
 
           if (recipe.reagents) {
-
+            queries.push(...recipe.reagents.map(r => format(`
+                INSERT INTO reagents
+                VALUES (?, ?, ?, ?);
+            `, [
+                recipe.id,
+                r.reagent.id,
+                r.quantity,
+                0
+            ])))
           }
 
           if (recipe.description && recipe.description.en_GB) {

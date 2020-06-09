@@ -67,8 +67,12 @@ describe('Recipev2Util', () => {
             const db = new DatabaseUtil(false);
             await db.query(`
             SELECT data
-            FROM recipe;`)
+            FROM recipe
+            WHERE id NOT IN (SELECT id FROM recipes_new);`)
               .then(async r => {
+                  const count = r.length;
+                  let done = 0;
+
                   for (const recipe of r) {
                       const res: Recipev2 = JSON.parse(recipe.data);
                       await RecipeV2Util.generateQuery(res)
@@ -78,8 +82,10 @@ describe('Recipev2Util', () => {
                                 await db.query(q)
                                   .catch(console.error);
                             }
+                            done++;
                         })
                         .catch(console.error);
+                      console.log('Done', done, count, `${Math.round(done / count * 100)}%`);
                   }
               })
               .catch(console.error);
