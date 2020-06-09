@@ -8,9 +8,9 @@ export abstract class Repository<T> {
     ) {
     }
 
-    abstract getById(id: number): Promise<T>;
+    abstract getById(id: number, locale: string, db: DatabaseUtil): Promise<T>;
 
-    abstract getAllAfter(timestamp: number): Promise<T[]>;
+    abstract getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<T[]>;
 
     abstract insert(data: T): Promise<T>;
 
