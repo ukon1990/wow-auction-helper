@@ -62,7 +62,7 @@ describe('Recipev2Util', () => {
             expect(completed).toBe(increment);
         });*/
 
-        it('insert all', async () => {
+        xit('insert all', async () => {
             jest.setTimeout(9999999);
             const db = new DatabaseUtil(false);
             await db.query(`
@@ -136,8 +136,9 @@ describe('Recipev2Util', () => {
 
 
         it('getAndMapProfessions',  async() => {
+            jest.setTimeout(99999);
             const mapped = await RecipeV2Util.getAndMapProfessions();
-            console.log('mapped', mapped);
+            // console.log('mapped', JSON.stringify(mapped));
             expect(mapped).toBeTruthy();
         });
     });
