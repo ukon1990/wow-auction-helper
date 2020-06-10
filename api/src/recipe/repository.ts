@@ -46,14 +46,17 @@ export class RecipeRepository extends Repository<Recipe> {
    */
   getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<Recipe[]> {
     return new Promise<Recipe[]>((resolve, reject) => {
-      db.query(`${this.geteBaseQuery(locale)};`)
+      db.query(`${this.geteBaseQuery(locale)}
+          WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000};`)
         .then((recipes: Recipe[]) => {
           const map = {};
           recipes.forEach(recipe => map[recipe.id] = recipe);
 
           db.query(`
             SELECT *
-            FROM reagents`)
+            FROM reagents
+                LEFT JOIN ${this.table} as recipes ON recipes.id = reagents.recipeId
+            WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000};`)
             .then((reagents: any[]) => {
               reagents.forEach(r => {
                 if (!map[r['recipeId']].reagents) {
