@@ -1,4 +1,4 @@
-import {RecipeUtil} from './recipe.util';
+import {OldRecipeUtil} from './old-util';
 
 describe('RecipeUtil', () => {
   beforeAll(() => {
@@ -6,7 +6,7 @@ describe('RecipeUtil', () => {
   });
 
   xit('getRecipeListForPatch', async () => {
-    const list = await RecipeUtil.getRecipeListForPatch(80300);
+    const list = await OldRecipeUtil.getRecipeListForPatch(80300);
     expect(list.length).toBe(155);
     console.log('ids', list.map(l => l.spellID).join(','));
 

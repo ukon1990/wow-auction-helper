@@ -3,7 +3,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {Response} from '../utils/response.util';
 import {Recipe, RecipeSpell} from '../models/crafting/recipe';
 import {RecipeQuery} from '../queries/recipe.query';
-import {RecipeUtil} from '../utils/recipe.util';
+import {OldRecipeUtil} from '../recipe/old-util';
 import {Endpoints} from '../utils/endpoints.util';
 import {LocaleUtil} from '../utils/locale.util';
 import {Item} from '../../../client/src/client/models/item/item';
@@ -99,7 +99,7 @@ export class RecipeHandler {
           await this.setItemIdIfMissing(recipe)
             .catch(console.error);
 
-          await RecipeUtil.getLocalesForRecipe(id)
+          await OldRecipeUtil.getLocalesForRecipe(id)
             .then(async recipeName => {
               if (!recipeName || Object.keys(recipeName).length !== 14) {
                 Response.error(callback, 'Locale not found:' + Object.keys(recipeName).length, event);
@@ -155,7 +155,7 @@ export class RecipeHandler {
       request.get(
         `http://ptr.wowdb.com/api/spell/${id}`,
         async (error, result, body) => {
-          const recipe = RecipeUtil.convert(
+          const recipe = OldRecipeUtil.convert(
             JSON.parse(body.slice(1, body.length - 1))
           );
           const missingItemId = recipe.itemID === 0;

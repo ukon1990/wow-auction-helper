@@ -56,7 +56,7 @@ export class RecipeRepository extends Repository<Recipe> {
             SELECT *
             FROM reagents
                 LEFT JOIN ${this.table} as recipes ON recipes.id = reagents.recipeId
-            WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000};`)
+            WHERE UNIX_TIMESTAMP(timestamp) > ${Math.round(+new Date(timestamp) / 1000)};`)
             .then((reagents: any[]) => {
               reagents.forEach(r => {
                 if (!map[r['recipeId']].reagents) {

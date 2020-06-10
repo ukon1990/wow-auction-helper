@@ -1,11 +1,11 @@
 import {format} from 'sqlstring';
-import {Endpoints} from '../endpoints.util';
-import {HttpClientUtil} from '../http-client.util';
-import {Recipev2} from '../../models/crafting/recipev2.model';
-import {AuthHandler} from '../../handlers/auth.handler';
-import {DatabaseUtil} from '../database.util';
-import {QueryUtil} from '../query.util';
-import {ItemLocale} from "../../models/item/item-locale";
+import {Endpoints} from '../utils/endpoints.util';
+import {HttpClientUtil} from '../utils/http-client.util';
+import {Recipev2} from '../models/crafting/recipev2.model';
+import {AuthHandler} from '../handlers/auth.handler';
+import {DatabaseUtil} from '../utils/database.util';
+import {QueryUtil} from '../utils/query.util';
+import {ItemLocale} from "../models/item/item-locale";
 
 export class RecipeV2Util {
 

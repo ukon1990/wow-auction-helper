@@ -1,7 +1,7 @@
 import {RecipeV2Util} from './recipev2.util';
-import {Recipev2} from '../../models/crafting/recipev2.model';
-import {DatabaseUtil} from '../database.util';
-import {Recipe} from '../../../../client/src/client/modules/crafting/models/recipe';
+import {Recipev2} from '../models/crafting/recipev2.model';
+import {DatabaseUtil} from '../utils/database.util';
+import {Recipe} from '../../../client/src/client/modules/crafting/models/recipe';
 
 const setKeyMap = (res: any, keyMap: {} = {}) => {
     Object.keys(res).forEach(key => {
@@ -32,7 +32,7 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
     return keyMap;
 };
 
-describe('Recipev2Util', () => {
+xdescribe('Recipev2Util', () => {
     describe('Not really tests', () => {/*
         xit('"bruteforce" recipes', async () => {
             jest.setTimeout(10000000);
