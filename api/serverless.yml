@@ -133,23 +133,30 @@ functions:
           path: pet/{id}
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
-  recipes:
+  getAllRecipesAfter:
     tags:
-      FunctionName: Wah-recipes
-    handler: src/controllers/recipe.handler
+      FunctionName: Wah-getAllRecipesAfter
     memorySize: 128
+    handler: src/recipe/controller.getAfter
     events:
       - http:
-          method: any
+          method: post
           path: recipe
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
+  getRecipeById:
+    tags:
+      FunctionName: Wah-getRecipeById
+    memorySize: 128
+    handler: src/recipe/controller.getById
+    events:
       - http:
-          method: any
+          method: post
           path: recipe/{id}
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+
   zone:
     tags:
       FunctionName: Wah-zone
