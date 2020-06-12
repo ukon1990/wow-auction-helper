@@ -1,12 +1,12 @@
 import {Recipe} from '../models/crafting/recipe';
 import {Reagent} from '../models/crafting/reagent';
-import {HttpClientUtil} from './http-client.util';
-import {WoWHeadUtil} from './wowhead.util';
+import {HttpClientUtil} from '../utils/http-client.util';
+import {WoWHeadUtil} from '../utils/wowhead.util';
 import {GameBuild} from '../../../client/src/client/utils/game-build.util';
 import {languages} from '../static-data/language.data';
 import {ItemLocale} from '../models/item/item-locale';
 
-export class RecipeUtil {
+export class OldRecipeUtil {
 
   private static slugifyString(realm: string): string {
     return realm.replace(/[']/g, '').replace(/[.*+?^${}()|[\]\\ ]/g, '-').toLowerCase();
@@ -22,7 +22,7 @@ export class RecipeUtil {
       rank: wowDB.Rank,
       minCount: basePoints > 0 ? basePoints : 1,
       maxCount: basePoints > 0 ? basePoints : 1,
-      reagents: RecipeUtil.convertReagents(wowDB.Reagents)
+      reagents: OldRecipeUtil.convertReagents(wowDB.Reagents)
     } as Recipe;
   }
 

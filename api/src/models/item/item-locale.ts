@@ -15,7 +15,7 @@ export class ItemLocale {
     ru_RU: string;
     ko_KR: string;
     zh_TW: string;
-    zh_CN: string;
+    zh_CN?: string;
 
     constructor(id?: number) {
         this.id = id;
