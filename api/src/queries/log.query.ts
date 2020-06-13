@@ -39,6 +39,7 @@ export class LogQuery {
                           \`userId\`,
                           \`fileName\`,
                           \`isMe\`,
+                          \`userAgent\`,
                           \`timestamp\`)
                     VALUES
                             ("${requestData.type}",
@@ -48,13 +49,15 @@ export class LogQuery {
                             "${requestData.ipObfuscated}",
                             "${requestData.fileName}",
                             ${this.isMe(requestData)},
+                            "${requestData.userAgent}",
                             CURRENT_TIMESTAMP);`;
   }
 
   /* istanbul ignore next */
   private static isMe(requestData) {
-    const id = 'seo7xQEYpAmOwTd+NAOY42cgqYTBbLox4aJ1kGO7gXY=';
-    return requestData.ipObfuscated === id ? 1 : 0;
+    return requestData.ipObfuscated === 'seo7xQEYpAmOwTd+NAOY42cgqYTBbLox4aJ1kGO7gXY=' ||
+    requestData.ipObfuscated === 'VHXNCxunVI2cmo8R8KzoI6eBcLLJnqmQ9Hp48zbVzcU='
+      ? 1 : 0;
   }
 
   static deleteUser(entry: LogEntry) {
