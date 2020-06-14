@@ -290,7 +290,7 @@ export class AuctionHandler {
         new S3Handler().save(ahDumpResponse, `auctions/${region}/${id}/dump-path.json.gz`,
           {region})
           .then((res) => {
-            console.log('Successfully uploaded:', res);
+            console.log('Successfully uploaded:', id);
             resolve();
           })
           .catch((err) => {
