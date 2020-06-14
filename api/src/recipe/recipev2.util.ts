@@ -157,7 +157,7 @@ export class RecipeV2Util {
                       s.id, res.id, s.minimum_skill_level, s.maximum_skill_level
                     ]))
                       .catch(console.error);
-                    await this.insertLocale(res.id, 'professionSkillTiersName', skillTier.name, db)
+                    await this.insertLocale(s.id, 'professionSkillTiersName', skillTier.name, db)
                       .catch(console.error);
 
                     s.categories.forEach(c =>

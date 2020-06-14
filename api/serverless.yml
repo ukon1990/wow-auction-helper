@@ -133,6 +133,17 @@ functions:
           path: pet/{id}
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  getProfessions:
+    tags:
+      FunctionName: Wah-getProfessions
+    memorySize: 128
+    handler: src/profession/controller.getProfessions
+    events:
+      - http:
+          method: post
+          path: profession
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getAllRecipesAfter:
     tags:
       FunctionName: Wah-getAllRecipesAfter
