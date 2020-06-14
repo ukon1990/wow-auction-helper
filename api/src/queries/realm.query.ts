@@ -100,20 +100,41 @@ export class RealmQuery {
   static getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay() {
     /* Not doing "AND isUpdating = 0" as the lambda will time out after 30 seconds and the update check interval is once per minute... */
     const hours = 4; // old: 24
-    return `SELECT ah.id as id, connectedId, region, slug, name, url, lastModified,
-                lowestDelay, avgDelay, highestDelay, (${+new Date()} - lastModified) / 60000 as timeSince
+    return `SELECT ah.id                                                             as id,
+                   connectedId,
+                   region,
+                   slug,
+                   name,
+                   url,
+                   lastModified,
+                   lowestDelay,
+                   avgDelay,
+                   highestDelay,
+                   (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 as timeSince,
+                   timestamp
             FROM auction_houses as ah
-            LEFT OUTER JOIN (
+                     LEFT OUTER JOIN (
                 SELECT ahId, slug, name
-              FROM auction_house_realm
+                FROM auction_house_realm
                 GROUP BY ahId) as realm
-            ON ah.id = realm.ahId
+                                     ON ah.id = realm.ahId
+                     LEFT JOIN (
+                SELECT realm.ahId as ahId, timestamp
+                FROM \`s3-logs\` as logs
+                         JOIN (
+                    SELECT realm.ahId as ahId, house.region as region, slug, name, locale, timeZone
+                    FROM auction_house_realm AS realm
+                             LEFT JOIN auction_houses AS house ON house.id = realm.ahId
+                ) as realm ON CONCAT(realm.slug, '.json.gz') = fileName
+                WHERE timestamp >= NOW() - INTERVAL 6 HOUR
+                  AND logs.ahId IS NULL
+                  AND fileName NOT LIKE 'status.json.gz'
+                GROUP BY logs.region, slug
+            ) as log ON log.ahId = ah.id
             WHERE (autoUpdate = 1
-                AND (${+new Date()} - lastModified) / 60000 >= lowestDelay
-                AND (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 > 30
-                )
-              OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / ${hours} > 1
-            ORDER BY autoUpdate DESC, (${+new Date()} - lastModified) / 60000 DESC
+                AND FROM_UNIXTIME(lastModified / 1000) <= NOW() - INTERVAL lowestDelay MINUTE)
+               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
+            ORDER BY timestamp DESC, autoUpdate DESC, (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 DESC
             LIMIT 30;`;
   }
 
