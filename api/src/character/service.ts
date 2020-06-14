@@ -1,25 +1,28 @@
-import {Character} from '../../../client/src/client/modules/character/models/character.model';
-import {CharacterGameData, CharacterGameDataMedia, Faction} from '../models/character/character-game-data.model';
-import {HttpClientUtil} from './http-client.util';
-import {Endpoints} from './endpoints.util';
+import {Character} from './model';
+import {AuthHandler} from '../handlers/auth.handler';
+import {HttpClientUtil} from '../utils/http-client.util';
+import {Endpoints} from '../utils/endpoints.util';
+import {CharacterGameData, Faction} from '../models/character/character-game-data.model';
 import {CharacterReputationsGameData} from '../models/character/character-reputations-game-data.model';
 
-export class CharacterUtil {
+export class CharacterService {
+  static get(region: string, realm: string, name: string, locale: string): Promise<Character> {
+    return new Promise<Character>(async (resolve, reject) => {
+      const character: Character = new Character();
 
-  static get(region: string, realm: string, name: string, locale: string) {
-    return new Promise((resolve, reject) => {
-      const character = new Character();
-      Promise.all([
+      await AuthHandler.getToken();
+      await Promise.all([
         this.getAndSetCharacterProfile(character, realm, name, locale, region),
         this.getAndSetReputations(character, realm, name, locale, region),
         this.getAndSetThumbnail(character, realm, name, locale, region),
-        // this.getAndSetProfessions(character, realm, name, locale, region)
+        this.getAndSetProfessions(character, realm, name, locale, region)
       ])
         .then(() =>
           resolve(character))
         .catch(reject);
     });
   }
+
 
   private static getAndSetCharacterProfile(character: Character, realm: string, name: string, locale: string, region: string) {
     return new Promise((resolve, reject) => {

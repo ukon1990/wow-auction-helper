@@ -217,7 +217,7 @@ functions:
   character:
     tags:
       FunctionName: Wah-character
-    handler: src/controllers/character.handler
+    handler: src/character/controller.getCharacter
     memorySize: 128
     events:
       - http:
