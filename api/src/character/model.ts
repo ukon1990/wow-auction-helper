@@ -19,8 +19,8 @@ export class Character {
   calcClass: string;
   faction: number; // 0 = ally, 1 = horde
   professions: {
-    primary: Array<Profession>,
-    secondary: Array<Profession>
+    primaries: CharacterProfession[],
+    secondaries: CharacterProfession[]
   };
   statistics?: CharacterStatistic[];
   mounts?: {
@@ -45,13 +45,13 @@ export class Character {
   }
 }
 
-interface Profession {
+export interface CharacterProfession {
   id: number;
-  name: string;
-  icon: string;
-  rank: number;
-  max: number;
-  recipes: Array<number>;
+  skillTiers: {
+    id: number;
+    points: number;
+    recipes: number[];
+  }[];
 }
 
 interface CharacterStatisticCategory {
