@@ -72,35 +72,29 @@ interface CharacterStatistic {
 class Mount {
 }
 
-class UserPets {
-  numCollected = 0;
-  numNotCollected = 0;
-  collected: Array<CollectedPet>;
+export interface UserPets {
+  unlockedBattlePetSlots: number;
+  pets: CollectedPet[];
 }
 
 export interface CollectedPet {
+  id: number;
+  speciesId: number;
   name: string;
-  spellId: number;
-  creatureId: number;
-  itemId: number;
-  qualityId: number;
-  icon: string;
+  speciesName: string;
+  creatureDisplay: {
+    key: {
+      href: string;
+    };
+    id: number;
+  };
+  level: number;
+  quality: string;
   stats: PetStats;
-  battlePetGuid: string;
-  count?: number;
-  isFavorite: boolean;
-  isFirstAbilitySlotSelected: boolean;
-  isSecondAbilitySlotSelected: boolean;
-  isThirdAbilitySlotSelected: boolean;
-  creatureName: string;
-  canBattle: boolean;
 }
 
 interface PetStats {
-  speciesId: number;
   breedId: number;
-  petQualityId: number;
-  level: number;
   health: number;
   power: number;
   speed: number;
