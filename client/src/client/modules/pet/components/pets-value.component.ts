@@ -106,12 +106,12 @@ export class PetsValueComponent implements OnInit, OnDestroy {
     const tmpMap: Map<number, CollectedPet> = new Map<number, CollectedPet>();
     const l = [];
     SharedService.user.characters.forEach(char => {
-      if (!char || !char.pets || !char.pets.collected) {
+      if (!char || !char.pets || !char.pets.list) {
         return;
       }
       l.push(char);
-      char.pets.collected.forEach(cp => {
-        const pet = SharedService.pets[cp.stats.speciesId];
+      char.pets.list.forEach(cp => {
+        const pet = SharedService.pets[cp.speciesId];
         if (!pet || !pet.auctions || !pet.auctions.length) {
           return;
         }
