@@ -19,4 +19,6 @@ export class Recipe {
   professionId: number;
   skillTierId: number;
   reagents: Reagent[];
+
+  timestamp: number;
 }

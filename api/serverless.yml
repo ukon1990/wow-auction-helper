@@ -78,16 +78,6 @@ functions:
     handler: src/controllers/auction.updateAllRealmDailyData
     memorySize: 1024
     timeout: 300
-  locales:
-    tags:
-      Function: Wah-locales
-    handler: src/controllers/locale.handler
-    events:
-      - http:
-          method: post
-          path: locale/add-missing
-          cors:
-            origin: 'localhost:3000'
   items:
     tags:
       Function: Wah-items

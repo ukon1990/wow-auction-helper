@@ -20,11 +20,14 @@ export class RecipeService {
     });
   }
 
-  static getAllAfter(timestamp: number, locale: string): Promise<Recipe[]> {
+  static getAllAfter(timestamp: number, locale: string): Promise<{timestamp: number; recipes: Recipe[]}> {
     return new Promise((resolve, reject) => {
       const db = new DatabaseUtil(false);
       this.repository.getAllAfter(timestamp, locale, db)
-        .then(resolve)
+        .then((recipes: Recipe[]) => resolve({
+          timestamp: recipes[0] ? recipes[0].timestamp : timestamp,
+          recipes
+        }))
         .catch(reject);
     });
   }
