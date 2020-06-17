@@ -2,6 +2,7 @@ import {ItemSpells} from './itemspells';
 import {WoWHead} from './wowhead';
 import {ItemLocale} from '../../../../../api/src/models/item/item-locale';
 import {ItemGameData, PreviewItemSpells} from '../../../../../api/src/models/item/item-game-data.model';
+import {QualityUtil} from '../../utils/quality.util';
 
 export class Item {
   id: number;
@@ -40,7 +41,7 @@ export class Item {
     this.itemLevel = item.level;
     this.itemClass = item.item_class.id;
     this.itemSubClass = item.item_subclass.id;
-    this.quality = this.getQuality(item);
+    this.quality = QualityUtil.get(item.quality.type);
     this.buyPrice = item.purchase_price;
     this.setSellPrice(item);
     if (item.preview_item.requirements &&
@@ -58,24 +59,6 @@ export class Item {
     this.patch = wowHead.patch;
     delete wowHead.expansionId;
     this.itemSource = wowHead;
-  }
-
-  /* istanbul ignore next */
-  private getQuality(item: ItemGameData) {
-    switch (item.quality.type) {
-      case 'POOR':
-        return 0;
-      case 'COMMON':
-        return 1;
-      case 'UNCOMMON':
-        return 2;
-      case 'RARE':
-        return 3;
-      case 'EPIC':
-        return 4;
-      case 'LEGENDARY':
-        return 5;
-    }
   }
 
   private getItemSpellsFromGameData(spells: PreviewItemSpells[]) {

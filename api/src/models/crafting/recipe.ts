@@ -1,15 +1,8 @@
-import {Reagent} from './reagent';
+import {Recipe as APIRecipe} from '../../../../api/src/recipe/model';
 import {ItemLocale} from '../item/item-locale';
 
-export class Recipe {
-  spellID: number;
-  itemID: number;
-  name: string | ItemLocale = 'Missing recipe data';
-  profession?: string;
-  rank?: string;
-  minCount: number;
-  maxCount: number;
-  reagents: Array<Reagent>;
+export class Recipe extends APIRecipe {
+  name = 'Missing recipe data';
   expansion?: number;
 
   // Applied after cost calculation
@@ -23,14 +16,4 @@ export class Recipe {
   regionSaleRate = 0;
   buyout = 0;
   quantityTotal = 0;
-}
-
-/**
- * The recipe object returned by blizzards API
- */
-export interface RecipeSpell {
-  id: number;
-  name: string;
-  profession: string;
-  icon: string;
 }

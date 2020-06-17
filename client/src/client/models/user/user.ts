@@ -10,6 +10,7 @@ import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
 import {BaseCraftingUtil} from '../../modules/crafting/utils/base-crafting.util';
+import {CharacterProfession} from '../../../../../api/src/character/model';
 
 
 export class User {
@@ -223,25 +224,25 @@ export class User {
   public static setRecipesForCharacter(character: Character): void {
     if (character && character.professions &&
       SharedService.user.realm.toLowerCase() === User.slugifyString(character.realm)) {
-      character.professions.primary.forEach(primary => {
-        primary.recipes.forEach(recipe => {
-          User.addRecipe(recipe, character.name, character.faction);
-        });
+      character.professions.primaries.forEach(primary => {
+        this.addKnownRecipes(primary, character);
       });
-      character.professions.secondary.forEach(secondary => {
-        secondary.recipes.forEach(recipe => {
-          User.addRecipe(recipe, character.name, character.faction);
-        });
-      });
+      character.professions.primaries.forEach(secondary => this.addKnownRecipes(secondary, character));
     }
   }
 
-  private static addRecipe(spellId: number, characterName: string, faction: number): void {
-    if (!SharedService.recipesForUser[spellId]) {
-      SharedService.recipesForUser[spellId] = new Array<string>();
+  private static addKnownRecipes(category: CharacterProfession, character: Character) {
+    category.skillTiers.forEach(tier =>
+      tier.recipes.forEach(recipe =>
+        User.addRecipe(recipe, character.name, character.faction)));
+  }
+
+  private static addRecipe(id: number, characterName: string, faction: number): void {
+    if (!SharedService.recipesForUser[id]) {
+      SharedService.recipesForUser[id] = new Array<string>();
     }
-    SharedService.recipesForUser[spellId].push(
-      `${characterName} (${ faction ? 'H' : 'A'})`);
+    SharedService.recipesForUser[id].push(
+      `${characterName} (${faction ? 'H' : 'A'})`);
   }
 
   public static slugifyString(realm: string): string {

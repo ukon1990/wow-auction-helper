@@ -92,6 +92,9 @@ export interface CollectedPet {
   level: number;
   quality: string;
   stats: PetStats;
+
+  // Optionals for the client
+  count?: number;
 }
 
 interface PetStats {

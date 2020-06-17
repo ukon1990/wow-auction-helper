@@ -4,7 +4,7 @@ export interface Reagent {
   isOptional: boolean;
 }
 
-export interface Recipe {
+export class Recipe {
   id: number;
   icon: string;
   name: string;
