@@ -74,12 +74,13 @@ class Mount {
 
 export interface UserPets {
   unlockedBattlePetSlots: number;
-  pets: CollectedPet[];
+  list: CollectedPet[];
 }
 
 export interface CollectedPet {
   id: number;
   speciesId: number;
+  creatureId: number;
   name: string;
   speciesName: string;
   creatureDisplay: {

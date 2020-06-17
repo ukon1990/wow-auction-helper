@@ -19,7 +19,18 @@ export class CharacterService {
       ])
         .then(() =>
           resolve(character))
-        .catch(reject);
+        .catch(error => {
+          console.error({
+            input: {
+              region, realm, character, locale
+            },
+            error
+          });
+          reject({
+            code: 500,
+            message: 'Could not fetch character data'
+          });
+        });
     });
   }
 

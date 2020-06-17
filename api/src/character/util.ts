@@ -24,26 +24,30 @@ export class CharacterUtil {
     return new Promise<UserPets>(async (resolve, reject) => {
       const list: CollectedPet[] = [];
       for (const pet of pets) {
-        list.push({
-          id: pet.id,
-          speciesId: pet.species.id,
-          name: pet.name || pet.species.name,
-          speciesName: pet.species.name,
-          creatureDisplay: pet.creature_display,
-          level: pet.level,
-          quality: pet.quality.type,
-          stats: {
-            breedId: pet.stats.breed_id,
-            health: pet.stats.health,
-            power: pet.stats.power,
-            speed: pet.stats.speed
-          },
-        });
+        try {
+          list.push({
+            id: pet.id,
+            speciesId: pet.species.id,
+            creatureId: pet.creature_display ? pet.creature_display.id : undefined,
+            name: pet.name || pet.species.name,
+            speciesName: pet.species.name,
+            creatureDisplay: pet.creature_display,
+            level: pet.level,
+            quality: pet.quality.type,
+            stats: {
+              breedId: pet.stats.breed_id,
+              health: pet.stats.health,
+              power: pet.stats.power,
+              speed: pet.stats.speed
+            },
+          });
+        } catch (e) {
+        }
       }
 
       resolve({
         unlockedBattlePetSlots: unlockedSlots,
-        pets: list
+        list
       });
     });
   }
