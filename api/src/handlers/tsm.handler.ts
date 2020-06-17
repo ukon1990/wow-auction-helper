@@ -8,22 +8,30 @@ export class TSMHandler {
     console.log('Checking for new realms to update');
     return new Promise<boolean>((resolve, reject) => {
       new DatabaseUtil().query(`
-        SELECT ah.id as id, region, slug, tsm.lastModified as lastModified
-        FROM auction_houses as ah
-        LEFT OUTER JOIN (
-          SELECT ahId, slug, name
-        FROM auction_house_realm
-        GROUP BY ahId) as realm
-        ON ah.id = realm.ahId
-        LEFT OUTER JOIN (
-          SELECT *
-          FROM tsmDump as ah
-      ) as tsm ON tsm.id = ah.id
+        SELECT
+          ah.id AS id,
+          region,
+          slug,
+          tsm.lastModified AS lastModified,
+          FROM_UNIXTIME(tsm.lastModified / 1000)
+        FROM
+          auction_houses AS ah
+              LEFT OUTER JOIN
+          (SELECT
+              ahId, slug, name
+          FROM
+              auction_house_realm
+          GROUP BY ahId) AS realm ON ah.id = realm.ahId
+              LEFT OUTER JOIN
+          tsmDump AS tsm ON tsm.id = ah.id
         WHERE
-          (region = 'eu' OR region = 'us') AND (
-          ah.id NOT IN (SELECT id FROM tsmDump) OR
-          (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - tsm.lastModified) / 60000 / 60 > 24)
-        ORDER BY lastModified desc
+          (region = 'eu' OR region = 'us')
+              AND (ah.id NOT IN (SELECT
+                  id
+              FROM
+                  tsmDump)
+              OR FROM_UNIXTIME(tsm.lastModified / 1000) < NOW() - INTERVAL 24 HOUR)
+        ORDER BY lastModified ASC
         LIMIT 1;
       `)
         .then(async (rows: { id, slug, region, lastModified }[]) => {

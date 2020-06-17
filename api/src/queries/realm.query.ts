@@ -119,14 +119,14 @@ export class RealmQuery {
                 GROUP BY ahId) as realm
                                      ON ah.id = realm.ahId
                      LEFT JOIN (
-                SELECT realm.ahId as ahId, timestamp
+                SELECT realm.ahId as ahId, MAX(timestamp) AS timestamp
                 FROM \`s3-logs\` as logs
                          JOIN (
                     SELECT realm.ahId as ahId, house.region as region, slug, name, locale, timeZone
                     FROM auction_house_realm AS realm
                              LEFT JOIN auction_houses AS house ON house.id = realm.ahId
                 ) as realm ON CONCAT(realm.slug, '.json.gz') = fileName
-                WHERE timestamp >= NOW() - INTERVAL 6 HOUR
+                WHERE timestamp >= NOW() - INTERVAL 24 HOUR
                   AND logs.ahId IS NULL
                   AND fileName NOT LIKE 'status.json.gz'
                 GROUP BY logs.region, slug
@@ -135,7 +135,7 @@ export class RealmQuery {
                 AND FROM_UNIXTIME(lastModified / 1000) <= NOW() - INTERVAL lowestDelay MINUTE)
                OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
             ORDER BY timestamp DESC, autoUpdate DESC, (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 DESC
-            LIMIT 30;`;
+            LIMIT 20;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
