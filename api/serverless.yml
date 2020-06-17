@@ -12,8 +12,8 @@ provider:
   memorySize: 200
   timeout: 30
   versionFunctions: false
-  tags:
-    Project: WAH
+  #tags:
+    #Project: WAH
   tracing:
     apiGateway: true
     lambda: true
@@ -21,7 +21,7 @@ provider:
 functions:
   auctionUpdateLogForRealm:
     tags:
-      FunctionName: Wah-auctionUpdateLogForRealm
+      Function: Wah-auctionUpdateLogForRealm
     handler: src/controllers/auction.getUpdateLogForRealm
     memorySize: 200
     events:
@@ -32,32 +32,32 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   auctionsDownloadAndSave:
     tags:
-      FunctionName: Wah-auctionsDownloadAndSave
+      Function: Wah-auctionsDownloadAndSave
     handler: src/controllers/auction.auctionsDownloadAndSave
     memorySize: 350
     timeout: 59
   auctionsUpdateStaticS3Data:
     tags:
-      FunctionName: Wah-auctions
+      Function: Wah-auctions
     handler: src/controllers/auction.updateStaticS3Data
     memorySize: 350
     timeout: 59
   updateAllHouses:
     tags:
-      FunctionName: Wah-updateAllHouses
+      Function: Wah-updateAllHouses
     handler: src/controllers/auction.updateAll
     memorySize: 256
     timeout: 59
 
   deactivateInactiveHouses:
     tags:
-      FunctionName: Wah-deactivateInactiveHouses
+      Function: Wah-deactivateInactiveHouses
     handler: src/controllers/auction.deactivateInactiveHouses
     memorySize: 200
 
   updateSpesificHouse:
     tags:
-      FunctionName: Wah-updateSpesificHouse
+      Function: Wah-updateSpesificHouse
     handler: src/controllers/auction.updateOne
     memorySize: 200
     events:
@@ -68,19 +68,19 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   deleteOldPriceHistoryForRealmAndSetDailyPrice:
     tags:
-      FunctionName: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
+      Function: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
     handler: src/controllers/auction.deleteOldPriceHistoryForRealmAndSetDailyPrice
     memorySize: 450
     timeout: 120
   updateAllRealmDailyData:
     tags:
-      FunctionName: Wah-updateAllRealmDailyData
+      Function: Wah-updateAllRealmDailyData
     handler: src/controllers/auction.updateAllRealmDailyData
     memorySize: 1024
     timeout: 300
   locales:
     tags:
-      FunctionName: Wah-locales
+      Function: Wah-locales
     handler: src/controllers/locale.handler
     events:
       - http:
@@ -90,7 +90,7 @@ functions:
             origin: 'localhost:3000'
   items:
     tags:
-      FunctionName: Wah-items
+      Function: Wah-items
     handler: src/controllers/item.handler
     memorySize: 300
     events:
@@ -107,7 +107,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getPriceHistoryForItem:
     tags:
-      FunctionName: Wah-item-history
+      Function: Wah-item-history
     handler: src/controllers/item.getPriceHistoryForItem
     memorySize: 256
     events:
@@ -118,7 +118,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   pets:
     tags:
-      FunctionName: Wah-pets
+      Function: Wah-pets
     handler: src/controllers/pet.handler
     memorySize: 128
     events:
@@ -170,7 +170,7 @@ functions:
 
   zone:
     tags:
-      FunctionName: Wah-zone
+      Function: Wah-zone
     handler: src/controllers/zone.getAll
     memorySize: 128
     timeout: 30
@@ -182,7 +182,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetById:
     tags:
-      FunctionName: Wah-npc-by-id
+      Function: Wah-npc-by-id
     handler: src/controllers/npc.getById
     memorySize: 128
     events:
@@ -193,7 +193,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetAll:
     tags:
-      FunctionName: Wah-npc-get-all
+      Function: Wah-npc-get-all
     handler: src/controllers/npc.getAll
     memorySize: 400
     events:
@@ -204,7 +204,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetByIds:
     tags:
-      FunctionName: Wah-npc
+      Function: Wah-npc
     handler: src/controllers/npc.addNewNPCsByIds
     memorySize: 256
     timeout: 30
@@ -227,7 +227,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   realm:
     tags:
-      FunctionName: Wah-realm
+      Function: Wah-realm
     handler: src/controllers/realm.handler
     events:
       - http:
@@ -238,7 +238,7 @@ functions:
 
   realmAllRegions:
     tags:
-      FunctionName: Wah-realmAllRegions
+      Function: Wah-realmAllRegions
     handler: src/controllers/realm.realmAllRegions
     memorySize: 200
     events:
@@ -249,7 +249,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getByRegionAndName:
     tags:
-      FunctionName: Wah-getByRegionAndName
+      Function: Wah-getByRegionAndName
     handler: src/controllers/realm.getByRegionAndName
     memorySize: 200
     events:
@@ -260,7 +260,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   test:
     tags:
-      FunctionName: Wah-test
+      Function: Wah-test
     handler: src/controllers/test.handler
     memorySize: 512
     events:
@@ -272,7 +272,7 @@ functions:
 
   logger:
     tags:
-      FunctionName: Wah-logger
+      Function: Wah-logger
     handler: src/controllers/logger.handler
     memorySize: 128
     events:
@@ -281,7 +281,7 @@ functions:
           path: logger
   loggerClientEvent:
     tags:
-      FunctionName: Wah-loggerClientEvent
+      Function: Wah-loggerClientEvent
     handler: src/controllers/logger.clientEvent
     memorySize: 128
     events:
@@ -293,7 +293,7 @@ functions:
 
   loggerClientDelete:
     tags:
-      FunctionName: Wah-loggerClientDelete
+      Function: Wah-loggerClientDelete
     handler: src/controllers/logger.clientDelete
     memorySize: 128
     events:
@@ -304,7 +304,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   currency:
     tags:
-      FunctionName: Wah-currencies
+      Function: Wah-currencies
     handler: src/controllers/currency.handler
     memorySize: 128
     events:
@@ -315,6 +315,6 @@ functions:
             origin: 'http://localhost:4200'
   updateTSMDumpData:
     tags:
-      FunctionName: Wah-updateTSMDumpData
+      Function: Wah-updateTSMDumpData
     handler: src/controllers/tsm.handler
     memorySize: 256
