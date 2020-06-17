@@ -10,7 +10,7 @@ export class RecipeRepository extends Repository<Recipe> {
     super('recipes_new', 'recipesName');
   }
 
-  private geteBaseQuery(locale): string {
+  private geteBaseQuery(locale: string): string {
     return `SELECT recipes.id        as id,
                               recipes.icon      as icon,
                               name.${locale}        as name,
