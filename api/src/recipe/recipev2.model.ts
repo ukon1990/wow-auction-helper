@@ -1,5 +1,5 @@
-import {ItemLocale} from '../item/item-locale';
-import {Key} from '../game-data/Key.model';
+import {ItemLocale} from '../models/item/item-locale';
+import {Key} from '../models/game-data/Key.model';
 
 export interface CreatedItem {
     id: number;

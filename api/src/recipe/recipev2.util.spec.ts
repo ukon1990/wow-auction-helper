@@ -1,5 +1,5 @@
 import {RecipeV2Util} from './recipev2.util';
-import {Recipev2} from '../models/crafting/recipev2.model';
+import {Recipev2} from './recipev2.model';
 import {DatabaseUtil} from '../utils/database.util';
 import {QueryUtil} from '../utils/query.util';
 

@@ -1,4 +1,4 @@
-export interface Reagent {
+export class Reagent {
   id: number;
   quantity: number;
   isOptional: boolean;

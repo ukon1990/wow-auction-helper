@@ -8,7 +8,7 @@ export interface SkillTier {
 export interface Profession {
   id: number;
   name: string;
-  descriptions: string;
+  description: string;
   icon: string;
   type: string;
   skillTiers: SkillTier[];
