@@ -109,7 +109,7 @@ export class AddRecipesComponent implements OnInit {
       spellID: id,
       itemID: recipe.itemID,
       name: recipe.name,
-      profession: recipe.profession,
+      profession: recipe.professionId,
       rank: recipe.rank,
       expansion: recipe.expansion,
       isNew: true

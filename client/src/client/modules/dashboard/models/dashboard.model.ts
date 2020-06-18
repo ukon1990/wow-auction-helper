@@ -534,7 +534,8 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) *
+        CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
@@ -572,7 +573,8 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) *
+        CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
@@ -638,7 +640,7 @@ export class Dashboard {
           return false;
         }
 
-        if (onlyKnown && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
+        if (onlyKnown && !SharedService.recipesForUser[recipe.id] && recipe.professionId) {
           return false;
         }
         if (Filters.isUsingAPI()) {

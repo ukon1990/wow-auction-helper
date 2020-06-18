@@ -147,7 +147,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     this.materialFor.length = 0;
     SharedService.recipes.forEach(recipe => {
       recipe.reagents.forEach(reagent => {
-        if (reagent.itemID === this.selected.item.id) {
+        if (reagent.id === this.selected.item.id) {
           this.materialFor.push(recipe);
         }
       });

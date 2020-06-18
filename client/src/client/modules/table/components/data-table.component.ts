@@ -206,8 +206,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   getCraftersForRecipe(recipe: Recipe) {
-    return SharedService.recipesForUser[recipe.spellID] ?
-      SharedService.recipesForUser[recipe.spellID].join(', ') : '';
+    return SharedService.recipesForUser[recipe.id] ?
+      SharedService.recipesForUser[recipe.id].join(', ') : '';
   }
 
   customPrices(): CustomPrices {
@@ -329,8 +329,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.sorter.sort(this.filteredData, column.customSort);
   }
 
-  getSource(recipe: Recipe): string {
-    return recipe.profession ? recipe.profession : 'On use';
+  getSource(recipe: Recipe): number {
+    return recipe.professionId || 0;
   }
 
   displayColumn(column: ColumnDescription): boolean {
@@ -370,8 +370,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       return (item as ShoppingCartItem).quantity;
     } else {
       const recipe: Recipe = this.isKnownRecipe(item);
-      return item && SharedService.user.shoppingCart.recipeMap[recipe.spellID] ?
-        SharedService.user.shoppingCart.recipeMap[recipe.spellID].quantity :
+      return item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
+        SharedService.user.shoppingCart.recipeMap[recipe.id].quantity :
         0;
     }
   }
@@ -426,7 +426,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (SharedService.recipesMapPerItemKnown[id]) {
       return SharedService.recipesMapPerItemKnown[id];
     }
-    return recipe && recipe.profession === 'none';
+    return recipe && !recipe.professionId;
 
   }
 

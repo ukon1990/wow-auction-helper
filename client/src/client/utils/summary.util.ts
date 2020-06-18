@@ -2,6 +2,7 @@ import {Recipe} from '../modules/crafting/models/recipe';
 import {SharedService} from '../services/shared.service';
 import {TSM} from '../modules/auction/models/tsm.model';
 import {Item} from '../models/item/item';
+import {getProfessionById} from '../data/professions/professions';
 
 export class SummaryUtil {
   public static isProfitMatch(recipe: Recipe): boolean {
@@ -22,7 +23,8 @@ export class SummaryUtil {
   }
 
   public static getProfessionNameFromRecipe(recipe: Recipe): string {
-    return recipe.profession ? recipe.profession : 'On use';
+    return recipe.professionId ?
+      getProfessionById(recipe.professionId).name : 'On use';
   }
 
   public static isCurrentExpansionMatch(itemID: number, onlyCurrentExpansion: boolean) {
@@ -38,6 +40,6 @@ export class SummaryUtil {
   }
 
   public static isUnrakedOrRank3(recipe: Recipe): boolean {
-    return !recipe.rank || recipe.rank === '' || recipe.rank === '3';
+    return !recipe.rank || recipe.rank === 3;
   }
 }

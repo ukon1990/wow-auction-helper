@@ -37,7 +37,8 @@ export class DatabaseService {
     + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation';
   readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
-  readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
+  readonly RECIPE_TABLE_COLUMNS = 'id,icon,name,description,rank,craftedItemId,hordeCraftedItemId,' +
+    'allianceCraftedItemId,minCount,maxCount,procRate,professionId,skillTierId,reagents';
   readonly TSM_ADDON_HISTORY = 'timestamp,data';
   readonly ADDON = 'id,name,gameVersion,timestamp,data';
   readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
@@ -202,7 +203,7 @@ export class DatabaseService {
       .toArray()
       .then(recipes => {
         SharedService.downloading.recipes = false;
-        SharedService.recipes = recipes as Array<Recipe>;
+        SharedService.recipes = recipes as Recipe[];
         SharedService.events.recipes.emit(true);
         console.log('Restored recipes from local DB');
       }).catch(e => {
@@ -451,7 +452,8 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
-    this.db.version(7).stores({
+
+    this.db.version(8).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,
@@ -462,13 +464,24 @@ export class DatabaseService {
       zones: this.ZONE_TABLE_COLUMNS,
       addons: this.ADDON
     });
+    this.db.version(7).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      addons: this.ADDON
+    });
     this.db.version(6).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       wowuction: this.WOWUCTION_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS,
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
       npcs: this.NPC_TABLE_COLUMNS,
       zones: this.ZONE_TABLE_COLUMNS,
       tsmAddonHistory: this.TSM_ADDON_HISTORY
@@ -480,7 +493,7 @@ export class DatabaseService {
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS,
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
       tsmAddonHistory: this.TSM_ADDON_HISTORY
     });
     this.db.version(4).stores({
@@ -489,7 +502,7 @@ export class DatabaseService {
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion'
     });
     this.db.version(3).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,

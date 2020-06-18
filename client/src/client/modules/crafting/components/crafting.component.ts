@@ -15,6 +15,8 @@ import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {BaseCraftingUtil} from '../utils/base-crafting.util';
 import {AuctionsService} from '../../../services/auctions.service';
+import {getProfessions} from '../../../data/professions/professions';
+import {ThemeUtil} from '../../core/utils/theme.util';
 
 @Component({
   selector: 'wah-crafting',
@@ -22,14 +24,18 @@ import {AuctionsService} from '../../../services/auctions.service';
   styleUrls: ['./crafting.component.scss']
 })
 export class CraftingComponent implements OnInit, OnDestroy {
+  theme = ThemeUtil.current;
   searchForm: FormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
   itemClasses = itemClasses;
   professions = [
-    ...GameBuild.professions,
-    'none'
-  ].sort();
+    getProfessions(),
+    {
+      id: 0,
+      name: 'None'
+    }
+  ];
   expansions = GameBuild.expansionMap;
   delayFilter = false;
 
@@ -53,7 +59,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
       onlyKnownRecipes: query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true,
-      profession: query && query.profession ? query.profession : 'All',
+      profession: query && query.profession ? query.profession : -1,
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
@@ -112,7 +118,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   isKnownRecipe(recipe: Recipe): boolean {
-    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.spellID] || !recipe.profession;
+    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.id] || !recipe.professionId;
   }
 
   isNameMatch(recipe: Recipe, name: string): boolean {

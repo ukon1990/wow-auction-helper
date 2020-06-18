@@ -166,7 +166,7 @@ export class UpdateComponent implements OnInit {
           item.itemSource[k].length = 0);
       items.push();
       recipe.reagents.forEach(reagent => {
-        item = SharedService.items[reagent.itemID];
+        item = SharedService.items[reagent.id];
         if (item) {
           Object.keys(item.itemSource)
             .forEach(k =>

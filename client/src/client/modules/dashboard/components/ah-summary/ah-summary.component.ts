@@ -164,7 +164,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     const recipe: Recipe[] = SharedService.itemRecipeMap[item.itemID];
     if (recipe) {
       (this.summaries[2] as SummaryCard)
-        .addEntry(recipe[0].profession, item.quantityTotal);
+        .addEntry(recipe[0].professionId, item.quantityTotal);
     }
   }
 

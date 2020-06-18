@@ -6,61 +6,101 @@
 
     <mat-form-field class="col">
       <mat-select [disableOptionCentering]="true" placeholder="Profession" formControlName="profession">
-        <mat-option value="All" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
-        <mat-option *ngFor="let i of professions" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
-          {{ i }}
+        <mat-option [value]="-1"
+                    [ngClass]="theme.tableColorClass">
+          All
+        </mat-option>
+        <mat-option
+                *ngFor="let profession of professions"
+                [value]="profession.id"
+                [ngClass]="theme.tableColorClass">
+          {{ profession.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field class="ml-2 mr-2 col">
-      <mat-select [disableOptionCentering]="true" placeholder="Item class" formControlName="itemClass">
-        <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+      <mat-select
+              [disableOptionCentering]="true"
+              placeholder="Item class"
+              formControlName="itemClass">
+        <mat-option [value]="-1"
+                    [ngClass]="theme.tableColorClass">
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses.classes; let i = index;" [value]="i"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        <mat-option *ngFor="let c of itemClasses.classes; let i = index;"
+                    [value]="i"
+                    [ngClass]="theme.tableColorClass">
           {{ c.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]" class="ml-2 mr-2 col">
-      <mat-select [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
-        <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+    <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]"
+                    class="ml-2 mr-2 col">
+      <mat-select
+              [disableOptionCentering]="true"
+              placeholder="Item sub class"
+              formControlName="itemSubClass">
+        <mat-option
+                [value]="-1"
+                [ngClass]="theme.tableColorClass">
           All
         </mat-option>
         <mat-option *ngFor="let c of itemClasses.classes[searchForm.value['itemClass']].subclasses; let i = index;"
-                    [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+                    [value]="i" [ngClass]="theme.tableColorClass">
           {{ c.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field class="col">
-      <mat-select [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
-        <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
-        <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+      <mat-select
+              [disableOptionCentering]="true"
+              placeholder="Expansion"
+              formControlName="expansion">
+        <mat-option
+                [value]="null"
+                [ngClass]="theme.tableColorClass">
+          All
+        </mat-option>
+        <mat-option
+                *ngFor="let expansion of expansions; let i = index"
+                [value]="i"
+                [ngClass]="theme.tableColorClass">
           {{ expansion }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
   <div class="row">
-    <wah-crafting-config (changed)="filter()"></wah-crafting-config>
+    <wah-crafting-config
+            (changed)="filter()">
+    </wah-crafting-config>
     <mat-form-field class="col">
-      <input matInput placeholder="Minimum profit %" formControlName="profit" type="number"
-             matTooltip="Minimum return on investment">
+      <input
+              matInput
+              placeholder="Minimum profit %"
+              formControlName="profit"
+              type="number"
+              matTooltip="Minimum return on investment">
     </mat-form-field>
 
     <mat-form-field class="col">
-      <input matInput placeholder="Sale rate % (default 0)" formControlName="demand" type="number"
+      <input
+              matInput
+              placeholder="Sale rate % (default 0)"
+              formControlName="demand"
+              type="number"
              matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
     </mat-form-field>
 
     <mat-form-field class="col">
-      <input matInput placeholder="Minimum avg daily sold" formControlName="minSold" type="number">
+      <input
+              matInput
+              placeholder="Minimum avg daily sold"
+              formControlName="minSold"
+              type="number">
     </mat-form-field>
 
     <div class="col">
@@ -72,7 +112,12 @@
     </div>
 
     <div class="col">
-      <button type="button" (click)="resetForm()" mat-raised-button>Reset</button>
+      <button
+              type="button"
+              (click)="resetForm()"
+              mat-raised-button>
+        Reset
+      </button>
     </div>
   </div>
 </form>

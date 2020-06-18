@@ -56,8 +56,8 @@ export class AddItemsComponent implements OnInit {
       }
 
       recipe.reagents.forEach(reagent => {
-        if (!SharedService.items[reagent.itemID] && reagent.itemID) {
-          list.push(reagent.itemID);
+        if (!SharedService.items[reagent.id] && reagent.id) {
+          list.push(reagent.id);
         }
       });
     });
