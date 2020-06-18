@@ -425,14 +425,22 @@ export class AuctionHandler {
             .catch(err => console.error('Could not updateAllStatuses', err)),
           this.createLastModifiedFile(+ahId, region, conn)
             .catch(err => console.error('Could not createLastModifiedFile', err)),
+          /*
           await this.copyAuctionsToNewFile(record, auctions, region, ahId)
             .catch(err => console.error('Could not copyAuctionsToNewFile', err)),
-          this.processAuctions(region, record, +ahId, fileName, conn)
-            .catch(err => console.error('Could not processAuctions'))
+            */
         ])
-          .catch(console.error);
+          .catch(err => {
+            console.error(err);
+            reject(err);
+          });
+        await this.processAuctions(region, record, +ahId, fileName, conn)
+          .then(resolve)
+          .catch(err => {
+            console.error('Could not processAuctions');
+            reject(err);
+          });
       }
-      resolve();
     });
   }
 

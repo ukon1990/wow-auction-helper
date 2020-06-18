@@ -34,14 +34,14 @@ functions:
     tags:
       Function: Wah-auctionsDownloadAndSave
     handler: src/controllers/auction.auctionsDownloadAndSave
-    memorySize: 350
-    timeout: 59
+    memorySize: 256
+    timeout: 30
   auctionsUpdateStaticS3Data:
     tags:
       Function: Wah-auctionsUpdateStaticS3Data
     handler: src/controllers/auction.updateStaticS3Data
-    memorySize: 350
-    timeout: 59
+    memorySize: 228
+    timeout: 30
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses
