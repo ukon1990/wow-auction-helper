@@ -38,7 +38,7 @@ functions:
     timeout: 59
   auctionsUpdateStaticS3Data:
     tags:
-      Function: Wah-auctions
+      Function: Wah-auctionsUpdateStaticS3Data
     handler: src/controllers/auction.updateStaticS3Data
     memorySize: 350
     timeout: 59
@@ -164,7 +164,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetById:
     tags:
-      Function: Wah-npc-by-id
+      Function: Wah-npcGetById
     handler: src/controllers/npc.getById
     memorySize: 128
     events:
@@ -175,7 +175,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetAll:
     tags:
-      Function: Wah-npc-get-all
+      Function: Wah-npcGetAll
     handler: src/controllers/npc.getAll
     memorySize: 400
     events:
@@ -186,7 +186,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetByIds:
     tags:
-      Function: Wah-npc
+      Function: Wah-npcGetByIds
     handler: src/controllers/npc.addNewNPCsByIds
     memorySize: 256
     timeout: 30
@@ -286,7 +286,7 @@ functions:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
   currency:
     tags:
-      Function: Wah-currencies
+      Function: Wah-currency
     handler: src/controllers/currency.handler
     memorySize: 128
     events:
