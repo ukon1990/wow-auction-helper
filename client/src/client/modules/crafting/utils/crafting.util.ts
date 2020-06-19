@@ -84,17 +84,17 @@ export class CraftingUtil {
           }
 
           const numbers = regex.exec(wordsToNumbers(spell.Text) + ''),
-            count = numbers !== null && numbers.length > 0 && numbers[0] ? parseInt(numbers[0], 10) : 1,
-            createCount = numbers !== null && numbers.length > 1 && numbers[1] ? parseInt(numbers[1], 10) : 1;
+            quantity = numbers !== null && numbers.length > 0 && numbers[0] ? parseInt(numbers[0], 10) : 1,
+            createsQuantity = numbers !== null && numbers.length > 1 && numbers[1] ? parseInt(numbers[1], 10) : 1;
 
-          recipe.spellID = spell.SpellID;
+          recipe.id = spell.SpellID;
           recipe.name = `${name.indexOf('Create') === -1 ? 'Create ' : ''}${name}`;
           recipe.itemID = originalRecipe.itemID;
-          recipe.minCount = createCount;
-          recipe.maxCount = createCount;
-          reagent.itemID = item.id;
+          recipe.minCount = createsQuantity;
+          recipe.maxCount = createsQuantity;
+          reagent.id = item.id;
           reagent.name = item.name;
-          reagent.count = count;
+          reagent.quantity = quantity;
           recipe.reagents = [];
           recipe.reagents.push(reagent);
 

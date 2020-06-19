@@ -5,7 +5,6 @@ import {Watchlist} from '../../modules/dashboard/models/watchlist.model';
 import {CustomPrice, CustomPrices} from '../../modules/crafting/models/custom-price';
 import {customPricesDefault} from '../../modules/crafting/models/default-custom-prices';
 import {CustomProc} from '../../modules/crafting/models/custom-proc.model';
-import {customProcsDefault} from '../../modules/crafting/models/default-custom-procs';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
@@ -21,8 +20,8 @@ export class User {
   characters: Array<Character> = new Array<Character>();
   apiWoWu?: string;
   apiTsm?: string;
-  customPrices: Array<CustomPrice> = customPricesDefault;
-  customProcs: Array<CustomProc> = customProcsDefault;
+  customPrices: CustomPrice[] = customPricesDefault;
+  customProcs: CustomProc[] = [];
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
@@ -206,7 +205,7 @@ export class User {
     });
 
     if (user.customProcs.length === 0) {
-      user.customProcs = customProcsDefault;
+      user.customProcs = [];
     }
     return user;
   }

@@ -130,10 +130,10 @@ export class Filters {
       expansionId === item.expansionId;
   }
 
-  static isProfessionMatch(itemID: number, profession: string) {
+  static isProfessionMatch(itemID: number, professionId: number) {
     const recipes: Recipe[] = SharedService.itemRecipeMap[itemID];
 
-    if (EmptyUtil.isNullOrUndefined(profession) || profession === 'All') {
+    if (!professionId) {
       return true;
     }
 
@@ -141,8 +141,8 @@ export class Filters {
       return false;
     }
 
-    return TextUtil.isEqualIgnoreCase(recipes[0].profession, profession) ||
-      !recipes[0].profession && profession === 'none';
+    return recipes[0].professionId === professionId ||
+      !recipes[0].professionId && professionId === 0;
   }
 
   static isProfitMatch(recipe: Recipe, itemID: number, profit: number) {

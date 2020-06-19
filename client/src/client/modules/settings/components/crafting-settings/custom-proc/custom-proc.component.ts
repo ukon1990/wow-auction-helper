@@ -7,7 +7,6 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
-import {customProcsDefault} from '../../../../crafting/models/default-custom-procs';
 import {Report} from '../../../../../utils/report.util';
 import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
@@ -76,6 +75,6 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   }
 
   resetToDefault(): void {
-    SharedService.user.customProcs = customProcsDefault;
+    SharedService.user.customProcs = [];
   }
 }

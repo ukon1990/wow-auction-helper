@@ -95,22 +95,16 @@ export class CraftingService {
   }
 
   async handleRecipe(r: Recipe, missingItems?: Array<number>): Promise<Recipe> {
-    const possiblyBuggedRecipe = !r.profession && r.name.indexOf('Create ') !== -1;
+    const possiblyBuggedRecipe = !r.professionId && r.name.indexOf('Create ') !== -1;
     if (missingItems && r.itemID > 0 && !SharedService.items[r.itemID]) {
       missingItems.push(r.itemID);
     }
-
-    r.reagents.forEach(async reagent => {
-      if (reagent.itemID > 0 && !SharedService.items[reagent.itemID]) {
-        ItemService.missingQueue[reagent.itemID] = reagent.itemID;
-      }
-    });
 
     if (possiblyBuggedRecipe) {
       r.flaggedAsBugged = true;
     }
 
-    SharedService.recipesMap[r.spellID] = r;
+    SharedService.recipesMap[r.id] = r;
     return r;
   }
 
@@ -127,12 +121,12 @@ export class CraftingService {
           return;
         }
 
-        if (map[recipe.spellID]) {
+        if (map[recipe.id]) {
           Object.keys(recipe).forEach(key => {
-            map[recipe.spellID][key] = recipe[key];
+            map[recipe.id][key] = recipe[key];
           });
         } else {
-          map[recipe.spellID] = recipe;
+          map[recipe.id] = recipe;
           SharedService.recipes.push(recipe);
         }
       });
