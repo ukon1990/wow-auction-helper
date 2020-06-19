@@ -9,6 +9,7 @@ import {itemClasses} from '../../../../models/item/item-classes';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SummaryUtil} from '../../../../utils/summary.util';
 import {Recipe} from '../../../crafting/models/recipe';
+import {CraftingService} from '../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -172,7 +173,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
   private addProfitableCrafts(summary: SummaryCard, filterFN: (n: Recipe) => boolean, onlyCurrentExpansion: boolean): void {
     const professions = {};
 
-    SharedService.recipes.forEach((recipe: Recipe) => {
+    CraftingService.list.value.forEach((recipe: Recipe) => {
       if (filterFN(recipe) &&
         SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion) &&
         SummaryUtil.isUnrakedOrRank3(recipe)) {

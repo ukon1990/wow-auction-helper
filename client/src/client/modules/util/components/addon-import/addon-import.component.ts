@@ -86,7 +86,7 @@ export class AddonImportComponent implements OnInit {
       this.form.controls.realm.setValue(realm);
       const realmData = this.getCurrentRealmAuctions(realm);
       if (realmData) {
-        this.dbService.addClassicAuctions(realmData);
+        // this.dbService.addClassicAuctions(realmData);
       }
     }
 
@@ -224,7 +224,7 @@ export class AddonImportComponent implements OnInit {
     const realm = this.getCurrentRealmAuctions(this.form.value.realm);
     if (realm) {
       this.auctionsService.events.list.next(realm.auctions);
-      this.dbService.addClassicAuctions(realm);
+      // this.dbService.addClassicAuctions(realm);
       await AuctionUtil.organize(realm.auctions, this.petService);
       const status = new AuctionHouseStatus();
       status.lastModified = realm.lastScan;

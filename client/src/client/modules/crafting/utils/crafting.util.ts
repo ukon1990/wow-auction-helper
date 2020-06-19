@@ -4,12 +4,9 @@ import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {ItemSpells} from '../../../models/item/itemspells';
-import {Spell} from '../../../models/spell';
 import {Reagent} from '../models/reagent';
 import wordsToNumbers from 'words-to-numbers';
-import {CustomProcUtil} from './custom-proc.util';
 import {Filters} from '../../../utils/filtering';
-import {NpcService} from '../../npc/services/npc.service';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
 import {BaseCraftingUtil} from './base-crafting.util';
 import {OptimisticCraftingUtil} from './optimistic-crafting.util';
@@ -19,24 +16,6 @@ import {Report} from '../../../utils/report.util';
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
   public static strategy: BaseCraftingUtil;
-
-  public static checkForMissingRecipes(craftingService: CraftingService): void {
-    const missingRecipes = [];
-    Object.keys(SharedService.recipesForUser).forEach(key => {
-      try {
-        if (!SharedService.recipesMap[key]) {
-          missingRecipes.push(parseInt(key, 10));
-        }
-      } catch (e) {
-        console.error('checkForMissingRecipes failed', e);
-      }
-    });
-
-    if (missingRecipes.length < 100) {
-      craftingService.addRecipes(missingRecipes);
-    } else {
-    }
-  }
 
   /**
    * Checks all items for possible create effects
@@ -51,7 +30,7 @@ export class CraftingUtil {
       tmpList = tmpList.concat(CraftingUtil.getItemForSpellsThatAreRecipes(i)));
 
     tmpList.forEach(recipe => {
-      SharedService.recipes.push(recipe);
+      CraftingService.list.value.push(recipe);
       SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
     });
   }
@@ -69,13 +48,13 @@ export class CraftingUtil {
     if (item.itemClass === 7 && item.itemSpells !== null &&
       item.itemSpells && item.itemSpells.length > 0) {
       item.itemSpells.forEach((spell: ItemSpells) => {
-        if (SharedService.recipesMap[spell.SpellID]
-          && SharedService.recipesMap[spell.SpellID].itemID &&
-          SharedService.recipesMap[spell.SpellID].reagents) {
+        if (CraftingService.map.value.get(spell.SpellID)
+          && CraftingService.map.value.get(spell.SpellID).itemID &&
+          CraftingService.map.value.get(spell.SpellID).reagents) {
 
           const recipe = new Recipe(),
             reagent = new Reagent(),
-            originalRecipe: Recipe = SharedService.recipesMap[spell.SpellID],
+            originalRecipe: Recipe = CraftingService.map.value.get(spell.SpellID),
             name = SharedService.items[originalRecipe.itemID].name,
             regex = new RegExp(/[0-9]{1,}/gi);
 
@@ -132,7 +111,7 @@ export class CraftingUtil {
         'Calculated with strategy: ' + BaseCraftingUtil.STRATEGY_LIST[selectedStrategy].name);
     }
 
-    this.strategy.calculate(SharedService.recipes);
+    this.strategy.calculate(CraftingService.list.value);
   }
 
   public static getCost(itemID: number, count: number): number {
@@ -195,12 +174,5 @@ export class CraftingUtil {
     return CraftingUtil.existsInTSM(itemID) && SharedService.auctionItemsMap[itemID].buyout /
       SharedService.tsm[itemID].MarketValue * 100 >=
       SharedService.user.buyoutLimit;
-  }
-
-  private static getROI(cost: number, item?: AuctionItem) {
-    if (!item) {
-      return 0;
-    }
-    return item.buyout - cost;
   }
 }

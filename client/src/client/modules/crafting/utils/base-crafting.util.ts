@@ -6,6 +6,7 @@ import {CustomProcUtil} from './custom-proc.util';
 import {Reagent} from '../models/reagent';
 import {CustomPrice} from '../models/custom-price';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {CraftingService} from '../../../services/crafting.service';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -40,6 +41,7 @@ export abstract class BaseCraftingUtil {
     if (!recipe) {
       return;
     }
+
     this.resetRecipePriceValues(recipe);
     this.setRecipePriceAndStatData(recipe);
 
@@ -88,7 +90,7 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipeForReagent(r: Reagent, parentRecipe: Recipe) {
-    const recipe: Recipe = SharedService.recipesMapPerItemKnown[r.id];
+    const recipe: Recipe = CraftingService.map.value.get(r.id);
     if (!r.recipe && recipe) {
       r.recipe = recipe;
       if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.id)) {

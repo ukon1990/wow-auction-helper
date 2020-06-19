@@ -197,8 +197,9 @@ export class BackgroundDownloadService {
 
   private async loadRecipes() {
     await this.dbService.getAllRecipes()
-      .then(async () => {
-        if (SharedService.recipes.length === 0) {
+      .then(async (result) => {
+        CraftingService.list.next(result);
+        if (CraftingService.list.value.length === 0) {
           delete localStorage['timestamp_recipes'];
         }
       })
@@ -206,7 +207,6 @@ export class BackgroundDownloadService {
       });
 
     await this.craftingService.getRecipes();
-    await CraftingUtil.checkForMissingRecipes(this.craftingService);
     CraftingUtil.setOnUseCraftsWithNoReagents();
   }
 

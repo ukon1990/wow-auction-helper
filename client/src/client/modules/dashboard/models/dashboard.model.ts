@@ -13,6 +13,7 @@ import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TSM} from '../../auction/models/tsm.model';
+import {CraftingService} from '../../../services/crafting.service';
 
 export class Dashboard {
   public static fails = [];
@@ -630,7 +631,7 @@ export class Dashboard {
     let sumROI = 0;
     const pipe: GoldPipe = new GoldPipe();
     this.data.length = 0;
-    this.data = SharedService.recipes
+    this.data = CraftingService.list.value
       .filter(recipe => {
         if (this.isExpansionMissMatch(recipe.itemID) || !recipe || !recipe.roi) {
           return false;

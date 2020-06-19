@@ -214,6 +214,7 @@ export class User {
    * Grouping the current recipes for a user
    */
   public static updateRecipesForRealm(): void {
+    // TODO: fix
     SharedService.recipesForUser = new Map<number, Array<string>>();
     SharedService.user.characters.forEach(character => {
       this.setRecipesForCharacter(character);

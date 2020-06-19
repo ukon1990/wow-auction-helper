@@ -1,17 +1,13 @@
-import {Injectable, ErrorHandler, EventEmitter} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {SharedService} from './shared.service';
 import {HttpClient} from '@angular/common/http';
 import {Item} from '../models/item/item';
 import {Endpoints} from './endpoints';
-import {GameBuild} from '../utils/game-build.util';
 import {DatabaseService} from './database.service';
 import {WoWHeadSoldBy} from '../models/item/wowhead';
 import {ErrorReport} from '../utils/error-report.util';
-import {Angulartics2} from 'angulartics2';
-import {ProspectingAndMillingUtil} from '../utils/prospect-milling.util';
 import {MatSnackBar} from '@angular/material';
 import {ItemOverrides} from '../overrides/item.overrides';
-import {Recipe} from '../modules/crafting/models/recipe';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
 import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
@@ -36,7 +32,6 @@ export class ItemService {
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
               public snackBar: MatSnackBar,
-              private angulartics2: Angulartics2,
               private realmService: RealmService,
               public platform: Platform) {
     this.sm.add(this.realmService.events.realmStatus, () => {

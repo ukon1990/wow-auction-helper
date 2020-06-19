@@ -11,6 +11,7 @@ import {Report} from '../../../../../utils/report.util';
 import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {CraftingService} from '../../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -65,7 +66,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
    * @param name Item name for the query
    */
   private filter(name: string): Array<Recipe> {
-    return SharedService.recipes.filter(i =>
+    return CraftingService.list.value.filter(i =>
       TextUtil.contains(i.name, name)).slice(0, 20);
   }
 

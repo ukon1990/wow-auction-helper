@@ -5,14 +5,12 @@ import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
-import {WoWUction} from '../models/wowuction.model';
 import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
-import {AuctionItemStat, AuctionProcessorUtil} from '../../../../../../api/src/utils/auction-processor.util';
-import {ItemService} from '../../../services/item.service';
+import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
 
 export class AuctionUtil {
   private static missingPetMap = {};

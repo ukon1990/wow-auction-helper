@@ -4,6 +4,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {Item} from '../../../../../models/item/item';
+import {CraftingService} from '../../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-add-items',
@@ -50,7 +51,7 @@ export class AddItemsComponent implements OnInit {
 
   setMissingReagentItems(): void {
     const list = [];
-    SharedService.recipes.forEach(recipe => {
+    CraftingService.list.value.forEach(recipe => {
       if (!SharedService.items[recipe.itemID] && recipe.itemID) {
         list.push(recipe.itemID);
       }

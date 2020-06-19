@@ -68,9 +68,8 @@ export class SharedService {
   public static tsm: Map<number, TSM> = new Map<number, TSM>();
   public static wowUction: Map<number, WoWUction> = new Map<number, WoWUction>();
 
+  // TODO: Replace with values in CraftingService
   public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
-  public static recipes: Array<Recipe> = new Array<Recipe>();
-  public static recipesMap: Map<number, Recipe> = new Map<number, Recipe>();
   public static recipesMapPerItemKnown = {
     0: new Map<number, Recipe>(),
     1: new Map<number, Recipe>()

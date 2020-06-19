@@ -17,6 +17,7 @@ import {BaseCraftingUtil} from '../utils/base-crafting.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {getProfessions} from '../../../data/professions/professions';
 import {ThemeUtil} from '../../core/utils/theme.util';
+import {CraftingService} from '../../../services/crafting.service';
 
 @Component({
   selector: 'wah-crafting',
@@ -101,7 +102,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   filter(changes = this.searchForm.value): void {
-    this.filtered = SharedService.recipes
+    this.filtered = CraftingService.list.value
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {
           return this.isKnownRecipe(recipe)

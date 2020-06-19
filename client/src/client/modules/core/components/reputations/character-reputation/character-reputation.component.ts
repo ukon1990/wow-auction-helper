@@ -117,9 +117,9 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
     }
   }
 
-  private getRecipe(recipe) {
-    return SharedService.recipesMap[recipe.spellId] ?
-      SharedService.recipesMap[recipe.spellId] : new Recipe();
+  private getRecipe(recipe: Recipe) {
+    return CraftingService.map.value.get(recipe.id) ?
+      CraftingService.map.value.get(recipe.id) : new Recipe();
   }
 
   private getKnownRecipesMap(ids: number[]) {
@@ -157,7 +157,6 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
         });
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
         User.updateRecipesForRealm();
-        CraftingUtil.checkForMissingRecipes(this.craftingService);
 
         if (SharedService.user.region && SharedService.user.realm) {
           AuctionUtil.organize(SharedService.auctions);

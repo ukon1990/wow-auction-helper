@@ -8,6 +8,7 @@ import {Report} from '../../../utils/report.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {ShoppingCartItem} from './shopping-cart-item.model';
+import {CraftingService} from '../../../services/crafting.service';
 
 
 export class ShoppingCart {
@@ -45,7 +46,7 @@ export class ShoppingCart {
     try {
       if (old && old['reagents'] && old['recipes']) {
         old['recipes'].forEach(recipe => {
-          const r = SharedService.recipesMap[recipe.id];
+          const r = CraftingService.map.value.get(recipe.id);
           if (r) {
             this.add(r, recipe.quantity, true);
           }
@@ -60,14 +61,14 @@ export class ShoppingCart {
 
   import(data: object): void {
     try {
-      if (SharedService.recipes.length === 0) {
+      if (CraftingService.list.value.length === 0) {
         return;
       }
       // Import recipes
       if (data['recipes']) {
         data['recipes']
           .forEach(recipe => {
-            const r = SharedService.recipesMap[recipe.id];
+            const r = CraftingService.map.value.get(recipe.id);
             if (!r) {
               return;
             }
@@ -166,7 +167,7 @@ export class ShoppingCart {
 
   remove(id: number, quantity?: number): void {
     try {
-      const recipe = SharedService.recipesMap[id],
+      const recipe = CraftingService.map.value.get(id),
         cartRecipe: ShoppingCartItem = this.recipeMap[id];
       if (!recipe || !cartRecipe) {
         return;

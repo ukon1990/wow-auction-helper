@@ -2,18 +2,14 @@ import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {Item} from '../models/item/item';
 import {Auction} from '../modules/auction/models/auction.model';
-import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {SharedService} from './shared.service';
 import {TSM} from '../modules/auction/models/tsm.model';
-import {WoWUction} from '../modules/auction/models/wowuction.model';
-import {PetsService} from './pets.service';
 import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
 import {TsmLuaUtil} from '../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../utils/error-report.util';
-import {AuctionsService} from './auctions.service';
 import {NPC} from '../modules/npc/models/npc.model';
 import {Zone} from '../modules/zone/models/zone.model';
 import {BehaviorSubject} from 'rxjs';
@@ -77,7 +73,8 @@ export class DatabaseService {
       return;
     }
     this.db.table('items').bulkPut(items)
-      .catch(console.error);
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.addItems', e));
   }
 
   async getAllItems(): Dexie.Promise<any> {
@@ -190,42 +187,38 @@ export class DatabaseService {
     if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
-    this.db.table('recipes').bulkPut(recipes);
+    this.db.table('recipes').bulkPut(recipes)
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.addRecipes', e));
   }
 
-  getAllRecipes(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return new Dexie.Promise<any>((resolve, reject) => reject([]));
-    }
-
+  getAllRecipes(): Promise<Recipe[]> {
     SharedService.downloading.recipes = true;
-    return this.db.table('recipes')
-      .toArray()
-      .then(recipes => {
+    return new Promise((resolve, reject) => {
+      if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+        return resolve([]);
+      }
+
+      this.db.table('recipes')
+        .toArray()
+        .then(recipes => {
+          SharedService.downloading.recipes = false;
+          console.log('Restored recipes from local DB');
+          resolve(recipes);
+          SharedService.events.recipes.emit(true);
+        }).catch(error => {
+        console.error('Could not restore recipes from local DB', error);
+        ErrorReport.sendError('DatabaseService.getAllRecipes', error);
         SharedService.downloading.recipes = false;
-        SharedService.recipes = recipes as Recipe[];
-        SharedService.events.recipes.emit(true);
-        console.log('Restored recipes from local DB');
-      }).catch(e => {
-        console.error('Could not restore recipes from local DB', e);
-        SharedService.downloading.recipes = false;
+        reject(error);
       });
+    });
   }
 
   clearRecipes(): void {
-    this.db.table('recipes').clear();
-  }
-
-  addClassicAuctions(realmData: { realm: string, auctions: Auction[] }): void {
-    if (this.isUnsupportedBrowser()) {
-      return;
-    }
-
-    // this.db.table('classic-auctions').clear();
-    this.db.table('classic-auctions')
-      .put(realmData)
-      .then(r => console.log('Successfully added auctions to local DB'))
-      .catch(e => console.error('Could not add auctions to local DB', e));
+    this.db.table('recipes').clear()
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.clearRecipes', e));
   }
 
   addAuction(auction: Auction): void {
@@ -236,109 +229,11 @@ export class DatabaseService {
       .then(r =>
         console.log('Successfully added auctions to local DB'))
       .catch(e =>
-        console.error('Could not add auctions to local DB', e));
+        ErrorReport.sendError('DatabaseService.addAuction', e));
   }
 
   private isUnsupportedBrowser() {
     return environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported;
-  }
-
-  clearAuctions(): void {
-    this.db.table('auctions').clear();
-  }
-
-
-  addAuctions(auctions: Array<Auction>): void {
-    return; // Deactivated
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return;
-    }
-    this.db.table('auctions').clear();
-    this.db.table('auctions')
-      .bulkAdd(auctions)
-      .then(r => console.log('Successfully added auctions to local DB'))
-      .catch(e => console.error('Could not add auctions to local DB', e));
-  }
-
-  async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    return; // Deactivated
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
-    }
-
-    SharedService.downloading.auctions = true;
-    return this.db.table('auctions')
-      .toArray()
-      .then(auctions => {
-        SharedService.downloading.auctions = false;
-        auctionService.events.list.next(auctions);
-        AuctionUtil.organize(auctions, petService)
-          .then(auctionItems =>
-            auctionService.events.groupedList.next(auctionItems))
-          .catch(error =>
-            ErrorReport.sendError('getAllAuctions', error));
-        console.log('Restored auctions from local DB');
-        SharedService.events.auctionUpdate.emit();
-      }).catch(e => {
-        console.error('Could not restore auctions from local DB', e);
-        SharedService.downloading.auctions = false;
-      });
-  }
-
-  async getClassicAuctions(realm: string, petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    console.log('input to DB fetch', realm);
-    SharedService.downloading.auctions = true;
-    return this.db.table('classic-auctions')
-      .where('realm')
-      .equals(realm)
-      .toArray()
-      .then(realmData =>
-        this.handleSuccessfulAuctionDBFetch(realmData[0].auctions, petService, auctionService))
-      .catch(e => {
-        console.error('Could not restore auctions from local DB', e);
-        SharedService.downloading.auctions = false;
-      });
-  }
-
-  private handleSuccessfulAuctionDBFetch(auctions: Auction[], petService: PetsService, auctionService: AuctionsService) {
-    SharedService.downloading.auctions = false;
-    AuctionUtil.organize(auctions, petService)
-      .then(auctionItems => {
-        auctionService.events.list.next(auctions);
-        auctionService.events.groupedList.next(auctionItems);
-      })
-      .catch(error =>
-        ErrorReport.sendError('getAllAuctions', error));
-    console.log('Restored auctions from local DB');
-    SharedService.events.auctionUpdate.emit();
-  }
-
-  addWoWUctionItems(wowuction: Array<WoWUction>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return;
-    }
-    this.db.table('wowuction').clear();
-    this.db.table('wowuction')
-      .bulkPut(wowuction)
-      .then(r => console.log('Successfully added WoWUction data to local DB'))
-      .catch(e => console.error('Could not add WoWUction data to local DB', e));
-  }
-
-  getWoWUctionItems(): Dexie.Promise<any> {
-    SharedService.downloading.wowUctionAuctions = true;
-    return this.db.table('wowuction')
-      .toArray()
-      .then(wowuction => {
-        (<WoWUction[]>wowuction).forEach(a => {
-          SharedService.wowUction[a.id] = a;
-        });
-        SharedService.downloading.wowUctionAuctions = false;
-        console.log('Restored WoWUction data from local DB');
-      })
-      .catch(e => {
-        console.error('Could not restore WoWUction data', e);
-        SharedService.downloading.wowUctionAuctions = false;
-      });
   }
 
   addAddonData(name: string, data: any, gameVersion: number, lastModified: number): void {
@@ -401,7 +296,7 @@ export class DatabaseService {
         console.log('Restored TSM addon historical data from local DB');
       })
       .catch(e => {
-        console.error('Could not restore TSM data', e);
+        ErrorReport.sendError('DatabaseService.getAddonData', e);
         SharedService.downloading.tsmAuctions = false;
       });
   }
@@ -414,7 +309,7 @@ export class DatabaseService {
     this.db.table('tsm')
       .bulkPut(tsm)
       .then(r => console.log('Successfully added tsm data to local DB'))
-      .catch(e => console.error('Could not add tsm data to local DB', e));
+      .catch(e => ErrorReport.sendError('DatabaseService.addTSMItems', e));
   }
 
   getTSMItems(): Dexie.Promise<any> {
@@ -433,13 +328,12 @@ export class DatabaseService {
         console.log('Restored TSM data from local DB');
       })
       .catch(e => {
-        console.error('Could not restore TSM data', e);
+        ErrorReport.sendError('DatabaseService.getTSMItems', e);
         SharedService.downloading.tsmAuctions = false;
       });
   }
 
   async clearWowDataFromDB(): Promise<void> {
-    this.clearAuctions();
     this.clearItems();
     await this.clearNPCs();
     this.clearPets();

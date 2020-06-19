@@ -20,6 +20,7 @@ import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
 import {Router} from '@angular/router';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
+import {CraftingService} from '../../../services/crafting.service';
 
 @Component({
   selector: 'wah-data-table',
@@ -407,7 +408,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     const diff = newValue - recipe.quantity;
     if (diff > 0 && newValue > 0) {
       SharedService.user.shoppingCart.add(
-        SharedService.recipesMap[recipe.id],
+        CraftingService.map.value.get(recipe.id),
         diff);
     } else {
       SharedService.user.shoppingCart.remove(

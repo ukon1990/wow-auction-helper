@@ -39,36 +39,11 @@ export class AuctionsService {
     private _dbService: DatabaseService,
     private _itemService: ItemService,
     private petService: PetsService,
-    private realmService: RealmService,
-    private angulartics2: Angulartics2) {
+    private realmService: RealmService) {
     this.subs.add(
       this.realmService.events.realmStatus,
       (status: RealmStatus) =>
         this.getLatestData(status));
-  }
-
-  getLastModifiedTime(force?: boolean): Promise<any> {
-    const previousLastModified = SharedService.auctionResponse ?
-      SharedService.auctionResponse.lastModified : undefined;
-    return this.http.post(
-      Endpoints.getLambdaUrl(`auction`, SharedService.user.region), {
-        region: SharedService.user.region,
-        realm: SharedService.user.realm
-      })
-      .toPromise()
-      .then(r => {
-        SharedService.auctionResponse = r as AuctionResponse;
-        if (force || previousLastModified !== SharedService.auctionResponse.lastModified) {
-          this.getAuctions()
-            .then(res => {
-              console.log('Updating auctions');
-            }).catch();
-        }
-      })
-      .catch(error => {
-        console.error('Could not get last update time', error);
-        ErrorReport.sendHttpError(error);
-      });
   }
 
   getAuctions(): Promise<any> {
@@ -90,7 +65,6 @@ export class AuctionsService {
         if (!this.doNotOrganize) {
           await AuctionUtil.organize(a['auctions'], this.petService);
         }
-        this._dbService.addAuctions(a['auctions']);
 
         // Adding lacking items to the database
         this.handleMissingAuctionItems(missingItems);
@@ -185,47 +159,6 @@ export class AuctionsService {
         resolve();
       }
     });
-  }
-
-  getWoWUctionAuctions(): Promise<any> {
-    const region = SharedService.user.region;
-
-    if (region === 'eu' || region === 'us') {
-      console.log('Downloading WoWUction data');
-      SharedService.downloading.wowUctionAuctions = true;
-      this.openSnackbar('Downloading WoWUction data');
-      return this.http.post(`${Endpoints.getUrl('auction/wowuction')}`,
-        {
-          region: SharedService.user.region,
-          realm: SharedService.user.realm,
-          key: SharedService.user.apiWoWu
-        }).toPromise()
-        .then(wowu => {
-          localStorage['timestamp_wowuction'] = new Date().toDateString();
-          (<WoWUction[]>wowu).forEach(a => {
-            SharedService.wowUction[a.id] = a;
-          });
-          SharedService.downloading.wowUctionAuctions = false;
-          console.log('WoWUction data download is complete');
-          this._dbService.addWoWUctionItems(wowu as Array<WoWUction>);
-          this.openSnackbar('Completed WoWUction download');
-        })
-        .catch(error => {
-          this.openSnackbar(
-            `Could not completed WoWUction download. One reason that this could happen, is if you have used all your requests.`);
-          console.error('Unable to download WoWUction data', error);
-          SharedService.downloading.wowUctionAuctions = false;
-          ErrorReport.sendHttpError(error);
-
-          this._dbService.getWoWUctionItems().then(r => {
-            this.openSnackbar(`Using the previously used WoWUction data instead (from local DB) if available`);
-          }).catch(err => {
-            console.error('Could not restore WoWUction auctions from local DB', err);
-          });
-        });
-    } else {
-      return new Promise((resolve) => []);
-    }
   }
 
   private openSnackbar(message: string): void {

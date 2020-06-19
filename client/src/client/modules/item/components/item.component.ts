@@ -16,6 +16,7 @@ import {ItemNpcDetails} from '../models/item-npc-details.model';
 import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
+import {CraftingService} from '../../../services/crafting.service';
 
 @Component({
   selector: 'wah-item',
@@ -145,7 +146,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   setMaterialFor(): void {
     this.materialFor.length = 0;
-    SharedService.recipes.forEach(recipe => {
+    CraftingService.list.value.forEach(recipe => {
       recipe.reagents.forEach(reagent => {
         if (reagent.id === this.selected.item.id) {
           this.materialFor.push(recipe);
