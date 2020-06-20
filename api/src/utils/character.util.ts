@@ -71,7 +71,7 @@ export class CharacterUtil {
     character.faction = this.getFaction(gameData.faction);
     character.slug = gameData.realm.slug;
     character.realm = gameData.realm.name;
-    character.guild = gameData.guild.name;
+    character.guild = gameData.guild ? gameData.guild.name : undefined;
     character.level = gameData.level;
     character.lastModified = gameData.last_login_timestamp;
   }
