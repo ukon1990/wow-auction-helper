@@ -12,7 +12,16 @@ const getProfessions = (): Profession[] => {
 const getProfessionById = id =>
   getProfessions().filter(profession => profession.id === id)[0];
 
+const getMappedProfessions = () => {
+  const map = {};
+  getProfessions().forEach(profession => {
+    map[profession.id] = profession;
+  });
+  return map;
+};
+
 export {
   getProfessionById,
-  getProfessions
+  getProfessions,
+  getMappedProfessions
 };

@@ -7,6 +7,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Dashboard} from '../../../dashboard/models/dashboard.model';
 import {Report} from '../../../../utils/report.util';
+import {ThemeUtil} from '../../../core/utils/theme.util';
 
 @Component({
   selector: 'wah-crafting-config',
@@ -14,10 +15,11 @@ import {Report} from '../../../../utils/report.util';
   styleUrls: ['./config.component.scss']
 })
 export class ConfigComponent implements OnDestroy {
-  @Output() changed: EventEmitter<any> = new EventEmitter();
+  @Output() changed: EventEmitter<void> = new EventEmitter();
   strategies = BaseCraftingUtil.STRATEGY_LIST;
   sm = new SubscriptionManager();
   form: FormGroup;
+  theme = ThemeUtil.current;
 
   constructor(private fb: FormBuilder) {
     const useIntermediateCrafting = SharedService.user.useIntermediateCrafting;
@@ -42,16 +44,12 @@ export class ConfigComponent implements OnDestroy {
             'ConfigComponent',
             'Crafting strategy: ' + strategyObj ? strategyObj.name : strategy);
         }
+        this.changed.emit();
       }
     );
   }
 
   ngOnDestroy() {
     this.sm.unsubscribe();
-  }
-
-  /* istanbul ignore next */
-  isDarkmode(): boolean {
-    return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 }

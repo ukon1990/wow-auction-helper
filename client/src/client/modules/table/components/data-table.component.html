@@ -42,8 +42,8 @@
                   <br>
                 </span>
                 <span *ngIf="!hideCraftingDetails">
-                  {{ d.profession }}
-                  <span *ngIf="d.rank"> - {{ d.rank }}</span>
+                  {{ professionIdMap[d?.professionId]?.name }}
+                  <span *ngIf="d.rank"> - Rank {{ d.rank }}</span>
                   <br>
                   <span *ngIf="getCraftersForRecipe(d)">
                     Known by: {{ getCraftersForRecipe(d) }}

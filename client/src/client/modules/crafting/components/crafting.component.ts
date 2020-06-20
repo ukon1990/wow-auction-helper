@@ -60,7 +60,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
       onlyKnownRecipes: query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true,
-      profession: query && query.professionId ? query.professionId : 0,
+      professionId: query && query.professionId ? query.professionId : 0,
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
@@ -85,7 +85,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
         if (!this.delayFilter) {
           this.delayFilter = true;
           setTimeout(() => {
-            this.filter(changes);
+            this.filter();
             this.delayFilter = false;
           }, 100);
         }

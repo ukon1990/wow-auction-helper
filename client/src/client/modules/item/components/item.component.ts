@@ -218,7 +218,8 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
   /* istanbul ignore next */
   getPet(): Pet {
-    const speciesId = (this.selected.auctionItem as AuctionItem).petSpeciesId;
+    const auctionItem: AuctionItem = this.selected.auctionItem;
+    const speciesId = auctionItem ? auctionItem.petSpeciesId : undefined;
     if (!speciesId) {
       return undefined;
     }
