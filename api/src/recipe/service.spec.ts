@@ -9,7 +9,7 @@ describe('RecipeService', () => {
 
   it('getAllAfter', async () => {
     const recipes = await RecipeService.getAllAfter(0, 'en_GB');
-    expect(recipes.length).toBe(7339);
+    expect(recipes.recipes.length).toBe(7339);
     expect(recipes[0].reagents.length).toBe(2);
   });
 });
