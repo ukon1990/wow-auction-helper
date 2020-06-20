@@ -5,11 +5,7 @@
     </mat-form-field>
 
     <mat-form-field class="col">
-      <mat-select [disableOptionCentering]="true" placeholder="Profession" formControlName="profession">
-        <mat-option [value]="-1"
-                    [ngClass]="theme.tableColorClass">
-          All
-        </mat-option>
+      <mat-select [disableOptionCentering]="true" placeholder="Profession" formControlName="professionId">
         <mat-option
                 *ngFor="let profession of professions"
                 [value]="profession.id"

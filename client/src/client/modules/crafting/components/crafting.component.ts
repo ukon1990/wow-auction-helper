@@ -7,13 +7,9 @@ import {GameBuild} from '../../../utils/game-build.util';
 import {itemClasses} from '../../../models/item/item-classes';
 import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
-import {User} from '../../../models/user/user';
-import {CraftingUtil} from '../utils/crafting.util';
 import {Filters} from '../../../utils/filtering';
-import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {BaseCraftingUtil} from '../utils/base-crafting.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {getProfessions} from '../../../data/professions/professions';
 import {ThemeUtil} from '../../core/utils/theme.util';
@@ -31,9 +27,13 @@ export class CraftingComponent implements OnInit, OnDestroy {
   subs = new SubscriptionManager();
   itemClasses = itemClasses;
   professions = [
-    getProfessions(),
     {
       id: 0,
+      name: 'All',
+    },
+    ...getProfessions(),
+    {
+      id: -1,
       name: 'None'
     }
   ];
@@ -60,7 +60,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
       onlyKnownRecipes: query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true,
-      profession: query && query.profession ? query.profession : -1,
+      profession: query && query.professionId ? query.professionId : 0,
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
@@ -79,13 +79,13 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       this.searchForm.valueChanges,
-      (() => {
+      ((changes) => {
         localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
 
         if (!this.delayFilter) {
           this.delayFilter = true;
           setTimeout(() => {
-            this.filter();
+            this.filter(changes);
             this.delayFilter = false;
           }, 100);
         }
@@ -110,7 +110,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isProfitMatch(recipe, undefined, changes.profit)
             && Filters.isSaleRateMatch(recipe.itemID, changes.demand, false)
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
-            && Filters.isProfessionMatch(recipe.itemID, changes.profession)
+            && Filters.isProfessionMatch(recipe.itemID, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
             && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
         }
