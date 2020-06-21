@@ -64,10 +64,11 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
   }
 
   getAllNPCSFromDBAndSetBatches() {
+    /* TODO: So what to do here?
     this.service.getAllAfterTimestamp()
       .then(() => {
       })
-      .catch(console.error);
+      .catch(console.error);*/
   }
 
   ngOnInit() {

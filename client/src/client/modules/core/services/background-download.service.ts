@@ -13,12 +13,13 @@ import {RealmStatus} from '../../../models/realm-status.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {AuctionUtil} from '../../auction/utils/auction.util';
-import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {Auction} from '../../auction/models/auction.model';
-import {ItemExtract} from '../../../utils/item-extract.util';
 import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {Timestamps} from '../../../../../../api/src/updates/model';
+import {HttpClient} from '@angular/common/http';
+import {Endpoints} from '../../../services/endpoints';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,6 @@ export class BackgroundDownloadService {
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
-    wowuction: localStorage['timestamp_wowuction'],
     npc: localStorage.getItem('timestamp_npcs'),
     zone: localStorage.getItem('timestamp_zone')
   };
@@ -42,6 +42,7 @@ export class BackgroundDownloadService {
   private subs = new SubscriptionManager();
 
   constructor(
+    private http: HttpClient,
     private realmService: RealmService,
     private itemService: ItemService,
     private craftingService: CraftingService,
@@ -70,7 +71,6 @@ export class BackgroundDownloadService {
       this.timestamps.recipes = localStorage['timestamp_recipes'];
       this.timestamps.auctions = localStorage['timestamp_auctions'];
       this.timestamps.tsm = localStorage['timestamp_tsm'];
-      this.timestamps.wowuction = localStorage['timestamp_wowuction'];
       this.timestamps.npc = localStorage.getItem('timestamp_npcs');
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
     }, 1000);
@@ -91,24 +91,38 @@ export class BackgroundDownloadService {
     await this.realmService.getStatus(region, realm)
       .catch(console.error);
 
-    this.auctionsService.doNotOrganize = true;
+    await this.getUpdateTimestamps()
+      .then(async (timestamps: Timestamps) => {
+        this.auctionsService.doNotOrganize = true;
+        console.log('Timestamps', timestamps);
 
-    await Promise.all([
-      this.loadItems().catch(console.error),
-      this.loadPets().catch(console.error),
-      this.loadNpc().catch(console.error),
-      this.loadRecipes().catch(console.error),
-      this.loadZones().catch(console.error),
-      this.loadThirdPartyAPI().catch(console.error),
-      this.itemService.getBonusIds()
-    ])
-      .catch(console.error);
+        await Promise.all([
+          this.itemService.loadItems(timestamps.items)
+            .catch(console.error),
+          this.petService.loadPets(timestamps.pets)
+            .catch(console.error),
+          this.npcService.getAll(false, timestamps.npcs)
+            .catch(console.error),
+          this.craftingService.loadRecipes(timestamps.recipes)
+            .catch(console.error),
+          this.zoneService.getAll(false, timestamps.zones)
+            .then(() =>
+              console.log('Done loading zone data'))
+            .catch(console.error),
+          this.loadThirdPartyAPI().catch(console.error),
+          this.itemService.getBonusIds()
+        ])
+          .catch(console.error);
 
-    await this.startRealmStatusInterval();
-    const auctions: Auction[] = this.auctionsService.events.list.value;
-    await AuctionUtil.organize(auctions, this.petService);
-    this.auctionsService.reTriggerEvents();
-    this.auctionsService.doNotOrganize = false;
+        await this.startRealmStatusInterval();
+        const auctions: Auction[] = this.auctionsService.events.list.value;
+        await AuctionUtil.organize(auctions);
+        this.auctionsService.reTriggerEvents();
+        this.auctionsService.doNotOrganize = false;
+      })
+      .catch(error =>
+        ErrorReport.sendError('BackgroundDownloadService.init', error));
+
     await this.dbService.getAddonData();
 
     this.loggLoadingTime(startTimestamp);
@@ -167,49 +181,6 @@ export class BackgroundDownloadService {
       this.realmStatus.lowestDelay - this.timeSinceUpdate.value < 1;
   }
 
-  private async loadItems() {
-    await this.dbService.getAllItems()
-      .then(async () => {
-        if (Object.keys(SharedService.items).length === 0) {
-          delete localStorage['timestamp_items'];
-        }
-      })
-      .catch(async error => {
-        delete localStorage['timestamp_items'];
-        console.error(error);
-      });
-    await this.itemService.getItems();
-    console.log('Processed items mapped', ItemExtract.fromItems(SharedService.itemsUnmapped));
-  }
-
-  private async loadPets() {
-    await this.dbService.getAllPets()
-      .then(async () => {
-        if (Object.keys(SharedService.pets).length === 0) {
-          delete localStorage['timestamp_pets'];
-        }
-      })
-      .catch(async error => {
-      });
-
-    await this.petService.getPets();
-  }
-
-  private async loadRecipes() {
-    await this.dbService.getAllRecipes()
-      .then(async (result) => {
-        this.craftingService.handleRecipes({recipes: result, timestamp: localStorage['timestamp_recipes']});
-        if (CraftingService.list.value.length === 0) {
-          delete localStorage['timestamp_recipes'];
-        }
-      })
-      .catch(async (error) => {
-      });
-
-    await this.craftingService.getRecipes();
-    CraftingUtil.setOnUseCraftsWithNoReagents();
-  }
-
   private async loadThirdPartyAPI() {
     if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
       await this.auctionsService.getTsmAuctions();
@@ -227,16 +198,12 @@ export class BackgroundDownloadService {
     }
   }
 
-  private async loadNpc() {
-    await this.npcService.getAll()
-      .then(() => console.log('Done loading NPC data'))
-      .catch(console.error);
-    console.log('loadNpc');
-  }
-
-  private async loadZones() {
-    await this.zoneService.getAll()
-      .then(() => console.log('Done loading zone data'))
-      .catch(console.error);
+  private getUpdateTimestamps(): Promise<Timestamps> {
+    return new Promise<Timestamps>((resolve, rejects) => {
+      this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz`)
+        .toPromise()
+        .then(resolve)
+        .catch(rejects);
+    });
   }
 }

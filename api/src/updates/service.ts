@@ -5,7 +5,6 @@ import {S3Handler} from '../handlers/s3.handler';
 
 export class UpdatesService {
   static getAndSetTimestamps(db: DatabaseUtil): Promise<any> {
-    // https://wah-data.s3-eu-west-1.amazonaws.com/timestamps.json.gz
     return new Promise(async (resolve, reject) => {
       db.query(UpdatesRepository.getLatestTimestamps())
         .then((rows: Timestamps[]) => {

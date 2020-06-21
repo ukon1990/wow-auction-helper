@@ -7,6 +7,7 @@ import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {Platform} from '@angular/cdk/platform';
 import {BehaviorSubject} from 'rxjs';
+import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -57,38 +58,44 @@ export class CraftingService {
     return itemId;
   }
 
+  async loadRecipes(latestTimestamp: Date) {
+    await this.dbService.getAllRecipes()
+      .then(async (result) => {
+        this.handleRecipes({recipes: result, timestamp: localStorage['timestamp_recipes']});
+        if (CraftingService.list.value.length === 0) {
+          delete localStorage['timestamp_recipes'];
+        }
+      })
+      .catch(async (error) =>
+        ErrorReport.sendError('CraftingService.loadRecipes', error));
+
+    const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+
+    if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
+      await this.getRecipes();
+    }
+    this.setOnUseCraftsWithNoReagents();
+  }
+
   async getRecipes(): Promise<any> {
     const locale = localStorage['locale'];
-    let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
+    const timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
     console.log('Downloading recipes');
-    SharedService.downloading.recipes = true;
 
     if (!timestamp) {
       this.dbService.clearRecipes();
-      await this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz`)
-        .toPromise()
-        .then((result: RecipeResponse) => {
-          timestamp = result.timestamp;
-          this.handleRecipes(result);
-        })
-        .catch(error =>
-          ErrorReport.sendHttpError(error));
     }
 
     SharedService.downloading.recipes = true;
-    return this._http.post(
-      Endpoints.getLambdaUrl(`recipe`),
-      {
-        locales: locale,
-        timestamp: timestamp ? timestamp : new Date('2000-06-30').toJSON()
-      })
+    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz`)
       .toPromise()
-      .then((recipes: RecipeResponse) =>
-        this.handleRecipes(recipes))
-      .catch(error => {
+      .then((result: RecipeResponse) => {
         SharedService.downloading.recipes = false;
-        console.error('Recipe download failed', error);
+        this.handleRecipes(result);
+      })
+      .catch(error => {
         ErrorReport.sendHttpError(error);
+        SharedService.downloading.recipes = false;
       });
   }
 
@@ -139,5 +146,23 @@ export class CraftingService {
     CraftingService.list.next(CraftingService.getRecipesForFaction(list));
     SharedService.events.recipes.emit(true);
     console.log('Recipe download is completed');
+  }
+
+  /**
+   * Checks all items for possible create effects
+   *
+   * PS: Another wastefull function, I hope that this does not impact performance too much...
+   * @static
+   * @memberof Crafting
+   */
+  private setOnUseCraftsWithNoReagents(): void {
+    let tmpList = [];
+    SharedService.itemsUnmapped.forEach(i =>
+      tmpList = tmpList.concat(CraftingUtil.getItemForSpellsThatAreRecipes(i)));
+
+    tmpList.forEach(recipe => {
+      CraftingService.list.value.push(recipe);
+      SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
+    });
   }
 }

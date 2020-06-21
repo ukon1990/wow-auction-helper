@@ -15,6 +15,7 @@ import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {ItemExtract} from '../utils/item-extract.util';
 
 class ItemResponse {
   timestamp: Date;
@@ -37,6 +38,24 @@ export class ItemService {
     this.sm.add(this.realmService.events.realmStatus, () => {
       this.historyMap.next(new Map());
     });
+  }
+
+  async loadItems(latestTimestamp: Date) {
+    await this.dbService.getAllItems()
+      .then(async () => {
+        if (Object.keys(SharedService.items).length === 0) {
+          delete localStorage['timestamp_items'];
+        }
+      })
+      .catch(async error => {
+        delete localStorage['timestamp_items'];
+        ErrorReport.sendError('ItemService.loadItems', error);
+      });
+    const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+
+    if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
+      await this.getItems();
+    }
   }
 
   getBonusIds(): Promise<void> {
@@ -90,52 +109,24 @@ export class ItemService {
 
   async getItems(): Promise<any> {
     const locale = localStorage['locale'];
-    let timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
     console.log('Downloading items');
     SharedService.downloading.items = true;
-    if (this.isTimestampNotDefined(timestamp)) {
-      this.dbService.clearItems();
-      SharedService.itemsUnmapped.length = 0;
-      await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz`)
-        .toPromise()
-        .then((response: ItemResponse) => {
-          SharedService.itemsUnmapped = [];
-          Object.keys(SharedService.items).forEach(id =>
-            delete SharedService.items[id]);
-          timestamp = response.timestamp;
-          this.handleItems(response);
-        })
-        .catch(error => {
-          ErrorReport.sendHttpError(error);
-        });
-    }
-    if (this.isTimestampNotDefined(timestamp)) {
-      ErrorReport.sendError('getItems', {message: 'No timestamp retrieved after S3 fetch!'} as Error);
-      return null;
-    }
-    SharedService.downloading.items = true;
-    return this._http.post(
-      Endpoints.getLambdaUrl(`item`),
-      {
-        locale: locale,
-        timestamp: !this.isTimestampNotDefined(timestamp) ? timestamp : new Date('2020-01-01').toJSON()
-      })
-      .toPromise()
-      .then(items => this.handleItems(items as ItemResponse))
-      .catch(error => {
-        SharedService.downloading.items = false;
-        console.error('Items download failed', error);
-        ErrorReport.sendHttpError(error);
-      });
-  }
 
-  async addMissingItems() {
-    const ids = Object.keys(ItemService.missingQueue);
-    if (ids.length === 0 || ids.length > 100) {
-      return;
-    }
-    ids.forEach(async id =>
-      await this.addItem(ItemService.missingQueue[id]));
+    this.dbService.clearItems();
+    SharedService.itemsUnmapped.length = 0;
+    await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz`)
+      .toPromise()
+      .then((response: ItemResponse) => {
+        SharedService.itemsUnmapped = [];
+        Object.keys(SharedService.items).forEach(id =>
+          delete SharedService.items[id]);
+        SharedService.downloading.items = false;
+        this.handleItems(response);
+      })
+      .catch(error => {
+        ErrorReport.sendHttpError(error);
+        SharedService.downloading.items = false;
+      });
   }
 
   handleItems(items: ItemResponse): void {

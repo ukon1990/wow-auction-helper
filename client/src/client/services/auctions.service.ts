@@ -3,16 +3,11 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from './shared.service';
 import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {TSM} from '../modules/auction/models/tsm.model';
-import {Endpoints} from './endpoints';
 import {DatabaseService} from './database.service';
 import {ItemService} from './item.service';
 import {Notifications} from '../models/user/notification';
 import {MatSnackBar} from '@angular/material';
-import {WoWUction} from '../modules/auction/models/wowuction.model';
-import {PetsService} from './pets.service';
-import {Angulartics2} from 'angulartics2';
 import {ErrorReport} from '../utils/error-report.util';
-import {AuctionResponse} from '../modules/auction/models/auctions-response.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {BehaviorSubject} from 'rxjs';
 import {Auction} from '../modules/auction/models/auction.model';
@@ -38,7 +33,6 @@ export class AuctionsService {
     public snackBar: MatSnackBar,
     private _dbService: DatabaseService,
     private _itemService: ItemService,
-    private petService: PetsService,
     private realmService: RealmService) {
     this.subs.add(
       this.realmService.events.realmStatus,
@@ -63,7 +57,7 @@ export class AuctionsService {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         if (!this.doNotOrganize) {
-          await AuctionUtil.organize(a['auctions'], this.petService);
+          await AuctionUtil.organize(a['auctions']);
         }
 
         // Adding lacking items to the database

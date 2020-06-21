@@ -51,7 +51,6 @@ export class AddonImportComponent implements OnInit {
     private auctionsService: AuctionsService,
     private dbService: DatabaseService,
     private realmService: RealmService,
-    private petService: PetsService,
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
@@ -225,7 +224,7 @@ export class AddonImportComponent implements OnInit {
     if (realm) {
       this.auctionsService.events.list.next(realm.auctions);
       // this.dbService.addClassicAuctions(realm);
-      await AuctionUtil.organize(realm.auctions, this.petService);
+      await AuctionUtil.organize(realm.auctions);
       const status = new AuctionHouseStatus();
       status.lastModified = realm.lastScan;
       this.realmService.events.realmStatus.next(status);

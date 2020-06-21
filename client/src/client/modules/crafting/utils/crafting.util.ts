@@ -18,24 +18,6 @@ export class CraftingUtil {
   public static strategy: BaseCraftingUtil;
 
   /**
-   * Checks all items for possible create effects
-   *
-   * PS: Another wastefull function, I hope that this does not impact performance too much...
-   * @static
-   * @memberof Crafting
-   */
-  public static setOnUseCraftsWithNoReagents(): void {
-    let tmpList = [];
-    SharedService.itemsUnmapped.forEach(i =>
-      tmpList = tmpList.concat(CraftingUtil.getItemForSpellsThatAreRecipes(i)));
-
-    tmpList.forEach(recipe => {
-      CraftingService.list.value.push(recipe);
-      SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
-    });
-  }
-
-  /**
    * Generating recipes from spell text and spell ID
    *
    * @static

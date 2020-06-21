@@ -22,24 +22,23 @@ export class NpcService {
   constructor(private http: HttpClient, private db: DatabaseService, private zoneService: ZoneService) {
   }
 
-  getAll(forceUpdate = false): Promise<NPC[]> {
+  getAll(forceUpdate = false, latestTimestamp?: Date): Promise<NPC[]> {
     if (forceUpdate) {
       localStorage.removeItem(this.storageName);
     }
     return new Promise<NPC[]>(async (resolve) => {
+      const timestamp = localStorage.getItem(this.storageName);
       await this.db.getAllNPCs()
         .then(list => {
           this.mapAndSetNextValueForNPCs(list);
         })
-        .catch(console.error);
+        .catch(error =>
+          ErrorReport.sendError('NpcService.getAll', error));
 
-      if (!this.list.value.length) {
+      if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
         await this.getAllFromS3()
           .catch(console.error);
       }
-
-      await this.getAllAfterTimestamp()
-        .catch(console.error);
 
       NPC.getTradeVendorsAndSetUnitPriceIfMissing(this.list.value);
 
@@ -70,33 +69,6 @@ export class NpcService {
           SharedService.downloading.npc = false;
           console.error(error);
           ErrorReport.sendHttpError(error);
-        });
-    });
-  }
-
-  getAllAfterTimestamp(): Promise<NPC[]> {
-    SharedService.downloading.npc = true;
-    const locale = localStorage['locale'],
-      timestamp = localStorage.getItem(this.storageName);
-
-    if (!timestamp) {
-      return this.getAllFromS3();
-    }
-    return new Promise<NPC[]>((resolve, reject) => {
-      this.http.post(Endpoints.getLambdaUrl('npc/all'),
-        {locale, timestamp})
-        .toPromise()
-        .then((response) => {
-          SharedService.downloading.npc = false;
-          this.db.addNPCs(response['npcs'])
-            .catch(console.error);
-          this.mapAndSetNextValueForNPCs(response['npcs']);
-          resolve(this.list.value);
-        })
-        .catch((error) => {
-          SharedService.downloading.npc = false;
-          ErrorReport.sendHttpError(error);
-          resolve(this.list.value);
         });
     });
   }
