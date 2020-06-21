@@ -1,11 +1,6 @@
-import {Recipe} from '../models/recipe';
 import {SharedService} from '../../../services/shared.service';
 import {Item} from '../../../models/item/item';
-import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
-import {ItemSpells} from '../../../models/item/itemspells';
-import {Reagent} from '../models/reagent';
-import wordsToNumbers from 'words-to-numbers';
 import {Filters} from '../../../utils/filtering';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
 import {BaseCraftingUtil} from './base-crafting.util';
@@ -16,61 +11,6 @@ import {Report} from '../../../utils/report.util';
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
   public static strategy: BaseCraftingUtil;
-
-  /**
-   * Generating recipes from spell text and spell ID
-   *
-   * @static
-   * @param {Item} item
-   * @returns {Recipe[]}
-   * @memberof Crafting
-   */
-  public static getItemForSpellsThatAreRecipes(item: Item): Recipe[] {
-    const list: Recipe[] = [];
-    if (item.itemClass === 7 && item.itemSpells !== null &&
-      item.itemSpells && item.itemSpells.length > 0) {
-      item.itemSpells.forEach((spell: ItemSpells) => {
-        if (CraftingService.map.value.get(spell.SpellID)
-          && CraftingService.map.value.get(spell.SpellID).itemID &&
-          CraftingService.map.value.get(spell.SpellID).reagents) {
-
-          const recipe = new Recipe(),
-            reagent = new Reagent(),
-            originalRecipe: Recipe = CraftingService.map.value.get(spell.SpellID),
-            name = SharedService.items[originalRecipe.itemID].name,
-            regex = new RegExp(/[0-9]{1,}/gi);
-
-          if (originalRecipe.reagents && originalRecipe.reagents.length > 1) {
-            return;
-          }
-
-          const numbers = regex.exec(wordsToNumbers(spell.Text) + ''),
-            quantity = numbers !== null && numbers.length > 0 && numbers[0] ? parseInt(numbers[0], 10) : 1,
-            createsQuantity = numbers !== null && numbers.length > 1 && numbers[1] ? parseInt(numbers[1], 10) : 1;
-
-          recipe.id = spell.SpellID;
-          recipe.name = `${name.indexOf('Create') === -1 ? 'Create ' : ''}${name}`;
-          recipe.itemID = originalRecipe.itemID;
-          recipe.minCount = createsQuantity;
-          recipe.maxCount = createsQuantity;
-          reagent.id = item.id;
-          reagent.name = item.name;
-          reagent.quantity = quantity;
-          recipe.reagents = [];
-          recipe.reagents.push(reagent);
-
-          if (originalRecipe.reagents.length === 0 || originalRecipe.flaggedAsBugged) {
-            originalRecipe.reagents = recipe.reagents;
-            originalRecipe.minCount = recipe.minCount;
-            originalRecipe.maxCount = recipe.maxCount;
-          } else {
-            list.push(recipe);
-          }
-        }
-      });
-    }
-    return list;
-  }
 
   public static calculateCost(strategyHasChanged = false): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY,

@@ -23,7 +23,7 @@ import {CraftingService} from '../../../services/crafting.service';
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })
-export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
+export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs', {static: false}) tabs;
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
@@ -79,6 +79,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
+  private tabSubId = 'tab-subscription';
 
   constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
@@ -96,26 +97,33 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
     });
   }
 
-  ngOnInit(): void {
+  onItemSelection(): void {
     this.setItemData();
-    // TODO: this.setAuctionItem();
     this.setRecipesForItem();
 
     Report.send('Opened', 'Item detail view');
     Report.debug('Selected:', this.selected);
+
+    setTimeout(() => {
+      const tabGroup: MatTabGroup = this.tabs;
+      // Should be done after the render cyclus
+      if (tabGroup && !this.subscriptions.getMap().has(this.tabSubId)) {
+        this.subscriptions.add(
+          tabGroup
+            .selectedTabChange,
+          (event: MatTabChangeEvent) => {
+            Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`);
+            console.log('Tab changed!', this.subscriptions.getMap().has(this.tabSubId));
+          },
+          {id: this.tabSubId});
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     this.subscriptions.add(
-      (this.tabs as MatTabGroup)
-        .selectedTabChange,
-      (event: MatTabChangeEvent) =>
-        Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`));
-
-    this.subscriptions.add(
       ItemService.itemSelection,
-      () => this.ngOnInit()
-    );
+      () => this.onItemSelection());
   }
 
   ngAfterContentInit(): void {
@@ -202,21 +210,6 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   /* istanbul ignore next */
-  setAuctionItem(): void {
-    this.selected.auctionItem = this.auctionItemExists() ?
-      SharedService.auctionItemsMap[this.getAuctionId()] : undefined;
-
-    Report.debug('setAuctionItem', this.selected.auctionItem);
-  }
-
-  getAuctionId(): any {/*
-    if (SharedService.selectedPetSpeciesId !== undefined) {
-      return SharedService.selectedPetSpeciesId.auctionId;
-    }*/
-    return this.selected.item.id;
-  }
-
-  /* istanbul ignore next */
   getPet(): Pet {
     const auctionItem: AuctionItem = this.selected.auctionItem;
     const speciesId = auctionItem ? auctionItem.petSpeciesId : undefined;
@@ -236,17 +229,11 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
   }
 
   /* istanbul ignore next */
-  close(): void {/*
-    SharedService.selectedItemId = undefined;
-    SharedService.selectedPetSpeciesId = undefined;*/
+  close(): void {
+    this.subscriptions.unsubscribeById(this.tabSubId);
     SharedService.events.detailPanelOpen.emit(false);
     Object.keys(this.selected).forEach(key =>
       this.selected[key] = undefined);
-  }
-
-  /* istanbul ignore next */
-  auctionItemExists(): boolean {
-    return SharedService.auctionItemsMap[this.selected.item.id] ? true : false;
   }
 
   isMobile(): boolean {
@@ -277,7 +264,7 @@ export class ItemComponent implements OnInit, AfterViewInit, AfterContentInit, O
       this.handlePet(item);
     }
     this.selectionHistory = [{...this.selected}, ...this.selectionHistory];
-    this.ngOnInit();
+    this.onItemSelection();
 
     this.ignoreNextSelectionHistoryFormChange = true;
     this.itemSelectionHistoryForm.setValue(0);
