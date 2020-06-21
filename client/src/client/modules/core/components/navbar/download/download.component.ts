@@ -12,7 +12,7 @@ import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
 import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
-import {BackgroundDownloadService} from '../../../../../services/background-download.service';
+import {BackgroundDownloadService} from '../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
