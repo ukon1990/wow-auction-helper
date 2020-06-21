@@ -1,4 +1,5 @@
 import {RecipeService} from './service';
+import {DatabaseUtil} from '../utils/database.util';
 
 describe('RecipeService', () => {
   it('getById', async () => {
@@ -8,7 +9,9 @@ describe('RecipeService', () => {
   });
 
   it('getAllAfter', async () => {
-    const recipes = await RecipeService.getAllAfter(0, 'en_GB');
+    const db = new DatabaseUtil(false);
+    const recipes = await RecipeService.getAllAfter(0, 'en_GB', db);
+    db.end();
     expect(recipes.recipes.length).toBe(7339);
     expect(recipes[0].reagents.length).toBe(2);
   });

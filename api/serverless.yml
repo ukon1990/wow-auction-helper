@@ -308,3 +308,16 @@ functions:
       Function: Wah-updateTSMDumpData
     handler: src/controllers/tsm.handler
     memorySize: 256
+
+  updateS3:
+    tags:
+      Function: Wah-updateS3
+    handler: src/updates/controller.update
+    memorySize: 4096
+    timeout: 900
+    events:
+      - http:
+          method: get
+          path: update-s3
+          cors:
+            origin: 'http://localhost:4200'

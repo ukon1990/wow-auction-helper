@@ -20,9 +20,8 @@ export class RecipeService {
     });
   }
 
-  static getAllAfter(timestamp: number, locale: string): Promise<RecipeAPIResponse> {
+  static getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<RecipeAPIResponse> {
     return new Promise((resolve, reject) => {
-      const db = new DatabaseUtil(false);
       this.repository.getAllAfter(timestamp, locale, db)
         .then((recipes: Recipe[]) => resolve({
           timestamp: recipes[0] ? recipes[0].timestamp : timestamp,
