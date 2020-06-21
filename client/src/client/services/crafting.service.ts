@@ -7,7 +7,6 @@ import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {Platform} from '@angular/cdk/platform';
 import {BehaviorSubject} from 'rxjs';
-import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -140,6 +139,5 @@ export class CraftingService {
     CraftingService.list.next(CraftingService.getRecipesForFaction(list));
     SharedService.events.recipes.emit(true);
     console.log('Recipe download is completed');
-    console.log('recipe download result', CraftingService.list.value);
   }
 }

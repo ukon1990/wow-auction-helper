@@ -183,7 +183,7 @@ export class DatabaseService {
     this.db.table('pets').clear();
   }
 
-  addRecipes(recipes: Array<Recipe>): void {
+  addRecipes(recipes: Recipe[]): void {
     if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }

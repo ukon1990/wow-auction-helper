@@ -198,7 +198,7 @@ export class BackgroundDownloadService {
   private async loadRecipes() {
     await this.dbService.getAllRecipes()
       .then(async (result) => {
-        CraftingService.list.next(result);
+        this.craftingService.handleRecipes({recipes: result, timestamp: localStorage['timestamp_recipes']});
         if (CraftingService.list.value.length === 0) {
           delete localStorage['timestamp_recipes'];
         }
