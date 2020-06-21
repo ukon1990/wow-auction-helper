@@ -1,8 +1,6 @@
 import {Repository} from '../core/repository';
 import {DatabaseUtil} from '../utils/database.util';
-import {format} from 'sqlstring';
 import {Reagent, Recipe} from './model';
-import {rejects} from 'assert';
 
 export class RecipeRepository extends Repository<Recipe> {
 
@@ -23,7 +21,8 @@ export class RecipeRepository extends Repository<Recipe> {
                               maxCount,
                               procRate,
                               professions.id    as professionId,
-                              skillTier.id      as skillTierId
+                              skillTier.id      as skillTierId,
+                              timestamp
                        FROM recipes_new as recipes
                                 LEFT JOIN recipesName as name ON name.id = recipes.id
                                 LEFT JOIN recipesDescription as description ON description.id = recipes.id
@@ -46,12 +45,17 @@ export class RecipeRepository extends Repository<Recipe> {
    */
   getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<Recipe[]> {
     return new Promise<Recipe[]>((resolve, reject) => {
-      const date = Math.round(+new Date(timestamp) / 1000);
+      const unix = +new Date(timestamp);
+      console.log('unix', unix);
+      const date = isNaN(unix) ? 0 : Math.round( unix / 1000);
       db.query(`${this.geteBaseQuery(locale)}
-          WHERE UNIX_TIMESTAMP(timestamp) > ${date};`)
+          WHERE UNIX_TIMESTAMP(timestamp) > ${date}
+          ORDER BY timestamp DESC;`)
         .then((recipes: Recipe[]) => {
           const map = {};
-          recipes.forEach(recipe => map[recipe.id] = recipe);
+          recipes.forEach(recipe => {
+            map[recipe.id] = recipe;
+          });
 
           db.query(`
             SELECT *

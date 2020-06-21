@@ -1,4 +1,4 @@
-import {Recipe} from './model';
+import {Recipe, RecipeAPIResponse} from './model';
 import {DatabaseUtil} from '../utils/database.util';
 import {RecipeRepository} from './repository';
 
@@ -20,13 +20,16 @@ export class RecipeService {
     });
   }
 
-  static getAllAfter(timestamp: number, locale: string): Promise<{timestamp: number; recipes: Recipe[]}> {
+  static getAllAfter(timestamp: number, locale: string): Promise<RecipeAPIResponse> {
     return new Promise((resolve, reject) => {
       const db = new DatabaseUtil(false);
       this.repository.getAllAfter(timestamp, locale, db)
         .then((recipes: Recipe[]) => resolve({
           timestamp: recipes[0] ? recipes[0].timestamp : timestamp,
-          recipes
+          recipes: recipes.map(recipe => {
+            delete recipe.timestamp;
+            return recipe;
+          })
         }))
         .catch(reject);
     });

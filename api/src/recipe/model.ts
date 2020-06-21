@@ -22,3 +22,8 @@ export class Recipe {
 
   timestamp: number;
 }
+
+export interface RecipeAPIResponse {
+  timestamp: number;
+  recipes: Recipe[];
+}

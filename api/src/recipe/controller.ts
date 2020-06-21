@@ -15,7 +15,7 @@ export const getByIds = (event: APIGatewayEvent, context: Context, callback: Cal
 
 export const getAfter = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const {timestamp, locales, locale} = JSON.parse(event.body);
-  RecipeService.getAllAfter(timestamp, locales || locale)
+  RecipeService.getAllAfter(timestamp || 0, locales || locale)
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 500));
 };
