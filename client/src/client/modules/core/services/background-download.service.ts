@@ -88,14 +88,9 @@ export class BackgroundDownloadService {
     console.log('Starting to load data');
     await this.realmService.getRealms()
       .catch(error => console.error(error));
-    await this.realmService.getStatus(region, realm)
-      .catch(console.error);
 
     await this.getUpdateTimestamps()
       .then(async (timestamps: Timestamps) => {
-        this.auctionsService.doNotOrganize = true;
-        console.log('Timestamps', timestamps);
-
         await Promise.all([
           this.itemService.loadItems(timestamps.items)
             .catch(console.error),
@@ -114,11 +109,9 @@ export class BackgroundDownloadService {
         ])
           .catch(console.error);
 
+        await this.realmService.getStatus(region, realm)
+          .catch(console.error);
         await this.startRealmStatusInterval();
-        const auctions: Auction[] = this.auctionsService.events.list.value;
-        await AuctionUtil.organize(auctions);
-        this.auctionsService.reTriggerEvents();
-        this.auctionsService.doNotOrganize = false;
       })
       .catch(error =>
         ErrorReport.sendError('BackgroundDownloadService.init', error));
@@ -200,7 +193,7 @@ export class BackgroundDownloadService {
 
   private getUpdateTimestamps(): Promise<Timestamps> {
     return new Promise<Timestamps>((resolve, rejects) => {
-      this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz`)
+      this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
         .then(resolve)
         .catch(rejects);

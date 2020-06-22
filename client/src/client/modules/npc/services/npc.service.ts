@@ -35,7 +35,7 @@ export class NpcService {
         .catch(error =>
           ErrorReport.sendError('NpcService.getAll', error));
 
-      if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
+      if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
         await this.getAllFromS3()
           .catch(console.error);
       }
@@ -52,7 +52,7 @@ export class NpcService {
     const locale = localStorage['locale'];
     this.isLoading = true;
     return new Promise<any[]>(async (resolve, reject) => {
-      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz`)
+      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
         .then((response) => {
           SharedService.downloading.npc = false;

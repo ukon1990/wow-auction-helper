@@ -31,6 +31,12 @@ export class UpdatesRepository {
                  FROM zone
                  ORDER BY timestamp DESC
                  LIMIT 1
-             ) zones;`;
+             ) zones,
+             (
+                 SELECT timestamp as professions
+                 FROM professions
+                 ORDER BY timestamp DESC
+                 LIMIT 1
+             ) professions;`;
   }
 }

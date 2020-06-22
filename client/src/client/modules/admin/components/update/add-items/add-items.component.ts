@@ -71,7 +71,7 @@ export class AddItemsComponent implements OnInit {
       this.progress[key] = [];
     });
     this.progress.ids = this.form.getRawValue().input.replace(/[ a-zA-z]/g, '').split(',');
-    this.addItem(0);
+    // this.addItem(0);
   }
 
   async addItem(index: number) {
@@ -97,13 +97,13 @@ export class AddItemsComponent implements OnInit {
       if (SharedService.items[id] && !this.shouldUpdate()) {
         const {name, icon}: Item = SharedService.items[id];
         this.progress.existing.push({id: id, name, icon, isNew: false});
-      } else {
+      } else {/* TODO: remove?
         await this.service.addItem(id)
           .then((item) =>
             this.handleServiceResult(item, id))
           .catch((error) => {
             this.progress.failed.push({id: id, message: error});
-          });
+          });*/
       }
     }
   }

@@ -34,7 +34,7 @@ export class PetsService {
       });
 
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
-    if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
+    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
       await this.getPets();
     }
   }
@@ -42,7 +42,7 @@ export class PetsService {
   async getPets(): Promise<any> {
     const locales = localStorage['locale'];
     SharedService.downloading.pets = true;
-    await this._http.get(`${Endpoints.S3_BUCKET}/pet/${locales}.json.gz`)
+    await this._http.get(`${Endpoints.S3_BUCKET}/pet/${locales}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
       .toPromise()
       .then((response: PetResponse) => {
         this.handlePets(response);

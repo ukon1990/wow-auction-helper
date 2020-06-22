@@ -73,14 +73,11 @@ export class ItemHandler {
       console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
-          const ts = rows[0] ? rows[0].timestamp : new Date().toJSON(),
-            items = ItemUtil.handleItems(rows);
+          const ts = rows[0] ? rows[0].timestamp : new Date().toJSON();
           resolve({
             timestamp: ts,
-            items
+            items: ItemUtil.handleItems(rows)
           });
-          items.length = 0;
-          rows.length = 0;
         })
         .catch((error) => {
           console.error('getAllRelevant failed for', {timestamp, locale}, 'with error', error);

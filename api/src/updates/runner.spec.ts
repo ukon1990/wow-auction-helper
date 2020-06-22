@@ -6,31 +6,25 @@ import {DatabaseUtil} from '../utils/database.util';
 import {UpdatesService} from './service';
 
 describe('Update runner', () => {
-  let db: DatabaseUtil;
   beforeAll(() => {
     jest.setTimeout(999999);
-    db = new DatabaseUtil(false);
-  });
-
-  afterAll(() => {
-    db.end();
   });
 
   it('Update timestamps', async () => {
-    const timestamps = await UpdatesService.getAndSetTimestamps(db)
+    const timestamps = await UpdatesService.getAndSetTimestamps()
       .catch(console.error);
     console.log(timestamps);
     expect(timestamps).toBeTruthy();
   });
 
   it('Update recipes', async () => {
-    const timestamps = await UpdatesService.getAndSetRecipes(db)
+    const timestamps = await UpdatesService.getAndSetRecipes()
       .catch(console.error);
     expect(timestamps).toBeTruthy();
   });
 
   it('Update items', async () => {
-    const timestamps = await UpdatesService.getAndSetItems(db)
+    const timestamps = await UpdatesService.getAndSetItems()
       .catch(console.error);
     expect(timestamps).toBeTruthy();
   });
@@ -43,6 +37,12 @@ describe('Update runner', () => {
 
   it('Update zones', async () => {
     const timestamps = await UpdatesService.getAndSetZones()
+      .catch(console.error);
+    expect(timestamps).toBeTruthy();
+  });
+
+  it('Update getAndSetProfessions', async () => {
+    const timestamps = await UpdatesService.getAndSetProfessions()
       .catch(console.error);
     expect(timestamps).toBeTruthy();
   });

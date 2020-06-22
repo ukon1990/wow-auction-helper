@@ -53,7 +53,7 @@ export class ItemService {
       });
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
-    if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
+    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
       await this.getItems();
     }
   }
@@ -79,6 +79,7 @@ export class ItemService {
     });
   }
 
+  /*
   addItem(itemID: number): Promise<any> {
     Report.debug('Attempting to add item data for ' + itemID);
     Report.send('addItem', 'ItemService', itemID);
@@ -105,7 +106,7 @@ export class ItemService {
         ErrorReport.sendHttpError(error);
         return error;
       }) as Promise<any>;
-  }
+  }*/
 
   async getItems(): Promise<any> {
     const locale = localStorage['locale'];
@@ -114,7 +115,7 @@ export class ItemService {
 
     this.dbService.clearItems();
     SharedService.itemsUnmapped.length = 0;
-    await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz`)
+    await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
       .toPromise()
       .then((response: ItemResponse) => {
         SharedService.itemsUnmapped = [];
@@ -245,7 +246,7 @@ export class ItemService {
    * @returns {void}
    * @memberof ItemService
    */
-  addItems(itemsToAdd: Array<number>, i?: number): void {
+  addItems(itemsToAdd: Array<number>, i?: number): void {/*
     if (!i) {
       i = 0;
     }
@@ -267,7 +268,7 @@ export class ItemService {
       } else {
         this.addItems(itemsToAdd, i);
       }
-    }, 100);
+    }, 100);*/
   }
 
   addItemToBoughtFromVendorList(item: Item): void {

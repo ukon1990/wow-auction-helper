@@ -30,7 +30,7 @@ export class ZoneService {
 
 
       const timestamp = localStorage.getItem(this.storageName);
-      if (!this.list.value.length || !timestamp || +latestTimestamp > +new Date(timestamp)) {
+      if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
         await this.getAllFromS3();
       }
       resolve(this.list.value);
@@ -41,7 +41,7 @@ export class ZoneService {
     SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
     return new Promise<any[]>((resolve, reject) => {
-      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz`)
+      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
         .then(async (response) => {
           SharedService.downloading.zone = false;

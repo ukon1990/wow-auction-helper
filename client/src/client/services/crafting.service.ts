@@ -75,7 +75,7 @@ export class CraftingService {
 
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
-    if (!timestamp || +latestTimestamp > +new Date(timestamp)) {
+    if (!CraftingService.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
       await this.getRecipes();
     }
     this.setOnUseCraftsWithNoReagents();
@@ -91,7 +91,7 @@ export class CraftingService {
     }
 
     SharedService.downloading.recipes = true;
-    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz`)
+    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
       .toPromise()
       .then((result: RecipeResponse) => {
         SharedService.downloading.recipes = false;
