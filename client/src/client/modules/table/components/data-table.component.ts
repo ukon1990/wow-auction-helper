@@ -50,7 +50,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   filteredData = [];
   sm = new SubscriptionManager();
-  professionIdMap: Map<number, Profession>;
+  professionIdMap: Map<number, Profession> = new Map<number, Profession>();
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
@@ -69,10 +69,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   private isTyping: boolean;
   private lastCharacterTyped: number;
 
-  constructor(private router: Router, private professionService: ProfessionService) {
+  constructor(private professionService: ProfessionService) {
     this.sorter = new Sorter();
-    this.sm.add(this.professionService.map, map => {
-      this.professionIdMap = map.value;
+
+    this.sm.add(professionService.map, map => {
+      this.professionIdMap = map;
     });
   }
 

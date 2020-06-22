@@ -1,11 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import {Profession} from '../../../../../../api/src/profession/model';
 import {SharedService} from '../../../services/shared.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {Endpoints} from '../../../services/endpoints';
+import {CraftingService} from '../../../services/crafting.service';
+import {Recipe} from '../models/recipe';
 
 class ProfessionResponse {
   timestamp: Date;
@@ -18,16 +20,35 @@ class ProfessionResponse {
 export class ProfessionService {
   private LOCAL_STORAGE_TIMESTAMP = 'timestamp_professions';
   list: BehaviorSubject<Profession[]> = new BehaviorSubject<Profession[]>([]);
+  listWithRecipes: BehaviorSubject<Profession[]> = new BehaviorSubject<Profession[]>([]);
   map: BehaviorSubject<Map<number, Profession>> = new BehaviorSubject<Map<number, Profession>>(
     new Map<number, Profession>());
+  craftingSubscription: Subscription;
 
   constructor(private http: HttpClient, private dbService: DatabaseService) {
+    this.craftingSubscription = CraftingService.list.subscribe((data) => {
+      this.mapProfessionsWithRecipes(data);
+    });
+  }
+
+  private mapProfessionsWithRecipes(data: Recipe[]) {
+    const map = new Map<number, Profession>(),
+      list: Profession[] = [];
+    data.forEach(recipe => {
+      if (!map.has(recipe.professionId)) {
+        const profession = this.map.value.get(recipe.professionId);
+        if (profession) {
+          map.set(recipe.professionId, profession);
+          list.push(profession);
+        }
+      }
+    });
+    this.listWithRecipes.next(list);
   }
 
   async load(latestTimestamp: Date) {
     await this.dbService.getAllProfessions()
       .then(async (professions) => {
-        console.log('Professions from db', professions);
         this.setSubjects(professions);
         if (this.list.value.length === 0) {
           delete localStorage[this.LOCAL_STORAGE_TIMESTAMP];
@@ -50,6 +71,7 @@ export class ProfessionService {
       .toPromise()
       .then((response: ProfessionResponse) => {
         this.dbService.addProfessions(response.professions);
+        this.mapProfessionsWithRecipes(CraftingService.list.value);
         this.setSubjects(response.professions);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = response.timestamp;
         SharedService.downloading.professions = false;

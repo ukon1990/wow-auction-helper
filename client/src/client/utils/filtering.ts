@@ -6,6 +6,7 @@ import {Recipe} from '../modules/crafting/models/recipe';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Pet} from '../modules/pet/models/pet';
+import {CraftingService} from '../services/crafting.service';
 
 export class Filters {
   public static isNameMatch(itemID: number, name: string, speciesId?: number, aiId?: string): boolean {
@@ -131,7 +132,7 @@ export class Filters {
   }
 
   static isProfessionMatch(itemID: number, professionId: number) {
-    const recipes: Recipe[] = SharedService.itemRecipeMap[itemID];
+    const recipes: Recipe[] = CraftingService.itemRecipeMap[itemID];
 
     if (!professionId) {
       return true;

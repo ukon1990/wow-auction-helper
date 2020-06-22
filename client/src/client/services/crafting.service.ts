@@ -36,6 +36,8 @@ export class CraftingService {
 
   static getRecipesForFaction(recipes: Recipe[]): Recipe[] {
     const result = [];
+    const itemMap = new Map<number, Recipe[]>();
+    const itemReagentMap = new Map<number, Recipe[]>();
     recipes.forEach(recipe => {
       if (!recipe || !recipe.reagents) {
         return;
@@ -45,9 +47,23 @@ export class CraftingService {
         return;
       }
       recipe.itemID = itemId;
+      this.addRecipeToItemMap(itemMap, itemId, recipe);
+      recipe.reagents.forEach(reagent => {
+        this.addRecipeToItemMap(itemReagentMap, reagent.id, recipe);
+      });
       result.push(recipe);
     });
+    CraftingService.itemRecipeMap.next(itemMap);
+    CraftingService.reagentRecipeMap.next(itemReagentMap);
     return result;
+  }
+
+  private static addRecipeToItemMap(itemMap: Map<number, Recipe[]>, itemId: number, recipe: Recipe) {
+    if (!itemMap.has(itemId)) {
+      itemMap.set(itemId, [recipe]);
+    } else {
+      itemMap.get(itemId).push(recipe);
+    }
   }
 
   private static getItemIdForCurrentFaction(recipe: Recipe): number {

@@ -87,20 +87,18 @@ export class CraftingComponent implements OnInit, OnDestroy {
       () =>
         this.filter());
 
-    this.subs.add(this.professionService.list, (professions) => {
+    this.subs.add(this.professionService.listWithRecipes, (professions) => {
       this.professions = [
         {
           id: 0,
           name: 'All',
         },
-        ...professions,
+        ...(this.getProfessionsSorted(professions)),
         {
           id: -1,
           name: 'None'
         }
       ];
-
-      console.log('Professions', professions, this.professions);
     });
   }
 
@@ -140,16 +138,14 @@ export class CraftingComponent implements OnInit, OnDestroy {
     return item && TextUtil.contains(item.name, name);
   }
 
-
-  /* istanbul ignore next */
-  isDarkmode(): boolean {
-    return SharedService.user ? SharedService.user.isDarkMode : false;
-  }
-
   resetForm() {
     this.searchForm.reset({
       strategy: SharedService.user.craftingStrategy,
       intermediate: SharedService.user.useIntermediateCrafting
     });
+  }
+
+  private getProfessionsSorted(professions) {
+    return professions.sort((a, b) => a.name.localeCompare(b.name)) || [];
   }
 }
