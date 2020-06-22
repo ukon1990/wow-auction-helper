@@ -16,6 +16,7 @@ import {BehaviorSubject} from 'rxjs';
 import {Report} from '../utils/report.util';
 import {GameBuild} from '../utils/game-build.util';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
+import {Profession} from '../../../../api/src/profession/model';
 
 /**
  * A Class for handeling the indexedDB
@@ -40,6 +41,8 @@ export class DatabaseService {
   readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
     'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
   readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
+  readonly PROFESSION_TABLE_COLUMNS = 'id,name,description,icon,type,skillTiers';
+
   databaseIsReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(public platform: Platform) {
@@ -131,6 +134,25 @@ export class DatabaseService {
 
   async clearNPCs(): Promise<void> {
     await this.db.table('npcs').clear();
+  }
+
+  addProfessions(professions: Profession[]): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+        resolve();
+        return;
+      }
+      this.db.table('professions').bulkPut(professions)
+        .then(() => resolve())
+        .catch(reject);
+    });
+  }
+
+  getAllProfessions() {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
+    }
+    return this.db.table('professions').toArray();
   }
 
   async addZones(list: Zone[]): Promise<void> {
@@ -356,6 +378,7 @@ export class DatabaseService {
       recipes: this.RECIPE_TABLE_COLUMNS,
       npcs: this.NPC_TABLE_COLUMNS,
       zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
       addons: this.ADDON
     });
     this.db.version(7).stores({

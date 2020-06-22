@@ -20,6 +20,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {Timestamps} from '../../../../../../api/src/updates/model';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
+import {ProfessionService} from '../../crafting/services/profession.service';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,7 @@ export class BackgroundDownloadService {
     private petService: PetsService,
     private npcService: NpcService,
     private zoneService: ZoneService,
+    private professionService: ProfessionService,
     private dbService: DatabaseService) {
 
 
@@ -92,6 +94,8 @@ export class BackgroundDownloadService {
     await this.getUpdateTimestamps()
       .then(async (timestamps: Timestamps) => {
         await Promise.all([
+          this.professionService.load(timestamps.professions)
+            .catch(console.error),
           this.itemService.loadItems(timestamps.items)
             .catch(console.error),
           this.petService.loadPets(timestamps.pets)

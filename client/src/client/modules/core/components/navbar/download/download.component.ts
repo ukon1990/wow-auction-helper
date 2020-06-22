@@ -80,8 +80,8 @@ export class DownloadComponent implements OnInit {
       return 'Downloading auction data';
     } else if (SharedService.downloading.tsmAuctions) {
       return 'Downloading TSM data';
-    } else if (SharedService.downloading.wowUctionAuctions) {
-      return 'Downloading WoWuction data';
+    } else if (SharedService.downloading.professions) {
+      return 'Downloading profession data';
     } else if (SharedService.downloading.items) {
       return 'Downloading item data';
     } else if (SharedService.downloading.pets) {

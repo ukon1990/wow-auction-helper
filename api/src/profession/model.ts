@@ -5,6 +5,11 @@ export interface SkillTier {
   max: number;
 }
 
+export interface ProfessionAPIResponse {
+  professions: Profession[];
+  timestamp: Date;
+}
+
 export interface Profession {
   id: number;
   name: string;
@@ -12,4 +17,6 @@ export interface Profession {
   icon: string;
   type: string;
   skillTiers: SkillTier[];
+
+  timestamp?: Date;
 }

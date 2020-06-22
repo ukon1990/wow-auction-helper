@@ -1,0 +1,76 @@
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject} from 'rxjs';
+import {Profession} from '../../../../../../api/src/profession/model';
+import {SharedService} from '../../../services/shared.service';
+import {ErrorReport} from '../../../utils/error-report.util';
+import {DatabaseService} from '../../../services/database.service';
+import {Endpoints} from '../../../services/endpoints';
+
+class ProfessionResponse {
+  timestamp: Date;
+  professions: Profession[];
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProfessionService {
+  private LOCAL_STORAGE_TIMESTAMP = 'timestamp_professions';
+  list: BehaviorSubject<Profession[]> = new BehaviorSubject<Profession[]>([]);
+  map: BehaviorSubject<Map<number, Profession>> = new BehaviorSubject<Map<number, Profession>>(
+    new Map<number, Profession>());
+
+  constructor(private http: HttpClient, private dbService: DatabaseService) {
+  }
+
+  async load(latestTimestamp: Date) {
+    await this.dbService.getAllProfessions()
+      .then(async (professions) => {
+        console.log('Professions from db', professions);
+        this.setSubjects(professions);
+        if (this.list.value.length === 0) {
+          delete localStorage[this.LOCAL_STORAGE_TIMESTAMP];
+        }
+      })
+      .catch(async error => {
+        ErrorReport.sendError('ProfessionService.load', error);
+      });
+
+    const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+    if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+      await this.getAll();
+    }
+  }
+
+  async getAll(): Promise<any> {
+    const locales = localStorage['locale'];
+    SharedService.downloading.professions = true;
+    await this.http.get(`${Endpoints.S3_BUCKET}/profession/${locales}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+      .toPromise()
+      .then((response: ProfessionResponse) => {
+        this.dbService.addProfessions(response.professions);
+        this.setSubjects(response.professions);
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = response.timestamp;
+        SharedService.downloading.professions = false;
+      })
+      .catch(error => {
+        ErrorReport.sendHttpError(error);
+        SharedService.downloading.professions = false;
+      });
+  }
+
+  setSubjects(professions: Profession[]): void {
+    const map = new Map<number, Profession>();
+    professions.forEach(profession => {
+      map.set(profession.id, profession);
+    });
+    this.map.next(map);
+    this.list.next(professions);
+  }
+
+  getProfessionById(id) {
+    return this.list.value.filter(profession =>
+      profession.id === id)[0];
+  }
+}

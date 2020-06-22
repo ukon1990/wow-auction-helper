@@ -10,6 +10,8 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SummaryUtil} from '../../../../utils/summary.util';
 import {Recipe} from '../../../crafting/models/recipe';
 import {CraftingService} from '../../../../services/crafting.service';
+import {Profession} from '../../../../../../../api/src/profession/model';
+import {ProfessionService} from '../../../crafting/services/profession.service';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -55,7 +57,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
    * - Expansions
    */
 
-  constructor() {
+  constructor(private professionService: ProfessionService) {
   }
 
   ngOnInit() {
@@ -177,7 +179,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
       if (filterFN(recipe) &&
         SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion) &&
         SummaryUtil.isUnrakedOrRank3(recipe)) {
-        const name = SummaryUtil.getProfessionNameFromRecipe(recipe);
+        const name = SummaryUtil.getProfessionNameFromRecipe(recipe, this.professionService.map.value);
         if (professions[name]) {
           professions[name]++;
         } else {

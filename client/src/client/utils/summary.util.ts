@@ -2,7 +2,7 @@ import {Recipe} from '../modules/crafting/models/recipe';
 import {SharedService} from '../services/shared.service';
 import {TSM} from '../modules/auction/models/tsm.model';
 import {Item} from '../models/item/item';
-import {getProfessionById} from '../data/professions/professions';
+import {Profession} from '../../../../api/src/profession/model';
 
 export class SummaryUtil {
   public static isProfitMatch(recipe: Recipe): boolean {
@@ -22,9 +22,9 @@ export class SummaryUtil {
       recipe.avgDailySold >= 5 && recipe.regionSaleRate > .15;
   }
 
-  public static getProfessionNameFromRecipe(recipe: Recipe): string {
-    return recipe.professionId ?
-      getProfessionById(recipe.professionId).name : 'On use';
+  public static getProfessionNameFromRecipe(recipe: Recipe, professionMap: Map<number, Profession>): string {
+    return professionMap.has(recipe.professionId) ?
+      professionMap.get(recipe.professionId).name : 'On use';
   }
 
   public static isCurrentExpansionMatch(itemID: number, onlyCurrentExpansion: boolean) {

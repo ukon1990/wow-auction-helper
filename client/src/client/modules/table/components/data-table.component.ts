@@ -21,7 +21,8 @@ import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.mo
 import {Router} from '@angular/router';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {CraftingService} from '../../../services/crafting.service';
-import {getMappedProfessions} from '../../../data/professions/professions';
+import {ProfessionService} from '../../crafting/services/profession.service';
+import {Profession} from '../../../../../../api/src/profession/model';
 
 @Component({
   selector: 'wah-data-table',
@@ -49,7 +50,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   filteredData = [];
   sm = new SubscriptionManager();
-  professionIdMap = getMappedProfessions();
+  professionIdMap: Map<number, Profession>;
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
@@ -68,8 +69,11 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   private isTyping: boolean;
   private lastCharacterTyped: number;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private professionService: ProfessionService) {
     this.sorter = new Sorter();
+    this.sm.add(this.professionService.map, map => {
+      this.professionIdMap = map.value;
+    });
   }
 
   ngAfterViewInit() {

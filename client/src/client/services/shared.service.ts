@@ -97,13 +97,13 @@ export class SharedService {
   public static downloading = {
     auctions: false,
     tsmAuctions: false,
-    wowUctionAuctions: false,
     items: false,
     pets: false,
     recipes: false,
     characterData: false,
     zone: false,
-    npc: false
+    npc: false,
+    professions: false
   };
 
   /* istanbul ignore next */
@@ -111,7 +111,7 @@ export class SharedService {
   public static isDownloading(): boolean {
     return SharedService.downloading.auctions ||
       SharedService.downloading.tsmAuctions ||
-      SharedService.downloading.wowUctionAuctions ||
+      SharedService.downloading.professions ||
       SharedService.downloading.items ||
       SharedService.downloading.pets ||
       SharedService.downloading.recipes ||

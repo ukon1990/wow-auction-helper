@@ -11,9 +11,9 @@ import {Filters} from '../../../utils/filtering';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionsService} from '../../../services/auctions.service';
-import {getProfessions} from '../../../data/professions/professions';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {CraftingService} from '../../../services/crafting.service';
+import {ProfessionService} from '../services/profession.service';
 
 @Component({
   selector: 'wah-crafting',
@@ -26,17 +26,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
   itemClasses = itemClasses;
-  professions = [
-    {
-      id: 0,
-      name: 'All',
-    },
-    ...getProfessions(),
-    {
-      id: -1,
-      name: 'None'
-    }
-  ];
+  professions = [];
   expansions = GameBuild.expansionMap;
   delayFilter = false;
 
@@ -52,7 +42,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
-  constructor(private _formBuilder: FormBuilder, private _title: Title, private service: AuctionsService) {
+  constructor(private _formBuilder: FormBuilder, private _title: Title,
+              private service: AuctionsService, private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
@@ -95,6 +86,22 @@ export class CraftingComponent implements OnInit, OnDestroy {
       this.service.events.groupedList,
       () =>
         this.filter());
+
+    this.subs.add(this.professionService.list, (professions) => {
+      this.professions = [
+        {
+          id: 0,
+          name: 'All',
+        },
+        ...professions,
+        {
+          id: -1,
+          name: 'None'
+        }
+      ];
+
+      console.log('Professions', professions, this.professions);
+    });
   }
 
   ngOnDestroy() {
