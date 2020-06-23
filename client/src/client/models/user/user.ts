@@ -224,10 +224,15 @@ export class User {
   public static setRecipesForCharacter(character: Character): void {
     if (character && character.professions &&
       SharedService.user.realm.toLowerCase() === User.slugifyString(character.realm)) {
-      character.professions.primaries.forEach(primary => {
-        this.addKnownRecipes(primary, character);
-      });
-      character.professions.primaries.forEach(secondary => this.addKnownRecipes(secondary, character));
+      if (character.professions.primaries) {
+        character.professions.primaries.forEach(primary => {
+          this.addKnownRecipes(primary, character);
+        });
+      }
+      if (character.professions.secondaries) {
+        character.professions.secondaries.forEach(secondary =>
+          this.addKnownRecipes(secondary, character));
+      }
     }
   }
 
