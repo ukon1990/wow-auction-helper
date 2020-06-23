@@ -108,7 +108,8 @@ export class BackgroundDownloadService {
             .then(() =>
               console.log('Done loading zone data'))
             .catch(console.error),
-          this.loadThirdPartyAPI().catch(console.error),
+          this.loadThirdPartyAPI()
+            .catch(console.error),
           this.itemService.getBonusIds()
         ])
           .catch(console.error);
@@ -179,20 +180,30 @@ export class BackgroundDownloadService {
   }
 
   private async loadThirdPartyAPI() {
-    if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-      await this.auctionsService.getTsmAuctions();
-    } else {
-      await this.dbService.getTSMItems()
-        .then(async r => {
-          if (Object.keys(SharedService.tsm).length === 0) {
-            await this.auctionsService.getTsmAuctions();
-          }
-        })
-        .catch(async e => {
-          console.error('Could not restore TSM data', e);
-          await this.auctionsService.getTsmAuctions();
-        });
-    }
+    return new Promise((resolve, reject) => {
+      if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
+        this.auctionsService.getTsmAuctions()
+          .then(resolve)
+          .catch(reject);
+      } else {
+        this.dbService.getTSMItems()
+          .then(async r => {
+            if (Object.keys(SharedService.tsm).length === 0) {
+              this.auctionsService.getTsmAuctions()
+                .then(resolve)
+                .catch(reject);
+            } else {
+              resolve();
+            }
+          })
+          .catch(async e => {
+            ErrorReport.sendError('BackgroundDownload.loadThirdPartyAPI', e);
+            this.auctionsService.getTsmAuctions()
+              .then(resolve)
+              .catch(reject);
+          });
+      }
+    });
   }
 
   private getUpdateTimestamps(): Promise<Timestamps> {
