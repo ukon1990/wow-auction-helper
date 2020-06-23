@@ -313,7 +313,7 @@ functions:
     tags:
       Function: Wah-updateS3
     handler: src/updates/controller.update
-    memorySize: 4096
+    memorySize: 3008
     timeout: 900
     events:
       - http:
