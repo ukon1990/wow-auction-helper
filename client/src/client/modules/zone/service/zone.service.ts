@@ -31,13 +31,13 @@ export class ZoneService {
 
       const timestamp = localStorage.getItem(this.storageName);
       if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
-        await this.getAllFromS3();
+        await this.get();
       }
       resolve(this.list.value);
     });
   }
 
-  private getAllFromS3(): Promise<any[]> {
+  get(): Promise<any[]> {
     SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
     return new Promise<any[]>((resolve, reject) => {
@@ -45,6 +45,7 @@ export class ZoneService {
         .toPromise()
         .then(async (response) => {
           SharedService.downloading.zone = false;
+          await this.dbService.clearZones();
           this.setTimestamp(response);
           this.mapAndSetNextValueForZones(response['zones']);
           await this.dbService.addZones(response['zones']);

@@ -14,6 +14,9 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscript
 import {Report} from '../../../../utils/report.util';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {Difference} from '@ukon1990/js-utilities/dist/models/difference.model';
+import {ProfessionService} from '../../../crafting/services/profession.service';
+import {ZoneService} from '../../../zone/service/zone.service';
+import {NpcService} from '../../../npc/services/npc.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -32,7 +35,10 @@ export class GeneralSettingsComponent implements OnDestroy {
               private dbServie: DatabaseService,
               private itemService: ItemService,
               private craftingService: CraftingService,
+              private zoneService: ZoneService,
               private petsService: PetsService,
+              private npcService: NpcService,
+              private professionService: ProfessionService,
               private _auctionService: AuctionsService) {
     this.form = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
@@ -59,16 +65,17 @@ export class GeneralSettingsComponent implements OnDestroy {
     );
   }
 
-  private getDifferenceMap(value) {
+  private getDifferenceMap({region, realm, locale}) {
     const differenceMap = new Map<string, any>();
-    ObjectUtil
-      .getDifference(
-        this.originalUserObject,
-        value,
-        undefined,
-        Object.keys(this.form.getRawValue()))
-      .forEach(field =>
-        differenceMap.set(field.name, field));
+    if (locale !== localStorage.getItem('locale')) {
+      differenceMap.set('locale', locale);
+    }
+    if (region !== this.originalUserObject.region) {
+      differenceMap.set('region', region);
+    }
+    if (realm !== this.originalUserObject.realm) {
+      differenceMap.set('realm', realm);
+    }
     return differenceMap;
   }
 
@@ -85,19 +92,26 @@ export class GeneralSettingsComponent implements OnDestroy {
   async saveRealmAndRegion() {
     if (this.userChanges.has('locale')) {
       localStorage['locale'] = this.form.value.locale;
+      /*
       delete localStorage['timestamp_items'];
-      await this.itemService.getItems();
       delete localStorage['timestamp_pets'];
-      await this.petsService.getPets();
-      delete localStorage['timestamp_recipes'];
-      await this.craftingService.getRecipes();
+      delete localStorage['timestamp_recipes'];*/
+      await Promise.all([
+        this.zoneService.get(),
+        this.professionService.getAll(),
+        this.itemService.getItems(),
+        this.npcService.get(),
+        this.petsService.getPets(),
+        this.craftingService.get()
+      ])
+        .catch(console.error);
 
       // Updating the watchlist names
       this.updateWatchlistItemNamesToNewLocale();
 
 
       if (this.hasNotChangedRealmOrRegion()) {
-        AuctionUtil.organize(SharedService.auctions);
+        await AuctionUtil.organize(SharedService.auctions);
       }
     }
 
@@ -180,7 +194,8 @@ export class GeneralSettingsComponent implements OnDestroy {
 
       Report.send('Imported existing setup from file', 'General settings');
 
-      this.saveRealmAndRegion();
+      this.saveRealmAndRegion()
+        .catch(console.error);
     } catch (e) {
       console.error('Could not import from file', e);
     }

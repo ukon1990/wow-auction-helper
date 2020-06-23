@@ -12,6 +12,7 @@ import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
 import wordsToNumbers from 'words-to-numbers';
+import {Report} from '../utils/report.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -78,7 +79,7 @@ export class CraftingService {
     return itemId;
   }
 
-  async loadRecipes(latestTimestamp: Date) {
+  async load(latestTimestamp: Date) {
     await this.dbService.getAllRecipes()
       .then(async (result) => {
         this.handleRecipes({recipes: result, timestamp: localStorage['timestamp_recipes']});
@@ -92,31 +93,39 @@ export class CraftingService {
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
     if (!CraftingService.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
-      await this.getRecipes();
+      await this.get();
     }
     this.setOnUseCraftsWithNoReagents();
   }
 
-  async getRecipes(): Promise<any> {
+  get(): Promise<any> {
     const locale = localStorage['locale'];
-    const timestamp = localStorage[this.LOCAL_STORAGE_TIMESTAMP];
     console.log('Downloading recipes');
-
-    if (!timestamp) {
-      this.dbService.clearRecipes();
-    }
 
     SharedService.downloading.recipes = true;
     return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
       .toPromise()
-      .then((result: RecipeResponse) => {
+      .then(async (result: RecipeResponse) => {
         SharedService.downloading.recipes = false;
+        await this.clearAndSaveResult(result);
         this.handleRecipes(result);
       })
       .catch(error => {
         ErrorReport.sendHttpError(error);
         SharedService.downloading.recipes = false;
       });
+  }
+
+  private async clearAndSaveResult(result: RecipeResponse) {
+    await this.dbService.clearRecipes();
+    try {
+      if (this.platform !== null && !this.platform.WEBKIT) {
+        await this.dbService.addRecipes(result.recipes);
+        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = result.timestamp;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   updateRecipe(spellID: number): Promise<Recipe> {
@@ -143,24 +152,13 @@ export class CraftingService {
 
   handleRecipes(recipes: RecipeResponse): void {
     SharedService.downloading.recipes = false;
-    const list = CraftingService.fullList.value,
-      map = CraftingService.map.value;
+    const list = recipes.recipes,
+      map = new Map<number, Recipe>();
 
-    recipes.recipes.forEach(recipe => {
-      if (!map.get(recipe.id)) {
-        list.push(recipe);
-      }
+    list.forEach(recipe => {
       map.set(recipe.id, recipe);
     });
 
-    try {
-      if (this.platform !== null && !this.platform.WEBKIT) {
-        this.dbService.addRecipes(list);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = recipes.timestamp;
-      }
-    } catch (error) {
-      console.error(error);
-    }
     CraftingService.map.next(map);
     CraftingService.fullList.next(list);
     CraftingService.list.next(CraftingService.getRecipesForFaction(list));

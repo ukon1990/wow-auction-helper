@@ -102,7 +102,7 @@ export class BackgroundDownloadService {
             .catch(console.error),
           this.npcService.getAll(false, timestamps.npcs)
             .catch(console.error),
-          this.craftingService.loadRecipes(timestamps.recipes)
+          this.craftingService.load(timestamps.recipes)
             .catch(console.error),
           this.zoneService.getAll(false, timestamps.zones)
             .then(() =>

@@ -67,6 +67,8 @@ export class ProfessionService {
   async getAll(): Promise<any> {
     const locales = localStorage['locale'];
     SharedService.downloading.professions = true;
+
+    await this.dbService.clearProfessions();
     await this.http.get(`${Endpoints.S3_BUCKET}/profession/${locales}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
       .toPromise()
       .then((response: ProfessionResponse) => {

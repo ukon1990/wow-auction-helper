@@ -124,7 +124,7 @@ export class DownloadComponent implements OnInit {
           .catch(console.error);
         break;
       case 'zone':
-        this.zoneService.getAll(true)
+        this.zoneService.get()
           .catch(console.error);
     }
   }
@@ -178,7 +178,7 @@ export class DownloadComponent implements OnInit {
       delete localStorage['timestamp_recipes'];
     }
     this.downloadProgress = 'Downloading recipes';
-    await this._craftingService.getRecipes();
+    await this._craftingService.get();
 
     if (forceUpdate) {
       await AuctionUtil.organize(SharedService.auctions)

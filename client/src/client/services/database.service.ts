@@ -133,7 +133,9 @@ export class DatabaseService {
   }
 
   async clearNPCs(): Promise<void> {
-    await this.db.table('npcs').clear();
+    await this.db.table('npcs').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearNPCs', error));
   }
 
   addProfessions(professions: Profession[]): Promise<void> {
@@ -153,6 +155,12 @@ export class DatabaseService {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
     return this.db.table('professions').toArray();
+  }
+
+  async clearProfessions() {
+    await this.db.table('professions').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearProfessions', error));
   }
 
   async addZones(list: Zone[]): Promise<void> {
@@ -237,8 +245,8 @@ export class DatabaseService {
     });
   }
 
-  clearRecipes(): void {
-    this.db.table('recipes').clear()
+  async clearRecipes(): Promise<void> {
+    await this.db.table('recipes').clear()
       .catch(e =>
         ErrorReport.sendError('DatabaseService.clearRecipes', e));
   }

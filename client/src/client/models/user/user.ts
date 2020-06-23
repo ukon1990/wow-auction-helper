@@ -27,7 +27,6 @@ export class User {
   buyoutLimit = 200;
   useVendorPriceForCraftingIfAvailable = true;
   useIntermediateCrafting = true;
-  crafters: any[];
   notifications: NotificationSettings = new NotificationSettings();
   watchlist: Watchlist = new Watchlist();
   shoppingCart: ShoppingCart = new ShoppingCart();
@@ -36,6 +35,7 @@ export class User {
   gameVersion = 0;
   classicRealm: string;
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
+  locale: string;
 
   /**
    *
