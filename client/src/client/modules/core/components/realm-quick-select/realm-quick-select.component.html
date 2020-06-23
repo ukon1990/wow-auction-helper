@@ -17,7 +17,7 @@
     <mat-select placeholder="Realm" formControlName="realm">
       <mat-option *ngFor="let realm of realmList"
                   [value]="realm.slug">
-        {{ realm.name }} ({{ realm.characterCount }})
+        {{ realm.name }} ({{ realm.characterCount || 0 }})
       </mat-option>
     </mat-select>
   </mat-form-field>

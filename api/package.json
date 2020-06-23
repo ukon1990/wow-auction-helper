@@ -30,6 +30,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "source-map-explorer": "^2.1.0",
+    "sqlstring": "^2.3.2",
     "tslib": "^1.9.3",
     "zlib": "^1.0.5"
   },
@@ -37,6 +38,7 @@
     "@types/aws-lambda": "8.10.31",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.6.8",
+    "@types/sqlstring": "^2.2.1",
     "@types/supertest": "^2.0.8",
     "babel-jest": "^24.9.0",
     "jest": "^24.9.0",

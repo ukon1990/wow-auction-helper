@@ -3,6 +3,7 @@ import {SharedService} from '../../../services/shared.service';
 import {ItemInventory} from '../../../models/item/item';
 import {Recipe} from '../../crafting/models/recipe';
 import {ShoppingCart} from './shopping-cart.model';
+import {CraftingService} from '../../../services/crafting.service';
 
 describe('ShoppingCartUtil', () => {
   let recipe: Recipe,
@@ -40,7 +41,7 @@ describe('ShoppingCartUtil', () => {
         stack: 5
       }]
     };
-    recipe = SharedService.recipesMap[264769];
+    recipe = CraftingService.map.value.get(264769);
   });
 
   beforeEach(() => {
@@ -209,10 +210,10 @@ describe('ShoppingCartUtil', () => {
     it('can remove all crafts of a recipe, but keep reagent if in the cart via another', () => {
       cart.add(
         // Contract: Talanji's Expedition rank 3
-        SharedService.recipesMap[256289]
+        CraftingService.map.value.get(256289)
       );
       expect(cart.recipes.length).toBe(2);
-      cart.remove(recipe.spellID);
+      cart.remove(recipe.id);
       expect(cart.recipes.length).toBe(1);
       expect(cart.reagents.length).toBe(3);
       expect(cart.reagentMap[158188].quantity).toBe(5);

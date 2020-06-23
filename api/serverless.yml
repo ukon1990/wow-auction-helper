@@ -78,16 +78,6 @@ functions:
     handler: src/controllers/auction.updateAllRealmDailyData
     memorySize: 1024
     timeout: 300
-  locales:
-    tags:
-      Function: Wah-locales
-    handler: src/controllers/locale.handler
-    events:
-      - http:
-          method: post
-          path: locale/add-missing
-          cors:
-            origin: 'localhost:3000'
   items:
     tags:
       Function: Wah-items
@@ -133,23 +123,41 @@ functions:
           path: pet/{id}
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
-  recipes:
+  getProfessions:
     tags:
-      Function: Wah-recipes
-    handler: src/controllers/recipe.handler
+      FunctionName: Wah-getProfessions
     memorySize: 128
+    handler: src/profession/controller.getProfessions
     events:
       - http:
-          method: any
+          method: post
+          path: profession
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  getAllRecipesAfter:
+    tags:
+      FunctionName: Wah-getAllRecipesAfter
+    memorySize: 128
+    handler: src/recipe/controller.getAfter
+    events:
+      - http:
+          method: post
           path: recipe
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
+  getRecipeById:
+    tags:
+      FunctionName: Wah-getRecipeById
+    memorySize: 128
+    handler: src/recipe/controller.getById
+    events:
       - http:
-          method: any
+          method: post
           path: recipe/{id}
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+
   zone:
     tags:
       Function: Wah-zone
@@ -198,8 +206,8 @@ functions:
             origin: 'http://localhost:4200'
   character:
     tags:
-      Function: Wah-character
-    handler: src/controllers/character.handler
+      FunctionName: Wah-character
+    handler: src/character/controller.getCharacter
     memorySize: 128
     events:
       - http:
@@ -300,3 +308,16 @@ functions:
       Function: Wah-updateTSMDumpData
     handler: src/controllers/tsm.handler
     memorySize: 256
+
+  updateS3:
+    tags:
+      Function: Wah-updateS3
+    handler: src/updates/controller.update
+    memorySize: 4096
+    timeout: 900
+    events:
+      - http:
+          method: get
+          path: update-s3
+          cors:
+            origin: 'http://localhost:4200'

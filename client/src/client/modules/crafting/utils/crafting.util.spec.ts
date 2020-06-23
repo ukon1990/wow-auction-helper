@@ -4,13 +4,14 @@ import {CraftingUtil} from './crafting.util';
 import {TSM} from '../../auction/models/tsm.model';
 import {Recipe} from '../models/recipe';
 import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
+import {CraftingService} from '../../../services/crafting.service';
 
 describe('CraftingUtil', () => {
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     const recipe = new Recipe();
 
-    SharedService.recipes.length = 0;
+    CraftingService.list.next([]);
     SharedService.auctionItemsMap[10] = new AuctionItem();
     SharedService.auctionItemsMap[10].buyout = 20;
     SharedService.auctionItemsMap[11] = new AuctionItem();
@@ -21,55 +22,54 @@ describe('CraftingUtil', () => {
     SharedService.auctionItemsMap[20].buyout = 10;
     SharedService.tsm[20] = {MarketValue: 100} as TSM;
 
-    recipe.spellID = 1;
+    recipe.id = 1;
     recipe.itemID = 10;
     recipe.name = 'test recipe';
-    recipe.profession = 'Software developer';
+    recipe.professionId = 1;
     recipe.minCount = 1;
     recipe.maxCount = 1;
     recipe.reagents = [];
-    SharedService.recipes.push(recipe);
+    CraftingService.list.next([recipe]);
   });
 
   describe('Should be able to calculate cost', () => {
     it('for one reagent', () => {
-      SharedService.recipes[0].reagents.push({
+      CraftingService.list.value[0].reagents.push({
         itemID: 11,
         name: '',
         count: 3,
         dropped: false
       });
       CraftingUtil.calculateCost();
-      expect(SharedService.recipes[0].cost).toEqual(30);
-      expect(SharedService.recipes[0].roi).toEqual(-10);
+      expect(CraftingService.list.value[0].cost).toEqual(30);
+      expect(CraftingService.list.value[0].roi).toEqual(-10);
     });
 
     it('for several reagents', () => {
-      SharedService.recipes[0].reagents.push({
+      CraftingService.list.value[0].reagents.push({
         itemID: 11,
         name: '',
         count: 3,
         dropped: false
       });
-      SharedService.recipes[0].reagents.push({
+      CraftingService.list.value[0].reagents.push({
         itemID: 12,
         name: '',
         count: 10,
         dropped: false
       });
       CraftingUtil.calculateCost();
-      expect(SharedService.recipes[0].cost).toEqual(330);
-      expect(SharedService.recipes[0].roi).toEqual(-310);
+      expect(CraftingService.list.value[0].cost).toEqual(330);
+      expect(CraftingService.list.value[0].roi).toEqual(-310);
     });
 
     it('if some items aren\'t at AH', () => {
-      SharedService.recipes[0].reagents.push({
-        itemID: 1,
-        name: '',
-        count: 3,
+      CraftingService.list.value[0].reagents.push({
+        id: 1,
+        quantity: 3,
         dropped: false
       });
-      SharedService.recipes[0].reagents.push({
+      CraftingService.list.value[0].reagents.push({
         itemID: 12,
         name: '',
         count: 10,

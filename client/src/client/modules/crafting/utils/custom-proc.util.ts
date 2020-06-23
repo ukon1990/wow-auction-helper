@@ -5,14 +5,14 @@ import {CustomProc} from '../models/custom-proc.model';
 export class CustomProcUtil {
 
   public static get(recipe: Recipe): number {
-    return SharedService.customProcsMap[recipe.spellID] ?
-      SharedService.customProcsMap[recipe.spellID].rate : recipe.minCount;
+    return SharedService.customProcsMap[recipe.id] ?
+      SharedService.customProcsMap[recipe.id].rate : recipe.minCount;
   }
 
   public static add(recipe: Recipe): void {
-    if (!SharedService.customProcsMap[recipe.spellID]) {
+    if (!SharedService.customProcsMap[recipe.id]) {
       const customProc = new CustomProc(recipe);
-      SharedService.customProcsMap[recipe.spellID] = customProc;
+      SharedService.customProcsMap[recipe.id] = customProc;
       SharedService.user.customProcs.unshift(customProc);
       CustomProcUtil.save();
     }
@@ -20,13 +20,13 @@ export class CustomProcUtil {
 
   public static remove(customProc: CustomProc, index: number): void {
     SharedService.user.customProcs.splice(index, 1);
-    delete SharedService.customProcsMap[customProc.spellID];
+    delete SharedService.customProcsMap[customProc.id];
     CustomProcUtil.save();
   }
 
   public static createMap(customProcs: Array<CustomProc>): void {
     customProcs.forEach(c =>
-      SharedService.customProcsMap[c.spellID] = c);
+      SharedService.customProcsMap[c.id] = c);
   }
 
   public static save(): void {

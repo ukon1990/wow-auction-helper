@@ -41,9 +41,9 @@
                   {{ getItem(d.itemID).name }}
                   <br>
                 </span>
-                <span *ngIf="!hideCraftingDetails">
-                  {{ d.profession }}
-                  <span *ngIf="d.rank"> - {{ d.rank }}</span>
+                <span *ngIf="!hideCraftingDetails && professionIdMap">
+                  {{ professionIdMap.get(d?.professionId)?.name }}
+                  <span *ngIf="d.rank"> - Rank {{ d.rank }}</span>
                   <br>
                   <span *ngIf="getCraftersForRecipe(d)">
                     Known by: {{ getCraftersForRecipe(d) }}
@@ -53,9 +53,6 @@
             </span>
             <span *ngSwitchCase="'date'">
               {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
-            </span>
-            <span *ngSwitchCase="'seller'" (click)="setSelectedSeller({ name: d[c.key] })">
-              {{ d[c.key] }}
             </span>
             <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
             <span *ngSwitchCase="'gold'">

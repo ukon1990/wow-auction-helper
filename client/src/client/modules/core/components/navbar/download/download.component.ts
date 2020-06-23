@@ -12,10 +12,11 @@ import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
 import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
-import {BackgroundDownloadService} from '../../../../../services/background-download.service';
+import {BackgroundDownloadService} from '../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
+import {ErrorReport} from '../../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-download',
@@ -37,7 +38,6 @@ export class DownloadComponent implements OnInit {
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
-    wowuction: localStorage['timestamp_wowuction'],
     npc: localStorage.getItem('timestamp_npcs'),
     zone: localStorage.getItem('timestamp_zone')
   };
@@ -80,8 +80,8 @@ export class DownloadComponent implements OnInit {
       return 'Downloading auction data';
     } else if (SharedService.downloading.tsmAuctions) {
       return 'Downloading TSM data';
-    } else if (SharedService.downloading.wowUctionAuctions) {
-      return 'Downloading WoWuction data';
+    } else if (SharedService.downloading.professions) {
+      return 'Downloading profession data';
     } else if (SharedService.downloading.items) {
       return 'Downloading item data';
     } else if (SharedService.downloading.pets) {
@@ -94,48 +94,39 @@ export class DownloadComponent implements OnInit {
   }
 
   /* istanbul ignore next */
-  isDarkmode(): boolean {
-    return SharedService.user ? SharedService.user.isDarkMode : false;
-  }
-
-  getUserRealm(): Realm {
-    return SharedService.realms[SharedService.user.realm];
-  }
-
-  /* istanbul ignore next */
   async download(type: string, forceUpdate?: boolean) {
     if (forceUpdate) {
       Report.send(type, 'Manual download');
     }
     switch (type) {
       case 'tsm':
-        this.downloadTSM();
+        this.downloadTSM()
+          .catch(console.error);
         break;
       case 'auctions':
-        this.downloadAuctions();
+        this.downloadAuctions()
+          .catch(console.error);
         break;
       case 'items':
-        this.downloadItems(forceUpdate);
+        this.downloadItems(forceUpdate)
+          .catch(console.error);
         break;
       case 'pets':
-        this.downloadPets(forceUpdate);
+        this.downloadPets(forceUpdate)
+          .catch(console.error);
         break;
       case 'recipes':
-        this.downloadRecipes(forceUpdate);
+        this.downloadRecipes(forceUpdate)
+          .catch(console.error);
         break;
       case 'npc':
         this.npcService.getAll(true)
           .catch(console.error);
         break;
       case 'zone':
-        this.zoneService.getAll(true)
+        this.zoneService.get()
           .catch(console.error);
     }
-  }
-
-  /* istanbul ignore next */
-  getAuctionsLastModified(): number {
-    return SharedService.auctionResponse.lastModified;
   }
 
   /* istanbul ignore next */
@@ -148,17 +139,9 @@ export class DownloadComponent implements OnInit {
     return SharedService.downloading;
   }
 
-  getUserRealms(): Array<Realm> {
-    return SharedService.userRealms ? SharedService.userRealms : [];
-  }
-
   /* istanbul ignore next */
   isDownloading(): boolean {
     return SharedService.isDownloading();
-  }
-
-  private isOnline(): boolean {
-    return navigator.onLine;
   }
 
   private async downloadAuctions() {
@@ -170,7 +153,9 @@ export class DownloadComponent implements OnInit {
   private async downloadTSM() {
     this.downloadProgress = 'Downloading TSM data';
     await this._auctionsService.getTsmAuctions();
-    AuctionUtil.organize(SharedService.auctions);
+    await AuctionUtil.organize(SharedService.auctions)
+      .catch(error =>
+        ErrorReport.sendError('DownloadComponent.downloadTSM', error));
   }
 
   private async downloadPets(forceUpdate: boolean) {
@@ -182,7 +167,9 @@ export class DownloadComponent implements OnInit {
     await this._petService.getPets();
 
     if (forceUpdate) {
-      AuctionUtil.organize(SharedService.auctions);
+      await AuctionUtil.organize(SharedService.auctions)
+        .catch(error =>
+          ErrorReport.sendError('DownloadComponent.downloadPets', error));
     }
   }
 
@@ -191,10 +178,12 @@ export class DownloadComponent implements OnInit {
       delete localStorage['timestamp_recipes'];
     }
     this.downloadProgress = 'Downloading recipes';
-    await this._craftingService.getRecipes();
+    await this._craftingService.get();
 
     if (forceUpdate) {
-      AuctionUtil.organize(SharedService.auctions);
+      await AuctionUtil.organize(SharedService.auctions)
+        .catch(error =>
+          ErrorReport.sendError('DownloadComponent.downloadRecipes', error));
     }
   }
 
@@ -207,7 +196,9 @@ export class DownloadComponent implements OnInit {
     await this._itemService.getItems();
 
     if (forceUpdate) {
-      AuctionUtil.organize(SharedService.auctions);
+      await AuctionUtil.organize(SharedService.auctions)
+        .catch(error =>
+          ErrorReport.sendError('DownloadComponent.downloadItems', error));
     }
   }
 }

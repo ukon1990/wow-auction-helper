@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AddItemsComponent} from './components/update/add-items/add-items.component';
-import {AddRecipesComponent} from './components/update/add-recipes/add-recipes.component';
 import {UpdateComponent} from './components/update/update.component';
 import {
   MatCardModule, MatSelectModule, MatProgressBarModule,
@@ -17,8 +16,6 @@ import { AddNpcsComponent } from './components/add-npcs/add-npcs.component';
   declarations: [
     UpdateComponent,
     AddItemsComponent,
-    AddRecipesComponent,
-    AddRecipesComponent,
     AddNpcsComponent
   ],
   imports: [

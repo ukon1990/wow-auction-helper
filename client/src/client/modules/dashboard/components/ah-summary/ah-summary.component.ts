@@ -9,6 +9,9 @@ import {itemClasses} from '../../../../models/item/item-classes';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SummaryUtil} from '../../../../utils/summary.util';
 import {Recipe} from '../../../crafting/models/recipe';
+import {CraftingService} from '../../../../services/crafting.service';
+import {Profession} from '../../../../../../../api/src/profession/model';
+import {ProfessionService} from '../../../crafting/services/profession.service';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -54,7 +57,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
    * - Expansions
    */
 
-  constructor() {
+  constructor(private professionService: ProfessionService) {
   }
 
   ngOnInit() {
@@ -164,7 +167,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     const recipe: Recipe[] = SharedService.itemRecipeMap[item.itemID];
     if (recipe) {
       (this.summaries[2] as SummaryCard)
-        .addEntry(recipe[0].profession, item.quantityTotal);
+        .addEntry(recipe[0].professionId, item.quantityTotal);
     }
   }
 
@@ -172,11 +175,11 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
   private addProfitableCrafts(summary: SummaryCard, filterFN: (n: Recipe) => boolean, onlyCurrentExpansion: boolean): void {
     const professions = {};
 
-    SharedService.recipes.forEach((recipe: Recipe) => {
+    CraftingService.list.value.forEach((recipe: Recipe) => {
       if (filterFN(recipe) &&
         SummaryUtil.isCurrentExpansionMatch(recipe.itemID, onlyCurrentExpansion) &&
         SummaryUtil.isUnrakedOrRank3(recipe)) {
-        const name = SummaryUtil.getProfessionNameFromRecipe(recipe);
+        const name = SummaryUtil.getProfessionNameFromRecipe(recipe, this.professionService.map.value);
         if (professions[name]) {
           professions[name]++;
         } else {

@@ -22,24 +22,23 @@ export class NpcService {
   constructor(private http: HttpClient, private db: DatabaseService, private zoneService: ZoneService) {
   }
 
-  getAll(forceUpdate = false): Promise<NPC[]> {
+  getAll(forceUpdate = false, latestTimestamp?: Date): Promise<NPC[]> {
     if (forceUpdate) {
       localStorage.removeItem(this.storageName);
     }
     return new Promise<NPC[]>(async (resolve) => {
+      const timestamp = localStorage.getItem(this.storageName);
       await this.db.getAllNPCs()
         .then(list => {
           this.mapAndSetNextValueForNPCs(list);
         })
-        .catch(console.error);
+        .catch(error =>
+          ErrorReport.sendError('NpcService.getAll', error));
 
-      if (!this.list.value.length) {
-        await this.getAllFromS3()
+      if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+        await this.get()
           .catch(console.error);
       }
-
-      await this.getAllAfterTimestamp()
-        .catch(console.error);
 
       NPC.getTradeVendorsAndSetUnitPriceIfMissing(this.list.value);
 
@@ -48,14 +47,15 @@ export class NpcService {
     });
   }
 
-  private getAllFromS3(): Promise<NPC[]> {
+  get(): Promise<NPC[]> {
     SharedService.downloading.npc = true;
     const locale = localStorage['locale'];
     this.isLoading = true;
     return new Promise<any[]>(async (resolve, reject) => {
-      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz`)
+      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
-        .then((response) => {
+        .then(async (response) => {
+          await this.db.clearNPCs();
           SharedService.downloading.npc = false;
           const list = response['npcs'],
             map = {};
@@ -70,33 +70,6 @@ export class NpcService {
           SharedService.downloading.npc = false;
           console.error(error);
           ErrorReport.sendHttpError(error);
-        });
-    });
-  }
-
-  getAllAfterTimestamp(): Promise<NPC[]> {
-    SharedService.downloading.npc = true;
-    const locale = localStorage['locale'],
-      timestamp = localStorage.getItem(this.storageName);
-
-    if (!timestamp) {
-      return this.getAllFromS3();
-    }
-    return new Promise<NPC[]>((resolve, reject) => {
-      this.http.post(Endpoints.getLambdaUrl('npc/all'),
-        {locale, timestamp})
-        .toPromise()
-        .then((response) => {
-          SharedService.downloading.npc = false;
-          this.db.addNPCs(response['npcs'])
-            .catch(console.error);
-          this.mapAndSetNextValueForNPCs(response['npcs']);
-          resolve(this.list.value);
-        })
-        .catch((error) => {
-          SharedService.downloading.npc = false;
-          ErrorReport.sendHttpError(error);
-          resolve(this.list.value);
         });
     });
   }

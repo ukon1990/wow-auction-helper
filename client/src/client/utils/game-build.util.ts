@@ -45,28 +45,4 @@ export class GameBuild {
   static territories = ['Alliance', 'Horde', 'Contested', 'Word PvP', 'Sanctuary', 'PvP'];
 
   static zoneType = ['Zone', 'City', 'Dungeon', 'Raid', 'Scenario', 'Artifact Acquisition', 'Battleground'];
-  static professions: string[] = [
-    'Blacksmithing',
-    'Leatherworking',
-    'Alchemy',
-    'Cooking',
-    'Mining',
-    'Tailoring',
-    'Engineering',
-    'Enchanting',
-    'Jewelcrafting',
-    'Inscription',
-  ];
-
-  static professionsClassic: string[] = [
-    'Blacksmithing',
-    'Leatherworking',
-    'Alchemy',
-    'Cooking',
-    'Mining',
-    'Tailoring',
-    'Engineering',
-    'Enchanting',
-    'First aid',
-  ];
 }

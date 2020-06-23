@@ -6,6 +6,7 @@ import {CustomProcUtil} from './custom-proc.util';
 import {Reagent} from '../models/reagent';
 import {CustomPrice} from '../models/custom-price';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {CraftingService} from '../../../services/crafting.service';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -40,6 +41,7 @@ export abstract class BaseCraftingUtil {
     if (!recipe) {
       return;
     }
+
     this.resetRecipePriceValues(recipe);
     this.setRecipePriceAndStatData(recipe);
 
@@ -52,28 +54,28 @@ export abstract class BaseCraftingUtil {
     this.setROI(recipe);
   }
 
-  private calculateReagentCosts(r: Reagent, recipe: Recipe) {
+  private calculateReagentCosts(reagent: Reagent, recipe: Recipe) {
     let price;
-    const vendor = this.getVendorPriceDetails(r.itemID),
-      overridePrice = this.getOverridePrice(r.itemID),
-      tradeVendorPrice = this.getTradeVendorPrice(r.itemID),
-    count = r.count / recipe.procRate;
+    const vendor = this.getVendorPriceDetails(reagent.id),
+      overridePrice = this.getOverridePrice(reagent.id),
+      tradeVendorPrice = this.getTradeVendorPrice(reagent.id),
+      quantity = reagent.quantity / recipe.procRate;
 
     if (overridePrice) {
-      price = overridePrice.price * count;
+      price = overridePrice.price * quantity;
     } else if (vendor && vendor.price && !vendor.stock) {
-      price = this.getCostFromVendor(vendor, r, count);
+      price = this.getCostFromVendor(vendor, reagent, quantity);
     } else if (tradeVendorPrice) {
-      price = tradeVendorPrice * count;
+      price = tradeVendorPrice * quantity;
     } else {
-      price = this.getPrice(r.itemID, count);
+      price = this.getPrice(reagent.id, quantity);
     }
     if (!price) {
-      const fallback = this.getFallbackPrice(r.itemID, count);
+      const fallback = this.getFallbackPrice(reagent.id, quantity);
       price = fallback.cost;
-      r.intermediateEligible = fallback.intermediateEligible;
+      reagent.intermediateEligible = fallback.intermediateEligible;
     }
-    r.avgPrice = price / count;
+    reagent.avgPrice = price / quantity;
     recipe.cost += price;
   }
 
@@ -88,12 +90,12 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipeForReagent(r: Reagent, parentRecipe: Recipe) {
-    const recipe: Recipe = SharedService.recipesMapPerItemKnown[r.itemID];
+    const recipe: Recipe = CraftingService.map.value.get(r.id);
     if (!r.recipe && recipe) {
       r.recipe = recipe;
-      if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.spellID)) {
+      if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.id)) {
         BaseCraftingUtil.intermediateEligible.push(parentRecipe);
-        BaseCraftingUtil.intermediateMap.set(parentRecipe.spellID, parentRecipe);
+        BaseCraftingUtil.intermediateMap.set(parentRecipe.id, parentRecipe);
       }
     }
   }
@@ -102,7 +104,7 @@ export abstract class BaseCraftingUtil {
     let price = 0;
     if (vendor && vendor.stock && vendor.stock < count) {
       price = vendor.price * vendor.stock;
-      price += this.getPrice(r.itemID, count - vendor.stock);
+      price += this.getPrice(r.id, count - vendor.stock);
     } else {
       price = vendor.price * count;
     }
@@ -128,12 +130,12 @@ export abstract class BaseCraftingUtil {
     SharedService.itemRecipeMap[recipe.itemID].push(recipe);
 
     // The user should see item combination items as "known"
-    if (recipe.profession === 'none') {
-      SharedService.recipesForUser[recipe.spellID] = ['Item'];
+    if (!recipe.professionId) {
+      SharedService.recipesForUser[recipe.id] = ['Item'];
     }
 
     // For intermediate crafting
-    if (SharedService.recipesForUser[recipe.spellID]) {
+    if (SharedService.recipesForUser[recipe.icon]) {
       if (!SharedService.recipesMapPerItemKnown[recipe.itemID] || SharedService.recipesMapPerItemKnown[recipe.itemID].cost > recipe.cost) {
         SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
       }
@@ -149,7 +151,7 @@ export abstract class BaseCraftingUtil {
       recipe: Recipe = SharedService.recipesMapPerItemKnown[id];
     if (recipe) {
       recipe.reagents.forEach(r => {
-        result.cost += this.getPrice(r.itemID, r.count * quantity);
+        result.cost += this.getPrice(r.id, r.quantity * quantity);
       });
       result.intermediateEligible = true;
     } else if (item) {
@@ -189,15 +191,15 @@ export abstract class BaseCraftingUtil {
     recipe.cost = 0;
     recipe.roi = 0;
     recipe.reagents.forEach(reagent => {
-      const knownRecipe: Recipe = SharedService.recipesMapPerItemKnown[reagent.itemID];
-      if (this.shouldUseIntermediateForReagent(knownRecipe, reagent) && !this.getOverridePrice(reagent.itemID)) {
+      const knownRecipe: Recipe = SharedService.recipesMapPerItemKnown[reagent.id];
+      if (this.shouldUseIntermediateForReagent(knownRecipe, reagent) && !this.getOverridePrice(reagent.id)) {
         reagent.intermediateEligible = true;
-        reagent.intermediateCount = reagent.count;
-        recipe.cost += knownRecipe.cost * reagent.count;
+        reagent.intermediateCount = reagent.quantity;
+        recipe.cost += knownRecipe.cost * reagent.quantity;
       } else {
         reagent.intermediateEligible = false;
         reagent.intermediateCount = 0;
-        recipe.cost += reagent.avgPrice * (reagent.count / recipe.procRate);
+        recipe.cost += reagent.avgPrice * (reagent.quantity / recipe.procRate);
       }
     });
     this.setROI(recipe);

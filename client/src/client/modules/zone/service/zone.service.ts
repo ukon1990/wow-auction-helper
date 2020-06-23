@@ -18,7 +18,7 @@ export class ZoneService {
   constructor(private http: HttpClient, private dbService: DatabaseService) {
   }
 
-  getAll(forceUpdate = false): Promise<Zone[]> {
+  getAll(forceUpdate = false, latestTimestamp?: Date): Promise<Zone[]> {
     if (forceUpdate) {
       localStorage.removeItem(this.storageName);
     }
@@ -28,23 +28,24 @@ export class ZoneService {
         .then(list => this.mapAndSetNextValueForZones(list))
         .catch(console.error);
 
-      if (!this.list.value.length) {
-        await this.getAllFromS3();
-      }
 
-      await this.getAllAfterTimestamp();
+      const timestamp = localStorage.getItem(this.storageName);
+      if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+        await this.get();
+      }
       resolve(this.list.value);
     });
   }
 
-  private getAllFromS3(): Promise<any[]> {
+  get(): Promise<any[]> {
     SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
     return new Promise<any[]>((resolve, reject) => {
-      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz`)
+      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
         .then(async (response) => {
           SharedService.downloading.zone = false;
+          await this.dbService.clearZones();
           this.setTimestamp(response);
           this.mapAndSetNextValueForZones(response['zones']);
           await this.dbService.addZones(response['zones']);
@@ -63,28 +64,6 @@ export class ZoneService {
       return;
     }
     localStorage[this.storageName] = response['timestamp'];
-  }
-
-  private async getAllAfterTimestamp() {
-    SharedService.downloading.zone = true;
-    const locale = localStorage['locale'];
-    return new Promise<Zone[]>((resolve) => {
-
-      this.http.post(Endpoints.getLambdaUrl('zone'),
-        {locale, timestamp: localStorage.getItem(this.storageName)})
-        .toPromise()
-        .then(async response => {
-          SharedService.downloading.zone = false;
-          this.setTimestamp(response);
-          this.mapAndSetNextValueForZones(response['zones']);
-          await this.dbService.addZones(response['zones']);
-          resolve(this.list.value);
-        }).catch(error => {
-        SharedService.downloading.zone = false;
-        ErrorReport.sendHttpError(error);
-        resolve(this.list.value);
-      });
-    });
   }
 
   private mapAndSetNextValueForZones(newData: Zone[]) {

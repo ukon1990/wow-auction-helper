@@ -46,8 +46,8 @@ export class MaterialsComponent implements OnInit {
   }
 
   setSelectedItem(reagent: Reagent): void {
-    SharedService.events.detailSelection.emit(SharedService.items[reagent.itemID]);
-    ItemService.itemSelection.emit(reagent.itemID);
+    SharedService.events.detailSelection.emit(SharedService.items[reagent.id]);
+    ItemService.itemSelection.emit(reagent.id);
   }
 
   getRecipeForItem(itemID: number): Array<Reagent> {
@@ -66,10 +66,10 @@ export class MaterialsComponent implements OnInit {
 
   vendorTooltip(reagent: Reagent): string {
     if (this.usingVendor) {
-      const item: Item = SharedService.itemNpcMap[reagent.itemID];
+      const item: Item = SharedService.itemNpcMap[reagent.id];
       if (!this.vendorHasEnough(reagent) && item) {
         const vendorCount = item.vendorBoughtLimit;
-        return `You need to buy ${reagent.count - vendorCount} from AH and ${
+        return `You need to buy ${reagent.quantity - vendorCount} from AH and ${
           vendorCount} from the vendor. This is used for cost calculation.`;
       }
       return `This item is sold by a vendor, and it is currently cheaper source than from the AH.`;
@@ -78,7 +78,7 @@ export class MaterialsComponent implements OnInit {
   }
 
   usingVendor(reagent: Reagent): boolean {
-    return CraftingUtil.isVendorCheaperThanAH(reagent.itemID) ? true : false;
+    return CraftingUtil.isVendorCheaperThanAH(reagent.id);
   }
 
   getReagentFromVendorString(reagent: Reagent): string | boolean {
@@ -86,8 +86,8 @@ export class MaterialsComponent implements OnInit {
   }
 
   vendorHasEnough(reagent: Reagent) {
-    return SharedService.items[reagent.itemID] &&
-      SharedService.items[reagent.itemID].vendorBoughtLimit >= reagent.count;
+    return SharedService.items[reagent.id] &&
+      SharedService.items[reagent.id].vendorBoughtLimit >= reagent.quantity;
   }
 
   getAhCountTooltip(id: number) {

@@ -1,6 +1,6 @@
-import {Pet} from './pet';
-import {CollectedPet} from '../../character/models/character.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
+import {CollectedPet} from '../../../../../../api/src/character/model';
+import {QualityUtil} from '../../../utils/quality.util';
 
 export class PetTableData {
   public itemID = 82800;
@@ -17,11 +17,11 @@ export class PetTableData {
   public totalBuyout: number;
 
   constructor(private collectedPet: CollectedPet, public auctions: AuctionItem[]) {
-    this.petSpeciesId = collectedPet.stats.speciesId;
-    this.name = collectedPet.creatureName;
-    this.icon = collectedPet.icon;
-    this.petLevel = collectedPet.stats.level;
-    this.petQualityId = collectedPet.qualityId;
+    this.petSpeciesId = collectedPet.speciesId;
+    this.name = collectedPet.speciesName;
+    // TODO: this.icon = collectedPet.icon;
+    this.petLevel = collectedPet.level;
+    this.petQualityId = QualityUtil.get(collectedPet.quality);
     this.userStock = collectedPet.count;
     this.ahStock = this.getStock(auctions);
 

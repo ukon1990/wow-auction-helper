@@ -41,7 +41,7 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updated.recipes.list = SharedService.recipes;
+    this.updated.recipes.list = CraftingService.list.value;
   }
 
   /**
@@ -55,7 +55,7 @@ export class UpdateComponent implements OnInit {
     if (!i) {
       i = 0;
       this.updated.recipes.list = [];
-      SharedService.recipes
+      CraftingService.list.value
         .filter((recipe: Recipe) =>
           Filters.isExpansionMatch(recipe.itemID, 7))
         .forEach(r => {
@@ -152,7 +152,7 @@ export class UpdateComponent implements OnInit {
   }
 
   printData() {
-    const recipes = SharedService.recipes.filter(r =>
+    const recipes = CraftingService.list.value.filter(r =>
       Filters.isExpansionMatch(r.itemID, 7)).slice(0, 99);
     const pets = Object.keys(SharedService.pets)
       .map(k =>
@@ -166,7 +166,7 @@ export class UpdateComponent implements OnInit {
           item.itemSource[k].length = 0);
       items.push();
       recipe.reagents.forEach(reagent => {
-        item = SharedService.items[reagent.itemID];
+        item = SharedService.items[reagent.id];
         if (item) {
           Object.keys(item.itemSource)
             .forEach(k =>

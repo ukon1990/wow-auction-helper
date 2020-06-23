@@ -7,11 +7,11 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
-import {customProcsDefault} from '../../../../crafting/models/default-custom-procs';
 import {Report} from '../../../../../utils/report.util';
 import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {CraftingService} from '../../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -66,7 +66,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
    * @param name Item name for the query
    */
   private filter(name: string): Array<Recipe> {
-    return SharedService.recipes.filter(i =>
+    return CraftingService.list.value.filter(i =>
       TextUtil.contains(i.name, name)).slice(0, 20);
   }
 
@@ -76,6 +76,6 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   }
 
   resetToDefault(): void {
-    SharedService.user.customProcs = customProcsDefault;
+    SharedService.user.customProcs = [];
   }
 }

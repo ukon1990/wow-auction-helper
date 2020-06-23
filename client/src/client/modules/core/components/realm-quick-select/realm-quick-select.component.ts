@@ -12,6 +12,7 @@ import {DatabaseService} from '../../../../services/database.service';
 import {Report} from '../../../../utils/report.util';
 import {RealmStatus} from '../../../../models/realm-status.model';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
+import {CraftingService} from '../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -29,7 +30,9 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder, private realmService: RealmService, private dbService: DatabaseService,
-    private characterService: CharacterService, private auctionsService: AuctionsService) {
+    private craftingService: CraftingService,
+    private characterService: CharacterService,
+    private auctionsService: AuctionsService) {
     this.form = this.fb.group({
       region: new FormControl(this.getFormValueFor('region')),
       realm: new FormControl(this.getFormValueFor('realm')),
@@ -54,6 +57,10 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
+
+    if (!this.form.value.faction) {
+      this.form.controls.faction.setValue(0);
+    }
   }
 
   ngOnDestroy() {
@@ -170,6 +177,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
   private handleFactionChange(faction: number) {
     SharedService.user.faction = faction;
     User.save();
+    this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();
     Report.send('handleFactionChange', 'RealmQuickSelectComponent');
