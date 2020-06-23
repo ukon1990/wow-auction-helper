@@ -66,10 +66,9 @@ export class PetHandler {
     });
   }
 
-  getAllRelevant(timestamp: string, locale: string = 'en_GB'): Promise<ApiResponse<Pet>> {
+  getAllRelevant(timestamp: string, locale: string = 'en_GB', db: DatabaseUtil = new DatabaseUtil()): Promise<ApiResponse<Pet>> {
     return new Promise<ApiResponse<Pet>>((resolve, reject) => {
-      new DatabaseUtil()
-        .query(PetQuery.selectAllForTimestampWithLocale(locale, timestamp))
+      db.query(PetQuery.selectAllForTimestampWithLocale(locale, timestamp))
         .then((rows: Pet[]) => {
           console.log('Pets', rows.length);
           let ts: string = timestamp;

@@ -20,6 +20,9 @@ import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
 import {Router} from '@angular/router';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
+import {CraftingService} from '../../../services/crafting.service';
+import {ProfessionService} from '../../crafting/services/profession.service';
+import {Profession} from '../../../../../../api/src/profession/model';
 
 @Component({
   selector: 'wah-data-table',
@@ -47,6 +50,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   filteredData = [];
   sm = new SubscriptionManager();
+  professionIdMap: Map<number, Profession> = new Map<number, Profession>();
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
@@ -65,8 +69,12 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   private isTyping: boolean;
   private lastCharacterTyped: number;
 
-  constructor(private router: Router) {
+  constructor(private professionService: ProfessionService) {
     this.sorter = new Sorter();
+
+    this.sm.add(professionService.map, map => {
+      this.professionIdMap = map;
+    });
   }
 
   ngAfterViewInit() {
@@ -206,8 +214,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   getCraftersForRecipe(recipe: Recipe) {
-    return SharedService.recipesForUser[recipe.spellID] ?
-      SharedService.recipesForUser[recipe.spellID].join(', ') : '';
+    return SharedService.recipesForUser[recipe.id] ?
+      SharedService.recipesForUser[recipe.id].join(', ') : '';
   }
 
   customPrices(): CustomPrices {
@@ -329,8 +337,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.sorter.sort(this.filteredData, column.customSort);
   }
 
-  getSource(recipe: Recipe): string {
-    return recipe.profession ? recipe.profession : 'On use';
+  getSource(recipe: Recipe): number {
+    return recipe.professionId || 0;
   }
 
   displayColumn(column: ColumnDescription): boolean {
@@ -370,8 +378,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       return (item as ShoppingCartItem).quantity;
     } else {
       const recipe: Recipe = this.isKnownRecipe(item);
-      return item && SharedService.user.shoppingCart.recipeMap[recipe.spellID] ?
-        SharedService.user.shoppingCart.recipeMap[recipe.spellID].quantity :
+      return item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
+        SharedService.user.shoppingCart.recipeMap[recipe.id].quantity :
         0;
     }
   }
@@ -407,7 +415,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     const diff = newValue - recipe.quantity;
     if (diff > 0 && newValue > 0) {
       SharedService.user.shoppingCart.add(
-        SharedService.recipesMap[recipe.id],
+        CraftingService.map.value.get(recipe.id),
         diff);
     } else {
       SharedService.user.shoppingCart.remove(
@@ -426,7 +434,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (SharedService.recipesMapPerItemKnown[id]) {
       return SharedService.recipesMapPerItemKnown[id];
     }
-    return recipe && recipe.profession === 'none';
+    return recipe && !recipe.professionId;
 
   }
 

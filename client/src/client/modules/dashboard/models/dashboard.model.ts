@@ -13,6 +13,7 @@ import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TSM} from '../../auction/models/tsm.model';
+import {CraftingService} from '../../../services/crafting.service';
 
 export class Dashboard {
   public static fails = [];
@@ -534,7 +535,8 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) *
+        CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
@@ -572,7 +574,8 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) * CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
+        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) *
+        CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
@@ -628,7 +631,7 @@ export class Dashboard {
     let sumROI = 0;
     const pipe: GoldPipe = new GoldPipe();
     this.data.length = 0;
-    this.data = SharedService.recipes
+    this.data = CraftingService.list.value
       .filter(recipe => {
         if (this.isExpansionMissMatch(recipe.itemID) || !recipe || !recipe.roi) {
           return false;
@@ -638,7 +641,7 @@ export class Dashboard {
           return false;
         }
 
-        if (onlyKnown && !SharedService.recipesForUser[recipe.spellID] && recipe.profession) {
+        if (onlyKnown && !SharedService.recipesForUser[recipe.id] && recipe.professionId) {
           return false;
         }
         if (Filters.isUsingAPI()) {

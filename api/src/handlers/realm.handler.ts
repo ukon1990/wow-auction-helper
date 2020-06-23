@@ -4,7 +4,6 @@ import * as http from 'request';
 import {Endpoints} from '../utils/endpoints.util';
 import {Response} from '../utils/response.util';
 import {Realm, RealmStatuses} from '../models/realm.model';
-import {LocaleHandler} from './locale.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from '../queries/realm.query';
 import {HttpClientUtil} from '../utils/http-client.util';
@@ -78,24 +77,6 @@ export class RealmHandler {
         .then(resolve)
         .catch(reject);
     });
-  }
-
-  async getAllRealmsGrouped(event: APIGatewayEvent, callback: Callback) {
-    await AuthHandler.getToken();
-    const list = [],
-      regions = Object.keys(new LocaleHandler().region);
-
-    for (let i = 0; i < regions.length; i++) {
-      const region = regions[i];
-      await this.getRealmList(region)
-        .then(status =>
-          this.processRealms(region, status, list))
-        .catch(console.error);
-    }
-
-    Response.send(list, callback);
-
-    // this.addHouses(list);
   }
 
   getRealmList(region: string): Promise<RealmStatuses> {

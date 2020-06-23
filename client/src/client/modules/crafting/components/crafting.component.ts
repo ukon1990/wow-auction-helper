@@ -7,14 +7,13 @@ import {GameBuild} from '../../../utils/game-build.util';
 import {itemClasses} from '../../../models/item/item-classes';
 import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
-import {User} from '../../../models/user/user';
-import {CraftingUtil} from '../utils/crafting.util';
 import {Filters} from '../../../utils/filtering';
-import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {BaseCraftingUtil} from '../utils/base-crafting.util';
 import {AuctionsService} from '../../../services/auctions.service';
+import {ThemeUtil} from '../../core/utils/theme.util';
+import {CraftingService} from '../../../services/crafting.service';
+import {ProfessionService} from '../services/profession.service';
 
 @Component({
   selector: 'wah-crafting',
@@ -22,14 +21,12 @@ import {AuctionsService} from '../../../services/auctions.service';
   styleUrls: ['./crafting.component.scss']
 })
 export class CraftingComponent implements OnInit, OnDestroy {
+  theme = ThemeUtil.current;
   searchForm: FormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
   itemClasses = itemClasses;
-  professions = [
-    ...GameBuild.professions,
-    'none'
-  ].sort();
+  professions = [];
   expansions = GameBuild.expansionMap;
   delayFilter = false;
 
@@ -45,7 +42,8 @@ export class CraftingComponent implements OnInit, OnDestroy {
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
-  constructor(private _formBuilder: FormBuilder, private _title: Title, private service: AuctionsService) {
+  constructor(private _formBuilder: FormBuilder, private _title: Title,
+              private service: AuctionsService, private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
@@ -53,7 +51,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
       onlyKnownRecipes: query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true,
-      profession: query && query.profession ? query.profession : 'All',
+      professionId: query && query.professionId ? query.professionId : 0,
       profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
       demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
       minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
@@ -72,7 +70,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       this.searchForm.valueChanges,
-      (() => {
+      ((changes) => {
         localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
 
         if (!this.delayFilter) {
@@ -88,6 +86,20 @@ export class CraftingComponent implements OnInit, OnDestroy {
       this.service.events.groupedList,
       () =>
         this.filter());
+
+    this.subs.add(this.professionService.listWithRecipes, (professions) => {
+      this.professions = [
+        {
+          id: 0,
+          name: 'All',
+        },
+        ...(this.getProfessionsSorted(professions)),
+        {
+          id: -1,
+          name: 'None'
+        }
+      ];
+    });
   }
 
   ngOnDestroy() {
@@ -95,7 +107,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   filter(changes = this.searchForm.value): void {
-    this.filtered = SharedService.recipes
+    this.filtered = CraftingService.list.value
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {
           return this.isKnownRecipe(recipe)
@@ -103,7 +115,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isProfitMatch(recipe, undefined, changes.profit)
             && Filters.isSaleRateMatch(recipe.itemID, changes.demand, false)
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
-            && Filters.isProfessionMatch(recipe.itemID, changes.profession)
+            && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
             && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
         }
@@ -112,7 +124,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   isKnownRecipe(recipe: Recipe): boolean {
-    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.spellID] || !recipe.profession;
+    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.id] || !recipe.professionId;
   }
 
   isNameMatch(recipe: Recipe, name: string): boolean {
@@ -126,16 +138,14 @@ export class CraftingComponent implements OnInit, OnDestroy {
     return item && TextUtil.contains(item.name, name);
   }
 
-
-  /* istanbul ignore next */
-  isDarkmode(): boolean {
-    return SharedService.user ? SharedService.user.isDarkMode : false;
-  }
-
   resetForm() {
     this.searchForm.reset({
       strategy: SharedService.user.craftingStrategy,
       intermediate: SharedService.user.useIntermediateCrafting
     });
+  }
+
+  private getProfessionsSorted(professions) {
+    return professions.sort((a, b) => a.name.localeCompare(b.name)) || [];
   }
 }

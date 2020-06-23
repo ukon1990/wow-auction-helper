@@ -5,14 +5,11 @@ import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
-import {WoWUction} from '../models/wowuction.model';
-import {PetsService} from '../../../services/pets.service';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
-import {AuctionItemStat, AuctionProcessorUtil} from '../../../../../../api/src/utils/auction-processor.util';
-import {ItemService} from '../../../services/item.service';
+import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
 
 export class AuctionUtil {
   private static missingPetMap = {};
@@ -21,12 +18,12 @@ export class AuctionUtil {
    * Used in the auction service.
    * @param auctions A raw auction array
    */
-  public static organize(auctions: Array<Auction>, petService?: PetsService): Promise<any> {
+  public static organize(auctions: Array<Auction>): Promise<any> {
     return new Promise<AuctionItem[]>((resolve, reject) => {
       try {
         const t0 = performance.now();
         this.clearOldData();
-        this.groupAuctions(auctions, petService);
+        this.groupAuctions(auctions);
         this.calculateCosts(t0);
         SharedService.events.auctionUpdate.emit(true);
         Report.debug('AuctionUtil.organize', SharedService.auctionItems);
@@ -37,7 +34,7 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, petService: PetsService) {
+  private static groupAuctions(auctions: Array<Auction>) {
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     Object.keys(SharedService.tsm).forEach(id => {
       const auction = new Auction();
@@ -47,7 +44,7 @@ export class AuctionUtil {
 
     SharedService.auctions = auctions;
     auctions.forEach((a: Auction) =>
-      this.processAuction(a, petService));
+      this.processAuction(a));
 
     SharedService.auctionItems.forEach(ai => {
       ai.auctions = ai.auctions.sort((a, b) => {
@@ -105,7 +102,7 @@ export class AuctionUtil {
     console.log(`Prices calc time ${t2 - t1} ms`);
   }
 
-  private static processAuction(a: Auction, petService: PetsService) {
+  private static processAuction(a: Auction) {
     const id = a.item + AuctionItemStat.bonusId(a.bonusLists, false);
     if (a.petSpeciesId && AuctionUtil.isPetNotInList(a)) {
       const petId = AuctionUtil.getPetId(a);
@@ -113,7 +110,7 @@ export class AuctionUtil {
       SharedService.auctionItems.push(SharedService.auctionItemsMap[petId]);
       AuctionUtil.setUserSaleRateForAuction(a);
 
-      if (!AuctionUtil.isPetMissing(a, petService)) {
+      if (!AuctionUtil.isPetMissing(a)) {
         this.handlePetAuction(a, petId);
       }
     } else {
@@ -159,16 +156,8 @@ export class AuctionUtil {
     return !SharedService.auctionItemsMap[AuctionUtil.getPetId(a)];
   }
 
-  private static isPetMissing(a, petService: PetsService) {
-    const isMissing = !SharedService.pets[a.petSpeciesId] && petService;
-    if (isMissing && !this.missingPetMap[a.petSpeciesId]) {
-      petService.getPet(a.petSpeciesId)
-        .then(() =>
-          this.missingPetMap[a.petSpeciesId] = a.petSpeciesId)
-        .catch(() =>
-          this.missingPetMap[a.petSpeciesId] = a.petSpeciesId);
-    }
-    return isMissing;
+  private static isPetMissing(auction: Auction) {
+    return !SharedService.pets[auction.petSpeciesId];
   }
 
   private static getItemName(auction: Auction, useSuffix = true): string {

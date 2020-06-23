@@ -4,11 +4,11 @@
   <mat-card *ngIf="r.intermediateEligible && useIntermediateCrafting(); else regular" class="p-0 m-0 pt-2 pb-2">
     <mat-card-header (click)="setSelectedItem(r)">
       <mat-card-subtitle>
-        <a class="col-md-12" rel="spell={{ r.recipe.spellID }}"
-           [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }">
-          <wah-icon *ngIf="r.itemID" class="float-left" size="22" [id]="r.itemID"></wah-icon>
-          {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} -
-          <span class="float-right" [matTooltip]="usingVendor(r) ? vendorTooltip : ''">
+        <a class="col-md-12" rel="spell={{ r.recipe.id }}"
+           [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }">
+          <wah-icon *ngIf="r.id" class="float-left" size="22" [id]="r.id"></wah-icon>
+          {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} -
+          <span class="float-right" [matTooltip]="usingVendor(r) ? vendorTooltip(r) : ''">
             {{ r.recipe.cost | gold }}
             {{ getReagentFromVendorString(r) }}
           </span>
@@ -19,14 +19,14 @@
       <div class="ml-3 mr-1 mb-1"
            *ngFor="let subR of r.recipe.reagents"
            (click)="setSelectedItem(subR)">
-        <a rel="item={{ subR.itemID }}"
-           [ngClass]="{'not-found': !isEnoughAtAH(subR.itemID, subR.count) }"
-           [matTooltip]="getAhCountTooltip(subR.itemID)">
-          <wah-icon *ngIf="subR.itemID" class="float-left" size="22" [id]="subR.itemID"></wah-icon>
-          {{ subR.count * r.count / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }}
-          x {{ getItemName(subR.itemID) }} -
+        <a rel="item={{ subR.id }}"
+           [ngClass]="{'not-found': !isEnoughAtAH(subR.id, subR.quantity) }"
+           [matTooltip]="getAhCountTooltip(subR.id)">
+          <wah-icon *ngIf="subR.id" class="float-left" size="22" [id]="subR.id"></wah-icon>
+          {{ subR.quantity * r.quantity / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }}
+          x {{ getItemName(subR.id) }} -
           <span class="float-right" [matTooltip]="usingVendor(subR) ? vendorTooltip(subR) : ''">
-            {{ getItemValue(subR.itemID) | gold }}
+            {{ getItemValue(subR.id) | gold }}
             {{ getReagentFromVendorString(subR) }} / {{subR.avgPrice | gold}}
           </span>
         </a>
@@ -37,17 +37,17 @@
   <!-- No reasonable intermidiate crafts available -->
   <ng-template #regular>
     <div (click)="setSelectedItem(r)">
-      <a rel="item={{ r.itemID }}"
-         [ngClass]="{'not-found': !isEnoughAtAH(r.itemID, r.count) }"
-         [matTooltip]="getAhCountTooltip(r.itemID)">
-        <wah-icon *ngIf="r.itemID"
+      <a rel="item={{ r.id }}"
+         [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }"
+         [matTooltip]="getAhCountTooltip(r.id)">
+        <wah-icon *ngIf="r.id"
                   class="float-left"
                   size="22"
-                  [id]="r.itemID"></wah-icon>
-        {{ r.count / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.itemID) }} -
+                  [id]="r.id"></wah-icon>
+        {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.id) }} -
         <span class="float-right" [ngClass]="{'not-found': !vendorHasEnough(r) && usingVendor(r)}"
               [matTooltip]="vendorTooltip(r)">
-          {{ getItemValue(r.itemID) | gold }}
+          {{ getItemValue(r.id) | gold }}
           {{ getReagentFromVendorString(r) }} / {{r.avgPrice | gold}}
         </span>
       </a>

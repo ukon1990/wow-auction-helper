@@ -1,14 +1,11 @@
-import { Reagent } from './reagent';
+import {Recipe as APIRecipe} from '../../../../../../api/src/recipe/model';
+import {Reagent} from './reagent';
 
-export class Recipe {
-  spellID: number;
+export class Recipe extends APIRecipe {
+  // Added by the client
   itemID: number;
-  name = 'Missing recipe data';
-  profession?: string;
-  rank?: string;
-  minCount: number;
-  maxCount: number;
-  reagents: Array<Reagent>;
+  icon: string;
+  reagents: Reagent[];
   expansion?: number;
   flaggedAsBugged?: boolean;
 

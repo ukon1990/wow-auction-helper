@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {User} from '../../../../models/user/user';
 import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {BackgroundDownloadService} from '../../../../services/background-download.service';
+import {BackgroundDownloadService} from '../../../core/services/background-download.service';
 
 @Component({
   selector: 'wah-setup',

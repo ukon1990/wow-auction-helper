@@ -4,6 +4,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {Item} from '../../../../../models/item/item';
+import {CraftingService} from '../../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-add-items',
@@ -50,14 +51,14 @@ export class AddItemsComponent implements OnInit {
 
   setMissingReagentItems(): void {
     const list = [];
-    SharedService.recipes.forEach(recipe => {
+    CraftingService.list.value.forEach(recipe => {
       if (!SharedService.items[recipe.itemID] && recipe.itemID) {
         list.push(recipe.itemID);
       }
 
       recipe.reagents.forEach(reagent => {
-        if (!SharedService.items[reagent.itemID] && reagent.itemID) {
-          list.push(reagent.itemID);
+        if (!SharedService.items[reagent.id] && reagent.id) {
+          list.push(reagent.id);
         }
       });
     });
@@ -70,7 +71,7 @@ export class AddItemsComponent implements OnInit {
       this.progress[key] = [];
     });
     this.progress.ids = this.form.getRawValue().input.replace(/[ a-zA-z]/g, '').split(',');
-    this.addItem(0);
+    // this.addItem(0);
   }
 
   async addItem(index: number) {
@@ -96,13 +97,13 @@ export class AddItemsComponent implements OnInit {
       if (SharedService.items[id] && !this.shouldUpdate()) {
         const {name, icon}: Item = SharedService.items[id];
         this.progress.existing.push({id: id, name, icon, isNew: false});
-      } else {
+      } else {/* TODO: remove?
         await this.service.addItem(id)
           .then((item) =>
             this.handleServiceResult(item, id))
           .catch((error) => {
             this.progress.failed.push({id: id, message: error});
-          });
+          });*/
       }
     }
   }

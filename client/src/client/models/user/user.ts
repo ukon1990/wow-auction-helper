@@ -5,11 +5,11 @@ import {Watchlist} from '../../modules/dashboard/models/watchlist.model';
 import {CustomPrice, CustomPrices} from '../../modules/crafting/models/custom-price';
 import {customPricesDefault} from '../../modules/crafting/models/default-custom-prices';
 import {CustomProc} from '../../modules/crafting/models/custom-proc.model';
-import {customProcsDefault} from '../../modules/crafting/models/default-custom-procs';
 import {ProspectingAndMillingUtil} from '../../utils/prospect-milling.util';
 import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.model';
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
 import {BaseCraftingUtil} from '../../modules/crafting/utils/base-crafting.util';
+import {CharacterProfession} from '../../../../../api/src/character/model';
 
 
 export class User {
@@ -20,14 +20,13 @@ export class User {
   characters: Array<Character> = new Array<Character>();
   apiWoWu?: string;
   apiTsm?: string;
-  customPrices: Array<CustomPrice> = customPricesDefault;
-  customProcs: Array<CustomProc> = customProcsDefault;
+  customPrices: CustomPrice[] = customPricesDefault;
+  customProcs: CustomProc[] = [];
   apiToUse = 'none';
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
   useVendorPriceForCraftingIfAvailable = true;
   useIntermediateCrafting = true;
-  crafters: any[];
   notifications: NotificationSettings = new NotificationSettings();
   watchlist: Watchlist = new Watchlist();
   shoppingCart: ShoppingCart = new ShoppingCart();
@@ -36,6 +35,7 @@ export class User {
   gameVersion = 0;
   classicRealm: string;
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
+  locale: string;
 
   /**
    *
@@ -205,7 +205,7 @@ export class User {
     });
 
     if (user.customProcs.length === 0) {
-      user.customProcs = customProcsDefault;
+      user.customProcs = [];
     }
     return user;
   }
@@ -214,6 +214,7 @@ export class User {
    * Grouping the current recipes for a user
    */
   public static updateRecipesForRealm(): void {
+    // TODO: fix
     SharedService.recipesForUser = new Map<number, Array<string>>();
     SharedService.user.characters.forEach(character => {
       this.setRecipesForCharacter(character);
@@ -223,25 +224,25 @@ export class User {
   public static setRecipesForCharacter(character: Character): void {
     if (character && character.professions &&
       SharedService.user.realm.toLowerCase() === User.slugifyString(character.realm)) {
-      character.professions.primary.forEach(primary => {
-        primary.recipes.forEach(recipe => {
-          User.addRecipe(recipe, character.name, character.faction);
-        });
+      character.professions.primaries.forEach(primary => {
+        this.addKnownRecipes(primary, character);
       });
-      character.professions.secondary.forEach(secondary => {
-        secondary.recipes.forEach(recipe => {
-          User.addRecipe(recipe, character.name, character.faction);
-        });
-      });
+      character.professions.primaries.forEach(secondary => this.addKnownRecipes(secondary, character));
     }
   }
 
-  private static addRecipe(spellId: number, characterName: string, faction: number): void {
-    if (!SharedService.recipesForUser[spellId]) {
-      SharedService.recipesForUser[spellId] = new Array<string>();
+  private static addKnownRecipes(category: CharacterProfession, character: Character) {
+    category.skillTiers.forEach(tier =>
+      tier.recipes.forEach(recipe =>
+        User.addRecipe(recipe, character.name, character.faction)));
+  }
+
+  private static addRecipe(id: number, characterName: string, faction: number): void {
+    if (!SharedService.recipesForUser[id]) {
+      SharedService.recipesForUser[id] = new Array<string>();
     }
-    SharedService.recipesForUser[spellId].push(
-      `${characterName} (${ faction ? 'H' : 'A'})`);
+    SharedService.recipesForUser[id].push(
+      `${characterName} (${faction ? 'H' : 'A'})`);
   }
 
   public static slugifyString(realm: string): string {

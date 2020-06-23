@@ -2,24 +2,21 @@ import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {Item} from '../models/item/item';
 import {Auction} from '../modules/auction/models/auction.model';
-import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {SharedService} from './shared.service';
 import {TSM} from '../modules/auction/models/tsm.model';
-import {WoWUction} from '../modules/auction/models/wowuction.model';
-import {PetsService} from './pets.service';
 import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
 import {TsmLuaUtil} from '../utils/tsm/tsm-lua.util';
 import {ErrorReport} from '../utils/error-report.util';
-import {AuctionsService} from './auctions.service';
 import {NPC} from '../modules/npc/models/npc.model';
 import {Zone} from '../modules/zone/models/zone.model';
 import {BehaviorSubject} from 'rxjs';
 import {Report} from '../utils/report.util';
 import {GameBuild} from '../utils/game-build.util';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
+import {Profession} from '../../../../api/src/profession/model';
 
 /**
  * A Class for handeling the indexedDB
@@ -37,12 +34,15 @@ export class DatabaseService {
     + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation';
   readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
   readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
-  readonly RECIPE_TABLE_COLUMNS = 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion';
+  readonly RECIPE_TABLE_COLUMNS = 'id,icon,name,description,rank,craftedItemId,hordeCraftedItemId,' +
+    'allianceCraftedItemId,minCount,maxCount,procRate,professionId,skillTierId,reagents';
   readonly TSM_ADDON_HISTORY = 'timestamp,data';
   readonly ADDON = 'id,name,gameVersion,timestamp,data';
   readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
     'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
   readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
+  readonly PROFESSION_TABLE_COLUMNS = 'id,name,description,icon,type,skillTiers';
+
   databaseIsReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(public platform: Platform) {
@@ -76,7 +76,8 @@ export class DatabaseService {
       return;
     }
     this.db.table('items').bulkPut(items)
-      .catch(console.error);
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.addItems', e));
   }
 
   async getAllItems(): Dexie.Promise<any> {
@@ -132,7 +133,34 @@ export class DatabaseService {
   }
 
   async clearNPCs(): Promise<void> {
-    await this.db.table('npcs').clear();
+    await this.db.table('npcs').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearNPCs', error));
+  }
+
+  addProfessions(professions: Profession[]): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+        resolve();
+        return;
+      }
+      this.db.table('professions').bulkPut(professions)
+        .then(() => resolve())
+        .catch(reject);
+    });
+  }
+
+  getAllProfessions() {
+    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      return new Dexie.Promise<any>((resolve, reject) => reject([]));
+    }
+    return this.db.table('professions').toArray();
+  }
+
+  async clearProfessions() {
+    await this.db.table('professions').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearProfessions', error));
   }
 
   async addZones(list: Zone[]): Promise<void> {
@@ -185,46 +213,42 @@ export class DatabaseService {
     this.db.table('pets').clear();
   }
 
-  addRecipes(recipes: Array<Recipe>): void {
+  addRecipes(recipes: Recipe[]): void {
     if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
-    this.db.table('recipes').bulkPut(recipes);
+    this.db.table('recipes').bulkPut(recipes)
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.addRecipes', e));
   }
 
-  getAllRecipes(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return new Dexie.Promise<any>((resolve, reject) => reject([]));
-    }
-
+  getAllRecipes(): Promise<Recipe[]> {
     SharedService.downloading.recipes = true;
-    return this.db.table('recipes')
-      .toArray()
-      .then(recipes => {
+    return new Promise((resolve, reject) => {
+      if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+        return resolve([]);
+      }
+
+      this.db.table('recipes')
+        .toArray()
+        .then(recipes => {
+          SharedService.downloading.recipes = false;
+          console.log('Restored recipes from local DB');
+          resolve(recipes);
+          SharedService.events.recipes.emit(true);
+        }).catch(error => {
+        console.error('Could not restore recipes from local DB', error);
+        ErrorReport.sendError('DatabaseService.getAllRecipes', error);
         SharedService.downloading.recipes = false;
-        SharedService.recipes = recipes as Array<Recipe>;
-        SharedService.events.recipes.emit(true);
-        console.log('Restored recipes from local DB');
-      }).catch(e => {
-        console.error('Could not restore recipes from local DB', e);
-        SharedService.downloading.recipes = false;
+        reject(error);
       });
+    });
   }
 
-  clearRecipes(): void {
-    this.db.table('recipes').clear();
-  }
-
-  addClassicAuctions(realmData: { realm: string, auctions: Auction[] }): void {
-    if (this.isUnsupportedBrowser()) {
-      return;
-    }
-
-    // this.db.table('classic-auctions').clear();
-    this.db.table('classic-auctions')
-      .put(realmData)
-      .then(r => console.log('Successfully added auctions to local DB'))
-      .catch(e => console.error('Could not add auctions to local DB', e));
+  async clearRecipes(): Promise<void> {
+    await this.db.table('recipes').clear()
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.clearRecipes', e));
   }
 
   addAuction(auction: Auction): void {
@@ -235,109 +259,11 @@ export class DatabaseService {
       .then(r =>
         console.log('Successfully added auctions to local DB'))
       .catch(e =>
-        console.error('Could not add auctions to local DB', e));
+        ErrorReport.sendError('DatabaseService.addAuction', e));
   }
 
   private isUnsupportedBrowser() {
     return environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported;
-  }
-
-  clearAuctions(): void {
-    this.db.table('auctions').clear();
-  }
-
-
-  addAuctions(auctions: Array<Auction>): void {
-    return; // Deactivated
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return;
-    }
-    this.db.table('auctions').clear();
-    this.db.table('auctions')
-      .bulkAdd(auctions)
-      .then(r => console.log('Successfully added auctions to local DB'))
-      .catch(e => console.error('Could not add auctions to local DB', e));
-  }
-
-  async getAllAuctions(petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    return; // Deactivated
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return new Dexie.Promise<any>((resolve, reject) => reject());
-    }
-
-    SharedService.downloading.auctions = true;
-    return this.db.table('auctions')
-      .toArray()
-      .then(auctions => {
-        SharedService.downloading.auctions = false;
-        auctionService.events.list.next(auctions);
-        AuctionUtil.organize(auctions, petService)
-          .then(auctionItems =>
-            auctionService.events.groupedList.next(auctionItems))
-          .catch(error =>
-            ErrorReport.sendError('getAllAuctions', error));
-        console.log('Restored auctions from local DB');
-        SharedService.events.auctionUpdate.emit();
-      }).catch(e => {
-        console.error('Could not restore auctions from local DB', e);
-        SharedService.downloading.auctions = false;
-      });
-  }
-
-  async getClassicAuctions(realm: string, petService?: PetsService, auctionService?: AuctionsService): Dexie.Promise<any> {
-    console.log('input to DB fetch', realm);
-    SharedService.downloading.auctions = true;
-    return this.db.table('classic-auctions')
-      .where('realm')
-      .equals(realm)
-      .toArray()
-      .then(realmData =>
-        this.handleSuccessfulAuctionDBFetch(realmData[0].auctions, petService, auctionService))
-      .catch(e => {
-        console.error('Could not restore auctions from local DB', e);
-        SharedService.downloading.auctions = false;
-      });
-  }
-
-  private handleSuccessfulAuctionDBFetch(auctions: Auction[], petService: PetsService, auctionService: AuctionsService) {
-    SharedService.downloading.auctions = false;
-    AuctionUtil.organize(auctions, petService)
-      .then(auctionItems => {
-        auctionService.events.list.next(auctions);
-        auctionService.events.groupedList.next(auctionItems);
-      })
-      .catch(error =>
-        ErrorReport.sendError('getAllAuctions', error));
-    console.log('Restored auctions from local DB');
-    SharedService.events.auctionUpdate.emit();
-  }
-
-  addWoWUctionItems(wowuction: Array<WoWUction>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return;
-    }
-    this.db.table('wowuction').clear();
-    this.db.table('wowuction')
-      .bulkPut(wowuction)
-      .then(r => console.log('Successfully added WoWUction data to local DB'))
-      .catch(e => console.error('Could not add WoWUction data to local DB', e));
-  }
-
-  getWoWUctionItems(): Dexie.Promise<any> {
-    SharedService.downloading.wowUctionAuctions = true;
-    return this.db.table('wowuction')
-      .toArray()
-      .then(wowuction => {
-        (<WoWUction[]>wowuction).forEach(a => {
-          SharedService.wowUction[a.id] = a;
-        });
-        SharedService.downloading.wowUctionAuctions = false;
-        console.log('Restored WoWUction data from local DB');
-      })
-      .catch(e => {
-        console.error('Could not restore WoWUction data', e);
-        SharedService.downloading.wowUctionAuctions = false;
-      });
   }
 
   addAddonData(name: string, data: any, gameVersion: number, lastModified: number): void {
@@ -400,7 +326,7 @@ export class DatabaseService {
         console.log('Restored TSM addon historical data from local DB');
       })
       .catch(e => {
-        console.error('Could not restore TSM data', e);
+        ErrorReport.sendError('DatabaseService.getAddonData', e);
         SharedService.downloading.tsmAuctions = false;
       });
   }
@@ -413,7 +339,7 @@ export class DatabaseService {
     this.db.table('tsm')
       .bulkPut(tsm)
       .then(r => console.log('Successfully added tsm data to local DB'))
-      .catch(e => console.error('Could not add tsm data to local DB', e));
+      .catch(e => ErrorReport.sendError('DatabaseService.addTSMItems', e));
   }
 
   getTSMItems(): Dexie.Promise<any> {
@@ -432,13 +358,12 @@ export class DatabaseService {
         console.log('Restored TSM data from local DB');
       })
       .catch(e => {
-        console.error('Could not restore TSM data', e);
+        ErrorReport.sendError('DatabaseService.getTSMItems', e);
         SharedService.downloading.tsmAuctions = false;
       });
   }
 
   async clearWowDataFromDB(): Promise<void> {
-    this.clearAuctions();
     this.clearItems();
     await this.clearNPCs();
     this.clearPets();
@@ -451,13 +376,26 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
-    this.db.version(7).stores({
+
+    this.db.version(8).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
       'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
       recipes: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON
+    });
+    this.db.version(7).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
       npcs: this.NPC_TABLE_COLUMNS,
       zones: this.ZONE_TABLE_COLUMNS,
       addons: this.ADDON
@@ -468,7 +406,7 @@ export class DatabaseService {
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS,
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
       npcs: this.NPC_TABLE_COLUMNS,
       zones: this.ZONE_TABLE_COLUMNS,
       tsmAddonHistory: this.TSM_ADDON_HISTORY
@@ -480,7 +418,7 @@ export class DatabaseService {
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS,
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
       tsmAddonHistory: this.TSM_ADDON_HISTORY
     });
     this.db.version(4).stores({
@@ -489,7 +427,7 @@ export class DatabaseService {
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS
+      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion'
     });
     this.db.version(3).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,

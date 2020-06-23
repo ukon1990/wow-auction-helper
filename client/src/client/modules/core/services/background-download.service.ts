@@ -1,24 +1,26 @@
 import {Injectable} from '@angular/core';
-import {RealmService} from './realm.service';
-import {ItemService} from './item.service';
-import {CraftingService} from './crafting.service';
-import {AuctionsService} from './auctions.service';
-import {PetsService} from './pets.service';
-import {DatabaseService} from './database.service';
-import {Report} from '../utils/report.util';
+import {RealmService} from '../../../services/realm.service';
+import {ItemService} from '../../../services/item.service';
+import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {PetsService} from '../../../services/pets.service';
+import {DatabaseService} from '../../../services/database.service';
+import {Report} from '../../../utils/report.util';
 import {BehaviorSubject} from 'rxjs';
-import {SharedService} from './shared.service';
+import {SharedService} from '../../../services/shared.service';
 import {DateUtil} from '@ukon1990/js-utilities';
-import {RealmStatus} from '../models/realm-status.model';
+import {RealmStatus} from '../../../models/realm-status.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
-import {Dashboard} from '../modules/dashboard/models/dashboard.model';
-import {AuctionUtil} from '../modules/auction/utils/auction.util';
-import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
-import {Auction} from '../modules/auction/models/auction.model';
-import {ItemExtract} from '../utils/item-extract.util';
-import {NpcService} from '../modules/npc/services/npc.service';
-import {ZoneService} from '../modules/zone/service/zone.service';
-import {ErrorReport} from '../utils/error-report.util';
+import {Dashboard} from '../../dashboard/models/dashboard.model';
+import {AuctionUtil} from '../../auction/utils/auction.util';
+import {Auction} from '../../auction/models/auction.model';
+import {NpcService} from '../../npc/services/npc.service';
+import {ZoneService} from '../../zone/service/zone.service';
+import {ErrorReport} from '../../../utils/error-report.util';
+import {Timestamps} from '../../../../../../api/src/updates/model';
+import {HttpClient} from '@angular/common/http';
+import {Endpoints} from '../../../services/endpoints';
+import {ProfessionService} from '../../crafting/services/profession.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,6 @@ export class BackgroundDownloadService {
     recipes: localStorage['timestamp_recipes'],
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
-    wowuction: localStorage['timestamp_wowuction'],
     npc: localStorage.getItem('timestamp_npcs'),
     zone: localStorage.getItem('timestamp_zone')
   };
@@ -42,6 +43,7 @@ export class BackgroundDownloadService {
   private subs = new SubscriptionManager();
 
   constructor(
+    private http: HttpClient,
     private realmService: RealmService,
     private itemService: ItemService,
     private craftingService: CraftingService,
@@ -49,6 +51,7 @@ export class BackgroundDownloadService {
     private petService: PetsService,
     private npcService: NpcService,
     private zoneService: ZoneService,
+    private professionService: ProfessionService,
     private dbService: DatabaseService) {
 
 
@@ -70,7 +73,6 @@ export class BackgroundDownloadService {
       this.timestamps.recipes = localStorage['timestamp_recipes'];
       this.timestamps.auctions = localStorage['timestamp_auctions'];
       this.timestamps.tsm = localStorage['timestamp_tsm'];
-      this.timestamps.wowuction = localStorage['timestamp_wowuction'];
       this.timestamps.npc = localStorage.getItem('timestamp_npcs');
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
     }, 1000);
@@ -88,27 +90,37 @@ export class BackgroundDownloadService {
     console.log('Starting to load data');
     await this.realmService.getRealms()
       .catch(error => console.error(error));
-    await this.realmService.getStatus(region, realm)
-      .catch(console.error);
 
-    this.auctionsService.doNotOrganize = true;
+    await this.getUpdateTimestamps()
+      .then(async (timestamps: Timestamps) => {
+        await Promise.all([
+          this.professionService.load(timestamps.professions)
+            .catch(console.error),
+          this.itemService.loadItems(timestamps.items)
+            .catch(console.error),
+          this.petService.loadPets(timestamps.pets)
+            .catch(console.error),
+          this.npcService.getAll(false, timestamps.npcs)
+            .catch(console.error),
+          this.craftingService.load(timestamps.recipes)
+            .catch(console.error),
+          this.zoneService.getAll(false, timestamps.zones)
+            .then(() =>
+              console.log('Done loading zone data'))
+            .catch(console.error),
+          this.loadThirdPartyAPI()
+            .catch(console.error),
+          this.itemService.getBonusIds()
+        ])
+          .catch(console.error);
 
-    await Promise.all([
-      this.loadItems().catch(console.error),
-      this.loadPets().catch(console.error),
-      this.loadNpc().catch(console.error),
-      this.loadRecipes().catch(console.error),
-      this.loadZones().catch(console.error),
-      this.loadThirdPartyAPI().catch(console.error),
-      this.itemService.getBonusIds()
-    ])
-      .catch(console.error);
+        await this.realmService.getStatus(region, realm)
+          .catch(console.error);
+        await this.startRealmStatusInterval();
+      })
+      .catch(error =>
+        ErrorReport.sendError('BackgroundDownloadService.init', error));
 
-    await this.startRealmStatusInterval();
-    const auctions: Auction[] = this.auctionsService.events.list.value;
-    await AuctionUtil.organize(auctions, this.petService);
-    this.auctionsService.reTriggerEvents();
-    this.auctionsService.doNotOrganize = false;
     await this.dbService.getAddonData();
 
     this.loggLoadingTime(startTimestamp);
@@ -167,76 +179,39 @@ export class BackgroundDownloadService {
       this.realmStatus.lowestDelay - this.timeSinceUpdate.value < 1;
   }
 
-  private async loadItems() {
-    await this.dbService.getAllItems()
-      .then(async () => {
-        if (Object.keys(SharedService.items).length === 0) {
-          delete localStorage['timestamp_items'];
-        }
-      })
-      .catch(async error => {
-        delete localStorage['timestamp_items'];
-        console.error(error);
-      });
-    await this.itemService.getItems();
-    console.log('Processed items mapped', ItemExtract.fromItems(SharedService.itemsUnmapped));
-  }
-
-  private async loadPets() {
-    await this.dbService.getAllPets()
-      .then(async () => {
-        if (Object.keys(SharedService.pets).length === 0) {
-          delete localStorage['timestamp_pets'];
-        }
-      })
-      .catch(async error => {
-      });
-
-    await this.petService.getPets();
-  }
-
-  private async loadRecipes() {
-    await this.dbService.getAllRecipes()
-      .then(async () => {
-        if (SharedService.recipes.length === 0) {
-          delete localStorage['timestamp_recipes'];
-        }
-      })
-      .catch(async (error) => {
-      });
-
-    await this.craftingService.getRecipes();
-    await CraftingUtil.checkForMissingRecipes(this.craftingService);
-    CraftingUtil.setOnUseCraftsWithNoReagents();
-  }
-
   private async loadThirdPartyAPI() {
-    if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-      await this.auctionsService.getTsmAuctions();
-    } else {
-      await this.dbService.getTSMItems()
-        .then(async r => {
-          if (Object.keys(SharedService.tsm).length === 0) {
-            await this.auctionsService.getTsmAuctions();
-          }
-        })
-        .catch(async e => {
-          console.error('Could not restore TSM data', e);
-          await this.auctionsService.getTsmAuctions();
-        });
-    }
+    return new Promise((resolve, reject) => {
+      if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
+        this.auctionsService.getTsmAuctions()
+          .then(resolve)
+          .catch(reject);
+      } else {
+        this.dbService.getTSMItems()
+          .then(async r => {
+            if (Object.keys(SharedService.tsm).length === 0) {
+              this.auctionsService.getTsmAuctions()
+                .then(resolve)
+                .catch(reject);
+            } else {
+              resolve();
+            }
+          })
+          .catch(async e => {
+            ErrorReport.sendError('BackgroundDownload.loadThirdPartyAPI', e);
+            this.auctionsService.getTsmAuctions()
+              .then(resolve)
+              .catch(reject);
+          });
+      }
+    });
   }
 
-  private async loadNpc() {
-    await this.npcService.getAll()
-      .then(() => console.log('Done loading NPC data'))
-      .catch(console.error);
-    console.log('loadNpc');
-  }
-
-  private async loadZones() {
-    await this.zoneService.getAll()
-      .then(() => console.log('Done loading zone data'))
-      .catch(console.error);
+  private getUpdateTimestamps(): Promise<Timestamps> {
+    return new Promise<Timestamps>((resolve, rejects) => {
+      this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+        .toPromise()
+        .then(resolve)
+        .catch(rejects);
+    });
   }
 }

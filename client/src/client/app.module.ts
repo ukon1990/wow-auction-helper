@@ -33,7 +33,7 @@ import {PetModule} from './modules/pet/pet.module';
 import {AuctionModule} from './modules/auction/auction.module';
 import {ShoppingCartModule} from './modules/shopping-cart/shopping-cart.module';
 import {AddonModule} from './modules/addon/addon.module';
-import {BackgroundDownloadService} from './services/background-download.service';
+import {BackgroundDownloadService} from './modules/core/services/background-download.service';
 import {ReportService} from './services/report/report.service';
 import {AuthenticationInterceptor} from './auth.interceptor';
 import {ZoneService} from './modules/zone/service/zone.service';

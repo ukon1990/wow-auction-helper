@@ -132,7 +132,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
     User.updateRecipesForRealm();
-    CraftingUtil.checkForMissingRecipes(this.craftingService);
 
     this.downloading = false;
     Realm.gatherRealms();
@@ -160,7 +159,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
           SharedService.user.characters[index] = c;
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
           User.updateRecipesForRealm();
-          CraftingUtil.checkForMissingRecipes(this.craftingService);
 
           if (SharedService.user.region && SharedService.user.realm) {
             AuctionUtil.organize(

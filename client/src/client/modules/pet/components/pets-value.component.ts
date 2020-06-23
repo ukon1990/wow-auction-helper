@@ -1,13 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../services/shared.service';
-import {CollectedPet} from '../../character/models/character.model';
 import {ColumnDescription} from '../../table/models/column-description';
 import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
 import {AuctionsService} from '../../../services/auctions.service';
 import {PageEvent} from '@angular/material';
 import {Report} from '../../../utils/report.util';
 import {PetTableData} from '../models/pet-table-data.model';
-import {Title} from '@angular/platform-browser';
+import {CollectedPet} from '../../../../../../api/src/character/model';
 
 @Component({
   selector: 'wah-my-pets',
@@ -106,19 +105,19 @@ export class PetsValueComponent implements OnInit, OnDestroy {
     const tmpMap: Map<number, CollectedPet> = new Map<number, CollectedPet>();
     const l = [];
     SharedService.user.characters.forEach(char => {
-      if (!char || !char.pets || !char.pets.collected) {
+      if (!char || !char.pets || !char.pets.list) {
         return;
       }
       l.push(char);
-      char.pets.collected.forEach(cp => {
-        const pet = SharedService.pets[cp.stats.speciesId];
+      char.pets.list.forEach(cp => {
+        const pet = SharedService.pets[cp.speciesId];
         if (!pet || !pet.auctions || !pet.auctions.length) {
           return;
         }
         if (!tmpMap[cp.creatureId]) {
           cp.count = 1;
           tmpMap.set(cp.creatureId, cp);
-          this.petAuctionsMap[cp.stats.speciesId] = pet && pet.auctions ? pet.auctions : [];
+          this.petAuctionsMap[cp.speciesId] = pet && pet.auctions ? pet.auctions : [];
         } else {
           tmpMap[cp.creatureId].count++;
         }
@@ -131,7 +130,7 @@ export class PetsValueComponent implements OnInit, OnDestroy {
   private setTable() {
     this.petValue = 0;
     this.table.data = this.petSpecies.map((species: CollectedPet) => {
-      const pet = new PetTableData(species, this.petAuctionsMap[species.stats.speciesId]);
+      const pet = new PetTableData(species, this.petAuctionsMap[species.speciesId]);
       this.petValue += pet.minBuyout * pet.userStock;
       return pet;
     });

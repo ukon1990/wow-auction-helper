@@ -1,3 +1,5 @@
+import {Key} from '../game-data/Key.model';
+
 export interface Self {
   href: string;
 }
@@ -6,16 +8,8 @@ export interface Links {
   self: Self;
 }
 
-export interface Key {
-  href: string;
-}
-
-export interface Key2 {
-  href: string;
-}
-
 export interface Realm {
-  key: Key2;
+  key: Key;
   name: string;
   id: number;
   slug: string;

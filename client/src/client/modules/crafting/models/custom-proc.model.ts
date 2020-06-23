@@ -1,19 +1,19 @@
 import {Recipe} from './recipe';
 
 export class CustomProc {
-  spellID: number;
+  id: number;
   itemID: number;
   name: string;
-  profession: string;
-  rank: string;
+  professionId: number;
+  rank: number;
   rate: number;
 
   constructor(recipe?: Recipe) {
     if (recipe) {
-      this.spellID = recipe.spellID;
+      this.id = recipe.id;
       this.itemID = recipe.itemID;
       this.name = recipe.name;
-      this.profession = recipe.profession;
+      this.professionId = recipe.professionId;
       this.rank = recipe.rank;
       this.rate = recipe.minCount;
     }

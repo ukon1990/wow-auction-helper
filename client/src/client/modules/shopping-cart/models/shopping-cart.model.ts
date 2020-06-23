@@ -8,6 +8,7 @@ import {Report} from '../../../utils/report.util';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {ShoppingCartItem} from './shopping-cart-item.model';
+import {CraftingService} from '../../../services/crafting.service';
 
 
 export class ShoppingCart {
@@ -45,7 +46,7 @@ export class ShoppingCart {
     try {
       if (old && old['reagents'] && old['recipes']) {
         old['recipes'].forEach(recipe => {
-          const r = SharedService.recipesMap[recipe.spellID];
+          const r = CraftingService.map.value.get(recipe.id);
           if (r) {
             this.add(r, recipe.quantity, true);
           }
@@ -60,14 +61,14 @@ export class ShoppingCart {
 
   import(data: object): void {
     try {
-      if (SharedService.recipes.length === 0) {
+      if (CraftingService.list.value.length === 0) {
         return;
       }
       // Import recipes
       if (data['recipes']) {
         data['recipes']
           .forEach(recipe => {
-            const r = SharedService.recipesMap[recipe.id];
+            const r = CraftingService.map.value.get(recipe.id);
             if (!r) {
               return;
             }
@@ -110,13 +111,13 @@ export class ShoppingCart {
 
   add(recipe: Recipe, quantity: number = 1, doNotSave?: boolean): void {
     try {
-      if (this.recipeMap[recipe.spellID]) {
-        (this.recipeMap[recipe.spellID] as ShoppingCartItem)
+      if (this.recipeMap[recipe.id]) {
+        (this.recipeMap[recipe.id] as ShoppingCartItem)
           .increment(quantity);
       } else {
-        this.recipeMap[recipe.spellID] = new ShoppingCartItem(
-          recipe.spellID, quantity, undefined, recipe.itemID);
-        this.recipes.push(this.recipeMap[recipe.spellID]);
+        this.recipeMap[recipe.id] = new ShoppingCartItem(
+          recipe.id, quantity, undefined, recipe.itemID);
+        this.recipes.push(this.recipeMap[recipe.id]);
       }
       this.addReagents(recipe, quantity);
       this.calculateCosts();
@@ -149,14 +150,14 @@ export class ShoppingCart {
 
   private addReagent(reagent: Reagent, quantity: number) {
     try {
-      if (this.reagentMap[reagent.itemID]) {
-        (this.reagentMap[reagent.itemID] as ShoppingCartItem)
+      if (this.reagentMap[reagent.id]) {
+        (this.reagentMap[reagent.id] as ShoppingCartItem)
           .increment(
-            reagent.count * quantity);
+            reagent.quantity * quantity);
       } else {
         const item = new ShoppingCartItem(
-          reagent.itemID, reagent.count * quantity);
-        this.reagentMap[reagent.itemID] = item;
+          reagent.id, reagent.quantity * quantity);
+        this.reagentMap[reagent.id] = item;
         this.reagents.push(item);
       }
     } catch (error) {
@@ -166,7 +167,7 @@ export class ShoppingCart {
 
   remove(id: number, quantity?: number): void {
     try {
-      const recipe = SharedService.recipesMap[id],
+      const recipe = CraftingService.map.value.get(id),
         cartRecipe: ShoppingCartItem = this.recipeMap[id];
       if (!recipe || !cartRecipe) {
         return;
@@ -199,11 +200,11 @@ export class ShoppingCart {
 
   private removeReagentForRecipe(reagent: Reagent, quantity: number) {
     try {
-      if (this.reagentMap[reagent.itemID]) {
-        const cartReagent = (this.reagentMap[reagent.itemID] as ShoppingCartItem);
+      if (this.reagentMap[reagent.id]) {
+        const cartReagent = (this.reagentMap[reagent.id] as ShoppingCartItem);
 
         cartReagent.decrement(
-          reagent.count * quantity);
+          reagent.quantity * quantity);
 
         if (cartReagent.quantity <= 0) {
           this.removeFromList(cartReagent, this.reagents, this.reagentMap);

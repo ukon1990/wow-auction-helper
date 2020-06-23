@@ -135,8 +135,7 @@ export class ItemQuery {
          expansionId,
          timestamp
     FROM items as i
-    LEFT OUTER JOIN item_name_locale as l
-    ON i.id = l.id
+    LEFT OUTER JOIN item_name_locale as l ON i.id = l.id
     WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000}
     ORDER BY timestamp desc;`;
   }
