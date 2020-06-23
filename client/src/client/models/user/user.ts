@@ -167,7 +167,6 @@ export class User {
           break;
         case 'custom_procs':
           user.customProcs = JSON.parse(localStorage[key]);
-
           CustomProcUtil.createMap(user.customProcs);
           break;
         case 'crafting_buyout_limit':

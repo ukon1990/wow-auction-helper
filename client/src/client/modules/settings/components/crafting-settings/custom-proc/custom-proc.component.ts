@@ -58,7 +58,6 @@ export class CustomProcComponent implements OnInit, OnDestroy {
 
   setCustomProcs(): void {
     this.customProcs = [...SharedService.user.customProcs];
-    console.log('Custom procs', JSON.stringify(this.customProcs));
   }
 
   /**
