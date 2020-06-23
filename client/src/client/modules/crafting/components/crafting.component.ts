@@ -115,7 +115,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isProfitMatch(recipe, undefined, changes.profit)
             && Filters.isSaleRateMatch(recipe.itemID, changes.demand, false)
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
-            && Filters.isProfessionMatch(recipe.itemID, changes.professionId)
+            && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
             && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
         }

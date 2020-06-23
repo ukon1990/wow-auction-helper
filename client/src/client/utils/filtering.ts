@@ -131,6 +131,22 @@ export class Filters {
       expansionId === item.expansionId;
   }
 
+  static recipeIsProfessionMatch(id: number, professionId: number) {
+
+    if (!professionId) {
+      return true;
+    }
+
+    const recipe: Recipe = CraftingService.map.value.get(id);
+
+    if (!recipe) {
+      return false;
+    }
+
+    return recipe.professionId === professionId ||
+      !recipe.professionId && professionId === 0;
+  }
+
   static isProfessionMatch(itemID: number, professionId: number) {
     const recipes: Recipe[] = CraftingService.itemRecipeMap[itemID];
 
