@@ -24,7 +24,7 @@ import {CraftingService} from '../../../services/crafting.service';
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy {
-  @ViewChild('tabs', {static: false}) tabs;
+  @ViewChild('tabs') tabs;
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
   selectionHistory: any[] = [];
