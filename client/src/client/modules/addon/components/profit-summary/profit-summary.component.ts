@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
 import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Component({
   selector: 'wah-profit-summary',

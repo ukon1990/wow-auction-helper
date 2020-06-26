@@ -7,7 +7,7 @@ import {Filters} from '../../../../utils/filtering';
 import {Title} from '@angular/platform-browser';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {itemQualities} from '../../../../models/item/disenchanting-list';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 
 @Component({

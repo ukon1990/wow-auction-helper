@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {DatabaseService} from '../../../../services/database.service';
 import {RealmService} from '../../../../services/realm.service';

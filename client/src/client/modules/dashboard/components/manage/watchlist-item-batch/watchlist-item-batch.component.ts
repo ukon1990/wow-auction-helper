@@ -8,7 +8,7 @@ import {Filters} from '../../../../../utils/filtering';
 import {Item} from '../../../../../models/item/item';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {Angulartics2} from 'angulartics2';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
 
 @Component({

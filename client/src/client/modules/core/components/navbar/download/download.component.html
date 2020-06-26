@@ -10,7 +10,7 @@
   <ng-template #notDownloading>
     <div class="float-left mr-1" *ngIf="timeSinceUpdate > 60"
          matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
-      <i class="fas fa-exclamation-circle"></i>
+      <fa-icon [icon]="faExclamationCircle"></fa-icon>
     </div>
     <span class="d-none d-sm-inline">Last update was </span>{{ timeSinceUpdate }} minutes ago
     <small *ngIf="realmStatus">(~{{ realmStatus.lowestDelay - timeSinceUpdate }} min left)</small>
@@ -56,7 +56,7 @@
             <!-- [disabled]="getDownloading().items" -->
             <button mat-icon-button (click)="download('items', true)"
                     matTooltip="Re-download item data">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>
@@ -72,7 +72,7 @@
             <!-- [disabled]="getDownloading().recipes" -->
             <button mat-icon-button (click)="download('recipes', true)"
                     matTooltip="Re-download recipe data">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>
@@ -86,7 +86,7 @@
             <!-- [disabled]="getDownloading().pets" -->
             <button mat-icon-button (click)="download('pets', true)"
                     matTooltip="Re-download pet data">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>
@@ -99,7 +99,7 @@
           <td>
             <button mat-icon-button (click)="download('npc', true)"
                     matTooltip="Re-download npc data">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>
@@ -112,7 +112,7 @@
           <td>
             <button mat-icon-button (click)="download('zone', true)"
                     matTooltip="Re-download zone data">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>
@@ -126,7 +126,7 @@
             <!-- [disabled]="getDownloading().auctions" -->
             <button mat-icon-button (click)="download('auctions')"
                     matTooltip="Re-download auction data">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>
@@ -141,7 +141,7 @@
             <!-- [disabled]="getDownloading().tsmAuctions" -->
             <button mat-icon-button (click)="download('tsm')"
                     matTooltip="Re-download TSM data" [disabled]="isDownloading()">
-              <i class="fas fa-download"></i>
+              <fa-icon [icon]="faDownload"></fa-icon>
             </button>
           </td>
         </tr>

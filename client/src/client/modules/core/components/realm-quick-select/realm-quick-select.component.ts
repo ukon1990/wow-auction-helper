@@ -3,7 +3,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
 import {Realm} from '../../../../models/realm';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CharacterService} from '../../../../services/character.service';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';

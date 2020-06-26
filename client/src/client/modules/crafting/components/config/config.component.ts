@@ -3,7 +3,7 @@ import {BaseCraftingUtil} from '../../utils/base-crafting.util';
 import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {CraftingUtil} from '../../utils/crafting.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Dashboard} from '../../../dashboard/models/dashboard.model';
 import {Report} from '../../../../utils/report.util';

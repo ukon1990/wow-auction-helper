@@ -8,7 +8,7 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
 import {Report} from '../../../../../utils/report.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Component({
   selector: 'wah-custom-prices',

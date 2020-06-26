@@ -25,7 +25,7 @@ import {PlatformModule} from '@angular/cdk/platform';
 import {SettingsModule} from './modules/settings/settings.module';
 import {TableModule} from './modules/table/table.module';
 import {CoreModule} from './modules/core/core.module';
-import {MatCardModule} from '@angular/material';
+import { MatCardModule } from '@angular/material/card';
 import {AboutModule} from './modules/about/about.module';
 import {DashboardModule} from './modules/dashboard/dashboard.module';
 import {CraftingModule} from './modules/crafting/crafting.module';
@@ -39,6 +39,8 @@ import {AuthenticationInterceptor} from './auth.interceptor';
 import {ZoneService} from './modules/zone/service/zone.service';
 import {NpcService} from './modules/npc/services/npc.service';
 import {ItemModule} from './modules/item/item.module';
+import {AdminModule} from './modules/admin/admin.module';
+import {NpcModule} from './modules/npc/npc.module';
 
 
 @NgModule({
@@ -65,7 +67,9 @@ import {ItemModule} from './modules/item/item.module';
     AuctionModule,
     ShoppingCartModule,
     AddonModule,
-    ItemModule
+    ItemModule,
+    AdminModule,
+    NpcModule
   ],
   providers: [
     RealmService,

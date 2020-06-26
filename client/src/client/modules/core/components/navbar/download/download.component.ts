@@ -7,16 +7,16 @@ import {AuctionsService} from '../../../../../services/auctions.service';
 import {PetsService} from '../../../../../services/pets.service';
 import {DatabaseService} from '../../../../../services/database.service';
 import {RealmService} from '../../../../../services/realm.service';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
-import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {BackgroundDownloadService} from '../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
 import {ErrorReport} from '../../../../../utils/error-report.util';
+import {faDownload, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'wah-download',
@@ -31,6 +31,8 @@ export class DownloadComponent implements OnInit {
   realmControl: FormControl = new FormControl();
   downloadProgress = '';
   subs = new SubscriptionManager();
+  faExclamationCircle = faExclamationCircle;
+  faDownload = faDownload;
 
   timestamps = {
     items: localStorage['timestamp_items'],

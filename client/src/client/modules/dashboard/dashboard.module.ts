@@ -13,15 +13,15 @@ import {WatchlistItemComponent} from './components/manage/watchlist-item/watchli
 import {WatchlistManagerComponent} from './components/manage/watchlist-manager/watchlist-manager.component';
 import {WatchlistItemManagerComponent} from './components/manage/watchlist-item-manager/watchlist-item-manager.component';
 import {WatchlistItemBatchComponent} from './components/manage/watchlist-item-batch/watchlist-item-batch.component';
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatCheckboxModule, MatExpansionModule,
-  MatInputModule, MatPaginatorModule,
-  MatSelectModule,
-  MatTabsModule,
-  MatTooltipModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
 import {IconModule} from '../icon/icon.module';

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { SharedService } from '../../../../../services/shared.service';
 import {WatchlistItem} from '../../../models/watchlist.model';
 import {SelectionItem} from '../../../models/selection-item.model';

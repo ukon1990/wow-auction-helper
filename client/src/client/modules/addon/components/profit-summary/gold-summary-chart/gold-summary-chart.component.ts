@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import * as distinctColors from 'distinct-colors';
 import {TSMCSV, TsmLuaUtil} from '../../../../../utils/tsm/tsm-lua.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ChartData} from '../../../../util/models/chart.model';
 import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 

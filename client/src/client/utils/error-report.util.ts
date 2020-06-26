@@ -1,7 +1,7 @@
 import {Angulartics2} from 'angulartics2';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from '../services/shared.service';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {environment} from '../../environments/environment';
 import {ReportService} from '../services/report/report.service';
 

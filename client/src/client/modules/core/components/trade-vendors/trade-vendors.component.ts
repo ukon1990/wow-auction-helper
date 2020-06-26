@@ -5,7 +5,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {Filters} from '../../../../utils/filtering';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {TRADE_VENDORS} from '../../../../data/trade-vendors';
 import {Zone} from '../../../zone/models/zone.model';

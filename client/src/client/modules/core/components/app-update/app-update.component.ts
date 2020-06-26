@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {UpdateService} from '../../../../services/update.service';
 import {UpdateActivatedEvent} from '@angular/service-worker';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../utils/report.util';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {Remains} from '../../../../models/item/remains.model';

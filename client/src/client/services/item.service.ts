@@ -6,7 +6,7 @@ import {Endpoints} from './endpoints';
 import {DatabaseService} from './database.service';
 import {WoWHeadSoldBy} from '../models/item/wowhead';
 import {ErrorReport} from '../utils/error-report.util';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
@@ -14,7 +14,7 @@ import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ItemExtract} from '../utils/item-extract.util';
 
 class ItemResponse {

@@ -5,7 +5,7 @@ import {ColumnDescription} from '../../../table/models/column-description';
 import {Auction} from '../../models/auction.model';
 import {UserAuctions} from '../../models/user-auctions.model';
 import {UserAuctionCharacter} from '../../models/user-auction-character.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({

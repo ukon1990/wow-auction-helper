@@ -22,6 +22,6 @@
     "../server-legacy"
   ],
   "angularCompilerOptions": {
-    "enableIvy": false
+    "enableIvy": true
   }
 }

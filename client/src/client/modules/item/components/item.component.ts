@@ -1,7 +1,7 @@
 import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {GameBuild} from '../../../utils/game-build.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {ColumnDescription} from '../../table/models/column-description';

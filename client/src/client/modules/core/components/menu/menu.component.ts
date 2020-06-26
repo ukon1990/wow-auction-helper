@@ -1,10 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {MenuItem} from '../../models/menu-item.model';
 import {RoutingUtil} from '../../utils/routing.util';
+import {faBars, faEllipsisV} from '@fortawesome/free-solid-svg-icons';
 
 declare function require(moduleName: string): any;
 
@@ -16,12 +17,13 @@ const version = require('../../../../../../package.json').version;
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnDestroy, OnInit {
-  showMenu: boolean;
   appVersion = version;
   numberOfUndercutAuctions = 0;
   sm = new SubscriptionManager();
   isUserSet: boolean;
   menuItems: MenuItem[] = [];
+  faEllipsisV = faEllipsisV;
+  faBars = faBars;
 
   constructor(private service: AuctionsService) {
     this.sm.add(this.service.events.list,

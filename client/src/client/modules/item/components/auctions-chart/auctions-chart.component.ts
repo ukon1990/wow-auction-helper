@@ -1,5 +1,5 @@
 import {AfterContentInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Auction} from '../../../auction/models/auction.model';

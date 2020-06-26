@@ -4,7 +4,7 @@ import {User} from '../../../models/user/user';
 import {Recipe} from '../../crafting/models/recipe';
 import {Report} from '../../../utils/report.util';
 import {ShoppingCart} from '../models/shopping-cart.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
 import {CraftingService} from '../../../services/crafting.service';
 

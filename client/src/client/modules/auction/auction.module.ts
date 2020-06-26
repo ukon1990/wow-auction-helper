@@ -12,7 +12,9 @@ import {UtilModule} from '../util/util.module';
 import {AddonModule} from '../addon/addon.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
-import {MatBadgeModule, MatGridListModule, MatMenuModule} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatMenuModule } from '@angular/material/menu';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({

@@ -10,7 +10,7 @@ import {CraftingService} from '../../../../services/crafting.service';
 import {PetsService} from '../../../../services/pets.service';
 import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {DatabaseService} from '../../../../services/database.service';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../utils/report.util';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {Difference} from '@ukon1990/js-utilities/dist/models/difference.model';

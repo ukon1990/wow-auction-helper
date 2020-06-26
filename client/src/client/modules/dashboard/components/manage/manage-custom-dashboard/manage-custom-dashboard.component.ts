@@ -5,8 +5,8 @@ import {SharedService} from '../../../../../services/shared.service';
 import {Item} from '../../../../../models/item/item';
 import {SelectionItem} from '../../../models/selection-item.model';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {PageEvent} from '@angular/material';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import { PageEvent } from '@angular/material/paginator';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 
 @Component({

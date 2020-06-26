@@ -6,12 +6,12 @@ import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
 import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
 import {ErrorReport} from './utils/error-report.util';
-import {MatSnackBar} from '@angular/material';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ReportService} from './services/report/report.service';
 import {Title} from '@angular/platform-browser';
 import {RoutingUtil} from './modules/core/utils/routing.util';
@@ -24,7 +24,6 @@ import {MenuItem} from './modules/core/models/menu-item.model';
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
-  mainWindowScrollPosition = 0;
   shouldAskForConcent = false;
   pageTitle: string;
 

@@ -3,7 +3,7 @@ import {Item} from '../../../../models/item/item';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {ItemPriceEntry} from '../../models/item-price-entry.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {ChartData} from '../../../util/models/chart.model';

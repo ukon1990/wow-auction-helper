@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {SharedService} from '../../../../services/shared.service';
 import {TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';

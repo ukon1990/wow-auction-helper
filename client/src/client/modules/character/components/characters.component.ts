@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Input, OnChanges} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
 import {CharacterService} from '../../../services/character.service';
 import {RealmService} from '../../../services/realm.service';

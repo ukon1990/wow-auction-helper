@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NpcService} from '../../../npc/services/npc.service';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 import {ItemExtract} from '../../../../utils/item-extract.util';
 import {FormControl, FormGroup} from '@angular/forms';

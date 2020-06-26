@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
-import {PageEvent} from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription} from '../models/column-description';
@@ -13,7 +13,7 @@ import {User} from '../../../models/user/user';
 import {Item} from '../../../models/item/item';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ThemeUtil} from '../../core/utils/theme.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
 import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
@@ -23,6 +23,7 @@ import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {Profession} from '../../../../../../api/src/profession/model';
+import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'wah-data-table',
@@ -66,6 +67,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   };
   getBonusList = Auction.getBonusList;
   theme = ThemeUtil.current;
+  faExternalLink = faExternalLinkSquareAlt;
+  faEye = faEye;
+  faTrashAlt = faTrashAlt;
+  faCartPlus = faCartPlus;
   private isTyping: boolean;
   private lastCharacterTyped: number;
 

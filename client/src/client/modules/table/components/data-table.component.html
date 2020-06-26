@@ -87,13 +87,13 @@
             <span *ngSwitchCase="'wdb-link'">
               <a href="https://www.wowdb.com/{{ linkType ? linkType + 's' : 'npcs' }}/{{ d[c.key] }}" target="_blank">
                 Open
-                <i class="fas fa-external-link-square-alt"></i>
+                <fa-icon [icon]="faExternalLink"></fa-icon>
               </a>
             </span>
             <span *ngSwitchCase="'whead-link'">
               <a href="http://www.wowhead.com/{{linkType ? linkType : 'npc' }}={{ d[c.key] }}" target="_blank">
                 Open
-                <i class="fas fa-external-link-square-alt"></i>
+                <fa-icon [icon]="faExternalLink"></fa-icon>
               </a>
             </span>
             <span *ngSwitchCase="'percent'">
@@ -106,7 +106,7 @@
                href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
                target="_blank">
                 {{ d[c.key] }}
-              <i class="fas fa-external-link-square-alt"></i>
+              <fa-icon [icon]="faExternalLink"></fa-icon>
             </a>
             <span *ngSwitchCase="'array'">
               {{ d[c.key] ? d[c.key].toString() : '' }}
@@ -153,7 +153,7 @@
 
             <span *ngSwitchCase="'action'">
               <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
-                <i class="fas fa-eye"></i>
+                <fa-icon [icon]="faEye"></fa-icon>
               </button>
 
               <ng-container *ngFor="let action of c.actions">
@@ -161,23 +161,24 @@
 
                   <button *ngSwitchCase="'remove-from-list'" mat-icon-button
                           matTooltip="Removes this item from the list" (click)="removeFromList(i)">
-                    <i class="fas fa-trash-alt"></i>
+                    <fa-icon [icon]="faTrashAlt"></fa-icon>
                   </button>
 
                   <button *ngSwitchCase="'custom-price-delete'" mat-icon-button (click)="customPrices().remove(d, i)"
                           matTooltip="Remove from custom price list">
-                    <i class="fas fa-trash-alt"></i>
+                    <fa-icon [icon]="faTrashAlt"></fa-icon>
                   </button>
 
                   <button *ngSwitchCase="'custom-procs-delete'" mat-icon-button (click)="customProcs().remove(d, i)"
                           matTooltip="Remove from custom procs list">
-                    <i class="fas fa-trash-alt"></i>
+                    <fa-icon [icon]="faTrashAlt"></fa-icon>
                   </button>
                 </span>
               </ng-container>
               <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart"
-                      *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' && c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
-                <i class="fas fa-cart-plus"></i>
+                      *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' &&
+                      c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
+                <fa-icon [icon]="faCartPlus"></fa-icon>
               </button>
             </span>
 
@@ -193,7 +194,7 @@
             <span *ngSwitchCase="'cart-delete'">
               <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)"
                       matTooltip="Remove item from the shopping cart">
-                <i class="fas fa-trash-alt"></i>
+                <fa-icon [icon]="faTrashAlt"></fa-icon>
               </button>
             </span>
             <span *ngSwitchDefault>{{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>

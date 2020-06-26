@@ -7,7 +7,7 @@ import {AuctionsService} from './auctions.service';
 import {User} from '../models/user/user';
 import {ErrorReport} from '../utils/error-report.util';
 import {Angulartics2} from 'angulartics2';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
 import {GameBuild} from '../../../utils/game-build.util';
 import {itemClasses} from '../../../models/item/item-classes';

@@ -10,7 +10,7 @@ import {BehaviorSubject} from 'rxjs';
 import {SharedService} from '../../../services/shared.service';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {RealmStatus} from '../../../models/realm-status.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Auction} from '../../auction/models/auction.model';

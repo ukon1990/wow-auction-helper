@@ -9,7 +9,7 @@ import {CustomProc} from '../../../../crafting/models/custom-proc.model';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {Report} from '../../../../../utils/report.util';
 import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../../../services/crafting.service';
 
