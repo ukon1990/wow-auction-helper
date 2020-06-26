@@ -167,7 +167,6 @@ export class User {
           break;
         case 'custom_procs':
           user.customProcs = JSON.parse(localStorage[key]);
-
           CustomProcUtil.createMap(user.customProcs);
           break;
         case 'crafting_buyout_limit':
@@ -224,10 +223,15 @@ export class User {
   public static setRecipesForCharacter(character: Character): void {
     if (character && character.professions &&
       SharedService.user.realm.toLowerCase() === User.slugifyString(character.realm)) {
-      character.professions.primaries.forEach(primary => {
-        this.addKnownRecipes(primary, character);
-      });
-      character.professions.primaries.forEach(secondary => this.addKnownRecipes(secondary, character));
+      if (character.professions.primaries) {
+        character.professions.primaries.forEach(primary => {
+          this.addKnownRecipes(primary, character);
+        });
+      }
+      if (character.professions.secondaries) {
+        character.professions.secondaries.forEach(secondary =>
+          this.addKnownRecipes(secondary, character));
+      }
     }
   }
 

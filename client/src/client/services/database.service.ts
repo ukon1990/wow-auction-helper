@@ -364,11 +364,12 @@ export class DatabaseService {
   }
 
   async clearWowDataFromDB(): Promise<void> {
-    this.clearItems();
+    await this.clearItems();
     await this.clearNPCs();
-    this.clearPets();
-    this.clearRecipes();
+    await this.clearPets();
+    await this.clearRecipes();
     await this.clearZones();
+    await this.clearProfessions();
   }
 
   deleteDB(): void {
@@ -376,6 +377,19 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+
+    this.db.version(9).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON
+    });
 
     this.db.version(8).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,

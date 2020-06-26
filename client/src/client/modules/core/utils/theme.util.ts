@@ -34,7 +34,8 @@ export class ThemeUtil {
 
   static setTheme(theme: Theme): void {
     localStorage.setItem('theme', theme.className);
-    ObjectUtil.overwrite(theme, this.current);
+
+    this.update(theme);
     this.setBodyClass(this.current);
   }
 
@@ -43,7 +44,7 @@ export class ThemeUtil {
     const theme = this.list.filter(t =>
       t.className === className);
     const current = new Theme('', '', '', '');
-    ObjectUtil.overwrite(
+    this.update(
       theme ? theme[0] : ThemeUtil.list[0], current);
     this.setBodyClass(current);
     return current;
@@ -52,6 +53,14 @@ export class ThemeUtil {
   private static setBodyClass(theme: Theme) {
     if (document && document.getElementsByTagName('body')[0]) {
       document.getElementsByTagName('body')[0].className = theme.className;
+    }
+  }
+
+  private static update(theme: Theme, current: Theme = this.current): void {
+    try {
+      Object.keys(theme)
+        .forEach(key => current[key] = theme[key]);
+    } catch (e) {
     }
   }
 }

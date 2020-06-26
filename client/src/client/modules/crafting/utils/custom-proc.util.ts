@@ -25,11 +25,22 @@ export class CustomProcUtil {
   }
 
   public static createMap(customProcs: Array<CustomProc>): void {
+    CustomProcUtil.migration(customProcs);
     customProcs.forEach(c =>
       SharedService.customProcsMap[c.id] = c);
   }
 
-  public static save(): void {
-    localStorage['custom_procs'] = JSON.stringify(SharedService.user.customProcs);
+  public static save(procs?: CustomProc[]): void {
+    localStorage['custom_procs'] = JSON.stringify(procs || SharedService.user.customProcs);
+  }
+
+  static migration(procs: CustomProc[]): void {
+    if (procs[0] && procs[0]['spellID']) {
+      procs.forEach(proc => {
+        proc.id = proc['spellID'];
+        delete proc['spellID'];
+      });
+      this.save(procs);
+    }
   }
 }

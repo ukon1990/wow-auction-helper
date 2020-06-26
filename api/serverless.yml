@@ -22,6 +22,7 @@ functions:
   auctionUpdateLogForRealm:
     tags:
       Function: Wah-auctionUpdateLogForRealm
+      Project: WAH
     handler: src/controllers/auction.getUpdateLogForRealm
     memorySize: 200
     events:
@@ -33,18 +34,21 @@ functions:
   auctionsDownloadAndSave:
     tags:
       Function: Wah-auctionsDownloadAndSave
+      Project: WAH
     handler: src/controllers/auction.auctionsDownloadAndSave
     memorySize: 256
     timeout: 30
   auctionsUpdateStaticS3Data:
     tags:
       Function: Wah-auctionsUpdateStaticS3Data
+      Project: WAH
     handler: src/controllers/auction.updateStaticS3Data
     memorySize: 228
     timeout: 30
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses
+      Project: WAH
     handler: src/controllers/auction.updateAll
     memorySize: 256
     timeout: 59
@@ -52,12 +56,14 @@ functions:
   deactivateInactiveHouses:
     tags:
       Function: Wah-deactivateInactiveHouses
+      Project: WAH
     handler: src/controllers/auction.deactivateInactiveHouses
     memorySize: 200
 
   updateSpesificHouse:
     tags:
       Function: Wah-updateSpesificHouse
+      Project: WAH
     handler: src/controllers/auction.updateOne
     memorySize: 200
     events:
@@ -69,18 +75,21 @@ functions:
   deleteOldPriceHistoryForRealmAndSetDailyPrice:
     tags:
       Function: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
+      Project: WAH
     handler: src/controllers/auction.deleteOldPriceHistoryForRealmAndSetDailyPrice
     memorySize: 450
     timeout: 120
   updateAllRealmDailyData:
     tags:
       Function: Wah-updateAllRealmDailyData
+      Project: WAH
     handler: src/controllers/auction.updateAllRealmDailyData
     memorySize: 1024
     timeout: 300
   items:
     tags:
       Function: Wah-items
+      Project: WAH
     handler: src/controllers/item.handler
     memorySize: 300
     events:
@@ -98,6 +107,7 @@ functions:
   getPriceHistoryForItem:
     tags:
       Function: Wah-item-history
+      Project: WAH
     handler: src/controllers/item.getPriceHistoryForItem
     memorySize: 256
     events:
@@ -109,6 +119,7 @@ functions:
   pets:
     tags:
       Function: Wah-pets
+      Project: WAH
     handler: src/controllers/pet.handler
     memorySize: 128
     events:
@@ -126,6 +137,7 @@ functions:
   getProfessions:
     tags:
       FunctionName: Wah-getProfessions
+      Project: WAH
     memorySize: 128
     handler: src/profession/controller.getProfessions
     events:
@@ -137,6 +149,7 @@ functions:
   getAllRecipesAfter:
     tags:
       FunctionName: Wah-getAllRecipesAfter
+      Project: WAH
     memorySize: 128
     handler: src/recipe/controller.getAfter
     events:
@@ -149,6 +162,7 @@ functions:
   getRecipeById:
     tags:
       FunctionName: Wah-getRecipeById
+      Project: WAH
     memorySize: 128
     handler: src/recipe/controller.getById
     events:
@@ -161,6 +175,7 @@ functions:
   zone:
     tags:
       Function: Wah-zone
+      Project: WAH
     handler: src/controllers/zone.getAll
     memorySize: 128
     timeout: 30
@@ -173,6 +188,7 @@ functions:
   npcGetById:
     tags:
       Function: Wah-npcGetById
+      Project: WAH
     handler: src/controllers/npc.getById
     memorySize: 128
     events:
@@ -184,6 +200,7 @@ functions:
   npcGetAll:
     tags:
       Function: Wah-npcGetAll
+      Project: WAH
     handler: src/controllers/npc.getAll
     memorySize: 400
     events:
@@ -195,6 +212,7 @@ functions:
   npcGetByIds:
     tags:
       Function: Wah-npcGetByIds
+      Project: WAH
     handler: src/controllers/npc.addNewNPCsByIds
     memorySize: 256
     timeout: 30
@@ -207,6 +225,7 @@ functions:
   character:
     tags:
       FunctionName: Wah-character
+      Project: WAH
     handler: src/character/controller.getCharacter
     memorySize: 128
     events:
@@ -218,6 +237,7 @@ functions:
   realm:
     tags:
       Function: Wah-realm
+      Project: WAH
     handler: src/controllers/realm.handler
     events:
       - http:
@@ -229,6 +249,7 @@ functions:
   realmAllRegions:
     tags:
       Function: Wah-realmAllRegions
+      Project: WAH
     handler: src/controllers/realm.realmAllRegions
     memorySize: 200
     events:
@@ -240,6 +261,7 @@ functions:
   getByRegionAndName:
     tags:
       Function: Wah-getByRegionAndName
+      Project: WAH
     handler: src/controllers/realm.getByRegionAndName
     memorySize: 200
     events:
@@ -251,6 +273,7 @@ functions:
   test:
     tags:
       Function: Wah-test
+      Project: WAH
     handler: src/controllers/test.handler
     memorySize: 512
     events:
@@ -263,6 +286,7 @@ functions:
   logger:
     tags:
       Function: Wah-logger
+      Project: WAH
     handler: src/controllers/logger.handler
     memorySize: 128
     events:
@@ -272,6 +296,7 @@ functions:
   loggerClientEvent:
     tags:
       Function: Wah-loggerClientEvent
+      Project: WAH
     handler: src/controllers/logger.clientEvent
     memorySize: 128
     events:
@@ -284,6 +309,7 @@ functions:
   loggerClientDelete:
     tags:
       Function: Wah-loggerClientDelete
+      Project: WAH
     handler: src/controllers/logger.clientDelete
     memorySize: 128
     events:
@@ -295,6 +321,7 @@ functions:
   currency:
     tags:
       Function: Wah-currency
+      Project: WAH
     handler: src/controllers/currency.handler
     memorySize: 128
     events:
@@ -306,12 +333,14 @@ functions:
   updateTSMDumpData:
     tags:
       Function: Wah-updateTSMDumpData
+      Project: WAH
     handler: src/controllers/tsm.handler
     memorySize: 256
 
   updateS3:
     tags:
       Function: Wah-updateS3
+      Project: WAH
     handler: src/updates/controller.update
     memorySize: 3008
     timeout: 900
