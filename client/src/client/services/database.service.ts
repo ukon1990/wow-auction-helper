@@ -217,7 +217,7 @@ export class DatabaseService {
     if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
-    this.db.table('recipes').bulkPut(recipes)
+    this.db.table('recipes2').bulkPut(recipes)
       .catch(e =>
         ErrorReport.sendError('DatabaseService.addRecipes', e));
   }
@@ -229,7 +229,7 @@ export class DatabaseService {
         return resolve([]);
       }
 
-      this.db.table('recipes')
+      this.db.table('recipes2')
         .toArray()
         .then(recipes => {
           SharedService.downloading.recipes = false;
@@ -246,7 +246,7 @@ export class DatabaseService {
   }
 
   async clearRecipes(): Promise<void> {
-    await this.db.table('recipes').clear()
+    await this.db.table('recipes2').clear()
       .catch(e =>
         ErrorReport.sendError('DatabaseService.clearRecipes', e));
   }
@@ -377,6 +377,19 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+
+    this.db.version(10).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes2: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON
+    });
 
     this.db.version(9).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,
