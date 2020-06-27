@@ -20,6 +20,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {RouterModule} from '@angular/router';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {RouterModule} from '@angular/router';
     MatExpansionModule,
     MatChipsModule,
     MatListModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    FontAwesomeModule
   ],
   exports: [
     AboutWhatIsComponent,
