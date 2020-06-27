@@ -109,6 +109,7 @@ export class BackgroundDownloadService {
               console.log('Done loading zone data'))
             .catch(console.error),
           this.loadThirdPartyAPI()
+            .then(() => console.log('api downloaded'))
             .catch(console.error),
           this.itemService.getBonusIds()
         ])
@@ -179,7 +180,7 @@ export class BackgroundDownloadService {
       this.realmStatus.lowestDelay - this.timeSinceUpdate.value < 1;
   }
 
-  private async loadThirdPartyAPI() {
+  private loadThirdPartyAPI(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
         this.auctionsService.getTsmAuctions()

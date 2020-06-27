@@ -80,7 +80,7 @@ export class DatabaseService {
         ErrorReport.sendError('DatabaseService.addItems', e));
   }
 
-  async getAllItems(): Dexie.Promise<any> {
+  async getAllItems(): Promise<any> {
     if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
@@ -125,7 +125,7 @@ export class DatabaseService {
     await this.db.table('npcs').bulkPut(list);
   }
 
-  async getAllNPCs(): Dexie.Promise<NPC[]> {
+  async getAllNPCs(): Promise<NPC[]> {
     if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
@@ -171,7 +171,7 @@ export class DatabaseService {
       .catch(console.error);
   }
 
-  async getAllZones(): Dexie.Promise<Zone[]> {
+  async getAllZones(): Promise<Zone[]> {
     if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
