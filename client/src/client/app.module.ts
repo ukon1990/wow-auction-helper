@@ -41,6 +41,7 @@ import {NpcService} from './modules/npc/services/npc.service';
 import {ItemModule} from './modules/item/item.module';
 import {AdminModule} from './modules/admin/admin.module';
 import {NpcModule} from './modules/npc/npc.module';
+import {ProfessionService} from './modules/crafting/services/profession.service';
 
 
 @NgModule({
@@ -87,6 +88,7 @@ import {NpcModule} from './modules/npc/npc.module';
     ReportService,
     ZoneService,
     NpcService,
+    ProfessionService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

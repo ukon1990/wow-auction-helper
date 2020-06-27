@@ -7,7 +7,6 @@ import {Profession} from '../../../../../../../../api/src/profession/model';
 @Component({
   selector: 'wah-skill-list',
   templateUrl: './skill-list.component.html',
-  styleUrls: ['./skill-list.component.scss']
 })
 export class SkillListComponent implements OnChanges, OnDestroy {
   @Input() characterProfession: CharacterProfession[];
@@ -33,18 +32,20 @@ export class SkillListComponent implements OnChanges, OnDestroy {
 
   setProfessions(professions: CharacterProfession[]): void {
     this.professions.length = 0;
-    professions.forEach(p => {
-      let known = 0;
-      p.skillTiers.forEach(skill => {
-        if (skill.recipes) {
-          known += skill.recipes.length;
-        }
+    if (professions) {
+      professions.forEach(p => {
+        let known = 0;
+        p.skillTiers.forEach(skill => {
+          if (skill.recipes) {
+            known += skill.recipes.length;
+          }
+        });
+        this.professions.push({
+          id: p.id,
+          name: this.map && this.map.get(p.id) ? this.map.get(p.id).name : 'Unknown',
+          known
+        });
       });
-      this.professions.push({
-        id: p.id,
-        name: this.map && this.map.get(p.id) ? this.map.get(p.id).name : 'Unknown',
-        known
-      });
-    });
+    }
   }
 }
