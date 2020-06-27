@@ -73,7 +73,6 @@ export class ProfessionService {
       .toPromise()
       .then((response: ProfessionResponse) => {
         this.dbService.addProfessions(response.professions);
-        this.mapProfessionsWithRecipes(CraftingService.list.value);
         this.setSubjects(response.professions);
         localStorage[this.LOCAL_STORAGE_TIMESTAMP] = response.timestamp;
         SharedService.downloading.professions = false;
@@ -89,6 +88,8 @@ export class ProfessionService {
     professions.forEach(profession => {
       map.set(profession.id, profession);
     });
+
+    this.mapProfessionsWithRecipes(CraftingService.list.value);
     this.map.next(map);
     this.list.next(professions);
   }

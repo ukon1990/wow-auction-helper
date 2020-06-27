@@ -12,9 +12,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {ReactiveFormsModule} from '@angular/forms';
 import {UtilModule} from '../util/util.module';
+import { SkillListComponent } from './components/character/skill-list/skill-list.component';
 
 @NgModule({
-  declarations: [CharacterComponent, CharactersComponent],
+  declarations: [CharacterComponent, CharactersComponent, SkillListComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,

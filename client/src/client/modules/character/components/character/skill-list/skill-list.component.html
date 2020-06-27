@@ -1,0 +1,11 @@
+<mat-list role="list" dense>
+  <ng-container *ngFor="let profession of professions">
+    <ng-container *ngIf="profession.known > 0 ||
+            profession.id === 182 || profession.id === 393 || profession.id === 186">
+      <mat-list-item role="listitem">
+        <h4 mat-line>{{ profession.name }}</h4>
+        <p mat-line>You know {{ profession.known }} recipes </p>
+      </mat-list-item>
+    </ng-container>
+  </ng-container>
+</mat-list>
