@@ -42,6 +42,7 @@ import {ItemModule} from './modules/item/item.module';
 import {AdminModule} from './modules/admin/admin.module';
 import {NpcModule} from './modules/npc/npc.module';
 import {ProfessionService} from './modules/crafting/services/profession.service';
+import {TsmService} from './modules/tsm/tsm.service';
 
 
 @NgModule({
@@ -89,6 +90,7 @@ import {ProfessionService} from './modules/crafting/services/profession.service'
     ZoneService,
     NpcService,
     ProfessionService,
+    TsmService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

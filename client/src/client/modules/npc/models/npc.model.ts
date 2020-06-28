@@ -5,9 +5,9 @@ import {TSM} from '../../auction/models/tsm.model';
 import {TradeVendor, TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TRADE_VENDORS} from '../../../data/trade-vendors';
 import {Currency} from '../../core/models/currency.model';
-import {currency, currencyMap} from '../../../data/currency.data';
+import {currencyMap} from '../../../data/currency.data';
 import {Report} from '../../../utils/report.util';
-import {CraftingService} from '../../../services/crafting.service';
+import {TsmService} from '../../tsm/tsm.service';
 
 export class VendorItem {
   id: number;
@@ -27,7 +27,7 @@ export class DroppedItem {
   static getScoredItem(dropped: DroppedItem) {
     const item: Item = SharedService.items[dropped.id],
       auctionItem: AuctionItem = SharedService.auctionItemsMap[dropped.id],
-      tsmItem: TSM = SharedService.tsm[dropped.id],
+      tsmItem: TSM = TsmService.getById(dropped.id),
       buyout = auctionItem ? auctionItem.buyout : 0,
       vendorValue = item ? item.sellPrice * dropped.dropChance : 0,
       buyoutValue = buyout * dropped.dropChance,
@@ -124,7 +124,7 @@ export class NPC {
 
   static calculateSellerVendorItemROI(item: VendorItem, roi: number = 0) {
     const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.id],
-      tsm: TSM = SharedService.tsm[item.id],
+      tsm: TSM = TsmService.getById(item.id),
       currencyAuctionItem: AuctionItem = SharedService.auctionItemsMap[item.currency];
     const unitPrice = currencyAuctionItem ?
       (currencyAuctionItem.buyout || currencyAuctionItem.regionSaleAvg) * item.unitPrice : item.unitPrice;

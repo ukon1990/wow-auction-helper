@@ -21,6 +21,7 @@ import {Timestamps} from '../../../../../../api/src/updates/model';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
+import {TsmService} from '../../tsm/tsm.service';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,7 @@ export class BackgroundDownloadService {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private professionService: ProfessionService,
+    private tsmService: TsmService,
     private dbService: DatabaseService) {
 
 
@@ -108,15 +110,17 @@ export class BackgroundDownloadService {
             .then(() =>
               console.log('Done loading zone data'))
             .catch(console.error),
-          this.loadThirdPartyAPI()
-            .then(() => console.log('api downloaded'))
+          this.tsmService.load()
             .catch(console.error),
-          this.itemService.getBonusIds()
+          this.itemService.getBonusIds(),
         ])
           .catch(console.error);
 
         await this.realmService.getStatus(region, realm)
           .catch(console.error);
+        AuctionUtil.organize(SharedService.auctions)
+          .catch(error =>
+            ErrorReport.sendError('BackgroundDownloadService.init', error));
         await this.startRealmStatusInterval();
       })
       .catch(error =>
@@ -178,33 +182,6 @@ export class BackgroundDownloadService {
   private shouldAnUpdateShouldBeAvailableSoon() {
     return !this.realmStatus ||
       this.realmStatus.lowestDelay - this.timeSinceUpdate.value < 1;
-  }
-
-  private loadThirdPartyAPI(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-        this.auctionsService.getTsmAuctions()
-          .then(resolve)
-          .catch(reject);
-      } else {
-        this.dbService.getTSMItems()
-          .then(async r => {
-            if (Object.keys(SharedService.tsm).length === 0) {
-              this.auctionsService.getTsmAuctions()
-                .then(resolve)
-                .catch(reject);
-            } else {
-              resolve();
-            }
-          })
-          .catch(async e => {
-            ErrorReport.sendError('BackgroundDownload.loadThirdPartyAPI', e);
-            this.auctionsService.getTsmAuctions()
-              .then(resolve)
-              .catch(reject);
-          });
-      }
-    });
   }
 
   private getUpdateTimestamps(): Promise<Timestamps> {

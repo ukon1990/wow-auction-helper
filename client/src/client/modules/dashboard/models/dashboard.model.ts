@@ -14,6 +14,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {TradeVendorItem} from '../../../models/item/trade-vendor';
 import {TSM} from '../../auction/models/tsm.model';
 import {CraftingService} from '../../../services/crafting.service';
+import {TsmService} from '../../tsm/tsm.service';
 
 export class Dashboard {
   public static fails = [];
@@ -339,7 +340,7 @@ export class Dashboard {
     Object.keys(SharedService.tradeVendorItemMap)
       .forEach(id => {
         const item: TradeVendorItem = SharedService.tradeVendorItemMap[id],
-          tsm: TSM = SharedService.tsm[id],
+          tsm: TSM = TsmService.getById(+id),
           hasValueAndProfit = item.value > 0 && item.sourceBuyout > 0 && item.roi > 0,
           doesAtLeastRegionSaleRateOf10Percent = (!tsm || tsm.RegionSaleRate > .1);
         if (!this.isExpansionMissMatch(+id) && hasValueAndProfit && doesAtLeastRegionSaleRateOf10Percent) {

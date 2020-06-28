@@ -3,7 +3,6 @@ import Dexie from 'dexie';
 import {Item} from '../models/item/item';
 import {Auction} from '../modules/auction/models/auction.model';
 import {SharedService} from './shared.service';
-import {TSM} from '../modules/auction/models/tsm.model';
 import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
@@ -23,8 +22,8 @@ import {Profession} from '../../../../api/src/profession/model';
  */
 @Injectable()
 export class DatabaseService {
-  private db: Dexie;
-  private unsupported: boolean;
+  public db: Dexie;
+  public unsupported: boolean;
 
   readonly TSM_TABLE_COLUMNS = 'Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,'
     + 'RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,'
@@ -327,38 +326,6 @@ export class DatabaseService {
       })
       .catch(e => {
         ErrorReport.sendError('DatabaseService.getAddonData', e);
-        SharedService.downloading.tsmAuctions = false;
-      });
-  }
-
-  addTSMItems(tsm: Array<TSM>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return;
-    }
-    this.db.table('tsm').clear();
-    this.db.table('tsm')
-      .bulkPut(tsm)
-      .then(r => console.log('Successfully added tsm data to local DB'))
-      .catch(e => ErrorReport.sendError('DatabaseService.addTSMItems', e));
-  }
-
-  getTSMItems(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return new Dexie.Promise<any>((resolve, reject) => reject([]));
-    }
-
-    SharedService.downloading.tsmAuctions = true;
-    return this.db.table('tsm')
-      .toArray()
-      .then(tsm => {
-        (<TSM[]>tsm).forEach(a => {
-          SharedService.tsm[a.Id] = a;
-        });
-        SharedService.downloading.tsmAuctions = false;
-        console.log('Restored TSM data from local DB');
-      })
-      .catch(e => {
-        ErrorReport.sendError('DatabaseService.getTSMItems', e);
         SharedService.downloading.tsmAuctions = false;
       });
   }

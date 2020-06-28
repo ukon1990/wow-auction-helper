@@ -17,6 +17,7 @@ import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
 import {ErrorReport} from '../../../../../utils/error-report.util';
 import {faDownload, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
+import {TsmService} from '../../../../tsm/tsm.service';
 
 @Component({
   selector: 'wah-download',
@@ -54,6 +55,7 @@ export class DownloadComponent implements OnInit {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private _dbService: DatabaseService,
+    private tsmService: TsmService,
     private service: BackgroundDownloadService) {
 
     this.timestamps = service.timestamps;
@@ -154,7 +156,8 @@ export class DownloadComponent implements OnInit {
 
   private async downloadTSM() {
     this.downloadProgress = 'Downloading TSM data';
-    await this._auctionsService.getTsmAuctions();
+    await this.tsmService.get()
+      .catch(console.error);
     await AuctionUtil.organize(SharedService.auctions)
       .catch(error =>
         ErrorReport.sendError('DownloadComponent.downloadTSM', error));

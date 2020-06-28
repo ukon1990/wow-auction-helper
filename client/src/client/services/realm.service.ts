@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
@@ -6,7 +6,6 @@ import {Realm} from '../models/realm';
 import {AuctionsService} from './auctions.service';
 import {User} from '../models/user/user';
 import {ErrorReport} from '../utils/error-report.util';
-import {Angulartics2} from 'angulartics2';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
@@ -21,11 +20,11 @@ export class RealmService {
   events = {
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
     list: new BehaviorSubject([]),
-    map: new BehaviorSubject(new Map<number, RealmStatus>())
+    map: new BehaviorSubject(new Map<number, RealmStatus>()),
+    realmChanged: new EventEmitter()
   };
 
   constructor(private http: HttpClient,
-              private angulartics2: Angulartics2,
               private matSnackBar: MatSnackBar) {
   }
 
@@ -39,7 +38,7 @@ export class RealmService {
     await this.getStatus(
       SharedService.user.region,
       realm);
-    await auctionsService.getTsmAuctions();
+    this.events.realmChanged.emit();
   }
 
   getLogForRealmWithId(ahId: number): Promise<AuctionUpdateLog> {
