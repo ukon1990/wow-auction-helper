@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {WatchlistGroup, WatchlistItem} from '../../../models/watchlist.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SharedService} from '../../../../../services/shared.service';
 import {itemClasses} from '../../../../../models/item/item-classes';
@@ -7,9 +6,10 @@ import {GameBuild} from '../../../../../utils/game-build.util';
 import {Filters} from '../../../../../utils/filtering';
 import {Item} from '../../../../../models/item/item';
 import {ColumnDescription} from '../../../../table/models/column-description';
-import {Angulartics2} from 'angulartics2';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
+import {WatchlistGroup} from '../../../models/watchlist-group.model';
+import {WatchlistItem} from '../../../models/watchlist-item.model';
 
 @Component({
   selector: 'wah-watchlist-item-batch',

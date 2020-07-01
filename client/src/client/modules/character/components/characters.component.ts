@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Input, OnChanges} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
 import {CharacterService} from '../../../services/character.service';
 import {RealmService} from '../../../services/realm.service';
@@ -9,11 +9,10 @@ import {AuctionsService} from '../../../services/auctions.service';
 import {SharedService} from '../../../services/shared.service';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
 import {Character} from '../models/character.model';
-import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Report} from '../../../utils/report.util';
 import {Realm} from '../../../models/realm';
-import {User} from '../../../models/user/user';
+import {UserUtil} from '../../../utils/user/user.util';
 
 @Component({
   selector: 'wah-characters',
@@ -131,10 +130,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     SharedService.user.characters.push(character);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
-    User.updateRecipesForRealm();
+    UserUtil.updateRecipesForRealm();
 
     this.downloading = false;
-    Realm.gatherRealms();
+    RealmService.gatherRealms();
 
     if (SharedService.user.region && SharedService.user.realm) {
       AuctionUtil.organize(SharedService.auctions);
@@ -148,7 +147,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
       character['downloading'] = true;
       this._characterService.getCharacter(
         SharedService.user.characters[index].name,
-        User.slugifyString(SharedService.user.characters[index].realm),
+        UserUtil.slugifyString(SharedService.user.characters[index].realm),
         this.form.value.region
       ).then(c => {
         if (c && !c.error) {
@@ -158,7 +157,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
 
           SharedService.user.characters[index] = c;
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-          User.updateRecipesForRealm();
+          UserUtil.updateRecipesForRealm();
 
           if (SharedService.user.region && SharedService.user.realm) {
             AuctionUtil.organize(
@@ -203,8 +202,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     SharedService.user.characters.splice(index, 1);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
     try {
-      User.updateRecipesForRealm();
-      Realm.gatherRealms();
+      UserUtil.updateRecipesForRealm();
+      RealmService.gatherRealms();
     } catch (e) {
       ErrorReport.sendError('removeCharacter', e);
     }

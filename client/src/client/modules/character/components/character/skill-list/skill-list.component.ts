@@ -17,7 +17,6 @@ export class SkillListComponent implements OnChanges, OnDestroy {
   constructor(private service: ProfessionService) {
     this.sm.add(service.map, (map) => {
       this.map = map;
-      console.log('SHIT', map);
       this.setProfessions(this.characterProfession);
     });
   }

@@ -1,6 +1,5 @@
-import { async, TestBed } from '@angular/core/testing';
-import { SharedService } from '../../../services/shared.service';
-import { Watchlist, WatchlistItem, WatchlistGroup } from './watchlist.model';
+import { Watchlist } from './watchlist.model';
+import {WatchlistItem} from './watchlist-item.model';
 
 
 let wl = new Watchlist(),

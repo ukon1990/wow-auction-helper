@@ -1,10 +1,9 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { SharedService } from './shared.service';
-import { Endpoints } from './endpoints';
-import { startWith, map } from 'rxjs/operators';
-import { ErrorReport } from '../utils/error-report.util';
-import {User} from '../models/user/user';
+import {HttpClient} from '@angular/common/http';
+import {SharedService} from './shared.service';
+import {Endpoints} from './endpoints';
+import {ErrorReport} from '../utils/error-report.util';
+import {UserUtil} from '../utils/user/user.util';
 
 @Injectable()
 export class CharacterService {
@@ -20,7 +19,7 @@ export class CharacterService {
           region: region ? region : SharedService.user.region,
           realm: realm,
           name: character,
-          locale: Endpoints.getRealm(User.slugifyString(realm)).locale,
+          locale: Endpoints.getRealm(UserUtil.slugifyString(realm)).locale,
           withFields: true
         })
       .toPromise()
@@ -42,7 +41,7 @@ export class CharacterService {
           region: SharedService.user.region,
           realm: realm,
           name: character,
-          locale: Endpoints.getRealm(User.slugifyString(realm)).locale,
+          locale: Endpoints.getRealm(UserUtil.slugifyString(realm)).locale,
           withFields: false
         })
       .toPromise()

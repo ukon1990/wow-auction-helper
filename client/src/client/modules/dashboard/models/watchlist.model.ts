@@ -2,46 +2,8 @@ import {Recipe} from '../../crafting/models/recipe';
 import {SharedService} from '../../../services/shared.service';
 import {defaultWatchlist} from '../data/default-watchlist.data';
 import {Dashboard} from './dashboard.model';
-
-export class WatchlistItem {
-  itemID: number;
-  name: string;
-  compareTo: string;
-  target?: number;
-  targetType: string;
-  criteria: string;
-  minCraftingProfit: number;
-  value = 0;
-
-  constructor(itemID?: any) {
-    itemID = parseInt(itemID, 10);
-    if (itemID && SharedService.items[itemID]) {
-      const wl = SharedService.user.watchlist;
-      this.itemID = itemID;
-      this.name = SharedService.items[itemID].name;
-      this.compareTo = wl.COMPARABLE_VARIABLES.BUYOUT;
-      this.targetType = wl.TARGET_TYPES.GOLD;
-      this.criteria = wl.CRITERIA.BELOW;
-      this.minCraftingProfit = 0;
-    }
-  }
-}
-
-export class WatchlistGroup {
-  name: string;
-  items: Array<WatchlistItem> = new Array<WatchlistItem>();
-  matchSaleRate = 0;
-  matchDailySold = 0;
-  hide: false;
-
-  constructor(name: string, items?: Array<WatchlistItem>) {
-    this.name = name;
-
-    if (items) {
-      this.items = items;
-    }
-  }
-}
+import {WatchlistItem} from './watchlist-item.model';
+import {WatchlistGroup} from './watchlist-group.model';
 
 export class Watchlist {
   private storageName = 'watchlist';

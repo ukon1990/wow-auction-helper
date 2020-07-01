@@ -16,6 +16,7 @@ import {ReportService} from './services/report/report.service';
 import {Title} from '@angular/platform-browser';
 import {RoutingUtil} from './modules/core/utils/routing.util';
 import {MenuItem} from './modules/core/models/menu-item.model';
+import {UserUtil} from './utils/user/user.util';
 
 @Component({
   selector: 'wah-root',
@@ -36,7 +37,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private title: Title) {
     this.setLocale();
     DefaultDashboardSettings.init();
-    User.restore();
+    UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
     SharedService.user.shoppingCart = new ShoppingCart();

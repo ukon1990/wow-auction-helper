@@ -17,6 +17,7 @@ import {Difference} from '@ukon1990/js-utilities/dist/models/difference.model';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../../npc/services/npc.service';
+import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
   selector: 'wah-general-settings',
@@ -150,13 +151,13 @@ export class GeneralSettingsComponent implements OnDestroy {
   exportData(): void {
     this.form.controls['exportString']
       .setValue(
-        JSON.stringify(User.getSettings(true)));
+        JSON.stringify(UserUtil.getSettings(true)));
     Report.send('Exported settings to string',
       'General settings');
   }
 
   exportAsFile(): void {
-    FileService.saveJSONToFile(User.getSettings(true), `wah-settings-${SharedService.user.realm}.json`);
+    FileService.saveJSONToFile(UserUtil.getSettings(true), `wah-settings-${SharedService.user.realm}.json`);
 
     Report.send(
       'Exported settings to file',
@@ -167,7 +168,7 @@ export class GeneralSettingsComponent implements OnDestroy {
     if (this.isImportStringNotEmpty()) {
       SharedService.user.watchlist
         .attemptRestoreFromString(this.form.value.importString);
-      User.import(this.form.value.importString);
+      UserUtil.import(this.form.value.importString);
       Report.send(
         'Imported existing setup',
         'General settings');
@@ -190,7 +191,7 @@ export class GeneralSettingsComponent implements OnDestroy {
       SharedService.user.watchlist
         .attemptRestoreFromString(reader.result);
 
-      User.import(reader.result.toString());
+      UserUtil.import(reader.result.toString());
 
       Report.send('Imported existing setup from file', 'General settings');
 

@@ -4,28 +4,45 @@ import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
 import {Realm} from '../models/realm';
 import {AuctionsService} from './auctions.service';
-import {User} from '../models/user/user';
 import {ErrorReport} from '../utils/error-report.util';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {Report} from '../utils/report.util';
 import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
 import {RealmStatus} from '../models/realm-status.model';
+import {UserUtil} from '../utils/user/user.util';
 
 @Injectable()
 export class RealmService {
+
+  constructor(private http: HttpClient,
+              private matSnackBar: MatSnackBar) {
+  }
   previousUrl;
   events = {
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
     list: new BehaviorSubject([]),
     map: new BehaviorSubject(new Map<number, RealmStatus>()),
-    realmChanged: new EventEmitter()
+    realmChanged: new EventEmitter<RealmStatus>()
   };
 
-  constructor(private http: HttpClient,
-              private matSnackBar: MatSnackBar) {
+  public static gatherRealms(): void {
+    const tmpMap: Map<string, Realm> = new Map<string, Realm>();
+    SharedService.userRealms = new Array<Realm>();
+
+    if (SharedService.user && SharedService.user.characters) {
+      SharedService.user.characters.forEach(character => {
+        if (!tmpMap[character.realm]) {
+          const realm = SharedService.realms[UserUtil.slugifyString(character.realm)];
+          tmpMap[character.realm] = realm;
+        }
+      });
+    }
+
+    Object.keys(tmpMap).forEach(key =>
+      SharedService.userRealms.push(tmpMap[key]));
   }
 
   async changeRealm(auctionsService: AuctionsService, realm: string, region?: string) {
@@ -33,12 +50,15 @@ export class RealmService {
       SharedService.user.region = region;
     }
     SharedService.user.realm = realm;
-    User.save();
+    UserUtil.save();
 
-    await this.getStatus(
+    this.getStatus(
       SharedService.user.region,
-      realm);
-    this.events.realmChanged.emit();
+      realm)
+      .then(status =>
+        this.events.realmChanged.emit(status))
+      .catch(error =>
+        ErrorReport.sendError('RealmService.changeRealm', error));
   }
 
   getLogForRealmWithId(ahId: number): Promise<AuctionUpdateLog> {
@@ -107,7 +127,7 @@ export class RealmService {
         this.events.map.value.set(realm.ahId, realm);
         SharedService.realms[realm.slug] = realm;
       });
-      Realm.gatherRealms();
+      RealmService.gatherRealms();
       SharedService.events.realms.emit(true);
       this.events.list.next(realms);
     } else {

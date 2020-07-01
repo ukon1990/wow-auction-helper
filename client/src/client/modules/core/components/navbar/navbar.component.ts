@@ -4,6 +4,7 @@ import { SharedService } from '../../../../services/shared.service';
 import { User } from '../../../../models/user/user';
 import { UserAuctions } from '../../../auction/models/user-auctions.model';
 import { Angulartics2 } from 'angulartics2';
+import {UserUtil} from '../../../../utils/user/user.util';
 
 declare function require(moduleName: string): any;
 const version = require('../../../../../../package.json').version;
@@ -34,7 +35,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
 
   saveUser(evt: any): void {
     SharedService.user.isDarkMode = evt.checked;
-    User.save();
+    UserUtil.save();
   }
 
   isRegisteredUser(): boolean {
