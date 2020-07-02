@@ -13,7 +13,6 @@ import {RealmStatus} from '../../../models/realm-status.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {AuctionUtil} from '../../auction/utils/auction.util';
-import {Auction} from '../../auction/models/auction.model';
 import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {ErrorReport} from '../../../utils/error-report.util';
@@ -110,7 +109,7 @@ export class BackgroundDownloadService {
             .then(() =>
               console.log('Done loading zone data'))
             .catch(console.error),
-          this.tsmService.load()
+          this.tsmService.load(this.realmService.events.realmStatus.value)
             .catch(console.error),
           this.itemService.getBonusIds(),
         ])

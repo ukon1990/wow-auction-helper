@@ -10,7 +10,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {RealmService} from '../../services/realm.service';
 import {environment} from '../../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
-import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +18,11 @@ export class TsmService {
   static list: BehaviorSubject<TSM[]> = new BehaviorSubject<TSM[]>([]);
   static mapped: BehaviorSubject<Map<number, TSM>> = new BehaviorSubject(new Map<number, TSM>());
 
-  private sm = new SubscriptionManager();
 
   constructor(private http: HttpClient,
               private db: DatabaseService,
               public platform: Platform,
-              private snackBar: MatSnackBar,
-              private realmService: RealmService) {
-    this.sm.add(this.realmService.events.realmChanged, (evt) => {
-      console.log('RealmStatus changed', evt);
-    });
+              private snackBar: MatSnackBar) {
   }
 
 
@@ -36,17 +30,17 @@ export class TsmService {
     return this.mapped.value.get(id);
   }
 
-  load(): Promise<TSM[]> {
+  load(realmStatus: AuctionHouseStatus): Promise<TSM[]> {
     return new Promise<TSM[]>((resolve, reject) => {
       if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-        this.get()
+        this.get(realmStatus)
           .then(resolve)
           .catch(reject);
       } else {
         this.getFromDB()
           .then(data => {
             if (!data || !data.length) {
-              this.get()
+              this.get(realmStatus)
                 .then(resolve)
                 .catch(reject);
             } else {
@@ -55,7 +49,7 @@ export class TsmService {
           })
           .catch((error) => {
             ErrorReport.sendError('TsmService.load', error);
-            this.get()
+            this.get(realmStatus)
               .then(resolve)
               .catch(reject);
           });
@@ -63,9 +57,8 @@ export class TsmService {
     });
   }
 
-  get(): Promise<TSM[]> {
+  get(realmStatus: AuctionHouseStatus): Promise<TSM[]> {
     return new Promise<TSM[]>((resolve, reject) => {
-      const realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.value;
       // Regions such as Taiwan and Korea is not supported by TSM. But they should not have a tsmUrl
       if (realmStatus && realmStatus.tsmUrl) {
         console.log('Downloading TSM data');

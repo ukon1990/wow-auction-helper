@@ -156,7 +156,7 @@ export class DownloadComponent implements OnInit {
 
   private async downloadTSM() {
     this.downloadProgress = 'Downloading TSM data';
-    await this.tsmService.get()
+    await this.tsmService.get(this._realmService.events.realmStatus.value)
       .catch(console.error);
     await AuctionUtil.organize(SharedService.auctions)
       .catch(error =>
