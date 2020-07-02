@@ -89,8 +89,14 @@ export class BackgroundDownloadService {
     this.isLoading.next(true);
     const startTimestamp = performance.now();
     console.log('Starting to load data');
-    await this.realmService.getRealms()
-      .catch(error => console.error(error));
+
+    await Promise.all([
+      this.realmService.getRealms()
+        .catch(error => console.error(error)),
+      this.realmService.getStatus(region, realm)
+        .catch(console.error)
+    ])
+      .catch(console.error);
 
     await this.getUpdateTimestamps()
       .then(async (timestamps: Timestamps) => {
@@ -113,9 +119,6 @@ export class BackgroundDownloadService {
             .catch(console.error),
           this.itemService.getBonusIds(),
         ])
-          .catch(console.error);
-
-        await this.realmService.getStatus(region, realm)
           .catch(console.error);
         AuctionUtil.organize(SharedService.auctions)
           .catch(error =>
