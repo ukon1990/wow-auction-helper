@@ -26,7 +26,7 @@ import {TsmService} from '../../tsm/tsm.service';
   providedIn: 'root'
 })
 export class BackgroundDownloadService {
-  isLoading = new BehaviorSubject(false);
+  isLoading = new BehaviorSubject(true);
   timeSinceUpdate = new BehaviorSubject(0);
 
   timestamps = {
