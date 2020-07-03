@@ -17,6 +17,8 @@ import {Title} from '@angular/platform-browser';
 import {RoutingUtil} from './modules/core/utils/routing.util';
 import {MenuItem} from './modules/core/models/menu-item.model';
 import {UserUtil} from './utils/user/user.util';
+import {BackgroundDownloadService} from './modules/core/services/background-download.service';
+import {ThemeUtil} from './modules/core/utils/theme.util';
 
 @Component({
   selector: 'wah-root',
@@ -25,17 +27,23 @@ import {UserUtil} from './utils/user/user.util';
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
+  theme = ThemeUtil.current;
   shouldAskForConcent = false;
   pageTitle: string;
+  isLoading: boolean;
 
   constructor(public platform: Platform,
               private router: Router,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
+              private downloadService: BackgroundDownloadService,
               private reportService: ReportService,
               private title: Title) {
     this.setLocale();
+    this.subs.add(downloadService.isLoading, (isLoading) => {
+      this.isLoading = isLoading;
+    });
     DefaultDashboardSettings.init();
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
@@ -160,5 +168,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  /* istanbul ignore next */
+  getDownloading() {
+    return SharedService.downloading;
   }
 }

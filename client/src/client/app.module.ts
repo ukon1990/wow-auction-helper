@@ -43,6 +43,7 @@ import {AdminModule} from './modules/admin/admin.module';
 import {NpcModule} from './modules/npc/npc.module';
 import {ProfessionService} from './modules/crafting/services/profession.service';
 import {TsmService} from './modules/tsm/tsm.service';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -71,7 +72,8 @@ import {TsmService} from './modules/tsm/tsm.service';
     AddonModule,
     ItemModule,
     AdminModule,
-    NpcModule
+    NpcModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     RealmService,

@@ -48,7 +48,7 @@
           <td>
             <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
           </td>
-          <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
+          <td>
             Items
           </td>
           <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
@@ -104,7 +104,9 @@
           <td>
             <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
           </td>
-          <td>NPCs (~24 mb)</td>
+          <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
+            NPCs (~24 mb)
+          </td>
           <td>{{ timestamps.npc | date: 'HH:mm M/d/yy' }}</td>
           <td>
             <button mat-icon-button (click)="download('npc', true)"

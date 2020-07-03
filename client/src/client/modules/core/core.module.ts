@@ -65,7 +65,7 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
     FontAwesomeModule,
     MarketResetModule
   ],
-  exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent]
+  exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent, DownloadComponent]
 })
 export class CoreModule {
   constructor() {

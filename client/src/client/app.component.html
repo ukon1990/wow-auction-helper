@@ -15,8 +15,66 @@
 </div>
 
 <ng-template #loadingTemplate>
-  The app is loading!
-  <mat-progress-bar mode="determinate" [value]="progress.auctions"></mat-progress-bar>
+  App data is loading…
+  <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
+    <tbody>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>
+        Items
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>
+        Recipes
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>Pets</td>
+    </tr>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().professions" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>Professions</td>
+    </tr>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
+        NPCs
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().zone" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>Zones</td>
+    </tr>
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>Auctions</td>
+    </tr>
+
+    <tr>
+      <td>
+        <mat-spinner *ngIf="getDownloading().tsmAuctions" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>TSM</td>
+    </tr>
+    </tbody>
+  </table>
 </ng-template>
 
 <wah-news></wah-news>
