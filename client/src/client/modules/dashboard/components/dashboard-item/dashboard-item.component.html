@@ -4,13 +4,17 @@
       <button
               class="btn btn-sm mr-2"
               mat-raised-button
-              matTooltip="Configure this dashboard">
+              color="accent"
+              matTooltip="Configure this dashboard"
+              (click)="toggleConfig()"
+      >
         <fa-icon [icon]="faCog"></fa-icon>
       </button>
       <button
               mat-raised-button
               class="btn btn-sm"
               (click)="openClose()"
+              [color]="detailView ? 'accent' : 'primary'"
               matTooltip="Click to {{ detailView ? 'close' : 'open' }} the full window.">
         <span *ngIf="!detailView; else closeIcon">
           <i matTooltip="Open detail view" class="far fa-window-restore"></i>
@@ -29,16 +33,40 @@
       {{ dashboard.message }}
     </mat-card-subtitle>
   </mat-card-header>
+  <ng-container *ngIf="!isConfigOpen; else configTemplate">
   <mat-card-content>
-    <wah-data-table [id]="dashboard?.idParam" iconSize="22" [columns]="currentColumns"
-                    [filterParameter]="filterParameter" [data]="dashboard?.data" [maxVisibleRows]="maxVisibleRows"
-                    [numOfRows]="20"
-                    [isCrafting]="dashboard.isCrafting" [hideCraftingDetails]="true"></wah-data-table>
-    <!-- detailView -->
-    <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
-                    class="row col-md-12">
-      <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
-    </mat-form-field>
+     <wah-data-table [id]="dashboard?.idParam" iconSize="22" [columns]="currentColumns"
+                     [filterParameter]="filterParameter" [data]="dashboard?.data" [maxVisibleRows]="maxVisibleRows"
+                     [numOfRows]="20"
+                     [isCrafting]="dashboard.isCrafting" [hideCraftingDetails]="true"></wah-data-table>
+     <!-- detailView -->
+     <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
+                     class="row col-md-12">
+       <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
+     </mat-form-field>
   </mat-card-content>
+  </ng-container>
 </mat-card>
 <div *ngIf="detailView && !isOtherDetailPanelOpen" class="backdrop" (click)="openClose()"></div>
+
+<ng-template #configTemplate>
+  <mat-card-content>
+    Config inc
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      color="primary"
+    >
+      <fa-icon [icon]="faSave"></fa-icon>
+      Save
+    </button>
+    <button
+            mat-raised-button
+            color="warn"
+    >
+      <fa-icon [icon]="faTrash"></fa-icon>
+      Discard
+    </button>
+  </mat-card-actions>
+</ng-template>
