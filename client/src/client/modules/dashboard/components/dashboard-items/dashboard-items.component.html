@@ -3,7 +3,7 @@
     <wah-crafting-config></wah-crafting-config>
   </div>
   <ng-container *ngFor="let d of dashboards">
-    <div *ngIf="!d.isDisabled && d.data.length > 0" class="col-md-6 mb-3 slim-sm">
+    <div *ngIf="!d.isDisabled && d.data.length > 0" class="col-md-6 col-sm-12 mb-3 slim-sm">
       <wah-dashboard-item [dashboard]="d" filterParameter="name"></wah-dashboard-item>
     </div>
   </ng-container>

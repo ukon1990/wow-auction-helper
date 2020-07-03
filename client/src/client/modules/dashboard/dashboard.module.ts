@@ -29,6 +29,7 @@ import {UtilModule} from '../util/util.module';
 import {RouterModule} from '@angular/router';
 import { ManageCustomDashboardComponent } from './components/manage/manage-custom-dashboard/manage-custom-dashboard.component';
 import {CraftingModule} from '../crafting/crafting.module';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import {CraftingModule} from '../crafting/crafting.module';
     UtilModule,
     RouterModule,
     MatPaginatorModule,
-    CraftingModule
+    CraftingModule,
+    FontAwesomeModule
   ]
 })
 export class DashboardModule { }
