@@ -6,6 +6,7 @@ import {User} from '../../../../models/user/user';
 import {Notifications} from '../../../../models/user/notification';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
+import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
   selector: 'wah-notification-settings',
@@ -27,7 +28,7 @@ export class NotificationSettingsComponent implements OnInit, OnDestroy {
     this.formChanges = this.notificationsForm.valueChanges
       .subscribe((change) => {
         SharedService.user.notifications.setString(change);
-        User.save();
+        UserUtil.save();
       });
   }
 

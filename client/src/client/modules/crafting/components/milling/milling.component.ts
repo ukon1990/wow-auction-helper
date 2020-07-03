@@ -4,7 +4,7 @@ import {ColumnDescription} from '../../../table/models/column-description';
 import {Remains} from '../../../../models/item/remains.model';
 import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Filters} from '../../../../utils/filtering';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Item} from '../../../../models/item/item';

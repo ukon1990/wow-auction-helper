@@ -5,7 +5,7 @@ import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {Report} from '../../../../utils/report.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ProfitSummary} from '../../models/profit-summary.model';
 import {UserProfit} from '../../models/user-profit.model';
 import {NumberUtil} from '../../../util/utils/number.util';

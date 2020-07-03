@@ -6,16 +6,19 @@ import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
 import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
 import {ErrorReport} from './utils/error-report.util';
-import {MatSnackBar} from '@angular/material';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ReportService} from './services/report/report.service';
 import {Title} from '@angular/platform-browser';
 import {RoutingUtil} from './modules/core/utils/routing.util';
 import {MenuItem} from './modules/core/models/menu-item.model';
+import {UserUtil} from './utils/user/user.util';
+import {BackgroundDownloadService} from './modules/core/services/background-download.service';
+import {ThemeUtil} from './modules/core/utils/theme.util';
 
 @Component({
   selector: 'wah-root',
@@ -24,20 +27,25 @@ import {MenuItem} from './modules/core/models/menu-item.model';
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
-  mainWindowScrollPosition = 0;
+  theme = ThemeUtil.current;
   shouldAskForConcent = false;
   pageTitle: string;
+  isLoading: boolean;
 
   constructor(public platform: Platform,
               private router: Router,
               private matSnackBar: MatSnackBar,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
+              private downloadService: BackgroundDownloadService,
               private reportService: ReportService,
               private title: Title) {
     this.setLocale();
+    this.subs.add(downloadService.isLoading, (isLoading) => {
+      this.isLoading = isLoading;
+    });
     DefaultDashboardSettings.init();
-    User.restore();
+    UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
     SharedService.user.shoppingCart = new ShoppingCart();
@@ -160,5 +168,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   /* istanbul ignore next */
   isDarkmode(): boolean {
     return SharedService.user ? SharedService.user.isDarkMode : false;
+  }
+
+  /* istanbul ignore next */
+  getDownloading() {
+    return SharedService.downloading;
   }
 }

@@ -7,16 +7,18 @@ import {AuctionsService} from '../../../../../services/auctions.service';
 import {PetsService} from '../../../../../services/pets.service';
 import {DatabaseService} from '../../../../../services/database.service';
 import {RealmService} from '../../../../../services/realm.service';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
-import {Realm} from '../../../../../models/realm';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {BackgroundDownloadService} from '../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
 import {ErrorReport} from '../../../../../utils/error-report.util';
+import {faDownload, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
+import {TsmService} from '../../../../tsm/tsm.service';
+import {ProfessionService} from '../../../../crafting/services/profession.service';
 
 @Component({
   selector: 'wah-download',
@@ -25,12 +27,11 @@ import {ErrorReport} from '../../../../../utils/error-report.util';
 })
 export class DownloadComponent implements OnInit {
   theme = ThemeUtil.current;
-  checkingForUpdates: boolean;
-  lastCheckedMin;
   timeSinceUpdate = 0;
-  realmControl: FormControl = new FormControl();
   downloadProgress = '';
   subs = new SubscriptionManager();
+  faExclamationCircle = faExclamationCircle;
+  faDownload = faDownload;
 
   timestamps = {
     items: localStorage['timestamp_items'],
@@ -39,7 +40,8 @@ export class DownloadComponent implements OnInit {
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
     npc: localStorage.getItem('timestamp_npcs'),
-    zone: localStorage.getItem('timestamp_zone')
+    zone: localStorage.getItem('timestamp_zone'),
+    professions: localStorage.getItem('timestamp_professions')
   };
   private realmStatus: RealmStatus;
 
@@ -52,6 +54,8 @@ export class DownloadComponent implements OnInit {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private _dbService: DatabaseService,
+    private tsmService: TsmService,
+    private professionService: ProfessionService,
     private service: BackgroundDownloadService) {
 
     this.timestamps = service.timestamps;
@@ -126,6 +130,11 @@ export class DownloadComponent implements OnInit {
       case 'zone':
         this.zoneService.get()
           .catch(console.error);
+        break;
+      case 'professions':
+        this.professionService.getAll()
+          .catch(console.error);
+        break;
     }
   }
 
@@ -152,7 +161,8 @@ export class DownloadComponent implements OnInit {
 
   private async downloadTSM() {
     this.downloadProgress = 'Downloading TSM data';
-    await this._auctionsService.getTsmAuctions();
+    await this.tsmService.get(this._realmService.events.realmStatus.value)
+      .catch(console.error);
     await AuctionUtil.organize(SharedService.auctions)
       .catch(error =>
         ErrorReport.sendError('DownloadComponent.downloadTSM', error));

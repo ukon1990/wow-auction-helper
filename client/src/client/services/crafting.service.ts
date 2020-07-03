@@ -7,12 +7,10 @@ import {DatabaseService} from './database.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {Platform} from '@angular/cdk/platform';
 import {BehaviorSubject} from 'rxjs';
-import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
 import wordsToNumbers from 'words-to-numbers';
-import {Report} from '../utils/report.util';
 
 class RecipeResponse {
   timestamp: Date;

@@ -37,7 +37,7 @@
     <button type="button"
             mat-button
             [matMenuTriggerFor]="mobileMenuDropdown">
-      <fa-icon [icon]="['fas', 'bars']" aria-label="Menu"></fa-icon>
+      <fa-icon [icon]="faBars" aria-label="Menu"></fa-icon>
     </button>
 
     <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>
@@ -78,7 +78,7 @@
     <button mat-icon-button [matMenuTriggerFor]="menu"
             aria-label="Display the extra menu"
             matTooltip="Display the extra menu">
-      <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
+      <fa-icon [icon]="faEllipsisV"></fa-icon>
     </button>
     <mat-menu #menu="matMenu">
       <ng-container></ng-container>

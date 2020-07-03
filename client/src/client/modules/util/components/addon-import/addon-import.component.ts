@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {DatabaseService} from '../../../../services/database.service';
 import {RealmService} from '../../../../services/realm.service';
@@ -19,6 +19,7 @@ import {AuctionDBImportUtil} from '../../../auction/utils/auction-db-import.util
 import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {GameBuild} from '../../../../utils/game-build.util';
+import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
   selector: 'wah-addon-import',
@@ -77,7 +78,7 @@ export class AddonImportComponent implements OnInit {
 
     this.sm.add(this.form.controls.gameVersion.valueChanges, version => {
       SharedService.user.gameVersion = version;
-      User.save();
+      UserUtil.save();
     });
 
 
@@ -215,7 +216,7 @@ export class AddonImportComponent implements OnInit {
   private async onRealmChange(realm: string) {
     SharedService.user.classicRealm = realm;
     this.getCurrentRealmAuctions(realm);
-    User.save();
+    UserUtil.save();
     this.loadData();
   }
 

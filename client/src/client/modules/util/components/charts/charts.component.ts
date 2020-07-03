@@ -4,7 +4,7 @@ import * as distinctColors from 'distinct-colors';
 import {FormControl} from '@angular/forms';
 import {Item} from '../../../../models/item/item';
 import {ChartData} from '../../../../models/chart-data.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../utils/report.util';
 
 @Component({

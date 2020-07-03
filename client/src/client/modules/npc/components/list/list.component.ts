@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NpcService} from '../../services/npc.service';
 import {ColumnDescription} from '../../../table/models/column-description';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DroppedItem, NPC, VendorItem} from '../../models/npc.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {ZoneService} from '../../../zone/service/zone.service';

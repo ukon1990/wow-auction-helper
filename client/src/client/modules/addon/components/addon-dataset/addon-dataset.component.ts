@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {SharedService} from '../../../../services/shared.service';
 import {TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
@@ -11,6 +11,7 @@ import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {Filters} from '../../../../utils/filtering';
 import {Report} from '../../../../utils/report.util';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {TsmService} from '../../../tsm/tsm.service';
 
 @Component({
   selector: 'wah-tsm-dataset',
@@ -388,7 +389,7 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
     list = this.filterInventory(formData, list);
 
     list.forEach((iv: ItemInventory) => {
-      const tsm: TSM = SharedService.tsm[iv.id];
+      const tsm: TSM = TsmService.mapped.value.get(iv.id);
       if (!this.isSoldByVendor(SharedService.items[iv.id])) {
         this.inventoryValue += iv.sumBuyout;
 

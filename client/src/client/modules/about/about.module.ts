@@ -11,16 +11,16 @@ import {AboutPrivacyComponent} from './components/about-privacy/about-privacy.co
 import {AboutDataComponent} from './components/about-data/about-data.component';
 import {AboutCraftingComponent} from './components/about-crafting/about-crafting.component';
 import {GithubService} from './services/github.service';
-import {
-  MatButtonModule,
-  MatCardModule, MatCheckboxModule,
-  MatChipsModule,
-  MatExpansionModule,
-  MatListModule,
-  MatTabsModule,
-  MatTooltipModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {RouterModule} from '@angular/router';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -45,7 +45,8 @@ import {RouterModule} from '@angular/router';
     MatExpansionModule,
     MatChipsModule,
     MatListModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    FontAwesomeModule
   ],
   exports: [
     AboutWhatIsComponent,

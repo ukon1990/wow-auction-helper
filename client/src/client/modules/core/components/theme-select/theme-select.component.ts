@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ThemeUtil} from '../../utils/theme.util';
 import {Theme} from '../../models/theme.model';
 import {Report} from '../../../../utils/report.util';
+import {faCheck, faPalette} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'wah-theme-select',
@@ -11,6 +12,8 @@ import {Report} from '../../../../utils/report.util';
 export class ThemeSelectComponent implements OnInit {
   list = ThemeUtil.list;
   currentTheme = ThemeUtil.current;
+  faCheck = faCheck;
+  faPalette = faPalette;
 
   constructor() {
   }

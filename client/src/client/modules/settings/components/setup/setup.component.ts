@@ -5,8 +5,9 @@ import {Realm} from '../../../../models/realm';
 import {Router} from '@angular/router';
 import {User} from '../../../../models/user/user';
 import {Report} from '../../../../utils/report.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {BackgroundDownloadService} from '../../../core/services/background-download.service';
+import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
   selector: 'wah-setup',
@@ -34,29 +35,13 @@ export class SetupComponent {
       });
   }
 
-  isWithinSupported3RDPartyAPIRegion(): boolean {
-    return this.form.getRawValue().region === 'eu' ||
-      this.form.getRawValue().region === 'us';
-  }
-
-  getRealmsKeys() {
-    return SharedService.realms ? Object.keys(SharedService.realms) : [];
-  }
-
-  getRealmWithkey(slug?: string): Realm {
-    if (!slug) {
-      slug = this.form.value.realm;
-    }
-    return SharedService.realms[slug] ? SharedService.realms[slug] : new Realm();
-  }
-
   isValid(): boolean {
     return this.form.status === 'VALID';
   }
 
   importUserData(): void {
     if (this.form.value.importString.length > 0) {
-      User.import(this.form.value.importString);
+      UserUtil.import(this.form.value.importString);
       this.redirectUserFromRestore();
     }
   }
@@ -70,7 +55,7 @@ export class SetupComponent {
         SharedService.user.watchlist
           .attemptRestoreFromString(reader.result);
 
-        User.import(reader.result as string);
+        UserUtil.import(reader.result as string);
 
         Report.send('Imported existing setup from file', 'User registration');
 
@@ -94,7 +79,7 @@ export class SetupComponent {
       localStorage['character'] = this.form.value.name;
       localStorage['timestamp_news'] = new Date().toLocaleDateString();
 
-      User.restore();
+      UserUtil.restore();
       this.service.init();
       this.router.navigateByUrl('/dashboard');
       Report.send('New user registered', 'User registration');
@@ -103,10 +88,6 @@ export class SetupComponent {
 
   isDarkMode(): boolean {
     return SharedService.user.isDarkMode;
-  }
-
-  saveUser(evt: any): void {
-    SharedService.user.isDarkMode = evt.checked;
   }
 
   realmSelectionEvent(change: { region: string; realm: string; locale: string }) {

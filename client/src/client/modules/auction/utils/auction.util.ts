@@ -10,6 +10,7 @@ import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
+import {TsmService} from '../../tsm/tsm.service';
 
 export class AuctionUtil {
   private static missingPetMap = {};
@@ -36,9 +37,9 @@ export class AuctionUtil {
 
   private static groupAuctions(auctions: Array<Auction>) {
     SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
-    Object.keys(SharedService.tsm).forEach(id => {
+    TsmService.list.value.forEach(tsm => {
       const auction = new Auction();
-      auction.item = +id;
+      auction.item = +tsm.Id;
       this.addNewAuctionItem(auction, false, '' + auction.item);
     });
 
@@ -55,10 +56,6 @@ export class AuctionUtil {
         ai.buyout = lowest.buyout / lowest.quantity;
       }
     });
-
-    // Checking if we have been undercutted etc
-    SharedService.userAuctions
-      .countUndercuttedAuctions(SharedService.auctionItemsMap);
   }
 
   private static getLowest(ai: AuctionItem) {
@@ -222,7 +219,7 @@ export class AuctionUtil {
   private static newAuctionItem(auction: Auction, addAuction = true, id: string): AuctionItem {
     const tmpAuc = AuctionUtil.getTempAuctionItem(auction, addAuction, id);
 
-    if (SharedService.tsm[auction.item]) {
+    if (TsmService.mapped.value.has(auction.item)) {
       AuctionUtil.setTSMData(auction, tmpAuc);
 
     }
@@ -241,7 +238,7 @@ export class AuctionUtil {
   }
 
   private static setTSMData(auction: Auction, tmpAuc) {
-    const tsmItem = SharedService.tsm[auction.item];
+    const tsmItem = TsmService.mapped.value.get(auction.item);
     tmpAuc.regionSaleRate = tsmItem.RegionSaleRate;
     tmpAuc.mktPrice = tsmItem.MarketValue;
     tmpAuc.avgDailySold = tsmItem.RegionAvgDailySold;

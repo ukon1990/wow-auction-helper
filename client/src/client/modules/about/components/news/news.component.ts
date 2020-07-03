@@ -1,4 +1,5 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
 
 declare function require(moduleName: string): any;
 const version = require('../../../../../../package.json').version;
@@ -10,6 +11,7 @@ declare var $;
 })
 export class NewsComponent implements AfterViewInit {
   showNews: boolean;
+  faTimes = faTimes;
 
   constructor() {
   }

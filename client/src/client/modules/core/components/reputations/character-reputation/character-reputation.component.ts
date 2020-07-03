@@ -5,13 +5,12 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {SharedService} from '../../../../../services/shared.service';
 import {Subscription} from 'rxjs';
 import {Recipe} from '../../../../crafting/models/recipe';
-import {User} from '../../../../../models/user/user';
-import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
 import {CharacterService} from '../../../../../services/character.service';
 import {CraftingService} from '../../../../../services/crafting.service';
 import {Report} from '../../../../../utils/report.util';
+import {UserUtil} from 'client/utils/user/user.util';
 
 @Component({
   selector: 'wah-character-reputation',
@@ -148,7 +147,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
     this.character['downloading'] = true;
     this.characterService.getCharacter(
       this.character.name,
-      User.slugifyString(this.character.realm),
+      UserUtil.slugifyString(this.character.realm),
       SharedService.user.region
     ).then(c => {
       if (!c.error) {
@@ -156,7 +155,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
           this.character[key] = c[key];
         });
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-        User.updateRecipesForRealm();
+        UserUtil.updateRecipesForRealm();
 
         if (SharedService.user.region && SharedService.user.realm) {
           AuctionUtil.organize(SharedService.auctions);

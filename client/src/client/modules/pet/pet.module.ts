@@ -1,7 +1,8 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {PetsValueComponent} from './components/pets-value.component';
-import {MatCardModule, MatPaginatorModule} from '@angular/material';
+import { MatCardModule } from '@angular/material/card';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import {IconModule} from '../icon/icon.module';
 import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';

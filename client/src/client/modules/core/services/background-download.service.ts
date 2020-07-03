@@ -10,10 +10,9 @@ import {BehaviorSubject} from 'rxjs';
 import {SharedService} from '../../../services/shared.service';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {RealmStatus} from '../../../models/realm-status.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {AuctionUtil} from '../../auction/utils/auction.util';
-import {Auction} from '../../auction/models/auction.model';
 import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {ErrorReport} from '../../../utils/error-report.util';
@@ -21,6 +20,7 @@ import {Timestamps} from '../../../../../../api/src/updates/model';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
+import {TsmService} from '../../tsm/tsm.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +36,8 @@ export class BackgroundDownloadService {
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
     npc: localStorage.getItem('timestamp_npcs'),
-    zone: localStorage.getItem('timestamp_zone')
+    zone: localStorage.getItem('timestamp_zone'),
+    professions: localStorage.getItem('timestamp_professions')
   };
   private checkingForUpdates: boolean;
   private realmStatus: RealmStatus;
@@ -52,6 +53,7 @@ export class BackgroundDownloadService {
     private npcService: NpcService,
     private zoneService: ZoneService,
     private professionService: ProfessionService,
+    private tsmService: TsmService,
     private dbService: DatabaseService) {
 
 
@@ -75,6 +77,7 @@ export class BackgroundDownloadService {
       this.timestamps.tsm = localStorage['timestamp_tsm'];
       this.timestamps.npc = localStorage.getItem('timestamp_npcs');
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
+      this.timestamps.professions = localStorage.getItem('timestamp_professions');
     }, 1000);
   }
 
@@ -88,8 +91,14 @@ export class BackgroundDownloadService {
     this.isLoading.next(true);
     const startTimestamp = performance.now();
     console.log('Starting to load data');
-    await this.realmService.getRealms()
-      .catch(error => console.error(error));
+
+    await Promise.all([
+      this.realmService.getRealms()
+        .catch(error => console.error(error)),
+      this.realmService.getStatus(region, realm, true)
+        .catch(console.error)
+    ])
+      .catch(console.error);
 
     await this.getUpdateTimestamps()
       .then(async (timestamps: Timestamps) => {
@@ -108,14 +117,15 @@ export class BackgroundDownloadService {
             .then(() =>
               console.log('Done loading zone data'))
             .catch(console.error),
-          this.loadThirdPartyAPI()
+          this.tsmService.load(this.realmService.events.realmStatus.value)
             .catch(console.error),
-          this.itemService.getBonusIds()
+          this.itemService.getBonusIds(),
         ])
           .catch(console.error);
 
-        await this.realmService.getStatus(region, realm)
-          .catch(console.error);
+        AuctionUtil.organize(this.auctionsService.events.list.value)
+          .catch(error =>
+            ErrorReport.sendError('BackgroundDownloadService.init', error));
         await this.startRealmStatusInterval();
       })
       .catch(error =>
@@ -179,38 +189,13 @@ export class BackgroundDownloadService {
       this.realmStatus.lowestDelay - this.timeSinceUpdate.value < 1;
   }
 
-  private async loadThirdPartyAPI() {
-    return new Promise((resolve, reject) => {
-      if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-        this.auctionsService.getTsmAuctions()
-          .then(resolve)
-          .catch(reject);
-      } else {
-        this.dbService.getTSMItems()
-          .then(async r => {
-            if (Object.keys(SharedService.tsm).length === 0) {
-              this.auctionsService.getTsmAuctions()
-                .then(resolve)
-                .catch(reject);
-            } else {
-              resolve();
-            }
-          })
-          .catch(async e => {
-            ErrorReport.sendError('BackgroundDownload.loadThirdPartyAPI', e);
-            this.auctionsService.getTsmAuctions()
-              .then(resolve)
-              .catch(reject);
-          });
-      }
-    });
-  }
-
   private getUpdateTimestamps(): Promise<Timestamps> {
     return new Promise<Timestamps>((resolve, rejects) => {
       this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
-        .then(resolve)
+        .then(result => {
+          resolve(result as Timestamps);
+        })
         .catch(rejects);
     });
   }

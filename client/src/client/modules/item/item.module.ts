@@ -4,15 +4,16 @@ import {ItemComponent} from './components/item.component';
 import {LineChartComponent} from './components/line-chart/line-chart.component';
 import {TableModule} from '../table/table.module';
 import {MarketResetModule} from '../market-reset/market-reset.module';
-import {
-  MatCardModule,
-  MatFormFieldModule,
-  MatListModule,
-  MatTabsModule,
-  MatCheckboxModule,
-  MatButtonModule,
-  MatTooltipModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {ReactiveFormsModule} from '@angular/forms';
 import {IconModule} from '../icon/icon.module';
 import {AddonModule} from '../addon/addon.module';

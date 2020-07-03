@@ -1,16 +1,14 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ShoppingCartComponent} from './components/shopping-cart.component';
-import {
-  MatBadgeModule,
-  MatButtonModule,
-  MatCardModule,
-  MatExpansionModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatListModule,
-  MatTooltipModule
-} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Chart} from 'chart.js';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../utils/report.util';
 import {ChartData} from '../../models/chart.model';
 

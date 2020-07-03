@@ -3,7 +3,8 @@
    matTooltip="Select color theme"
    routerLinkActive="mat-accent"
    [matMenuTriggerFor]="themeDropdown">
-  <fa-icon [icon]="['fas', 'palette']"></fa-icon>
+  <fa-icon
+           [icon]="faPalette"></fa-icon>
 </a>
 <mat-menu #themeDropdown="matMenu">
   <mat-grid-list cols="2" rowHeight="1:1">
@@ -14,7 +15,7 @@
               [style.background-color]="theme.accentColorCode"
               [matTooltip]="theme.name">
         <fa-icon *ngIf="theme.className === currentTheme.className"
-                [icon]="['fas', 'check']">
+                 [icon]="faCheck">
         </fa-icon>
       </button>
     </mat-grid-tile>

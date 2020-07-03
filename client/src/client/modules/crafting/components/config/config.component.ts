@@ -3,11 +3,12 @@ import {BaseCraftingUtil} from '../../utils/base-crafting.util';
 import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {CraftingUtil} from '../../utils/crafting.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Dashboard} from '../../../dashboard/models/dashboard.model';
 import {Report} from '../../../../utils/report.util';
 import {ThemeUtil} from '../../../core/utils/theme.util';
+import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
   selector: 'wah-crafting-config',
@@ -34,7 +35,7 @@ export class ConfigComponent implements OnDestroy {
         const strategyChanged = SharedService.user.craftingStrategy !== strategy;
         SharedService.user.craftingStrategy = strategy;
         SharedService.user.useIntermediateCrafting = intermediate;
-        User.save();
+        UserUtil.save();
         CraftingUtil.calculateCost(strategyChanged);
         Dashboard.addDashboards();
         if (strategyChanged) {

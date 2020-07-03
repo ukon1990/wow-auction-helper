@@ -2,17 +2,17 @@ import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
-import {Realm} from '../../../../models/realm';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CharacterService} from '../../../../services/character.service';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {User} from '../../../../models/user/user';
 import {DatabaseService} from '../../../../services/database.service';
 import {Report} from '../../../../utils/report.util';
 import {RealmStatus} from '../../../../models/realm-status.model';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../../services/crafting.service';
+import {UserUtil} from '../../../../utils/user/user.util';
+import {ErrorReport} from '../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -165,9 +165,13 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     }
 
     if (!this.isCurrentRealm(slug)) {
-      this.realmService.changeRealm(this.auctionsService, slug);
+      this.realmService.changeRealm(this.auctionsService, slug)
+        .then((status) => {
+          Report.send('handleRealmChange', 'RealmQuickSelectComponent');
+        })
+        .catch(error =>
+          ErrorReport.sendError('RealmQuickSelectComponent', error));
     }
-    Report.send('handleRealmChange', 'RealmQuickSelectComponent');
   }
 
   private isCurrentRealm(slug: string) {
@@ -176,7 +180,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
 
   private handleFactionChange(faction: number) {
     SharedService.user.faction = faction;
-    User.save();
+    UserUtil.save();
     this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();

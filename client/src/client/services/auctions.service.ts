@@ -6,15 +6,16 @@ import {TSM} from '../modules/auction/models/tsm.model';
 import {DatabaseService} from './database.service';
 import {ItemService} from './item.service';
 import {Notifications} from '../models/user/notification';
-import {MatSnackBar} from '@angular/material';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {ErrorReport} from '../utils/error-report.util';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {BehaviorSubject} from 'rxjs';
 import {Auction} from '../modules/auction/models/auction.model';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {RealmStatus} from '../models/realm-status.model';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
+import {TsmService} from '../modules/tsm/tsm.service';
 
 @Injectable()
 export class AuctionsService {
@@ -33,11 +34,21 @@ export class AuctionsService {
     public snackBar: MatSnackBar,
     private _dbService: DatabaseService,
     private _itemService: ItemService,
+    private tsmService: TsmService,
     private realmService: RealmService) {
     this.subs.add(
       this.realmService.events.realmStatus,
-      (status: RealmStatus) =>
+      (status: AuctionHouseStatus) =>
         this.getLatestData(status));
+
+    this.subs.add(
+      this.realmService.events.realmChanged,
+      (status) => {
+        this.tsmService.get(status)
+          .then(() => AuctionUtil.organize(this.events.list.value))
+          .catch(console.error);
+      }
+    );
   }
 
   getAuctions(): Promise<any> {
@@ -56,7 +67,7 @@ export class AuctionsService {
       .then(async a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        if (!this.doNotOrganize) {
+        if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
           await AuctionUtil.organize(a['auctions']);
         }
 
@@ -101,65 +112,11 @@ export class AuctionsService {
     }
   }
 
-  getTsmAuctions(): Promise<any> {
-
-    return new Promise((resolve, reject) => {
-      const region = SharedService.user.region;
-      if (region === 'eu' || region === 'us') {
-        console.log('Downloading TSM data');
-        this.openSnackbar('Downloading TSM data');
-        const realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.value;
-        if (!realmStatus || !realmStatus.tsmUrl) {
-          // Regions such as Taiwan and Korea is not supported by TSM.
-          console.log('The realm is missing TSM data');
-          resolve();
-          return;
-        }
-        SharedService.downloading.tsmAuctions = true;
-        this.http.get(realmStatus.tsmUrl)
-          .toPromise()
-          .then(tsm => {
-            if (!tsm || tsm['error']) {
-              ErrorReport.sendHttpError(tsm['error']);
-              resolve();
-              return;
-            }
-            console.log(tsm);
-            localStorage['timestamp_tsm'] = new Date().toDateString();
-            (<TSM[]>tsm).forEach(a => {
-              this.events.tsm.value.set(a.Id, a);
-              SharedService.tsm[a.Id] = a;
-            });
-            SharedService.downloading.tsmAuctions = false;
-            console.log('TSM data download is complete');
-            this._dbService.addTSMItems(tsm as Array<TSM>);
-            this.openSnackbar('Completed TSM download');
-            resolve();
-          })
-          .catch(e => {
-            this.openSnackbar(
-              `Could not completed TSM download. One reason that this could happen, is if you have used all your requests.`);
-            console.error('Unable to download TSM data', e);
-            SharedService.downloading.tsmAuctions = false;
-            this._dbService.getTSMItems().then(r => {
-              this.openSnackbar(`Using the previously used TSM data instead (from local DB) if available`);
-            }).catch(error => {
-              console.error('Could not restore TSM auctions from local DB', error);
-              ErrorReport.sendHttpError(error);
-            });
-            resolve();
-          });
-      } else {
-        resolve();
-      }
-    });
-  }
-
   private openSnackbar(message: string): void {
     this.snackBar.open(message, 'Ok', {duration: 3000});
   }
 
-  private getLatestData(status: RealmStatus) {
+  private getLatestData(status: AuctionHouseStatus) {
     if (!status) {
       return;
     }
@@ -170,15 +127,15 @@ export class AuctionsService {
     }
   }
 
-  private shouldDownload(status: RealmStatus, previousLastModified) {
+  private shouldDownload(status: AuctionHouseStatus, previousLastModified) {
     return this.isNewUpdateAvailable(status, previousLastModified) || this.isAuctionArrayEmpty(status);
   }
 
-  private isNewUpdateAvailable(status: RealmStatus, previousLastModified) {
+  private isNewUpdateAvailable(status: AuctionHouseStatus, previousLastModified) {
     return status && status.lastModified !== previousLastModified && !SharedService.downloading.auctions;
   }
 
-  private isAuctionArrayEmpty(status: RealmStatus) {
+  private isAuctionArrayEmpty(status: AuctionHouseStatus) {
     const list = this.events.list.getValue();
     return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
   }

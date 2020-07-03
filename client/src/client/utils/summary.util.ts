@@ -3,6 +3,7 @@ import {SharedService} from '../services/shared.service';
 import {TSM} from '../modules/auction/models/tsm.model';
 import {Item} from '../models/item/item';
 import {Profession} from '../../../../api/src/profession/model';
+import {TsmService} from '../modules/tsm/tsm.service';
 
 export class SummaryUtil {
   public static isProfitMatch(recipe: Recipe): boolean {
@@ -13,7 +14,7 @@ export class SummaryUtil {
   }
 
   public static isProfitAndDailySoldMatch(recipe: Recipe): boolean {
-    const tsm = (SharedService.tsm[recipe.itemID] as TSM);
+    const tsm = TsmService.getById(recipe.itemID);
     if (!tsm) {
       return false;
     }

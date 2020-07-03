@@ -7,6 +7,7 @@ import {BaseCraftingUtil} from './base-crafting.util';
 import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {Report} from '../../../utils/report.util';
+import {TsmService} from '../../tsm/tsm.service';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
@@ -36,18 +37,18 @@ export class CraftingUtil {
     this.strategy.calculate(CraftingService.list.value);
   }
 
-  public static getCost(itemID: number, count: number): number {
-    if (SharedService.customPricesMap && SharedService.customPricesMap[itemID]) {
-      return (SharedService.customPricesMap[itemID].price * count);
-    } else if (CraftingUtil.isVendorCheaperThanAH(itemID)) {
-      return this.getNeededBuyPriceFromVendor(itemID, count);
-    } else if (SharedService.tradeVendorItemMap[itemID] && SharedService.tradeVendorMap[itemID].useForCrafting) {
-      return (SharedService.tradeVendorItemMap[itemID].value * count);
-    } else if (SharedService.auctionItemsMap[itemID] && !CraftingUtil.isBelowMktBuyoutValue(itemID)) {
-      return SharedService.auctionItemsMap[itemID].buyout * count;
-    } else if (CraftingUtil.existsInTSM(itemID)) {
+  public static getCost(id: number, count: number): number {
+    if (SharedService.customPricesMap && SharedService.customPricesMap[id]) {
+      return (SharedService.customPricesMap[id].price * count);
+    } else if (CraftingUtil.isVendorCheaperThanAH(id)) {
+      return this.getNeededBuyPriceFromVendor(id, count);
+    } else if (SharedService.tradeVendorItemMap[id] && SharedService.tradeVendorMap[id].useForCrafting) {
+      return (SharedService.tradeVendorItemMap[id].value * count);
+    } else if (SharedService.auctionItemsMap[id] && !CraftingUtil.isBelowMktBuyoutValue(id)) {
+      return SharedService.auctionItemsMap[id].buyout * count;
+    } else if (CraftingUtil.existsInTSM(id)) {
       // Using the tsm list, so that we can get mktPrice if an item is not @ AH
-      return (SharedService.tsm[itemID].MarketValue * count);
+      return (TsmService.getById(id).MarketValue * count);
     }
     return 0;
   }
@@ -83,18 +84,14 @@ export class CraftingUtil {
     return SharedService.items[itemID];
   }
 
-  /*
-    public static getReagentCraftCost(itemID: number, count: number): number {
-      return
-    }*/
-
-  private static existsInTSM(itemID: number): boolean {
-    return Filters.isUsingAPI() && SharedService.tsm[itemID];
+  private static existsInTSM(id: number): boolean {
+    return Filters.isUsingAPI() && !!TsmService.getById(id);
   }
 
-  private static isBelowMktBuyoutValue(itemID: number): boolean {
-    return CraftingUtil.existsInTSM(itemID) && SharedService.auctionItemsMap[itemID].buyout /
-      SharedService.tsm[itemID].MarketValue * 100 >=
+  private static isBelowMktBuyoutValue(id: number): boolean {
+    return CraftingUtil.existsInTSM(id) &&
+      SharedService.auctionItemsMap[id].buyout /
+      TsmService.getById(id).MarketValue * 100 >=
       SharedService.user.buyoutLimit;
   }
 }

@@ -5,20 +5,18 @@ import {NotificationSettingsComponent} from './components/notification-settings/
 import {GeneralSettingsComponent} from './components/general-settings/general-settings.component';
 import {CraftingSettingsComponent} from './components/crafting-settings/crafting-settings.component';
 import {RouterModule} from '@angular/router';
-import {
-  MatAutocompleteModule,
-  MatButtonModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatRadioModule,
-  MatSelectModule,
-  MatSlideToggleModule,
-  MatStepperModule,
-  MatTabsModule,
-  MatTooltipModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {AboutModule} from '../about/about.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RealmListComponent} from './components/realm-list/realm-list.component';

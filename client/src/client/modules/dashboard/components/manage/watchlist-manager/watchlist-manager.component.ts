@@ -1,11 +1,12 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {FormBuilder, FormControl} from '@angular/forms';
-import {Watchlist, WatchlistGroup} from '../../../models/watchlist.model';
+import {Watchlist} from '../../../models/watchlist.model';
 import {SharedService} from '../../../../../services/shared.service';
 import {ColumnDescription} from '../../../../table/models/column-description';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../../services/auctions.service';
 import {Report} from '../../../../../utils/report.util';
+import {WatchlistGroup} from '../../../models/watchlist-group.model';
 
 @Component({
   selector: 'wah-watchlist-manager',

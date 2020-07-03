@@ -3,7 +3,6 @@ import Dexie from 'dexie';
 import {Item} from '../models/item/item';
 import {Auction} from '../modules/auction/models/auction.model';
 import {SharedService} from './shared.service';
-import {TSM} from '../modules/auction/models/tsm.model';
 import {Pet} from '../modules/pet/models/pet';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {environment} from '../../environments/environment';
@@ -23,8 +22,8 @@ import {Profession} from '../../../../api/src/profession/model';
  */
 @Injectable()
 export class DatabaseService {
-  private db: Dexie;
-  private unsupported: boolean;
+  public db: Dexie;
+  public unsupported: boolean;
 
   readonly TSM_TABLE_COLUMNS = 'Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,'
     + 'RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,'
@@ -80,7 +79,7 @@ export class DatabaseService {
         ErrorReport.sendError('DatabaseService.addItems', e));
   }
 
-  async getAllItems(): Dexie.Promise<any> {
+  async getAllItems(): Promise<any> {
     if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
@@ -125,7 +124,7 @@ export class DatabaseService {
     await this.db.table('npcs').bulkPut(list);
   }
 
-  async getAllNPCs(): Dexie.Promise<NPC[]> {
+  async getAllNPCs(): Promise<NPC[]> {
     if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
@@ -171,7 +170,7 @@ export class DatabaseService {
       .catch(console.error);
   }
 
-  async getAllZones(): Dexie.Promise<Zone[]> {
+  async getAllZones(): Promise<Zone[]> {
     if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
@@ -217,7 +216,7 @@ export class DatabaseService {
     if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
       return;
     }
-    this.db.table('recipes').bulkPut(recipes)
+    this.db.table('recipes2').bulkPut(recipes)
       .catch(e =>
         ErrorReport.sendError('DatabaseService.addRecipes', e));
   }
@@ -229,7 +228,7 @@ export class DatabaseService {
         return resolve([]);
       }
 
-      this.db.table('recipes')
+      this.db.table('recipes2')
         .toArray()
         .then(recipes => {
           SharedService.downloading.recipes = false;
@@ -246,7 +245,7 @@ export class DatabaseService {
   }
 
   async clearRecipes(): Promise<void> {
-    await this.db.table('recipes').clear()
+    await this.db.table('recipes2').clear()
       .catch(e =>
         ErrorReport.sendError('DatabaseService.clearRecipes', e));
   }
@@ -331,38 +330,6 @@ export class DatabaseService {
       });
   }
 
-  addTSMItems(tsm: Array<TSM>): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return;
-    }
-    this.db.table('tsm').clear();
-    this.db.table('tsm')
-      .bulkPut(tsm)
-      .then(r => console.log('Successfully added tsm data to local DB'))
-      .catch(e => ErrorReport.sendError('DatabaseService.addTSMItems', e));
-  }
-
-  getTSMItems(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
-      return new Dexie.Promise<any>((resolve, reject) => reject([]));
-    }
-
-    SharedService.downloading.tsmAuctions = true;
-    return this.db.table('tsm')
-      .toArray()
-      .then(tsm => {
-        (<TSM[]>tsm).forEach(a => {
-          SharedService.tsm[a.Id] = a;
-        });
-        SharedService.downloading.tsmAuctions = false;
-        console.log('Restored TSM data from local DB');
-      })
-      .catch(e => {
-        ErrorReport.sendError('DatabaseService.getTSMItems', e);
-        SharedService.downloading.tsmAuctions = false;
-      });
-  }
-
   async clearWowDataFromDB(): Promise<void> {
     await this.clearItems();
     await this.clearNPCs();
@@ -377,6 +344,19 @@ export class DatabaseService {
   }
 
   setDbVersions(): void {
+
+    this.db.version(10).stores({
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes2: this.RECIPE_TABLE_COLUMNS,
+      npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON
+    });
 
     this.db.version(9).stores({
       auctions: this.AUCTIONS_TABLE_COLUMNS,

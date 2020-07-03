@@ -5,7 +5,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {Filters} from '../../../../utils/filtering';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ItemReset} from '../../models/item-reset.model';
 import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {EmptyUtil} from '@ukon1990/js-utilities';

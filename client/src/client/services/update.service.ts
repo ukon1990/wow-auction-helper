@@ -1,6 +1,6 @@
 import {Injectable, EventEmitter} from '@angular/core';
 
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {SwUpdate, UpdateAvailableEvent} from '@angular/service-worker';
 import {Report} from '../utils/report.util';
 

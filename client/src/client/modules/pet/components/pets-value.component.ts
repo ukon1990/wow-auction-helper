@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../services/shared.service';
 import {ColumnDescription} from '../../table/models/column-description';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../services/auctions.service';
-import {PageEvent} from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import {Report} from '../../../utils/report.util';
 import {PetTableData} from '../models/pet-table-data.model';
 import {CollectedPet} from '../../../../../../api/src/character/model';

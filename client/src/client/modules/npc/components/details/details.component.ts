@@ -1,16 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SubscriptionManager} from '@ukon1990/subscription-manager/dist/subscription-manager';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DroppedItem, NPC, VendorItem} from '../../models/npc.model';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../services/npc.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SharedService} from '../../../../services/shared.service';
-import {Item} from '../../../../models/item/item';
-import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Zone} from '../../../zone/models/zone.model';
 import {GameBuild} from '../../../../utils/game-build.util';
-import {TSM} from '../../../auction/models/tsm.model';
 
 @Component({
   selector: 'wah-details',

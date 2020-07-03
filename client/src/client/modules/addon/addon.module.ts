@@ -4,15 +4,13 @@ import {AddonComponent} from './components/addon.component';
 import {ProfitSummaryComponent} from './components/profit-summary/profit-summary.component';
 import {ProfitSummaryCardComponent} from './components/profit-summary-card/profit-summary-card.component';
 import {ItemSaleSummaryComponent} from './components/item-sale-summary/item-sale-summary.component';
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatExpansionModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatSelectModule,
-  MatTabsModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';

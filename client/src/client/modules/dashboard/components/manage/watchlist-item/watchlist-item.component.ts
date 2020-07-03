@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { SharedService } from '../../../../../services/shared.service';
-import {WatchlistItem} from '../../../models/watchlist.model';
 import {SelectionItem} from '../../../models/selection-item.model';
 import {AuctionItem} from '../../../../auction/models/auction-item.model';
 import {Recipe} from '../../../../crafting/models/recipe';
+import {WatchlistItem} from '../../../models/watchlist-item.model';
 
 @Component({
   selector: 'wah-watchlist-item',

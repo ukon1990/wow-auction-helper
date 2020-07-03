@@ -1,7 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MenuDropdownComponent } from './menu-dropdown.component';
-import {MatButtonModule, MatGridListModule, MatMenuModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatMenuModule } from '@angular/material/menu';
 import {RouterTestingModule} from '@angular/router/testing';
 
 describe('MenuDropdownComponent', () => {
