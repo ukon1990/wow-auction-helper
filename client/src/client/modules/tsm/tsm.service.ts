@@ -58,6 +58,7 @@ export class TsmService {
   }
 
   get(realmStatus: AuctionHouseStatus): Promise<TSM[]> {
+    console.log('status', realmStatus);
     return new Promise<TSM[]>((resolve, reject) => {
       // Regions such as Taiwan and Korea is not supported by TSM. But they should not have a tsmUrl
       if (realmStatus && realmStatus.tsmUrl) {

@@ -25,7 +25,7 @@ export class RealmService {
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
     list: new BehaviorSubject([]),
     map: new BehaviorSubject(new Map<number, RealmStatus>()),
-    realmChanged: new EventEmitter<RealmStatus>()
+    realmChanged: new EventEmitter<AuctionHouseStatus>()
   };
 
   public static gatherRealms(): void {
@@ -51,14 +51,19 @@ export class RealmService {
     }
     SharedService.user.realm = realm;
     UserUtil.save();
-
-    this.getStatus(
-      SharedService.user.region,
-      realm)
-      .then(status =>
-        this.events.realmChanged.emit(status))
-      .catch(error =>
-        ErrorReport.sendError('RealmService.changeRealm', error));
+    return new Promise<AuctionHouseStatus>((resolve, reject) => {
+      this.getStatus(
+        SharedService.user.region,
+        realm)
+        .then(status => {
+          this.events.realmChanged.emit(status);
+          resolve(status);
+        })
+        .catch(error => {
+          ErrorReport.sendError('RealmService.changeRealm', error);
+          reject(error);
+        });
+    });
   }
 
   getLogForRealmWithId(ahId: number): Promise<AuctionUpdateLog> {
@@ -66,29 +71,34 @@ export class RealmService {
       Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
-  getStatus(region: string, realm: string): Promise<any> {
+  getStatus(region: string, realm: string): Promise<AuctionHouseStatus> {
     const realmStatus = this.events.realmStatus.value,
       timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
         realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,
       versionId = timeSince && timeSince > 1 ? '?timeDiff=' + timeSince : '';
-    return this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
-      .toPromise()
-      .then(async (status: AuctionHouseStatus) => {
-        this.events.realmStatus.next(status);
+    return new Promise<AuctionHouseStatus>(((resolve, reject) => {
+      this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
+        .toPromise()
+        .then(async (status: AuctionHouseStatus) => {
+          this.events.realmStatus.next(status);
 
-        if (!this.events.map.value.get(status.id)['autoUpdate'] && !status.autoUpdate) {
-          this.activateInactiveRealm(region, realm)
-            .catch(error => ErrorReport.sendHttpError(error));
-        }
+          if (!this.events.map.value.get(status.id)['autoUpdate'] && !status.autoUpdate) {
+            this.activateInactiveRealm(region, realm)
+              .catch(error => ErrorReport.sendHttpError(error));
+          }
 
-        if (status.isUpdating && status.url !== this.previousUrl) {
-          this.matSnackBar.open('New auction data is being processed on the server and will be available soon.');
-          this.previousUrl = status.url;
-          Report.debug('The server is processing new auction data', status);
-        }
-      })
-      .catch(error => {
-      });
+          if (status.isUpdating && status.url !== this.previousUrl) {
+            this.matSnackBar.open('New auction data is being processed on the server and will be available soon.');
+            this.previousUrl = status.url;
+            Report.debug('The server is processing new auction data', status);
+          }
+          resolve(status);
+        })
+        .catch(error => {
+          ErrorReport.sendHttpError(error);
+          reject(error);
+        });
+    }));
   }
 
   private activateInactiveRealm(region, realm): Promise<any> {
@@ -107,11 +117,18 @@ export class RealmService {
   }
 
   getRealms(region?: string): Promise<any> {
-    return this.http.get(Endpoints.getS3URL(region, 'auctions', 'status')) // Endpoints.getLambdaUrl('realm/all', region)
-      .toPromise()
-      .then((realms: any[]) =>
-        this.handleRealms(realms))
-      .catch();
+    return new Promise<any>(((resolve, reject) => {
+      this.http.get(Endpoints.getS3URL(region, 'auctions', 'status')) // Endpoints.getLambdaUrl('realm/all', region)
+        .toPromise()
+        .then((realms: any[]) => {
+          this.handleRealms(realms);
+          resolve(realms);
+        })
+        .catch(error => {
+          ErrorReport.sendHttpError(error);
+          reject(error);
+        });
+    }));
   }
 
   private openSnackbar(message: string): void {

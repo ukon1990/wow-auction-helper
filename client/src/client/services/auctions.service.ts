@@ -6,7 +6,7 @@ import {TSM} from '../modules/auction/models/tsm.model';
 import {DatabaseService} from './database.service';
 import {ItemService} from './item.service';
 import {Notifications} from '../models/user/notification';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {ErrorReport} from '../utils/error-report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {BehaviorSubject} from 'rxjs';
@@ -34,11 +34,21 @@ export class AuctionsService {
     public snackBar: MatSnackBar,
     private _dbService: DatabaseService,
     private _itemService: ItemService,
+    private tsmService: TsmService,
     private realmService: RealmService) {
     this.subs.add(
       this.realmService.events.realmStatus,
       (status: RealmStatus) =>
         this.getLatestData(status));
+
+    this.subs.add(
+      this.realmService.events.realmChanged,
+      (status) => {
+        this.tsmService.get(status)
+          .then(() => AuctionUtil.organize(this.events.list.value))
+          .catch(console.error);
+      }
+    );
   }
 
   getAuctions(): Promise<any> {

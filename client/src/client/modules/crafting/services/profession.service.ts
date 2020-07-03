@@ -46,22 +46,27 @@ export class ProfessionService {
     this.listWithRecipes.next(list);
   }
 
-  async load(latestTimestamp: Date) {
-    await this.dbService.getAllProfessions()
-      .then(async (professions) => {
-        this.setSubjects(professions);
-        if (this.list.value.length === 0) {
-          delete localStorage[this.LOCAL_STORAGE_TIMESTAMP];
-        }
-      })
-      .catch(async error => {
-        ErrorReport.sendError('ProfessionService.load', error);
-      });
+  load(latestTimestamp: Date) {
+    return new Promise(async (resolve) => {
+      if (localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP)) {
+        await this.dbService.getAllProfessions()
+          .then(async (professions) => {
+            this.setSubjects(professions);
+            if (this.list.value.length === 0) {
+              delete localStorage[this.LOCAL_STORAGE_TIMESTAMP];
+            }
+          })
+          .catch(async error => {
+            ErrorReport.sendError('ProfessionService.load', error);
+          });
+      }
 
-    const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
-    if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
-      await this.getAll();
-    }
+      const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+      if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+        await this.getAll();
+      }
+      resolve();
+    });
   }
 
   async getAll(): Promise<any> {

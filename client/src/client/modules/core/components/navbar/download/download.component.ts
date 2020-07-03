@@ -18,6 +18,7 @@ import {ZoneService} from '../../../../zone/service/zone.service';
 import {ErrorReport} from '../../../../../utils/error-report.util';
 import {faDownload, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import {TsmService} from '../../../../tsm/tsm.service';
+import {ProfessionService} from '../../../../crafting/services/profession.service';
 
 @Component({
   selector: 'wah-download',
@@ -42,7 +43,8 @@ export class DownloadComponent implements OnInit {
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
     npc: localStorage.getItem('timestamp_npcs'),
-    zone: localStorage.getItem('timestamp_zone')
+    zone: localStorage.getItem('timestamp_zone'),
+    professions: localStorage.getItem('timestamp_professions')
   };
   private realmStatus: RealmStatus;
 
@@ -56,6 +58,7 @@ export class DownloadComponent implements OnInit {
     private zoneService: ZoneService,
     private _dbService: DatabaseService,
     private tsmService: TsmService,
+    private professionService: ProfessionService,
     private service: BackgroundDownloadService) {
 
     this.timestamps = service.timestamps;
@@ -130,6 +133,11 @@ export class DownloadComponent implements OnInit {
       case 'zone':
         this.zoneService.get()
           .catch(console.error);
+        break;
+      case 'professions':
+        this.professionService.getAll()
+          .catch(console.error);
+        break;
     }
   }
 

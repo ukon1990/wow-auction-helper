@@ -166,8 +166,9 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
 
     if (!this.isCurrentRealm(slug)) {
       this.realmService.changeRealm(this.auctionsService, slug)
-        .then(() =>
-          Report.send('handleRealmChange', 'RealmQuickSelectComponent'))
+        .then((status) => {
+          Report.send('handleRealmChange', 'RealmQuickSelectComponent');
+        })
         .catch(error =>
           ErrorReport.sendError('RealmQuickSelectComponent', error));
     }

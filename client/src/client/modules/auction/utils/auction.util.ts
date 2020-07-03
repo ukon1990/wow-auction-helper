@@ -56,10 +56,6 @@ export class AuctionUtil {
         ai.buyout = lowest.buyout / lowest.quantity;
       }
     });
-
-    // Checking if we have been undercutted etc
-    SharedService.userAuctions
-      .countUndercuttedAuctions(SharedService.auctionItemsMap);
   }
 
   private static getLowest(ai: AuctionItem) {

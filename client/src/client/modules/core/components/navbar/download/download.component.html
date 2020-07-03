@@ -49,11 +49,10 @@
             <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
           </td>
           <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
-            Items (~24 mb)
+            Items
           </td>
           <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
           <td>
-            <!-- [disabled]="getDownloading().items" -->
             <button mat-icon-button (click)="download('items', true)"
                     matTooltip="Re-download item data">
               <fa-icon [icon]="faDownload"></fa-icon>
@@ -69,7 +68,6 @@
           </td>
           <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
           <td>
-            <!-- [disabled]="getDownloading().recipes" -->
             <button mat-icon-button (click)="download('recipes', true)"
                     matTooltip="Re-download recipe data">
               <fa-icon [icon]="faDownload"></fa-icon>
@@ -83,7 +81,6 @@
           <td>Pets</td>
           <td>{{ timestamps.pets | date: 'HH:mm M/d/yy' }}</td>
           <td>
-            <!-- [disabled]="getDownloading().pets" -->
             <button mat-icon-button (click)="download('pets', true)"
                     matTooltip="Re-download pet data">
               <fa-icon [icon]="faDownload"></fa-icon>
@@ -92,9 +89,22 @@
         </tr>
         <tr>
           <td>
+            <mat-spinner *ngIf="getDownloading().professions" class="float-left mr-2"></mat-spinner>
+          </td>
+          <td>Professions</td>
+          <td><!--{{ timestamps.professions | date: 'HH:mm M/d/yy' }}--></td>
+          <td>
+            <button mat-icon-button (click)="download('professions', true)"
+                    matTooltip="Re-download profession data">
+              <fa-icon [icon]="faDownload"></fa-icon>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
           </td>
-          <td>NPCs</td>
+          <td>NPCs (~24 mb)</td>
           <td>{{ timestamps.npc | date: 'HH:mm M/d/yy' }}</td>
           <td>
             <button mat-icon-button (click)="download('npc', true)"

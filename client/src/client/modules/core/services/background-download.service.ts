@@ -36,7 +36,8 @@ export class BackgroundDownloadService {
     auctions: localStorage['timestamp_auctions'],
     tsm: localStorage['timestamp_tsm'],
     npc: localStorage.getItem('timestamp_npcs'),
-    zone: localStorage.getItem('timestamp_zone')
+    zone: localStorage.getItem('timestamp_zone'),
+    professions: localStorage.getItem('timestamp_professions')
   };
   private checkingForUpdates: boolean;
   private realmStatus: RealmStatus;
@@ -76,6 +77,7 @@ export class BackgroundDownloadService {
       this.timestamps.tsm = localStorage['timestamp_tsm'];
       this.timestamps.npc = localStorage.getItem('timestamp_npcs');
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
+      this.timestamps.professions = localStorage.getItem('timestamp_professions');
     }, 1000);
   }
 
@@ -190,7 +192,9 @@ export class BackgroundDownloadService {
     return new Promise<Timestamps>((resolve, rejects) => {
       this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
-        .then(resolve)
+        .then(result => {
+          resolve(result as Timestamps);
+        })
         .catch(rejects);
     });
   }
