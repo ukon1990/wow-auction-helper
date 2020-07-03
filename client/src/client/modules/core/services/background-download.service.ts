@@ -122,6 +122,7 @@ export class BackgroundDownloadService {
           this.itemService.getBonusIds(),
         ])
           .catch(console.error);
+
         AuctionUtil.organize(this.auctionsService.events.list.value)
           .catch(error =>
             ErrorReport.sendError('BackgroundDownloadService.init', error));

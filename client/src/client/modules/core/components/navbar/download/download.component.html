@@ -92,7 +92,7 @@
             <mat-spinner *ngIf="getDownloading().professions" class="float-left mr-2"></mat-spinner>
           </td>
           <td>Professions</td>
-          <td><!--{{ timestamps.professions | date: 'HH:mm M/d/yy' }}--></td>
+          <td>{{ timestamps.professions | date: 'HH:mm M/d/yy' }}</td>
           <td>
             <button mat-icon-button (click)="download('professions', true)"
                     matTooltip="Re-download profession data">

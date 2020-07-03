@@ -54,7 +54,8 @@ export class RealmService {
     return new Promise<AuctionHouseStatus>((resolve, reject) => {
       this.getStatus(
         SharedService.user.region,
-        realm)
+        realm,
+        true)
         .then(status => {
           this.events.realmChanged.emit(status);
           resolve(status);
@@ -85,7 +86,7 @@ export class RealmService {
             isInitialLoad,
           });
 
-          if (!this.events.map.value.get(status.id)['autoUpdate'] && !status.autoUpdate) {
+          if ((!this.events.map.value.get(status.id) || !this.events.map.value.get(status.id)['autoUpdate']) && !status.autoUpdate) {
             this.activateInactiveRealm(region, realm)
               .catch(error => ErrorReport.sendHttpError(error));
           }

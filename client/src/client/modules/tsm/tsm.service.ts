@@ -44,7 +44,8 @@ export class TsmService {
                 .then(resolve)
                 .catch(reject);
             } else {
-              resolve();
+              this.processData(data);
+              resolve(data);
             }
           })
           .catch((error) => {
