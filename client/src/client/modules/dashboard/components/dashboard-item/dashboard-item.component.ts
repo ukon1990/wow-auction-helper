@@ -5,8 +5,6 @@ import {Dashboard} from '../../models/dashboard.model';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
-import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
-import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -25,8 +23,6 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit 
   currentColumns;
   data;
   faCog = faCog;
-  faSave = faSave;
-  faTrash = faTrashAlt;
 
   constructor() {
   }

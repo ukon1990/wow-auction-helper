@@ -30,6 +30,7 @@ import {RouterModule} from '@angular/router';
 import { ManageCustomDashboardComponent } from './components/manage/manage-custom-dashboard/manage-custom-dashboard.component';
 import {CraftingModule} from '../crafting/crafting.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { ConfigureComponent } from './components/configure/configure.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     WatchlistManagerComponent,
     WatchlistItemManagerComponent,
     WatchlistItemBatchComponent,
-    ManageCustomDashboardComponent],
+    ManageCustomDashboardComponent,
+    ConfigureComponent],
   imports: [
     CommonModule,
     MatTabsModule,

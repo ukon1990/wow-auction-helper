@@ -1,0 +1,30 @@
+<mat-card-content>
+  <ng-container *ngIf="dashboard.settings">
+    <wah-manage-items-built-in-item
+            [autoSave]="false"
+            [board]="dashboard.settings"
+            (event)="onEvent($event)"
+    >
+    </wah-manage-items-built-in-item>
+  </ng-container>
+</mat-card-content>
+<mat-card-actions>
+  <div
+          class="float-right"
+  >
+    <button
+            mat-raised-button
+            color="warn"
+    >
+      <fa-icon [icon]="faTrash"></fa-icon>
+      Discard
+    </button>
+    <button
+            mat-raised-button
+            color="primary"
+    >
+      <fa-icon [icon]="faSave"></fa-icon>
+      Save
+    </button>
+  </div>
+</mat-card-actions>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import {Component, OnInit, Input, OnDestroy, Output, EventEmitter} from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import {GameBuild} from '../../../../../utils/game-build.util';
@@ -13,6 +13,8 @@ import {Dashboard} from '../../../models/dashboard.model';
 })
 export class ManageItemsBuiltInItemComponent implements OnInit, OnDestroy {
   @Input() board: DefaultDashboardSettings;
+  @Input() autoSave = true;
+  @Output() event: EventEmitter<DefaultDashboardSettings> = new EventEmitter<DefaultDashboardSettings>();
   expansions = GameBuild.expansionMap;
   form: FormGroup;
   changeSubscription: Subscription;
@@ -49,8 +51,11 @@ export class ManageItemsBuiltInItemComponent implements OnInit, OnDestroy {
             }
           });
 
-      DefaultDashboardSettings.save(this.board.typeId);
-      Dashboard.addDashboards();
+      if (this.autoSave) {
+        DefaultDashboardSettings.save(this.board.typeId);
+        Dashboard.addDashboards();
+      }
+      this.event.emit(this.board);
     });
   }
 

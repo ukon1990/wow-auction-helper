@@ -33,8 +33,8 @@
       {{ dashboard.message }}
     </mat-card-subtitle>
   </mat-card-header>
-  <ng-container *ngIf="!isConfigOpen; else configTemplate">
   <mat-card-content>
+    <ng-container *ngIf="!isConfigOpen; else configTemplate">
      <wah-data-table [id]="dashboard?.idParam" iconSize="22" [columns]="currentColumns"
                      [filterParameter]="filterParameter" [data]="dashboard?.data" [maxVisibleRows]="maxVisibleRows"
                      [numOfRows]="20"
@@ -44,29 +44,14 @@
                      class="row col-md-12">
        <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
      </mat-form-field>
+    </ng-container>
   </mat-card-content>
-  </ng-container>
 </mat-card>
 <div *ngIf="detailView && !isOtherDetailPanelOpen" class="backdrop" (click)="openClose()"></div>
 
 <ng-template #configTemplate>
-  <mat-card-content>
-    Config inc
-  </mat-card-content>
-  <mat-card-actions>
-    <button
-      mat-raised-button
-      color="primary"
-    >
-      <fa-icon [icon]="faSave"></fa-icon>
-      Save
-    </button>
-    <button
-            mat-raised-button
-            color="warn"
-    >
-      <fa-icon [icon]="faTrash"></fa-icon>
-      Discard
-    </button>
-  </mat-card-actions>
+  <wah-configure
+          [dashboard]="dashboard"
+  >
+  </wah-configure>
 </ng-template>
