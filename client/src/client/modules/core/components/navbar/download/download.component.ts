@@ -27,10 +27,7 @@ import {ProfessionService} from '../../../../crafting/services/profession.servic
 })
 export class DownloadComponent implements OnInit {
   theme = ThemeUtil.current;
-  checkingForUpdates: boolean;
-  lastCheckedMin;
   timeSinceUpdate = 0;
-  realmControl: FormControl = new FormControl();
   downloadProgress = '';
   subs = new SubscriptionManager();
   faExclamationCircle = faExclamationCircle;
