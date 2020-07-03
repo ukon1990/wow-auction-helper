@@ -13,4 +13,8 @@ export class AuctionHouseStatus {
   highestDelay: number;
   firstRequested: number;
   lastRequested: number;
+
+
+  // To check for initial load
+  isInitialLoad?: boolean;
 }

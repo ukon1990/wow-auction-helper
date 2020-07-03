@@ -71,7 +71,7 @@ export class RealmService {
       Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
-  getStatus(region: string, realm: string): Promise<AuctionHouseStatus> {
+  getStatus(region: string, realm: string, isInitialLoad = false): Promise<AuctionHouseStatus> {
     const realmStatus = this.events.realmStatus.value,
       timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
         realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,
@@ -80,7 +80,10 @@ export class RealmService {
       this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
         .toPromise()
         .then(async (status: AuctionHouseStatus) => {
-          this.events.realmStatus.next(status);
+          this.events.realmStatus.next({
+            ...status,
+            isInitialLoad,
+          });
 
           if (!this.events.map.value.get(status.id)['autoUpdate'] && !status.autoUpdate) {
             this.activateInactiveRealm(region, realm)

@@ -95,7 +95,7 @@ export class BackgroundDownloadService {
     await Promise.all([
       this.realmService.getRealms()
         .catch(error => console.error(error)),
-      this.realmService.getStatus(region, realm)
+      this.realmService.getStatus(region, realm, true)
         .catch(console.error)
     ])
       .catch(console.error);
@@ -122,7 +122,7 @@ export class BackgroundDownloadService {
           this.itemService.getBonusIds(),
         ])
           .catch(console.error);
-        AuctionUtil.organize(SharedService.auctions)
+        AuctionUtil.organize(this.auctionsService.events.list.value)
           .catch(error =>
             ErrorReport.sendError('BackgroundDownloadService.init', error));
         await this.startRealmStatusInterval();

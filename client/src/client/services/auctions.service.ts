@@ -38,7 +38,7 @@ export class AuctionsService {
     private realmService: RealmService) {
     this.subs.add(
       this.realmService.events.realmStatus,
-      (status: RealmStatus) =>
+      (status: AuctionHouseStatus) =>
         this.getLatestData(status));
 
     this.subs.add(
@@ -67,7 +67,7 @@ export class AuctionsService {
       .then(async a => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        if (!this.doNotOrganize) {
+        if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
           await AuctionUtil.organize(a['auctions']);
         }
 
@@ -116,7 +116,7 @@ export class AuctionsService {
     this.snackBar.open(message, 'Ok', {duration: 3000});
   }
 
-  private getLatestData(status: RealmStatus) {
+  private getLatestData(status: AuctionHouseStatus) {
     if (!status) {
       return;
     }
@@ -127,15 +127,15 @@ export class AuctionsService {
     }
   }
 
-  private shouldDownload(status: RealmStatus, previousLastModified) {
+  private shouldDownload(status: AuctionHouseStatus, previousLastModified) {
     return this.isNewUpdateAvailable(status, previousLastModified) || this.isAuctionArrayEmpty(status);
   }
 
-  private isNewUpdateAvailable(status: RealmStatus, previousLastModified) {
+  private isNewUpdateAvailable(status: AuctionHouseStatus, previousLastModified) {
     return status && status.lastModified !== previousLastModified && !SharedService.downloading.auctions;
   }
 
-  private isAuctionArrayEmpty(status: RealmStatus) {
+  private isAuctionArrayEmpty(status: AuctionHouseStatus) {
     const list = this.events.list.getValue();
     return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
   }
