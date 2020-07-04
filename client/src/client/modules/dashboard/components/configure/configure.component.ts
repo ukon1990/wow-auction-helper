@@ -16,31 +16,36 @@ export class ConfigureComponent implements OnChanges {
 
   faSave = faSave;
   faTrash = faTrashAlt;
-  original: DefaultDashboardSettings;
+  clone: DefaultDashboardSettings;
+  hasChanges: boolean;
 
   ngOnChanges({dashboard}: SimpleChanges) {
     if (dashboard && dashboard.currentValue && dashboard.currentValue.settings) {
-      this.original = ObjectUtil.clone(dashboard.currentValue.settings) as DefaultDashboardSettings;
+      this.clone = ObjectUtil.clone(dashboard.currentValue.settings) as DefaultDashboardSettings;
     }
   }
 
   onEvent(settings: DefaultDashboardSettings) {
-
+    setTimeout(() =>
+      this.hasChanges = !!ObjectUtil.getDifference(this.dashboard.settings, settings).length);
   }
 
   onSave(): void {
     // TODO: Needs to be able to calculate individual dashboards
     if (this.dashboard.settings) {
-      this.original = ObjectUtil.clone(this.dashboard.settings) as DefaultDashboardSettings;
+      ObjectUtil.overwrite(this.clone, this.dashboard.settings);
+      DefaultDashboardSettings.save(this.clone);
+      // Calculate
     } else {
-
+      // Save
+      // Calculate
     }
     this.event.emit();
   }
 
   onDiscard(): void {
     if (this.dashboard.settings) {
-      this.dashboard.settings = ObjectUtil.clone(this.original) as DefaultDashboardSettings;
+      this.clone = ObjectUtil.clone(this.dashboard.settings) as DefaultDashboardSettings;
     } else {
 
     }

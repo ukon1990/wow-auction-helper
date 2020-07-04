@@ -2,7 +2,7 @@
   <ng-container *ngIf="dashboard.settings">
     <wah-manage-items-built-in-item
             [autoSave]="false"
-            [board]="dashboard.settings"
+            [board]="clone"
             (event)="onEvent($event)"
     >
     </wah-manage-items-built-in-item>
@@ -15,6 +15,8 @@
     <button
             mat-raised-button
             color="warn"
+            [disabled]="!hasChanges"
+            (click)="onDiscard()"
     >
       <fa-icon [icon]="faTrash"></fa-icon>
       Discard
@@ -22,6 +24,7 @@
     <button
             mat-raised-button
             color="primary"
+            [disabled]="!hasChanges"
     >
       <fa-icon [icon]="faSave"></fa-icon>
       Save

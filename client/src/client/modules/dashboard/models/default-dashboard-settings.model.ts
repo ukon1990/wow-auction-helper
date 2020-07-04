@@ -1,5 +1,6 @@
 import { SharedService } from '../../../services/shared.service';
 import { Dashboard } from './dashboard.model';
+import {ObjectUtil} from '@ukon1990/js-utilities';
 
 export class DefaultDashboardSettings {
   public static list = [
@@ -128,7 +129,8 @@ export class DefaultDashboardSettings {
     });
   }
 
-  public static save(id: string): void {
-    localStorage[id] = JSON.stringify(SharedService.defaultDashboardSettingsListMap[id]);
+  public static save(board: DefaultDashboardSettings): void {
+    ObjectUtil.overwrite(board, SharedService.defaultDashboardSettingsListMap[board.typeId]);
+    localStorage[board.typeId] = JSON.stringify(board);
   }
 }
