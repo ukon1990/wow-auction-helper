@@ -7,3 +7,7 @@ export interface Rule {
   field: string;
   toField: string;
 }
+
+export interface ItemRule extends Rule {
+  itemId: number;
+}
