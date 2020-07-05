@@ -3,7 +3,9 @@
 </em>
 <mat-card>
   <mat-card-actions>
-    <a mat-raised-button routerLink="/tools/npc">Back to the list</a>
+    <a mat-raised-button
+       color="primary"
+       routerLink="/tools/npc">Back to the list</a>
   </mat-card-actions>
   <mat-card-header *ngIf="npc">
     <mat-card-title>{{ npc.name }}</mat-card-title>
@@ -19,7 +21,9 @@
   </mat-card-header>
 
   <mat-card-content *ngIf="npc">
-    <mat-tab-group>
+    <mat-tab-group
+            color="accent"
+    >
       <!--<mat-tab *ngIf="npc.coordinates" label="Map ({{ npc.coordinates.length | number }})"></mat-tab>-->
       <mat-tab *ngIf="npc.drops" label="Drops">
         <wah-data-table

@@ -2,10 +2,13 @@
   Here you can alter the value that is used, for the avg / expected yield per craft.
 </em>
 <form class="row col-md-12">
-  <mat-form-field class="row col-md-12">
+  <mat-form-field class="row col-md-12"
+                  color="accent"
+  >
     <input matInput placeholder="The name of the recipe to add to custom proc rate for" aria-label="Recipe"
            [matAutocomplete]="auto" [formControl]="itemSearchForm">
-    <mat-autocomplete #auto="matAutocomplete">
+    <mat-autocomplete #auto="matAutocomplete"
+    >
       <mat-option *ngFor="let recipe of filteredItems" [value]="recipe.name"
                   (click)="add(recipe)"
                   [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
@@ -23,4 +26,9 @@
         [data]="customProcs"
         (rowClicked)="setCustomProcs()"></wah-data-table>
 
-<button (click)="resetToDefault()" mat-raised-button>Restore default</button>
+<button (click)="resetToDefault()"
+        mat-raised-button
+        color="warn"
+>
+  Restore default
+</button>

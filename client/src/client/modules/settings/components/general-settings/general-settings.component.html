@@ -7,6 +7,7 @@
               [locale]="form.getRawValue().locale"
               (changes)="realmSelectionEvent($event)">
         <button mat-button
+                color="accent"
                 (click)="saveRealmAndRegion()"
                 [disabled]="!hasRealmChanges()">
           <i class="fas fa-save"></i> Save
@@ -23,14 +24,23 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <mat-form-field class="col-md-10">
+          <mat-form-field class="col-md-10"
+                          color="accent"
+          >
             <textarea matInput formControlName="importString" placeholder="Paste the string here"></textarea>
           </mat-form-field>
-          <button class="col-md-2" mat-button (click)="importUser()" [disabled]="!isImportStringNotEmpty()">
+          <button class="col-md-2"
+                  mat-button (click)="importUser()"
+                  [disabled]="!isImportStringNotEmpty()"
+                  color="accent"
+          >
             <i class="fas fa-upload"></i>
             Restore
           </button>
-          <button mat-button (click)="fileInput.click()">
+          <button mat-button
+                  (click)="fileInput.click()"
+                  color="accent"
+          >
             <i class="fas fa-upload"></i>
             Select a settings file to import
             <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
@@ -45,15 +55,24 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <mat-form-field class="col-md-10">
+          <mat-form-field class="col-md-10"
+                          color="accent"
+          >
             <textarea matInput formControlName="exportString"
                       placeholder="The export string will appear here."></textarea>
           </mat-form-field>
-          <button class="col-md-2" mat-button (click)="exportData()">
+          <button class="col-md-2"
+                  mat-button
+                  (click)="exportData()"
+                  color="primary"
+          >
             <i class="fas fa-download"></i>
             Export as string
           </button>
-          <button mat-button (click)="exportAsFile()">
+          <button mat-button
+                  (click)="exportAsFile()"
+                  color="primary"
+          >
             <i class="fas fa-download"></i>
             Export as file
           </button>
@@ -70,7 +89,10 @@
           This will delete all your settings and the data stored in the local database.
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button (click)="deleteUser()">
+          <button mat-button
+                  (click)="deleteUser()"
+                  color="warn"
+          >
             <i class="fas fa-trash-alt"></i>
             Delete all locally stored data
           </button>
