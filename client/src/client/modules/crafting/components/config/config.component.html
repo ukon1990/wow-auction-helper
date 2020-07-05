@@ -1,9 +1,12 @@
 <form [formGroup]="form" class="row col">
-  <mat-form-field class="col-md-6">
-    <mat-select [disableOptionCentering]="true" placeholder="Crafting strategy" formControlName="strategy">
+  <mat-form-field class="col-md-6"
+                  color="accent"
+  >
+    <mat-select [disableOptionCentering]="true"
+                placeholder="Crafting strategy"
+                formControlName="strategy">
       <mat-option *ngFor="let strategy of strategies"
-                  [value]="strategy.id"
-                  [ngClass]="theme.tableColorClass">
+                  [value]="strategy.id">
         {{ strategy.name }}
       </mat-option>
     </mat-select>

@@ -13,12 +13,16 @@
       </wah-icon>
     </a>
     <div class="action-icon mat-elevation-z5" (click)="close()" matTooltip="Click to open/close the full window.">
-      <button mat-raised-button class="btn btn-sm">
+      <button mat-raised-button
+              color="warn"
+              class="btn btn-sm">
         <i class="fas fa-times" matTooltip="Close detail view"></i>
       </button>
     </div>
     <mat-card-title>
-      <mat-form-field class="col-md-12">
+      <mat-form-field class="col-md-12"
+                      color="accent"
+      >
         <mat-select [formControl]="itemSelectionHistoryForm" placeholder="Selection history">
           <mat-option *ngFor="let option of selectionHistory; let i = index" [value]="i">
             {{option.auctionItem?.name || option.item?.name}}
@@ -53,7 +57,11 @@
                 [item]="selected.auctionItem"></wah-auction-item-details>
       </div>
       <div [ngClass]="{'col-md-8': selected.auctionItem, 'col-md-12': !selected.auctionItem}">
-        <mat-tab-group [selectedIndex]="selectedTab" (selectedIndexChange)="setTabChange($event, '')" #tabs>
+        <mat-tab-group [selectedIndex]="selectedTab"
+                       (selectedIndexChange)="setTabChange($event, '')"
+                       color="accent"
+                       #tabs
+        >
           <mat-tab label="Auctions" *ngIf="selected.auctionItem">
             <wah-data-table [columns]="columns"
                             [data]="selected.auctionItem?.auctions"
@@ -137,28 +145,41 @@
     </ng-template>
   </mat-card-content>
   <mat-card-actions>
-    <button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item.id, 'WoWDB')" mat-raised-button>
+    <button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item.id, 'WoWDB')"
+            mat-raised-button
+            color="accent"
+    >
       WoWDB
       <i class="fas fa-external-link-square-alt"></i>
     </button>
-    <button (click)="openInNewTab('http://www.wowhead.com/item=' + selected.item.id, 'WoWHead')" mat-raised-button>
+    <button (click)="openInNewTab('http://www.wowhead.com/item=' + selected.item.id, 'WoWHead')"
+            mat-raised-button
+            color="accent"
+    >
       WoWHead
       <i class="fas fa-external-link-square-alt"></i>
     </button>
-    <button (click)="openInNewTab(getTUJUrl(), 'TUJ')" mat-raised-button>
+    <button (click)="openInNewTab(getTUJUrl(), 'TUJ')"
+            mat-raised-button
+            color="accent"
+    >
       TUJ
       <i class="fas fa-external-link-square-alt"></i>
     </button>
 
     <div *ngIf="userHasRecipeForItem()" class="float-right">
-      <mat-form-field>
+      <mat-form-field
+              color="accent"
+      >
         <input matInput
                placeholder="Quantity"
                [formControl]="shoppingCartQuantityField">
       </mat-form-field>
 
       <button mat-raised-button matTooltip="Add to shopping list"
-              (click)="addEntryToCart()">
+              (click)="addEntryToCart()"
+              color="accent"
+      >
         Add to cart
         <i class="fas fa-cart-plus"></i>
       </button>
