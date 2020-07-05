@@ -1,6 +1,9 @@
-import {RuleTypes} from '../types/enum';
+import {ConditionEnum} from '../types/condition.enum';
+import {TargetValueEnum} from '../types/target-value.enum';
 
 export interface Rule {
-  comparable: RuleTypes;
+  condition: ConditionEnum;
+  targetValueType: TargetValueEnum;
   field: string;
+  toField: string;
 }
