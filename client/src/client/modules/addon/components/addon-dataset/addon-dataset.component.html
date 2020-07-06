@@ -1,8 +1,7 @@
 <form [formGroup]="form">
-  <mat-form-field>
+  <mat-form-field color="accent">
     <mat-select placeholder="Dataset"
                 formControlName="dataset"
-                color="accent"
     >
       <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
         {{ set.title }}
