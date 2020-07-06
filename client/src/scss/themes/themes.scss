@@ -5,6 +5,7 @@
 
 @import '../../../node_modules/@angular/material/theming';
 @include mat-core();
+@import 'solarized-light-theme';
 @import 'dark-unicorn-theme';
 @import 'dark-blue-theme';
 @import 'dark-pink-theme';

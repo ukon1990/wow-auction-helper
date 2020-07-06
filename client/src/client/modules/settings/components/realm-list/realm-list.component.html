@@ -1,12 +1,19 @@
-<button mat-raised-button (click)="toggle()" *ngIf="!show; else tableTemplate">
+<button mat-stroked-button
+        (click)="toggle()"
+        color="primary"
+        *ngIf="!show; else tableTemplate">
   Display the statuses of all realms in a table
 </button>
 
 <ng-template #tableTemplate>
   <mat-card class="full-screen">
     <mat-card-header>
-      <div class="action-icon mat-elevation-z5" (click)="toggle()" matTooltip="Click to open/close the full window.">
-        <button mat-raised-button class="btn btn-sm">
+      <div class="action-icon mat-elevation-z5"
+           (click)="toggle()"
+           matTooltip="Click to open/close the full window.">
+        <button mat-stroked-button
+                class="btn btn-sm"
+        >
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -16,7 +23,8 @@
       </mat-card-title>
 
       <mat-card-subtitle>
-        A realm has auto update set, if a user requests that realm. If it is not set to auto update, it's only kept ut to date once per day. Clicking on a row displays It's update history.
+        A realm has auto update set, if a user requests that realm. If it is not set to auto update, it's only kept ut
+        to date once per day. Clicking on a row displays It's update history.
       </mat-card-subtitle><!--
       <mat-card-subtitle>
         Click on a realm that has been active withing the past 7 days, to get a log over the AH update interval.
@@ -37,13 +45,17 @@
       </wah-data-table>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button
+      <button mat-stroked-button
+              color="accent"
               (click)="service.getRealms()">
         Update
       </button>
 
-      <button *ngIf="updateLogForRealm" mat-raised-button
-              (click)="reset()">
+      <button *ngIf="updateLogForRealm"
+              mat-stroked-button
+              (click)="reset()"
+              color="warn"
+      >
         Back to realm list
       </button>
     </mat-card-actions>

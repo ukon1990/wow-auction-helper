@@ -1,25 +1,22 @@
 <mat-card class="mb-2">
-    <mat-card-header>
-        <mat-card-title>
-            {{ summary.title }}
-        </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <wah-data-table *ngIf="!useChart; else chartTemplate"
-                itemsPerPage="30"
-                [data]="tableData"
-                [columns]="columns">
-        </wah-data-table>
-    </mat-card-content>
+  <mat-card-header>
+    <mat-card-title>
+      {{ summary.title }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <wah-data-table *ngIf="!useChart; else chartTemplate"
+                    itemsPerPage="30"
+                    [data]="tableData"
+                    [columns]="columns">
+    </wah-data-table>
+  </mat-card-content>
 </mat-card>
 
 
 <ng-template #chartTemplate>
-    <wah-charts *ngIf="summary.data.length > 0"
-                [defaultType]="summary.type"
-                storageName="{{ summary.title }}-chart"
-                [labels]="summary.labels"
-                [dataMap]="summary.dataMap"
-                (selection)="selection($event)">
-    </wah-charts>
+  <wah-charts-data-sets
+          storageName="{{summary.title}}-ah-summary-chart"
+          [datasets]="dateData">
+  </wah-charts-data-sets>
 </ng-template>

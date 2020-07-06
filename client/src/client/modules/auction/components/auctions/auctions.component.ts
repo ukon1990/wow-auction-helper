@@ -1,6 +1,5 @@
 import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {AuctionItem} from '../../models/auction-item.model';
-import {ColumnDescription} from '../../../table/models/column-description';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {itemClasses} from '../../../../models/item/item-classes';
 import {Filters} from '../../../../utils/filtering';
@@ -114,10 +113,5 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
       Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
       Filters.isExpansionMatch(auctionItem.itemID, changes.expansion);
-  }
-
-  /* istanbul ignore next */
-  isDarkmode(): boolean {
-    return SharedService.user ? SharedService.user.isDarkMode : false;
   }
 }

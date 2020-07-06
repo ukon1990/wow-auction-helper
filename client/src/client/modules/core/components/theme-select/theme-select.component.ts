@@ -10,7 +10,8 @@ import {faCheck, faPalette} from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./theme-select.component.scss']
 })
 export class ThemeSelectComponent implements OnInit {
-  list = ThemeUtil.list;
+  lightThemes = ThemeUtil.list.filter(theme => !theme.isDark);
+  darkThemes = ThemeUtil.list.filter(theme => theme.isDark);
   currentTheme = ThemeUtil.current;
   faCheck = faCheck;
   faPalette = faPalette;

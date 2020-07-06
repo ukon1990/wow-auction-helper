@@ -1,5 +1,8 @@
 <ng-template #importButtonTemplate>
-  <button mat-button (click)="fileInput.click()">
+  <button mat-button
+          (click)="fileInput.click()"
+          color="accent"
+  >
     <i class="fas fa-upload"></i>
     {{minimal ?
       'Import addon data' : 'Import one or more .lua files'}}
@@ -86,7 +89,10 @@
     <mat-card-actions>
       <ng-container *ngTemplateOutlet="importButtonTemplate"></ng-container>
 
-      <button mat-raised-button (click)="loadData()">
+      <button mat-stroked-button
+              (click)="loadData()"
+              color="accent"
+      >
         Reload saved data
       </button>
     </mat-card-actions>

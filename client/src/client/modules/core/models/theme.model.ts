@@ -4,6 +4,7 @@ export class Theme {
     public name: string,
     public primaryColorCode: string,
     public accentColorCode: string,
-    public tableColorClass = ''
+    public tableColorClass = '',
+    public isDark: boolean
   ) {}
 }

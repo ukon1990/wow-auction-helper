@@ -41,14 +41,18 @@
   </mat-card-content>
   <mat-card-actions *ngIf="!isSeller">
     <button *ngIf="!disallowDelete"
-            mat-raised-button type="button"
+            mat-stroked-button
+            type="button"
+            color="warn"
             (click)="remove.emit('')">
       <i class="fa fa-trash" aria-hidden="true"></i>
       Remove
     </button>
-    <button mat-raised-button
+    <button mat-stroked-button
             type="button"
-            (click)="update.emit('')">
+            (click)="update.emit('')"
+            color="accent"
+    >
       <div class="float-left mr-1" [ngClass]="{'loading': character.downloading}">
         <i class="fas fa-sync" aria-hidden="true"></i>
       </div>

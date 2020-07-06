@@ -1,14 +1,29 @@
-<a mat-flat-button
-   color="primary"
+<a mat-icon-button
+   color="accent"
    matTooltip="Select color theme"
    routerLinkActive="mat-accent"
    [matMenuTriggerFor]="themeDropdown">
-  <fa-icon
-           [icon]="faPalette"></fa-icon>
+  <fa-icon [icon]="faPalette">
+  </fa-icon>
 </a>
 <mat-menu #themeDropdown="matMenu">
+  <small>Light themes</small>
   <mat-grid-list cols="2" rowHeight="1:1">
-    <mat-grid-tile *ngFor="let theme of list"
+    <mat-grid-tile *ngFor="let theme of lightThemes"
+                   [style.background-color]="theme.primaryColorCode">
+      <button mat-mini-fab
+              (click)="setTheme(theme)"
+              [style.background-color]="theme.accentColorCode"
+              [matTooltip]="theme.name">
+        <fa-icon *ngIf="theme.className === currentTheme.className"
+                 [icon]="faCheck">
+        </fa-icon>
+      </button>
+    </mat-grid-tile>
+  </mat-grid-list>
+  <small>Dark themes</small>
+  <mat-grid-list cols="2" rowHeight="1:1">
+    <mat-grid-tile *ngFor="let theme of darkThemes"
                    [style.background-color]="theme.primaryColorCode">
       <button mat-mini-fab
               (click)="setTheme(theme)"

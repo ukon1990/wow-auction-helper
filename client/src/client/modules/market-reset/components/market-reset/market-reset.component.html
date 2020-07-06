@@ -5,18 +5,24 @@
 </p>
 
 <form [formGroup]="form" class="row">
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput placeholder="Item name" formControlName="name">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput placeholder="ROI increment percent"
            formControlName="breakPointPercent"
            type="number"
            min="101">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput
            placeholder="Est days to sell"
            formControlName="timeToSell"
@@ -24,14 +30,18 @@
            min="0">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput
            placeholder="Max x% of market value"
            type="number"
            formControlName="mktPriceUpperThreshold">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput
            placeholder="Max x% of current min price"
            matTooltip="The new price can at max, be x % of the current lowest buyout price"
@@ -40,7 +50,9 @@
            min="0">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput
            placeholder="Min profit in gold {{ form.getRawValue().minROI * 10000 | gold }}"
            formControlName="minROI"
@@ -48,7 +60,9 @@
            min="0">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput
            placeholder="Min ROI in percent"
            formControlName="minROIPercent"
@@ -56,7 +70,9 @@
            min="0">
   </mat-form-field>
 
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput
            placeholder="Max sum buyout per reset ({{ form.getRawValue().maxTotalBuyoutPerItem * 10000 | gold }})"
            formControlName="maxTotalBuyoutPerItem"
@@ -71,7 +87,7 @@
   </mat-checkbox>
 
   <div class="col">
-    <button mat-raised-button
+    <button mat-stroked-button
             color="warn"
             type="button"
             (click)="resetForm()">
@@ -80,7 +96,10 @@
   </div>
 </form>
 
-<mat-form-field *ngIf="tsmShoppingString.length > 0" class="row col-md-12">
+<mat-form-field *ngIf="tsmShoppingString.length > 0"
+                class="row col-md-12"
+                color="accent"
+>
     <textarea matInput
               placeholder="TSM shopping string"
               [value]="tsmShoppingString"></textarea>
@@ -89,7 +108,9 @@
 
 <p>Click on a row(not the name) to get the TSM string for it.</p>
 <ng-container *ngIf="itemResetBreakpoint && itemResetBreakpoint.tsmShoppingString.length > 0">
-  <mat-form-field class="row col-md-12">
+  <mat-form-field class="row col-md-12"
+                  color="accent"
+  >
     <textarea matInput
               placeholder="Shopping string for the selected row"
               [value]="itemResetBreakpoint.tsmShoppingString"></textarea>

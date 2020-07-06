@@ -9,13 +9,16 @@
   <mat-form-field>
     <input formControlName="ids" placeholder="Ids" matInput/>
   </mat-form-field>
-  <button class="ml-2" mat-raised-button (click)="addNpcs()">
+  <button class="ml-2"
+          mat-stroked-button
+          color="accent"
+          (click)="addNpcs()">
     Process batch
   </button>
-  <button class="ml-2" mat-raised-button color="accent" (click)="stop = true">
+  <button class="ml-2" mat-stroked-button color="accent" (click)="stop = true">
     Stop
   </button>
-  <button class="ml-2" mat-raised-button color="primary" (click)="getAllNPCSFromDBAndSetBatches()">
+  <button class="ml-2" mat-stroked-button color="primary" (click)="getAllNPCSFromDBAndSetBatches()">
     Generate batches
   </button>
 </form>

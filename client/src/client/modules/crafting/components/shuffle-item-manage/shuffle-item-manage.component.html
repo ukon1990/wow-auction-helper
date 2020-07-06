@@ -12,7 +12,9 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content *ngIf="!newRemains">
-      <mat-form-field class="row col-md-12">
+      <mat-form-field class="row col-md-12"
+                      color="accent"
+      >
         <input type="text"
                placeholder="Search for the origin item (eg. Starlight rose)"
                matInput [formControl]="itemSearchForm"
@@ -32,12 +34,18 @@
 
     <mat-card-content *ngIf="newRemains">
 
-      <mat-form-field>
+      <mat-form-field
+              color="accent"
+      >
         <input placeholder="Number of {{ newRemains.name }} milled"
-               [(ngModel)]="newRemains.outOf" type="number" matInput>
+               [(ngModel)]="newRemains.outOf"
+               type="number"
+               matInput>
       </mat-form-field>
 
-      <mat-form-field class="w-100">
+      <mat-form-field class="w-100"
+                      color="accent"
+      >
         <input class="w-100"
                type="text"
                placeholder="Item search"
@@ -55,11 +63,18 @@
         </mat-option>
       </mat-autocomplete>
 
-      <wah-data-table [id]="'id'" [iconSize]="22" [columns]="itemSourceColumns"
-                      [data]="newRemains.sources"></wah-data-table>
+      <wah-data-table [id]="'id'"
+                      [iconSize]="22"
+                      [columns]="itemSourceColumns"
+                      [data]="newRemains.sources"
+      >
+      </wah-data-table>
     </mat-card-content>
     <mat-card-actions>
-      <button (click)="save()" mat-raised-button>
+      <button (click)="save()"
+              mat-stroked-button
+              color="accent"
+      >
         {{ isEditing ? 'Save' : 'Add' }}
       </button>
     </mat-card-actions>
