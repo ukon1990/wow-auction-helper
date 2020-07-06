@@ -16,11 +16,18 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  context.callbackWaitsForEmptyEventLoop = false;
+  // context.callbackWaitsForEmptyEventLoop = false;
   const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = JSON.parse(event.body);
-  new ItemHandler().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly, connection)
-    .then(history => Response.send(history, callback))
-    .catch(error => Response.error(callback, error, event));
+  const conn = new DatabaseUtil(false);
+  new ItemHandler().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly, conn)
+    .then(history => {
+      conn.end();
+      Response.send(history, callback);
+    })
+    .catch(error => {
+      conn.end();
+      Response.error(callback, error, event);
+    });
 };
 
 class ItemController {

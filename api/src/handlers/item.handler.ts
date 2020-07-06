@@ -181,9 +181,12 @@ export class ItemHandler {
           .then(r => {
             resolve(r);
           })
-          .catch(e => {
-            console.error(e);
-            resolve([]);
+          .catch(error => {
+            console.error(error);
+            reject({
+              status: 500,
+              message: error.message
+            });
           });
       });
     }
@@ -193,23 +196,34 @@ export class ItemHandler {
     };
     return new Promise(async (resolve, reject) => {
       try {
-        await conn.enqueueHandshake()
-          .catch(console.error);
-        Promise.all([
-          this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
-            .then(r => result.hourly = r)
-            .catch(console.error),
-          this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
-            .then(r => result.daily = r)
-            .catch(console.error)
-        ])
+        conn.enqueueHandshake()
           .then(() => {
-            AuctionProcessorUtil.setCurrentDayFromHourly(result);
-            resolve(result);
+            Promise.all([
+              this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+                .then(r => result.hourly = r)
+                .catch(console.error),
+              this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
+                .then(r => result.daily = r)
+                .catch(console.error)
+            ])
+              .then(() => {
+                AuctionProcessorUtil.setCurrentDayFromHourly(result);
+                resolve(result);
+              })
+              .catch(error => {
+                console.error(error);
+                reject({
+                  status: 500,
+                  message: error.message
+                });
+              });
           })
-          .catch(err => {
-            console.error(err);
-            resolve(result);
+          .catch(error => {
+            console.error(error);
+            reject({
+              status: 500,
+              message: error.message
+            });
           });
       } catch (e) {
         console.error(e);
