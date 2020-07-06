@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {SharedService} from '../../../../services/shared.service';
