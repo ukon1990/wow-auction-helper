@@ -72,7 +72,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-    
+
             <mat-form-field class="col-md-2">
               <mat-select  [disableOptionCentering]="true" placeholder="Criteria" formControlName="criteria">
                 <mat-option *ngFor="let i of criteria" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
@@ -80,7 +80,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-    
+
             <mat-form-field class="col-md-2">
               <mat-select  [disableOptionCentering]="true" placeholder="Target type" formControlName="targetType">
                 <mat-option *ngFor="let i of targetTypes" [value]="i" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
@@ -88,14 +88,18 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-    
+
             <mat-form-field class="col-md-2">
               <input matInput placeholder="Value {{ form.value.value | gold }} (compared to buyout)" formControlName="value" type="number">
             </mat-form-field>
           </form>
     </mat-card-content>
     <mat-card-actions>
-      <button type="button" mat-raised-button (click)="add()">
+      <button type="button"
+              mat-stroked-button
+              (click)="add()"
+              color="accent"
+      >
         <div class="float-left mr-1">
           <i class="far fa-edit"></i>
         </div>

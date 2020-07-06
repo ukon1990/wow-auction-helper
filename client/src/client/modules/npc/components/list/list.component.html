@@ -2,14 +2,20 @@
   This tool is currently still in the development phase, and everything should be considered subject to change.
 </em>
 <form [formGroup]="form">
-  <mat-form-field>
+  <mat-form-field
+          color="accent"
+  >
     <input matInput placeholder="Minimum sale rate" formControlName="minSaleRate" />
   </mat-form-field>
-  <mat-form-field>
+  <mat-form-field
+          color="accent"
+  >
     <input matInput placeholder="Minimum avg regional daily sold" formControlName="minAvgDailySold" />
   </mat-form-field>
 </form>
-<mat-tab-group>
+<mat-tab-group
+        color="accent"
+>
   <mat-tab label="Lootable mobs ({{ table.dropped.data.length | number }})">
     <wah-data-table
             [id]="'id'"

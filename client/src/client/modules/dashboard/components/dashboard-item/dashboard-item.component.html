@@ -1,7 +1,7 @@
 <mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen}">
   <mat-card-header>
     <div class="action-icon mat-elevation-z5" (click)="openClose()" matTooltip="Click to open/close the full window.">
-      <button mat-raised-button class="btn btn-sm">
+      <button mat-stroked-button class="btn btn-sm">
         <span *ngIf="!detailView; else closeIcon">
           <i matTooltip="Open detail view" class="far fa-window-restore"></i>
         </span>

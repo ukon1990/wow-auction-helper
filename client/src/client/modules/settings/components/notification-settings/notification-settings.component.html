@@ -1,4 +1,3 @@
-
 <div *ngIf="isHttps; else notHttps">
   <label id="notifications-radio-group-label">Only send notifications:</label>
   <br>
@@ -12,21 +11,25 @@
     <mat-radio-button value="isUpdateAvailable">
       Whenever the AH updates
     </mat-radio-button>
-    <br>
-    <mat-radio-button value="isUndercut">
-      If I'm undercut
-    </mat-radio-button>
   </mat-radio-group>
   <br>
 
-  Test notification: <button (click)="sendTest()" mat-raised-button>Send</button>
+  Test notification:
+  <button (click)="sendTest()"
+          mat-stroked-button
+          color="primary"
+  >
+    Send
+  </button>
 </div>
 
 <ng-template #notHttps>
   <em>
-    Notifications will not work if you are using http instead of https for the webapp. If you are using http to connect to the webapp, consider switching.
+    Notifications will not work if you are using http instead of https for the webapp. If you are using http to connect
+    to the webapp, consider switching.
     Export your settings in the general tab and import them into the import
-    section on the <a href="https://wah.jonaskf.net" target="_blank">https://wah.jonaskf.net</a> (the link opens in a new tab).
+    section on the <a href="https://wah.jonaskf.net" target="_blank">https://wah.jonaskf.net</a> (the link opens in a
+    new tab).
   </em>
 </ng-template>
 

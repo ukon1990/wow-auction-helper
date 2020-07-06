@@ -1,12 +1,16 @@
 <em>
   I intend on updating this feature in the future, where it then would be globally synchronized (if users wish).
-  This then might mean, that I might not be able to save all milling and prospecting history that you might have modified.
+  This then might mean, that I might not be able to save all milling and prospecting history that you might have
+  modified.
 </em>
 <em>
-  Note: The value is per single source item. So, when milling 5 herbs, the value on the resulting items value are per 1 herb.
+  Note: The value is per single source item. So, when milling 5 herbs, the value on the resulting items value are per 1
+  herb.
 </em>
 <form [formGroup]="form">
-  <mat-form-field>
+  <mat-form-field
+          color="accent"
+  >
     <input matInput formControlName="minROI" placeholder="Minimum ROI in gold" type="number"/>
   </mat-form-field><!--
   <mat-form-field>
@@ -16,37 +20,45 @@
     </mat-select>
   </mat-form-field>-->
 </form>
-<mat-tab-group>
+<mat-tab-group
+        color="accent"
+>
   <mat-tab label="Milling">
     <button class="mr-2 mt-2"
-      (click)="openEditWindow(editingType.MILLING)" mat-raised-button>
+            (click)="openEditWindow(editingType.MILLING)"
+            mat-stroked-button
+            color="accent"
+    >
       Add new source item
     </button>
     <wah-data-boards
-      [columns]="columns"
-      [data]="data.milling"
-      [type]="types.MILLING">
+            [columns]="columns"
+            [data]="data.milling"
+            [type]="types.MILLING">
     </wah-data-boards>
     <wah-shuffle-item-manage
-      *ngIf="isEditingType === editingType.MILLING"
-      [sourceList]="data.milling"
-      (close)="closeEditWindow()">
+            *ngIf="isEditingType === editingType.MILLING"
+            [sourceList]="data.milling"
+            (close)="closeEditWindow()">
     </wah-shuffle-item-manage>
   </mat-tab>
   <mat-tab label="Prospecting">
     <button class="mr-2 mt-2"
-      (click)="openEditWindow(editingType.PROSPECTING)" mat-raised-button>
+            (click)="openEditWindow(editingType.PROSPECTING)"
+            mat-stroked-button
+            color="accent"
+    >
       Add new source item
     </button>
     <wah-data-boards
-      [columns]="columns"
-      [data]="data.prospecting"
-      [type]="types.PROSPECTING">
+            [columns]="columns"
+            [data]="data.prospecting"
+            [type]="types.PROSPECTING">
     </wah-data-boards>
     <wah-shuffle-item-manage
-      *ngIf="isEditingType === editingType.PROSPECTING"
-      [sourceList]="data.prospecting"
-      (close)="closeEditWindow()">
+            *ngIf="isEditingType === editingType.PROSPECTING"
+            [sourceList]="data.prospecting"
+            (close)="closeEditWindow()">
     </wah-shuffle-item-manage>
   </mat-tab>
 </mat-tab-group>

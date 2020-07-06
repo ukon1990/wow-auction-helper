@@ -16,7 +16,6 @@ import {ChartData} from '../../../util/models/chart.model';
 export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterContentInit {
   @Input() auctions: Auction[] = [];
   sm = new SubscriptionManager();
-  chartData: SummaryCard = new SummaryCard('', '');
   medianPercentLimit: FormControl;
   medianPrice: number;
   localStorageName = 'wah-auctions-chart-median-percent';

@@ -1,14 +1,13 @@
 <form [formGroup]="form" class="ml-2 mr-2 row">
-  <!--
-  <mat-form-field>
-    <input matInput placeholder="Currency name" formControlName="name" />
-  </mat-form-field>
-  -->
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
            matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
   </mat-form-field>
-  <mat-form-field class="col">
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
   </mat-form-field>
 

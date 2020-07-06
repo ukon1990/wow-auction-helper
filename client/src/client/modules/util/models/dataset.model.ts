@@ -5,6 +5,6 @@ export interface Dataset {
   backgroundColor?: string;
   borderColor?: string;
   order?: number;
-  type: 'line' | 'radar' | 'bar';
+  type: 'line' | 'radar' | 'bar' | 'pie';
   fill?: 'origin' | string | false | number;
 }

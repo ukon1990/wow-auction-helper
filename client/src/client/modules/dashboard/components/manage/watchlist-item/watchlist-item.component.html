@@ -68,13 +68,20 @@
     </mat-tab-group>
   </mat-card-content>
   <mat-card-actions>
-    <button type="button" mat-raised-button (click)="edit.emit('')">
+    <button type="button"
+            mat-stroked-button
+            color="accent"
+            (click)="edit.emit('')">
       <div class="float-left mr-1">
         <i class="far fa-edit"></i>
       </div>
       Edit
     </button>
-    <button type="button" mat-raised-button (click)="delete.emit('')">
+    <button type="button"
+            mat-stroked-button
+            (click)="delete.emit('')"
+            color="warn"
+    >
       <span class="float-left mr-1">
         <i class="far fa-trash-alt"></i>
       </span>

@@ -184,7 +184,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   addEntryToCart(entry: any): void {
-    if (entry.spellID) {
+    if (entry.id && entry.reagents) {
       SharedService.user.shoppingCart.add(entry);
       Report.send('Added recipe', 'Shopping cart');
     } else {

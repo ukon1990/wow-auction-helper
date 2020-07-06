@@ -1,12 +1,21 @@
-<mat-form-field *ngIf="filterParameter !== undefined" class="float-left">
+<mat-form-field *ngIf="filterParameter !== undefined"
+                class="float-left"
+                color="accent"
+>
   <input matInput placeholder="Search by name" [formControl]="searchField">
 </mat-form-field>
 
 <ng-content></ng-content>
 
-<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" class="float-right"
-               [length]="filteredData.length" [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
-               [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
+<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows"
+               class="float-right"
+               color="accent"
+               [length]="filteredData.length"
+               [pageSize]="pageEvent.pageSize"
+               [pageSizeOptions]="pageRows"
+               [pageIndex]="pageEvent.pageIndex"
+               [showFirstLastButtons]="true"
+               (page)="pageChange($event)">
 </mat-paginator>
 <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
   <thead>
@@ -113,16 +122,19 @@
             </span>
             <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
             <span *ngSwitchCase="'input-number'">
-              <mat-form-field class="row col-md-12">
+              <mat-form-field class="row col-md-12"
+                              color="accent"
+              >
                 <input
                         matInput type="number"
-
                         [ngModel]="d[c.key]"
                         (ngModelChange)="onInputChange(d, c, $event)">
               </mat-form-field>
             </span>
             <ng-container *ngSwitchCase="'input-gold'">
-              <mat-form-field class="row col-md-12">
+              <mat-form-field class="row col-md-12"
+                              color="accent"
+              >
                 <input
                         matInput
                         [ngModel]="d[c.key] | gold"
@@ -131,7 +143,9 @@
               </mat-form-field>
             </ng-container>
             <span *ngSwitchCase="'input-text'">
-              <mat-form-field class="row col-md-12">
+              <mat-form-field class="row col-md-12"
+                              color="accent"
+              >
                 <input
                         matInput type="text"
                         [ngModel]="d[c.key]"
@@ -143,6 +157,7 @@
             <ng-container *ngSwitchCase="'row-actions'">
               <ng-container *ngFor="let action of c.actions">
                 <button mat-icon-button
+                        [color]="action.color || 'primary'"
                         [matTooltip]="action.tooltip"
                         (click)="action.callback(d, getPageIndex(i))">
                     <i [class]="action.icon"></i>
@@ -152,30 +167,44 @@
             </ng-container>
 
             <span *ngSwitchCase="'action'">
-              <button *ngIf="getItemID(d)" mat-icon-button (click)="setSelectedItem(d)" matTooltip="View item details">
+              <button *ngIf="getItemID(d)"
+                      mat-icon-button
+                      color="accent"
+                      (click)="setSelectedItem(d)"
+                      matTooltip="View item details">
                 <fa-icon [icon]="faEye"></fa-icon>
               </button>
 
               <ng-container *ngFor="let action of c.actions">
                 <span [ngSwitch]="action">
 
-                  <button *ngSwitchCase="'remove-from-list'" mat-icon-button
+                  <button *ngSwitchCase="'remove-from-list'"
+                          mat-icon-button
+                          color="warn"
                           matTooltip="Removes this item from the list" (click)="removeFromList(i)">
                     <fa-icon [icon]="faTrashAlt"></fa-icon>
                   </button>
 
-                  <button *ngSwitchCase="'custom-price-delete'" mat-icon-button (click)="customPrices().remove(d, i)"
+                  <button *ngSwitchCase="'custom-price-delete'"
+                          color="warn"
+                          mat-icon-button
+                          (click)="customPrices().remove(d, i)"
                           matTooltip="Remove from custom price list">
                     <fa-icon [icon]="faTrashAlt"></fa-icon>
                   </button>
 
-                  <button *ngSwitchCase="'custom-procs-delete'" mat-icon-button (click)="customProcs().remove(d, i)"
+                  <button *ngSwitchCase="'custom-procs-delete'"
+                          mat-icon-button (click)="customProcs().remove(d, i)"
+                          color="warn"
                           matTooltip="Remove from custom procs list">
                     <fa-icon [icon]="faTrashAlt"></fa-icon>
                   </button>
                 </span>
               </ng-container>
-              <button mat-icon-button (click)="addEntryToCart(d)" matTooltip="Add to shopping cart"
+              <button mat-icon-button
+                      (click)="addEntryToCart(d)"
+                      color="accent"
+                      matTooltip="Add to shopping cart"
                       *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' &&
                       c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
                 <fa-icon [icon]="faCartPlus"></fa-icon>
@@ -183,7 +212,10 @@
             </span>
 
             <ng-container *ngSwitchCase="'cart-recipe-count'">
-              <mat-form-field class="input-column" *ngIf="isKnownRecipe(d)">
+              <mat-form-field
+                      class="input-column"
+                      color="accent"
+                      *ngIf="isKnownRecipe(d)">
                 <input matInput
                        type="number"
                        [value]="getCartCount(d, c)"
@@ -192,7 +224,10 @@
             </ng-container>
 
             <span *ngSwitchCase="'cart-delete'">
-              <button *ngIf="getItemID(d)" mat-icon-button (click)="removeRecipe(d, i)"
+              <button *ngIf="getItemID(d)"
+                      color="warn"
+                      mat-icon-button
+                      (click)="removeRecipe(d, i)"
                       matTooltip="Remove item from the shopping cart">
                 <fa-icon [icon]="faTrashAlt"></fa-icon>
               </button>
@@ -205,7 +240,13 @@
   </tbody>
 </table>
 
-<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows" [length]="filteredData.length"
-               [pageSize]="pageEvent.pageSize" [pageSizeOptions]="pageRows"
-               [pageIndex]="pageEvent.pageIndex" [showFirstLastButtons]="true" (page)="pageChange($event)">
+<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows"
+               [length]="filteredData.length"
+               [pageSize]="pageEvent.pageSize"
+               [pageSizeOptions]="pageRows"
+               [pageIndex]="pageEvent.pageIndex"
+               [showFirstLastButtons]="true"
+               (page)="pageChange($event)"
+               color="accent"
+>
 </mat-paginator>
