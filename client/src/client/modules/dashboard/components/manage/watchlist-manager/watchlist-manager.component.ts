@@ -34,6 +34,7 @@ export class WatchlistManagerComponent implements OnInit, OnDestroy {
         {
           icon: 'fas fa-trash-alt',
           tooltip: 'Removes the dashboard group and it\'s items',
+          color: 'warn',
           callback: (row, index) => {
             this.watchlist.removeGroup(index);
             this.watchlist.save();
@@ -44,11 +45,13 @@ export class WatchlistManagerComponent implements OnInit, OnDestroy {
         {
           icon: 'fas fa-chevron-up',
           tooltip: 'Move the group up. This will also change it\'s order in the dashboard.',
+          color: 'accent',
           callback: (row, index) => this.moveGroup(index, -1),
         },
         {
           icon: 'fas fa-chevron-down',
           tooltip: 'Move the group down. This will also change it\'s order in the dashboard.',
+          color: 'accent',
           callback: (row, index) => this.moveGroup(index, 1),
         }
       ]

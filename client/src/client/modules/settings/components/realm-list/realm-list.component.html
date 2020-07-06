@@ -1,4 +1,4 @@
-<button mat-raised-button
+<button mat-stroked-button
         (click)="toggle()"
         color="primary"
         *ngIf="!show; else tableTemplate">
@@ -11,7 +11,7 @@
       <div class="action-icon mat-elevation-z5"
            (click)="toggle()"
            matTooltip="Click to open/close the full window.">
-        <button mat-raised-button
+        <button mat-stroked-button
                 class="btn btn-sm"
         >
           <i class="fas fa-times"></i>
@@ -45,14 +45,14 @@
       </wah-data-table>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button
+      <button mat-stroked-button
               color="accent"
               (click)="service.getRealms()">
         Update
       </button>
 
       <button *ngIf="updateLogForRealm"
-              mat-raised-button
+              mat-stroked-button
               (click)="reset()"
               color="warn"
       >

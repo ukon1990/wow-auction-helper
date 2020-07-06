@@ -13,7 +13,7 @@
       </wah-icon>
     </a>
     <div class="action-icon mat-elevation-z5" (click)="close()" matTooltip="Click to open/close the full window.">
-      <button mat-raised-button
+      <button mat-stroked-button
               class="btn btn-sm">
         <i class="fas fa-times" matTooltip="Close detail view"></i>
       </button>
@@ -145,21 +145,21 @@
   </mat-card-content>
   <mat-card-actions>
     <button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item.id, 'WoWDB')"
-            mat-raised-button
+            mat-stroked-button
             color="primary"
     >
       WoWDB
       <i class="fas fa-external-link-square-alt"></i>
     </button>
     <button (click)="openInNewTab('http://www.wowhead.com/item=' + selected.item.id, 'WoWHead')"
-            mat-raised-button
+            mat-stroked-button
             color="primary"
     >
       WoWHead
       <i class="fas fa-external-link-square-alt"></i>
     </button>
     <button (click)="openInNewTab(getTUJUrl(), 'TUJ')"
-            mat-raised-button
+            mat-stroked-button
             color="primary"
     >
       TUJ
@@ -175,7 +175,7 @@
                [formControl]="shoppingCartQuantityField">
       </mat-form-field>
 
-      <button mat-raised-button matTooltip="Add to shopping list"
+      <button mat-stroked-button matTooltip="Add to shopping list"
               (click)="addEntryToCart()"
               color="accent"
       >
