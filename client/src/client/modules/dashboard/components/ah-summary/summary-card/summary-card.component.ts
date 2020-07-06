@@ -58,7 +58,8 @@ export class SummaryCardComponent implements OnInit, OnChanges {
   }
 
   private getLabel(summary: SummaryCard, data: SummaryCardData) {
-    return summary.labels[data.id] ? summary.labels[data.id].value : data.id;
+    const [match] = summary.labels.filter(l => l.id === data.id);
+    return match ? match.value : data.id;
   }
 
   selection(id: number) {
@@ -81,12 +82,8 @@ export class SummaryCardComponent implements OnInit, OnChanges {
   tooltipCallback(items, data): string {
     const {index, datasetIndex} = items;
     const dataset = data.datasets[datasetIndex];
-    if (datasetIndex > 2) {
-      return dataset.label + ': ' +
-        NumberUtil.format(dataset.data[index]);
-    }
     return dataset.label + ': ' +
-      new GoldPipe().transform(dataset.data[index] * 10000);
+      NumberUtil.format(dataset.data[index]);
   }
 
   private setChartData(summary: SummaryCard, data: SummaryCardData) {

@@ -85,7 +85,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
 
   private getProfessionLabels() {
     return this.professionService.listWithRecipes.value.map(profession =>
-      new ChartData(profession.id, profession.id));
+      new ChartData(profession.id, profession.name));
   }
 
   private itemByClassSummary() {
