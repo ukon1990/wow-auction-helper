@@ -4,65 +4,85 @@
     <mat-form-field class="col">
       <input matInput placeholder="Item name" formControlName="name">
     </mat-form-field>
-    <mat-form-field class="col">
-      <mat-select [disableOptionCentering]="true" placeholder="Item class" formControlName="itemClass">
-        <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <mat-select [disableOptionCentering]="true"
+                  placeholder="Item class"
+                  formControlName="itemClass">
+        <mat-option [value]="-1">
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses.classes; let i = index;" [value]="i"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        <mat-option *ngFor="let c of itemClasses.classes; let i = index;"
+                    [value]="i">
           {{ c.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="itemClasses.classes[form.value.itemClass]" class="col">
+    <mat-form-field *ngIf="itemClasses.classes[form.value.itemClass]"
+                    class="col"
+                    color="accent"
+    >
       <mat-select [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
-        <mat-option [value]="-1" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        <mat-option [value]="-1">
           All
         </mat-option>
         <mat-option *ngFor="let c of itemClasses.classes[form.value['itemClass']].subclasses; let i = index;"
                     [value]="i"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        >
           {{ c.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="col">
+    <mat-form-field class="col"
+                    color="accent"
+    >
       <input matInput type="number" placeholder="Minimum item level" formControlName="minItemLevel"
              matTooltip="Some items may appear with incorrect iLvL.">
     </mat-form-field>
 
-    <mat-form-field class="col">
-      <mat-select [disableOptionCentering]="true" placeholder="Minimum item quality" formControlName="minItemQuality">
-        <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">Any</mat-option>
-        <mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <mat-select [disableOptionCentering]="true"
+                  placeholder="Minimum item quality"
+                  formControlName="minItemQuality">
+        <mat-option [value]="null">Any</mat-option>
+        <mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i">
           {{ quality }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="col">
+    <mat-form-field class="col"
+                    color="accent"
+    >
       <mat-select [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
-        <mat-option [value]="null" [ngClass]="{'unicorn-dark-theme': isDarkmode()}">All</mat-option>
-        <mat-option *ngFor="let expansion of expansions; let i = index" [value]="i"
-                    [ngClass]="{'unicorn-dark-theme': isDarkmode()}">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option *ngFor="let expansion of expansions; let i = index"
+                    [value]="i">
           {{ expansion }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
   <div class="row">
-    <mat-form-field class="col">
+    <mat-form-field class="col"
+                    color="accent"
+    >
       <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
              matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
     </mat-form-field>
-    <mat-form-field class="col">
+    <mat-form-field class="col"
+                    color="accent"
+    >
       <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
     </mat-form-field>
-    <mat-form-field class="col">
+    <mat-form-field class="col"
+                    color="accent"
+    >
       <input matInput type="number" placeholder="Below MV" matTooltip="Only items below x % of the market value"
              formControlName="mktPrice">
     </mat-form-field>
@@ -71,9 +91,11 @@
       Below vendor price
     </mat-checkbox>
     <div class="col">
-      <button mat-raised-button
+      <button mat-stroked-button
               type="button"
-              (click)="form.reset()">
+              (click)="form.reset()"
+              color="warn"
+      >
         Reset
       </button>
     </div>

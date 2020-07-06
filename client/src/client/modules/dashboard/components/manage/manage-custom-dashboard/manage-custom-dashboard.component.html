@@ -24,34 +24,48 @@
 
   <div class="col-md-12">
     <div>
-      <button type="button" (click)="openBachMenu()" mat-raised-button>
+      <button type="button"
+              color="accent"
+              (click)="openBachMenu()"
+              mat-stroked-button
+      >
               <span class="float-left mr-1">
                 <i class="far fa-plus-square"></i>
               </span>
         Add one or more item from query
       </button>
       <button class="ml-2"
-              (click)="openBatchEdit()" mat-raised-button
+              (click)="openBatchEdit()"
+              mat-stroked-button
+              color="accent"
               [disabled]="batchCount === 0">
         <i class="mr-2 far fa-edit"></i>
         Edit batch ({{ batchCount | number }})
       </button>
 
       <button class="ml-2"
-              (click)="batchDelete()" mat-raised-button
+              (click)="batchDelete()"
+              mat-stroked-button
+              color="warn"
               [disabled]="batchCount === 0">
         <i class="mr-2 fas fa-trash-alt"></i>
         Delete batch ({{ batchCount | number }})
       </button>
 
       <button class="ml-2"
-              (click)="setSelections(true, itemSelection)" mat-raised-button>
+              (click)="setSelections(true, itemSelection)"
+              mat-stroked-button
+              color="primary"
+      >
         <i class="mr-2 fas fa-check"></i>
         Select all
       </button>
 
       <button class="ml-2"
-              (click)="setSelections(false, itemSelection)" mat-raised-button>
+              (click)="setSelections(false, itemSelection)"
+              mat-stroked-button
+              color="primary"
+      >
         <i class="mr-2 fas fa-eraser"></i>
         Clear selections
       </button>
@@ -60,7 +74,11 @@
         <mat-form-field class="ml-2" *ngIf="shareString">
           <input matInput placeholder="Copy this string to share th group" [value]="shareString">
         </mat-form-field>
-        <button matTooltip="Share this group" (click)="shareGroup(group)" mat-raised-button>
+        <button matTooltip="Share this group"
+                (click)="shareGroup(group)"
+                mat-stroked-button
+                color="primary"
+        >
           <i class=" mr-2 far fa-share-square"></i>
           Share
         </button>

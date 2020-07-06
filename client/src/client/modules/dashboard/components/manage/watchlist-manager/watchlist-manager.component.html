@@ -1,20 +1,34 @@
-<mat-tab-group>
+<mat-tab-group
+        color="accent"
+>
   <mat-tab label="Dashboards">
     <mat-tab-group>
       <mat-tab *ngFor="let group of watchlist?.groups; let tabIndex = index"
                [label]="group.name">
         <wah-manage-custom-dashboard
-                                     [group]="group">
+                [group]="group">
         </wah-manage-custom-dashboard>
       </mat-tab>
     </mat-tab-group>
   </mat-tab>
   <mat-tab label="Organize or add new groups">
-    <form (ngSubmit)="addGroup()">
-      <mat-form-field>
+    <form (ngSubmit)="addGroup()"
+          class="row"
+    >
+      <mat-form-field
+              class="col-md-10"
+              color="accent"
+      >
         <input matInput placeholder="Name" [formControl]="groupNameForm">
       </mat-form-field>
-      <button type="submit" mat-raised-button>Create new</button>
+      <div class="col-md-2">
+        <button type="submit"
+                color="accent"
+                mat-stroked-button
+        >
+          Create new
+        </button>
+      </div>
     </form>
 
     <wah-data-table [columns]="columns" [data]="groupList"></wah-data-table>
@@ -24,12 +38,19 @@
     <p>
       If you wish to share your setup, feel free to do so by exporting your watchlist groups.
     </p>
-    <mat-tab-group>
+    <mat-tab-group
+            color="accent"
+    >
       <mat-tab label="Export">
-        <mat-form-field class="col-md-10">
+        <mat-form-field class="col-md-10"
+                        color="accent"
+        >
           <textarea matInput [formControl]="exportString" placeholder="The export string will appear here."></textarea>
         </mat-form-field>
-        <button class="col-md-2" mat-button (click)="export()">
+        <button class="col-md-2"
+                mat-stroked-button
+                color="accent"
+                (click)="export()">
           <i class="fas fa-upload"></i>
           Export
         </button>
@@ -38,13 +59,17 @@
         <p>
           Groups that have the same name as one of the new ones, will be overwritten unless you rename them.
         </p>
-        <mat-form-field class="col-md-10">
+        <mat-form-field class="col-md-10"
+                        color="accent"
+        >
           <textarea matInput [formControl]="importString" placeholder="Paste the string here"></textarea>
         </mat-form-field>
 
         <p *ngIf="importList.length > 0">
-          You can change the group name if you want. If a group is unchecked by default, it indicates that there already exist a group
-          with that name. If you import that group (check it in the list), you wil overwrite the existing one. Changing either
+          You can change the group name if you want. If a group is unchecked by default, it indicates that there already
+          exist a group
+          with that name. If you import that group (check it in the list), you wil overwrite the existing one. Changing
+          either
           of the groups name avoids this (above or below).
         </p>
         <div class="row">
@@ -54,7 +79,9 @@
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     <mat-checkbox class="pl-2" matLine [(ngModel)]="import.import">
-                      <mat-form-field>
+                      <mat-form-field
+                              color="accent"
+                      >
                         <input class="ml-2" matInput [(ngModel)]="import.group.name">
                       </mat-form-field>
                     </mat-checkbox>
@@ -78,7 +105,11 @@
           </div>
         </div>
 
-        <button class="col-md-2" mat-button (click)="import()" [disabled]="importString.value === null || importString.value.length === 0">
+        <button class="col-md-2"
+                mat-stroked-button
+                (click)="import()"
+                color="accent"
+                [disabled]="importString.value === null || importString.value.length === 0">
           <i class="fas fa-upload"></i>
           Import
         </button>

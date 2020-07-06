@@ -1,13 +1,17 @@
 <form [formGroup]="form">
-  <mat-form-field>
-    <mat-select placeholder="Dataset" formControlName="dataset">
+  <mat-form-field color="accent">
+    <mat-select placeholder="Dataset"
+                formControlName="dataset"
+    >
       <mat-option *ngFor="let set of dataSets; let i = index" [value]="i">
         {{ set.title }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field
+          color="accent"
+  >
     <mat-select placeholder="Realm" formControlName="realm">
       <mat-option *ngFor="let realm of realms" [value]="realm">
         {{ realm }}
@@ -15,7 +19,9 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="currentSetIsInventory()">
+  <mat-form-field *ngIf="currentSetIsInventory()"
+                  color="accent"
+  >
     <mat-select placeholder="Realm" formControlName="faction">
       <mat-option [value]="0">
         Alliance
@@ -26,7 +32,9 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="characters.length > 0">
+  <mat-form-field *ngIf="characters.length > 0"
+                  color="accent"
+  >
     <mat-select placeholder="Character" formControlName="character">
       <mat-option *ngFor="let name of characters" [value]="name">
         {{ name }}
@@ -67,14 +75,18 @@
         [columns]="table.columns"
         [data]="table.data">
   <form [formGroup]="inventoryFilterForm" *ngIf="currentSetIsInventory()">
-    <mat-form-field>
+    <mat-form-field
+            color="accent"
+    >
       <input
               type="number"
               formControlName="saleRate"
               placeholder="Min sale rate" matInput>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field
+            color="accent"
+    >
       <input
               type="number"
               formControlName="avgDailySold"

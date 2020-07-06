@@ -1,6 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
-import {Title} from '@angular/platform-browser';
 import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {SharedService} from '../../../../services/shared.service';
@@ -10,8 +8,8 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SummaryUtil} from '../../../../utils/summary.util';
 import {Recipe} from '../../../crafting/models/recipe';
 import {CraftingService} from '../../../../services/crafting.service';
-import {Profession} from '../../../../../../../api/src/profession/model';
 import {ProfessionService} from '../../../crafting/services/profession.service';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -19,8 +17,10 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
   styleUrls: ['./ah-summary.component.scss']
 })
 export class AhSummaryComponent implements OnInit, OnDestroy {
-  displayAs = new FormControl(false);
-  ahEvents: Subscription;
+  readonly LOCAL_STORAGE_NAME = 'ah-summary-display-as';
+  initialValue = JSON.parse(localStorage.getItem(this.LOCAL_STORAGE_NAME));
+  displayAs = new FormControl(this.initialValue === null ? true : this.initialValue);
+  subs: SubscriptionManager = new SubscriptionManager();
   summaries: SummaryCard[] = [
     this.expansionSummary(),
     this.itemByClassSummary(),
@@ -58,39 +58,34 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
    */
 
   constructor(private professionService: ProfessionService) {
+    this.subs.add(this.displayAs.valueChanges,
+      value => localStorage.setItem(this.LOCAL_STORAGE_NAME, value + ''));
+    this.subs.add(SharedService.events.auctionUpdate,
+      () =>
+        this.summarizeData());
   }
 
   ngOnInit() {
-    this.ahEvents = SharedService.events.auctionUpdate
-      .subscribe(() =>
-        this.summarizeData());
     this.summarizeData();
   }
 
   ngOnDestroy(): void {
-    this.ahEvents.unsubscribe();
+    this.subs.unsubscribe();
   }
 
   private getProfessionItemCount() {
     return new SummaryCard(
       'Item count per profession',
       'line',
-      [
-        'Blacksmithing',
-        'Leatherworking',
-        'Alchemy',
-        'Cooking',
-        'Mining',
-        'Tailoring',
-        'Engineering',
-        'Enchanting',
-        'Jewelcrafting',
-        'Inscription',
-        'none'
-      ].map(name => new ChartData(name, name)),
+      this.getProfessionLabels(),
       []);
   }
 
+
+  private getProfessionLabels() {
+    return this.professionService.listWithRecipes.value.map(profession =>
+      new ChartData(profession.id, profession.name));
+  }
 
   private itemByClassSummary() {
     return new SummaryCard(

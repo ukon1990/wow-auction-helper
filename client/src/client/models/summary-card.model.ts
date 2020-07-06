@@ -4,7 +4,7 @@ export class SummaryCard {
   dataMap = new Map<string, ChartData>();
 
   constructor(public title: string,
-              public type: string,
+              public type: 'line' | 'radar' | 'bar' | 'pie',
               public labels: ChartData[] = [],
               public data: ChartData[] = []) {
   }

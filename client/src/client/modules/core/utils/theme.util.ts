@@ -7,26 +7,41 @@ export class ThemeUtil {
       '',
       'Default',
       '#3f51b5',
-      '#ff4081'),
+      '#ff4081',
+      undefined,
+      false
+    ), /*
+    new Theme(
+      'solarized-light-theme',
+      'White & Orange',
+      '#3f51b5',
+      '#ff4081',
+      undefined,
+      false
+    ),*/
     new Theme(
       'unicorn-dark-theme',
       'Dark yellow',
       '#607d8b',
       '#ffd740',
-      'table-dark'),
+      'table-dark',
+      true
+    ),
     new Theme(
       'dark-blue-theme',
       'Dark blue',
       '#607d8b',
       '#40c4ff',
-      'table-dark'
+      'table-dark',
+      true
     ),
     new Theme(
       'dark-pink-theme',
       'Dark pink',
       '#e91e63',
       '#eeeeee',
-      'table-dark'
+      'table-dark',
+      true
     )
   ];
 
@@ -43,7 +58,7 @@ export class ThemeUtil {
     const className = localStorage.getItem('theme');
     const theme = this.list.filter(t =>
       t.className === className);
-    const current = new Theme('', '', '', '');
+    const current = new Theme('', '', '', '', undefined, false);
     this.update(
       theme ? theme[0] : ThemeUtil.list[0], current);
     this.setBodyClass(current);

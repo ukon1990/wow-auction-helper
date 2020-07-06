@@ -6,8 +6,11 @@
   </mat-card-header>
   <mat-card-content>
 
-    <mat-form-field>
-      <mat-select placeholder="Timespan" [formControl]="field">
+    <mat-form-field
+            color="accent"
+    >
+      <mat-select placeholder="Timespan"
+                  [formControl]="field">
         <mat-option *ngFor="let set of dataSets" [value]="set.key">
           {{ set.title }}
         </mat-option>

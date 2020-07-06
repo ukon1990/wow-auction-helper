@@ -4,7 +4,7 @@
   </p>
 
   <div class="row col-md-12">
-    <button mat-raised-button (click)="printData()">Print data</button>
+    <button mat-stroked-button (click)="printData()">Print data</button>
   </div>
 
   <div class="row col-md-12">
@@ -12,7 +12,7 @@
       <mat-card>
         <mat-card-title>
           Recipes
-          <button mat-raised-button (click)="updateRecipes()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
+          <button mat-stroked-button (click)="updateRecipes()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
             Update
           </button>
         </mat-card-title>
@@ -38,7 +38,7 @@
       <mat-card>
         <mat-card-title>
           Items
-          <button mat-raised-button (click)="updateItems()" [disabled]="updated.items.completed.length  !== 0 || updated.items.completed.length > this.updated.items.list.length">
+          <button mat-stroked-button (click)="updateItems()" [disabled]="updated.items.completed.length  !== 0 || updated.items.completed.length > this.updated.items.list.length">
             Update
           </button>
         </mat-card-title>
@@ -64,7 +64,7 @@
       <mat-card>
         <mat-card-title>
           Pets
-          <button mat-raised-button (click)="updateRecipes()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
+          <button mat-stroked-button (click)="updateRecipes()" [disabled]="updated.recipes.completed.length  !== 0 || updated.recipes.completed.length > this.updated.recipes.list.length">
             Update
           </button>
         </mat-card-title>
