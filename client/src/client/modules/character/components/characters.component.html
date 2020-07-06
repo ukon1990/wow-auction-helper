@@ -16,16 +16,15 @@
           [minimal]="true"
           (changes)="realmSelectionEvent($event)">
   </wah-select-realm>
-  <mat-form-field class="col-md-6">
+  <mat-form-field class="col-md-6"
+                  color="accent"
+  >
     <input matInput placeholder="Character" formControlName="name">
   </mat-form-field>
-  <mat-checkbox formControlName="characterBelowLevelTen" class="mr-2"
-    matTooltip="
-      If the character is lower than level 10, it will not be found on the armory.
-      The app can then not get any crafting information etc for that character.">
-    Below level 10
-  </mat-checkbox>
-  <button class="btn btn-sm btn-secondary mat-elevation-z5 col-md-1" type="submit">
+  <button mat-raised-button
+          type="submit"
+          color="accent"
+  >
     <span *ngIf="!downloading; else dl">
         <i class="fa fa-plus" aria-hidden="true"></i>
     </span>
