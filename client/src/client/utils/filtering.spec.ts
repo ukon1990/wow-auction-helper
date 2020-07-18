@@ -165,29 +165,29 @@ describe('Filters', () => {
       beforeEach(() => {
         recipe = new Recipe();
         recipe.itemID = 25;
-        recipe.profession = 'Example';
+        recipe.professionId = 1;
         SharedService.itemRecipeMap[25] = [recipe];
       });
 
       it('Positive match when', () => {
-        expect(Filters.isProfessionMatch(recipe.itemID, 'Example')).toBeTruthy();
-        expect(Filters.isProfessionMatch(recipe.itemID, 'All')).toBeTruthy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 1)).toBeTruthy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 0)).toBeTruthy();
         expect(Filters.isProfessionMatch(recipe.itemID, null)).toBeTruthy();
         expect(Filters.isProfessionMatch(recipe.itemID, undefined)).toBeTruthy();
 
-        recipe.profession = undefined;
-        expect(Filters.isProfessionMatch(recipe.itemID, 'none')).toBeTruthy();
+        recipe.professionId = undefined;
+        expect(Filters.isProfessionMatch(recipe.itemID, -1)).toBeTruthy();
       });
 
       it('Negative match when', () => {
-        expect(Filters.isProfessionMatch(recipe.itemID, 'random')).toBeFalsy();
-        expect(Filters.isProfessionMatch(recipe.itemID, '')).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 33)).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 66)).toBeFalsy();
 
 
         SharedService.itemRecipeMap[25] = [];
-        expect(Filters.isProfessionMatch(recipe.itemID, 'Example')).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 1)).toBeFalsy();
         SharedService.itemRecipeMap[25] = undefined;
-        expect(Filters.isProfessionMatch(recipe.itemID, 'Example')).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 1)).toBeFalsy();
       });
     });
   });
@@ -233,7 +233,6 @@ describe('Filters', () => {
       expect(Filters.isBelowMarketValue(152506, 70)).toBeTruthy();
       expect(Filters.isBelowMarketValue(152506, undefined)).toBeTruthy();
       expect(Filters.isBelowMarketValue(152506, null)).toBeTruthy();
-      SharedService.user.apiToUse = 'none';
       expect(Filters.isBelowMarketValue(152506, 10)).toBeTruthy();
     });
 

@@ -16,9 +16,9 @@ describe('ItemComponent', () => {
   }));
 
   beforeEach(() => {
-    SharedService.selectedItemId = 124120;
     fixture = TestBed.createComponent(ItemComponent);
     component = fixture.componentInstance;
+    component.selected.item = 124120;
     fixture.detectChanges();
   });
 

@@ -96,7 +96,7 @@ describe('ShoppingCartUtil', () => {
             'itemID': 158188,
             'quantity': 8
           }],
-          'spellID': 264766,
+          'id': 264766,
           'itemID': 158201
         }, {
           'quantity': 1,
@@ -114,7 +114,7 @@ describe('ShoppingCartUtil', () => {
             'itemID': 152875,
             'quantity': 15
           }],
-          'spellID': 255098,
+          'id': 255098,
           'itemID': 153442
         }],
         'reagents': [{
@@ -196,13 +196,13 @@ describe('ShoppingCartUtil', () => {
     });
 
     it('can remove a single craft of a recipe', () => {
-      cart.remove(recipe.spellID, 1);
+      cart.remove(recipe.id, 1);
       expect(cart.recipes[0].quantity).toBe(1);
       expect(cart.reagentMap[158188].quantity).toBe(8);
     });
 
     it('can remove all crafts of a recipe', () => {
-      cart.remove(recipe.spellID);
+      cart.remove(recipe.id);
       expect(cart.recipes.length).toBeFalsy();
       expect(cart.reagents.length).toBeFalsy();
     });
