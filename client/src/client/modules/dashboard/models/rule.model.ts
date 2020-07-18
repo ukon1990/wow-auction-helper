@@ -10,4 +10,6 @@ export interface Rule {
 
 export interface ItemRule extends Rule {
   itemId: number;
+  bonusIds: number[];
+  petSpeciesId: number;
 }

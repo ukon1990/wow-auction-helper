@@ -9,11 +9,11 @@ export interface DashboardV2 {
   tsmShoppingString: string;
   columns: ColumnDescription[];
   data: any[];
-  message: string;
+  message?: string;
 
-  isCrafting: boolean;
-  isDisabled: boolean;
+  isCrafting?: boolean;
+  isDisabled?: boolean;
   settings?: DefaultDashboardSettings;
   rules: Rule[];
-  itemRules: ItemRule[];
+  itemRules?: ItemRule[];
 }
