@@ -72,10 +72,14 @@ export class CharacterUtil {
     const primaries: CharacterProfession[] = [],
       secondaries: CharacterProfession[] = [];
 
-    body.primaries.forEach(profession =>
-      primaries.push(this.professionFromAPI(profession)));
-    body.secondaries.forEach(profession =>
-      secondaries.push(this.professionFromAPI(profession)));
+    if (body.primaries) {
+      body.primaries.forEach(profession =>
+        primaries.push(this.professionFromAPI(profession)));
+    }
+    if (body.secondaries) {
+      body.secondaries.forEach(profession =>
+        secondaries.push(this.professionFromAPI(profession)));
+    }
     character.professions = {
       primaries,
       secondaries
@@ -98,9 +102,13 @@ export class CharacterUtil {
   }
 
   static setReputationsBaseData(body: CharacterReputationsGameData, character: Character) {
-    body.reputations.forEach(reputation => {
-      delete reputation.faction.key;
-    });
-    character.reputations = body.reputations;
+    if (character.reputations) {
+      body.reputations.forEach(reputation => {
+        delete reputation.faction.key;
+      });
+      character.reputations = body.reputations;
+    } else {
+      character.reputations = [];
+    }
   }
 }
