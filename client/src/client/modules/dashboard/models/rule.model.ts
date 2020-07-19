@@ -5,7 +5,8 @@ export interface Rule {
   condition: ConditionEnum;
   targetValueType: TargetValueEnum;
   field: string;
-  toField: string;
+  toField?: string;
+  toValue: number | string | boolean;
 }
 
 export interface ItemRule extends Rule {
