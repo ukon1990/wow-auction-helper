@@ -58,7 +58,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.list = data;
       this.mapDataToTable(data);
     });
-    this.sm.add(this.auctionService.events.groupedList, () => {
+    this.sm.add(this.auctionService.list, () => {
       this.mapDataToTable();
     });
 

@@ -9,6 +9,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 
 export class DashboardCalculateUtil {
+  // TODO: Add sort by x
   static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
     const dataMap = new Map<string, any>();
     if (board.onlyItemsWithRules) {

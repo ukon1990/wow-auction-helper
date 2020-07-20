@@ -109,7 +109,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     this.downloading = false;
   }
 
-  addLowLevelCharacter(): void {
+  async addLowLevelCharacter(): Promise<void> {
     const character = new Character();
     character.name = this.form.value.name;
     character.realm = SharedService.realms[this.form.value.realm].name;
@@ -121,11 +121,11 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     character.level = 0;
 
     Report.send('Added a lower than level 10 character', 'Characters');
-    this.processCharacter(character);
+    await this.processCharacter(character);
     return;
   }
 
-  processCharacter(character: Character): void {
+  async processCharacter(character: Character): Promise<void> {
     this.form.controls.name.setValue('');
     SharedService.user.characters.push(character);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
@@ -136,7 +136,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     RealmService.gatherRealms();
 
     if (SharedService.user.region && SharedService.user.realm) {
-      AuctionUtil.organize(SharedService.auctions);
+      await this.auctionService.organize();
     }
   }
 
@@ -149,7 +149,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
         SharedService.user.characters[index].name,
         UserUtil.slugifyString(SharedService.user.characters[index].realm),
         this.form.value.region
-      ).then(c => {
+      ).then(async c => {
         if (c && !c.error) {
           if (!c.professions) {
             c.professions = professions;
@@ -160,8 +160,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
           UserUtil.updateRecipesForRealm();
 
           if (SharedService.user.region && SharedService.user.realm) {
-            AuctionUtil.organize(
-              this.getAuctions());
+            await this.auctionService.organize();
           }
 
 
@@ -177,7 +176,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   private getAuctions() {
-    return this.auctionService.events.list.getValue();
+    return this.auctionService.auctions.getValue();
   }
 
   getRealmsKeys() {

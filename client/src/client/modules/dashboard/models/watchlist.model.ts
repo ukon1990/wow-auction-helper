@@ -4,6 +4,7 @@ import {defaultWatchlist} from '../data/default-watchlist.data';
 import {Dashboard} from './dashboard.model';
 import {WatchlistItem} from './watchlist-item.model';
 import {WatchlistGroup} from './watchlist-group.model';
+import {AuctionsService} from '../../../services/auctions.service';
 
 export class Watchlist {
   private storageName = 'watchlist';
@@ -42,7 +43,7 @@ export class Watchlist {
   groups: Array<WatchlistGroup> = new Array<WatchlistGroup>();
   groupsMap: Map<string, WatchlistGroup> = new Map<string, WatchlistGroup>();
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
     this.restore();
   }
 
@@ -92,7 +93,7 @@ export class Watchlist {
   }
 
   isTargetMatch(item: WatchlistItem): boolean {
-    if (!SharedService.auctionItemsMap[item.itemID]) {
+    if (!this.auctionService.getById(item.itemID)) {
       return false;
     }
 
@@ -114,7 +115,7 @@ export class Watchlist {
       case this.TARGET_TYPES.GOLD:
         return this.getCompareToValue(item);
       case this.TARGET_TYPES.PERCENT:
-        return  SharedService.auctionItemsMap[item.itemID].buyout /
+        return  this.auctionService.getById(item.itemID).buyout /
         this.getCompareToValue(item) * 100;
     }
     return 0;
@@ -141,7 +142,7 @@ export class Watchlist {
 
       return 0;
     } else {
-      const auctionItem = SharedService.auctionItemsMap[item.itemID];
+      const auctionItem = this.auctionService.getById(item.itemID);
       return auctionItem ? auctionItem[item.compareTo] : 0;
     }
   }

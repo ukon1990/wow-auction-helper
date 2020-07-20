@@ -19,7 +19,7 @@ export class DashboardService {
 
   constructor(private auctionsService: AuctionsService) {
     this.init();
-    this.sm.add(this.auctionsService.events.mapped,
+    this.sm.add(this.auctionsService.mapped,
       (map) => this.calculateAll(map));
   }
 
@@ -28,7 +28,7 @@ export class DashboardService {
     this.calculateAll();
   }
 
-  calculateAll(map: Map<string, AuctionItem> = this.auctionsService.events.mapped.value): void {
+  calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
     DashboardService.list.value.forEach(board => {
       DashboardCalculateUtil.calculate(board, map);
       DashboardService.map.value.set(board.id, board);

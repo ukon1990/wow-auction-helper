@@ -1,5 +1,5 @@
 import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
+import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {GameBuild} from '../../../utils/game-build.util';
@@ -17,6 +17,7 @@ import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-item',
@@ -81,7 +82,8 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   ];
   private tabSubId = 'tab-subscription';
 
-  constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
+  constructor(private _wowDBService: WowdbService, private npcService: NpcService,
+              private zoneService: ZoneService, private auctionService: AuctionsService) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
 
     this.subscriptions.add(
@@ -269,20 +271,21 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   private handleItemWithItemID(item: any) {
-    this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
+    this.selected.auctionItem = this.auctionService.mapped.value.get(item.itemID);
     this.selected.item = SharedService.items[item.itemID];
   }
 
   private handleItemWithId(item: any) {
-    this.selected.auctionItem = SharedService.auctionItemsMap[item.id];
+    this.selected.auctionItem = this.auctionService.mapped.value.get(item.id);
     this.selected.item = SharedService.items[item.id];
   }
 
   private handlePet(item: any) {
     this.selected.pet = SharedService.pets[item.speciesId];
-    for (let i = 0, length = SharedService.auctionItems.length; i < length; i++) {
-      if (SharedService.auctionItems[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
-        this.selected.auctionItem = SharedService.auctionItems[i];
+    const list = this.auctionService.list.value;
+    for (let i = 0, length = list.length; i < length; i++) {
+      if (list[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
+        this.selected.auctionItem = list[i];
         this.selected.item = SharedService.items[this.selected.auctionItem.itemID];
         return;
       }

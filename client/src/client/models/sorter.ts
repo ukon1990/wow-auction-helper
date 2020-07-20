@@ -1,10 +1,11 @@
-import {SharedService} from '../services/shared.service';
+import {AuctionsService} from '../services/auctions.service';
 
 export class Key {
   constructor(
     public key: string, public desc: boolean, public divideByQuantity: boolean,
     public byPercent?: boolean, public percentOf?: string
-  ) { }
+  ) {
+  }
 }
 
 export class Sorter {
@@ -16,6 +17,9 @@ export class Sorter {
   };
 
   keys: Key[] = [];
+
+  constructor(private auctionService: AuctionsService) {
+  }
 
   addKey(key: string, divideByQuantity?: boolean): void {
     if (this.findKeyIndex(key) > -1) {
@@ -78,8 +82,8 @@ export class Sorter {
   }
 
   private getAuctionItem(item: any): any {
-    const id = item.item || item.itemID || item.id;
-    return SharedService.auctionItemsMap[id];
+    return this.auctionService.getById(
+      item.item || item.itemID || item.id);
   }
 
   private isString(object: any, index): boolean {

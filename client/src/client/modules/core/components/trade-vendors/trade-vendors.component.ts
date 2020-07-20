@@ -47,7 +47,7 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
         this.filterVendors(change);
       }));
     this.sm.add(
-      this.service.events.groupedList,
+      this.service.mapped,
       () => this.filterVendors(this.form.getRawValue()));
 
     this.sm.add(zoneService.mapped, (map) => {
@@ -100,12 +100,11 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   }
 
   getAuctionItem(tradeVendor: TradeVendor): AuctionItem {
-    return SharedService.auctionItemsMap[tradeVendor.itemID] ?
-      SharedService.auctionItemsMap[tradeVendor.itemID] : new AuctionItem();
+    return this.service.getById(tradeVendor.itemID) || new AuctionItem();
   }
 
   private isNotBOP(vendor: TradeVendor, onlyBuyableSource: boolean): boolean {
-    const sourceItem: AuctionItem = SharedService.auctionItemsMap[vendor.itemID];
+    const sourceItem: AuctionItem = this.service.getById(vendor.itemID);
     return !onlyBuyableSource ||
       sourceItem !== undefined;
   }

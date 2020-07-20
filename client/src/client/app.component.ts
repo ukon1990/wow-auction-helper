@@ -19,6 +19,9 @@ import {MenuItem} from './modules/core/models/menu-item.model';
 import {UserUtil} from './utils/user/user.util';
 import {BackgroundDownloadService} from './modules/core/services/background-download.service';
 import {ThemeUtil} from './modules/core/utils/theme.util';
+import {AuctionsService} from './services/auctions.service';
+import {CraftingUtil} from './modules/crafting/utils/crafting.util';
+import {NPC} from './modules/npc/models/npc.model';
 
 @Component({
   selector: 'wah-root',
@@ -38,17 +41,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
               private downloadService: BackgroundDownloadService,
+              private auctionService: AuctionsService,
               private reportService: ReportService,
               private title: Title) {
     this.setLocale();
     this.subs.add(downloadService.isLoading, (isLoading) => {
       this.isLoading = isLoading;
     });
+    ProspectingAndMillingUtil.init(auctionService);
+    CraftingUtil.init(auctionService);
+    NPC.init(auctionService);
     DefaultDashboardSettings.init();
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
-    SharedService.user.shoppingCart = new ShoppingCart();
+    SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
     ProspectingAndMillingUtil.restore();
 
     this.subs.add(

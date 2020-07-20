@@ -112,7 +112,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
 
       if (this.hasNotChangedRealmOrRegion()) {
-        await AuctionUtil.organize(SharedService.auctions);
+        await this._auctionService.organize();
       }
     }
 

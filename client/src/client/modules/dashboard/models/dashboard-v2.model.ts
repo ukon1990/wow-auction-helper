@@ -4,7 +4,7 @@ import {ColumnDescription} from '../../table/models/column-description';
 
 export interface DashboardV2 {
   id: string; // UUID type id?
-  idParam: string; // The name of the id param for the table
+  idParam: string; // The name of the id param for the table -> No longer needed?
   title: string;
   tsmShoppingString?: string;
   columns: ColumnDescription[];
@@ -15,6 +15,10 @@ export interface DashboardV2 {
   isDisabled?: boolean;
   onlyItemsWithRules?: boolean;
   settings?: DefaultDashboardSettings;
+  sortRule?: {
+    field: string;
+    sortDesc: boolean
+  };
   rules: Rule[];
   itemRules?: ItemRule[];
 

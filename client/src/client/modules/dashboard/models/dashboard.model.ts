@@ -480,7 +480,7 @@ export class Dashboard {
     const pipe = new GoldPipe();
     this.data.length = 0;
     this.tsmShoppingString = '';
-    this.data = SharedService.auctionItems.filter(ai => {
+    this.data = /* TODO: Depricate! SharedService.auctionItems*/ [].filter(ai => {
       if (this.isExpansionMissMatch(ai.itemID)) {
         return false;
       }
@@ -522,7 +522,7 @@ export class Dashboard {
     let sumROI = 0;
     const pipe = new GoldPipe();
     this.data.length = 0;
-    SharedService.auctions.forEach(a => {
+    /* TODO: Depricate! SharedService.auctions*/ [].forEach(a => {
       let match = true;
 
       if (!a.bid) {
@@ -537,19 +537,19 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) *
+        (/* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].buyout / (a.bid / a.quantity)) *
         CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
       if (match && Filters.isUsingAPI() &&
-        SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
-        SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
+        /* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].avgDailySold < this.settings.avgDailySold &&
+        /* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
       }
 
       if (match) {
-        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * CraftingUtil.ahCutModifier;
+        a.roi = (/* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].buyout * a.quantity - a.bid) * CraftingUtil.ahCutModifier;
         sumROI += a.roi;
         this.data.push(a);
       }
@@ -565,7 +565,7 @@ export class Dashboard {
     let sumROI = 0;
     const pipe: GoldPipe = new GoldPipe();
     this.data.length = 0;
-    SharedService.auctions.forEach(a => {
+    /* TODO: Depricate! SharedService.auctions*/ [].forEach(a => {
       let match = true;
       if (!a.bid) {
         match = false;
@@ -576,19 +576,19 @@ export class Dashboard {
       }
 
       if (match && (a.buyout === 0 ||
-        (SharedService.auctionItemsMap[a.item].buyout / (a.bid / a.quantity)) *
+        (/* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].buyout / (a.bid / a.quantity)) *
         CraftingUtil.ahCutModifier < this.settings.minROIPercent + 1)) {
         match = false;
       }
 
       if (match && Filters.isUsingAPI() &&
-        SharedService.auctionItemsMap[a.item].avgDailySold < this.settings.avgDailySold &&
-        SharedService.auctionItemsMap[a.item].regionSaleRate < this.settings.regionSaleRate) {
+        /* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].avgDailySold < this.settings.avgDailySold &&
+        /* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].regionSaleRate < this.settings.regionSaleRate) {
         match = false;
       }
 
       if (match) {
-        a.roi = (SharedService.auctionItemsMap[a.item].buyout * a.quantity - a.bid) * CraftingUtil.ahCutModifier;
+        a.roi = (/* TODO: Depricate! SharedService.auctionItemsMap*/ {}[a.item].buyout * a.quantity - a.bid) * CraftingUtil.ahCutModifier;
         sumROI += a.roi;
         this.data.push(a);
       }
@@ -605,7 +605,7 @@ export class Dashboard {
     this.data.length = 0;
     this.tsmShoppingString = '';
 
-    this.data = SharedService.auctionItems.filter(ai => {
+    this.data = /* TODO: Depricate! SharedService.auctionItems*/ [].filter(ai => {
       if (this.isExpansionMissMatch(ai.itemID)) {
         return false;
       }
@@ -666,7 +666,7 @@ export class Dashboard {
 
   private groupItemsByAvailability(): void {
     this.data.length = 0;
-    this.data = SharedService.auctionItems.sort((a, b) => b.quantityTotal - a.quantityTotal);
+    this.data = /* TODO: Depricate! SharedService.auctionItems*/ [].sort((a, b) => b.quantityTotal - a.quantityTotal);
   }
 
   private sortByROI(): void {
@@ -687,7 +687,7 @@ export class Dashboard {
   }
 
   private getAuctionItem(id: number): AuctionItem {
-    return SharedService.auctionItemsMap[id] ?
-      SharedService.auctionItemsMap[id] : new AuctionItem();
+    return null; /*SharedService.auctionItemsMap[id] ?
+      SharedService.auctionItemsMap[id] : new AuctionItem()*/;
   }
 }

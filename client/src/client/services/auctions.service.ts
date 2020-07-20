@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from './shared.service';
 import {AuctionUtil} from '../modules/auction/utils/auction.util';
-import {TSM} from '../modules/auction/models/tsm.model';
 import {DatabaseService} from './database.service';
 import {ItemService} from './item.service';
 import {Notifications} from '../models/user/notification';
@@ -18,12 +17,11 @@ import {TsmService} from '../modules/tsm/tsm.service';
 
 @Injectable()
 export class AuctionsService {
+  list: BehaviorSubject<AuctionItem[]> = new BehaviorSubject<AuctionItem[]>([]);
+  mapped: BehaviorSubject<Map<string, AuctionItem>> = new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>());
+  auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
   events = {
     isDownloading: new BehaviorSubject<boolean>(true),
-    list: new BehaviorSubject<Auction[]>([]),
-    groupedList: new BehaviorSubject<AuctionItem[]>([]),
-    tsm: new BehaviorSubject<Map<number, TSM>>(new Map<number, TSM>()),
-    mapped: new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>())
   };
   subs = new SubscriptionManager();
   doNotOrganize = false;
@@ -45,10 +43,14 @@ export class AuctionsService {
       this.realmService.events.realmChanged,
       (status) => {
         this.tsmService.get(status)
-          .then(() => AuctionUtil.organize(this.events.list.value))
+          .then(async () => await this.organize())
           .catch(console.error);
       }
     );
+  }
+
+  getById(id: string | number): AuctionItem {
+    return this.mapped.value.get('' + id);
   }
 
   getAuctions(): Promise<any> {
@@ -56,8 +58,7 @@ export class AuctionsService {
       return;
     }
     this.events.isDownloading.next(true);
-    const missingItems = [],
-      realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.getValue();
+    const realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.getValue();
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
@@ -68,16 +69,7 @@ export class AuctionsService {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-          await AuctionUtil.organize(a['auctions'])
-            .then(({
-              map,
-              list,
-              auctions
-            }) => {
-              this.events.list.next(auctions);
-              this.events.mapped.next(map);
-              this.events.groupedList.next(list);
-            })
+          await this.organize(a['auctions'])
             .catch(error => ErrorReport.sendError('getAuctions', error));
         }
 
@@ -128,7 +120,7 @@ export class AuctionsService {
   }
 
   private isAuctionArrayEmpty(status: AuctionHouseStatus) {
-    const list = this.events.list.getValue();
+    const list = this.auctions.value;
     return status && status.lastModified && list && list.length === 0 && !SharedService.downloading.auctions;
   }
 
@@ -143,5 +135,19 @@ export class AuctionsService {
         'WAH - New auction data',
         `There are new auctions available for ${SharedService.user.realm}.`);
     }
+  }
+
+  async organize(auctions: Auction[] = this.auctions.value) {
+    await AuctionUtil.organize(auctions)
+      .then(({
+               map,
+               list,
+               auctions: auc
+             }) => {
+        this.auctions.next(auc);
+        this.list.next(list);
+        this.mapped.next(map);
+      })
+      .catch(error => ErrorReport.sendError('getAuctions', error));
   }
 }

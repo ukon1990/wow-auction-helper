@@ -83,7 +83,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
       }));
 
     this.subs.add(
-      this.service.events.groupedList,
+      this.service.mapped,
       () =>
         this.filter());
 

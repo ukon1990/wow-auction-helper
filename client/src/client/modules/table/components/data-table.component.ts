@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription} from '../models/column-description';
@@ -18,12 +18,12 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
 import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
-import {Router} from '@angular/router';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {Profession} from '../../../../../../api/src/profession/model';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
+import {AuctionsService} from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-data-table',
@@ -74,8 +74,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   private isTyping: boolean;
   private lastCharacterTyped: number;
 
-  constructor(private professionService: ProfessionService) {
-    this.sorter = new Sorter();
+  constructor(private professionService: ProfessionService, private auctionService: AuctionsService) {
+    this.sorter = new Sorter(this.auctionService);
 
     this.sm.add(professionService.map, map => {
       this.professionIdMap = map;
@@ -174,15 +174,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  isUsersAuction(auction: any): boolean {
-    if (this.showOwner) {
-      const a = SharedService.auctionItemsMap[auction.item ? Auction.getAuctionItemId(auction) : auction.itemID];
-      return !!(SharedService.userAuctions.charactersMap[a.ownerRealm] &&
-        SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner]);
-    }
-    return false;
-  }
-
   addEntryToCart(entry: any): void {
     if (entry.id && entry.reagents) {
       SharedService.user.shoppingCart.add(entry);
@@ -263,8 +254,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if (this.useAuctionItemForName && item.petSpeciesId) {
       const petId = `${item.item}-${item.petSpeciesId}-${item.petLevel}-${item.petQualityId}`;
-      if (SharedService.auctionItemsMap[petId]) {
-        return SharedService.auctionItemsMap[petId].name;
+      if (this.auctionService.getById(petId)) {
+        return this.auctionService.getById(petId).name;
       }
     }
 
@@ -298,8 +289,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   /* istanbul ignore next */
   getAuctionItem(item: any): AuctionItem {
-    return SharedService.auctionItemsMap[this.getItemID(item)] ?
-      SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
+    return this.auctionService.getById(this.getItemID(item)) || new AuctionItem();
   }
 
   onInputChange(row, column: ColumnDescription, value): void {

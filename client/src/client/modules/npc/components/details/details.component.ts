@@ -73,7 +73,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.sm.add(NpcService.mapped, (map) => {
       this.setTableData(map);
     });
-    this.sm.add(this.auctionService.events.list, (list) => {
+    this.sm.add(this.auctionService.list, (list) => {
       if (list.length > 0) {
         this.setTableData();
       }
@@ -94,7 +94,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.zone = this.zoneService.mapped.value.get(this.npc.zoneId);
       if (this.npc.drops) {
         this.table.drops.data = this.npc.drops.map((drop: DroppedItem) => {
-          const result = DroppedItem.getScoredItem(drop);
+          const result = DroppedItem.getScoredItem(drop, this.auctionService.mapped.value);
           this.potentialValue.vendor += result.vendorValue;
           this.potentialValue.ah += result.buyoutValue;
           return result;

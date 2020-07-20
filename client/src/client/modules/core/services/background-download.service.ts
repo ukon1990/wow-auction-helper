@@ -124,7 +124,7 @@ export class BackgroundDownloadService {
         ])
           .catch(console.error);
 
-        AuctionUtil.organize(this.auctionsService.events.list.value)
+        await this.auctionsService.organize()
           .catch(error =>
             ErrorReport.sendError('BackgroundDownloadService.init', error));
         await this.startRealmStatusInterval();

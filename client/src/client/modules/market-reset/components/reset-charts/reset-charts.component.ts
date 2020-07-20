@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {ItemReset} from '../../models/item-reset.model';
 import {ChartData} from '../../../util/models/chart.model';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {NumberUtil} from '../../../util/utils/number.util';
 import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {SharedService} from '../../../../services/shared.service';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-reset-charts',
@@ -36,13 +36,13 @@ export class ResetChartsComponent implements OnChanges {
   datasetsBreakpoints: ChartData;
   private goldPipe = new GoldPipe();
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
   }
 
   ngOnChanges({newBuyout, itemID}: SimpleChanges) {
     console.log('onChanges', {newBuyout, itemID});
     if (itemID && itemID.currentValue) {
-      this.auctionItem = SharedService.auctionItemsMap[itemID.currentValue];
+      this.auctionItem = this.auctionService.getById(itemID.currentValue);
       if (this.auctionItem) {
         this.itemReset = new ItemReset(this.auctionItem);
         this.itemResetChange.emit(this.itemReset);

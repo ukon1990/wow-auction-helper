@@ -2,12 +2,13 @@ import { async, TestBed } from '@angular/core/testing';
 import { Sorter } from './sorter';
 import { SharedService } from '../services/shared.service';
 import { AuctionItem } from '../modules/auction/models/auction-item.model';
+import {AuctionsService} from '../services/auctions.service';
 
 let sorter: Sorter,
   arr = [];
 
 beforeEach(() => {
-  sorter = new Sorter();
+  sorter = new Sorter(new AuctionsService(null, null, null, null, null, null));
   arr = [
     { id: 1, name: 'Arch' },
     { id: 2, name: 'Aisha' },

@@ -201,8 +201,8 @@ export class AddonImportComponent implements OnInit {
       if (csvAuctionDBScan && csvAuctionDBScan[realm]) {
         const tsmData = csvAuctionDBScan[realm];
         tsmData.forEach(({id, marketValue, lastScan}) => {
-          if (SharedService.auctionItemsMap[id]) {
-            (SharedService.auctionItemsMap[id] as AuctionItem).mktPrice = marketValue;
+          if (this.auctionsService.getById(id)) {
+            this.auctionsService.getById(id).mktPrice = marketValue;
             added++;
           }
         });
@@ -223,7 +223,7 @@ export class AddonImportComponent implements OnInit {
   async loadData() {
     const realm = this.getCurrentRealmAuctions(this.form.value.realm);
     if (realm) {
-      this.auctionsService.events.list.next(realm.auctions);
+      this.auctionsService.auctions.next(realm.auctions);
       // this.dbService.addClassicAuctions(realm);
       await AuctionUtil.organize(realm.auctions);
       const status = new AuctionHouseStatus();
