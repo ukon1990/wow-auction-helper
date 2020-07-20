@@ -149,10 +149,10 @@ export class AddonImportComponent implements OnInit {
         case this.ADDONS.TSM.file:
           this.handleTSMFile(result, gameVersion, +new Date(lastModified));
           break;
-          /*
-        case this.ADDONS.Auctioneer:
-          AuctioneerStatsOverTimeUtil.import(result);
-          break;*/
+        /*
+      case this.ADDONS.Auctioneer:
+        AuctioneerStatsOverTimeUtil.import(result);
+        break;*/
         default:
           Report.debug('File data', name, LuaUtil.toObject(result));
           break;
@@ -184,7 +184,8 @@ export class AddonImportComponent implements OnInit {
 
   private handleTSMFile(result, gameVersion: number, lastModified: number) {
     this.dbService.addAddonData(this.ADDONS.TSM.file, result, gameVersion, lastModified);
-    this.setTSMMarketValueIfAvailable(gameVersion, new TsmLuaUtil().convertList(result));
+    this.setTSMMarketValueIfAvailable(gameVersion,
+      new TsmLuaUtil().convertList(result));
   }
 
   private setTSMMarketValueIfAvailable(gameVersion: number, csv: TSMCSV) {

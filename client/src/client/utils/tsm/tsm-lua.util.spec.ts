@@ -3,7 +3,7 @@ import {TsmLuaUtil} from './tsm-lua.util';
 
 describe('TSMLuaUtil', () => {
   it('getCharacterDataForField', () => {
-    const data = new TsmLuaUtil().processLuaData(
+    const data = new TsmLuaUtil(null).processLuaData(
       `TradeSkillMasterDB = {
       ["s@HordieChar - Horde - Server@internalData@bagQuantity"] = {
       ["i:155838"] = 113

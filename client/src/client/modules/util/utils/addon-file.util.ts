@@ -6,6 +6,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {AuctionDBImportUtil} from '../../auction/utils/auction-db-import.util';
+import {AuctionsService} from '../../../services/auctions.service';
 
 class FileResponse {
   lastModified: number;
@@ -32,7 +33,7 @@ export class AddonFileUtil {
   private auctionDataSource: number;
   private realm: string;
 
-  constructor(private service: DatabaseService) {
+  constructor(private service: DatabaseService, private auctionService: AuctionsService) {
 
   }
 
@@ -100,7 +101,7 @@ export class AddonFileUtil {
   }
 
   private handleTSMFile(result) {
-    const {auctionDBScanTime, csvAuctionDBScan}: TSMCSV = new TsmLuaUtil().convertList(result);
+    const {auctionDBScanTime, csvAuctionDBScan}: TSMCSV = new TsmLuaUtil(this.auctionService).convertList(result);
     let lastScanTimestamp;
     let added = 0;
     const realms = Object.keys(csvAuctionDBScan).filter(r =>

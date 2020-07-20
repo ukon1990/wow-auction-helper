@@ -22,6 +22,11 @@ import {ThemeUtil} from './modules/core/utils/theme.util';
 import {AuctionsService} from './services/auctions.service';
 import {CraftingUtil} from './modules/crafting/utils/crafting.util';
 import {NPC} from './modules/npc/models/npc.model';
+import {TsmLuaUtil} from './utils/tsm/tsm-lua.util';
+import {TradeVendor} from './models/item/trade-vendor';
+import {TradeVendors} from './models/trade-vendors';
+import {Filters} from './utils/filtering';
+import {InventoryUtil} from './utils/tsm/inventory.util';
 
 @Component({
   selector: 'wah-root',
@@ -51,6 +56,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     ProspectingAndMillingUtil.init(auctionService);
     CraftingUtil.init(auctionService);
     NPC.init(auctionService);
+    TsmLuaUtil.init(auctionService);
+    TradeVendors.init(auctionService);
+    Filters.init(auctionService);
+    InventoryUtil.init(auctionService);
     DefaultDashboardSettings.init();
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);

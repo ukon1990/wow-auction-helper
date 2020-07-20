@@ -1,10 +1,16 @@
-import {Report} from '../report.util';
 import {ItemInventory} from '../../models/item/item';
 import {ErrorReport} from '../error-report.util';
 import {SharedService} from '../../services/shared.service';
 import {RealmStatus} from '../../models/realm-status.model';
+import {AuctionsService} from '../../services/auctions.service';
 
 export class InventoryUtil {
+  private static auctionService: AuctionsService;
+
+  static init(auctionService: AuctionsService) {
+    this.auctionService = auctionService;
+  }
+
   static organize(inventory): void {
     this.setInventory(inventory);
   }
@@ -45,7 +51,7 @@ export class InventoryUtil {
   }
 
   private static calculateInventoryItem(item) {
-    const ahItem = SharedService.auctionItemsMap[item.id];
+    const ahItem = this.auctionService.getById(item.id);
     if (ahItem) {
       item.buyout = ahItem.buyout;
       item.sumBuyout = ahItem.buyout * item.quantity;

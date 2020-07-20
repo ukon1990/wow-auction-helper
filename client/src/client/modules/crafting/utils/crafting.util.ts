@@ -26,13 +26,13 @@ export class CraftingUtil {
     if (!this.strategy || strategyHasChanged) {
       switch (selectedStrategy) {
         case STRATEGY.OPTIMISTIC:
-          this.strategy = new OptimisticCraftingUtil();
+          this.strategy = new OptimisticCraftingUtil(this.auctionService);
           break;
         case STRATEGY.PESSIMISTIC:
-          this.strategy = new PessimisticCraftingUtil();
+          this.strategy = new PessimisticCraftingUtil(undefined, undefined, this.auctionService);
           break;
         default:
-          this.strategy = new NeededCraftingUtil();
+          this.strategy = new NeededCraftingUtil(this.auctionService);
           break;
       }
       Report.send(

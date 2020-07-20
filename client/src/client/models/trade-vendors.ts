@@ -3,8 +3,15 @@ import {Item} from './item/item';
 import {TRADE_VENDORS} from '../data/trade-vendors';
 import {TradeVendor, TradeVendorItem} from './item/trade-vendor';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
+import {AuctionsService} from '../services/auctions.service';
 
 export class TradeVendors {
+  private static auctionService: AuctionsService;
+
+  static init(auctionService: AuctionsService) {
+    this.auctionService = auctionService;
+  }
+
   public static setValues(): void {
     TRADE_VENDORS.forEach(vendor => {
       this.setVendorValues(vendor);
@@ -49,8 +56,8 @@ export class TradeVendors {
 
   private static setItemValue(item: TradeVendorItem, vendor: TradeVendor) {
     item.sourceID = vendor.itemID;
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID],
-      vendorAuctionItem: AuctionItem = SharedService.auctionItemsMap[vendor.itemID];
+    const auctionItem: AuctionItem = this.auctionService.getById(item.itemID),
+      vendorAuctionItem: AuctionItem = this.auctionService.getById(vendor.itemID);
     item.value = auctionItem !== undefined ?
       auctionItem.buyout * item.quantity : 0;
     item.buyout = auctionItem !== undefined ?
@@ -63,14 +70,12 @@ export class TradeVendors {
   }
 
   private static setItemApiValues(item: TradeVendorItem) {
-    item.estDemand = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-      SharedService.auctionItemsMap[item.itemID].estDemand : 0;
-    item.regionSaleAvg = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-      SharedService.auctionItemsMap[item.itemID].regionSaleAvg : 0;
-    item.mktPrice = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-      SharedService.auctionItemsMap[item.itemID].mktPrice : 0;
-    item.avgSold = SharedService.auctionItemsMap[item.itemID] !== undefined ?
-      SharedService.auctionItemsMap[item.itemID].avgDailySold : 0;
+    item.regionSaleAvg = this.auctionService.getById(item.itemID) !== undefined ?
+      this.auctionService.getById(item.itemID).regionSaleAvg : 0;
+    item.mktPrice = this.auctionService.getById(item.itemID) !== undefined ?
+      this.auctionService.getById(item.itemID).mktPrice : 0;
+    item.avgSold = this.auctionService.getById(item.itemID) !== undefined ?
+      this.auctionService.getById(item.itemID).avgDailySold : 0;
   }
 
   private static getItem(itemID: any) {

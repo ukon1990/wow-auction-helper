@@ -1,5 +1,6 @@
 import {SharedService} from '../../../services/shared.service';
 import {UserProfit} from './user-profit.model';
+import {AuctionsService} from '../../../services/auctions.service';
 
 export class ProfitSummary {
   past24Hours: UserProfit;
@@ -10,14 +11,14 @@ export class ProfitSummary {
   past90Days: UserProfit;
   total: UserProfit;
 
-  constructor(realm: string, characters: any) {
-    this.past24Hours = new UserProfit(1, characters[realm]);
-    this.past7Days = new UserProfit(7, characters[realm]);
-    this.past14Days = new UserProfit(14, characters[realm]);
-    this.past30Days = new UserProfit(30, characters[realm]);
-    this.past60Days = new UserProfit(60, characters[realm]);
-    this.past90Days = new UserProfit(90, characters[realm]);
-    this.total = new UserProfit(undefined, characters[realm]);
+  constructor(realm: string, characters: any, private auctionService: AuctionsService) {
+    this.past24Hours = new UserProfit(1, characters[realm], auctionService);
+    this.past7Days = new UserProfit(7, characters[realm], auctionService);
+    this.past14Days = new UserProfit(14, characters[realm], auctionService);
+    this.past30Days = new UserProfit(30, characters[realm], auctionService);
+    this.past60Days = new UserProfit(60, characters[realm], auctionService);
+    this.past90Days = new UserProfit(90, characters[realm], auctionService);
+    this.total = new UserProfit(undefined, characters[realm], auctionService);
   }
 
   setSaleRates(): void {

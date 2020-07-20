@@ -16,6 +16,7 @@ import {Report} from '../utils/report.util';
 import {GameBuild} from '../utils/game-build.util';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
 import {Profession} from '../../../../api/src/profession/model';
+import {AuctionsService} from './auctions.service';
 
 /**
  * A Class for handeling the indexedDB

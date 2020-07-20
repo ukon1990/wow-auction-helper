@@ -8,6 +8,7 @@ import {CustomPrice} from '../models/custom-price';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
+import {AuctionsService} from '../../../services/auctions.service';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -23,8 +24,12 @@ export abstract class BaseCraftingUtil {
   private static intermediateEligible: Recipe[] = [];
   private static intermediateMap: Map<number, Recipe> = new Map();
   private static hasMappedRecipes: boolean;
+  private auctionService: AuctionsService;
 
   private ahCutModifier = 0.95;
+  constructor(auctionsService: AuctionsService) {
+    this.auctionService = auctionsService;
+  }
 
   calculate(recipes: Recipe[]): void {
     if (!BaseCraftingUtil.hasMappedRecipes) {
@@ -113,7 +118,7 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipePriceAndStatData(recipe: Recipe) {
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[recipe.itemID];
+    const auctionItem: AuctionItem = this.auctionService.getById(recipe.itemID);
     if (auctionItem) {
       recipe.buyout = auctionItem.buyout;
       recipe.mktPrice = auctionItem.mktPrice;
@@ -148,7 +153,7 @@ export abstract class BaseCraftingUtil {
       cost: 0,
       intermediateEligible: false
     };
-    const item: AuctionItem = SharedService.auctionItemsMap[id],
+    const item: AuctionItem = this.auctionService.getById(id),
       recipe: Recipe = SharedService.recipesMapPerItemKnown[id];
     if (recipe) {
       recipe.reagents.forEach(r => {

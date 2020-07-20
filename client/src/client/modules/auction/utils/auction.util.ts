@@ -22,8 +22,6 @@ interface OrganizedAuctionResult {
 }
 
 export class AuctionUtil {
-  private static missingPetMap = {};
-
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
