@@ -153,14 +153,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   setMaterialFor(): void {
-    this.materialFor.length = 0;
-    CraftingService.list.value.forEach(recipe => {
-      recipe.reagents.forEach(reagent => {
-        if (reagent.id === this.selected.item.id) {
-          this.materialFor.push(recipe);
-        }
-      });
-    });
+    this.materialFor = [...CraftingService.reagentRecipeMap.value.get(this.selected.item.id)];
   }
 
   openInNewTab(url: string, target: string) {
@@ -246,14 +239,12 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   private setSelection(item: any) {
-    console.log('this.ignoreNextSelectionHistoryFormChange', this.ignoreNextSelectionHistoryFormChange);
     if (this.ignoreNextSelectionHistoryFormChange) {
       this.ignoreNextSelectionHistoryFormChange = false;
       return;
     }
     this.selected.pet = undefined;
 
-    Report.debug('setSelection', item);
     if (item.auctions) {
       this.handleAuctionItem(item);
     } else if (item.itemID) {
@@ -268,6 +259,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
     this.ignoreNextSelectionHistoryFormChange = true;
     this.itemSelectionHistoryForm.setValue(0);
+    Report.debug('selected', this.selected, item);
   }
 
   private handleAuctionItem(item: any) {

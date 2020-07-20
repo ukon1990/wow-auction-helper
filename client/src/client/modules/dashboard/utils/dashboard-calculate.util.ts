@@ -1,6 +1,5 @@
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {Recipe} from '../../crafting/models/recipe';
 import {ItemRule, Rule} from '../models/rule.model';
 import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
 import {ColumnDescription} from '../../table/models/column-description';
@@ -8,7 +7,6 @@ import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
-import {Item} from '../../../models/item/item';
 
 export class DashboardCalculateUtil {
   /**
@@ -18,10 +16,10 @@ export class DashboardCalculateUtil {
    * - Shuffles
    * - etc?
    */
-  static calculate(board: DashboardV2, items: Map<number, AuctionItem>, knownRecipeItemMap: Map<number, Recipe>): DashboardV2 {
+  static calculate(board: DashboardV2, items: Map<number, AuctionItem>): DashboardV2 {
     const dataMap = new Map<string, any>();
 
-    if (board.rules.length) {
+    if (board.rules && board.rules.length) {
       items.forEach((item: AuctionItem) => {
         if (this.isFollowingTheRules(board.rules, item)) {
           const id = this.getId(item);
@@ -30,7 +28,7 @@ export class DashboardCalculateUtil {
       });
     }
 
-    if (board.itemRules.length) {
+    if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((item: ItemRule) => {
         const id = this.getId(undefined, item);
         if (dataMap.has(id) && !this.isFollowingTheRules(board.rules, items.get(item.itemId))) {

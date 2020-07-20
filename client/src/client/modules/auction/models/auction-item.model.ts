@@ -2,6 +2,7 @@ import {Auction} from './auction.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {NPC} from '../../npc/models/npc.model';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
+import {Item} from '../../../models/item/item';
 
 export class AuctionItem {
   id: string;
@@ -37,15 +38,18 @@ export class AuctionItem {
   recipes: {
     known: Recipe[],
     all: Recipe[]
+    materialFor: Recipe[]
   } = {
     known: [],
-    all: []
+    all: [],
+    materialFor: []
   };
   shuffle = {
     sourceIn: [],
     targetIn: []
   };
   npcDetails: ItemNpcDetails;
+  item: Item;
 
   constructor(public itemID?: number) {
   }

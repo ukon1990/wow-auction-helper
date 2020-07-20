@@ -34,7 +34,6 @@ fdescribe('DashboardCalculateUtil', () => {
   secondItem.mktPrice = 99;
 
   const auctionItems: Map<number, AuctionItem> = new Map<number, AuctionItem>();
-  const recipeMap = new Map<number, Recipe>();
 
   beforeAll(() => {
     // recipeMap.set(32, []);
@@ -53,7 +52,7 @@ fdescribe('DashboardCalculateUtil', () => {
               field: 'buyout',
               toValue: 99
             }
-          ]), auctionItems, recipeMap);
+          ]), auctionItems);
 
         expect(board.data.length).toBe(1);
         expect(board.data[0].buyout).toBe(secondItem.buyout);
@@ -69,7 +68,7 @@ fdescribe('DashboardCalculateUtil', () => {
               toField: 'mktPrice',
               toValue: .7
             }
-          ]), auctionItems, recipeMap);
+          ]), auctionItems);
 
         expect(board.data.length).toBe(1);
         expect(board.data[0].buyout).toBe(firstItem.buyout);
@@ -84,7 +83,7 @@ fdescribe('DashboardCalculateUtil', () => {
               field: 'name',
               toValue: 'test'
             }
-          ]), auctionItems, recipeMap);
+          ]), auctionItems);
 
         expect(board.data.length).toBe(2);
       });
@@ -98,7 +97,7 @@ fdescribe('DashboardCalculateUtil', () => {
               field: 'name',
               toValue: 'test'
             }
-          ]), auctionItems, recipeMap);
+          ]), auctionItems);
 
         expect(board.data.length).toBe(1);
       });
@@ -113,7 +112,7 @@ fdescribe('DashboardCalculateUtil', () => {
                 field: 'roi',
                 toValue: 1.15
               }
-            ]), auctionItems, recipeMap);
+            ]), auctionItems);
 
           expect(board.data.length).toBe(1);
           expect(board.data[0].buyout).toBe(firstItem.buyout);
@@ -134,7 +133,7 @@ fdescribe('DashboardCalculateUtil', () => {
                 field: 'professionId',
                 toValue: 100
               }
-            ]), auctionItems, recipeMap);
+            ]), auctionItems);
 
           expect(board.data.length).toBe(1);
           expect(board.data[0].buyout).toBe(firstItem.buyout);

@@ -26,6 +26,8 @@ class ItemResponse {
 export class ItemService {
   static missingQueue: Map<string, number> = new Map<string, number>();
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
+  static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
+  static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
   private historyMap: BehaviorSubject<Map<number, Map<string, any>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   private sm = new SubscriptionManager();
@@ -134,8 +136,13 @@ export class ItemService {
     const missingItems: number[] = [],
       noItems = SharedService.itemsUnmapped.length === 0;
     SharedService.downloading.items = false;
+    const list: Item[] = [];
+    const mapped = new Map<number, Item>();
 
     items.items.forEach((item: Item) => {
+      mapped.set(item.id, item);
+      list.push(item);
+      // TODO: Remove
       if (SharedService.items[item.id]) {
         Object.keys(item).forEach(key => {
           SharedService.items[item.id][key] = item[key];
@@ -148,7 +155,8 @@ export class ItemService {
       }
     });
 
-    SharedService.itemsUnmapped.forEach((item: Item) => {
+    // TODO: Remove or move?
+    list.forEach((item: Item) => {
       // Making sure that the tradevendor item names are updated in case of locale change
       if (SharedService.tradeVendorMap[item.id]) {
         SharedService.tradeVendorMap[item.id].name = item.name;
@@ -186,6 +194,8 @@ export class ItemService {
       localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
     }
     SharedService.events.items.emit(true);
+    ItemService.mapped.next(mapped);
+    ItemService.list.next(list);
     console.log('Items download is completed');
   }
 

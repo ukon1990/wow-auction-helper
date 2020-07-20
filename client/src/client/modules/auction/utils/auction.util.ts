@@ -13,6 +13,7 @@ import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor
 import {TsmService} from '../../tsm/tsm.service';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
+import {ItemService} from '../../../services/item.service';
 
 export class AuctionUtil {
   private static missingPetMap = {};
@@ -273,12 +274,14 @@ export class AuctionUtil {
     }
 
     tmpAuc.recipes.all = CraftingService.itemRecipeMap.value.get(auction.item);
+    tmpAuc.recipes.materialFor = CraftingService.reagentRecipeMap.value.get(auction.item);
     try {
       tmpAuc.recipes.known = SharedService.recipesMapPerItemKnown[SharedService.user.faction][auction.item];
     } catch (error) {
     }
 
-    tmpAuc.npcDetails = NpcService.mapped.value[auction.item];
+    tmpAuc.npcDetails = NpcService.itemNpcMap.value.get(auction.item);
+    tmpAuc.item = ItemService.mapped.value.get(tmpAuc.itemID);
     return tmpAuc;
   }
 
