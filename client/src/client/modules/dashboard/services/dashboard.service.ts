@@ -7,6 +7,7 @@ import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItem} from '../../auction/models/auction-item.model';
+import {defaultBoards} from '../data/default-doards.data';
 
 @Injectable({
   providedIn: 'root'
@@ -37,40 +38,7 @@ export class DashboardService {
   }
 
   private restore(): void {
-    this.list.next([{
-      id: 'asd-dsa',
-      idParam: 'id',
-      title: 'Profitable crafts',
-      columns: [{
-        key: 'name',
-        title: 'Name',
-        dataType: 'name',
-      }, {
-        key: 'buyout',
-        title: 'Buyout',
-        dataType: 'gold',
-      }, {
-        key: 'quantityTotal',
-        title: '#',
-        dataType: 'number',
-      }, {
-        key: 'source.recipe.all.0.roi',
-        title: 'roi',
-        dataType: 'gold'
-      }],
-      rules: [{
-        condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-        targetValueType: TargetValueEnum.NUMBER,
-        field: 'quantityTotal',
-        toValue: 100
-      }, {
-        condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-        targetValueType: TargetValueEnum.NUMBER,
-        field: 'source.recipe.all.0.roi',
-        toValue: 1
-      }],
-      data: []
-    }]);
+    this.list.next(defaultBoards);
   }
 
   save(): void {

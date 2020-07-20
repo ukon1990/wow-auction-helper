@@ -145,7 +145,6 @@ export class AuctionsService {
                list,
                auctions: auc
              }) => {
-        Report.debug('ehh', auctions, list);
         this.auctions.next(auctions);
         this.list.next(list);
         this.mapped.next(map);

@@ -94,8 +94,10 @@ export class DashboardCalculateUtil {
       .forEach(key => {
         if (!value && item[key]) {
           value = item[key];
-        } else {
+        } else if (value) {
           value = value[key];
+        } else {
+          value = 0;
         }
       });
     return value;
@@ -106,8 +108,9 @@ export class DashboardCalculateUtil {
       id: item.itemID,
       bonusIds: item.bonusIds,
       petSpeciesId: item.petSpeciesId,
-      // recipeId: item.source.recipe.known
+      recipeId: item.source.recipe.known
     };
+
     columns.forEach(column =>
       obj[column.key] = this.getValue(item, column.key));
     return obj;

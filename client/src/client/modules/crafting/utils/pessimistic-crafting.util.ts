@@ -16,15 +16,15 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
    *
    * @param threshold Price threshold to trigger not using the cheapest auction
    * @param checkPercent The percent of the total quantity of an item available to check
-   * @param auctionsService
+   * @param map
    */
-  constructor(private threshold: number = 1.05, private checkPercent: number = 0.1, private auctionsService: AuctionsService) {
-    super(auctionsService);
+  constructor(private threshold: number = 1.05, private checkPercent: number = 0.1, map: Map<string, AuctionItem>) {
+    super(map);
   }
 
   getPrice(id: number, quantity: number): number {
     let cost = 0;
-    const auctionItem: AuctionItem = this.auctionsService.getById(id);
+    const auctionItem: AuctionItem = this.map.get('' + id);
     if (auctionItem) {
       const auctions = auctionItem.auctions;
       let foundCount = 0, usedForCraftCount = 0;

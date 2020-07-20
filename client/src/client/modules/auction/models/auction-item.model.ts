@@ -1,8 +1,6 @@
 import {Auction} from './auction.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {Item} from '../../../models/item/item';
-import {ItemSoldByRow} from '../../item/models/item-sold-by-row.model';
-import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 
 export class AuctionItem {

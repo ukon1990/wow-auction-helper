@@ -59,13 +59,6 @@ export class SharedService {
     lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static userAuctions: UserAuctions = new UserAuctions();
-
-  // TODO: Replace with values in CraftingService
-  public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
-  public static recipesMapPerItemKnown = {
-    0: new Map<number, Recipe>(),
-    1: new Map<number, Recipe>()
-  };
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
 
   public static tsmAddonData: TSMCSV = {};

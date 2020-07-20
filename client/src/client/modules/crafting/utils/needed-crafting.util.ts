@@ -4,13 +4,13 @@ import {SharedService} from '../../../services/shared.service';
 import {AuctionsService} from '../../../services/auctions.service';
 
 export class NeededCraftingUtil extends BaseCraftingUtil {
-  constructor(private service: AuctionsService) {
-    super(service);
+  constructor(map: Map<string, AuctionItem>) {
+    super(map);
   }
 
   getPrice(id: number, quantity: number): number {
     let price = 0;
-    const auctionItem: AuctionItem = this.service.getById(id);
+    const auctionItem: AuctionItem = this.map.get('' + id);
     if (auctionItem) {
       let foundCount = 0, usedForCraftCount = 0;
       for (let i = 0; i < auctionItem.auctions.length && foundCount <= quantity; i++) {

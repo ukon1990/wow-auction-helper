@@ -210,8 +210,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   getCraftersForRecipe(recipe: Recipe) {
-    return SharedService.recipesForUser[recipe.id] ?
-      SharedService.recipesForUser[recipe.id].join(', ') : '';
+    return CraftingService.recipesForUser.value.get(recipe.id) ?
+      CraftingService.recipesForUser.value.get(recipe.id).join(', ') : '';
   }
 
   customPrices(): CustomPrices {
@@ -372,8 +372,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (column.key) {
       return (item as ShoppingCartItem).quantity;
     } else {
-      const recipe: Recipe = this.isKnownRecipe(item);
-      return item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
+      const recipe: Recipe = this.isKnownRecipe(item) as Recipe;
+      return recipe && item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
         SharedService.user.shoppingCart.recipeMap[recipe.id].quantity :
         0;
     }
@@ -387,9 +387,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     } else if (recipe instanceof Recipe) {
       this.addRecipeToCart(recipe as Recipe, newValue);
     } else {
-      const r: Recipe = SharedService.recipesMapPerItemKnown[recipe[this.id]];
+      const r: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(recipe[this.id]);
       if (r) {
-        this.addRecipeToCart(r, newValue);
+        this.addRecipeToCart(r[0], newValue);
       }
     }
   }
@@ -426,8 +426,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id],
       recipe: Recipe = SharedService.itemRecipeMap[id];
-    if (SharedService.recipesMapPerItemKnown[id]) {
-      return SharedService.recipesMapPerItemKnown[id];
+    if (CraftingService.itemRecipeMapPerKnown.value.has(id)[0]) {
+      return CraftingService.itemRecipeMapPerKnown.value.get(id)[0];
     }
     return recipe && !recipe.professionId;
 

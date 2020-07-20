@@ -454,9 +454,9 @@ export class Dashboard {
           return;
         }
 
-        const recipe = SharedService.recipesMapPerItemKnown[item.itemID];
+        const recipe = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
         if (recipe &&
-          recipe.roi / recipe.cost >= this.settings.minROIPercent &&
+          recipe[0].roi / recipe[0].cost >= this.settings.minROIPercent &&
           this.getAuctionItem(item.itemID).regionSaleRate >= this.settings.regionSaleRate &&
           this.getAuctionItem(item.itemID).avgDailySold >= this.settings.avgDailySold) {
           tmpList[item.itemID] = recipe;
@@ -643,7 +643,7 @@ export class Dashboard {
           return false;
         }
 
-        if (onlyKnown && !SharedService.recipesForUser[recipe.id] && recipe.professionId) {
+        if (onlyKnown && !CraftingService.recipesForUser.value.get(recipe.id) && recipe.professionId) {
           return false;
         }
         if (Filters.isUsingAPI()) {
@@ -688,6 +688,6 @@ export class Dashboard {
 
   private getAuctionItem(id: number): AuctionItem {
     return null; /*SharedService.auctionItemsMap[id] ?
-      SharedService.auctionItemsMap[id] : new AuctionItem()*/;
+      SharedService.auctionItemsMap[id] : new AuctionItem()*/
   }
 }

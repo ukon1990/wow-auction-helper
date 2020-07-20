@@ -5,6 +5,7 @@ import {Dashboard} from './dashboard.model';
 import {WatchlistItem} from './watchlist-item.model';
 import {WatchlistGroup} from './watchlist-group.model';
 import {AuctionsService} from '../../../services/auctions.service';
+import {CraftingService} from '../../../services/crafting.service';
 
 export class Watchlist {
   private storageName = 'watchlist';
@@ -123,11 +124,11 @@ export class Watchlist {
 
   getCompareToValue(item: WatchlistItem): number {
     if (item.compareTo === this.COMPARABLE_VARIABLES.PROFITABLE_TO_CRAFT) {
-      const knownRecipe = (SharedService.recipesMapPerItemKnown[item.itemID] as Recipe);
+      const knownRecipe = (CraftingService.itemRecipeMapPerKnown.value.get(item.itemID));
       const recipeMapItem = SharedService.itemRecipeMap[item.itemID];
 
       if (knownRecipe) {
-        return knownRecipe.cost;
+        return knownRecipe[0].cost;
       } else if (recipeMapItem && recipeMapItem.length > 0) {
         let lowestCost = 0;
 

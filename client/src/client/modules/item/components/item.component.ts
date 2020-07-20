@@ -155,7 +155,8 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   setMaterialFor(): void {
-    this.materialFor = [...CraftingService.reagentRecipeMap.value.get(this.selected.item.id)];
+    const materialFor = CraftingService.reagentRecipeMap.value.get(this.selected.item.id) || [];
+    this.materialFor = [...materialFor];
   }
 
   openInNewTab(url: string, target: string) {
@@ -189,7 +190,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   userHasRecipeForItem(): boolean {
-    return !!SharedService.recipesMapPerItemKnown[this.selected.item.id];
+    return CraftingService.itemRecipeMapPerKnown.value.has(this.selected.item.id);
   }
 
   addEntryToCart(): void {
@@ -198,7 +199,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     }
     SharedService.user.shoppingCart
       .add(
-        SharedService.recipesMapPerItemKnown[this.selected.item.id],
+        CraftingService.itemRecipeMapPerKnown.value.get(this.selected.item.id)[0],
         this.shoppingCartQuantityField.value);
 
     Report.send('Added to recipe shopping cart', 'Item detail view');

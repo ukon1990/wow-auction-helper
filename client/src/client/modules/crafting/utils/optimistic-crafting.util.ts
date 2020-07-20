@@ -5,12 +5,12 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {AuctionsService} from '../../../services/auctions.service';
 
 export class OptimisticCraftingUtil extends BaseCraftingUtil {
-  constructor(private service: AuctionsService) {
-    super(service);
+  constructor(map: Map<string, AuctionItem>) {
+    super(map);
   }
 
   getPrice(id: number, quantity: number): number {
-    const item: AuctionItem = this.service.getById(id);
+    const item: AuctionItem = this.map.get('' + id);
     if (item) {
       return item.buyout * quantity;
     }

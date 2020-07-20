@@ -10,6 +10,7 @@ import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {AuctionsService} from '../../../services/auctions.service';
+import {AuctionItem} from '../../auction/models/auction-item.model';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
@@ -20,19 +21,19 @@ export class CraftingUtil {
     this.auctionService = auctionsService;
   }
 
-  public static calculateCost(strategyHasChanged = false): void {
+  public static calculateCost(strategyHasChanged = false, map: Map<string, AuctionItem> = this.auctionService.mapped.value): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY,
       selectedStrategy = SharedService.user.craftingStrategy;
     if (!this.strategy || strategyHasChanged) {
       switch (selectedStrategy) {
         case STRATEGY.OPTIMISTIC:
-          this.strategy = new OptimisticCraftingUtil(this.auctionService);
+          this.strategy = new OptimisticCraftingUtil(map);
           break;
         case STRATEGY.PESSIMISTIC:
-          this.strategy = new PessimisticCraftingUtil(undefined, undefined, this.auctionService);
+          this.strategy = new PessimisticCraftingUtil(undefined, undefined, map);
           break;
         default:
-          this.strategy = new NeededCraftingUtil(this.auctionService);
+          this.strategy = new NeededCraftingUtil(map);
           break;
       }
       Report.send(
@@ -42,6 +43,8 @@ export class CraftingUtil {
     }
 
     this.strategy.calculate(CraftingService.list.value);
+    CraftingService.itemRecipeMapPerKnown.value.forEach((recipes) =>
+      recipes.sort((a, b) => b.roi - a.roi));
   }
 
   public static getCost(id: number, count: number): number {

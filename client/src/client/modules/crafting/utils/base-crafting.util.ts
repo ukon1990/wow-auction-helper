@@ -24,11 +24,9 @@ export abstract class BaseCraftingUtil {
   private static intermediateEligible: Recipe[] = [];
   private static intermediateMap: Map<number, Recipe> = new Map();
   private static hasMappedRecipes: boolean;
-  private auctionService: AuctionsService;
 
   private ahCutModifier = 0.95;
-  constructor(auctionsService: AuctionsService) {
-    this.auctionService = auctionsService;
+  protected constructor(public map: Map<string, AuctionItem>) {
   }
 
   calculate(recipes: Recipe[]): void {
@@ -96,9 +94,9 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipeForReagent(r: Reagent, parentRecipe: Recipe) {
-    const recipe: Recipe = CraftingService.map.value.get(r.id);
+    const recipe: Recipe[] = CraftingService.itemRecipeMap.value.get(r.id);
     if (!r.recipe && recipe) {
-      r.recipe = recipe;
+      r.recipe = recipe[0];
       if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.id)) {
         BaseCraftingUtil.intermediateEligible.push(parentRecipe);
         BaseCraftingUtil.intermediateMap.set(parentRecipe.id, parentRecipe);
@@ -118,7 +116,7 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipePriceAndStatData(recipe: Recipe) {
-    const auctionItem: AuctionItem = this.auctionService.getById(recipe.itemID);
+    const auctionItem: AuctionItem = this.map.get('' + recipe.itemID);
     if (auctionItem) {
       recipe.buyout = auctionItem.buyout;
       recipe.mktPrice = auctionItem.mktPrice;
@@ -137,15 +135,16 @@ export abstract class BaseCraftingUtil {
 
     // The user should see item combination items as "known"
     if (!recipe.professionId) {
-      SharedService.recipesForUser[recipe.id] = ['Item'];
+      CraftingService.recipesForUser.value.set(recipe.itemID, ['Item']);
     }
 
     // For intermediate crafting
-    if (SharedService.recipesForUser[recipe.icon]) {
+    /*
+    if (CraftingService.recipesForUser.value.has(recipe.id)) {
       if (!SharedService.recipesMapPerItemKnown[recipe.itemID] || SharedService.recipesMapPerItemKnown[recipe.itemID].cost > recipe.cost) {
         SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
       }
-    }
+    }*/
   }
 
   getFallbackPrice(id: number, quantity: number): { cost: number, intermediateEligible: boolean } {
@@ -153,10 +152,10 @@ export abstract class BaseCraftingUtil {
       cost: 0,
       intermediateEligible: false
     };
-    const item: AuctionItem = this.auctionService.getById(id),
-      recipe: Recipe = SharedService.recipesMapPerItemKnown[id];
+    const item: AuctionItem = this.map.get('' + id),
+      recipe: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(id);
     if (recipe) {
-      recipe.reagents.forEach(r => {
+      recipe[0].reagents.forEach(r => {
         result.cost += this.getPrice(r.id, r.quantity * quantity);
       });
       result.intermediateEligible = true;
@@ -197,11 +196,11 @@ export abstract class BaseCraftingUtil {
     recipe.cost = 0;
     recipe.roi = 0;
     recipe.reagents.forEach(reagent => {
-      const knownRecipe: Recipe = SharedService.recipesMapPerItemKnown[reagent.id];
-      if (this.shouldUseIntermediateForReagent(knownRecipe, reagent) && !this.getOverridePrice(reagent.id)) {
+      const knownRecipes: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(reagent.id);
+      if (knownRecipes && this.shouldUseIntermediateForReagent(knownRecipes[0], reagent) && !this.getOverridePrice(reagent.id)) {
         reagent.intermediateEligible = true;
         reagent.intermediateCount = reagent.quantity;
-        recipe.cost += knownRecipe.cost * reagent.quantity;
+        recipe.cost += knownRecipes[0].cost * reagent.quantity;
       } else {
         reagent.intermediateEligible = false;
         reagent.intermediateCount = 0;
