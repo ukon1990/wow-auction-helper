@@ -9,7 +9,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 
 export class DashboardCalculateUtil {
-  static calculate(board: DashboardV2, items: Map<number, AuctionItem>): DashboardV2 {
+  static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
     const dataMap = new Map<string, any>();
     if (board.onlyItemsWithRules) {
       this.addOnlyIncludedInItemRules(board, items, dataMap);
@@ -24,20 +24,20 @@ export class DashboardCalculateUtil {
     return board;
   }
 
-  private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<number, AuctionItem>, dataMap: Map<string, any>) {
+  private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((rule: ItemRule) => {
         const id = this.getId(undefined, rule);
-        const item = items.get(rule.itemId);
+        const item = items.get('' + rule.itemId);
         if (this.isFollowingTheRules(board.rules, item) &&
-          this.isFollowingTheRules(rule.rules, items.get(rule.itemId))) {
+          this.isFollowingTheRules(rule.rules, items.get('' + rule.itemId))) {
           dataMap.set(id, this.getResultObject(item, board.columns));
         }
       });
     }
   }
 
-  private static addMatchingBoardRules(board: DashboardV2, items: Map<number, AuctionItem>, dataMap: Map<string, any>) {
+  private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>) {
     if ((board.rules.length || board.itemRules && board.itemRules.length)) {
       items.forEach((item: AuctionItem) => {
         if (this.isFollowingTheRules(board.rules, item)) {
@@ -48,11 +48,11 @@ export class DashboardCalculateUtil {
     }
   }
 
-  private static addMatchingItemRules(board: DashboardV2, dataMap: Map<string, any>, items: Map<number, AuctionItem>) {
+  private static addMatchingItemRules(board: DashboardV2, dataMap: Map<string, any>, items: Map<string, AuctionItem>) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((item: ItemRule) => {
         const id = this.getId(undefined, item);
-        if (dataMap.has(id) && !this.isFollowingTheRules(item.rules, items.get(item.itemId))) {
+        if (dataMap.has(id) && !this.isFollowingTheRules(item.rules, items.get('' + item.itemId))) {
           dataMap.delete(id);
         }
       });
@@ -101,7 +101,12 @@ export class DashboardCalculateUtil {
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[]) {
-    const obj = {};
+    const obj = {
+      id: item.itemID,
+      bonusIds: item.bonusIds,
+      petSpeciesId: item.petSpeciesId,
+      // recipeId: item.source.recipe.known
+    };
     columns.forEach(column =>
       obj[column.key] = this.getValue(item, column.key));
     return obj;
