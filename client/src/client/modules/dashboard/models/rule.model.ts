@@ -6,7 +6,7 @@ export interface Rule {
   targetValueType: TargetValueEnum;
   field: string;
   toField?: string;
-  toValue: number | string | boolean;
+  toValue?: number | string | boolean;
 }
 
 export interface ItemRule {

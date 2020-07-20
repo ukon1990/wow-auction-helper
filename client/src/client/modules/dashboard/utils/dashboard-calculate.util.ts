@@ -135,6 +135,8 @@ export class DashboardCalculateUtil {
         return fromValue <= value;
       case ConditionEnum.LESS_THAN:
         return fromValue < value;
+      case ConditionEnum.IS_NOT:
+        return fromValue !== value;
       default:
         return false;
     }
@@ -159,6 +161,8 @@ export class DashboardCalculateUtil {
         return !TextUtil.contains(fromValue, value);
       case ConditionEnum.EQUAL_TO:
         return TextUtil.isEqualIgnoreCase(fromValue, value);
+      case ConditionEnum.IS_NOT:
+        return fromValue !== value;
       default:
         return false;
     }
