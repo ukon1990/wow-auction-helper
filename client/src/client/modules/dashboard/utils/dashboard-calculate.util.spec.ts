@@ -16,6 +16,9 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   }, {
     key: 'buyout',
     title: 'Buyout'
+  }, {
+    key: 'source.recipe.known.0.roi',
+    title: 'roi'
   }],
   rules,
   itemRules,
@@ -25,6 +28,9 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
 fdescribe('DashboardCalculateUtil', () => {
   const recipe1 = new Recipe();
   recipe1.roi = 50;
+  recipe1.professionId = 1;
+  recipe1.cost = 7 * 4;
+
   const firstItem = new AuctionItem(1);
   firstItem.name = 'test';
   firstItem.buyout = 7;
@@ -32,7 +38,10 @@ fdescribe('DashboardCalculateUtil', () => {
   firstItem.source.recipe.known = [recipe1];
 
   const recipe2 = new Recipe();
-  recipe1.roi = 50;
+  recipe2.roi = 10;
+  recipe2.professionId = 33;
+  recipe2.cost = 99 * 2;
+
   const secondItem = new AuctionItem(2);
   secondItem.name = 'test2';
   secondItem.buyout = 99;
@@ -115,12 +124,13 @@ fdescribe('DashboardCalculateUtil', () => {
               {
                 condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
                 targetValueType: TargetValueEnum.PERCENT,
-                field: 'source.recipe.all.[roi]',
-                toValue: 1.15
+                field: 'source.recipe.known.0.cost',
+                toValue: 1,
+                toField: 'buyout'
               }
             ]), auctionItems);
 
-          expect(board.data.length).toBe(1);
+          expect(board.data.length).toBe(2);
           expect(board.data[0].buyout).toBe(firstItem.buyout);
         });
 
@@ -130,25 +140,63 @@ fdescribe('DashboardCalculateUtil', () => {
               {
                 condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
                 targetValueType: TargetValueEnum.PERCENT,
-                field: 'source.recipe.known.0.roi',
-                toValue: 1.15
+                field: 'source.recipe.known.0.cost',
+                toValue: 1.15,
+                toField: 'buyout'
               },
               {
-                condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-                targetValueType: TargetValueEnum.PERCENT,
+                condition: ConditionEnum.EQUAL_TO,
+                targetValueType: TargetValueEnum.NUMBER,
                 field: 'source.recipe.known.0.professionId',
-                toValue: 100
+                toValue: 1
               }
             ]), auctionItems);
 
           expect(board.data.length).toBe(1);
-          expect(board.data[0].buyout).toBe(firstItem.buyout);
+          expect(board.data[0]['source.recipe.known.0.roi'])
+            .toBe(firstItem.source.recipe.known[0].roi);
         });
       });
     });
 
     describe('Item rules', () => {
+      it('Only include these items', () => {
+        const board: DashboardV2 = getBoard([], [
+          {
+            itemId: 1,
+            rules: [{
+              condition: ConditionEnum.GREATER_THAN,
+              targetValueType: TargetValueEnum.NUMBER,
+              field: 'buyout',
+              toValue: 1
+            }]
+          }
+        ]);
+        board.onlyItemsWithRules = true;
+        DashboardCalculateUtil.calculate(board, auctionItems);
+
+        expect(board.data.length).toBe(1);
+        expect(board.data[0]['buyout'])
+          .toBe(firstItem.buyout);
+      });
+
       it('With board rules', () => {
+        const board: DashboardV2 = getBoard([], [
+          {
+            itemId: 1,
+            rules: [{
+              condition: ConditionEnum.GREATER_THAN,
+              targetValueType: TargetValueEnum.NUMBER,
+              field: 'buyout',
+              toValue: 50
+            }]
+          }
+        ]);
+        DashboardCalculateUtil.calculate(board, auctionItems);
+
+        expect(board.data.length).toBe(1);
+        expect(board.data[0]['buyout'])
+          .toBe(secondItem.buyout);
       });
     });
   });

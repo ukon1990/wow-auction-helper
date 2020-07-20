@@ -9,17 +9,36 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 
 export class DashboardCalculateUtil {
-  /**
-   * TODO: One calculate per data type?
-   * - auction items
-   * - recipes
-   * - Shuffles
-   * - etc?
-   */
   static calculate(board: DashboardV2, items: Map<number, AuctionItem>): DashboardV2 {
     const dataMap = new Map<string, any>();
+    if (board.onlyItemsWithRules) {
+      this.addOnlyIncludedInItemRules(board, items, dataMap);
+    } else {
+      this.addMatchingBoardRules(board, items, dataMap);
+      this.addMatchingItemRules(board, dataMap, items);
+    }
 
-    if (board.rules && board.rules.length) {
+
+    board.data = [];
+    dataMap.forEach(item => board.data.push(item));
+    return board;
+  }
+
+  private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<number, AuctionItem>, dataMap: Map<string, any>) {
+    if (board.itemRules && board.itemRules.length) {
+      board.itemRules.forEach((rule: ItemRule) => {
+        const id = this.getId(undefined, rule);
+        const item = items.get(rule.itemId);
+        if (this.isFollowingTheRules(board.rules, item) &&
+          this.isFollowingTheRules(rule.rules, items.get(rule.itemId))) {
+          dataMap.set(id, this.getResultObject(item, board.columns));
+        }
+      });
+    }
+  }
+
+  private static addMatchingBoardRules(board: DashboardV2, items: Map<number, AuctionItem>, dataMap: Map<string, any>) {
+    if ((board.rules.length || board.itemRules && board.itemRules.length)) {
       items.forEach((item: AuctionItem) => {
         if (this.isFollowingTheRules(board.rules, item)) {
           const id = this.getId(item);
@@ -27,23 +46,22 @@ export class DashboardCalculateUtil {
         }
       });
     }
+  }
 
+  private static addMatchingItemRules(board: DashboardV2, dataMap: Map<string, any>, items: Map<number, AuctionItem>) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((item: ItemRule) => {
         const id = this.getId(undefined, item);
-        if (dataMap.has(id) && !this.isFollowingTheRules(board.rules, items.get(item.itemId))) {
+        if (dataMap.has(id) && !this.isFollowingTheRules(item.rules, items.get(item.itemId))) {
           dataMap.delete(id);
         }
       });
     }
-
-    board.data = [];
-    dataMap.forEach(item => board.data.push(item));
-    return board;
   }
 
   private static isFollowingTheRules(rules: Rule[], item: AuctionItem) {
     for (let i = 0, length = rules.length; i < length; i++) {
+      console.log('isFollowingRule', this.validateRule(rules[i], item), rules[i]);
       if (!this.validateRule(rules[i], item)) {
         return false;
       }
@@ -54,7 +72,6 @@ export class DashboardCalculateUtil {
   private static validateRule(rule: Rule, item: AuctionItem): boolean {
     const fromValue = this.getValue(item, rule.field);
     const toValue = this.getValue(item, rule.toField);
-    console.log('validateRule', fromValue, toValue);
     switch (rule.targetValueType) {
       case TargetValueEnum.PERCENT:
         return this.comparePercent(rule, fromValue, toValue);
@@ -69,6 +86,9 @@ export class DashboardCalculateUtil {
 
   private static getValue(item: AuctionItem, field: String): any {
     let value;
+    if (!field) {
+      return value;
+    }
     field.split('.')
       .forEach(key => {
         if (!value && item[key]) {
@@ -83,16 +103,8 @@ export class DashboardCalculateUtil {
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[]) {
     const obj = {};
     columns.forEach(column =>
-      this.getValueForColumn(item, column, obj));
+      obj[column.key] = this.getValue(item, column.key));
     return obj;
-  }
-
-  private static getValueForColumn(item: AuctionItem, column: ColumnDescription, obj: {}) {
-    if (item[column.key] !== undefined) {
-      obj[column.key] = item[column.key];
-    } else {
-      obj[column.key] = 'TODO!';
-    }
   }
 
   /**
@@ -103,7 +115,6 @@ export class DashboardCalculateUtil {
    */
   private static compareNumbers(rule: Rule, fromValue: any, toValue: any) {
     const value: number = (toValue || rule.toValue);
-    console.log('compareNumbers', rule, fromValue, value);
     switch (rule.condition) {
       case ConditionEnum.GREATER_THAN:
         return fromValue > value;
@@ -127,7 +138,6 @@ export class DashboardCalculateUtil {
    * @param toValue
    */
   private static comparePercent(rule: Rule, fromValue: number, toValue: number) {
-    console.log('comparePercent', fromValue / toValue);
     return this.compareNumbers(rule, fromValue / toValue, rule.toValue);
   }
 

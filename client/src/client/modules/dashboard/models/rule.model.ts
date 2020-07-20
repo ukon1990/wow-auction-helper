@@ -9,8 +9,9 @@ export interface Rule {
   toValue: number | string | boolean;
 }
 
-export interface ItemRule extends Rule {
+export interface ItemRule {
   itemId: number;
-  bonusIds: number[];
-  petSpeciesId: number;
+  bonusIds?: number[];
+  petSpeciesId?: number;
+  rules: Rule[];
 }
