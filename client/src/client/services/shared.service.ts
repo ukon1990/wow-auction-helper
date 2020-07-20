@@ -60,10 +60,6 @@ export class SharedService {
 
   public static userAuctions: UserAuctions = new UserAuctions();
 
-  public static auctionItemsMap: Map<number, AuctionItem> = new Map<number, AuctionItem>();
-  public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();
-  public static auctions: Array<Auction> = new Array<Auction>();
-
   // TODO: Replace with values in CraftingService
   public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
   public static recipesMapPerItemKnown = {

@@ -13,7 +13,6 @@ import {BehaviorSubject} from 'rxjs';
 import {Auction} from '../modules/auction/models/auction.model';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
-import {RealmStatus} from '../models/realm-status.model';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {TsmService} from '../modules/tsm/tsm.service';
 
@@ -23,7 +22,8 @@ export class AuctionsService {
     isDownloading: new BehaviorSubject<boolean>(true),
     list: new BehaviorSubject<Auction[]>([]),
     groupedList: new BehaviorSubject<AuctionItem[]>([]),
-    tsm: new BehaviorSubject<Map<number, TSM>>(new Map<number, TSM>())
+    tsm: new BehaviorSubject<Map<number, TSM>>(new Map<number, TSM>()),
+    mapped: new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>())
   };
   subs = new SubscriptionManager();
   doNotOrganize = false;
@@ -68,19 +68,25 @@ export class AuctionsService {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-          await AuctionUtil.organize(a['auctions']);
+          await AuctionUtil.organize(a['auctions'])
+            .then(({
+              map,
+              list,
+              auctions
+            }) => {
+              this.events.list.next(auctions);
+              this.events.mapped.next(map);
+              this.events.groupedList.next(list);
+            })
+            .catch(error => ErrorReport.sendError('getAuctions', error));
         }
 
-        // Adding lacking items to the database
-        this.handleMissingAuctionItems(missingItems);
         console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
 
         this.handleNotifications();
         SharedService.events.auctionUpdate.emit();
-        this.events.list.next(a['auctions']);
         this.events.isDownloading.next(true);
-        this.events.groupedList.next(SharedService.auctionItems);
       })
       .catch((error: HttpErrorResponse) => {
         SharedService.downloading.auctions = false;
@@ -96,20 +102,6 @@ export class AuctionsService {
 
         ErrorReport.sendHttpError(error);
       });
-  }
-
-  private handleMissingAuctionItems(missingItems) {
-    SharedService.auctionItems.forEach(ai => {
-      if (!SharedService.items[ai.itemID]) {
-        missingItems.push(ai.itemID);
-      }
-    });
-    if (missingItems.length < 100) {
-      this._itemService.addItems(missingItems);
-    } else {
-      console.log('Attempting to download items again.');
-      this._itemService.getItems();
-    }
   }
 
   private openSnackbar(message: string): void {
@@ -151,10 +143,5 @@ export class AuctionsService {
         'WAH - New auction data',
         `There are new auctions available for ${SharedService.user.realm}.`);
     }
-  }
-
-  reTriggerEvents() {
-    this.events.list.next(this.events.list.value);
-    this.events.groupedList.next(SharedService.auctionItems);
   }
 }
