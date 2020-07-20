@@ -1,29 +1,23 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
-import {SharedService} from '../../../../services/shared.service';
-import {Dashboard} from '../../models/dashboard.model';
+import {Component, OnDestroy} from '@angular/core';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {DashboardService} from '../../services/dashboard.service';
+import {DashboardV2} from '../../models/dashboard-v2.model';
 
 @Component({
   selector: 'wah-dasboard-items',
   templateUrl: './dashboard-items.component.html',
   styleUrls: ['./dashboard-items.component.scss']
 })
-export class DashboardItemsComponent implements AfterViewInit, OnDestroy {
-  dashboards: Dashboard[] = SharedService.itemDashboards;
-  subscription: Subscription;
+export class DashboardItemsComponent implements OnDestroy {
+  dashboards: DashboardV2[] = [];
+  sm = new SubscriptionManager();
 
 
-  constructor() {
-  }
-
-  ngAfterViewInit(): void {
-    this.subscription = Dashboard.itemEvents.subscribe((dashboards: Dashboard[]) => {
-      this.dashboards = dashboards;
-    });
+  constructor(private service: DashboardService) {
+    this.sm.add(this.service.list, (boards) => this.dashboards = boards);
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.sm.unsubscribe();
   }
 }

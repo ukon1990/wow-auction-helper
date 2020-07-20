@@ -271,12 +271,12 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   private handleItemWithItemID(item: any) {
-    this.selected.auctionItem = this.auctionService.mapped.value.get(item.itemID);
+    this.selected.auctionItem = this.auctionService.getById(item.itemID);
     this.selected.item = SharedService.items[item.itemID];
   }
 
   private handleItemWithId(item: any) {
-    this.selected.auctionItem = this.auctionService.mapped.value.get(item.id);
+    this.selected.auctionItem = this.auctionService.getById(item.id);
     this.selected.item = SharedService.items[item.id];
   }
 

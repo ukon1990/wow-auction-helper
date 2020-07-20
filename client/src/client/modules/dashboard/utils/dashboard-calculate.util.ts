@@ -19,6 +19,7 @@ export class DashboardCalculateUtil {
       this.addMatchingItemRules(board, dataMap, items);
     }
 
+    console.log(board, dataMap, items);
 
     board.data = [];
     dataMap.forEach(item => board.data.push(item));
@@ -62,7 +63,6 @@ export class DashboardCalculateUtil {
 
   private static isFollowingTheRules(rules: Rule[], item: AuctionItem) {
     for (let i = 0, length = rules.length; i < length; i++) {
-      console.log('isFollowingRule', this.validateRule(rules[i], item), rules[i]);
       if (!this.validateRule(rules[i], item)) {
         return false;
       }
@@ -94,7 +94,7 @@ export class DashboardCalculateUtil {
       .forEach(key => {
         if (!value && item[key]) {
           value = item[key];
-        } else if (value && value[key]) {
+        } else {
           value = value[key];
         }
       });

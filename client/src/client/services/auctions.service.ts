@@ -14,6 +14,7 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {TsmService} from '../modules/tsm/tsm.service';
+import {Report} from '../utils/report.util';
 
 @Injectable()
 export class AuctionsService {
@@ -78,6 +79,7 @@ export class AuctionsService {
 
         this.handleNotifications();
         SharedService.events.auctionUpdate.emit();
+        this.auctions.next(a['auctions']);
         this.events.isDownloading.next(true);
       })
       .catch((error: HttpErrorResponse) => {
@@ -129,7 +131,6 @@ export class AuctionsService {
   }
 
   private sendNewAuctionDataAvailable() {
-    const undercutAuctions = SharedService.userAuctions.undercutAuctions;
     if (SharedService.user.notifications.isUpdateAvailable) {
       Notifications.send(
         'WAH - New auction data',
@@ -144,7 +145,8 @@ export class AuctionsService {
                list,
                auctions: auc
              }) => {
-        this.auctions.next(auc);
+        Report.debug('ehh', auctions, list);
+        this.auctions.next(auctions);
         this.list.next(list);
         this.mapped.next(map);
       })

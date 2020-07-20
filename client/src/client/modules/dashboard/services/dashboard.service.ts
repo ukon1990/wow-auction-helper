@@ -12,8 +12,8 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
   providedIn: 'root'
 })
 export class DashboardService {
-  static list: BehaviorSubject<DashboardV2[]> = new BehaviorSubject<DashboardV2[]>([]);
-  static map: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
+  list: BehaviorSubject<DashboardV2[]> = new BehaviorSubject<DashboardV2[]>([]);
+  map: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
 
   private sm = new SubscriptionManager();
 
@@ -29,37 +29,45 @@ export class DashboardService {
   }
 
   calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
-    DashboardService.list.value.forEach(board => {
+    this.list.value.forEach(board => {
       DashboardCalculateUtil.calculate(board, map);
-      DashboardService.map.value.set(board.id, board);
+      this.map.value.set(board.id, board);
     });
-    console.log('Dashboard shits', DashboardService.list.value);
+    console.log('Dashboard shits', this.list.value);
   }
 
   private restore(): void {
-    DashboardService.list.next([{
+    this.list.next([{
       id: 'asd-dsa',
       idParam: 'id',
-      title: 'test',
+      title: 'Profitable crafts',
       columns: [{
         key: 'name',
         title: 'Name',
-        dataType: '',
+        dataType: 'name',
       }, {
         key: 'buyout',
         title: 'Buyout',
         dataType: 'gold',
       }, {
-        key: 'source.recipe.known.0.roi',
+        key: 'quantityTotal',
+        title: '#',
+        dataType: 'number',
+      }, {
+        key: 'source.recipe.all.0.roi',
         title: 'roi',
         dataType: 'gold'
       }],
       rules: [{
         condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-        targetValueType: TargetValueEnum.PERCENT,
-        field: 'source.recipe.known.0.cost',
-        toValue: 1,
-        toField: 'buyout'
+        targetValueType: TargetValueEnum.NUMBER,
+        field: 'quantityTotal',
+        toValue: 100
+      }, {
+        condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+        targetValueType: TargetValueEnum.NUMBER,
+        field: 'source.recipe.all.0.roi',
+        toValue: 1
       }],
       data: []
     }]);

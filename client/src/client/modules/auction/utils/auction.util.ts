@@ -100,7 +100,7 @@ export class AuctionUtil {
     ProspectingAndMillingUtil.calculateCost();
 
     // Dashboard -> Needs to be done after trade vendors
-    Dashboard.addDashboards();
+    // Dashboard.addDashboards();
 
     SharedService.user.shoppingCart.calculateCosts();
 
