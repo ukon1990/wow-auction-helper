@@ -148,7 +148,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     if (SharedService.items[id]) {
       this.selected.item = SharedService.items[id];
       this.setMaterialFor();
-      this.itemNpcDetails.setForItemId(id);
+      this.itemNpcDetails.setForItemId(id, NpcService.list.value);
     }
   }
 

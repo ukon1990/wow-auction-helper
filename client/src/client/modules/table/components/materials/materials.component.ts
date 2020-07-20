@@ -7,6 +7,8 @@ import {ItemService} from '../../../../services/item.service';
 import {Item} from '../../../../models/item/item';
 import {CustomProcUtil} from '../../../crafting/utils/custom-proc.util';
 import {NumberUtil} from '../../../util/utils/number.util';
+import {NpcService} from '../../../npc/services/npc.service';
+import {ItemNpcDetails} from '../../../item/models/item-npc-details.model';
 
 @Component({
   selector: 'wah-materials',
@@ -66,9 +68,9 @@ export class MaterialsComponent implements OnInit {
 
   vendorTooltip(reagent: Reagent): string {
     if (this.usingVendor) {
-      const item: Item = SharedService.itemNpcMap[reagent.id];
+      const item: ItemNpcDetails = NpcService.itemNpcMap.value.get(reagent.id);
       if (!this.vendorHasEnough(reagent) && item) {
-        const vendorCount = item.vendorBoughtLimit;
+        const vendorCount = item.vendorAvailable;
         return `You need to buy ${reagent.quantity - vendorCount} from AH and ${
           vendorCount} from the vendor. This is used for cost calculation.`;
       }

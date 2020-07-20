@@ -1,4 +1,7 @@
 import {Auction} from './auction.model';
+import {Recipe} from '../../crafting/models/recipe';
+import {NPC} from '../../npc/models/npc.model';
+import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 
 export class AuctionItem {
   id: string;
@@ -8,6 +11,7 @@ export class AuctionItem {
   quality: number;
   buyout = 0;
   bid = 0;
+  bonusIds: number[];
   owner: string;
   ownerRealm: string;
   petLevel?: number;
@@ -29,7 +33,19 @@ export class AuctionItem {
   past90DaysSaleRate?: number;
   totalSaleRate?: number;
   hasPersonalSaleRate: boolean;
-  bonusIds: number[];
+
+  recipes: {
+    known: Recipe[],
+    all: Recipe[]
+  } = {
+    known: [],
+    all: []
+  };
+  shuffle = {
+    sourceIn: [],
+    targetIn: []
+  };
+  npcDetails: ItemNpcDetails;
 
   constructor(public itemID?: number) {
   }

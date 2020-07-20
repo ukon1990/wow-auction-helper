@@ -7,10 +7,9 @@ import {Recipe} from '../../crafting/models/recipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 
 const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
-  id: 1,
+  id: 'asd-dsa',
   idParam: null,
   title: 'test',
-  tsmShoppingString: '',
   columns: [{
     key: 'name',
     title: 'Name',
@@ -104,7 +103,42 @@ fdescribe('DashboardCalculateUtil', () => {
         expect(board.data.length).toBe(1);
       });
 
-      it('Crafting cost > x', () => {
+      describe('Crafting', () => {
+        it('ROI > value', () => {
+          const board: DashboardV2 = DashboardCalculateUtil.calculate(
+            getBoard([
+              {
+                condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+                targetValueType: TargetValueEnum.PERCENT,
+                field: 'roi',
+                toValue: 1.15
+              }
+            ]), auctionItems, recipeMap);
+
+          expect(board.data.length).toBe(1);
+          expect(board.data[0].buyout).toBe(firstItem.buyout);
+        });
+
+        it('Profession and ROI > value', () => {
+          const board: DashboardV2 = DashboardCalculateUtil.calculate(
+            getBoard([
+              {
+                condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+                targetValueType: TargetValueEnum.PERCENT,
+                field: 'roi',
+                toValue: 1.15
+              },
+              {
+                condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+                targetValueType: TargetValueEnum.PERCENT,
+                field: 'professionId',
+                toValue: 100
+              }
+            ]), auctionItems, recipeMap);
+
+          expect(board.data.length).toBe(1);
+          expect(board.data[0].buyout).toBe(firstItem.buyout);
+        });
       });
     });
 

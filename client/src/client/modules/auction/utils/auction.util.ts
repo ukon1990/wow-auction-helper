@@ -11,9 +11,12 @@ import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
 import {TsmService} from '../../tsm/tsm.service';
+import {CraftingService} from '../../../services/crafting.service';
+import {NpcService} from '../../npc/services/npc.service';
 
 export class AuctionUtil {
   private static missingPetMap = {};
+
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
@@ -145,7 +148,7 @@ export class AuctionUtil {
     pet.auctions.push(a);
   }
 
-  private static getPetId(a) {
+  static getPetId(a) {
     return `${a.item}-${a.petSpeciesId}-${a.petLevel}-${a.petQualityId}`;
   }
 
@@ -268,6 +271,14 @@ export class AuctionUtil {
     if (addAuction) {
       tmpAuc.auctions.push(auction);
     }
+
+    tmpAuc.recipes.all = CraftingService.itemRecipeMap.value.get(auction.item);
+    try {
+      tmpAuc.recipes.known = SharedService.recipesMapPerItemKnown[SharedService.user.faction][auction.item];
+    } catch (error) {
+    }
+
+    tmpAuc.npcDetails = NpcService.mapped.value[auction.item];
     return tmpAuc;
   }
 

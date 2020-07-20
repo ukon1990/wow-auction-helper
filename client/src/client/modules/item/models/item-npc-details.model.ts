@@ -15,10 +15,10 @@ export class ItemNpcDetails {
   constructor(private npcService?: NpcService, private zoneService?: ZoneService) {
   }
 
-  public setForItemId(itemId: number): void {
+  public setForItemId(itemId: number, list: NPC[]): void {
     this.soldBy.length = 0;
     this.droppedBy.length = 0;
-    this.npcService.list.value.forEach((npc: NPC) => {
+    list.forEach((npc: NPC) => {
       this.handleDroppedItems(npc.drops, itemId, npc);
       this.handleVendorItems(npc.sells, itemId, npc);
     });

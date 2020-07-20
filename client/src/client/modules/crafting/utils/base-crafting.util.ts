@@ -7,6 +7,7 @@ import {Reagent} from '../models/reagent';
 import {CustomPrice} from '../models/custom-price';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../services/crafting.service';
+import {NpcService} from '../../npc/services/npc.service';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -168,7 +169,7 @@ export abstract class BaseCraftingUtil {
   }
 
   getVendorPriceDetails(id: number): { price: number; stock: number } {
-    const item: ItemNpcDetails = SharedService.itemNpcMap.get(id);
+    const item: ItemNpcDetails = NpcService.itemNpcMap.value.get(id);
     if (item) {
       return {
         price: item.vendorBuyPrice,

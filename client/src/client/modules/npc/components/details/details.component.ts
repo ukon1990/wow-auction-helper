@@ -70,7 +70,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.setTableData();
     });
 
-    this.sm.add(this.npcService.mapped, (map) => {
+    this.sm.add(NpcService.mapped, (map) => {
       this.setTableData(map);
     });
     this.sm.add(this.auctionService.events.list, (list) => {
@@ -83,7 +83,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   private setTableData(map?) {
     if (!map) {
-      map = this.npcService.mapped.value;
+      map = NpcService.mapped.value;
     }
     this.npc = map[this.npcId];
     this.zone = undefined;

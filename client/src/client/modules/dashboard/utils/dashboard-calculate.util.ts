@@ -1,12 +1,14 @@
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Recipe} from '../../crafting/models/recipe';
-import {Rule} from '../models/rule.model';
+import {ItemRule, Rule} from '../models/rule.model';
 import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
 import {ColumnDescription} from '../../table/models/column-description';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {AuctionUtil} from '../../auction/utils/auction.util';
+import {Item} from '../../../models/item/item';
 
 export class DashboardCalculateUtil {
   /**
@@ -22,8 +24,17 @@ export class DashboardCalculateUtil {
     if (board.rules.length) {
       items.forEach((item: AuctionItem) => {
         if (this.isFollowingTheRules(board.rules, item)) {
-          const id = item.itemID + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
+          const id = this.getId(item);
           dataMap.set(id, this.getResultObject(item, board.columns));
+        }
+      });
+    }
+
+    if (board.itemRules.length) {
+      board.itemRules.forEach((item: ItemRule) => {
+        const id = this.getId(undefined, item);
+        if (dataMap.has(id) && !this.isFollowingTheRules(board.rules, items.get(item.itemId))) {
+          dataMap.delete(id);
         }
       });
     }
@@ -121,5 +132,13 @@ export class DashboardCalculateUtil {
       default:
         return false;
     }
+  }
+
+  private static getId(item: AuctionItem, itemRule?: ItemRule) {
+    if ((item || itemRule).petSpeciesId) {
+      return AuctionUtil.getPetId(item.auctions[0]);
+    }
+    return ((item ? item.itemID : undefined) || itemRule.itemId) +
+      AuctionItemStat.bonusIdRaw((item || itemRule).bonusIds, false);
   }
 }

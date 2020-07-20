@@ -8,6 +8,7 @@ import {Auction} from '../../auction/models/auction.model';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
+import {NpcService} from '../../npc/services/npc.service';
 
 describe('BaseCraftingUtil', () => {
   let recipe: Recipe;
@@ -24,7 +25,7 @@ describe('BaseCraftingUtil', () => {
     const vendor = new ItemNpcDetails();
     vendor.vendorAvailable = 0;
     vendor.vendorBuyPrice = 1;
-    SharedService.itemNpcMap.set(4, vendor);
+    NpcService.itemNpcMap.value.set(4, vendor);
     const item1: AuctionItem = new AuctionItem(1),
       item2: AuctionItem = new AuctionItem(2),
       item3: AuctionItem = new AuctionItem(3),

@@ -8,6 +8,7 @@ import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
+import {NpcService} from '../../npc/services/npc.service';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
@@ -54,7 +55,7 @@ export class CraftingUtil {
   }
 
   private static getNeededBuyPriceFromVendor(itemID: number, count: number) {
-    const itemNpcDetails = SharedService.itemNpcMap.get(itemID);
+    const itemNpcDetails = NpcService.itemNpcMap.value.get(itemID);
     if (itemNpcDetails) {
       if (itemNpcDetails.vendorAvailable > 0 && itemNpcDetails.vendorAvailable < count) {
         return itemNpcDetails.vendorBuyPrice * itemNpcDetails.vendorAvailable +
@@ -67,7 +68,7 @@ export class CraftingUtil {
   }
 
   public static isVendorCheaperThanAH(itemID: number): boolean {
-    const itemNpcDetails = SharedService.itemNpcMap.get(itemID);
+    const itemNpcDetails = NpcService.itemNpcMap.value.get(itemID);
     if (itemNpcDetails) {
       if (itemNpcDetails.soldBy.length && SharedService.user.useVendorPriceForCraftingIfAvailable) {
         if (!SharedService.auctionItemsMap[itemID]) {

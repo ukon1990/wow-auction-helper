@@ -54,7 +54,7 @@ export class ListComponent implements OnInit, OnDestroy {
       minAHValue: 0,
       minVendorValue: 0
     });
-    this.sm.add(this.service.list, (data: NPC[]) => {
+    this.sm.add(NpcService.list, (data: NPC[]) => {
       this.list = data;
       this.mapDataToTable(data);
     });
@@ -73,7 +73,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  private mapDataToTable(data: NPC[] = this.service.list.value) {
+  private mapDataToTable(data: NPC[] = NpcService.list.value) {
     this.table.dropped.data = [];
     this.table.sold.data = [];
     data.forEach((npc) => {
