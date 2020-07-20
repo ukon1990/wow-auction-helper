@@ -52,8 +52,8 @@ export class DashboardCalculateUtil {
   }
 
   private static validateRule(rule: Rule, item: AuctionItem): boolean {
-    const fromValue = item[rule.field];
-    const toValue = item[rule.toField];
+    const fromValue = this.getValue(item, rule.field);
+    const toValue = this.getValue(item, rule.toField);
     console.log('validateRule', fromValue, toValue);
     switch (rule.targetValueType) {
       case TargetValueEnum.PERCENT:
@@ -65,6 +65,19 @@ export class DashboardCalculateUtil {
       default:
         return false;
     }
+  }
+
+  private static getValue(item: AuctionItem, field: String): any {
+    let value;
+    field.split('.')
+      .forEach(key => {
+        if (!value && item[key]) {
+          value = item[key];
+        } else if (value && value[key]) {
+          value = value[key];
+        }
+      });
+    return value;
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[]) {

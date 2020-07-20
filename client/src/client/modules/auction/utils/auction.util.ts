@@ -273,14 +273,14 @@ export class AuctionUtil {
       tmpAuc.auctions.push(auction);
     }
 
-    tmpAuc.recipes.all = CraftingService.itemRecipeMap.value.get(auction.item);
-    tmpAuc.recipes.materialFor = CraftingService.reagentRecipeMap.value.get(auction.item);
+    tmpAuc.source.recipe.all = CraftingService.itemRecipeMap.value.get(auction.item);
+    tmpAuc.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(auction.item);
     try {
-      tmpAuc.recipes.known = SharedService.recipesMapPerItemKnown[SharedService.user.faction][auction.item];
+      tmpAuc.source.recipe.known = SharedService.recipesMapPerItemKnown[SharedService.user.faction][auction.item];
     } catch (error) {
     }
 
-    tmpAuc.npcDetails = NpcService.itemNpcMap.value.get(auction.item);
+    tmpAuc.source.npc = NpcService.itemNpcMap.value.get(auction.item);
     tmpAuc.item = ItemService.mapped.value.get(tmpAuc.itemID);
     return tmpAuc;
   }

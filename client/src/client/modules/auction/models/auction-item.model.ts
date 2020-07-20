@@ -1,8 +1,9 @@
 import {Auction} from './auction.model';
 import {Recipe} from '../../crafting/models/recipe';
-import {NPC} from '../../npc/models/npc.model';
-import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {Item} from '../../../models/item/item';
+import {ItemSoldByRow} from '../../item/models/item-sold-by-row.model';
+import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
+import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 
 export class AuctionItem {
   id: string;
@@ -17,7 +18,7 @@ export class AuctionItem {
   ownerRealm: string;
   petLevel?: number;
   petQualityId?: number;
-  auctions: Auction[] = new Array<Auction>();
+  auctions: Auction[] = [];
   regionSaleRate = 0;
   avgDailySold = 0;
   avgDailyPosted = 0;
@@ -35,21 +36,30 @@ export class AuctionItem {
   totalSaleRate?: number;
   hasPersonalSaleRate: boolean;
 
-  recipes: {
-    known: Recipe[],
-    all: Recipe[]
-    materialFor: Recipe[]
-  } = {
-    known: [],
-    all: [],
-    materialFor: []
-  };
-  shuffle = {
-    sourceIn: [],
-    targetIn: []
-  };
-  npcDetails: ItemNpcDetails;
   item: Item;
+  source: {
+    recipe: {
+      known: Recipe[],
+      all: Recipe[]
+      materialFor: Recipe[]
+    },
+    shuffle: {
+      sourceIn: [],
+      targetIn: []
+    },
+    npc: ItemNpcDetails
+  } = {
+    recipe: {
+      known: [],
+      all: [],
+      materialFor: []
+    },
+    shuffle: {
+      sourceIn: [],
+      targetIn: []
+    },
+    npc: undefined
+  };
 
   constructor(public itemID?: number) {
   }

@@ -23,15 +23,21 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
 } as DashboardV2);
 
 fdescribe('DashboardCalculateUtil', () => {
+  const recipe1 = new Recipe();
+  recipe1.roi = 50;
   const firstItem = new AuctionItem(1);
   firstItem.name = 'test';
   firstItem.buyout = 7;
   firstItem.mktPrice = 10;
+  firstItem.source.recipe.known = [recipe1];
 
+  const recipe2 = new Recipe();
+  recipe1.roi = 50;
   const secondItem = new AuctionItem(2);
   secondItem.name = 'test2';
   secondItem.buyout = 99;
   secondItem.mktPrice = 99;
+  secondItem.source.recipe.known = [recipe2];
 
   const auctionItems: Map<number, AuctionItem> = new Map<number, AuctionItem>();
 
@@ -109,7 +115,7 @@ fdescribe('DashboardCalculateUtil', () => {
               {
                 condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
                 targetValueType: TargetValueEnum.PERCENT,
-                field: 'roi',
+                field: 'source.recipe.all.[roi]',
                 toValue: 1.15
               }
             ]), auctionItems);
@@ -124,13 +130,13 @@ fdescribe('DashboardCalculateUtil', () => {
               {
                 condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
                 targetValueType: TargetValueEnum.PERCENT,
-                field: 'roi',
+                field: 'source.recipe.known.0.roi',
                 toValue: 1.15
               },
               {
                 condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
                 targetValueType: TargetValueEnum.PERCENT,
-                field: 'professionId',
+                field: 'source.recipe.known.0.professionId',
                 toValue: 100
               }
             ]), auctionItems);
