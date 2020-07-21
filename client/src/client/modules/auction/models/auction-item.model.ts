@@ -2,6 +2,7 @@ import {Auction} from './auction.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {Item} from '../../../models/item/item';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
+import {TradeVendorItemValue} from '../../../models/item/trade-vendor';
 
 export class AuctionItem {
   id: string;
@@ -36,6 +37,7 @@ export class AuctionItem {
 
   item: Item;
   source: {
+    tradeVendor: TradeVendorItemValue;
     recipe: {
       known: Recipe[],
       all: Recipe[]
@@ -56,7 +58,8 @@ export class AuctionItem {
       sourceIn: [],
       targetIn: []
     },
-    npc: undefined
+    npc: undefined,
+    tradeVendor: undefined
   };
 
   constructor(public itemID?: number) {

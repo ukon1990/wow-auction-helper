@@ -176,23 +176,33 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   idParam: 'id',
   title: 'Trade vendor currency in gold',
   columns: [
-    {key: 'source.npc.soldBy.0.currency', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
-    {key: 'name', title: 'Target', dataType: 'name'},
-    {key: 'roi', title: 'Roi', dataType: 'gold'},
-    {key: 'value', title: 'Value', dataType: 'gold'},
-    {key: 'sourceBuyout', title: 'Source buyout', dataType: 'gold'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold'}
+    {key: 'source.tradeVendor.name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
+    {key: 'source.tradeVendor.bestValueName', title: 'Target', dataType: 'name'},
+    {key: 'source.tradeVendor.roi', title: 'Roi', dataType: 'gold'},
+    {key: 'source.tradeVendor.value', title: 'Value', dataType: 'gold'},
+    {key: 'source.tradeVendor.sourceBuyout', title: 'Source buyout', dataType: 'gold'},
+    {key: 'source.tradeVendor.buyout', title: 'Buyout', dataType: 'gold'}
   ],
   rules: [{
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.NUMBER,
-    field: 'source.npc.soldBy.length',
+    field: 'source.tradeVendor.sourceBuyout',
     toValue: 0,
   }, {
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.NUMBER,
-    field: 'source.npc.soldBy.0.currency',
+    field: 'source.tradeVendor.value',
     toValue: 0,
+  }, {
+    condition: ConditionEnum.GREATER_THAN,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'source.tradeVendor.roi',
+    toValue: 0,
+  }, {
+    condition: ConditionEnum.GREATER_THAN,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'saleRate',
+    toValue: .1,
   }],
   data: []
 };
