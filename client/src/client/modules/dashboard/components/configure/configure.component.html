@@ -1,4 +1,10 @@
 <mat-card-content>
+  <mat-form-field class="row col-md-12">
+    <input matInput
+           placeholder="Dashboard title"
+           [value]="dashboard.title">
+  </mat-form-field>
+  <!--
   <ng-container *ngIf="dashboard.settings">
     <wah-manage-items-built-in-item
             [autoSave]="false"
@@ -6,7 +12,7 @@
             (event)="onEvent($event)"
     >
     </wah-manage-items-built-in-item>
-  </ng-container>
+  </ng-container>-->
 </mat-card-content>
 <mat-card-actions>
   <div
