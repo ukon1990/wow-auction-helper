@@ -57,7 +57,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     CraftingUtil.init(auctionService);
     NPC.init(auctionService);
     TsmLuaUtil.init(auctionService);
-    TradeVendors.init(auctionService);
     Filters.init(auctionService);
     InventoryUtil.init(auctionService);
     DefaultDashboardSettings.init();

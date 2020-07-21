@@ -201,7 +201,7 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   }, {
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.NUMBER,
-    field: 'saleRate',
+    field: 'regionSaleRate',
     toValue: .1,
   }],
   data: []

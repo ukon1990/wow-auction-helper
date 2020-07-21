@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, AfterViewInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
 import {Angulartics2} from 'angulartics2';
 import {Subscription} from 'rxjs';
 import {Dashboard} from '../../models/dashboard.model';
@@ -11,7 +11,7 @@ import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
   templateUrl: './dashboard-item.component.html',
   styleUrls: ['./dashboard-item.component.scss']
 })
-export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
   @Input() dashboard: Dashboard;
   @Input() filterParameter: string;
   detailPanelOpenSubscription: Subscription;
@@ -30,6 +30,10 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit 
   ngOnInit(): void {
     this.setColumns();
     this.setData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
   }
 
   ngAfterViewInit(): void {

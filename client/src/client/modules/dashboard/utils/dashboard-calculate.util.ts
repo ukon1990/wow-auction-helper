@@ -7,8 +7,27 @@ import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
+import {CraftingService} from '../../../services/crafting.service';
+import {NpcService} from '../../npc/services/npc.service';
+import {SharedService} from '../../../services/shared.service';
+import {ItemService} from '../../../services/item.service';
 
 export class DashboardCalculateUtil {
+  static setItemSources(items: Map<string, AuctionItem>): void {
+    items.forEach(item => {
+      item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
+      item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
+      try {
+        item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
+      } catch (error) {
+        console.error(error);
+      }
+
+      item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
+      item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
+      item.item = ItemService.mapped.value.get(item.itemID);
+    });
+  }
   // TODO: Add sort by x
   static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
     const dataMap = new Map<string, any>();

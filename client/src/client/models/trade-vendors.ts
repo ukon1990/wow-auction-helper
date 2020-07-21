@@ -4,33 +4,29 @@ import {TRADE_VENDORS} from '../data/trade-vendors';
 import {TradeVendor, TradeVendorItem} from './item/trade-vendor';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {AuctionsService} from '../services/auctions.service';
+import {ObjectUtil} from '@ukon1990/js-utilities';
 
 export class TradeVendors {
-  private static auctionService: AuctionsService;
 
-  static init(auctionService: AuctionsService) {
-    this.auctionService = auctionService;
-  }
-
-  public static setValues(): void {
+  public static setValues(map: Map<string, AuctionItem>): void {
     TRADE_VENDORS.forEach(vendor => {
-      this.setVendorValues(vendor);
+      this.setVendorValues(vendor, map);
     });
 
     Object.keys(SharedService.tradeVendorMap)
       .forEach(key => {
-        this.updateTradeVendorItemMap(key);
+        this.updateTradeVendorItemMap(key, map);
       });
   }
 
-  private static setVendorValues(vendor: TradeVendor) {
+  private static setVendorValues(vendor: TradeVendor, map: Map<string, AuctionItem>) {
     // Re-setting the item name in case of locale is not English
     if (SharedService.items[vendor.itemID]) {
       vendor.name = SharedService.items[vendor.itemID].name;
     }
 
     vendor.items.forEach(item => {
-      this.setItemValue(item, vendor);
+      this.setItemValue(item, vendor, map);
     });
     vendor.items.sort(function (a, b) {
       return b.value - a.value;
@@ -39,7 +35,7 @@ export class TradeVendors {
     SharedService.tradeVendorMap[vendor.itemID] = vendor;
   }
 
-  private static updateTradeVendorItemMap(key) {
+  private static updateTradeVendorItemMap(key, map: Map<string, AuctionItem>) {
     const {sourceID, sourceBuyout, value, roi, itemID} = SharedService.tradeVendorMap[key].items[0] as TradeVendorItem;
     const item = {
       sourceID,
@@ -51,13 +47,17 @@ export class TradeVendors {
       tradeVendor: SharedService.tradeVendorMap[key],
       roi
     };
-    SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
+    if (SharedService.tradeVendorItemMap[item.tradeVendor.itemID]) {
+      ObjectUtil.overwrite(item, SharedService.tradeVendorItemMap[item.tradeVendor.itemID]);
+    } else {
+      SharedService.tradeVendorItemMap[item.tradeVendor.itemID] = item;
+    }
   }
 
-  private static setItemValue(item: TradeVendorItem, vendor: TradeVendor) {
+  private static setItemValue(item: TradeVendorItem, vendor: TradeVendor, map: Map<string, AuctionItem>) {
     item.sourceID = vendor.itemID;
-    const auctionItem: AuctionItem = this.auctionService.getById(item.itemID),
-      vendorAuctionItem: AuctionItem = this.auctionService.getById(vendor.itemID);
+    const auctionItem: AuctionItem = map.get('' + item.itemID),
+      vendorAuctionItem: AuctionItem = map.get('' + vendor.itemID);
     item.value = auctionItem !== undefined ?
       auctionItem.buyout * item.quantity : 0;
     item.buyout = auctionItem !== undefined ?
@@ -66,16 +66,16 @@ export class TradeVendors {
     if (vendorAuctionItem) {
       item.sourceBuyout = vendorAuctionItem.buyout;
     }
-    this.setItemApiValues(item);
+    this.setItemApiValues(item, map);
   }
 
-  private static setItemApiValues(item: TradeVendorItem) {
-    item.regionSaleAvg = this.auctionService.getById(item.itemID) !== undefined ?
-      this.auctionService.getById(item.itemID).regionSaleAvg : 0;
-    item.mktPrice = this.auctionService.getById(item.itemID) !== undefined ?
-      this.auctionService.getById(item.itemID).mktPrice : 0;
-    item.avgSold = this.auctionService.getById(item.itemID) !== undefined ?
-      this.auctionService.getById(item.itemID).avgDailySold : 0;
+  private static setItemApiValues(item: TradeVendorItem, map: Map<string, AuctionItem>) {
+    item.regionSaleAvg = map.get('' + item.itemID) !== undefined ?
+      map.get('' + item.itemID).regionSaleAvg : 0;
+    item.mktPrice = map.get('' + item.itemID) !== undefined ?
+      map.get('' + item.itemID).mktPrice : 0;
+    item.avgSold = map.get('' + item.itemID) !== undefined ?
+      map.get('' + item.itemID).avgDailySold : 0;
   }
 
   private static getItem(itemID: any) {

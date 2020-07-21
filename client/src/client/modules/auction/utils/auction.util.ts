@@ -15,6 +15,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {UserUtil} from '../../../utils/user/user.util';
+import {ObjectUtil} from '@ukon1990/js-utilities';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -92,7 +93,7 @@ export class AuctionUtil {
     const t1 = performance.now();
     console.log(`Auctions organized in ${t1 - t0} ms`);
     // Trade vendors has to be done before crafting calc
-    TradeVendors.setValues();
+    TradeVendors.setValues(map);
 
     CraftingUtil.calculateCost(false, map);
 
@@ -280,16 +281,6 @@ export class AuctionUtil {
       tmpAuc.auctions.push(auction);
     }
 
-    tmpAuc.source.recipe.all = CraftingService.itemRecipeMap.value.get(auction.item);
-    tmpAuc.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(auction.item);
-    try {
-      tmpAuc.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(auction.item);
-    } catch (error) {
-      console.error(error);
-    }
-
-    tmpAuc.source.npc = NpcService.itemNpcMap.value.get(auction.item);
-    tmpAuc.item = ItemService.mapped.value.get(tmpAuc.itemID);
     return tmpAuc;
   }
 

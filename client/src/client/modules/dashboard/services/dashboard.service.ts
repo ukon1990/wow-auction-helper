@@ -30,6 +30,7 @@ export class DashboardService {
   }
 
   calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
+    DashboardCalculateUtil.setItemSources(map);
     this.list.value.forEach(board => {
       DashboardCalculateUtil.calculate(board, map);
       this.map.value.set(board.id, board);
