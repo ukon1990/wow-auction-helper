@@ -1,9 +1,74 @@
 <mat-card-content>
-  <mat-form-field class="row col-md-12">
-    <input matInput
-           placeholder="Dashboard title"
-           [value]="dashboard.title">
-  </mat-form-field>
+  <form [formGroup]="form">
+    <mat-form-field class="row col-md-12">
+      <input matInput
+             placeholder="Dashboard title"
+             formControlName="title">
+    </mat-form-field>
+
+    <mat-card *ngIf="rules.controls.length">
+      <mat-card-header>
+        <mat-card-title>
+          Rules
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content formArrayName="rules">
+        <div *ngFor="let rule of rules.controls; let i = index"
+             class="row">
+          <mat-form-field class="col">
+            <mat-select
+                    placeholder="Field"
+                    formControlName="field"
+            >
+              <mat-option *ngFor="let field of fields" [value]="field.key">
+                {{field.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col">
+            <mat-select
+                    placeholder="Comparison logic"
+                    formControlName="condition"
+            >
+              <mat-option *ngFor="let condition of conditionLocale"
+                          [value]="condition.id"
+                          [matTooltip]="condition.tooltip"
+              >
+                {{condition.text}}
+                <small>{{condition.tooltip}}</small>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col">
+            <mat-select
+                    placeholder="Field"
+                    formControlName="toField"
+            >
+              <mat-option *ngFor="let field of fields" [value]="field.key">
+                {{field.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col">
+            <input
+                    matInput
+                    formControlName="toValue"
+                    placeholder="Compare to value"
+            />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-stroked-button
+                (click)="addRule()"
+        >
+          Add new rule
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
   <!--
   <ng-container *ngIf="dashboard.settings">
     <wah-manage-items-built-in-item

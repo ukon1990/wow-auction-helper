@@ -176,7 +176,7 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   idParam: 'id',
   title: 'Trade vendor currency in gold',
   columns: [
-    {key: 'source.tradeVendor.name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
+    // {key: 'source.tradeVendor.name', title: 'Name', dataType: 'name', options: {idName: 'sourceID'}},
     {key: 'source.tradeVendor.bestValueName', title: 'Target', dataType: 'name'},
     {key: 'source.tradeVendor.roi', title: 'Roi', dataType: 'gold'},
     {key: 'source.tradeVendor.value', title: 'Value', dataType: 'gold'},
