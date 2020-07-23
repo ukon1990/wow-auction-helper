@@ -7,6 +7,7 @@ export interface DashboardV2 {
   idParam: string; // The name of the id param for the table -> No longer needed?
   title: string;
   columns: ColumnDescription[];
+  sortOrder: number;
   isDisabled?: boolean;
   onlyItemsWithRules?: boolean;
   sortRule?: {

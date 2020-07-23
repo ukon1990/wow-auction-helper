@@ -1,5 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {Dashboard} from '../../models/dashboard.model';
+import {Component, EventEmitter, Inject, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {DefaultDashboardSettings} from '../../models/default-dashboard-settings.model';
@@ -13,14 +12,14 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
 import {ItemRule, Rule} from '../../models/rule.model';
 import {DashboardV2} from '../../models/dashboard-v2.model';
 import {ColumnDescription} from '../../../table/models/column-description';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'wah-configure',
   templateUrl: './configure.component.html',
   styleUrls: ['./configure.component.scss']
 })
-export class ConfigureComponent implements OnChanges {
-  @Input() dashboard: Dashboard;
+export class ConfigureComponent {
   @Output() event: EventEmitter<void> = new EventEmitter<void>();
 
   conditionLocale = conditionLocale;
@@ -29,7 +28,6 @@ export class ConfigureComponent implements OnChanges {
 
   faSave = faSave;
   faTrash = faTrashAlt;
-  clone: DashboardV2;
   hasChanges: boolean;
   form: FormGroup = new FormGroup({
     title: new FormControl(null, Validators.required),
@@ -61,19 +59,15 @@ export class ConfigureComponent implements OnChanges {
     toValue: null,
   };
 
-  constructor(private fb: FormBuilder, private professionService: ProfessionService) {
+  constructor(
+    public dialogRef: MatDialogRef<ConfigureComponent>,
+    @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2,
+    private fb: FormBuilder, private professionService: ProfessionService) {
     this.sm.add(this.professionService.listWithRecipes,
       list =>
         this.professions = list);
-  }
 
-  ngOnChanges({dashboard}: SimpleChanges) {
-    if (dashboard && dashboard.currentValue) {
-      const board: DashboardV2 = dashboard.currentValue;
-      this.clone = ObjectUtil.clone(board) as DashboardV2;
-
-      this.populateForm(board);
-    }
+      this.populateForm(dashboard);
   }
 
   private populateForm(board: DashboardV2) {
@@ -91,7 +85,7 @@ export class ConfigureComponent implements OnChanges {
       board.rules.forEach(rule =>
         this.addRule(undefined, rule));
     }
-    if (board.rules) {
+    if (board.itemRules) {
       board.itemRules.forEach(rule =>
         this.addItemRule(undefined, rule));
     }
@@ -139,13 +133,13 @@ export class ConfigureComponent implements OnChanges {
 
   onEvent(settings: DefaultDashboardSettings) {
     setTimeout(() =>
-      this.hasChanges = !!ObjectUtil.getDifference(this.dashboard.settings, settings).length);
+      this.hasChanges = !!ObjectUtil.getDifference(this.dashboard, settings).length);
   }
 
   onSave(): void {
     // TODO: Needs to be able to calculate individual dashboards
-    if (this.dashboard.settings) {
-      ObjectUtil.overwrite(this.clone, this.dashboard.settings);
+    if (this.dashboard) {
+      ObjectUtil.overwrite(this.form.getRawValue(), this.dashboard);
       // DefaultDashboardSettings.save(this.clone);
       // Calculate
     } else {
@@ -153,11 +147,12 @@ export class ConfigureComponent implements OnChanges {
       // Calculate
     }
     this.event.emit();
+    this.dialogRef.close();
   }
 
   onDiscard(): void {
-    this.clone = ObjectUtil.clone(this.dashboard) as DashboardV2;
-
+    this.populateForm(this.dashboard);
     this.event.emit();
+    this.dialogRef.close();
   }
 }

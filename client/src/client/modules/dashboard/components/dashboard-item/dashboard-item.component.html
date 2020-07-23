@@ -34,7 +34,7 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <ng-container *ngIf="!isConfigOpen; else configTemplate">
+    <ng-container>
       <wah-data-table [id]="dashboard?.idParam"
                       iconSize="22"
                       [columns]="currentColumns"
@@ -53,10 +53,3 @@
   </mat-card-content>
 </mat-card>
 <div *ngIf="detailView && !isOtherDetailPanelOpen" class="backdrop" (click)="openClose()"></div>
-
-<ng-template #configTemplate>
-  <wah-configure
-          [dashboard]="dashboard"
-  >
-  </wah-configure>
-</ng-template>

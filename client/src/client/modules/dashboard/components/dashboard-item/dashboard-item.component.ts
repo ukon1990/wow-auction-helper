@@ -5,6 +5,8 @@ import {Dashboard} from '../../models/dashboard.model';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfigureComponent} from '../configure/configure.component';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -24,8 +26,8 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit,
   data;
   faCog = faCog;
 
-  constructor() {
-  }
+
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.setColumns();
@@ -47,6 +49,18 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit,
     this.detailPanelOpenSubscription.unsubscribe();
   }
 
+  toggleConfig(): void {
+    this.isConfigOpen = true;
+    const dialogRef = this.dialog.open(ConfigureComponent, {
+      width: '90%',
+      data: this.dashboard
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.isConfigOpen = false;
+    });
+  }
+
   setColumns(): void {
     this.currentColumns = this.detailView ?
       this.dashboard.columns : this.dashboard.columns.slice(0, 4);
@@ -62,10 +76,5 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit,
     this.setData();
 
     Report.send(`${this.dashboard.title} opened/closed`, 'Dashboard');
-  }
-
-  toggleConfig() {
-    // this.openClose();
-    this.isConfigOpen = !this.isConfigOpen;
   }
 }

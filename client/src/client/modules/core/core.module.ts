@@ -30,6 +30,7 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
 import {MarketResetModule} from '../market-reset/market-reset.module';
 import {MenuItemComponent} from './components/menu/menu-item/menu-item.component';
 import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdown.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
     MatGridListModule,
     MatBadgeModule,
     FontAwesomeModule,
-    MarketResetModule
+    MarketResetModule,
+    MatDialogModule
   ],
   exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent, DownloadComponent]
 })

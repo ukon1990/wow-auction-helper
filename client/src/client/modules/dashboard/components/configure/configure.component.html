@@ -1,4 +1,6 @@
-<mat-card-content>
+<h1 mat-dialog-title>Configure dashboard</h1>
+
+<div mat-dialog-content>
   <form [formGroup]="form">
     <mat-form-field class="row col-md-12">
       <input matInput
@@ -16,47 +18,76 @@
       <mat-card-content formArrayName="rules">
         <div *ngFor="let rule of rules.controls; let i = index"
              class="row">
-          <mat-form-field class="col">
-            <mat-select
-                    placeholder="Field"
-                    formControlName="field"
-            >
-              <mat-option *ngFor="let field of fields" [value]="field.key">
-                {{field.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field class="col">
-            <mat-select
-                    placeholder="Comparison logic"
-                    formControlName="condition"
-            >
-              <mat-option *ngFor="let condition of conditionLocale"
-                          [value]="condition.id"
-                          [matTooltip]="condition.tooltip"
+          <ng-container [formGroupName]="i">
+            <mat-form-field class="col">
+              <mat-select
+                      placeholder="Field"
+                      formControlName="field"
               >
-                {{condition.text}}
-                <small>{{condition.tooltip}}</small>
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field class="col">
-            <mat-select
-                    placeholder="Field"
-                    formControlName="toField"
-            >
-              <mat-option *ngFor="let field of fields" [value]="field.key">
-                {{field.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field class="col">
-            <input
-                    matInput
-                    formControlName="toValue"
-                    placeholder="Compare to value"
-            />
-          </mat-form-field>
+                <mat-optgroup [label]="fieldGroup.name"
+                              *ngFor="let fieldGroup of fields">
+                  <mat-option *ngFor="let field of fieldGroup.options"
+                              [matTooltip]="field.name"
+                              [value]="field.key">
+                    {{fieldGroup.name}}: {{field.name}}
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col">
+              <mat-select
+                      placeholder="Comparison logic"
+                      formControlName="condition"
+              >
+                <mat-option *ngFor="let condition of conditionLocale"
+                            [value]="condition.id"
+                            [matTooltip]="condition.tooltip"
+                >
+                  {{condition.text}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col">
+              <mat-select placeholder="Value type"
+                          formControlName="targetValueType">
+                <mat-option value="NUMBER">
+                  Number
+                </mat-option>
+                <mat-option value="PERCENT">
+                  Percent
+                </mat-option>
+                <mat-option value="TEXT">
+                  Text
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col">
+              <mat-select
+                      placeholder="Field"
+                      formControlName="toField"
+              >
+                <mat-option [value]="null">
+                  None (use value instead)
+                </mat-option>
+                <mat-optgroup [label]="fieldGroup.name"
+                              *ngFor="let fieldGroup of fields">
+                  <mat-option *ngFor="let field of fieldGroup.options"
+                              [value]="field.key"
+                              [matTooltip]="field.name"
+                  >
+                    {{fieldGroup.name}}: {{field.name}}
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col">
+              <input
+                      matInput
+                      formControlName="toValue"
+                      placeholder="Compare to value"
+              />
+            </mat-form-field>
+          </ng-container>
         </div>
       </mat-card-content>
 
@@ -69,17 +100,9 @@
       </mat-card-actions>
     </mat-card>
   </form>
-  <!--
-  <ng-container *ngIf="dashboard.settings">
-    <wah-manage-items-built-in-item
-            [autoSave]="false"
-            [board]="clone"
-            (event)="onEvent($event)"
-    >
-    </wah-manage-items-built-in-item>
-  </ng-container>-->
-</mat-card-content>
-<mat-card-actions>
+</div>
+
+<div mat-dialog-actions>
   <div
           class="float-right"
   >
@@ -101,4 +124,4 @@
       Save
     </button>
   </div>
-</mat-card-actions>
+</div>

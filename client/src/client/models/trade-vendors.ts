@@ -25,12 +25,16 @@ export class TradeVendors {
       vendor.name = SharedService.items[vendor.itemID].name;
     }
 
-    (vendor.items || []).forEach(item => {
-      this.setItemValue(item, vendor, map);
-    });
-    vendor.items.sort(function (a, b) {
-      return b.value - a.value;
-    });
+    try {
+      (vendor.items || []).forEach(item => {
+        this.setItemValue(item, vendor, map);
+      });
+      vendor.items.sort(function (a, b) {
+        return b.value - a.value;
+      });
+    } catch (e) {
+      console.error('setVendorValues', vendor.items, e);
+    }
 
     SharedService.tradeVendorMap[vendor.itemID] = vendor;
   }

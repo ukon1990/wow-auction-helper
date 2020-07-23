@@ -4,6 +4,7 @@ import {TargetValueEnum} from '../types/target-value.enum';
 
 const profitableCrafts = {
   id: 'asd-dsa',
+  sortOrder: 0,
   idParam: 'id',
   title: 'Profitable crafts',
   columns: [{
@@ -48,6 +49,7 @@ const profitableCrafts = {
 
 const profitableKnownCrafts = {
   id: 'asd-dsa',
+  sortOrder: 1,
   idParam: 'id',
   title: 'Profitable known crafts',
   columns: [{
@@ -92,6 +94,7 @@ const profitableKnownCrafts = {
 
 const potentialBidDeals: DashboardV2 = {
   id: 'asd-dsa',
+  sortOrder: 2,
   idParam: 'id',
   title: 'Potential 2 hour bid deals',
   columns: [
@@ -108,7 +111,9 @@ const potentialBidDeals: DashboardV2 = {
     targetValueType: TargetValueEnum.NUMBER,
     field: '[auctions].buyout',
     toValue: 1.10
-  },/* [{
+  },
+    /*
+  [{
     condition: ConditionEnum.EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: '[auctions].timeLeft',
@@ -118,28 +123,30 @@ const potentialBidDeals: DashboardV2 = {
     targetValueType: TargetValueEnum.NUMBER,
     field: '[auctions].timeLeft',
     toValue: 'SHORT'
-  }], */{
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: 'regionSaleRate',
-    toValue: .30
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: 'avgDailySold',
-    toValue: 1
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.PERCENT,
-    field: 'bid',
-    toValue: .1,
-    toField: 'buyout'
   }],
+  */{
+      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.NUMBER,
+      field: 'regionSaleRate',
+      toValue: .30
+    }, {
+      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.NUMBER,
+      field: 'avgDailySold',
+      toValue: 1
+    }, {
+      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.PERCENT,
+      field: 'bid',
+      toValue: .1,
+      toField: 'buyout'
+    }],
   data: []
 };
 
 const buyoutBelowVendorSellPrice: DashboardV2 = {
   id: 'asd-dsa',
+  sortOrder: 3,
   idParam: 'id',
   title: 'Buyout below vendor sell price',
   columns: [
@@ -173,6 +180,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
 
 const tradeVendorCurrencyInGold: DashboardV2 = {
   id: 'asd-dsa',
+  sortOrder: 4,
   idParam: 'id',
   title: 'Trade vendor currency in gold',
   columns: [
