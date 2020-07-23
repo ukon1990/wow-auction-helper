@@ -1,0 +1,44 @@
+<mat-card *ngIf="formArray"
+          [formGroup]="form"
+>
+    <mat-card-header>
+        <mat-card-title>
+            Item rules
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content formArrayName="itemRules">
+        <div *ngFor="let rule of formArray.controls; let i = index"
+             class="row">
+            <ng-container [formGroupName]="i">
+                <input matInput
+                       placeholder="Query for item/pet"
+                       aria-label="Recipe"
+                       [matAutocomplete]="auto"
+                       [formControl]="itemSearchForm">
+                <mat-autocomplete #auto="matAutocomplete"
+                >
+                    <mat-option *ngFor="let item of filteredItems"
+                                [value]="item.id"
+                                (click)="setItem(item, rule)">
+                        <wah-icon size="36" [id]="item.id"></wah-icon>
+                        {{ item.name }}
+                    </mat-option>
+                </mat-autocomplete>
+
+                <wah-rules
+                    [form]="formGroup(rule)"
+                    [rules]="rules ? rules[i].rules : undefined"
+                ></wah-rules>
+            </ng-container>
+        </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+        <button mat-stroked-button
+                (click)="addItemRule()"
+        >
+            Add new rule
+        </button>
+    </mat-card-actions>
+</mat-card>

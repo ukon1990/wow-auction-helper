@@ -1,0 +1,105 @@
+<mat-card *ngIf="formArray"
+          [formGroup]="form"
+>
+    <mat-card-header>
+        <mat-card-title>
+            Rules
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content formArrayName="rules">
+        <div *ngFor="let rule of formArray.controls; let i = index"
+             class="row">
+            <ng-container [formGroupName]="i">
+                <mat-form-field class="col">
+                    <mat-select
+                            placeholder="Field"
+                            formControlName="field"
+                    >
+                        <mat-optgroup [label]="fieldGroup.name"
+                                      *ngFor="let fieldGroup of fields">
+                            <mat-option *ngFor="let field of fieldGroup.options"
+                                        [matTooltip]="field.name"
+                                        [value]="field.key">
+                                {{ fieldGroup.name }}: {{ field.name }}
+                            </mat-option>
+                        </mat-optgroup>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col">
+                    <mat-select
+                            placeholder="Comparison logic"
+                            formControlName="condition"
+                    >
+                        <mat-option *ngFor="let condition of conditionLocale"
+                                    [value]="condition.id"
+                                    [matTooltip]="condition.tooltip"
+                        >
+                            {{ condition.text }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col">
+                    <mat-select placeholder="Value type"
+                                formControlName="targetValueType">
+                        <mat-option value="NUMBER">
+                            Number
+                        </mat-option>
+                        <mat-option value="PERCENT">
+                            Percent
+                        </mat-option>
+                        <mat-option value="TEXT">
+                            Text
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col">
+                    <mat-select
+                            placeholder="Field"
+                            formControlName="toField"
+                    >
+                        <mat-option [value]="null">
+                            None (use value instead)
+                        </mat-option>
+                        <mat-optgroup [label]="fieldGroup.name"
+                                      *ngFor="let fieldGroup of fields">
+                            <mat-option *ngFor="let field of fieldGroup.options"
+                                        [value]="field.key"
+                                        [matTooltip]="field.name"
+                            >
+                                {{ fieldGroup.name }}: {{ field.name }}
+                            </mat-option>
+                        </mat-optgroup>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col">
+                    <input
+                            matInput
+                            formControlName="toValue"
+                            placeholder="Compare to value"
+                    />
+                </mat-form-field>
+                <div class="col">
+                    <button
+                            mat-stroked-button
+                            color="warn"
+                            matTooltip="Delete"
+                    >
+                        <fa-icon
+                                [icon]="faTrash"
+                        >
+                        </fa-icon>
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+        <button mat-stroked-button
+                (click)="addRule()"
+        >
+            Add new rule
+        </button>
+    </mat-card-actions>
+</mat-card>

@@ -52,7 +52,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit,
   toggleConfig(): void {
     this.isConfigOpen = true;
     const dialogRef = this.dialog.open(ConfigureComponent, {
-      width: '90%',
+      width: '95%',
       data: this.dashboard
     });
 

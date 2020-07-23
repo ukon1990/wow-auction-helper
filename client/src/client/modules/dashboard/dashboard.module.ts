@@ -31,45 +31,53 @@ import {ManageCustomDashboardComponent} from './components/manage/manage-custom-
 import {CraftingModule} from '../crafting/crafting.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {ConfigureComponent} from './components/configure/configure.component';
-import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
+import {MatDialogModule} from '@angular/material/dialog';
+import { RulesComponent } from './components/configure/rules/rules.component';
+import { ItemRulesComponent } from './components/configure/item-rules/item-rules.component';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @NgModule({
-  declarations: [
-    DashboardComponent,
-    DashboardItemComponent,
-    DashboardItemsComponent,
-    DashboardSellersComponent,
-    ManageItemsBuiltInComponent,
-    ManageItemsBuiltInItemComponent,
-    AhSummaryComponent,
-    SummaryCardComponent,
-    WatchlistComponent,
-    WatchlistItemComponent,
-    WatchlistManagerComponent,
-    WatchlistItemManagerComponent,
-    WatchlistItemBatchComponent,
-    ManageCustomDashboardComponent,
-    ConfigureComponent],
-  imports: [
-    CommonModule,
-    MatTabsModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatInputModule,
-    MatTooltipModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatSelectModule,
-    TableModule,
-    MatExpansionModule,
-    IconModule,
-    UtilModule,
-    RouterModule,
-    MatPaginatorModule,
-    CraftingModule,
-    FontAwesomeModule
-  ]
+    declarations: [
+        DashboardComponent,
+        DashboardItemComponent,
+        DashboardItemsComponent,
+        DashboardSellersComponent,
+        ManageItemsBuiltInComponent,
+        ManageItemsBuiltInItemComponent,
+        AhSummaryComponent,
+        SummaryCardComponent,
+        WatchlistComponent,
+        WatchlistItemComponent,
+        WatchlistManagerComponent,
+        WatchlistItemManagerComponent,
+        WatchlistItemBatchComponent,
+        ManageCustomDashboardComponent,
+        ConfigureComponent,
+        RulesComponent,
+        ItemRulesComponent,
+    ],
+    imports: [
+        CommonModule,
+        MatTabsModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatInputModule,
+        MatTooltipModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        MatSelectModule,
+        TableModule,
+        MatExpansionModule,
+        IconModule,
+        UtilModule,
+        RouterModule,
+        MatPaginatorModule,
+        CraftingModule,
+        FontAwesomeModule,
+        MatDialogModule,
+        MatAutocompleteModule
+    ]
 })
 export class DashboardModule {
 }

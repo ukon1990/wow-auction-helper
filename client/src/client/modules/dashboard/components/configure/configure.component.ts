@@ -34,7 +34,7 @@ export class ConfigureComponent {
     columns: new FormArray([]),
     onlyItemsWithRules: new FormControl(false),
     isDisabled: new FormControl(false),
-    rules: new FormArray([]),
+    rules: new FormArray([], Validators.minLength(1)),
     itemRules: new FormArray([]),
     sortRule: new FormGroup({
       field: new FormControl(null),
@@ -43,21 +43,10 @@ export class ConfigureComponent {
   });
   private sm = new SubscriptionManager();
 
-  get rules(): FormArray {
-    return this.form.get('rules') as FormArray;
-  }
 
   get itemRules(): FormArray {
     return this.form.get('itemRules') as FormArray;
   }
-
-  private baseRuleConfig = {
-    condition: [null, Validators.required],
-    targetValueType: [null, Validators.required],
-    field: [null, Validators.required],
-    toField: null,
-    toValue: null,
-  };
 
   constructor(
     public dialogRef: MatDialogRef<ConfigureComponent>,
@@ -80,42 +69,6 @@ export class ConfigureComponent {
         this.addColumn(undefined, column);
       });
     }
-
-    if (board.rules) {
-      board.rules.forEach(rule =>
-        this.addRule(undefined, rule));
-    }
-    if (board.itemRules) {
-      board.itemRules.forEach(rule =>
-        this.addItemRule(undefined, rule));
-    }
-  }
-
-  addRule(formArray: FormArray = this.form.controls.rules as FormArray, rule?: Rule): void {
-    const form = new FormGroup({
-      condition: new FormControl(rule ? rule.condition : null, Validators.required),
-      targetValueType: new FormControl(rule ? rule.targetValueType : null, Validators.required),
-      field: new FormControl(rule ? rule.field : null, Validators.required),
-      toField: new FormControl(rule ? rule.toField : null),
-      toValue: new FormControl(rule ? rule.toValue : null),
-    });
-    formArray.push(form);
-  }
-
-  addItemRule(formArray: FormArray = this.form.controls.itemRules as FormArray, itemRule?: ItemRule): void {
-    const form = new FormGroup({
-      itemId: new FormControl(itemRule ? itemRule.itemId : null, Validators.required),
-      bonusIds: new FormControl(itemRule ? itemRule.bonusIds : null),
-      petSpecies: new FormControl(itemRule ? itemRule.petSpeciesId : null),
-      rules: new FormArray([]),
-    });
-
-    if (itemRule) {
-      itemRule.rules.forEach(rule =>
-        this.addRule(form.controls.rules as FormArray, rule));
-    }
-
-    formArray.push(form);
   }
 
   addColumn(formArray: FormArray = this.form.controls.columns as FormArray, column?: ColumnDescription): void {
