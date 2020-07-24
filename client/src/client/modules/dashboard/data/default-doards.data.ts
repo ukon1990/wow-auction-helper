@@ -78,7 +78,7 @@ const profitableKnownCrafts: DashboardV2 = {
   data: []
 };
 
-const potentialBidDeals: DashboardV2 = {
+const potentialDeals: DashboardV2 = {
   id: generateUUID(),
   idIsBackendGenerated: false,
   sortOrder: 2,
@@ -103,30 +103,72 @@ const potentialBidDeals: DashboardV2 = {
     field: 'bid',
     toValue: .9,
     toField: 'buyout',
-  },{
-      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-      targetValueType: TargetValueEnum.NUMBER,
-      field: 'regionSaleRate',
-      toValue: .30
-    }, {
-      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-      targetValueType: TargetValueEnum.NUMBER,
-      field: 'avgDailySold',
-      toValue: 1
-    }, {
-      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-      targetValueType: TargetValueEnum.PERCENT,
-      field: 'bid',
-      toValue: .1,
-      toField: 'buyout'
-    }],
+  }, {
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'regionSaleRate',
+    toValue: .30
+  }, {
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'avgDailySold',
+    toValue: 1
+  }, {
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.PERCENT,
+    field: 'bid',
+    toValue: .1,
+    toField: 'buyout'
+  }],
+  data: []
+};
+
+const potentialBidDeals: DashboardV2 = {
+  id: generateUUID(),
+  idIsBackendGenerated: false,
+  sortOrder: 3,
+  idParam: 'id',
+  title: 'Potential deals',
+  columns: [
+    columnConfig.item.name,
+    columnConfig.auction.mktPrice,
+    columnConfig.auction.buyout,
+    columnConfig.auction.avgDailySold,
+    columnConfig.auction.regionSaleRate
+  ],
+  sortRule: {
+    field: 'buyout',
+    sortDesc: true
+  },
+  rules: [{
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'regionSaleRate',
+    toValue: .30
+  }, {
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'avgDailySold',
+    toValue: 1
+  }, {
+    condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.PERCENT,
+    field: 'buyout',
+    toValue: .75,
+    toField: 'mktPrice'
+  }, {
+    condition: ConditionEnum.GREATER_THAN,
+    targetValueType: TargetValueEnum.GOLD,
+    field: 'buyout',
+    toValue: 0
+  }],
   data: []
 };
 
 const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
   id: generateUUID(),
   idIsBackendGenerated: false,
-  sortOrder: 2,
+  sortOrder: 4,
   idParam: 'id',
   title: 'Potential 2 hour bid deals',
   columns: [
@@ -149,21 +191,21 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
     toValue: .9,
     toField: 'buyout',
   },
-  {
-    condition: ConditionEnum.EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: '[auctions].timeLeft',
-    toValue: 'MEDIUM',
-    or: [
-      {
-        condition: ConditionEnum.EQUAL_TO,
-        targetValueType: TargetValueEnum.NUMBER,
-        field: '[auctions].timeLeft',
-        toValue: 'SHORT'
-      }
-    ]
-  },
-  {
+    {
+      condition: ConditionEnum.EQUAL_TO,
+      targetValueType: TargetValueEnum.NUMBER,
+      field: '[auctions].timeLeft',
+      toValue: 'MEDIUM',
+      or: [
+        {
+          condition: ConditionEnum.EQUAL_TO,
+          targetValueType: TargetValueEnum.NUMBER,
+          field: '[auctions].timeLeft',
+          toValue: 'SHORT'
+        }
+      ]
+    },
+    {
       condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
       targetValueType: TargetValueEnum.NUMBER,
       field: 'regionSaleRate',
@@ -186,7 +228,7 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
 const buyoutBelowVendorSellPrice: DashboardV2 = {
   id: generateUUID(),
   idIsBackendGenerated: false,
-  sortOrder: 3,
+  sortOrder: 6,
   idParam: 'id',
   title: 'Buyout below vendor sell price',
   columns: [
@@ -225,7 +267,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
 const tradeVendorCurrencyInGold: DashboardV2 = {
   id: generateUUID(),
   idIsBackendGenerated: false,
-  sortOrder: 4,
+  sortOrder: 6,
   idParam: 'id',
   title: 'Trade vendor currency in gold',
   sortRule: {
@@ -275,6 +317,7 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
 export const defaultBoards: DashboardV2[] = [
   profitableCrafts,
   profitableKnownCrafts,
+  potentialDeals,
   potentialBidDeals,
   potentialBidDealsWith2HOrLessLeft,
   buyoutBelowVendorSellPrice,

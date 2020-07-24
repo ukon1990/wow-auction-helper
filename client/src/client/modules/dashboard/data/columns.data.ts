@@ -51,6 +51,11 @@ export const columnConfig = {
             key: 'quantity',
             title: 'Size',
             dataType: 'number'
+        },
+        mktPrice: {
+            key: 'mktPrice',
+            title: 'Market value',
+            dataType: 'gold'
         }
     },
     recipe: {
