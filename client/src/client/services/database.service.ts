@@ -88,30 +88,41 @@ export class DatabaseService {
     SharedService.downloading.items = true;
 
     return new Dexie.Promise<any>(async (resolve) => {
-      await this.getItemsInBatch(0, 50000);
-      await this.getItemsInBatch(50001, 100000);
-      await this.getItemsInBatch(100001, 200000);
-      await this.getItemsInBatch(200001, 1000000);
+      let items: Item[] = [];
+      const add = (result) => items = [...items, ...result];
+      await this.getItemsInBatch(0, 50000)
+          .then((res) => add(res));
+      await this.getItemsInBatch(50001, 100000)
+          .then((res) => add(res));
+      await this.getItemsInBatch(100001, 200000)
+          .then((res) => add(res));
+      await this.getItemsInBatch(200001, 1000000)
+          .then((res) => add(res));
       SharedService.events.items.emit(true);
-      resolve();
+      resolve(items);
     });
   }
 
   private getItemsInBatch(from: number, to: number) {
-    return this.db.table('items')
-      .where(':id')
-      .between(from, to)
-      .toArray()
-      .then(items => {
-        SharedService.downloading.items = false;
-        SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
-        items.forEach(i => {
-          SharedService.items[i.id] = i;
-        });
-      }).catch(e => {
+    return new Promise<Item[]>((resolve, reject) => {
+      this.db.table('items')
+          .where(':id')
+          .between(from, to)
+          .toArray()
+          .then(items => {
+            SharedService.downloading.items = false;
+            /*
+            SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
+            items.forEach(i => {
+              SharedService.items[i.id] = i;
+            });*/
+            resolve(items);
+          }).catch(e => {
         console.error('Could not restore items from local DB', e);
         SharedService.downloading.items = false;
+        reject(e);
       });
+    });
   }
 
   clearItems(): void {

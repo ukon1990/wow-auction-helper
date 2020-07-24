@@ -4,11 +4,19 @@ import {ItemInventory} from '../../../models/item/item';
 import {Recipe} from '../../crafting/models/recipe';
 import {ShoppingCart} from './shopping-cart.model';
 import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {TestBed} from '@angular/core/testing';
 
 describe('ShoppingCartUtil', () => {
   let recipe: Recipe,
     cart: ShoppingCart,
     inventoryItem: ItemInventory;
+  let service: AuctionsService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(AuctionsService);
+  });
 
   // 39354 light parchment
 
@@ -45,7 +53,7 @@ describe('ShoppingCartUtil', () => {
   });
 
   beforeEach(() => {
-    cart = new ShoppingCart();
+    cart = new ShoppingCart(service);
   });
 
   describe('upgrade', () => {
@@ -158,7 +166,6 @@ describe('ShoppingCartUtil', () => {
 
     it('Can calculate cost from ah', () => {
       cart.calculateCosts();
-      console.log('auctionhouse', SharedService.auctionItemsMap[158188]);
       expect(cart.sources.ah[0].cost).toBe(2249995);
     });
 

@@ -1,6 +1,6 @@
 <mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen}">
   <mat-card-header>
-    <div class="action-icon">
+    <div class="action-icon" *ngIf="!hideButtons">
       <button
               class="btn btn-sm mr-2"
               mat-raised-button
@@ -35,14 +35,13 @@
   </mat-card-header>
   <mat-card-content>
     <ng-container>
-      <wah-data-table [id]="dashboard?.idParam"
+      <wah-data-table [id]="dashboard?.idParam || 'id'"
                       iconSize="22"
                       [columns]="currentColumns"
                       [filterParameter]="filterParameter"
                       [data]="dashboard?.data"
                       [maxVisibleRows]="maxVisibleRows"
                       [numOfRows]="20"
-                      [isCrafting]="dashboard.isCrafting"
                       [hideCraftingDetails]="true"></wah-data-table>
       <!-- detailView -->
       <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"

@@ -48,12 +48,12 @@ fdescribe('DashboardCalculateUtil', () => {
   secondItem.mktPrice = 99;
   secondItem.source.recipe.known = [recipe2];
 
-  const auctionItems: Map<number, AuctionItem> = new Map<number, AuctionItem>();
+  const auctionItems: Map<string, AuctionItem> = new Map<string, AuctionItem>();
 
   beforeAll(() => {
     // recipeMap.set(32, []);
-    auctionItems.set(1, firstItem);
-    auctionItems.set(2, secondItem);
+    auctionItems.set('1', firstItem);
+    auctionItems.set('2', secondItem);
   });
 
   describe('calculate', () => {

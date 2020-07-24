@@ -38,7 +38,7 @@ export class DashboardCalculateUtil {
       this.addMatchingItemRules(board, dataMap, items);
     }
 
-    console.log(board, dataMap, items);
+    console.log(board);
 
     board.data = [];
     dataMap.forEach(item => board.data.push(item));
@@ -95,6 +95,7 @@ export class DashboardCalculateUtil {
     switch (rule.targetValueType) {
       case TargetValueEnum.PERCENT:
         return this.comparePercent(rule, fromValue, toValue);
+      case TargetValueEnum.GOLD:
       case TargetValueEnum.NUMBER:
         return this.compareNumbers(rule, fromValue, toValue);
       case TargetValueEnum.TEXT:
@@ -130,8 +131,12 @@ export class DashboardCalculateUtil {
       recipeId: item.source.recipe.known
     };
 
-    columns.forEach(column =>
-      obj[column.key] = this.getValue(item, column.key));
+    columns.forEach(column => {
+      obj[column.key] = this.getValue(item, column.key);
+      if (column.options && column.options.idName) {
+        obj[column.options.idName] = this.getValue(item, column.options.idName);
+      }
+    });
     return obj;
   }
 

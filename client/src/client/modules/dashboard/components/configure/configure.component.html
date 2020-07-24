@@ -8,15 +8,44 @@
                    formControlName="title">
         </mat-form-field>
 
-        <wah-rules
-                [form]="form"
-                [rules]="dashboard?.rules"
-        ></wah-rules>
-        <wah-item-rules
-                [form]="form"
-                [rules]="dashboard?.itemRules"
-        ></wah-item-rules>
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Columns ({{rules.length}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                TODO
+            </mat-expansion-panel>
+            <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Rules ({{rules.length}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <wah-rules
+                        [form]="form"
+                        [rules]="dashboard?.rules"
+                ></wah-rules>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Item rules ({{itemRules.length}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <wah-item-rules
+                        [form]="form"
+                        [rules]="dashboard?.itemRules"
+                ></wah-item-rules>
+            </mat-expansion-panel>
+        </mat-accordion>
     </form>
+
+    <wah-dashboard-item *ngIf="tmpBoard && tmpBoard.data && tmpBoard.data.length"
+                        [dashboard]="tmpBoard"
+                        [hideButtons]="true"
+    ></wah-dashboard-item>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

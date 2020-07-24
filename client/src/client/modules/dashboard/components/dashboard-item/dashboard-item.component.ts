@@ -1,5 +1,4 @@
-import {Component, OnInit, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
-import {Angulartics2} from 'angulartics2';
+import {AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {Dashboard} from '../../models/dashboard.model';
 import {SharedService} from '../../../../services/shared.service';
@@ -7,74 +6,74 @@ import {Report} from '../../../../utils/report.util';
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfigureComponent} from '../configure/configure.component';
+import {DashboardV2} from '../../models/dashboard-v2.model';
+import {DashboardService} from '../../services/dashboard.service';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Component({
-  selector: 'wah-dashboard-item',
-  templateUrl: './dashboard-item.component.html',
-  styleUrls: ['./dashboard-item.component.scss']
+    selector: 'wah-dashboard-item',
+    templateUrl: './dashboard-item.component.html',
+    styleUrls: ['./dashboard-item.component.scss']
 })
-export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
-  @Input() dashboard: Dashboard;
-  @Input() filterParameter: string;
-  detailPanelOpenSubscription: Subscription;
-  isOtherDetailPanelOpen = false;
+export class DashboardItemComponent implements AfterViewInit, OnDestroy {
+    @Input() dashboard: DashboardV2;
+    @Input() filterParameter: string;
+    @Input() hideButtons: boolean;
+    isOtherDetailPanelOpen = false;
 
-  detailView = false;
-  isConfigOpen = false;
-  maxVisibleRows: number;
-  currentColumns;
-  data;
-  faCog = faCog;
+    detailView = false;
+    isConfigOpen = false;
+    maxVisibleRows: number;
+    currentColumns;
+    data;
+    faCog = faCog;
+    sm = new SubscriptionManager();
 
 
-  constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, private service: DashboardService) {
+        this.sm.add(SharedService.events.detailPanelOpen, (isOpen: boolean) => {
+            this.isOtherDetailPanelOpen = isOpen;
+        });
 
-  ngOnInit(): void {
-    this.setColumns();
-    this.setData();
-  }
+        this.sm.add(this.service.calculatedBoardEvent, (id) => {
+        });
+    }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
-  }
+    ngAfterViewInit(): void {
+        this.setColumns();
+        this.setData();
+    }
 
-  ngAfterViewInit(): void {
-    this.detailPanelOpenSubscription = SharedService.events.detailPanelOpen
-      .subscribe((isOpen: boolean) => {
-        this.isOtherDetailPanelOpen = isOpen;
-      });
-  }
+    ngOnDestroy(): void {
+        this.sm.unsubscribe();
+    }
 
-  ngOnDestroy(): void {
-    this.detailPanelOpenSubscription.unsubscribe();
-  }
+    toggleConfig(): void {
+        this.isConfigOpen = true;
+        const dialogRef = this.dialog.open(ConfigureComponent, {
+            width: '95%',
+            data: this.dashboard
+        });
 
-  toggleConfig(): void {
-    this.isConfigOpen = true;
-    const dialogRef = this.dialog.open(ConfigureComponent, {
-      width: '95%',
-      data: this.dashboard
-    });
+        dialogRef.afterClosed().subscribe(result => {
+            this.isConfigOpen = false;
+        });
+    }
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.isConfigOpen = false;
-    });
-  }
+    setColumns(): void {
+        this.currentColumns = this.detailView ?
+            this.dashboard.columns : this.dashboard.columns.slice(0, 4);
+    }
 
-  setColumns(): void {
-    this.currentColumns = this.detailView ?
-      this.dashboard.columns : this.dashboard.columns.slice(0, 4);
-  }
+    setData(): void {
+        this.maxVisibleRows = this.detailView ? undefined : 5;
+    }
 
-  setData(): void {
-    this.maxVisibleRows = this.detailView ? undefined : 5;
-  }
+    openClose(): void {
+        this.detailView = !this.detailView;
+        this.setColumns();
+        this.setData();
 
-  openClose(): void {
-    this.detailView = !this.detailView;
-    this.setColumns();
-    this.setData();
-
-    Report.send(`${this.dashboard.title} opened/closed`, 'Dashboard');
-  }
+        Report.send(`${this.dashboard.title} opened/closed`, 'Dashboard');
+    }
 }

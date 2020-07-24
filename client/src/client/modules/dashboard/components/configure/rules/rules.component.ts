@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {conditionLocale} from 'client/modules/dashboard/types/condition.enum';
@@ -13,15 +13,13 @@ import {Rule} from '../../../models/rule.model';
 export class RulesComponent implements AfterViewInit {
     @Input() form: FormGroup;
     @Input() rules: Rule[];
+    @Input() displayHeader: boolean;
     faTrash = faTrashAlt;
     conditionLocale = conditionLocale;
     fields = ruleFields;
 
     get formArray(): FormArray {
         return this.form.get('rules') as FormArray;
-    }
-
-    constructor() {
     }
 
     ngAfterViewInit(): void {

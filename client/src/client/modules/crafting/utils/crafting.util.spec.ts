@@ -7,21 +7,34 @@ import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {Reagent} from '../models/reagent';
+import {TestBed} from '@angular/core/testing';
+import {AuctionsService} from '../../../services/auctions.service';
 
 describe('CraftingUtil', () => {
+  let service: AuctionsService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(AuctionsService);
+  });
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     const recipe = new Recipe();
 
     CraftingService.list.next([]);
-    SharedService.auctionItemsMap[10] = new AuctionItem();
-    SharedService.auctionItemsMap[10].buyout = 20;
-    SharedService.auctionItemsMap[11] = new AuctionItem();
-    SharedService.auctionItemsMap[11].buyout = 10;
-    SharedService.auctionItemsMap[12] = new AuctionItem();
-    SharedService.auctionItemsMap[12].buyout = 30;
-    SharedService.auctionItemsMap[20] = new AuctionItem();
-    SharedService.auctionItemsMap[20].buyout = 10;
+    const ai1 = new AuctionItem();
+    ai1.buyout = 20;
+    service.mapped.value.set('' + 10, ai1);
+    const ai2 = new AuctionItem();
+    ai2.buyout = 10;
+    service.mapped.value.set('' + 11, ai2);
+    const ai3 = new AuctionItem();
+    ai3.buyout = 30;
+    service.mapped.value.set('' + 12, ai3);
+    const ai4 = new AuctionItem();
+    ai4.buyout = 10;
+    service.mapped.value.set('' + 20, ai4);
+
     TsmService.mapped.value.set(20, {MarketValue: 100} as TSM);
 
     recipe.id = 1;

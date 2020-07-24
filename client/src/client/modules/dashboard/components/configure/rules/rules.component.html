@@ -1,7 +1,7 @@
 <mat-card *ngIf="formArray"
           [formGroup]="form"
 >
-    <mat-card-header>
+    <mat-card-header *ngIf="displayHeader">
         <mat-card-title>
             Rules
         </mat-card-title>
@@ -9,7 +9,7 @@
 
     <mat-card-content formArrayName="rules">
         <div *ngFor="let rule of formArray.controls; let i = index"
-             class="row">
+             class="row col-md-12">
             <ng-container [formGroupName]="i">
                 <mat-form-field class="col">
                     <mat-select
@@ -84,6 +84,7 @@
                             mat-stroked-button
                             color="warn"
                             matTooltip="Delete"
+                            (click)="formArray.removeAt(i)"
                     >
                         <fa-icon
                                 [icon]="faTrash"

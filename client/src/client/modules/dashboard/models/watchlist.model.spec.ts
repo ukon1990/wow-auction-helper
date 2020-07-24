@@ -1,13 +1,18 @@
-import { Watchlist } from './watchlist.model';
+import {Watchlist} from './watchlist.model';
 import {WatchlistItem} from './watchlist-item.model';
+import {TestBed} from '@angular/core/testing';
+import {AuctionsService} from '../../../services/auctions.service';
+import {MockLoaderUtil} from '../../../mocks/mock-loader.util';
 
 
-let wl = new Watchlist(),
+let wl: Watchlist,
   group,
-  item = new WatchlistItem();
+  item = new WatchlistItem(),
+  service: AuctionsService;
 
 beforeEach(() => {
-  wl =  new Watchlist();
+  service = MockLoaderUtil.component().auctionsService;
+  wl = new Watchlist(service);
   group = 'Enchants';
   item = new WatchlistItem();
   item.itemID = 130221;
@@ -28,7 +33,7 @@ describe('Watchlist', () => {
   it('Can restore from localStorage', () => {
     wl.addGroup(group);
     wl.save();
-    const wl2 = new Watchlist();
+    const wl2 = new Watchlist(service);
     wl2.restore();
     expect(wl2.groups.length).toBeGreaterThan(0);
   });

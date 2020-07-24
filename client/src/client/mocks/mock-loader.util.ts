@@ -1,10 +1,26 @@
 import {environment} from '../../environments/environment';
 import {RealmService} from '../services/realm.service';
 import {UserUtil} from '../utils/user/user.util';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {TestModule} from '../modules/test.module';
+import {MockComponent} from './mock.component';
 
 declare function require(moduleName: string): any;
 
 export class MockLoaderUtil {
+  // The purpose of this one is to get a service, that can be used for tests
+  private static fixture: ComponentFixture<MockComponent>;
+
+  static component(): MockComponent {
+    if (!this.fixture) {
+      TestBed.configureTestingModule({
+        imports: [TestModule]
+      })
+        .compileComponents();
+      this.fixture = TestBed.createComponent(MockComponent);
+    }
+    return this.fixture.componentInstance;
+  }
 
   initBaseData() {
     environment.test = true;

@@ -6,7 +6,7 @@ beforeEach(() => {
   new MockLoaderUtil().initBaseData();
 });
 
-
+/*
 describe('AuctionUtil', () => {
   describe('Organizing auctions', () => {
     it('Should be able to organize auctions', () => {
@@ -32,3 +32,5 @@ describe('AuctionUtil', () => {
     });
   });
 });
+*/
+

@@ -44,10 +44,11 @@ export class ItemService {
 
   async loadItems(latestTimestamp: Date) {
     await this.dbService.getAllItems()
-      .then(async () => {
-        if (Object.keys(SharedService.items).length === 0) {
+      .then(async (items) => {
+        if (items.length === 0) {
           delete localStorage['timestamp_items'];
         }
+        this.handleItems({items, timestamp: latestTimestamp});
       })
       .catch(async error => {
         delete localStorage['timestamp_items'];
@@ -133,30 +134,13 @@ export class ItemService {
   }
 
   handleItems(items: ItemResponse): void {
-    const missingItems: number[] = [],
-      noItems = SharedService.itemsUnmapped.length === 0;
+    const missingItems: number[] = [];
     SharedService.downloading.items = false;
     const list: Item[] = [];
     const mapped = new Map<number, Item>();
 
-    items.items.forEach((item: Item) => {
-      mapped.set(item.id, item);
-      list.push(item);
-      // TODO: Remove
-      if (SharedService.items[item.id]) {
-        Object.keys(item).forEach(key => {
-          SharedService.items[item.id][key] = item[key];
-        });
-        if (noItems) {
-          SharedService.itemsUnmapped.push(item);
-        }
-      } else {
-        SharedService.itemsUnmapped.push(item);
-      }
-    });
-
     // TODO: Remove or move?
-    list.forEach((item: Item) => {
+    items.items.forEach((item: Item) => {
       // Making sure that the tradevendor item names are updated in case of locale change
       if (SharedService.tradeVendorMap[item.id]) {
         SharedService.tradeVendorMap[item.id].name = item.name;
@@ -168,6 +152,9 @@ export class ItemService {
       }
 
       SharedService.items[item.id] = item;
+      mapped.set(item.id, item);
+      list.push(item);
+      SharedService.itemsUnmapped.push(item);
 
       if (item.itemSource && item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
         item.itemSource.containedInItem.forEach(i =>

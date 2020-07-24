@@ -24,6 +24,7 @@ import {ProfessionService} from '../../crafting/services/profession.service';
 import {Profession} from '../../../../../../api/src/profession/model';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {AuctionsService} from '../../../services/auctions.service';
+import {ItemService} from "../../../services/item.service";
 
 @Component({
   selector: 'wah-data-table',
@@ -187,7 +188,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   /* istanbul ignore next */
   setSelectedItem(item: any, column: ColumnDescription): void {
     SharedService.preScrollPosition = window.scrollY;
-    SharedService.events.detailSelection.emit(item);
+    if (column.options && column.options.idName) {
+      SharedService.events.detailSelection.emit(
+          ItemService.mapped.value.get(item[column.options.idName])
+      );
+    } else {
+      SharedService.events.detailSelection.emit(item);
+    }
     this.setSelectedPet(item);
     SharedService.events.detailPanelOpen.emit(true);
     Report.debug('clicked', item);

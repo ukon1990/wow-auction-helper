@@ -1,9 +1,12 @@
 import * as lua from 'luaparse';
 import {TsmLuaUtil} from './tsm-lua.util';
+import {AuctionsService} from '../../services/auctions.service';
+import {TestBed} from '@angular/core/testing';
 
 describe('TSMLuaUtil', () => {
+
   it('getCharacterDataForField', () => {
-    const data = new TsmLuaUtil(null).processLuaData(
+    const data = new TsmLuaUtil().processLuaData(
       `TradeSkillMasterDB = {
       ["s@HordieChar - Horde - Server@internalData@bagQuantity"] = {
       ["i:155838"] = 113
