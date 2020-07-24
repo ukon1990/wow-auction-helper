@@ -7,6 +7,7 @@ export interface Rule {
   field: string;
   toField?: string;
   toValue?: number | string | boolean;
+  or?: Rule[];
 }
 
 export interface ItemRule {

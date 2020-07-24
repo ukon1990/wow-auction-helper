@@ -9,7 +9,12 @@ export const columnConfig = {
             key: 'vendorSell',
             title: 'Vendor sell',
             dataType: 'gold'
-        }
+        },
+      itemLevel: {
+          key: 'itemLevel',
+          title: 'ILvL',
+          dataType: 'number'
+      }
     },
     auction: {
         buyout: {
