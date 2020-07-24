@@ -200,4 +200,44 @@ fdescribe('DashboardCalculateUtil', () => {
       });
     });
   });
+
+  describe('Sort rule', () => {
+    it('Can sort ascending', () => {
+      const board: DashboardV2 = getBoard([
+        {
+          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+          targetValueType: TargetValueEnum.PERCENT,
+          field: 'source.recipe.known.0.cost',
+          toValue: 1,
+          toField: 'buyout'
+        }
+      ]);
+      board.sortRule = {
+        field: 'buyout',
+        sortDesc: false
+      };
+      DashboardCalculateUtil.calculate(board, auctionItems);
+
+      expect(board.data[0].buyout).toBe(firstItem.buyout);
+    });
+
+    it('Can sort descending', () => {
+      const board: DashboardV2 = getBoard([
+        {
+          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+          targetValueType: TargetValueEnum.PERCENT,
+          field: 'source.recipe.known.0.cost',
+          toValue: 1,
+          toField: 'buyout'
+        }
+      ]);
+      board.sortRule = {
+        field: 'buyout',
+        sortDesc: true
+      };
+      DashboardCalculateUtil.calculate(board, auctionItems);
+
+      expect(board.data[0].buyout).toBe(secondItem.buyout);
+    });
+  });
 });

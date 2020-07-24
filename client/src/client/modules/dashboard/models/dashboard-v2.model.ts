@@ -13,7 +13,7 @@ export interface DashboardV2 {
   onlyItemsWithRules?: boolean;
   sortRule?: {
     field: string;
-    sortAsc?: boolean
+    sortDesc?: boolean
   };
   rules: Rule[];
   itemRules?: ItemRule[];

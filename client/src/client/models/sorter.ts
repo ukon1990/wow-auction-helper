@@ -18,17 +18,20 @@ export class Sorter {
 
   keys: Key[] = [];
 
-  constructor(private auctionService: AuctionsService) {
+  /**
+   * @param auctionService Is requiered if there is any need to get a auctionItem object from within the sorter
+   */
+  constructor(private auctionService?: AuctionsService) {
   }
 
-  addKey(key: string, divideByQuantity?: boolean): void {
+  addKey(key: string, divideByQuantity: boolean = false, sortDesc: boolean = true): void {
     if (this.findKeyIndex(key) > -1) {
       this.getKey(key).divideByQuantity = divideByQuantity ? divideByQuantity : false;
       this.getKey(key).desc = !this.getKey(key).desc;
     } else {
       this.keys = [];
       this.keys.push(
-        new Key(key, true, divideByQuantity ? divideByQuantity : false));
+        new Key(key, sortDesc, divideByQuantity ? divideByQuantity : false));
     }
   }
 
@@ -43,7 +46,7 @@ export class Sorter {
           continue;
         }
 
-        if (this.keys[i].desc) {
+        if (!this.keys[i].desc) {
           if (this.isString(a, i)) {
             return this.getItemToSort(this.keys[i], b).localeCompare(this.getItemToSort(this.keys[i], a));
           } else {
@@ -82,8 +85,8 @@ export class Sorter {
   }
 
   private getAuctionItem(item: any): any {
-    return this.auctionService.getById(
-      item.item || item.itemID || item.id);
+    return this.auctionService ? this.auctionService.getById(
+      item.item || item.itemID || item.id) : undefined;
   }
 
   private isString(object: any, index): boolean {

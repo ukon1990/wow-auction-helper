@@ -11,6 +11,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {SharedService} from '../../../services/shared.service';
 import {ItemService} from '../../../services/item.service';
+import {Sorter} from '../../../models/sorter';
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {
@@ -28,7 +29,7 @@ export class DashboardCalculateUtil {
       item.item = ItemService.mapped.value.get(item.itemID);
     });
   }
-  // TODO: Add sort by x
+
   static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
     const dataMap = new Map<string, any>();
     if (board.onlyItemsWithRules) {
@@ -40,9 +41,22 @@ export class DashboardCalculateUtil {
 
     console.log(board);
 
-    board.data = [];
-    dataMap.forEach(item => board.data.push(item));
+    this.assignAndSortDataToBoard(dataMap, board);
     return board;
+  }
+
+  private static assignAndSortDataToBoard(dataMap: Map<string, any>, board: DashboardV2) {
+    const data = [];
+    dataMap.forEach(item =>
+      data.push(item));
+
+    if (board.sortRule) {
+      const sorter = new Sorter();
+      sorter.addKey(board.sortRule.field, undefined, board.sortRule.sortDesc);
+      sorter.sort(data);
+    }
+
+    board.data = data;
   }
 
   private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>) {

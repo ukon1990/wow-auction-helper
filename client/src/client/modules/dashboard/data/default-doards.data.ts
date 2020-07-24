@@ -17,6 +17,10 @@ const profitableCrafts: DashboardV2 = {
         columnConfig.recipe.mostProfitableROI,
         columnConfig.auction.regionSaleRate
     ],
+    sortRule: {
+        field: columnConfig.recipe.mostProfitableROI.key,
+        sortDesc: true
+    },
     rules: [{
         condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
         targetValueType: TargetValueEnum.NUMBER,
@@ -49,6 +53,10 @@ const profitableKnownCrafts: DashboardV2 = {
         columnConfig.recipe.mostProfitableKnownROI,
         columnConfig.auction.regionSaleRate
     ],
+    sortRule: {
+        field: columnConfig.recipe.mostProfitableKnownROI.key,
+        sortDesc: true
+    },
     rules: [{
         condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
         targetValueType: TargetValueEnum.NUMBER,
@@ -83,6 +91,10 @@ const potentialBidDeals: DashboardV2 = {
         columnConfig.auction.quantity,
         columnConfig.auction.timeLeft
     ],
+    sortRule: {
+        field: 'bid',
+        sortDesc: true
+    },
     rules: [{
         condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
         targetValueType: TargetValueEnum.NUMBER,
@@ -133,6 +145,10 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
         {key: 'buyout', title: 'Buyout', dataType: 'gold'},
         {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'}
     ],
+    sortRule: {
+        field: 'buyout',
+        sortDesc: true
+    },
     rules: [{
         condition: ConditionEnum.LESS_THAN,
         targetValueType: TargetValueEnum.NUMBER,
@@ -164,7 +180,8 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
     idParam: 'id',
     title: 'Trade vendor currency in gold',
     sortRule: {
-        field: 'source.tradeVendor.roi'
+        field: 'source.tradeVendor.roi',
+        sortDesc: true
     },
     columns: [
         {
