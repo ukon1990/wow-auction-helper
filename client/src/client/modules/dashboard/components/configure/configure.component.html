@@ -67,7 +67,7 @@
     <button
             mat-raised-button
             color="accent"
-            [disabled]="!hasChanges"
+            [disabled]="form.valid && hasChanges"
     >
         <fa-icon [icon]="faSave"></fa-icon>
         Save

@@ -1,24 +1,19 @@
 import {ColumnDescription} from '../../table/models/column-description';
 import {RuleField, RuleFieldGroup} from '../models/rule-field.model';
+import {columnConfig} from './columns.data';
 
 export const ruleFields: RuleFieldGroup[] = [
   {
     name: 'Item',
     options: [
       {
-        key: 'name', name: 'Item name', column: {
-          key: 'name', title: 'Name', dataType: 'name'
-        }
+        key: 'name', name: 'Item name', column: columnConfig.item.name
       },
       {
-        key: 'vendorSell', name: 'Vendor sell', column: {
-          key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'
-        }
+        key: 'vendorSell', name: 'Vendor sell', column: columnConfig.item.vendorSell
       },
       {
-        key: 'item.expansionId', name: 'Expansion', column: {
-          key: 'item.expansionId', title: 'Expansion', dataType: 'expansion'
-        }
+        key: 'item.expansionId', name: 'Expansion', column: columnConfig.item.expansion
       },
       {
         key: 'item.itemSubClass', name: 'Item sub class'/*, column: {
@@ -31,22 +26,16 @@ export const ruleFields: RuleFieldGroup[] = [
         }*/
       },
       {
-        key: 'itemLevel', name: 'Item level', column: {
-          key: 'itemLevel', title: 'Item level', dataType: 'number'
-        }
+        key: 'itemLevel', name: 'Item level', column: columnConfig.item.itemLevel
       },
       {
         key: '[bonusIds]', name: 'Bonus'
       },
       {
-        key: 'petLevel', name: 'Pet level', column: {
-          key: 'petLevel', title: 'Pet level', dataType: 'number'
-        }
+        key: 'petLevel', name: 'Pet level', column: columnConfig.pet.level
       },
       {
-        key: 'petQuality', name: 'Pet quality', column: {
-          key: 'petQuality', title: 'Pet quality', dataType: 'number'
-        }
+        key: 'petQuality', name: 'Pet quality', column: columnConfig.pet.quality
       },
     ]
   },
@@ -55,74 +44,46 @@ export const ruleFields: RuleFieldGroup[] = [
     options: [
 
       {
-        key: 'buyout', name: 'Buyout', column: {
-          key: 'buyout', title: 'Buyout', dataType: 'gold'
-        }
+        key: 'buyout', name: 'Buyout', column: columnConfig.auction.buyout
       },
       {
-        key: 'bid', name: 'Bid', column: {
-          key: 'bid', title: 'Bid', dataType: 'gold'
-        }
+        key: 'bid', name: 'Bid', column: columnConfig.auction.bid
       },
       {
-        key: 'regionSaleRate', name: 'Sale rate', column: {
-          key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'
-        }
+        key: 'regionSaleRate', name: 'Sale rate', column: columnConfig.auction.regionSaleRate
       },
       {
-        key: 'avgDailySold', name: 'Avg daily sold', column: {
-          key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'
-        }
+        key: 'avgDailySold', name: 'Avg daily sold', column: columnConfig.auction.avgDailySold
       },
       {
-        key: 'mktPrice', name: 'Market price', column: {
-          key: 'mktPrice', title: 'Market price', dataType: 'gold'
-        }
+        key: 'mktPrice', name: 'Market price', column: columnConfig.auction.mktPrice
       },
       {
-        key: 'regionSaleAvg', name: 'Avg sales price', column: {
-          key: 'regionSaleAvg', title: 'Avg sales price', dataType: 'gold'
-        }
+        key: 'regionSaleAvg', name: 'Avg sales price', column: columnConfig.auction.regionSaleAvg
       },
       {
-        key: 'quantityTotal', name: 'Quantity total', column: {
-          key: 'quantityTotal', title: 'Quantity total', dataType: 'number'
-        }
+        key: 'quantityTotal', name: 'Quantity total', column: columnConfig.auction.quantityTotal
       },
       {
-        key: 'past24HoursSaleRate', name: 'Sales rate past 24h(personal)', column: {
-          key: 'past24HoursSaleRate', title: '24h Sale rate', dataType: 'percent'
-        }
+        key: 'past24HoursSaleRate', name: 'Sales rate past 24h(personal)', column: columnConfig.auction.past24HoursSaleRate
       },
       {
-        key: 'past7DaysSaleRate', name: 'Sales rate past 7 days(personal)', column: {
-          key: 'past7DaysSaleRate', title: '7 days Sale rate', dataType: 'percent'
-        }
+        key: 'past7DaysSaleRate', name: 'Sales rate past 7 days(personal)', column: columnConfig.auction.past7DaysSaleRate
       },
       {
-        key: 'past14DaysSaleRate', name: 'Sales rate past 14 days(personal)', column: {
-          key: 'past14DaysSaleRate', title: '14 days Sale rate', dataType: 'percent'
-        }
+        key: 'past14DaysSaleRate', name: 'Sales rate past 14 days(personal)', column: columnConfig.auction.past14DaysSaleRate
       },
       {
-        key: 'past30DaysSaleRate', name: 'Sales rate past 30 days(personal)', column: {
-          key: 'past30DaysSaleRate', title: '30 days Sale rate', dataType: 'percent'
-        }
+        key: 'past30DaysSaleRate', name: 'Sales rate past 30 days(personal)', column: columnConfig.auction.past30DaysSaleRate
       },
       {
-        key: 'past60DaysSaleRate', name: 'Sales rate past 60 days(personal)', column: {
-          key: 'past60DaysSaleRate', title: '60 days Sale rate', dataType: 'percent'
-        }
+        key: 'past60DaysSaleRate', name: 'Sales rate past 60 days(personal)', column: columnConfig.auction.past60DaysSaleRate
       },
       {
-        key: 'past90DaysSaleRate', name: 'Sales rate past 90 days(personal)', column: {
-          key: 'past90DaysSaleRate', title: '90 days Sale rate', dataType: 'percent'
-        }
+        key: 'past90DaysSaleRate', name: 'Sales rate past 90 days(personal)', column: columnConfig.auction.past90DaysSaleRate
       },
       {
-        key: 'totalSaleRate', name: 'All time sales rate(personal)', column: {
-          key: 'totalSaleRate', title: 'All time Sale rate', dataType: 'percent'
-        }
+        key: 'totalSaleRate', name: 'All time sales rate(personal)', column: columnConfig.auction.allTimeSaleRate
       },
     ]
   },
@@ -130,19 +91,13 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Known recipes',
     options: [
       {
-        key: 'source.recipe.0.known.name', name: 'Name', column: {
-          key: 'source.recipe.0.known.name', title: 'Name', dataType: 'name'
-        }
+        key: 'source.recipe.0.known.name', name: 'Name', column: columnConfig.recipe.mostProfitableKnownName
       },
       {
-        key: 'source.recipe.known.0.cost', name: 'Cost', column: {
-          key: 'source.recipe.known.0.cost', title: 'Cost', dataType: 'gold'
-        }
+        key: 'source.recipe.known.0.cost', name: 'Cost', column: columnConfig.recipe.mostProfitableKnownCost
       },
       {
-        key: 'source.recipe.known.0.roi', name: 'ROI', column: {
-          key: 'source.recipe.known.0.roi', title: 'ROI', dataType: 'gold'
-        }
+        key: 'source.recipe.known.0.roi', name: 'ROI', column: columnConfig.recipe.mostProfitableKnownROI
       }
     ]
   },
@@ -150,19 +105,13 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: All recipes',
     options: [
       {
-        key: 'source.recipe.all.0.name', name: 'Name', column: {
-          key: 'source.recipe.all.0.name', title: 'Name', dataType: 'name'
-        }
+        key: 'source.recipe.all.0.name', name: 'Name', column: columnConfig.recipe.mostProfitableName
       },
       {
-        key: 'source.recipe.all.0.cost', name: 'Cost', column: {
-          key: 'source.recipe.all.0.cost', title: 'Cost', dataType: 'gold'
-        }
+        key: 'source.recipe.all.0.cost', name: 'Cost', column: columnConfig.recipe.mostProfitableCost
       },
       {
-        key: 'source.recipe.all.0.roi', name: 'ROI', column: {
-          key: 'source.recipe.all.0.roi', title: 'ROI', dataType: 'gold'
-        }
+        key: 'source.recipe.all.0.roi', name: 'ROI', column: columnConfig.recipe.mostProfitableROI
       }
     ]
   },
@@ -170,39 +119,19 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Sold by',
     options: [
       {
-        key: 'source.npc.[soldBy].name', name: 'Vendor', column: {
-          key: 'source.npc.[soldBy].name', title: 'Vendor', dataType: 'name', options: {
-            idName: 'source.npc.[soldBy].id'
-          }
-        }
+        key: 'source.npc.[soldBy].name', name: 'Vendor', column: columnConfig.source.soldBy.name
       }, {
-        key: 'source.npc.[soldBy].tag', name: 'Tag', column: {
-          key: 'source.npc.[soldBy].tag', title: 'Vendor tag', dataType: 'string'
-        }
+        key: 'source.npc.[soldBy].tag', name: 'Tag', column: columnConfig.source.soldBy.tag
       }, {
-        key: 'source.npc.[soldBy].zoneName', name: 'Zone', column: {
-          key: 'source.npc.[soldBy].zoneName', title: 'Zone', dataType: 'name', options: {
-            idName: 'source.npc.[soldBy].zoneId'
-          }
-        }
+        key: 'source.npc.[soldBy].zoneName', name: 'Zone', column: columnConfig.source.soldBy.zoneName
       }, {
-        key: 'source.npc.[soldBy].price', name: 'Sell price', column: {
-          key: 'source.npc.[soldBy].price', title: 'Sell price', dataType: 'gold'
-        }
+        key: 'source.npc.[soldBy].price', name: 'Sell price', column: columnConfig.source.soldBy.price
       }, {
-        key: 'source.npc.[soldBy].unitPrice', name: 'Unit price', column: {
-          key: 'source.npc.[soldBy].unitPrice', title: 'Unit price', dataType: 'gold'
-        }
+        key: 'source.npc.[soldBy].unitPrice', name: 'Unit price', column: columnConfig.source.soldBy.unitPrice
       }, {
-        key: 'source.npc.[soldBy].stackSize', name: 'Stack size', column: {
-          key: 'source.npc.[soldBy].stackSize', title: 'Stack size', dataType: 'number'
-        }
+        key: 'source.npc.[soldBy].stackSize', name: 'Stack size', column: columnConfig.source.soldBy.stackSize
       }, {
-        key: 'source.npc.[soldBy].currency', name: 'Currency', column: {
-          key: 'source.npc.[soldBy].currency', title: 'Currency', dataType: 'currency', options: {
-            idName: 'source.npc.[soldBy].currency'
-          }
-        }
+        key: 'source.npc.[soldBy].currency', name: 'Currency', column: columnConfig.source.soldBy.currency
       }
     ]
   },
@@ -210,29 +139,15 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Dropped by',
     options: [
       {
-        key: 'source.npc.[droppedBy].name', name: 'NPC name', column: {
-          key: 'source.npc.[droppedBy].name', title: 'NPC name', dataType: 'name', options: {
-            idName: 'source.npc.[droppedBy].id'
-          }
-        }
+        key: 'source.npc.[droppedBy].name', name: 'NPC name', column: columnConfig.source.droppedBy.name
       }, {
-        key: 'source.npc.[droppedBy].tag', name: 'Tag', column: {
-          key: 'source.npc.[droppedBy].tag', title: 'Tag', dataType: 'string'
-        }
+        key: 'source.npc.[droppedBy].tag', name: 'Tag', column: columnConfig.source.droppedBy.tag
       }, {
-        key: 'source.npc.[droppedBy].zoneName', name: 'Zone', column: {
-          key: 'source.npc.[droppedBy].zoneName', title: 'Zone', dataType: 'name', options: {
-            idName: 'source.npc.[droppedBy].zoneId'
-          }
-        }
+        key: 'source.npc.[droppedBy].zoneName', name: 'Zone', column: columnConfig.source.droppedBy.zoneName
       }, {
-        key: 'source.npc.[droppedBy].dropChance', name: 'Drop chance', column: {
-          key: 'source.npc.[droppedBy].dropChance', title: 'Drop chance', dataType: 'percent'
-        }
+        key: 'source.npc.[droppedBy].dropChance', name: 'Drop chance', column: columnConfig.source.droppedBy.dropChance
       }, {
-        key: 'source.npc.[droppedBy].levelRange', name: 'Level range', column: {
-          key: 'source.npc.[droppedBy].levelRange', title: 'Level range', dataType: 'text'
-        }
+        key: 'source.npc.[droppedBy].levelRange', name: 'Level range', column: columnConfig.source.droppedBy.levelRange
       }
     ]
   },
@@ -240,38 +155,22 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Trade vendors',
     options: [
       {
-        key: 'source.tradeVendor.name', name: 'Currency', column: {
-          key: 'source.tradeVendor.name', title: 'Currency', dataType: 'name', options: {
-            idName: 'sourceID'
-          }
-        }
+        key: 'source.tradeVendor.name', name: 'Currency', column: columnConfig.source.tradeVendor.name
       },
       {
-        key: 'source.tradeVendor.bestValueName', name: 'Best value', column: {
-          key: 'source.tradeVendor.bestValueName', title: 'Best value', dataType: 'name', options: {
-            idName: 'itemID'
-          }
-        }
+        key: 'source.tradeVendor.bestValueName', name: 'Best value', column: columnConfig.source.tradeVendor.bestValueName
       },
       {
-        key: 'source.tradeVendor.roi', name: 'ROI', column: {
-          key: 'source.tradeVendor.roi', title: 'ROI', dataType: 'gold'
-        }
+        key: 'source.tradeVendor.roi', name: 'ROI', column: columnConfig.source.tradeVendor.roi
       },
       {
-        key: 'source.tradeVendor.value', name: 'Value', column: {
-          key: 'source.tradeVendor.value', title: 'Value', dataType: 'gold'
-        }
+        key: 'source.tradeVendor.value', name: 'Value', column: columnConfig.source.tradeVendor.value
       },
       {
-        key: 'source.tradeVendor.sourceBuyout', name: 'Source buyout', column: {
-          key: 'source.tradeVendor.sourceBuyout', title: 'Source buyout', dataType: 'gold'
-        }
+        key: 'source.tradeVendor.sourceBuyout', name: 'Source buyout', column: columnConfig.source.tradeVendor.sourceBuyout
       },
       {
-        key: 'source.tradeVendor.buyout', name: 'Best value buyout', column: {
-          key: 'source.tradeVendor.buyout', title: 'Best value buyout', dataType: 'gold'
-        }
+        key: 'source.tradeVendor.buyout', name: 'Best value buyout', column: columnConfig.source.tradeVendor.buyout
       }
     ]
   },
@@ -279,9 +178,7 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Inventory',
     options: [
       {
-        key: 'item.inventory.quantity', name: 'Quantity', column: {
-          key: 'item.inventory.quantity', title: 'Inventory qty', dataType: 'number'
-        }
+        key: 'item.inventory.quantity', name: 'Quantity', column: columnConfig.inventory.quantity
       }
     ]
   }

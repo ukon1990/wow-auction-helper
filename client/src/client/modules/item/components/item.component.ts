@@ -18,6 +18,7 @@ import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
+import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
 
 @Component({
   selector: 'wah-item',
@@ -250,6 +251,10 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
     if (item.auctions) {
       this.handleAuctionItem(item);
+    } else if (item.id && item.bonusIds) {
+      const id = item.id + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
+      const auctionItem: AuctionItem = this.auctionService.getById(id);
+      this.handleAuctionItem(auctionItem);
     } else if (item.itemID) {
       this.handleItemWithItemID(item);
     } else if (item.id) {
