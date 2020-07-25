@@ -15,6 +15,7 @@ const profitableCrafts: DashboardV2 = {
     columnConfig.auction.buyout,
     columnConfig.recipe.mostProfitableRank,
     columnConfig.recipe.mostProfitableROI,
+    columnConfig.recipe.mostProfitableCost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel
   ],
@@ -24,9 +25,10 @@ const profitableCrafts: DashboardV2 = {
   },
   rules: [{
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: columnConfig.recipe.mostProfitableROI.key,
-    toValue: 1.10
+    targetValueType: TargetValueEnum.PERCENT,
+    field: columnConfig.auction.buyout.key,
+    toValue: 1.10,
+    toField: columnConfig.recipe.mostProfitableCost.key
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
@@ -52,6 +54,7 @@ const profitableKnownCrafts: DashboardV2 = {
     columnConfig.auction.buyout,
     columnConfig.recipe.mostProfitableKnownRank,
     columnConfig.recipe.mostProfitableKnownROI,
+    columnConfig.recipe.mostProfitableKnownCost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel
   ],
@@ -62,8 +65,9 @@ const profitableKnownCrafts: DashboardV2 = {
   rules: [{
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
-    field: columnConfig.recipe.mostProfitableKnownROI.key,
-    toValue: 1.10
+    field: columnConfig.auction.buyout.key,
+    toValue: 1.10,
+    toField: columnConfig.recipe.mostProfitableKnownCost.key
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
@@ -99,7 +103,7 @@ const potentialDeals: DashboardV2 = {
   },
   rules: [{
     condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: 'bid',
     toValue: .9,
     toField: 'buyout',
@@ -242,12 +246,12 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
   },
   rules: [{
     condition: ConditionEnum.LESS_THAN,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.GOLD,
     field: 'buyout',
     toField: 'vendorSell'
   }, {
     condition: ConditionEnum.GREATER_THAN,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.GOLD,
     field: 'buyout',
     toValue: 0
   }, {

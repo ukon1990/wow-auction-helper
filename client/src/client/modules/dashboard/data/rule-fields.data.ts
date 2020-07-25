@@ -16,14 +16,10 @@ export const ruleFields: RuleFieldGroup[] = [
         key: 'item.expansionId', name: 'Expansion', column: columnConfig.item.expansion
       },
       {
-        key: 'item.itemSubClass', name: 'Item sub class'/*, column: {
-          key: 'petQuality', title: 'Item class', dataType: 'number'
-        }*/
+        key: 'item.itemClass', name: 'Item class'
       },
       {
-        key: 'item.itemSubClass', name: 'Item sub class'/*, column: {
-          key: 'petQuality', title: 'Item class', dataType: 'number'
-        }*/
+        key: 'item.itemSubClass', name: 'Item sub class'
       },
       {
         key: 'itemLevel', name: 'Item level', column: columnConfig.item.itemLevel
