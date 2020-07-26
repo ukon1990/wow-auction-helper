@@ -119,22 +119,35 @@ export class DashboardCalculateUtil {
     }
   }
 
-  private static getValue(item: AuctionItem, field: String): any {
+  private static getValue(item: AuctionItem, field: string): any {
     let value;
     if (!field) {
       return value;
     }
-    field.split('.')
-      .forEach(key => {
-        if (!value && item[key]) {
-          value = item[key];
-        } else if (value) {
-          value = value[key];
-        } else {
-          value = 0;
-        }
-      });
+    value = this.getValueFromField(field, item);
     return value;
+  }
+
+  private static getValueFromField(field: string, item: AuctionItem) {
+    const resultValues = [];
+    const regex = /[*\-\/+]/gi;
+    const mathExpressions = regex.exec(field);
+    field.split(regex)
+      .forEach((fieldPath, index) => {
+        let value;
+        fieldPath.split('.')
+          .forEach(key => {
+            if (!value && item[key]) {
+              value = item[key];
+            } else if (value) {
+              value = value[key];
+            } else {
+              value = 0;
+            }
+          });
+        resultValues.push(value);
+      });
+    return this.calculateField(resultValues, mathExpressions);
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[]) {
@@ -212,5 +225,33 @@ export class DashboardCalculateUtil {
     }
     return ((item ? item.itemID : undefined) || itemRule.itemId) +
       AuctionItemStat.bonusIdRaw((item || itemRule).bonusIds, false);
+  }
+
+  private static calculateField(resultValues: any[], mathExpressions: RegExpExecArray) {
+    if (resultValues.length < 2) {
+      return resultValues[0];
+    }
+    let value;
+    resultValues.forEach((v, index) => {
+      if (index === 0) {
+        value = v;
+        return;
+      }
+      switch (mathExpressions[index - 1]) {
+        case '/':
+          value /= v;
+          break;
+        case '*':
+          value *= v;
+          break;
+        case '+':
+          value += v;
+          break;
+        case '-':
+          value -= v;
+          break;
+      }
+    });
+    return value;
   }
 }

@@ -5,6 +5,7 @@ import {TargetValueEnum} from '../types/target-value.enum';
 import {DashboardCalculateUtil} from './dashboard-calculate.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {AuctionItem} from '../../auction/models/auction-item.model';
+import {Auction} from '../../auction/models/auction.model';
 
 const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   id: 'asd-dsa',
@@ -16,6 +17,9 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   }, {
     key: 'buyout',
     title: 'Buyout'
+  }, {
+    key: 'bid',
+    title: 'Bid'
   }, {
     key: 'source.recipe.known.0.roi',
     title: 'roi'
@@ -33,9 +37,13 @@ fdescribe('DashboardCalculateUtil', () => {
 
   const firstItem = new AuctionItem(1);
   firstItem.name = 'test';
+  firstItem.bid = 3;
   firstItem.buyout = 7;
   firstItem.mktPrice = 10;
   firstItem.source.recipe.known = [recipe1];
+  firstItem.auctions.push(new Auction(1, 1, 90, 50));
+  firstItem.auctions.push(new Auction(1, 1, 50, 11));
+  firstItem.auctions.push(new Auction(1, 1, 93, 1));
 
   const recipe2 = new Recipe();
   recipe2.roi = 10;
@@ -44,6 +52,7 @@ fdescribe('DashboardCalculateUtil', () => {
 
   const secondItem = new AuctionItem(2);
   secondItem.name = 'test2';
+  secondItem.bid = 101;
   secondItem.buyout = 99;
   secondItem.mktPrice = 99;
   secondItem.source.recipe.known = [recipe2];
@@ -242,26 +251,72 @@ fdescribe('DashboardCalculateUtil', () => {
   });
 
   describe('Can do math on fields', () => {
-    it('Can subtract', () => {
+    it('Can add', () => {
       const board: DashboardV2 = getBoard([
         {
           condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-          targetValueType: TargetValueEnum.PERCENT,
-          field: 'source.recipe.known.0.cost',
-          toValue: 1,
-          toField: 'buyout'
+          targetValueType: TargetValueEnum.GOLD,
+          field: 'buyout',
+          toValue: 1
         }
       ]);
+      board.columns.push({
+        key: 'bid+buyout',
+        title: 'Bid + Buyout',
+        dataType: 'number'
+      });
       board.sortRule = {
         field: 'buyout',
         sortDesc: true
       };
       DashboardCalculateUtil.calculate(board, auctionItems);
 
-      expect(board.data[0].buyout).toBe(secondItem.buyout);
+      expect(board.data[0]['bid+buyout']).toBe(200);
+    });
+
+    it('Can subtract', () => {
+      const board: DashboardV2 = getBoard([
+        {
+          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+          targetValueType: TargetValueEnum.GOLD,
+          field: 'buyout',
+          toValue: 1
+        }
+      ]);
+      board.columns.push({
+        key: 'bid-buyout',
+        title: 'Bid - Buyout',
+        dataType: 'number'
+      });
+      board.sortRule = {
+        field: 'buyout',
+        sortDesc: true
+      };
+      DashboardCalculateUtil.calculate(board, auctionItems);
+      console.log('xxx', board);
+      expect(board.data[0]['bid-buyout']).toBe(2);
     });
   });
 
-  describe('Can loop over array fields', () => {
+  xdescribe('Can loop over array fields', () => {
+    it('Loop', () => {
+
+      const board: DashboardV2 = getBoard([
+        {
+          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+          targetValueType: TargetValueEnum.PERCENT,
+          field: 'source.[auctions].buyout',
+          toValue: 51
+        }
+      ]);
+      board.sortRule = {
+        field: 'source.[auctions].buyout',
+        sortDesc: true
+      };
+      DashboardCalculateUtil.calculate(board, auctionItems);
+
+      expect(board.data.length).toBe(2);
+      expect(board.data[0]['source.[auctions].buyout']).toBe(secondItem.auctions[2].buyout);
+    });
   });
 });
