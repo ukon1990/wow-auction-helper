@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ObjectUtil} from '@ukon1990/js-utilities';
@@ -18,7 +18,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
   templateUrl: './configure.component.html',
   styleUrls: ['./configure.component.scss']
 })
-export class ConfigureComponent {
+export class ConfigureComponent implements AfterViewInit {
   @Output() event: EventEmitter<void> = new EventEmitter<void>();
   fields = ruleFields;
   professions: Profession[] = [];
@@ -40,6 +40,11 @@ export class ConfigureComponent {
     }),
   });
   private sm = new SubscriptionManager();
+  hasPanelBeenOpened = {
+    columns: false,
+    rules: true,
+    itemRules: false
+  };
 
 
   get itemRules(): FormArray {
@@ -50,20 +55,22 @@ export class ConfigureComponent {
     return this.form.get('rules') as FormArray;
   }
 
+  get columns(): FormArray {
+    return this.form.get('columns') as FormArray;
+  }
+
   constructor(
     public dialogRef: MatDialogRef<ConfigureComponent>,
     @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2,
-    private auctionService: AuctionsService,
-    private fb: FormBuilder, private professionService: ProfessionService) {
-    this.sm.add(this.professionService.listWithRecipes,
-      list =>
-        this.professions = list);
-
+    private auctionService: AuctionsService) {
     this.populateForm(dashboard);
-    this.sm.add(this.form.valueChanges, (board: DashboardV2) => {
-      this.tmpBoard = DashboardCalculateUtil.calculate(board, this.auctionService.mapped.value);
-      this.onEvent(board);
-    });
+    this.sm.add(this.form.valueChanges, (board: DashboardV2) => this.onEvent(board));
+  }
+
+  ngAfterViewInit(): void {
+    if (this.dashboard) {
+      this.tmpBoard = DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
+    }
   }
 
   private populateForm(board: DashboardV2) {
@@ -114,12 +121,15 @@ export class ConfigureComponent {
     formArray.push(form);
   }
 
-  onEvent(changes: any) {
+  onEvent(board: DashboardV2) {
+    console.log('Board update', board);
+    this.tmpBoard = DashboardCalculateUtil.calculate(board, this.auctionService.mapped.value);
     if (!this.dashboard) {
       this.hasChanges = true;
     } else {
+      return;
       const currentBoard: DashboardV2 = ObjectUtil.merge(
-        this.form.value,
+        board,
         ObjectUtil.clone(this.dashboard)
       ) as DashboardV2;
       this.hasChanges = !!ObjectUtil.getDifference(this.dashboard, currentBoard).length;

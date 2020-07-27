@@ -1,0 +1,71 @@
+<mat-card *ngIf="formArray"
+          [formGroup]="form"
+>
+  <mat-card-header *ngIf="displayHeader">
+    <mat-card-title>
+      Columns
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content formArrayName="columns">
+    <div *ngFor="let column of formArray.controls; let i = index"
+         class="row col-md-12">
+      <ng-container [formGroupName]="i">
+      <mat-form-field class="col">
+        <input matInput
+               placeholder="Value name"
+               formControlName="key"
+               type="text"
+        />
+      </mat-form-field>
+        <mat-form-field class="col">
+          <input matInput
+                 placeholder="Title"
+                 formControlName="title"
+                 type="text"
+          />
+        </mat-form-field>
+        <mat-form-field class="col">
+          <input matInput
+                 placeholder="Formatting/datatype"
+                 formControlName="dataType"
+                 type="text"
+          />
+        </mat-form-field>
+      <div class="col">
+        <button
+                mat-stroked-button
+                color="warn"
+                matTooltip="Delete"
+                (click)="formArray.removeAt(i)"
+        >
+          <fa-icon
+                  [icon]="faTrash"
+          >
+          </fa-icon>
+        </button>
+      </div>
+      </ng-container>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <mat-select [formControl]="columnSelectionField">
+      <mat-optgroup [label]="fieldGroup.name"
+                    *ngFor="let fieldGroup of fields">
+        <ng-container *ngFor="let field of fieldGroup.options">
+          <mat-option *ngIf="field.column"
+                      [matTooltip]="field.name"
+                      [value]="field.column">
+            {{ fieldGroup.name }}: {{ field.column.title }}
+          </mat-option>
+        </ng-container>
+      </mat-optgroup>
+    </mat-select>
+    <button mat-stroked-button
+            (click)="addColumn()"
+    >
+      Add new column
+    </button>
+  </mat-card-actions>
+</mat-card>

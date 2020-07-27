@@ -17,23 +17,46 @@ export const columnConfig = {
     },
     expansion: {
       key: 'item.expansionId', title: 'Expansion', dataType: 'expansion'
+    },
+    quality: {
+      key: 'quality', title: 'Quality', dataType: 'quality'
     }
   },
   auction: {
     buyout: {
       key: 'buyout',
-      title: 'Buyout',
+      title: 'Lowest buyout',
       dataType: 'gold',
+    },
+    mktPriceMinusBuyout: {
+      key: 'mktPrice-buyout',
+      title: 'ROI',
+      dataType: 'gold'
     },
     bid: {
       key: 'bid',
-      title: 'Bid',
+      title: 'Lowest bid',
       dataType: 'gold',
+    },
+    auctionsBid: {
+      key: '[auctions].bid',
+      title: 'Bid',
+      dataType: 'gold'
     },
     bidVsBuyout: {
       key: 'bid/buyout',
       title: 'Profit',
       dataType: 'percent'
+    },
+    buyoutVsVendorSell: {
+      key: 'buyout/vendorSell',
+      title: 'Vendor ROI',
+      dataType: 'percent'
+    },
+    auctionsBidMinusBuyout: {
+      key: 'buyout-[auctions].bid',
+      title: 'Profit',
+      dataType: 'gold'
     },
     regionSaleRate: {
       key: 'regionSaleRate',
@@ -104,8 +127,39 @@ export const columnConfig = {
     },
     mostProfitableKnownCost: {
       key: 'source.recipe.known.0.cost', title: 'Cost', dataType: 'gold'
-    }, mostProfitableName: {
-      key: 'source.recipe.all.0.name', title: 'Name', dataType: 'name'
+    },
+    mostProfitableKnownProfession: {
+      key: 'source.recipe.known.0.professionId',
+      title: 'Profession',
+      dataType: 'profession'
+    },
+    knownName: {
+      key: 'source.recipe.[known].name',
+      title: 'Name',
+      dataType: 'name'
+    },
+    knownRank: {
+      key: 'source.recipe.[known].rank',
+      title: 'Rank',
+      dataType: 'number'
+    },
+    knownROI: {
+      key: 'source.recipe.[known].roi',
+      title: 'Profit',
+      dataType: 'gold'
+    },
+    knownCost: {
+      key: 'source.recipe.[known].cost', title: 'Cost', dataType: 'gold'
+    },
+    knownProfession: {
+      key: 'source.recipe.[known].professionId',
+      title: 'Profession',
+      dataType: 'profession'
+    },
+    mostProfitableName: {
+      key: 'source.recipe.all.0.name',
+      title: 'Name',
+      dataType: 'name'
     },
     mostProfitableRank: {
       key: 'source.recipe.all.0.rank',
@@ -122,7 +176,36 @@ export const columnConfig = {
       title: 'Cost',
       dataType: 'gold'
     },
-
+    mostProfitableProfession: {
+      key: 'source.recipe.all.0.professionId',
+      title: 'Profession',
+      dataType: 'profession'
+    },
+    name: {
+      key: 'source.recipe.[all].name',
+      title: 'Name',
+      dataType: 'name'
+    },
+    rank: {
+      key: 'source.recipe.[all].rank',
+      title: 'Rank',
+      dataType: 'number'
+    },
+    ROI: {
+      key: 'source.recipe.[all].roi',
+      title: 'ROI',
+      dataType: 'gold'
+    },
+    cost: {
+      key: 'source.recipe.[all].cost',
+      title: 'Cost',
+      dataType: 'gold'
+    },
+    profession: {
+      key: 'source.recipe.[all].professionId',
+      title: 'Profession',
+      dataType: 'profession'
+    }
   },
   pet: {
     level: {

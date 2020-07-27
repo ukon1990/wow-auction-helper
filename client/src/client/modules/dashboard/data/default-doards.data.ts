@@ -13,14 +13,14 @@ const profitableCrafts: DashboardV2 = {
   columns: [
     columnConfig.item.name,
     columnConfig.auction.buyout,
-    columnConfig.recipe.mostProfitableRank,
-    columnConfig.recipe.mostProfitableROI,
-    columnConfig.recipe.mostProfitableCost,
+    columnConfig.recipe.rank,
+    columnConfig.recipe.ROI,
+    columnConfig.recipe.cost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel
   ],
   sortRule: {
-    field: columnConfig.recipe.mostProfitableROI.key,
+    field: columnConfig.recipe.ROI.key,
     sortDesc: true
   },
   rules: [{
@@ -28,12 +28,12 @@ const profitableCrafts: DashboardV2 = {
     targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.buyout.key,
     toValue: 1.10,
-    toField: columnConfig.recipe.mostProfitableCost.key
+    toField: columnConfig.recipe.cost.key
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.regionSaleRate.key,
-    toValue: .10
+    toValue: .15
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
@@ -52,27 +52,27 @@ const profitableKnownCrafts: DashboardV2 = {
   columns: [
     columnConfig.item.name,
     columnConfig.auction.buyout,
-    columnConfig.recipe.mostProfitableKnownRank,
-    columnConfig.recipe.mostProfitableKnownROI,
-    columnConfig.recipe.mostProfitableKnownCost,
+    columnConfig.recipe.knownRank,
+    columnConfig.recipe.knownROI,
+    columnConfig.recipe.knownCost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel
   ],
   sortRule: {
-    field: columnConfig.recipe.mostProfitableKnownROI.key,
+    field: columnConfig.recipe.knownROI.key,
     sortDesc: true
   },
   rules: [{
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.buyout.key,
     toValue: 1.10,
-    toField: columnConfig.recipe.mostProfitableKnownCost.key
+    toField: columnConfig.recipe.knownCost.key
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.regionSaleRate.key,
-    toValue: .10
+    toValue: .15
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
@@ -87,64 +87,27 @@ const potentialDeals: DashboardV2 = {
   idIsBackendGenerated: false,
   sortOrder: 2,
   idParam: 'id',
-  title: 'Potential 2 hour bid deals',
-  columns: [
-    columnConfig.item.name,
-    columnConfig.auction.bid,
-    columnConfig.auction.buyout,
-    columnConfig.auction.bidVsBuyout,
-    columnConfig.item.vendorSell,
-    columnConfig.auction.quantity,
-    columnConfig.auction.timeLeft
-  ],
-  sortRule: {
-    field: 'bid',
-    sortDesc: true
-  },
-  rules: [{
-    condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.PERCENT,
-    field: 'bid',
-    toValue: .9,
-    toField: 'buyout',
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: 'regionSaleRate',
-    toValue: .30
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: 'avgDailySold',
-    toValue: 1
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.PERCENT,
-    field: 'bid',
-    toValue: .1,
-    toField: 'buyout'
-  }],
-  data: []
-};
-
-const potentialBidDeals: DashboardV2 = {
-  id: generateUUID(),
-  idIsBackendGenerated: false,
-  sortOrder: 3,
-  idParam: 'id',
   title: 'Potential deals',
   columns: [
     columnConfig.item.name,
     columnConfig.auction.mktPrice,
     columnConfig.auction.buyout,
+    columnConfig.auction.mktPriceMinusBuyout,
+    columnConfig.item.vendorSell,
     columnConfig.auction.avgDailySold,
-    columnConfig.auction.regionSaleRate
+    columnConfig.auction.regionSaleRate,
+    columnConfig.auction.regionSaleAvg,
   ],
   sortRule: {
-    field: 'buyout',
+    field: 'mktPrice-buyout',
     sortDesc: true
   },
   rules: [{
+    condition: ConditionEnum.GREATER_THAN,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: 'quality',
+    toValue: 0
+  }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: 'regionSaleRate',
@@ -169,45 +132,37 @@ const potentialBidDeals: DashboardV2 = {
   data: []
 };
 
-const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
+const potentialBidDeals: DashboardV2 = {
   id: generateUUID(),
   idIsBackendGenerated: false,
-  sortOrder: 4,
+  sortOrder: 3,
   idParam: 'id',
-  title: 'Potential 2 hour bid deals',
+  title: 'Potential bid deals',
   columns: [
     columnConfig.item.name,
-    columnConfig.auction.bid,
+    columnConfig.auction.auctionsBid,
     columnConfig.auction.buyout,
-    columnConfig.auction.bidVsBuyout,
+    columnConfig.auction.auctionsBidMinusBuyout,
     columnConfig.item.vendorSell,
     columnConfig.auction.quantity,
     columnConfig.auction.timeLeft
   ],
   sortRule: {
-    field: 'bid',
+    field: columnConfig.auction.auctionsBidMinusBuyout.key,
     sortDesc: true
   },
-  rules: [{
-    condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: 'bid',
-    toValue: .9,
-    toField: 'buyout',
-  },
+  rules: [
     {
-      condition: ConditionEnum.EQUAL_TO,
-      targetValueType: TargetValueEnum.NUMBER,
-      field: '[auctions].timeLeft',
-      toValue: 'MEDIUM',
-      or: [
-        {
-          condition: ConditionEnum.EQUAL_TO,
-          targetValueType: TargetValueEnum.NUMBER,
-          field: '[auctions].timeLeft',
-          toValue: 'SHORT'
-        }
-      ]
+      condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.GOLD,
+      field: 'bid',
+      toValue: .9,
+      toField: 'buyout',
+    }, {
+      condition: ConditionEnum.GREATER_THAN,
+      targetValueType: TargetValueEnum.GOLD,
+      field: 'bid',
+      toValue: 0
     },
     {
       condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
@@ -220,12 +175,58 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
       field: 'avgDailySold',
       toValue: 1
     }, {
-      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      condition: ConditionEnum.GREATER_THAN,
+      targetValueType: TargetValueEnum.NUMBER,
+      field: 'quality',
+      toValue: 0
+    }, {
+      condition: ConditionEnum.GREATER_THAN,
+      targetValueType: TargetValueEnum.GOLD,
+      field: '[auctions].bid',
+      toValue: 0
+    }, {
+      condition: ConditionEnum.LESS_THAN,
       targetValueType: TargetValueEnum.PERCENT,
-      field: 'bid',
-      toValue: .1,
+      field: '[auctions].bid',
+      toValue: .9,
       toField: 'buyout'
     }],
+  data: []
+};
+
+const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
+  id: generateUUID(),
+  idIsBackendGenerated: false,
+  sortOrder: 4,
+  idParam: 'id',
+  title: 'Potential 2 hour bid deals',
+  columns: [
+    columnConfig.item.name,
+    columnConfig.auction.bid,
+    columnConfig.auction.buyout,
+    columnConfig.auction.auctionsBidMinusBuyout,
+    columnConfig.item.vendorSell,
+    columnConfig.auction.quantity,
+    columnConfig.auction.timeLeft
+  ],
+  sortRule: {
+    field: columnConfig.auction.auctionsBidMinusBuyout.key,
+    sortDesc: true
+  },
+  rules: [...potentialBidDeals.rules, {
+    condition: ConditionEnum.EQUAL_TO,
+    targetValueType: TargetValueEnum.TEXT,
+    field: '[auctions].timeLeft',
+    toValue: 'MEDIUM',
+    or: [
+      {
+        condition: ConditionEnum.EQUAL_TO,
+        targetValueType: TargetValueEnum.TEXT,
+        field: '[auctions].timeLeft',
+        toValue: 'SHORT'
+      }
+    ]
+  }],
   data: []
 };
 
@@ -236,9 +237,10 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
   idParam: 'id',
   title: 'Buyout below vendor sell price',
   columns: [
-    {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-    {key: 'vendorSell', title: 'Vendor sell', dataType: 'gold'}
+    columnConfig.item.name,
+    columnConfig.auction.buyout,
+    columnConfig.item.vendorSell,
+    columnConfig.auction.buyoutVsVendorSell,
   ],
   sortRule: {
     field: 'buyout',

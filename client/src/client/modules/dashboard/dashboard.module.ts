@@ -35,6 +35,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { RulesComponent } from './components/configure/rules/rules.component';
 import { ItemRulesComponent } from './components/configure/item-rules/item-rules.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { ColumnsComponent } from './components/configure/columns/columns.component';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
         ConfigureComponent,
         RulesComponent,
         ItemRulesComponent,
+        ColumnsComponent,
     ],
     imports: [
         CommonModule,

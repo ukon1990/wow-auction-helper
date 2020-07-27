@@ -9,15 +9,21 @@
         </mat-form-field>
 
         <mat-accordion>
-            <mat-expansion-panel>
+            <mat-expansion-panel (opened)="hasPanelBeenOpened.columns = true">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        Columns ({{rules.length}})
+                        Columns ({{columns.length}})
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                TODO
+                <wah-columns *ngIf="hasPanelBeenOpened.columns"
+                    [columns]="dashboard?.columns"
+                    [form]="form"
+                >
+                </wah-columns>
             </mat-expansion-panel>
-            <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel
+                    [expanded]="true"
+            >
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         Rules ({{rules.length}})
@@ -28,13 +34,13 @@
                         [rules]="dashboard?.rules"
                 ></wah-rules>
             </mat-expansion-panel>
-            <mat-expansion-panel>
+            <mat-expansion-panel (opened)="hasPanelBeenOpened.itemRules = true">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         Item rules ({{itemRules.length}})
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <wah-item-rules
+                <wah-item-rules *ngIf="hasPanelBeenOpened.itemRules"
                         [form]="form"
                         [rules]="dashboard?.itemRules"
                 ></wah-item-rules>

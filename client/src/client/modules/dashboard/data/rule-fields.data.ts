@@ -22,6 +22,9 @@ export const ruleFields: RuleFieldGroup[] = [
         key: 'item.itemSubClass', name: 'Item sub class'
       },
       {
+        key: 'quality', name: 'Quality', column: columnConfig.item.quality
+      },
+      {
         key: 'itemLevel', name: 'Item level', column: columnConfig.item.itemLevel
       },
       {
@@ -43,7 +46,15 @@ export const ruleFields: RuleFieldGroup[] = [
         key: 'buyout', name: 'Buyout', column: columnConfig.auction.buyout
       },
       {
-        key: 'bid', name: 'Bid', column: columnConfig.auction.bid
+        key: 'bid', name: 'Lowest bid', column: columnConfig.auction.bid
+      },
+      {
+        key: '[auctions].bid', name: 'Auction bid', column: columnConfig.auction.bid
+      },
+      {
+        key: columnConfig.auction.buyoutVsVendorSell.key,
+        name: columnConfig.auction.buyoutVsVendorSell.title,
+        column: columnConfig.auction.buyoutVsVendorSell
       },
       {
         key: 'regionSaleRate', name: 'Sale rate', column: columnConfig.auction.regionSaleRate
@@ -87,13 +98,29 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Known recipes',
     options: [
       {
-        key: 'source.recipe.0.known.name', name: 'Name', column: columnConfig.recipe.mostProfitableKnownName
+        key: columnConfig.recipe.knownName.key,
+        name: 'Name',
+        column: columnConfig.recipe.knownName
       },
       {
-        key: 'source.recipe.known.0.cost', name: 'Cost', column: columnConfig.recipe.mostProfitableKnownCost
+        key: columnConfig.recipe.knownRank.key,
+        name: 'Rank',
+        column: columnConfig.recipe.knownRank
       },
       {
-        key: 'source.recipe.known.0.roi', name: 'ROI', column: columnConfig.recipe.mostProfitableKnownROI
+        key: columnConfig.recipe.knownCost.key,
+        name: 'Cost',
+        column: columnConfig.recipe.knownCost
+      },
+      {
+        key: columnConfig.recipe.knownROI.key,
+        name: 'ROI',
+        column: columnConfig.recipe.knownROI
+      },
+      {
+        key: columnConfig.recipe.knownProfession.key,
+        name: 'Profession',
+        column: columnConfig.recipe.knownProfession
       }
     ]
   },
@@ -101,13 +128,29 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: All recipes',
     options: [
       {
-        key: 'source.recipe.all.0.name', name: 'Name', column: columnConfig.recipe.mostProfitableName
+        key: columnConfig.recipe.name.key,
+        name: 'Name',
+        column: columnConfig.recipe.name
       },
       {
-        key: 'source.recipe.all.0.cost', name: 'Cost', column: columnConfig.recipe.mostProfitableCost
+        key: columnConfig.recipe.rank.key,
+        name: 'Rank',
+        column: columnConfig.recipe.rank
       },
       {
-        key: 'source.recipe.all.0.roi', name: 'ROI', column: columnConfig.recipe.mostProfitableROI
+        key: columnConfig.recipe.cost.key,
+        name: 'Cost',
+        column: columnConfig.recipe.cost
+      },
+      {
+        key: columnConfig.recipe.ROI.key,
+        name: 'ROI',
+        column: columnConfig.recipe.ROI
+      },
+      {
+        key: columnConfig.recipe.profession.key,
+        name: 'Profession',
+        column: columnConfig.recipe.profession
       }
     ]
   },
