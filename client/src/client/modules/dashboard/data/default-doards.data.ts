@@ -322,9 +322,70 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   data: []
 };
 
+const getKnownProfessionBoards: DashboardV2[] = [
+  {id: 794, name: 'Archaelogy'},
+  {id: 171, name: 'Alchemy'},
+  {id: 164, name: 'Blacksmithing'},
+  {id: 185, name: 'Cooking'},
+  {id: 202, name: 'Engineering'},
+  {id: 333, name: 'Enchanting'},
+  {id: 356, name: 'Fishing'},
+  {id: 182, name: 'Herbalism'},
+  {id: 773, name: 'Inscription'},
+  {id: 755, name: 'Jewelcrafting'},
+  {id: 165, name: 'Leatherworking'},
+  {id: 186, name: 'Mining'},
+  {id: 393, name: 'Skinning'},
+  {id: 197, name: 'Tailoring'}
+].map(p => ({
+  id: generateUUID(),
+  idIsBackendGenerated: false,
+  sortOrder: 1,
+  idParam: 'id',
+  title: p.name,
+  columns: [
+    columnConfig.item.name,
+    columnConfig.auction.buyout,
+    columnConfig.recipe.knownRank,
+    columnConfig.recipe.knownROI,
+    columnConfig.recipe.knownCost,
+    columnConfig.auction.regionSaleRate,
+    columnConfig.item.itemLevel,
+    columnConfig.shoppingCartInput
+  ],
+  sortRule: {
+    field: columnConfig.recipe.knownROI.key,
+    sortDesc: true
+  },
+  rules: [{
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.PERCENT,
+    field: columnConfig.auction.buyout.key,
+    toValue: 1.10,
+    toField: columnConfig.recipe.knownCost.key
+  }, {
+    condition: ConditionEnum.EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: columnConfig.recipe.knownProfession.key,
+    toValue: p.id
+  }, {
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: columnConfig.auction.regionSaleRate.key,
+    toValue: .15
+  }, {
+    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+    targetValueType: TargetValueEnum.NUMBER,
+    field: columnConfig.auction.avgDailySold.key,
+    toValue: 1
+  }],
+  data: []
+}));
+
 export const defaultBoards: DashboardV2[] = [
   profitableCrafts,
   profitableKnownCrafts,
+  ...getKnownProfessionBoards,
   potentialDeals,
   potentialBidDeals,
   potentialBidDealsWith2HOrLessLeft,

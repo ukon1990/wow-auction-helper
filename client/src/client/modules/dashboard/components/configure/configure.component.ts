@@ -2,13 +2,11 @@ import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output} from '@a
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ObjectUtil} from '@ukon1990/js-utilities';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../data/rule-fields.data';
 import {Profession} from '../../../../../../../api/src/profession/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {ProfessionService} from '../../../crafting/services/profession.service';
 import {DashboardV2} from '../../models/dashboard-v2.model';
-import {ColumnDescription} from '../../../table/models/column-description';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DashboardCalculateUtil} from '../../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../../services/auctions.service';
@@ -18,7 +16,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
   templateUrl: './configure.component.html',
   styleUrls: ['./configure.component.scss']
 })
-export class ConfigureComponent implements AfterViewInit {
+export class ConfigureComponent implements OnInit, AfterViewInit {
   @Output() event: EventEmitter<void> = new EventEmitter<void>();
   fields = ruleFields;
   professions: Profession[] = [];
@@ -64,61 +62,33 @@ export class ConfigureComponent implements AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2,
     private auctionService: AuctionsService) {
     this.populateForm(dashboard);
-    this.sm.add(this.form.valueChanges, (board: DashboardV2) => this.onEvent(board));
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     if (this.dashboard) {
       this.tmpBoard = DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
     }
   }
 
+  ngAfterViewInit() {
+    this.sm.add(this.form.valueChanges, (board: DashboardV2) => this.onEvent(board));
+  }
+
   private populateForm(board: DashboardV2) {
     if (!board) {
-      this.addDefaultColumns();
+      // this.addDefaultColumns();
       return;
     }
     this.form.controls.title.setValue(board.title);
     this.form.controls.onlyItemsWithRules.setValue(board.onlyItemsWithRules);
     this.form.controls.isDisabled.setValue(board.isDisabled);
 
+    /*
     if (board.columns) {
       board.columns.forEach(column => {
         this.addColumn(undefined, column);
       });
-    }
-  }
-
-  private addDefaultColumns() {
-    this.addColumn(undefined, {
-      key: 'name', title: 'Name', dataType: 'name', options: {idName: 'id'}
-    });
-    this.addColumn(undefined, {
-      key: 'buyout', title: 'Buyout', dataType: 'gold'
-    });
-    this.addColumn(undefined, {
-      key: 'mktPrice',
-      title: 'Market value',
-      dataType: 'gold'
-    });
-    this.addColumn(undefined, {
-      key: 'regionSaleRate',
-      title: 'Sale rate',
-      dataType: 'percent'
-    });
-  }
-
-  addColumn(formArray: FormArray = this.form.controls.columns as FormArray, column?: ColumnDescription): void {
-    const form = new FormGroup({
-      key: new FormControl(column ? column.key : null, Validators.required),
-      title: new FormControl(column ? column.title : null, Validators.required),
-      dataType: new FormControl(column ? column.dataType : null, Validators.required),
-      /*
-      toField: new FormControl(column ? column.toField : null),
-      toValue: new FormControl(column ? column.toValue : null),
-      */
-    });
-    formArray.push(form);
+    }*/
   }
 
   onEvent(board: DashboardV2) {

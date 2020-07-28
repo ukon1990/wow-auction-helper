@@ -11,10 +11,11 @@
     <div *ngFor="let rule of formArray.controls; let i = index"
          class="row col-md-12">
       <ng-container [formGroupName]="i">
-        <mat-form-field class="col">
+        <mat-form-field class="col"
+                        color="accent">
           <mat-select
-                  placeholder="Field"
-                  formControlName="field"
+            placeholder="Field"
+            formControlName="field"
           >
             <mat-optgroup [label]="fieldGroup.name"
                           *ngFor="let fieldGroup of fields">
@@ -31,8 +32,8 @@
         </mat-form-field>
         <mat-form-field class="col">
           <mat-select
-                  placeholder="Comparison logic"
-                  formControlName="condition"
+            placeholder="Comparison logic"
+            formControlName="condition"
           >
             <mat-option *ngFor="let condition of conditionLocale"
                         [value]="condition.id"
@@ -42,7 +43,8 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field class="col">
+        <mat-form-field class="col"
+                        color="accent">
           <mat-select placeholder="Value type"
                       formControlName="targetValueType">
             <mat-option value="GOLD">
@@ -60,11 +62,12 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field class="col"
+                        color="accent"
                         [ngStyle]="{'visibility': shouldDisplayInputField(i) ? '': 'hidden'}"
         >
           <mat-select
-                  placeholder="Field"
-                  formControlName="toField"
+            placeholder="Field"
+            formControlName="toField"
           >
             <mat-option [value]="null">
               None (use value instead)
@@ -83,12 +86,13 @@
           </mat-select>
         </mat-form-field>
         <ng-container>
-          <mat-form-field class="col">
+          <mat-form-field class="col"
+                          color="accent">
             <ng-container>
               <ng-container *ngIf="isFieldType(i, 'profession');
                 else expansionSelectTemplate">
                 <mat-select placeholder="Profession"
-                        formControlName="toValue">
+                            formControlName="toValue">
                   <mat-option *ngFor="let profession of professions" [value]="profession.id">
                     {{profession.name}}
                   </mat-option>
@@ -98,7 +102,7 @@
               <ng-template #expansionSelectTemplate>
                 <ng-container *ngIf="isFieldType(i, 'expansion'); else itemClassSelectTemplate">
                   <mat-select placeholder="Expansion"
-                          formControlName="toValue">
+                              formControlName="toValue">
                     <mat-option *ngFor="let expansion of expansions; let i = index"
                                 [value]="i">
                       {{expansion}}
@@ -110,9 +114,9 @@
               <ng-template #itemClassSelectTemplate>
                 <ng-container *ngIf="isFieldType(i, 'itemClass'); else valueTypeBasedTemplate">
                   <mat-select placeholder="Item class"
-                          formControlName="toValue">
+                              formControlName="toValue">
                     <mat-option *ngFor="let itemClass of itemClasses"
-                                [value]="itemClass.id">
+                                [value]="itemClass.class">
                       {{itemClass.name}}
                     </mat-option>
                   </mat-select>
@@ -154,13 +158,13 @@
         </ng-container>
         <div class="col">
           <button
-                  mat-stroked-button
-                  color="warn"
-                  matTooltip="Delete"
-                  (click)="formArray.removeAt(i)"
+            mat-stroked-button
+            color="warn"
+            matTooltip="Delete"
+            (click)="formArray.removeAt(i)"
           >
             <fa-icon
-                    [icon]="faTrash"
+              [icon]="faTrash"
             >
             </fa-icon>
           </button>
@@ -172,6 +176,7 @@
   <mat-card-actions>
     <button mat-stroked-button
             (click)="addRule()"
+            color="accent"
     >
       Add new rule
     </button>

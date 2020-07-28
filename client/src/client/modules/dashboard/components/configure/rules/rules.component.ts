@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {conditionLocale} from 'client/modules/dashboard/types/condition.enum';
@@ -15,7 +15,7 @@ import {itemClasses} from 'client/models/item/item-classes';
   templateUrl: './rules.component.html',
   styleUrls: ['./rules.component.scss']
 })
-export class RulesComponent implements AfterViewInit, OnDestroy {
+export class RulesComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() rules: Rule[];
   @Input() displayHeader: boolean;
@@ -37,8 +37,9 @@ export class RulesComponent implements AfterViewInit, OnDestroy {
         this.professions = list);
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     if (this.rules) {
+      this.formArray.clear();
       this.rules.forEach(rule =>
         this.addRule(undefined, rule));
     }
@@ -48,7 +49,7 @@ export class RulesComponent implements AfterViewInit, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  addRule(formArray: FormArray = this.form.controls.rules as FormArray, rule?: Rule): void {
+  addRule(formArray: FormArray = this.formArray, rule?: Rule): void {
     const form = new FormGroup({
       condition: new FormControl(rule ? rule.condition : null, Validators.required),
       targetValueType: new FormControl(rule ? rule.targetValueType : null, Validators.required),

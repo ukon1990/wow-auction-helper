@@ -1,8 +1,8 @@
 <mat-card *ngIf="formArray"
           [formGroup]="form"
 >
-    <mat-checkbox
-            formControlName="onlyItemsWithRules"
+    <mat-checkbox color="accent"
+                  formControlName="onlyItemsWithRules"
     >
         Only include items with a rule connected to it
     </mat-checkbox>
@@ -43,14 +43,14 @@
 
     <mat-card-actions>
         <div class="row">
-            <mat-form-field class="col">
+            <mat-form-field class="col"
+                            color="accent">
                 <input matInput
                        placeholder="Query for item/pet"
                        aria-label="Recipe"
                        [matAutocomplete]="auto"
                        [formControl]="itemSearchForm">
-                <mat-autocomplete #auto="matAutocomplete"
-                >
+                <mat-autocomplete #auto="matAutocomplete">
                     <mat-option *ngFor="let item of filteredItems"
                                 [value]="item.name"
                                 (click)="setItem(item)">

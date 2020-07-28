@@ -13,24 +13,29 @@ import {SharedService} from '../../../services/shared.service';
 import {ItemService} from '../../../services/item.service';
 import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {Report} from "../../../utils/report.util";
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {
-    items.forEach(item => {
-      item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
-      if (item.source.recipe.all) {
-        item.source.recipe.all.sort((a, b) => b.roi - a.roi);
-      }
-      item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
-      item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
-      if (item.source.recipe.known) {
-        item.source.recipe.known.sort((a, b) => b.roi - a.roi);
-      }
+    try {
+      items.forEach(item => {
+        item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
+        if (item.source.recipe.all) {
+          item.source.recipe.all.sort((a, b) => b.roi - a.roi);
+        }
+        item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
+        item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
+        if (item.source.recipe.known) {
+          item.source.recipe.known.sort((a, b) => b.roi - a.roi);
+        }
 
-      item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
-      item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
-      item.item = ItemService.mapped.value.get(item.itemID);
-    });
+        item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
+        item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
+        item.item = ItemService.mapped.value.get(item.itemID);
+      });
+    } catch (error) {
+      ErrorReport.sendError('DashboardCalculateUtil.setItemSources', error);
+    }
   }
 
   static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
@@ -42,10 +47,9 @@ export class DashboardCalculateUtil {
         this.addMatchingBoardRules(board, items, dataMap);
         this.addMatchingItemRules(board, dataMap, items);
       }
-
-      console.log(board);
-
       this.assignAndSortDataToBoard(dataMap, board);
+
+      Report.debug('DashboardCalculateUtil.calculate', board);
     } catch (error) {
       ErrorReport.sendError('DashboardCalculateUtil.calculate', error);
     }
@@ -132,7 +136,7 @@ export class DashboardCalculateUtil {
   }
 
   private static getParamWithArrayIndicator(iterableKeyRules: Rule[]) {
-    if (iterableKeyRules[0].field .indexOf('[') > -1) {
+    if (iterableKeyRules[0].field.indexOf('[') > -1) {
       return iterableKeyRules[0].field;
     }
     return iterableKeyRules[0].toField;

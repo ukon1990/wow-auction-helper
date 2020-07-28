@@ -2,6 +2,11 @@ import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {ItemRule, Rule} from './rule.model';
 import {ColumnDescription} from '../../table/models/column-description';
 
+export interface SortRule {
+  field: string;
+  sortDesc?: boolean;
+}
+
 export interface DashboardV2 {
   id?: string; // UUID type id?
   parentId?: string;
@@ -11,10 +16,7 @@ export interface DashboardV2 {
   sortOrder: number;
   isDisabled?: boolean;
   onlyItemsWithRules?: boolean;
-  sortRule?: {
-    field: string;
-    sortDesc?: boolean
-  };
+  sortRule?: SortRule;
   rules: Rule[];
   itemRules?: ItemRule[];
 

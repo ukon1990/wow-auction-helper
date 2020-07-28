@@ -9,40 +9,48 @@
         </mat-form-field>
 
         <mat-accordion>
-            <mat-expansion-panel (opened)="hasPanelBeenOpened.columns = true">
+            <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         Columns ({{columns.length}})
                     </mat-panel-title>
+                    <mat-panel-description>
+                        Add or edit the table columns for this board and the sort column
+                    </mat-panel-description>
                 </mat-expansion-panel-header>
-                <wah-columns *ngIf="hasPanelBeenOpened.columns"
-                    [columns]="dashboard?.columns"
-                    [form]="form"
+                <wah-columns
+                             [columns]="dashboard?.columns"
+                             [sortOrder]="dashboard?.sortRule"
+                             [form]="form"
                 >
                 </wah-columns>
             </mat-expansion-panel>
-            <mat-expansion-panel
-                    [expanded]="true"
-            >
+            <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         Rules ({{rules.length}})
                     </mat-panel-title>
+                    <mat-panel-description>
+                        Add or edit the main rules for this board
+                    </mat-panel-description>
                 </mat-expansion-panel-header>
                 <wah-rules
                         [form]="form"
                         [rules]="dashboard?.rules"
                 ></wah-rules>
             </mat-expansion-panel>
-            <mat-expansion-panel (opened)="hasPanelBeenOpened.itemRules = true">
+            <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         Item rules ({{itemRules.length}})
                     </mat-panel-title>
+                    <mat-panel-description>
+                        Add or edit item specific rules
+                    </mat-panel-description>
                 </mat-expansion-panel-header>
-                <wah-item-rules *ngIf="hasPanelBeenOpened.itemRules"
-                        [form]="form"
-                        [rules]="dashboard?.itemRules"
+                <wah-item-rules
+                                [form]="form"
+                                [rules]="dashboard?.itemRules"
                 ></wah-item-rules>
             </mat-expansion-panel>
         </mat-accordion>

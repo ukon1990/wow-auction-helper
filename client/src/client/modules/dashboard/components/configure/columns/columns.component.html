@@ -7,25 +7,46 @@
     </mat-card-title>
   </mat-card-header>
 
+  <mat-card-content formGroupName="sortRule">
+    <mat-form-field color="accent">
+      <mat-select formControlName="field"
+        placeholder="Sort by column">
+        <mat-option
+                *ngFor="let column of formArray.controls"
+                [value]="column.value?.key"
+        >
+          {{ column.value?.title }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox formControlName="sortDesc"
+                  color="accent">
+      Sort descending
+    </mat-checkbox>
+  </mat-card-content>
+
   <mat-card-content formArrayName="columns">
     <div *ngFor="let column of formArray.controls; let i = index"
          class="row col-md-12">
       <ng-container [formGroupName]="i">
-      <mat-form-field class="col">
+      <mat-form-field class="col"
+                      color="accent">
         <input matInput
                placeholder="Value name"
                formControlName="key"
                type="text"
         />
       </mat-form-field>
-        <mat-form-field class="col">
+        <mat-form-field class="col"
+                        color="accent">
           <input matInput
                  placeholder="Title"
                  formControlName="title"
                  type="text"
           />
         </mat-form-field>
-        <mat-form-field class="col">
+        <mat-form-field class="col"
+                        color="accent">
           <input matInput
                  placeholder="Formatting/datatype"
                  formControlName="dataType"
@@ -50,19 +71,23 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <mat-select [formControl]="columnSelectionField">
-      <mat-optgroup [label]="fieldGroup.name"
-                    *ngFor="let fieldGroup of fields">
-        <ng-container *ngFor="let field of fieldGroup.options">
-          <mat-option *ngIf="field.column"
-                      [matTooltip]="field.name"
-                      [value]="field.column">
-            {{ fieldGroup.name }}: {{ field.column.title }}
-          </mat-option>
-        </ng-container>
-      </mat-optgroup>
-    </mat-select>
+    <mat-form-field color="accent">
+      <mat-select placeholder="Select a field to add"
+              [formControl]="columnSelectionField">
+        <mat-optgroup [label]="fieldGroup.name"
+                      *ngFor="let fieldGroup of fields">
+          <ng-container *ngFor="let field of fieldGroup.options">
+            <mat-option *ngIf="field.column"
+                        [matTooltip]="field.name"
+                        [value]="field.column">
+              {{ fieldGroup.name }}: {{ field.column.title }}
+            </mat-option>
+          </ng-container>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
     <button mat-stroked-button
+            color="accent"
             (click)="addColumn()"
     >
       Add new column
