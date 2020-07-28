@@ -12,10 +12,10 @@
       <mat-select formControlName="field"
         placeholder="Sort by column">
         <mat-option
-                *ngFor="let column of formArray.controls"
-                [value]="column.value?.key"
+                *ngFor="let column of selectedColumns"
+                [value]="column.key"
         >
-          {{ column.value?.title }}
+          {{ column.title }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -32,9 +32,11 @@
       <mat-form-field class="col"
                       color="accent">
         <input matInput
-               placeholder="Value name"
+               placeholder="Value key"
                formControlName="key"
                type="text"
+               matTooltip="This is to indicate the type of data that is set to the column.
+               [name] indicates that it will check through lists etc."
         />
       </mat-form-field>
         <mat-form-field class="col"
@@ -43,15 +45,48 @@
                  placeholder="Title"
                  formControlName="title"
                  type="text"
+                 matTooltip="The name that is displayed in the column header"
           />
         </mat-form-field>
         <mat-form-field class="col"
-                        color="accent">
-          <input matInput
-                 placeholder="Formatting/datatype"
-                 formControlName="dataType"
-                 type="text"
-          />
+                        color="accent"
+                        matTooltip="The way the column will be formatted"
+        >
+          <mat-select formControlName="dataType">
+            <mat-option value="gold">
+              Gold
+            </mat-option>
+            <mat-option value="number">
+              Number
+            </mat-option>
+            <mat-option value="percent">
+              Percent
+            </mat-option>
+            <mat-option value="text">
+              Text
+            </mat-option>
+            <mat-option value="name">
+              Name
+            </mat-option>
+            <mat-option value="boolean">
+              Checkbox
+            </mat-option>
+            <mat-option value="zone">
+              Zone
+            </mat-option>
+            <mat-option value="materials">
+              Materials
+            </mat-option>
+            <mat-option value="expansion">
+              Expansion
+            </mat-option>
+            <mat-option value="time-left">
+              Time left
+            </mat-option>
+            <mat-option value="cart-recipe-count">
+              # in cart
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       <div class="col">
         <button

@@ -17,6 +17,7 @@ export class ColumnsComponent implements OnInit, OnDestroy {
   @Input() columns: ColumnDescription[];
   @Input() sortOrder: SortRule;
   @Input() displayHeader: boolean;
+  selectedColumns: ColumnDescription[] = [];
   faTrash = faTrashAlt;
   fields = ruleFields;
   columnSelectionField: FormControl = new FormControl(columnConfig.item.name, Validators.required);
@@ -42,7 +43,10 @@ export class ColumnsComponent implements OnInit, OnDestroy {
     } else {
       this.columns.forEach(column =>
         this.addColumn(undefined, column));
+      this.selectedColumns = this.formArray.getRawValue();
     }
+    this.sm.add(this.formArray.valueChanges,
+      (values) => this.selectedColumns = values);
   }
 
   ngOnDestroy() {
@@ -71,9 +75,14 @@ export class ColumnsComponent implements OnInit, OnDestroy {
   addColumn(formArray: FormArray = this.formArray,
             column: ColumnDescription = this.columnSelectionField.value as ColumnDescription): void {
     const form = new FormGroup({
-      key: new FormControl(column ? column.key : null, Validators.required),
+      key: new FormControl({
+        value: column ? column.key : null,
+        disabled: true
+      }, Validators.required),
       title: new FormControl(column ? column.title : null, Validators.required),
-      dataType: new FormControl(column ? column.dataType : null, Validators.required),
+      dataType: new FormControl({
+        value: column ? column.dataType : null, disabled: true
+      }, Validators.required),
       hideOnMobile: new FormControl(column ? column.hideOnMobile : null),
     });
     formArray.push(form);
