@@ -18,11 +18,14 @@
           >
             <mat-optgroup [label]="fieldGroup.name"
                           *ngFor="let fieldGroup of fields">
-              <mat-option *ngFor="let field of fieldGroup.options"
-                          [matTooltip]="field.name"
-                          [value]="field.key">
-                {{ fieldGroup.name }}: {{ field.name }}
-              </mat-option>
+              <ng-container *ngFor="let field of fieldGroup.options">
+                <mat-option *ngIf="field.key"
+                            [value]="field.key"
+                            [matTooltip]="field.name"
+                >
+                  {{ fieldGroup.name }}: {{ field.name }}
+                </mat-option>
+              </ng-container>
             </mat-optgroup>
           </mat-select>
         </mat-form-field>
@@ -56,7 +59,9 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field class="col">
+        <mat-form-field class="col"
+                        [ngStyle]="{'visibility': shouldDisplayInputField(i) ? '': 'hidden'}"
+        >
           <mat-select
                   placeholder="Field"
                   formControlName="toField"
@@ -66,12 +71,14 @@
             </mat-option>
             <mat-optgroup [label]="fieldGroup.name"
                           *ngFor="let fieldGroup of fields">
-              <mat-option *ngFor="let field of fieldGroup.options"
-                          [value]="field.key"
-                          [matTooltip]="field.name"
-              >
-                {{ fieldGroup.name }}: {{ field.name }}
-              </mat-option>
+              <ng-container *ngFor="let field of fieldGroup.options">
+                <mat-option *ngIf="field.key"
+                            [value]="field.key"
+                            [matTooltip]="field.name"
+                >
+                  {{ fieldGroup.name }}: {{ field.name }}
+                </mat-option>
+              </ng-container>
             </mat-optgroup>
           </mat-select>
         </mat-form-field>
@@ -79,8 +86,9 @@
           <mat-form-field class="col">
             <ng-container>
               <ng-container *ngIf="isFieldType(i, 'profession');
-                else valueTypeBasedTemplate">
-                <mat-select formControlName="toValue">
+                else expansionSelectTemplate">
+                <mat-select placeholder="Profession"
+                        formControlName="toValue">
                   <mat-option *ngFor="let profession of professions" [value]="profession.id">
                     {{profession.name}}
                   </mat-option>
@@ -89,7 +97,8 @@
 
               <ng-template #expansionSelectTemplate>
                 <ng-container *ngIf="isFieldType(i, 'expansion'); else itemClassSelectTemplate">
-                  <mat-select formControlName="toValue">
+                  <mat-select placeholder="Expansion"
+                          formControlName="toValue">
                     <mat-option *ngFor="let expansion of expansions; let i = index"
                                 [value]="i">
                       {{expansion}}
@@ -100,8 +109,10 @@
 
               <ng-template #itemClassSelectTemplate>
                 <ng-container *ngIf="isFieldType(i, 'itemClass'); else valueTypeBasedTemplate">
-                  <mat-select formControlName="toValue">
-                    <mat-option *ngFor="let itemClass of itemClasses" [value]="itemClass.id">
+                  <mat-select placeholder="Item class"
+                          formControlName="toValue">
+                    <mat-option *ngFor="let itemClass of itemClasses"
+                                [value]="itemClass.id">
                       {{itemClass.name}}
                     </mat-option>
                   </mat-select>

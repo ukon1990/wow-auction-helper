@@ -144,7 +144,7 @@ export const columnConfig = {
       dataType: 'number'
     },
     knownROI: {
-      key: 'source.recipe.[known].roi',
+      key: 'buyout-source.recipe.[known].cost',
       title: 'Profit',
       dataType: 'gold'
     },
@@ -192,7 +192,7 @@ export const columnConfig = {
       dataType: 'number'
     },
     ROI: {
-      key: 'source.recipe.[all].roi',
+      key: 'buyout-source.recipe.[all].cost',
       title: 'ROI',
       dataType: 'gold'
     },
@@ -298,5 +298,6 @@ export const columnConfig = {
     quantity: {
       key: 'item.inventory.quantity', title: 'Inventory qty', dataType: 'number'
     }
-  }
+  },
+  shoppingCartInput: {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
 };

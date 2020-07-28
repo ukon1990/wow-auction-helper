@@ -276,14 +276,14 @@ export class DashboardCalculateUtil {
   }
 
   private static compareText(rule: Rule, fromValue: string, toValue: string) {
-    const value: string = (toValue || rule.toValue) + '';
+    const value: string = (toValue || rule.toValue || '') + '';
     switch (rule.condition) {
       case ConditionEnum.CONTAINS:
         return TextUtil.contains(fromValue, value);
       case ConditionEnum.DOES_NOT_CONTAIN:
         return !TextUtil.contains(fromValue, value);
       case ConditionEnum.EQUAL_TO:
-        return TextUtil.isEqualIgnoreCase(fromValue, value);
+        return fromValue && TextUtil.isEqualIgnoreCase(fromValue, value);
       case ConditionEnum.IS_NOT:
         return fromValue !== value;
       default:

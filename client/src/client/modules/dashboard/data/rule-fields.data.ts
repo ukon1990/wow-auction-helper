@@ -128,6 +128,11 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: All recipes',
     options: [
       {
+        key: undefined,
+        name: 'Add to cart action',
+        column: columnConfig.shoppingCartInput
+      },
+      {
         key: columnConfig.recipe.name.key,
         name: 'Name',
         column: columnConfig.recipe.name

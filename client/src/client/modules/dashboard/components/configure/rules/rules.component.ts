@@ -8,7 +8,7 @@ import {ProfessionService} from '../../../../crafting/services/profession.servic
 import {Profession} from '../../../../../../../../api/src/profession/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {GameBuild} from '../../../../../utils/game-build.util';
-import { itemClasses } from 'client/models/item/item-classes';
+import {itemClasses} from 'client/models/item/item-classes';
 
 @Component({
   selector: 'wah-rules',
@@ -57,6 +57,12 @@ export class RulesComponent implements AfterViewInit, OnDestroy {
       toValue: new FormControl(rule ? rule.toValue : null),
     });
     formArray.push(form);
+  }
+
+  shouldDisplayInputField(index: number): boolean {
+    return !this.isFieldType(index, 'profession') &&
+      !this.isFieldType(index, 'expansion') &&
+      !this.isFieldType(index, 'itemClass');
   }
 
   isFieldType(i: number, type: string) {
