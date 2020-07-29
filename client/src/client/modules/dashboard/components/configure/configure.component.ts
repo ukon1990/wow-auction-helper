@@ -71,7 +71,8 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.sm.add(this.form.valueChanges, (board: DashboardV2) => this.onEvent(board));
+    this.sm.add(this.form.valueChanges, () =>
+      setTimeout(() => this.onEvent()));
   }
 
   private populateForm(board: DashboardV2) {
