@@ -36,6 +36,7 @@ import { RulesComponent } from './components/configure/rules/rules.component';
 import { ItemRulesComponent } from './components/configure/item-rules/item-rules.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import { ColumnsComponent } from './components/configure/columns/columns.component';
+import { RuleComponent } from './components/configure/rules/rule/rule.component';
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import { ColumnsComponent } from './components/configure/columns/columns.compone
         RulesComponent,
         ItemRulesComponent,
         ColumnsComponent,
+        RuleComponent,
     ],
     imports: [
         CommonModule,
