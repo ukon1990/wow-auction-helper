@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {conditionLocale} from 'client/modules/dashboard/types/condition.enum';
 import {ruleFields} from '../../../data/rule-fields.data';
 import {Rule} from '../../../models/rule.model';
@@ -9,6 +9,7 @@ import {Profession} from '../../../../../../../../api/src/profession/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {GameBuild} from '../../../../../utils/game-build.util';
 import {itemClasses} from 'client/models/item/item-classes';
+import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
 
 @Component({
   selector: 'wah-rules',
@@ -20,6 +21,8 @@ export class RulesComponent implements OnInit, OnDestroy {
   @Input() rules: Rule[];
   @Input() displayHeader: boolean;
   faTrash = faTrashAlt;
+  faPlus = faPlus;
+
   conditionLocale = conditionLocale;
   fields = ruleFields;
   expansions = GameBuild.expansionMap;
@@ -56,7 +59,13 @@ export class RulesComponent implements OnInit, OnDestroy {
       field: new FormControl(rule ? rule.field : null, Validators.required),
       toField: new FormControl(rule ? rule.toField : null),
       toValue: new FormControl(rule ? rule.toValue : null),
+      or: new FormArray([]),
     });
+
+    if (rule && rule.or) {
+      rule.or.forEach(orRule =>
+        this.addRule(form.controls.or as FormArray, orRule));
+    }
     formArray.push(form);
   }
 
@@ -69,5 +78,9 @@ export class RulesComponent implements OnInit, OnDestroy {
   isFieldType(i: number, type: string) {
     const field = this.formArray.controls[i].value.field;
     return field ? field.indexOf(type) > -1 : false;
+  }
+
+  addOrRule(group: AbstractControl) {
+    this.addRule((group as FormGroup).controls.or as FormArray);
   }
 }

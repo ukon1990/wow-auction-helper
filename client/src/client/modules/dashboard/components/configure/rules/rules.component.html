@@ -159,6 +159,18 @@
         <div class="col">
           <button
             mat-stroked-button
+            color="accent"
+            matTooltip="Adds an alternative rule"
+            (click)="addOrRule(rule)"
+          >
+            <fa-icon
+              [icon]="faPlus"
+            >
+              Or
+            </fa-icon>
+          </button>
+          <button
+            mat-stroked-button
             color="warn"
             matTooltip="Delete"
             (click)="formArray.removeAt(i)"
