@@ -1,10 +1,15 @@
 <div [formGroup]="formGroup"
      class="row col-md-12">
+  <div class="col-md-1">
+    <span [ngClass]="isOrRule ? 'pl-4' : ''">
+      {{isOrRule ? 'Or' : 'And'}}:
+    </span>
+  </div>
   <mat-form-field class="col"
                   color="accent">
     <mat-select
-      placeholder="Field"
-      formControlName="field"
+            placeholder="Field"
+            formControlName="field"
     >
       <mat-optgroup [label]="fieldGroup.name"
                     *ngFor="let fieldGroup of fields">
@@ -21,8 +26,8 @@
   </mat-form-field>
   <mat-form-field class="col">
     <mat-select
-      placeholder="Comparison logic"
-      formControlName="condition"
+            placeholder="Comparison logic"
+            formControlName="condition"
     >
       <mat-option *ngFor="let condition of conditionLocale"
                   [value]="condition.id"
@@ -54,8 +59,8 @@
                   color="accent"
   >
     <mat-select
-      placeholder="Field"
-      formControlName="toField"
+            placeholder="Field"
+            formControlName="toField"
     >
       <mat-option [value]="null">
         None (use value instead)
@@ -145,28 +150,37 @@
     </mat-form-field>
   </ng-container>
   <div class="col">
-    <button
-      mat-stroked-button
-      color="accent"
-      matTooltip="Adds an alternative rule"
-      (click)="addOrRule()"
+    <button *ngIf="!isOrRule"
+            mat-stroked-button
+            color="accent"
+            class="mr-2"
+            matTooltip="Adds an alternative rule"
+            (click)="addOrRule()"
     >
       <fa-icon
-        [icon]="faPlus"
+              [icon]="faPlus"
       >
         Or
       </fa-icon>
     </button>
     <button
-      mat-stroked-button
-      color="warn"
-      matTooltip="Delete"
-      (click)="remove.emit()"
+            mat-stroked-button
+            color="warn"
+            matTooltip="Delete"
+            (click)="remove.emit()"
     >
       <fa-icon
-        [icon]="faTrash"
+              [icon]="faTrash"
       >
       </fa-icon>
     </button>
   </div>
+</div>
+
+<div *ngIf="orRules">
+  <ng-container *ngFor="let orRule of orRules.controls">
+    <wah-rule [formGroup]="orRule"
+              [isOrRule]="true"
+    ></wah-rule>
+  </ng-container>
 </div>

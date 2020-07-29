@@ -19,6 +19,7 @@ import {Rule} from '../../../../models/rule.model';
 export class RuleComponent implements OnInit, OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() rules: Rule[];
+  @Input() isOrRule: boolean;
   @Output() remove: EventEmitter<void> = new EventEmitter<void>();
   fields = ruleFields;
   conditionLocale = conditionLocale;
@@ -36,7 +37,7 @@ export class RuleComponent implements OnInit, OnDestroy {
   faPlus = faPlus;
 
   get orRules(): FormArray {
-    return this.formGroup.get('orRules') as FormArray;
+    return this.formGroup.get('or') as FormArray;
   }
 
   constructor(private professionService: ProfessionService) {

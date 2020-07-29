@@ -55,6 +55,10 @@ export const ruleFields: RuleFieldGroup[] = [
         key: columnConfig.auction.buyoutVsVendorSell.key,
         name: columnConfig.auction.buyoutVsVendorSell.title,
         column: columnConfig.auction.buyoutVsVendorSell
+      }, {
+       key: columnConfig.auction.timeLeft.key,
+        name: columnConfig.auction.timeLeft.title,
+        column: columnConfig.auction.timeLeft
       },
       {
         key: 'regionSaleRate', name: 'Sale rate', column: columnConfig.auction.regionSaleRate
