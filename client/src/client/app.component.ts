@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {User} from './models/user/user';
 import {SharedService} from './services/shared.service';
 import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
 import {Angulartics2} from 'angulartics2';
@@ -19,6 +18,7 @@ import {MenuItem} from './modules/core/models/menu-item.model';
 import {UserUtil} from './utils/user/user.util';
 import {BackgroundDownloadService} from './modules/core/services/background-download.service';
 import {ThemeUtil} from './modules/core/utils/theme.util';
+import {LogRocketUtil} from "./utils/log-rocket.util";
 
 @Component({
   selector: 'wah-root',
@@ -40,6 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private downloadService: BackgroundDownloadService,
               private reportService: ReportService,
               private title: Title) {
+    LogRocketUtil.init();
     this.setLocale();
     this.subs.add(downloadService.isLoading, (isLoading) => {
       this.isLoading = isLoading;

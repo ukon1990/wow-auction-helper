@@ -27,7 +27,6 @@ export class AuctionUtil {
         this.groupAuctions(auctions);
         this.calculateCosts(t0);
         SharedService.events.auctionUpdate.emit(true);
-        Report.debug('AuctionUtil.organize', SharedService.auctionItems);
         resolve(SharedService.auctionItems);
       } catch (e) {
         reject(e);
