@@ -6,6 +6,7 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {columnConfig} from '../../../data/columns.data';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SortRule} from '../../../models/dashboard-v2.model';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'wah-columns',
@@ -83,8 +84,15 @@ export class ColumnsComponent implements OnInit, OnDestroy {
       dataType: new FormControl({
         value: column ? column.dataType : null, disabled: true
       }, Validators.required),
-      hideOnMobile: new FormControl(column ? column.hideOnMobile : null),
+      hideOnMobile: new FormControl(column ? column.hideOnMobile || false : false),
     });
     formArray.push(form);
+  }
+
+  drop(event: CdkDragDrop<FormGroup[]>) {
+    const column = this.formArray.at(event.previousIndex);
+    this.formArray.removeAt(event.previousIndex);
+    this.formArray.insert(event.currentIndex, column);
+    // moveItemInArray(this.formArray.controls, event.previousIndex, event.currentIndex);
   }
 }
