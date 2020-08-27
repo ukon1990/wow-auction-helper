@@ -56,9 +56,16 @@
         </mat-accordion>
     </form>
 
+    <mat-card-subtitle>
+        Preview
+    </mat-card-subtitle>
+    <mat-checkbox [(ngModel)]="showAllColumns">
+        Show all as detail view
+    </mat-checkbox>
     <wah-dashboard-item *ngIf="tmpBoard && tmpBoard.data && tmpBoard.data.length"
                         [dashboard]="tmpBoard"
                         [hideButtons]="true"
+                        [allColumns]="showAllColumns"
     ></wah-dashboard-item>
 </mat-dialog-content>
 
@@ -72,10 +79,18 @@
     <button
             mat-raised-button
             color="warn"
+            (click)="onDelete()"
+    >
+        <fa-icon [icon]="faTrash"></fa-icon>
+        Delete
+    </button>
+    <button
+            mat-raised-button
+            color="primary"
             [disabled]="!hasChanges"
             (click)="onDiscard()"
     >
-        <fa-icon [icon]="faTrash"></fa-icon>
+        <fa-icon [icon]="faUndo"></fa-icon>
         Discard
     </button>
     <button

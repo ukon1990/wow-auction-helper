@@ -37,6 +37,7 @@ import { ItemRulesComponent } from './components/configure/item-rules/item-rules
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import { ColumnsComponent } from './components/configure/columns/columns.component';
 import { RuleComponent } from './components/configure/rules/rule/rule.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
     declarations: [
@@ -60,28 +61,29 @@ import { RuleComponent } from './components/configure/rules/rule/rule.component'
         ColumnsComponent,
         RuleComponent,
     ],
-    imports: [
-        CommonModule,
-        MatTabsModule,
-        MatButtonModule,
-        MatCheckboxModule,
-        MatInputModule,
-        MatTooltipModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatCardModule,
-        MatSelectModule,
-        TableModule,
-        MatExpansionModule,
-        IconModule,
-        UtilModule,
-        RouterModule,
-        MatPaginatorModule,
-        CraftingModule,
-        FontAwesomeModule,
-        MatDialogModule,
-        MatAutocompleteModule
-    ]
+  imports: [
+    CommonModule,
+    MatTabsModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatTooltipModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatSelectModule,
+    TableModule,
+    MatExpansionModule,
+    IconModule,
+    UtilModule,
+    RouterModule,
+    MatPaginatorModule,
+    CraftingModule,
+    FontAwesomeModule,
+    MatDialogModule,
+    MatAutocompleteModule,
+    DragDropModule
+  ]
 })
 export class DashboardModule {
 }

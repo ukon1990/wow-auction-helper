@@ -10,6 +10,7 @@ import {DashboardV2} from '../../models/dashboard-v2.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DashboardCalculateUtil} from '../../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
 
 @Component({
   selector: 'wah-configure',
@@ -24,8 +25,13 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
 
   faSave = faSave;
   faTrash = faTrashAlt;
+  faUndo = faUndo;
+
   hasChanges: boolean;
   form: FormGroup = new FormGroup({
+    id: new FormControl(),
+    parentId: new FormControl(),
+    idParam: new FormControl(),
     title: new FormControl(null, Validators.required),
     columns: new FormArray([]),
     onlyItemsWithRules: new FormControl(false),
@@ -43,6 +49,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     rules: true,
     itemRules: false
   };
+  showAllColumns = true;
 
 
   get itemRules(): FormArray {
@@ -59,7 +66,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
 
   constructor(
     public dialogRef: MatDialogRef<ConfigureComponent>,
-    @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2,
+    @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2 | any,
     private auctionService: AuctionsService) {
     this.populateForm(dashboard);
   }
@@ -80,8 +87,13 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       // this.addDefaultColumns();
       return;
     }
+    this.form.controls.id.setValue(board.id);
+    this.form.controls.parentId.setValue(board.parentId);
+    this.form.controls.idParam.setValue(board.idParam);
+
     this.form.controls.title.setValue(board.title);
     this.form.controls.onlyItemsWithRules.setValue(board.onlyItemsWithRules);
+
     this.form.controls.isDisabled.setValue(board.isDisabled);
 
     /*
@@ -92,19 +104,19 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     }*/
   }
 
-  onEvent(board: DashboardV2) {
-    console.log('Board update', board);
+  onEvent(board: DashboardV2 = this.form.getRawValue()) {
     this.tmpBoard = DashboardCalculateUtil.calculate(board, this.auctionService.mapped.value);
+    this.hasChanges = true;
+    /*
     if (!this.dashboard) {
       this.hasChanges = true;
     } else {
-      return;
       const currentBoard: DashboardV2 = ObjectUtil.merge(
         board,
         ObjectUtil.clone(this.dashboard)
       ) as DashboardV2;
       this.hasChanges = !!ObjectUtil.getDifference(this.dashboard, currentBoard).length;
-    }
+    }*/
   }
 
   onSave(): void {
@@ -125,5 +137,9 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     this.populateForm(this.dashboard);
     this.event.emit();
     this.dialogRef.close();
+  }
+
+  onDelete() {
+    console.error('Delete is not implemented');
   }
 }
