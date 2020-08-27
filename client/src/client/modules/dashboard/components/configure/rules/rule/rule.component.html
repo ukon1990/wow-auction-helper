@@ -1,7 +1,8 @@
 <div [formGroup]="formGroup"
      class="row col-md-12">
   <div class="col-md-1">
-    <span [ngClass]="isOrRule ? 'pl-4' : ''">
+    <span *ngIf="index > 0"
+          [ngClass]="isOrRule ? 'pl-4' : ''">
       {{isOrRule ? 'Or' : 'And'}}:
     </span>
   </div>

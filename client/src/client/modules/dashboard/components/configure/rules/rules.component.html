@@ -10,7 +10,8 @@
   <mat-card-content formArrayName="rules">
     <ng-container *ngFor="let rule of formArray.controls; let i = index">
       <wah-rule [formGroup]="rule"
-        (remove)="formArray.removeAt(i)">
+                [index]="i"
+                (remove)="formArray.removeAt(i)">
       </wah-rule>
     </ng-container>
   </mat-card-content>

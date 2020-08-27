@@ -13,7 +13,7 @@ import {SharedService} from '../../../services/shared.service';
 import {ItemService} from '../../../services/item.service';
 import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
-import {Report} from "../../../utils/report.util";
+import {Report} from '../../../utils/report.util';
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {
@@ -162,7 +162,8 @@ export class DashboardCalculateUtil {
 
   private static isFollowingTheRules(rules: Rule[], item: AuctionItem) {
     for (let i = 0, length = rules.length; i < length; i++) {
-      if (rules[i].or ? !this.validateOrRule(rules[i], item) : !this.validateRule(rules[i], item)) {
+      if (rules[i].or && rules[i].or.length ?
+        !this.validateOrRule(rules[i], item) : !this.validateRule(rules[i], item)) {
         return false;
       }
     }

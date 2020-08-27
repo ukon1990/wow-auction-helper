@@ -10,6 +10,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {Rule} from '../../../../models/rule.model';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-rule',
@@ -19,6 +20,7 @@ import {Rule} from '../../../../models/rule.model';
 export class RuleComponent implements OnInit, OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() rules: Rule[];
+  @Input() index: number;
   @Input() isOrRule: boolean;
   @Output() remove: EventEmitter<void> = new EventEmitter<void>();
   fields = ruleFields;
@@ -65,7 +67,7 @@ export class RuleComponent implements OnInit, OnDestroy {
 
   isFieldType(i: number, type: string) {
     const field = this.formGroup.value.field;
-    return field ? field.indexOf(type) > -1 : false;
+    return field ? TextUtil.contains(field, type) : false;
   }
 
   addOrRule(rule?: Rule) {
