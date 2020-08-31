@@ -9,6 +9,7 @@ import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {ChartData} from '../../../util/models/chart.model';
 import {NumberUtil} from '../../../util/utils/number.util';
 import {Report} from '../../../../utils/report.util';
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'wah-item-price-history',
@@ -19,7 +20,74 @@ export class ItemPriceHistoryComponent implements OnChanges {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
   sm = new SubscriptionManager();
-  priceHistory: {hourly: ItemPriceEntry[], daily: any[]} = {
+  Highcharts: typeof Highcharts = Highcharts;
+  chartOptions: Highcharts.Options = {
+    title: {
+      text: 'Hourly prices and quantity for the past 14 days'
+    },
+    chart: {
+      zoomType: 'x',
+    },
+    xAxis: [{
+      categories: [],
+      crosshair: true
+    }],
+    yAxis: [
+      { // Primary yAxis
+        labels: {
+          format: '{value}g',
+          style: {
+            color: Highcharts.getOptions().colors[1]
+          }
+        },
+        title: {
+          text: 'Gold',
+          style: {
+            color: Highcharts.getOptions().colors[1]
+          }
+        }
+      }, { // Secondary yAxis
+        title: {
+          text: 'Quantity',
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        },
+        labels: {
+          format: '{value} qty',
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        },
+        opposite: true
+      }
+    ],
+    tooltip: {
+      shared: true
+    },
+    legend: {
+      layout: 'vertical',
+      align: 'left',
+      x: 120,
+      verticalAlign: 'top',
+      y: 100,
+      floating: true,
+      backgroundColor:
+        Highcharts.defaultOptions.legend.backgroundColor || // theme
+        'rgba(255,255,255,0.25)'
+    },
+    series: [{
+      name: 'Prices',
+      data: [],
+      type: 'spline',
+    }, {
+      name: 'Quantity',
+      data: [],
+      type: 'column',
+      yAxis: 1,
+    }]
+  };
+  priceHistory: { hourly: ItemPriceEntry[], daily: any[] } = {
     hourly: [],
     daily: []
   };
@@ -58,6 +126,7 @@ export class ItemPriceHistoryComponent implements OnChanges {
     yAxis2: 'Quantity',
     xAxis: 'Date'
   };
+  updateDailyChart: any;
 
   constructor(private service: ItemService) {
   }
@@ -123,6 +192,8 @@ export class ItemPriceHistoryComponent implements OnChanges {
     this.populateDailyChartData(dates);
     this.fourteenDayByHourTable.data.sort((a, b) =>
       b.timestamp - a.timestamp);
+    this.updateDailyChart = Math.random();
+    console.log('Chart shit', this.chartOptions);
   }
 
   private resetHourlyChart() {
@@ -165,6 +236,10 @@ export class ItemPriceHistoryComponent implements OnChanges {
     this.fourteenDayHourByHour.datasets[1].data.push(entry.quantity);
     this.fourteenDayHourByHour.labels.push(date.toLocaleString());
     this.fourteenDayByHourTable.data.push(entry);
+
+    this.chartOptions.xAxis[0]['categories'].push(date.toLocaleString());
+    this.chartOptions.series[0]['data'].push(minGold);
+    this.chartOptions.series[1]['data'].push(entry.quantity);
   }
 
   private calculateDailyValues(entry) {
