@@ -2,6 +2,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {S3Handler} from './s3.handler';
 import {QueryUtil} from '../utils/query.util';
+import {TSM} from '../../../client/src/client/modules/auction/models/tsm.model';
 
 export class TSMHandler {
   getAndStartAllRealmsToUpdate(key: string): Promise<boolean> {
@@ -61,14 +62,20 @@ export class TSMHandler {
             reject();
             return;
           }
+          const faultyItemsCount = (body as TSM[]).filter(tsm => !tsm.RegionAvgDailySold && !tsm.RegionSaleRate).length;
           console.log('TSMHandler.updateRealm saving to s3');
-          new S3Handler().save(body, `tsm/${region}/${id}.json.gz`, {region, url: ''})
-            .then(async queryData => {
-              this.handleUploadSuccess(id, queryData)
-                .then(resolve)
-                .catch(reject);
-            })
-            .catch(reject);
+          if (faultyItemsCount < (body as TSM[]).length) {
+            new S3Handler().save(body, `tsm/${region}/${id}.json.gz`, {region, url: ''})
+              .then(async queryData => {
+                this.handleUploadSuccess(id, queryData)
+                  .then(resolve)
+                  .catch(reject);
+              })
+              .catch(reject);
+          } else {
+            console.error('TSM dump is missing daily sold and sale rate');
+            reject({message: 'Missing daily sold and sale rate', code: 400});
+          }
         })
         .catch(error => {
           console.error(`Could not get TSM api data`, error);
