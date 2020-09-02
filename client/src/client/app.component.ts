@@ -40,7 +40,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private downloadService: BackgroundDownloadService,
               private reportService: ReportService,
               private title: Title) {
-    LogRocketUtil.init();
     this.setLocale();
     this.subs.add(downloadService.isLoading, (isLoading) => {
       this.isLoading = isLoading;
@@ -49,6 +48,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
+    LogRocketUtil.init();
     SharedService.user.shoppingCart = new ShoppingCart();
     ProspectingAndMillingUtil.restore();
 
