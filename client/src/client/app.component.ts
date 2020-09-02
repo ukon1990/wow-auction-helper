@@ -18,7 +18,7 @@ import {MenuItem} from './modules/core/models/menu-item.model';
 import {UserUtil} from './utils/user/user.util';
 import {BackgroundDownloadService} from './modules/core/services/background-download.service';
 import {ThemeUtil} from './modules/core/utils/theme.util';
-import {LogRocketUtil} from "./utils/log-rocket.util";
+import {LogRocketUtil} from './utils/log-rocket.util';
 
 @Component({
   selector: 'wah-root',
@@ -28,7 +28,6 @@ import {LogRocketUtil} from "./utils/log-rocket.util";
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   subs = new SubscriptionManager();
   theme = ThemeUtil.current;
-  shouldAskForConcent = false;
   pageTitle: string;
   isLoading: boolean;
 
@@ -76,8 +75,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.restorePreviousLocation();
-    this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
-    Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
   }
 
   ngAfterViewInit(): void {

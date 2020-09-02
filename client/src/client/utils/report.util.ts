@@ -14,11 +14,13 @@ export class Report {
 
   public static init(googleAnalytics: Angulartics2, reportService: ReportService) {
     Report.ga = googleAnalytics;
+    // TODO: Report.ga.settings.developerMode = true;
     this.service = reportService;
   }
 
   public static send(action: string, category: string, label?: string | number): void {
-    if (!Report.ga || !environment.production || SharedService.user.doNotReport) {
+    //  || SharedService.user.privacy.googleAnalytics
+    if (!Report.ga || !environment.production) {
       return;
     }
     Report.ga.eventTrack.next({

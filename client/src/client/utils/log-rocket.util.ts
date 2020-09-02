@@ -8,6 +8,10 @@ export class LogRocketUtil {
     this.identify();
   }
 
+  static newSession(): void {
+    LogRocket.startNewSession();
+  }
+
   static identify(): void {
     LogRocket.identify(generateUUID(), {
       region: SharedService.user.region,

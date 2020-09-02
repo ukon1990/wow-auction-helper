@@ -10,7 +10,7 @@ import {ShoppingCart} from '../../modules/shopping-cart/models/shopping-cart.mod
 import {CustomProcUtil} from '../../modules/crafting/utils/custom-proc.util';
 import {BaseCraftingUtil} from '../../modules/crafting/utils/base-crafting.util';
 import {CharacterProfession} from '../../../../../api/src/character/model';
-
+import {Privacy} from './privacy.model';
 
 export class User {
   faction: number;
@@ -34,4 +34,6 @@ export class User {
   classicRealm: string;
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
   locale: string;
+
+  privacy: Privacy = new Privacy();
 }
