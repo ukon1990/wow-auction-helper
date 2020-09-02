@@ -77,14 +77,14 @@ export class ItemPriceHistoryComponent implements OnChanges {
         'rgba(255,255,255,0.25)'
     },
     series: [{
-      name: 'Prices',
-      data: [],
-      type: 'spline',
-    }, {
       name: 'Quantity',
       data: [],
       type: 'column',
       yAxis: 1,
+    }, {
+      name: 'Prices',
+      data: [],
+      type: 'spline',
     }]
   };
   priceHistory: { hourly: ItemPriceEntry[], daily: any[] } = {
@@ -238,8 +238,8 @@ export class ItemPriceHistoryComponent implements OnChanges {
     this.fourteenDayByHourTable.data.push(entry);
 
     this.chartOptions.xAxis[0]['categories'].push(date.toLocaleString());
-    this.chartOptions.series[0]['data'].push(minGold);
-    this.chartOptions.series[1]['data'].push(entry.quantity);
+    this.chartOptions.series[0]['data'].push(entry.quantity);
+    this.chartOptions.series[1]['data'].push(minGold);
   }
 
   private calculateDailyValues(entry) {
