@@ -131,9 +131,14 @@ export class RealmQuery {
                   AND fileName NOT LIKE 'status.json.gz'
                 GROUP BY logs.region, slug
             ) as log ON log.ahId = ah.id
-            WHERE (autoUpdate = 1
-                AND FROM_UNIXTIME(lastModified / 1000) <= NOW() - INTERVAL lowestDelay MINUTE)
-               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
+            WHERE isActive = 1
+              AND name IS NOT NULL
+              AND (
+                    (
+                            autoUpdate = 1 AND FROM_UNIXTIME(lastModified / 1000) <= NOW() - INTERVAL lowestDelay MINUTE
+                        )
+                    OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
+                )
             ORDER BY timestamp DESC, autoUpdate DESC, (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 DESC
             LIMIT 20;`;
   }
