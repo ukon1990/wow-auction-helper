@@ -32,35 +32,41 @@ import {CraftingModule} from '../crafting/crafting.module';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {ConfigureComponent} from './components/configure/configure.component';
 import {MatDialogModule} from '@angular/material/dialog';
-import { RulesComponent } from './components/configure/rules/rules.component';
-import { ItemRulesComponent } from './components/configure/item-rules/item-rules.component';
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import { ColumnsComponent } from './components/configure/columns/columns.component';
-import { RuleComponent } from './components/configure/rules/rule/rule.component';
+import {RulesComponent} from './components/configure/rules/rules.component';
+import {ItemRulesComponent} from './components/configure/item-rules/item-rules.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {ColumnsComponent} from './components/configure/columns/columns.component';
+import {RuleComponent} from './components/configure/rules/rule/rule.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatListModule} from '@angular/material/list';
+import { MigrationComponent } from './components/migration/migration.component';
+import {CoreModule} from '../core/core.module';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
-    declarations: [
-        DashboardComponent,
-        DashboardItemComponent,
-        DashboardItemsComponent,
-        DashboardSellersComponent,
-        ManageItemsBuiltInComponent,
-        ManageItemsBuiltInItemComponent,
-        AhSummaryComponent,
-        SummaryCardComponent,
-        WatchlistComponent,
-        WatchlistItemComponent,
-        WatchlistManagerComponent,
-        WatchlistItemManagerComponent,
-        WatchlistItemBatchComponent,
-        ManageCustomDashboardComponent,
-        ConfigureComponent,
-        RulesComponent,
-        ItemRulesComponent,
-        ColumnsComponent,
-        RuleComponent,
-    ],
+  declarations: [
+    DashboardComponent,
+    DashboardItemComponent,
+    DashboardItemsComponent,
+    DashboardSellersComponent,
+    ManageItemsBuiltInComponent,
+    ManageItemsBuiltInItemComponent,
+    AhSummaryComponent,
+    SummaryCardComponent,
+    WatchlistComponent,
+    WatchlistItemComponent,
+    WatchlistManagerComponent,
+    WatchlistItemManagerComponent,
+    WatchlistItemBatchComponent,
+    ManageCustomDashboardComponent,
+    ConfigureComponent,
+    RulesComponent,
+    ItemRulesComponent,
+    ColumnsComponent,
+    RuleComponent,
+    MigrationComponent,
+  ],
   imports: [
     CommonModule,
     MatTabsModule,
@@ -82,7 +88,11 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     FontAwesomeModule,
     MatDialogModule,
     MatAutocompleteModule,
-    DragDropModule
+    DragDropModule,
+    MatDatepickerModule,
+    MatListModule,
+    CoreModule,
+    MatStepperModule
   ]
 })
 export class DashboardModule {

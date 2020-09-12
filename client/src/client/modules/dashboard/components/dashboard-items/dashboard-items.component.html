@@ -1,22 +1,59 @@
-<div class="row slim-sm">
-  <div class="row col-md-12">
-    <wah-crafting-config class="col"></wah-crafting-config>
-    <mat-checkbox class="col" [formControl]="displayHiddenForm">
-      Show hidden boards
-    </mat-checkbox>
-    <div class="col">
-      <button
-              mat-stroked-button
-              color="accent"
-              (click)="openNewBoardDialog()"
-      >
-        Add new dashboard
-      </button>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="displaySortPanel">
+    <mat-expansion-panel-header (click)="onPanelClick('sort')">
+      <mat-panel-title>
+        Organize boards
+      </mat-panel-title>
+
+      <mat-panel-description>
+        Open this panel to arrange the sort order of the dashboards
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <em>
+      Drag the names to sort the tables in your preferred order
+    </em>
+    <mat-list
+            cdkDropList
+            (cdkDropListDropped)="drop($event)">
+      <mat-list-item *ngFor="let d of dashboards"
+                     cdkDrag>
+        [{{d.isDisabled ? 'Disabled' : 'Active'}}] {{ d.title }} ({{d.data.length}})
+      </mat-list-item>
+    </mat-list>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel [expanded]="!displaySortPanel">
+    <mat-expansion-panel-header (click)="onPanelClick('boards')">
+      <mat-panel-title>
+        Dashboard matches
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="row">
+      <div class="row col-md-12 slim-sm pr-0">
+        <wah-crafting-config class="col"></wah-crafting-config>
+        <mat-checkbox class="col" [formControl]="displayHiddenForm">
+          Show hidden boards
+        </mat-checkbox>
+        <div class="col">
+          <button
+                  mat-stroked-button
+                  color="accent"
+                  (click)="openNewBoardDialog()"
+          >
+            Add new dashboard
+          </button>
+        </div>
+      </div>
+
+      <div class="row col-md-12 pr-0">
+        <ng-container *ngFor="let d of dashboards">
+          <div *ngIf="(!d.isDisabled && d.data.length > 0 || displayHiddenForm.value)"
+               class="col-xxxl-4 col-xl-6 mb-3 slim-sm">
+            <wah-dashboard-item [dashboard]="d" filterParameter="name"></wah-dashboard-item>
+          </div>
+        </ng-container>
+      </div>
     </div>
-  </div>
-  <ng-container *ngFor="let d of dashboards">
-    <div *ngIf="(!d.isDisabled && d.data.length > 0) || displayHiddenForm.value" class="col-md-6 col-sm-12 mb-3 slim-sm">
-      <wah-dashboard-item [dashboard]="d" filterParameter="name"></wah-dashboard-item>
-    </div>
-  </ng-container>
-</div>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -121,17 +121,10 @@ const DASHBOARD_ROUTE: TitledRoute = {
     {
       title: 'Item', path: 'items', component: DashboardItemsComponent
     },
-    /*
-    {
-      title: 'Seller', path: 'sellers', component: DashboardSellersComponent
-    },*/
     {
       title: 'AH summary', path: 'ah-summary', component: AhSummaryComponent
     },
-    {path: 'tsm', redirectTo: '/tools/tsm'},
-    {
-      title: 'Manage', path: 'manage-dashboards', component: WatchlistComponent
-    }
+    {path: '**', redirectTo: 'items'},
   ]
 };
 

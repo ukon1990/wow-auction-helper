@@ -6,7 +6,7 @@
       {{isOrRule ? 'Or' : 'And'}}:
     </span>
   </div>
-  <mat-form-field class="col"
+  <mat-form-field class="col-md-3"
                   color="accent">
     <mat-select
             placeholder="Field"
@@ -25,7 +25,7 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-  <mat-form-field class="col">
+  <mat-form-field class="col-md-1">
     <mat-select
             placeholder="Comparison logic"
             formControlName="condition"
@@ -38,29 +38,11 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field class="col"
-                  color="accent">
-    <mat-select placeholder="Value type"
-                formControlName="targetValueType">
-      <mat-option value="GOLD">
-        Gold
-      </mat-option>
-      <mat-option value="NUMBER">
-        Number
-      </mat-option>
-      <mat-option value="PERCENT">
-        Percent
-      </mat-option>
-      <mat-option value="TEXT">
-        Text
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="col"
+  <mat-form-field class="col-md-3"
                   color="accent"
   >
     <mat-select
-            placeholder="Field"
+            placeholder="Compare to field"
             formControlName="toField"
     >
       <mat-option [value]="null">
@@ -106,19 +88,50 @@
         </ng-template>
 
         <ng-template #itemClassSelectTemplate>
-          <ng-container *ngIf="mainFieldType.isItemClass; else valueTypeBasedTemplate">
+          <ng-container *ngIf="mainFieldType.isItemClass; else itemSubClassSelectTemplate">
             <mat-select placeholder="Item class"
                         formControlName="toValue">
               <mat-option *ngFor="let itemClass of itemClasses"
-                          [value]="itemClass.class">
+                          [value]="itemClass.class"
+              >
                 {{ itemClass.name }}
               </mat-option>
             </mat-select>
           </ng-container>
         </ng-template>
 
+        <ng-template #itemSubClassSelectTemplate>
+          <ng-container *ngIf="mainFieldType.isItemSubClass; else qualityTemplate">
+            <mat-select placeholder="Item sub class"
+                        formControlName="toValue">
+              <mat-optgroup *ngFor="let itemClass of itemClasses"
+                            [label]="itemClass.name"
+              >
+                <mat-option *ngFor="let subClass of itemClass.subclasses"
+                            [value]="subClass.subclass"
+                >
+                  {{ subClass.name }}
+                </mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #qualityTemplate>
+          <ng-container *ngIf="mainFieldType.isQuality; else valueTypeBasedTemplate">
+            <mat-select placeholder="Item quality"
+                        formControlName="toValue">
+              <mat-option *ngFor="let quality of itemQualities"
+                          [value]="quality.id"
+              >
+                {{ quality?.name }}
+              </mat-option>
+            </mat-select>
+          </ng-container>
+        </ng-template>
+
         <ng-template #valueTypeBasedTemplate>
-          <ng-container [ngSwitch]="formGroup.value.targetValueType">
+          <ng-container [ngSwitch]="formGroup.controls.targetValueType.value">
             <input *ngSwitchCase="'PERCENT'"
                    matInput
                    formControlName="toValue"
@@ -130,15 +143,16 @@
                    formControlName="toValue"
                    placeholder="Compare to value"
                    type="number"
-            /><!--
-              <input
-                      matInput
-                      [ngModel]="d[c.key] | gold"
-                      (ngModelChange)="setNewInputGoldValue(d, c, $event)"
-                      formControlName="toValue"
-                      placeholder="Compare to value"
-                      type="number"
-              />-->
+            />
+            <input *ngSwitchCase="'GOLD'"
+                    matInput
+                    [ngModel]="toValueGold | gold"
+                    (ngModelChange)="setNewInputGoldValue($event)"
+                    formControlName="toValue"
+                    placeholder="Compare to value"
+                    type="text"
+            />
+
             <input *ngSwitchDefault
                    matInput
                    formControlName="toValue"
@@ -148,6 +162,24 @@
           </ng-container>
         </ng-template>
       </ng-container>
+    </mat-form-field>
+    <mat-form-field class="col-md-1"
+                    color="accent">
+      <mat-select placeholder="Value type"
+                  formControlName="targetValueType">
+        <mat-option value="GOLD">
+          Gold
+        </mat-option>
+        <mat-option value="NUMBER">
+          Number
+        </mat-option>
+        <mat-option value="PERCENT">
+          Percent
+        </mat-option>
+        <mat-option value="TEXT">
+          Text
+        </mat-option>
+      </mat-select>
     </mat-form-field>
   </ng-container>
   <div class="col">

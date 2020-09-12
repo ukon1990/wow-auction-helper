@@ -56,7 +56,9 @@
                         color="accent"
                         matTooltip="The way the column will be formatted"
         >
-          <mat-select formControlName="dataType">
+          <mat-select formControlName="dataType"
+                      placeholder="Type"
+          >
             <mat-option value="gold">
               Gold
             </mat-option>
@@ -86,6 +88,9 @@
             </mat-option>
             <mat-option value="time-left">
               Time left
+            </mat-option>
+            <mat-option value="quality">
+              Quality
             </mat-option>
             <mat-option value="cart-recipe-count">
               # in cart

@@ -16,10 +16,14 @@ export const columnConfig = {
       dataType: 'number'
     },
     expansion: {
-      key: 'item.expansionId', title: 'Expansion', dataType: 'expansion'
+      key: 'item.expansionId',
+      title: 'Expansion',
+      dataType: 'expansion'
     },
     quality: {
-      key: 'quality', title: 'Quality', dataType: 'quality'
+      key: 'quality',
+      title: 'Quality',
+      dataType: 'quality'
     }
   },
   auction: {
@@ -148,6 +152,11 @@ export const columnConfig = {
       title: 'Profit',
       dataType: 'gold'
     },
+    knownROIPercent: {
+      key: 'buyout/source.recipe.[known].cost',
+      title: 'ROI %',
+      dataType: 'percent'
+    },
     knownCost: {
       key: 'source.recipe.[known].cost', title: 'Cost', dataType: 'gold'
     },
@@ -170,6 +179,11 @@ export const columnConfig = {
       key: 'source.recipe.all.0.roi',
       title: 'ROI',
       dataType: 'gold'
+    },
+    mostProfitableROIPercent: {
+      key: 'buyout/source.recipe.all.0.roi',
+      title: 'ROI %',
+      dataType: 'percent'
     },
     mostProfitableCost: {
       key: 'source.recipe.all.0.cost',
@@ -195,6 +209,11 @@ export const columnConfig = {
       key: 'buyout-source.recipe.[all].cost',
       title: 'ROI',
       dataType: 'gold'
+    },
+    ROIPercent: {
+      key: 'buyout/source.recipe.[all].cost',
+      title: 'ROI %',
+      dataType: 'percent'
     },
     cost: {
       key: 'source.recipe.[all].cost',

@@ -1,4 +1,4 @@
-import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -19,6 +19,7 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'wah-item',
@@ -84,12 +85,12 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   private tabSubId = 'tab-subscription';
 
   constructor(private _wowDBService: WowdbService, private npcService: NpcService,
-              private zoneService: ZoneService, private auctionService: AuctionsService) {
+              private zoneService: ZoneService, private auctionService: AuctionsService,
+              public dialogRef: MatDialogRef<ItemComponent>,
+              @Inject(MAT_DIALOG_DATA) public selection: any) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
 
-    this.subscriptions.add(
-      SharedService.events.detailSelection,
-      item => this.setSelection(item));
+    this.setSelection(selection);
 
     this.subscriptions.add(this.itemSelectionHistoryForm.valueChanges, index => {
       const target = this.selectionHistory[index].auctionItem || this.selectionHistory[index].item;
@@ -231,6 +232,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     SharedService.events.detailPanelOpen.emit(false);
     Object.keys(this.selected).forEach(key =>
       this.selected[key] = undefined);
+    this.dialogRef.close();
   }
 
   isMobile(): boolean {

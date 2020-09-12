@@ -15,7 +15,6 @@ import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {ItemExtract} from '../utils/item-extract.util';
 
 class ItemResponse {
   timestamp: Date;
@@ -56,7 +55,7 @@ export class ItemService {
       });
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
-    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp) || !ItemService.list.value.length) {
       await this.getItems();
     }
   }

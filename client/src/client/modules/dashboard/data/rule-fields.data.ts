@@ -1,40 +1,67 @@
-import {ColumnDescription} from '../../table/models/column-description';
-import {RuleField, RuleFieldGroup} from '../models/rule-field.model';
+import {RuleFieldGroup} from '../models/rule-field.model';
 import {columnConfig} from './columns.data';
+import {TargetValueEnum} from '../types/target-value.enum';
 
 export const ruleFields: RuleFieldGroup[] = [
   {
     name: 'Item',
     options: [
       {
-        key: 'name', name: 'Item name', column: columnConfig.item.name
+        key: 'name',
+        name: 'Item name',
+        column: columnConfig.item.name,
+        defaultType: TargetValueEnum.TEXT
       },
       {
-        key: 'vendorSell', name: 'Vendor sell', column: columnConfig.item.vendorSell
+        key: 'vendorSell',
+        name: 'Vendor sell',
+        column: columnConfig.item.vendorSell,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'item.expansionId', name: 'Expansion', column: columnConfig.item.expansion
+        key: 'item.expansionId',
+        name: 'Expansion',
+        column: columnConfig.item.expansion,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'item.itemClass', name: 'Item class'
+        key: 'item.itemClass',
+        name: 'Item class',
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'item.itemSubClass', name: 'Item sub class'
+        key: 'item.itemSubClass',
+        name: 'Item sub class',
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'quality', name: 'Quality', column: columnConfig.item.quality
+        key: 'quality',
+        name: 'Quality',
+        column: columnConfig.item.quality,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'itemLevel', name: 'Item level', column: columnConfig.item.itemLevel
+        key: 'itemLevel',
+        name: 'Item level',
+        column: columnConfig.item.itemLevel,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: '[bonusIds]', name: 'Bonus'
+        key: '[bonusIds]',
+        name: 'Bonus',
+        defaultType: null
       },
       {
-        key: 'petLevel', name: 'Pet level', column: columnConfig.pet.level
+        key: 'petLevel',
+        name: 'Pet level',
+        column: columnConfig.pet.level,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'petQuality', name: 'Pet quality', column: columnConfig.pet.quality
+        key: 'petQuality',
+        name: 'Pet quality',
+        column: columnConfig.pet.quality,
+        defaultType: TargetValueEnum.NUMBER
       },
     ]
   },
@@ -43,58 +70,105 @@ export const ruleFields: RuleFieldGroup[] = [
     options: [
 
       {
-        key: 'buyout', name: 'Buyout', column: columnConfig.auction.buyout
+        key: 'buyout',
+        name: 'Buyout',
+        column: columnConfig.auction.buyout,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'bid', name: 'Lowest bid', column: columnConfig.auction.bid
+        key: 'bid',
+        name: 'Lowest bid',
+        column: columnConfig.auction.bid,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: '[auctions].bid', name: 'Auction bid', column: columnConfig.auction.bid
+        key: '[auctions].bid',
+        name: 'Auction bid',
+        column: columnConfig.auction.bid,
+        defaultType: TargetValueEnum.GOLD
       },
       {
         key: columnConfig.auction.buyoutVsVendorSell.key,
         name: columnConfig.auction.buyoutVsVendorSell.title,
-        column: columnConfig.auction.buyoutVsVendorSell
+        column: columnConfig.auction.buyoutVsVendorSell,
+        defaultType: TargetValueEnum.GOLD
       }, {
-       key: columnConfig.auction.timeLeft.key,
+        key: columnConfig.auction.timeLeft.key,
         name: columnConfig.auction.timeLeft.title,
-        column: columnConfig.auction.timeLeft
+        column: columnConfig.auction.timeLeft,
+        defaultType: TargetValueEnum.TEXT
       },
       {
-        key: 'regionSaleRate', name: 'Sale rate', column: columnConfig.auction.regionSaleRate
+        key: 'regionSaleRate',
+        name: 'Sale rate',
+        column: columnConfig.auction.regionSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'avgDailySold', name: 'Avg daily sold', column: columnConfig.auction.avgDailySold
+        key: 'avgDailySold',
+        name: 'Avg daily sold',
+        column: columnConfig.auction.avgDailySold,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'mktPrice', name: 'Market price', column: columnConfig.auction.mktPrice
+        key: 'mktPrice',
+        name: 'Market price',
+        column: columnConfig.auction.mktPrice,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'regionSaleAvg', name: 'Avg sales price', column: columnConfig.auction.regionSaleAvg
+        key: 'regionSaleAvg',
+        name: 'Avg sales price',
+        column: columnConfig.auction.regionSaleAvg,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'quantityTotal', name: 'Quantity total', column: columnConfig.auction.quantityTotal
+        key: 'quantityTotal',
+        name: 'Quantity total',
+        column: columnConfig.auction.quantityTotal,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
-        key: 'past24HoursSaleRate', name: 'Sales rate past 24h(personal)', column: columnConfig.auction.past24HoursSaleRate
+        key: 'past24HoursSaleRate',
+        name: 'Sales rate past 24h(personal)',
+        column: columnConfig.auction.past24HoursSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'past7DaysSaleRate', name: 'Sales rate past 7 days(personal)', column: columnConfig.auction.past7DaysSaleRate
+        key: 'past7DaysSaleRate',
+        name: 'Sales rate past 7 days(personal)',
+        column: columnConfig.auction.past7DaysSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'past14DaysSaleRate', name: 'Sales rate past 14 days(personal)', column: columnConfig.auction.past14DaysSaleRate
+        key: 'past14DaysSaleRate',
+        name: 'Sales rate past 14 days(personal)',
+        column: columnConfig.auction.past14DaysSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'past30DaysSaleRate', name: 'Sales rate past 30 days(personal)', column: columnConfig.auction.past30DaysSaleRate
+        key: 'past30DaysSaleRate',
+        name: 'Sales rate past 30 days(personal)',
+        column: columnConfig.auction.past30DaysSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'past60DaysSaleRate', name: 'Sales rate past 60 days(personal)', column: columnConfig.auction.past60DaysSaleRate
+        key: 'past60DaysSaleRate',
+        name: 'Sales rate past 60 days(personal)',
+        column: columnConfig.auction.past60DaysSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'past90DaysSaleRate', name: 'Sales rate past 90 days(personal)', column: columnConfig.auction.past90DaysSaleRate
+        key: 'past90DaysSaleRate',
+        name: 'Sales rate past 90 days(personal)',
+        column: columnConfig.auction.past90DaysSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
-        key: 'totalSaleRate', name: 'All time sales rate(personal)', column: columnConfig.auction.allTimeSaleRate
+        key: 'totalSaleRate',
+        name: 'All time sales rate(personal)',
+        column: columnConfig.auction.allTimeSaleRate,
+        defaultType: TargetValueEnum.PERCENT
       },
     ]
   },
@@ -104,27 +178,38 @@ export const ruleFields: RuleFieldGroup[] = [
       {
         key: columnConfig.recipe.knownName.key,
         name: 'Name',
-        column: columnConfig.recipe.knownName
+        column: columnConfig.recipe.knownName,
+        defaultType: TargetValueEnum.TEXT
       },
       {
         key: columnConfig.recipe.knownRank.key,
         name: 'Rank',
-        column: columnConfig.recipe.knownRank
+        column: columnConfig.recipe.knownRank,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
         key: columnConfig.recipe.knownCost.key,
         name: 'Cost',
-        column: columnConfig.recipe.knownCost
+        column: columnConfig.recipe.knownCost,
+        defaultType: TargetValueEnum.GOLD
       },
       {
         key: columnConfig.recipe.knownROI.key,
         name: 'ROI',
-        column: columnConfig.recipe.knownROI
+        column: columnConfig.recipe.knownROI,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.recipe.knownROIPercent.key,
+        name: 'ROI %',
+        column: columnConfig.recipe.knownROIPercent,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
         key: columnConfig.recipe.knownProfession.key,
         name: 'Profession',
-        column: columnConfig.recipe.knownProfession
+        column: columnConfig.recipe.knownProfession,
+        defaultType: TargetValueEnum.NUMBER
       }
     ]
   },
@@ -134,32 +219,44 @@ export const ruleFields: RuleFieldGroup[] = [
       {
         key: undefined,
         name: 'Add to cart action',
-        column: columnConfig.shoppingCartInput
+        column: columnConfig.shoppingCartInput,
+        defaultType: TargetValueEnum.INPUT_NUMBER
       },
       {
         key: columnConfig.recipe.name.key,
         name: 'Name',
-        column: columnConfig.recipe.name
+        column: columnConfig.recipe.name,
+        defaultType: TargetValueEnum.TEXT
       },
       {
         key: columnConfig.recipe.rank.key,
         name: 'Rank',
-        column: columnConfig.recipe.rank
+        column: columnConfig.recipe.rank,
+        defaultType: TargetValueEnum.NUMBER
       },
       {
         key: columnConfig.recipe.cost.key,
         name: 'Cost',
-        column: columnConfig.recipe.cost
+        column: columnConfig.recipe.cost,
+        defaultType: TargetValueEnum.GOLD
       },
       {
         key: columnConfig.recipe.ROI.key,
         name: 'ROI',
-        column: columnConfig.recipe.ROI
+        column: columnConfig.recipe.ROI,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.recipe.ROIPercent.key,
+        name: 'ROI %',
+        column: columnConfig.recipe.ROIPercent,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
         key: columnConfig.recipe.profession.key,
         name: 'Profession',
-        column: columnConfig.recipe.profession
+        column: columnConfig.recipe.profession,
+        defaultType: TargetValueEnum.NUMBER
       }
     ]
   },
@@ -167,19 +264,40 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Sold by',
     options: [
       {
-        key: 'source.npc.[soldBy].name', name: 'Vendor', column: columnConfig.source.soldBy.name
+        key: 'source.npc.[soldBy].name',
+        name: 'Vendor',
+        column: columnConfig.source.soldBy.name,
+        defaultType: TargetValueEnum.TEXT
       }, {
-        key: 'source.npc.[soldBy].tag', name: 'Tag', column: columnConfig.source.soldBy.tag
+        key: 'source.npc.[soldBy].tag',
+        name: 'Tag',
+        column: columnConfig.source.soldBy.tag,
+        defaultType: TargetValueEnum.TEXT
       }, {
-        key: 'source.npc.[soldBy].zoneName', name: 'Zone', column: columnConfig.source.soldBy.zoneName
+        key: 'source.npc.[soldBy].zoneName',
+        name: 'Zone',
+        column: columnConfig.source.soldBy.zoneName,
+        defaultType: TargetValueEnum.TEXT
       }, {
-        key: 'source.npc.[soldBy].price', name: 'Sell price', column: columnConfig.source.soldBy.price
+        key: 'source.npc.[soldBy].price',
+        name: 'Sell price',
+        column: columnConfig.source.soldBy.price,
+        defaultType: TargetValueEnum.GOLD
       }, {
-        key: 'source.npc.[soldBy].unitPrice', name: 'Unit price', column: columnConfig.source.soldBy.unitPrice
+        key: 'source.npc.[soldBy].unitPrice',
+        name: 'Unit price',
+        column: columnConfig.source.soldBy.unitPrice,
+        defaultType: TargetValueEnum.GOLD
       }, {
-        key: 'source.npc.[soldBy].stackSize', name: 'Stack size', column: columnConfig.source.soldBy.stackSize
+        key: 'source.npc.[soldBy].stackSize',
+        name: 'Stack size',
+        column: columnConfig.source.soldBy.stackSize,
+        defaultType: TargetValueEnum.NUMBER
       }, {
-        key: 'source.npc.[soldBy].currency', name: 'Currency', column: columnConfig.source.soldBy.currency
+        key: 'source.npc.[soldBy].currency',
+        name: 'Currency',
+        column: columnConfig.source.soldBy.currency,
+        defaultType: TargetValueEnum.NUMBER
       }
     ]
   },
@@ -187,15 +305,30 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Dropped by',
     options: [
       {
-        key: 'source.npc.[droppedBy].name', name: 'NPC name', column: columnConfig.source.droppedBy.name
+        key: 'source.npc.[droppedBy].name',
+        name: 'NPC name',
+        column: columnConfig.source.droppedBy.name,
+        defaultType: TargetValueEnum.TEXT
       }, {
-        key: 'source.npc.[droppedBy].tag', name: 'Tag', column: columnConfig.source.droppedBy.tag
+        key: 'source.npc.[droppedBy].tag',
+        name: 'Tag',
+        column: columnConfig.source.droppedBy.tag,
+        defaultType: TargetValueEnum.TEXT
       }, {
-        key: 'source.npc.[droppedBy].zoneName', name: 'Zone', column: columnConfig.source.droppedBy.zoneName
+        key: 'source.npc.[droppedBy].zoneName',
+        name: 'Zone',
+        column: columnConfig.source.droppedBy.zoneName,
+        defaultType: TargetValueEnum.TEXT
       }, {
-        key: 'source.npc.[droppedBy].dropChance', name: 'Drop chance', column: columnConfig.source.droppedBy.dropChance
+        key: 'source.npc.[droppedBy].dropChance',
+        name: 'Drop chance',
+        column: columnConfig.source.droppedBy.dropChance,
+        defaultType: TargetValueEnum.NUMBER
       }, {
-        key: 'source.npc.[droppedBy].levelRange', name: 'Level range', column: columnConfig.source.droppedBy.levelRange
+        key: 'source.npc.[droppedBy].levelRange',
+        name: 'Level range',
+        column: columnConfig.source.droppedBy.levelRange,
+        defaultType: TargetValueEnum.TEXT
       }
     ]
   },
@@ -203,22 +336,40 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Source: Trade vendors',
     options: [
       {
-        key: 'source.tradeVendor.name', name: 'Currency', column: columnConfig.source.tradeVendor.name
+        key: 'source.tradeVendor.name',
+        name: 'Currency',
+        column: columnConfig.source.tradeVendor.name,
+        defaultType: TargetValueEnum.TEXT
       },
       {
-        key: 'source.tradeVendor.bestValueName', name: 'Best value', column: columnConfig.source.tradeVendor.bestValueName
+        key: 'source.tradeVendor.bestValueName',
+        name: 'Best value',
+        column: columnConfig.source.tradeVendor.bestValueName,
+        defaultType: TargetValueEnum.TEXT
       },
       {
-        key: 'source.tradeVendor.roi', name: 'ROI', column: columnConfig.source.tradeVendor.roi
+        key: 'source.tradeVendor.roi',
+        name: 'ROI',
+        column: columnConfig.source.tradeVendor.roi,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'source.tradeVendor.value', name: 'Value', column: columnConfig.source.tradeVendor.value
+        key: 'source.tradeVendor.value',
+        name: 'Value',
+        column: columnConfig.source.tradeVendor.value,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'source.tradeVendor.sourceBuyout', name: 'Source buyout', column: columnConfig.source.tradeVendor.sourceBuyout
+        key: 'source.tradeVendor.sourceBuyout',
+        name: 'Source buyout',
+        column: columnConfig.source.tradeVendor.sourceBuyout,
+        defaultType: TargetValueEnum.GOLD
       },
       {
-        key: 'source.tradeVendor.buyout', name: 'Best value buyout', column: columnConfig.source.tradeVendor.buyout
+        key: 'source.tradeVendor.buyout',
+        name: 'Best value buyout',
+        column: columnConfig.source.tradeVendor.buyout,
+        defaultType: TargetValueEnum.GOLD
       }
     ]
   },
@@ -226,7 +377,10 @@ export const ruleFields: RuleFieldGroup[] = [
     name: 'Inventory',
     options: [
       {
-        key: 'item.inventory.quantity', name: 'Quantity', column: columnConfig.inventory.quantity
+        key: 'item.inventory.quantity',
+        name: 'Quantity',
+        column: columnConfig.inventory.quantity,
+        defaultType: TargetValueEnum.NUMBER
       }
     ]
   }

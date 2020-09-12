@@ -23,10 +23,12 @@ import {AuctionsService} from './services/auctions.service';
 import {CraftingUtil} from './modules/crafting/utils/crafting.util';
 import {NPC} from './modules/npc/models/npc.model';
 import {TsmLuaUtil} from './utils/tsm/tsm-lua.util';
-import {TradeVendor} from './models/item/trade-vendor';
-import {TradeVendors} from './models/trade-vendors';
 import {Filters} from './utils/filtering';
 import {InventoryUtil} from './utils/tsm/inventory.util';
+import {MatDialog} from '@angular/material/dialog';
+import {NewsUtil} from './modules/about/utils/news.util';
+import {NewsComponent} from './modules/about/components/news/news.component';
+import {ItemComponent} from './modules/item/components/item.component';
 
 @Component({
   selector: 'wah-root',
@@ -48,6 +50,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private downloadService: BackgroundDownloadService,
               private auctionService: AuctionsService,
               private reportService: ReportService,
+              private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
     this.subs.add(downloadService.isLoading, (isLoading) => {
@@ -75,6 +78,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.events,
       (event: NavigationEnd) =>
         this.onNavigationChange(event));
+
+    this.subs.add(SharedService.events.detailSelection, (selection) => {
+      if (selection) {
+        this.dialog.open(ItemComponent, {
+          width: '95%',
+          maxWidth: '100%',
+          data: selection
+        });
+      }
+    });
+
     this.angulartics2GoogleAnalytics.startTracking();
   }
 
@@ -92,6 +106,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.restorePreviousLocation();
     this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
     Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
+    NewsUtil.shouldTrigger()
+      .then(render => {
+        if (render) {
+          this.dialog.open(NewsComponent, {
+            width: '95%',
+            maxWidth: '100%',
+          });
+        }
+      });
   }
 
   ngAfterViewInit(): void {

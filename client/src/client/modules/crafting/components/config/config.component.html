@@ -1,12 +1,16 @@
 <form [formGroup]="form" class="row col">
   <mat-form-field class="col-md-6"
                   color="accent"
+                  [matTooltip]="strategies[form.controls.strategy.value].description"
   >
     <mat-select [disableOptionCentering]="true"
                 placeholder="Crafting strategy"
                 formControlName="strategy">
       <mat-option *ngFor="let strategy of strategies"
-                  [value]="strategy.id">
+                  [value]="strategy.id"
+                  [matTooltip]="strategy.description"
+                  matTooltipPosition="after"
+      >
         {{ strategy.name }}
       </mat-option>
     </mat-select>

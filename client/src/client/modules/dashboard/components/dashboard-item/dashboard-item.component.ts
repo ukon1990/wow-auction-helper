@@ -36,6 +36,9 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
     });
 
     this.sm.add(this.service.calculatedBoardEvent, (id) => {
+      if (id === this.dashboard.id) {
+        this.dashboard = this.service.map.value.get(id);
+      }
     });
   }
 
@@ -60,6 +63,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
     this.isConfigOpen = true;
     const dialogRef = this.dialog.open(ConfigureComponent, {
       width: '95%',
+      maxWidth: '100%',
       data: this.dashboard
     });
 

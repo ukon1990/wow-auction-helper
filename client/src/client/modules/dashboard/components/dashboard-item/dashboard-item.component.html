@@ -1,4 +1,4 @@
-<mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen}">
+<mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen && !isConfigOpen}">
   <mat-card-header>
     <div class="action-icon" *ngIf="!hideButtons">
       <button
@@ -34,7 +34,7 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <ng-container>
+    <ng-container *ngIf="!dashboard.isDisabled; else disabledTemplate">
       <wah-data-table [id]="dashboard?.idParam || 'id'"
                       iconSize="22"
                       [columns]="currentColumns"
@@ -49,6 +49,10 @@
         <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
       </mat-form-field>
     </ng-container>
+
+    <ng-template #disabledTemplate>
+      This dashboard has been disabled, and is therefore not calculated. If you wish to re-activate it. Go into it's settings(cogwheel).
+    </ng-template>
   </mat-card-content>
 </mat-card>
 <div *ngIf="detailView && !isOtherDetailPanelOpen" class="backdrop" (click)="openClose()"></div>

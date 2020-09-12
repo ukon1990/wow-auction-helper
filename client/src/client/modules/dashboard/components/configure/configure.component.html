@@ -1,12 +1,25 @@
-<h1 mat-dialog-title>Configure dashboard</h1>
+<wah-close-btn></wah-close-btn>
 
+<h1 mat-dialog-title>Configure dashboard</h1>
 <mat-dialog-content>
     <form [formGroup]="form">
-        <mat-form-field class="row col-md-12">
-            <input matInput
-                   placeholder="Dashboard title"
-                   formControlName="title">
-        </mat-form-field>
+        <div class="row">
+            <mat-form-field class="col-md-8">
+                <input matInput
+                       placeholder="Dashboard title"
+                       formControlName="title">
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4">
+                <mat-label>Last modified</mat-label>
+                <input matInput
+                       formControlName="lastModified"
+                       [matDatepicker]="picker"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
 
         <mat-accordion>
             <mat-expansion-panel>
@@ -70,13 +83,13 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button
-            mat-dialog-close
-            color="primary"
-    >
-        Close
-    </button>
-    <button
+    <form [formGroup]="form"
+          class="mr-2 pt-2">
+        <mat-checkbox formControlName="isDisabled">
+            Disabled
+        </mat-checkbox>
+    </form>
+    <button *ngIf="!isDefaultBoard; else resetBtnTemplate"
             mat-raised-button
             color="warn"
             (click)="onDelete()"
@@ -84,8 +97,16 @@
         <fa-icon [icon]="faTrash"></fa-icon>
         Delete
     </button>
-    <button
-            mat-raised-button
+    <ng-template #resetBtnTemplate>
+        <button mat-raised-button
+                color="warn"
+                (click)="reset()"
+        >
+            <fa-icon [icon]="faUndo"></fa-icon>
+            Reset to default
+        </button>
+    </ng-template>
+    <button mat-raised-button
             color="primary"
             [disabled]="!hasChanges"
             (click)="onDiscard()"
@@ -96,7 +117,8 @@
     <button
             mat-raised-button
             color="accent"
-            [disabled]="form.valid && hasChanges"
+            [disabled]="!form.valid || !hasChanges"
+            (click)="onSave()"
     >
         <fa-icon [icon]="faSave"></fa-icon>
         Save

@@ -25,6 +25,7 @@ import {Profession} from '../../../../../../api/src/profession/model';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {AuctionsService} from '../../../services/auctions.service';
 import {ItemService} from "../../../services/item.service";
+import {ItemLocale} from '../../../language/item.locale';
 
 @Component({
   selector: 'wah-data-table',
@@ -53,6 +54,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   filteredData = [];
   sm = new SubscriptionManager();
   professionIdMap: Map<number, Profession> = new Map<number, Profession>();
+  itemQualities = ItemLocale.getQualities().map;
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];

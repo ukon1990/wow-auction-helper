@@ -14,6 +14,7 @@ import {ItemService} from '../../../services/item.service';
 import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Report} from '../../../utils/report.util';
+import {GoldPipe} from '../../util/pipes/gold.pipe';
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {
@@ -39,6 +40,11 @@ export class DashboardCalculateUtil {
   }
 
   static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
+    if (board.isDisabled) {
+      board.data = [];
+      return board;
+    }
+
     try {
       const dataMap = new Map<string, any>();
       if (board.onlyItemsWithRules) {
@@ -137,9 +143,13 @@ export class DashboardCalculateUtil {
 
   private static getParamWithArrayIndicator(iterableKeyRules: Rule[]) {
     if (iterableKeyRules[0].field.indexOf('[') > -1) {
-      return iterableKeyRules[0].field;
+      const {regex: rx} = this.getMathRegex(iterableKeyRules[0].field);
+      const sp = iterableKeyRules[0].field.split(rx);
+      return sp.length > 1 ? sp[1] : sp[0];
     }
-    return iterableKeyRules[0].toField;
+    const {regex} = this.getMathRegex(iterableKeyRules[0].toField);
+    const split = iterableKeyRules[0].toField.split(regex);
+    return split.length > 1 ? split[1] : split[0];
   }
 
   private static ruleContainsIterable(rule: Rule) {
@@ -182,7 +192,7 @@ export class DashboardCalculateUtil {
 
   private static validateRule(rule: Rule, item: AuctionItem): boolean {
     const fromValue = this.getValue(item, rule.field);
-    const toValue = this.getValue(item, rule.toField);
+    const toValue = this.getValue(item, rule.toField) || rule.toValue;
     if (fromValue === undefined) {
       return false;
     }
@@ -191,6 +201,7 @@ export class DashboardCalculateUtil {
       case TargetValueEnum.PERCENT:
         return this.comparePercent(rule, fromValue, toValue);
       case TargetValueEnum.GOLD:
+        return this.compareNumbers(rule, GoldPipe.toCopper(fromValue), GoldPipe.toCopper(toValue));
       case TargetValueEnum.NUMBER:
         return this.compareNumbers(rule, fromValue, toValue);
       case TargetValueEnum.TEXT:
@@ -209,8 +220,7 @@ export class DashboardCalculateUtil {
 
   private static getValueFromField(field: string, item: AuctionItem) {
     const resultValues = [];
-    const regex = /[*\-\/+]/gi;
-    const mathExpressions = regex.exec(field);
+    const {regex, expressions} = this.getMathRegex(field);
     field.split(regex)
       .forEach((fieldPath, index) => {
         let value;
@@ -224,7 +234,13 @@ export class DashboardCalculateUtil {
           });
         resultValues.push(value);
       });
-    return this.calculateField(resultValues, mathExpressions);
+    return this.calculateField(resultValues, expressions);
+  }
+
+  private static getMathRegex(field: string) {
+    const regex = /[*\-\/+]/gi;
+    const expressions = regex.exec(field);
+    return {regex, expressions};
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[]) {
@@ -250,8 +266,8 @@ export class DashboardCalculateUtil {
    * @param fromValue
    * @param toValue
    */
-  private static compareNumbers(rule: Rule, fromValue: any, toValue: any) {
-    const value: number = (toValue || rule.toValue);
+  private static compareNumbers(rule: Rule, fromValue: number, toValue: number) {
+    const value: number = toValue !== undefined ? +toValue : +rule.toValue;
     switch (rule.condition) {
       case ConditionEnum.GREATER_THAN:
         return fromValue > value;
@@ -277,7 +293,8 @@ export class DashboardCalculateUtil {
    * @param toValue
    */
   private static comparePercent(rule: Rule, fromValue: number, toValue: number) {
-    return this.compareNumbers(rule, fromValue / toValue, rule.toValue);
+    const value = +toValue === +rule.toValue ? fromValue : fromValue / toValue;
+    return this.compareNumbers(rule, value, +rule.toValue / 100);
   }
 
   private static compareText(rule: Rule, fromValue: string, toValue: string) {

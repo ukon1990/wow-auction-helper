@@ -4,7 +4,7 @@ import { ConfigureComponent } from './configure.component';
 import {HarnessLoader} from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 
-fdescribe('ConfigureComponent', () => {
+describe('ConfigureComponent', () => {
   let component: ConfigureComponent;
   let fixture: ComponentFixture<ConfigureComponent>;
   let loader: HarnessLoader;

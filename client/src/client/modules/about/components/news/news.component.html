@@ -1,30 +1,24 @@
-<mat-card class="full-screen mb-3" *ngIf="showNews">
-  <mat-card-header>
-    <mat-card-title>
-      Welcome back! There has been a new version installed, since your last visit.
-    </mat-card-title>
-    <div class="action-icon mat-elevation-z5" (click)="close()">
-      <button mat-stroked-button class="btn btn-sm">
-        <fa-icon [icon]="faTimes"></fa-icon>
-      </button>
-    </div>
-  </mat-card-header>
-  <mat-card-content class="overflow">
-    <div class="scrollable">
-      <wah-changelog></wah-changelog>
-    </div>
-  </mat-card-content>
-  <mat-card-footer>
-    <div class="col-md-12 ">
-      If you find any bugs or wish to give feedback
-      on the app, please do so on
-      <a href="https://github.com/ukon1990/wow-auction-helper"
-         matTooltip="Github: Contribute report bugs/issues and feature requests">
-        <i class="fab fa-github"></i> Github
-      </a> or via PM to me on Reddit or Discord (Ukon1990). As always, any feedback is appreciated!
-    </div>
-  </mat-card-footer>
-</mat-card>
+<h1 mat-dialog-title>
+  Welcome back! There has been a new version installed, since your last visit.
+</h1>
 
-<div *ngIf="showNews " class="backdrop " (click)="close() ">
-</div>
+<mat-dialog-content>
+  <em>
+    If you find any bugs or wish to give feedback
+    on the app, please do so on
+    <a href="https://github.com/ukon1990/wow-auction-helper"
+       matTooltip="Github: Contribute report bugs/issues and feature requests">
+      <i class="fab fa-github"></i> Github
+    </a> or via PM to me on Reddit or Discord (Ukon1990). As always, any feedback is appreciated!
+  </em>
+
+  <wah-changelog></wah-changelog>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button
+          color="accent"
+          (click)="close()">
+    Close
+  </button>
+</mat-dialog-actions>

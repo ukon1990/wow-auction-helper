@@ -1,11 +1,10 @@
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {ConditionEnum} from '../types/condition.enum';
 import {TargetValueEnum} from '../types/target-value.enum';
-import generateUUID from '../../../utils/uuid.util';
 import {columnConfig} from './columns.data';
 
 const profitableCrafts: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-profitable-crafts',
   idIsBackendGenerated: false,
   sortOrder: 0,
   idParam: 'id',
@@ -15,37 +14,39 @@ const profitableCrafts: DashboardV2 = {
     columnConfig.auction.buyout,
     columnConfig.recipe.rank,
     columnConfig.recipe.ROI,
+    columnConfig.recipe.ROIPercent,
     columnConfig.recipe.cost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel,
     columnConfig.shoppingCartInput
   ],
   sortRule: {
-    field: columnConfig.recipe.ROI.key,
+    field: columnConfig.recipe.ROIPercent.key,
     sortDesc: true
   },
   rules: [{
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.buyout.key,
-    toValue: 1.10,
+    toValue: 110,
     toField: columnConfig.recipe.cost.key
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.regionSaleRate.key,
-    toValue: .15
+    toValue: 15
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.avgDailySold.key,
     toValue: 1
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const profitableKnownCrafts: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-profitable-known-crafts',
   idIsBackendGenerated: false,
   sortOrder: 1,
   idParam: 'id',
@@ -55,37 +56,39 @@ const profitableKnownCrafts: DashboardV2 = {
     columnConfig.auction.buyout,
     columnConfig.recipe.knownRank,
     columnConfig.recipe.knownROI,
+    columnConfig.recipe.knownROIPercent,
     columnConfig.recipe.knownCost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel,
     columnConfig.shoppingCartInput
   ],
   sortRule: {
-    field: columnConfig.recipe.knownROI.key,
+    field: columnConfig.recipe.knownROIPercent.key,
     sortDesc: true
   },
   rules: [{
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.buyout.key,
-    toValue: 1.10,
+    toValue: 110,
     toField: columnConfig.recipe.knownCost.key
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.regionSaleRate.key,
-    toValue: .15
+    toValue: 15
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.avgDailySold.key,
     toValue: 1
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const potentialDeals: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-potential-deals',
   idIsBackendGenerated: false,
   sortOrder: 2,
   idParam: 'id',
@@ -111,9 +114,9 @@ const potentialDeals: DashboardV2 = {
     toValue: 0
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: 'regionSaleRate',
-    toValue: .30
+    toValue: 30
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
@@ -123,19 +126,20 @@ const potentialDeals: DashboardV2 = {
     condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: 'buyout',
-    toValue: .75,
+    toValue: 75,
     toField: 'mktPrice'
   }, {
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.GOLD,
     field: 'buyout',
-    toValue: 0
+    toValue: '0c'
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const potentialBidDeals: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-potential-bid-deals',
   idIsBackendGenerated: false,
   sortOrder: 3,
   idParam: 'id',
@@ -156,7 +160,7 @@ const potentialBidDeals: DashboardV2 = {
   rules: [
     {
       condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
-      targetValueType: TargetValueEnum.GOLD,
+      targetValueType: TargetValueEnum.PERCENT,
       field: 'bid',
       toValue: .9,
       toField: 'buyout',
@@ -164,13 +168,13 @@ const potentialBidDeals: DashboardV2 = {
       condition: ConditionEnum.GREATER_THAN,
       targetValueType: TargetValueEnum.GOLD,
       field: 'bid',
-      toValue: 0
+      toValue: '0c'
     },
     {
       condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-      targetValueType: TargetValueEnum.NUMBER,
+      targetValueType: TargetValueEnum.PERCENT,
       field: 'regionSaleRate',
-      toValue: .30
+      toValue: 30
     }, {
       condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
       targetValueType: TargetValueEnum.NUMBER,
@@ -185,19 +189,20 @@ const potentialBidDeals: DashboardV2 = {
       condition: ConditionEnum.GREATER_THAN,
       targetValueType: TargetValueEnum.GOLD,
       field: '[auctions].bid',
-      toValue: 0
+      toValue: '0c'
     }, {
       condition: ConditionEnum.LESS_THAN,
       targetValueType: TargetValueEnum.PERCENT,
       field: '[auctions].bid',
-      toValue: .9,
+      toValue: 90,
       toField: 'buyout'
     }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-potential-bid-deals-with-2hours-or-less',
   idIsBackendGenerated: false,
   sortOrder: 4,
   idParam: 'id',
@@ -229,11 +234,12 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
       }
     ]
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const buyoutBelowVendorSellPrice: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-buyout-below-vendor-sell-price',
   idIsBackendGenerated: false,
   sortOrder: 6,
   idParam: 'id',
@@ -257,7 +263,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.GOLD,
     field: 'buyout',
-    toValue: 0
+    toValue: '0c'
   }, {
     condition: ConditionEnum.IS_NOT,
     targetValueType: TargetValueEnum.NUMBER,
@@ -269,11 +275,12 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
     field: 'item.itemClass',
     toValue: 2
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const tradeVendorCurrencyInGold: DashboardV2 = {
-  id: generateUUID(),
+  id: 'default-trade-vendor-currency-in-gold',
   idIsBackendGenerated: false,
   sortOrder: 6,
   idParam: 'id',
@@ -300,26 +307,27 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   ],
   rules: [{
     condition: ConditionEnum.GREATER_THAN,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.GOLD,
     field: 'source.tradeVendor.sourceBuyout',
-    toValue: 0,
+    toValue: '0c',
   }, {
     condition: ConditionEnum.GREATER_THAN,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.GOLD,
     field: 'source.tradeVendor.value',
-    toValue: 0,
+    toValue: '0c',
   }, {
     condition: ConditionEnum.GREATER_THAN,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.GOLD,
     field: 'source.tradeVendor.roi',
-    toValue: 0,
+    toValue: '0c',
   }, {
     condition: ConditionEnum.GREATER_THAN,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: 'regionSaleRate',
-    toValue: .1,
+    toValue: 10,
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 };
 
 const getKnownProfessionBoards: DashboardV2[] = [
@@ -337,31 +345,23 @@ const getKnownProfessionBoards: DashboardV2[] = [
   {id: 186, name: 'Mining'},
   {id: 393, name: 'Skinning'},
   {id: 197, name: 'Tailoring'}
-].map(p => ({
-  id: generateUUID(),
+].map(p => (
+  {
+  id: 'default-get-known-profession-' + p.id,
   idIsBackendGenerated: false,
   sortOrder: 1,
   idParam: 'id',
   title: p.name,
-  columns: [
-    columnConfig.item.name,
-    columnConfig.auction.buyout,
-    columnConfig.recipe.knownRank,
-    columnConfig.recipe.knownROI,
-    columnConfig.recipe.knownCost,
-    columnConfig.auction.regionSaleRate,
-    columnConfig.item.itemLevel,
-    columnConfig.shoppingCartInput
-  ],
+  columns: profitableKnownCrafts.columns,
   sortRule: {
-    field: columnConfig.recipe.knownROI.key,
+    field: columnConfig.recipe.knownROIPercent.key,
     sortDesc: true
   },
   rules: [{
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.buyout.key,
-    toValue: 1.10,
+    toValue: 110,
     toField: columnConfig.recipe.knownCost.key
   }, {
     condition: ConditionEnum.EQUAL_TO,
@@ -370,16 +370,17 @@ const getKnownProfessionBoards: DashboardV2[] = [
     toValue: p.id
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
+    targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.regionSaleRate.key,
-    toValue: .15
+    toValue: 15
   }, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.avgDailySold.key,
     toValue: 1
   }],
-  data: []
+  data: [],
+  lastModified: 1595541600000
 }));
 
 export const defaultBoards: DashboardV2[] = [

@@ -8,5 +8,6 @@ export interface RuleFieldGroup {
 export interface RuleField {
   key: string;
   name: string;
+  defaultType: string;
   column?: ColumnDescription;
 }

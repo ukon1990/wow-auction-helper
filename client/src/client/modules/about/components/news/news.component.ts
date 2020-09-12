@@ -1,39 +1,35 @@
-import { Component, AfterViewInit } from '@angular/core';
+import {Component, AfterViewInit, Inject, OnDestroy} from '@angular/core';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {DashboardService} from '../../../dashboard/services/dashboard.service';
+import {NewsUtil} from '../../utils/news.util';
 
 declare function require(moduleName: string): any;
+
 const version = require('../../../../../../package.json').version;
 declare var $;
+
 @Component({
   selector: 'wah-news',
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.scss']
 })
-export class NewsComponent implements AfterViewInit {
+export class NewsComponent implements OnDestroy {
   showNews: boolean;
   faTimes = faTimes;
 
-  constructor() {
+  constructor(
+    public dialogRef: MatDialogRef<NewsComponent>,
+    @Inject(MAT_DIALOG_DATA) public input: string | any) {
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      try {
-        console.log(localStorage['timestamp_news'], version);
-        if (localStorage['realm'] &&
-            localStorage['timestamp_news'] && localStorage['timestamp_news'] !== version) {
-            this.showNews = true;
-        } else if (!localStorage['timestamp_news']) {
-            this.close();
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }, 1000);
+  ngOnDestroy(): void {
+    NewsUtil.events.next(false);
   }
 
   close(): void {
     localStorage['timestamp_news'] = version;
     this.showNews = false;
+    this.dialogRef.close();
   }
 }

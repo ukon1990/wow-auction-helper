@@ -6,7 +6,7 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {columnConfig} from '../../../data/columns.data';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SortRule} from '../../../models/dashboard-v2.model';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'wah-columns',

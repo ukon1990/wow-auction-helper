@@ -17,15 +17,34 @@ export abstract class BaseCraftingUtil {
     PESSIMISTIC: 2
   };
   static readonly STRATEGY_LIST = [
-    {id: 0, name: 'Optimistic', description: ''},
-    {id: 1, name: 'Needed', description: ''},
-    {id: 2, name: 'Pessimistic', description: ''}
+    {
+      id: 0,
+      name: 'Optimistic',
+      description: 'Uses a straight up calculation on the lowest prices per item * quantity needed.'
+    },
+    {
+      id: 1,
+      name: 'Needed',
+      description: 'Calculates the cost blindly based on what the price was as of the AH snapshot. ' +
+        'If there are not enough of a reagent at a given price point, it will go up to the next' +
+        'until the price is calculated for the needed reagent quantity.'
+    },
+    {
+      id: 2,
+      name: 'Pessimistic',
+      description: 'Same as the "Needed" strategy, but in addition. It will attempt to take potential ' +
+        'price bait in to consideration.\n\n' +
+        'Eg: So if someone posts a couple items up, for a price that is way cheaper than the ' +
+        'majority of prices for that item. It will skip to the next price. ' +
+        'This will probably be more of an accurate estimate, especially for highly populated realms.'
+    }
   ];
   private static intermediateEligible: Recipe[] = [];
   private static intermediateMap: Map<number, Recipe> = new Map();
   private static hasMappedRecipes: boolean;
 
   private ahCutModifier = 0.95;
+
   protected constructor(public map: Map<string, AuctionItem>) {
   }
 

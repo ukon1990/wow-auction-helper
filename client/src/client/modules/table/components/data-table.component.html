@@ -110,6 +110,9 @@
             <span *ngSwitchCase="'number'">
               {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
             </span>
+            <ng-container *ngSwitchCase="'quality'">
+              {{ itemQualities.get(d[c.key])?.name }}
+            </ng-container>
             <a *ngSwitchCase="'zone'"
                href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
                target="_blank">
