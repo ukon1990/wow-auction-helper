@@ -26,6 +26,8 @@ import { ContainedInTabComponent } from './components/contained-in-tab/contained
 import { AuctionsChartComponent } from './components/auctions-chart/auctions-chart.component';
 import { ItemPriceHistoryComponent } from './components/item-price-history/item-price-history.component';
 import {CraftingModule} from '../crafting/crafting.module';
+import {MatDialogModule} from '@angular/material/dialog';
+import {CoreModule} from '../core/core.module';
 
 
 @NgModule({
@@ -58,7 +60,9 @@ import {CraftingModule} from '../crafting/crafting.module';
     UtilModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    CraftingModule
+    CraftingModule,
+    MatDialogModule,
+    CoreModule
   ],
   exports: [
     ItemComponent

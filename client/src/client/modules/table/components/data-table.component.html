@@ -29,8 +29,7 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let d of filteredData | slice: getFromValue():getToValue(); let i = index"
-      [ngClass]="{'user-auction-lowest': isUsersAuction(d)}">
+  <tr *ngFor="let d of filteredData | slice: getFromValue():getToValue(); let i = index">
     <ng-container *ngFor="let c of columns;">
       <td [class]="c.cssClass" *ngIf="displayColumn(c)" (click)="this.rowClickEvent(c, d)">
           <span [ngSwitch]="c.dataType">
@@ -111,6 +110,9 @@
             <span *ngSwitchCase="'number'">
               {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
             </span>
+            <ng-container *ngSwitchCase="'quality'">
+              {{ itemQualities.get(d[c.key])?.name }}
+            </ng-container>
             <a *ngSwitchCase="'zone'"
                href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
                target="_blank">

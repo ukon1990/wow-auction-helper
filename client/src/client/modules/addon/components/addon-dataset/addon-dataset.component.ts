@@ -207,7 +207,7 @@ export class AddonDatasetComponent implements OnDestroy, OnInit {
         this.handleInventorySet(this.form.getRawValue().faction, formData));
 
     this.sm.add(
-      this.auctionService.events.list,
+      this.auctionService.list,
       () => this.initContent());
   }
 

@@ -102,6 +102,11 @@ export class BackgroundDownloadService {
 
     await this.getUpdateTimestamps()
       .then(async (timestamps: Timestamps) => {
+        await this.zoneService.getAll(false, timestamps.zones)
+          .then(() =>
+            console.log('Done loading zone data'))
+          .catch(console.error);
+
         await Promise.all([
           this.professionService.load(timestamps.professions)
             .catch(console.error),
@@ -113,17 +118,13 @@ export class BackgroundDownloadService {
             .catch(console.error),
           this.craftingService.load(timestamps.recipes)
             .catch(console.error),
-          this.zoneService.getAll(false, timestamps.zones)
-            .then(() =>
-              console.log('Done loading zone data'))
-            .catch(console.error),
           this.tsmService.load(this.realmService.events.realmStatus.value)
             .catch(console.error),
           this.itemService.getBonusIds(),
         ])
           .catch(console.error);
 
-        AuctionUtil.organize(this.auctionsService.events.list.value)
+        await this.auctionsService.organize()
           .catch(error =>
             ErrorReport.sendError('BackgroundDownloadService.init', error));
         await this.startRealmStatusInterval();

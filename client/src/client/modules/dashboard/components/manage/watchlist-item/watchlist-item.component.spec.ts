@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WatchlistItemComponent } from './watchlist-item.component';
 import { TestModule } from '../../../../test.module';
-import { WatchlistItem } from '../../../models/watchlist.model';
+import {WatchlistItem} from '../../../models/watchlist-item.model';
 
 describe('WatchlistItemComponent', () => {
   let component: WatchlistItemComponent;

@@ -26,7 +26,7 @@ import {UserUtil} from '../../../../utils/user/user.util';
 })
 export class GeneralSettingsComponent implements OnDestroy {
   form: FormGroup;
-  originalUserObject: User;
+  originalUserObject: { realm: string; region: string; locale: string };
   userChanges: Map<string, Difference> = new Map<string, Difference>();
 
   subscriptions = new SubscriptionManager();
@@ -93,10 +93,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   async saveRealmAndRegion() {
     if (this.userChanges.has('locale')) {
       localStorage['locale'] = this.form.value.locale;
-      /*
-      delete localStorage['timestamp_items'];
-      delete localStorage['timestamp_pets'];
-      delete localStorage['timestamp_recipes'];*/
       await Promise.all([
         this.zoneService.get(),
         this.professionService.getAll(),
@@ -112,7 +108,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
 
       if (this.hasNotChangedRealmOrRegion()) {
-        await AuctionUtil.organize(SharedService.auctions);
+        await this._auctionService.organize();
       }
     }
 
@@ -141,7 +137,12 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   private setOriginalUserObject() {
-    this.originalUserObject = ObjectUtil.clone(SharedService.user) as User;
+    const user: User = SharedService.user;
+    this.originalUserObject = {
+      region: user.region,
+      realm: user.realm,
+      locale: user.locale
+    };
   }
 
   isValid(): boolean {

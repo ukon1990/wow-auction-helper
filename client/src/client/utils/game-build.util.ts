@@ -29,7 +29,8 @@ export class GameBuild {
     'Mists of Pandaria',
     'Warlords of Draenor',
     'Legion',
-    'Battle for Azeroth'
+    'Battle for Azeroth',
+    'Shadowlands'
   ];
 
   static expansionMaxLevel = [

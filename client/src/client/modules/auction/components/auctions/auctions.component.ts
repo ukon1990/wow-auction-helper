@@ -8,6 +8,7 @@ import {GameBuild} from '../../../../utils/game-build.util';
 import {itemQualities} from '../../../../models/item/disenchanting-list';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-auctions',
@@ -27,7 +28,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   delayFilter = false;
   private subs = new SubscriptionManager();
 
-  constructor(private formBuilder: FormBuilder, private _title: Title) {
+  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     SharedService.events.title.next('Auctions');
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
     this.addColumns();
@@ -95,7 +96,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
   async filterAuctions(changes = this.form.value) {
 
-    this.table.data = SharedService.auctionItems
+    this.table.data = this.auctionService.list.value
       .filter(i => this.isMatch(i, changes))
       .map(i => {
         return {...SharedService.pets[i.petSpeciesId], ...i};

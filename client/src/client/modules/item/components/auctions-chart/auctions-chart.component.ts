@@ -24,7 +24,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
   constructor(private auctionsService: AuctionsService) {
     const medianPercentLimit = localStorage.getItem(this.localStorageName);
     this.medianPercentLimit = new FormControl(medianPercentLimit ? +medianPercentLimit : 5);
-    this.sm.add(this.auctionsService.events.groupedList, (map) => {
+    this.sm.add(this.auctionsService.list, () => {
       this.setAuctionAndDataset();
     });
     this.sm.add(this.medianPercentLimit.valueChanges,

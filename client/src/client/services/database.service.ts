@@ -16,6 +16,9 @@ import {Report} from '../utils/report.util';
 import {GameBuild} from '../utils/game-build.util';
 import {AucScanDataImportUtil} from '../modules/auction/utils/auc-scan-data-import.util';
 import {Profession} from '../../../../api/src/profession/model';
+import {AuctionsService} from './auctions.service';
+import {DatabaseUtil} from '../utils/database.util';
+import {DashboardV2} from '../modules/dashboard/models/dashboard-v2.model';
 
 /**
  * A Class for handeling the indexedDB
@@ -24,24 +27,6 @@ import {Profession} from '../../../../api/src/profession/model';
 export class DatabaseService {
   public db: Dexie;
   public unsupported: boolean;
-
-  readonly TSM_TABLE_COLUMNS = 'Id,Name,Level,VendorBuy,VendorSell,MarketValue,MinBuyout,HistoricalPrice,'
-    + 'RegionMarketAvg,RegionMinBuyoutAvg,RegionHistoricalPrice,RegionSaleAvg,'
-    + 'RegionAvgDailySold,RegionSaleRate';
-  readonly WOWUCTION_TABLE_COLUMNS = 'id,mktPrice,avgDailyed,avgDailySold,estDemand,dailyPriceChange';
-  readonly ITEM_TABLE_COLUMNS = 'id,name,icon,itemLevel,itemClass,itemSubClass,quality,itemSpells'
-    + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation';
-  readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
-  readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
-  readonly RECIPE_TABLE_COLUMNS = 'id,icon,name,description,rank,craftedItemId,hordeCraftedItemId,' +
-    'allianceCraftedItemId,minCount,maxCount,procRate,professionId,skillTierId,reagents';
-  readonly TSM_ADDON_HISTORY = 'timestamp,data';
-  readonly ADDON = 'id,name,gameVersion,timestamp,data';
-  readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
-    'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
-  readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
-  readonly PROFESSION_TABLE_COLUMNS = 'id,name,description,icon,type,skillTiers';
-
   databaseIsReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(public platform: Platform) {
@@ -50,7 +35,7 @@ export class DatabaseService {
       return;
     }
     this.db = new Dexie('wah-db');
-    this.setDbVersions();
+    new DatabaseUtil().setVersion(this.db);
     this.db.open()
       .then(async (dx) => {
         const storageName = 'previousDBVersion';
@@ -70,8 +55,12 @@ export class DatabaseService {
     });
   }
 
+  private shouldNotUseIndexedDB() {
+    return environment.test || this.platform === null || this.unsupported;
+  }
+
   addItems(items: Array<Item>): void {
-    if (environment.test || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return;
     }
     this.db.table('items').bulkPut(items)
@@ -80,37 +69,48 @@ export class DatabaseService {
   }
 
   async getAllItems(): Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
 
     SharedService.downloading.items = true;
 
     return new Dexie.Promise<any>(async (resolve) => {
-      await this.getItemsInBatch(0, 50000);
-      await this.getItemsInBatch(50001, 100000);
-      await this.getItemsInBatch(100001, 200000);
-      await this.getItemsInBatch(200001, 1000000);
+      let items: Item[] = [];
+      const add = (result) => items = [...items, ...result];
+      await this.getItemsInBatch(0, 50000)
+          .then((res) => add(res));
+      await this.getItemsInBatch(50001, 100000)
+          .then((res) => add(res));
+      await this.getItemsInBatch(100001, 200000)
+          .then((res) => add(res));
+      await this.getItemsInBatch(200001, 1000000)
+          .then((res) => add(res));
       SharedService.events.items.emit(true);
-      resolve();
+      resolve(items);
     });
   }
 
   private getItemsInBatch(from: number, to: number) {
-    return this.db.table('items')
-      .where(':id')
-      .between(from, to)
-      .toArray()
-      .then(items => {
-        SharedService.downloading.items = false;
-        SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
-        items.forEach(i => {
-          SharedService.items[i.id] = i;
-        });
-      }).catch(e => {
+    return new Promise<Item[]>((resolve, reject) => {
+      this.db.table('items')
+          .where(':id')
+          .between(from, to)
+          .toArray()
+          .then(items => {
+            SharedService.downloading.items = false;
+            /*
+            SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
+            items.forEach(i => {
+              SharedService.items[i.id] = i;
+            });*/
+            resolve(items);
+          }).catch(e => {
         console.error('Could not restore items from local DB', e);
         SharedService.downloading.items = false;
+        reject(e);
       });
+    });
   }
 
   clearItems(): void {
@@ -118,14 +118,14 @@ export class DatabaseService {
   }
 
   async addNPCs(list: NPC[]): Promise<void> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return;
     }
     await this.db.table('npcs').bulkPut(list);
   }
 
   async getAllNPCs(): Promise<NPC[]> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
     return this.db.table('npcs').toArray();
@@ -139,7 +139,7 @@ export class DatabaseService {
 
   addProfessions(professions: Profession[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      if (this.shouldNotUseIndexedDB()) {
         resolve();
         return;
       }
@@ -150,7 +150,7 @@ export class DatabaseService {
   }
 
   getAllProfessions() {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
     return this.db.table('professions').toArray();
@@ -163,7 +163,7 @@ export class DatabaseService {
   }
 
   async addZones(list: Zone[]): Promise<void> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return;
     }
     await this.db.table('zones').bulkPut(list)
@@ -171,7 +171,7 @@ export class DatabaseService {
   }
 
   async getAllZones(): Promise<Zone[]> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
     return this.db.table('zones').toArray();
@@ -182,14 +182,14 @@ export class DatabaseService {
   }
 
   addPets(pets: Array<Pet>): void {
-    if (environment.test || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return;
     }
     this.db.table('pets').bulkPut(pets);
   }
 
   getAllPets(): Dexie.Promise<any> {
-    if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
 
@@ -213,7 +213,7 @@ export class DatabaseService {
   }
 
   addRecipes(recipes: Recipe[]): void {
-    if (environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported) {
+    if (this.shouldNotUseIndexedDB()) {
       return;
     }
     this.db.table('recipes2').bulkPut(recipes)
@@ -224,7 +224,7 @@ export class DatabaseService {
   getAllRecipes(): Promise<Recipe[]> {
     SharedService.downloading.recipes = true;
     return new Promise((resolve, reject) => {
-      if (this.platform === null || this.platform.WEBKIT || this.unsupported) {
+      if (this.shouldNotUseIndexedDB()) {
         return resolve([]);
       }
 
@@ -239,6 +239,46 @@ export class DatabaseService {
         console.error('Could not restore recipes from local DB', error);
         ErrorReport.sendError('DatabaseService.getAllRecipes', error);
         SharedService.downloading.recipes = false;
+        reject(error);
+      });
+    });
+  }
+
+  addDashboards(boards: DashboardV2[]): void {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
+    this.db.table('dashboards').bulkPut(boards)
+      .catch(e =>
+        ErrorReport.sendError('DatabaseService.addDashboards', e));
+  }
+
+  removeDashboard(id: string): Promise<void> {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
+    return new Promise<void>((resolve, reject) => {
+      this.db.table('dashboards').delete(id)
+        .then(resolve)
+        .catch((reject));
+    });
+  }
+
+  getDashboards(): Promise<DashboardV2[]> {
+    return new Promise((resolve, reject) => {
+      if (this.shouldNotUseIndexedDB()) {
+        return resolve([]);
+      }
+
+      this.db.table('dashboards')
+        .toArray()
+        .then(boards => {
+          console.log('Restored dashboards from local DB');
+          resolve(boards);
+          SharedService.events.recipes.emit(true);
+        }).catch(error => {
+        console.error('Could not restore dashboards from local DB', error);
+        ErrorReport.sendError('DatabaseService.getDashboards', error);
         reject(error);
       });
     });
@@ -262,7 +302,7 @@ export class DatabaseService {
   }
 
   private isUnsupportedBrowser() {
-    return environment.test || this.platform === null || this.platform.WEBKIT || this.unsupported;
+    return environment.test || this.shouldNotUseIndexedDB();
   }
 
   addAddonData(name: string, data: any, gameVersion: number, lastModified: number): void {
@@ -341,113 +381,5 @@ export class DatabaseService {
 
   deleteDB(): void {
     this.db.delete();
-  }
-
-  setDbVersions(): void {
-
-    this.db.version(10).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes2: this.RECIPE_TABLE_COLUMNS,
-      npcs: this.NPC_TABLE_COLUMNS,
-      zones: this.ZONE_TABLE_COLUMNS,
-      professions: this.PROFESSION_TABLE_COLUMNS,
-      addons: this.ADDON
-    });
-
-    this.db.version(9).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS,
-      npcs: this.NPC_TABLE_COLUMNS,
-      zones: this.ZONE_TABLE_COLUMNS,
-      professions: this.PROFESSION_TABLE_COLUMNS,
-      addons: this.ADDON
-    });
-
-    this.db.version(8).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes: this.RECIPE_TABLE_COLUMNS,
-      npcs: this.NPC_TABLE_COLUMNS,
-      zones: this.ZONE_TABLE_COLUMNS,
-      professions: this.PROFESSION_TABLE_COLUMNS,
-      addons: this.ADDON
-    });
-    this.db.version(7).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
-      npcs: this.NPC_TABLE_COLUMNS,
-      zones: this.ZONE_TABLE_COLUMNS,
-      addons: this.ADDON
-    });
-    this.db.version(6).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: this.WOWUCTION_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
-      npcs: this.NPC_TABLE_COLUMNS,
-      zones: this.ZONE_TABLE_COLUMNS,
-      tsmAddonHistory: this.TSM_ADDON_HISTORY
-    });
-
-    this.db.version(5).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: this.WOWUCTION_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion',
-      tsmAddonHistory: this.TSM_ADDON_HISTORY
-    });
-    this.db.version(4).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: this.WOWUCTION_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS,
-      recipes: 'spellID,itemID,name,profession,rank,minCount,maxCount,reagents,expansion'
-    });
-    this.db.version(3).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: this.WOWUCTION_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS
-    }).upgrade(() => {
-      console.log('Upgraded db');
-    });
-
-    this.db.version(2).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: 'id,mktPrice,avgDailyPosted,avgDailySold,estDemand,realm',
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: this.ITEM_TABLE_COLUMNS,
-      pets: this.PET_TABLE_COLUMNS
-    }).upgrade(() => {
-      console.log('Upgraded db');
-    });
-    this.db.version(1).stores({
-      auctions: this.AUCTIONS_TABLE_COLUMNS,
-      wowuction: this.WOWUCTION_TABLE_COLUMNS,
-      tsm: this.TSM_TABLE_COLUMNS,
-      items: `id,name,icon,itemClass,itemSubClass,quality,itemSpells,itemSource`,
-      pets: this.PET_TABLE_COLUMNS
-    });
   }
 }

@@ -7,6 +7,8 @@ import {Reagent} from '../models/reagent';
 import {CustomPrice} from '../models/custom-price';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../services/crafting.service';
+import {NpcService} from '../../npc/services/npc.service';
+import {AuctionsService} from '../../../services/auctions.service';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -15,15 +17,36 @@ export abstract class BaseCraftingUtil {
     PESSIMISTIC: 2
   };
   static readonly STRATEGY_LIST = [
-    {id: 0, name: 'Optimistic', description: ''},
-    {id: 1, name: 'Needed', description: ''},
-    {id: 2, name: 'Pessimistic', description: ''}
+    {
+      id: 0,
+      name: 'Optimistic',
+      description: 'Uses a straight up calculation on the lowest prices per item * quantity needed.'
+    },
+    {
+      id: 1,
+      name: 'Needed',
+      description: 'Calculates the cost blindly based on what the price was as of the AH snapshot. ' +
+        'If there are not enough of a reagent at a given price point, it will go up to the next' +
+        'until the price is calculated for the needed reagent quantity.'
+    },
+    {
+      id: 2,
+      name: 'Pessimistic',
+      description: 'Same as the "Needed" strategy, but in addition. It will attempt to take potential ' +
+        'price bait in to consideration.\n\n' +
+        'Eg: So if someone posts a couple items up, for a price that is way cheaper than the ' +
+        'majority of prices for that item. It will skip to the next price. ' +
+        'This will probably be more of an accurate estimate, especially for highly populated realms.'
+    }
   ];
   private static intermediateEligible: Recipe[] = [];
   private static intermediateMap: Map<number, Recipe> = new Map();
   private static hasMappedRecipes: boolean;
 
   private ahCutModifier = 0.95;
+
+  protected constructor(public map: Map<string, AuctionItem>) {
+  }
 
   calculate(recipes: Recipe[]): void {
     if (!BaseCraftingUtil.hasMappedRecipes) {
@@ -90,9 +113,9 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipeForReagent(r: Reagent, parentRecipe: Recipe) {
-    const recipe: Recipe = CraftingService.map.value.get(r.id);
+    const recipe: Recipe[] = CraftingService.itemRecipeMap.value.get(r.id);
     if (!r.recipe && recipe) {
-      r.recipe = recipe;
+      r.recipe = recipe[0];
       if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.id)) {
         BaseCraftingUtil.intermediateEligible.push(parentRecipe);
         BaseCraftingUtil.intermediateMap.set(parentRecipe.id, parentRecipe);
@@ -112,7 +135,7 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipePriceAndStatData(recipe: Recipe) {
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[recipe.itemID];
+    const auctionItem: AuctionItem = this.map.get('' + recipe.itemID);
     if (auctionItem) {
       recipe.buyout = auctionItem.buyout;
       recipe.mktPrice = auctionItem.mktPrice;
@@ -131,15 +154,16 @@ export abstract class BaseCraftingUtil {
 
     // The user should see item combination items as "known"
     if (!recipe.professionId) {
-      SharedService.recipesForUser[recipe.id] = ['Item'];
+      CraftingService.recipesForUser.value.set(recipe.itemID, ['Item']);
     }
 
     // For intermediate crafting
-    if (SharedService.recipesForUser[recipe.icon]) {
+    /*
+    if (CraftingService.recipesForUser.value.has(recipe.id)) {
       if (!SharedService.recipesMapPerItemKnown[recipe.itemID] || SharedService.recipesMapPerItemKnown[recipe.itemID].cost > recipe.cost) {
         SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
       }
-    }
+    }*/
   }
 
   getFallbackPrice(id: number, quantity: number): { cost: number, intermediateEligible: boolean } {
@@ -147,10 +171,10 @@ export abstract class BaseCraftingUtil {
       cost: 0,
       intermediateEligible: false
     };
-    const item: AuctionItem = SharedService.auctionItemsMap[id],
-      recipe: Recipe = SharedService.recipesMapPerItemKnown[id];
+    const item: AuctionItem = this.map.get('' + id),
+      recipe: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(id);
     if (recipe) {
-      recipe.reagents.forEach(r => {
+      recipe[0].reagents.forEach(r => {
         result.cost += this.getPrice(r.id, r.quantity * quantity);
       });
       result.intermediateEligible = true;
@@ -168,7 +192,7 @@ export abstract class BaseCraftingUtil {
   }
 
   getVendorPriceDetails(id: number): { price: number; stock: number } {
-    const item: ItemNpcDetails = SharedService.itemNpcMap.get(id);
+    const item: ItemNpcDetails = NpcService.itemNpcMap.value.get(id);
     if (item) {
       return {
         price: item.vendorBuyPrice,
@@ -191,11 +215,11 @@ export abstract class BaseCraftingUtil {
     recipe.cost = 0;
     recipe.roi = 0;
     recipe.reagents.forEach(reagent => {
-      const knownRecipe: Recipe = SharedService.recipesMapPerItemKnown[reagent.id];
-      if (this.shouldUseIntermediateForReagent(knownRecipe, reagent) && !this.getOverridePrice(reagent.id)) {
+      const knownRecipes: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(reagent.id);
+      if (knownRecipes && this.shouldUseIntermediateForReagent(knownRecipes[0], reagent) && !this.getOverridePrice(reagent.id)) {
         reagent.intermediateEligible = true;
         reagent.intermediateCount = reagent.quantity;
-        recipe.cost += knownRecipe.cost * reagent.quantity;
+        recipe.cost += knownRecipes[0].cost * reagent.quantity;
       } else {
         reagent.intermediateEligible = false;
         reagent.intermediateCount = 0;

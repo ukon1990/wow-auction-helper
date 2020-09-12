@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuctionsComponent} from './components/auctions/auctions.component';
-import {MyAuctionsComponent} from './components/my-auctions/my-auctions.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '../material.module';
 import {TableModule} from '../table/table.module';
@@ -19,8 +18,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
-    AuctionsComponent,
-    MyAuctionsComponent
+    AuctionsComponent
   ],
   imports: [
     CommonModule,

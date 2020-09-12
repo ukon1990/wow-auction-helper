@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import {SharedService} from '../../../../services/shared.service';
 import {Character} from '../../../character/models/character.model';
 import {Sorter} from '../../../../models/sorter';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-reputations',
@@ -13,7 +14,7 @@ export class ReputationsComponent implements OnInit {
   charactersByRealm = [];
   charactersByRealmMapped = new Map<string, any>();
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
     SharedService.events.title.next('Reputations');
   }
 
@@ -21,7 +22,7 @@ export class ReputationsComponent implements OnInit {
     SharedService.user.characters
       .forEach(character =>
         this.addToRealm(character));
-    const sorter = new Sorter();
+    const sorter = new Sorter(this.auctionService);
     sorter.addKey('level');
     sorter.addKey('level');
     this.charactersByRealm.forEach(realm => {

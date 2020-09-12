@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
 import {ColumnDescription} from '../models/column-description';
@@ -18,12 +18,14 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {RowClickEvent} from '../models/row-click-event.model';
 import {CustomProcUtil} from '../../crafting/utils/custom-proc.util';
 import {ShoppingCartItem} from '../../shopping-cart/models/shopping-cart-item.model';
-import {Router} from '@angular/router';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {Profession} from '../../../../../../api/src/profession/model';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
+import {AuctionsService} from '../../../services/auctions.service';
+import {ItemService} from "../../../services/item.service";
+import {ItemLocale} from '../../../language/item.locale';
 
 @Component({
   selector: 'wah-data-table',
@@ -52,6 +54,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   filteredData = [];
   sm = new SubscriptionManager();
   professionIdMap: Map<number, Profession> = new Map<number, Profession>();
+  itemQualities = ItemLocale.getQualities().map;
 
   searchField: FormControl = new FormControl();
   pageRows: Array<number> = [10, 20, 40, 80, 100];
@@ -74,8 +77,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   private isTyping: boolean;
   private lastCharacterTyped: number;
 
-  constructor(private professionService: ProfessionService) {
-    this.sorter = new Sorter();
+  constructor(private professionService: ProfessionService, private auctionService: AuctionsService) {
+    this.sorter = new Sorter(this.auctionService);
 
     this.sm.add(professionService.map, map => {
       this.professionIdMap = map;
@@ -174,15 +177,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  isUsersAuction(auction: any): boolean {
-    if (this.showOwner) {
-      const a = SharedService.auctionItemsMap[auction.item ? Auction.getAuctionItemId(auction) : auction.itemID];
-      return !!(SharedService.userAuctions.charactersMap[a.ownerRealm] &&
-        SharedService.userAuctions.charactersMap[a.ownerRealm][a.owner]);
-    }
-    return false;
-  }
-
   addEntryToCart(entry: any): void {
     if (entry.id && entry.reagents) {
       SharedService.user.shoppingCart.add(entry);
@@ -196,7 +190,13 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   /* istanbul ignore next */
   setSelectedItem(item: any, column: ColumnDescription): void {
     SharedService.preScrollPosition = window.scrollY;
-    SharedService.events.detailSelection.emit(item);
+    if (column.options && column.options.idName) {
+      SharedService.events.detailSelection.emit(
+          ItemService.mapped.value.get(item[column.options.idName])
+      );
+    } else {
+      SharedService.events.detailSelection.emit(item);
+    }
     this.setSelectedPet(item);
     SharedService.events.detailPanelOpen.emit(true);
     Report.debug('clicked', item);
@@ -219,8 +219,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   getCraftersForRecipe(recipe: Recipe) {
-    return SharedService.recipesForUser[recipe.id] ?
-      SharedService.recipesForUser[recipe.id].join(', ') : '';
+    return CraftingService.recipesForUser.value.get(recipe.id) ?
+      CraftingService.recipesForUser.value.get(recipe.id).join(', ') : '';
   }
 
   customPrices(): CustomPrices {
@@ -263,8 +263,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if (this.useAuctionItemForName && item.petSpeciesId) {
       const petId = `${item.item}-${item.petSpeciesId}-${item.petLevel}-${item.petQualityId}`;
-      if (SharedService.auctionItemsMap[petId]) {
-        return SharedService.auctionItemsMap[petId].name;
+      if (this.auctionService.getById(petId)) {
+        return this.auctionService.getById(petId).name;
       }
     }
 
@@ -298,8 +298,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   /* istanbul ignore next */
   getAuctionItem(item: any): AuctionItem {
-    return SharedService.auctionItemsMap[this.getItemID(item)] ?
-      SharedService.auctionItemsMap[this.getItemID(item)] : new AuctionItem();
+    return this.auctionService.getById(this.getItemID(item)) || new AuctionItem();
   }
 
   onInputChange(row, column: ColumnDescription, value): void {
@@ -382,8 +381,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (column.key) {
       return (item as ShoppingCartItem).quantity;
     } else {
-      const recipe: Recipe = this.isKnownRecipe(item);
-      return item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
+      const recipe: Recipe = this.isKnownRecipe(item) as Recipe;
+      return recipe && item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
         SharedService.user.shoppingCart.recipeMap[recipe.id].quantity :
         0;
     }
@@ -397,9 +396,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     } else if (recipe instanceof Recipe) {
       this.addRecipeToCart(recipe as Recipe, newValue);
     } else {
-      const r: Recipe = SharedService.recipesMapPerItemKnown[recipe[this.id]];
+      const r: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(recipe[this.id]);
       if (r) {
-        this.addRecipeToCart(r, newValue);
+        this.addRecipeToCart(r[0], newValue);
       }
     }
   }
@@ -436,8 +435,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     const id = item instanceof Recipe ? (item as Recipe).itemID : item[this.id],
       recipe: Recipe = SharedService.itemRecipeMap[id];
-    if (SharedService.recipesMapPerItemKnown[id]) {
-      return SharedService.recipesMapPerItemKnown[id];
+    if (CraftingService.itemRecipeMapPerKnown.value.has(id)[0]) {
+      return CraftingService.itemRecipeMapPerKnown.value.get(id)[0];
     }
     return recipe && !recipe.professionId;
 

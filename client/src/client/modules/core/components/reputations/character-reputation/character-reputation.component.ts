@@ -5,12 +5,12 @@ import {ColumnDescription} from '../../../../table/models/column-description';
 import {SharedService} from '../../../../../services/shared.service';
 import {Subscription} from 'rxjs';
 import {Recipe} from '../../../../crafting/models/recipe';
-import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
 import {CharacterService} from '../../../../../services/character.service';
 import {CraftingService} from '../../../../../services/crafting.service';
 import {Report} from '../../../../../utils/report.util';
 import {UserUtil} from 'client/utils/user/user.util';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-character-reputation',
@@ -34,7 +34,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
 
   subscription: Subscription;
 
-  constructor(private characterService: CharacterService, private craftingService: CraftingService) {
+  constructor(private characterService: CharacterService, private auctionService: AuctionsService) {
   }
 
   ngAfterContentInit() {
@@ -149,7 +149,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
       this.character.name,
       UserUtil.slugifyString(this.character.realm),
       SharedService.user.region
-    ).then(c => {
+    ).then(async c => {
       if (!c.error) {
         Object.keys(c).forEach((key) => {
           this.character[key] = c[key];
@@ -158,7 +158,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
         UserUtil.updateRecipesForRealm();
 
         if (SharedService.user.region && SharedService.user.realm) {
-          AuctionUtil.organize(SharedService.auctions);
+          await this.auctionService.organize();
         }
 
         Report.send('Updated', 'Characters');

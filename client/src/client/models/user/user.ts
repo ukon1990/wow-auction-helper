@@ -26,8 +26,8 @@ export class User {
   useVendorPriceForCraftingIfAvailable = true;
   useIntermediateCrafting = true;
   notifications: NotificationSettings = new NotificationSettings();
-  watchlist: Watchlist = new Watchlist();
-  shoppingCart: ShoppingCart = new ShoppingCart();
+  watchlist: Watchlist; // = new Watchlist();
+  shoppingCart: ShoppingCart; // new ShoppingCart();
   isDarkMode = true;
   doNotReport = false;
   gameVersion = 0;

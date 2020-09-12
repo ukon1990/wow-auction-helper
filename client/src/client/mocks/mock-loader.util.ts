@@ -1,19 +1,26 @@
-import {SharedService} from '../services/shared.service';
-import {TSM} from '../modules/auction/models/tsm.model';
-import {AuctionUtil} from '../modules/auction/utils/auction.util';
 import {environment} from '../../environments/environment';
-import {Pet} from '../modules/pet/models/pet';
-import {Item} from '../models/item/item';
-import {CraftingService} from '../services/crafting.service';
-import {ItemService} from '../services/item.service';
-import {PetsService} from '../services/pets.service';
-import {User} from '../models/user/user';
-import {AuctionsService} from '../services/auctions.service';
 import {RealmService} from '../services/realm.service';
+import {UserUtil} from '../utils/user/user.util';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {TestModule} from '../modules/test.module';
+import {MockComponent} from './mock.component';
 
 declare function require(moduleName: string): any;
 
 export class MockLoaderUtil {
+  // The purpose of this one is to get a service, that can be used for tests
+  private static fixture: ComponentFixture<MockComponent>;
+
+  static component(): MockComponent {
+    if (!this.fixture) {
+      TestBed.configureTestingModule({
+        imports: [TestModule]
+      })
+        .compileComponents();
+      this.fixture = TestBed.createComponent(MockComponent);
+    }
+    return this.fixture.componentInstance;
+  }
 
   initBaseData() {
     environment.test = true;
@@ -73,12 +80,12 @@ export class MockLoaderUtil {
 
     localStorage['timestamp_news'] = '123';
 
-    User.restore();
+    UserUtil.restore();
   }
 
   private setRealms() {
     const realms = this.getFile('realms');
-    const service = new RealmService(null, null, null);
+    const service = new RealmService(null, null);
     service.handleRealms(realms);
   }
 }

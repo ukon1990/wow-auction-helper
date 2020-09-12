@@ -11,6 +11,7 @@ import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-market-reset',
@@ -45,7 +46,7 @@ export class MarketResetComponent implements OnInit {
   rowShoppingString = '';
   itemResetBreakpoint: ItemResetBreakpoint;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     SharedService.events.title.next('Market resetter');
     const query = this.getQuery();
     this.form = this.formBuilder.group({
@@ -105,7 +106,7 @@ export class MarketResetComponent implements OnInit {
     this.tsmShoppingString = '';
     this.rowShoppingString = '';
 
-    SharedService.auctionItems.forEach(ai => {
+    this.auctionService.list.value.forEach(ai => {
       if (!Filters.isNameMatch(ai.itemID, query.name)) {
         return;
       }

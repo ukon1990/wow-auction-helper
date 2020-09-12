@@ -59,17 +59,6 @@ export class SharedService {
     lastModified: parseInt(localStorage['timestamp_auctions'], 10), url: undefined};
 
   public static userAuctions: UserAuctions = new UserAuctions();
-
-  public static auctionItemsMap: Map<number, AuctionItem> = new Map<number, AuctionItem>();
-  public static auctionItems: Array<AuctionItem> = new Array<AuctionItem>();
-  public static auctions: Array<Auction> = new Array<Auction>();
-
-  // TODO: Replace with values in CraftingService
-  public static recipesForUser: Map<number, Array<string>> = new Map<number, Array<string>>();
-  public static recipesMapPerItemKnown = {
-    0: new Map<number, Recipe>(),
-    1: new Map<number, Recipe>()
-  };
   public static itemRecipeMap: Map<number, Array<Recipe>> = new Map<number, Array<Recipe>>();
 
   public static tsmAddonData: TSMCSV = {};
@@ -77,7 +66,6 @@ export class SharedService {
   public static itemsUnmapped: Array<Item> = new Array<Item>();
   public static tradeVendorItemMap: Map<number, TradeVendorItemValue> = new Map<number, TradeVendorItemValue>();
   public static tradeVendorMap: Map<number, TradeVendor> = new Map<number, TradeVendor>();
-  public static itemNpcMap: Map<number, ItemNpcDetails> = new Map();
   static bonusIdMap: any = {};
 
   public static pets: Map<number, Pet> = new Map<number, Pet>();

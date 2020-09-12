@@ -6,6 +6,7 @@ import { Angulartics2 } from 'angulartics2';
 import { SelectionItem } from '../../../models/selection-item.model';
 import {WatchlistItem} from '../../../models/watchlist-item.model';
 import {WatchlistGroup} from '../../../models/watchlist-group.model';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-watchlist-item-manager',
@@ -27,7 +28,7 @@ export class WatchlistItemManagerComponent implements OnInit {
   targetTypes = new Array<string>();
   groups = new Array<WatchlistGroup>();
 
-  constructor(private _formBuilder: FormBuilder, private angulartics2: Angulartics2) {
+  constructor(private _formBuilder: FormBuilder, private auctionService: AuctionsService) {
     Object.keys(SharedService.user.watchlist.CRITERIA).forEach(key => {
       this.criteria.push(SharedService.user.watchlist.CRITERIA[key]);
     });
@@ -95,8 +96,8 @@ export class WatchlistItemManagerComponent implements OnInit {
   }
 
   getAuctionItem(): AuctionItem {
-    return this.item && SharedService.auctionItemsMap[this.item.itemID] ?
-      SharedService.auctionItemsMap[this.item.itemID] : undefined;
+    return this.item && this.auctionService.getById(this.item.itemID) ?
+      this.auctionService.getById(this.item.itemID) : undefined;
   }
 
   getTSMString(): any {

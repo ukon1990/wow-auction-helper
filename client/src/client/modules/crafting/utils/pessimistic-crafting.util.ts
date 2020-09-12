@@ -2,6 +2,7 @@ import {BaseCraftingUtil} from './base-crafting.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
 import {Auction} from '../../auction/models/auction.model';
+import {AuctionsService} from '../../../services/auctions.service';
 
 class StartPrice {
   constructor(public price: number, public index: number) {
@@ -15,14 +16,15 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
    *
    * @param threshold Price threshold to trigger not using the cheapest auction
    * @param checkPercent The percent of the total quantity of an item available to check
+   * @param map
    */
-  constructor(private threshold: number = 1.05, private checkPercent: number = 0.1) {
-    super();
+  constructor(private threshold: number = 1.05, private checkPercent: number = 0.1, map: Map<string, AuctionItem>) {
+    super(map);
   }
 
   getPrice(id: number, quantity: number): number {
     let cost = 0;
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[id];
+    const auctionItem: AuctionItem = this.map.get('' + id);
     if (auctionItem) {
       const auctions = auctionItem.auctions;
       let foundCount = 0, usedForCraftCount = 0;

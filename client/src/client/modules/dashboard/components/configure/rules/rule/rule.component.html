@@ -1,0 +1,219 @@
+<div [formGroup]="formGroup"
+     class="row col-md-12">
+  <div class="col-md-1">
+    <span *ngIf="index > 0"
+          [ngClass]="isOrRule ? 'pl-4' : ''">
+      {{isOrRule ? 'Or' : 'And'}}:
+    </span>
+  </div>
+  <mat-form-field class="col-md-3"
+                  color="accent">
+    <mat-select
+            placeholder="Field"
+            formControlName="field"
+    >
+      <mat-optgroup [label]="fieldGroup.name"
+                    *ngFor="let fieldGroup of fields">
+        <ng-container *ngFor="let field of fieldGroup.options">
+          <mat-option *ngIf="field.key"
+                      [value]="field.key"
+                      [matTooltip]="field.name"
+          >
+            {{ fieldGroup.name }}: {{ field.name }}
+          </mat-option>
+        </ng-container>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="col-md-1">
+    <mat-select
+            placeholder="Comparison logic"
+            formControlName="condition"
+    >
+      <mat-option *ngFor="let condition of conditionLocale"
+                  [value]="condition.id"
+                  [matTooltip]="condition.tooltip"
+      >
+        {{ condition.text }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="col-md-3"
+                  color="accent"
+  >
+    <mat-select
+            placeholder="Compare to field"
+            formControlName="toField"
+    >
+      <mat-option [value]="null">
+        None (use value instead)
+      </mat-option>
+      <mat-optgroup [label]="fieldGroup.name"
+                    *ngFor="let fieldGroup of fields">
+        <ng-container *ngFor="let field of fieldGroup.options">
+          <mat-option *ngIf="field.key"
+                      [value]="field.key"
+                      [matTooltip]="field.name"
+          >
+            {{ fieldGroup.name }}: {{ field.name }}
+          </mat-option>
+        </ng-container>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <ng-container>
+    <mat-form-field class="col"
+                    color="accent">
+      <ng-container>
+        <ng-container *ngIf="mainFieldType.isProfession;
+                else expansionSelectTemplate">
+          <mat-select placeholder="Profession"
+                      formControlName="toValue">
+            <mat-option *ngFor="let profession of professions" [value]="profession.id">
+              {{ profession.name }}
+            </mat-option>
+          </mat-select>
+        </ng-container>
+
+        <ng-template #expansionSelectTemplate>
+          <ng-container *ngIf="mainFieldType.isExpansion; else itemClassSelectTemplate">
+            <mat-select placeholder="Expansion"
+                        formControlName="toValue">
+              <mat-option *ngFor="let expansion of expansions; let i = index"
+                          [value]="i">
+                {{ expansion }}
+              </mat-option>
+            </mat-select>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #itemClassSelectTemplate>
+          <ng-container *ngIf="mainFieldType.isItemClass; else itemSubClassSelectTemplate">
+            <mat-select placeholder="Item class"
+                        formControlName="toValue">
+              <mat-option *ngFor="let itemClass of itemClasses"
+                          [value]="itemClass.class"
+              >
+                {{ itemClass.name }}
+              </mat-option>
+            </mat-select>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #itemSubClassSelectTemplate>
+          <ng-container *ngIf="mainFieldType.isItemSubClass; else qualityTemplate">
+            <mat-select placeholder="Item sub class"
+                        formControlName="toValue">
+              <mat-optgroup *ngFor="let itemClass of itemClasses"
+                            [label]="itemClass.name"
+              >
+                <mat-option *ngFor="let subClass of itemClass.subclasses"
+                            [value]="subClass.subclass"
+                >
+                  {{ subClass.name }}
+                </mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #qualityTemplate>
+          <ng-container *ngIf="mainFieldType.isQuality; else valueTypeBasedTemplate">
+            <mat-select placeholder="Item quality"
+                        formControlName="toValue">
+              <mat-option *ngFor="let quality of itemQualities"
+                          [value]="quality.id"
+              >
+                {{ quality?.name }}
+              </mat-option>
+            </mat-select>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #valueTypeBasedTemplate>
+          <ng-container [ngSwitch]="formGroup.controls.targetValueType.value">
+            <input *ngSwitchCase="'PERCENT'"
+                   matInput
+                   formControlName="toValue"
+                   placeholder="Compare to value"
+                   type="number"
+            />
+            <input *ngSwitchCase="'NUMBER'"
+                   matInput
+                   formControlName="toValue"
+                   placeholder="Compare to value"
+                   type="number"
+            />
+            <input *ngSwitchCase="'GOLD'"
+                    matInput
+                    [ngModel]="toValueGold | gold"
+                    (ngModelChange)="setNewInputGoldValue($event)"
+                    formControlName="toValue"
+                    placeholder="Compare to value"
+                    type="text"
+            />
+
+            <input *ngSwitchDefault
+                   matInput
+                   formControlName="toValue"
+                   placeholder="Compare to value"
+                   type="text"
+            />
+          </ng-container>
+        </ng-template>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field class="col-md-1"
+                    color="accent">
+      <mat-select placeholder="Value type"
+                  formControlName="targetValueType">
+        <mat-option value="GOLD">
+          Gold
+        </mat-option>
+        <mat-option value="NUMBER">
+          Number
+        </mat-option>
+        <mat-option value="PERCENT">
+          Percent
+        </mat-option>
+        <mat-option value="TEXT">
+          Text
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
+  <div class="col">
+    <button *ngIf="!isOrRule"
+            mat-stroked-button
+            color="accent"
+            class="mr-2"
+            matTooltip="Adds an alternative rule"
+            (click)="addOrRule()"
+    >
+      <fa-icon
+              [icon]="faPlus"
+      >
+        Or
+      </fa-icon>
+    </button>
+    <button
+            mat-stroked-button
+            color="warn"
+            matTooltip="Delete"
+            (click)="remove.emit()"
+    >
+      <fa-icon
+              [icon]="faTrash"
+      >
+      </fa-icon>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="orRules">
+  <ng-container *ngFor="let orRule of orRules.controls">
+    <wah-rule [formGroup]="orRule"
+              [isOrRule]="true"
+    ></wah-rule>
+  </ng-container>
+</div>

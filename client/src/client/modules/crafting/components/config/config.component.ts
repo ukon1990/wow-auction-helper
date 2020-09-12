@@ -9,6 +9,7 @@ import {Dashboard} from '../../../dashboard/models/dashboard.model';
 import {Report} from '../../../../utils/report.util';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {DashboardService} from '../../../dashboard/services/dashboard.service';
 
 @Component({
   selector: 'wah-crafting-config',
@@ -22,7 +23,7 @@ export class ConfigComponent implements OnDestroy {
   form: FormGroup;
   theme = ThemeUtil.current;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private dashboardService: DashboardService) {
     const useIntermediateCrafting = SharedService.user.useIntermediateCrafting;
     this.form = fb.group({
       intermediate: useIntermediateCrafting !== null ? useIntermediateCrafting : true,
@@ -37,7 +38,8 @@ export class ConfigComponent implements OnDestroy {
         SharedService.user.useIntermediateCrafting = intermediate;
         UserUtil.save();
         CraftingUtil.calculateCost(strategyChanged);
-        Dashboard.addDashboards();
+        // Dashboard.addDashboards();
+        this.dashboardService.calculateAll();
         if (strategyChanged) {
           const strategyObj = BaseCraftingUtil.STRATEGY_LIST[strategy];
           Report.send(

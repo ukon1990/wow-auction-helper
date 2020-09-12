@@ -1,0 +1,92 @@
+<wah-close-btn></wah-close-btn>
+
+<h1 mat-dialog-title>Dashboard migration</h1>
+<mat-dialog-content>
+
+  <mat-horizontal-stepper labelPosition="bottom" #stepper>
+    <mat-step>
+      <p>
+        There has been a major overhaul of the dashboards since your last visit.
+        In then next step, you can choose what boards to keep, and which not to keep.
+      </p>
+
+      <p>
+        The boards you choose to migrate over to the new system, should work as they did prior to the update.
+      </p>
+
+      <strong>Whats new:</strong>
+      <ul>
+        <li>
+          A dashboard is now much more flexible, and is no longer locked in to spesific items.
+        </li>
+        <li>
+          You can choose what columns you want to be displayed.
+        </li>
+        <li>
+          You can choose in what order or by what column it should be sorted by default.
+        </li>
+        <li>
+          You can create rules, that will display any item matching those rules instead of only specific items.
+          So if you want to only display any crafted bracers with profit. You can. Regardless of profession.
+        </li>
+        <li>
+          You can define additional rules for certain items. Meaning that if you only want true silver ore to appear, if
+          it's
+          buyout is < 50% of the market value. You can. But have any other items appear based on the dashboard rules.
+        </li>
+        <li>
+          If you want, you can have a board where you only have specific items appear.
+        </li>
+      </ul>
+
+      <p>
+        I hope that you will find the new system as an improvement over the old system. And that it helps you find some
+        good deals on your travels.
+      </p>
+    </mat-step>
+    <mat-step optional>
+      <ng-template matStepLabel>Select which dashboards to migrate</ng-template>
+      <mat-selection-list #selections>
+        <mat-list-option *ngFor="let board of boards"
+                         [selected]="!board.isDisabled"
+                         (click)="board.isDisabled = board.isDisabled ? false : true"
+                         checkboxPosition="before">
+          {{ board.title }} with {{ board.itemRules.length | number }} item specific rules
+        </mat-list-option>
+      </mat-selection-list>
+      You have selected {{selections.selectedOptions.selected.length}} out of {{boards.length}} of your dashboards.
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="row col-md-12">
+    <button mat-button [disabled]="stepper.selectedIndex > 0"
+            (click)="stepper.previous()"
+            class="col">
+      Back
+    </button>
+
+    <button [disabled]="!selections.selectedOptions.selected.length"
+            class="col"
+            mat-button
+            color="accent"
+            (click)="migrate()">
+      Migrate the selected boards
+    </button>
+
+    <button
+            class="col"
+            mat-button
+            color="warn"
+            (click)="noMigrate()">
+      Do not migrate.
+    </button>
+
+    <button mat-button [disabled]="stepper.selectedIndex === 1"
+            (click)="stepper.next()"
+            class="col">
+      Next
+    </button>
+  </div>
+</mat-dialog-actions>
