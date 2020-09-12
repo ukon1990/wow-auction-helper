@@ -1,5 +1,5 @@
-import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
+import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {GameBuild} from '../../../utils/game-build.util';
@@ -17,6 +17,9 @@ import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'wah-item',
@@ -81,12 +84,13 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   ];
   private tabSubId = 'tab-subscription';
 
-  constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
+  constructor(private _wowDBService: WowdbService, private npcService: NpcService,
+              private zoneService: ZoneService, private auctionService: AuctionsService,
+              public dialogRef: MatDialogRef<ItemComponent>,
+              @Inject(MAT_DIALOG_DATA) public selection: any) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
 
-    this.subscriptions.add(
-      SharedService.events.detailSelection,
-      item => this.setSelection(item));
+    this.setSelection(selection);
 
     this.subscriptions.add(this.itemSelectionHistoryForm.valueChanges, index => {
       const target = this.selectionHistory[index].auctionItem || this.selectionHistory[index].item;
@@ -148,19 +152,13 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     if (SharedService.items[id]) {
       this.selected.item = SharedService.items[id];
       this.setMaterialFor();
-      this.itemNpcDetails.setForItemId(id);
+      this.itemNpcDetails.setForItemId(id, NpcService.list.value);
     }
   }
 
   setMaterialFor(): void {
-    this.materialFor.length = 0;
-    CraftingService.list.value.forEach(recipe => {
-      recipe.reagents.forEach(reagent => {
-        if (reagent.id === this.selected.item.id) {
-          this.materialFor.push(recipe);
-        }
-      });
-    });
+    const materialFor = CraftingService.reagentRecipeMap.value.get(this.selected.item.id) || [];
+    this.materialFor = [...materialFor];
   }
 
   openInNewTab(url: string, target: string) {
@@ -194,7 +192,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   userHasRecipeForItem(): boolean {
-    return !!SharedService.recipesMapPerItemKnown[this.selected.item.id];
+    return CraftingService.itemRecipeMapPerKnown.value.has(this.selected.item.id);
   }
 
   addEntryToCart(): void {
@@ -203,7 +201,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     }
     SharedService.user.shoppingCart
       .add(
-        SharedService.recipesMapPerItemKnown[this.selected.item.id],
+        CraftingService.itemRecipeMapPerKnown.value.get(this.selected.item.id)[0],
         this.shoppingCartQuantityField.value);
 
     Report.send('Added to recipe shopping cart', 'Item detail view');
@@ -234,6 +232,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     SharedService.events.detailPanelOpen.emit(false);
     Object.keys(this.selected).forEach(key =>
       this.selected[key] = undefined);
+    this.dialogRef.close();
   }
 
   isMobile(): boolean {
@@ -246,16 +245,18 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   private setSelection(item: any) {
-    console.log('this.ignoreNextSelectionHistoryFormChange', this.ignoreNextSelectionHistoryFormChange);
     if (this.ignoreNextSelectionHistoryFormChange) {
       this.ignoreNextSelectionHistoryFormChange = false;
       return;
     }
     this.selected.pet = undefined;
 
-    Report.debug('setSelection', item);
     if (item.auctions) {
       this.handleAuctionItem(item);
+    } else if (item.id && item.bonusIds) {
+      const id = item.id + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
+      const auctionItem: AuctionItem = this.auctionService.getById(id);
+      this.handleAuctionItem(auctionItem);
     } else if (item.itemID) {
       this.handleItemWithItemID(item);
     } else if (item.id) {
@@ -268,6 +269,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
     this.ignoreNextSelectionHistoryFormChange = true;
     this.itemSelectionHistoryForm.setValue(0);
+    Report.debug('selected', this.selected, item);
   }
 
   private handleAuctionItem(item: any) {
@@ -277,20 +279,21 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   private handleItemWithItemID(item: any) {
-    this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
+    this.selected.auctionItem = this.auctionService.getById(item.itemID);
     this.selected.item = SharedService.items[item.itemID];
   }
 
   private handleItemWithId(item: any) {
-    this.selected.auctionItem = SharedService.auctionItemsMap[item.id];
+    this.selected.auctionItem = this.auctionService.getById(item.id);
     this.selected.item = SharedService.items[item.id];
   }
 
   private handlePet(item: any) {
     this.selected.pet = SharedService.pets[item.speciesId];
-    for (let i = 0, length = SharedService.auctionItems.length; i < length; i++) {
-      if (SharedService.auctionItems[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
-        this.selected.auctionItem = SharedService.auctionItems[i];
+    const list = this.auctionService.list.value;
+    for (let i = 0, length = list.length; i < length; i++) {
+      if (list[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
+        this.selected.auctionItem = list[i];
         this.selected.item = SharedService.items[this.selected.auctionItem.itemID];
         return;
       }

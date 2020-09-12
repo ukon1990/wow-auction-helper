@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SharedService} from '../../../../services/shared.service';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {RealmService} from '../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {CharacterService} from '../../../../services/character.service';
@@ -19,28 +19,35 @@ import {ErrorReport} from '../../../../utils/error-report.util';
   templateUrl: './realm-quick-select.component.html',
   styleUrls: ['./realm-quick-select.component.scss']
 })
-export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
-  form: FormGroup;
+export class RealmQuickSelectComponent implements OnInit, OnDestroy {
+  form: FormGroup = new FormGroup({
+    region: new FormControl(),
+    realm: new FormControl(),
+    faction: new FormControl()
+  });
   realmList = [];
   realmListMap = {};
+  allianceCharacterCountForRealm = 0;
+  hordeCharacterCountForRealm = 0;
 
   list = [];
 
   sm = new SubscriptionManager();
 
-  constructor(
-    private fb: FormBuilder, private realmService: RealmService, private dbService: DatabaseService,
-    private craftingService: CraftingService,
-    private characterService: CharacterService,
-    private auctionsService: AuctionsService) {
-    this.form = this.fb.group({
-      region: new FormControl(this.getFormValueFor('region')),
-      realm: new FormControl(this.getFormValueFor('realm')),
-      faction: new FormControl(this.getFormValueFor('faction'))
-    });
+  constructor(private realmService: RealmService, private dbService: DatabaseService,
+              private craftingService: CraftingService,
+              private characterService: CharacterService,
+              private auctionsService: AuctionsService) {
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit() {
+    this.form.controls.region.setValue(
+      this.getFormValueFor('region'));
+    this.form.controls.realm.setValue(
+      this.getFormValueFor('realm'));
+    this.form.controls.faction.setValue(
+      this.getFormValueFor('faction'));
+
     this.sm.add(this.realmService.events.list,
       (realms) => this.setRealmList(realms));
 
@@ -57,10 +64,6 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
-
-    if (!this.form.value.faction) {
-      this.form.controls.faction.setValue(0);
-    }
   }
 
   ngOnDestroy() {
@@ -74,10 +77,7 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
     return null;
   }
 
-  private setRealmList(realms?: RealmStatus[]) {
-    if (!realms) {
-      realms = this.realmService.events.list.value;
-    }
+  private setRealmList(realms: RealmStatus[] = this.realmService.events.list.value) {
 
     if (!SharedService.user || !SharedService.user.characters || !realms) {
       return;
@@ -122,6 +122,12 @@ export class RealmQuickSelectComponent implements AfterViewInit, OnDestroy {
         map[character.realm].factions[character.faction]++;
       }
     });
+
+    if (map[this.form.value.realm]) {
+      const realm = map[this.form.value.realm];
+      this.allianceCharacterCountForRealm = realm.factions[0];
+      this.allianceCharacterCountForRealm = realm.factions[1];
+    }
   }
 
   private pupulateDropdownWithCurrentRealm(map) {

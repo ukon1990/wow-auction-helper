@@ -1,10 +1,8 @@
-import { async, TestBed } from '@angular/core/testing';
-import { SharedService } from '../../../services/shared.service';
-import { User } from '../../../models/user/user';
-import { CustomPrices, CustomPrice } from './custom-price';
+import {CustomPrice, CustomPrices} from './custom-price';
+import {UserUtil} from '../../../utils/user/user.util';
 
 beforeEach(() => {
-    User.restore();
+    UserUtil.restore();
 });
 
 describe('CustomPrices', () => {

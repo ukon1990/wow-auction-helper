@@ -8,24 +8,32 @@ import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
+import {NpcService} from '../../npc/services/npc.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {AuctionItem} from '../../auction/models/auction-item.model';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
   public static strategy: BaseCraftingUtil;
+  private static auctionService: AuctionsService;
 
-  public static calculateCost(strategyHasChanged = false): void {
+  static init(auctionsService: AuctionsService) {
+    this.auctionService = auctionsService;
+  }
+
+  public static calculateCost(strategyHasChanged = false, map: Map<string, AuctionItem> = this.auctionService.mapped.value): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY,
       selectedStrategy = SharedService.user.craftingStrategy;
     if (!this.strategy || strategyHasChanged) {
       switch (selectedStrategy) {
         case STRATEGY.OPTIMISTIC:
-          this.strategy = new OptimisticCraftingUtil();
+          this.strategy = new OptimisticCraftingUtil(map);
           break;
         case STRATEGY.PESSIMISTIC:
-          this.strategy = new PessimisticCraftingUtil();
+          this.strategy = new PessimisticCraftingUtil(undefined, undefined, map);
           break;
         default:
-          this.strategy = new NeededCraftingUtil();
+          this.strategy = new NeededCraftingUtil(map);
           break;
       }
       Report.send(
@@ -35,6 +43,8 @@ export class CraftingUtil {
     }
 
     this.strategy.calculate(CraftingService.list.value);
+    CraftingService.itemRecipeMapPerKnown.value.forEach((recipes) =>
+      recipes.sort((a, b) => b.roi - a.roi));
   }
 
   public static getCost(id: number, count: number): number {
@@ -44,8 +54,8 @@ export class CraftingUtil {
       return this.getNeededBuyPriceFromVendor(id, count);
     } else if (SharedService.tradeVendorItemMap[id] && SharedService.tradeVendorMap[id].useForCrafting) {
       return (SharedService.tradeVendorItemMap[id].value * count);
-    } else if (SharedService.auctionItemsMap[id] && !CraftingUtil.isBelowMktBuyoutValue(id)) {
-      return SharedService.auctionItemsMap[id].buyout * count;
+    } else if (this.auctionService.getById(id) && !CraftingUtil.isBelowMktBuyoutValue(id)) {
+      return this.auctionService.getById(id).buyout * count;
     } else if (CraftingUtil.existsInTSM(id)) {
       // Using the tsm list, so that we can get mktPrice if an item is not @ AH
       return (TsmService.getById(id).MarketValue * count);
@@ -54,12 +64,12 @@ export class CraftingUtil {
   }
 
   private static getNeededBuyPriceFromVendor(itemID: number, count: number) {
-    const itemNpcDetails = SharedService.itemNpcMap.get(itemID);
+    const itemNpcDetails = NpcService.itemNpcMap.value.get(itemID);
     if (itemNpcDetails) {
       if (itemNpcDetails.vendorAvailable > 0 && itemNpcDetails.vendorAvailable < count) {
         return itemNpcDetails.vendorBuyPrice * itemNpcDetails.vendorAvailable +
-          (SharedService.auctionItemsMap[itemID] ?
-            SharedService.auctionItemsMap[itemID].buyout * (count - itemNpcDetails.vendorAvailable) : 0);
+          (this.auctionService.getById(itemID) ?
+            this.auctionService.getById(itemID).buyout * (count - itemNpcDetails.vendorAvailable) : 0);
       }
       return (itemNpcDetails.vendorBuyPrice * count);
     }
@@ -67,12 +77,12 @@ export class CraftingUtil {
   }
 
   public static isVendorCheaperThanAH(itemID: number): boolean {
-    const itemNpcDetails = SharedService.itemNpcMap.get(itemID);
+    const itemNpcDetails = NpcService.itemNpcMap.value.get(itemID);
     if (itemNpcDetails) {
       if (itemNpcDetails.soldBy.length && SharedService.user.useVendorPriceForCraftingIfAvailable) {
-        if (!SharedService.auctionItemsMap[itemID]) {
+        if (!this.auctionService.getById(itemID)) {
           return true;
-        } else if (itemNpcDetails.vendorBuyPrice < SharedService.auctionItemsMap[itemID].buyout) {
+        } else if (itemNpcDetails.vendorBuyPrice < this.auctionService.getById(itemID).buyout) {
           return true;
         }
       }
@@ -90,7 +100,7 @@ export class CraftingUtil {
 
   private static isBelowMktBuyoutValue(id: number): boolean {
     return CraftingUtil.existsInTSM(id) &&
-      SharedService.auctionItemsMap[id].buyout /
+      this.auctionService.getById(id).buyout /
       TsmService.getById(id).MarketValue * 100 >=
       SharedService.user.buyoutLimit;
   }

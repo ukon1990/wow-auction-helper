@@ -6,6 +6,8 @@ import {NotificationSettings} from '../../models/user/notification';
 import {Character} from '../../modules/character/models/character.model';
 import {CharacterProfession} from '../../../../../api/src/character/model';
 import {User} from '../../models/user/user';
+import {Recipe} from '../../modules/crafting/models/recipe';
+import {CraftingService} from '../../services/crafting.service';
 
 export class UserUtil {
   /**
@@ -185,7 +187,7 @@ export class UserUtil {
    */
   public static updateRecipesForRealm(): void {
     // TODO: fix
-    SharedService.recipesForUser = new Map<number, Array<string>>();
+    CraftingService.recipesForUser.value.clear();
     SharedService.user.characters.forEach(character => {
       this.setRecipesForCharacter(character);
     });
@@ -213,10 +215,10 @@ export class UserUtil {
   }
 
   private static addRecipe(id: number, characterName: string, faction: number): void {
-    if (!SharedService.recipesForUser[id]) {
-      SharedService.recipesForUser[id] = new Array<string>();
+    if (!CraftingService.recipesForUser.value.has(id)) {
+      CraftingService.recipesForUser.value.set(id, []);
     }
-    SharedService.recipesForUser[id].push(
+    CraftingService.recipesForUser.value.get(id).push(
       `${characterName} (${faction ? 'H' : 'A'})`);
   }
 

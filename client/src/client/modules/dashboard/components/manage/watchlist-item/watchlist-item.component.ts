@@ -5,6 +5,7 @@ import {SelectionItem} from '../../../models/selection-item.model';
 import {AuctionItem} from '../../../../auction/models/auction-item.model';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {WatchlistItem} from '../../../models/watchlist-item.model';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-watchlist-item',
@@ -21,7 +22,7 @@ export class WatchlistItemComponent implements OnInit {
   comparableVariables = SharedService.user.watchlist.COMPARABLE_VARIABLES_LIST;
 
 
-  constructor() { }
+  constructor(private auctionService: AuctionsService) { }
 
   ngOnInit() {
   }
@@ -31,8 +32,8 @@ export class WatchlistItemComponent implements OnInit {
   }
 
   getAuctionItem(itemID: number): AuctionItem {
-    return SharedService.auctionItemsMap[itemID] ?
-    SharedService.auctionItemsMap[itemID] : new AuctionItem();
+    return this.auctionService.mapped.value.get(itemID + '') ?
+      this.auctionService.mapped.value.get('' + itemID) : new AuctionItem();
   }
 
   setSelection(change: MatCheckboxChange): void {

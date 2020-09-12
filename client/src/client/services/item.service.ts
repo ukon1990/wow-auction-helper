@@ -15,7 +15,6 @@ import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {ItemExtract} from '../utils/item-extract.util';
 
 class ItemResponse {
   timestamp: Date;
@@ -26,6 +25,8 @@ class ItemResponse {
 export class ItemService {
   static missingQueue: Map<string, number> = new Map<string, number>();
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
+  static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
+  static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
   private historyMap: BehaviorSubject<Map<number, Map<string, any>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   private sm = new SubscriptionManager();
@@ -42,10 +43,11 @@ export class ItemService {
 
   async loadItems(latestTimestamp: Date) {
     await this.dbService.getAllItems()
-      .then(async () => {
-        if (Object.keys(SharedService.items).length === 0) {
+      .then(async (items) => {
+        if (items.length === 0) {
           delete localStorage['timestamp_items'];
         }
+        this.handleItems({items, timestamp: latestTimestamp});
       })
       .catch(async error => {
         delete localStorage['timestamp_items'];
@@ -53,7 +55,7 @@ export class ItemService {
       });
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
-    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp) || !ItemService.list.value.length) {
       await this.getItems();
     }
   }
@@ -131,24 +133,13 @@ export class ItemService {
   }
 
   handleItems(items: ItemResponse): void {
-    const missingItems: number[] = [],
-      noItems = SharedService.itemsUnmapped.length === 0;
+    const missingItems: number[] = [];
     SharedService.downloading.items = false;
+    const list: Item[] = [];
+    const mapped = new Map<number, Item>();
 
+    // TODO: Remove or move?
     items.items.forEach((item: Item) => {
-      if (SharedService.items[item.id]) {
-        Object.keys(item).forEach(key => {
-          SharedService.items[item.id][key] = item[key];
-        });
-        if (noItems) {
-          SharedService.itemsUnmapped.push(item);
-        }
-      } else {
-        SharedService.itemsUnmapped.push(item);
-      }
-    });
-
-    SharedService.itemsUnmapped.forEach((item: Item) => {
       // Making sure that the tradevendor item names are updated in case of locale change
       if (SharedService.tradeVendorMap[item.id]) {
         SharedService.tradeVendorMap[item.id].name = item.name;
@@ -160,6 +151,9 @@ export class ItemService {
       }
 
       SharedService.items[item.id] = item;
+      mapped.set(item.id, item);
+      list.push(item);
+      SharedService.itemsUnmapped.push(item);
 
       if (item.itemSource && item.itemSource.containedInItem && item.itemSource.containedInItem.length > 0) {
         item.itemSource.containedInItem.forEach(i =>
@@ -186,6 +180,8 @@ export class ItemService {
       localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
     }
     SharedService.events.items.emit(true);
+    ItemService.mapped.next(mapped);
+    ItemService.list.next(list);
     console.log('Items download is completed');
   }
 

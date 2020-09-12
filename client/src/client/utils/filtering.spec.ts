@@ -5,18 +5,19 @@ import {Item} from '../models/item/item';
 import {Recipe} from '../modules/crafting/models/recipe';
 import {itemClasses} from '../models/item/item-classes';
 import {MockLoaderUtil} from '../mocks/mock-loader.util';
+import {AuctionsService} from '../services/auctions.service';
+import {TestBed} from '@angular/core/testing';
 
 describe('Filters', () => {
+  let service: AuctionsService;
+
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
-    console.log('SharedService', {
-      items: SharedService.itemsUnmapped,
-      auctionItems: SharedService.auctionItems
-    });
   });
 
   beforeEach(() => {
-    SharedService.user.apiToUse = 'tsm';
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(AuctionsService);
   });
 
   describe('isSaleRateMatch', () => {
@@ -31,7 +32,7 @@ describe('Filters', () => {
         const ai = new AuctionItem();
         ai.regionSaleRate = 0.10;
         ai.itemID = 25;
-        SharedService.auctionItemsMap[ai.itemID] = ai;
+        service.mapped.value.set('' + ai.itemID, ai);
         expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
       });
 
@@ -39,7 +40,7 @@ describe('Filters', () => {
         const ai = new AuctionItem();
         ai.regionSaleRate = 0.09;
         ai.itemID = 25;
-        SharedService.auctionItemsMap[ai.itemID] = ai;
+        service.mapped.value.set('' + ai.itemID, ai);
         expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
       });
 
@@ -47,7 +48,7 @@ describe('Filters', () => {
         const ai = new AuctionItem();
         ai.regionSaleRate = 0.10;
         ai.itemID = 25;
-        SharedService.auctionItemsMap[ai.itemID] = ai;
+        service.mapped.value.set('' + ai.itemID, ai);
         expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeTruthy();
       });
 
@@ -64,7 +65,7 @@ describe('Filters', () => {
       const ai = new AuctionItem();
       ai.regionSaleRate = 0.08;
       ai.itemID = 25;
-      SharedService.auctionItemsMap[ai.itemID] = ai;
+      service.mapped.value.set('' + ai.itemID, ai);
       expect(Filters.isSaleRateMatch(ai.itemID, 9)).toBeFalsy();
 
       expect(Filters.isSaleRateMatch(123, 90)).toBeFalsy();
@@ -78,7 +79,7 @@ describe('Filters', () => {
       SharedService.items[25] = new Item();
       SharedService.items[25].itemClass = 1;
       ai.itemID = 25;
-      SharedService.auctionItemsMap[ai.itemID] = ai;
+      service.mapped.value.set('' + ai.itemID, ai);
 
       expect(Filters.isItemClassMatch(ai.itemID, null, null)).toBeTruthy();
       expect(Filters.isItemClassMatch(ai.itemID, -1, undefined)).toBeTruthy();
@@ -165,29 +166,29 @@ describe('Filters', () => {
       beforeEach(() => {
         recipe = new Recipe();
         recipe.itemID = 25;
-        recipe.profession = 'Example';
+        recipe.professionId = 1;
         SharedService.itemRecipeMap[25] = [recipe];
       });
 
       it('Positive match when', () => {
-        expect(Filters.isProfessionMatch(recipe.itemID, 'Example')).toBeTruthy();
-        expect(Filters.isProfessionMatch(recipe.itemID, 'All')).toBeTruthy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 1)).toBeTruthy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 0)).toBeTruthy();
         expect(Filters.isProfessionMatch(recipe.itemID, null)).toBeTruthy();
         expect(Filters.isProfessionMatch(recipe.itemID, undefined)).toBeTruthy();
 
-        recipe.profession = undefined;
-        expect(Filters.isProfessionMatch(recipe.itemID, 'none')).toBeTruthy();
+        recipe.professionId = undefined;
+        expect(Filters.isProfessionMatch(recipe.itemID, -1)).toBeTruthy();
       });
 
       it('Negative match when', () => {
-        expect(Filters.isProfessionMatch(recipe.itemID, 'random')).toBeFalsy();
-        expect(Filters.isProfessionMatch(recipe.itemID, '')).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 33)).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 66)).toBeFalsy();
 
 
         SharedService.itemRecipeMap[25] = [];
-        expect(Filters.isProfessionMatch(recipe.itemID, 'Example')).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 1)).toBeFalsy();
         SharedService.itemRecipeMap[25] = undefined;
-        expect(Filters.isProfessionMatch(recipe.itemID, 'Example')).toBeFalsy();
+        expect(Filters.isProfessionMatch(recipe.itemID, 1)).toBeFalsy();
       });
     });
   });
@@ -196,7 +197,7 @@ describe('Filters', () => {
     beforeEach(() => {
       const auctionItem: AuctionItem = new AuctionItem();
       auctionItem.avgDailySold = 40;
-      SharedService.auctionItemsMap[25] = auctionItem;
+      service.mapped.value.set('' + 25, auctionItem);
       SharedService.user.apiToUse = 'Testing';
     });
     it('Positive match when', () => {
@@ -207,7 +208,7 @@ describe('Filters', () => {
 
     it('Negative match when', () => {
       expect(Filters.isDailySoldMatch(25, 50)).toBeFalsy();
-      SharedService.auctionItemsMap[25].avgDailySold = 0.2;
+      service.mapped.value.get('' + 25).avgDailySold = 0.2;
       expect(Filters.isDailySoldMatch(25, 1)).toBeFalsy();
       expect(Filters.isDailySoldMatch(50, undefined)).toBeFalsy();
     });
@@ -233,7 +234,6 @@ describe('Filters', () => {
       expect(Filters.isBelowMarketValue(152506, 70)).toBeTruthy();
       expect(Filters.isBelowMarketValue(152506, undefined)).toBeTruthy();
       expect(Filters.isBelowMarketValue(152506, null)).toBeTruthy();
-      SharedService.user.apiToUse = 'none';
       expect(Filters.isBelowMarketValue(152506, 10)).toBeTruthy();
     });
 
@@ -242,7 +242,7 @@ describe('Filters', () => {
       const fakeItem = new AuctionItem();
       fakeItem.itemID = 1;
       fakeItem.mktPrice = 0;
-      SharedService.auctionItemsMap[fakeItem.itemID] = fakeItem;
+      service.mapped.value.set('' + fakeItem.itemID, fakeItem);
       expect(Filters.isBelowMarketValue(1, 0.01)).toBeFalsy();
       expect(Filters.isBelowMarketValue(152506, 10)).toBeFalsy();
     });
@@ -255,7 +255,7 @@ describe('Filters', () => {
       fakeItem.buyout = 10;
       fakeItem.bid = 10;
       fakeItem.vendorSell = 30;
-      SharedService.auctionItemsMap[fakeItem.itemID] = fakeItem;
+      service.mapped.value.set('' + fakeItem.itemID, fakeItem);
       expect(Filters.isBelowSellToVendorPrice(1, true)).toBeTruthy();
       expect(Filters.isBelowSellToVendorPrice(160298, false)).toBeTruthy();
       expect(Filters.isBelowSellToVendorPrice(160298, null)).toBeTruthy();
@@ -263,7 +263,6 @@ describe('Filters', () => {
     });
 
     it('Negative when', () => {
-      console.log('SharedService', SharedService.auctionItemsMap[160298], SharedService.items[160298]);
       expect(Filters.isBelowSellToVendorPrice(152579, true)).toBeFalsy();
       expect(Filters.isBelowSellToVendorPrice(160298, true)).toBeFalsy();
     });

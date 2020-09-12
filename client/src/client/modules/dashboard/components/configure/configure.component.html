@@ -1,0 +1,126 @@
+<wah-close-btn></wah-close-btn>
+
+<h1 mat-dialog-title>Configure dashboard</h1>
+<mat-dialog-content>
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field class="col-md-8">
+                <input matInput
+                       placeholder="Dashboard title"
+                       formControlName="title">
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4">
+                <mat-label>Last modified</mat-label>
+                <input matInput
+                       formControlName="lastModified"
+                       [matDatepicker]="picker"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Columns ({{columns.length}})
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Add or edit the table columns for this board and the sort column
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <wah-columns
+                             [columns]="dashboard?.columns"
+                             [sortOrder]="dashboard?.sortRule"
+                             [form]="form"
+                >
+                </wah-columns>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Rules ({{rules.length}})
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Add or edit the main rules for this board
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <wah-rules
+                        [form]="form"
+                        [rules]="dashboard?.rules"
+                ></wah-rules>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Item rules ({{itemRules.length}})
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Add or edit item specific rules
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <wah-item-rules
+                                [form]="form"
+                                [rules]="dashboard?.itemRules"
+                ></wah-item-rules>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+
+    <mat-card-subtitle>
+        Preview
+    </mat-card-subtitle>
+    <mat-checkbox [(ngModel)]="showAllColumns">
+        Show all as detail view
+    </mat-checkbox>
+    <wah-dashboard-item *ngIf="tmpBoard && tmpBoard.data && tmpBoard.data.length"
+                        [dashboard]="tmpBoard"
+                        [hideButtons]="true"
+                        [allColumns]="showAllColumns"
+    ></wah-dashboard-item>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <form [formGroup]="form"
+          class="mr-2 pt-2">
+        <mat-checkbox formControlName="isDisabled">
+            Disabled
+        </mat-checkbox>
+    </form>
+    <button *ngIf="!isDefaultBoard; else resetBtnTemplate"
+            mat-raised-button
+            color="warn"
+            (click)="onDelete()"
+    >
+        <fa-icon [icon]="faTrash"></fa-icon>
+        Delete
+    </button>
+    <ng-template #resetBtnTemplate>
+        <button mat-raised-button
+                color="warn"
+                (click)="reset()"
+        >
+            <fa-icon [icon]="faUndo"></fa-icon>
+            Reset to default
+        </button>
+    </ng-template>
+    <button mat-raised-button
+            color="primary"
+            [disabled]="!hasChanges"
+            (click)="onDiscard()"
+    >
+        <fa-icon [icon]="faUndo"></fa-icon>
+        Discard
+    </button>
+    <button
+            mat-raised-button
+            color="accent"
+            [disabled]="!form.valid || !hasChanges"
+            (click)="onSave()"
+    >
+        <fa-icon [icon]="faSave"></fa-icon>
+        Save
+    </button>
+</mat-dialog-actions>

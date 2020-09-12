@@ -7,6 +7,9 @@ import {ItemService} from '../../../../services/item.service';
 import {Item} from '../../../../models/item/item';
 import {CustomProcUtil} from '../../../crafting/utils/custom-proc.util';
 import {NumberUtil} from '../../../util/utils/number.util';
+import {NpcService} from '../../../npc/services/npc.service';
+import {ItemNpcDetails} from '../../../item/models/item-npc-details.model';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-materials',
@@ -16,7 +19,7 @@ import {NumberUtil} from '../../../util/utils/number.util';
 export class MaterialsComponent implements OnInit {
   @Input() recipe: Recipe;
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
   }
 
   ngOnInit() {
@@ -42,22 +45,13 @@ export class MaterialsComponent implements OnInit {
   }
 
   getAtAHCount(itemID: number): number {
-    return SharedService.auctionItemsMap[itemID] ? SharedService.auctionItemsMap[itemID].quantityTotal : 0;
+    return this.auctionService.mapped.value.get('' + itemID) ?
+      this.auctionService.mapped.value.get('' + itemID).quantityTotal : 0;
   }
 
   setSelectedItem(reagent: Reagent): void {
     SharedService.events.detailSelection.emit(SharedService.items[reagent.id]);
     ItemService.itemSelection.emit(reagent.id);
-  }
-
-  getRecipeForItem(itemID: number): Array<Reagent> {
-    if (SharedService.recipesMapPerItemKnown[itemID] && !SharedService.auctionItemsMap[itemID]) {
-      return SharedService.recipesMapPerItemKnown[itemID];
-    } else if (SharedService.recipesMapPerItemKnown[itemID] && SharedService.auctionItemsMap[itemID] &&
-      SharedService.recipesMapPerItemKnown[itemID].cost < SharedService.auctionItemsMap[itemID].buyout) {
-      return SharedService.recipesMapPerItemKnown[itemID];
-    }
-    return undefined;
   }
 
   getMinCount(recipe: Recipe): number {
@@ -66,9 +60,9 @@ export class MaterialsComponent implements OnInit {
 
   vendorTooltip(reagent: Reagent): string {
     if (this.usingVendor) {
-      const item: Item = SharedService.itemNpcMap[reagent.id];
+      const item: ItemNpcDetails = NpcService.itemNpcMap.value.get(reagent.id);
       if (!this.vendorHasEnough(reagent) && item) {
-        const vendorCount = item.vendorBoughtLimit;
+        const vendorCount = item.vendorAvailable;
         return `You need to buy ${reagent.quantity - vendorCount} from AH and ${
           vendorCount} from the vendor. This is used for cost calculation.`;
       }

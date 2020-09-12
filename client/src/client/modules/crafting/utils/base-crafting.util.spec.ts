@@ -8,10 +8,13 @@ import {Auction} from '../../auction/models/auction.model';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
+import {NpcService} from '../../npc/services/npc.service';
 
 describe('BaseCraftingUtil', () => {
   let recipe: Recipe;
+  let map: Map<string, AuctionItem>;
   beforeEach(() => {
+    map = new Map<string, AuctionItem>();
     recipe = new Recipe();
     recipe.itemID = 1;
     recipe.minCount = 1;
@@ -24,7 +27,7 @@ describe('BaseCraftingUtil', () => {
     const vendor = new ItemNpcDetails();
     vendor.vendorAvailable = 0;
     vendor.vendorBuyPrice = 1;
-    SharedService.itemNpcMap.set(4, vendor);
+    NpcService.itemNpcMap.value.set(4, vendor);
     const item1: AuctionItem = new AuctionItem(1),
       item2: AuctionItem = new AuctionItem(2),
       item3: AuctionItem = new AuctionItem(3),
@@ -56,9 +59,9 @@ describe('BaseCraftingUtil', () => {
     ];
     item4.buyout = 10;
     item4.quantityTotal = 1000;
-    SharedService.auctionItemsMap[1] = item1;
-    SharedService.auctionItemsMap[2] = item2;
-    SharedService.auctionItemsMap[3] = item3;
+    map.set('1', item1);
+    map.set('2', item2);
+    map.set('3', item3);
   });
 
   beforeAll(
@@ -68,27 +71,27 @@ describe('BaseCraftingUtil', () => {
   describe('OptimisticCraftingUtil', () => {
     it('Can calculate', () => {
       const cost = 101;
-      new OptimisticCraftingUtil().calculate([recipe]);
+      new OptimisticCraftingUtil(map).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
-      expect(recipe.roi).toBe(SharedService.auctionItemsMap[1].buyout * 0.95 - cost);
+      expect(recipe.roi).toBe(map.get('1').buyout * 0.95 - cost);
     });
   });
 
   describe('NeededCraftingUtil', () => {
     it('Can calculate', () => {
       const cost = 159;
-      new NeededCraftingUtil().calculate([recipe]);
+      new NeededCraftingUtil(map).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
-      expect(recipe.roi).toBe(SharedService.auctionItemsMap[1].buyout * 0.95 - cost);
+      expect(recipe.roi).toBe(map.get('2').buyout * 0.95 - cost);
     });
   });
 
   describe('PessimisticCraftingUtil', () => {
     it('Can calculate', () => {
       const cost = 196;
-      new PessimisticCraftingUtil().calculate([recipe]);
+      new PessimisticCraftingUtil(undefined, undefined, map).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
-      expect(recipe.roi).toBe(SharedService.auctionItemsMap[1].buyout * 0.95 - cost);
+      expect(recipe.roi).toBe(map.get('1').buyout * 0.95 - cost);
     });
   });
 });

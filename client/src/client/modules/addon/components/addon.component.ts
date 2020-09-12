@@ -5,6 +5,7 @@ import {Report} from '../../../utils/report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Router} from '@angular/router';
+import {AuctionsService} from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-addon',
@@ -16,7 +17,7 @@ export class AddonComponent {
   lastModified: Date = localStorage['timestamp_tsm_addon_import'] ?
     new Date(localStorage['timestamp_tsm_addon_import']) : undefined;
 
-  constructor(private formBuilder: FormBuilder, private dbService: DatabaseService) {
+  constructor() {
   }
 
   importFromFile(fileEvent): void {

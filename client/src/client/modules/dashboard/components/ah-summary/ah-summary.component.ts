@@ -10,6 +10,7 @@ import {Recipe} from '../../../crafting/models/recipe';
 import {CraftingService} from '../../../../services/crafting.service';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -57,7 +58,7 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
    * - Expansions
    */
 
-  constructor(private professionService: ProfessionService) {
+  constructor(private professionService: ProfessionService, private auctionService: AuctionsService) {
     this.subs.add(this.displayAs.valueChanges,
       value => localStorage.setItem(this.LOCAL_STORAGE_NAME, value + ''));
     this.subs.add(SharedService.events.auctionUpdate,
@@ -117,13 +118,14 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     this.summaries.forEach(s =>
       s.clearEntries());
 
-    SharedService.auctionItems.forEach((item: AuctionItem) => {
-      this.addByExpansion(item);
+    this.auctionService.list.value
+      .forEach((item: AuctionItem) => {
+        this.addByExpansion(item);
 
-      this.itemsByClass(item);
+        this.itemsByClass(item);
 
-      this.addCrafts(item);
-    });
+        this.addCrafts(item);
+      });
 
     this.addProfitableCrafts(
       this.summaries[3],

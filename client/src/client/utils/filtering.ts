@@ -7,22 +7,29 @@ import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Pet} from '../modules/pet/models/pet';
 import {CraftingService} from '../services/crafting.service';
+import {AuctionsService} from '../services/auctions.service';
 
 export class Filters {
+  private static auctionService: AuctionsService;
+
+  static init(auctionService: AuctionsService) {
+    this.auctionService = auctionService;
+  }
+
   public static isNameMatch(itemID: number, name: string, speciesId?: number, aiId?: string): boolean {
     if (TextUtil.isEmpty(name)) {
       return true;
     }
     const pet: Pet = SharedService.pets[speciesId];
     let nameForId = pet ? pet.name : Filters.getItemName(itemID);
-    if (aiId && SharedService.auctionItemsMap[aiId]) {
-      nameForId = SharedService.auctionItemsMap[aiId].name;
+    if (aiId && this.auctionService.getById(aiId)) {
+      nameForId = this.auctionService.getById(aiId).name;
     }
     return TextUtil.contains(nameForId, name);
   }
 
   public static isBelowMarketValue(itemID: number, marketValuePercent: number): boolean {
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[itemID];
+    const auctionItem: AuctionItem = this.auctionService.getById(itemID);
     if (Filters.isUsingAPI() && auctionItem) {
       if (EmptyUtil.isNullOrUndefined(marketValuePercent) || marketValuePercent === 0) {
         return true;
@@ -39,9 +46,9 @@ export class Filters {
 
   public static isBelowSellToVendorPrice(itemID: number, onlyVendorSellable): boolean {
     if (onlyVendorSellable) {
-      return SharedService.auctionItemsMap[itemID].vendorSell > 0 &&
-        SharedService.auctionItemsMap[itemID].buyout <= SharedService.auctionItemsMap[itemID].vendorSell &&
-        SharedService.auctionItemsMap[itemID].bid <= SharedService.auctionItemsMap[itemID].vendorSell;
+      return this.auctionService.getById(itemID).vendorSell > 0 &&
+        this.auctionService.getById(itemID).buyout <= this.auctionService.getById(itemID).vendorSell &&
+        this.auctionService.getById(itemID).bid <= this.auctionService.getById(itemID).vendorSell;
     }
     return true;
   }
@@ -66,7 +73,7 @@ export class Filters {
     if (EmptyUtil.isNullOrUndefined(saleRate) || !Filters.isUsingAPI()) {
       return true;
     }
-    const item: AuctionItem = SharedService.auctionItemsMap[itemID],
+    const item: AuctionItem = this.auctionService.getById(itemID),
       minSaleRatePercent = saleRate / 100;
     if (!item && !requirePresence && !saleRate) {
       return true;
@@ -79,7 +86,7 @@ export class Filters {
       return true;
     }
 
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[itemID];
+    const auctionItem: AuctionItem = this.auctionService.getById(itemID);
     if (!auctionItem && requirePresence) {
       return false;
     }

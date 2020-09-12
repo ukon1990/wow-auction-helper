@@ -44,6 +44,7 @@ import {NpcModule} from './modules/npc/npc.module';
 import {ProfessionService} from './modules/crafting/services/profession.service';
 import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatNativeDateModule} from '@angular/material/core';
 
 
 @NgModule({
@@ -73,7 +74,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ItemModule,
     AdminModule,
     NpcModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatNativeDateModule,
   ],
   providers: [
     RealmService,

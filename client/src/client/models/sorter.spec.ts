@@ -2,12 +2,16 @@ import { async, TestBed } from '@angular/core/testing';
 import { Sorter } from './sorter';
 import { SharedService } from '../services/shared.service';
 import { AuctionItem } from '../modules/auction/models/auction-item.model';
+import {AuctionsService} from '../services/auctions.service';
+import {MockLoaderUtil} from '../mocks/mock-loader.util';
 
 let sorter: Sorter,
-  arr = [];
+  arr = [],
+  service: AuctionsService;
 
 beforeEach(() => {
-  sorter = new Sorter();
+  service = MockLoaderUtil.component().auctionsService;
+  sorter = new Sorter(service);
   arr = [
     { id: 1, name: 'Arch' },
     { id: 2, name: 'Aisha' },
@@ -78,9 +82,9 @@ describe('sort', () => {
   });
 
   it('getItemToSort returns the desired value if the key was found on the item', () => {
-    SharedService.auctionItemsMap[1] = new AuctionItem();
-    SharedService.auctionItemsMap[1].id = 1;
-    SharedService.auctionItemsMap[1].buyout = 10;
+    const item = new AuctionItem(1);
+    item.buyout = 10;
+    service.mapped.value.set('1', item);
 
     sorter.addKey('buyout');
 
@@ -88,9 +92,9 @@ describe('sort', () => {
   });
 
   it('getItemToSort tries to get auction item if the item did not contain the key', () => {
-    SharedService.auctionItemsMap[1] = new AuctionItem();
-    SharedService.auctionItemsMap[1].id = 1;
-    SharedService.auctionItemsMap[1].buyout = 10;
+    const item = new AuctionItem(1);
+    item.buyout = 10;
+    service.mapped.value.set('1', item);
 
     sorter.addKey('buyout');
 

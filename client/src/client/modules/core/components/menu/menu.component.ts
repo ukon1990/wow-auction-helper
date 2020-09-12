@@ -25,10 +25,7 @@ export class MenuComponent implements OnDestroy, OnInit {
   faEllipsisV = faEllipsisV;
   faBars = faBars;
 
-  constructor(private service: AuctionsService) {
-    this.sm.add(this.service.events.list,
-      (list) =>
-        this.numberOfUndercutAuctions = SharedService.userAuctions.undercutAuctions);
+  constructor() {
     this.sm.add(
       SharedService.events.isUserSet,
       isSet => {

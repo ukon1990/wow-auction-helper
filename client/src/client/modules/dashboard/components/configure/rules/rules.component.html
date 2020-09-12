@@ -1,0 +1,27 @@
+<mat-card *ngIf="formArray"
+          [formGroup]="form"
+>
+  <mat-card-header *ngIf="displayHeader">
+    <mat-card-title>
+      Rules
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content formArrayName="rules">
+    <ng-container *ngFor="let rule of formArray.controls; let i = index">
+      <wah-rule [formGroup]="rule"
+                [index]="i"
+                (remove)="formArray.removeAt(i)">
+      </wah-rule>
+    </ng-container>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-stroked-button
+            (click)="addRule()"
+            color="accent"
+    >
+      Add new rule
+    </button>
+  </mat-card-actions>
+</mat-card>

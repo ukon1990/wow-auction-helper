@@ -6,6 +6,7 @@ import {BehaviorSubject} from 'rxjs';
 import {InventoryUtil} from './inventory.util';
 import {Report} from '../report.util';
 import {ProfitSummary} from '../../modules/addon/models/profit-summary.model';
+import {AuctionsService} from '../../services/auctions.service';
 
 export class TSMCSV {
   characterGuilds?: any;
@@ -24,6 +25,14 @@ export class TSMCSV {
 
 export class TsmLuaUtil {
   static events: BehaviorSubject<TSMCSV> = new BehaviorSubject(undefined);
+  private static auctionService: AuctionsService;
+
+  constructor() {
+  }
+
+  static init(auctionService: AuctionsService) {
+    this.auctionService = auctionService;
+  }
 
   convertList(input: any): object {
     let result = {};
@@ -319,7 +328,7 @@ export class TsmLuaUtil {
       result.profitSummary = {};
 
       Object.keys(result.csvCancelled).forEach(realm => {
-        result.profitSummary[realm] = new ProfitSummary(realm, characters);
+        result.profitSummary[realm] = new ProfitSummary(realm, characters, TsmLuaUtil.auctionService);
 
         result.csvExpired[realm].forEach(row => {
           this.addUpProfits(result.profitSummary[realm], row, 'expired');

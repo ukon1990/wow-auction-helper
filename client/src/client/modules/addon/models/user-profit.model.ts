@@ -2,6 +2,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
 import {UserProfitValue} from './user-profit-value.model';
+import {AuctionsService} from '../../../services/auctions.service';
 
 export class UserProfit {
   expired: UserProfitValue = new UserProfitValue('Expired');
@@ -16,7 +17,7 @@ export class UserProfit {
     list: []
   };
 
-  constructor(public daysSince: number, private characters: any) {
+  constructor(public daysSince: number, private characters: any, private auctionService: AuctionsService) {
   }
 
   add(value: { amount: number; time: number; price: number; }, type: string): void {
@@ -101,7 +102,7 @@ export class UserProfit {
     const sales = this.sales.itemMap[itemId],
       expired = this.expired.itemMap[itemId],
       cancelled = this.cancelled.itemMap[itemId],
-      auctionItem: AuctionItem = SharedService.auctionItemsMap[itemId];
+      auctionItem: AuctionItem = this.auctionService.getById(itemId);
     let total = 0, plus = 0, saleRate = 0;
 
     if (sales) {

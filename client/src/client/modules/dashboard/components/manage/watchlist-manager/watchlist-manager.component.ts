@@ -71,7 +71,7 @@ export class WatchlistManagerComponent implements OnInit, OnDestroy {
       (change) =>
         this.handleImportStringChange(change));
     this.sm.add(
-      this.auctionsService.events.groupedList,
+      this.auctionsService.list,
       () => this.setWatchlist());
     this.importString.setValue('');
   }

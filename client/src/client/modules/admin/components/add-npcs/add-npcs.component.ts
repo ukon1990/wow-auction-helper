@@ -54,7 +54,7 @@ export class AddNpcsComponent implements OnInit, OnDestroy {
       this.npcBatchedIds[0] = ids.split(',');
     });
 
-    this.sm.add(this.service.list, (npcs) => {
+    this.sm.add(NpcService.list, (npcs) => {
       npcs.forEach(npc => this.existingNPCsMap[npc.id] = npc);
       console.log('NPC get all', npcs);
       this.groupIdsIntoBatches();

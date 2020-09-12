@@ -7,6 +7,7 @@ import {ShoppingCart} from '../models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
 import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -60,7 +61,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
   subscriptions = new SubscriptionManager();
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
   }
 
   ngOnInit() {
@@ -87,7 +88,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   }
 
   private setCart() {
-    SharedService.user.shoppingCart = new ShoppingCart();
+    SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
     this.cart = SharedService.user.shoppingCart;
     this.cart.setSources();
     this.cart.calculateCosts();

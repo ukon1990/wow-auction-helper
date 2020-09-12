@@ -163,9 +163,7 @@ export class DownloadComponent implements OnInit {
     this.downloadProgress = 'Downloading TSM data';
     await this.tsmService.get(this._realmService.events.realmStatus.value)
       .catch(console.error);
-    await AuctionUtil.organize(SharedService.auctions)
-      .catch(error =>
-        ErrorReport.sendError('DownloadComponent.downloadTSM', error));
+    await this._auctionsService.organize();
   }
 
   private async downloadPets(forceUpdate: boolean) {
@@ -177,9 +175,7 @@ export class DownloadComponent implements OnInit {
     await this._petService.getPets();
 
     if (forceUpdate) {
-      await AuctionUtil.organize(SharedService.auctions)
-        .catch(error =>
-          ErrorReport.sendError('DownloadComponent.downloadPets', error));
+      await this._auctionsService.organize();
     }
   }
 
@@ -191,9 +187,7 @@ export class DownloadComponent implements OnInit {
     await this._craftingService.get();
 
     if (forceUpdate) {
-      await AuctionUtil.organize(SharedService.auctions)
-        .catch(error =>
-          ErrorReport.sendError('DownloadComponent.downloadRecipes', error));
+      await this._auctionsService.organize();
     }
   }
 
@@ -206,9 +200,7 @@ export class DownloadComponent implements OnInit {
     await this._itemService.getItems();
 
     if (forceUpdate) {
-      await AuctionUtil.organize(SharedService.auctions)
-        .catch(error =>
-          ErrorReport.sendError('DownloadComponent.downloadItems', error));
+      await this._auctionsService.organize();
     }
   }
 }

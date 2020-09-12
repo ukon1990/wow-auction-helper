@@ -131,7 +131,7 @@ export class AddItemsComponent implements OnInit {
 
   addMissingNPCItems() {
     const map = {};
-    this.npcService.list.value.forEach(npc => {
+    NpcService.list.value.forEach(npc => {
       if (npc.sells) {
         npc.sells.forEach(({id}) => {
           if (!SharedService.items[id]) {

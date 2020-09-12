@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardItemComponent } from './dashboard-item.component';
 import {TestModule} from '../../../test.module';
 import {Dashboard} from '../../models/dashboard.model';
+import {defaultBoards} from '../../data/default-doards.data';
 
 describe('DashboardItemComponent', () => {
   let component: DashboardItemComponent;
@@ -18,7 +19,7 @@ describe('DashboardItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardItemComponent);
     component = fixture.componentInstance;
-    component.dashboard = new Dashboard('Some title', Dashboard.TYPES.CHEAP_BIDS_WITH_LOW_TIME_LEFT);
+    component.dashboard = defaultBoards[0];
     fixture.detectChanges();
   });
 
