@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {User} from './models/user/user';
 import {SharedService} from './services/shared.service';
 import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
 import {Angulartics2} from 'angulartics2';
@@ -29,6 +28,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {NewsUtil} from './modules/about/utils/news.util';
 import {NewsComponent} from './modules/about/components/news/news.component';
 import {ItemComponent} from './modules/item/components/item.component';
+import {LogRocketUtil} from './utils/log-rocket.util';
 
 @Component({
   selector: 'wah-root',
@@ -68,6 +68,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     Report.init(this.angulartics2, this.reportService);
     SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
     ProspectingAndMillingUtil.restore();
+    LogRocketUtil.init();
 
     this.subs.add(
       SharedService.events.detailPanelOpen,

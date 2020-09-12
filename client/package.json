@@ -42,6 +42,7 @@
     "dexie": "^2.0.4",
     "distinct-colors": "^1.0.4",
     "file-saver": "^2.0.2",
+    "logrocket": "^1.0.12",
     "luaparse": "^0.2.1",
     "push.js": "^1.0.12",
     "rxjs": "^6.5.5",
