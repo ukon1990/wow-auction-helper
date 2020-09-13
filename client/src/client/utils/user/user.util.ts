@@ -194,8 +194,7 @@ export class UserUtil {
   }
 
   public static setRecipesForCharacter(character: Character): void {
-    if (character && character.professions &&
-      SharedService.user.realm.toLowerCase() === UserUtil.slugifyString(character.realm)) {
+    if (character && character.professions && UserUtil.isCharacterOnTheCurrentRealm(character)) {
       if (character.professions.primaries) {
         character.professions.primaries.forEach(primary => {
           this.addKnownRecipes(primary, character);
@@ -206,6 +205,10 @@ export class UserUtil {
           this.addKnownRecipes(secondary, character));
       }
     }
+  }
+
+  private static isCharacterOnTheCurrentRealm(character: Character) {
+    return SharedService.user.realm && SharedService.user.realm.toLowerCase() === UserUtil.slugifyString(character.realm);
   }
 
   private static addKnownRecipes(category: CharacterProfession, character: Character) {

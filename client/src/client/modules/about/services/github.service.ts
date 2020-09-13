@@ -53,7 +53,8 @@ export class GithubService {
         .catch(error => reject());
 
       resolve(
-        ChangeLog.combineTagsAndCommits(tags, commits));
+        ChangeLog.combineTagsAndCommits(tags, commits)
+          .sort((a, b) => +b.date - +a.date));
     });
   }
 }

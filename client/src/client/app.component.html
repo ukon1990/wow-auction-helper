@@ -8,7 +8,8 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <router-outlet *ngIf="!isLoading; else loadingTemplate"></router-outlet>
+      <!--  *ngIf="!isLoading || initialLoadWasSetup; else loadingTemplate" -->
+      <router-outlet></router-outlet>
     </mat-card-content>
   </mat-card>
   <wah-footer></wah-footer>

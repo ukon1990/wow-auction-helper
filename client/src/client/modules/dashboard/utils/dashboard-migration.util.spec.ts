@@ -1,7 +1,7 @@
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {DashboardMigrationUtil, OldGroups} from './dashboard-migration.util';
 
-fdescribe('DashboardMigrationUtil', () => {
+describe('DashboardMigrationUtil', () => {
   const exampleSource: OldGroups = {
     groups: [
       {

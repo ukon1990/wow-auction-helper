@@ -153,7 +153,6 @@ export class CraftingService {
         }
       }
     });
-    console.log('known', itemRecipeMapPerKnown, CraftingService.recipesForUser.value);
 
     CraftingService.itemRecipeMapPerKnown.next(itemRecipeMapPerKnown);
     CraftingService.map.next(map);

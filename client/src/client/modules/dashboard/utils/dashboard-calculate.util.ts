@@ -226,7 +226,7 @@ export class DashboardCalculateUtil {
         let value;
         fieldPath.split('.')
           .forEach(key => {
-            if (!value && item[key]) {
+            if (!value && item[key] && item) {
               value = item[key];
             } else if (value) {
               value = value[key];

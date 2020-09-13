@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "3.19.0",
+  "version": "3.19.1",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "angulartics2": "^9.1.0",
     "chart.js": "^2.9.3",
     "core-js": "^3.2.1",
-    "dexie": "^2.0.4",
+    "dexie": "^3.0.2",
     "distinct-colors": "^1.0.4",
     "file-saver": "^2.0.2",
     "logrocket": "^1.0.12",

@@ -1,7 +1,7 @@
 import {Angulartics2} from 'angulartics2';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from '../services/shared.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {environment} from '../../environments/environment';
 import {ReportService} from '../services/report/report.service';
 
@@ -21,6 +21,15 @@ export class ErrorReport {
   }
 
   public static sendHttpError(error: HttpErrorResponse, options?: ErrorOptions): void {
+    console.error(error.name, error.error);
+
+    if (options && options.useSnackBar) {
+      this.sb.open(
+        `Error ${error.status}: ${options.message || error.message}`,
+        'Ok',
+        {duration: 5000, panelClass: ['mat-toolbar', 'mat-warn']});
+    }
+
     if (!this.doNotReport() && error.status !== 0 && error.status !== undefined) {
       const action = `${error.status} - ${error.statusText}`;
       const category = `Http errors (${version})`;
@@ -34,15 +43,6 @@ export class ErrorReport {
         },
       });
       // this.service.send(action, category, version, 'error-http', label);
-
-      console.error(error.name, error.error);
-
-      if (options) {
-        ErrorReport.sb.open(
-          `${options.message + ' - '}${error.status} - ${error.statusText}`,
-          'Ok',
-          {duration: 4000});
-      }
     }
   }
 

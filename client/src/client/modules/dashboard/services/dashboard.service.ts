@@ -36,12 +36,14 @@ export class DashboardService {
   }
 
   calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
-    DashboardCalculateUtil.setItemSources(map);
-    this.list.value.forEach(board => {
-      DashboardCalculateUtil.calculate(board, map);
-      this.map.value.set(board.id, board);
-      this.calculatedBoardEvent.emit(board.id);
-    });
+    if (map.size > 0) {
+      DashboardCalculateUtil.setItemSources(map);
+      this.list.value.forEach(board => {
+        DashboardCalculateUtil.calculate(board, map);
+        this.map.value.set(board.id, board);
+        this.calculatedBoardEvent.emit(board.id);
+      });
+    }
   }
 
   private async restore(): Promise<void> {

@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { CharacterService } from './character.service';
-import { TestModule } from '../modules/test.module';
+import { TestModule } from '../../test.module';
 
 describe('CharacterService', () => {
   beforeEach(() => {

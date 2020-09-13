@@ -1,7 +1,7 @@
 import * as LogRocket from 'logrocket';
 import generateUUID from './uuid.util';
 import {SharedService} from '../services/shared.service';
-import {environment} from '../../environments/environment.prod';
+import {environment} from '../../environments/environment';
 
 export class LogRocketUtil {
   static init(): void {

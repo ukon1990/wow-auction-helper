@@ -10,7 +10,12 @@ import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionsService} from '../../../services/auctions.service';
 
-export class VendorItem {
+export interface NPCCoordinate {
+  x: number;
+  y: number;
+}
+
+export interface VendorItem {
   id: number;
   price: number;
   unitPrice: number;
@@ -74,7 +79,7 @@ export class NPC {
   id: number;
   name: string;
   zoneId: number;
-  coordinates: Coordinates[] = [];
+  coordinates: NPCCoordinate[] = [];
   sells: VendorItem[] = [];
   drops: DroppedItem[] = [];
   skinning: SkinnedItem[] = [];

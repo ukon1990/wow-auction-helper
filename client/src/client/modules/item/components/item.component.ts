@@ -117,7 +117,6 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
             .selectedTabChange,
           (event: MatTabChangeEvent) => {
             Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`);
-            console.log('Tab changed!', this.subscriptions.getMap().has(this.tabSubId));
           },
           {id: this.tabSubId});
       }
@@ -192,6 +191,9 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   userHasRecipeForItem(): boolean {
+    if (!this.selected.item) {
+      return false;
+    }
     return CraftingService.itemRecipeMapPerKnown.value.has(this.selected.item.id);
   }
 

@@ -27,8 +27,8 @@ export class CharacterService {
             error
           });
           reject({
-            code: 500,
-            message: 'Could not fetch character data'
+            code: 401,
+            message: 'The character was not found'
           });
         });
     });
