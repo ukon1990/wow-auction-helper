@@ -24,12 +24,16 @@ export class NewsComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.setNewsHasBeenClosed();
     NewsUtil.events.next(false);
   }
 
   close(): void {
+    this.dialogRef.close();
+  }
+
+  private setNewsHasBeenClosed() {
     localStorage['timestamp_news'] = version;
     this.showNews = false;
-    this.dialogRef.close();
   }
 }

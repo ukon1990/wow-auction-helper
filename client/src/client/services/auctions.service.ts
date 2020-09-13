@@ -48,6 +48,12 @@ export class AuctionsService {
           .catch(console.error);
       }
     );
+
+    this.subs.add(TsmService.list, async () => {
+      if (this.list.value.length > 0) {
+        await this.organize();
+      }
+    });
   }
 
   getById(id: string | number): AuctionItem {

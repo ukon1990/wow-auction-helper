@@ -7,26 +7,33 @@ import {AuctionsService} from './auctions.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, interval, Observable} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {Report} from '../utils/report.util';
 import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
 import {RealmStatus} from '../models/realm-status.model';
 import {UserUtil} from '../utils/user/user.util';
+import {environment} from '../../environments/environment';
 
 @Injectable()
 export class RealmService {
-
-  constructor(private http: HttpClient,
-              private matSnackBar: MatSnackBar) {
-  }
+  private statusInterval: Observable<number> = environment.test ? null : interval(1000);
+  private isCheckingStatus: boolean;
   previousUrl;
   events = {
+    timeSince: new BehaviorSubject(0),
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
     list: new BehaviorSubject([]),
     map: new BehaviorSubject(new Map<number, RealmStatus>()),
     realmChanged: new EventEmitter<AuctionHouseStatus>()
   };
+
+  constructor(private http: HttpClient,
+              private matSnackBar: MatSnackBar) {
+    if (!environment.test) {
+      this.statusInterval.subscribe(() => this.checkForUpdates());
+    }
+  }
 
   public static gatherRealms(): void {
     const tmpMap: Map<string, Realm> = new Map<string, Realm>();
@@ -73,6 +80,7 @@ export class RealmService {
   }
 
   getStatus(region: string, realm: string, isInitialLoad = false): Promise<AuctionHouseStatus> {
+    this.isCheckingStatus = false;
     const realmStatus = this.events.realmStatus.value,
       timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
         realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,
@@ -81,6 +89,7 @@ export class RealmService {
       this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
         .toPromise()
         .then(async (status: AuctionHouseStatus) => {
+          this.previousUrl = status.url;
           this.events.realmStatus.next({
             ...status,
             isInitialLoad,
@@ -93,13 +102,14 @@ export class RealmService {
 
           if (status.isUpdating && status.url !== this.previousUrl) {
             this.matSnackBar.open('New auction data is being processed on the server and will be available soon.');
-            this.previousUrl = status.url;
             Report.debug('The server is processing new auction data', status);
           }
+          this.isCheckingStatus = false;
           resolve(status);
         })
         .catch(error => {
           ErrorReport.sendHttpError(error);
+          this.isCheckingStatus = false;
           reject(error);
         });
     }));
@@ -156,5 +166,26 @@ export class RealmService {
         name: 'The app could not fetch the realm data correctly', message: 'No object were found', stack: undefined
       });
     }
+  }
+
+  private async checkForUpdates() {
+    const {region, realm} = SharedService.user;
+    if (!this.isCheckingStatus && this.shouldUpdateRealmStatus() && realm && region) {
+      await this.getStatus(region, realm);
+    }
+  }
+
+  private shouldUpdateRealmStatus(): boolean {
+    const status = this.events.realmStatus.value;
+    if (!status) {
+      return true;
+    }
+
+    this.events.timeSince.next(DateUtil.timeSince(status.lastModified, 'm'));
+
+    if (status.url !== this.previousUrl) {
+      return true;
+    }
+    return !status || this.events.timeSince.value > status.lowestDelay;
   }
 }

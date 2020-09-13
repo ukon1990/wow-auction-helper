@@ -6,7 +6,7 @@ import {SharedService} from '../../../../../services/shared.service';
 import {Subscription} from 'rxjs';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
-import {CharacterService} from '../../../../../services/character.service';
+import {CharacterService} from '../../../../character/services/character.service';
 import {CraftingService} from '../../../../../services/crafting.service';
 import {Report} from '../../../../../utils/report.util';
 import {UserUtil} from 'client/utils/user/user.util';

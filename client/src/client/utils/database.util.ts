@@ -16,6 +16,7 @@ export class DatabaseUtil {
   private readonly ADDON = 'id,name,gameVersion,timestamp,data';
   private readonly NPC_TABLE_COLUMNS = 'id,name,zoneId,coordinates,sells,drops,skinning,' +
     'expansionId,isAlliance,isHorde,minLevel,maxLevel,tag,type,classification';
+  private readonly NPC_ENTRY_COLUMNS = 'id,item,foundOn';
   private readonly ZONE_TABLE_COLUMNS = 'id,name,patch,typeId,parentId,parent,territoryId,minLevel,maxLevel';
   private readonly PROFESSION_TABLE_COLUMNS = 'id,name,description,icon,type,skillTiers';
   private readonly DASHBOARD_TABLE_COLUMNS = 'id,parentId,idParam,title,columns,sortOrder,isDisabled,onlyItemsWithRules,' +
@@ -128,6 +129,22 @@ export class DatabaseUtil {
       pets: this.PET_TABLE_COLUMNS,
       recipes2: this.RECIPE_TABLE_COLUMNS,
       npcs: this.NPC_TABLE_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON,
+      dashboards: this.DASHBOARD_TABLE_COLUMNS
+    },
+    {
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes2: this.RECIPE_TABLE_COLUMNS,
+      npcsBase: this.NPC_TABLE_COLUMNS,
+      npcsDrops: this.NPC_ENTRY_COLUMNS,
+      npcsSells: this.NPC_ENTRY_COLUMNS,
+      npcsSkinns: this.NPC_ENTRY_COLUMNS,
       zones: this.ZONE_TABLE_COLUMNS,
       professions: this.PROFESSION_TABLE_COLUMNS,
       addons: this.ADDON,

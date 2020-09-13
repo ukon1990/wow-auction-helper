@@ -29,6 +29,7 @@ import {NewsUtil} from './modules/about/utils/news.util';
 import {NewsComponent} from './modules/about/components/news/news.component';
 import {ItemComponent} from './modules/item/components/item.component';
 import {LogRocketUtil} from './utils/log-rocket.util';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-root',
@@ -41,6 +42,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shouldAskForConcent = false;
   pageTitle: string;
   isLoading: boolean;
+  isInTheSetup: boolean;
+  initialLoadWasSetup: boolean;
 
   constructor(public platform: Platform,
               private router: Router,
@@ -174,6 +177,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onNavigationChange(event: NavigationEnd) {
+    if (TextUtil.contains(event.url, 'setup')) {
+      this.initialLoadWasSetup = true;
+    }
     this.redirectToCorrectPath(event.url);
     this.saveCurrentRoute(event);
     const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);
@@ -183,6 +189,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     window.scroll(0, 0);
     Report.navigation(event);
+
+    this.isInTheSetup = TextUtil.contains(event.url, 'setup');
   }
 
   private saveCurrentRoute(event: NavigationEnd) {

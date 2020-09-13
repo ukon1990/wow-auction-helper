@@ -227,7 +227,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
 
     if (Filters.isUsingAPI()) {
-      this.columns.push({key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'});
+      this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
     }
   }
 }

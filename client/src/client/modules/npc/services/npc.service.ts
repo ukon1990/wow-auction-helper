@@ -9,6 +9,8 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {SharedService} from '../../../services/shared.service';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {ZoneService} from '../../zone/service/zone.service';
+import {NpcUtil} from '../utils/npc.util';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +53,8 @@ export class NpcService {
   }
 
   get(): Promise<NPC[]> {
+    const start = +new Date();
+    console.log('Downloading NPC data');
     SharedService.downloading.npc = true;
     const locale = localStorage['locale'];
     this.isLoading = true;
@@ -67,6 +71,8 @@ export class NpcService {
           this.mapAndSetNextValueForNPCs(response['npcs']);
           this.db.addNPCs(response['npcs'])
             .catch(console.error);
+
+          console.log('Downloaded and saved NPC data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
           resolve(list);
         })
         .catch(error => {

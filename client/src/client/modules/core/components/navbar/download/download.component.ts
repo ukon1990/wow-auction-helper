@@ -65,7 +65,7 @@ export class DownloadComponent implements OnInit {
       (status) => this.setRealmStatus(status));
 
     this.subs.add(
-      this.service.timeSinceUpdate,
+      this._realmService.events.timeSince,
       time =>
         this.timeSinceUpdate = time);
   }

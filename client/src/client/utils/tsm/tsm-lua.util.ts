@@ -112,13 +112,13 @@ export class TsmLuaUtil {
         result[fRes.type][fRes.character.realm]['All'] = [];
       }
 
-      if (ObjectUtil.isObject(fRes.data)) {
+      if (fRes.data && ObjectUtil.isObject(fRes.data)) {
         Object.keys(fRes.data)
           .forEach(key => {
             fRes.data[key].character = fRes.character.name;
             result[fRes.type][fRes.character.realm]['All'].push(fRes.data[key]);
           });
-      } else {
+      } else if (fRes.data && fRes.data.forEach) {
         fRes.data.forEach(d => {
           d.character = fRes.character.name;
           result[fRes.type][fRes.character.realm]['All'].push(d);

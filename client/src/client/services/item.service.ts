@@ -41,7 +41,7 @@ export class ItemService {
     });
   }
 
-  async loadItems(latestTimestamp: Date) {
+  async loadItems(latestTimestamp: Date) {/*
     await this.dbService.getAllItems()
       .then(async (items) => {
         if (items.length === 0) {
@@ -52,7 +52,7 @@ export class ItemService {
       .catch(async error => {
         delete localStorage['timestamp_items'];
         ErrorReport.sendError('ItemService.loadItems', error);
-      });
+      });*/
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
     if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp) || !ItemService.list.value.length) {
@@ -176,7 +176,7 @@ export class ItemService {
     }
 
     if (this.platform !== null && !this.platform.WEBKIT) {
-      this.dbService.addItems(items.items);
+      // this.dbService.addItems(items.items);
       localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
     }
     SharedService.events.items.emit(true);

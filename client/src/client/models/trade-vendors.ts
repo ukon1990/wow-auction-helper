@@ -26,7 +26,7 @@ export class TradeVendors {
     }
 
     try {
-      (vendor.items || []).forEach(item => {
+      (vendor && vendor.items ? vendor.items : []).forEach(item => {
         this.setItemValue(item, vendor, map);
       });
       vendor.items.sort(function (a, b) {

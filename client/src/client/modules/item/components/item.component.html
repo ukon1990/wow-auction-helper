@@ -61,7 +61,7 @@
                      color="accent"
                      #tabs
       >
-        <mat-tab label="Auctions" *ngIf="selected.auctionItem">
+        <mat-tab label="Auctions" *ngIf="selected.auctionItem && selected.auctionItem?.auctions.length > 0">
           <wah-data-table [columns]="columns"
                           [data]="selected.auctionItem?.auctions"
                           [numOfRows]="20">

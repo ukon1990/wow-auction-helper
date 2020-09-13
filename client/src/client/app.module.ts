@@ -10,7 +10,6 @@ import {AppRoutingModule} from './modules/app-routing.module';
 
 import {AppComponent} from './app.component';
 import {RealmService} from './services/realm.service';
-import {CharacterService} from './services/character.service';
 import {AuctionsService} from './services/auctions.service';
 import {DatabaseService} from './services/database.service';
 import {ItemService} from './services/item.service';
@@ -79,7 +78,6 @@ import {MatNativeDateModule} from '@angular/material/core';
   ],
   providers: [
     RealmService,
-    CharacterService,
     AuctionsService,
     DatabaseService,
     ItemService,

@@ -36,7 +36,7 @@ export class Response {
       console.error(error);
     }
     return Response.send({
-      statusCode: statusCode || 500,
+      status: statusCode || 500,
       error: this.getErrorMessage(error),
       event: this.getEvent(event)
     }, callback);

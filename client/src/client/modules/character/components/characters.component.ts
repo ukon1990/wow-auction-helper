@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, Input, OnChanges} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
-import {CharacterService} from '../../../services/character.service';
+import {CharacterService} from '../services/character.service';
 import {RealmService} from '../../../services/realm.service';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
@@ -13,25 +13,30 @@ import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Report} from '../../../utils/report.util';
 import {Realm} from '../../../models/realm';
 import {UserUtil} from '../../../utils/user/user.util';
+import {DashboardService} from '../../dashboard/services/dashboard.service';
+import {ProfessionService} from '../../crafting/services/profession.service';
 
 @Component({
   selector: 'wah-characters',
   templateUrl: './characters.component.html',
   styleUrls: ['./characters.component.scss']
 })
-export class CharactersComponent implements OnChanges, AfterViewInit {
+export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() region: string;
   @Input() realm: string;
 
   regions: any;
   downloading: boolean;
   form: FormGroup;
+  private shouldRecalculateDashboards: boolean;
 
   constructor(private _characterService: CharacterService,
               private snackBar: MatSnackBar,
               private realmService: RealmService,
               private craftingService: CraftingService,
+              private professionService: ProfessionService,
               private auctionService: AuctionsService,
+              private dashboardService: DashboardService,
               private formBuilder: FormBuilder
   ) {
     this.form = this.formBuilder.group({
@@ -58,11 +63,22 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  getCharacter(): void {
+  ngOnDestroy() {
+    if (this.shouldRecalculateDashboards) {
+      this.dashboardService.calculateAll();
+    }
+  }
+
+  async getCharacter() {
     this.downloading = true;
 
+    if (this.professionService.list.value.length === 0) {
+      this.professionService.getAll()
+        .catch(console.error);
+    }
+
     if (this.form.value.characterBelowLevelTen) {
-      this.addLowLevelCharacter();
+      await this.addLowLevelCharacter();
       Report.send('Added level < 10 character', 'Characters');
     } else {
       this._characterService
@@ -84,7 +100,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
       error,
       new ErrorOptions(
         true,
-        `Something went wrong, while adding ${this.form.value.name}.`));
+        `${this.form.value.name} could not be found on ${this.form.value.realm}.`));
   }
 
   private addCharacter(c) {
@@ -93,18 +109,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
       this.openSnackbar(`${c.name} was successfully added`);
 
       Report.send('Added character', 'Characters');
-    } else {
-      if (c.error.status === 404) {
-        ErrorReport.sendHttpError(
-          c.error,
-          new ErrorOptions(
-            true,
-            `${
-              this.form.value.name
-            } could not be found on the realm ${
-              this.form.value.realm
-            }.`));
-      }
+      this.shouldRecalculateDashboards = true;
     }
     this.downloading = false;
   }
@@ -141,6 +146,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   updateCharacter(index: number): void {
+    this.shouldRecalculateDashboards = true;
     const character: Character = SharedService.user.characters[index],
       professions = character.professions;
     if (character.level) {
@@ -198,6 +204,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit {
   }
 
   removeCharacter(index: number): void {
+    this.shouldRecalculateDashboards = true;
     SharedService.user.characters.splice(index, 1);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
     try {

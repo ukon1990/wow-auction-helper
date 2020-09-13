@@ -7,6 +7,7 @@ export class ChangeLog {
   tag: string;
   sha: string;
   changes: GithubSubCommit[] = [];
+  date: Date;
 
   public static combineTagsAndCommits(tags: GithubTag[], commits: GithubCommit[]): ChangeLog[] {
     const changelog: ChangeLog[] = [],
@@ -25,6 +26,7 @@ export class ChangeLog {
       if (changelogMap[commit.sha]) {
         previousTag = changelogMap[commit.sha];
         previousTag.title = `${ new Date(commit.commit.author.date).toLocaleDateString() } - version ${ previousTag.tag }`;
+        previousTag.date = new Date(commit.commit.author.date);
         previousTag.changes.push(new GithubSubCommit(commit.commit));
       }
     });

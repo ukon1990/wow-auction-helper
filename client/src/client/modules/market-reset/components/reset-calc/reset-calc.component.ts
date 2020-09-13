@@ -41,7 +41,7 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
     {key: 'newBuyout', title: 'New buyout', dataType: 'gold'},
     {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
     {key: 'sumBuyout', title: 'Total cost', dataType: 'gold'},
-    {key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'},
+    {key: 'sellTime', title: 'Est days to sell', dataType: 'number'},
   ];
 
   constructor() {

@@ -19,6 +19,9 @@ import {Profession} from '../../../../api/src/profession/model';
 import {AuctionsService} from './auctions.service';
 import {DatabaseUtil} from '../utils/database.util';
 import {DashboardV2} from '../modules/dashboard/models/dashboard-v2.model';
+import {rejects} from 'assert';
+import {DropsType, NpcSplitType, NpcUtil, SellsType, SkinningType} from '../modules/npc/utils/npc.util';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 /**
  * A Class for handeling the indexedDB
@@ -79,13 +82,13 @@ export class DatabaseService {
       let items: Item[] = [];
       const add = (result) => items = [...items, ...result];
       await this.getItemsInBatch(0, 50000)
-          .then((res) => add(res));
+        .then((res) => add(res));
       await this.getItemsInBatch(50001, 100000)
-          .then((res) => add(res));
+        .then((res) => add(res));
       await this.getItemsInBatch(100001, 200000)
-          .then((res) => add(res));
+        .then((res) => add(res));
       await this.getItemsInBatch(200001, 1000000)
-          .then((res) => add(res));
+        .then((res) => add(res));
       SharedService.events.items.emit(true);
       resolve(items);
     });
@@ -94,18 +97,18 @@ export class DatabaseService {
   private getItemsInBatch(from: number, to: number) {
     return new Promise<Item[]>((resolve, reject) => {
       this.db.table('items')
-          .where(':id')
-          .between(from, to)
-          .toArray()
-          .then(items => {
-            SharedService.downloading.items = false;
-            /*
-            SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
-            items.forEach(i => {
-              SharedService.items[i.id] = i;
-            });*/
-            resolve(items);
-          }).catch(e => {
+        .where(':id')
+        .between(from, to)
+        .toArray()
+        .then(items => {
+          SharedService.downloading.items = false;
+          /*
+          SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
+          items.forEach(i => {
+            SharedService.items[i.id] = i;
+          });*/
+          resolve(items);
+        }).catch(e => {
         console.error('Could not restore items from local DB', e);
         SharedService.downloading.items = false;
         reject(e);
@@ -114,6 +117,9 @@ export class DatabaseService {
   }
 
   clearItems(): void {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     this.db.table('items').clear();
   }
 
@@ -121,23 +127,89 @@ export class DatabaseService {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    await this.db.table('npcs').bulkPut(list);
+    return new Promise<void>((resolve, reject) => {
+      const npcs: NpcSplitType = NpcUtil.split(list);
+
+      const promises: Promise<any>[] = [
+        this.db.table('npcsBase').bulkPut(npcs.bases)
+          .catch(error => ErrorReport.sendError('DatabaseService.addNPCs.npcsBase', error)),
+        this.db.table('npcsDrops').bulkPut(npcs.drops)
+          .catch(error => ErrorReport.sendError('DatabaseService.addNPCs.npcsDrops', error)),
+        this.db.table('npcsSells').bulkPut(npcs.sells)
+          .catch(error => ErrorReport.sendError('DatabaseService.addNPCs.npcsSells', error)),
+        this.db.table('npcsSkinns').bulkPut(npcs.skinning)
+          .catch(error => ErrorReport.sendError('DatabaseService.addNPCs.npcsSkinns', error)),
+      ];
+      Promise.all(promises)
+        .then(() => {
+          resolve();
+        })
+        .catch(error => {
+          ErrorReport.sendError('DatabaseService.addNPCs', error);
+          reject(error);
+        });
+    });
   }
 
   async getAllNPCs(): Promise<NPC[]> {
     if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject([]));
     }
-    return this.db.table('npcs').toArray();
+    return new Promise<NPC[]>((resolve, reject) => {
+      console.log('Loading NPCs from local DB');
+      const npcs: NpcSplitType = {
+        bases: [],
+        sells: [],
+        drops: [],
+        skinning: [],
+      };
+      const start = +new Date();
+      const promises: Promise<any>[] = [
+        this.db.table('npcsBase').toArray()
+          .then((base: NPC[]) => npcs.bases = base),
+        this.db.table('npcsDrops').toArray()
+          .then((drops: DropsType[]) => npcs.drops = drops),
+        this.db.table('npcsSells').toArray()
+          .then((sells: SellsType[]) => npcs.sells = sells),
+        this.db.table('npcsSkinns').toArray()
+          .then((skinning: SkinningType[]) => npcs.skinning = skinning),
+      ];
+      Promise.all(promises)
+        .then(() => {
+          const result = NpcUtil.combine(npcs);
+          console.log(`Done loading NPCs from local DB (${DateUtil.getDifferenceInSeconds(start, +new Date())})`);
+          resolve(result);
+        })
+        .catch(reject);
+    });
   }
 
   async clearNPCs(): Promise<void> {
-    await this.db.table('npcs').clear()
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
+
+    await this.db.table('npcs').clear() // Deprecated
+      .catch(() => {
+      });
+    await this.db.table('npcsBase').clear()
       .catch(error =>
-        ErrorReport.sendError('DatabaseService.clearNPCs', error));
+        ErrorReport.sendError('DatabaseService.clearNPCs.npcsBase', error));
+    await this.db.table('npcsDrops').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearNPCs.npcsDrops', error));
+    await this.db.table('npcsSells').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearNPCs.npcsSells', error));
+    await this.db.table('npcsSkinns').clear()
+      .catch(error =>
+        ErrorReport.sendError('DatabaseService.clearNPCs.npcsSkinns', error));
   }
 
   addProfessions(professions: Profession[]): Promise<void> {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     return new Promise<void>((resolve, reject) => {
       if (this.shouldNotUseIndexedDB()) {
         resolve();
@@ -157,6 +229,9 @@ export class DatabaseService {
   }
 
   async clearProfessions() {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     await this.db.table('professions').clear()
       .catch(error =>
         ErrorReport.sendError('DatabaseService.clearProfessions', error));
@@ -178,6 +253,9 @@ export class DatabaseService {
   }
 
   async clearZones(): Promise<void> {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     await this.db.table('zones').clear();
   }
 
@@ -209,6 +287,9 @@ export class DatabaseService {
   }
 
   clearPets(): void {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     this.db.table('pets').clear();
   }
 
@@ -285,6 +366,9 @@ export class DatabaseService {
   }
 
   async clearRecipes(): Promise<void> {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     await this.db.table('recipes2').clear()
       .catch(e =>
         ErrorReport.sendError('DatabaseService.clearRecipes', e));
@@ -380,6 +464,9 @@ export class DatabaseService {
   }
 
   deleteDB(): void {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
     this.db.delete();
   }
 }
