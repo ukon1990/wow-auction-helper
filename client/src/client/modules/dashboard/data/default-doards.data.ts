@@ -21,7 +21,7 @@ const profitableCrafts: DashboardV2 = {
     columnConfig.shoppingCartInput
   ],
   sortRule: {
-    field: columnConfig.recipe.ROIPercent.key,
+    field: columnConfig.recipe.ROI.key,
     sortDesc: true
   },
   rules: [{
@@ -63,7 +63,7 @@ const profitableKnownCrafts: DashboardV2 = {
     columnConfig.shoppingCartInput
   ],
   sortRule: {
-    field: columnConfig.recipe.knownROIPercent.key,
+    field: columnConfig.recipe.knownROI.key,
     sortDesc: true
   },
   rules: [{
@@ -354,7 +354,7 @@ const getKnownProfessionBoards: DashboardV2[] = [
   title: p.name,
   columns: profitableKnownCrafts.columns,
   sortRule: {
-    field: columnConfig.recipe.knownROIPercent.key,
+    field: columnConfig.recipe.knownROI.key,
     sortDesc: true
   },
   rules: [{

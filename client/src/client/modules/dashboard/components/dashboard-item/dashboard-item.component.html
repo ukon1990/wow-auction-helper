@@ -40,8 +40,7 @@
                       [columns]="currentColumns"
                       [filterParameter]="filterParameter"
                       [data]="dashboard?.data"
-                      [maxVisibleRows]="maxVisibleRows"
-                      [numOfRows]="20"
+                      [numOfRows]="detailView ? 20 : 10"
                       [hideCraftingDetails]="true"></wah-data-table>
       <!-- detailView -->
       <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
