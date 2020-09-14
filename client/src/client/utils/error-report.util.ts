@@ -27,7 +27,7 @@ export class ErrorReport {
       this.sb.open(
         `Error ${error.status}: ${options.message || error.message}`,
         'Ok',
-        {duration: 5000, panelClass: ['mat-toolbar', 'mat-warn']});
+        {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
     }
 
     if (!this.doNotReport() && error.status !== 0 && error.status !== undefined) {

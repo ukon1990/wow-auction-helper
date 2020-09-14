@@ -15,6 +15,7 @@ import {Realm} from '../../../models/realm';
 import {UserUtil} from '../../../utils/user/user.util';
 import {DashboardService} from '../../dashboard/services/dashboard.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Component({
   selector: 'wah-characters',
@@ -28,7 +29,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   regions: any;
   downloading: boolean;
   form: FormGroup;
+  private sm = new SubscriptionManager();
   private shouldRecalculateDashboards: boolean;
+  private lastCalculationTime: number;
 
   constructor(private _characterService: CharacterService,
               private snackBar: MatSnackBar,
@@ -45,6 +48,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       name: '',
       characterBelowLevelTen: false
     });
+
+    this.sm.add(this.form.controls.name.valueChanges,
+      name => this.handleCharacterNameChange(name));
   }
 
   ngAfterViewInit(): void {
@@ -67,9 +73,14 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     if (this.shouldRecalculateDashboards) {
       this.dashboardService.calculateAll();
     }
+    this.sm.unsubscribe();
   }
 
-  async getCharacter() {
+  async getCharacter(name: string = this.form.value.name) {
+    if (this.downloading || !name) {
+      return;
+    }
+
     this.downloading = true;
 
     if (this.professionService.list.value.length === 0) {
@@ -83,7 +94,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     } else {
       this._characterService
         .getCharacter(
-          this.form.value.name,
+          name,
           this.form.value.realm,
           this.region ? this.region : SharedService.user.region
         )
@@ -237,5 +248,15 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
           control.setValue(change[key]);
         }
       });
+  }
+
+  private handleCharacterNameChange(name: any) {
+    this.lastCalculationTime = +new Date();
+    setTimeout(async () => {
+      const timeDiff = +new Date() - this.lastCalculationTime;
+      if (timeDiff >= 500) {
+        await this.getCharacter(name);
+      }
+    }, 500);
   }
 }

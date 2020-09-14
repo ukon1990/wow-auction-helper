@@ -1,16 +1,41 @@
 import {Theme} from '../models/theme.model';
-import {ObjectUtil} from '@ukon1990/js-utilities';
 
 export class ThemeUtil {
+  private static pinkAndBlue: Theme = new Theme(
+    '',
+    'Pink & blue',
+    '#3f51b5',
+    '#ff4081',
+    undefined,
+    false
+  );
+  private static unicornDarkBlue: Theme = new Theme(
+    'unicorn-dark-theme',
+    'Dark yellow',
+    '#607d8b',
+    '#ffd740',
+    'table-dark',
+    true
+  );
+  private static darkBlue: Theme = new Theme(
+    'dark-blue-theme',
+    'Dark blue',
+    '#607d8b',
+    '#40c4ff',
+    'table-dark',
+    true
+  );
+  private static darkPink: Theme = new Theme(
+    'dark-pink-theme',
+    'Dark pink',
+    '#e91e63',
+    '#eeeeee',
+    'table-dark',
+    true
+  );
+
   static list: Theme[] = [
-    new Theme(
-      '',
-      'Default',
-      '#3f51b5',
-      '#ff4081',
-      undefined,
-      false
-    ), /*
+    ThemeUtil.pinkAndBlue, /*
     new Theme(
       'solarized-light-theme',
       'White & Orange',
@@ -19,30 +44,9 @@ export class ThemeUtil {
       undefined,
       false
     ),*/
-    new Theme(
-      'unicorn-dark-theme',
-      'Dark yellow',
-      '#607d8b',
-      '#ffd740',
-      'table-dark',
-      true
-    ),
-    new Theme(
-      'dark-blue-theme',
-      'Dark blue',
-      '#607d8b',
-      '#40c4ff',
-      'table-dark',
-      true
-    ),
-    new Theme(
-      'dark-pink-theme',
-      'Dark pink',
-      '#e91e63',
-      '#eeeeee',
-      'table-dark',
-      true
-    )
+    ThemeUtil.unicornDarkBlue,
+    ThemeUtil.darkBlue,
+    ThemeUtil.darkPink,
   ];
 
   static current: Theme = ThemeUtil.getFromLocalStorage();
@@ -60,7 +64,7 @@ export class ThemeUtil {
       t.className === className);
     const current = new Theme('', '', '', '', undefined, false);
     this.update(
-      theme ? theme[0] : ThemeUtil.list[0], current);
+      theme ? theme[0] : ThemeUtil.unicornDarkBlue, current);
     this.setBodyClass(current);
     return current;
   }

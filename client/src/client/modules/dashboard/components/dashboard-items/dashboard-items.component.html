@@ -26,10 +26,21 @@
   <mat-expansion-panel [expanded]="!displaySortPanel">
     <mat-expansion-panel-header (click)="onPanelClick('boards')">
       <mat-panel-title>
-        Dashboard matches
+        Dashboard matches ({{ numberOfBoardsWithAMatch }}/ {{ numberOfActiveBoards }})
       </mat-panel-title>
+      <mat-panel-description>
+        Click on an item's name to get more information about it or historical pricing etc and the cogwheel to edit.
+      </mat-panel-description>
     </mat-expansion-panel-header>
     <div class="row">
+      <div *ngIf="!numberOfCharactersOnRealm" class="mat-toolbar mat-warn col-md-12">
+        <p>
+          It seems like you've not added any characters with recipes. This will cause some of the default boards to not return a result.
+        </p>
+        <p>
+          If you want to add any of your crafters, go to <a routerLink="/settings/characters">Settings -> Characters</a>.
+        </p>
+      </div>
       <div class="row col-md-12 slim-sm pr-0">
         <wah-crafting-config class="col"></wah-crafting-config>
         <mat-checkbox class="col" [formControl]="displayHiddenForm">
@@ -41,7 +52,7 @@
                   color="accent"
                   (click)="openNewBoardDialog()"
           >
-            Add new dashboard
+            Create a new board
           </button>
         </div>
       </div>

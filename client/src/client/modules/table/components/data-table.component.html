@@ -7,8 +7,7 @@
 
 <ng-content></ng-content>
 
-<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows"
-               class="float-right"
+<mat-paginator class="float-right"
                color="accent"
                [length]="filteredData.length"
                [pageSize]="pageEvent.pageSize"
@@ -242,8 +241,7 @@
   </tbody>
 </table>
 
-<mat-paginator *ngIf="filteredData.length > pageRows[0] && !maxVisibleRows"
-               [length]="filteredData.length"
+<mat-paginator [length]="filteredData.length"
                [pageSize]="pageEvent.pageSize"
                [pageSizeOptions]="pageRows"
                [pageIndex]="pageEvent.pageIndex"
