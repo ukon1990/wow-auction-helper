@@ -29,7 +29,7 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   data: []
 } as DashboardV2);
 
-describe('DashboardCalculateUtil', () => {
+fdescribe('DashboardCalculateUtil', () => {
   const recipe1 = new Recipe();
   recipe1.roi = 50;
   recipe1.professionId = 1;
@@ -69,7 +69,8 @@ describe('DashboardCalculateUtil', () => {
 
   const auctionItems: Map<string, AuctionItem> = new Map<string, AuctionItem>();
 
-  beforeAll(() => {
+  beforeEach(() => {
+    auctionItems.clear();
     auctionItems.set('1', firstItem);
     auctionItems.set('2', secondItem);
     auctionItems.set('3', thirdItem);
@@ -167,6 +168,66 @@ describe('DashboardCalculateUtil', () => {
 
           expect(board.data.length).toBe(1);
           expect(board.data[0].buyout).toBe(secondItem.buyout);
+        });
+
+        it('Can handle multiple ranks', () => {
+
+          const board: DashboardV2 = getBoard([
+            {
+              condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+              targetValueType: TargetValueEnum.PERCENT,
+              field: 'buyout',
+              toValue: 1,
+              toField: columnConfig.recipe.knownCost.key
+            },
+            {
+              condition: ConditionEnum.EQUAL_TO,
+              targetValueType: TargetValueEnum.NUMBER,
+              field: 'itemID',
+              toValue: 4,
+            }
+          ]);
+          board.columns.push(columnConfig.recipe.knownRank);
+          board.sortRule = {
+            field: columnConfig.recipe.knownRank.key,
+            sortDesc: true
+          };
+
+          board.columns.push(columnConfig.recipe.knownRank);
+          board.columns.push(columnConfig.recipe.knownCost);
+          const rank1: Recipe = new Recipe();
+          rank1.id = 100;
+          rank1.rank = 1;
+          rank1.cost = 3;
+          const rank2: Recipe = new Recipe();
+          rank2.id = 101;
+          rank2.rank = 2;
+          rank2.cost = 2;
+          const rank3: Recipe = new Recipe();
+          rank3.id = 102;
+          rank3.rank = 3;
+          rank2.cost = 1;
+
+
+          const ai = new AuctionItem(4);
+          ai.name = 'Ranked recipes';
+          ai.bid = 55;
+          ai.buyout = 60;
+          ai.mktPrice = 71;
+          ai.auctions.push(new Auction(2, 3, 60, 1000));
+          ai.regionSaleRate = 0.14;
+          ai.source.recipe.known = [rank1, rank2, rank3];
+          auctionItems.set('4', ai);
+
+          DashboardCalculateUtil.calculate(board, auctionItems);
+
+          expect(board.data.length).toBe(3);
+          expect(board.data[0][columnConfig.recipe.knownRank.key]).toBe(3);
+          expect(board.data[0][columnConfig.recipe.knownCost.key]).toBe(rank3.cost);
+          expect(board.data[1][columnConfig.recipe.knownRank.key]).toBe(2);
+          expect(board.data[1][columnConfig.recipe.knownCost.key]).toBe(rank2.cost);
+          expect(board.data[2][columnConfig.recipe.knownRank.key]).toBe(1);
+          expect(board.data[2][columnConfig.recipe.knownCost.key]).toBe(rank1.cost);
         });
 
         it('Profession and ROI > value', () => {
@@ -343,11 +404,11 @@ describe('DashboardCalculateUtil', () => {
 
     it('Can divide', () => {
       const board: DashboardV2 = getBoard([{
-          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-          targetValueType: TargetValueEnum.PERCENT,
-          field: columnConfig.recipe.knownROIPercent.key,
-          toValue: 1
-        }
+        condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+        targetValueType: TargetValueEnum.PERCENT,
+        field: columnConfig.recipe.knownROIPercent.key,
+        toValue: 1
+      }
       ]);
       board.columns.push(columnConfig.recipe.knownROIPercent);
       board.sortRule = {
