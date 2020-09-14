@@ -2,7 +2,7 @@ export class RealmQuery {
   static getUpdateHistoryForRealm(ahId: number, sinceTimestamp: number): string {
     return `SELECT *
             FROM auction_houses_dump_log
-            WHERE ahId = ${ahId} AND lastModified >= ${sinceTimestamp}
+            WHERE ahId = ${ahId} AND lastModified >= ${sinceTimestamp} AND timeSincePreviousDump > 0
             ORDER BY lastModified desc;`;
   }
 
@@ -140,7 +140,7 @@ export class RealmQuery {
                     OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
                 )
             ORDER BY timestamp DESC, autoUpdate DESC, (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 DESC
-            LIMIT 20;`;
+            LIMIT 10;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
@@ -183,16 +183,37 @@ export class RealmQuery {
   }
 
   static getHouseForRealm(region: string, realmSlug: string): string {
-    return `SELECT ah.id as id, connectedId, region, ah.url as url, tsm.url as tsmUrl, ah.lastModified as lastModified,
-                    isUpdating, isActive, autoUpdate, size, lowestDelay, avgDelay, highestDelay, firstRequested, lastRequested
+    return `SELECT ah.id                  as id,
+                   ah.connectedId         as connectedId,
+                   region,
+                   slug,
+                   name,
+                   connectedRealms.realms as connectedTo,
+                   ah.url                 as url,
+                   tsm.url                as tsmUrl,
+                   ah.lastModified        as lastModified,
+                   isUpdating,
+                   isActive,
+                   autoUpdate,
+                   size,
+                   lowestDelay,
+                   avgDelay,
+                   highestDelay,
+                   firstRequested,
+                   lastRequested
             FROM auction_houses as ah
-              LEFT OUTER JOIN tsmDump as tsm
-              ON ah.id = tsm.id
-            WHERE ah.id IN (
-                  SELECT ahId
-                  FROM auction_house_realm
-                  WHERE slug = "${realmSlug}")
-                AND region = "${region}";`;
+                     LEFT OUTER JOIN tsmDump as tsm ON ah.id = tsm.id
+                     LEFT OUTER JOIN auction_house_realm as realm ON realm.ahId = ah.id
+                     LEFT OUTER JOIN (
+                SELECT ahId,
+                       connectedId,
+                       Group_CONCAT(slug) as realms
+                FROM auction_house_realm
+                         LEFT JOIN auction_houses as ah ON ah.id = ahId
+                GROUP BY connectedId
+            ) as connectedRealms ON connectedRealms.ahId = ah.id
+            WHERE slug = "${realmSlug}"
+              AND region = "${region}";`;
   }
 
   static isUpdating(id: number, isUpdating: boolean) {
@@ -200,21 +221,6 @@ export class RealmQuery {
             SET
               \`isUpdating\` = ${isUpdating ? 1 : 0}
                 WHERE \`id\` = ${id};`;
-  }
-
-  static isUpdatingByRealmAndRegion(region: string, realm: string, isUpdating: boolean) {
-    return `UPDATE \`100680-wah\`.\`auction_houses\`
-            SET
-              \`isUpdating\` = ${isUpdating ? 1 : 0}
-                WHERE \`id\` IN (
-                    SELECT ah.id as ahId, slug
-                    FROM auction_house_realm
-                    LEFT OUTER JOIN (
-                      SELECT a.id, region
-                      FROM auction_houses as a) AS ah
-                      ON ah.id = ahId
-                    WHERE region = '${region}' and slug = '${realm}';
-                );`;
   }
 
   static activateHouse(id: any): string {

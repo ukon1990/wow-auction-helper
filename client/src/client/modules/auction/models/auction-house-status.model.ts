@@ -1,5 +1,8 @@
 export class AuctionHouseStatus {
   id: number;
+  slug: string;
+  name: string;
+  connectedTo: string[];
   region: string;
   url: string;
   tsmUrl: string;

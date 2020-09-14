@@ -155,12 +155,12 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
           this.character[key] = c[key];
         });
         localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-        UserUtil.updateRecipesForRealm();
 
         if (SharedService.user.region && SharedService.user.realm) {
           await this.auctionService.organize();
         }
 
+        this.characterService.updateCharactersForRealmAndRecipes();
         Report.send('Updated', 'Characters');
         delete this.character['downloading'];
         this.mapProfessions();

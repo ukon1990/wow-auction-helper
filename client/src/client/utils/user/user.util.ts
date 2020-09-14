@@ -85,7 +85,6 @@ export class UserUtil {
     });
 
     if (user.realm && user.region) {
-      this.updateRecipesForRealm();
       SharedService.events.isUserSet.next(true);
     } else {
       SharedService.events.isUserSet.next(false);
@@ -100,7 +99,6 @@ export class UserUtil {
   public static restore(): void {
     SharedService.user = UserUtil.getSettings();
     if (SharedService.user.realm && SharedService.user.region) {
-      this.updateRecipesForRealm();
       SharedService.events.isUserSet.next(true);
     }
   }
@@ -180,49 +178,6 @@ export class UserUtil {
       user.customProcs = [];
     }
     return user;
-  }
-
-  /**
-   * Grouping the current recipes for a user
-   */
-  public static updateRecipesForRealm(): void {
-    // TODO: fix
-    CraftingService.recipesForUser.value.clear();
-    SharedService.user.characters.forEach(character => {
-      this.setRecipesForCharacter(character);
-    });
-  }
-
-  public static setRecipesForCharacter(character: Character): void {
-    if (character && character.professions && UserUtil.isCharacterOnTheCurrentRealm(character)) {
-      if (character.professions.primaries) {
-        character.professions.primaries.forEach(primary => {
-          this.addKnownRecipes(primary, character);
-        });
-      }
-      if (character.professions.secondaries) {
-        character.professions.secondaries.forEach(secondary =>
-          this.addKnownRecipes(secondary, character));
-      }
-    }
-  }
-
-  private static isCharacterOnTheCurrentRealm(character: Character) {
-    return SharedService.user.realm && SharedService.user.realm.toLowerCase() === UserUtil.slugifyString(character.realm);
-  }
-
-  private static addKnownRecipes(category: CharacterProfession, character: Character) {
-    category.skillTiers.forEach(tier =>
-      tier.recipes.forEach(recipe =>
-        this.addRecipe(recipe, character.name, character.faction)));
-  }
-
-  private static addRecipe(id: number, characterName: string, faction: number): void {
-    if (!CraftingService.recipesForUser.value.has(id)) {
-      CraftingService.recipesForUser.value.set(id, []);
-    }
-    CraftingService.recipesForUser.value.get(id).push(
-      `${characterName} (${faction ? 'H' : 'A'})`);
   }
 
   public static slugifyString(realm: string): string {

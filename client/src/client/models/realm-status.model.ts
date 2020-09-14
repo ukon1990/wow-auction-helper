@@ -3,6 +3,7 @@ export class RealmStatus {
   region: string;
   slug: string;
   name: string;
+  connectedTo: string[];
   battlegroup: string;
   locale: string;
   timezone: string;
