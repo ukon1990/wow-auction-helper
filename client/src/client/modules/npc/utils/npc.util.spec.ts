@@ -2,7 +2,7 @@ import {NPC} from '../models/npc.model';
 import {NpcUtil} from './npc.util';
 import {environment} from '../../../../environments/environment';
 
-fdescribe('NpcUtil', () => {
+describe('NpcUtil', () => {
 
   const getBaseNPC = () => ({
     id: 10,

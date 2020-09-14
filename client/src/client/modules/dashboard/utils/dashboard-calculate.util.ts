@@ -5,7 +5,7 @@ import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor
 import {ColumnDescription} from '../../table/models/column-description';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
-import {TextUtil} from '@ukon1990/js-utilities';
+import {ObjectUtil, TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
@@ -124,9 +124,9 @@ export class DashboardCalculateUtil {
           arr = obj ? obj[arrKey] : item[arrKey];
 
           if (arr) {
-            arr.forEach(it => {
-              const childObject = {...item};
-              this.setValueAtPath(childObject, it, partialPath);
+            arr.forEach((it, index) => {
+              const childObject = this.getItemCopy(item);
+              this.setValueAtPath(childObject, it, partialPath, index);
               if (this.isFollowingTheRules(iterableKeyRules, childObject)) {
                 list.push(this.getResultObject(childObject, board.columns));
               }
@@ -139,6 +139,29 @@ export class DashboardCalculateUtil {
     if (list.length) {
       dataMap.set(id, list);
     }
+  }
+
+  private static getItemCopy(item: AuctionItem): AuctionItem {
+    return {
+      ...item,
+      source: {
+        ...item.source,
+        recipe: {
+          known: item.source.recipe.known ?
+            [...item.source.recipe.known] : [],
+          all: item.source.recipe.all ?
+            [...item.source.recipe.all] : [],
+          materialFor: item.source.recipe.materialFor ?
+            [...item.source.recipe.materialFor] : []
+        },
+        /*
+        shuffle: {
+          sourceIn: [...item.source.shuffle.sourceIn],
+          targetIn: [...item.source.shuffle.targetIn]
+        }
+        */
+      }
+    };
   }
 
   private static getParamWithArrayIndicator(iterableKeyRules: Rule[]) {
@@ -248,7 +271,7 @@ export class DashboardCalculateUtil {
       id: item.itemID,
       bonusIds: item.bonusIds,
       petSpeciesId: item.petSpeciesId,
-      recipeId: item.source.recipe.known
+      recipeId: item.source.recipe.known // TODO: Needs to be fixed to handle arrays
     };
 
     columns.forEach(column => {
@@ -349,11 +372,16 @@ export class DashboardCalculateUtil {
     return value;
   }
 
-  private static setValueAtPath(childObject: any, it: any, partialPath: any[]) {
+  private static setValueAtPath(childObject: any, it: any, partialPath: any[], targetIndex: number) {
     let currentLevel = childObject;
     partialPath.forEach((key, index) => {
       if (currentLevel[key]) {
-        currentLevel = currentLevel[key];
+        if (TextUtil.contains(key, '[')) {
+          const arrayKey = key.replace(/[\[\]]/gi, '');
+          currentLevel = [currentLevel[arrayKey][targetIndex]];
+        } else {
+          currentLevel = currentLevel[key];
+        }
       } else if (index === partialPath.length - 1) {
         currentLevel[key] = it;
       }
