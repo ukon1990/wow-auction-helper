@@ -11,6 +11,8 @@ import {NewsUtil} from '../../../about/utils/news.util';
 import {SharedService} from '../../../../services/shared.service';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {Character} from '../../../character/models/character.model';
+import {RealmService} from '../../../../services/realm.service';
+import {CharacterService} from '../../../character/services/character.service';
 
 @Component({
   selector: 'wah-dasboard-items',
@@ -26,7 +28,7 @@ export class DashboardItemsComponent implements OnDestroy, OnInit {
   numberOfBoardsWithAMatch: number;
   numberOfActiveBoards: number;
 
-  constructor(private service: DashboardService, public dialog: MatDialog) {
+  constructor(private service: DashboardService, public dialog: MatDialog, private characterService: CharacterService) {
     this.sm.add(this.service.list, (boards: DashboardV2[]) =>
       this.dashboards = boards);
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
@@ -38,10 +40,8 @@ export class DashboardItemsComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    if (SharedService.user && SharedService.user.characters) {
-      this.numberOfCharactersOnRealm = SharedService.user.characters.filter(character =>
-        TextUtil.isEqualIgnoreCase(character.realm, SharedService.user.realm) && this.characterHaveRecipes(character)).length;
-    }
+    this.sm.add(this.characterService.charactersForRealmWithRecipes,
+      chars => this.numberOfCharactersOnRealm = chars.length);
   }
 
   ngOnDestroy(): void {
@@ -82,13 +82,5 @@ export class DashboardItemsComponent implements OnDestroy, OnInit {
         data: localStorage.getItem('watchlist')
       });
     }
-  }
-
-  private characterHaveRecipes(character: Character): boolean {
-    if (!character.professions) {
-      return false;
-    }
-    return !!(character.professions.primaries && character.professions.primaries.length) ||
-      !!(character.professions.secondaries && character.professions.secondaries.length);
   }
 }

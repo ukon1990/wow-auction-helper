@@ -153,7 +153,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     }
     const currentRealm = this.realmService.events.list.value
       .filter((status: RealmStatus) =>
-        status.ahId === realmStatus.id);
+        status.slug === realmStatus.slug);
     if (!slug) {
       slug = currentRealm && currentRealm.length ?
         currentRealm[0].slug : this.form.getRawValue().realm;

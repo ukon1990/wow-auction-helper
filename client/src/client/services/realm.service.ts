@@ -92,6 +92,8 @@ export class RealmService {
           this.previousUrl = status.url;
           this.events.realmStatus.next({
             ...status,
+            connectedTo: status.connectedTo && typeof status.connectedTo === 'string' ?
+              ('' + status['connectedTo']).split(',') : status.connectedTo,
             isInitialLoad,
           });
 

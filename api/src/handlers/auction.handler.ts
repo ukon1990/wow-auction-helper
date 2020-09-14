@@ -207,7 +207,7 @@ export class AuctionHandler {
       conn.query(RealmQuery
         .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
         .then(async rows => {
-          const basePerSecond = 0.7,
+          const basePerSecond = 0.5,
             requestsPerSecond = rows.length > 20 ? rows.length / (60 - 2) || basePerSecond : basePerSecond;
           const promiseThrottle = new PromiseThrottle({
               requestsPerSecond,
@@ -355,6 +355,10 @@ export class AuctionHandler {
               await conn.query(
                 RealmQuery.getHouseForRealm(realm.region, realm.slug))
                 .then(async (data) => {
+                  if (data.connectedTo) {
+                    data.connectedTo = data.connectedTo.split(',');
+                  }
+
                   await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
                     .then(uploaded => {
                       console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`);

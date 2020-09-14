@@ -33,7 +33,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   private shouldRecalculateDashboards: boolean;
   private lastCalculationTime: number;
 
-  constructor(private _characterService: CharacterService,
+  constructor(private characterService: CharacterService,
               private snackBar: MatSnackBar,
               private realmService: RealmService,
               private craftingService: CraftingService,
@@ -92,14 +92,16 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       await this.addLowLevelCharacter();
       Report.send('Added level < 10 character', 'Characters');
     } else {
-      this._characterService
+      this.characterService
         .getCharacter(
           name,
           this.form.value.realm,
           this.region ? this.region : SharedService.user.region
         )
-        .then(c =>
-          this.addCharacter(c))
+        .then(c => {
+          this.addCharacter(c);
+          this.characterService.updateCharactersForRealmAndRecipes();
+        })
         .catch((error: HttpErrorResponse) =>
           this.handleCharacterError(error));
     }
@@ -146,7 +148,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     SharedService.user.characters.push(character);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
 
-    UserUtil.updateRecipesForRealm();
+    this.characterService.updateCharactersForRealmAndRecipes();
 
     this.downloading = false;
     RealmService.gatherRealms();
@@ -162,7 +164,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       professions = character.professions;
     if (character.level) {
       character['downloading'] = true;
-      this._characterService.getCharacter(
+      this.characterService.getCharacter(
         SharedService.user.characters[index].name,
         UserUtil.slugifyString(SharedService.user.characters[index].realm),
         this.form.value.region
@@ -174,7 +176,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
 
           SharedService.user.characters[index] = c;
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-          UserUtil.updateRecipesForRealm();
+          this.characterService.updateCharactersForRealmAndRecipes();
 
           if (SharedService.user.region && SharedService.user.realm) {
             await this.auctionService.organize();
@@ -219,8 +221,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     SharedService.user.characters.splice(index, 1);
     localStorage['characters'] = JSON.stringify(SharedService.user.characters);
     try {
-      UserUtil.updateRecipesForRealm();
       RealmService.gatherRealms();
+      this.characterService.updateCharactersForRealmAndRecipes();
     } catch (e) {
       ErrorReport.sendError('removeCharacter', e);
     }
