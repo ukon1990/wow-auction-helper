@@ -103,8 +103,8 @@ export class MarketResetComponent implements OnInit {
     this.setColumns();
     this.filter();
 
-    this.sm.add(SharedService.events.auctionUpdate,
-      (auctionItems: AuctionItem[]) => {
+    this.sm.add(this.auctionService.list,
+      () => {
         this.filter();
       });
   }

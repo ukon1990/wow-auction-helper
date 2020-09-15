@@ -97,7 +97,7 @@ export class RealmQuery {
   /*
   * Updating Any house that probably has an update incoming or that has not received an update in 1 day
   */
-  static getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay() {
+  static selectAllUpdatableRealms() {
     /* Not doing "AND isUpdating = 0" as the lambda will time out after 30 seconds and the update check interval is once per minute... */
     const hours = 4; // old: 24
     return `SELECT ah.id                                                             as id,

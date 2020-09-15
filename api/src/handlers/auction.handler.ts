@@ -205,10 +205,10 @@ export class AuctionHandler {
 
     return new Promise(async (resolve, reject) => {
       conn.query(RealmQuery
-        .getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay())
+        .selectAllUpdatableRealms())
         .then(async rows => {
           const basePerSecond = 0.5,
-            requestsPerSecond = rows.length > 20 ? rows.length / (60 - 2) || basePerSecond : basePerSecond;
+            requestsPerSecond = rows.length / (60 - 2) || basePerSecond;
           const promiseThrottle = new PromiseThrottle({
               requestsPerSecond,
               promiseImplementation: Promise
