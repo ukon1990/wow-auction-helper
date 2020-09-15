@@ -16,6 +16,7 @@ import {UserUtil} from '../../../utils/user/user.util';
 import {DashboardService} from '../../dashboard/services/dashboard.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-characters',
@@ -78,6 +79,18 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
 
   async getCharacter(name: string = this.form.value.name) {
     if (this.downloading || !name) {
+      return;
+    }
+    let firstDuplicateIndex: number;
+    SharedService.user.characters.forEach((character, index) => {
+      if (TextUtil.isEqualIgnoreCase(character.slug, this.form.value.realm) &&
+        TextUtil.isEqualIgnoreCase(character.name, name)) {
+        firstDuplicateIndex = index;
+        return character;
+      }
+    });
+    if (firstDuplicateIndex !== undefined) {
+      this.updateCharacter(firstDuplicateIndex);
       return;
     }
 

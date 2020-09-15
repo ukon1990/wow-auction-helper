@@ -15,6 +15,7 @@ import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {TsmService} from '../modules/tsm/tsm.service';
 import {Report} from '../utils/report.util';
+import {CharacterService} from '../modules/character/services/character.service';
 
 @Injectable()
 export class AuctionsService {
@@ -34,6 +35,7 @@ export class AuctionsService {
     private _dbService: DatabaseService,
     private _itemService: ItemService,
     private tsmService: TsmService,
+    private characterService: CharacterService,
     private realmService: RealmService) {
     this.subs.add(
       this.realmService.events.realmStatus,
@@ -145,6 +147,7 @@ export class AuctionsService {
   }
 
   async organize(auctions: Auction[] = this.auctions.value) {
+    // this.characterService.updateCharactersForRealmAndRecipes();
     await AuctionUtil.organize(auctions)
       .then(({
                map,

@@ -11,6 +11,11 @@ import {CraftingService} from '../../../../../services/crafting.service';
 import {Report} from '../../../../../utils/report.util';
 import {UserUtil} from 'client/utils/user/user.util';
 import {AuctionsService} from '../../../../../services/auctions.service';
+import {CharacterProfession} from '../../../../../../../../api/src/character/model';
+import {Profession} from '../../../../../../../../api/src/profession/model';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {ProfessionService} from '../../../../crafting/services/profession.service';
+import {ReputationVendor} from '../../../../../models/reputation.model';
 
 @Component({
   selector: 'wah-character-reputation',
@@ -20,8 +25,9 @@ import {AuctionsService} from '../../../../../services/auctions.service';
 export class CharacterReputationComponent implements AfterContentInit, OnDestroy {
   @Input() character: Character;
   reputations = ReputationVendorsData.bfa;
-  professions = [];
-  professionMap = new Map<string, any>();
+  professionMap: Map<number, Profession> = new Map<number, Profession>();
+  relevantProfessions = [];
+  relevantProfessionsMap = new Map<number, any>();
 
   columns: ColumnDescription[] = [
     {key: 'isKnown', title: 'Known', dataType: 'boolean'},
@@ -32,24 +38,41 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
     {key: 'requiredStanding', title: 'Standing', dataType: 'text'}
   ];
 
-  subscription: Subscription;
+  private sm = new SubscriptionManager();
 
-  constructor(private characterService: CharacterService, private auctionService: AuctionsService) {
+  constructor(private characterService: CharacterService,
+              private auctionService: AuctionsService,
+              private craftingService: CraftingService,
+              private professionService: ProfessionService) {
+  }
+
+  private shouldMap() {
+    return this.professionService.list.value.length && this.auctionService.list.value.length && CraftingService.list.value.length;
   }
 
   ngAfterContentInit() {
-    if (SharedService.itemsUnmapped.length > 0) {
-      this.mapProfessions();
-    }
+    this.sm.add(this.professionService.map,
+      map => {
+        this.professionMap = map;
+        if (this.shouldMap() && !this.relevantProfessions.length) {
+          this.mapProfessions();
+        }
+      });
+    this.sm.add(CraftingService.map, () => {
+      if (this.shouldMap() && !this.relevantProfessions.length) {
+        this.mapProfessions();
+      }
+    });
 
-    this.subscription = SharedService.events
-      .auctionUpdate
-      .subscribe(() =>
-        this.mapProfessions());
+    this.sm.add(this.auctionService.mapped, () => {
+      if (this.shouldMap()) {
+        this.mapProfessions();
+      }
+    });
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.sm.unsubscribe();
   }
 
   mapProfessions() {
@@ -61,23 +84,34 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
   }
 
   private clearLists() {
-    this.professions.length = 0;
-    Object.keys(this.professionMap).forEach(key =>
-      delete this.professionMap[key]);
+    this.relevantProfessions.length = 0;
+    this.relevantProfessionsMap.clear();
   }
 
   private organizeCharacterProfessions() {
+    if (!this.character) {
+      return;
+    }
     Object.keys(this.character.professions)
       .forEach(type => {
-        const charProfessions = this.character.professions[type];
-        charProfessions.forEach(profession => {
-          this.professionMap[profession.name] = {
-            name: profession.name,
+        if (!this.character.professions) {
+          return;
+        }
+        const charProfessions: CharacterProfession[] = this.character.professions[type];
+        charProfessions.forEach((profession: CharacterProfession) => {
+          const knownRecipes = new Map<number, Recipe[]>();
+          profession.skillTiers.forEach(skillTier => {
+            this.setKnownRecipesMap(skillTier.recipes, knownRecipes);
+          });
+
+          this.relevantProfessionsMap.set(profession.id, {
+            id: profession.id,
+            name: this.professionMap.get(profession.id).name,
             reputations: [],
-            knownRecipes: this.getKnownRecipesMap(profession.recipes)
-          };
-          this.professions.push(
-            this.professionMap[profession.name]);
+            knownRecipes
+          });
+          this.relevantProfessions.push(
+            this.relevantProfessionsMap.get(profession.id));
         });
       });
   }
@@ -87,28 +121,31 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
       if (!this.isReputationMatch(reputation)) {
         return;
       }
-      Object.keys(reputation.professions).forEach(professionName => {
-        this.addProfessionData(professionName, reputation);
+      Object.keys(reputation.professions).forEach(id => {
+        this.addProfessionData(+id, reputation);
       });
     });
   }
 
-  private addProfessionData(professionName, reputation) {
-    const profession = this.professionMap[professionName];
+  private addProfessionData(id: number, reputation: ReputationVendor) {
+    const profession = this.relevantProfessionsMap.get(id);
     if (profession) {
       profession.reputations.push({
         id: reputation.id,
         name: reputation.name,
-        recipes: reputation.professions[professionName]
-          .map(recipe => {
+        recipes: (reputation.professions[id] || [])
+          .map(repRecipe => {
+            const recipe: Recipe = this.getRecipe(repRecipe);
+            const knownRecipes: Recipe[] = profession.knownRecipes.get(recipe.itemID) || [];
             return {
-              itemID: this.getRecipe(recipe).itemID,
-              spellId: recipe.spellId,
+              itemID: recipe.itemID,
+              id: repRecipe.id,
               name: recipe.name,
-              rank: recipe.rank,
-              requiredStanding: recipe.requiredStanding,
-              cost: recipe.cost[0],
-              isKnown: this.professionMap[professionName].knownRecipes[recipe.spellId],
+              rank: repRecipe.rank,
+              requiredStanding: repRecipe.requiredStanding,
+              cost: repRecipe.cost[0],
+              isKnown: knownRecipes.filter(reci =>
+                reci.rank >= recipe.rank && reci.name === recipe.name).length > 0,
               roi: this.getRecipe(recipe).roi
             };
           })
@@ -121,11 +158,15 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
       CraftingService.map.value.get(recipe.id) : new Recipe();
   }
 
-  private getKnownRecipesMap(ids: number[]) {
-    const map = {};
-    ids.forEach(id =>
-      map[id] = true);
-    return map;
+  private setKnownRecipesMap(ids: number[], knownRecipes: Map<number, Recipe[]>) {
+    ids.forEach(id => {
+      const recipe: Recipe = CraftingService.map.value.get(id);
+
+      if (!knownRecipes.has(recipe.itemID)) {
+        knownRecipes.set(recipe.itemID, []);
+      }
+      knownRecipes.get(recipe.itemID).push(recipe);
+    });
   }
 
   private isReputationMatch(reputation: any) {

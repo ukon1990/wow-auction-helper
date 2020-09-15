@@ -1,172 +1,38 @@
-export const talanjisExpedition = {
+import {ReputationVendor, ReputationVendorRecipe, Vendor} from '../../../models/reputation.model';
+
+export const talanjisExpedition: ReputationVendor = {
   id: 2156,
   name: 'Talanji\'s Expedition',
   vendors: [
-    {
-      name: 'Provisioner Lija',
-      isAlly: false,
-      isHorde: true,
-      locations: [
-        {},
-        {}
-      ]
-    }
+    new Vendor('Provisioner Lija', false, true, []),
   ],
+  expansion: 7,
   professions: {
-    Alchemy: [
-      {
-        spellId: 279164,
-        name: 'Battle Potion of Intellect',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252356,
-        name: 'Flask of the Vast Horizon',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252387,
-        name: 'Coastal Mana Potion',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252343,
-        name: 'Potion of Bursting Blood',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    171: [
+      new ReputationVendorRecipe(39861, 'Battle Potion of Intellect', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38793, 'Flask of the Vast Horizon', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38820, 'Coastal Mana Potion', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38781, 'Potion of Bursting Blood', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Enchanting: [
-      {
-        spellId: 2551000000,
-        name: 'Pact of Mastery',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 255112,
-        name: 'Enchant Weapon - Siphoning',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 268903,
-        name: 'Enchant Weapon - Masterful Navigation',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    333: [
+      new ReputationVendorRecipe(38873, 'Pact of Mastery', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38882, 'Enchant Weapon - Siphoning', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39422, 'Enchant Weapon - Masterful Navigation', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Engineering: [
-      {
-        spellId: 272063,
-        name: 'AZ3-R1-T3 Bionic Bifocals',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Honored'
-      },
-      {
-        spellId: 272064,
-        name: 'AZ3-R1-T3 Bionic Bifocals',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    202: [
+      new ReputationVendorRecipe(39602, 'AZ3-R1-T3 Bionic Bifocals', 2, [11000000, 0, 0], 'Honored'),
+      new ReputationVendorRecipe(39603, 'AZ3-R1-T3 Bionic Bifocals', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38934, 'Finely-Tuned Stormsteel Destroyer', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Inscription: [
-      {
-        spellId: 256288,
-        name: 'Contract: Talanji\'s Expedition',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Friendly'
-      }
+    773: [
+      new ReputationVendorRecipe(38954, 'Contract: Talanji\'s Expedition', 2, [11000000, 0, 0], 'Friendly'),
     ],
-    Jewelcrafting: [
-      {
-        spellId: 256519,
-        name: 'Tidal Amethyst Loop',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    755: [
+      new ReputationVendorRecipe(39013, 'Tidal Amethyst Loop', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Leatherworking: [
-      {
-        spellId: 256781,
-        name: 'Mistscale Knuckles',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256784,
-        name: 'Hardened Tempest Knuckles',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    165: [
+      new ReputationVendorRecipe(39063, 'Mistscale Knuckles', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39066, 'Hardened Tempest Knuckles', 3, [14000000, 0, 0], 'Revered'),
     ]
   },
   isAlly: false,

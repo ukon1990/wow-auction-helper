@@ -12,6 +12,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {AuctionHouseStatus} from '../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {CharacterProfession} from '../../../../../../api/src/character/model';
+import {Report} from '../../../utils/report.util';
 
 @Injectable()
 export class CharacterService {
@@ -95,10 +96,10 @@ export class CharacterService {
   }
 
   updateCharactersForRealmAndRecipes(status: AuctionHouseStatus = this.realmService.events.realmStatus.value) {
-    if (SharedService.user && SharedService.user.characters && status) {
 
-      const withRecipes: Character[] = [];
-      const currentCharacters: Character[] = [];
+    const withRecipes: Character[] = [];
+    const currentCharacters: Character[] = [];
+    if (SharedService.user && SharedService.user.characters && status) {
       const map = new Map<number, string>();
       CraftingService.recipesForUser.value.clear();
       SharedService.user.characters.filter(character => {
@@ -111,9 +112,9 @@ export class CharacterService {
           }
         }
       });
-      this.charactersForRealm.next(currentCharacters);
-      this.charactersForRealmWithRecipes.next(withRecipes);
     }
+    this.charactersForRealm.next(currentCharacters);
+    this.charactersForRealmWithRecipes.next(withRecipes);
   }
 
 

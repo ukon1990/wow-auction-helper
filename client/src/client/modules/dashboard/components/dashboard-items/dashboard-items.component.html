@@ -1,40 +1,10 @@
-<mat-accordion>
-  <mat-expansion-panel [expanded]="displaySortPanel">
-    <mat-expansion-panel-header (click)="onPanelClick('sort')">
-      <mat-panel-title>
-        Organize boards
-      </mat-panel-title>
-
-      <mat-panel-description>
-        Open this panel to arrange the sort order of the dashboards
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <em>
-      Drag the names to sort the tables in your preferred order
-    </em>
-    <mat-list
-            cdkDropList
-            (cdkDropListDropped)="drop($event)">
-      <mat-list-item *ngFor="let d of dashboards"
-                     cdkDrag>
-        [{{d.isDisabled ? 'Disabled' : 'Active'}}] {{ d.title }} ({{d.data.length}})
-      </mat-list-item>
-    </mat-list>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel [expanded]="!displaySortPanel">
-    <mat-expansion-panel-header (click)="onPanelClick('boards')">
-      <mat-panel-title>
-        Dashboard matches ({{ numberOfBoardsWithAMatch }}/ {{ numberOfActiveBoards }})
-      </mat-panel-title>
-      <mat-panel-description>
-        Click on an item's name to get more information about it or historical pricing etc and the cogwheel to edit.
-      </mat-panel-description>
-    </mat-expansion-panel-header>
+<mat-tab-group>
+  <mat-tab label="Dashboard matches ({{ numberOfBoardsWithAMatch }}/ {{ numberOfActiveBoards }})">
+    <p>
+      Click on an item's name to get more information about it, current prices, sources, historical pricing etc and the cogwheel to edit.
+    </p>
     <div class="row">
       <div *ngIf="!numberOfCharactersOnRealm" class="mat-toolbar mat-warn col-md-12">
-        {{numberOfCharactersOnRealm | number}}
         <p>
           It seems like you've not added any characters with recipes. This will cause some of the default boards to not return a result.
         </p>
@@ -67,5 +37,19 @@
         </ng-container>
       </div>
     </div>
-  </mat-expansion-panel>
-</mat-accordion>
+  </mat-tab>
+
+  <mat-tab label="Organize/Sort boards">
+    <em>
+      Drag the names to sort the tables in your preferred order
+    </em>
+    <mat-list
+            cdkDropList
+            (cdkDropListDropped)="drop($event)">
+      <mat-list-item *ngFor="let d of dashboards"
+                     cdkDrag>
+        [{{d.isDisabled ? 'Disabled' : 'Active'}}] {{ d.title }} ({{d.data.length}})
+      </mat-list-item>
+    </mat-list>
+  </mat-tab>
+</mat-tab-group>

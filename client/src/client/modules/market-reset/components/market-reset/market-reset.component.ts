@@ -45,6 +45,12 @@ export class MarketResetComponent implements OnInit {
   };
   rowShoppingString = '';
   itemResetBreakpoint: ItemResetBreakpoint;
+  toValueGold = {
+    minROI: 0,
+    maxTotalBuyoutPerItem: 0,
+  };
+  private lastCharacterTyped: number;
+  private lastCalculationTime: number;
 
   constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     SharedService.events.title.next('Market resetter');
@@ -62,10 +68,17 @@ export class MarketResetComponent implements OnInit {
       newVsCurrentBuyoutPriceLimit: new FormControl(query.newVsCurrentBuyoutPriceLimit)
     });
 
-    this.form.valueChanges.subscribe((form) => {
-      localStorage['query_market_reset'] = JSON.stringify(this.form.value);
-      this.filter(form);
-    });
+    this.sm.add(this.form.valueChanges,
+      (form) => {
+        this.lastCalculationTime = +new Date();
+        setTimeout(() => {
+          const timeDiff = +new Date() - this.lastCalculationTime;
+          if (timeDiff >= 500) {
+            localStorage['query_market_reset'] = JSON.stringify(this.form.value);
+            this.filter(form);
+          }
+        }, 500);
+      });
   }
 
   private getQuery() {
@@ -76,26 +89,34 @@ export class MarketResetComponent implements OnInit {
       .forEach(key => {
         if (query[key] === undefined) {
           query[key] = this.formDefaults[key];
+        } else if (key === 'minROI' || key === 'maxTotalBuyoutPerItem') {
+          this.toValueGold[key] = GoldPipe.toCopper(query[key]);
+          query[key] = new GoldPipe().transform(this.toValueGold[key]);
         }
       });
 
-    Report.debug('getQuery', query);
+    Report.debug('getQuery', query, JSON.parse(queryString));
     return query;
   }
 
   ngOnInit() {
     this.setColumns();
-    this.filter(this.form.getRawValue());
+    this.filter();
 
     this.sm.add(SharedService.events.auctionUpdate,
       (auctionItems: AuctionItem[]) => {
-        this.filter(this.form.getRawValue());
+        this.filter();
       });
   }
 
-  private filter(query: any) {
+  private filter(queryParams: any = this.form.getRawValue()) {
     const strings = [];
     const results = [];
+    const query = {
+      ...queryParams,
+      minROI: GoldPipe.toCopper(queryParams.minROI),
+      maxTotalBuyoutPerItem: GoldPipe.toCopper(queryParams.maxTotalBuyoutPerItem)
+    };
 
     this.sum.auctionsToBuy = 0;
     this.sum.itemsToBuy = 0;
@@ -148,7 +169,7 @@ export class MarketResetComponent implements OnInit {
 
   private isMinROIMatch(query: any, bp) {
     return Filters.isXSmallerThanOrEqualToY(
-      query.minROI ? query.minROI * 10000 : 0,
+      query.minROI ? query.minROI : 0,
       bp.potentialProfit);
   }
 
@@ -171,7 +192,7 @@ export class MarketResetComponent implements OnInit {
     }
     return Filters.isXSmallerThanOrEqualToY(
       bp.sumBuyout,
-      query.maxTotalBuyoutPerItem ? query.maxTotalBuyoutPerItem * 10000 : undefined);
+      query.maxTotalBuyoutPerItem ? query.maxTotalBuyoutPerItem : undefined);
   }
 
   private handleMatch(bp: ItemResetBreakpoint, strings, results: any[]) {
@@ -191,7 +212,10 @@ export class MarketResetComponent implements OnInit {
   }
 
   resetForm() {
-    this.form.reset(this.formDefaults);
+    localStorage.removeItem('query_market_reset');
+    this.toValueGold.minROI = GoldPipe.toCopper(this.formDefaults.minROI);
+    this.toValueGold.maxTotalBuyoutPerItem = GoldPipe.toCopper(this.formDefaults.maxTotalBuyoutPerItem);
+    this.form.reset(this.getQuery());
   }
 
   private isHigherROIThanPrevious(query: any, bp: ItemResetBreakpoint, matchPoint: any) {
@@ -229,5 +253,16 @@ export class MarketResetComponent implements OnInit {
     if (Filters.isUsingAPI()) {
       this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
     }
+  }
+
+  setNewInputGoldValue(newValue: any, field: string) {
+    const interval = 500;
+    this.lastCharacterTyped = +new Date();
+    setTimeout(() => {
+      if (+new Date() - this.lastCharacterTyped >= interval) {
+        this.toValueGold[field] = GoldPipe.toCopper(newValue);
+        this.lastCharacterTyped = undefined;
+      }
+    }, interval);
   }
 }

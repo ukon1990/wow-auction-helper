@@ -8,8 +8,8 @@ export const theRajani: ReputationVendor = {
   ],
   expansion: 7,
   professions: {
-    Inscription: [
-      new ReputationVendorRecipe(299672, 'Contract: Rajani', 1, [1400 * 10000, 0, 0], 'Revered')
+    773: [
+      new ReputationVendorRecipe(42442, 'Contract: Rajani', 1, [1400 * 10000, 0, 0], 'Revered')
     ]
   },
   isAlly: true,

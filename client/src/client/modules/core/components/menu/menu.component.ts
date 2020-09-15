@@ -50,7 +50,7 @@ export class MenuComponent implements OnDestroy, OnInit {
 
   displayExtraMenu(): boolean {
     // @ts-ignore
-    return window.innerWidth < 1534;
+    return window.innerWidth < 1325;
   }
 
   doNotClose(event: MouseEvent): void {

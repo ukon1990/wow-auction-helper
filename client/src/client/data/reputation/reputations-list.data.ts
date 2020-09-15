@@ -12,9 +12,10 @@ import {wavebladeAnkoan} from './bfa/waveblade-ankoan.data';
 import {rustboltResistance} from './bfa/rustbolt-resistance.data';
 import {theUldumAccord} from './bfa/the-uldum-accord.data';
 import {theRajani} from './bfa/the-rajani.data';
+import {ReputationVendor} from '../../models/reputation.model';
 
 export class ReputationVendorsData {
-  public static bfa = [
+  public static bfa: ReputationVendor[] = [
     rustboltResistance,
     wavebladeAnkoan,
     theUnshackled,

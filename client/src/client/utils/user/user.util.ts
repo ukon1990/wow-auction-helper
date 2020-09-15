@@ -181,6 +181,6 @@ export class UserUtil {
   }
 
   public static slugifyString(realm: string): string {
-    return realm.replace(/[']/g, '').replace(/[.*+?^${}()|[\]\\ ]/g, '-').toLowerCase();
+    return realm ? realm.replace(/[']/g, '').replace(/[.*+?^${}()|[\]\\ ]/g, '-').toLowerCase() : realm;
   }
 }

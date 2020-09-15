@@ -10,6 +10,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {TRADE_VENDORS} from '../../../../data/trade-vendors';
 import {Zone} from '../../../zone/models/zone.model';
 import {ZoneService} from '../../../zone/service/zone.service';
+import {ErrorReport} from '../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-trade-vendors',
@@ -49,6 +50,7 @@ export class TradeVendorsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
     this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     this.columns.push({key: 'roi', title: 'ROI', dataType: 'gold'});
+    console.log('REAL SHIT', this.vendors);
 
     this.sm.add(
       this.form.valueChanges,
@@ -84,9 +86,19 @@ export class TradeVendorsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   filteredTradeVendorItems(tv: TradeVendor, formData): void {
-    tv.itemsFiltered = tv.items
-      .filter(i =>
-        this.isMatch(i, tv, formData));
+    try {
+      tv.itemsFiltered = this.castTVToArray(tv.items)
+        .filter(i =>
+          this.isMatch(i, tv, formData));
+    } catch (e) {
+      ErrorReport.sendError('TradeVendorsComponent.filteredTradeVendorItems', e);
+      console.log('Error on', tv.items);
+    }
+  }
+
+  public castTVToArray(array: any[]) {
+    return array.length !== undefined ?
+      array : Object.keys(array).map(key => array[key]);
   }
 
   isMatch(item: TradeVendorItem, vendor: TradeVendor, {saleRate, avgDailySold, onlyPotentiallyProfitable, onlyBuyableSource}): boolean {

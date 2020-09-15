@@ -110,7 +110,7 @@ export class RealmService {
           resolve(status);
         })
         .catch(error => {
-          ErrorReport.sendHttpError(error);
+          ErrorReport.sendHttpError(error, {useSnackBar: true});
           this.isCheckingStatus = false;
           reject(error);
         });
