@@ -7,8 +7,8 @@
   </wah-character>
 
   <div class="col-md-12 row mb-2">
-    <ng-container *ngFor="let profession of professions">
-      <div class="col-md-6" *ngIf="profession.reputations.length > 0">
+    <ng-container *ngFor="let profession of relevantProfessions">
+      <div class="col-xxxl-4 col-xl-6 mb-3 slim-sm" *ngIf="profession.reputations.length > 0">
         <mat-card>
           <mat-card-header>
             <mat-card-title>

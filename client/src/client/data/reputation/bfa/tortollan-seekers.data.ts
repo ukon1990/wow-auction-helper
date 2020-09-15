@@ -1,231 +1,49 @@
-export const tortollanSeekers = {
+import {ReputationVendor, ReputationVendorRecipe, Vendor} from '../../../models/reputation.model';
+
+export const tortollanSeekers: ReputationVendor = {
   id: 2163,
   name: 'Tortollan Seekers',
+  expansion: 7,
   vendors: [
-    {
-      name: 'Collector Kojo',
-      isAlly: true,
-      isHorde: true,
-      locations: [
-        {
-          npcId: '134345',
-          zone: 'Zuldazar'
-        },
-        {
-          npcId: '135793',
-          zone: 'Stormsong Valley'
-        }
-      ]
-    }
+    new Vendor('Collector Kojo', true, true, [
+      {
+        zone: 'Zuldazar'
+      }
+    ], 134345),
+    new Vendor('Collector Kojo', true, true, [
+      {
+        zone: 'Stormsong Valley'
+      }
+    ], 135793),
   ],
   professions: {
-    Alchemy: [
-      {
-        spellId: 252363,
-        name: 'Endless Tincture of Renewed Combat',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252370,
-        name: 'Siren\'s Alchemist Stone',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    171: [
+      new ReputationVendorRecipe(38802, 'Endless Tincture of Renewed Combat', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38805, 'Siren\'s Alchemist Stone', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Cooking: [
-      {
-        spellId: 259423,
-        name: 'Bountiful Captains Feast',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Honored'
-      },
-      {
-        spellId: 259423,
-        name: 'Bountiful Captains Feast',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 259420,
-        name: 'Galley Banquet',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 259432,
-        name: 'Grilled Catfish',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 259435,
-        name: 'Seasoned Loins',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    185: [
+      // TODO: Missing!?!?! new ReputationVendorRecipe(38805, 'Bountiful Captains Feast', 2, [11000000, 0, 0], 'Honored'),
+      // TODO: Missing!?!?! new ReputationVendorRecipe(38805, 'Bountiful Captains Feast', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39630, 'Galley Banquet', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39621, 'Grilled Catfish', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39642, 'Seasoned Loins', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Enchanting: [
-      {
-        spellId: 255094,
-        name: 'Seal of Critical Strike',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 255097,
-        name: 'Seal of Versatility',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    333: [
+      new ReputationVendorRecipe(38855, 'Seal of Critical Strike', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38864, 'Seal of Versatility', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Inscription: [
-      {
-        spellId: 256298,
-        name: 'Contract: Champions of Azeroth',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Friendly'
-      },
-      {
-        spellId: 256295,
-        name: 'Contract: Tortollan Seekers',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Friendly'
-      },
-      {
-        spellId: 256234,
-        name: 'Codex of the Quiet Mind',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256246,
-        name: 'Darkmoon Card of War',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256252,
-        name: 'Inked Vessel of Robust Regeneration',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256249,
-        name: 'Inscribed Vessel of Mysticism',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256237,
-        name: 'Tome of the Quiet Mind',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 276059,
-        name: 'Glyph of the Dolphin',
-        rank: 1,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    773: [
+      new ReputationVendorRecipe(38963, 'Contract: Champions of Azeroth', 2, [11000000, 0, 0], 'Friendly'),
+      new ReputationVendorRecipe(38960, 'Contract: Tortollan Seekers', 2, [11000000, 0, 0], 'Friendly'),
+      new ReputationVendorRecipe(38940, 'Codex of the Quiet Mind', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38984, 'Darkmoon Card of War', 3, [14000000, 0, 0], 'Revered'),
+      // TODO: Missing!! new ReputationVendorRecipe(38940, 'Inked Vessel of Robust Regeneration', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38975, 'Inscribed Vessel of Mysticism', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38982, 'Tome of the Quiet Mind', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39717, 'Glyph of the Dolphin', 0, [14000000, 0, 0], 'Revered'),
     ],
-    Tailoring: [
-      {
-        spellId: 257129,
-        name: 'Embroidered Deep Sea Bag',
-        rank: 2,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    197: [
+      new ReputationVendorRecipe(39071, 'Codex of the Quiet Mind', 2, [14000000, 0, 0], 'Revered'),
     ]
   },
   isAlly: true,

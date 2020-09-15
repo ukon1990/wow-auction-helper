@@ -54,10 +54,11 @@
                   color="accent"
   >
     <input matInput
-           placeholder="Min profit in gold {{ form.getRawValue().minROI * 10000 | gold }}"
+           placeholder="Min profit in gold"
            formControlName="minROI"
-           type="number"
-           min="0">
+           type="text"
+           [ngModel]="toValueGold.minROI | gold"
+           (ngModelChange)="setNewInputGoldValue($event, 'minROI')">
   </mat-form-field>
 
   <mat-form-field class="col"
@@ -74,10 +75,11 @@
                   color="accent"
   >
     <input matInput
-           placeholder="Max sum buyout per reset ({{ form.getRawValue().maxTotalBuyoutPerItem * 10000 | gold }})"
+           placeholder="Max sum buyout per reset"
            formControlName="maxTotalBuyoutPerItem"
-           type="number"
-           min="0">
+           [ngModel]="toValueGold.maxTotalBuyoutPerItem | gold"
+           (ngModelChange)="setNewInputGoldValue($event, 'maxTotalBuyoutPerItem')"
+           type="text">
   </mat-form-field>
 
   <mat-checkbox class="col"

@@ -8,8 +8,8 @@ export const theUldumAccord: ReputationVendor = {
   ],
   expansion: 7,
   professions: {
-    Inscription: [
-      new ReputationVendorRecipe(299673, 'Contract: Uldum Accord', 1, [1400 * 10000, 0, 0], 'Revered')
+    773: [
+      new ReputationVendorRecipe(42443, 'Contract: Uldum Accord', 1, [1400 * 10000, 0, 0], 'Revered')
     ]
   },
   isAlly: true,

@@ -7,7 +7,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {TestBed} from '@angular/core/testing';
 
-describe('ShoppingCartUtil', () => {
+xdescribe('ShoppingCartUtil', () => {
   let recipe: Recipe,
     cart: ShoppingCart,
     inventoryItem: ItemInventory;

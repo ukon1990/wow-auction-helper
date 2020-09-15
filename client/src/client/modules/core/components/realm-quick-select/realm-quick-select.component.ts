@@ -13,6 +13,7 @@ import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.m
 import {CraftingService} from '../../../../services/crafting.service';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
+import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -25,16 +26,18 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     realm: new FormControl(),
     faction: new FormControl()
   });
+  realmListAll: AuctionHouseStatus[] = [];
   realmList = [];
   realmListMap = {};
   allianceCharacterCountForRealm = 0;
   hordeCharacterCountForRealm = 0;
-
   list = [];
+  faUserPlus = faUserPlus;
 
   sm = new SubscriptionManager();
 
-  constructor(private realmService: RealmService, private dbService: DatabaseService,
+  constructor(private realmService: RealmService,
+              private dbService: DatabaseService,
               private craftingService: CraftingService,
               private characterService: CharacterService,
               private auctionsService: AuctionsService) {
@@ -49,7 +52,11 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       this.getFormValueFor('faction'));
 
     this.sm.add(this.realmService.events.list,
-      (realms) => this.setRealmList(realms));
+      (realms: AuctionHouseStatus[]) => {
+        this.setRealmList(realms);
+        this.realmListAll = realms.filter(status =>
+          TextUtil.isEqualIgnoreCase(status.region, this.form.controls.region.value));
+      });
 
     this.sm.add(this.realmService.events.realmStatus,
       () => this.setRealmList());
@@ -77,7 +84,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  private setRealmList(realms: RealmStatus[] = this.realmService.events.list.value) {
+  private setRealmList(realms: AuctionHouseStatus[] = this.realmService.events.list.value) {
 
     if (!SharedService.user || !SharedService.user.characters || !realms) {
       return;
@@ -94,8 +101,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.handleRealmChange();
   }
 
-  private setSlugFromRealms(realms: RealmStatus[], map) {
-    realms.forEach((realm: RealmStatus) => {
+  private setSlugFromRealms(realms: AuctionHouseStatus[], map) {
+    realms.forEach((realm: AuctionHouseStatus) => {
       if (map[realm.name]) {
         map[realm.name].slug = realm.slug;
         this.realmListMap[realm.slug] = map[realm.name];
@@ -153,7 +160,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     }
     const currentRealm = this.realmService.events.list.value
       .filter((status: RealmStatus) =>
-        status.slug === realmStatus.slug);
+        status.slug === realmStatus.slug && realmStatus.region === status.region);
     if (!slug) {
       slug = currentRealm && currentRealm.length ?
         currentRealm[0].slug : this.form.getRawValue().realm;

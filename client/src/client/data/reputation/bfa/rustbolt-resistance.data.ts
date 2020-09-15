@@ -8,12 +8,12 @@ export const rustboltResistance: ReputationVendor = {
   ],
   expansion: 7,
   professions: {
-    Cooking: [
-      new ReputationVendorRecipe(297106, 'Famine Evaluator And Snack Table', 2, [1900 * 1000, 0, 0], 'Exalted')],
-    Engineering: [
-      new ReputationVendorRecipe(298930, 'Blingtron 7000', 1, [1900 * 1000, 0, 0], 'Exalted')],
-    Inscription: [
-      new ReputationVendorRecipe(299671, 'Contract: Rustbolt Resistance', 1, [1400 * 1000, 0, 0], 'Revered')]
+    185: [
+      new ReputationVendorRecipe(40603, 'Famine Evaluator And Snack Table', 2, [1900 * 1000, 0, 0], 'Exalted')],
+    202: [
+      new ReputationVendorRecipe(40698, 'Blingtron 7000', 1, [1900 * 1000, 0, 0], 'Exalted')],
+    773: [
+      new ReputationVendorRecipe(40768, 'Contract: Rustbolt Resistance', 1, [1400 * 1000, 0, 0], 'Revered')]
   },
   isAlly: false,
   isHorde: true

@@ -29,7 +29,7 @@ const getBoard = (rules: Rule[] = [], itemRules?: ItemRule[]) => ({
   data: []
 } as DashboardV2);
 
-fdescribe('DashboardCalculateUtil', () => {
+describe('DashboardCalculateUtil', () => {
   const recipe1 = new Recipe();
   recipe1.roi = 50;
   recipe1.professionId = 1;

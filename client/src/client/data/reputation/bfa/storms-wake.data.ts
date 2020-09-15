@@ -1,203 +1,38 @@
-export const stormsWake = {
+import {ReputationVendor, ReputationVendorRecipe, Vendor} from '../../../models/reputation.model';
+
+export const stormsWake: ReputationVendor = {
   id: 2162,
   name: 'Storm\'s Wake',
   vendors: [
-    {
-      name: 'Sister Lilyana',
-      isAlly: true,
-      isHorde: false,
-      locations: [
-        {},
-        {}
-      ]
-    }
+    new Vendor('Sister Lilyana', true, false, []),
   ],
+  expansion: 7,
   professions: {
-    Alchemy: [
-      {
-        spellId: 252340,
-        name: 'Potion of Replenishment',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252353,
-        name: 'Flask of Endless Fathoms',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252384,
-        name: 'Coastal Healing Potion',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 279167,
-        name: 'Battle Potion of Stamina',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    171: [
+      new ReputationVendorRecipe(38778, 'Potion of Replenishment', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38790, 'Flask of Endless Fathoms', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38817, 'Coastal Healing Potion', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39864, 'Battle Potion of Stamina', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Enchanting: [
-      {
-        spellId: 255099,
-        name: 'Pact of Haste',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 268915,
-        name: 'Weapon Enchant - Stalwart Navigation',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 268909,
-        name: 'Weapon Enchant - Deadly Navigation',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    333: [
+      new ReputationVendorRecipe(38870, 'Pact of Haste', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39428, 'Weapon Enchant - Stalwart Navigation', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39425, 'Weapon Enchant - Deadly Navigation', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Engineering: [
-      {
-        spellId: 272060,
-        name: 'AZ3-R1-T3 Gearspun Goggles',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Honored'
-      },
-      {
-        spellId: 272061,
-        name: 'AZ3-R1-T3 Gearspun Goggles',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 255409,
-        name: 'Organic Discombobulation Grenade',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256084,
-        name: 'Interdimensional Companion Repository',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256156,
-        name: 'Deployable Attire Rearranger',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    202: [
+      new ReputationVendorRecipe(39599, 'AZ3-R1-T3 Gearspun Goggles', 2, [11000000, 0, 0], 'Honored'),
+      new ReputationVendorRecipe(39600, 'AZ3-R1-T3 Gearspun Goggles', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38915, 'Organic Discombobulation Grenade', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38927, 'Interdimensional Companion Repository', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38930, 'Organic Discombobulation Grenade', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Inscription: [
-      {
-        spellId: 256282,
-        name: 'Contract: Storm\'s Wake',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Friendly'
-      }
+    773: [
+      new ReputationVendorRecipe(38948, 'Contract: Contract: Storm\'s Wake', 2, [11000000, 0, 0], 'Friendly'),
     ],
-    Jewelcrafting: [
-      {
-        spellId: 256517,
-        name: 'Owlseye Loop',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256257,
-        name: 'Laribole Staff of Alacrity',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 256260,
-        name: 'Laribole Staff of Alacrity',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    755: [
+      new ReputationVendorRecipe(39010, 'Owlseye Loop', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39019, 'Laribole Staff of Alacrity', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39022, 'Diamond Staff of Intuition', 3, [14000000, 0, 0], 'Revered'),
     ]
   },
   isAlly: true,

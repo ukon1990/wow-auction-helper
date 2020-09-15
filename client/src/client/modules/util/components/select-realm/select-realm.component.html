@@ -30,14 +30,12 @@
                     color="accent"
     >
       <input matInput
-             placeholder="Select a realm"
+             placeholder="Select/Search for your realm"
              aria-label="State"
              [matAutocomplete]="auto"
              [formControl]="autocompleteField">
 
-      <mat-autocomplete #auto="matAutocomplete"
-                        color="accent"
-      >
+      <mat-autocomplete #auto="matAutocomplete">
         <mat-option (onSelectionChange)="onOptionSelected(realm.realm)"
                     *ngFor="let realm of filteredRealms"
                     [value]="realm.value">

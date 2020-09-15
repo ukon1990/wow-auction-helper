@@ -26,7 +26,7 @@ export class TradeVendors {
     }
 
     try {
-      (vendor && vendor.items ? vendor.items : []).forEach(item => {
+      (vendor && vendor.items ? this.castTVToArray(vendor.items) : []).forEach(item => {
         this.setItemValue(item, vendor, map);
       });
       vendor.items.sort(function (a, b) {
@@ -37,6 +37,12 @@ export class TradeVendors {
     }
 
     SharedService.tradeVendorMap[vendor.itemID] = vendor;
+  }
+
+  // TODO: Fix this dumbassery -> Find out what is causing the need for this.
+  private static castTVToArray(array: any[]) {
+    return array.length !== undefined ?
+      array : Object.keys(array).map(key => array[key]);
   }
 
   private static updateTradeVendorItemMap(key, map: Map<string, AuctionItem>) {

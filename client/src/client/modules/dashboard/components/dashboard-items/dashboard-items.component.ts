@@ -13,13 +13,14 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {Character} from '../../../character/models/character.model';
 import {RealmService} from '../../../../services/realm.service';
 import {CharacterService} from '../../../character/services/character.service';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-dasboard-items',
   templateUrl: './dashboard-items.component.html',
   styleUrls: ['./dashboard-items.component.scss']
 })
-export class DashboardItemsComponent implements OnDestroy, OnInit {
+export class DashboardItemsComponent implements OnDestroy {
   dashboards: DashboardV2[] = [];
   displayHiddenForm: FormControl = new FormControl(false);
   sm = new SubscriptionManager();
@@ -37,11 +38,10 @@ export class DashboardItemsComponent implements OnDestroy, OnInit {
         board.data.length && !board.isDisabled).length;
       this.numberOfActiveBoards = this.dashboards.filter(board => !board.isDisabled).length;
     });
-  }
-
-  ngOnInit() {
     this.sm.add(this.characterService.charactersForRealmWithRecipes,
-      chars => this.numberOfCharactersOnRealm = chars.length);
+      chars => {
+        this.numberOfCharactersOnRealm = chars.length;
+      });
   }
 
   ngOnDestroy(): void {

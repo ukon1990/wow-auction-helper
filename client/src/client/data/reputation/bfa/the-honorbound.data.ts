@@ -1,227 +1,42 @@
-export const theHonorbound = {
+import {ReputationVendor, ReputationVendorRecipe, Vendor} from '../../../models/reputation.model';
+
+export const theHonorbound: ReputationVendor = {
   id: 2157,
   name: 'The Honorbound',
   vendors: [
-    {
-      name: 'Ransa Greyfeather',
-      isAlly: false,
-      isHorde: true,
-      locations: [
-        {},
-        {}
-      ]
-    }
+    new Vendor('Ransa Greyfeather', false, true, []),
   ],
+  expansion: 7,
   professions: {
-    Alchemy: [
-      {
-        spellId: 252336,
-        name: 'Steelskin Potion',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252350,
-        name: 'Flask of the Currents',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252378,
-        name: 'Endless Tincture of Fractional Power',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252381,
-        name: 'Surging Alchemist Stone',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 279170,
-        name: 'Battle Potion of Strength',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    171: [
+      new ReputationVendorRecipe(38775, 'Steelskin Potion', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38787, 'Flask of the Currents', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38811, 'Endless Tincture of Fractional Power', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38814, 'Surging Alchemist Stone', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39867, 'Battle Potion of Strength', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Blacksmithing: [
-      {
-        spellId: 253118,
-        name: 'Stormsteel Shield',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 253158,
-        name: 'Stormsteel Dagger',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 253161,
-        name: 'Stormsteel Spear',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 278133,
-        name: 'Stormsteel Saber',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    164: [
+      new ReputationVendorRecipe(38743, 'Stormsteel Shield', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38769, 'Stormsteel Dagger', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38772, 'Stormsteel Spear', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39833, 'Stormsteel Saber', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Inscription: [
-      {
-        spellId: 284296,
-        name: 'Contract: The Honorbound',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Friendly'
-      }
+    333: [
+      new ReputationVendorRecipe(38867, 'Pact of Critical Strike', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39542, 'Enchanter\'s Sorcerous Scepter', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Enchanting: [
-      {
-        spellId: 255098,
-        name: 'Pact of Critical Strike',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 265112,
-        name: 'Enchanter\'s Sorcerous Scepter',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    202: [
+      new ReputationVendorRecipe(39596, 'AZ3-R1-T3 Synthetic Specs', 2, [11000000, 0, 0], 'Honored'),
+      new ReputationVendorRecipe(39597, 'AZ3-R1-T3 Synthetic Specs', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39240, 'Monelite Scope of Alacrity', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39231, 'Precision Attitude Adjuster', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38934, 'Finely-Tuned Stormsteel Destroyer', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Engineering: [
-      {
-        spellId: 272057,
-        name: 'AZ3-R1-T3 Synthetic Specs',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Honored'
-      },
-      {
-        spellId: 272058,
-        name: 'AZ3-R1-T3 Synthetic Specs',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 264967,
-        name: 'Monelite Scope of Alacrity',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 253152,
-        name: 'Precision Attitude Adjuster',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 255459,
-        name: 'Finely-Tuned Stormsteel Destroyer',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    773: [
+      new ReputationVendorRecipe(40135, 'Contract: The Honorbound', 2, [11000000, 0, 0], 'Friendly'),
     ],
-    Jewelcrafting: [
-      {
-        spellId: 256515,
-        name: 'Amberblaze Loop',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    755: [
+      new ReputationVendorRecipe(39007, 'Amberblaze Loop', 3, [14000000, 0, 0], 'Revered'),
     ]
   },
   isAlly: false,

@@ -65,7 +65,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
         }
       }));
     this.subs.add(
-      SharedService.events.auctionUpdate,
+      this.auctionService.list,
       () => {
         this.filterAuctions();
       });

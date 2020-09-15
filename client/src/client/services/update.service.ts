@@ -29,6 +29,7 @@ export class UpdateService {
 
   update(): void {
     Report.send(`Reload to update from ${version}`, 'Update available');
+    localStorage.setItem('timestamp_news', version);
     window.location.reload();
   }
 }

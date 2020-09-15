@@ -25,7 +25,6 @@ beforeEach(() => {
 describe('sort', () => {
   it('should sort strings ascending', () => {
     sorter.addKey('name');
-    sorter.addKey('name');
     sorter.sort(arr);
 
     expect(arr).toEqual([
@@ -39,6 +38,7 @@ describe('sort', () => {
   });
 
   it('should sort strings descending', () => {
+    sorter.addKey('name');
     sorter.addKey('name');
     sorter.sort(arr);
 

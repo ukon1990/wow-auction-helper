@@ -9,14 +9,18 @@ import {TsmService} from '../../tsm/tsm.service';
 import {Reagent} from '../models/reagent';
 import {TestBed} from '@angular/core/testing';
 import {AuctionsService} from '../../../services/auctions.service';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('CraftingUtil', () => {
-  let service: AuctionsService;
+  const map = new Map<string, AuctionItem>();
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(AuctionsService);
+  beforeAll(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [AuctionsService]
+    });
   });
+
   beforeAll(() => {
     new MockLoaderUtil().initBaseData();
     const recipe = new Recipe();
@@ -24,16 +28,16 @@ describe('CraftingUtil', () => {
     CraftingService.list.next([]);
     const ai1 = new AuctionItem();
     ai1.buyout = 20;
-    service.mapped.value.set('' + 10, ai1);
+    map.set('' + 10, ai1);
     const ai2 = new AuctionItem();
     ai2.buyout = 10;
-    service.mapped.value.set('' + 11, ai2);
+    map.set('' + 11, ai2);
     const ai3 = new AuctionItem();
     ai3.buyout = 30;
-    service.mapped.value.set('' + 12, ai3);
+    map.set('' + 12, ai3);
     const ai4 = new AuctionItem();
     ai4.buyout = 10;
-    service.mapped.value.set('' + 20, ai4);
+    map.set('' + 20, ai4);
 
     TsmService.mapped.value.set(20, {MarketValue: 100} as TSM);
 
@@ -51,7 +55,7 @@ describe('CraftingUtil', () => {
     it('for one reagent', () => {
       CraftingService.list.value[0].reagents
         .push(new Reagent(11, 3));
-      CraftingUtil.calculateCost();
+      CraftingUtil.calculateCost(false, map);
       expect(CraftingService.list.value[0].cost).toEqual(30);
       expect(CraftingService.list.value[0].roi).toEqual(-10);
     });
@@ -61,7 +65,7 @@ describe('CraftingUtil', () => {
         .push(new Reagent(11, 3));
       CraftingService.list.value[0].reagents
         .push(new Reagent(12, 10));
-      CraftingUtil.calculateCost();
+      CraftingUtil.calculateCost(false, map);
 
       expect(CraftingService.list.value[0].cost).toEqual(330);
       expect(CraftingService.list.value[0].roi).toEqual(-310);
@@ -72,7 +76,7 @@ describe('CraftingUtil', () => {
         .push(new Reagent(1, 3));
       CraftingService.list.value[0].reagents
         .push(new Reagent(12, 10));
-      CraftingUtil.calculateCost();
+      CraftingUtil.calculateCost(false, map);
 
       expect(CraftingService.list.value[0].cost).toEqual(300);
       expect(CraftingService.list.value[0].roi).toEqual(-280);
@@ -95,7 +99,7 @@ describe('CraftingUtil', () => {
 
       // 100
       TsmService.mapped.value.get(20).MarketValue = 15;
-      CraftingUtil.calculateCost();
+      CraftingUtil.calculateCost(false, map);
       expect(CraftingService.list.value[0].cost).toEqual(180);
     });
 
