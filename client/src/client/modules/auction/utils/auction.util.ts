@@ -93,7 +93,10 @@ export class AuctionUtil {
     const t1 = performance.now();
     console.log(`Auctions organized in ${t1 - t0} ms`);
     // Trade vendors has to be done before crafting calc
-    TradeVendors.setValues(map);
+    try {
+      TradeVendors.setValues(map);
+    } catch (e) {
+    }
 
     CraftingUtil.calculateCost(false, map);
 
