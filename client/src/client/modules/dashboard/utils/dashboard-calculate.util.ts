@@ -55,7 +55,6 @@ export class DashboardCalculateUtil {
       }
       this.assignAndSortDataToBoard(dataMap, board);
 
-      Report.debug('DashboardCalculateUtil.calculate', board);
     } catch (error) {
       ErrorReport.sendError('DashboardCalculateUtil.calculate', error);
     }

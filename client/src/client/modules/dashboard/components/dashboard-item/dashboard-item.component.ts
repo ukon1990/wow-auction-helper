@@ -8,6 +8,7 @@ import {ConfigureComponent} from '../configure/configure.component';
 import {DashboardV2} from '../../models/dashboard-v2.model';
 import {DashboardService} from '../../services/dashboard.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {DetailsDialogComponent} from './details-dialog/details-dialog.component';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -19,11 +20,9 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
   @Input() filterParameter: string;
   @Input() hideButtons: boolean;
   @Input() allColumns: boolean;
+  @Input() isInDialogWindow: boolean;
   isOtherDetailPanelOpen = false;
-
-  detailView = false;
   isConfigOpen = false;
-  maxVisibleRows: number;
   currentColumns;
   data;
   faCog = faCog;
@@ -44,7 +43,6 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
 
   ngAfterViewInit(): void {
     this.setColumns();
-    this.setData();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -60,31 +58,27 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
   }
 
   toggleConfig(): void {
-    this.isConfigOpen = true;
-    const dialogRef = this.dialog.open(ConfigureComponent, {
+    this.dialog.open(ConfigureComponent, {
       width: '95%',
       maxWidth: '100%',
       data: this.dashboard
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.isConfigOpen = false;
-    });
   }
 
   setColumns(allColumns: boolean = this.allColumns): void {
-    this.currentColumns = (this.detailView || allColumns) ?
+    this.currentColumns = (this.isInDialogWindow || allColumns) ?
       this.dashboard.columns : this.dashboard.columns.slice(0, 4);
   }
 
-  setData(): void {
-    this.maxVisibleRows = this.detailView ? undefined : 5;
-  }
-
   openClose(): void {
-    this.detailView = !this.detailView;
-    this.setColumns();
-    this.setData();
+    this.dialog.open(DetailsDialogComponent, {
+      width: '95%',
+      maxWidth: '100%',
+      data: {
+        dashboard: this.dashboard,
+        filterParameter: this.filterParameter,
+      }
+    });
 
     Report.send(`${this.dashboard.title} opened/closed`, 'Dashboard');
   }

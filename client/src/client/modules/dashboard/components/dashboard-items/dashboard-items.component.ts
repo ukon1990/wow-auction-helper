@@ -31,7 +31,7 @@ export class DashboardItemsComponent implements OnDestroy {
 
   constructor(private service: DashboardService, public dialog: MatDialog, private characterService: CharacterService) {
     this.sm.add(this.service.list, (boards: DashboardV2[]) =>
-      this.dashboards = boards);
+      this.dashboards = [...boards]);
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
     this.sm.add(this.service.calculatedBoardEvent, () => {
       this.numberOfBoardsWithAMatch = this.dashboards.filter(board =>

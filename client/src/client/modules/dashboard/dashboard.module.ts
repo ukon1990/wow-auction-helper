@@ -35,6 +35,7 @@ import {MatListModule} from '@angular/material/list';
 import { MigrationComponent } from './components/migration/migration.component';
 import {CoreModule} from '../core/core.module';
 import {MatStepperModule} from '@angular/material/stepper';
+import { DetailsDialogComponent } from './components/dashboard-item/details-dialog/details-dialog.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     ColumnsComponent,
     RuleComponent,
     MigrationComponent,
+    DetailsDialogComponent,
   ],
   imports: [
     CommonModule,

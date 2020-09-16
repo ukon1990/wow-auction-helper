@@ -1,0 +1,24 @@
+<wah-close-btn>
+  <button
+          class="btn btn-sm mr-2"
+          mat-raised-button
+          color="accent"
+          matTooltip="Configure this dashboard"
+          (click)="toggleConfig()"
+  >
+    <fa-icon [icon]="faCog"></fa-icon>
+  </button>
+</wah-close-btn>
+
+<h1 mat-dialog-title>
+  {{ data.dashboard.title }} ({{ data.dashboard.data.length | number }})
+</h1>
+
+<mat-dialog-content>
+  <wah-dashboard-item
+          [dashboard]="data.dashboard"
+          [filterParameter]="data.filterParameter"
+          [allColumns]="true"
+          [isInDialogWindow]="true"
+  ></wah-dashboard-item>
+</mat-dialog-content>
