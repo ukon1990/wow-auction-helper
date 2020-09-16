@@ -19,13 +19,15 @@ import {DashboardMigrationUtil} from '../utils/dashboard-migration.util';
 })
 export class DashboardService {
   calculatedBoardEvent: EventEmitter<string> = new EventEmitter<string>();
+  allBoardsCalculatedEvent: BehaviorSubject<number | boolean> = new BehaviorSubject<number | boolean>(false);
   list: BehaviorSubject<DashboardV2[]> = new BehaviorSubject<DashboardV2[]>([]);
   map: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
 
   private sm = new SubscriptionManager();
 
   constructor(private auctionsService: AuctionsService, private db: DatabaseService) {
-    this.init();
+    this.init()
+      .catch(error => ErrorReport.sendError('DashboardService.init', error));
     this.sm.add(this.auctionsService.mapped,
       (map) => this.calculateAll(map));
   }
@@ -43,6 +45,7 @@ export class DashboardService {
         this.map.value.set(board.id, board);
         this.calculatedBoardEvent.emit(board.id);
       });
+      this.allBoardsCalculatedEvent.next(+new Date());
     }
   }
 

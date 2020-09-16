@@ -65,7 +65,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     TsmLuaUtil.init(auctionService);
     Filters.init(auctionService);
     InventoryUtil.init(auctionService);
-    DefaultDashboardSettings.init();
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);

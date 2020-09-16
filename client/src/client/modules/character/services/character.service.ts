@@ -100,7 +100,7 @@ export class CharacterService {
     const withRecipes: Character[] = [];
     const currentCharacters: Character[] = [];
     if (SharedService.user && SharedService.user.characters && status) {
-      const map = new Map<number, string>();
+      const map = new Map<number, string[]>();
       CraftingService.recipesForUser.value.clear();
       SharedService.user.characters.filter(character => {
         if (TextUtil.contains(status.connectedTo.join(','), character.slug)) {
@@ -108,10 +108,12 @@ export class CharacterService {
 
           if (this.characterHaveRecipes(character)) {
             withRecipes.push(character);
-            this.setRecipesForCharacter(character);
+            this.setRecipesForCharacter(character, map);
           }
         }
       });
+      CraftingService.recipesForUser.next(map);
+      this.craftingService.setItemRecipeMapPerKnown();
     }
     this.charactersForRealm.next(currentCharacters);
     this.charactersForRealmWithRecipes.next(withRecipes);
@@ -131,31 +133,31 @@ export class CharacterService {
     });
   }*/
 
-  public setRecipesForCharacter(character: Character): void {
+  public setRecipesForCharacter(character: Character, userRecipeMap: Map<number, string[]>): void {
     if (character && character.professions) {
       if (character.professions.primaries) {
         character.professions.primaries.forEach(primary => {
-          this.addKnownRecipes(primary, character);
+          this.addKnownRecipes(primary, character, userRecipeMap);
         });
       }
       if (character.professions.secondaries) {
         character.professions.secondaries.forEach(secondary =>
-          this.addKnownRecipes(secondary, character));
+          this.addKnownRecipes(secondary, character, userRecipeMap));
       }
     }
   }
 
-  private addKnownRecipes(category: CharacterProfession, character: Character) {
+  private addKnownRecipes(category: CharacterProfession, character: Character, userRecipeMap: Map<number, string[]>) {
     category.skillTiers.forEach(tier =>
       tier.recipes.forEach(recipe =>
-        this.addRecipe(recipe, character.name, character.faction)));
+        this.addRecipe(recipe, character.name, character.faction, userRecipeMap)));
   }
 
-  private addRecipe(id: number, characterName: string, faction: number): void {
-    if (!CraftingService.recipesForUser.value.has(id)) {
-      CraftingService.recipesForUser.value.set(id, []);
+  private addRecipe(id: number, characterName: string, faction: number, userRecipeMap: Map<number, string[]>): void {
+    if (!userRecipeMap.has(id)) {
+      userRecipeMap.set(id, []);
     }
-    CraftingService.recipesForUser.value.get(id).push(
+    userRecipeMap.get(id).push(
       `${characterName} (${faction ? 'H' : 'A'})`);
   }
 

@@ -11,6 +11,7 @@ import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
 import wordsToNumbers from 'words-to-numbers';
+import {Report} from '../utils/report.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -138,11 +139,20 @@ export class CraftingService {
   handleRecipes(recipes: Recipe[]): void {
     SharedService.downloading.recipes = false;
     const list = recipes,
-      map = new Map<number, Recipe>(),
-      itemRecipeMapPerKnown = new Map<number, Recipe[]>();
+      map = new Map<number, Recipe>();
 
     CraftingService.list.next(CraftingService.getRecipesForFaction(list));
 
+    this.setItemRecipeMapPerKnown(map);
+
+    CraftingService.map.next(map);
+    CraftingService.fullList.next(list);
+    SharedService.events.recipes.emit(true);
+    console.log('Recipe download is completed');
+  }
+
+  setItemRecipeMapPerKnown(map: Map<number, Recipe> = CraftingService.map.value, list: Recipe[] = CraftingService.list.value): void {
+    const itemRecipeMapPerKnown = new Map<number, Recipe[]>();
     list.forEach(recipe => {
       map.set(recipe.id, recipe);
       if (CraftingService.recipesForUser.value.has(recipe.id)) {
@@ -153,12 +163,7 @@ export class CraftingService {
         }
       }
     });
-
     CraftingService.itemRecipeMapPerKnown.next(itemRecipeMapPerKnown);
-    CraftingService.map.next(map);
-    CraftingService.fullList.next(list);
-    SharedService.events.recipes.emit(true);
-    console.log('Recipe download is completed');
   }
 
   /**

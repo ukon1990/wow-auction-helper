@@ -52,7 +52,7 @@ export class AuctionUtil {
   }
 
   private static groupAuctions(auctions: Array<Auction>, map: Map<string, AuctionItem>, list: AuctionItem[]) {
-    SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
+    // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     TsmService.list.value.forEach(tsm => {
       const auction = new Auction();
       auction.item = +tsm.Id;

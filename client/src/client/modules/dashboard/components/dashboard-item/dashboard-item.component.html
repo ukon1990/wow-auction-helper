@@ -1,4 +1,4 @@
-<mat-card [ngClass]="{'full-screen': detailView && !isOtherDetailPanelOpen && !isConfigOpen}">
+<mat-card *ngIf="!isInDialogWindow; else contentTemplate">
   <mat-card-header>
     <div class="action-icon" *ngIf="!hideButtons">
       <button
@@ -14,16 +14,9 @@
               mat-raised-button
               class="btn btn-sm"
               (click)="openClose()"
-              [color]="detailView ? 'accent' : 'primary'"
-              matTooltip="Click to {{ detailView ? 'close' : 'open' }} the full window.">
-        <span *ngIf="!detailView; else closeIcon">
-          <i matTooltip="Open detail view" class="far fa-window-restore"></i>
-        </span>
-        <ng-template #closeIcon>
-          <span>
-            <i class="fas fa-times" matTooltip="Close detail view"></i>
-          </span>
-        </ng-template>
+              color="primary"
+              matTooltip="Click to open the full window.">
+        <i matTooltip="Open detail view" class="far fa-window-restore"></i>
       </button>
     </div>
     <mat-card-title>
@@ -33,26 +26,27 @@
       {{ dashboard.message }}
     </mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
-    <ng-container *ngIf="!dashboard.isDisabled; else disabledTemplate">
-      <wah-data-table [id]="dashboard?.idParam || 'id'"
-                      iconSize="22"
-                      [columns]="currentColumns"
-                      [filterParameter]="filterParameter"
-                      [data]="dashboard?.data"
-                      [maxVisibleRows]="maxVisibleRows"
-                      [numOfRows]="detailView ? 20 : 10"
-                      [hideCraftingDetails]="true"></wah-data-table>
-      <!-- detailView -->
-      <mat-form-field *ngIf="detailView && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
-                      class="row col-md-12">
-        <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
-      </mat-form-field>
-    </ng-container>
-
-    <ng-template #disabledTemplate>
-      This dashboard has been disabled, and is therefore not calculated. If you wish to re-activate it. Go into it's settings(cogwheel).
-    </ng-template>
+  <mat-card-content *ngTemplateOutlet="contentTemplate">
   </mat-card-content>
 </mat-card>
-<div *ngIf="detailView && !isOtherDetailPanelOpen" class="backdrop" (click)="openClose()"></div>
+
+<ng-template #contentTemplate>
+  <ng-container *ngIf="!dashboard.isDisabled; else disabledTemplate">
+    <wah-data-table [id]="dashboard?.idParam || 'id'"
+                    iconSize="22"
+                    [columns]="currentColumns"
+                    [filterParameter]="filterParameter"
+                    [data]="dashboard?.data"
+                    [numOfRows]="isInDialogWindow ? 20 : 10"
+                    [hideCraftingDetails]="true"></wah-data-table>
+    <!-- detailView -->
+    <mat-form-field *ngIf="isInDialogWindow && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
+                    class="row col-md-12">
+      <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
+    </mat-form-field>
+  </ng-container>
+
+  <ng-template #disabledTemplate>
+    This dashboard has been disabled, and is therefore not calculated. If you wish to re-activate it. Go into it's settings(cogwheel).
+  </ng-template>
+</ng-template>
