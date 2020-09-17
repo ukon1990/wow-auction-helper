@@ -9,7 +9,7 @@ import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
-import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
