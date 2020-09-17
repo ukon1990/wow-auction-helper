@@ -6,7 +6,6 @@ import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
 import {ErrorReport} from './utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';

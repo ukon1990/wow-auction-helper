@@ -9,7 +9,7 @@ import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
-import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
+import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {TsmService} from '../../tsm/tsm.service';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';

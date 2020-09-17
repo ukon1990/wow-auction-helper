@@ -21,7 +21,10 @@
   <tr>
     <ng-container *ngFor="let c of columns">
       <td (click)="sort(c)" *ngIf="displayColumn(c)">
-        <wah-sort-icon [key]="sorter.getKey(c.key)"></wah-sort-icon>
+        <wah-sort-icon
+                *ngIf="!c.canNotSort"
+                [key]="sorter.getKey(c.key)">
+        </wah-sort-icon>
         {{ c.title }}
       </td>
     </ng-container>
@@ -36,6 +39,7 @@
                   [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''"
                   (click)="select(d, c)">
               <a wahItemTooltip [item]="d" [rel]="getRelData(c, d)"
+                 matTooltip="You can click item names, to get more information about them."
                  [routerLink]="getRouterLink(d, c)">
                 <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left"
                           [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
@@ -202,6 +206,7 @@
                   </button>
                 </span>
               </ng-container>
+              <!-- TODO: Add back when the shopping cart is restored
               <button mat-icon-button
                       (click)="addEntryToCart(d)"
                       color="accent"
@@ -210,9 +215,11 @@
                       c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
                 <fa-icon [icon]="faCartPlus"></fa-icon>
               </button>
+              -->
             </span>
 
             <ng-container *ngSwitchCase="'cart-recipe-count'">
+              <!--
               <mat-form-field
                       class="input-column"
                       color="accent"
@@ -222,6 +229,7 @@
                        [value]="getCartCount(d, c)"
                        (change)="setCartCount(d, c, $event)"/>
               </mat-form-field>
+              -->
             </ng-container>
 
             <span *ngSwitchCase="'cart-delete'">

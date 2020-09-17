@@ -30,6 +30,9 @@ import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';
 import {MatListModule} from '@angular/material/list';
 import {CraftingModule} from '../crafting/crafting.module';
+import { RealmListDialogComponent } from './components/realm-list/realm-list-dialog/realm-list-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,8 @@ import {CraftingModule} from '../crafting/crafting.module';
     CraftingSettingsComponent,
     CustomPricesComponent,
     CustomProcComponent,
-    RealmListComponent
+    RealmListComponent,
+    RealmListDialogComponent
   ],
   imports: [
     CommonModule,
@@ -66,7 +70,9 @@ import {CraftingModule} from '../crafting/crafting.module';
     CoreModule,
     MatRadioModule,
     MatListModule,
-    CraftingModule
+    CraftingModule,
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
   exports: [RealmListComponent]
 })

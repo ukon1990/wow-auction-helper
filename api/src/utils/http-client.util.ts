@@ -66,7 +66,6 @@ export class HttpClientUtil {
         },
         (error, response, body) => {
           try {
-
             if (error || !body || response.statusCode === 404) {
               reject(error);
             }

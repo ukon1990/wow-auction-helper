@@ -126,7 +126,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       error,
       new ErrorOptions(
         true,
-        `${this.form.value.name} could not be found on ${this.form.value.realm}.`));
+        `${this.form.value.name} could not be found on ${this.form.value.realm}. If you are sure that the name matches, try loggin in and out of the character.`));
   }
 
   private addCharacter(c) {
@@ -203,7 +203,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
             c.error,
             new ErrorOptions(true, 'Could not update the character'));
         }
-      });
+      }).catch(error => this.handleCharacterError(error));
     }
   }
 

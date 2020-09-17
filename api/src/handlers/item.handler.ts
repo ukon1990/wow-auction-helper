@@ -11,7 +11,7 @@ import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
 import {NpcHandler} from './npc.handler';
-import {AuctionItemStat, AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionItemStat, AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
 
 export class ItemHandler {
   /* istanbul ignore next */
@@ -168,105 +168,6 @@ export class ItemHandler {
         return;
       }
       resolve(item);
-    });
-  }
-
-  /* istanbul ignore next */
-  async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true,
-                           conn: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
-    console.log(`getPriceHistoryFor ahId=${ahId} item=${id} pet=${petSpeciesId}`);
-    if (onlyHourly) {
-      return new Promise((resolve, reject) => {
-        this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
-          .then(r => {
-            resolve(r);
-          })
-          .catch(error => {
-            console.error(error);
-            reject({
-              status: 500,
-              message: error.message
-            });
-          });
-      });
-    }
-    const result = {
-      hourly: [],
-      daily: [],
-    };
-    return new Promise(async (resolve, reject) => {
-      try {
-        conn.enqueueHandshake()
-          .then(() => {
-            Promise.all([
-              this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
-                .then(r => result.hourly = r)
-                .catch(console.error),
-              this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
-                .then(r => result.daily = r)
-                .catch(console.error)
-            ])
-              .then(() => {
-                AuctionProcessorUtil.setCurrentDayFromHourly(result);
-                resolve(result);
-              })
-              .catch(error => {
-                console.error(error);
-                reject({
-                  status: 500,
-                  message: error.message
-                });
-              });
-          })
-          .catch(error => {
-            console.error(error);
-            reject({
-              status: 500,
-              message: error.message
-            });
-          });
-      } catch (e) {
-        console.error(e);
-        reject(e);
-      }
-    });
-  }
-
-  private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const fourteenDays = 60 * 60 * 24 * 1000 * 14;
-      conn.query(`SELECT *
-                FROM itemPriceHistoryPerHour
-                WHERE ahId = ${ahId}
-                  AND itemId = ${id}
-                  AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
-                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
-        .then((result => {
-          resolve(AuctionProcessorUtil.processHourlyPriceData(result));
-        }))
-        .catch((error) => {
-          console.error(error);
-          resolve([]);
-        });
-    });
-  }
-
-  private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      conn.query(`SELECT *
-                FROM itemPriceHistoryPerDay
-                WHERE ahId = ${ahId}
-                  AND itemId = ${id}
-                  AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`)
-        .then((result => {
-          resolve(AuctionProcessorUtil.processDailyPriceData(result));
-        }))
-        .catch((error) => {
-          console.error(error);
-          resolve([]);
-        });
     });
   }
 }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DashboardService} from '../../services/dashboard.service';
 import {DashboardV2} from '../../models/dashboard-v2.model';
@@ -8,19 +8,14 @@ import {MatDialog} from '@angular/material/dialog';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {MigrationComponent} from '../migration/migration.component';
 import {NewsUtil} from '../../../about/utils/news.util';
-import {SharedService} from '../../../../services/shared.service';
-import {TextUtil} from '@ukon1990/js-utilities';
-import {Character} from '../../../character/models/character.model';
-import {RealmService} from '../../../../services/realm.service';
 import {CharacterService} from '../../../character/services/character.service';
-import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-dasboard-items',
   templateUrl: './dashboard-items.component.html',
   styleUrls: ['./dashboard-items.component.scss']
 })
-export class DashboardItemsComponent implements OnDestroy {
+export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
   dashboards: DashboardV2[] = [];
   displayHiddenForm: FormControl = new FormControl(false);
   sm = new SubscriptionManager();
@@ -33,19 +28,26 @@ export class DashboardItemsComponent implements OnDestroy {
     this.sm.add(this.service.list, (boards: DashboardV2[]) =>
       this.dashboards = [...boards]);
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
-    this.sm.add(this.service.calculatedBoardEvent, () => {
-      this.numberOfBoardsWithAMatch = this.dashboards.filter(board =>
-        board.data.length && !board.isDisabled).length;
-      this.numberOfActiveBoards = this.dashboards.filter(board => !board.isDisabled).length;
-    });
+    this.sm.add(this.service.calculatedBoardEvent, () =>
+      this.setTabTitleNumbers());
     this.sm.add(this.characterService.charactersForRealmWithRecipes,
       chars => {
         this.numberOfCharactersOnRealm = chars.length;
       });
   }
 
+  ngAfterViewInit() {
+    this.setTabTitleNumbers();
+  }
+
   ngOnDestroy(): void {
     this.sm.unsubscribe();
+  }
+
+  private setTabTitleNumbers() {
+    this.numberOfBoardsWithAMatch = this.dashboards.filter(board =>
+      board.data.length && !board.isDisabled).length;
+    this.numberOfActiveBoards = this.dashboards.filter(board => !board.isDisabled).length;
   }
 
   openNewBoardDialog() {

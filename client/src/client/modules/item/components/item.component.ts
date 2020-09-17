@@ -18,7 +18,7 @@ import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
-import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
+import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
@@ -64,7 +64,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
   recipeColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials'},
+    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},

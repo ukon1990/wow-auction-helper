@@ -1,5 +1,5 @@
-import {AuctionV2} from '../models/auction/auction-v2.model';
-import {Auction} from '../models/auction/auction';
+import {AuctionV2} from '../../models/auction/auction-v2.model';
+import {Auction} from '../../models/auction/auction';
 
 export class AuctionTransformerUtil {
   static transform({auctions}: any) {
