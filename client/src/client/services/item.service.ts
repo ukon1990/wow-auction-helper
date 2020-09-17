@@ -13,8 +13,8 @@ import {Report} from '../utils/report.util';
 import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
-import {AuctionItemStat} from '../../../../api/src/auction/utils/auction-processor.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 
 class ItemResponse {
   timestamp: Date;

@@ -18,8 +18,8 @@ import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
-import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 
 @Component({
   selector: 'wah-item',

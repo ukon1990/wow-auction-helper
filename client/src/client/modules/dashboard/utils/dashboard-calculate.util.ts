@@ -1,7 +1,6 @@
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ItemRule, Rule} from '../models/rule.model';
-import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {ColumnDescription} from '../../table/models/column-description';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
@@ -15,6 +14,7 @@ import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Report} from '../../../utils/report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
+import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {
