@@ -2,9 +2,10 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
-import {AuctionItemStat, AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
 import {AuctionQuery} from '../auction.query';
+import {AuctionItemStat} from '../models/auction-item-stat.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');

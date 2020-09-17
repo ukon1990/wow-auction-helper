@@ -4,43 +4,7 @@
 */
 import {Auction} from '../../models/auction/auction';
 import {AuctionQuery} from '../auction.query';
-
-class Bonus {
-  bonusListId: number;
-}
-
-export class AuctionItemStat {
-  itemId: number;
-  petSpeciesId = -1;
-  date: string;
-
-  constructor(public ahId: number, public bonusIds: string, auction: Auction, timestamp: number, hour: string) {
-    const date = new Date(timestamp),
-      dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
-    this.itemId = auction.item;
-    this.date = dateString;
-    this[`quantity${hour}`] = auction.quantity;
-    this[`price${hour}`] = auction.buyout / auction.quantity;
-    if (auction.petSpeciesId) {
-      this.petSpeciesId = auction.petSpeciesId;
-    }
-  }
-
-  static bonusId(ids: Bonus[], alwaysHaveAValue = true): string {
-    if (!ids) {
-      return alwaysHaveAValue ? '-1' : '';
-    }
-    return this.bonusIdRaw(ids.map(id => id.bonusListId), alwaysHaveAValue);
-  }
-
-  static bonusIdRaw(ids: number[], alwaysHaveAValue = true): string {
-    if (!ids) {
-      return alwaysHaveAValue ? '-1' : '';
-    }
-    return ids.sort((a, b) => a - b)
-      .join(',');
-  }
-}
+import {AuctionItemStat} from '../models/auction-item-stat.model';
 
 export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number): string {

@@ -1,5 +1,5 @@
 import {QueryUtil} from '../utils/query.util';
-import {AuctionItemStat} from './utils/auction-processor.util';
+import {AuctionItemStat} from './models/auction-item-stat.model';
 
 export class AuctionQuery {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
