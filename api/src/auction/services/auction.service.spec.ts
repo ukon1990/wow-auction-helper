@@ -1,10 +1,11 @@
-import {AuctionHandler} from './auction.handler';
-import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
-import {S3Handler} from './s3.handler';
-import {DatabaseUtil} from '../utils/database.util';
-import {environment} from '../../../client/src/environments/environment';
-import {AuthHandler} from './auth.handler';
-import {BLIZZARD} from '../secrets';
+import {AuctionService} from './auction.service';
+import {AuctionUpdateLog} from '../../models/auction/auction-update-log.model';
+import {S3Handler} from '../../handlers/s3.handler';
+import {DatabaseUtil} from '../../utils/database.util';
+import {environment} from '../../../../client/src/environments/environment';
+import {AuthHandler} from '../../handlers/auth.handler';
+import {BLIZZARD} from '../../secrets';
+import {StatsService} from './stats.service';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -15,7 +16,7 @@ describe('AuctionHandler', () => {
   describe('getLatestDumpPathV2', () => {
     it('Can convert game data response to the old type', async () => {
       await AuthHandler.getToken();
-      const handler = new AuctionHandler(),
+      const handler = new AuctionService(),
         region = 'eu',
         newPath = await handler.getLatestDumpPath(1403, region),
         oldPath = await handler.getLatestDumpPathOld(region, 'draenor');
@@ -26,7 +27,7 @@ describe('AuctionHandler', () => {
 
   describe('getUpdateLog', () => {
     it('Can get the last 3 hours', async () => {
-      const log: AuctionUpdateLog = await new AuctionHandler().getUpdateLog(69, 3);
+      const log: AuctionUpdateLog = await new AuctionService().getUpdateLog(69, 3);
       expect(log.entries.length).toBeLessThanOrEqual(3);
       expect(log.entries.length).toBeGreaterThanOrEqual(2);
       expect(log.minTime).toBeTruthy();
@@ -35,7 +36,7 @@ describe('AuctionHandler', () => {
     });
 
     it('Can get the last 3 hours', async () => {
-      const log: AuctionUpdateLog = await new AuctionHandler().getUpdateLog(69, 2);
+      const log: AuctionUpdateLog = await new AuctionService().getUpdateLog(69, 2);
       expect(log.entries.length).toBeLessThanOrEqual(2);
       expect(log.entries.length).toBeGreaterThanOrEqual(1);
       expect(log.minTime).toBe(70);
@@ -46,10 +47,10 @@ describe('AuctionHandler', () => {
 
   xit('Testing the behavior of shit', async () => {
     jest.setTimeout(100000);
-    await new AuctionHandler().getAndUploadAuctionDump({
+    await new AuctionService().getAndUploadAuctionDump({
       lastModified: 1584374830000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/1329/auctions?namespace=dynamic-eu'
     }, 113, 'eu');
-    await new AuctionHandler().getAndUploadAuctionDump({
+    await new AuctionService().getAndUploadAuctionDump({
       lastModified: 1584374834000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/3391/auctions?namespace=dynamic-eu'
     }, 115, 'eu');
     expect(1).toBe(1);
@@ -68,7 +69,7 @@ describe('AuctionHandler', () => {
     for (let id = 1; id <= 260; id++) {// 242
       promises.push(promiseThrottle.add(() =>
         new Promise((resolve) => {
-          new AuctionHandler().compileDailyAuctionData(id, conn, new Date(date))
+          new StatsService().compileDailyAuctionData(id, conn, new Date(date))
             .then(() => {
               processed++;
               console.log(`Processed count: ${processed} of ${260}`);
@@ -142,14 +143,13 @@ describe('AuctionHandler', () => {
                 const date = new Date(+fileName
                   .replace('-lastModified', '')
                   .replace('.json.gz', '').toString());
-                new AuctionHandler().processAuctions(region,
+                new StatsService().processRecord(
                   {
                     bucket: {name: bucket},
                     object: {key: file.Key, size: 0},
                     s3SchemaVersion: '',
                     configurationId: ''
-                  }, ahId,
-                  fileName.replace('.json.gz', ''),
+                  },
                   conn)
                   .then(() => {
                     processed++;

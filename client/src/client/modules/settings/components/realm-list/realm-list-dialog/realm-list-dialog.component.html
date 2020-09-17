@@ -1,0 +1,41 @@
+<wah-close-btn>
+</wah-close-btn>
+
+<h1 mat-dialog-title>
+  Realm list
+</h1>
+
+<mat-dialog-content>
+  <p>
+    A realm has auto update set, if a user requests that realm. If it is not set to auto update, it's only kept ut
+    to date once per day. Clicking on a row displays It's update history.
+  </p>
+  <wah-data-table *ngIf="!isDownloading; else loadingTemplate"
+          filterParameter="name"
+          [numOfRows]="20"
+          [columns]="selectedDataset.columns"
+          [data]="selectedDataset.data"
+          (rowClicked)="realmSelect($event)">
+  </wah-data-table>
+
+  <ng-template #loadingTemplate>
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </ng-template>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button
+          color="accent"
+          (click)="getRealms()">
+    Update
+  </button>
+
+  <button *ngIf="updateLogForRealm"
+          mat-stroked-button
+          (click)="reset()"
+          color="warn"
+  >
+    Back to realm list
+  </button>
+</mat-dialog-actions>

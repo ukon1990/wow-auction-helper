@@ -14,6 +14,7 @@ export interface ColumnDescription {
   key?: string;
   actions?: string[] | RowAction[];
   hideOnMobile?: boolean;
+  canNotSort?: boolean;
   customSort?: Function;
   cssClass?: string;
   options?: {

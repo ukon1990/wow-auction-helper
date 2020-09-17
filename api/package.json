@@ -1,6 +1,6 @@
 {
   "name": "wah-api",
-  "version": "3.130.0",
+  "version": "3.135.0",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -14,9 +14,10 @@
     "deploy-dev-kr": "sls deploy -r ap-northeast-2 -s dev",
     "deploy-dev": "npm run deploy-dev-us && npm run deploy-dev-eu && npm run deploy-dev-kr",
     "deploy-eu": "sls deploy -r eu-west-1 -s prod",
+    "deploy-eu-north": "sls deploy -r eu-north-1 -s prod",
     "deploy-us": "sls deploy -r us-west-1 -s prod",
     "deploy-kr": "sls deploy -r ap-northeast-2 -s prod",
-    "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr",
+    "deploy": "npm run deploy-eu && npm run deploy-us && npm run deploy-kr && npm run deploy-eu-north",
     "update-json-data-locally": "cd ../scripts;sh update-data.sh; cd .."
   },
   "private": true,

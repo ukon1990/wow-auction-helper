@@ -24,7 +24,7 @@ import {ProfessionService} from '../../crafting/services/profession.service';
 import {Profession} from '../../../../../../api/src/profession/model';
 import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {AuctionsService} from '../../../services/auctions.service';
-import {ItemService} from "../../../services/item.service";
+import {ItemService} from '../../../services/item.service';
 import {ItemLocale} from '../../../language/item.locale';
 
 @Component({
@@ -192,7 +192,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     SharedService.preScrollPosition = window.scrollY;
     if (column.options && column.options.idName) {
       SharedService.events.detailSelection.emit(
-          ItemService.mapped.value.get(item[column.options.idName])
+        ItemService.mapped.value.get(item[column.options.idName])
       );
     } else {
       SharedService.events.detailSelection.emit(item);
@@ -380,7 +380,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   getCartCount(item: any, column: ColumnDescription): number {
     if (column.key) {
       return (item as ShoppingCartItem).quantity;
-    } else {
+    } else if (SharedService.user.shoppingCart && SharedService.user.shoppingCart.recipeMap) {
       const recipe: Recipe = this.isKnownRecipe(item) as Recipe;
       return recipe && item && SharedService.user.shoppingCart.recipeMap[recipe.id] ?
         SharedService.user.shoppingCart.recipeMap[recipe.id].quantity :
@@ -404,6 +404,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private addRecipeToCart(recipe: any, newValue) {
+    if (!SharedService.user || !SharedService.user.shoppingCart) {
+      return;
+    }
     const cart = SharedService.user.shoppingCart;
     if (cart.recipeMap[recipe.spellID]) {
       this.updateCartCountForRecipe(

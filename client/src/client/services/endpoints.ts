@@ -9,18 +9,11 @@ export class Endpoints {
   // char/realm/??/??.jpg
   public static readonly IMAGE_PATH_CHARACTER = Endpoints.IMAGE_PATH + 'character';
   public static readonly LAMBDAS = {
-    EU: environment.production ?
-      'https://dto8jvfie1.execute-api.eu-west-1.amazonaws.com/prod/' :
-      'https://54d944z3dl.execute-api.eu-west-1.amazonaws.com/dev/',
-    US: environment.production ?
-      'https://w7r88eeid9.execute-api.us-west-1.amazonaws.com/prod/' :
-      'https://qbxwravpi9.execute-api.us-west-1.amazonaws.com/dev/',
-    KR: environment.production ?
-      'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/' :
-      'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/dev/',
-    TW: environment.production ?
-      'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/' :
-      'https://fk9meeuzrl.execute-api.ap-northeast-2.amazonaws.com/dev/'
+    EU: 'https://dto8jvfie1.execute-api.eu-west-1.amazonaws.com/prod/',
+    EU_NORTH: 'https://0r56xaj0l2.execute-api.eu-north-1.amazonaws.com/prod/',
+    US: 'https://w7r88eeid9.execute-api.us-west-1.amazonaws.com/prod/',
+    KR: 'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/',
+    TW: 'https://v3haq1749e.execute-api.ap-northeast-2.amazonaws.com/prod/'
   };
   public static readonly S3_BUCKET = `https://s3-eu-west-1.amazonaws.com/wah-data`;
 

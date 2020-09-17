@@ -23,7 +23,7 @@ functions:
     tags:
       Function: Wah-auctionUpdateLogForRealm
       Project: WAH
-    handler: src/controllers/auction.getUpdateLogForRealm
+    handler: src/auction/controller.getUpdateLogForRealm
     memorySize: 200
     events:
       - http:
@@ -35,21 +35,21 @@ functions:
     tags:
       Function: Wah-auctionsDownloadAndSave
       Project: WAH
-    handler: src/controllers/auction.auctionsDownloadAndSave
+    handler: src/auction/controller.auctionsDownloadAndSave
     memorySize: 256
     timeout: 30
   auctionsUpdateStaticS3Data:
     tags:
       Function: Wah-auctionsUpdateStaticS3Data
       Project: WAH
-    handler: src/controllers/auction.updateStaticS3Data
-    memorySize: 228
+    handler: src/auction/controller.updateStaticS3Data
+    memorySize: 300
     timeout: 30
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses
       Project: WAH
-    handler: src/controllers/auction.updateAll
+    handler: src/auction/controller.updateAll
     memorySize: 256
     timeout: 59
 
@@ -57,14 +57,14 @@ functions:
     tags:
       Function: Wah-deactivateInactiveHouses
       Project: WAH
-    handler: src/controllers/auction.deactivateInactiveHouses
+    handler: src/auction/controller.deactivateInactiveHouses
     memorySize: 200
 
   updateSpesificHouse:
     tags:
       Function: Wah-updateSpesificHouse
       Project: WAH
-    handler: src/controllers/auction.updateOne
+    handler: src/auction/controller.updateOne
     memorySize: 200
     events:
       - http:
@@ -76,14 +76,14 @@ functions:
     tags:
       Function: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
       Project: WAH
-    handler: src/controllers/auction.deleteOldPriceHistoryForRealmAndSetDailyPrice
+    handler: src/auction/controller.deleteOldPriceHistoryForRealmAndSetDailyPrice
     memorySize: 450
     timeout: 120
   updateAllRealmDailyData:
     tags:
       Function: Wah-updateAllRealmDailyData
       Project: WAH
-    handler: src/controllers/auction.updateAllRealmDailyData
+    handler: src/auction/controller.updateAllRealmDailyData
     memorySize: 1024
     timeout: 300
   items:
@@ -108,7 +108,7 @@ functions:
     tags:
       Function: Wah-item-history
       Project: WAH
-    handler: src/controllers/item.getPriceHistoryForItem
+    handler: src/auction/controller.getPriceHistoryForItem
     memorySize: 256
     events:
       - http:

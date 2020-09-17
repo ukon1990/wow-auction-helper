@@ -73,7 +73,7 @@ export class ErrorReport {
       ErrorReport.sb.open(
         `${error.name}`,
         'Ok',
-        {duration: 4000});
+        {duration: 6000});
     }
   }
 }

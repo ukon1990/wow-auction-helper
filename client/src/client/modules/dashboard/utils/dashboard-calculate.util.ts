@@ -1,7 +1,7 @@
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ItemRule, Rule} from '../models/rule.model';
-import {AuctionItemStat} from '../../../../../../api/src/utils/auction-processor.util';
+import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {ColumnDescription} from '../../table/models/column-description';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';

@@ -2,8 +2,8 @@
   The intention with this class
   Is to gather price statistics for the lowest, highest and avg prices
 */
-import {Auction} from '../models/auction/auction';
-import {AuctionQuery} from '../queries/auction.query';
+import {Auction} from '../../models/auction/auction';
+import {AuctionQuery} from '../auction.query';
 
 class Bonus {
   bonusListId: number;

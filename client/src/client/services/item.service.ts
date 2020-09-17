@@ -13,7 +13,7 @@ import {Report} from '../utils/report.util';
 import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
-import {AuctionItemStat} from '../../../../api/src/utils/auction-processor.util';
+import {AuctionItemStat} from '../../../../api/src/auction/utils/auction-processor.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 class ItemResponse {
@@ -212,7 +212,7 @@ export class ItemService {
         resolve(realmMap.get(ahId).get(storedId));
       });
     }
-    return this._http.post(Endpoints.getLambdaUrl('item/history'),
+    return this._http.post(Endpoints.getLambdaUrl('item/history', 'EU_NORTH'),
       {
         id,
         ahId,
