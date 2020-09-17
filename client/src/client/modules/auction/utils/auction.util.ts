@@ -2,20 +2,14 @@ import {SharedService} from '../../../services/shared.service';
 import {Auction} from '../models/auction.model';
 import {AuctionItem} from '../models/auction-item.model';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
-import {Dashboard} from '../../dashboard/models/dashboard.model';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
 import {Pet} from '../../pet/models/pet';
 import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
-import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {TsmService} from '../../tsm/tsm.service';
-import {CraftingService} from '../../../services/crafting.service';
-import {NpcService} from '../../npc/services/npc.service';
-import {ItemService} from '../../../services/item.service';
-import {UserUtil} from '../../../utils/user/user.util';
-import {ObjectUtil} from '@ukon1990/js-utilities';
+import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -107,7 +101,9 @@ export class AuctionUtil {
     // Dashboard -> Needs to be done after trade vendors
     // Dashboard.addDashboards();
 
-    SharedService.user.shoppingCart.calculateCosts();
+    if (SharedService.user && SharedService.user.shoppingCart) {
+      SharedService.user.shoppingCart.calculateCosts();
+    }
 
 
     const t2 = performance.now();

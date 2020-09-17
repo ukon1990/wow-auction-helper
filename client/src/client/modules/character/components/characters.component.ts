@@ -116,17 +116,17 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
           this.characterService.updateCharactersForRealmAndRecipes();
         })
         .catch((error: HttpErrorResponse) =>
-          this.handleCharacterError(error));
+          this.handleCharacterError(error, name));
     }
   }
 
-  private handleCharacterError(error: HttpErrorResponse) {
+  private handleCharacterError(error: HttpErrorResponse, name: string) {
     this.downloading = false;
     ErrorReport.sendHttpError(
       error,
       new ErrorOptions(
         true,
-        `${this.form.value.name} could not be found on ${this.form.value.realm}. If you are sure that the name matches, try loggin in and out of the character.`));
+        `${name} could not be found on ${this.form.value.realm}. If you are sure that the name matches, try loggin in and out of the character.`));
   }
 
   private addCharacter(c) {
@@ -176,9 +176,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     const character: Character = SharedService.user.characters[index],
       professions = character.professions;
     if (character.level) {
+      const name = SharedService.user.characters[index].name;
       character['downloading'] = true;
       this.characterService.getCharacter(
-        SharedService.user.characters[index].name,
+        name,
         UserUtil.slugifyString(SharedService.user.characters[index].realm),
         this.form.value.region
       ).then(async c => {
@@ -203,7 +204,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
             c.error,
             new ErrorOptions(true, 'Could not update the character'));
         }
-      }).catch(error => this.handleCharacterError(error));
+      }).catch(error => this.handleCharacterError(error, name));
     }
   }
 
