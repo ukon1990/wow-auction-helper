@@ -2,7 +2,6 @@ import {BaseCraftingUtil} from './base-crafting.util';
 import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {Recipe} from '../models/recipe';
 import {Reagent} from '../models/reagent';
-import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Auction} from '../../auction/models/auction.model';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
@@ -10,7 +9,7 @@ import {NeededCraftingUtil} from './needed-crafting.util';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
 import {NpcService} from '../../npc/services/npc.service';
 
-describe('BaseCraftingUtil', () => {
+fdescribe('BaseCraftingUtil', () => {
   let recipe: Recipe;
   let map: Map<string, AuctionItem>;
   beforeEach(() => {
@@ -82,7 +81,7 @@ describe('BaseCraftingUtil', () => {
       const cost = 159;
       new NeededCraftingUtil(map).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
-      expect(recipe.roi).toBe(map.get('2').buyout * 0.95 - cost);
+      expect(recipe.roi).toBe(map.get('1').buyout * 0.95 - cost);
     });
   });
 

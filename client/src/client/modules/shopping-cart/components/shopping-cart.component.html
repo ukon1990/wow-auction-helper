@@ -1,17 +1,18 @@
 <button mat-flat-button
-   (click)="toggleDisplay()"
+   (click)="toggleDialog()"
    color="primary"
    matTooltip="Shopping cart"
-   matBadge="{{cart.recipes.length | number}}"
+   matBadge="{{items.length + recipes.length | number}}"
    matBadgeColor="accent"
    matBadgePosition="before"
    matBadgeDescription="The number of items in your shopping cart">
   <div class="float-left mr-1">
     <i class="fas fa-shopping-cart"></i>
   </div>
-  Shopping cart | {{ cart.profit | gold }}
+  Shopping cart<!-- | {{ cart.profit | gold }}-->
 </button>
 
+<!--
 <mat-card *ngIf="show" class="full-screen">
   <mat-card-header>
     <div class="action-icon mat-elevation-z5" (click)="toggleDisplay()" matTooltip="Close the shopping cart">
@@ -162,3 +163,4 @@
 </mat-card>
 
 <div *ngIf="show" class="backdrop" (click)="toggleDisplay()"></div>
+-->

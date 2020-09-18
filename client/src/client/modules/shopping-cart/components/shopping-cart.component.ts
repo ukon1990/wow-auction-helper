@@ -1,13 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SharedService} from '../../../services/shared.service';
-import {User} from '../../../models/user/user';
-import {Recipe} from '../../crafting/models/recipe';
-import {Report} from '../../../utils/report.util';
-import {ShoppingCart} from '../models/shopping-cart.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
-import {CraftingService} from '../../../services/crafting.service';
-import {AuctionsService} from '../../../services/auctions.service';
+import {ShoppingCartService} from '../services/shopping-cart.service';
+import {MatDialog} from '@angular/material/dialog';
+import {CartDialogComponent} from './cart-dialog/cart-dialog.component';
+import {CartItem, CartRecipe, ShoppingCartV2} from '../models/shopping-cart-v2.model';
 
 @Component({
   selector: 'wah-shopping-cart',
@@ -15,9 +11,12 @@ import {AuctionsService} from '../../../services/auctions.service';
   styleUrls: ['./shopping-cart.component.scss']
 })
 export class ShoppingCartComponent implements OnInit, OnDestroy {
-  cart: ShoppingCart = SharedService.user.shoppingCart;
+  cart: ShoppingCartV2;
+  items: CartItem[] = [];
+  recipes: CartRecipe[] = [];
+  sm = new SubscriptionManager();
 
-  show: boolean;
+  /*
   columns = {
     recipes: [
       {key: 'name', title: 'Name', dataType: 'name'},
@@ -57,79 +56,26 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
       {key: 'characters', title: 'Characters', dataType: 'array'}
     ]
   };
+  */
 
-
-  subscriptions = new SubscriptionManager();
-
-  constructor(private auctionService: AuctionsService) {
+  constructor(private service: ShoppingCartService, private dialog: MatDialog) {
+    this.sm.add(this.service.items, (items) => this.items = items);
+    this.sm.add(this.service.recipes, (recipes) => this.recipes = recipes);
+    this.sm.add(service.cart, cart => this.cart = cart);
   }
 
   ngOnInit() {
-
-    this.subscriptions.add(
-      SharedService.events.shoppingCart,
-      (data) => this.handleShoppingCartUpdate(data)
-    );
-
-    this.subscriptions.add(
-      TsmLuaUtil.events,
-      () => this.handleTSMAddonDataUpdate()
-    );
-
-    this.subscriptions.add(
-      SharedService.events.auctionUpdate,
-      () => this.handleAHUpdate()
-    );
-
-    this.subscriptions.add(
-      SharedService.events.recipes,
-      () =>
-        this.setCart());
-  }
-
-  private setCart() {
-    SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
-    this.cart = SharedService.user.shoppingCart;
-    this.cart.setSources();
-    this.cart.calculateCosts();
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    this.sm.unsubscribe();
   }
 
-  getRecipe(id: number): Recipe {
-    return CraftingService.map.value.get(id) || new Recipe();
-  }
-
-  clearShoppingCart(): void {
-    this.cart.clear();
-  }
-
-  getUser(): User {
-    return SharedService.user;
-  }
-
-  toggleDisplay(): void {
-    this.show = !this.show;
-    Report.send(
-      this.show ? 'Shopping cart opened' : 'Shopping cart closed',
-      'Shopping cart');
-  }
-
-  private handleShoppingCartUpdate(data: any) {
-  }
-
-  private handleAHUpdate() {
-    // Update need to be bought costs
-    // Make sure to split vendor items into it's own list
-    this.cart.setSources();
-    this.cart.calculateCosts();
-  }
-
-  private handleTSMAddonDataUpdate() {
-    // Update inventory status
-    this.setCart();
-    return undefined;
+  toggleDialog() {
+    this.dialog.open(CartDialogComponent,
+      {
+        width: '95%',
+        maxWidth: '100%',
+      });
   }
 }

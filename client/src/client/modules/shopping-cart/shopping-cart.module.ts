@@ -13,10 +13,13 @@ import {TableModule} from '../table/table.module';
 import {UtilModule} from '../util/util.module';
 import {CoreModule} from '../core/core.module';
 import {AddonModule} from '../addon/addon.module';
+import { CartDialogComponent } from './components/cart-dialog/cart-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
-    ShoppingCartComponent
+    ShoppingCartComponent,
+    CartDialogComponent
   ],
   imports: [
     CommonModule,
@@ -30,7 +33,8 @@ import {AddonModule} from '../addon/addon.module';
     MatButtonModule,
     MatTooltipModule,
     AddonModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatDialogModule
   ],
   exports: [ShoppingCartComponent]
 })
