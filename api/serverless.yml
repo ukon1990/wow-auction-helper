@@ -50,7 +50,7 @@ functions:
       Function: Wah-updateAllHouses
       Project: WAH
     handler: src/auction/controller.updateAll
-    memorySize: 256
+    memorySize: 212
     timeout: 59
 
   deactivateInactiveHouses:

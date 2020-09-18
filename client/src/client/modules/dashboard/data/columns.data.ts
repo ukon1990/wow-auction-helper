@@ -230,7 +230,7 @@ export const columnConfig = {
     level: {
       key: 'petLevel', title: 'Pet level', dataType: 'number'
     }, quality: {
-      key: 'petQuality', title: 'Pet quality', dataType: 'number'
+      key: 'petQualityId', title: 'Pet quality', dataType: 'quality'
     }
 
   },
