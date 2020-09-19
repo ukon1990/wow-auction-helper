@@ -26,6 +26,7 @@ import {faCartPlus, faExternalLinkSquareAlt, faEye, faTrashAlt} from '@fortaweso
 import {AuctionsService} from '../../../services/auctions.service';
 import {ItemService} from '../../../services/item.service';
 import {ItemLocale} from '../../../language/item.locale';
+import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 
 @Component({
   selector: 'wah-data-table',
@@ -77,7 +78,9 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   private isTyping: boolean;
   private lastCharacterTyped: number;
 
-  constructor(private professionService: ProfessionService, private auctionService: AuctionsService) {
+  constructor(private professionService: ProfessionService,
+              private auctionService: AuctionsService,
+              private shoppingCartService: ShoppingCartService) {
     this.sorter = new Sorter(this.auctionService);
 
     this.sm.add(professionService.map, map => {
@@ -179,8 +182,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   addEntryToCart(entry: any): void {
     if (entry.id && entry.reagents) {
-      SharedService.user.shoppingCart.add(entry);
       Report.send('Added recipe', 'Shopping cart');
+      this.shoppingCartService.addRecipe(entry.id, 1);
     } else {
       // TODO: Add item -> SharedService.user.shoppingCart.add(entry);
       // Report.send('Added item', 'Shopping cart');
@@ -326,7 +329,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   removeRecipe(recipe: ShoppingCartItem, index: number): void {
-    SharedService.user.shoppingCart.remove(recipe.id);
+    this.shoppingCartService.removeRecipe(recipe.id, 1);
 
     Report.send('Removed recipe', 'Shopping cart');
   }
@@ -377,6 +380,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     return column.options && column.options.tooltipType || this.linkType;
   }
 
+  // TODO: Convert to the new one
   getCartCount(item: any, column: ColumnDescription): number {
     if (column.key) {
       return (item as ShoppingCartItem).quantity;
@@ -395,27 +399,19 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
         recipe as ShoppingCartItem, newValue);
     } else if (recipe instanceof Recipe) {
       this.addRecipeToCart(recipe as Recipe, newValue);
+      this.shoppingCartService.addRecipe(recipe.id, newValue);
     } else {
       const r: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(recipe[this.id]);
       if (r) {
+        this.shoppingCartService.addRecipe(r[0].id, newValue);
         this.addRecipeToCart(r[0], newValue);
       }
     }
   }
 
   private addRecipeToCart(recipe: any, newValue) {
-    if (!SharedService.user || !SharedService.user.shoppingCart) {
-      return;
-    }
-    const cart = SharedService.user.shoppingCart;
-    if (cart.recipeMap[recipe.spellID]) {
-      this.updateCartCountForRecipe(
-        cart.recipeMap[recipe.spellID] as ShoppingCartItem, newValue);
-    } else if (newValue > 0) {
-      SharedService.user.shoppingCart.add(
-        recipe,
-        newValue);
-    }
+    // TODO: Implement
+    console.log('NOT IMPLEMENTED YET');
   }
 
   private updateCartCountForRecipe(recipe: ShoppingCartItem, newValue: number) {

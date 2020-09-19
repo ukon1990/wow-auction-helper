@@ -167,7 +167,8 @@
     <i class="fas fa-external-link-square-alt"></i>
   </button>
 
-  <div *ngIf="userHasRecipeForItem()" class="float-right">
+  <!-- *ngIf="userHasRecipeForItem()" -->
+  <div  class="float-right">
     <mat-form-field
             color="accent"
     >
@@ -176,7 +177,6 @@
              [formControl]="shoppingCartQuantityField">
     </mat-form-field>
 
-    <!-- TODO: Add back once the Shopping cart is fixed
     <button mat-stroked-button matTooltip="Add to shopping list"
             (click)="addEntryToCart()"
             color="accent"
@@ -184,6 +184,5 @@
       Add to cart
       <i class="fas fa-cart-plus"></i>
     </button>
-    -->
   </div>
 </mat-dialog-actions>

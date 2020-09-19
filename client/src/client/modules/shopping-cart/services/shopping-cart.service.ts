@@ -25,6 +25,7 @@ export class ShoppingCartService {
   }
 
   addRecipeByItemId(id: number, quantity: number): void {
+    console.log('YO!');
     const auctionItem: AuctionItem = this.auctionService.mapped.value.get('' + id);
     if (auctionItem && auctionItem.source && auctionItem.source.recipe && auctionItem.source.recipe.known) {
       const recipe: Recipe = auctionItem.source.recipe.known[0];
@@ -76,5 +77,9 @@ export class ShoppingCartService {
       this.recipes.value,
       this.items.value
     ));
+  }
+
+  removeRecipe(id: number, number: number) {
+    console.error('removeRecipe is NOT IMPLEMENTED');
   }
 }
