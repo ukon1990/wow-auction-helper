@@ -33,34 +33,59 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
 };
 
 describe('Recipev2Util', () => {
-  xdescribe('Not really tests', () => {/*
-        xit('"bruteforce" recipes', async () => {
-            jest.setTimeout(10000000);
-            const conn = new DatabaseUtil(false),
-                increment = 200000,
-                start = 1353,
-                end = 50000; // start + increment;
-            let completed = 0, found = 0, lastId = 0;
+  xdescribe('Not really tests', () => {
+    /*
+    xit('"bruteforce" recipes', async () => {
+      jest.setTimeout(10000000);
+      const conn = new DatabaseUtil(false),
+        increment = 200000,
+        start = 1353,
+        end = 50000; // start + increment;
+      let completed = 0, found = 0, lastId = 0;
 
-            for (let i = start; i < end; i++) {
-                await RecipeV2Util.addToDB(i, conn)
-                    .then((recipe) => {
-                        found++;
-                        lastId = recipe.id;
-                    })
-                    .catch(() => {
-                    });
-                completed++;
-                console.log('Procesed', completed, '/', end - start,
-                    `(${((completed / (end - start)) * 100).toFixed(2)}%) id=${i
-                    } found=${found
-                    } last id was=${lastId
-                    }`);
-            }
-            conn.end();
+      for (let i = start; i < end; i++) {
+        await RecipeV2Util.addToDB(i, conn)
+          .then((recipe) => {
+            found++;
+            lastId = recipe.id;
+          })
+          .catch(() => {
+          });
+        completed++;
+        console.log('Procesed', completed, '/', end - start,
+          `(${((completed / (end - start)) * 100).toFixed(2)}%) id=${i
+          } found=${found
+          } last id was=${lastId
+          }`);
+      }
+      conn.end();
 
-            expect(completed).toBe(increment);
-        });*/
+      expect(completed).toBe(increment);
+    });
+  */
+
+    xit('Add ids', async () => {
+      jest.setTimeout(10000000);
+      let completed = 0, found = 0, lastId = 0;
+      const conn = new DatabaseUtil(false);
+      const ids = [];
+      for (const id of ids) {
+        await RecipeV2Util.addToDB(id, conn)
+          .then((recipe) => {
+            found++;
+            lastId = recipe.id;
+          })
+          .catch(() => {
+          });
+        completed++;
+        console.log('Procesed', completed, '/', ids.length,
+          `(${((completed / ids.length) * 100).toFixed(2)}%) id=${id} found=${found
+          } last id was=${lastId
+          }`);
+      }
+      conn.end();
+      expect(1).toBe(1);
+    });
 
     xit('insert all', async () => {
       jest.setTimeout(9999999);
@@ -160,13 +185,13 @@ describe('Recipev2Util', () => {
       const conn = new DatabaseUtil(false);
       await conn.query(query)
         .then(async rows => {
-            console.log('Num of rows', rows.length);
-            for (const row of rows) {
-                await conn.query(`
+          console.log('Num of rows', rows.length);
+          for (const row of rows) {
+            await conn.query(`
                 UPDATE recipes_new
                 SET craftedItemId = ${row.itemId}
                 WHERE id = ${row.id}`);
-            }
+          }
         })
         .catch(console.error);
       conn.end();

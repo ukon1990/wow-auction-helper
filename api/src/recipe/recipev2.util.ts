@@ -25,14 +25,12 @@ export class RecipeV2Util {
     return new Promise(async (resolve, reject) => {
       RecipeV2Util.getRecipeFromAPI(id)
         .then(async recipe => {
-          const sql = format(`
-              INSERT INTO \`wah\`.\`recipe\`
-              (\`id\`,
-               \`data\`)
-              VALUES (?, ?);`, [recipe.id, JSON.stringify(recipe)]);
-          await conn.query(sql)
-            .then(() => resolve(recipe))
-            .catch(reject);
+          const queries = await RecipeV2Util.generateQuery(recipe);
+          for (const q of queries) {
+            await conn.query(q)
+              .catch(console.error);
+          }
+          resolve(recipe);
         })
         .catch(reject);
     });
@@ -190,7 +188,6 @@ export class RecipeV2Util {
   }
 
   private static insertLocale(id: number, table: string, locale: ItemLocale, db: DatabaseUtil): Promise<void> {
-    console.log('YO');
     const sql = format(`INSERT INTO ${table} VALUES(
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
       id,

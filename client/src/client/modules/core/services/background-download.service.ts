@@ -27,6 +27,7 @@ import {TsmService} from '../../tsm/tsm.service';
 })
 export class BackgroundDownloadService {
   isLoading = new BehaviorSubject(false);
+  isInitialLoadCompleted: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   timestamps = {
     items: localStorage['timestamp_items'],
@@ -65,6 +66,7 @@ export class BackgroundDownloadService {
     this.subs.add(this.dbService.databaseIsReady, async (isReady) => {
       if (isReady) {
         await this.init();
+        this.isInitialLoadCompleted.next(true);
       }
     });
 
