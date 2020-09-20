@@ -7,6 +7,7 @@ import {PessimisticCraftingUtil} from '../../crafting/utils/pessimistic-crafting
 import {NeededCraftingUtil} from '../../crafting/utils/needed-crafting.util';
 import {BaseCraftingUtil} from '../../crafting/utils/base-crafting.util';
 import {SharedService} from '../../../services/shared.service';
+import {CraftingService} from '../../../services/crafting.service';
 
 export class ShoppingCartUtil {
   public strategy: BaseCraftingUtil;
@@ -32,11 +33,11 @@ export class ShoppingCartUtil {
         break;
     }
     this.strategy.calculateOne(tmpRecipe);
-    console.log('TMP recipe', tmpRecipe);
 
     cart.neededItems = tmpRecipe.reagents;
-    cart.profit = tmpRecipe.roi;
     cart.sumCost = tmpRecipe.cost;
+
+    cart.profit = this.getProfit(cart.sumCost, recipes, items, auctionMap);
 
     return cart;
   }
@@ -85,5 +86,27 @@ export class ShoppingCartUtil {
     } else {
       map.get(id).quantity += quantity;
     }
+  }
+
+  private getProfit(sumCost: number, recipes: CartRecipe[], items: CartItem[], auctionMap: Map<string, AuctionItem>) {
+    let profit = 0;
+    const setProfit = (id: number) => {
+      const ai = auctionMap.get('' + id);
+      if (ai) {
+        profit += ai.buyout;
+      }
+    };
+
+    items.forEach(item => {
+      setProfit(item.id);
+    });
+
+    recipes.forEach(recipe => {
+      const rec: Recipe = CraftingService.map.value.get(recipe.id);
+      if (rec) {
+        setProfit(rec.itemID);
+      }
+    });
+    return profit - sumCost;
   }
 }

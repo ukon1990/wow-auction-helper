@@ -4,6 +4,10 @@
 <mat-dialog-content>
 
   <div class="row">
+    <div class="col-md-12">
+      <strong>Cost: </strong> {{ cart?.sumCost | gold }} |
+      <strong>ROI: </strong> {{ cart?.profit | gold }}
+    </div>
     <mat-card class="col-md-4">
       <mat-card-header>
         <mat-card-title>
