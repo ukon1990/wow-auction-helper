@@ -1,14 +1,18 @@
-import {ShoppingCartItem} from './shopping-cart-item.model';
+import {Reagent} from '../../crafting/models/reagent';
 
-export interface CartRecipe {
+interface CartObject {
   id: number;
   quantity: number;
+  buyout?: number;
+  name?: string;
+}
+
+export interface CartRecipe extends CartObject {
+  itemId?: number;
   isIntermediate: boolean;
 }
 
-export interface CartItem {
-  id: number;
-  quantity: number;
+export interface CartItem extends CartObject {
   isReagent: boolean;
 }
 
@@ -29,4 +33,5 @@ export class ShoppingCartV2 {
   profit = 0;
   sumEstimatedInventoryCost = 0;
   tsmShoppingString = '';
+  neededItems: Reagent[];
 }

@@ -34,6 +34,7 @@ export class ShoppingCartUtil {
     this.strategy.calculateOne(tmpRecipe);
     console.log('TMP recipe', tmpRecipe);
 
+    cart.neededItems = tmpRecipe.reagents;
     cart.profit = tmpRecipe.roi;
     cart.sumCost = tmpRecipe.cost;
 

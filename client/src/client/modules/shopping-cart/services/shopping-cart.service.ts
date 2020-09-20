@@ -7,12 +7,14 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {ShoppingCartUtil} from '../utils/shopping-cart.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {Recipe} from '../../crafting/models/recipe';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingCartService {
   private util = new ShoppingCartUtil();
+  private STORAGE_NAME = 'shopping_cart_';
   cart: BehaviorSubject<ShoppingCartV2> = new BehaviorSubject<ShoppingCartV2>(undefined);
   items: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
   recipes: BehaviorSubject<CartRecipe[]> = new BehaviorSubject<CartRecipe[]>([]);
@@ -20,8 +22,29 @@ export class ShoppingCartService {
   private sm = new SubscriptionManager();
 
   constructor(private auctionService: AuctionsService, private craftingService: CraftingService) {
+    this.restore();
     this.sm.add(auctionService.mapped,
       (map: Map<string, AuctionItem>) => this.calculateCart(map));
+  }
+
+  private restore(): void {
+    const items = localStorage.getItem(this.STORAGE_NAME + 'items');
+    const recipes = localStorage.getItem(this.STORAGE_NAME + 'recipes');
+
+    if (items) {
+      try {
+        this.items.next(JSON.parse(items));
+      } catch (error) {
+        ErrorReport.sendError('ShoppingCartService.restore items', error);
+      }
+    }
+    if (recipes) {
+      try {
+        this.recipes.next(JSON.parse(recipes));
+      } catch (error) {
+        ErrorReport.sendError('ShoppingCartService.restore recipes', error);
+      }
+    }
   }
 
   addRecipeByItemId(id: number, quantity: number): void {
@@ -51,6 +74,7 @@ export class ShoppingCartService {
       ...list
     ]);
     this.calculateCart();
+    localStorage.setItem(this.STORAGE_NAME + 'recipes', JSON.stringify(this.recipes.value));
   }
 
   addItem(id: number, quantity: number): void {
@@ -68,6 +92,7 @@ export class ShoppingCartService {
     }
 
     this.calculateCart();
+    localStorage.setItem(this.STORAGE_NAME + 'items', JSON.stringify(this.items.value));
   }
 
   private calculateCart(map: Map<string, AuctionItem> = this.auctionService.mapped.value) {
