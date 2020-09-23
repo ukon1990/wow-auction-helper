@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
 import {GameBuild} from '../../../../../../utils/game-build.util';
@@ -19,7 +19,7 @@ import {ItemLocale} from '../../../../../../language/item.locale';
   templateUrl: './rule.component.html',
   styleUrls: ['./rule.component.scss']
 })
-export class RuleComponent implements OnInit, OnDestroy {
+export class RuleComponent implements AfterViewInit, OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() rules: Rule[];
   @Input() index: number;
@@ -55,7 +55,7 @@ export class RuleComponent implements OnInit, OnDestroy {
         this.professions = list);
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if (this.rules) {
       this.rules.forEach(rule =>
         this.addOrRule(rule));
@@ -112,7 +112,6 @@ export class RuleComponent implements OnInit, OnDestroy {
   }
 
   private enableOrDisableTargetValueTypeField(toField: string = this.formGroup.controls.toField.value): void {
-    console.log('toValue', toField);
     if (toField) {
       this.formGroup.controls.targetValueType.enable();
     } else {

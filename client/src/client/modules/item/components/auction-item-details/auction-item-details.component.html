@@ -59,6 +59,11 @@
   </mat-card-content>
 </mat-card>
 
-<wah-auctions-chart *ngIf="item.auctions.length > 1"
+<wah-auctions-chart *ngIf="item.auctions.length > 1; else notEnoughAvailableTemplate"
+                    [dialogId]="dialogId"
                     [auctions]="item.auctions">
 </wah-auctions-chart>
+
+<ng-template #notEnoughAvailableTemplate>
+  There are not enough auctions up for this item, to display the chart ({{ item?.auctions?.length | number }})
+</ng-template>

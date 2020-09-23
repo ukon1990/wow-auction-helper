@@ -18,6 +18,7 @@ import {Report} from '../../../../utils/report.util';
 export class ItemPriceHistoryComponent implements OnChanges {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
+  @Input() dialogId: string;
   sm = new SubscriptionManager();
   priceHistory: {hourly: ItemPriceEntry[], daily: any[]} = {
     hourly: [],

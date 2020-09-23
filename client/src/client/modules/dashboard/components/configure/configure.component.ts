@@ -86,7 +86,10 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if (this.dashboard) {
-      this.tmpBoard = DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
+      this.tmpBoard = {
+        ...this.dashboard,
+        data: [...this.dashboard.data]
+      }; // DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
       this.isDefaultBoard = TextUtil.contains((this.dashboard as DashboardV2).id, 'default-');
       Report.send('Editing existing board', 'Dashboard.ConfigureComponent');
     } else {
@@ -99,10 +102,10 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       this.lastCalculationTime = +new Date();
       setTimeout(() => {
         const timeDiff = +new Date() - this.lastCalculationTime;
-        if (timeDiff >= 500) {
+        if (timeDiff >= 1000) {
           this.onEvent();
         }
-      }, 500);
+      }, 1000);
     });
   }
 
@@ -129,7 +132,6 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   onEvent(board: DashboardV2 = this.form.getRawValue()) {
     this.tmpBoard = DashboardCalculateUtil.calculate(board, this.auctionService.mapped.value);
     this.hasChanges = true;
-    console.log('onEvent.board', board);
   }
 
   onSave(): void {
