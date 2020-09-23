@@ -20,6 +20,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
+import {ItemDetailsUtil} from '../utils/item-details.util';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 
 @Component({
@@ -29,6 +30,7 @@ import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.se
 })
 export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs') tabs;
+
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
   selectionHistory: any[] = [];
@@ -42,12 +44,11 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   selected = {
     item: undefined,
     auctionItem: undefined,
-    seller: undefined,
     pet: undefined
   };
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
-  subscriptions = new SubscriptionManager();
+  sm = new SubscriptionManager();
   columns: ColumnDescription[] = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -85,8 +86,11 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   ];
   private tabSubId = 'tab-subscription';
 
-  constructor(private _wowDBService: WowdbService, private npcService: NpcService,
-              private zoneService: ZoneService, private auctionService: AuctionsService,
+  constructor(private _wowDBService: WowdbService,
+              private npcService: NpcService,
+              private zoneService: ZoneService,
+              private auctionService: AuctionsService,
+              private itemService: ItemService,
               private shoppingCartService: ShoppingCartService,
               public dialogRef: MatDialogRef<ItemComponent>,
               @Inject(MAT_DIALOG_DATA) public selection: any) {
@@ -94,13 +98,17 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
     this.setSelection(selection);
 
-    this.subscriptions.add(this.itemSelectionHistoryForm.valueChanges, index => {
+    this.sm.add(this.itemSelectionHistoryForm.valueChanges, index => {
       const target = this.selectionHistory[index].auctionItem || this.selectionHistory[index].item;
       if (this.selectionHistory.length > 1 && !this.ignoreNextSelectionHistoryFormChange) {
         this.selectionHistory.splice(index, 1);
       }
       this.setSelection(target);
     });
+    this.sm.add(this.itemService.selectionHistory,
+      history => {
+        this.selectionHistory = history;
+      });
   }
 
   onItemSelection(): void {
@@ -108,37 +116,32 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.setRecipesForItem();
 
     Report.send('Opened', 'Item detail view');
-    Report.debug('Selected:', this.selected);
-
-    setTimeout(() => {
-      const tabGroup: MatTabGroup = this.tabs;
-      // Should be done after the render cyclus
-      if (tabGroup && !this.subscriptions.getMap().has(this.tabSubId)) {
-        this.subscriptions.add(
-          tabGroup
-            .selectedTabChange,
-          (event: MatTabChangeEvent) => {
-            Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`);
-          },
-          {id: this.tabSubId});
-      }
-    });
   }
 
   ngAfterViewInit(): void {
-    this.subscriptions.add(
+    this.sm.add(
       ItemService.itemSelection,
       () => this.onItemSelection());
   }
 
   ngAfterContentInit(): void {
     SharedService.events.detailPanelOpen.emit(true);
+    setTimeout(() => {
+      const tabGroup: MatTabGroup = this.tabs;
+      // Should be done after the render cyclus
+      this.sm.add(
+        tabGroup
+          .selectedTabChange,
+        (event: MatTabChangeEvent) => {
+          Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`);
+        });
+    });
   }
 
   ngOnDestroy(): void {
     SharedService.events.detailPanelOpen.emit(false);
 
-    this.subscriptions.unsubscribe();
+    this.sm.unsubscribe();
   }
 
   setItemData(): void {
@@ -233,10 +236,8 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
   /* istanbul ignore next */
   close(): void {
-    this.subscriptions.unsubscribeById(this.tabSubId);
+    this.sm.unsubscribeById(this.tabSubId);
     SharedService.events.detailPanelOpen.emit(false);
-    Object.keys(this.selected).forEach(key =>
-      this.selected[key] = undefined);
     this.dialogRef.close();
   }
 
@@ -254,54 +255,13 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
       this.ignoreNextSelectionHistoryFormChange = false;
       return;
     }
-    this.selected.pet = undefined;
 
-    if (item.auctions) {
-      this.handleAuctionItem(item);
-    } else if (item.id && item.bonusIds) {
-      const id = item.id + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
-      const auctionItem: AuctionItem = this.auctionService.getById(id);
-      this.handleAuctionItem(auctionItem);
-    } else if (item.itemID) {
-      this.handleItemWithItemID(item);
-    } else if (item.id) {
-      this.handleItemWithId(item);
-    } else if (item.speciesId) {
-      this.handlePet(item);
-    }
-    this.selectionHistory = [{...this.selected}, ...this.selectionHistory];
+    this.selected = ItemDetailsUtil.getSelection(item, this.auctionService.mapped.value);
+    this.itemService.addToSelectionHistory({...this.selected});
     this.onItemSelection();
-
-    this.ignoreNextSelectionHistoryFormChange = true;
     this.itemSelectionHistoryForm.setValue(0);
-    Report.debug('selected', this.selected, item);
+    this.ignoreNextSelectionHistoryFormChange = true;
   }
 
-  private handleAuctionItem(item: any) {
-    this.selected.auctionItem = item;
-    this.selected.item = SharedService.items[item.itemID];
-    this.selected.pet = SharedService.pets[item.petSpeciesId];
-  }
 
-  private handleItemWithItemID(item: any) {
-    this.selected.auctionItem = this.auctionService.getById(item.itemID);
-    this.selected.item = SharedService.items[item.itemID];
-  }
-
-  private handleItemWithId(item: any) {
-    this.selected.auctionItem = this.auctionService.getById(item.id);
-    this.selected.item = SharedService.items[item.id];
-  }
-
-  private handlePet(item: any) {
-    this.selected.pet = SharedService.pets[item.speciesId];
-    const list = this.auctionService.list.value;
-    for (let i = 0, length = list.length; i < length; i++) {
-      if (list[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
-        this.selected.auctionItem = list[i];
-        this.selected.item = SharedService.items[this.selected.auctionItem.itemID];
-        return;
-      }
-    }
-  }
 }

@@ -46,9 +46,9 @@
 
 
 <wah-reset-charts
-        [newBuyout]="this.form.value * 10000"
+        [newBuyout]="form.value * 10000"
         [itemID]="auctionItem.itemID"
-        namePrefix="item"
+        [namePrefix]="dialogId + '-item'"
         (itemResetChange)="itemReset = $event"
         (resetPriceChange)="resetPrice = $event"
 ></wah-reset-charts>

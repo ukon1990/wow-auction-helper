@@ -9,6 +9,7 @@ import {DashboardV2} from '../../models/dashboard-v2.model';
 import {DashboardService} from '../../services/dashboard.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DetailsDialogComponent} from './details-dialog/details-dialog.component';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-dashboard-item',
@@ -37,6 +38,7 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
     this.sm.add(this.service.calculatedBoardEvent, (id) => {
       if (id === this.dashboard.id) {
         this.dashboard = this.service.map.value.get(id);
+        this.setColumns();
       }
     });
   }
@@ -68,6 +70,11 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
   setColumns(allColumns: boolean = this.allColumns): void {
     this.currentColumns = (this.isInDialogWindow || allColumns) ?
       this.dashboard.columns : this.dashboard.columns.slice(0, 4);
+    const nameColumns = this.dashboard.columns.filter(column =>
+      TextUtil.contains(column.key, 'name'));
+    if (nameColumns.length) {
+      this.filterParameter = nameColumns[0].key;
+    }
   }
 
   openClose(): void {

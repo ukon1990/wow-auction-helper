@@ -15,6 +15,8 @@ import {ChartData} from '../../../util/models/chart.model';
 })
 export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterContentInit {
   @Input() auctions: Auction[] = [];
+  @Input() dialogId: string;
+
   sm = new SubscriptionManager();
   medianPercentLimit: FormControl;
   medianPrice: number;
@@ -24,7 +26,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
   constructor(private auctionsService: AuctionsService) {
     const medianPercentLimit = localStorage.getItem(this.localStorageName);
     this.medianPercentLimit = new FormControl(medianPercentLimit ? +medianPercentLimit : 5);
-    this.sm.add(this.auctionsService.list, () => {
+    this.sm.add(this.auctionsService.mapped, () => {
       this.setAuctionAndDataset();
     });
     this.sm.add(this.medianPercentLimit.valueChanges,
@@ -44,22 +46,22 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
     this.sm.unsubscribe();
   }
 
-  private resetDailyChartData() {
+  private setCurrentPriceVariations(labels: string[], prices: number[], quantities: number[]) {
     this.datasets = {
-      labels: [],
+      labels,
       axisLabels: {
         yAxis1: 'Price',
         yAxis2: 'Quantity'
       },
       datasets: [{
         label: 'Min price',
-        data: [],
+        data: prices,
         type: 'line',
         yAxisID: 'yAxes-1',
         backgroundColor: 'rgba(0, 255, 22, 0.4)'
       }, {
         label: 'Quantity',
-        data: [],
+        data: quantities,
         type: 'line',
         yAxisID: 'yAxes-2',
         backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
@@ -70,7 +72,9 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
 
   private setAuctionAndDataset(medianPercentLimit: number = this.medianPercentLimit.value) {
     localStorage.setItem(this.localStorageName, '' + medianPercentLimit);
-    this.resetDailyChartData();
+    const quantities: number[] = [];
+    const prices: number[] = [];
+    const labels: string[] = [];
 
     if (this.auctions && this.auctions.length) {
       const unitPriceMap = {},
@@ -91,11 +95,12 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
       unitPrices
         .sort((a, b) => b.price - a.price)
         .forEach(({quantity, price}, index) => {
-          this.datasets.datasets[0].data.push(price);
-          this.datasets.datasets[1].data.push(quantity);
-          this.datasets.labels.push('');
+          prices.push(price);
+          quantities.push(quantity);
+          labels.push('');
         });
     }
+    this.setCurrentPriceVariations(labels, prices, quantities);
   }
 
   tooltipCallback(items, data): string {

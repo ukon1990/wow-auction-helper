@@ -270,9 +270,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     this.lastCalculationTime = +new Date();
     setTimeout(async () => {
       const timeDiff = +new Date() - this.lastCalculationTime;
-      if (timeDiff >= 500) {
+      if (timeDiff >= 1000) {
         await this.getCharacter(name);
       }
-    }, 500);
+    }, 1000);
   }
 }

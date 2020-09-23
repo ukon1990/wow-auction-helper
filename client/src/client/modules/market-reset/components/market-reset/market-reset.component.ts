@@ -12,6 +12,7 @@ import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {columnConfig} from '../../../dashboard/data/columns.data';
 
 @Component({
   selector: 'wah-market-reset',
@@ -95,7 +96,7 @@ export class MarketResetComponent implements OnInit {
         }
       });
 
-    Report.debug('getQuery', query, JSON.parse(queryString));
+    Report.debug('getQuery', query, queryString);
     return query;
   }
 
@@ -150,6 +151,8 @@ export class MarketResetComponent implements OnInit {
               name: item.name,
               icon: item.icon,
               percentOfMkt: bp.newBuyout / ai.mktPrice,
+              regionSaleRate: ai.regionSaleRate,
+              avgDailySold: ai.avgDailySold,
               ...bp
             };
           }
@@ -238,10 +241,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'potentialProfitPercent', title: 'ROI %', dataType: 'percent'});
     this.columns.push({key: 'potentialProfit', title: 'Profit', dataType: 'gold'});
     this.columns.push({key: 'newBuyout', title: 'New buyout', dataType: 'gold'});
-
-    if (Filters.isUsingAPI()) {
-      this.columns.push({key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'});
-    }
+    this.columns.push({key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'});
     this.columns.push({key: 'newVsCurrentBuyoutPercent', title: 'New vs current', dataType: 'percent'});
     this.columns.push({key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'});
     this.columns.push({key: 'sumBuyout', title: 'Total cost', dataType: 'gold'});
@@ -249,10 +249,9 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
     this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
-
-    if (Filters.isUsingAPI()) {
-      this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
-    }
+    this.columns.push(columnConfig.auction.avgDailySold);
+    this.columns.push(columnConfig.auction.regionSaleRate);
+    this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
   }
 
   setNewInputGoldValue(newValue: any, field: string) {

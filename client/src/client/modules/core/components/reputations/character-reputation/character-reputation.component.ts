@@ -46,11 +46,6 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
               private craftingService: CraftingService,
               private backgroundService: BackgroundDownloadService,
               private professionService: ProfessionService) {
-    this.sm.add(backgroundService.isInitialLoadCompleted, isDone => {
-      if (isDone) {
-        this.mapProfessions();
-      }
-    });
   }
 
   private shouldMap() {
@@ -59,25 +54,12 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
       CraftingService.list.value.length;
   }
 
-  ngAfterContentInit() {/*
-    this.sm.add(this.professionService.map,
-      map => {
-        this.professionMap = map;
-        if (this.shouldMap() && !this.relevantProfessions.length) {
-          this.mapProfessions();
-        }
-      });
-    this.sm.add(CraftingService.map, () => {
-      if (this.shouldMap() && !this.relevantProfessions.length) {
+  ngAfterContentInit() {
+    this.sm.add(this.backgroundService.isInitialLoadCompleted, isDone => {
+      if (isDone) {
         this.mapProfessions();
       }
     });
-
-    this.sm.add(this.auctionService.mapped, () => {
-      if (this.shouldMap()) {
-        this.mapProfessions();
-      }
-    });*/
   }
 
   ngOnDestroy(): void {

@@ -492,4 +492,66 @@ fdescribe('DashboardCalculateUtil', () => {
       expect(board.data[0]['[auctions].buyout']).toBe(thirdItem.auctions[0].buyout);
     });
   });
+
+  describe('Can combine item and recipe name', () => {
+    it('Should not combine transmutes', () => {
+      // TODO: Remember take non english locales into consideration
+      const board: DashboardV2 = getBoard([
+        {
+          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+          targetValueType: TargetValueEnum.NUMBER,
+          field: 'buyout',
+          toValue: 1,
+        }
+      ]);
+      board.columns.push(columnConfig.recipe.knownName);
+      const recipe = new Recipe();
+      recipe.name = 'Transmute: Mithril to Truesilver';
+      recipe.itemID = 2;
+
+      const item = new AuctionItem(2);
+      item.name = 'Truesilver';
+      item.buyout = 10;
+      item.source.recipe.known = [recipe];
+
+      const map = new Map<string, AuctionItem>();
+      map.set('2', item);
+
+      DashboardCalculateUtil.calculate(board, map);
+      expect(board.data[0][columnConfig.recipe.knownName.key])
+        .toBe(recipe.name);
+    });
+
+    it('Should combine bonus id items', () => {
+      const board: DashboardV2 = getBoard([
+        {
+          condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+          targetValueType: TargetValueEnum.NUMBER,
+          field: 'buyout',
+          toValue: 1,
+        }
+      ]);
+      board.columns.push(columnConfig.recipe.knownName);
+      const recipe = new Recipe();
+      recipe.name = 'Uncanny';
+      recipe.itemID = 2;
+
+      const item = new AuctionItem(2);
+      item.name = 'Uncanny of the Quickblade';
+      item.bonusIds = [1];
+      item.buyout = 10;
+      item.source.recipe.known = [recipe];
+
+      const map = new Map<string, AuctionItem>();
+      map.set('2', item);
+
+      DashboardCalculateUtil.calculate(board, map);
+      expect(board.data[0][columnConfig.recipe.knownName.key])
+        .toBe('Transmute: True silver');
+    });
+
+    it('Enchants should have the slot type first', () => {
+      // Enchant Ring - Accord of haste
+    });
+  });
 });

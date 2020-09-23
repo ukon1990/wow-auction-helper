@@ -7,19 +7,24 @@ export class LogRocketUtil {
   static init(): void {
     if (environment.production) {
       LogRocket.init('ovw5eo/wow-auction-helper');
-      this.identify();
     }
   }
 
   static newSession(): void {
-    LogRocket.startNewSession();
+    if (environment.production) {
+      LogRocket.startNewSession();
+    }
   }
 
   static identify(): void {
-    LogRocket.identify(generateUUID(), {
-      region: SharedService.user.region,
-      realm: SharedService.user.realm,
-      locale: SharedService.user.locale,
-    });
+    if (environment.production) {
+      const {region, realm} = SharedService.user;
+      // generateUUID()
+      LogRocket.identify(region ? `${realm}@${region}` : 'new_user', {
+        region: SharedService.user.region,
+        realm: SharedService.user.realm,
+        locale: SharedService.user.locale,
+      });
+    }
   }
 }
