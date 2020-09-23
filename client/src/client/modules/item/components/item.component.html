@@ -46,13 +46,14 @@
   -->
 </h1>
 
-<mat-dialog-content>
+<mat-dialog-content *ngIf="selected && selected.item">
   <div class="row col-md-12">
 
     <div class="col-md-4" *ngIf="selected.auctionItem">
       <strong>Expansion: </strong> {{ expansions[selected.item?.expansionId] }}
       <br>
       <wah-auction-item-details
+              [dialogId]="dialogRef.id"
               [item]="selected.auctionItem"></wah-auction-item-details>
     </div>
     <div [ngClass]="{'col-md-8': selected.auctionItem, 'col-md-12': !selected.auctionItem}">
@@ -70,14 +71,16 @@
 
         <mat-tab label="Price and quantity history" *ngIf="selected.auctionItem?.auctions">
           <wah-item-price-history *ngIf="selectedTab === 1"
+                                  [dialogId]="dialogRef.id"
                                   [item]="selected.item"
                                   [auctionItem]="selected.auctionItem">
           </wah-item-price-history>
         </mat-tab>
 
         <mat-tab label="Data from TSM">
-          <wah-tsm-tab *ngIf="selectedTab === 2"
+          <wah-tsm-tab *ngIf="selectedTab === 2 && selected?.item"
                        [item]="selected?.item"
+                       [dialogId]="dialogRef.id"
                        [auctionItem]="selected.auctionItem"></wah-tsm-tab>
         </mat-tab>
 
@@ -133,6 +136,7 @@
         </mat-tab>
         <mat-tab label="Reset cost calc" *ngIf="selected.auctionItem">
           <wah-reset-calc
+                  [dialogId]="dialogRef.id"
                   [auctionItem]="selected.auctionItem">¨
           </wah-reset-calc>
         </mat-tab>

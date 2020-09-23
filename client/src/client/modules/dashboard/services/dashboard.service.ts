@@ -145,17 +145,26 @@ export class DashboardService {
   }
 
   move(previousIndex: number, currentIndex: number) {
-    const board: DashboardV2 = this.list.value[previousIndex];
-    const targetBoard: DashboardV2 = this.list.value[currentIndex];
+    const list: DashboardV2[] = [...this.list.value];
+    const board: DashboardV2 = list[previousIndex];
+    const targetBoard: DashboardV2 = list[currentIndex];
 
-    board.sortOrder = currentIndex;
-    targetBoard.sortOrder = previousIndex;
+    try {
+      if (previousIndex === undefined || currentIndex === undefined) {
+        return;
+      }
+      board.sortOrder = currentIndex;
+      targetBoard.sortOrder = previousIndex;
 
-    moveItemInArray(this.list.value, previousIndex, currentIndex);
+      moveItemInArray(list, previousIndex, currentIndex);
 
-    this.list.value.forEach((dashboard, index) => {
-      dashboard.sortOrder = index;
-      this.save(dashboard, false);
-    });
+      list.forEach((dashboard, index) => {
+        dashboard.sortOrder = index;
+        this.save(dashboard, false);
+      });
+      this.list.next(list);
+    } catch (error) {
+      ErrorReport.sendError('DashboardService.move', error);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, SimpleChange} from '@angular/core';
 import {PageEvent} from '@angular/material/paginator';
 import {FormControl} from '@angular/forms';
 import {Report} from '../../../utils/report.util';
@@ -97,15 +97,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   /* istanbul ignore next */
-  ngOnChanges({data, itemsPerPage}: SimpleChanges) {
+  ngOnChanges({data, itemsPerPage, filterParameter}: SimpleChanges) {
     if (data && data.currentValue) {
       // this.pageEvent.length = change.data.currentValue.length;
       if (this.previousLength !== data.currentValue.length) {
         this.pageEvent.pageIndex = 0;
       }
 
-      setTimeout(() =>
-        this.handleDataChange(data));
+      this.handleDataChange([...data.currentValue],
+        filterParameter ? filterParameter.currentValue : undefined);
     }
 
     if (itemsPerPage && itemsPerPage.currentValue) {
@@ -113,13 +113,14 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  private handleDataChange(data) {
-    this.previousLength = data.currentValue.length;
-    this.filteredData = [...data.currentValue];
-    this.sorter.sort(this.filteredData);
+  private handleDataChange(data: any[], filterParameter: string) {
+    this.previousLength = data.length;
+    this.sorter.sort(data);
 
     if (this.filterParameter) {
-      this.filterData(this.searchField.value);
+      this.filterData(this.searchField.value, data, filterParameter);
+    } else {
+      this.filteredData = data;
     }
   }
 
@@ -127,20 +128,20 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  filterData(value: any): void {
-    if (!this.filterParameter || !this.data) {
-      this.filteredData = [...this.data];
+  filterData(value: any, data: any[] = this.data, filterParameter: string = this.filterParameter): void {
+    if (!this.filterParameter || !data) {
+      this.filteredData = data || [];
       return;
     }
 
     this.pageEvent.pageIndex = 0;
-    this.filteredData = this.data.filter(d => {
-      if (!d[this.filterParameter] && !SharedService.items[d.item]) {
+    this.filteredData = data.filter(d => {
+      if (!d[filterParameter] && !SharedService.items[d.item]) {
         return false;
       }
 
       const compareName = d[this.filterParameter] ?
-        d[this.filterParameter] : SharedService.items[d.item][this.filterParameter];
+        d[filterParameter] : SharedService.items[d.item][this.filterParameter];
       return TextUtil.isEmpty(value) || TextUtil.contains(compareName, value);
     });
   }
@@ -256,7 +257,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   /* istanbul ignore next */
   getItemName(name: string, item: any): string {
-    const id = this.getItemID(item);
     if (name !== undefined) {
       return name;
     }
@@ -268,6 +268,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges, OnDestroy {
       }
     }
 
+    const id = this.getItemID(item);
     if (this.getItem(id)) {
       return this.getItem(item[this.id]).name;
     }

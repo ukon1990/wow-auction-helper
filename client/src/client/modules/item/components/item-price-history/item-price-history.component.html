@@ -3,7 +3,7 @@
   <mat-tab-group>
     <mat-tab label="Chart">
       <wah-charts-data-sets
-              storageName="item-price-history-chart"
+              [storageName]="'item-price-history-chart-' + dialogId"
               [datasets]="fourteenDayHourByHour">
       </wah-charts-data-sets>
     </mat-tab>
@@ -19,7 +19,7 @@
   <mat-tab-group>
     <mat-tab label="Chart">
       <wah-charts-data-sets
-              storageName="item-price-daily-history-chart"
+              [storageName]="'item-price-daily-history-chart-' + dialogId"
               [datasets]="dateData">
       </wah-charts-data-sets>
     </mat-tab>

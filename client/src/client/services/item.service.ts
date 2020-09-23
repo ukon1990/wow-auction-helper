@@ -30,6 +30,7 @@ export class ItemService {
   private historyMap: BehaviorSubject<Map<number, Map<string, any>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   private sm = new SubscriptionManager();
+  selectionHistory: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
@@ -39,6 +40,10 @@ export class ItemService {
     this.sm.add(this.realmService.events.realmStatus, () => {
       this.historyMap.next(new Map());
     });
+  }
+
+  addToSelectionHistory(newValue: any): void {
+    this.selectionHistory.next( [newValue, ...this.selectionHistory.value]);
   }
 
   async loadItems(latestTimestamp: Date) {/*

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ItemRule} from '../../../models/rule.model';
@@ -13,7 +13,7 @@ import {SharedService} from '../../../../../services/shared.service';
   templateUrl: './item-rules.component.html',
   styleUrls: ['./item-rules.component.scss']
 })
-export class ItemRulesComponent implements OnInit, OnDestroy {
+export class ItemRulesComponent implements AfterViewInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() rules: ItemRule[];
   itemSearchForm: FormControl = new FormControl();
@@ -39,7 +39,7 @@ export class ItemRulesComponent implements OnInit, OnDestroy {
     this.sm.add(ItemService.mapped, (map) => this.items = map);
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if (this.rules) {
       this.formArray.clear();
       this.rules.forEach(rule =>
