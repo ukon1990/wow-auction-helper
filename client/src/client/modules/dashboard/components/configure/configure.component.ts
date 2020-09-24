@@ -90,7 +90,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
         ...this.dashboard,
         data: [...this.dashboard.data]
       }; // DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
-      this.isDefaultBoard = TextUtil.contains((this.dashboard as DashboardV2).id, 'default-');
+      this.isDefaultBoard = this.service.defaultMap.value.has(this.dashboard.id);
       Report.send('Editing existing board', 'Dashboard.ConfigureComponent');
     } else {
       Report.send('Creating new board', 'Dashboard.ConfigureComponent');
