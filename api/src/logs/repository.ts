@@ -1,6 +1,36 @@
 import {LogEntry} from '../models/log-entry.model';
 
-export class LogQuery {
+export class LogRepository {
+  static processList = `
+      SELECT id,
+             query_id as queryId,
+             tid,
+             command,
+             state,
+             time,
+             time_ms       as timeMs,
+             info,
+             stage,
+             max_stage     as maxStage,
+             progress,
+             ROUND(memory_used / 1024 / 1024) as memoryUsed,
+             examined_rows as examinedRows
+      FROM information_schema.processlist
+      WHERE info IS NOT NULL;`;
+
+  static tableSize = `
+      SELECT
+          TABLE_NAME AS 'name',
+          TABLE_ROWS as 'rows',
+          ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb
+      FROM
+          information_schema.TABLES
+      WHERE
+          TABLE_SCHEMA = '100680-wah'
+      ORDER BY
+          (DATA_LENGTH + INDEX_LENGTH)
+          DESC;`;
+
   static userEvent(entry: LogEntry): string {
     return `INSERT INTO \`100680-wah\`.\`event_log\` (
                   \`userId\`,

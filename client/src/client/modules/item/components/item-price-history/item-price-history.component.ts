@@ -93,12 +93,13 @@ export class ItemPriceHistoryComponent implements OnChanges {
   private setAuctionAndDataset() {
     this.resetHourlyChart();
     this.resetDailyChartData();
-
-    if (this.priceHistory && this.priceHistory.hourly.length) {
-      this.processHourlyData();
-    }
-    if (this.priceHistory && this.priceHistory.daily.length) {
-      this.processDailyData();
+    if (this.priceHistory) {
+      if (this.priceHistory.hourly && this.priceHistory.hourly.length) {
+        this.processHourlyData();
+      }
+      if (this.priceHistory.daily && this.priceHistory.daily.length) {
+        this.processDailyData();
+      }
     }
   }
 

@@ -1,0 +1,20 @@
+<h4>
+  Time: {{time | date:'full'}}
+</h4>
+
+<wah-data-table
+        filterParameter="info"
+        [columns]="columns"
+        [data]="processes"
+></wah-data-table>
+
+<wah-data-table
+        filterParameter="info"
+        [columns]="processHistoryColumns"
+        [data]="processHistory"
+></wah-data-table>
+
+<wah-data-table
+        [columns]="sizeColumns"
+        [data]="size"
+></wah-data-table>

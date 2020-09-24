@@ -28,6 +28,7 @@ import {NotificationSettingsComponent} from './settings/components/notification-
 import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
 import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/details.component';
 import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
+import {MonitorComponent} from './admin/components/monitor/monitor.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -153,6 +154,11 @@ const ADMIN_ROUTE: TitledRoute = {
   isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
   canActivate: [IsRegisteredService],
   children: [
+    {
+      title: 'Monitor',
+      component: MonitorComponent,
+      path: 'monitor'
+    },
     {
       title: 'Update and add items',
       component: UpdateComponent,
