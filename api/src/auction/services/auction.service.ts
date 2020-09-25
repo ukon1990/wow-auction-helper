@@ -206,11 +206,12 @@ export class AuctionService {
         reject('Blizzard Auth API is down');
         return;
       }
+
       conn.query(RealmQuery
         .selectAllUpdatableRealms())
         .then(async rows => {
           const basePerSecond = 1,
-            rps = rows.length / (60 - 2),
+            rps = rows.length / (40 - 2),
             requestsPerSecond = rows.length > 10 ? rps || basePerSecond : basePerSecond;
           const promiseThrottle = new PromiseThrottle({
               requestsPerSecond,
@@ -425,23 +426,27 @@ export class AuctionService {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
         const [auctions, region, ahId, fileName] = splitted;
-        await this.updateDBEntries(record, region, +ahId, fileName, conn)
-          .catch(console.error);
-        await Promise.all([
-          this.updateAllStatuses(region, conn)
-            .catch(err => console.error('Could not updateAllStatuses', err)),
-          this.createLastModifiedFile(+ahId, region, conn)
-            .catch(err => console.error('Could not createLastModifiedFile', err)),
-        ])
-          .catch(err => {
-            console.error(err);
-            reject(err);
-          });
-        await new StatsService().processRecord(record, conn)
-          .then(resolve)
-          .catch(err => {
-            console.error('Could not processAuctions');
-            reject(err);
+        this.updateDBEntries(record, region, +ahId, fileName, conn)
+          .then(async () => {
+            await Promise.all([
+              this.updateAllStatuses(region, conn)
+                .catch(err => console.error('Could not updateAllStatuses', err)),
+              this.createLastModifiedFile(+ahId, region, conn)
+                .catch(err => console.error('Could not createLastModifiedFile', err)),
+              new StatsService().processRecord(record, conn)
+                .catch(err => {
+                  console.error('Could not processAuctions', err);
+                }),
+            ])
+              .then(resolve)
+              .catch(err => {
+                console.error(err);
+                reject(err);
+              });
+          })
+          .catch(error => {
+            console.error(error);
+            reject(error);
           });
       }
     });
@@ -453,22 +458,38 @@ export class AuctionService {
       url = `${S3Handler.getBucketUrlForRegion(region, `auctions/${region}/${ahId}/${fileName}`)}`;
 
     return new Promise(async (resolve, reject) => {
+      let hasHadError = false;
       conn.query(RealmQuery.getHouse(ahId))
         .then(async (ah: AuctionHouseStatus) => {
           Promise.all([
             conn.query(RealmQuery
               .insertNewDumpLogRow(ahId, url, lastModified, ah[0].lastModified, fileSize))
-              .catch(console.error),
+              .catch(error => {
+                hasHadError = true;
+                console.log(error);
+              }),
             conn.query(RealmQuery
               .updateUrl(
                 ahId, url, lastModified, fileSize, await this.getDelay(ahId, conn)))
               .then(async () => {
                 console.log(`Successfully updated id=${ahId}`);
               })
-              .catch(console.error)
+              .catch(error => {
+                hasHadError = true;
+                console.log(error);
+              })
           ])
-            .then(() => resolve())
-            .catch(reject);
+            .then(() => {
+              if (hasHadError) {
+                reject();
+              } else {
+                resolve();
+              }
+            })
+            .catch((error) => {
+              console.error('An error occured in updateDBEntries', error);
+              reject(error);
+            });
 
         })
         .catch(reject);

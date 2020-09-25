@@ -11,9 +11,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DashboardCalculateUtil} from '../../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
-import {defaultBoards} from '../../data/default-doards.data';
+import {getDefaultDashboards} from '../../data/default-doards.data';
 import {DashboardService} from '../../services/dashboard.service';
 import {Report} from '../../../../utils/report.util';
+import {ProfessionService} from '../../../crafting/services/profession.service';
 
 @Component({
   selector: 'wah-configure',
@@ -78,14 +79,18 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<ConfigureComponent>,
     @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2 | any,
     private auctionService: AuctionsService,
-    public service: DashboardService) {
+    public service: DashboardService,
+    private professionService: ProfessionService) {
     this.populateForm(dashboard);
   }
 
   ngOnInit(): void {
     if (this.dashboard) {
-      this.tmpBoard = DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
-      this.isDefaultBoard = TextUtil.contains((this.dashboard as DashboardV2).id, 'default-');
+      this.tmpBoard = {
+        ...this.dashboard,
+        data: [...this.dashboard.data]
+      }; // DashboardCalculateUtil.calculate(this.dashboard, this.auctionService.mapped.value);
+      this.isDefaultBoard = this.service.defaultMap.value.has(this.dashboard.id);
       Report.send('Editing existing board', 'Dashboard.ConfigureComponent');
     } else {
       Report.send('Creating new board', 'Dashboard.ConfigureComponent');
@@ -97,10 +102,10 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       this.lastCalculationTime = +new Date();
       setTimeout(() => {
         const timeDiff = +new Date() - this.lastCalculationTime;
-        if (timeDiff >= 500) {
+        if (timeDiff >= 1000) {
           this.onEvent();
         }
-      }, 500);
+      }, 1000);
     });
   }
 
@@ -127,11 +132,10 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   onEvent(board: DashboardV2 = this.form.getRawValue()) {
     this.tmpBoard = DashboardCalculateUtil.calculate(board, this.auctionService.mapped.value);
     this.hasChanges = true;
-    console.log('onEvent.board', board);
   }
 
   onSave(): void {
-    if (this.dashboard.id) {
+    if (this.dashboard && this.dashboard.id) {
       Report.send('Saved existing board', 'Dashboard.ConfigureComponent');
     } else {
       Report.send('Saving a new board', 'Dashboard.ConfigureComponent');
@@ -153,7 +157,8 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   private getDefaultBoard(): DashboardV2 {
-    return defaultBoards.filter(board => board.id === this.dashboard.id)[0];
+    return getDefaultDashboards(this.professionService.list.value)
+      .filter(board => board.id === this.dashboard.id)[0];
   }
 
   onDelete() {
@@ -163,6 +168,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   reset(): void {
+    const defaultBoards = getDefaultDashboards(this.professionService.list.value);
     for (let i = 0; i < defaultBoards.length; i++) {
       if (this.dashboard.id === defaultBoards[i].id) {
         this.populateForm(defaultBoards[i]);

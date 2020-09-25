@@ -2,6 +2,7 @@ import {DashboardV2} from '../models/dashboard-v2.model';
 import {ConditionEnum} from '../types/condition.enum';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {columnConfig} from './columns.data';
+import {Profession} from '../../../../../../api/src/profession/model';
 
 const profitableCrafts: DashboardV2 = {
   id: 'default-profitable-crafts',
@@ -330,22 +331,7 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   lastModified: 1595541600000
 };
 
-const getKnownProfessionBoards: DashboardV2[] = [
-  {id: 794, name: 'Archaelogy'},
-  {id: 171, name: 'Alchemy'},
-  {id: 164, name: 'Blacksmithing'},
-  {id: 185, name: 'Cooking'},
-  {id: 202, name: 'Engineering'},
-  {id: 333, name: 'Enchanting'},
-  {id: 356, name: 'Fishing'},
-  {id: 182, name: 'Herbalism'},
-  {id: 773, name: 'Inscription'},
-  {id: 755, name: 'Jewelcrafting'},
-  {id: 165, name: 'Leatherworking'},
-  {id: 186, name: 'Mining'},
-  {id: 393, name: 'Skinning'},
-  {id: 197, name: 'Tailoring'}
-].map(p => (
+const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => professions.map(p => (
   {
   id: 'default-get-known-profession-' + p.id,
   idIsBackendGenerated: false,
@@ -383,10 +369,10 @@ const getKnownProfessionBoards: DashboardV2[] = [
   lastModified: 1595541600000
 }));
 
-export const defaultBoards: DashboardV2[] = [
+export const getDefaultDashboards = (professions: Profession[]): DashboardV2[] => [
   profitableCrafts,
   profitableKnownCrafts,
-  ...getKnownProfessionBoards,
+  ...getKnownProfessionBoards(professions),
   potentialDeals,
   potentialBidDeals,
   potentialBidDealsWith2HOrLessLeft,

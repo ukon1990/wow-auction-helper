@@ -62,6 +62,9 @@
                 </span>
               </span>
             </span>
+            <span *ngSwitchCase="'profession'">
+              {{professionIdMap.get(d[c.key])?.name }}
+            </span>
             <span *ngSwitchCase="'date'">
               {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
             </span>

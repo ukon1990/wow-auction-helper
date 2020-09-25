@@ -40,7 +40,6 @@ export class ResetChartsComponent implements OnChanges {
   }
 
   ngOnChanges({newBuyout, itemID}: SimpleChanges) {
-    console.log('onChanges', {newBuyout, itemID});
     if (itemID && itemID.currentValue) {
       this.auctionItem = this.auctionService.getById(itemID.currentValue);
       if (this.auctionItem) {

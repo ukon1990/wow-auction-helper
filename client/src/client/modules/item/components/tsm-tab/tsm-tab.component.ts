@@ -12,6 +12,7 @@ import {Report} from '../../../../utils/report.util';
 export class TsmTabComponent implements OnInit {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
+  @Input() dialogId: string;
   factionId: number;
   personalSaleRate;
 

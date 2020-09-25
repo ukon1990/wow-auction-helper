@@ -5,14 +5,14 @@ import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {defaultBoards} from '../data/default-doards.data';
+import {getDefaultDashboards} from '../data/default-doards.data';
 import {ErrorReport} from '../../../utils/error-report.util';
 import generateUUID from '../../../utils/uuid.util';
 import {ObjectUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 import {Report} from '../../../utils/report.util';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
-import {DashboardMigrationUtil} from '../utils/dashboard-migration.util';
+import {ProfessionService} from '../../crafting/services/profession.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,14 +22,23 @@ export class DashboardService {
   allBoardsCalculatedEvent: BehaviorSubject<number | boolean> = new BehaviorSubject<number | boolean>(false);
   list: BehaviorSubject<DashboardV2[]> = new BehaviorSubject<DashboardV2[]>([]);
   map: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
+  defaultMap: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
 
   private sm = new SubscriptionManager();
 
-  constructor(private auctionsService: AuctionsService, private db: DatabaseService) {
-    this.init()
-      .catch(error => ErrorReport.sendError('DashboardService.init', error));
-    this.sm.add(this.auctionsService.mapped,
-      (map) => this.calculateAll(map));
+  constructor(private auctionsService: AuctionsService, private db: DatabaseService,
+              private professionService: ProfessionService) {
+    this.sm.add(this.professionService.listWithRecipes, () => {
+      this.sm.unsubscribeById('auctions');
+
+      this.init()
+        .catch(error => ErrorReport.sendError('DashboardService.init', error));
+      this.sm.add(this.auctionsService.mapped,
+        (map) => this.calculateAll(map),
+        {
+          id: 'auctions'
+        });
+    });
   }
 
   async init(): Promise<void> {
@@ -50,30 +59,29 @@ export class DashboardService {
   }
 
   private async restore(): Promise<void> {
+    const defaultBoards = getDefaultDashboards(this.professionService.listWithRecipes.value);
     const dashboards: DashboardV2[] = [];
     const restoredMap: Map<string, DashboardV2> = new Map();
+    const defaultMap: Map<string, DashboardV2> = new Map();
     await this.db.getDashboards()
       .then(restored => {
         restored.forEach(board => {
           dashboards.push(board);
           restoredMap.set(board.id, board);
         });
-        Report.debug('DashboardService.restore', restored);
+        Report.debug('DashboardService.restore', restored, this.professionService.listWithRecipes.value);
       })
       .catch(error =>
         ErrorReport.sendError('DashboardService.restore', error));
 
     defaultBoards.forEach(board => {
+      defaultMap.set(board.id, board);
       if (!restoredMap.has(board.id)) {
         dashboards.push(ObjectUtil.clone(board) as DashboardV2);
-      } else {
-        Report.debug('Modified default board', {
-          original: board,
-          modified: restoredMap.get(board.id)
-        });
       }
     });
 
+    this.defaultMap.next(defaultMap);
     this.list.next(
       dashboards.sort((a, b) =>
         a.sortOrder - b.sortOrder));
@@ -82,8 +90,8 @@ export class DashboardService {
   }
 
 
-
   reset(dashboard: DashboardV2): void {
+    const defaultBoards = getDefaultDashboards(this.professionService.list.value);
     for (let i = 0; i < defaultBoards.length; i++) {
       if (dashboard.id === defaultBoards[i].id) {
         this.map.value.set(dashboard.id, defaultBoards[i]);
@@ -115,6 +123,7 @@ export class DashboardService {
 
     if (!this.map.value.has(board.id)) {
       this.list.value.unshift(board);
+      this.list.next([...this.list.value]);
     }
     this.map.value.set(board.id, board);
     this.db.addDashboards([{
@@ -135,17 +144,26 @@ export class DashboardService {
   }
 
   move(previousIndex: number, currentIndex: number) {
-    const board: DashboardV2 = this.list.value[previousIndex];
-    const targetBoard: DashboardV2 = this.list.value[currentIndex];
+    const list: DashboardV2[] = [...this.list.value];
+    const board: DashboardV2 = list[previousIndex];
+    const targetBoard: DashboardV2 = list[currentIndex];
 
-    board.sortOrder = currentIndex;
-    targetBoard.sortOrder = previousIndex;
+    try {
+      if (previousIndex === undefined || currentIndex === undefined) {
+        return;
+      }
+      board.sortOrder = currentIndex;
+      targetBoard.sortOrder = previousIndex;
 
-    moveItemInArray(this.list.value, previousIndex, currentIndex);
+      moveItemInArray(list, previousIndex, currentIndex);
 
-    this.list.value.forEach((dashboard, index) => {
-      dashboard.sortOrder = index;
-      this.save(dashboard, false);
-    });
+      list.forEach((dashboard, index) => {
+        dashboard.sortOrder = index;
+        this.save(dashboard, false);
+      });
+      this.list.next(list);
+    } catch (error) {
+      ErrorReport.sendError('DashboardService.move', error);
+    }
   }
 }

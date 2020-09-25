@@ -1,4 +1,5 @@
-<div [class]="sideBySide ? 'row' : ''">
+<div *ngIf="datasets.labels.length"
+     [class]="sideBySide ? 'row' : ''">
   <wah-charts-data-sets
           [class]="sideBySide ? 'col-md-6' : ''"
           [storageName]="namePrefix + '-price-reset-chart'"

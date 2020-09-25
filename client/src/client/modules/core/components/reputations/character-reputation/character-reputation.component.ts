@@ -16,6 +16,7 @@ import {Profession} from '../../../../../../../../api/src/profession/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
 import {ReputationVendor} from '../../../../../models/reputation.model';
+import {BackgroundDownloadService} from '../../../services/background-download.service';
 
 @Component({
   selector: 'wah-character-reputation',
@@ -43,29 +44,19 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
   constructor(private characterService: CharacterService,
               private auctionService: AuctionsService,
               private craftingService: CraftingService,
+              private backgroundService: BackgroundDownloadService,
               private professionService: ProfessionService) {
   }
 
   private shouldMap() {
-    return this.professionService.list.value.length && this.auctionService.list.value.length && CraftingService.list.value.length;
+    return this.professionService.list.value.length &&
+      this.auctionService.list.value.length &&
+      CraftingService.list.value.length;
   }
 
   ngAfterContentInit() {
-    this.sm.add(this.professionService.map,
-      map => {
-        this.professionMap = map;
-        if (this.shouldMap() && !this.relevantProfessions.length) {
-          this.mapProfessions();
-        }
-      });
-    this.sm.add(CraftingService.map, () => {
-      if (this.shouldMap() && !this.relevantProfessions.length) {
-        this.mapProfessions();
-      }
-    });
-
-    this.sm.add(this.auctionService.mapped, () => {
-      if (this.shouldMap()) {
+    this.sm.add(this.backgroundService.isInitialLoadCompleted, isDone => {
+      if (isDone) {
         this.mapProfessions();
       }
     });
@@ -100,13 +91,14 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
         const charProfessions: CharacterProfession[] = this.character.professions[type];
         charProfessions.forEach((profession: CharacterProfession) => {
           const knownRecipes = new Map<number, Recipe[]>();
-          profession.skillTiers.forEach(skillTier => {
+          (profession.skillTiers || []).forEach(skillTier => {
             this.setKnownRecipesMap(skillTier.recipes, knownRecipes);
           });
+          const prof: Profession = this.professionMap.get(profession.id);
 
           this.relevantProfessionsMap.set(profession.id, {
             id: profession.id,
-            name: this.professionMap.get(profession.id).name,
+            name: prof ? prof.name : '',
             reputations: [],
             knownRecipes
           });
@@ -162,10 +154,12 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
     ids.forEach(id => {
       const recipe: Recipe = CraftingService.map.value.get(id);
 
-      if (!knownRecipes.has(recipe.itemID)) {
-        knownRecipes.set(recipe.itemID, []);
+      if (recipe) {
+        if (!knownRecipes.has(recipe.itemID)) {
+          knownRecipes.set(recipe.itemID, []);
+        }
+        knownRecipes.get(recipe.itemID).push(recipe);
       }
-      knownRecipes.get(recipe.itemID).push(recipe);
     });
   }
 

@@ -21,12 +21,14 @@ import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {TsmService} from '../../tsm/tsm.service';
+import {LogRocketUtil} from '../../../utils/log-rocket.util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackgroundDownloadService {
   isLoading = new BehaviorSubject(false);
+  isInitialLoadCompleted: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   timestamps = {
     items: localStorage['timestamp_items'],
@@ -65,6 +67,7 @@ export class BackgroundDownloadService {
     this.subs.add(this.dbService.databaseIsReady, async (isReady) => {
       if (isReady) {
         await this.init();
+        this.isInitialLoadCompleted.next(true);
       }
     });
 
@@ -82,6 +85,7 @@ export class BackgroundDownloadService {
 
   async init(): Promise<void> {
     const {realm, region} = SharedService.user;
+    LogRocketUtil.identify();
     const hasRealmAndRegion: boolean = !!(region && realm);
 
     if (hasRealmAndRegion) {
@@ -95,7 +99,6 @@ export class BackgroundDownloadService {
       this.loggLoadingTime(startTimestamp);
       this.isLoading.next(false);
     }
-
   }
 
   private async initiateRealmSpecificDownloads(region: string, realm: string) {
