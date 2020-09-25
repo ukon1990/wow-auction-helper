@@ -13,7 +13,7 @@ import {ItemService} from '../../../services/item.service';
 import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
-import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
+import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {

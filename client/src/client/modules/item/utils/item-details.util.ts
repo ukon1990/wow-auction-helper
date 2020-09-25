@@ -1,10 +1,9 @@
 import {Report} from '../../../utils/report.util';
-import {AuctionItemStat} from '../../../../../../api/src/auction/utils/auction-processor.util';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SharedService} from '../../../services/shared.service';
 import {Pet} from '../../pet/models/pet';
 import {Item} from '../../../models/item/item';
-import {BehaviorSubject} from 'rxjs';
+import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 
 interface ItemSelection {
   auctionItem: AuctionItem;

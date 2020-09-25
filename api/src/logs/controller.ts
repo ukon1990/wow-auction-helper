@@ -35,10 +35,10 @@ exports.getLog = (event: APIGatewayEvent, context: Context, callback: Callback) 
 };
 
 exports.getCurrentQueries = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  /*if (!process.env.IS_OFFLINE) {
+  if (!process.env.IS_OFFLINE) {
     Response.error(callback, new Error('Not authorized'), event, 401);
     return;
-  }*/
+  }
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).getCurrentQueries()
     .then((data) => Response.send(data, callback))
@@ -46,10 +46,10 @@ exports.getCurrentQueries = (event: APIGatewayEvent, context: Context, callback:
 };
 
 exports.getTableSize = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  /*if (!process.env.IS_OFFLINE) {
+  if (!process.env.IS_OFFLINE) {
     Response.error(callback, new Error('Not authorized'), event, 401);
     return;
-  }*/
+  }
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).getTableSize()
     .then((data) => Response.send(data, callback))
@@ -57,10 +57,10 @@ exports.getTableSize = (event: APIGatewayEvent, context: Context, callback: Call
 };
 
 exports.getGlobalStatus = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  /*if (!process.env.IS_OFFLINE) {
+  if (!process.env.IS_OFFLINE) {
     Response.error(callback, new Error('Not authorized'), event, 401);
     return;
-  }*/
+  }
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).getGlobalStatus()
     .then((data) => Response.send(data, callback))
