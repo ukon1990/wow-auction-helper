@@ -305,6 +305,18 @@ functions:
           path: logger/tables
           cors:
             origin: 'http://localhost:4200'
+  loggerGetGlobalStatus:
+    tags:
+      Function: Wah-loggerGetGlobalStatus
+      Project: WAH
+    handler: src/logs/controller.getGlobalStatus
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/tables
+          cors:
+            origin: 'http://localhost:4200'
   loggerQueries:
     tags:
       Function: Wah-loggerGetCurrentQueries

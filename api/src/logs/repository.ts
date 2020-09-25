@@ -1,6 +1,7 @@
 import {LogEntry} from '../models/log-entry.model';
 
 export class LogRepository {
+  static globalStatus = `show global status;`;
   static processList = `
       SELECT id,
              query_id as queryId,

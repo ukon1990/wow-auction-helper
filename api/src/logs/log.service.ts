@@ -36,8 +36,6 @@ export class LogService {
         userAgent: this.detail.userAgent,
       };
 
-      console.log('details', this.detail);
-
       if (isNotAWSAPI && (requestData.ahId || requestData.type === 'tsm')) {
         const sql = LogRepository.s3Event(requestData);
         this.conn
@@ -106,5 +104,21 @@ export class LogService {
 
   getTableSize(): Promise<TableSize[]> {
     return this.conn.query(LogRepository.tableSize);
+  }
+
+  getGlobalStatus(): Promise<TableSize[]> {
+    return new Promise<any>((resolve, reject) => {
+      this.conn.query(LogRepository.globalStatus)
+        .then((status: { Variable_name: string, Value: any }[]) => {
+          const result = {};
+
+          status.forEach(s => {
+            result[s.Variable_name] = isNaN(s.Value) ? s.Value : +s.Value;
+          });
+
+          resolve(result);
+        })
+        .catch(reject);
+    });
   }
 }

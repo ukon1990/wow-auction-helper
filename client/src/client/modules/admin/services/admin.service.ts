@@ -15,4 +15,8 @@ export class AdminService {
   getTableSize(): Promise<TableSize[]> {
     return this.http.get(`http://localhost:3000/logger/tables`).toPromise() as Promise<TableSize[]>;
   }
+
+  getGlobalStatus(): Promise<any> {
+    return this.http.get(`http://localhost:3000/logger/global-status`).toPromise() as Promise<TableSize[]>;
+  }
 }
