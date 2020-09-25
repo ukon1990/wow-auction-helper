@@ -32,6 +32,7 @@ npm-debug.log
 testem.log
 /client/typings
 *.log
+.package-lock.json
 
 # e2e
 /e2e/*.js
