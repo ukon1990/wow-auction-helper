@@ -8,24 +8,31 @@ export class LogRepository {
     'Threads_connected',
     'Uptime'
     );`;
+
+  static activeQueryCount = `
+      SELECT count(*) as activeQueries
+      FROM information_schema.processlist
+      WHERE info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
+         OR info LIKE '%DELETE FROM%'`;
+
   static processList = `
       SELECT id,
-             query_id as queryId,
+             query_id                         as queryId,
              tid,
              command,
              state,
              time,
-             time_ms       as timeMs,
+             time_ms                          as timeMs,
              info,
              stage,
-             max_stage     as maxStage,
+             max_stage                        as maxStage,
              progress,
              ROUND(memory_used / 1024 / 1024) as memoryUsed,
-             examined_rows as examinedRows
+             examined_rows                    as examinedRows
       FROM information_schema.processlist
-      WHERE info IS NOT NULL AND
-            info NOT LIKE '%SHOW GLOBAL STATUS%' AND
-            info NOT LIKE '%information_schema.processlist%';`;
+      WHERE info IS NOT NULL
+        AND info NOT LIKE '%SHOW GLOBAL STATUS%'
+        AND info NOT LIKE '%information_schema.processlist%';`;
 
   static tableSize = `
       SELECT TABLE_NAME                                        AS 'name',

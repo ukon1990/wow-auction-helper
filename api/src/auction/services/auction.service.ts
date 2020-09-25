@@ -16,6 +16,7 @@ import {AuctionHouseStatus} from '../../../../client/src/client/modules/auction/
 import {AuctionResponse} from '../../models/auction/auctions-response';
 import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 import {StatsService} from './stats.service';
+import {LogRepository} from '../../logs/repository';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -207,36 +208,46 @@ export class AuctionService {
         return;
       }
 
-      conn.query(RealmQuery
-        .selectAllUpdatableRealms())
-        .then(async rows => {
-          const basePerSecond = 1,
-            rps = rows.length / (40 - 2),
-            requestsPerSecond = rows.length > 10 ? rps || basePerSecond : basePerSecond;
-          const promiseThrottle = new PromiseThrottle({
-              requestsPerSecond,
-              promiseImplementation: Promise
-            }),
-            promises = [];
-          console.log(`Updating ${rows.length} houses.`);
+      conn.query(LogRepository.activeQueryCount)
+        .then((active: {activeQueries: number}[]) => {
+          console.log('Num of Active queries', active);
+          if (active && active[0] && active[0].activeQueries < 30) {
+            conn.query(RealmQuery
+              .selectAllUpdatableRealms())
+              .then(async rows => {
+                const basePerSecond = 1,
+                  rps = rows.length / (40 - 2),
+                  requestsPerSecond = rows.length > 10 ? rps || basePerSecond : basePerSecond;
+                const promiseThrottle = new PromiseThrottle({
+                    requestsPerSecond,
+                    promiseImplementation: Promise
+                  }),
+                  promises = [];
+                console.log(`Updating ${rows.length} houses.`);
 
 
-          rows.forEach(row => {
-            if (region && row.region !== region) {
-              return;
-            }
-            this.addUpdateHousePromise(promises, promiseThrottle, row);
-          });
+                rows.forEach(row => {
+                  if (region && row.region !== region) {
+                    return;
+                  }
+                  this.addUpdateHousePromise(promises, promiseThrottle, row);
+                });
 
-          await Promise.all(promises)
-            .then(() =>
-              console.log('Done initiating AH updates'))
-            .catch(console.error);
+                await Promise.all(promises)
+                  .then(() =>
+                    console.log('Done initiating AH updates'))
+                  .catch(console.error);
 
-          resolve({
-            message: `Updating ${rows.length} houses.`,
-            rows
-          });
+                resolve({
+                  message: `Updating ${rows.length} houses.`,
+                  rows
+                });
+              })
+              .catch(reject);
+          } else {
+            console.error('Too many active queries: ', active);
+            reject('Too many active queries');
+          }
         })
         .catch(reject);
     });
