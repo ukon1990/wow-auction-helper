@@ -1,6 +1,13 @@
 import {LogEntry} from '../models/log-entry.model';
 
 export class LogRepository {
+  static globalStatus = `
+    SHOW GLOBAL STATUS
+    WHERE Variable_name IN (
+    'Max_used_connections',
+    'Threads_connected',
+    'Uptime'
+    );`;
   static processList = `
       SELECT id,
              query_id as queryId,
@@ -16,19 +23,17 @@ export class LogRepository {
              ROUND(memory_used / 1024 / 1024) as memoryUsed,
              examined_rows as examinedRows
       FROM information_schema.processlist
-      WHERE info IS NOT NULL;`;
+      WHERE info IS NOT NULL AND
+            info NOT LIKE '%SHOW GLOBAL STATUS%' AND
+            info NOT LIKE '%information_schema.processlist%';`;
 
   static tableSize = `
-      SELECT
-          TABLE_NAME AS 'name',
-          TABLE_ROWS as 'rows',
-          ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb
-      FROM
-          information_schema.TABLES
-      WHERE
-          TABLE_SCHEMA = '100680-wah'
-      ORDER BY
-          (DATA_LENGTH + INDEX_LENGTH)
+      SELECT TABLE_NAME                                        AS 'name',
+             TABLE_ROWS                                        as 'rows',
+             ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb
+      FROM information_schema.TABLES
+      WHERE TABLE_SCHEMA = '100680-wah'
+      ORDER BY (DATA_LENGTH + INDEX_LENGTH)
           DESC;`;
 
   static userEvent(entry: LogEntry): string {

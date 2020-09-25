@@ -14,6 +14,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MonitorComponent } from './components/monitor/monitor.component';
 import {AdminService} from './services/admin.service';
+import {UtilModule} from '../util/util.module';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import {AdminService} from './services/admin.service';
     MatSelectModule,
     MatInputModule,
     MatTabsModule,
-    TableModule
+    TableModule,
+    UtilModule
   ],
   providers: [AdminService]
 })

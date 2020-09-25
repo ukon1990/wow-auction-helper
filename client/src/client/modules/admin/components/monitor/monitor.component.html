@@ -2,6 +2,11 @@
   Time: {{time | date:'full'}}
 </h4>
 
+<wah-charts-data-sets *ngIf="datasets"
+        storageName="connection-status"
+  [datasets]="datasets"
+></wah-charts-data-sets>
+
 <wah-data-table
         filterParameter="info"
         [columns]="columns"
