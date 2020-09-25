@@ -1,12 +1,11 @@
+import {StatsBase} from './stats-base.model';
+
 export interface Stats {
   months: Stat[];
   days: Stat[];
 }
 
-export interface Stat {
-  itemId: number;
-  petSpeciesId: number;
-  bonusIds: string;
+export interface Stat extends StatsBase {
 
   price: {
     trend: number;

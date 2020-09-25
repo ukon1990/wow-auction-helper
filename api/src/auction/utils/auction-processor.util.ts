@@ -4,6 +4,7 @@
 */
 import {Auction} from '../../models/auction/auction';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
+import {ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 
 export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number): {
@@ -120,7 +121,7 @@ export class AuctionProcessorUtil {
     }
   }
 
-  static processHourlyPriceData(result) {
+  static processHourlyPriceData(result: AuctionItemStat[]): ItemPriceEntry[] {
     const list = [];
     result.forEach(entry => {
       for (let i = 0, maxHours = 23; i <= maxHours; i++) {
