@@ -50,3 +50,7 @@ scripts/json
 server-legacy/secrets/secrets\.js
 .env
 secrets.ts
+
+api/package-lock.json
+
+client/package-lock.json
