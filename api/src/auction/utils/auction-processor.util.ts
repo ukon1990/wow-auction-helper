@@ -3,15 +3,20 @@
   Is to gather price statistics for the lowest, highest and avg prices
 */
 import {Auction} from '../../models/auction/auction';
-import {AuctionQuery} from '../auction.query';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 
 export class AuctionProcessorUtil {
-  static process(auctions: Auction[], lastModified: number, ahId: number): string {
+  static process(auctions: Auction[], lastModified: number, ahId: number): {
+    list: AuctionItemStat[];
+    hour: number;
+  } {
     const start = +new Date();
-    const list: AuctionItemStat[] = [], map = {}, queries = [], hour = new Date(lastModified).getUTCHours();
+    const list: AuctionItemStat[] = [], map = {}, hour = new Date(lastModified).getUTCHours();
     if (!auctions) {
-      return '';
+      return {
+        list: [],
+        hour
+      };
     }
     const date = new Date(lastModified),
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
@@ -20,7 +25,10 @@ export class AuctionProcessorUtil {
       this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour));
     }
     console.log(`Processed ${auctions.length} in ${+new Date() - start} ms`);
-    return AuctionQuery.multiInsertOrUpdate(list, hour);
+    return {
+      list,
+      hour
+    };
   }
 
   private static processAuction(map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string) {
