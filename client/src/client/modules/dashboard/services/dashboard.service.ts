@@ -22,12 +22,13 @@ export class DashboardService {
   allBoardsCalculatedEvent: BehaviorSubject<number | boolean> = new BehaviorSubject<number | boolean>(false);
   list: BehaviorSubject<DashboardV2[]> = new BehaviorSubject<DashboardV2[]>([]);
   map: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
+  defaultMap: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
 
   private sm = new SubscriptionManager();
 
   constructor(private auctionsService: AuctionsService, private db: DatabaseService,
               private professionService: ProfessionService) {
-    this.sm.add(this.professionService.list, () => {
+    this.sm.add(this.professionService.listWithRecipes, () => {
       this.sm.unsubscribeById('auctions');
 
       this.init()
@@ -58,31 +59,29 @@ export class DashboardService {
   }
 
   private async restore(): Promise<void> {
-    const defaultBoards = getDefaultDashboards(this.professionService.list.value);
+    const defaultBoards = getDefaultDashboards(this.professionService.listWithRecipes.value);
     const dashboards: DashboardV2[] = [];
     const restoredMap: Map<string, DashboardV2> = new Map();
+    const defaultMap: Map<string, DashboardV2> = new Map();
     await this.db.getDashboards()
       .then(restored => {
         restored.forEach(board => {
           dashboards.push(board);
           restoredMap.set(board.id, board);
         });
-        Report.debug('DashboardService.restore', restored);
+        Report.debug('DashboardService.restore', restored, this.professionService.listWithRecipes.value);
       })
       .catch(error =>
         ErrorReport.sendError('DashboardService.restore', error));
 
     defaultBoards.forEach(board => {
+      defaultMap.set(board.id, board);
       if (!restoredMap.has(board.id)) {
         dashboards.push(ObjectUtil.clone(board) as DashboardV2);
-      } else {
-        Report.debug('Modified default board', {
-          original: board,
-          modified: restoredMap.get(board.id)
-        });
       }
     });
 
+    this.defaultMap.next(defaultMap);
     this.list.next(
       dashboards.sort((a, b) =>
         a.sortOrder - b.sortOrder));

@@ -12,13 +12,17 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
+import { MonitorComponent } from './components/monitor/monitor.component';
+import {AdminService} from './services/admin.service';
+import {UtilModule} from '../util/util.module';
 
 
 @NgModule({
   declarations: [
     UpdateComponent,
     AddItemsComponent,
-    AddNpcsComponent
+    AddNpcsComponent,
+    MonitorComponent,
   ],
   imports: [
     CommonModule,
@@ -30,8 +34,10 @@ import {MatTabsModule} from '@angular/material/tabs';
     MatSelectModule,
     MatInputModule,
     MatTabsModule,
-    TableModule
-  ]
+    TableModule,
+    UtilModule
+  ],
+  providers: [AdminService]
 })
 export class AdminModule {
 }
