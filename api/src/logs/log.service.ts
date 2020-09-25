@@ -3,7 +3,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {LogRepository} from './repository';
 import {LogEntry} from '../models/log-entry.model';
-import {SQLProcess, TableSize} from './model';
+import {GlobalStatus, SQLProcess, TableSize} from './model';
 
 const crypto = require('crypto');
 
@@ -106,7 +106,7 @@ export class LogService {
     return this.conn.query(LogRepository.tableSize);
   }
 
-  getGlobalStatus(): Promise<TableSize[]> {
+  getGlobalStatus(): Promise<GlobalStatus> {
     return new Promise<any>((resolve, reject) => {
       this.conn.query(LogRepository.globalStatus)
         .then((status: { Variable_name: string, Value: any }[]) => {

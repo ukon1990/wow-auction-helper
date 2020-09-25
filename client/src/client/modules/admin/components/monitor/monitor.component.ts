@@ -1,10 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
-import {SQLProcess, TableSize} from '../../../../../../../api/src/logs/model';
+import {GlobalStatus, SQLProcess, TableSize} from '../../../../../../../api/src/logs/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {interval, Observable} from 'rxjs';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {MonitorUtil} from '../../utils/monitor.util';
+import {ChartData} from '../../../util/models/chart.model';
 
 @Component({
   selector: 'wah-monitor',
@@ -42,15 +44,20 @@ export class MonitorComponent implements OnDestroy {
     {key: 'info', title: 'SQL', dataType: 'string'},
   ];
   time: Date;
+  globalStatuses: GlobalStatus[] = [];
+
 
   private statusInterval: Observable<number> = interval(500);
   private timeInterval: Observable<number> = interval(1000);
   private tableSizeInterval: Observable<number> = interval(10000);
+  private globalStatusInterval: Observable<number> = interval(2500);
 
   sm = new SubscriptionManager();
+  datasets: ChartData;
 
   constructor(private service: AdminService) {
     this.getSize();
+    this.getGlobalStatus();
 
     this.sm.add(this.statusInterval,
       () => {
@@ -61,6 +68,7 @@ export class MonitorComponent implements OnDestroy {
       });
     this.sm.add(this.timeInterval, () => this.time = new Date());
     this.sm.add(this.tableSizeInterval, () => this.getSize());
+    this.sm.add(this.globalStatusInterval, () => this.getGlobalStatus());
   }
 
   private getId(process: SQLProcess): string {
@@ -104,5 +112,17 @@ export class MonitorComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.sm.unsubscribe();
+  }
+
+  private getGlobalStatus() {
+    this.service.getGlobalStatus()
+      .then(status => {
+        this.globalStatuses.push({
+          ...status,
+          timestamp: new Date()
+        });
+        this.datasets = MonitorUtil.getDataset(this.globalStatuses);
+      })
+      .catch(console.error);
   }
 }

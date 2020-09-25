@@ -314,7 +314,7 @@ functions:
     events:
       - http:
           method: get
-          path: logger/tables
+          path: logger/global-status
           cors:
             origin: 'http://localhost:4200'
   loggerQueries:
