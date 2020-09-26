@@ -6,6 +6,7 @@ import {environment} from '../../../../client/src/environments/environment';
 import {AuthHandler} from '../../handlers/auth.handler';
 import {BLIZZARD} from '../../secrets';
 import {StatsService} from './stats.service';
+import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -123,47 +124,49 @@ describe('AuctionHandler', () => {
         const realmId = 207, interval = 40;
         for (let id = realmId; id <= realmId + interval; id++) {// 242
           const bucket = 'wah-data-' + s3Region.id;
-          const list = await s3.list(bucket, `auctions/${region}/${id}/`)
-            .catch(console.error);
-          const day = 3;
-          const startDay = +new Date(`5/${day}/2020`),
-            endDay = +new Date(`5/4/2020`), // max: 1/21/2020
-            filteredFiles = list.Contents.filter(file =>
-              +new Date(file.LastModified) >= startDay &&
-              +new Date(file.LastModified) <= endDay)
-              .sort((a, b) =>
-                +new Date(b.LastModified) - +new Date(a.LastModified));
+          s3.list(bucket, `auctions/${region}/${id}/`, 999999)
+            .then(list => {
+              const day = 3;
+              const startDay = +new Date(`5/${day}/2020`),
+                endDay = +new Date(`5/4/2020`), // max: 1/21/2020
+                filteredFiles = list.Contents.filter(file =>
+                  +new Date(file.LastModified) >= startDay &&
+                  +new Date(file.LastModified) <= endDay)
+                  .sort((a, b) =>
+                    +new Date(b.LastModified) - +new Date(a.LastModified));
 
-          totalLength += filteredFiles.length;
-          for (const file of filteredFiles) {
-            promises.push(promiseThrottle.add(() =>
-              new Promise((resolve) => {
-                const splitted = file.Key.split('/');
-                const [auctions, region1, ahId, fileName] = splitted;
-                const date = new Date(+fileName
-                  .replace('-lastModified', '')
-                  .replace('.json.gz', '').toString());
-                new StatsService().processRecord(
-                  {
-                    bucket: {name: bucket},
-                    object: {key: file.Key, size: 0},
-                    s3SchemaVersion: '',
-                    configurationId: ''
-                  },
-                  conn)
-                  .then(() => {
-                    processed++;
-                    console.log(`region=${region} ah=${id} date=${date}`);
-                    console.log(`Processed count: ${processed} of ${totalLength}`);
-                    resolve();
-                  })
-                  .catch((error) => {
-                    processed++;
-                    console.error(`region=${region} ah=${id} date=${date}`, error);
-                    resolve();
-                  });
-              })));
-          }
+              totalLength += filteredFiles.length;
+              for (const file of filteredFiles) {
+                promises.push(promiseThrottle.add(() =>
+                  new Promise((resolve) => {
+                    const splitted = file.Key.split('/');
+                    const [auctions, region1, ahId, fileName] = splitted;
+                    const date = new Date(+fileName
+                      .replace('-lastModified', '')
+                      .replace('.json.gz', '').toString());
+                    new StatsService().processRecord(
+                      {
+                        bucket: {name: bucket},
+                        object: {key: file.Key, size: 0},
+                        s3SchemaVersion: '',
+                        configurationId: ''
+                      },
+                      conn)
+                      .then(() => {
+                        processed++;
+                        console.log(`region=${region} ah=${id} date=${date}`);
+                        console.log(`Processed count: ${processed} of ${totalLength}`);
+                        resolve();
+                      })
+                      .catch((error) => {
+                        processed++;
+                        console.error(`region=${region} ah=${id} date=${date}`, error);
+                        resolve();
+                      });
+                  })));
+              }
+            })
+            .catch(console.error);
         }
       }
     }
