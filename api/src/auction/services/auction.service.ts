@@ -362,6 +362,7 @@ export class AuctionService {
   }
 
   private async createLastModifiedFile(ahId: number, region: string, conn: DatabaseUtil = new DatabaseUtil()) {
+    const start = +new Date();
     return new Promise((resolve) => {
       conn.query(RealmQuery.getHouse(ahId, 0))
         .then(async rows => {
@@ -376,7 +377,7 @@ export class AuctionService {
 
                   await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
                     .then(uploaded => {
-                      console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url}`);
+                      console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
                     })
                     .catch(error => {
                       console.error(error);
@@ -395,12 +396,13 @@ export class AuctionService {
   }
 
   private async updateAllStatuses(region: string, conn: DatabaseUtil) {
+    const start = +new Date();
     return new Promise((resolve, reject) => {
       new RealmHandler().getAllRealms(conn)
         .then((realms) => {
           new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
             .then(() => {
-              console.log('Updated realm statuses');
+              console.log(`Updated realm statuses in ${+new Date() - start} ms`);
               resolve();
             })
             .catch(resolve);
@@ -437,8 +439,10 @@ export class AuctionService {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
         const [auctions, region, ahId, fileName] = splitted;
+        const start = +new Date();
         this.updateDBEntries(record, region, +ahId, fileName, conn)
           .then(async () => {
+            console.log(`Checked update and updated realm status in ${+new Date() - start} ms`);
             await Promise.all([
               this.updateAllStatuses(region, conn)
                 .catch(err => console.error('Could not updateAllStatuses', err)),

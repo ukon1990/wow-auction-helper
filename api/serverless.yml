@@ -50,8 +50,8 @@ functions:
       Function: Wah-auctionsInsertStatisticsData
       Project: WAH
     handler: src/auction/controller.insertStatisticsData
-    memorySize: 300
-    timeout: 60
+    memorySize: 222
+    timeout: 58
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses

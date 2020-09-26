@@ -108,8 +108,8 @@ export class StatsService {
     return new Promise<void>((resolve, reject) => {
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
-      let completed = 0, total = 0;
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 100)
+      let completed = 0, total = 0, avgQueryTime;
+      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
         .then(async (objects: ListObjectsV2Output) => {
           total = objects.Contents.length;
           objects.Contents
@@ -136,7 +136,11 @@ export class StatsService {
                         completed++;
                       })
                       .catch(console.error);
-                    console.log(`Inserted ${object.Key} in ${+new Date() - insertStart} ms (Active relevant queries: ${status.activeQueries})`);
+                    if (!avgQueryTime) {
+                      avgQueryTime = +new Date() - insertStart;
+                    } else {
+                      avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
+                    }
                   }
                 })
                 .catch(error => console.error(`StatsService.insertStats.Contents`, error));
@@ -144,7 +148,7 @@ export class StatsService {
               console.log('There are too many active queries', status.activeQueries);
             }
           }
-          console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms`);
+          console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
           conn.end();
           resolve();
         })
@@ -157,6 +161,7 @@ export class StatsService {
   }
 
   processRecord(record: EventSchema, conn: DatabaseUtil = new DatabaseUtil()): Promise<void> {
+    const start = +new Date();
     return new Promise<void>((resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
@@ -183,6 +188,7 @@ export class StatsService {
                 new S3Handler()
                   .save(query, `statistics/inserts/${ahId}-${fileName}.sql.gz`, {region: 'eu-se'})
                   .then(ok => {
+                    console.log(`Processed and uploaded statistics SQL in ${+new Date() - start} ms`);
                     resolve(ok);
                   })
                   .catch(error => {
