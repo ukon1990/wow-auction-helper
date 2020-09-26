@@ -2,9 +2,12 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
-import {AuctionItemStat, AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
-import {AuctionQuery} from '../auction.query';
+import {AuctionItemStat} from '../models/auction-item-stat.model';
+import {StatsRepository} from '../repository/stats.repository';
+import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
+import {LogRepository} from '../../logs/repository';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -74,14 +77,7 @@ export class StatsService {
 
   private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any> {
     return new Promise((resolve, reject) => {
-      const fourteenDays = 60 * 60 * 24 * 1000 * 14;
-      conn.query(`SELECT *
-                FROM itemPriceHistoryPerHour
-                WHERE ahId = ${ahId}
-                  AND itemId = ${id}
-                  AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
-                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`)
+      new StatsRepository(conn).getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds)
         .then((result => {
           resolve(AuctionProcessorUtil.processHourlyPriceData(result));
         }))
@@ -94,12 +90,8 @@ export class StatsService {
 
   private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      conn.query(`SELECT *
-                FROM itemPriceHistoryPerDay
-                WHERE ahId = ${ahId}
-                  AND itemId = ${id}
-                  AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`)
+      new StatsRepository(conn)
+        .getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds)
         .then((result => {
           resolve(AuctionProcessorUtil.processDailyPriceData(result));
         }))
@@ -110,7 +102,66 @@ export class StatsService {
     });
   }
 
+
+  insertStats(): Promise<void> {
+    const insertStatsStart = +new Date();
+    return new Promise<void>((resolve, reject) => {
+      const s3 = new S3Handler(),
+        conn = new DatabaseUtil(false);
+      let completed = 0, total = 0, avgQueryTime;
+      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
+        .then(async (objects: ListObjectsV2Output) => {
+          total = objects.Contents.length;
+          objects.Contents
+            .sort((a, b) =>
+              +new Date(a.LastModified) - +new Date(b.LastModified));
+
+          for (const object of objects.Contents) {
+            if ((+new Date() - insertStatsStart) / 1000 > 50) {
+              console.log('The time since limit has passed');
+              return;
+            }
+            const [status]: { activeQueries: number }[] = await conn.query(LogRepository.activeQueryCount)
+              .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+
+            if (status.activeQueries < 10) {
+              await s3.getAndDecompress(objects.Name, object.Key)
+                .then(async (query: string) => {
+                  if (query) {
+                    const insertStart = +new Date();
+                    await conn.query(query)
+                      .then(() => {
+                        s3.deleteObject(objects.Name, object.Key)
+                          .catch(console.error);
+                        completed++;
+                      })
+                      .catch(console.error);
+                    if (!avgQueryTime) {
+                      avgQueryTime = +new Date() - insertStart;
+                    } else {
+                      avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
+                    }
+                  }
+                })
+                .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+            } else {
+              console.log('There are too many active queries', status.activeQueries);
+            }
+          }
+          console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
+          conn.end();
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          conn.end();
+          reject(error);
+        });
+    });
+  }
+
   processRecord(record: EventSchema, conn: DatabaseUtil = new DatabaseUtil()): Promise<void> {
+    const start = +new Date();
     return new Promise<void>((resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
@@ -129,16 +180,20 @@ export class StatsService {
                   resolve();
                   return;
                 }
-                const query = AuctionProcessorUtil.process(
-                  auctions, lastModified, +ahId);
-                const insertStart = +new Date();
-                conn.query(query)
-                  .then(async ok => {
-                    console.log(`Completed item price stat import in ${+new Date() - insertStart} ms`, ok);
-                    resolve();
+                const {
+                  list,
+                  hour
+                } = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
+                const query = StatsRepository.multiInsertOrUpdate(list, hour);
+                new S3Handler()
+                  .save(query, `statistics/inserts/${ahId}-${fileName}.sql.gz`, {region: 'eu-se'})
+                  .then(ok => {
+                    console.log(`Processed and uploaded statistics SQL in ${+new Date() - start} ms`);
+                    resolve(ok);
                   })
-                  .catch(error => console.error('StatsService.calcFile', error));
-                // setTimeout(() => resolve(), 500);
+                  .catch(error => {
+                    reject(error);
+                  });
               })
               .catch(reject);
           })
@@ -187,12 +242,8 @@ export class StatsService {
   compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<any> {
     console.log('Updating daily price data');
     const dayOfMonth = AuctionProcessorUtil.getDateNumber(date.getUTCDate());
-    const sql = `SELECT *
-                FROM itemPriceHistoryPerHour
-                WHERE ahId = ${id} and date = '${date.getUTCFullYear()}-${
-      AuctionProcessorUtil.getDateNumber(date.getUTCMonth() + 1)}-${dayOfMonth}'`;
     return new Promise<any>((resolve, reject) => {
-      conn.query(sql)
+      new StatsRepository(conn).insertStats(id, date, dayOfMonth)
         .then(rows => {
           const list = [];
           rows.forEach(row => {
@@ -204,7 +255,7 @@ export class StatsService {
           }
 
           console.log('Done updating daily price data');
-          conn.query(AuctionQuery.multiInsertOrUpdateDailyPrices(list, dayOfMonth))
+          new StatsRepository(conn).multiInsertOrUpdateDailyPrices(list, dayOfMonth)
             .then(resolve)
             .catch(error => {
               console.error('SQL error for id=', id);
@@ -237,24 +288,18 @@ export class StatsService {
       now.setUTCMinutes(0);
       now.setUTCMilliseconds(0);
 
-      conn.query(`SELECT *
-                        FROM auction_houses
-                        WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}
-                        ORDER BY lastHistoryDeleteEvent
-                        LIMIT 1;`)
+      const repository = new StatsRepository(conn);
+
+      repository.getNextHouseInTheDeleteQueue(now, day)
         .then(async (res) => {
           if (res.length) {
-            const {id, lastHistoryDeleteEvent} = res[0];
-            const sql = `DELETE FROM itemPriceHistoryPerHour
-                        WHERE ahId = ${id} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`;
-            console.log('Delete query', {sql, lastHistoryDeleteEvent});
+            const {id} = res[0];
 
-            conn.query(sql)
+            repository.deleteOldAuctionHouseData(id, now, day)
               .then((deleteResult) => {
                 deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
-                conn.query(`UPDATE auction_houses
-                                SET lastHistoryDeleteEvent = ${+new Date()}
-                                WHERE id = ${id};`)
+                repository
+                  .updateLastDeleteEvent(id)
                   .then(() => {
                     console.log('Successfully deleted old price data', deleteResult);
                     conn.end();

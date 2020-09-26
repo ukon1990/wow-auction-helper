@@ -1,0 +1,50 @@
+<h4>
+  Time: {{time | date:'full'}}
+</h4>
+
+<div class="row">
+  <div class="col-md-3">
+    <mat-list>
+      <mat-list-item>
+        <div mat-line>
+          Conntected threads
+        </div>
+        <div mat-line>
+          {{ globalStatuses[globalStatuses?.length -1]?.Threads_connected | number }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line>
+          Uptime
+        </div>
+        <div mat-line>
+          {{ globalStatuses[globalStatuses?.length -1]?.Uptime / 60 / 60 | number }} hours
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div class="col-md-9">
+    <wah-charts-data-sets *ngIf="datasets"
+                          storageName="connection-status"
+                          [datasets]="datasets"
+    ></wah-charts-data-sets>
+  </div>
+</div>
+
+<wah-data-table
+        filterParameter="info"
+        [columns]="columns"
+        [data]="processes"
+></wah-data-table>
+
+<wah-data-table
+        filterParameter="info"
+        [columns]="processHistoryColumns"
+        [data]="processHistory"
+></wah-data-table>
+
+<wah-data-table
+        [columns]="sizeColumns"
+        [data]="size"
+></wah-data-table>

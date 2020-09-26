@@ -11,7 +11,8 @@ import {Item} from '../../../client/src/client/models/item/item';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {QueryUtil} from '../utils/query.util';
 import {NpcHandler} from './npc.handler';
-import {AuctionItemStat, AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
+import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
+import {AuctionItemStat} from '../auction/models/auction-item-stat.model';
 
 export class ItemHandler {
   /* istanbul ignore next */

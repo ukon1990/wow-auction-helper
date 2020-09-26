@@ -45,6 +45,13 @@ functions:
     handler: src/auction/controller.updateStaticS3Data
     memorySize: 300
     timeout: 30
+  auctionsInsertStatisticsData:
+    tags:
+      Function: Wah-auctionsInsertStatisticsData
+      Project: WAH
+    handler: src/auction/controller.insertStatisticsData
+    memorySize: 222
+    timeout: 58
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses
@@ -287,17 +294,53 @@ functions:
     tags:
       Function: Wah-logger
       Project: WAH
-    handler: src/controllers/logger.handler
+    handler: src/logs/controller.handler
     memorySize: 128
     events:
       - http:
           method: any
           path: logger
+  loggerGetTableSize:
+    tags:
+      Function: Wah-loggerGetTableSize
+      Project: WAH
+    handler: src/logs/controller.getTableSize
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/tables
+          cors:
+            origin: 'http://localhost:4200'
+  loggerGetGlobalStatus:
+    tags:
+      Function: Wah-loggerGetGlobalStatus
+      Project: WAH
+    handler: src/logs/controller.getGlobalStatus
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/global-status
+          cors:
+            origin: 'http://localhost:4200'
+  loggerQueries:
+    tags:
+      Function: Wah-loggerGetCurrentQueries
+      Project: WAH
+    handler: src/logs/controller.getCurrentQueries
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/queries
+          cors:
+            origin: 'http://localhost:4200'
   loggerClientEvent:
     tags:
       Function: Wah-loggerClientEvent
       Project: WAH
-    handler: src/controllers/logger.clientEvent
+    handler: src/logs/controller.clientEvent
     memorySize: 128
     events:
       - http:
@@ -310,7 +353,7 @@ functions:
     tags:
       Function: Wah-loggerClientDelete
       Project: WAH
-    handler: src/controllers/logger.clientDelete
+    handler: src/logs/controller.clientDelete
     memorySize: 128
     events:
       - http:
