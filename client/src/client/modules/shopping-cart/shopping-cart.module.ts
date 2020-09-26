@@ -16,11 +16,13 @@ import {AddonModule} from '../addon/addon.module';
 import { CartDialogComponent } from './components/cart-dialog/cart-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTabsModule} from '@angular/material/tabs';
+import { SummaryComponent } from './components/cart-dialog/summary/summary.component';
 
 @NgModule({
   declarations: [
     ShoppingCartComponent,
-    CartDialogComponent
+    CartDialogComponent,
+    SummaryComponent
   ],
   imports: [
     CommonModule,

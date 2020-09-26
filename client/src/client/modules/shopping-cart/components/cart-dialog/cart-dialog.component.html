@@ -4,7 +4,10 @@
 <mat-dialog-content>
 
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-xxl-3 col-xl-4 col-lg-4 mt-3">
+      <wah-summary [cart]="cart"></wah-summary>
+    </div>
+    <div class="col-xxl-4 col-xl-4 col-lg-8 mt-3">
       <mat-card>
         <mat-card-content>
           <mat-tab-group>
@@ -28,7 +31,7 @@
       </mat-card>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-xxl-5 col-xl-4 col-lg-12 mt-3">
       <mat-card>
         <mat-card-header>
           <mat-card-title>
@@ -44,154 +47,99 @@
         </mat-card-content>
       </mat-card>
     </div>
-
-    <div class="col-md-4">
-      <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
-      <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
-      <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
-      <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
-      <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
-      <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }}
-      <br>
-      <br>
-      <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
-                      class="row col-md-12">
-        <textarea matInput placeholder="TSM shopping string"
-                  [value]="cart.tsmShoppingString"></textarea>
-      </mat-form-field>
-      <br>
-
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Import/Update inventory status
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-
-          <wah-addon [importMode]="true"></wah-addon>
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Cost caluclation logic</mat-panel-title>
-          </mat-expansion-panel-header>
-
-          <p>
-            When the app calculates the cost of your shopping cart.
-            It looks through all the auctions per reagent, from the cheapest auction and up.
-            As long as the "total quantity to purchase" does not exceed 120% of the needed quantity of reagents, It is
-            used in the calculation.
-          </p>
-          <p>
-            So lets say, that you need 20 Owlseye, and you have the following auctions:
-          </p>
-          <mat-list dense>
-            <mat-list-item>Stack of 1 for 20g per item</mat-list-item>
-            <mat-list-item>
-              <div mat-line>Stack of 50 for 22g per item</div>
-              <div mat-line>This one will be ignored</div>
-            </mat-list-item>
-            <mat-list-item>Stack of 5 for 23g per item</mat-list-item>
-            <mat-list-item>Stack of 10 for 24g per item</mat-list-item>
-            <mat-list-item>Stack of 5 for 25g per item</mat-list-item>
-          </mat-list>
-          <p>
-            The app will then expect that you will buy 21 Owlseye instead of 51, and set the total cost to 500g
-            instead of 1,120g.
-            And use the avg item buyout of those 21, to estimate the potential crafting profit.
-            The cost of the Owlseye you need, in this case would then be set to 476g.
-          </p>
-
-          <p>
-            If you have a couple in your inventory, it will subtract the ones in your inventory from what you need to
-            get from other sources.
-            The total value of those in your inventory, will be based upon the last x you have bought.
-          </p>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
   </div>
   <div class="row">
-    <div class="col" *ngIf="cart?.sources?.ah?.length">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            Auction house
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <wah-data-table [id]="'id'"
-                          [iconSize]="22"
-                          [columns]="sourceColumns"
-                          [data]="cart.sources.ah"
-          ></wah-data-table>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div class="col" *ngIf="cart?.sources?.inventory?.length">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            Inventory
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <wah-data-table [id]="'id'"
-                          [iconSize]="22"
-                          [columns]="sourceColumns"
-                          [data]="cart.sources.inventory"
-          ></wah-data-table>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div class="col" *ngIf="cart?.sources?.vendor?.length">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            Vendor
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <wah-data-table [id]="'id'"
-                          [iconSize]="22"
-                          [columns]="sourceColumns"
-                          [data]="cart.sources.vendor"
-          ></wah-data-table>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div class="col" *ngIf="cart?.sources?.tradeVendor?.length">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            Trade vendor
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <wah-data-table [id]="'id'"
-                          [iconSize]="22"
-                          [columns]="sourceColumns"
-                          [data]="cart.sources.tradeVendor"
-          ></wah-data-table>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div class="col" *ngIf="cart?.sources?.farm?.length">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            Farm
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <wah-data-table [id]="'id'"
-                          [iconSize]="22"
-                          [columns]="sourceColumns"
-                          [data]="cart.sources.farm"
-          ></wah-data-table>
-        </mat-card-content>
-      </mat-card>
-    </div>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          Sources
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="row">
+          <div class="col col-lg-6 mt-3" *ngIf="cart?.sources?.ah?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Auction house
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.ah"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-lg-6 mt-3" *ngIf="cart?.sources?.inventory?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Inventory
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.inventory"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-lg-6 mt-3" *ngIf="cart?.sources?.vendor?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Vendor
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.vendor"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-lg-6 mt-3" *ngIf="cart?.sources?.tradeVendor?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Trade vendor
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.tradeVendor"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-lg-6 mt-3" *ngIf="cart?.sources?.farm?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Farm
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.farm"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </mat-dialog-content>
