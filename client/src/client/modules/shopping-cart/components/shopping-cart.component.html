@@ -1,7 +1,7 @@
 <button mat-stroked-button
         (click)="toggleDialog()"
         matTooltip="Shopping cart"
-        matBadge="{{items.length + recipes.length | number}}"
+        matBadge="{{items?.length + recipes?.length | number}}"
         matBadgeColor="accent"
         matBadgePosition="before"
         matBadgeDescription="The number of items in your shopping cart">
@@ -12,7 +12,7 @@
     Shopping cart
   </span>
   <small class="sub-text-small">
-    {{ cart.profit | gold }}
+    {{ cart?.profit | gold }}
   </small>
 </button>
 

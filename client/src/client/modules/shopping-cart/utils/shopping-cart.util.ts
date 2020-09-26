@@ -39,8 +39,9 @@ export class ShoppingCartUtil {
     cart.sources = this.collectSources(tmpRecipe.reagents);
     cart.neededItems.sort((a, b) => b.avgPrice - a.avgPrice);
 
-    cart.profit = this.getProfit(cart.sumCost, recipes, items, auctionMap);
-    cart.sumTotalCost = this.getSumTotalCost(recipes, items, auctionMap);
+    cart.sumTotalCost = this.getSumTotalCost(cart.neededItems, auctionMap);
+    cart.totalValue = this.getTotalValue(recipeMap, recipes, items, auctionMap);
+    cart.profit = cart.totalValue - cart.sumCost;
 
     console.log('Result recipe', {cart});
     return cart;
@@ -92,28 +93,6 @@ export class ShoppingCartUtil {
     }
   }
 
-  private getProfit(sumCost: number, recipes: CartRecipe[], items: CartItem[], auctionMap: Map<string, AuctionItem>) {
-    let profit = 0;
-    const setProfit = (id: number) => {
-      const ai = auctionMap.get('' + id);
-      if (ai) {
-        profit += ai.buyout;
-      }
-    };
-
-    items.forEach(item => {
-      setProfit(item.id);
-    });
-
-    recipes.forEach(recipe => {
-      const rec: Recipe = CraftingService.map.value.get(recipe.id);
-      if (rec) {
-        setProfit(rec.itemID);
-      }
-    });
-    return profit - sumCost;
-  }
-
   private collectSources(reagents: Reagent[]): CartSources {
     const result: CartSources = {
       ah: [],
@@ -143,17 +122,31 @@ export class ShoppingCartUtil {
     return result;
   }
 
-  private getSumTotalCost(recipes: CartRecipe[], items: CartItem[], auctionMap: Map<string, AuctionItem>): number {
+  private getSumTotalCost(needed: Reagent[], auctionMap: Map<string, AuctionItem>): number {
     let sum = 0;
 
+    needed.forEach(reagent => {
+      if (auctionMap.has('' + reagent.id)) {
+        sum += reagent.avgPrice * reagent.quantity;
+      }
+    });
+
+    return sum;
+  }
+
+  private getTotalValue(recipeMap: Map<number, Recipe>, recipes: CartRecipe[], items: CartItem[], auctionMap: Map<string, AuctionItem>) {
+    let sum = 0;
+    console.log('recipes needed', recipes);
+
     recipes.forEach(recipe => {
-      if (auctionMap.has('' + recipe.itemId)) {
-        sum += auctionMap.get('' + recipe.itemId).buyout;
+      const rec: Recipe = recipeMap.get(recipe.id);
+      if (rec && auctionMap.has('' + rec.itemID)) {
+        sum += auctionMap.get('' + rec.itemID).buyout * +recipe.quantity;
       }
     });
     items.forEach(item => {
       if (auctionMap.has('' + item.id)) {
-        sum += auctionMap.get('' + item.id).buyout;
+        sum += auctionMap.get('' + item.id).buyout * +item.quantity;
       }
     });
 
