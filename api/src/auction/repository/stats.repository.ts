@@ -4,6 +4,18 @@ import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {QueryUtil} from '../../utils/query.util';
 
 export class StatsRepository {
+  static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
+    const formattedHour = (hour < 10 ? '0' + hour : '' + hour);
+
+    const insert = new QueryUtil('itemPriceHistoryPerHour')
+      .multiInsert(list)
+      .replace(';', '');
+
+    return `
+      ${insert} ON DUPLICATE KEY UPDATE
+        price${formattedHour} = VALUES(price${formattedHour}),
+        quantity${formattedHour} = VALUES(quantity${formattedHour});`;
+  }
 
   constructor(private conn: DatabaseUtil, autoClose: boolean = true) {
   }
@@ -43,19 +55,6 @@ export class StatsRepository {
       minQuantity${day} = VALUES(minQuantity${day}),
       avgQuantity${day} = VALUES(avgQuantity${day}),
       maxQuantity${day} = VALUES(maxQuantity${day});`);
-  }
-
-  multiInsertOrUpdate(list: AuctionItemStat[], hour: number): Promise<any> {
-    const formattedHour = (hour < 10 ? '0' + hour : '' + hour);
-
-    const insert = new QueryUtil('itemPriceHistoryPerHour')
-      .multiInsert(list)
-      .replace(';', '');
-
-    return this.conn.query(`
-      ${insert} ON DUPLICATE KEY UPDATE
-        price${formattedHour} = VALUES(price${formattedHour}),
-        quantity${formattedHour} = VALUES(quantity${formattedHour});`);
   }
 
   getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[]) {

@@ -14,7 +14,6 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {TsmService} from '../modules/tsm/tsm.service';
-import {Report} from '../utils/report.util';
 import {CharacterService} from '../modules/character/services/character.service';
 
 @Injectable()

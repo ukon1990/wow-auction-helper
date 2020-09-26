@@ -134,7 +134,8 @@ export class RealmService {
 
   getRealms(region?: string): Promise<any> {
     return new Promise<any>(((resolve, reject) => {
-      this.http.get(Endpoints.getS3URL(region, 'auctions', 'status')) // Endpoints.getLambdaUrl('realm/all', region)
+      this.http.get(Endpoints.getS3URL(region, 'auctions', 'status') +
+        '?random=' + (Math.random() * 1000)) // Endpoints.getLambdaUrl('realm/all', region)
         .toPromise()
         .then((realms: any[]) => {
           this.handleRealms(realms);

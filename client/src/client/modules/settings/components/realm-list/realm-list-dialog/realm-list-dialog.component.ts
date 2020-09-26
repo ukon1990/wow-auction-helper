@@ -69,7 +69,11 @@ export class RealmListDialogComponent implements OnDestroy {
             };
             timeList.push(times[minute]);
           }
-          times[minute].regions[realm.region] = true;
+          if (!times[minute].regions[realm.region]) {
+            times[minute].regions[realm.region] = 0;
+          }
+
+          times[minute].regions[realm.region]++;
         });
         Report.debug('Realm times are', timeList.sort((a, b) => b.minute - a.minute));
         this.reset();

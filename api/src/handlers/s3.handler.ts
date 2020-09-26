@@ -1,5 +1,8 @@
 import {GzipUtil} from '../utils/gzip.util';
 import {AWS_DETAILS} from '../secrets';
+import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
+import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
+import {StatsRepository} from '../auction/repository/stats.repository';
 
 const AWS = require('aws-sdk');
 
@@ -36,16 +39,32 @@ export class S3Handler {
     });
   }
 
-  list(bucket: string, prefix: string): Promise<any> {
+  list(bucket: string, prefix: string, maxKeys = 10): Promise<ListObjectsV2Output> {
     return new Promise<any>((resolve, reject) => {
       const s3 = this.getS3();
       s3.listObjectsV2({
         Bucket: bucket,
         Prefix: prefix,
-        MaxKeys: 999999
+        MaxKeys: maxKeys
       }, (error, data) => {
         if (error) {
           reject(error);
+          return;
+        }
+        resolve(data);
+      });
+    });
+  }
+
+  deleteObject(bucket: string, file: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      const s3 = this.getS3();
+      s3.deleteObject({
+        Bucket: bucket,
+        Key: file
+      }, (err, data) => {
+        if (err) {
+          reject(err);
           return;
         }
         resolve(data);
@@ -59,6 +78,18 @@ export class S3Handler {
       Bucket: bucket,
       Key: file
     }).promise();
+  }
+
+  getAndDecompress<T>(bucket: string, file: string): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      this.get(bucket, file)
+        .then(async data => {
+          await new GzipUtil().decompress(data['Body'])
+            .then(resolve)
+            .catch(reject);
+        })
+        .catch(reject);
+    });
   }
 
   copy(origin: string, target: string, bucket: string): Promise<any> {

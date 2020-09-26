@@ -45,6 +45,13 @@ functions:
     handler: src/auction/controller.updateStaticS3Data
     memorySize: 300
     timeout: 30
+  auctionsInsertStatisticsData:
+    tags:
+      Function: Wah-auctionsInsertStatisticsData
+      Project: WAH
+    handler: src/auction/controller.insertStatisticsData
+    memorySize: 222
+    timeout: 58
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses

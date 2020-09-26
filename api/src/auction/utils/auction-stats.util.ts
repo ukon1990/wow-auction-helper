@@ -5,8 +5,8 @@ import {AuctionItemStat} from '../models/auction-item-stat.model';
 export class AuctionStatsUtil {
   static processDays(rows: AuctionItemStat[]): ItemStats[] {
     const hours = AuctionProcessorUtil.processHourlyPriceData(rows);
-    rows.forEac
+    // rows.forEac
 
-    return hours;
+    return [];
   }
 }
