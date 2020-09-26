@@ -3,51 +3,21 @@
   Is to gather price statistics for the lowest, highest and avg prices
 */
 import {Auction} from '../../models/auction/auction';
-import {AuctionQuery} from '../auction.query';
-
-class Bonus {
-  bonusListId: number;
-}
-
-export class AuctionItemStat {
-  itemId: number;
-  petSpeciesId = -1;
-  date: string;
-
-  constructor(public ahId: number, public bonusIds: string, auction: Auction, timestamp: number, hour: string) {
-    const date = new Date(timestamp),
-      dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
-    this.itemId = auction.item;
-    this.date = dateString;
-    this[`quantity${hour}`] = auction.quantity;
-    this[`price${hour}`] = auction.buyout / auction.quantity;
-    if (auction.petSpeciesId) {
-      this.petSpeciesId = auction.petSpeciesId;
-    }
-  }
-
-  static bonusId(ids: Bonus[], alwaysHaveAValue = true): string {
-    if (!ids) {
-      return alwaysHaveAValue ? '-1' : '';
-    }
-    return this.bonusIdRaw(ids.map(id => id.bonusListId), alwaysHaveAValue);
-  }
-
-  static bonusIdRaw(ids: number[], alwaysHaveAValue = true): string {
-    if (!ids) {
-      return alwaysHaveAValue ? '-1' : '';
-    }
-    return ids.sort((a, b) => a - b)
-      .join(',');
-  }
-}
+import {AuctionItemStat} from '../models/auction-item-stat.model';
+import {ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 
 export class AuctionProcessorUtil {
-  static process(auctions: Auction[], lastModified: number, ahId: number): string {
+  static process(auctions: Auction[], lastModified: number, ahId: number): {
+    list: AuctionItemStat[];
+    hour: number;
+  } {
     const start = +new Date();
-    const list: AuctionItemStat[] = [], map = {}, queries = [], hour = new Date(lastModified).getUTCHours();
+    const list: AuctionItemStat[] = [], map = {}, hour = new Date(lastModified).getUTCHours();
     if (!auctions) {
-      return '';
+      return {
+        list: [],
+        hour
+      };
     }
     const date = new Date(lastModified),
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
@@ -56,7 +26,10 @@ export class AuctionProcessorUtil {
       this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour));
     }
     console.log(`Processed ${auctions.length} in ${+new Date() - start} ms`);
-    return AuctionQuery.multiInsertOrUpdate(list, hour);
+    return {
+      list,
+      hour
+    };
   }
 
   private static processAuction(map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string) {
@@ -148,7 +121,7 @@ export class AuctionProcessorUtil {
     }
   }
 
-  static processHourlyPriceData(result) {
+  static processHourlyPriceData(result: AuctionItemStat[]): ItemPriceEntry[] {
     const list = [];
     result.forEach(entry => {
       for (let i = 0, maxHours = 23; i <= maxHours; i++) {
