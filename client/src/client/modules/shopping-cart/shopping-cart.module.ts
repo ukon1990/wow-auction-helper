@@ -15,6 +15,7 @@ import {CoreModule} from '../core/core.module';
 import {AddonModule} from '../addon/addon.module';
 import { CartDialogComponent } from './components/cart-dialog/cart-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatTooltipModule,
     AddonModule,
     MatBadgeModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTabsModule
   ],
   exports: [ShoppingCartComponent]
 })

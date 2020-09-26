@@ -1,15 +1,19 @@
-<button mat-flat-button
-   (click)="toggleDialog()"
-   color="primary"
-   matTooltip="Shopping cart"
-   matBadge="{{items.length + recipes.length | number}}"
-   matBadgeColor="accent"
-   matBadgePosition="before"
-   matBadgeDescription="The number of items in your shopping cart">
-  <div class="float-left mr-1">
-    <i class="fas fa-shopping-cart"></i>
-  </div>
-  Shopping cart<!-- | {{ cart.profit | gold }}-->
+<button mat-stroked-button
+        (click)="toggleDialog()"
+        matTooltip="Shopping cart"
+        matBadge="{{items.length + recipes.length | number}}"
+        matBadgeColor="accent"
+        matBadgePosition="before"
+        matBadgeDescription="The number of items in your shopping cart">
+  <span>
+    <span class="float-left mr-1">
+      <i class="fas fa-shopping-cart"></i>
+    </span>
+    Shopping cart
+  </span>
+  <small class="sub-text-small">
+    {{ cart.profit | gold }}
+  </small>
 </button>
 
 <!--

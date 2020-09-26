@@ -181,11 +181,20 @@
              [formControl]="shoppingCartQuantityField">
     </mat-form-field>
 
-    <button mat-stroked-button matTooltip="Add to shopping list"
+    <button mat-stroked-button
+            matTooltip="Add the cheapest known recipe to shopping list"
             (click)="addEntryToCart()"
             color="accent"
     >
-      Add to cart
+      Add recipe cart
+      <i class="fas fa-cart-plus"></i>
+    </button>
+    <button mat-stroked-button
+            matTooltip="Add item to shopping list"
+            (click)="addEntryToCart(false)"
+            color="accent"
+    >
+      Add item cart
       <i class="fas fa-cart-plus"></i>
     </button>
   </div>

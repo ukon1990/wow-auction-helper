@@ -40,6 +40,7 @@ export class ShoppingCartUtil {
     cart.neededItems.sort((a, b) => b.avgPrice - a.avgPrice);
 
     cart.profit = this.getProfit(cart.sumCost, recipes, items, auctionMap);
+    cart.sumTotalCost = this.getSumTotalCost(recipes, items, auctionMap);
 
     console.log('Result recipe', {cart});
     return cart;
@@ -140,5 +141,22 @@ export class ShoppingCartUtil {
       });
 
     return result;
+  }
+
+  private getSumTotalCost(recipes: CartRecipe[], items: CartItem[], auctionMap: Map<string, AuctionItem>): number {
+    let sum = 0;
+
+    recipes.forEach(recipe => {
+      if (auctionMap.has('' + recipe.itemId)) {
+        sum += auctionMap.get('' + recipe.itemId).buyout;
+      }
+    });
+    items.forEach(item => {
+      if (auctionMap.has('' + item.id)) {
+        sum += auctionMap.get('' + item.id).buyout;
+      }
+    });
+
+    return sum;
   }
 }

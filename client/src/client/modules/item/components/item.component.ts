@@ -205,13 +205,18 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
       ai.source.recipe.known.length);
   }
 
-  addEntryToCart(): void {/*
+  addEntryToCart(isRecipe: boolean = true): void {/*
     if (!this.userHasRecipeForItem()) {
       return;
     }*/
-    this.shoppingCartService.addRecipeByItemId(this.selected.item.id, this.shoppingCartQuantityField.value);
+    if (isRecipe) {
+      this.shoppingCartService.addRecipeByItemId(this.selected.item.id, this.shoppingCartQuantityField.value);
+      Report.send('Added to recipe shopping cart', 'Item detail view');
+    } else {
+      this.shoppingCartService.addItem(this.selected.item.id, this.shoppingCartQuantityField.value);
+      Report.send('Added to item shopping cart', 'Item detail view');
+    }
 
-    Report.send('Added to recipe shopping cart', 'Item detail view');
   }
 
   /* istanbul ignore next */
