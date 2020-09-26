@@ -1,4 +1,4 @@
-import {Reagent} from '../../crafting/models/reagent';
+import {Reagent, ReagentSource, ReagentSources} from '../../crafting/models/reagent';
 
 interface CartObject {
   id: number;
@@ -20,13 +20,18 @@ export interface Cart {
   dunno: string;
 }
 
+export class CartSources {
+  override: ReagentSource[];
+  tradeVendor: ReagentSource[];
+  vendor: ReagentSource[];
+  ah: ReagentSource[];
+  farm: ReagentSource[];
+  intermediate: ReagentSource[];
+  inventory: ReagentSource[];
+}
+
 export class ShoppingCartV2 {
-  sources = {
-    inventory: [],
-    ah: [],
-    vendor: [],
-    farm: []
-  };
+  sources: CartSources;
   totalValue = 0;
   sumCost = 0;
   sumTotalCost = 0;

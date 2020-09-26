@@ -1,7 +1,7 @@
-import {CartItem, CartRecipe, ShoppingCartV2} from '../models/shopping-cart-v2.model';
+import {CartItem, CartRecipe, CartSources, ShoppingCartV2} from '../models/shopping-cart-v2.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Recipe} from '../../crafting/models/recipe';
-import {Reagent} from '../../crafting/models/reagent';
+import {Reagent, ReagentSource, ReagentSources} from '../../crafting/models/reagent';
 import {OptimisticCraftingUtil} from '../../crafting/utils/optimistic-crafting.util';
 import {PessimisticCraftingUtil} from '../../crafting/utils/pessimistic-crafting.util';
 import {NeededCraftingUtil} from '../../crafting/utils/needed-crafting.util';
@@ -36,9 +36,12 @@ export class ShoppingCartUtil {
 
     cart.neededItems = tmpRecipe.reagents;
     cart.sumCost = tmpRecipe.cost;
+    cart.sources = this.collectSources(tmpRecipe.reagents);
+    cart.neededItems.sort((a, b) => b.avgPrice - a.avgPrice);
 
     cart.profit = this.getProfit(cart.sumCost, recipes, items, auctionMap);
 
+    console.log('Result recipe', {cart});
     return cart;
   }
 
@@ -108,5 +111,34 @@ export class ShoppingCartUtil {
       }
     });
     return profit - sumCost;
+  }
+
+  private collectSources(reagents: Reagent[]): CartSources {
+    const result: CartSources = {
+      ah: [],
+      farm: [],
+      inventory: [],
+      vendor: [],
+      intermediate: [],
+      override: [],
+      tradeVendor: []
+    };
+
+    reagents.forEach(reagent => {
+      const {sources} = reagent;
+      Object.keys(sources)
+        .forEach(key => {
+          if (sources[key].quantity) {
+            result[key].push({...sources[key], id: reagent.id});
+          }
+        });
+    });
+
+    Object.keys(result)
+      .forEach(key => {
+        result[key].sort((a: ReagentSource, b: ReagentSource) => b.sumPrice - a.sumPrice);
+      });
+
+    return result;
   }
 }

@@ -50,14 +50,14 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       }
     },
     {
-      key: 'buyout',
-      title: 'Lowest buyout',
-      dataType: 'gold'
-    },
-    {
       key: 'quantity',
       title: 'Quantity',
       dataType: 'number'
+    },
+    {
+      key: 'buyout',
+      title: 'Lowest buyout',
+      dataType: 'gold'
     },
   ];
   neededColumns: ColumnDescription[] = [
@@ -70,14 +70,45 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       }
     },
     {
+      key: 'quantity',
+      title: 'Quantity',
+      dataType: 'number'
+    },
+    {
       key: 'avgPrice',
       title: 'Avg buyout',
       dataType: 'gold'
     },
     {
+      key: 'sumPrice',
+      title: 'Sum buyout',
+      dataType: 'gold'
+    },
+  ];
+
+  sourceColumns: ColumnDescription[] = [
+    {
+      key: 'name',
+      title: 'Name',
+      dataType: 'name',
+      options: {
+        idName: 'id'
+      }
+    },
+    {
       key: 'quantity',
       title: 'Quantity',
       dataType: 'number'
+    },
+    {
+      key: 'price',
+      title: 'Avg buyout',
+      dataType: 'gold'
+    },
+    {
+      key: 'sumPrice',
+      title: 'Sum buyout',
+      dataType: 'gold'
     },
   ];
 

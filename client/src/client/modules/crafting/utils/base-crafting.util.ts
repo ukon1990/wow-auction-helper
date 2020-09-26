@@ -9,6 +9,7 @@ import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {AuctionsService} from '../../../services/auctions.service';
+import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -44,6 +45,12 @@ export abstract class BaseCraftingUtil {
   private static hasMappedRecipes: boolean;
 
   private ahCutModifier = 0.95;
+  private baseSource = {
+    id: undefined,
+    quantity: 0,
+    price: 0,
+    sumPrice: 0,
+  };
 
   protected constructor(public map: Map<string, AuctionItem>) {
   }
@@ -78,6 +85,7 @@ export abstract class BaseCraftingUtil {
   }
 
   private calculateReagentCosts(reagent: Reagent, recipe: Recipe) {
+    this.setReagentBaseSources(reagent);
     let price;
     const vendor = this.getVendorPriceDetails(reagent.id),
       overridePrice = this.getOverridePrice(reagent.id),
@@ -86,20 +94,82 @@ export abstract class BaseCraftingUtil {
 
     if (overridePrice) {
       price = overridePrice.price * quantity;
+      reagent.sources.override = {
+        price: overridePrice.price,
+        quantity: quantity,
+        sumPrice: quantity * overridePrice.price,
+      };
     } else if (vendor && vendor.price && !vendor.stock) {
-      price = this.getCostFromVendor(vendor, reagent, quantity);
+      const {price: sumPrice, vendorPrice, vendorQuantity} = this.getCostFromVendor(vendor, reagent, quantity);
+      price = sumPrice;
+      reagent.sources.vendor = {
+        quantity: vendorQuantity,
+        price: vendorPrice,
+        sumPrice: vendorQuantity * vendorPrice
+      };
+      const restQuantity = quantity - reagent.sources.vendor.quantity;
+      if (restQuantity) {
+        reagent.sources.ah = {
+          price,
+          quantity: restQuantity,
+          sumPrice: restQuantity * price,
+        };
+      }
     } else if (tradeVendorPrice) {
       price = tradeVendorPrice * quantity;
+      reagent.sources.tradeVendor = {
+        quantity: quantity,
+        price: tradeVendorPrice,
+        sumPrice: quantity * tradeVendorPrice,
+      };
     } else {
       price = this.getPrice(reagent.id, quantity);
+      reagent.sources.ah = {
+        price: price / quantity,
+        quantity: quantity,
+        sumPrice: price,
+      };
     }
     if (!price) {
       const fallback = this.getFallbackPrice(reagent.id, quantity);
+      const droppedFrom = this.getDroppedFrom(reagent);
       price = fallback.cost;
       reagent.intermediateEligible = fallback.intermediateEligible;
+
+      if (droppedFrom) {
+        reagent.sources.farm = {
+          price: 0,
+          sumPrice: 0,
+          quantity: quantity,
+          list: droppedFrom,
+        };
+      }
     }
     reagent.avgPrice = price / quantity;
+    reagent.sumPrice = price;
     recipe.cost += price;
+  }
+
+  private getDroppedFrom(reagent: Reagent): ItemDroppedByRow[] {
+    const details: ItemNpcDetails = NpcService.itemNpcMap.value.get(reagent.id);
+    if (details && details.droppedBy) {
+      return details.droppedBy;
+    }
+    return undefined;
+  }
+
+  private setReagentBaseSources(reagent: Reagent) {
+    if (!reagent.sources) {
+      reagent.sources = {
+        override: {...this.baseSource},
+        vendor: {...this.baseSource},
+        tradeVendor: {...this.baseSource},
+        ah: {...this.baseSource},
+        farm: {...this.baseSource},
+        intermediate: {...this.baseSource},
+        inventory: {...this.baseSource},
+      };
+    }
   }
 
   private setROI(recipe: Recipe) {
@@ -123,15 +193,22 @@ export abstract class BaseCraftingUtil {
     }
   }
 
-  private getCostFromVendor(vendor: { price: number; stock: number }, r: Reagent, count: number) {
+  private getCostFromVendor(vendor: { price: number; stock: number }, r: Reagent, count: number): {
+    vendorQuantity: number;
+    vendorPrice: number;
+    price: number;
+  } {
     let price = 0;
+    let vendorQuantity = count;
+    const vendorPrice = vendor.price;
     if (vendor && vendor.stock && vendor.stock < count) {
+      vendorQuantity = vendor.stock;
       price = vendor.price * vendor.stock;
       price += this.getPrice(r.id, count - vendor.stock);
     } else {
       price = vendor.price * count;
     }
-    return price;
+    return {price, vendorQuantity, vendorPrice};
   }
 
   private setRecipePriceAndStatData(recipe: Recipe) {
