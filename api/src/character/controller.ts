@@ -1,5 +1,4 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {ProfessionService} from '../profession/service';
 import {Response} from '../utils/response.util';
 import {CharacterService} from './service';
 

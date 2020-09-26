@@ -78,7 +78,7 @@ export class DatabaseUtil {
       }
       const isAuthenticated = this.connection.state === 'authenticated';
 
-      console.log('Connection status', this.connection.state);
+      // console.log('Connection status', this.connection.state);
 
       if (this.isConnectionActive && isAuthenticated) {
         resolve();

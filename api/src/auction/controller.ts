@@ -61,17 +61,17 @@ exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, call
 
 /* istanbul ignore next */
 exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const conn = new DatabaseUtil(true);
+  const conn = new DatabaseUtil(false);
   Endpoints.setStage(event);
   const region = event.body ?
     JSON.parse(event.body).region : undefined;
   new AuctionService().updateAllHouses(region, conn)
     .then(res => {
-      // conn.end();
+      conn.end();
       Response.send(res, callback);
     })
     .catch(err => {
-      // conn.end();
+      conn.end();
       Response.error(callback, err);
     });
 };
@@ -82,6 +82,11 @@ exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent,
     .catch(err => Response.error(callback, err, event, 500));
 };
 
+exports.insertStatisticsData = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().insertStats()
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 500));
+};
 
 exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   // context.callbackWaitsForEmptyEventLoop = false;
