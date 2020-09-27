@@ -12,12 +12,14 @@ export class LogService {
   userId: string;
 
   constructor(public event: APIGatewayEvent, private conn: DatabaseUtil) {
-    if (this.event.requestContext && this.event.requestContext['identity']) {
-      this.detail = this.event.requestContext['identity'];
-    } else if (this.event['detail']) {
-      this.detail = this.event['detail'];
-    }
-    this.userId = this.generateId();
+    try {
+      if (this.event.requestContext && this.event.requestContext['identity']) {
+        this.detail = this.event.requestContext['identity'];
+      } else if (this.event['detail']) {
+        this.detail = this.event['detail'];
+      }
+      this.userId = this.generateId();
+    } catch (error) {}
   }
 
   handleS3AccessLog(): Promise<void> {

@@ -95,6 +95,7 @@ export class S3Handler {
   copy(origin: string, target: string, bucket: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const s3 = this.getS3();
+      console.log(`Copying from ${origin} to ${target} in ${bucket}`);
       s3.copyObject({
         Bucket: bucket,
         CopySource: `${bucket}/${origin}`,
