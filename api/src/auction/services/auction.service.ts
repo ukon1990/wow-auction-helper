@@ -17,6 +17,8 @@ import {AuctionResponse} from '../../models/auction/auctions-response';
 import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 import {StatsService} from './stats.service';
 import {LogRepository} from '../../logs/repository';
+import {LogService} from '../../logs/log.service';
+import {GlobalStatus} from '../../logs/model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -208,47 +210,43 @@ export class AuctionService {
         return;
       }
 
-      conn.query(LogRepository.activeQueryCount)
-        .then((active: {activeQueries: number}[]) => {
-          console.log('Num of Active queries', active);
-          if (active && active[0] && active[0].activeQueries < 30) {
-            conn.query(RealmQuery
-              .selectAllUpdatableRealms())
-              .then(async rows => {
-                const basePerSecond = 1,
-                  rps = rows.length / (40 - 2),
-                  requestsPerSecond = rows.length > 10 ? rps || basePerSecond : basePerSecond;
-                const promiseThrottle = new PromiseThrottle({
-                    requestsPerSecond,
-                    promiseImplementation: Promise
-                  }),
-                  promises = [];
-                console.log(`Updating ${rows.length} houses.`);
+      new LogService(undefined, conn).getGlobalStatus()
+        .then((status: GlobalStatus) => {
+        console.log('Num of Active queries', status.Threads_connected);
+        if (status.Threads_connected < 30) {
+          conn.query(RealmQuery.selectAllUpdatableRealms())
+            .then(async rows => {
+              const basePerSecond = 1,
+                rps = rows.length / (50 - 2),
+                requestsPerSecond = rows.length > 10 ? rps || basePerSecond : basePerSecond;
+              const promiseThrottle = new PromiseThrottle({
+                  requestsPerSecond,
+                  promiseImplementation: Promise
+                }),
+                promises = [];
+              console.log(`Updating ${rows.length} houses.`);
 
 
-                rows.forEach(row => {
-                  if (region && row.region !== region) {
-                    return;
-                  }
-                  this.addUpdateHousePromise(promises, promiseThrottle, row);
-                });
+              rows.forEach(row => {
+                this.addUpdateHousePromise(promises, promiseThrottle, row);
+              });
 
-                await Promise.all(promises)
-                  .then(() =>
-                    console.log('Done initiating AH updates'))
-                  .catch(console.error);
+              await Promise.all(promises)
+                .then(() =>
+                  console.log('Done initiating AH updates'))
+                .catch(console.error);
 
-                resolve({
-                  message: `Updating ${rows.length} houses.`,
-                  rows
-                });
-              })
-              .catch(reject);
-          } else {
-            console.error('Too many active queries: ', active);
-            reject('Too many active queries');
-          }
-        })
+              resolve({
+                message: `Updating ${rows.length} houses.`,
+                rows
+              });
+            })
+            .catch(reject);
+        } else {
+          console.error('Too many active connections: ', status.Threads_connected);
+          reject('Too many active queries');
+        }
+      })
         .catch(reject);
     });
   }
@@ -363,30 +361,37 @@ export class AuctionService {
 
   private async createLastModifiedFile(ahId: number, region: string, conn: DatabaseUtil = new DatabaseUtil()) {
     const start = +new Date();
-    return new Promise((resolve) => {
-      conn.query(RealmQuery.getHouse(ahId, 0))
+    return new Promise((resolve, reject) => {
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 100,
+        promiseImplementation: Promise
+      }),
+        promises = [];
+      RealmQuery.getAllRealmsForHouse(ahId, conn)
         .then(async rows => {
-          if (rows) {
-            for (const realm of rows) {
-              await conn.query(
-                RealmQuery.getHouseForRealm(realm.region, realm.slug))
-                .then(async (data) => {
-                  if (data.connectedTo) {
-                    data.connectedTo = data.connectedTo.split(',');
-                  }
+          if (rows && rows.length) {
+            rows.forEach(realm => {
+              if (realm.connectedTo) {
+                realm.connectedTo = (realm.connectedTo as string).split(',');
+              }
 
-                  await new S3Handler().save(data[0], `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
+              promises.push(promiseThrottle.add(() =>
+                  new S3Handler().save(realm, `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
                     .then(uploaded => {
                       console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
                     })
                     .catch(error => {
                       console.error(error);
-                    });
-                })
-                .catch(console.error);
-            }
+                    })
+                )
+              );
+            });
+            Promise.all(promises)
+              .then(resolve)
+              .catch(reject);
+          } else {
+            resolve();
           }
-          resolve();
         })
         .catch(error => {
           console.error(error);
@@ -440,31 +445,57 @@ export class AuctionService {
         console.log('Processing S3 auction data update');
         const [auctions, region, ahId, fileName] = splitted;
         const start = +new Date();
-        this.updateDBEntries(record, region, +ahId, fileName, conn)
-          .then(async () => {
+        const s3 = new S3Handler();
+        const lastModified = +fileName.replace(/-lastModified.json.gz/gi, '');
+        let previousLastModified;
+
+        await s3.getAndDecompress(record.bucket.name, `auctions/${region}/${ahId}/prev-dump-path.json.gz`)
+          .then(({lastModified: prevTime}) => {
+            console.log('Prev last mod was ', prevTime);
+            previousLastModified = prevTime;
+          })
+          .catch(console.error);
+        if (previousLastModified && previousLastModified === lastModified) {
+          console.log(`The house ${ahId} has already been updated this period`, lastModified, previousLastModified.lastModified);
+          resolve();
+          return;
+        }
+        conn.enqueueHandshake()
+          .then(() => {
             console.log(`Checked update and updated realm status in ${+new Date() - start} ms`);
-            await Promise.all([
-              this.updateAllStatuses(region, conn)
-                .catch(err => console.error('Could not updateAllStatuses', err)),
-              this.createLastModifiedFile(+ahId, region, conn)
-                .catch(err => console.error('Could not createLastModifiedFile', err)),
+            Promise.all([
+              this.updateDBEntries(record, region, +ahId, fileName, conn)
+                .catch((error) => console.error('Could not update DB entries', error)),,
               new StatsService().processRecord(record, conn)
                 .catch(err => {
                   console.error('Could not processAuctions', err);
                 }),
             ])
-              .then(resolve)
+              .then(async () => {
+                const base = `auctions/${region}/${ahId}/`;
+                await s3.copy(`${base}dump-path.json.gz`, `${base}prev-dump-path.json.gz`, record.bucket.name)
+                  .catch(error => console.error('Could not copy the dump file', error));
+                resolve();
+              })
               .catch(err => {
                 console.error(err);
                 reject(err);
               });
           })
-          .catch(error => {
-            console.error(error);
-            reject(error);
-          });
+          .catch(console.error);
+      } else {
+        resolve();
       }
     });
+  }
+
+  updateStatuses(region: string, ahId: number, conn: DatabaseUtil): Promise<any> {
+    return Promise.all([
+      this.updateAllStatuses(region, conn)
+        .catch(err => console.error('Could not updateAllStatuses', err)),
+      this.createLastModifiedFile(+ahId, region, conn)
+        .catch(err => console.error('Could not createLastModifiedFile', err))
+    ]);
   }
 
   private updateDBEntries(record: EventSchema, region: string, ahId: number, fileName: string, conn: DatabaseUtil) {
@@ -498,7 +529,9 @@ export class AuctionService {
               if (hasHadError) {
                 reject();
               } else {
-                resolve();
+                this.updateStatuses(region, ahId, conn)
+                  .then(resolve)
+                  .catch(reject);
               }
             })
             .catch((error) => {
