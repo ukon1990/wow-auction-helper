@@ -106,6 +106,8 @@ export class BackgroundDownloadService {
     const promises: Promise<any>[] = [
       this.realmService.getRealms()
     ];
+    await this.dbService.getAddonData()
+      .catch(console.error);
 
     if (TsmService.list.value.length === 0) {
       promises.unshift(
@@ -120,7 +122,6 @@ export class BackgroundDownloadService {
       .catch(error =>
         ErrorReport.sendError('BackgroundDownloadService.init', error));
 
-    await this.dbService.getAddonData();
     console.log('Loaded realm specific data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
   }
 

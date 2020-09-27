@@ -10,6 +10,8 @@ import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
+import {ItemInventory} from '../../../models/item/item';
+import {ItemService} from '../../../services/item.service';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -90,9 +92,12 @@ export abstract class BaseCraftingUtil {
     const vendor = this.getVendorPriceDetails(reagent.id),
       overridePrice = this.getOverridePrice(reagent.id),
       tradeVendorPrice = this.getTradeVendorPrice(reagent.id),
+      inventory = this.getInventory(reagent.id),
       quantity = reagent.quantity / recipe.procRate;
 
-    if (overridePrice) {
+    if (inventory) {
+      // console.log('Is in inventory');
+    } else if (overridePrice) {
       price = overridePrice.price * quantity;
       reagent.sources.override = {
         price: overridePrice.price,
@@ -317,5 +322,13 @@ export abstract class BaseCraftingUtil {
   private isNotMillingOrProspecting(knownRecipe: Recipe) {
     return !TextUtil.contains(knownRecipe.name, 'mass mill') &&
       !TextUtil.contains(knownRecipe.name, 'mass prospect');
+  }
+
+  private getInventory(id: number): ItemInventory {
+    const item = ItemService.mapped.value.get(id);
+    if (item && item.inventory) {
+      return item.inventory;
+    }
+    return undefined;
   }
 }
