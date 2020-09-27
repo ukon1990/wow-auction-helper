@@ -48,8 +48,8 @@
       </mat-card>
     </div>
   </div>
-  <div class="row">
-    <mat-card>
+  <div class="row mt-3">
+    <mat-card class="col-md-12">
       <mat-card-header>
         <mat-card-title>
           Sources
@@ -70,22 +70,6 @@
                                 [iconSize]="22"
                                 [columns]="sourceColumns"
                                 [data]="cart.sources.ah"
-                ></wah-data-table>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.inventory?.length">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>
-                  Inventory
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <wah-data-table [id]="'id'"
-                                [iconSize]="22"
-                                [columns]="sourceColumns"
-                                [data]="cart.sources.inventory"
                 ></wah-data-table>
               </mat-card-content>
             </mat-card>
@@ -134,6 +118,22 @@
                                 [iconSize]="22"
                                 [columns]="sourceColumns"
                                 [data]="cart.sources.farm"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="inventory?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Inventory
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="inventoryColumns"
+                                [data]="inventory"
                 ></wah-data-table>
               </mat-card-content>
             </mat-card>

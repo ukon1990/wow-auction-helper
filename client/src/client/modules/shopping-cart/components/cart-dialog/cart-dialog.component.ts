@@ -20,6 +20,8 @@ export class CartDialogComponent implements OnInit, OnDestroy {
   recipes: CartRecipe[] = [];
   needed: Reagent[] = [];
   cart: ShoppingCartV2;
+  inventory: any[] = [];
+
   recipeColumns: ColumnDescription[] = [
     {
       key: 'name',
@@ -111,6 +113,36 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       dataType: 'gold'
     },
   ];
+  inventoryColumns: ColumnDescription[] = [
+    {
+      key: 'name',
+      title: 'Name',
+      dataType: 'name',
+      options: {
+        idName: 'id'
+      }
+    },
+    {
+      key: 'quantity',
+      title: 'Quantity',
+      dataType: 'number'
+    },
+    {
+      key: 'price',
+      title: 'Current buyout',
+      dataType: 'gold'
+    },
+    {
+      key: 'sumPrice',
+      title: 'Sum buyout',
+      dataType: 'gold'
+    },
+    {
+      key: 'characters',
+      title: 'Characters',
+      dataType: 'text'
+    },
+  ];
 
   constructor(public dialogRef: MatDialogRef<CartDialogComponent>,
               private service: ShoppingCartService,
@@ -123,6 +155,7 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       this.setRecipes();
       this.setItems();
       this.needed = CartTransformUtil.needed(cart.neededItems);
+      this.setInventory();
     });
     this.sm.add(this.backgroundService.isInitialLoadCompleted, isDone => {
       if (isDone) {
@@ -147,5 +180,15 @@ export class CartDialogComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sm.unsubscribe();
+  }
+
+  private setInventory() {
+    this.inventory = [];
+    this.cart.sources.inventory.forEach(item => {
+      this.inventory.push({
+        ...item,
+        characters: item.list.join(', '),
+      });
+    });
   }
 }

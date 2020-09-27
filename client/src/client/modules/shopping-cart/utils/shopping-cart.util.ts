@@ -45,13 +45,13 @@ export class ShoppingCartUtil {
     cart.sumCost = tmpRecipe.cost;
     cart.sources = this.collectSources(tmpRecipe.reagents);
     cart.neededItems.sort((a, b) => b.avgPrice - a.avgPrice);
-    cart.sources.inventory.forEach(inv => console.log('Inv item: ', itemMap.get(inv.id)));
 
     cart.sumTotalCost = this.getSumTotalCost(cart.neededItems, auctionMap);
+    cart.sumEstimatedInventoryCost = this.calculateEstInventoryValue(cart.sources.inventory);
     cart.totalValue = this.getTotalValue(recipeMap, recipes, items, auctionMap);
     cart.profit = cart.totalValue - cart.sumCost;
+    cart.tsmShoppingString = this.getTsmString(cart.sources.ah, itemMap);
 
-    console.log('Result recipe', {cart});
     return cart;
   }
 
@@ -144,7 +144,6 @@ export class ShoppingCartUtil {
 
   private getTotalValue(recipeMap: Map<number, Recipe>, recipes: CartRecipe[], items: CartItem[], auctionMap: Map<string, AuctionItem>) {
     let sum = 0;
-    console.log('recipes needed', recipes);
 
     recipes.forEach(recipe => {
       const rec: Recipe = recipeMap.get(recipe.id);
@@ -159,5 +158,22 @@ export class ShoppingCartUtil {
     });
 
     return sum;
+  }
+
+  private calculateEstInventoryValue(inventory: ReagentSource[]) {
+    let value = 0;
+
+    inventory.forEach(item => {
+      value += item.sumPrice;
+    });
+
+    return value;
+  }
+
+  private getTsmString(ah: ReagentSource[], items: Map<number, Item>): string {
+    return ah.map(reagent => {
+      const item: Item = items.get(reagent.id);
+      return `${item ? item.name : ('i:' + reagent.id)}/exact/x${reagent.quantity}`;
+    }).join(';');
   }
 }
