@@ -8,6 +8,7 @@ import {ShoppingCartUtil} from '../utils/shopping-cart.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {Recipe} from '../../crafting/models/recipe';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {ItemService} from '../../../services/item.service';
 
 @Injectable({
   providedIn: 'root'
@@ -95,10 +96,12 @@ export class ShoppingCartService {
     localStorage.setItem(this.STORAGE_NAME + 'items', JSON.stringify(this.items.value));
   }
 
-  private calculateCart(map: Map<string, AuctionItem> = this.auctionService.mapped.value) {
+  private calculateCart(map: Map<string, AuctionItem> = this.auctionService.mapped.value, useInventory: boolean = true) {
     this.cart.next(this.util.calculateSources(
       CraftingService.map.value,
       map,
+      ItemService.mapped.value,
+      useInventory,
       this.recipes.value,
       this.items.value
     ));

@@ -8,10 +8,8 @@ import {CustomPrice} from '../models/custom-price';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
-import {AuctionsService} from '../../../services/auctions.service';
 import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
-import {ItemInventory} from '../../../models/item/item';
-import {ItemService} from '../../../services/item.service';
+import {Item, ItemInventory} from '../../../models/item/item';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -54,7 +52,8 @@ export abstract class BaseCraftingUtil {
     sumPrice: 0,
   };
 
-  protected constructor(public map: Map<string, AuctionItem>) {
+  protected constructor(public map: Map<string, AuctionItem>, public items: Map<number, Item>, public faction: number,
+                        public useIntermediateCrafting: boolean = false, public useInventory: boolean = false) {
   }
 
   calculate(recipes: Recipe[]): void {
@@ -92,12 +91,26 @@ export abstract class BaseCraftingUtil {
     const vendor = this.getVendorPriceDetails(reagent.id),
       overridePrice = this.getOverridePrice(reagent.id),
       tradeVendorPrice = this.getTradeVendorPrice(reagent.id),
-      inventory = this.getInventory(reagent.id),
-      quantity = reagent.quantity / recipe.procRate;
+      inventory = this.getInventory(reagent.id);
+    let quantity = reagent.quantity / recipe.procRate;
 
-    if (inventory) {
-      // console.log('Is in inventory');
-    } else if (overridePrice) {
+    if (inventory && this.useInventory) {
+      let fromInventory = quantity;
+      if (inventory.quantity < quantity) {
+        fromInventory = quantity - inventory.quantity;
+      }
+
+      reagent.sources.inventory = {
+        id: inventory.id,
+        quantity: fromInventory,
+        price: inventory.buyout,
+        sumPrice: inventory.buyout * fromInventory,
+        list: inventory.characters,
+      };
+
+      quantity = quantity - fromInventory;
+    }
+    if (overridePrice) {
       price = overridePrice.price * quantity;
       reagent.sources.override = {
         price: overridePrice.price,
@@ -314,9 +327,7 @@ export abstract class BaseCraftingUtil {
   private shouldUseIntermediateForReagent(knownRecipe: Recipe, reagent: Reagent) {
     return knownRecipe &&
       this.isNotMillingOrProspecting(knownRecipe) &&
-      knownRecipe.cost < reagent.avgPrice &&
-      SharedService.user &&
-      SharedService.user.useIntermediateCrafting;
+      knownRecipe.cost < reagent.avgPrice && this.useIntermediateCrafting;
   }
 
   private isNotMillingOrProspecting(knownRecipe: Recipe) {
@@ -325,9 +336,9 @@ export abstract class BaseCraftingUtil {
   }
 
   private getInventory(id: number): ItemInventory {
-    const item = ItemService.mapped.value.get(id);
-    if (item && item.inventory) {
-      return item.inventory;
+    const item = this.items.get(id);
+    if (item && item.inventory && item.inventory[this.faction]) {
+      return item.inventory[this.faction];
     }
     return undefined;
   }

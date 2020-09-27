@@ -8,28 +8,35 @@ import {NeededCraftingUtil} from '../../crafting/utils/needed-crafting.util';
 import {BaseCraftingUtil} from '../../crafting/utils/base-crafting.util';
 import {SharedService} from '../../../services/shared.service';
 import {CraftingService} from '../../../services/crafting.service';
+import {Item} from '../../../models/item/item';
+import {ItemService} from '../../../services/item.service';
 
 export class ShoppingCartUtil {
   public strategy: BaseCraftingUtil;
 
-  calculateSources(recipeMap: Map<number, Recipe>, auctionMap: Map<string, AuctionItem>,
-                   recipes: CartRecipe[] = [], items: CartItem[] = []): ShoppingCartV2 {
+  calculateSources(recipeMap: Map<number, Recipe>,
+                   auctionMap: Map<string, AuctionItem>,
+                   itemMap: Map<number, Item>,
+                   useInventory: boolean,
+                   recipes: CartRecipe[] = [],
+                   items: CartItem[] = []): ShoppingCartV2 {
     const STRATEGY = BaseCraftingUtil.STRATEGY,
-      selectedStrategy = SharedService.user.craftingStrategy;
+      selectedStrategy = SharedService.user.craftingStrategy,
+      faction = SharedService.user.faction;
     const cart = new ShoppingCartV2();
-    const neededitems = this.getNeededItems(recipeMap, recipes, items);
+    const neededItems = this.getNeededItems(recipeMap, recipes, items);
     const tmpRecipe: Recipe = new Recipe();
-    tmpRecipe.reagents = neededitems.map(
+    tmpRecipe.reagents = neededItems.map(
       ({id, quantity}) => new Reagent(id, quantity));
     switch (selectedStrategy) {
       case STRATEGY.OPTIMISTIC:
-        this.strategy = new OptimisticCraftingUtil(auctionMap);
+        this.strategy = new OptimisticCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
         break;
       case STRATEGY.PESSIMISTIC:
-        this.strategy = new PessimisticCraftingUtil(undefined, undefined, auctionMap);
+        this.strategy = new PessimisticCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
         break;
       default:
-        this.strategy = new NeededCraftingUtil(auctionMap);
+        this.strategy = new NeededCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
         break;
     }
     this.strategy.calculateOne(tmpRecipe);
@@ -38,6 +45,7 @@ export class ShoppingCartUtil {
     cart.sumCost = tmpRecipe.cost;
     cart.sources = this.collectSources(tmpRecipe.reagents);
     cart.neededItems.sort((a, b) => b.avgPrice - a.avgPrice);
+    cart.sources.inventory.forEach(inv => console.log('Inv item: ', itemMap.get(inv.id)));
 
     cart.sumTotalCost = this.getSumTotalCost(cart.neededItems, auctionMap);
     cart.totalValue = this.getTotalValue(recipeMap, recipes, items, auctionMap);
