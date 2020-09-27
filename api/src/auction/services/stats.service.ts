@@ -117,35 +117,35 @@ export class StatsService {
               +new Date(a.LastModified) - +new Date(b.LastModified));
 
           for (const object of objects.Contents) {
-            if ((+new Date() - insertStatsStart) / 1000 > 50) {
-              console.log('The time since limit has passed');
-              return;
-            }
-            const [status]: { activeQueries: number }[] = await conn.query(LogRepository.activeQueryCount)
-              .catch(error => console.error(`StatsService.insertStats.Contents`, error));
-
-            if (status.activeQueries < 10) {
-              await s3.getAndDecompress(objects.Name, object.Key)
-                .then(async (query: string) => {
-                  if (query) {
-                    const insertStart = +new Date();
-                    await conn.query(query)
-                      .then(() => {
-                        s3.deleteObject(objects.Name, object.Key)
-                          .catch(console.error);
-                        completed++;
-                      })
-                      .catch(console.error);
-                    if (!avgQueryTime) {
-                      avgQueryTime = +new Date() - insertStart;
-                    } else {
-                      avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
-                    }
-                  }
-                })
+            if ((+new Date() - insertStatsStart) / 1000 < 50) {
+              const [status]: { activeQueries: number }[] = await conn.query(LogRepository.activeQueryCount)
                 .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+
+              if (status.activeQueries < 10) {
+                await s3.getAndDecompress(objects.Name, object.Key)
+                  .then(async (query: string) => {
+                    if (query) {
+                      const insertStart = +new Date();
+                      await conn.query(query)
+                        .then(() => {
+                          s3.deleteObject(objects.Name, object.Key)
+                            .catch(console.error);
+                          completed++;
+                        })
+                        .catch(console.error);
+                      if (!avgQueryTime) {
+                        avgQueryTime = +new Date() - insertStart;
+                      } else {
+                        avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
+                      }
+                    }
+                  })
+                  .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+              } else {
+                console.log('There are too many active queries', status.activeQueries);
+              }
             } else {
-              console.log('There are too many active queries', status.activeQueries);
+              console.log('The time since limit has passed');
             }
           }
           console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);

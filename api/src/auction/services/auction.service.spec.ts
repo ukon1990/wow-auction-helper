@@ -46,6 +46,46 @@ describe('AuctionHandler', () => {
     });
   });
 
+  xit('Update all statuses', async () => {
+    jest.setTimeout(99999);
+    const conn = new DatabaseUtil(false);
+    await conn.query(`
+        SELECT
+            *
+        FROM
+            (SELECT
+                 id, region, connectedId, COUNT(*) AS count
+             FROM
+                 auction_houses
+             WHERE
+                     id IN (SELECT
+                                ahId
+                            FROM
+                                auction_house_realm)
+             GROUP BY connectedId) tbl
+        WHERE
+            count = 1
+        ORDER BY connectedId ASC;`)
+      .then(async (rows: {id, region}[]) => {
+        const promiseThrottle = new PromiseThrottle({
+            requestsPerSecond: 5,
+            promiseImplementation: Promise
+          }),
+          promises = [];
+        rows.forEach(row => {
+          promises.push(
+            promiseThrottle.add(
+              () => new AuctionService()
+                .updateStatuses(row.region, row.id, conn)));
+        });
+        console.log('Lengt of proms', promises.length);
+        await Promise.all(promises)
+          .catch(console.error);
+      })
+      .catch(console.error);
+    expect(1).toBe(2);
+  });
+
   xit('Testing the behavior of shit', async () => {
     jest.setTimeout(100000);
     await new AuctionService().getAndUploadAuctionDump({
