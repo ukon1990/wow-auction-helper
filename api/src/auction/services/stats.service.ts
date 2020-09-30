@@ -4,15 +4,21 @@ import {EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
-import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {LogRepository} from '../../logs/repository';
+import {RealmRepository} from '../../realm/repository';
+import {RealmService} from '../../realm/service';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
 
 export class StatsService {
+  realmRepository: RealmRepository;
+
+  constructor() {
+    this.realmRepository = new RealmRepository();
+  }
 
   /* istanbul ignore next */
   async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true,
@@ -106,51 +112,64 @@ export class StatsService {
   insertStats(): Promise<void> {
     const insertStatsStart = +new Date();
     return new Promise<void>((resolve, reject) => {
+      let completed = 0, total = 0, avgQueryTime;
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
-      let completed = 0, total = 0, avgQueryTime;
+
       s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
         .then(async (objects: ListObjectsV2Output) => {
           total = objects.Contents.length;
-          objects.Contents
-            .sort((a, b) =>
-              +new Date(a.LastModified) - +new Date(b.LastModified));
-
-          for (const object of objects.Contents) {
-            if ((+new Date() - insertStatsStart) / 1000 < 50) {
-              const [status]: { activeQueries: number }[] = await conn.query(LogRepository.activeQueryCount)
-                .catch(error => console.error(`StatsService.insertStats.Contents`, error));
-
-              if (status.activeQueries < 10) {
-                await s3.getAndDecompress(objects.Name, object.Key)
-                  .then(async (query: string) => {
-                    if (query) {
-                      const insertStart = +new Date();
-                      await conn.query(query)
-                        .then(() => {
-                          s3.deleteObject(objects.Name, object.Key)
-                            .catch(console.error);
-                          completed++;
-                        })
-                        .catch(console.error);
-                      if (!avgQueryTime) {
-                        avgQueryTime = +new Date() - insertStart;
-                      } else {
-                        avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
-                      }
-                    }
-                  })
-                  .catch(error => console.error(`StatsService.insertStats.Contents`, error));
-              } else {
-                console.log('There are too many active queries', status.activeQueries);
-              }
-            } else {
-              console.log('The time since limit has passed');
-            }
+          if (total > 0) {
+            await new RealmService().updateAllRealmStatuses()
+              .catch(console.error);
           }
-          console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
-          conn.end();
-          resolve();
+
+          conn.enqueueHandshake()
+            .then(async () => {
+              objects.Contents
+                .sort((a, b) =>
+                  +new Date(a.LastModified) - +new Date(b.LastModified));
+
+              for (const object of objects.Contents) {
+                if ((+new Date() - insertStatsStart) / 1000 < 50) {
+                  const [status]: { activeQueries: number }[] = await conn.query(LogRepository.activeQueryCount)
+                    .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+
+                  if (status.activeQueries < 10) {
+                    await s3.getAndDecompress(objects.Name, object.Key)
+                      .then(async (query: string) => {
+                        if (query) {
+                          const insertStart = +new Date();
+                          await conn.query(query)
+                            .then(() => {
+                              s3.deleteObject(objects.Name, object.Key)
+                                .catch(console.error);
+                              completed++;
+                            })
+                            .catch(console.error);
+                          if (!avgQueryTime) {
+                            avgQueryTime = +new Date() - insertStart;
+                          } else {
+                            avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
+                          }
+                        }
+                      })
+                      .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+                  } else {
+                    console.log('There are too many active queries', status.activeQueries);
+                  }
+                } else {
+                  console.log('The time since limit has passed');
+                }
+              }
+              console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
+              conn.end();
+              resolve();
+            })
+            .catch(error => {
+              console.error(error);
+              reject(error);
+            });
         })
         .catch(error => {
           console.error(error);

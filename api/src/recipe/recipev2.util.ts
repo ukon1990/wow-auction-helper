@@ -4,7 +4,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {Recipev2} from './recipev2.model';
 import {AuthHandler} from '../handlers/auth.handler';
 import {DatabaseUtil} from '../utils/database.util';
-import {QueryUtil} from '../utils/query.util';
+import {RDSQueryUtil} from '../utils/query.util';
 import {ItemLocale} from '../models/item/item-locale';
 
 export class RecipeV2Util {
@@ -67,7 +67,7 @@ export class RecipeV2Util {
                     CURRENT_TIMESTAMP,
                     null);
               `,
-            new QueryUtil('recipesName', false).insert({
+            new RDSQueryUtil('recipesName', false).insert({
               id: recipe.id,
               ...recipe.name
             })
@@ -86,7 +86,7 @@ export class RecipeV2Util {
           }
 
           if (recipe.description && recipe.description.en_GB) {
-            queries.push(new QueryUtil('recipesDescription', false).insert({
+            queries.push(new RDSQueryUtil('recipesDescription', false).insert({
               id: recipe.id,
               ...recipe.description
             }));

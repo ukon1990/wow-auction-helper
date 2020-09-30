@@ -217,6 +217,7 @@ export class ItemService {
         resolve(realmMap.get(ahId).get(storedId));
       });
     }
+
     return this._http.post(Endpoints.getLambdaUrl('item/history', 'EU_NORTH'),
       {
         id,

@@ -1,13 +1,13 @@
 import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
-import {QueryUtil} from '../../utils/query.util';
+import {RDSQueryUtil} from '../../utils/query.util';
 
 export class StatsRepository {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
     const formattedHour = (hour < 10 ? '0' + hour : '' + hour);
 
-    const insert = new QueryUtil('itemPriceHistoryPerHour')
+    const insert = new RDSQueryUtil('itemPriceHistoryPerHour')
       .multiInsert(list)
       .replace(';', '');
 
@@ -44,7 +44,7 @@ export class StatsRepository {
   }
 
   multiInsertOrUpdateDailyPrices(list: AuctionItemStat[], day: string): Promise<any> {
-    const insert = new QueryUtil('itemPriceHistoryPerDay')
+    const insert = new RDSQueryUtil('itemPriceHistoryPerDay')
       .multiInsert(list)
       .replace(';', '');
     return this.conn.query(`${insert} ON DUPLICATE KEY UPDATE

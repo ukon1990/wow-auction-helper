@@ -1,17 +1,26 @@
-import {APIGatewayEvent, Callback} from 'aws-lambda';
+import {APIGatewayEvent} from 'aws-lambda';
 import {DatabaseUtil} from '../utils/database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {LogRepository} from './repository';
 import {LogEntry} from '../models/log-entry.model';
 import {GlobalStatus, SQLProcess, TableSize} from './model';
+import {S3Handler} from '../handlers/s3.handler';
+import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
+import {RDSQueryUtil} from '../utils/query.util';
+import {LogDynamoRepository} from './dynamo.repository.model';
+import generateUUID from '../../../client/src/client/utils/uuid.util';
+import {IdUtil} from '../utils/id.util';
+import {RealmService} from '../realm/service';
 
 const crypto = require('crypto');
 
 export class LogService {
   detail;
   userId: string;
+  private repository: LogDynamoRepository;
 
   constructor(public event: APIGatewayEvent, private conn: DatabaseUtil) {
+    this.repository = new LogDynamoRepository();
     try {
       if (this.event.requestContext && this.event.requestContext['identity']) {
         this.detail = this.event.requestContext['identity'];
@@ -19,39 +28,121 @@ export class LogService {
         this.detail = this.event['detail'];
       }
       this.userId = this.generateId();
-    } catch (error) {}
+    } catch (error) {
+    }
+  }
+
+  processAccessLogs(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const insertStatsStart = +new Date();
+      let completed = 0, total = 0;
+      const s3 = new S3Handler();
+      s3.list('wah-data-eu-se', 'logg/inserts/', 2000)
+        .then(async (objects: ListObjectsV2Output) => {
+          total = objects.Contents.length;
+
+          if (!total) {
+            console.log('There are no inserts to process', total);
+            resolve();
+            return;
+          }
+
+
+          objects.Contents
+            .sort((a, b) =>
+              +new Date(a.LastModified) - +new Date(b.LastModified));
+
+          console.log(`Preparing to process ${total} files`);
+
+          const list = [];
+          await Promise.all(
+            objects.Contents.map(object =>
+              new Promise<any>((res, rej) => {
+                s3.getAndDecompress(objects.Name, object.Key)
+                  .then(async (entry: any) => {
+                    list.push({
+                      ...entry,
+                      timestamp: RDSQueryUtil.getSQLTimestamp(object.LastModified)
+                    });
+                    completed++;
+                    res();
+                  })
+                  .catch(error => {
+                    rej(error);
+                    console.error(`StatsService.insertStats.Contents`, error);
+                  });
+              })))
+            .catch(console.error);
+          console.log(`Done fetching files ${completed} / ${total} in ${+new Date() - insertStatsStart} ms`);
+
+          this.conn.query(LogRepository.s3Event(list))
+            .then(async () => {
+              console.log('Successfully inserted access events');
+              await Promise.all(
+                objects.Contents.map(object =>
+                  s3.deleteObject(objects.Name, object.Key)
+                    .catch(console.error)))
+                .catch(console.error);
+              console.log(`Done deleting files`);
+
+              console.log(
+                `Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms`);
+              this.conn.end();
+              resolve();
+            })
+            .catch(err => {
+              console.error(err);
+              this.conn.end();
+              reject(err);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
   }
 
   handleS3AccessLog(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
+      resolve();
+      /*
+      I do not think that this is needed after the DynamoDB swap
+
+
+
       const params = this.detail.requestParameters,
         isNotAWSAPI = !TextUtil.contains(this.detail.userAgent, 'AWS_Lambda');
       const path = params.key.split('/');
 
       const requestData = {
-        bucketName: params.bucketName,
+        bucket: params.bucketName,
         type: path[0],
         region: path[1],
         ahId: isNaN(path[2]) ? null : path[2],
         fileName: path[path.length - 1],
-        ipObfuscated: this.userId,
+        userId: this.userId,
+        isMe: 0,
         userAgent: this.detail.userAgent,
       };
 
-      if (isNotAWSAPI && (requestData.ahId || requestData.type === 'tsm')) {
-        const sql = LogRepository.s3Event(requestData);
-        this.conn
-          .query(sql)
-          .then(() => {
-            resolve();
-          })
-          .catch(err => {
-            console.error(err);
-            reject(err);
-          });
+      if (isNotAWSAPI &&
+        !requestData.ahId &&
+        TextUtil.contains(requestData.bucket, 'wah-data-') &&
+        requestData.fileName !== 'status.json.gz'
+      ) {
+      */
+      /*
+        We just want to update if it is a realm slug that was
+        requested (meaning update on client init or update check)
+      *//*
+        new RealmService().updateLastRequestedWithRegionAndSlug(
+          requestData.region, requestData.fileName.replace('.json.gz', ''), +new Date())
+          .then(resolve)
+          .catch(reject);
       } else {
         resolve();
       }
+    */
     });
   }
 
