@@ -12,6 +12,7 @@ import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingService} from '../../../../../services/crafting.service';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-custom-proc',
@@ -27,7 +28,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   customProcs: CustomProc[] = [];
   sm = new SubscriptionManager();
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private auctionService: AuctionsService) {
 
     this.sm.add(this.itemSearchForm.valueChanges, (name) => {
       this.filteredItems = this.filter(name);
@@ -46,7 +47,7 @@ export class CustomProcComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sm.unsubscribe();
     CustomProcUtil.save();
-    CraftingUtil.calculateCost();
+    CraftingUtil.calculateCost(false, this.auctionService.mapped.value);
   }
 
   add(recipe: Recipe): void {

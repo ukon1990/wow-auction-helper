@@ -150,7 +150,7 @@ export class DownloadComponent implements OnInit {
 
   /* istanbul ignore next */
   isDownloading(): boolean {
-    return SharedService.isDownloading();
+    return this.service.isLoading.value || SharedService.isDownloading();
   }
 
   private async downloadAuctions() {

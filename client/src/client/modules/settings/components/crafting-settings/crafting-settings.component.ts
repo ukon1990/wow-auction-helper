@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import { SharedService } from '../../../../services/shared.service';
-import { User } from '../../../../models/user/user';
+import {SharedService} from '../../../../services/shared.service';
 import {CraftingUtil} from '../../../crafting/utils/crafting.util';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-crafting-settings',
@@ -14,7 +14,7 @@ export class CraftingSettingsComponent {
   buyoutController: FormControl = new FormControl();
   form: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     this.form = this.formBuilder.group({
       buyoutLimit: new FormControl(
         SharedService.user.buyoutLimit),
@@ -26,7 +26,7 @@ export class CraftingSettingsComponent {
         Object.keys(data).forEach(key =>
           SharedService.user[key] = data[key]);
         UserUtil.save();
-        CraftingUtil.calculateCost();
+        CraftingUtil.calculateCost(false, this.auctionService.mapped.value);
       });
   }
 }

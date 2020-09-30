@@ -1,4 +1,4 @@
-<div class="materials-scrollable full-width mt-2 mb-2" *ngFor="let r of recipe.reagents">
+<div class="materials-scrollable full-width mt-2 mb-2" *ngFor="let r of recipe?.reagents">
 
   <!-- Intermidiate craft -->
   <mat-card *ngIf="r.intermediateEligible && useIntermediateCrafting(); else regular" class="p-0 m-0 pt-2 pb-2">
