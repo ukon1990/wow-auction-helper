@@ -1,6 +1,6 @@
 {
   "name": "wah-api",
-  "version": "3.136.0",
+  "version": "3.200.0",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -26,10 +26,13 @@
     "@ukon1990/subscription-manager": "^1.0.2",
     "aws-sdk": "^2.516.0",
     "file-saver": "^2.0.2",
+    "jwt-decode": "^3.0.0-beta.2",
     "mysql": "^2.17.1",
+    "njwt": "^1.0.0",
     "promise-throttle": "^1.0.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "secure-random": "^1.1.2",
     "source-map-explorer": "^2.1.0",
     "sqlstring": "^2.3.2",
     "tslib": "^1.9.3",

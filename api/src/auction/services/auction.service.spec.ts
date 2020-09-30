@@ -14,18 +14,6 @@ describe('AuctionHandler', () => {
   beforeEach(() => environment.test = false);
   afterEach(() => environment.test = true);
 
-  describe('getLatestDumpPathV2', () => {
-    it('Can convert game data response to the old type', async () => {
-      await AuthHandler.getToken();
-      const handler = new AuctionService(),
-        region = 'eu',
-        newPath = await handler.getLatestDumpPath(1403, region),
-        oldPath = await handler.getLatestDumpPathOld(region, 'draenor');
-      console.log(newPath, BLIZZARD);
-      expect(newPath.lastModified).toEqual(oldPath.lastModified);
-    });
-  });
-
   describe('getUpdateLog', () => {
     it('Can get the last 3 hours', async () => {
       const log: AuctionUpdateLog = await new AuctionService().getUpdateLog(69, 3);

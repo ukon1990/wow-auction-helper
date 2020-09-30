@@ -66,19 +66,6 @@ functions:
       Project: WAH
     handler: src/auction/controller.deactivateInactiveHouses
     memorySize: 200
-
-  updateSpesificHouse:
-    tags:
-      Function: Wah-updateSpesificHouse
-      Project: WAH
-    handler: src/auction/controller.updateOne
-    memorySize: 200
-    events:
-      - http:
-          method: post
-          path: auction/update-one
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   deleteOldPriceHistoryForRealmAndSetDailyPrice:
     tags:
       Function: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
@@ -265,18 +252,6 @@ functions:
           path: realm/all
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
-  getByRegionAndName:
-    tags:
-      Function: Wah-getByRegionAndName
-      Project: WAH
-    handler: src/controllers/realm.getByRegionAndName
-    memorySize: 200
-    events:
-      - http:
-          method: get
-          path: realm/{region}/{realm}
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   test:
     tags:
       Function: Wah-test
@@ -296,10 +271,18 @@ functions:
       Project: WAH
     handler: src/logs/controller.handler
     memorySize: 128
+    provisionedConcurrency: 100
     events:
       - http:
           method: any
           path: logger
+  loggerProcessAccessLogs:
+    tags:
+      Function: Wah-loggerProcessAccessLogs
+      Project: WAH
+    handler: src/logs/controller.processAccessLogs
+    memorySize: 128
+    timeout: 90
   loggerGetTableSize:
     tags:
       Function: Wah-loggerGetTableSize
@@ -377,7 +360,7 @@ functions:
     tags:
       Function: Wah-updateTSMDumpData
       Project: WAH
-    handler: src/controllers/tsm.handler
+    handler: src/auction/controller.updateTSMDataForOneRealm
     memorySize: 256
 
   updateS3:

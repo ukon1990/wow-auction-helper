@@ -7,11 +7,11 @@ const connection = new DatabaseUtil(false);
 
 /* istanbul ignore next */
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  context.callbackWaitsForEmptyEventLoop = false;
+  // context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection)
     .handleS3AccessLog()
     .then(() => Response.send({message: 'success'}, callback))
-    .catch(err => Response.error(this.callback, {message: 'error', err}));
+    .catch(err => Response.error(callback, {message: 'error', err}));
 };
 
 /* istanbul ignore next */
@@ -27,7 +27,7 @@ exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Call
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).deleteClient()
     .then(entry => Response.send({success: true, userId: entry.userId}, callback))
-    .catch(error => Response.error(this.callback, error, event));
+    .catch(error => Response.error(callback, error, event));
 };
 
 exports.getLog = (event: APIGatewayEvent, context: Context, callback: Callback) => {
@@ -42,7 +42,7 @@ exports.getCurrentQueries = (event: APIGatewayEvent, context: Context, callback:
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).getCurrentQueries()
     .then((data) => Response.send(data, callback))
-    .catch(err => Response.error(this.callback, err));
+    .catch(err => Response.error(callback, err));
 };
 
 exports.getTableSize = (event: APIGatewayEvent, context: Context, callback: Callback) => {
@@ -53,7 +53,7 @@ exports.getTableSize = (event: APIGatewayEvent, context: Context, callback: Call
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).getTableSize()
     .then((data) => Response.send(data, callback))
-    .catch(err => Response.error(this.callback, err));
+    .catch(err => Response.error(callback, err));
 };
 
 exports.getGlobalStatus = (event: APIGatewayEvent, context: Context, callback: Callback) => {
@@ -64,5 +64,12 @@ exports.getGlobalStatus = (event: APIGatewayEvent, context: Context, callback: C
   context.callbackWaitsForEmptyEventLoop = false;
   new LogService(event, connection).getGlobalStatus()
     .then((data) => Response.send(data, callback))
-    .catch(err => Response.error(this.callback, err));
+    .catch(err => Response.error(callback, err));
+};
+
+exports.processAccessLogs = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new LogService(event, new DatabaseUtil(false))
+    .processAccessLogs()
+    .then((data) => Response.send(data, callback))
+    .catch(err => Response.error(callback, err));
 };

@@ -16,16 +16,6 @@ exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback)
 };
 
 /* istanbul ignore next */
-exports.getByRegionAndName  = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const {region, realm} = event.pathParameters;
-  Endpoints.setStage(event);
-  new RealmHandler()
-    .getRealmByRegionAndName(region, realm)
-    .then((response) => Response.send(response, callback))
-    .catch((error) => Response.error(callback, error, event));
-};
-
-/* istanbul ignore next */
 exports.realmAllRegions = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const host = event.headers.Host;
   let region;
