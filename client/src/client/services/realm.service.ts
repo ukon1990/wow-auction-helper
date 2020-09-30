@@ -78,7 +78,11 @@ export class RealmService {
       Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
-  getStatus(region: string, realm: string, isInitialLoad = false): Promise<AuctionHouseStatus> {
+  getStatus(region?: string, realm?: string, isInitialLoad = false): Promise<AuctionHouseStatus> {
+    if (!region || !realm && SharedService.user.realm) {
+      region = SharedService.user.region;
+      realm = SharedService.user.realm;
+    }
     this.isCheckingStatus = false;
     const realmStatus = this.events.realmStatus.value,
       timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
