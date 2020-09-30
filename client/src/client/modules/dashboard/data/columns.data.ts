@@ -147,13 +147,18 @@ export const columnConfig = {
       title: 'Rank',
       dataType: 'number'
     },
+    knownReagents: {
+      key: 'source.recipe.[known].reagents',
+      title: 'Reagents',
+      dataType: 'materials'
+    },
     knownROI: {
-      key: 'buyout-source.recipe.[known].cost',
+      key: '0.95*buyout-source.recipe.[known].cost',
       title: 'Profit',
       dataType: 'gold'
     },
     knownROIPercent: {
-      key: 'buyout/source.recipe.[known].cost',
+      key: '0.95*buyout/source.recipe.[known].cost',
       title: 'ROI %',
       dataType: 'percent'
     },
@@ -181,7 +186,7 @@ export const columnConfig = {
       dataType: 'gold'
     },
     mostProfitableROIPercent: {
-      key: 'buyout/source.recipe.all.0.roi',
+      key: '0.95*buyout/source.recipe.all.0.roi',
       title: 'ROI %',
       dataType: 'percent'
     },
@@ -205,13 +210,18 @@ export const columnConfig = {
       title: 'Rank',
       dataType: 'number'
     },
+    reagents: {
+      key: 'source.recipe.[all].reagents',
+      title: 'Reagents',
+      dataType: 'materials'
+    },
     ROI: {
-      key: 'buyout-source.recipe.[all].cost',
+      key: '0.95*buyout-source.recipe.[all].cost',
       title: 'ROI',
       dataType: 'gold'
     },
     ROIPercent: {
-      key: 'buyout/source.recipe.[all].cost',
+      key: '0.95*buyout/source.recipe.[all].cost',
       title: 'ROI %',
       dataType: 'percent'
     },

@@ -20,6 +20,34 @@ export abstract class BaseRepository<T> {
 
   abstract getAllAfterTimestamp(timestamp: number): Promise<T[]>;
 
+
+  protected scan(params): Promise<T[]> {
+    return new Promise((resolve, reject) => {
+      this.client.scan(params, (error: AWSError, data: QueryOutput) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        const items: any[] = data.Items;
+        resolve(items);
+      });
+    });
+  }
+
+  protected query(params): Promise<T[]> {
+    return new Promise((resolve, reject) => {
+      this.client.query(params,
+        (error: AWSError, data: QueryOutput) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          const items: any[] = data.Items;
+          resolve(items);
+        });
+    });
+  }
+
   protected put(data: T): Promise<T> {
     return new Promise((resolve, reject) => {
       this.client.put({
@@ -109,79 +137,52 @@ export abstract class BaseRepository<T> {
   }
 
   protected getByIdAfter(id: number | string, lastModified: number, table: string = this.table): Promise<T[]> {
-    return new Promise((resolve, reject) => {
-      this.client.query({
-        TableName: table,
-        KeyConditionExpression: '#id = :id and #lastModified >= :lastModified',
-        ExpressionAttributeNames: {
-          '#id': 'id',
-          '#lastModified': 'lastModified'
-        },
-        ExpressionAttributeValues: {
-          ':id': id,
-          ':lastModified': lastModified,
-        }
-      }, (error: AWSError, data: QueryOutput) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        const items: any[] = data.Items;
-        resolve(items);
-      });
+    return this.query({
+      TableName: table,
+      KeyConditionExpression: '#id = :id and #lastModified >= :lastModified',
+      ExpressionAttributeNames: {
+        '#id': 'id',
+        '#lastModified': 'lastModified'
+      },
+      ExpressionAttributeValues: {
+        ':id': id,
+        ':lastModified': lastModified,
+      }
     });
   }
 
   protected getAllAfterForUser(lastModified: number): Promise<T[]> {
     const userId = AuthorizationUtil.token.sub;
-    return new Promise((resolve, reject) => {
-      this.client.scan({
-        TableName: this.table,
-        FilterExpression: '#lastModified > :lastModified and contains(#userId, :userId)',
-        ExpressionAttributeNames: {
-          '#lastModified': 'lastModified',
-          '#userId': 'memberIds'
-        },
-        ExpressionAttributeValues: {
-          ':lastModified': lastModified,
-          ':userId': userId
-        }
-      }, (error: AWSError, data: QueryOutput) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        const items: any[] = data.Items;
-        resolve(items);
-      });
+    return this.scan({
+      TableName: this.table,
+      FilterExpression: '#lastModified > :lastModified and contains(#userId, :userId)',
+      ExpressionAttributeNames: {
+        '#lastModified': 'lastModified',
+        '#userId': 'memberIds'
+      },
+      ExpressionAttributeValues: {
+        ':lastModified': lastModified,
+        ':userId': userId
+      }
     });
   }
 
   protected getAllAfter(lastModified: number): Promise<T[]> {
-    return new Promise((resolve, reject) => {
-      this.client.scan({
-        TableName: this.table,
-        FilterExpression: '#lastModified > :lastModified',
-        ExpressionAttributeNames: {
-          '#lastModified': 'lastModified',
-        },
-        ExpressionAttributeValues: {
-          ':lastModified': lastModified
-        }
-      }, (error: AWSError, data: QueryOutput) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        const items: any[] = data.Items;
-        resolve(items);
-      });
+    return this.scan({
+      TableName: this.table,
+      FilterExpression: '#lastModified > :lastModified',
+      ExpressionAttributeNames: {
+        '#lastModified': 'lastModified',
+      },
+      ExpressionAttributeValues: {
+        ':lastModified': lastModified
+      }
     });
   }
 
   protected getOne(id: string | number): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this.client.query({
+    return new Promise<T>((resolve, reject) => {
+      this.query({
         TableName: this.table,
         KeyConditionExpression: '#id = :id',
         ExpressionAttributeNames: {
@@ -190,42 +191,29 @@ export abstract class BaseRepository<T> {
         ExpressionAttributeValues: {
           ':id': id
         }
-      }, (error: AWSError, data: QueryOutput) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        const items: any[] = data.Items;
-        resolve(items[0]);
-      });
+      })
+        .then(entries =>
+          resolve(entries[0]))
+        .catch(reject);
     });
   }
 
   protected getAllForIndex(indexName: string, keyName: string, keyValue: any, lastModified: number): Promise<T[]> {
     const key = {};
     key[keyName] = keyValue;
-    return new Promise((resolve, reject) => {
-      this.client.query({
-        TableName: this.table,
-        IndexName: indexName,
-        KeyConditionExpression: '#id = :id',
-        FilterExpression: '#lastModified > :lastModified',
-        ExpressionAttributeNames: {
-          '#id': keyName,
-          '#lastModified': 'lastModified'
-        },
-        ExpressionAttributeValues: {
-          ':id': keyValue,
-          ':lastModified': lastModified
-        }
-      }, (error: AWSError, data: QueryOutput) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        const items: any[] = data.Items;
-        resolve(items);
-      });
+    return this.query({
+      TableName: this.table,
+      IndexName: indexName,
+      KeyConditionExpression: '#id = :id',
+      FilterExpression: '#lastModified > :lastModified',
+      ExpressionAttributeNames: {
+        '#id': keyName,
+        '#lastModified': 'lastModified'
+      },
+      ExpressionAttributeValues: {
+        ':id': keyValue,
+        ':lastModified': lastModified
+      }
     });
   }
 }

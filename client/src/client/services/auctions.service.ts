@@ -15,6 +15,7 @@ import {RealmService} from './realm.service';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
 import {TsmService} from '../modules/tsm/tsm.service';
 import {CharacterService} from '../modules/character/services/character.service';
+import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 
 @Injectable()
 export class AuctionsService {
@@ -153,6 +154,7 @@ export class AuctionsService {
                list,
                auctions: auc
              }) => {
+        CraftingUtil.calculateCost(true, map);
         this.auctions.next(auctions);
         this.list.next(list);
         this.mapped.next(map);

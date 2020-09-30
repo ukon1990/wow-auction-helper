@@ -43,13 +43,14 @@ export class DashboardCalculateUtil {
       board.data = [];
       return board;
     }
+    const recipeIdKey = this.getRecipeId(board);
 
     try {
       const dataMap = new Map<string, any>();
       if (board.onlyItemsWithRules) {
-        this.addOnlyIncludedInItemRules(board, items, dataMap);
+        this.addOnlyIncludedInItemRules(board, items, dataMap, recipeIdKey);
       } else {
-        this.addMatchingBoardRules(board, items, dataMap);
+        this.addMatchingBoardRules(board, items, dataMap, recipeIdKey);
         this.addMatchingItemRules(board, dataMap, items);
       }
       this.assignAndSortDataToBoard(dataMap, board);
@@ -58,6 +59,28 @@ export class DashboardCalculateUtil {
       ErrorReport.sendError('DashboardCalculateUtil.calculate', error);
     }
     return board;
+  }
+
+  private static getRecipeId(board: DashboardV2) {
+    let recipeIdKey;
+    board.columns.forEach(column => {
+      if (!recipeIdKey && TextUtil.contains(column.key, 'recipe')) {
+        const {regex, expressions} = this.getMathRegex(column.key);
+        if (expressions) {
+          const keys = column.key.split(expressions[0])
+            .filter(key => TextUtil.contains(key, 'recipe'))[0];
+          const parts = keys.split('.');
+          let idKey = '';
+          parts.forEach((part, i) => {
+            if (!idKey && part === 'recipe') {
+              idKey = parts.slice(0, i + 2).join('.') + '.id';
+            }
+          });
+          recipeIdKey = idKey;
+        }
+      }
+    });
+    return recipeIdKey;
   }
 
   private static assignAndSortDataToBoard(dataMap: Map<string, [any]>, board: DashboardV2) {
@@ -74,20 +97,22 @@ export class DashboardCalculateUtil {
     board.data = data;
   }
 
-  private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>) {
+  private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
+                                            recipeIdPath: string) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((rule: ItemRule) => {
         const id = this.getId(undefined, rule);
         const item = items.get('' + rule.itemId);
         if (this.isFollowingTheRules(board.rules, item) &&
           this.isFollowingTheRules(rule.rules, items.get('' + rule.itemId))) {
-          dataMap.set(id, [this.getResultObject(item, board.columns)]);
+          dataMap.set(id, [this.getResultObject(item, board.columns, recipeIdPath)]);
         }
       });
     }
   }
 
-  private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>) {
+  private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
+                                       recipeIdPath: string) {
     if ((board.rules.length || board.itemRules && board.itemRules.length)) {
       try {
         const iterableKeyRules = board.rules.filter(rule => this.ruleContainsIterable(rule));
@@ -96,9 +121,9 @@ export class DashboardCalculateUtil {
           if (this.isFollowingTheRules(nonIterableKeyRules, item)) {
             const id = this.getId(item);
             if (iterableKeyRules.length > 0) {
-              this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id);
+              this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, recipeIdPath);
             } else {
-              dataMap.set(id, [this.getResultObject(item, board.columns)]);
+              dataMap.set(id, [this.getResultObject(item, board.columns, recipeIdPath)]);
             }
           }
         });
@@ -109,7 +134,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: DashboardV2,
-                                              dataMap: Map<string, any>, id: string) {
+                                              dataMap: Map<string, any>, id: string, recipeIdPath: string) {
     const list = [];
     let arr: any[];
     const partialPath = [];
@@ -126,7 +151,7 @@ export class DashboardCalculateUtil {
               const childObject = this.getItemCopy(item);
               this.setValueAtPath(childObject, it, partialPath, index);
               if (this.isFollowingTheRules(iterableKeyRules, childObject)) {
-                list.push(this.getResultObject(childObject, board.columns));
+                list.push(this.getResultObject(childObject, board.columns, recipeIdPath));
               }
             });
           }
@@ -239,11 +264,15 @@ export class DashboardCalculateUtil {
     return this.getValueFromField(field, item);
   }
 
-  private static getValueFromField(field: string, item: AuctionItem) {
+  static getValueFromField(field: string, item: AuctionItem) {
     const resultValues = [];
     const {regex, expressions} = this.getMathRegex(field);
     field.split(regex)
       .forEach((fieldPath, index) => {
+        if (!isNaN(+fieldPath)) {
+          resultValues.push(+fieldPath);
+          return;
+        }
         let value;
         fieldPath.split('.')
           .forEach(key => {
@@ -260,16 +289,16 @@ export class DashboardCalculateUtil {
 
   private static getMathRegex(field: string) {
     const regex = /[*\-\/+]/gi;
-    const expressions = regex.exec(field);
+    const expressions = field.match(regex);
     return {regex, expressions};
   }
 
-  private static getResultObject(item: AuctionItem, columns: ColumnDescription[]) {
+  private static getResultObject(item: AuctionItem, columns: ColumnDescription[], recipeIdPath: string) {
     const obj = {
       id: item.itemID,
       bonusIds: item.bonusIds,
       petSpeciesId: item.petSpeciesId,
-      recipeId: item.source.recipe.known // TODO: Needs to be fixed to handle arrays
+      recipeId: recipeIdPath ? +this.getValue(item, recipeIdPath) : undefined
     };
 
     columns.forEach(column => {
@@ -342,7 +371,7 @@ export class DashboardCalculateUtil {
       AuctionItemStat.bonusIdRaw((item || itemRule).bonusIds, false);
   }
 
-  private static calculateField(resultValues: any[], mathExpressions: RegExpExecArray) {
+  private static calculateField(resultValues: any[], mathExpressions: string[]) {
     if (resultValues.length < 2) {
       return resultValues[0];
     }

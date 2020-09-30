@@ -130,13 +130,15 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
   }
 
   getRealmsToUpdate(): Promise<AuctionHouse[]> {
-    return new Promise<AuctionHouse[]>((resolve, reject) => {
-      this.getAllAfterTimestamp(0)
-        .then(houses =>
-          resolve(houses
-            .filter((house: AuctionHouse) =>
-              +new Date() - house.lastModified >= house.lowestDelay * 1000 * 60)))
-        .catch(reject);
+    return this.scan({
+      TableName: this.table,
+      FilterExpression: '#nextUpdate <= :now',
+      ExpressionAttributeNames: {
+        '#nextUpdate': 'nextUpdate',
+      },
+      ExpressionAttributeValues: {
+        ':now': +new Date(),
+      }
     });
   }
 
@@ -252,6 +254,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
             ...toHouse.realms,
             ...fromHouse.realms
           ],
+          realmSlugs: toHouse.realmSlugs + ',' + fromHouse.realmSlugs
         })
           .then((updateOutput) => {
             this.delete(fromHouse.id)

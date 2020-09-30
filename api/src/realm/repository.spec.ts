@@ -35,7 +35,7 @@ describe('RealmRepository', () => {
 
   xdescribe('Realm connection migration', () => {
     it('Migrate', async () => {
-      await repository.realmConnection(191, 130)
+      await repository.realmConnection(257, 256)
         .then(console.log)
         .catch(console.error);
       expect(2).toBe(3);

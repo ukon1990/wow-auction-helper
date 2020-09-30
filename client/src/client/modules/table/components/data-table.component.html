@@ -68,7 +68,10 @@
             <span *ngSwitchCase="'date'">
               {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
             </span>
-            <wah-materials *ngSwitchCase="'materials'" [recipe]="d"></wah-materials>
+            <wah-materials *ngSwitchCase="'materials'"
+                           [recipe]="d"
+                           [recipeId]="d?.recipeId">
+            </wah-materials>
             <span *ngSwitchCase="'gold'">
               {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold }}
               <span *ngIf="c.key === 'buyout' && d.mktPrice">

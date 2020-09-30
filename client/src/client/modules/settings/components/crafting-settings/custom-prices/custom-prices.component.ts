@@ -9,6 +9,7 @@ import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {customPricesDefault} from '../../../../crafting/models/default-custom-prices';
 import {Report} from '../../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-custom-prices',
@@ -27,7 +28,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   sm = new SubscriptionManager();
   customPrices: CustomPrice[] = [];
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
     this.sm.add(this.itemSearchForm.valueChanges, (name) => this.filter(name));
     this.setCustomPrices();
   }
@@ -38,7 +39,7 @@ export class CustomPricesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sm.unsubscribe();
     CustomPrices.save();
-    CraftingUtil.calculateCost();
+    CraftingUtil.calculateCost(false, this.auctionService.mapped.value);
   }
 
   add(item: Item): void {
