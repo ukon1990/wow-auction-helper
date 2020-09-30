@@ -1,6 +1,5 @@
 import {RealmService} from './service';
 import {RealmLogRepository} from './repository';
-import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
 
 describe('RealmService', () => {
   const service: RealmService = new RealmService();
