@@ -153,7 +153,7 @@ export const columnConfig = {
       dataType: 'materials'
     },
     knownROI: {
-      key: '0.95*buyout-source.recipe.[known].roi',
+      key: '0.95*buyout-source.recipe.[known].cost',
       title: 'Profit',
       dataType: 'gold'
     },
