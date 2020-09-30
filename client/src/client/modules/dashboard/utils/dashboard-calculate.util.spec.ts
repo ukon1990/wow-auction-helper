@@ -224,10 +224,13 @@ fdescribe('DashboardCalculateUtil', () => {
           expect(board.data.length).toBe(3);
           expect(board.data[0][columnConfig.recipe.knownRank.key]).toBe(3);
           expect(board.data[0][columnConfig.recipe.knownCost.key]).toBe(rank3.cost);
+          expect(board.data[0].recipeId).toBe(rank3.id);
           expect(board.data[1][columnConfig.recipe.knownRank.key]).toBe(2);
           expect(board.data[1][columnConfig.recipe.knownCost.key]).toBe(rank2.cost);
+          expect(board.data[1].recipeId).toBe(rank2.id);
           expect(board.data[2][columnConfig.recipe.knownRank.key]).toBe(1);
           expect(board.data[2][columnConfig.recipe.knownCost.key]).toBe(rank1.cost);
+          expect(board.data[2].recipeId).toBe(rank1.id);
         });
 
         it('Profession and ROI > value', () => {
@@ -378,7 +381,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
   });
 
-  describe('Can do math on fields', () => {
+  fdescribe('Can do math on fields', () => {
     it('Can add', () => {
       const board: DashboardV2 = getBoard([
         {
@@ -441,6 +444,22 @@ fdescribe('DashboardCalculateUtil', () => {
 
       expect(board.data[0]['bid-buyout']).toBe(2);
     });
+
+    describe('Multiple fields', function () {
+      it('Containing only fields', () => {
+        const {buyout, source, regionSaleRate} = secondItem;
+        const result = DashboardCalculateUtil.getValueFromField('regionSaleRate*buyout+source.recipe.[known].cost', secondItem);
+        expect(result).toBe(regionSaleRate * buyout - source.recipe.known[0].cost);
+      });
+
+      it('Containing a numeric value in the field', () => {
+        const {buyout, source} = secondItem;
+        console.log('Testen start');
+        const result = DashboardCalculateUtil.getValueFromField('0.95*buyout+source.recipe.[known].cost', secondItem);
+        console.log('Testen slutt');
+        expect(result).toBe(0.95 * buyout - source.recipe.known[0].cost);
+      });
+    });
   });
 
   describe('Can loop over array fields', () => {
@@ -493,7 +512,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
   });
 
-  describe('Can combine item and recipe name', () => {
+  xdescribe('Can combine item and recipe name', () => {
     it('Should not combine transmutes', () => {
       // TODO: Remember take non english locales into consideration
       const board: DashboardV2 = getBoard([

@@ -22,8 +22,8 @@ export class CraftingUtil {
     this.auctionService = auctionsService;
   }
 
-  public static calculateCost(strategyHasChanged = false,
-                              map: Map<string, AuctionItem> = this.auctionService.mapped.value,
+  public static calculateCost(strategyHasChanged = true,
+                              map: Map<string, AuctionItem>,
                               items: Map<number, Item> = ItemService.mapped.value,
                               useInventory: boolean = false): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY,

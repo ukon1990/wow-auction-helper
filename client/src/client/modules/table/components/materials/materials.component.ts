@@ -10,6 +10,7 @@ import {NumberUtil} from '../../../util/utils/number.util';
 import {NpcService} from '../../../npc/services/npc.service';
 import {ItemNpcDetails} from '../../../item/models/item-npc-details.model';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {CraftingService} from '../../../../services/crafting.service';
 
 @Component({
   selector: 'wah-materials',
@@ -18,11 +19,15 @@ import {AuctionsService} from '../../../../services/auctions.service';
 })
 export class MaterialsComponent implements OnInit {
   @Input() recipe: Recipe;
+  @Input() recipeId: number;
 
   constructor(private auctionService: AuctionsService) {
   }
 
   ngOnInit() {
+    if (this.recipeId) {
+      this.recipe = CraftingService.map.value.get(this.recipeId);
+    }
   }
 
   getItemValue(itemID: number) {

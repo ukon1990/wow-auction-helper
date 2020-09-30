@@ -104,6 +104,7 @@ export class BackgroundDownloadService {
   private async initiateRealmSpecificDownloads(region: string, realm: string) {
     const start = +new Date();
     const promises: Promise<any>[] = [
+      this.realmService.getStatus(),
       this.realmService.getRealms()
     ];
     await this.dbService.getAddonData()

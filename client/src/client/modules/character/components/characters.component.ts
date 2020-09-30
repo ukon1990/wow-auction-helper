@@ -17,6 +17,7 @@ import {DashboardService} from '../../dashboard/services/dashboard.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 
 @Component({
   selector: 'wah-characters',
@@ -242,7 +243,10 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     if (SharedService.user.region && SharedService.user.realm) {
-      AuctionUtil.organize(this.getAuctions());
+      AuctionUtil.organize(this.getAuctions())
+        .then(() => {
+          CraftingUtil.calculateCost(false, this.auctionService.mapped.value);
+        });
     }
 
     Report.send('Removed character', 'Characters');
