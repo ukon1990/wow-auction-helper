@@ -18,6 +18,7 @@ import {environment} from '../../environments/environment';
 export class RealmService {
   private statusInterval: Observable<number> = environment.test ? null : interval(25 * 1000);
   private isCheckingStatus: boolean;
+  private timeSinceInterval: Observable<number> = environment.test ? null : interval(1000);
   previousUrl;
   events = {
     timeSince: new BehaviorSubject(0),
@@ -31,6 +32,7 @@ export class RealmService {
               private matSnackBar: MatSnackBar) {
     if (!environment.test) {
       this.statusInterval.subscribe(() => this.checkForUpdates());
+      this.timeSinceInterval.subscribe(() => this.setTimeSince());
     }
   }
 
@@ -159,15 +161,18 @@ export class RealmService {
 
   private shouldUpdateRealmStatus(): boolean {
     const status = this.events.realmStatus.value;
-    if (!status) {
-      return true;
-    }
-
-    this.events.timeSince.next(DateUtil.timeSince(status.lastModified, 'm'));
-
-    if (status.url !== this.previousUrl) {
+    if (!status || status.url !== this.previousUrl) {
       return true;
     }
     return !status || this.events.timeSince.value > status.lowestDelay;
+  }
+
+  private setTimeSince() {
+    const status = this.events.realmStatus.value;
+    if (status) {
+      this.events.timeSince.next(DateUtil.timeSince(status.lastModified, 'm'));
+    } else {
+      this.events.timeSince.next(0);
+    }
   }
 }

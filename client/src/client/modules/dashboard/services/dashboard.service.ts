@@ -13,6 +13,7 @@ import {DatabaseService} from '../../../services/database.service';
 import {Report} from '../../../utils/report.util';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfessionService} from '../../crafting/services/profession.service';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,7 @@ export class DashboardService {
 
   calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
     if (map.size > 0) {
+      CraftingUtil.calculateCost(false, map);
       DashboardCalculateUtil.setItemSources(map);
       this.list.value.forEach(board => {
         DashboardCalculateUtil.calculate(board, map);

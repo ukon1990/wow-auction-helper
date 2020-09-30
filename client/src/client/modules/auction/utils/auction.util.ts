@@ -25,12 +25,11 @@ export class AuctionUtil {
    */
   public static organize(auctions: Auction[]): Promise<OrganizedAuctionResult> {
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {
-      const map = new Map<string, AuctionItem>();
-      const list: AuctionItem[] = [];
       try {
         const t0 = performance.now();
         this.clearOldData();
-        this.groupAuctions(auctions, map, list);
+        const list: AuctionItem[] = [];
+        const map = this.groupAuctions(auctions, list);
         this.calculateCosts(t0, map);
         SharedService.events.auctionUpdate.emit(true);
         Report.debug('AuctionUtil.organize', list);
@@ -45,8 +44,9 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, map: Map<string, AuctionItem>, list: AuctionItem[]) {
+  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[]) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
+    const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     TsmService.list.value.forEach(tsm => {
       const auction = new Auction();
       auction.item = +tsm.Id;
@@ -65,6 +65,7 @@ export class AuctionUtil {
         ai.buyout = lowest.buyout / lowest.quantity;
       }
     });
+    return map;
   }
 
   private static getLowest(ai: AuctionItem) {
@@ -91,8 +92,6 @@ export class AuctionUtil {
       TradeVendors.setValues(map);
     } catch (e) {
     }
-
-    CraftingUtil.calculateCost(false, map);
 
     // ProspectingAndMillingUtil.setCosts();
 
