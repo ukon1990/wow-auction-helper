@@ -1,17 +1,10 @@
-import {APIGatewayEvent, Callback, Context, Handler} from 'aws-lambda';
+import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {AuctionService} from './services/auction.service';
 import {Response} from '../utils/response.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {StatsService} from './services/stats.service';
-import {ItemHandler} from '../handlers/item.handler';
-
-
-/* istanbul ignore next */
-exports.updateOne = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  Endpoints.setStage(event);
-  new AuctionService().updateHouseRequest(event, callback);
-};
+import {TsmService} from './services/tsm.service';
 
 /* istanbul ignore next */
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
@@ -61,17 +54,12 @@ exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, call
 
 /* istanbul ignore next */
 exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const conn = new DatabaseUtil(false);
   Endpoints.setStage(event);
-  const region = event.body ?
-    JSON.parse(event.body).region : undefined;
-  new AuctionService().updateAllHouses(region, conn)
+  new AuctionService().updateAllHouses()
     .then(res => {
-      conn.end();
       Response.send(res, callback);
     })
     .catch(err => {
-      conn.end();
       Response.error(callback, err);
     });
 };
@@ -89,18 +77,20 @@ exports.insertStatisticsData = (event: APIGatewayEvent, context: Context, callba
 };
 
 exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  // context.callbackWaitsForEmptyEventLoop = false;
-  const conn = new DatabaseUtil(false);
   Endpoints.setStage(event);
-  new AuctionService().updateStaticS3Data(event['Records'], conn)
+  new AuctionService().updateStaticS3Data(event['Records'])
     .then(res => {
       console.log('Promise returned in then for static data');
-      conn.end();
       Response.send(res, callback);
     })
     .catch(err => {
       console.log('Promise returned in catch for static data');
-      conn.end();
       Response.error(callback, err, event, 401);
     });
+};
+
+exports.updateTSMDataForOneRealm = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new TsmService().updateTSMDataForOneRealm(event['key'])
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, event, 500));
 };

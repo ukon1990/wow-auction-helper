@@ -1,7 +1,7 @@
 import {RecipeV2Util} from './recipev2.util';
 import {Recipev2} from './recipev2.model';
 import {DatabaseUtil} from '../utils/database.util';
-import {QueryUtil} from '../utils/query.util';
+import {RDSQueryUtil} from '../utils/query.util';
 
 const setKeyMap = (res: any, keyMap: {} = {}) => {
   Object.keys(res).forEach(key => {

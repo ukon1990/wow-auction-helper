@@ -1,4 +1,4 @@
-import {QueryUtil} from './query.util';
+import {NoSQLQueryUtil, RDSQueryUtil} from './query.util';
 
 class TestModel {
   constructor(
@@ -10,8 +10,8 @@ class TestModel {
   }
 }
 
-describe('QueryUtil', () => {
-  const util = new QueryUtil<TestModel>('test_table');
+describe('RDSQueryUtil', () => {
+  const util = new RDSQueryUtil<TestModel>('test_table');
   describe('insert', () => {
     it('default', () => {
       const obj = new TestModel(
@@ -84,6 +84,22 @@ describe('QueryUtil', () => {
           'date = ' + +obj.date + ',' +
           'timestamp = CURRENT_TIMESTAMP ' +
           'WHERE id = 0;');
+    });
+  });
+});
+
+describe('NoSQLQueryUtil', () => {
+  describe('update', () => {
+    it('does not include id', () => {
+      const obj = {
+        id: 1,
+        name: 'example'
+      };
+      const params = NoSQLQueryUtil.update('test', obj);
+      expect(params.UpdateExpression)
+        .toBe('set lastModified = :lastModified, name = :name');
+      expect(params.ExpressionAttributeValues[':name'])
+        .toBe(obj.name);
     });
   });
 });

@@ -1,3 +1,26 @@
+import {DatabaseUtil} from '../utils/database.util';
+
+interface RealmsForHouseResult {
+  id: number;
+  connectedId: number;
+  region: string;
+  slug: string;
+  name: string;
+  connectedTo: string | string[];
+  url: string;
+  tsmUrl: string;
+  lastModified: string;
+  isUpdating: number;
+  isActive: number;
+  autoUpdate: number;
+  size: number;
+  lowestDelay: number;
+  avgDelay: number;
+  highestDelay: number;
+  firstRequested: number;
+  lastRequested: number;
+}
+
 export class RealmQuery {
   static getUpdateHistoryForRealm(ahId: number, sinceTimestamp: number): string {
     return `SELECT *
@@ -138,7 +161,7 @@ export class RealmQuery {
                     OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
                 )
             ORDER BY timestamp DESC, autoUpdate DESC, (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 DESC
-            LIMIT 100;`;
+            LIMIT 50;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
@@ -212,6 +235,44 @@ export class RealmQuery {
             ) as connectedRealms ON connectedRealms.ahId = ah.id
             WHERE slug = "${realmSlug}"
               AND region = "${region}";`;
+  }
+
+  static getAllRealmsForHouse(id: number, conn: DatabaseUtil): Promise<RealmsForHouseResult[]> {
+    return conn.query(`
+        SELECT *
+        FROM (SELECT ah.id                  AS id,
+                     ah.connectedId         AS connectedId,
+                     region,
+                     slug,
+                     name,
+                     connectedRealms.realms AS connectedTo,
+                     ah.url                 AS url,
+                     tsm.url                AS tsmUrl,
+                     ah.lastModified        AS lastModified,
+                     isUpdating,
+                     isActive,
+                     autoUpdate,
+                     size,
+                     lowestDelay,
+                     avgDelay,
+                     highestDelay,
+                     firstRequested,
+                     lastRequested
+              FROM auction_houses AS ah
+                       LEFT OUTER JOIN
+                   tsmDump AS tsm ON ah.id = tsm.id
+                       LEFT OUTER JOIN
+                   auction_house_realm AS realm ON realm.ahId = ah.id
+                       LEFT OUTER JOIN
+                   (SELECT ahId,
+                           connectedId,
+                           GROUP_CONCAT(slug) AS realms
+                    FROM auction_house_realm
+                             LEFT JOIN auction_houses AS ah ON ah.id = ahId
+                    GROUP BY connectedId) AS connectedRealms ON connectedRealms.ahId = ah.id
+             ) as tbl
+        WHERE slug IS NOT NULL
+          AND id = ${id};`);
   }
 
   static isUpdating(id: number, isUpdating: boolean) {

@@ -1,7 +1,15 @@
-import {ArrayUtil, EmptyUtil} from '@ukon1990/js-utilities';
+import {EmptyUtil} from '@ukon1990/js-utilities';
 import {safeifyString} from './string.util';
+import {S3} from 'aws-sdk';
 
-export class QueryUtil<T> {
+export class RDSQueryUtil<T> {
+  static getSQLTimestamp(timestamp: S3.LastModified) {
+    // example format: 2020-09-28 07:03:20
+    const month = timestamp.getMonth() + 1;
+    const withZero = (value: number) => value > 10 ? value : '0' + value;
+    return `${timestamp.getFullYear()}-${withZero(month)}-${withZero(timestamp.getDate())} ${
+      withZero(timestamp.getHours())}:${withZero(timestamp.getMinutes())}:${withZero(timestamp.getSeconds())}`;
+  }
 
   static unixTimestamp(timestamp): string {
     return `UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000}`;
@@ -95,5 +103,55 @@ export class QueryUtil<T> {
       return +value;
     }
     return `"${safeifyString(JSON.stringify(value))}"`;
+  }
+}
+
+export class NoSQLQueryUtil {
+
+  static update(table: string, input: any) {
+    const {
+      attributeValues,
+      updateExpression,
+      expressionAttributeNames
+    } = this.getAttributeValues(input);
+
+    return {
+      TableName: table,
+      Key: {
+        id: input.id
+      },
+      UpdateExpression: updateExpression,
+      ExpressionAttributeValues: attributeValues,
+      ExpressionAttributeNames: expressionAttributeNames,
+      ReturnValues: 'UPDATED_NEW'
+    };
+  }
+
+  private static getAttributeValues<T>(input: T) {
+    const attributeValues = {
+      ':lastModified': +new Date()
+    };
+    const updateExpression = [
+    ];
+    const expressionAttributeNames = {
+    };
+
+    if (!input['lastModified']) {
+      updateExpression.push('lastModified = :lastModified');
+    }
+
+    Object.keys(input).forEach(key => {
+      if (key === 'id') {
+        return;
+      }
+      attributeValues[`:${key}`] = input[key];
+      updateExpression.push(`#${key} = :${key}`);
+      expressionAttributeNames[`#${key}`] = key;
+    });
+    return {
+      attributeValues,
+      updateExpression: `set ${updateExpression.join(', ')}`,
+      expressionAttributeNames,
+    };
   }
 }

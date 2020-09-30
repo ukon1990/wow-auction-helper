@@ -10,7 +10,15 @@
           Conntected threads
         </div>
         <div mat-line>
-          {{ globalStatuses[globalStatuses?.length -1]?.Threads_connected | number }}
+          {{ globalStatuses[globalStatuses?.length - 1]?.Threads_connected | number }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line>
+          Max connections
+        </div>
+        <div mat-line>
+          {{ globalStatuses[globalStatuses?.length - 1]?.Max_used_connections | number }}
         </div>
       </mat-list-item>
       <mat-list-item>
@@ -18,7 +26,7 @@
           Uptime
         </div>
         <div mat-line>
-          {{ globalStatuses[globalStatuses?.length -1]?.Uptime / 60 / 60 | number }} hours
+          {{ globalStatuses[globalStatuses?.length - 1]?.Uptime / 60 / 60 | number }} hours
         </div>
       </mat-list-item>
     </mat-list>
@@ -33,18 +41,18 @@
 </div>
 
 <wah-data-table
-        filterParameter="info"
-        [columns]="columns"
-        [data]="processes"
+  filterParameter="info"
+  [columns]="columns"
+  [data]="processes"
 ></wah-data-table>
 
 <wah-data-table
-        filterParameter="info"
-        [columns]="processHistoryColumns"
-        [data]="processHistory"
+  filterParameter="info"
+  [columns]="processHistoryColumns"
+  [data]="processHistory"
 ></wah-data-table>
 
 <wah-data-table
-        [columns]="sizeColumns"
-        [data]="size"
+  [columns]="sizeColumns"
+  [data]="size"
 ></wah-data-table>

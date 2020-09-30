@@ -1,7 +1,7 @@
 import {ItemLocale} from '../models/item/item-locale';
 import {HttpClientUtil} from './http-client.util';
 import {languages} from '../static-data/language.data';
-import {QueryUtil} from './query.util';
+import {RDSQueryUtil} from './query.util';
 import {LocaleUtil} from './locale.util';
 import {DatabaseUtil} from './database.util';
 import {TextUtil} from '@ukon1990/js-utilities';
@@ -200,7 +200,7 @@ export class ZoneUtil {
       insert['parentId'] = zone.parentId;
     }
     return new DatabaseUtil().query(
-      new QueryUtil('zone').insert(insert)).then(() =>
+      new RDSQueryUtil('zone').insert(insert)).then(() =>
       LocaleUtil.insertToDB('zoneName', 'id', {id: zone.id, ...zone.name}))
       .catch((error) => {
         if (!TextUtil.contains(error.error, 'ER_DUP_ENTRY:')) {
@@ -228,7 +228,7 @@ export class ZoneUtil {
             promiseThrottle.add(() => this.getZoneDataForLocale(id, lang, zone))));
         await Promise.all(promises)
           .then(async () => {
-            const localeSQL = new QueryUtil('zoneName', false).insert(zone.name);
+            const localeSQL = new RDSQueryUtil('zoneName', false).insert(zone.name);
             if (!conn) {
               conn = new DatabaseUtil(false);
             }
@@ -245,7 +245,7 @@ export class ZoneUtil {
                 .catch(console.log);
             }
             await conn.query(
-              new QueryUtil('zone').insert({
+              new RDSQueryUtil('zone').insert({
                 id: zone.id,
                 territoryId: zone.territoryId,
                 typeId: zone.typeId,
