@@ -1,4 +1,5 @@
 import {LogEntry} from '../models/log-entry.model';
+import {RDSQueryUtil} from '../utils/query.util';
 
 export class LogRepository {
   static globalStatus = `
@@ -72,7 +73,7 @@ export class LogRepository {
                   CURRENT_TIMESTAMP);`;
   }
 
-  static s3Event(requestData) {
+  static s3Event(data: any[]) {/*
     return `INSERT INTO \`100680-wah\`.\`s3-logs\`
                           (\`type\`,
                           \`bucket\`,
@@ -92,14 +93,10 @@ export class LogRepository {
                             "${requestData.fileName}",
                             ${this.isMe(requestData)},
                             "${requestData.userAgent}",
-                            CURRENT_TIMESTAMP);`;
-  }
-
-  /* istanbul ignore next */
-  private static isMe(requestData) {
-    return requestData.ipObfuscated === 'seo7xQEYpAmOwTd+NAOY42cgqYTBbLox4aJ1kGO7gXY=' ||
-    requestData.ipObfuscated === 'VHXNCxunVI2cmo8R8KzoI6eBcLLJnqmQ9Hp48zbVzcU='
-      ? 1 : 0;
+                            CURRENT_TIMESTAMP);`;*/
+    return new RDSQueryUtil(`\`100680-wah\`.\`s3-logs\``)
+      .multiInsert(data)
+      .replace(';', '');
   }
 
   static deleteUser(entry: LogEntry) {

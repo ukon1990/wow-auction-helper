@@ -4,7 +4,7 @@ import {AuthHandler} from '../handlers/auth.handler';
 import {RealmHandler} from '../handlers/realm.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from './realm.query';
-import {QueryUtil} from '../utils/query.util';
+import {RDSQueryUtil} from '../utils/query.util';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class RealmUtil {
@@ -37,7 +37,7 @@ export class RealmUtil {
         .catch(console.error);
       if (connectedId) {
         await conn.query(
-          new QueryUtil(`auction_houses`, false)
+          new RDSQueryUtil(`auction_houses`, false)
             .update(id, {connectedId}))
           .then(() => {
           })

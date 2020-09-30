@@ -9,7 +9,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
 import {BehaviorSubject, interval, Observable} from 'rxjs';
 import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status.model';
-import {Report} from '../utils/report.util';
 import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-update-log.model';
 import {RealmStatus} from '../models/realm-status.model';
 import {UserUtil} from '../utils/user/user.util';
@@ -17,7 +16,7 @@ import {environment} from '../../environments/environment';
 
 @Injectable()
 export class RealmService {
-  private statusInterval: Observable<number> = environment.test ? null : interval(1000);
+  private statusInterval: Observable<number> = environment.test ? null : interval(25 * 1000);
   private isCheckingStatus: boolean;
   previousUrl;
   events = {
@@ -97,15 +96,6 @@ export class RealmService {
             isInitialLoad,
           });
 
-          if ((!this.events.map.value.get(status.id) || !this.events.map.value.get(status.id)['autoUpdate']) && !status.autoUpdate) {
-            this.activateInactiveRealm(region, realm)
-              .catch(error => ErrorReport.sendHttpError(error));
-          }
-
-          if (status.isUpdating && status.url !== this.previousUrl) {
-            this.matSnackBar.open('New auction data is being processed on the server and will be available soon.');
-            Report.debug('The server is processing new auction data', status);
-          }
           this.isCheckingStatus = false;
           resolve(status);
         })
@@ -115,21 +105,6 @@ export class RealmService {
           reject(error);
         });
     }));
-  }
-
-  private activateInactiveRealm(region, realm): Promise<any> {
-    this.openSnackbar('Your realm is currently inactive, it will now be activated');
-    return this.http.get(Endpoints.getLambdaUrl(`realm/${region}/${realm}`, region))
-      .toPromise()
-      .then((status: AuctionHouseStatus) => {
-        if (status.autoUpdate) {
-          this.openSnackbar('Your realm is currently inactive, it will now be activated');
-        }
-      })
-      .catch(error => {
-        this.openSnackbar('Something went wrong, with activating your realm');
-        ErrorReport.sendHttpError(error);
-      });
   }
 
   getRealms(region?: string): Promise<any> {

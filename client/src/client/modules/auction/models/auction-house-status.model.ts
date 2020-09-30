@@ -7,9 +7,9 @@ export class AuctionHouseStatus {
   url: string;
   tsmUrl: string;
   lastModified: number;
-  isUpdating: number;
-  isActive: number;
-  autoUpdate: number;
+  // isUpdating: number;
+  // isActive: number;
+  // autoUpdate: number;
   size: number;
   lowestDelay: number;
   avgDelay: number;

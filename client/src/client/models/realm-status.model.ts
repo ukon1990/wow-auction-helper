@@ -1,4 +1,5 @@
 export class RealmStatus {
+  id: number;
   ahId: number;
   region: string;
   slug: string;
