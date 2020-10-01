@@ -92,13 +92,23 @@ export class BackgroundDownloadService {
       this.isLoading.next(true);
       console.log('Starting to load data');
       const startTimestamp = performance.now();
+      await this.initiateRealmSpecificDownloads(region, realm);
       if (!ItemService.list.value.length) {
         await this.getGetOrUpdateBasicAppData();
       }
-      await this.initiateRealmSpecificDownloads(region, realm);
+      await this.initiateAuctionOrganizingAndTSM();
       this.loggLoadingTime(startTimestamp);
       this.isLoading.next(false);
     }
+  }
+
+  private async initiateAuctionOrganizingAndTSM() {
+    await this.tsmService.load(this.realmService.events.realmStatus.value)
+      .catch(console.error);
+    await this.auctionsService.organize()
+      .then(() => console.log('Organized'))
+      .catch(console.error);
+    await this.dbService.getAddonData();
   }
 
   private async initiateRealmSpecificDownloads(region: string, realm: string) {
@@ -110,19 +120,9 @@ export class BackgroundDownloadService {
     await this.dbService.getAddonData()
       .catch(console.error);
 
-    if (TsmService.list.value.length === 0) {
-      promises.unshift(
-        this.tsmService.load(this.realmService.events.realmStatus.value)
-      );
-    }
-
     await Promise.all(promises)
-      .then(async () =>
-        await this.auctionsService.organize()
-          .catch(console.error))
       .catch(error =>
         ErrorReport.sendError('BackgroundDownloadService.init', error));
-
     console.log('Loaded realm specific data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
   }
 
