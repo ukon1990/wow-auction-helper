@@ -23,7 +23,7 @@ functions:
     tags:
       Function: Wah-auctionUpdateLogForRealm
       Project: WAH
-    handler: src/auction/controller.getUpdateLogForRealm
+    handler: src/realm/controller.getUpdateLogForRealm
     memorySize: 200
     events:
       - http:

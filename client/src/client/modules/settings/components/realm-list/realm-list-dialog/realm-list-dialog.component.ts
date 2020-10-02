@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {AuctionUpdateLog, AuctionUpdateLogEntry} from '../../../../../../../../api/src/models/auction/auction-update-log.model';
+import {AuctionUpdateLog} from '../../../../../../../../api/src/models/auction/auction-update-log.model';
 import {RealmStatus} from '../../../../../models/realm-status.model';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {DateUtil} from '@ukon1990/js-utilities';
@@ -112,14 +112,12 @@ export class RealmListDialogComponent implements OnDestroy {
           const first = res.entries[0];
           res.entries = [{
             id: first.id,
-            ahId: first.ahId,
             lastModified: first.lastModified + res.avgTime * 1000 * 60,
             timeSincePreviousDump: first.timeSincePreviousDump,
             url: '',
             size: first.size
           }, ...res.entries];
           res.entries.forEach(entry => {
-            entry.timeSincePreviousDump = this.msToMinutes(entry);
             entry['name'] = row.name;
           });
           this.updateLogForRealm = res;
@@ -134,8 +132,8 @@ export class RealmListDialogComponent implements OnDestroy {
     }
     // getLogForRealmWithId;
   }
-
-  private msToMinutes(entry: AuctionUpdateLogEntry) {
+/*
+  private msToMinutes(entry: AuctionUpdateLog) {
     return Math.round(entry.timeSincePreviousDump / 1000 / 60);
-  }
+  }*/
 }

@@ -36,3 +36,9 @@ export interface AuctionHouse {
   size: number;
   lastHistoryDeleteEvent: number;
 }
+
+export interface DumpDelay {
+  lowestDelay: number;
+  highestDelay: number;
+  avgDelay: number;
+}

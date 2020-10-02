@@ -8,7 +8,6 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {RealmQuery} from '../../queries/realm.query';
 import {HttpClientUtil} from '../../utils/http-client.util';
-import {AuctionUpdateLog} from '../../models/auction/auction-update-log.model';
 import {RealmHandler} from '../../handlers/realm.handler';
 import {EventRecord, EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
@@ -16,7 +15,7 @@ import {AuctionResponse} from '../../models/auction/auctions-response';
 import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 import {StatsService} from './stats.service';
 import {RealmService} from '../../realm/service';
-import {RealmRepository} from '../../realm/repository';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 
 export class AuctionService {
@@ -24,15 +23,6 @@ export class AuctionService {
 
   constructor() {
     this.realmRepository = new RealmRepository();
-  }
-
-  async getUpdateLog(ahId: number, hours: number = 24, conn = new DatabaseUtil()): Promise<AuctionUpdateLog> {
-    const fromDate = +new Date() - hours * 60 * 60 * 1000;
-    return new Promise<AuctionUpdateLog>((resolve, reject) => {
-      conn.query(RealmQuery.getUpdateHistoryForRealm(ahId, fromDate))
-        .then(res => resolve(new AuctionUpdateLog(res)))
-        .catch(reject);
-    });
   }
 
   async latestDumpPathRequest(connectedId, region: string, realm: string, timestamp: number) {
@@ -253,15 +243,6 @@ export class AuctionService {
           reject(e);
         });
     });
-  }
-
-  private async getDelay(id, conn = new DatabaseUtil()) {
-    const {minTime, avgTime, maxTime} = await this.getUpdateLog(id, 72, conn);
-
-    const lowestDelay = minTime > 120 ? 120 : minTime;
-    return {
-      lowest: lowestDelay, avg: avgTime, highest: maxTime
-    };
   }
 
   private async createLastModifiedFile(ahId: number, region: string) {
