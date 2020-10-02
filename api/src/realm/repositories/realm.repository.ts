@@ -1,78 +1,8 @@
-import {BaseRepository} from '../repository/base.repository';
+import {BaseRepository} from '../../repository/base.repository';
 import {AWSError} from 'aws-sdk';
-import {AuctionHouse, AuctionHouseUpdateLog} from './model';
-import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
-
-interface DumpDelay {
-  lowestDelay: number;
-  highestDelay: number;
-  avgDelay: number;
-}
-
-export class RealmLogRepository extends BaseRepository<AuctionHouseUpdateLog> {
-  add(data: AuctionHouseUpdateLog): Promise<AuctionHouseUpdateLog> {
-    return Promise.resolve(undefined);
-  }
-
-  getAllAfterTimestamp(timestamp: number): Promise<AuctionHouseUpdateLog[]> {
-    return Promise.resolve([]);
-  }
-
-  getById(id: string | number): Promise<AuctionHouseUpdateLog> {
-    return Promise.resolve(undefined);
-  }
-
-  constructor() {
-    super('wah_auction_houses_update_log');
-  }
-
-  getUpdateDelays(id: number): Promise<DumpDelay> {
-    return new Promise<DumpDelay>((resolve, reject) => {
-      const threeDaysAgo = +new Date() - 1000 * 60 * 60 * 72;
-      this.getByIdAfter(id, threeDaysAgo)
-        .then((result) => {
-          if (!result.length) {
-            reject();
-            return;
-          }
-          const minuteInMS = 1000 * 60;
-
-          result.sort((a, b) =>
-            a.lastModified - b.lastModified);
-
-          let min = 60 * minuteInMS, max = 60 * minuteInMS, avg;
-          for (let i = 1; i < result.length; i++) {
-            const current = result[i];
-            const previous = result[i - 1];
-            const diff = current.lastModified - previous.lastModified;
-
-            if (diff > minuteInMS) {
-              if (!avg) {
-                avg = diff;
-              } else {
-                avg = (avg + diff) / 2;
-              }
-
-              if (min > diff) {
-                min = diff;
-              }
-
-              if (max < diff) {
-                max = diff;
-              }
-            }
-          }
-
-          resolve({
-            lowestDelay: Math.round(min / minuteInMS),
-            avgDelay: Math.round(avg / minuteInMS),
-            highestDelay: Math.round(max / minuteInMS)
-          });
-        })
-        .catch(reject);
-    });
-  }
-}
+import {AuctionHouse} from '../model';
+import {RealmStatus} from '../../../../client/src/client/models/realm-status.model';
+import {RealmLogRepository} from './realm-log.repository';
 
 export class RealmRepository extends BaseRepository<AuctionHouse> {
   repository: RealmLogRepository;
@@ -101,6 +31,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
           slug: realm.slug,
           name: realm.name,
           connectedTo: house.realmSlugs.split(','),
+          realms: house.realms,
           battlegroup: house.battlegroup,
           locale: realm.locale,
           timezone: realm.timezone,

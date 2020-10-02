@@ -1,0 +1,58 @@
+<wah-close-btn>
+</wah-close-btn>
+
+<h1 mat-dialog-title>
+  Download and realm info
+</h1>
+
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-md-6">
+      <mat-tab-group>
+        <mat-tab label="Downloads">
+          <p>
+            By default, the application will keep the data up to date as soon as it is available.
+            But in case something is misbehaving, you can try to download it again here.
+          </p>
+          <wah-data-table
+                  [columns]="downloadColumns"
+                  [data]="downloadRows"
+          ></wah-data-table>
+        </mat-tab>
+        <mat-tab label="Connected to {{connectedRealms?.length - 1 | number}} realms">
+          <wah-data-table *ngIf="connectedRealms"
+                          [columns]="connectedRealmsColumns"
+                          [data]="connectedRealms"
+          ></wah-data-table>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+    <div class="col-md-6">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            The past week update times
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            This is the update log, for your auction house.
+          </p>
+          <wah-data-table *ngIf="!logIsLoading; else loadingTemplate"
+                          [columns]="logColumns"
+                          [data]="log.entries"
+                          [numOfRows]="10"
+          ></wah-data-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+</mat-dialog-actions>
+
+<ng-template #loadingTemplate>
+  <mat-spinner color="accent"></mat-spinner>
+</ng-template>

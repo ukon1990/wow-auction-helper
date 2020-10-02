@@ -7,7 +7,7 @@ import {NumberUtil} from '../../../../client/src/client/modules/util/utils/numbe
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {LogRepository} from '../../logs/repository';
-import {RealmRepository} from '../../realm/repository';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
 
 const request: any = require('request');

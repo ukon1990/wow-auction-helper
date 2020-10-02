@@ -1,4 +1,4 @@
-import {RealmRepository} from '../../realm/repository';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {S3Handler} from '../../handlers/s3.handler';
