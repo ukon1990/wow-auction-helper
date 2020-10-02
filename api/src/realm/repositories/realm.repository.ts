@@ -31,6 +31,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
           slug: realm.slug,
           name: realm.name,
           connectedTo: house.realmSlugs.split(','),
+          realms: house.realms,
           battlegroup: house.battlegroup,
           locale: realm.locale,
           timezone: realm.timezone,

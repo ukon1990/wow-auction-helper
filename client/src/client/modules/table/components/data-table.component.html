@@ -65,9 +65,11 @@
             <span *ngSwitchCase="'profession'">
               {{professionIdMap.get(d[c.key])?.name }}
             </span>
-            <span *ngSwitchCase="'date'">
-              {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
-            </span>
+            <ng-container *ngSwitchCase="'date'">
+              <span *ngIf="d[c.key]">
+                {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
+              </span>
+            </ng-container>
             <wah-materials *ngSwitchCase="'materials'"
                            [recipe]="d"
                            [recipeId]="d?.recipeId">

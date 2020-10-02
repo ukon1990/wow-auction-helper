@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {DownloadComponent} from './components/navbar/download/download.component';
-import {ItemComponent} from '../item/components/item.component';
 import {TradeVendorsComponent} from './components/trade-vendors/trade-vendors.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {ReputationsComponent} from './components/reputations/reputations.component';
@@ -19,9 +18,9 @@ import {AddonModule} from '../addon/addon.module';
 import {ShoppingCartModule} from '../shopping-cart/shopping-cart.module';
 import {AboutModule} from '../about/about.module';
 import {MenuComponent} from './components/menu/menu.component';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatMenuModule } from '@angular/material/menu';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatMenuModule} from '@angular/material/menu';
 import {RealmQuickSelectComponent} from './components/realm-quick-select/realm-quick-select.component';
 import {ThemeSelectComponent} from './components/theme-select/theme-select.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -31,6 +30,7 @@ import {MarketResetModule} from '../market-reset/market-reset.module';
 import {MenuItemComponent} from './components/menu/menu-item/menu-item.component';
 import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdown.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {DownloadDialogComponent} from './components/navbar/download/dialog/dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +45,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     RealmQuickSelectComponent,
     ThemeSelectComponent,
     MenuItemComponent,
-    MenuDropdownComponent
+    MenuDropdownComponent,
+    DownloadDialogComponent
   ],
   imports: [
     CommonModule,

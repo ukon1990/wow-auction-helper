@@ -1,4 +1,4 @@
-interface Realm {
+export interface Realm {
   id: number;
   slug: string;
   name: string;

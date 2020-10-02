@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {Component} from '@angular/core';
 import {SharedService} from '../../../../../services/shared.service';
 import {ItemService} from '../../../../../services/item.service';
 import {CraftingService} from '../../../../../services/crafting.service';
@@ -8,24 +7,23 @@ import {PetsService} from '../../../../../services/pets.service';
 import {DatabaseService} from '../../../../../services/database.service';
 import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {Report} from '../../../../../utils/report.util';
 import {RealmStatus} from '../../../../../models/realm-status.model';
-import {AuctionUtil} from '../../../../auction/utils/auction.util';
 import {BackgroundDownloadService} from '../../../services/background-download.service';
 import {ThemeUtil} from '../../../utils/theme.util';
 import {NpcService} from '../../../../npc/services/npc.service';
 import {ZoneService} from '../../../../zone/service/zone.service';
-import {ErrorReport} from '../../../../../utils/error-report.util';
 import {faDownload, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import {TsmService} from '../../../../tsm/tsm.service';
 import {ProfessionService} from '../../../../crafting/services/profession.service';
+import {MatDialog} from '@angular/material/dialog';
+import {DownloadDialogComponent} from './dialog/dialog.component';
 
 @Component({
   selector: 'wah-download',
   templateUrl: './download.component.html',
   styleUrls: ['./download.component.scss']
 })
-export class DownloadComponent implements OnInit {
+export class DownloadComponent {
   theme = ThemeUtil.current;
   timeSinceUpdate = 0;
   downloadProgress = '';
@@ -33,19 +31,10 @@ export class DownloadComponent implements OnInit {
   faExclamationCircle = faExclamationCircle;
   faDownload = faDownload;
 
-  timestamps = {
-    items: localStorage['timestamp_items'],
-    pets: localStorage['timestamp_pets'],
-    recipes: localStorage['timestamp_recipes'],
-    auctions: localStorage['timestamp_auctions'],
-    tsm: localStorage['timestamp_tsm'],
-    npc: localStorage.getItem('timestamp_npcs'),
-    zone: localStorage.getItem('timestamp_zone'),
-    professions: localStorage.getItem('timestamp_professions')
-  };
   private realmStatus: RealmStatus;
 
   constructor(
+    public dialog: MatDialog,
     private _realmService: RealmService,
     private _itemService: ItemService,
     private _craftingService: CraftingService,
@@ -58,8 +47,6 @@ export class DownloadComponent implements OnInit {
     private professionService: ProfessionService,
     private service: BackgroundDownloadService) {
 
-    this.timestamps = service.timestamps;
-
     this.subs.add(
       this._realmService.events.realmStatus,
       (status) => this.setRealmStatus(status));
@@ -70,72 +57,15 @@ export class DownloadComponent implements OnInit {
         this.timeSinceUpdate = time);
   }
 
+  toggle(): void {
+    this.dialog.open(DownloadDialogComponent, {
+      width: '95%',
+      maxWidth: '100%'
+    });
+  }
+
   private setRealmStatus(status: RealmStatus) {
     this.realmStatus = status;
-  }
-
-  async ngOnInit() {
-  }
-
-  getMessage(): string {
-    if (this.downloadProgress.length > 0) {
-      return this.downloadProgress;
-    } else if (SharedService.downloading.auctions) {
-      return 'Downloading auction data';
-    } else if (SharedService.downloading.tsmAuctions) {
-      return 'Downloading TSM data';
-    } else if (SharedService.downloading.professions) {
-      return 'Downloading profession data';
-    } else if (SharedService.downloading.items) {
-      return 'Downloading item data';
-    } else if (SharedService.downloading.pets) {
-      return 'Downloading pet data';
-    } else if (SharedService.downloading.recipes) {
-      return 'Downloading recipe data';
-    } else if (SharedService.downloading.characterData) {
-      return 'Downloading character data';
-    }
-  }
-
-  /* istanbul ignore next */
-  async download(type: string, forceUpdate?: boolean) {
-    if (forceUpdate) {
-      Report.send(type, 'Manual download');
-    }
-    switch (type) {
-      case 'tsm':
-        this.downloadTSM()
-          .catch(console.error);
-        break;
-      case 'auctions':
-        this.downloadAuctions()
-          .catch(console.error);
-        break;
-      case 'items':
-        this.downloadItems(forceUpdate)
-          .catch(console.error);
-        break;
-      case 'pets':
-        this.downloadPets(forceUpdate)
-          .catch(console.error);
-        break;
-      case 'recipes':
-        this.downloadRecipes(forceUpdate)
-          .catch(console.error);
-        break;
-      case 'npc':
-        this.npcService.getAll(true)
-          .catch(console.error);
-        break;
-      case 'zone':
-        this.zoneService.get()
-          .catch(console.error);
-        break;
-      case 'professions':
-        this.professionService.getAll()
-          .catch(console.error);
-        break;
-    }
   }
 
   /* istanbul ignore next */
@@ -151,56 +81,5 @@ export class DownloadComponent implements OnInit {
   /* istanbul ignore next */
   isDownloading(): boolean {
     return this.service.isLoading.value || SharedService.isDownloading();
-  }
-
-  private async downloadAuctions() {
-    this.downloadProgress = 'Downloading new auctions';
-    await this._realmService.getStatus(SharedService.user.region, SharedService.user.realm);
-    await this._auctionsService.getAuctions();
-  }
-
-  private async downloadTSM() {
-    this.downloadProgress = 'Downloading TSM data';
-    await this.tsmService.get(this._realmService.events.realmStatus.value)
-      .catch(console.error);
-    await this._auctionsService.organize();
-  }
-
-  private async downloadPets(forceUpdate: boolean) {
-    if (forceUpdate) {
-      delete localStorage['timestamp_pets'];
-    }
-
-    this.downloadProgress = 'Downloading pets';
-    await this._petService.getPets();
-
-    if (forceUpdate) {
-      await this._auctionsService.organize();
-    }
-  }
-
-  private async downloadRecipes(forceUpdate: boolean) {
-    if (forceUpdate) {
-      delete localStorage['timestamp_recipes'];
-    }
-    this.downloadProgress = 'Downloading recipes';
-    await this._craftingService.get();
-
-    if (forceUpdate) {
-      await this._auctionsService.organize();
-    }
-  }
-
-  private async downloadItems(forceUpdate: boolean) {
-    if (forceUpdate) {
-      delete localStorage['timestamp_items'];
-    }
-
-    this.downloadProgress = 'Downloading items';
-    await this._itemService.getItems();
-
-    if (forceUpdate) {
-      await this._auctionsService.organize();
-    }
   }
 }
