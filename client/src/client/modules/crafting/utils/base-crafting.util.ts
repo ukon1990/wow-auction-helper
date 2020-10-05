@@ -95,9 +95,11 @@ export abstract class BaseCraftingUtil {
     let quantity = reagent.quantity / recipe.procRate;
 
     if (inventory && this.useInventory) {
-      let fromInventory = quantity;
-      if (inventory.quantity < quantity) {
-        fromInventory = quantity - inventory.quantity;
+      let fromInventory = 0;
+      if (inventory.quantity >= quantity) {
+        fromInventory = quantity;
+      } else {
+        fromInventory = inventory.quantity;
       }
 
       reagent.sources.inventory = {

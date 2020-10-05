@@ -57,7 +57,6 @@ export class BackgroundDownloadService {
     private tsmService: TsmService,
     private dbService: DatabaseService) {
 
-
     this.subs.add(
       this.realmService.events.realmStatus,
       (status) =>
@@ -103,6 +102,7 @@ export class BackgroundDownloadService {
   }
 
   private async initiateAuctionOrganizingAndTSM() {
+    this.auctionsService.isReady = true;
     await this.tsmService.load(this.realmService.events.realmStatus.value)
       .catch(console.error);
     await this.auctionsService.organize()

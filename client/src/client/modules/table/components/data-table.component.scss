@@ -1,9 +1,23 @@
 :not(.unicorn-dark-theme ) span.ng-star-inserted a.q1{
-    /* color: black !important;*/ 
+    /* color: black !important;*/
 }
 
 .input-column {
   width: 3em;
+}
+
+::ng-deep {
+  table tr td {
+    mat-form-field.mat-form-field,
+    .input-column {
+      height: 1.1em;
+      width: 100%;
+
+      .mat-form-field-wrapper {
+        margin-top: -1.25em !important;
+      }
+    }
+  }
 }
 
 .table-hover tbody tr:hover {

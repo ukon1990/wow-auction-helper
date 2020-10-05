@@ -209,11 +209,12 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     if (!this.userHasRecipeForItem()) {
       return;
     }*/
+    const quantity: number = +this.shoppingCartQuantityField.value;
     if (isRecipe) {
-      this.shoppingCartService.addRecipeByItemId(this.selected.item.id, this.shoppingCartQuantityField.value);
+      this.shoppingCartService.addRecipeByItemId(this.selected.item.id, quantity);
       Report.send('Added to recipe shopping cart', 'Item detail view');
     } else {
-      this.shoppingCartService.addItem(this.selected.item.id, this.shoppingCartQuantityField.value);
+      this.shoppingCartService.addItem(this.selected.item.id, quantity);
       Report.send('Added to item shopping cart', 'Item detail view');
     }
 

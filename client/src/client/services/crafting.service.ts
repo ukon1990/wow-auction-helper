@@ -30,6 +30,7 @@ export class CraftingService {
   static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static fullList: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static map: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
+  static knownRecipeMap: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
   static itemRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static itemRecipeMapPerKnown: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static reagentRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
@@ -153,9 +154,11 @@ export class CraftingService {
 
   setItemRecipeMapPerKnown(map: Map<number, Recipe> = CraftingService.map.value, list: Recipe[] = CraftingService.list.value): void {
     const itemRecipeMapPerKnown = new Map<number, Recipe[]>();
+    const knownRecipeMap = new Map<number, Recipe>();
     list.forEach(recipe => {
       map.set(recipe.id, recipe);
       if (CraftingService.recipesForUser.value.has(recipe.id)) {
+        knownRecipeMap.set(recipe.id, recipe);
         if (!itemRecipeMapPerKnown.has(recipe.itemID)) {
           itemRecipeMapPerKnown.set(recipe.itemID, [recipe]);
         } else {
@@ -163,6 +166,7 @@ export class CraftingService {
         }
       }
     });
+    CraftingService.knownRecipeMap.next(knownRecipeMap);
     CraftingService.itemRecipeMapPerKnown.next(itemRecipeMapPerKnown);
   }
 

@@ -181,4 +181,12 @@ describe('AuctionHandler', () => {
     conn.end();
     expect(1).toBe(1);
   });
+
+  xit('Map auction house fields', async () => {
+    const result = await new AuctionService()
+      .generateDataModel('https://eu.api.blizzard.com/data/wow/connected-realm/1403/auctions?namespace=dynamic-eu')
+      .catch(console.error);
+    console.log('The datamodel is', result);
+    expect(result).toBeTruthy();
+  });
 });

@@ -1,0 +1,14 @@
+<ng-container *ngIf="column && row">
+  {{ (
+    row[column.key] ?
+        row[column.key] :
+        (auctionItem ? auctionItem[column.key] : 0)) | gold
+  }}
+  <span *ngIf="row.key === 'buyout' && row.mktPrice">
+                ({{ row.buyout / row.mktPrice | percent }} of MV)
+              </span>
+
+  <span *ngIf="column.key === 'roi' && row.cost">
+      ({{ row.roi / row.cost | percent }})
+    </span>
+</ng-container>

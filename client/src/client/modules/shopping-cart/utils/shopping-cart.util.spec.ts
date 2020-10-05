@@ -4,6 +4,7 @@ import {CartRecipe, ShoppingCartV2} from '../models/shopping-cart-v2.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {Auction} from '../../auction/models/auction.model';
 import {Reagent} from '../../crafting/models/reagent';
+import {Item} from '../../../models/item/item';
 
 fdescribe('ShoppingCartUtil', () => {
   const auctionMap = new Map<string, AuctionItem>();
@@ -56,7 +57,12 @@ fdescribe('ShoppingCartUtil', () => {
       quantity: 2,
       isIntermediate: false
     }];
-    const cart: ShoppingCartV2 = util.calculateSources(recipeMap, auctionMap, recipes);
+    const cart: ShoppingCartV2 = util.calculateSources(
+      recipeMap, auctionMap,
+      new Map<number, Item>(),
+      false,
+      recipes,
+      []);
     console.log({
       cart,
       auctionMap,

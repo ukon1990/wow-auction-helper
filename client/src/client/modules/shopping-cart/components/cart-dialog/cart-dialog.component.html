@@ -17,6 +17,7 @@
                       [iconSize]="22"
                       [columns]="recipeColumns"
                       [data]="recipes"
+                      [alwaysDisplayCart]="true"
               ></wah-data-table>
             </mat-tab>
             <mat-tab label="Items ({{ items.length | number }})">
@@ -24,6 +25,7 @@
                               [iconSize]="22"
                               [columns]="itemColumns"
                               [data]="items"
+                              [alwaysDisplayCart]="true"
               ></wah-data-table>
             </mat-tab>
           </mat-tab-group>
@@ -143,3 +145,11 @@
     </mat-card>
   </div>
 </mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button
+          color="accent"
+          (click)="clear()">
+    Clear the cart
+  </button>
+</mat-dialog-actions>

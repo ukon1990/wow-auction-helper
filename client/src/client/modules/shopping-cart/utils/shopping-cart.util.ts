@@ -1,15 +1,13 @@
 import {CartItem, CartRecipe, CartSources, ShoppingCartV2} from '../models/shopping-cart-v2.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Recipe} from '../../crafting/models/recipe';
-import {Reagent, ReagentSource, ReagentSources} from '../../crafting/models/reagent';
+import {Reagent, ReagentSource} from '../../crafting/models/reagent';
 import {OptimisticCraftingUtil} from '../../crafting/utils/optimistic-crafting.util';
 import {PessimisticCraftingUtil} from '../../crafting/utils/pessimistic-crafting.util';
 import {NeededCraftingUtil} from '../../crafting/utils/needed-crafting.util';
 import {BaseCraftingUtil} from '../../crafting/utils/base-crafting.util';
 import {SharedService} from '../../../services/shared.service';
-import {CraftingService} from '../../../services/crafting.service';
 import {Item} from '../../../models/item/item';
-import {ItemService} from '../../../services/item.service';
 
 export class ShoppingCartUtil {
   public strategy: BaseCraftingUtil;

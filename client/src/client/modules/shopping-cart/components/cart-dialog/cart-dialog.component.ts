@@ -8,6 +8,7 @@ import {BackgroundDownloadService} from '../../../core/services/background-downl
 import {CartTransformUtil} from '../../utils/cart-transform.util';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Reagent} from '../../../crafting/models/reagent';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-cart-dialog',
@@ -37,9 +38,9 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       dataType: 'gold'
     },
     {
-      key: 'quantity',
-      title: 'Quantity',
-      dataType: 'number'
+      key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
+        idName: 'id',
+      }
     },
   ];
   itemColumns: ColumnDescription[] = [
@@ -52,14 +53,14 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       }
     },
     {
-      key: 'quantity',
-      title: 'Quantity',
-      dataType: 'number'
-    },
-    {
       key: 'buyout',
       title: 'Lowest buyout',
       dataType: 'gold'
+    },
+    {
+      key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
+        idName: 'id',
+      }
     },
   ];
   neededColumns: ColumnDescription[] = [
@@ -190,5 +191,9 @@ export class CartDialogComponent implements OnInit, OnDestroy {
         characters: item.list.join(', '),
       });
     });
+  }
+
+  clear() {
+    this.service.clear();
   }
 }

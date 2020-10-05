@@ -19,7 +19,7 @@ const profitableCrafts: DashboardV2 = {
     columnConfig.recipe.cost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel,
-    columnConfig.shoppingCartInput
+    columnConfig.recipe.shoppingCartInput
   ],
   sortRule: {
     field: columnConfig.recipe.ROI.key,
@@ -61,7 +61,7 @@ const profitableKnownCrafts: DashboardV2 = {
     columnConfig.recipe.knownCost,
     columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel,
-    columnConfig.shoppingCartInput
+    columnConfig.recipe.shoppingCartInput,
   ],
   sortRule: {
     field: columnConfig.recipe.knownROI.key,

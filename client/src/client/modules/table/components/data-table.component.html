@@ -34,223 +34,136 @@
   <tr *ngFor="let d of filteredData | slice: getFromValue():getToValue(); let i = index">
     <ng-container *ngFor="let c of columns;">
       <td [class]="c.cssClass" *ngIf="displayColumn(c)" (click)="this.rowClickEvent(c, d)">
-          <span [ngSwitch]="c.dataType">
-            <span *ngSwitchCase="'name'"
-                  [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(d) : ''"
-                  (click)="select(d, c)">
-              <a wahItemTooltip [item]="d" [rel]="getRelData(c, d)"
-                 matTooltip="You can click item names, to get more information about them."
-                 [routerLink]="getRouterLink(d, c)">
-                <wah-icon *ngIf="!(c.options && c.options.noIcon) && id" class="float-left"
-                          [size]="iconSize ? iconSize : 36" [id]="getItemID(d, c)"
-                          [petSpeciesId]="d?.petSpeciesId"></wah-icon>
-                {{ getItemName(d[c.key], d) }}
-              </a>
-              <span *ngIf="isCrafting">
-                <br>
-                <span *ngIf="getItem(d.itemID).name !== d.name && !hideCraftingDetails">
-                  {{ getItem(d.itemID).name }}
-                  <br>
-                </span>
-                <span *ngIf="!hideCraftingDetails && professionIdMap">
-                  {{ professionIdMap.get(d?.professionId)?.name }}
-                  <span *ngIf="d.rank"> - Rank {{ d.rank }}</span>
-                  <br>
-                  <span *ngIf="getCraftersForRecipe(d)">
-                    Known by: {{ getCraftersForRecipe(d) }}
-                  </span>
-                </span>
-              </span>
-            </span>
-            <span *ngSwitchCase="'profession'">
-              {{professionIdMap.get(d[c.key])?.name }}
-            </span>
-            <ng-container *ngSwitchCase="'date'">
-              <span *ngIf="d[c.key]">
-                {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
-              </span>
+        <ng-container [ngSwitch]="c.dataType">
+          <wah-name *ngSwitchCase="'name'"
+                    [column]="c"
+                    [row]="d"
+                    [idName]="id"
+                    [isCrafting]="isCrafting"
+                    [hideCraftingDetails]="hideCraftingDetails"
+                    [professionIds]="professionIdMap"
+                    [linkType]="linkType"
+                    [iconSize]="iconSize"
+                    [useAuctionItemForName]="useAuctionItemForName"
+          ></wah-name>
+          <ng-container *ngSwitchCase="'profession'">
+            {{professionIdMap.get(d[c.key])?.name }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'date'">
+            <ng-container *ngIf="d[c.key]">
+              {{ d[c.key] | date:'dd.MMM yyyy HH:mm:ss' }}
             </ng-container>
-            <wah-materials *ngSwitchCase="'materials'"
-                           [recipe]="d"
-                           [recipeId]="d?.recipeId">
-            </wah-materials>
-            <span *ngSwitchCase="'gold'">
-              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | gold }}
-              <span *ngIf="c.key === 'buyout' && d.mktPrice">
-                ({{ d.buyout / d.mktPrice | percent }} of MV)
-              </span>
+          </ng-container>
+          <wah-materials *ngSwitchCase="'materials'"
+                         [recipe]="d"
+                         [recipeId]="d?.recipeId">
+          </wah-materials>
 
-              <span *ngIf="c.key === 'roi' && d.cost">
-                ({{ d.roi / d.cost | percent }})
-              </span>
-            </span>
-            <span *ngSwitchCase="'gold-per-item'">
-              {{ d[c.key] / d.quantity | gold }}
-            </span>
-            <span *ngSwitchCase="'vendor-currency'">
-              <span *ngIf="!d.currency; else itemCurrency">
-                {{ d[c.key] | gold }}
-              </span>
-              <ng-template #itemCurrency>
-                <a rel="domain={{ locale }},item={{ d.currency }}">
-                  <div class="float-left">
-                    {{ d[c.key] | number }} x
-                  </div>
-                  <wah-icon *ngIf="id" class="float-left ml-1" [size]="22" [id]="d.currency"></wah-icon>
-                </a>
-              </ng-template>
-            </span>
-            <span *ngSwitchCase="'boolean'">
-              <mat-checkbox [checked]="d[c.key] === true || d[c.key] > 0" disabled></mat-checkbox>
-            </span>
-            <span *ngSwitchCase="'wdb-link'">
-              <a href="https://www.wowdb.com/{{ linkType ? linkType + 's' : 'npcs' }}/{{ d[c.key] }}" target="_blank">
-                Open
-                <fa-icon [icon]="faExternalLink"></fa-icon>
-              </a>
-            </span>
-            <span *ngSwitchCase="'whead-link'">
-              <a href="http://www.wowhead.com/{{linkType ? linkType : 'npc' }}={{ d[c.key] }}" target="_blank">
-                Open
-                <fa-icon [icon]="faExternalLink"></fa-icon>
-              </a>
-            </span>
-            <span *ngSwitchCase="'percent'">
-              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | percent }}
-            </span>
-            <span *ngSwitchCase="'number'">
-              {{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) | number }}
-            </span>
-            <ng-container *ngSwitchCase="'quality'">
-              {{ itemQualities.get(d[c.key])?.name }}
-            </ng-container>
-            <a *ngSwitchCase="'zone'"
-               href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
-               target="_blank">
-                {{ d[c.key] }}
+          <wah-gold *ngSwitchCase="'gold'"
+                    [column]="c"
+                    [row]="d"
+                    [idName]="id">
+          </wah-gold>
+          <ng-container *ngSwitchCase="'gold-per-item'">
+            {{ d[c.key] / d.quantity | gold }}
+          </ng-container>
+
+          <wah-item-currency
+                  *ngSwitchCase="'vendor-currency'"
+                  [column]="c"
+                  [row]="d"
+                  [idName]="id"
+                  [locale]="locale"
+          ></wah-item-currency>
+
+          <mat-checkbox *ngSwitchCase="'boolean'"
+                        [checked]="d[c.key] === true || d[c.key] > 0"
+                        disabled></mat-checkbox>
+
+          <ng-container *ngSwitchCase="'wdb-link'">
+            <a href="https://www.wowdb.com/{{ linkType ? linkType + 's' : 'npcs' }}/{{ d[c.key] }}" target="_blank">
+              Open
               <fa-icon [icon]="faExternalLink"></fa-icon>
             </a>
-            <span *ngSwitchCase="'array'">
-              {{ d[c.key] ? d[c.key].toString() : '' }}
-            </span>
-            <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
-            <span *ngSwitchCase="'input-number'">
-              <mat-form-field class="row col-md-12"
-                              color="accent"
-              >
-                <input
-                        matInput type="number"
-                        [ngModel]="d[c.key]"
-                        (ngModelChange)="onInputChange(d, c, $event)">
-              </mat-form-field>
-            </span>
-            <ng-container *ngSwitchCase="'input-gold'">
-              <mat-form-field class="row col-md-12"
-                              color="accent"
-              >
-                <input
-                        matInput
-                        [ngModel]="d[c.key] | gold"
-                        (ngModelChange)="setNewInputGoldValue(d, c, $event)"
-                />
-              </mat-form-field>
-            </ng-container>
-            <span *ngSwitchCase="'input-text'">
-              <mat-form-field class="row col-md-12"
-                              color="accent"
-              >
-                <input
-                        matInput type="text"
-                        [ngModel]="d[c.key]"
-                        (ngModelChange)="onInputChange(d, c, $event)"
-                />
-              </mat-form-field>
-            </span>
+          </ng-container>
+          <ng-container *ngSwitchCase="'whead-link'">
+            <a href="http://www.wowhead.com/{{linkType ? linkType : 'npc' }}={{ d[c.key] }}" target="_blank">
+              Open
+              <fa-icon [icon]="faExternalLink"></fa-icon>
+            </a>
+          </ng-container>
+          <ng-container *ngSwitchCase="'percent'">
+            {{ d[c.key] | percent }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'number'">
+            {{ d[c.key] | number }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'quality'">
+            {{ itemQualities.get(d[c.key])?.name }}
+          </ng-container>
+          <a *ngSwitchCase="'zone'"
+             href="http://www.wowhead.com/zone={{ d[c.options?.idName || id] }}"
+             target="_blank">
+            {{ d[c.key] }}
+            <fa-icon [icon]="faExternalLink"></fa-icon>
+          </a>
+          <ng-container *ngSwitchCase="'array'">
+            {{ d[c.key] ? d[c.key].join(', ') : '' }}
+          </ng-container>
+          <span *ngSwitchCase="'time-left'">{{ auctionDuration[d[c.key]] }}</span>
 
-            <ng-container *ngSwitchCase="'row-actions'">
-              <ng-container *ngFor="let action of c.actions">
-                <button mat-icon-button
-                        [color]="action.color || 'primary'"
-                        [matTooltip]="action.tooltip"
-                        (click)="action.callback(d, getPageIndex(i))">
-                    <i [class]="action.icon"></i>
-                  {{ action.text }}
-                  </button>
-              </ng-container>
-            </ng-container>
+          <wah-input *ngSwitchCase="'input-number'"
+                     [column]="c"
+                     [row]="d"
+                     type="number"
+          ></wah-input>
 
-            <span *ngSwitchCase="'action'">
-              <button *ngIf="getItemID(d)"
-                      mat-icon-button
-                      color="accent"
-                      (click)="setSelectedItem(d)"
-                      matTooltip="View item details">
-                <fa-icon [icon]="faEye"></fa-icon>
-              </button>
+          <wah-input *ngSwitchCase="'input-text'"
+                     [column]="c"
+                     [row]="d"
+                     type="text"
+          ></wah-input>
 
-              <ng-container *ngFor="let action of c.actions">
-                <span [ngSwitch]="action">
+          <wah-input-gold *ngSwitchCase="'input-gold'"
+                          [column]="c"
+                          [row]="d"
+          ></wah-input-gold>
 
-                  <button *ngSwitchCase="'remove-from-list'"
-                          mat-icon-button
-                          color="warn"
-                          matTooltip="Removes this item from the list" (click)="removeFromList(i)">
-                    <fa-icon [icon]="faTrashAlt"></fa-icon>
-                  </button>
+          <wah-row-actions *ngSwitchCase="'row-actions'"
+                           [column]="c"
+                           [row]="d"
+                           [pageEvent]="pageEvent"
+                           [index]="i"
+          >
+          </wah-row-actions>
 
-                  <button *ngSwitchCase="'custom-price-delete'"
-                          color="warn"
-                          mat-icon-button
-                          (click)="customPrices().remove(d, i)"
-                          matTooltip="Remove from custom price list">
-                    <fa-icon [icon]="faTrashAlt"></fa-icon>
-                  </button>
+          <wah-base-actions *ngSwitchCase="'action'"
+                            [column]="c"
+                            [row]="d"
+                            [rows]="filteredData"
+                            [pageEvent]="pageEvent"
+                            [index]="i"
+          >
+          </wah-base-actions>
 
-                  <button *ngSwitchCase="'custom-procs-delete'"
-                          mat-icon-button (click)="customProcs().remove(d, i)"
-                          color="warn"
-                          matTooltip="Remove from custom procs list">
-                    <fa-icon [icon]="faTrashAlt"></fa-icon>
-                  </button>
-                </span>
-              </ng-container>
-              <!-- TODO: Add back when the shopping cart is restored
-              <button mat-icon-button
-                      (click)="addEntryToCart(d)"
-                      color="accent"
-                      matTooltip="Add to shopping cart"
-                      *ngIf="isCrafting && c.actions[0] !== 'custom-price-delete' &&
-                      c.actions[0] !== 'custom-procs-delete' && c.actions[0] !== 'watchlist-group-delete'">
-                <fa-icon [icon]="faCartPlus"></fa-icon>
-              </button>
-              -->
-            </span>
+          <wah-cart-count *ngSwitchCase="'cart-recipe-count'"
+                          [column]="c"
+                          [row]="d"
+                          [isRecipeCart]="true"
+                          [alwaysDisplayCart]="alwaysDisplayCart"
+          >
+          </wah-cart-count>
 
-            <ng-container *ngSwitchCase="'cart-recipe-count'">
-              <!--
-              <mat-form-field
-                      class="input-column"
-                      color="accent"
-                      *ngIf="isKnownRecipe(d)">
-                <input matInput
-                       type="number"
-                       [value]="getCartCount(d, c)"
-                       (change)="setCartCount(d, c, $event)"/>
-              </mat-form-field>
-              -->
-            </ng-container>
+          <wah-cart-count *ngSwitchCase="'cart-item-count'"
+                          [column]="c"
+                          [row]="d"
+                          [isRecipeCart]="false"
+                          [alwaysDisplayCart]="alwaysDisplayCart"
+          >
+          </wah-cart-count>
 
-            <span *ngSwitchCase="'cart-delete'">
-              <button *ngIf="getItemID(d)"
-                      color="warn"
-                      mat-icon-button
-                      (click)="removeRecipe(d, i)"
-                      matTooltip="Remove item from the shopping cart">
-                <fa-icon [icon]="faTrashAlt"></fa-icon>
-              </button>
-            </span>
-            <span *ngSwitchDefault>{{ (d[c.key] ? d[c.key] : getAuctionItem(d)[c.key]) }}</span>
-          </span>
+          <ng-container *ngSwitchDefault>{{ d[c.key] }}</ng-container>
+        </ng-container>
       </td>
     </ng-container>
   </tr>

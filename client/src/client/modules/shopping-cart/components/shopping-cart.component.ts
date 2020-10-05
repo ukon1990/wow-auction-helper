@@ -16,48 +16,6 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   recipes: CartRecipe[] = [];
   sm = new SubscriptionManager();
 
-  /*
-  columns = {
-    recipes: [
-      {key: 'name', title: 'Name', dataType: 'name'},
-      {key: 'quantity', title: 'Qty', dataType: 'cart-recipe-count'},
-      {key: 'buyout', title: 'Buyout', dataType: 'gold'},
-      {key: '', title: '', dataType: 'cart-delete'}
-    ],
-    neededReagents :  [
-      {key: 'name', title: 'Name', dataType: 'name'},
-      {key: 'quantity', title: 'Qty', dataType: 'number'},
-      {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
-      {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'}
-    ],
-    ah: [
-      {key: 'name', title: 'Name', dataType: 'name'},
-      {key: 'quantity', title: 'Qty', dataType: 'number'},
-      {key: 'buyout', title: 'Min buyout', dataType: 'gold'},
-      {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
-      {key: 'totalCost', title: 'Total', dataType: 'gold'}
-    ],
-    vendor: [
-      {key: 'name', title: 'Name', dataType: 'name'},
-      {key: 'quantity', title: 'Qty', dataType: 'number'},
-      {key: 'avgCost', title: 'Avg buyout', dataType: 'gold'},
-      {key: 'totalCost', title: 'Total', dataType: 'gold'}
-    ],
-    farm: [
-      {key: 'name', title: 'Name', dataType: 'name'},
-      {key: 'quantity', title: 'Qty', dataType: 'number'}
-    ],
-    inventory: [
-      {key: 'name', title: 'Name', dataType: 'name'},
-      {key: 'quantity', title: 'Need', dataType: 'number'},
-      {key: 'inventoryQuantity', title: 'Have', dataType: 'number'},
-      {key: 'avgCost', title: 'Avg item cost', dataType: 'gold'},
-      {key: 'inventoryValue', title: 'Total cost', dataType: 'gold'},
-      {key: 'characters', title: 'Characters', dataType: 'array'}
-    ]
-  };
-  */
-
   constructor(private service: ShoppingCartService, private dialog: MatDialog) {
     this.sm.add(this.service.items, (items) => this.items = items);
     this.sm.add(this.service.recipes, (recipes) => this.recipes = recipes);
