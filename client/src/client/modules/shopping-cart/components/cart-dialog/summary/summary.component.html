@@ -1,0 +1,37 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Summary
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
+    <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
+    <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
+    <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
+    <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
+    <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }}
+    <br>
+    <br>
+    <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
+                    class="row col-md-12">
+        <textarea matInput placeholder="TSM shopping string"
+                  [value]="cart.tsmShoppingString"></textarea>
+    </mat-form-field>
+    <br>
+
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Import/Update inventory status
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <wah-addon [importMode]="true"></wah-addon>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card-content>
+</mat-card>

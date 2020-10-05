@@ -398,4 +398,52 @@ export class AuctionService {
       resolve();
     });
   }
+
+  generateDataModel(url: string): Promise<any> {
+    const getStructure = (obj, existing: any = {}) => {
+      Object.keys(obj).forEach(key => {
+        switch (typeof obj[key]) {
+          case 'object':
+            if (Array.isArray(obj[key])) {
+              let childObj = {
+                isArray: true,
+              };
+              obj[key].forEach(child => {
+                childObj = {
+                  ...childObj,
+                  ...getStructure(child, childObj)
+                };
+              });
+              existing[key] = childObj;
+            } else {
+              existing[key] = getStructure(obj[key], existing[key]);
+            }
+            break;
+          default:
+            if (obj[key]) {
+              existing[key] = typeof obj[key];
+            } else {
+              existing['id'] = typeof obj;
+            }
+            break;
+        }
+      });
+      return existing;
+    };
+
+    return new Promise(async (resolve, reject) => {
+      await AuthHandler.getToken();
+      const fullUrl = `${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
+      console.log('Full dump URL', fullUrl);
+      new HttpClientUtil().get(fullUrl)
+        .then(({body, headers}) => {
+          const result = {};
+          body.auctions.forEach(row => {
+            getStructure(row, result);
+          });
+          resolve(result);
+        })
+        .catch(reject);
+    });
+  }
 }

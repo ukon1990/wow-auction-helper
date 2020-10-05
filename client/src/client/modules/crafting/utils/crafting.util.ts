@@ -11,6 +11,7 @@ import {TsmService} from '../../tsm/tsm.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
+import {ItemService} from '../../../services/item.service';
 
 export class CraftingUtil {
   public static ahCutModifier = 0.95;
@@ -21,19 +22,24 @@ export class CraftingUtil {
     this.auctionService = auctionsService;
   }
 
-  public static calculateCost(strategyHasChanged = false, map: Map<string, AuctionItem>): void {
+  public static calculateCost(strategyHasChanged = true,
+                              map: Map<string, AuctionItem>,
+                              items: Map<number, Item> = ItemService.mapped.value,
+                              useInventory: boolean = false): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY,
-      selectedStrategy = SharedService.user.craftingStrategy;
+      selectedStrategy = SharedService.user.craftingStrategy,
+      faction = SharedService.user.faction;
+    const int = SharedService.user.useIntermediateCrafting;
     if (!this.strategy || strategyHasChanged) {
       switch (selectedStrategy) {
         case STRATEGY.OPTIMISTIC:
-          this.strategy = new OptimisticCraftingUtil(map);
+          this.strategy = new OptimisticCraftingUtil(map, items, faction, int, useInventory);
           break;
         case STRATEGY.PESSIMISTIC:
-          this.strategy = new PessimisticCraftingUtil(undefined, undefined, map);
+          this.strategy = new PessimisticCraftingUtil(map, items, faction, int, useInventory);
           break;
         default:
-          this.strategy = new NeededCraftingUtil(map);
+          this.strategy = new NeededCraftingUtil(map, items, faction, int, useInventory);
           break;
       }
       Report.send(

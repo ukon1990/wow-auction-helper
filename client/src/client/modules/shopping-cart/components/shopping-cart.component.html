@@ -1,164 +1,28 @@
-<button mat-flat-button
-   (click)="toggleDisplay()"
-   color="primary"
-   matTooltip="Shopping cart"
-   matBadge="{{cart.recipes.length | number}}"
-   matBadgeColor="accent"
-   matBadgePosition="before"
-   matBadgeDescription="The number of items in your shopping cart">
-  <div class="float-left mr-1">
-    <i class="fas fa-shopping-cart"></i>
-  </div>
-  Shopping cart | {{ cart.profit | gold }}
-</button>
-
-<mat-card *ngIf="show" class="full-screen">
-  <mat-card-header>
-    <div class="action-icon mat-elevation-z5" (click)="toggleDisplay()" matTooltip="Close the shopping cart">
-      <button mat-stroked-button class="btn btn-sm">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-
-    <mat-card-title>
-      <strong class="shopping-cart-header">
-        Shopping cart
-      </strong>
-    </mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-
-    <div class="row col-md-12">
-      <h4 class="col-md-12">Overview:</h4>
-      <div class="col-lg-4">
-        <strong class="row col-md-12">Recipes:</strong>
-        <wah-data-table *ngIf="cart.recipes && cart.recipes.length"
-                        [id]="'itemID'"
-                        [iconSize]="22"
-                        [columns]="columns.recipes"
-                        [data]="cart.recipes">
-        </wah-data-table>
-      </div>
-      <div class="col-lg-4">
-        <strong class="row col-md-12">Reagents needed:</strong>
-        <wah-data-table *ngIf="cart.reagents && cart.reagents.length"
-                        [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns.neededReagents"
-                        [data]="cart.reagents"></wah-data-table>
-      </div>
-
-      <div class="col-lg-4">
-
-        <strong>Total value: </strong> {{ cart.totalValue | gold }} <br>
-        <strong>Cost for needed materials: </strong> {{ cart.sumCost | gold }} <br>
-        <strong>Sum total cost from AH:</strong> {{ cart.sumTotalCost | gold }} <br>
-        <strong>Sum estimated inventory cost:</strong> {{ cart.sumEstimatedInventoryCost | gold }} <br>
-        <strong>Estimated profit: </strong> {{ cart.profit | gold }} <br>
-        <strong>Estimated profit with inventory: </strong> {{ cart.profit - cart.sumEstimatedInventoryCost | gold }}
-        <br>
-        <br>
-        <mat-form-field *ngIf="cart.tsmShoppingString && cart.tsmShoppingString.length > 0"
-                        class="row col-md-12">
-        <textarea matInput placeholder="TSM shopping string"
-                  [value]="cart.tsmShoppingString"></textarea>
-        </mat-form-field>
-        <br>
-
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Import/Update inventory status
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <wah-addon [importMode]="true"></wah-addon>
-
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>Cost caluclation logic</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <p>
-              When the app calculates the cost of your shopping cart.
-              It looks through all the auctions per reagent, from the cheapest auction and up.
-              As long as the "total quantity to purchase" does not exceed 120% of the needed quantity of reagents, It is
-              used in the calculation.
-            </p>
-            <p>
-              So lets say, that you need 20 Owlseye, and you have the following auctions:
-            </p>
-            <mat-list dense>
-              <mat-list-item>Stack of 1 for 20g per item</mat-list-item>
-              <mat-list-item>
-                <div mat-line>Stack of 50 for 22g per item</div>
-                <div mat-line>This one will be ignored</div>
-              </mat-list-item>
-              <mat-list-item>Stack of 5 for 23g per item</mat-list-item>
-              <mat-list-item>Stack of 10 for 24g per item</mat-list-item>
-              <mat-list-item>Stack of 5 for 25g per item</mat-list-item>
-            </mat-list>
-            <p>
-              The app will then expect that you will buy 21 Owlseye instead of 51, and set the total cost to 500g
-              instead of 1,120g.
-              And use the avg item buyout of those 21, to estimate the potential crafting profit.
-              The cost of the Owlseye you need, in this case would then be set to 476g.
-            </p>
-
-            <p>
-              If you have a couple in your inventory, it will subtract the ones in your inventory from what you need to
-              get from other sources.
-              The total value of those in your inventory, will be based upon the last x you have bought.
-            </p>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
-    </div>
-
-    <div class="row col-md-12" *ngIf="cart.sources">
-      <h4 class="col-md-12">Sources:</h4>
-      <div class="col-md-12">
-        <strong class="row col-md-12">From your inventory:</strong>
-        <wah-data-table *ngIf="cart.sources.inventory && cart.sources.inventory.length"
-                        [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns.inventory"
-                        [data]="cart.sources.inventory"></wah-data-table>
-      </div>
-
-      <div class="col-lg-4">
-        <strong class="row col-md-12">From AH:</strong>
-        <wah-data-table *ngIf="cart.sources.ah && cart.sources.ah.length"
-                        [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns.ah"
-                        [data]="cart.sources.ah"></wah-data-table>
-      </div>
-
-      <div class="col-lg-4">
-        <strong class="row col-md-12">From vendor:</strong>
-        <wah-data-table *ngIf="cart.sources.vendor && cart.sources.vendor.length"
-                        [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns.vendor"
-                        [data]="cart.sources.vendor"></wah-data-table>
-      </div>
-
-      <div class="col-lg-4">
-        <strong class="row col-md-12">To farm:</strong>
-        <wah-data-table *ngIf="cart.sources.farm && cart.sources.farm.length"
-                        [id]="'id'"
-                        [iconSize]="22"
-                        [columns]="columns.farm"
-                        [data]="cart.sources.farm"></wah-data-table>
-      </div>
-    </div>
-  </mat-card-content>
-  <mat-card-actions>
-    <button class="btn btn-default mat-elevation-z5" (click)="clearShoppingCart()">Empty shopping cart</button>
-  </mat-card-actions>
-</mat-card>
-
-<div *ngIf="show" class="backdrop" (click)="toggleDisplay()"></div>
+<div
+        class="mr-3"
+        matBadge="{{items?.length | number}}"
+        [matBadgeHidden]="!items?.length"
+        matBadgeColor="accent"
+        matBadgePosition="after"
+        matBadgeDescription="The number of items in your shopping cart"
+>
+  <button mat-stroked-button
+          (click)="toggleDialog()"
+          matTooltip="Shopping cart"
+          matBadge="{{recipes?.length | number}}"
+          [matBadgeHidden]="!recipes?.length"
+          matBadgeColor="primary"
+          matBadgePosition="before"
+          matBadgeDescription="The number of recipes in your shopping cart"
+  >
+  <span>
+    <span class="float-left mr-1">
+      <i class="fas fa-shopping-cart"></i>
+    </span>
+    Shopping cart
+  </span>
+    <small class="sub-text-small">
+      {{ cart?.profit | gold }}
+    </small>
+  </button>
+</div>

@@ -153,7 +153,7 @@ fdescribe('DashboardCalculateUtil', () => {
       });
 
       describe('Crafting', () => {
-        it('ROI > value', () => {
+        fit('ROI > value', () => {
           const board: DashboardV2 = getBoard([
             {
               condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
@@ -187,7 +187,55 @@ fdescribe('DashboardCalculateUtil', () => {
               toValue: 4,
             }
           ]);
-          board.columns.push(columnConfig.recipe.knownRank);
+          board.columns = [
+            {
+              key: 'name',
+              title: 'Name',
+              dataType: 'name'
+            },
+            {
+              key: 'buyout',
+              title: 'Lowest buyout',
+              dataType: 'gold'
+            },
+            {
+              key: 'source.recipe.[known].rank',
+              title: 'Rank',
+              dataType: 'number'
+            },
+            {
+              key: '0.95*buyout-source.recipe.[known].cost',
+              title: 'Profit',
+              dataType: 'gold'
+            },
+            {
+              key: '0.95*buyout/source.recipe.[known].cost',
+              title: 'ROI %',
+              dataType: 'percent'
+            },
+            {
+              key: 'source.recipe.[known].cost',
+              title: 'Cost',
+              dataType: 'gold'
+            },
+            {
+              key: 'regionSaleRate',
+              title: 'Sale rate',
+              dataType: 'percent'
+            },
+            {
+              key: 'itemLevel',
+              title: 'ILvL',
+              dataType: 'number'
+            },
+            {
+              title: 'In cart',
+              dataType: 'cart-recipe-count',
+              options: {
+                idName: 'recipeId'
+              }
+            }
+          ];
           board.sortRule = {
             field: columnConfig.recipe.knownRank.key,
             sortDesc: true
@@ -381,7 +429,7 @@ fdescribe('DashboardCalculateUtil', () => {
     });
   });
 
-  fdescribe('Can do math on fields', () => {
+  describe('Can do math on fields', () => {
     it('Can add', () => {
       const board: DashboardV2 = getBoard([
         {

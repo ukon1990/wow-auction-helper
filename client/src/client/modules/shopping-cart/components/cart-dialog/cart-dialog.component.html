@@ -1,0 +1,155 @@
+<wah-close-btn></wah-close-btn>
+
+<h1 mat-dialog-title>Shopping cart</h1>
+<mat-dialog-content>
+
+  <div class="row">
+    <div class="col-xxl-3 col-xl-4 col-lg-4 mt-3">
+      <wah-summary [cart]="cart"></wah-summary>
+    </div>
+    <div class="col-xxl-4 col-xl-4 col-lg-8 mt-3">
+      <mat-card>
+        <mat-card-content>
+          <mat-tab-group>
+            <mat-tab label="Recipes ({{ recipes.length | number }})">
+              <wah-data-table
+                      [id]="'itemId'"
+                      [iconSize]="22"
+                      [columns]="recipeColumns"
+                      [data]="recipes"
+                      [alwaysDisplayCart]="true"
+              ></wah-data-table>
+            </mat-tab>
+            <mat-tab label="Items ({{ items.length | number }})">
+              <wah-data-table [id]="'id'"
+                              [iconSize]="22"
+                              [columns]="itemColumns"
+                              [data]="items"
+                              [alwaysDisplayCart]="true"
+              ></wah-data-table>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-xxl-5 col-xl-4 col-lg-12 mt-3">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Needed items
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <wah-data-table [id]="'id'"
+                          [iconSize]="22"
+                          [columns]="neededColumns"
+                          [data]="needed"
+          ></wah-data-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <mat-card class="col-md-12">
+      <mat-card-header>
+        <mat-card-title>
+          Sources
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="row">
+          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.ah?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Auction house
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.ah"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.vendor?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Vendor
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.vendor"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.tradeVendor?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Trade vendor
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.tradeVendor"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.farm?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Farm
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="sourceColumns"
+                                [data]="cart.sources.farm"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="inventory?.length">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Inventory
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-data-table [id]="'id'"
+                                [iconSize]="22"
+                                [columns]="inventoryColumns"
+                                [data]="inventory"
+                ></wah-data-table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button
+          color="accent"
+          (click)="clear()">
+    Clear the cart
+  </button>
+</mat-dialog-actions>

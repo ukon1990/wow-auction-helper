@@ -1,0 +1,10 @@
+<mat-form-field
+        class="input-column"
+        color="accent"
+        *ngIf="alwaysDisplayCart || isKnownRecipe || !isRecipeCart">
+  <input matInput
+         type="number"
+         min="0"
+         [value]="cartCount"
+         (change)="setCartCount($event)"/>
+</mat-form-field>

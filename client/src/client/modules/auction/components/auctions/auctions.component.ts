@@ -91,7 +91,11 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
+    columns.push({
+      key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
+        idName: 'id',
+      }
+    });
   }
 
   async filterAuctions(changes = this.form.value) {

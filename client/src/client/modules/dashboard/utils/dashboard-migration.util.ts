@@ -88,7 +88,7 @@ export class DashboardMigrationUtil {
         columnConfig.item.name,
         columnConfig.auction.buyout,
         columnConfig.item.vendorSell,
-        columnConfig.shoppingCartInput,
+        columnConfig.recipe.shoppingCartInput,
       ],
       data: [],
       sortOrder: 0,

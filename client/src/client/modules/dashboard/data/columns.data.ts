@@ -24,7 +24,12 @@ export const columnConfig = {
       key: 'quality',
       title: 'Quality',
       dataType: 'quality'
-    }
+    },
+    shoppingCartInput: {
+      key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
+        idName: 'id',
+      }
+    },
   },
   auction: {
     buyout: {
@@ -116,6 +121,11 @@ export const columnConfig = {
     }
   },
   recipe: {
+    shoppingCartInput: {
+      key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
+        idName: 'recipeId',
+      }
+    },
     mostProfitableKnownName: {
       key: 'source.recipe.0.known.name', title: 'Name', dataType: 'name'
     },
@@ -327,6 +337,5 @@ export const columnConfig = {
     quantity: {
       key: 'item.inventory.quantity', title: 'Inventory qty', dataType: 'number'
     }
-  },
-  shoppingCartInput: {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
+  }
 };

@@ -1,0 +1,32 @@
+<ng-container *ngIf="column && row">
+      <span
+              [matTooltip]="hideCraftingDetails && isCrafting ? 'Source: ' + getSource(row) : ''"
+              (click)="select()"
+      >
+        <a wahItemTooltip
+           [item]="row"
+           [rel]="relData"
+           matTooltip="You can click item names, to get more information about them."
+           [routerLink]="routerLink">
+          <wah-icon *ngIf="!(column && column.options && column.options.noIcon) && itemId" class="float-left"
+                    [size]="iconSize ? iconSize : 36" [id]="itemId"
+                    [petSpeciesId]="row?.petSpeciesId"></wah-icon>
+          {{ name }}
+        </a>
+        <span *ngIf="isCrafting">
+          <br>
+          <span *ngIf="subName !== row.name && !hideCraftingDetails">
+          {{ subName }}
+            <br>
+          </span>
+          <span *ngIf="!hideCraftingDetails && professionIds">
+          {{ professionIds.get(row?.professionId)?.name }}
+            <span *ngIf="row.rank"> - Rank {{ row.rank }}</span>
+            <br>
+            <span *ngIf="knownBy">
+              Known by: {{ knownBy }}
+            </span>
+          </span>
+        </span>
+      </span>
+</ng-container>

@@ -52,7 +52,8 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
 
   openNewBoardDialog() {
     this.dialog.open(ConfigureComponent, {
-      width: '95%'
+      width: '95%',
+      maxWidth: '100%',
     });
   }
 

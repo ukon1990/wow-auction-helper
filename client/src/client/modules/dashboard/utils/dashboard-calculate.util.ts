@@ -67,7 +67,7 @@ export class DashboardCalculateUtil {
       if (!recipeIdKey && TextUtil.contains(column.key, 'recipe')) {
         const {regex, expressions} = this.getMathRegex(column.key);
         if (expressions) {
-          const keys = column.key.split(expressions[0])
+          const keys = column.key.split(regex)
             .filter(key => TextUtil.contains(key, 'recipe'))[0];
           const parts = keys.split('.');
           let idKey = '';
@@ -282,7 +282,9 @@ export class DashboardCalculateUtil {
               value = value[key];
             }
           });
-        resultValues.push(value);
+        if (value) {
+          resultValues.push(value);
+        }
       });
     return this.calculateField(resultValues, expressions);
   }
@@ -293,18 +295,22 @@ export class DashboardCalculateUtil {
     return {regex, expressions};
   }
 
-  private static getResultObject(item: AuctionItem, columns: ColumnDescription[], recipeIdPath: string) {
+  private static getResultObject(item: AuctionItem, columns: ColumnDescription[],
+                                 recipeIdPath: string, printLog: boolean = false) {
     const obj = {
       id: item.itemID,
       bonusIds: item.bonusIds,
       petSpeciesId: item.petSpeciesId,
-      recipeId: recipeIdPath ? +this.getValue(item, recipeIdPath) : undefined
+      recipeId: recipeIdPath  && +this.getValue(item, recipeIdPath),
+      mktPrice: item.mktPrice,
     };
 
     columns.forEach(column => {
       obj[column.key] = this.getValue(item, column.key);
-      if (column.options && column.options.idName) {
+
+      if (column.options && column.options.idName && column.options.idName  !== 'recipeId') {
         obj[column.options.idName] = this.getValue(item, column.options.idName);
+
       }
     });
     return obj;
