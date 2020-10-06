@@ -37,18 +37,20 @@ export class CartCountComponent extends BaseComponent implements OnInit, OnDestr
   }
 
   getCartCount(): number {
-    if (this.isRecipeCart) {
-      if ((!this.row || !this.column.options && !this.column.options.idName) && !this.row.recipeId) {
-        return 0;
+    try {
+      if (this.isRecipeCart) {
+        if ((!this.row || !this.column.options && !this.column.options.idName) && !this.row.recipeId) {
+          return 0;
+        }
+        const id: number = this.row[this.column.options.idName] || this.row.recipeId;
+        const cartItem = this.shoppingCartService.recipesMap.value.get(id);
+        return cartItem ? cartItem.quantity : 0;
+      } else {
+        const id: number = this.row[this.column.options.idName] || this.row.id;
+        const cartItem = this.shoppingCartService.itemsMap.value.get(id);
+        return cartItem ? cartItem.quantity : 0;
       }
-      const id: number = this.row[this.column.options.idName] || this.row.recipeId;
-      const cartItem = this.shoppingCartService.recipesMap.value.get(id);
-      return cartItem ? cartItem.quantity : 0;
-    } else {
-      const id: number = this.row[this.column.options.idName] || this.row.id;
-      const cartItem = this.shoppingCartService.itemsMap.value.get(id);
-      return cartItem ? cartItem.quantity : 0;
-    }
+    } catch (e) {}
   }
 
   setCartCount(event: Event): void {
@@ -77,10 +79,14 @@ export class CartCountComponent extends BaseComponent implements OnInit, OnDestr
   }
 
   getIsKnownRecipe() {
-    if ((!this.column.options || !this.column.options.idName) && !this.row.recipeId) {
+    try {
+      if ((!this.column.options || !this.column.options.idName) && !this.row.recipeId) {
+        return false;
+      }
+      const id: number = this.row[this.column.options.idName];
+      return CraftingService.knownRecipeMap.value.has(id);
+    } catch (e) {
       return false;
     }
-    const id: number = this.row[this.column.options.idName];
-    return CraftingService.knownRecipeMap.value.has(id);
   }
 }

@@ -68,6 +68,9 @@ export class DashboardItemComponent implements AfterViewInit, OnDestroy, OnChang
   }
 
   setColumns(allColumns: boolean = this.allColumns): void {
+    if (!this.dashboard || !this.dashboard.columns) {
+      return;
+    }
     this.currentColumns = (this.isInDialogWindow || allColumns) ?
       this.dashboard.columns : this.dashboard.columns.slice(0, 4);
     const nameColumns = this.dashboard.columns.filter(column =>

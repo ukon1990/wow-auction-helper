@@ -8,6 +8,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SortRule} from '../../../models/dashboard-v2.model';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {ErrorReport} from '../../../../../utils/error-report.util';
+import {Report} from '../../../../../utils/report.util';
 
 @Component({
   selector: 'wah-columns',
@@ -93,12 +94,17 @@ export class ColumnsComponent implements AfterViewInit, OnDestroy {
   drop(event: CdkDragDrop<FormGroup[]>) {
     try {
       const {previousIndex, currentIndex} = event;
+      Report.debug(`Moved column from ${previousIndex} to ${currentIndex}`);
       if (previousIndex !== currentIndex &&
         previousIndex !== undefined && currentIndex !== undefined) {
         const column = this.formArray.at(previousIndex);
         this.formArray.removeAt(previousIndex);
         this.formArray.insert(currentIndex, column);
       }
+      Report.send(
+        'Rearranged board',
+        'DashboardItemsComponent.drop',
+        `Moved board from ${previousIndex} to ${currentIndex}`);
     } catch (error) {
       ErrorReport.sendError('ColumnComponent.drop', error);
     }
