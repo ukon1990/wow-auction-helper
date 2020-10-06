@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from '../../../services/shared.service';
 import {Endpoints} from '../../../services/endpoints';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
@@ -13,6 +13,9 @@ import {AuctionHouseStatus} from '../../auction/models/auction-house-status.mode
 import {CraftingService} from '../../../services/crafting.service';
 import {CharacterProfession} from '../../../../../../api/src/character/model';
 import {Report} from '../../../utils/report.util';
+import {AuctionsService} from '../../../services/auctions.service';
+import {AuctionUtil} from '../../auction/utils/auction.util';
+import {CraftingUtil} from '../../crafting/utils/crafting.util';
 
 @Injectable()
 export class CharacterService {
@@ -24,20 +27,22 @@ export class CharacterService {
   charactersForRealm: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
   charactersForRealmWithRecipes: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
 
-  constructor(private _http: HttpClient, private realmService: RealmService, private craftingService: CraftingService) {
+  constructor(private _http: HttpClient,
+              private realmService: RealmService,
+              private craftingService: CraftingService) {
     this.sm.add(this.realmService.events.realmStatus,
       status => this.updateCharactersForRealmAndRecipes(status));
   }
 
-  getCharacter(character: string, realm: string, region?: string): Promise<Character> {
+  getCharacter(name: string, realm: string, region?: string): Promise<Character> {
     SharedService.downloading.characterData = true;
     return new Promise<Character>((resolve, reject) => {
       this._http
         .post(Endpoints.getLambdaUrl(`character`),
           {
             region: region ? region : SharedService.user.region,
-            realm: realm,
-            name: character,
+            realm,
+            name,
             locale: Endpoints.getRealm(UserUtil.slugifyString(realm)).locale,
             withFields: true
           })
@@ -167,5 +172,84 @@ export class CharacterService {
     }
     return !!(character.professions.primaries && character.professions.primaries.length) ||
       !!(character.professions.secondaries && character.professions.secondaries.length);
+  }
+
+  remove(character: Character) {
+    return new Promise<void>(async (resolve) => {
+      const index = this.getCharacterIndex(character);
+      SharedService.user.characters.splice(index, 1);
+      localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+      try {
+        RealmService.gatherRealms();
+        this.updateCharactersForRealmAndRecipes();
+      } catch (e) {
+        ErrorReport.sendError('removeCharacter', e);
+      }
+
+      Report.send('Removed character', 'Characters');
+      resolve();
+    });
+  }
+
+  update(character: Character): Promise<Character> {
+    const professions = character.professions;
+
+    return new Promise<Character>((resolve, reject) => {
+      if (!SharedService.user || !SharedService.user.region) {
+        resolve(character);
+        return;
+      }
+      const region = SharedService.user.region;
+      this.getCharacter(
+        character.name,
+        UserUtil.slugifyString(character.realm),
+        region
+      ).then(async c => {
+        if (c && !c.error && SharedService.user && SharedService.user.characters) {
+          if (!c.professions) {
+            c.professions = professions;
+          }
+          const index = this.getCharacterIndex(character);
+          if (index !== undefined) {
+            SharedService.user.characters[index] = c;
+          } else {
+            SharedService.user.characters.push(c);
+          }
+
+          localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+          this.updateCharactersForRealmAndRecipes();
+
+          Report.send('Updated', 'Characters');
+          resolve(c);
+        } else {
+          ErrorReport.sendHttpError(
+            c.error,
+            new ErrorOptions(true, 'Could not update the character'));
+          reject(c.error);
+        }
+      }).catch(error => {
+        this.handleCharacterError(error, name, character.realm);
+        reject(error);
+      });
+    });
+  }
+
+  private getCharacterIndex(character: Character) {
+    let index: number;
+    SharedService.user.characters
+      .forEach((char: Character, i: number) => {
+        if (char.name === character.name && char.realm === character.realm) {
+          index = i;
+        }
+      });
+    return index;
+  }
+
+  handleCharacterError(error: HttpErrorResponse, name: string, realm: string) {
+    ErrorReport.sendHttpError(
+      error,
+      new ErrorOptions(
+        true,
+        `${name} could not be found on ${realm}. If you are sure that the name matches, try loggin in and out of the character.`));
   }
 }
