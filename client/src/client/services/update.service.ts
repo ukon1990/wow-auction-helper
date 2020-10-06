@@ -1,35 +1,33 @@
-import {Injectable, EventEmitter} from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {SwUpdate, UpdateAvailableEvent} from '@angular/service-worker';
-import {Report} from '../utils/report.util';
+import {GithubService} from '../modules/about/services/github.service';
+import {MatDialog} from '@angular/material/dialog';
+import {AppUpdateComponent} from '../modules/core/components/app-update/app-update.component';
 
-declare function require(moduleName: string): any;
-
-const version = require('../../../package.json').version;
 
 @Injectable()
 export class UpdateService {
-  public events = new EventEmitter<UpdateAvailableEvent>();
 
-  constructor(private swUpdate: SwUpdate, private matSnackBar: MatSnackBar) {
+  constructor(private swUpdate: SwUpdate,
+              private matSnackBar: MatSnackBar,
+              private dialog: MatDialog,
+              private githubService: GithubService) {
     this.swUpdate.available.subscribe((evt: UpdateAvailableEvent) => {
-      this.events.emit(evt);
-      const snack = this.matSnackBar
-        .open(
-          'There is an update Available!',
-          'Reload',
-          {duration: 3000});
-
-      snack
-        .onAction()
-        .subscribe(() => this.update());
+      console.log('Service  worker update available', evt);
+      this.initiateUpdateDialog();
     });
   }
 
-  update(): void {
-    Report.send(`Reload to update from ${version}`, 'Update available');
-    localStorage.setItem('timestamp_news', version);
-    window.location.reload();
+  private initiateUpdateDialog() {
+    this.githubService.getChangeLogs()
+      .then(() => {
+        this.dialog.open(AppUpdateComponent, {
+          width: '95%',
+          maxWidth: '100%',
+        });
+      })
+      .catch(console.error);
   }
 }

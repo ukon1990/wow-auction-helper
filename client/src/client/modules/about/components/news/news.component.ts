@@ -1,7 +1,6 @@
-import {Component, AfterViewInit, Inject, OnDestroy} from '@angular/core';
+import {Component, Inject, OnDestroy} from '@angular/core';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {DashboardService} from '../../../dashboard/services/dashboard.service';
 import {NewsUtil} from '../../utils/news.util';
 
 declare function require(moduleName: string): any;
@@ -17,10 +16,12 @@ declare var $;
 export class NewsComponent implements OnDestroy {
   showNews: boolean;
   faTimes = faTimes;
+  changelog: any;
 
   constructor(
     public dialogRef: MatDialogRef<NewsComponent>,
     @Inject(MAT_DIALOG_DATA) public input: string | any) {
+    this.changelog = input;
   }
 
   ngOnDestroy(): void {
