@@ -1,13 +1,26 @@
 import {DatabaseUtil} from '../utils/database.util';
-import {RealmRepository} from './repository';
+import { RealmRepository} from './repositories/realm.repository';
 import {AuctionHouse} from './model';
 import {S3Handler} from '../handlers/s3.handler';
+import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
+import {RealmLogRepository} from './repositories/realm-log.repository';
 
 export class RealmService {
   private repository: RealmRepository;
+  private logRepository: RealmLogRepository;
 
   constructor() {
     this.repository = new RealmRepository();
+    this.logRepository = new RealmLogRepository();
+  }
+
+  getUpdateLog(ahId: number, hours: number = 24): Promise<AuctionUpdateLog> {
+    const fromDate = +new Date() - hours * 60 * 60 * 1000;
+    return new Promise<AuctionUpdateLog>((resolve, reject) => {
+      this.logRepository.getByIdAfter(ahId, fromDate)
+        .then(res => resolve(new AuctionUpdateLog(res)))
+        .catch(reject);
+    });
   }
 
   updateLastRequested(id: number, lastRequested: number): Promise<any> {

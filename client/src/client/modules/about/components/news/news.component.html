@@ -1,3 +1,5 @@
+<wah-close-btn (close)="close()"></wah-close-btn>
+
 <h1 mat-dialog-title>
   Welcome back! There has been a new version installed, since your last visit.
 </h1>
@@ -12,7 +14,7 @@
     </a> or via PM to me on Reddit or Discord (Ukon1990). As always, any feedback is appreciated!
   </em>
 
-  <wah-changelog></wah-changelog>
+  <wah-changelog [changeLogs]="changelog"></wah-changelog>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

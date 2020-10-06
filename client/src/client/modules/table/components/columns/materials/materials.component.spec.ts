@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MaterialsComponent } from './materials.component';
-import { TestModule } from '../../../test.module';
-import { SharedService } from '../../../../services/shared.service';
-import { AuctionItem } from '../../../auction/models/auction-item.model';
-import { Recipe } from '../../../crafting/models/recipe';
-import {AuctionsService} from '../../../../services/auctions.service';
+import { TestModule } from '../../../../test.module';
+import { SharedService } from '../../../../../services/shared.service';
+import { AuctionItem } from '../../../../auction/models/auction-item.model';
+import { Recipe } from '../../../../crafting/models/recipe';
+import {AuctionsService} from '../../../../../services/auctions.service';
 
 describe('MaterialsComponent', () => {
   let component: MaterialsComponent;

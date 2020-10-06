@@ -79,7 +79,7 @@ export class ProfessionService {
       .then((response: ProfessionResponse) => {
         this.dbService.addProfessions(response.professions);
         this.setSubjects(response.professions);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = response.timestamp;
+        localStorage.setItem(this.LOCAL_STORAGE_TIMESTAMP, '' + response.timestamp);
         SharedService.downloading.professions = false;
       })
       .catch(error => {

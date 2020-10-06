@@ -27,6 +27,7 @@ export class AuctionsService {
   };
   subs = new SubscriptionManager();
   doNotOrganize = false;
+  isReady: boolean = false;
 
 
   constructor(
@@ -147,6 +148,9 @@ export class AuctionsService {
   }
 
   async organize(auctions: Auction[] = this.auctions.value) {
+    if (!this.isReady) {
+      return;
+    }
     // this.characterService.updateCharactersForRealmAndRecipes();
     await AuctionUtil.organize(auctions)
       .then(({

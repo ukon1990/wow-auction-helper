@@ -29,6 +29,8 @@ import {NewsComponent} from './modules/about/components/news/news.component';
 import {ItemComponent} from './modules/item/components/item.component';
 import {LogRocketUtil} from './utils/log-rocket.util';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {GithubService} from './modules/about/services/github.service';
+import {UpdateService} from './services/update.service';
 
 @Component({
   selector: 'wah-root',
@@ -52,6 +54,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private downloadService: BackgroundDownloadService,
               private auctionService: AuctionsService,
               private reportService: ReportService,
+              private githubService: GithubService,
+              private updateService: UpdateService,
               private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
@@ -108,13 +112,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.restorePreviousLocation();
     this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
     Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
+    this.displayChangelogIfRelevant();
+  }
+
+  private displayChangelogIfRelevant() {
     NewsUtil.shouldTrigger()
       .then(render => {
         if (render) {
-          this.dialog.open(NewsComponent, {
-            width: '95%',
-            maxWidth: '100%',
-          });
+          this.githubService.getChangeLogs()
+            .then((changelog) => {
+              this.dialog.open(NewsComponent, {
+                width: '95%',
+                maxWidth: '100%',
+                data: changelog
+              });
+            })
+            .catch(error => ErrorReport.sendHttpError(error));
         }
       });
   }

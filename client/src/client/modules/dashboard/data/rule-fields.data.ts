@@ -219,7 +219,7 @@ export const ruleFields: RuleFieldGroup[] = [
       {
         key: undefined,
         name: 'Add to cart action',
-        column: columnConfig.shoppingCartInput,
+        column: columnConfig.recipe.shoppingCartInput,
         defaultType: TargetValueEnum.INPUT_NUMBER
       },
       {

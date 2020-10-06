@@ -3,6 +3,7 @@ import { PageEvent } from '@angular/material/paginator';
 import {SharedService} from '../../../../services/shared.service';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {Remains} from '../../../../models/item/remains.model';
+import {ItemService} from '../../../../services/item.service';
 
 @Component({
   selector: 'wah-data-boards',
@@ -26,7 +27,8 @@ export class DataBoardsComponent implements OnInit {
   }
 
   setSelectedItem(item: Remains): void {
-    SharedService.events.detailSelection = SharedService.items[item.id];
+    SharedService.events.detailSelection.emit(
+      ItemService.mapped.value.get(item.id));
   }
 
   /* istanbul ignore next */

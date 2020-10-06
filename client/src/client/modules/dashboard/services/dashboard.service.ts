@@ -14,6 +14,8 @@ import {Report} from '../../../utils/report.util';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
+import {TsmService} from '../../tsm/tsm.service';
+import {BackgroundDownloadService} from '../../core/services/background-download.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +28,10 @@ export class DashboardService {
   defaultMap: BehaviorSubject<Map<string, DashboardV2>> = new BehaviorSubject<Map<string, DashboardV2>>(new Map<string, DashboardV2>());
 
   private sm = new SubscriptionManager();
+  private isInitiated: boolean;
 
   constructor(private auctionsService: AuctionsService, private db: DatabaseService,
-              private professionService: ProfessionService) {
+              private professionService: ProfessionService, private backgroundService: BackgroundDownloadService) {
     this.sm.add(this.professionService.listWithRecipes, () => {
       this.sm.unsubscribeById('auctions');
 
@@ -40,11 +43,18 @@ export class DashboardService {
           id: 'auctions'
         });
     });
+
+    this.sm.add(TsmService.list, () => {
+      if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
+        this.calculateAll();
+      }
+    });
   }
 
   async init(): Promise<void> {
     await this.restore();
     this.calculateAll();
+    this.isInitiated = true;
   }
 
   calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
@@ -58,6 +68,7 @@ export class DashboardService {
       });
       this.allBoardsCalculatedEvent.next(+new Date());
     }
+    Report.debug('Boards', this.list.value);
   }
 
   private async restore(): Promise<void> {
@@ -71,7 +82,6 @@ export class DashboardService {
           dashboards.push(board);
           restoredMap.set(board.id, board);
         });
-        Report.debug('DashboardService.restore', restored, this.professionService.listWithRecipes.value);
       })
       .catch(error =>
         ErrorReport.sendError('DashboardService.restore', error));

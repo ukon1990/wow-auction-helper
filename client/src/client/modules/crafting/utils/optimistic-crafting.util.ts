@@ -1,12 +1,11 @@
 import {BaseCraftingUtil} from './base-crafting.util';
-import {Recipe} from '../models/recipe';
-import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
-import {AuctionsService} from '../../../services/auctions.service';
+import {Item} from '../../../models/item/item';
 
 export class OptimisticCraftingUtil extends BaseCraftingUtil {
-  constructor(map: Map<string, AuctionItem>) {
-    super(map);
+  constructor(map: Map<string, AuctionItem>, public items: Map<number, Item>, public faction: number,
+              useIntermediateCrafting: boolean = false, public useInventory: boolean = false) {
+    super(map, items, faction, useIntermediateCrafting, useInventory);
   }
 
   getPrice(id: number, quantity: number): number {

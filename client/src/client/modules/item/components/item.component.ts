@@ -20,6 +20,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ItemDetailsUtil} from '../utils/item-details.util';
+import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 
 @Component({
   selector: 'wah-item',
@@ -89,6 +90,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
               private zoneService: ZoneService,
               private auctionService: AuctionsService,
               private itemService: ItemService,
+              private shoppingCartService: ShoppingCartService,
               public dialogRef: MatDialogRef<ItemComponent>,
               @Inject(MAT_DIALOG_DATA) public selection: any) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
@@ -196,19 +198,26 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     if (!this.selected.item) {
       return false;
     }
-    return CraftingService.itemRecipeMapPerKnown.value.has(this.selected.item.id);
+    const ai = this.auctionService.mapped.value.get(this.selected.item.id);
+    return !!(ai && ai.source &&
+      ai.source.recipe &&
+      ai.source.recipe.known &&
+      ai.source.recipe.known.length);
   }
 
-  addEntryToCart(): void {
+  addEntryToCart(isRecipe: boolean = true): void {/*
     if (!this.userHasRecipeForItem()) {
       return;
+    }*/
+    const quantity: number = +this.shoppingCartQuantityField.value;
+    if (isRecipe) {
+      this.shoppingCartService.addRecipeByItemId(this.selected.item.id, quantity);
+      Report.send('Added to recipe shopping cart', 'Item detail view');
+    } else {
+      this.shoppingCartService.addItem(this.selected.item.id, quantity);
+      Report.send('Added to item shopping cart', 'Item detail view');
     }
-    SharedService.user.shoppingCart
-      .add(
-        CraftingService.itemRecipeMapPerKnown.value.get(this.selected.item.id)[0],
-        this.shoppingCartQuantityField.value);
 
-    Report.send('Added to recipe shopping cart', 'Item detail view');
   }
 
   /* istanbul ignore next */

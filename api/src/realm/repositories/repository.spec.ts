@@ -1,6 +1,6 @@
-import {RealmRepository} from './repository';
-import {RealmStatus} from '../../../client/src/client/models/realm-status.model';
-import {AuctionHouse} from './model';
+import {RealmRepository} from './realm.repository';
+import {RealmStatus} from '../../../../client/src/client/models/realm-status.model';
+import {AuctionHouse} from '../model';
 
 describe('RealmRepository', () => {
   const repository: RealmRepository = new RealmRepository();

@@ -7,6 +7,7 @@ import {DatabaseService} from './database.service';
 import {Angulartics2} from 'angulartics2';
 import {ErrorReport} from '../utils/error-report.util';
 import {Platform} from '@angular/cdk/platform';
+import {BehaviorSubject} from 'rxjs';
 
 class PetResponse {
   timestamp: Date;
@@ -16,6 +17,7 @@ class PetResponse {
 @Injectable()
 export class PetsService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_pets';
+  mapped: BehaviorSubject<Map<number,  Pet>> = new BehaviorSubject(new Map<number,  Pet>());
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
@@ -55,15 +57,18 @@ export class PetsService {
   }
 
   handlePets(pets: PetResponse) {
+    const map = new Map<number, Pet>();
     SharedService.downloading.pets = false;
-    (pets.pets as Array<Pet>).forEach(p => {
-      SharedService.pets[p.speciesId] = p;
+    (pets.pets as Array<Pet>).forEach(pet => {
+      SharedService.pets[pet.speciesId] = pet;
+      map.set(pet.speciesId, pet);
     });
 
     if (this.platform !== null && !this.platform.WEBKIT) {
       this.dbService.addPets(pets.pets);
       localStorage[this.LOCAL_STORAGE_TIMESTAMP] = new Date(pets.timestamp).toJSON();
     }
+    this.mapped.next(map);
   }
 
   updatePet(speciesId): Promise<any> {

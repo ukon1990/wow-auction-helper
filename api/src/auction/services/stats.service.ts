@@ -7,7 +7,7 @@ import {NumberUtil} from '../../../../client/src/client/modules/util/utils/numbe
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {LogRepository} from '../../logs/repository';
-import {RealmRepository} from '../../realm/repository';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
 
 const request: any = require('request');
@@ -132,7 +132,7 @@ export class StatsService {
 
               for (const object of objects.Contents) {
                 if ((+new Date() - insertStatsStart) / 1000 < 50) {
-                  const [status]: { activeQueries: number }[] = await conn.query(LogRepository.activeQueryCount)
+                  const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
                     .catch(error => console.error(`StatsService.insertStats.Contents`, error));
 
                   if (status.activeQueries < 10) {
@@ -294,57 +294,64 @@ export class StatsService {
   * Run once each 6-10 minute
   * Limit 1 order by time since asc (to get the oldest first)
   * */
-  deleteOldPriceHistoryForRealmAndSetDailyPrice(conn = new DatabaseUtil(false)): Promise<any> {
-    return new Promise((resolve, reject) => {
-
-      const day = 1000 * 60 * 60 * 24;
-      const now = new Date();
-      if (now.getMinutes() < 30 && now.getMinutes() > 0) {
-        resolve();
-        return;
-      }
-      now.setUTCHours(0);
-      now.setUTCMinutes(0);
-      now.setUTCMilliseconds(0);
-
+  deleteOldPriceHistoryForRealm(conn = new DatabaseUtil(false)): Promise<any> {
+    return new Promise(async (resolve, reject) => {
       const repository = new StatsRepository(conn);
+      const [status]: { activeQueries: number }[] = await repository.getActiveQueries()
+        .catch(error => console.error(`StatsService.deleteOldPriceHistoryForRealm`, error));
 
-      repository.getNextHouseInTheDeleteQueue(now, day)
-        .then(async (res) => {
-          if (res.length) {
-            const {id} = res[0];
+      if (status.activeQueries < 1) {
+        const day = 1000 * 60 * 60 * 24;
+        const now = new Date();
+        /*
+        now.setUTCHours(0);
+        now.setUTCMinutes(0);
 
-            repository.deleteOldAuctionHouseData(id, now, day)
-              .then((deleteResult) => {
-                deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
-                repository
-                  .updateLastDeleteEvent(id)
-                  .then(() => {
-                    console.log('Successfully deleted old price data', deleteResult);
-                    conn.end();
-                    resolve();
-                  })
-                  .catch(error => {
-                    console.error(error);
-                    conn.end();
-                    reject(error);
-                  });
-              })
-              .catch(error => {
-                console.error(error);
-                conn.end();
-                reject(error);
-              });
-          } else {
+        now.setUTCMilliseconds(0);
+        */
+
+
+        repository.getNextHouseInTheDeleteQueue()
+          .then(async (res) => {
+            if (res.length) {
+              const {id} = res[0];
+
+              repository.deleteOldAuctionHouseData(id, now, day)
+                .then((deleteResult) => {
+                  deleteResult.affectedRows = NumberUtil.format(deleteResult.affectedRows);
+                  repository
+                    .updateLastDeleteEvent(id)
+                    .then(() => {
+                      console.log('Successfully deleted old price data', deleteResult);
+                      conn.end();
+                      resolve();
+                    })
+                    .catch(error => {
+                      console.error(error);
+                      conn.end();
+                      reject(error);
+                    });
+                })
+                .catch(error => {
+                  console.error(error);
+                  conn.end();
+                  reject(error);
+                });
+            } else {
+              conn.end();
+              resolve();
+            }
+          })
+          .catch(error => {
+            console.error(error);
             conn.end();
-            resolve();
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          conn.end();
-          reject(error);
-        });
+            reject(error);
+          });
+      } else {
+        conn.end();
+        console.log('Too many active queries', status.activeQueries);
+        resolve();
+      }
     });
   }
 }

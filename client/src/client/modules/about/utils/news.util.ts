@@ -12,9 +12,11 @@ export class NewsUtil {
       setTimeout(() => {
         let displayNews = false;
         try {
-          if (localStorage['realm'] &&
-            localStorage['timestamp_news'] && localStorage['timestamp_news'] !== version) {
+          if (localStorage.getItem('realm') &&
+            localStorage.getItem('timestamp_news') && localStorage.getItem('timestamp_news') !== version) {
             displayNews = true;
+          } else {
+            localStorage.setItem('timestamp_news', version);
           }
         } catch (e) {
           ErrorReport.sendError('NewsUtil.shouldTrigger', e);

@@ -136,7 +136,7 @@ export abstract class BaseRepository<T> {
     });
   }
 
-  protected getByIdAfter(id: number | string, lastModified: number, table: string = this.table): Promise<T[]> {
+  getByIdAfter(id: number | string, lastModified: number, table: string = this.table): Promise<T[]> {
     return this.query({
       TableName: table,
       KeyConditionExpression: '#id = :id and #lastModified >= :lastModified',

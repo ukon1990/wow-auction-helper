@@ -10,15 +10,6 @@ import {TsmService} from './services/tsm.service';
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
   new AuctionService().deactivateInactiveHouses(event, callback);
 
-/* istanbul ignore next */
-exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const id = +event.pathParameters.id;
-  Endpoints.setStage(event);
-  new AuctionService().getUpdateLog(id, 24 * 7)
-    .then(res => Response.send(res, callback))
-    .catch(err => Response.error(callback, err, event, 401));
-};
-
 exports.auctionsDownloadAndSave = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   Endpoints.setStage(event);
   new AuctionService().downloadAndSaveAuctionDump(event['Records'])
@@ -65,7 +56,7 @@ exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callbac
 };
 
 exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new StatsService().deleteOldPriceHistoryForRealmAndSetDailyPrice()
+  new StatsService().deleteOldPriceHistoryForRealm()
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 500));
 };

@@ -51,7 +51,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
     {key: 'roi', title: 'Profit', dataType: 'gold'},
     {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true},
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true},
-    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
+    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
+      idName: 'id',
+    }}
   ];
 
   constructor(private _formBuilder: FormBuilder, private _title: Title,

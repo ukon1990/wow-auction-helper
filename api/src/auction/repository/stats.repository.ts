@@ -2,6 +2,7 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
+import {LogRepository} from '../../logs/repository';
 
 export class StatsRepository {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
@@ -77,19 +78,18 @@ export class StatsRepository {
                   AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`);
   }
 
-  getNextHouseInTheDeleteQueue(now: Date, day: number): Promise<any> {
+  getNextHouseInTheDeleteQueue(): Promise<any> {
     return this.conn.query(`SELECT *
-                        FROM auction_houses
-                        WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}
-                        ORDER BY lastHistoryDeleteEvent
-                        LIMIT 1;`);
+                            FROM auction_houses
+                            ORDER BY lastHistoryDeleteEvent
+                            LIMIT 1;`);
   }
 
-  deleteOldAuctionHouseData(id: any, now: Date, day: number): Promise<any> {
+  deleteOldAuctionHouseData(ahId: number, now: Date, day: number): Promise<any> {
     return this.conn.query(`
             DELETE FROM itemPriceHistoryPerHour
-            WHERE ahId = ${id} AND
-                  UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`);
+            WHERE ahId = ${ahId} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000}
+            LIMIT 100000;`);
   }
 
   updateLastDeleteEvent(id: number): Promise<any> {
@@ -97,5 +97,14 @@ export class StatsRepository {
         UPDATE auction_houses
         SET lastHistoryDeleteEvent = ${+new Date()}
         WHERE id = ${id};`);
+  }
+
+  getActiveQueries(): Promise<any> {
+    return this.conn.query(`
+      SELECT count(*) as activeQueries
+      FROM information_schema.processlist
+      WHERE info NOT LIKE '%information_schema.processlist%' AND
+          (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
+              OR info LIKE '%DELETE FROM%');`);
   }
 }

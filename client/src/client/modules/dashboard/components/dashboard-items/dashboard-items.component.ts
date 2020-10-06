@@ -9,6 +9,8 @@ import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {MigrationComponent} from '../migration/migration.component';
 import {NewsUtil} from '../../../about/utils/news.util';
 import {CharacterService} from '../../../character/services/character.service';
+import {Report} from '../../../../utils/report.util';
+import {ErrorReport} from '../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-dasboard-items',
@@ -52,12 +54,22 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
 
   openNewBoardDialog() {
     this.dialog.open(ConfigureComponent, {
-      width: '95%'
+      width: '95%',
+      maxWidth: '100%',
     });
   }
 
   drop({previousIndex, currentIndex}: CdkDragDrop<DashboardV2, any>) {
-    this.service.move(previousIndex, currentIndex);
+    try {
+      Report.send(
+        'Rearranged board',
+        'DashboardItemsComponent.drop',
+        `Moved board from ${previousIndex} to ${currentIndex}`);
+      Report.debug(`Moved board from ${previousIndex} to ${currentIndex}`);
+      this.service.move(previousIndex, currentIndex);
+    } catch (error) {
+      ErrorReport.sendError('DashboardItemsComponent.drop', error);
+    }
   }
 
   onPanelClick(panelName: string) {
