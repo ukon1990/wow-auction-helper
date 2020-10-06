@@ -56,7 +56,7 @@ exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callbac
 };
 
 exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new StatsService().deleteOldPriceHistoryForRealmAndSetDailyPrice()
+  new StatsService().deleteOldPriceHistoryForRealm()
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 500));
 };
