@@ -16,6 +16,8 @@ import {ChartsDataSetsComponent} from './components/charts-datasets/charts-data-
 import {WowheadDirective} from './wowhead.directive';
 import {CloseBtnComponent} from './components/close-btn/close-btn.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { LoadingComponent } from './components/loading.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     ChartsDataSetsComponent,
     ChartsDataSetsComponent,
     WowheadDirective,
-    CloseBtnComponent
+    CloseBtnComponent,
+    LoadingComponent
   ],
   imports: [
     CommonModule,
@@ -39,6 +42,7 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatButtonModule,
     MatTooltipModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     GoldPipe,
@@ -47,7 +51,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     AddonImportComponent,
     ChartsDataSetsComponent,
     WowheadDirective,
-    CloseBtnComponent
+    CloseBtnComponent,
+    LoadingComponent
   ]
 })
 export class UtilModule {

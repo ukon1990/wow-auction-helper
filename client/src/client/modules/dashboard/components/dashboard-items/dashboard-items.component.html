@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group *ngIf="dashboards; else loadingTemplate">
   <mat-tab label="Dashboard matches ({{ numberOfBoardsWithAMatch }}/ {{ numberOfActiveBoards }})">
     <p>
       Click on an item's name to get more information about it, current prices, sources, historical pricing etc and the cogwheel to edit.
@@ -53,3 +53,7 @@
     </mat-list>
   </mat-tab>
 </mat-tab-group>
+
+<ng-template #loadingTemplate>
+  <wah-loading message="Dashboards are loading"></wah-loading>
+</ng-template>

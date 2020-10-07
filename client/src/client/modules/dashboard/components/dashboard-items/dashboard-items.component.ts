@@ -18,7 +18,7 @@ import {ErrorReport} from '../../../../utils/error-report.util';
   styleUrls: ['./dashboard-items.component.scss']
 })
 export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
-  dashboards: DashboardV2[] = [];
+  dashboards: DashboardV2[];
   displayHiddenForm: FormControl = new FormControl(false);
   sm = new SubscriptionManager();
   displaySortPanel: any;
@@ -27,6 +27,9 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
   numberOfActiveBoards: number;
 
   constructor(private service: DashboardService, public dialog: MatDialog, private characterService: CharacterService) {
+  }
+
+  ngAfterViewInit() {
     this.sm.add(this.service.list, (boards: DashboardV2[]) =>
       this.dashboards = [...boards]);
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
@@ -36,9 +39,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
       chars => {
         this.numberOfCharactersOnRealm = chars.length;
       });
-  }
 
-  ngAfterViewInit() {
     this.setTabTitleNumbers();
   }
 
