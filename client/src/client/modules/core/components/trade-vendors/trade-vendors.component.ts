@@ -50,7 +50,6 @@ export class TradeVendorsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
     this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     this.columns.push({key: 'roi', title: 'ROI', dataType: 'gold'});
-    console.log('REAL SHIT', this.vendors);
 
     this.sm.add(
       this.form.valueChanges,

@@ -252,13 +252,14 @@ export const columnConfig = {
     }, quality: {
       key: 'petQualityId', title: 'Pet quality', dataType: 'quality'
     }
-
   },
   source: {
     soldBy: {
       name: {
         key: 'source.npc.[soldBy].name', title: 'Vendor', dataType: 'name', options: {
-          idName: 'source.npc.[soldBy].id'
+          idName: 'soldById',
+          noIcon: true,
+          tooltipType: 'npc'
         }
       },
       tag: {
@@ -266,7 +267,9 @@ export const columnConfig = {
       },
       zoneName: {
         key: 'source.npc.[soldBy].zoneName', title: 'Zone', dataType: 'name', options: {
-          idName: 'source.npc.[soldBy].zoneId'
+          idName: 'zoneId',
+          noIcon: true,
+          tooltipType: 'zone'
         }
       },
       price: {
@@ -279,15 +282,17 @@ export const columnConfig = {
         key: 'source.npc.[soldBy].stackSize', title: 'Stack size', dataType: 'number'
       },
       currency: {
-        key: 'source.npc.[soldBy].currency', title: 'Currency', dataType: 'currency', options: {
-          idName: 'source.npc.[soldBy].currency'
+        key: 'source.npc.[soldBy].currency', title: 'Currency', dataType: 'vendor-currency', options: {
+          idName: 'source.npc.[soldBy].currency',
         }
       }
     },
     droppedBy: {
       name: {
         key: 'source.npc.[droppedBy].name', title: 'NPC name', dataType: 'name', options: {
-          idName: 'source.npc.[droppedBy].id'
+          idName: 'droppedById',
+          noIcon: true,
+          tooltipType: 'npc'
         }
       },
       tag: {
@@ -295,7 +300,9 @@ export const columnConfig = {
       },
       zoneName: {
         key: 'source.npc.[droppedBy].zoneName', title: 'Zone', dataType: 'name', options: {
-          idName: 'source.npc.[droppedBy].zoneId'
+          idName: 'source.npc.[droppedBy].zoneId',
+          noIcon: true,
+          tooltipType: 'zone'
         }
       },
       dropChance: {
@@ -304,8 +311,6 @@ export const columnConfig = {
       levelRange: {
         key: 'source.npc.[droppedBy].levelRange', title: 'Level range', dataType: 'text'
       }
-
-
     },
     tradeVendor: {
       name: {

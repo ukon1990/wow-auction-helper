@@ -14,6 +14,14 @@ import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {Report} from '../../../utils/report.util';
+
+interface IdPaths {
+  recipeId?: string;
+  soldById?: string;
+  droppedById?: string;
+  zoneId?: string;
+}
 
 export class DashboardCalculateUtil {
   static setItemSources(items: Map<string, AuctionItem>): void {
@@ -43,14 +51,20 @@ export class DashboardCalculateUtil {
       board.data = [];
       return board;
     }
-    const recipeIdKey = this.getRecipeId(board);
+    const paths: IdPaths = {
+      recipeId: this.getIdParameterForName(board, 'recipe'),
+      soldById: this.getIdParameterForName(board, 'soldBy'),
+      droppedById: this.getIdParameterForName(board, 'dropped'),
+      zoneId: this.getIdParameterForName(board, 'zone')
+    };
+    Report.debug('Paths are', paths);
 
     try {
       const dataMap = new Map<string, any>();
       if (board.onlyItemsWithRules) {
-        this.addOnlyIncludedInItemRules(board, items, dataMap, recipeIdKey);
+        this.addOnlyIncludedInItemRules(board, items, dataMap, paths);
       } else {
-        this.addMatchingBoardRules(board, items, dataMap, recipeIdKey);
+        this.addMatchingBoardRules(board, items, dataMap, paths);
         this.addMatchingItemRules(board, dataMap, items);
       }
       this.assignAndSortDataToBoard(dataMap, board);
@@ -61,22 +75,26 @@ export class DashboardCalculateUtil {
     return board;
   }
 
-  private static getRecipeId(board: DashboardV2) {
+  private static getIdParameterForName(board: DashboardV2, name: string) {
     let recipeIdKey;
     board.columns.forEach(column => {
-      if (!recipeIdKey && TextUtil.contains(column.key, 'recipe')) {
+      if (!recipeIdKey && TextUtil.contains(column.key, name)) {
         const {regex, expressions} = this.getMathRegex(column.key);
-        if (expressions) {
-          const keys = column.key.split(regex)
-            .filter(key => TextUtil.contains(key, 'recipe'))[0];
-          const parts = keys.split('.');
-          let idKey = '';
-          parts.forEach((part, i) => {
-            if (!idKey && part === 'recipe') {
-              idKey = parts.slice(0, i + 2).join('.') + '.id';
+        const keys = column.key.split(regex)
+          .filter(key => TextUtil.contains(key, name))[0];
+        const parts = keys.split('.');
+        const path: string[] = [];
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          path.push(part);
+          if (TextUtil.contains(part, name)) {
+            if (TextUtil.contains(parts[i + 1], '[')) {
+              path.push(parts[i + 1]);
             }
-          });
-          recipeIdKey = idKey;
+            path.push(`id`);
+            recipeIdKey =  path.join('.');
+            return recipeIdKey;
+          }
         }
       }
     });
@@ -98,21 +116,21 @@ export class DashboardCalculateUtil {
   }
 
   private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-                                            recipeIdPath: string) {
+                                            paths: IdPaths) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((rule: ItemRule) => {
         const id = this.getId(undefined, rule);
         const item = items.get('' + rule.itemId);
         if (this.isFollowingTheRules(board.rules, item) &&
           this.isFollowingTheRules(rule.rules, items.get('' + rule.itemId))) {
-          dataMap.set(id, [this.getResultObject(item, board.columns, recipeIdPath)]);
+          dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
         }
       });
     }
   }
 
   private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-                                       recipeIdPath: string) {
+                                       paths: IdPaths) {
     if ((board.rules.length || board.itemRules && board.itemRules.length)) {
       try {
         const iterableKeyRules = board.rules.filter(rule => this.ruleContainsIterable(rule));
@@ -121,9 +139,9 @@ export class DashboardCalculateUtil {
           if (this.isFollowingTheRules(nonIterableKeyRules, item)) {
             const id = this.getId(item);
             if (iterableKeyRules.length > 0) {
-              this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, recipeIdPath);
+              this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, paths);
             } else {
-              dataMap.set(id, [this.getResultObject(item, board.columns, recipeIdPath)]);
+              dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
             }
           }
         });
@@ -134,7 +152,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: DashboardV2,
-                                              dataMap: Map<string, any>, id: string, recipeIdPath: string) {
+                                              dataMap: Map<string, any>, id: string, paths: IdPaths) {
     const list = [];
     let arr: any[];
     const partialPath = [];
@@ -151,7 +169,7 @@ export class DashboardCalculateUtil {
               const childObject = this.getItemCopy(item);
               this.setValueAtPath(childObject, it, partialPath, index);
               if (this.isFollowingTheRules(iterableKeyRules, childObject)) {
-                list.push(this.getResultObject(childObject, board.columns, recipeIdPath));
+                list.push(this.getResultObject(childObject, board.columns, paths));
               }
             });
           }
@@ -296,19 +314,22 @@ export class DashboardCalculateUtil {
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[],
-                                 recipeIdPath: string, printLog: boolean = false) {
+                                 paths: IdPaths, printLog: boolean = false) {
     const obj = {
       id: item.itemID,
       bonusIds: item.bonusIds,
       petSpeciesId: item.petSpeciesId,
-      recipeId: recipeIdPath  && +this.getValue(item, recipeIdPath),
+      recipeId: paths.recipeId && +this.getValue(item, paths.recipeId),
+      soldById: paths.soldById && +this.getValue(item, paths.soldById),
+      droppedById: paths.droppedById && +this.getValue(item, paths.droppedById),
+      zoneId: paths.zoneId && +this.getValue(item, paths.zoneId),
       mktPrice: item.mktPrice,
     };
 
     columns.forEach(column => {
       obj[column.key] = this.getValue(item, column.key);
 
-      if (column.options && column.options.idName && column.options.idName  !== 'recipeId') {
+      if (column.options && column.options.idName && column.options.idName !== 'recipeId') {
         obj[column.options.idName] = this.getValue(item, column.options.idName);
 
       }

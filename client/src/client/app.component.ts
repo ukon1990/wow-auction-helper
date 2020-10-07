@@ -45,6 +45,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading: boolean;
   isInTheSetup: boolean;
   initialLoadWasSetup: boolean;
+  isInNonAppDataPage: boolean;
 
   constructor(public platform: Platform,
               private router: Router,
@@ -191,6 +192,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     if (TextUtil.contains(event.url, 'setup')) {
       this.initialLoadWasSetup = true;
     }
+
+    if (TextUtil.contains(event.url, 'settings') || TextUtil.contains(event.url, 'about')) {
+      this.isInNonAppDataPage = true;
+    } else if (event.url) {
+      this.isInNonAppDataPage = false;
+    }
+
     this.redirectToCorrectPath(event.url);
     this.saveCurrentRoute(event);
     const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);

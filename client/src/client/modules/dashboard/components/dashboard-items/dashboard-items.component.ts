@@ -27,6 +27,9 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
   numberOfActiveBoards: number;
 
   constructor(private service: DashboardService, public dialog: MatDialog, private characterService: CharacterService) {
+  }
+
+  ngAfterViewInit() {
     this.sm.add(this.service.list, (boards: DashboardV2[]) =>
       this.dashboards = [...boards]);
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
@@ -36,9 +39,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
       chars => {
         this.numberOfCharactersOnRealm = chars.length;
       });
-  }
 
-  ngAfterViewInit() {
     this.setTabTitleNumbers();
   }
 
