@@ -62,7 +62,7 @@ export class CharacterService {
           new ErrorOptions(
             true,
             `${
-              character
+              name
             } could not be found on the realm ${
               realm
             }.`));

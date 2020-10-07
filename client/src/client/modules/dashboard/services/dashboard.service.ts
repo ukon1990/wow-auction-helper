@@ -68,6 +68,7 @@ export class DashboardService {
       });
       this.allBoardsCalculatedEvent.next(+new Date());
     }
+    Report.debug('Boards', this.list.value);
   }
 
   private async restore(): Promise<void> {

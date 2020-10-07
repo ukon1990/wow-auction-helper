@@ -39,10 +39,10 @@ export class CartCountComponent extends BaseComponent implements OnInit, OnDestr
   getCartCount(): number {
     try {
       if (this.isRecipeCart) {
-        if ((!this.row || !this.column.options && !this.column.options.idName) && !this.row.recipeId) {
+        const id: number = this.getId();
+        if (!id) {
           return 0;
         }
-        const id: number = this.row[this.column.options.idName] || this.row.recipeId;
         const cartItem = this.shoppingCartService.recipesMap.value.get(id);
         return cartItem ? cartItem.quantity : 0;
       } else {
@@ -56,11 +56,7 @@ export class CartCountComponent extends BaseComponent implements OnInit, OnDestr
   setCartCount(event: Event): void {
     let valueToAdd = +event.target['value'];
 
-    if ((!this.column.options || !this.column.options.idName) && !this.row.recipeId && this.isRecipeCart) {
-      return;
-    }
-
-    const id: number = this.row[this.column.options.idName] || this.row.recipeId;
+    const id: number = this.getId();
     if (id) {
       const existing = this.isRecipeCart ?
         this.shoppingCartService.recipesMap.value.get(id) :
@@ -80,13 +76,16 @@ export class CartCountComponent extends BaseComponent implements OnInit, OnDestr
 
   getIsKnownRecipe() {
     try {
-      if ((!this.column.options || !this.column.options.idName) && !this.row.recipeId) {
-        return false;
-      }
-      const id: number = this.row[this.column.options.idName];
-      return CraftingService.knownRecipeMap.value.has(id);
+      return CraftingService.knownRecipeMap.value.has(this.getId());
     } catch (e) {
       return false;
     }
+  }
+
+  private getId() {
+    if (this.column.options && this.column.options.idName) {
+      return this.row[this.column.options.idName];
+    }
+    return this.row.recipeId;
   }
 }
