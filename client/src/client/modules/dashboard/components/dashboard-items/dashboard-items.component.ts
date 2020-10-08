@@ -18,7 +18,7 @@ import {ErrorReport} from '../../../../utils/error-report.util';
   styleUrls: ['./dashboard-items.component.scss']
 })
 export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
-  dashboards: DashboardV2[];
+  dashboards: DashboardV2[] = [];
   displayHiddenForm: FormControl = new FormControl(false);
   sm = new SubscriptionManager();
   displaySortPanel: any;
