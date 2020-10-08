@@ -22,5 +22,6 @@
 
 <wah-item-sale-summary *ngIf="item.id"
                        [itemId]="item.id"
+                       [dialogId]="dialogId"
                        (saleRate)="setPersonalSaleRate($event)">
 </wah-item-sale-summary>

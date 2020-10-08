@@ -1,5 +1,9 @@
 @import 'mobile';
 
+.mat-dialog-container {
+  position: relative !important;
+}
+
 .mat-tab-body-wrapper {
   padding-top: 1em;
 }
@@ -9,7 +13,7 @@
 }
 
 .wowhead-tooltip {
-  z-index: 502 !important;
+  z-index: 2000 !important;
 }
 
 .cdk-overlay-container {
@@ -185,3 +189,10 @@ wah-materials,
     }
   }
 }
+
+/*
+.row {
+  @media screen and (min-width: 1920px) {
+    .col-xxl-12 {}
+  }
+}*/

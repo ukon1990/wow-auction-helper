@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {ReactiveFormsModule} from '@angular/forms';
 import {UtilModule} from '../util/util.module';
 import { SkillListComponent } from './components/character/skill-list/skill-list.component';
+import {CharacterService} from './services/character.service';
 
 @NgModule({
   declarations: [CharacterComponent, CharactersComponent, SkillListComponent],
@@ -28,6 +29,9 @@ import { SkillListComponent } from './components/character/skill-list/skill-list
     MatInputModule,
     MatTooltipModule,
     UtilModule
+  ],
+  providers: [
+    CharacterService
   ],
   exports: [CharacterComponent, CharactersComponent]
 })

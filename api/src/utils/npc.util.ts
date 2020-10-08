@@ -3,7 +3,7 @@ import {languages} from '../static-data/language.data';
 import {Language} from '../models/language.model';
 import {ItemLocale} from '../models/item/item-locale';
 import {WoWHeadUtil} from './wowhead.util';
-import {QueryUtil} from './query.util';
+import {RDSQueryUtil} from './query.util';
 import {DatabaseUtil} from './database.util';
 import {LocaleUtil} from './locale.util';
 import {TextUtil} from '@ukon1990/js-utilities';
@@ -314,8 +314,8 @@ export class NPCUtil {
             await this.getLocaleForId(row.id)
               .then(async locale => {
                 locales.push(locale);
-                await conn.query(new QueryUtil('npcName', false).update(row.id, locale));
-                await conn.query(new QueryUtil('npc').update(row.id, {id: row.id}));
+                await conn.query(new RDSQueryUtil('npcName', false).update(row.id, locale));
+                await conn.query(new RDSQueryUtil('npc').update(row.id, {id: row.id}));
               })
               .catch(console.error);
             count++;
@@ -327,8 +327,8 @@ export class NPCUtil {
             await this.getLocaleForId(row.id)
               .then(async locale => {
                 locales.push(locale);
-                await conn.query(new QueryUtil('npcName', false).insert(locale));
-                await conn.query(new QueryUtil('npc').update(row.id, {id: row.id}));
+                await conn.query(new RDSQueryUtil('npcName', false).insert(locale));
+                await conn.query(new RDSQueryUtil('npc').update(row.id, {id: row.id}));
               })
               .catch(console.error);
             count++;
@@ -461,7 +461,7 @@ export class NPCUtil {
 
   private static insertNpcIntoDB(npc: NPC, conn: DatabaseUtil) {
     return new Promise<any>((resolve, reject) => {
-      const sql = new QueryUtil('npc').insert({
+      const sql = new RDSQueryUtil('npc').insert({
         id: npc.id,
         isAlliance: npc.isAlliance,
         isHorde: npc.isHorde,
@@ -489,7 +489,7 @@ export class NPCUtil {
       npcId: npc.id,
       ...drop
     }));
-    const sql = new QueryUtil('npcDrops').multiInsert(drops);
+    const sql = new RDSQueryUtil('npcDrops').multiInsert(drops);
     await conn.query(sql)
       .catch(e => {
         this.loggIfNotDuplicateError(e, sql);
@@ -501,7 +501,7 @@ export class NPCUtil {
       npcId: npc.id,
       ...sells
     }));
-    const sql = new QueryUtil('npcSells').multiInsert(sellers);
+    const sql = new RDSQueryUtil('npcSells').multiInsert(sellers);
     await conn.query(sql)
       .catch(e => {
         console.log(e);
@@ -524,10 +524,10 @@ export class NPCUtil {
       id: npc.id,
       ...coords
     }));
-    const sql = new QueryUtil('npcCoordinates').multiInsert(coordinates);
+    const sql = new RDSQueryUtil('npcCoordinates').multiInsert(coordinates);
     try {
       await conn.query(sql);
-      await conn.query(new QueryUtil('npc').update(npc.id, {id: npc.id}));
+      await conn.query(new RDSQueryUtil('npc').update(npc.id, {id: npc.id}));
     } catch (e) {
       this.loggIfNotDuplicateError(e, sql);
     }

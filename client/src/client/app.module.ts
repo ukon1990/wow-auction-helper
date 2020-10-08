@@ -10,7 +10,6 @@ import {AppRoutingModule} from './modules/app-routing.module';
 
 import {AppComponent} from './app.component';
 import {RealmService} from './services/realm.service';
-import {CharacterService} from './services/character.service';
 import {AuctionsService} from './services/auctions.service';
 import {DatabaseService} from './services/database.service';
 import {ItemService} from './services/item.service';
@@ -44,6 +43,7 @@ import {NpcModule} from './modules/npc/npc.module';
 import {ProfessionService} from './modules/crafting/services/profession.service';
 import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatNativeDateModule} from '@angular/material/core';
 
 
 @NgModule({
@@ -73,11 +73,11 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ItemModule,
     AdminModule,
     NpcModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatNativeDateModule,
   ],
   providers: [
     RealmService,
-    CharacterService,
     AuctionsService,
     DatabaseService,
     ItemService,

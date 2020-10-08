@@ -11,6 +11,8 @@ import {ItemResetBreakpoint} from '../../models/item-reset-breakpoint.model';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {Report} from '../../../../utils/report.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
+import {AuctionsService} from '../../../../services/auctions.service';
+import {columnConfig} from '../../../dashboard/data/columns.data';
 
 @Component({
   selector: 'wah-market-reset',
@@ -44,8 +46,14 @@ export class MarketResetComponent implements OnInit {
   };
   rowShoppingString = '';
   itemResetBreakpoint: ItemResetBreakpoint;
+  toValueGold = {
+    minROI: 0,
+    maxTotalBuyoutPerItem: 0,
+  };
+  private lastCharacterTyped: number;
+  private lastCalculationTime: number;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     SharedService.events.title.next('Market resetter');
     const query = this.getQuery();
     this.form = this.formBuilder.group({
@@ -61,10 +69,17 @@ export class MarketResetComponent implements OnInit {
       newVsCurrentBuyoutPriceLimit: new FormControl(query.newVsCurrentBuyoutPriceLimit)
     });
 
-    this.form.valueChanges.subscribe((form) => {
-      localStorage['query_market_reset'] = JSON.stringify(this.form.value);
-      this.filter(form);
-    });
+    this.sm.add(this.form.valueChanges,
+      (form) => {
+        this.lastCalculationTime = +new Date();
+        setTimeout(() => {
+          const timeDiff = +new Date() - this.lastCalculationTime;
+          if (timeDiff >= 500) {
+            localStorage['query_market_reset'] = JSON.stringify(this.form.value);
+            this.filter(form);
+          }
+        }, 500);
+      });
   }
 
   private getQuery() {
@@ -75,26 +90,34 @@ export class MarketResetComponent implements OnInit {
       .forEach(key => {
         if (query[key] === undefined) {
           query[key] = this.formDefaults[key];
+        } else if (key === 'minROI' || key === 'maxTotalBuyoutPerItem') {
+          this.toValueGold[key] = GoldPipe.toCopper(query[key]);
+          query[key] = new GoldPipe().transform(this.toValueGold[key]);
         }
       });
 
-    Report.debug('getQuery', query);
+    Report.debug('getQuery', query, queryString);
     return query;
   }
 
   ngOnInit() {
     this.setColumns();
-    this.filter(this.form.getRawValue());
+    this.filter();
 
-    this.sm.add(SharedService.events.auctionUpdate,
-      (auctionItems: AuctionItem[]) => {
-        this.filter(this.form.getRawValue());
+    this.sm.add(this.auctionService.list,
+      () => {
+        this.filter();
       });
   }
 
-  private filter(query: any) {
+  private filter(queryParams: any = this.form.getRawValue()) {
     const strings = [];
     const results = [];
+    const query = {
+      ...queryParams,
+      minROI: GoldPipe.toCopper(queryParams.minROI),
+      maxTotalBuyoutPerItem: GoldPipe.toCopper(queryParams.maxTotalBuyoutPerItem)
+    };
 
     this.sum.auctionsToBuy = 0;
     this.sum.itemsToBuy = 0;
@@ -105,7 +128,7 @@ export class MarketResetComponent implements OnInit {
     this.tsmShoppingString = '';
     this.rowShoppingString = '';
 
-    SharedService.auctionItems.forEach(ai => {
+    this.auctionService.list.value.forEach(ai => {
       if (!Filters.isNameMatch(ai.itemID, query.name)) {
         return;
       }
@@ -128,6 +151,8 @@ export class MarketResetComponent implements OnInit {
               name: item.name,
               icon: item.icon,
               percentOfMkt: bp.newBuyout / ai.mktPrice,
+              regionSaleRate: ai.regionSaleRate,
+              avgDailySold: ai.avgDailySold,
               ...bp
             };
           }
@@ -147,7 +172,7 @@ export class MarketResetComponent implements OnInit {
 
   private isMinROIMatch(query: any, bp) {
     return Filters.isXSmallerThanOrEqualToY(
-      query.minROI ? query.minROI * 10000 : 0,
+      query.minROI ? query.minROI : 0,
       bp.potentialProfit);
   }
 
@@ -170,7 +195,7 @@ export class MarketResetComponent implements OnInit {
     }
     return Filters.isXSmallerThanOrEqualToY(
       bp.sumBuyout,
-      query.maxTotalBuyoutPerItem ? query.maxTotalBuyoutPerItem * 10000 : undefined);
+      query.maxTotalBuyoutPerItem ? query.maxTotalBuyoutPerItem : undefined);
   }
 
   private handleMatch(bp: ItemResetBreakpoint, strings, results: any[]) {
@@ -190,7 +215,10 @@ export class MarketResetComponent implements OnInit {
   }
 
   resetForm() {
-    this.form.reset(this.formDefaults);
+    localStorage.removeItem('query_market_reset');
+    this.toValueGold.minROI = GoldPipe.toCopper(this.formDefaults.minROI);
+    this.toValueGold.maxTotalBuyoutPerItem = GoldPipe.toCopper(this.formDefaults.maxTotalBuyoutPerItem);
+    this.form.reset(this.getQuery());
   }
 
   private isHigherROIThanPrevious(query: any, bp: ItemResetBreakpoint, matchPoint: any) {
@@ -213,10 +241,7 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'potentialProfitPercent', title: 'ROI %', dataType: 'percent'});
     this.columns.push({key: 'potentialProfit', title: 'Profit', dataType: 'gold'});
     this.columns.push({key: 'newBuyout', title: 'New buyout', dataType: 'gold'});
-
-    if (Filters.isUsingAPI()) {
-      this.columns.push({key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'});
-    }
+    this.columns.push({key: 'percentOfMkt', title: 'New vs mkt price', dataType: 'percent'});
     this.columns.push({key: 'newVsCurrentBuyoutPercent', title: 'New vs current', dataType: 'percent'});
     this.columns.push({key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'});
     this.columns.push({key: 'sumBuyout', title: 'Total cost', dataType: 'gold'});
@@ -224,9 +249,19 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
     this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
+    this.columns.push(columnConfig.auction.avgDailySold);
+    this.columns.push(columnConfig.auction.regionSaleRate);
+    this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
+  }
 
-    if (Filters.isUsingAPI()) {
-      this.columns.push({key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'});
-    }
+  setNewInputGoldValue(newValue: any, field: string) {
+    const interval = 500;
+    this.lastCharacterTyped = +new Date();
+    setTimeout(() => {
+      if (+new Date() - this.lastCharacterTyped >= interval) {
+        this.toValueGold[field] = GoldPipe.toCopper(newValue);
+        this.lastCharacterTyped = undefined;
+      }
+    }, interval);
   }
 }

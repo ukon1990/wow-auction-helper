@@ -1,5 +1,5 @@
-import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
+import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {GameBuild} from '../../../utils/game-build.util';
@@ -17,6 +17,10 @@ import {NpcService} from '../../npc/services/npc.service';
 import {ZoneService} from '../../zone/service/zone.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ItemDetailsUtil} from '../utils/item-details.util';
+import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 
 @Component({
   selector: 'wah-item',
@@ -25,6 +29,7 @@ import {CraftingService} from '../../../services/crafting.service';
 })
 export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs') tabs;
+
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
   selectionHistory: any[] = [];
@@ -38,12 +43,11 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   selected = {
     item: undefined,
     auctionItem: undefined,
-    seller: undefined,
     pet: undefined
   };
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
-  subscriptions = new SubscriptionManager();
+  sm = new SubscriptionManager();
   columns: ColumnDescription[] = [
     {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
     {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
@@ -61,7 +65,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
   recipeColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials'},
+    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
@@ -81,20 +85,29 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   ];
   private tabSubId = 'tab-subscription';
 
-  constructor(private _wowDBService: WowdbService, private npcService: NpcService, private zoneService: ZoneService) {
+  constructor(private _wowDBService: WowdbService,
+              private npcService: NpcService,
+              private zoneService: ZoneService,
+              private auctionService: AuctionsService,
+              private itemService: ItemService,
+              private shoppingCartService: ShoppingCartService,
+              public dialogRef: MatDialogRef<ItemComponent>,
+              @Inject(MAT_DIALOG_DATA) public selection: any) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
 
-    this.subscriptions.add(
-      SharedService.events.detailSelection,
-      item => this.setSelection(item));
+    this.setSelection(selection);
 
-    this.subscriptions.add(this.itemSelectionHistoryForm.valueChanges, index => {
+    this.sm.add(this.itemSelectionHistoryForm.valueChanges, index => {
       const target = this.selectionHistory[index].auctionItem || this.selectionHistory[index].item;
       if (this.selectionHistory.length > 1 && !this.ignoreNextSelectionHistoryFormChange) {
         this.selectionHistory.splice(index, 1);
       }
       this.setSelection(target);
     });
+    this.sm.add(this.itemService.selectionHistory,
+      history => {
+        this.selectionHistory = history;
+      });
   }
 
   onItemSelection(): void {
@@ -102,38 +115,32 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.setRecipesForItem();
 
     Report.send('Opened', 'Item detail view');
-    Report.debug('Selected:', this.selected);
-
-    setTimeout(() => {
-      const tabGroup: MatTabGroup = this.tabs;
-      // Should be done after the render cyclus
-      if (tabGroup && !this.subscriptions.getMap().has(this.tabSubId)) {
-        this.subscriptions.add(
-          tabGroup
-            .selectedTabChange,
-          (event: MatTabChangeEvent) => {
-            Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`);
-            console.log('Tab changed!', this.subscriptions.getMap().has(this.tabSubId));
-          },
-          {id: this.tabSubId});
-      }
-    });
   }
 
   ngAfterViewInit(): void {
-    this.subscriptions.add(
+    this.sm.add(
       ItemService.itemSelection,
       () => this.onItemSelection());
   }
 
   ngAfterContentInit(): void {
     SharedService.events.detailPanelOpen.emit(true);
+    setTimeout(() => {
+      const tabGroup: MatTabGroup = this.tabs;
+      // Should be done after the render cyclus
+      this.sm.add(
+        tabGroup
+          .selectedTabChange,
+        (event: MatTabChangeEvent) => {
+          Report.send(`Changed tab to ${event.tab.textLabel}`, `Item detail view`);
+        });
+    });
   }
 
   ngOnDestroy(): void {
     SharedService.events.detailPanelOpen.emit(false);
 
-    this.subscriptions.unsubscribe();
+    this.sm.unsubscribe();
   }
 
   setItemData(): void {
@@ -148,19 +155,13 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     if (SharedService.items[id]) {
       this.selected.item = SharedService.items[id];
       this.setMaterialFor();
-      this.itemNpcDetails.setForItemId(id);
+      this.itemNpcDetails.setForItemId(id, NpcService.list.value);
     }
   }
 
   setMaterialFor(): void {
-    this.materialFor.length = 0;
-    CraftingService.list.value.forEach(recipe => {
-      recipe.reagents.forEach(reagent => {
-        if (reagent.id === this.selected.item.id) {
-          this.materialFor.push(recipe);
-        }
-      });
-    });
+    const materialFor = CraftingService.reagentRecipeMap.value.get(this.selected.item.id) || [];
+    this.materialFor = [...materialFor];
   }
 
   openInNewTab(url: string, target: string) {
@@ -194,19 +195,29 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   userHasRecipeForItem(): boolean {
-    return !!SharedService.recipesMapPerItemKnown[this.selected.item.id];
+    if (!this.selected.item) {
+      return false;
+    }
+    const ai = this.auctionService.mapped.value.get(this.selected.item.id);
+    return !!(ai && ai.source &&
+      ai.source.recipe &&
+      ai.source.recipe.known &&
+      ai.source.recipe.known.length);
   }
 
-  addEntryToCart(): void {
+  addEntryToCart(isRecipe: boolean = true): void {/*
     if (!this.userHasRecipeForItem()) {
       return;
+    }*/
+    const quantity: number = +this.shoppingCartQuantityField.value;
+    if (isRecipe) {
+      this.shoppingCartService.addRecipeByItemId(this.selected.item.id, quantity);
+      Report.send('Added to recipe shopping cart', 'Item detail view');
+    } else {
+      this.shoppingCartService.addItem(this.selected.item.id, quantity);
+      Report.send('Added to item shopping cart', 'Item detail view');
     }
-    SharedService.user.shoppingCart
-      .add(
-        SharedService.recipesMapPerItemKnown[this.selected.item.id],
-        this.shoppingCartQuantityField.value);
 
-    Report.send('Added to recipe shopping cart', 'Item detail view');
   }
 
   /* istanbul ignore next */
@@ -230,10 +241,9 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
   /* istanbul ignore next */
   close(): void {
-    this.subscriptions.unsubscribeById(this.tabSubId);
+    this.sm.unsubscribeById(this.tabSubId);
     SharedService.events.detailPanelOpen.emit(false);
-    Object.keys(this.selected).forEach(key =>
-      this.selected[key] = undefined);
+    this.dialogRef.close();
   }
 
   isMobile(): boolean {
@@ -246,54 +256,17 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   }
 
   private setSelection(item: any) {
-    console.log('this.ignoreNextSelectionHistoryFormChange', this.ignoreNextSelectionHistoryFormChange);
     if (this.ignoreNextSelectionHistoryFormChange) {
       this.ignoreNextSelectionHistoryFormChange = false;
       return;
     }
-    this.selected.pet = undefined;
 
-    Report.debug('setSelection', item);
-    if (item.auctions) {
-      this.handleAuctionItem(item);
-    } else if (item.itemID) {
-      this.handleItemWithItemID(item);
-    } else if (item.id) {
-      this.handleItemWithId(item);
-    } else if (item.speciesId) {
-      this.handlePet(item);
-    }
-    this.selectionHistory = [{...this.selected}, ...this.selectionHistory];
+    this.selected = ItemDetailsUtil.getSelection(item, this.auctionService.mapped.value);
+    this.itemService.addToSelectionHistory({...this.selected});
     this.onItemSelection();
-
-    this.ignoreNextSelectionHistoryFormChange = true;
     this.itemSelectionHistoryForm.setValue(0);
+    this.ignoreNextSelectionHistoryFormChange = true;
   }
 
-  private handleAuctionItem(item: any) {
-    this.selected.auctionItem = item;
-    this.selected.item = SharedService.items[item.itemID];
-    this.selected.pet = SharedService.pets[item.petSpeciesId];
-  }
 
-  private handleItemWithItemID(item: any) {
-    this.selected.auctionItem = SharedService.auctionItemsMap[item.itemID];
-    this.selected.item = SharedService.items[item.itemID];
-  }
-
-  private handleItemWithId(item: any) {
-    this.selected.auctionItem = SharedService.auctionItemsMap[item.id];
-    this.selected.item = SharedService.items[item.id];
-  }
-
-  private handlePet(item: any) {
-    this.selected.pet = SharedService.pets[item.speciesId];
-    for (let i = 0, length = SharedService.auctionItems.length; i < length; i++) {
-      if (SharedService.auctionItems[i].petSpeciesId === (this.selected.pet as Pet).speciesId) {
-        this.selected.auctionItem = SharedService.auctionItems[i];
-        this.selected.item = SharedService.items[this.selected.auctionItem.itemID];
-        return;
-      }
-    }
-  }
 }

@@ -8,8 +8,14 @@ import {Currency} from '../../core/models/currency.model';
 import {currencyMap} from '../../../data/currency.data';
 import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
+import {AuctionsService} from '../../../services/auctions.service';
 
-export class VendorItem {
+export interface NPCCoordinate {
+  x: number;
+  y: number;
+}
+
+export interface VendorItem {
   id: number;
   price: number;
   unitPrice: number;
@@ -24,9 +30,9 @@ export class DroppedItem {
   outOf: number;
   dropChance: number;
 
-  static getScoredItem(dropped: DroppedItem) {
+  static getScoredItem(dropped: DroppedItem, itemMap: Map<string, AuctionItem>) {
     const item: Item = SharedService.items[dropped.id],
-      auctionItem: AuctionItem = SharedService.auctionItemsMap[dropped.id],
+      auctionItem: AuctionItem = itemMap.get('' + dropped.id),
       tsmItem: TSM = TsmService.getById(dropped.id),
       buyout = auctionItem ? auctionItem.buyout : 0,
       vendorValue = item ? item.sellPrice * dropped.dropChance : 0,
@@ -68,10 +74,12 @@ export class SkinnedItem {
 }
 
 export class NPC {
+  private static auctionService: AuctionsService;
+
   id: number;
   name: string;
   zoneId: number;
-  coordinates: Coordinates[] = [];
+  coordinates: NPCCoordinate[] = [];
   sells: VendorItem[] = [];
   drops: DroppedItem[] = [];
   skinning: SkinnedItem[] = [];
@@ -85,11 +93,15 @@ export class NPC {
   classification: number;
   avgGoldDrop: number;
 
+  static init(auctionService: AuctionsService) {
+    this.auctionService = auctionService;
+  }
+
   static calculateValueOfDrops(drops: DroppedItem[]) {
     let buyoutValue = 0, score = 0, vendorValue = 0;
     if (drops) {
       drops.forEach(item => {
-        const scored = DroppedItem.getScoredItem(item);
+        const scored = DroppedItem.getScoredItem(item, this.auctionService.mapped.value);
         score += scored.score;
         buyoutValue = scored.buyoutValue;
         vendorValue = scored.vendorValue;
@@ -123,9 +135,9 @@ export class NPC {
   }
 
   static calculateSellerVendorItemROI(item: VendorItem, roi: number = 0) {
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.id],
+    const auctionItem: AuctionItem = this.auctionService.getById(item.id),
       tsm: TSM = TsmService.getById(item.id),
-      currencyAuctionItem: AuctionItem = SharedService.auctionItemsMap[item.currency];
+      currencyAuctionItem: AuctionItem = this.auctionService.getById(item.currency);
     const unitPrice = currencyAuctionItem ?
       (currencyAuctionItem.buyout || currencyAuctionItem.regionSaleAvg) * item.unitPrice : item.unitPrice;
     if (auctionItem && unitPrice < auctionItem.buyout) {

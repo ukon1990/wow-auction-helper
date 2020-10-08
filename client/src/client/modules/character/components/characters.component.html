@@ -1,13 +1,10 @@
 <strong>Your characters</strong>
 <p>
-  Adding characters, allows you to see if they have been undercut and also allows you to only display recipes known to them
-  in the crafting section.
+  The recipe boards need information about your characters, in order to display the relevant profession boards.
 </p>
-<em>
-  There are have been an issue where the recipe part of the character data has been missing, since blizzard updated their API endpoint.
-  It is now back, but they've made some changes, that makes it so that I have to do more work to get it back again (recipe id change).
-  I'm sorry for the inconvenience this has and is causing some.
-</em>
+<p>
+  Any characters that you add to the app, is only stored on your computer and will be available upon next visit in this browser.
+</p>
 <!-- Form -->
 <form class="form-inline" (ngSubmit)="getCharacter()" [formGroup]="form">
   <wah-select-realm
@@ -40,12 +37,17 @@
 <!-- Character overview -->
 <div class="mt-1">
   <div *ngIf="getCharacters().length === 0; else overview" class="list-group-item">
-    You have no registered crafters
+    You have not added any characters
   </div>
   <ng-template #overview>
     <div class="row col-md-12 slim-sm">
-      <div *ngFor="let character of getCharacters(); let i = index;" class="col-md-12 col-lg-6 col-xl-4 mt-2 mb-2">
-        <wah-character [character]="character" [region]="region" [index]="i" (update)="updateCharacter(i)" (remove)="removeCharacter(i)"></wah-character>
+      <div *ngFor="let character of getCharacters();" class="col-md-12 col-lg-6 col-xl-4 mt-2 mb-2">
+        <wah-character
+          [character]="character"
+          [region]="region"
+          (hasUpdatedCharacter)="shouldRecalculateDashboards = true"
+        >
+        </wah-character>
       </div>
     </div>
   </ng-template>

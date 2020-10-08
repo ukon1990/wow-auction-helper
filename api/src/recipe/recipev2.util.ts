@@ -4,7 +4,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {Recipev2} from './recipev2.model';
 import {AuthHandler} from '../handlers/auth.handler';
 import {DatabaseUtil} from '../utils/database.util';
-import {QueryUtil} from '../utils/query.util';
+import {RDSQueryUtil} from '../utils/query.util';
 import {ItemLocale} from '../models/item/item-locale';
 
 export class RecipeV2Util {
@@ -25,14 +25,12 @@ export class RecipeV2Util {
     return new Promise(async (resolve, reject) => {
       RecipeV2Util.getRecipeFromAPI(id)
         .then(async recipe => {
-          const sql = format(`
-              INSERT INTO \`wah\`.\`recipe\`
-              (\`id\`,
-               \`data\`)
-              VALUES (?, ?);`, [recipe.id, JSON.stringify(recipe)]);
-          await conn.query(sql)
-            .then(() => resolve(recipe))
-            .catch(reject);
+          const queries = await RecipeV2Util.generateQuery(recipe);
+          for (const q of queries) {
+            await conn.query(q)
+              .catch(console.error);
+          }
+          resolve(recipe);
         })
         .catch(reject);
     });
@@ -69,7 +67,7 @@ export class RecipeV2Util {
                     CURRENT_TIMESTAMP,
                     null);
               `,
-            new QueryUtil('recipesName', false).insert({
+            new RDSQueryUtil('recipesName', false).insert({
               id: recipe.id,
               ...recipe.name
             })
@@ -88,7 +86,7 @@ export class RecipeV2Util {
           }
 
           if (recipe.description && recipe.description.en_GB) {
-            queries.push(new QueryUtil('recipesDescription', false).insert({
+            queries.push(new RDSQueryUtil('recipesDescription', false).insert({
               id: recipe.id,
               ...recipe.description
             }));
@@ -190,7 +188,6 @@ export class RecipeV2Util {
   }
 
   private static insertLocale(id: number, table: string, locale: ItemLocale, db: DatabaseUtil): Promise<void> {
-    console.log('YO');
     const sql = format(`INSERT INTO ${table} VALUES(
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
       id,

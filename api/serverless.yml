@@ -23,7 +23,7 @@ functions:
     tags:
       Function: Wah-auctionUpdateLogForRealm
       Project: WAH
-    handler: src/controllers/auction.getUpdateLogForRealm
+    handler: src/realm/controller.getUpdateLogForRealm
     memorySize: 200
     events:
       - http:
@@ -35,55 +35,49 @@ functions:
     tags:
       Function: Wah-auctionsDownloadAndSave
       Project: WAH
-    handler: src/controllers/auction.auctionsDownloadAndSave
-    memorySize: 256
-    timeout: 30
+    handler: src/auction/controller.auctionsDownloadAndSave
+    memorySize: 300
+    timeout: 60
   auctionsUpdateStaticS3Data:
     tags:
       Function: Wah-auctionsUpdateStaticS3Data
       Project: WAH
-    handler: src/controllers/auction.updateStaticS3Data
-    memorySize: 228
+    handler: src/auction/controller.updateStaticS3Data
+    memorySize: 300
     timeout: 30
+  auctionsInsertStatisticsData:
+    tags:
+      Function: Wah-auctionsInsertStatisticsData
+      Project: WAH
+    handler: src/auction/controller.insertStatisticsData
+    memorySize: 222
+    timeout: 58
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses
       Project: WAH
-    handler: src/controllers/auction.updateAll
-    memorySize: 256
+    handler: src/auction/controller.updateAll
+    memorySize: 212
     timeout: 59
 
   deactivateInactiveHouses:
     tags:
       Function: Wah-deactivateInactiveHouses
       Project: WAH
-    handler: src/controllers/auction.deactivateInactiveHouses
+    handler: src/auction/controller.deactivateInactiveHouses
     memorySize: 200
-
-  updateSpesificHouse:
-    tags:
-      Function: Wah-updateSpesificHouse
-      Project: WAH
-    handler: src/controllers/auction.updateOne
-    memorySize: 200
-    events:
-      - http:
-          method: post
-          path: auction/update-one
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   deleteOldPriceHistoryForRealmAndSetDailyPrice:
     tags:
       Function: Wah-deleteOldPriceHistoryForRealmAndSetDailyPrice
       Project: WAH
-    handler: src/controllers/auction.deleteOldPriceHistoryForRealmAndSetDailyPrice
-    memorySize: 450
-    timeout: 120
+    handler: src/auction/controller.deleteOldPriceHistoryForRealmAndSetDailyPrice
+    memorySize: 200
+    timeout: 60
   updateAllRealmDailyData:
     tags:
       Function: Wah-updateAllRealmDailyData
       Project: WAH
-    handler: src/controllers/auction.updateAllRealmDailyData
+    handler: src/auction/controller.updateAllRealmDailyData
     memorySize: 1024
     timeout: 300
   items:
@@ -92,23 +86,11 @@ functions:
       Project: WAH
     handler: src/controllers/item.handler
     memorySize: 300
-    events:
-      - http:
-          method: any
-          path: item
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-
-      - http:
-          method: any
-          path: item/{id}
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getPriceHistoryForItem:
     tags:
       Function: Wah-item-history
       Project: WAH
-    handler: src/controllers/item.getPriceHistoryForItem
+    handler: src/auction/controller.getPriceHistoryForItem
     memorySize: 256
     events:
       - http:
@@ -122,42 +104,18 @@ functions:
       Project: WAH
     handler: src/controllers/pet.handler
     memorySize: 128
-    events:
-      - http:
-          method: any
-          path: pet
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-
-      - http:
-          method: any
-          path: pet/{id}
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getProfessions:
     tags:
       FunctionName: Wah-getProfessions
       Project: WAH
     memorySize: 128
     handler: src/profession/controller.getProfessions
-    events:
-      - http:
-          method: post
-          path: profession
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getAllRecipesAfter:
     tags:
       FunctionName: Wah-getAllRecipesAfter
       Project: WAH
     memorySize: 128
     handler: src/recipe/controller.getAfter
-    events:
-      - http:
-          method: post
-          path: recipe
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
 
   getRecipeById:
     tags:
@@ -165,13 +123,6 @@ functions:
       Project: WAH
     memorySize: 128
     handler: src/recipe/controller.getById
-    events:
-      - http:
-          method: post
-          path: recipe/{id}
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-
   zone:
     tags:
       Function: Wah-zone
@@ -179,36 +130,18 @@ functions:
     handler: src/controllers/zone.getAll
     memorySize: 128
     timeout: 30
-    events:
-      - http:
-          method: post
-          path: zone
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetById:
     tags:
       Function: Wah-npcGetById
       Project: WAH
     handler: src/controllers/npc.getById
     memorySize: 128
-    events:
-      - http:
-          method: post
-          path: npc/{id}
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetAll:
     tags:
       Function: Wah-npcGetAll
       Project: WAH
     handler: src/controllers/npc.getAll
     memorySize: 400
-    events:
-      - http:
-          method: post
-          path: npc/all
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   npcGetByIds:
     tags:
       Function: Wah-npcGetByIds
@@ -216,12 +149,6 @@ functions:
     handler: src/controllers/npc.addNewNPCsByIds
     memorySize: 256
     timeout: 30
-    events:
-      - http:
-          method: post
-          path: npc
-          cors:
-            origin: 'http://localhost:4200'
   character:
     tags:
       FunctionName: Wah-character
@@ -239,114 +166,75 @@ functions:
       Function: Wah-realm
       Project: WAH
     handler: src/controllers/realm.handler
-    events:
-      - http:
-          method: post
-          path: realm
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-
   realmAllRegions:
     tags:
       Function: Wah-realmAllRegions
       Project: WAH
     handler: src/controllers/realm.realmAllRegions
     memorySize: 200
-    events:
-      - http:
-          method: get
-          path: realm/all
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-  getByRegionAndName:
-    tags:
-      Function: Wah-getByRegionAndName
-      Project: WAH
-    handler: src/controllers/realm.getByRegionAndName
-    memorySize: 200
-    events:
-      - http:
-          method: get
-          path: realm/{region}/{realm}
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-  test:
-    tags:
-      Function: Wah-test
-      Project: WAH
-    handler: src/controllers/test.handler
-    memorySize: 512
-    events:
-      - http:
-          method: get
-          path: test
-          cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-
   logger:
     tags:
       Function: Wah-logger
       Project: WAH
-    handler: src/controllers/logger.handler
+    handler: src/logs/controller.handler
     memorySize: 128
+    provisionedConcurrency: 100
     events:
       - http:
           method: any
           path: logger
-  loggerClientEvent:
+  loggerProcessAccessLogs:
     tags:
-      Function: Wah-loggerClientEvent
+      Function: Wah-loggerProcessAccessLogs
       Project: WAH
-    handler: src/controllers/logger.clientEvent
+    handler: src/logs/controller.processAccessLogs
+    memorySize: 128
+    timeout: 90
+  loggerGetTableSize:
+    tags:
+      Function: Wah-loggerGetTableSize
+      Project: WAH
+    handler: src/logs/controller.getTableSize
     memorySize: 128
     events:
       - http:
-          method: post
-          path: logger/client-event
+          method: get
+          path: logger/tables
           cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
-
-  loggerClientDelete:
+            origin: 'http://localhost:4200'
+  loggerGetGlobalStatus:
     tags:
-      Function: Wah-loggerClientDelete
+      Function: Wah-loggerGetGlobalStatus
       Project: WAH
-    handler: src/controllers/logger.clientDelete
+    handler: src/logs/controller.getGlobalStatus
     memorySize: 128
     events:
       - http:
-          method: delete
-          path: logger/client-event
+          method: get
+          path: logger/global-status
           cors:
-            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+            origin: 'http://localhost:4200'
+  loggerQueries:
+    tags:
+      Function: Wah-loggerGetCurrentQueries
+      Project: WAH
+    handler: src/logs/controller.getCurrentQueries
+    memorySize: 128
+    events:
+      - http:
+          method: get
+          path: logger/queries
+          cors:
+            origin: 'http://localhost:4200'
   currency:
     tags:
       Function: Wah-currency
       Project: WAH
     handler: src/controllers/currency.handler
     memorySize: 128
-    events:
-      - http:
-          method: any
-          path: currency
-          cors:
-            origin: 'http://localhost:4200'
   updateTSMDumpData:
     tags:
       Function: Wah-updateTSMDumpData
       Project: WAH
-    handler: src/controllers/tsm.handler
+    handler: src/auction/controller.updateTSMDataForOneRealm
     memorySize: 256
-
-  updateS3:
-    tags:
-      Function: Wah-updateS3
-      Project: WAH
-    handler: src/updates/controller.update
-    memorySize: 3008
-    timeout: 900
-    events:
-      - http:
-          method: get
-          path: update-s3
-          cors:
-            origin: 'http://localhost:4200'

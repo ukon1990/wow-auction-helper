@@ -1,8 +1,31 @@
+import {DatabaseUtil} from '../utils/database.util';
+
+interface RealmsForHouseResult {
+  id: number;
+  connectedId: number;
+  region: string;
+  slug: string;
+  name: string;
+  connectedTo: string | string[];
+  url: string;
+  tsmUrl: string;
+  lastModified: string;
+  isUpdating: number;
+  isActive: number;
+  autoUpdate: number;
+  size: number;
+  lowestDelay: number;
+  avgDelay: number;
+  highestDelay: number;
+  firstRequested: number;
+  lastRequested: number;
+}
+
 export class RealmQuery {
   static getUpdateHistoryForRealm(ahId: number, sinceTimestamp: number): string {
     return `SELECT *
             FROM auction_houses_dump_log
-            WHERE ahId = ${ahId} AND lastModified >= ${sinceTimestamp}
+            WHERE ahId = ${ahId} AND lastModified >= ${sinceTimestamp} AND timeSincePreviousDump > 0
             ORDER BY lastModified desc;`;
   }
 
@@ -97,9 +120,7 @@ export class RealmQuery {
   /*
   * Updating Any house that probably has an update incoming or that has not received an update in 1 day
   */
-  static getAllHousesWithLastModifiedOlderThanPreviousDelayOrOlderThanOneDay() {
-    /* Not doing "AND isUpdating = 0" as the lambda will time out after 30 seconds and the update check interval is once per minute... */
-    const hours = 4; // old: 24
+  static selectAllUpdatableRealms() {
     return `SELECT ah.id                                                             as id,
                    connectedId,
                    region,
@@ -131,11 +152,16 @@ export class RealmQuery {
                   AND fileName NOT LIKE 'status.json.gz'
                 GROUP BY logs.region, slug
             ) as log ON log.ahId = ah.id
-            WHERE (autoUpdate = 1
-                AND FROM_UNIXTIME(lastModified / 1000) <= NOW() - INTERVAL lowestDelay MINUTE)
-               OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
+            WHERE isActive = 1
+              AND name IS NOT NULL
+              AND (
+                    (
+                            autoUpdate = 1 AND FROM_UNIXTIME(lastModified / 1000) <= NOW() - INTERVAL lowestDelay MINUTE
+                        )
+                    OR (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 / 60 / 4 > 1
+                )
             ORDER BY timestamp DESC, autoUpdate DESC, (ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) - lastModified) / 60000 DESC
-            LIMIT 20;`;
+            LIMIT 50;`;
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
@@ -178,16 +204,75 @@ export class RealmQuery {
   }
 
   static getHouseForRealm(region: string, realmSlug: string): string {
-    return `SELECT ah.id as id, connectedId, region, ah.url as url, tsm.url as tsmUrl, ah.lastModified as lastModified,
-                    isUpdating, isActive, autoUpdate, size, lowestDelay, avgDelay, highestDelay, firstRequested, lastRequested
+    return `SELECT ah.id                  as id,
+                   ah.connectedId         as connectedId,
+                   region,
+                   slug,
+                   name,
+                   connectedRealms.realms as connectedTo,
+                   ah.url                 as url,
+                   tsm.url                as tsmUrl,
+                   ah.lastModified        as lastModified,
+                   isUpdating,
+                   isActive,
+                   autoUpdate,
+                   size,
+                   lowestDelay,
+                   avgDelay,
+                   highestDelay,
+                   firstRequested,
+                   lastRequested
             FROM auction_houses as ah
-              LEFT OUTER JOIN tsmDump as tsm
-              ON ah.id = tsm.id
-            WHERE ah.id IN (
-                  SELECT ahId
-                  FROM auction_house_realm
-                  WHERE slug = "${realmSlug}")
-                AND region = "${region}";`;
+                     LEFT OUTER JOIN tsmDump as tsm ON ah.id = tsm.id
+                     LEFT OUTER JOIN auction_house_realm as realm ON realm.ahId = ah.id
+                     LEFT OUTER JOIN (
+                SELECT ahId,
+                       connectedId,
+                       Group_CONCAT(slug) as realms
+                FROM auction_house_realm
+                         LEFT JOIN auction_houses as ah ON ah.id = ahId
+                GROUP BY connectedId
+            ) as connectedRealms ON connectedRealms.ahId = ah.id
+            WHERE slug = "${realmSlug}"
+              AND region = "${region}";`;
+  }
+
+  static getAllRealmsForHouse(id: number, conn: DatabaseUtil): Promise<RealmsForHouseResult[]> {
+    return conn.query(`
+        SELECT *
+        FROM (SELECT ah.id                  AS id,
+                     ah.connectedId         AS connectedId,
+                     region,
+                     slug,
+                     name,
+                     connectedRealms.realms AS connectedTo,
+                     ah.url                 AS url,
+                     tsm.url                AS tsmUrl,
+                     ah.lastModified        AS lastModified,
+                     isUpdating,
+                     isActive,
+                     autoUpdate,
+                     size,
+                     lowestDelay,
+                     avgDelay,
+                     highestDelay,
+                     firstRequested,
+                     lastRequested
+              FROM auction_houses AS ah
+                       LEFT OUTER JOIN
+                   tsmDump AS tsm ON ah.id = tsm.id
+                       LEFT OUTER JOIN
+                   auction_house_realm AS realm ON realm.ahId = ah.id
+                       LEFT OUTER JOIN
+                   (SELECT ahId,
+                           connectedId,
+                           GROUP_CONCAT(slug) AS realms
+                    FROM auction_house_realm
+                             LEFT JOIN auction_houses AS ah ON ah.id = ahId
+                    GROUP BY connectedId) AS connectedRealms ON connectedRealms.ahId = ah.id
+             ) as tbl
+        WHERE slug IS NOT NULL
+          AND id = ${id};`);
   }
 
   static isUpdating(id: number, isUpdating: boolean) {
@@ -195,21 +280,6 @@ export class RealmQuery {
             SET
               \`isUpdating\` = ${isUpdating ? 1 : 0}
                 WHERE \`id\` = ${id};`;
-  }
-
-  static isUpdatingByRealmAndRegion(region: string, realm: string, isUpdating: boolean) {
-    return `UPDATE \`100680-wah\`.\`auction_houses\`
-            SET
-              \`isUpdating\` = ${isUpdating ? 1 : 0}
-                WHERE \`id\` IN (
-                    SELECT ah.id as ahId, slug
-                    FROM auction_house_realm
-                    LEFT OUTER JOIN (
-                      SELECT a.id, region
-                      FROM auction_houses as a) AS ah
-                      ON ah.id = ahId
-                    WHERE region = '${region}' and slug = '${realm}';
-                );`;
   }
 
   static activateHouse(id: any): string {

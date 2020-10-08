@@ -1,0 +1,73 @@
+<mat-card *ngIf="formArray"
+          [formGroup]="form"
+>
+    <mat-checkbox color="accent"
+                  formControlName="onlyItemsWithRules"
+    >
+        Only include items with a rule connected to it
+    </mat-checkbox>
+    <mat-card-content formArrayName="itemRules">
+        <mat-accordion>
+            <mat-expansion-panel
+                    *ngFor="let rule of formArray.controls; let i = index"
+                    [expanded]="i === selectedPanelIndex"
+                    [formGroupName]="i"
+                    (opened)="onPanelOpen(i)"
+            >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <wah-icon size="22" [id]="rule.value?.itemId"></wah-icon>
+                        {{items.get(+rule.value?.itemId)?.name}} ({{rule.value.rules?.length | number}})
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <wah-rules
+                        [displayHeader]="true"
+                        [form]="formGroup(rule)"
+                        [rules]="rules ? rules[i].rules : undefined"
+                ></wah-rules>
+
+                <button
+                        mat-stroked-button
+                        color="warn"
+                        (click)="formArray.removeAt(i)"
+                >
+                    <fa-icon
+                            matTooltip="Delete all rules for this item"
+                            [icon]="faTrash"
+                    ></fa-icon>
+                    Delete
+                </button>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-card-content>
+
+    <mat-card-actions>
+        <div class="row">
+            <mat-form-field class="col"
+                            color="accent">
+                <input matInput
+                       placeholder="Query for item/pet"
+                       aria-label="Recipe"
+                       [matAutocomplete]="auto"
+                       [formControl]="itemSearchForm">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let item of filteredItems"
+                                [value]="item.name"
+                                (click)="setItem(item)">
+                        <wah-icon size="36" [id]="item.id"></wah-icon>
+                        {{ item.name }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <div class="col">
+                <button mat-stroked-button
+                        (click)="addItemRule()"
+                        [disabled]="!selectedItem"
+                        color="accent"
+                >
+                    Add new rule
+                </button>
+            </div>
+        </div>
+    </mat-card-actions>
+</mat-card>

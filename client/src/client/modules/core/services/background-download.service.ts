@@ -21,13 +21,14 @@ import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {TsmService} from '../../tsm/tsm.service';
+import {LogRocketUtil} from '../../../utils/log-rocket.util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackgroundDownloadService {
   isLoading = new BehaviorSubject(false);
-  timeSinceUpdate = new BehaviorSubject(0);
+  isInitialLoadCompleted: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   timestamps = {
     items: localStorage['timestamp_items'],
@@ -56,7 +57,6 @@ export class BackgroundDownloadService {
     private tsmService: TsmService,
     private dbService: DatabaseService) {
 
-
     this.subs.add(
       this.realmService.events.realmStatus,
       (status) =>
@@ -66,6 +66,7 @@ export class BackgroundDownloadService {
     this.subs.add(this.dbService.databaseIsReady, async (isReady) => {
       if (isReady) {
         await this.init();
+        this.isInitialLoadCompleted.next(true);
       }
     });
 
@@ -83,58 +84,75 @@ export class BackgroundDownloadService {
 
   async init(): Promise<void> {
     const {realm, region} = SharedService.user;
+    LogRocketUtil.identify();
+    const hasRealmAndRegion: boolean = !!(region && realm);
 
-    if (!region || !realm) {
-      return;
+    if (hasRealmAndRegion) {
+      this.isLoading.next(true);
+      console.log('Starting to load data');
+      const startTimestamp = performance.now();
+      await this.initiateRealmSpecificDownloads(region, realm);
+      if (!ItemService.list.value.length) {
+        await this.getGetOrUpdateBasicAppData();
+      }
+      await this.initiateAuctionOrganizingAndTSM();
+      this.loggLoadingTime(startTimestamp);
+      this.isLoading.next(false);
     }
+  }
 
-    this.isLoading.next(true);
-    const startTimestamp = performance.now();
-    console.log('Starting to load data');
+  private async initiateAuctionOrganizingAndTSM() {
+    this.auctionsService.isReady = true;
+    await this.tsmService.load(this.realmService.events.realmStatus.value)
+      .catch(console.error);
+    await this.auctionsService.organize()
+      .then(() => console.log('Organized'))
+      .catch(console.error);
+    await this.dbService.getAddonData();
+  }
 
-    await Promise.all([
+  private async initiateRealmSpecificDownloads(region: string, realm: string) {
+    const start = +new Date();
+    const promises: Promise<any>[] = [
+      this.realmService.getStatus(),
       this.realmService.getRealms()
-        .catch(error => console.error(error)),
-      this.realmService.getStatus(region, realm, true)
-        .catch(console.error)
-    ])
+    ];
+    await this.dbService.getAddonData()
       .catch(console.error);
 
+    await Promise.all(promises)
+      .catch(error =>
+        ErrorReport.sendError('BackgroundDownloadService.init', error));
+    console.log('Loaded realm specific data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
+  }
+
+  private async getGetOrUpdateBasicAppData() {
+    const start = +new Date();
     await this.getUpdateTimestamps()
       .then(async (timestamps: Timestamps) => {
-        await Promise.all([
-          this.professionService.load(timestamps.professions)
-            .catch(console.error),
-          this.itemService.loadItems(timestamps.items)
-            .catch(console.error),
-          this.petService.loadPets(timestamps.pets)
-            .catch(console.error),
-          this.npcService.getAll(false, timestamps.npcs)
-            .catch(console.error),
-          this.craftingService.load(timestamps.recipes)
-            .catch(console.error),
-          this.zoneService.getAll(false, timestamps.zones)
-            .then(() =>
-              console.log('Done loading zone data'))
-            .catch(console.error),
-          this.tsmService.load(this.realmService.events.realmStatus.value)
-            .catch(console.error),
-          this.itemService.getBonusIds(),
-        ])
+        await this.zoneService.getAll(false, timestamps.zones)
+          .then(() =>
+            console.log('Done loading zone data'))
           .catch(console.error);
 
-        AuctionUtil.organize(this.auctionsService.events.list.value)
-          .catch(error =>
-            ErrorReport.sendError('BackgroundDownloadService.init', error));
-        await this.startRealmStatusInterval();
+        const promises: Promise<any>[] = [
+          this.tsmService.load(this.realmService.events.realmStatus.value)
+            .catch(console.error),
+          this.professionService.load(timestamps.professions),
+          this.itemService.loadItems(timestamps.items)
+            .then(() => console.log('Loaded items in ' + DateUtil.getDifferenceInSeconds(start, +new Date()))),
+          this.petService.loadPets(timestamps.pets),
+          this.npcService.getAll(false, timestamps.npcs),
+          this.craftingService.load(timestamps.recipes),
+          this.itemService.getBonusIds(),
+        ];
+
+        await Promise.all(promises)
+          .catch(console.error);
+        console.log('Loaded basic app data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
       })
       .catch(error =>
         ErrorReport.sendError('BackgroundDownloadService.init', error));
-
-    await this.dbService.getAddonData();
-
-    this.loggLoadingTime(startTimestamp);
-    this.isLoading.next(false);
   }
 
   private loggLoadingTime(startTimestamp): void {
@@ -143,50 +161,6 @@ export class BackgroundDownloadService {
     );
     console.log(`App startup took ${loadingTime}ms`);
     Report.send(`${(loadingTime / 1000).toFixed(2)}`, 'startup');
-  }
-
-  private async startRealmStatusInterval() {
-    await this.updateRealmStatus();
-    setInterval(() =>
-      this.updateRealmStatus(), 10000);
-  }
-
-  private updateRealmStatus(): Promise<any> {
-    if (!this.realmStatus) {
-      return;
-    }
-
-    this.timeSinceUpdate.next(
-      DateUtil.timeSince(this.realmStatus.lastModified, 'm'));
-
-    return new Promise<any>((resolve, reject) => {
-      if (this.shouldUpdateRealmStatus()) {
-        this.checkingForUpdates = true;
-        this.realmService.getStatus(
-          SharedService.user.region,
-          SharedService.user.realm)
-          .then((status) => {
-            this.checkingForUpdates = false;
-            resolve();
-          })
-          .catch((error) => {
-            this.checkingForUpdates = false;
-            reject(error);
-          });
-      } else {
-        resolve();
-      }
-    });
-  }
-
-  private shouldUpdateRealmStatus() {
-    return !this.checkingForUpdates &&
-      this.shouldAnUpdateShouldBeAvailableSoon();
-  }
-
-  private shouldAnUpdateShouldBeAvailableSoon() {
-    return !this.realmStatus ||
-      this.realmStatus.lowestDelay - this.timeSinceUpdate.value < 1;
   }
 
   private getUpdateTimestamps(): Promise<Timestamps> {

@@ -6,6 +6,7 @@ import {BehaviorSubject} from 'rxjs';
 import {InventoryUtil} from './inventory.util';
 import {Report} from '../report.util';
 import {ProfitSummary} from '../../modules/addon/models/profit-summary.model';
+import {AuctionsService} from '../../services/auctions.service';
 
 export class TSMCSV {
   characterGuilds?: any;
@@ -24,6 +25,14 @@ export class TSMCSV {
 
 export class TsmLuaUtil {
   static events: BehaviorSubject<TSMCSV> = new BehaviorSubject(undefined);
+  private static auctionService: AuctionsService;
+
+  constructor() {
+  }
+
+  static init(auctionService: AuctionsService) {
+    this.auctionService = auctionService;
+  }
 
   convertList(input: any): object {
     let result = {};
@@ -103,13 +112,13 @@ export class TsmLuaUtil {
         result[fRes.type][fRes.character.realm]['All'] = [];
       }
 
-      if (ObjectUtil.isObject(fRes.data)) {
+      if (fRes.data && ObjectUtil.isObject(fRes.data)) {
         Object.keys(fRes.data)
           .forEach(key => {
             fRes.data[key].character = fRes.character.name;
             result[fRes.type][fRes.character.realm]['All'].push(fRes.data[key]);
           });
-      } else {
+      } else if (fRes.data && fRes.data.forEach) {
         fRes.data.forEach(d => {
           d.character = fRes.character.name;
           result[fRes.type][fRes.character.realm]['All'].push(d);
@@ -319,7 +328,7 @@ export class TsmLuaUtil {
       result.profitSummary = {};
 
       Object.keys(result.csvCancelled).forEach(realm => {
-        result.profitSummary[realm] = new ProfitSummary(realm, characters);
+        result.profitSummary[realm] = new ProfitSummary(realm, characters, TsmLuaUtil.auctionService);
 
         result.csvExpired[realm].forEach(row => {
           this.addUpProfits(result.profitSummary[realm], row, 'expired');

@@ -7,6 +7,7 @@ import {Filters} from '../../../../utils/filtering';
 import {environment} from '../../../../../environments/environment';
 import {Item} from '../../../../models/item/item';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
+import {AuctionsService} from '../../../../services/auctions.service';
 
 @Component({
   selector: 'wah-update',
@@ -36,7 +37,8 @@ export class UpdateComponent implements OnInit {
     }
   };
 
-  constructor(private _craftingService: CraftingService, private _itemService: ItemService) {
+  constructor(private _craftingService: CraftingService, private _itemService: ItemService,
+              private auctionService: AuctionsService) {
     console.log('Environment', environment);
   }
 
@@ -180,7 +182,7 @@ export class UpdateComponent implements OnInit {
       if (!item) {
         return;
       }
-      const ai: AuctionItem = SharedService.auctionItemsMap[item.id];
+      const ai: AuctionItem = this.auctionService.getById(item.id);
       if (ai) {
         ai.auctions.slice(0, 30)
           .forEach(a =>

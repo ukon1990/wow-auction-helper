@@ -31,29 +31,35 @@ export class TsmService {
   }
 
   load(realmStatus: AuctionHouseStatus): Promise<TSM[]> {
-    return new Promise<TSM[]>((resolve, reject) => {
+    return new Promise<TSM[]>(async (resolve, reject) => {
+      let list: TSM[] = [];
+      let error;
       if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-        this.get(realmStatus)
-          .then(resolve)
-          .catch(reject);
-      } else {
-        this.getFromDB()
-          .then(data => {
-            if (!data || !data.length) {
-              this.get(realmStatus)
-                .then(resolve)
-                .catch(reject);
-            } else {
-              this.processData(data);
-              resolve(data);
-            }
-          })
-          .catch((error) => {
+        await this.get(realmStatus)
+          .then(data => list = data)
+          .catch(err => error = err);
+      }
+
+      if (!list || !list.length) {
+        await this.getFromDB()
+          .then(data => list = data)
+          .catch((err) => {
             ErrorReport.sendError('TsmService.load', error);
-            this.get(realmStatus)
-              .then(resolve)
-              .catch(reject);
+            error = err;
           });
+      }
+
+      if (!list || !list.length) {
+        await this.get(realmStatus)
+          .then(data => list = data)
+          .catch(err => error = err);
+      } else {
+        this.processData(list);
+      }
+      if (error) {
+        reject(error);
+      } else {
+        resolve(list);
       }
     });
   }
@@ -68,24 +74,24 @@ export class TsmService {
         SharedService.downloading.tsmAuctions = true;
         this.http.get(realmStatus.tsmUrl)
           .toPromise()
-          .then(tsm => {
+          .then((tsm: TSM[]) => {
             localStorage['timestamp_tsm'] = new Date().toDateString();
             SharedService.downloading.tsmAuctions = false;
             console.log('TSM data download is complete');
-            this.processData(tsm as TSM[]);
-            this.addToDB(tsm as TSM[]);
+            this.processData(tsm);
+            this.addToDB(tsm);
             this.openSnackbar('Completed TSM download');
-            resolve();
+            resolve(tsm);
           })
           .catch(error => {
             this.openSnackbar(
               `Something went wrong, while downloading TSM data.`);
             ErrorReport.sendError('TsmService.get', error);
             SharedService.downloading.tsmAuctions = false;
-            resolve();
+            resolve([]);
           });
       } else {
-        resolve();
+        resolve([]);
       }
     });
   }

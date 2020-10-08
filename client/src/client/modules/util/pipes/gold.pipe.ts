@@ -10,7 +10,7 @@ export class GoldPipe implements PipeTransform {
 
   static toCopper(newValue: any): number {
     let copper = 0;
-    if (isNaN(newValue)) {
+    if (newValue && isNaN(newValue)) {
       const splitted = newValue.replace(/[,]{1,}/gi, '').split(' ');
       splitted.forEach(val => {
         if (TextUtil.contains(val, 'g')) {
@@ -23,7 +23,7 @@ export class GoldPipe implements PipeTransform {
       });
       return copper;
     }
-    return +newValue;
+    return newValue ? +newValue : undefined;
   }
 
   transform(copper: number, args?: any): string {

@@ -2,7 +2,7 @@ import {APIGatewayEvent, Callback} from 'aws-lambda';
 import {GzipUtil} from './gzip.util';
 
 export class Response {
-  public static async send(body: any, callback: Callback, needsEncoding = true) {
+  public static send(body: any, callback: Callback, needsEncoding = true) {
     try {
       if (!needsEncoding) {
         callback(null, this.getResponse(body));
@@ -35,8 +35,8 @@ export class Response {
     if (error) {
       console.error(error);
     }
-    return Response.send({
-      statusCode: statusCode || 500,
+    Response.send({
+      status: statusCode || 500,
       error: this.getErrorMessage(error),
       event: this.getEvent(event)
     }, callback);

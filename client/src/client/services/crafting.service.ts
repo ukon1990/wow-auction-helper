@@ -11,6 +11,7 @@ import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
 import wordsToNumbers from 'words-to-numbers';
+import {Report} from '../utils/report.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -25,10 +26,13 @@ export class CraftingService {
               public platform: Platform) {
   }
 
+  static recipesForUser: BehaviorSubject<Map<number, string[]>> = new BehaviorSubject(new Map<number, string[]>());
   static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static fullList: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static map: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
+  static knownRecipeMap: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
   static itemRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
+  static itemRecipeMapPerKnown: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static reagentRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
 
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
@@ -133,35 +137,37 @@ export class CraftingService {
       .toPromise() as Promise<Recipe>;
   }
 
-  /* TODO: Is this one really needed now?
-  async handleRecipe(r: Recipe, missingItems?: Array<number>): Promise<Recipe> {
-    const possiblyBuggedRecipe = !r.professionId && r.name.indexOf('Create ') !== -1;
-    if (missingItems && r.itemID > 0 && !SharedService.items[r.itemID]) {
-      missingItems.push(r.itemID);
-    }
-
-    if (possiblyBuggedRecipe) {
-      r.flaggedAsBugged = true;
-    }
-
-    SharedService.recipesMap[r.id] = r;
-    return r;
-  }*/
-
   handleRecipes(recipes: Recipe[]): void {
     SharedService.downloading.recipes = false;
     const list = recipes,
       map = new Map<number, Recipe>();
 
-    list.forEach(recipe => {
-      map.set(recipe.id, recipe);
-    });
+    CraftingService.list.next(CraftingService.getRecipesForFaction(list));
+
+    this.setItemRecipeMapPerKnown(map);
 
     CraftingService.map.next(map);
     CraftingService.fullList.next(list);
-    CraftingService.list.next(CraftingService.getRecipesForFaction(list));
     SharedService.events.recipes.emit(true);
     console.log('Recipe download is completed');
+  }
+
+  setItemRecipeMapPerKnown(map: Map<number, Recipe> = CraftingService.map.value, list: Recipe[] = CraftingService.list.value): void {
+    const itemRecipeMapPerKnown = new Map<number, Recipe[]>();
+    const knownRecipeMap = new Map<number, Recipe>();
+    list.forEach(recipe => {
+      map.set(recipe.id, recipe);
+      if (CraftingService.recipesForUser.value.has(recipe.id)) {
+        knownRecipeMap.set(recipe.id, recipe);
+        if (!itemRecipeMapPerKnown.has(recipe.itemID)) {
+          itemRecipeMapPerKnown.set(recipe.itemID, [recipe]);
+        } else {
+          itemRecipeMapPerKnown.get(recipe.itemID).push(recipe);
+        }
+      }
+    });
+    CraftingService.knownRecipeMap.next(knownRecipeMap);
+    CraftingService.itemRecipeMapPerKnown.next(itemRecipeMapPerKnown);
   }
 
   /**
@@ -178,7 +184,7 @@ export class CraftingService {
 
     tmpList.forEach(recipe => {
       CraftingService.list.value.push(recipe);
-      SharedService.recipesMapPerItemKnown[recipe.itemID] = recipe;
+      CraftingService.itemRecipeMapPerKnown.value.set(recipe.itemID, [recipe]);
     });
   }
 

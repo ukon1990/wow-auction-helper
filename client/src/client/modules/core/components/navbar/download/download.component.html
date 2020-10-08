@@ -1,172 +1,26 @@
-<a mat-flat-button
-   color="primary"
-   routerLinkActive="mat-accent"
-   [matMenuTriggerFor]="downloadDropdown">
+<button mat-stroked-button
+        type="button"
+        class="mr-3"
+        routerLinkActive="mat-accent"
+        (click)="toggle()"
+>
   <ng-container *ngIf="isDownloading(); else notDownloading">
     <mat-spinner color="accent" class="float-left mr-2"></mat-spinner>
 
     Loading app data
   </ng-container>
   <ng-template #notDownloading>
-    <div class="float-left mr-1" *ngIf="timeSinceUpdate > 60"
-         matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is having maintenance, or if they are having issues with their backend service.">
+    <div class="float-left mr-1" *ngIf="timeSinceUpdate > realmStatus?.lowestDelay"
+         matTooltip="The auction data is older than 60 minutes. This can happen if blizzard is
+         having maintenance, or if they are having issues with their backend service.">
       <fa-icon [icon]="faExclamationCircle"></fa-icon>
     </div>
-    <span class="d-none d-sm-inline">Last update was </span>{{ timeSinceUpdate }} minutes ago
-    <small *ngIf="realmStatus">(~{{ realmStatus.lowestDelay - timeSinceUpdate }} min left)</small>
+    <div matTooltip="The est time to the next update is based on the update intervals, for the past 72h.">
+      <span class="d-none d-sm-inline">Last update was </span>{{ timeSinceUpdate }} minutes ago
+      <small *ngIf="realmStatus">(~{{ realmStatus?.lowestDelay - timeSinceUpdate }} min left)</small><br/>
+      <small class="sub-text-small">
+        Avg delay: {{ realmStatus?.avgDelay | number }} - Max delay: {{ realmStatus?.highestDelay | number }}
+      </small>
+    </div>
   </ng-template>
-</a>
-<mat-menu #downloadDropdown="matMenu" classList="download-dropdown-menu" xPosition="before">
-  <mat-card>
-    <mat-card-content>
-      <p>
-        The application will keep all the data up to date with auctions item, recipes etc.
-
-        Auctions will be downloaded as soon as they are available from Blizzard.
-        You do not have to do anything to get the latest data.
-
-        But in case it does not load correctly.
-        You can choose to manually re-download any of the following items here.
-      </p>
-      <p *ngIf="isDownloading()">
-        <strong>The application is currently loading data.</strong> This might take some time depending on your
-        internet speed, browser and computer. If "loading from disk" takes a long time, and you are not
-        using the latest version of Chrome. Do consider changing to that. The app is much faster in Chrome
-        , compared to other browsers.
-      </p>
-      <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
-        <thead>
-        <tr>
-          <td></td>
-          <td>Type</td>
-          <td>Up to date, as of</td>
-          <td>Download</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>
-            Items
-          </td>
-          <td>{{ timestamps.items | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <button mat-icon-button (click)="download('items', true)"
-                    matTooltip="Re-download item data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().recipes" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>
-            Recipes
-          </td>
-          <td>{{ timestamps.recipes | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <button mat-icon-button (click)="download('recipes', true)"
-                    matTooltip="Re-download recipe data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().pets" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>Pets</td>
-          <td>{{ timestamps.pets | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <button mat-icon-button (click)="download('pets', true)"
-                    matTooltip="Re-download pet data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().professions" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>Professions</td>
-          <td>{{ timestamps.professions | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <button mat-icon-button (click)="download('professions', true)"
-                    matTooltip="Re-download profession data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().npc" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td matTooltip="The compressed file is ~24 MB, but the total size is actually ~130 MB">
-            NPCs (~24 mb)
-          </td>
-          <td>{{ timestamps.npc | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <button mat-icon-button (click)="download('npc', true)"
-                    matTooltip="Re-download npc data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().zone" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>Zones</td>
-          <td>{{ timestamps.zone | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <button mat-icon-button (click)="download('zone', true)"
-                    matTooltip="Re-download zone data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().auctions" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>Auctions</td>
-          <td>{{ timestamps.auctions | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <!-- [disabled]="getDownloading().auctions" -->
-            <button mat-icon-button (click)="download('auctions')"
-                    matTooltip="Re-download auction data">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().tsmAuctions" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>TSM</td>
-          <td>{{ timestamps.tsm | date: 'HH:mm M/d/yy' }}</td>
-          <td>
-            <!-- [disabled]="getDownloading().tsmAuctions" -->
-            <button mat-icon-button (click)="download('tsm')"
-                    matTooltip="Re-download TSM data" [disabled]="isDownloading()">
-              <fa-icon [icon]="faDownload"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-spinner *ngIf="getDownloading().characterData" class="float-left mr-2"></mat-spinner>
-          </td>
-          <td>Characters</td>
-          <td></td>
-          <td></td>
-        </tr>
-        </tbody>
-      </table>
-    </mat-card-content>
-  </mat-card>
-</mat-menu>
+</button>

@@ -6,9 +6,9 @@
   <mat-tab *ngFor="let realm of charactersByRealm"
            [label]="realm.name">
     <mat-tab-group>
-      <mat-tab *ngFor="let character of realm.characters"
+      <mat-tab *ngFor="let character of realm?.characters"
               label="{{ character.name }} ({{ character.level }})">
-        <wah-character-reputation
+        <wah-character-reputation *ngIf="character"
                 [character]="character">
         </wah-character-reputation>
       </mat-tab>

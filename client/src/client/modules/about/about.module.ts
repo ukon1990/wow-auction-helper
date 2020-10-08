@@ -21,6 +21,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {RouterModule} from '@angular/router';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {UtilModule} from '../util/util.module';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,10 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
     MatChipsModule,
     MatListModule,
     MatCheckboxModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    UtilModule
   ],
   exports: [
     AboutWhatIsComponent,

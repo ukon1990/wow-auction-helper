@@ -1,7 +1,7 @@
 import {DatabaseUtil} from '../utils/database.util';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {S3Handler} from './s3.handler';
-import {QueryUtil} from '../utils/query.util';
+import {RDSQueryUtil} from '../utils/query.util';
 import {TSM} from '../../../client/src/client/modules/auction/models/tsm.model';
 
 export class TSMHandler {
@@ -102,13 +102,13 @@ export class TSMHandler {
         if (rows.length) {
           await new DatabaseUtil()
             .query(
-              new QueryUtil('tsmDump', false)
+              new RDSQueryUtil('tsmDump', false)
                 .update(id, {id, lastModified: +new Date()}))
             .catch(console.error);
         } else {
           await new DatabaseUtil()
             .query(
-              new QueryUtil('tsmDump', false)
+              new RDSQueryUtil('tsmDump', false)
                 .insert({id, url, lastModified: +new Date()}))
             .catch(console.error);
         }

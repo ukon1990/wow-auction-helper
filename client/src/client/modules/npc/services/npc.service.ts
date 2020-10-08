@@ -9,15 +9,20 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {SharedService} from '../../../services/shared.service';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {ZoneService} from '../../zone/service/zone.service';
+import {NpcUtil} from '../utils/npc.util';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NpcService {
+  static list: BehaviorSubject<NPC[]> = new BehaviorSubject<NPC[]>([]);
+  static mapped: BehaviorSubject<any> = new BehaviorSubject<any>({});
+  static itemNpcMap: BehaviorSubject<Map<number, ItemNpcDetails>> = new BehaviorSubject<
+    Map<number, ItemNpcDetails>>(new Map<number, ItemNpcDetails>());
+
   private storageName = 'timestamp_npcs';
   isLoading = false;
-  list: BehaviorSubject<NPC[]> = new BehaviorSubject<NPC[]>([]);
-  mapped: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
   constructor(private http: HttpClient, private db: DatabaseService, private zoneService: ZoneService) {
   }
@@ -35,19 +40,21 @@ export class NpcService {
         .catch(error =>
           ErrorReport.sendError('NpcService.getAll', error));
 
-      if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
+      if (!NpcService.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
         await this.get()
           .catch(console.error);
       }
 
-      NPC.getTradeVendorsAndSetUnitPriceIfMissing(this.list.value);
+      NPC.getTradeVendorsAndSetUnitPriceIfMissing(NpcService.list.value);
 
       this.mapNPCsToItems();
-      resolve(this.list.value);
+      resolve(NpcService.list.value);
     });
   }
 
   get(): Promise<NPC[]> {
+    const start = +new Date();
+    console.log('Downloading NPC data');
     SharedService.downloading.npc = true;
     const locale = localStorage['locale'];
     this.isLoading = true;
@@ -64,6 +71,8 @@ export class NpcService {
           this.mapAndSetNextValueForNPCs(response['npcs']);
           this.db.addNPCs(response['npcs'])
             .catch(console.error);
+
+          console.log('Downloaded and saved NPC data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
           resolve(list);
         })
         .catch(error => {
@@ -83,11 +92,11 @@ export class NpcService {
 
   private mapAndSetNextValueForNPCs(newData: NPC[]) {
     const map = {},
-      list = [...newData, ...this.list.value];
-    this.list.next(list);
-    this.list.value.forEach(npc =>
+      list = [...newData, ...NpcService.list.value];
+    NpcService.list.next(list);
+    NpcService.list.value.forEach(npc =>
       map[npc.id] = npc);
-    this.mapped.next(map);
+    NpcService.mapped.next(map);
   }
 
   getIds(ids: number[]) {
@@ -96,7 +105,7 @@ export class NpcService {
 
   private mapNPCsToItems() {
     const map: Map<number, ItemNpcDetails> = new Map();
-    this.list.value.forEach(npc => {
+    NpcService.list.value.forEach(npc => {
       (npc.drops || []).forEach(item => {
         if (!map.has(item.id)) {
           map.set(item.id, new ItemNpcDetails(this, this.zoneService));
@@ -111,7 +120,6 @@ export class NpcService {
         map.get(item.id).addSoldBy(item, npc);
       });
     });
-
-    SharedService.itemNpcMap = map;
+    NpcService.itemNpcMap.next(map);
   }
 }

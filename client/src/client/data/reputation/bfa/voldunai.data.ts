@@ -1,196 +1,41 @@
-import {ReputationVendor} from '../../../models/reputation.model';
+import {ReputationVendor, ReputationVendorRecipe, Vendor} from '../../../models/reputation.model';
 
 export const voldunai: ReputationVendor = {
   id: 2158,
   name: 'Voldunai',
   vendors: [
-    {
-      name: 'Hoarder Jena',
-      isAlly: false,
-      isHorde: true,
-      locations: []
-    }
+    new Vendor('Hoarder Jena', false, true, []),
   ],
   expansion: 7,
   professions: {
-    Alchemy: [
-      {
-        spellId: 279161,
-        name: 'Battle Potion of Agility',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252359,
-        name: 'Flask of the Undertow',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252346,
-        name: 'Potion of Rising Death',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 252390,
-        name: 'Coastal Rejuvenation Potion',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    171: [
+      new ReputationVendorRecipe(39858, 'Battle Potion of Agility', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38796, 'Flask of the Undertow', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38784, 'Potion of Rising Death', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38823, 'Coastal Rejuvenation Potion', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Enchanting: [
-      {
-        spellId: 255101,
-        name: 'Pact of Versatility',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 255143,
-        name: 'Weapon Enchant - Gale-Force Striking',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 268879,
-        name: 'Weapon Enchant - Versatile Navigation',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    333: [
+      new ReputationVendorRecipe(38876, 'Pact of Versatility', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(38885, 'Weapon Enchant - Gale-Force Striking', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39416, 'Weapon Enchant - Versatile Navigation', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Engineering: [
-      {
-        spellId: 272066,
-        name: 'AZ3-R1-T3 Orthogonal Optics',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Honored'
-      },
-      {
-        spellId: 265102,
-        name: 'Frost-Laced Ammunition',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 272067,
-        name: 'AZ3-R1-T3 Orthogonal Optics',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    202: [
+      new ReputationVendorRecipe(39605, 'AZ3-R1-T3 Orthogonal Optics', 2, [11000000, 0, 0], 'Honored'),
+      new ReputationVendorRecipe(39246, 'Frost-Laced Ammunition', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39606, 'AZ3-R1-T3 Orthogonal Optics', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Inscription: [
-      {
-        spellId: 256291,
-        name: 'Contract: Voldunai',
-        rank: 2,
-        cost: [
-          11000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Friendly'
-      }
+    773: [
+      new ReputationVendorRecipe(38957, 'Contract: Voldunai', 2, [11000000, 0, 0], 'Friendly'),
     ],
-    Jewelcrafting: [
-      {
-        spellId: 256521,
-        name: 'Royal Quartz Loop',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    755: [
+      new ReputationVendorRecipe(39016, 'Royal Quartz Loop', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Leatherworking: [
-      {
-        spellId: 256789,
-        name: 'Recurve Bow of the Strands',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    165: [
+      new ReputationVendorRecipe(39060, 'Recurve Bow of the Strands', 3, [14000000, 0, 0], 'Revered'),
     ],
-    Tailoring: [
-      {
-        spellId: 257127,
-        name: 'Deep Sea Bag',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      },
-      {
-        spellId: 257116,
-        name: 'Embroidered Deep Sea Cloak',
-        rank: 3,
-        cost: [
-          14000000,
-          0,
-          0
-        ],
-        requiredStanding: 'Revered'
-      }
+    197: [
+      new ReputationVendorRecipe(39069, 'Deep Sea Bag', 3, [14000000, 0, 0], 'Revered'),
+      new ReputationVendorRecipe(39092, 'Embroidered Deep Sea Cloak', 3, [14000000, 0, 0], 'Revered'),
     ]
   },
   isAlly: false,

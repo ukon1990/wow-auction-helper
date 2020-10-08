@@ -1,6 +1,6 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
-import {AuctionHandler} from '../handlers/auction.handler';
+import {AuctionService} from '../auction/services/auction.service';
 
 exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   // Endpoints.setStage(event);

@@ -1,0 +1,140 @@
+<mat-card *ngIf="formArray"
+          [formGroup]="form"
+>
+  <mat-card-header *ngIf="displayHeader">
+    <mat-card-title>
+      Columns
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content formGroupName="sortRule">
+    <mat-form-field color="accent">
+      <mat-select formControlName="field"
+                  placeholder="Sort by column">
+        <mat-option
+                *ngFor="let column of selectedColumns"
+                [value]="column.key"
+        >
+          {{ column.title }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox formControlName="sortDesc"
+                  color="accent">
+      Sort descending
+    </mat-checkbox>
+  </mat-card-content>
+
+  <mat-card-content formArrayName="columns"
+                    cdkDropList
+                    (cdkDropListDropped)="drop($event)"
+  >
+    <div *ngFor="let column of formArray.controls; let i = index"
+         class="row col-md-12"
+         cdkDrag>
+      <ng-container [formGroupName]="i">
+        <mat-form-field class="col"
+                        color="accent">
+          <input matInput
+                 placeholder="Value key"
+                 formControlName="key"
+                 type="text"
+                 matTooltip="This is to indicate the type of data that is set to the column.
+               [name] indicates that it will check through lists etc."
+          />
+        </mat-form-field>
+        <mat-form-field class="col"
+                        color="accent">
+          <input matInput
+                 placeholder="Title"
+                 formControlName="title"
+                 type="text"
+                 matTooltip="The name that is displayed in the column header"
+          />
+        </mat-form-field>
+        <mat-form-field class="col"
+                        color="accent"
+                        matTooltip="The way the column will be formatted"
+        >
+          <mat-select formControlName="dataType"
+                      placeholder="Type"
+          >
+            <mat-option value="gold">
+              Gold
+            </mat-option>
+            <mat-option value="number">
+              Number
+            </mat-option>
+            <mat-option value="percent">
+              Percent
+            </mat-option>
+            <mat-option value="text">
+              Text
+            </mat-option>
+            <mat-option value="name">
+              Name
+            </mat-option>
+            <mat-option value="boolean">
+              Checkbox
+            </mat-option>
+            <mat-option value="zone">
+              Zone
+            </mat-option>
+            <mat-option value="materials">
+              Materials
+            </mat-option>
+            <mat-option value="expansion">
+              Expansion
+            </mat-option>
+            <mat-option value="time-left">
+              Time left
+            </mat-option>
+            <mat-option value="quality">
+              Quality
+            </mat-option>
+            <mat-option value="cart-recipe-count">
+              # in cart
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="col">
+          <button
+                  mat-stroked-button
+                  color="warn"
+                  matTooltip="Delete"
+                  (click)="formArray.removeAt(i)"
+          >
+            <fa-icon
+                    [icon]="faTrash"
+            >
+            </fa-icon>
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <mat-form-field color="accent">
+      <mat-select placeholder="Select a field to add"
+                  [formControl]="columnSelectionField">
+        <mat-optgroup [label]="fieldGroup.name"
+                      *ngFor="let fieldGroup of fields">
+          <ng-container *ngFor="let field of fieldGroup.options">
+            <mat-option *ngIf="field.column"
+                        [matTooltip]="field.name"
+                        [value]="field.column">
+              {{ fieldGroup.name }}: {{ field.column.title }}
+            </mat-option>
+          </ng-container>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <button mat-stroked-button
+            color="accent"
+            (click)="addColumn()"
+    >
+      Add new column
+    </button>
+  </mat-card-actions>
+</mat-card>

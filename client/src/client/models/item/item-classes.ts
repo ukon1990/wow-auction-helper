@@ -1,4 +1,4 @@
-export let itemClasses = {
+export const itemClasses = {
     'classes': [{
         'class': 17,
         'name': 'Battle Pets',

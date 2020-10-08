@@ -9,6 +9,7 @@ import {SharedService} from '../../../../services/shared.service';
 })
 export class AuctionItemDetailsComponent implements OnChanges {
   @Input() item: AuctionItem;
+  @Input() dialogId: string;
 
   ngOnChanges({item}: SimpleChanges): void {
     if (item && item.currentValue) {

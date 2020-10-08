@@ -1,13 +1,11 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {User} from './models/user/user';
 import {SharedService} from './services/shared.service';
 import {Angulartics2GoogleAnalytics} from 'angulartics2/ga';
 import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from './utils/prospect-milling.util';
 import {ErrorReport} from './utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {DefaultDashboardSettings} from './modules/dashboard/models/default-dashboard-settings.model';
 import {Report} from './utils/report.util';
 import {Platform} from '@angular/cdk/platform';
 import {ShoppingCart} from './modules/shopping-cart/models/shopping-cart.model';
@@ -19,6 +17,20 @@ import {MenuItem} from './modules/core/models/menu-item.model';
 import {UserUtil} from './utils/user/user.util';
 import {BackgroundDownloadService} from './modules/core/services/background-download.service';
 import {ThemeUtil} from './modules/core/utils/theme.util';
+import {AuctionsService} from './services/auctions.service';
+import {CraftingUtil} from './modules/crafting/utils/crafting.util';
+import {NPC} from './modules/npc/models/npc.model';
+import {TsmLuaUtil} from './utils/tsm/tsm-lua.util';
+import {Filters} from './utils/filtering';
+import {InventoryUtil} from './utils/tsm/inventory.util';
+import {MatDialog} from '@angular/material/dialog';
+import {NewsUtil} from './modules/about/utils/news.util';
+import {NewsComponent} from './modules/about/components/news/news.component';
+import {ItemComponent} from './modules/item/components/item.component';
+import {LogRocketUtil} from './utils/log-rocket.util';
+import {TextUtil} from '@ukon1990/js-utilities';
+import {GithubService} from './modules/about/services/github.service';
+import {UpdateService} from './services/update.service';
 
 @Component({
   selector: 'wah-root',
@@ -31,6 +43,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   shouldAskForConcent = false;
   pageTitle: string;
   isLoading: boolean;
+  isInTheSetup: boolean;
+  initialLoadWasSetup: boolean;
+  isInNonAppDataPage: boolean;
 
   constructor(public platform: Platform,
               private router: Router,
@@ -38,18 +53,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
               private downloadService: BackgroundDownloadService,
+              private auctionService: AuctionsService,
               private reportService: ReportService,
+              private githubService: GithubService,
+              private updateService: UpdateService,
+              private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
     this.subs.add(downloadService.isLoading, (isLoading) => {
       this.isLoading = isLoading;
     });
-    DefaultDashboardSettings.init();
+    ProspectingAndMillingUtil.init(auctionService);
+    CraftingUtil.init(auctionService);
+    NPC.init(auctionService);
+    TsmLuaUtil.init(auctionService);
+    Filters.init(auctionService);
+    InventoryUtil.init(auctionService);
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
-    SharedService.user.shoppingCart = new ShoppingCart();
+    SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
     ProspectingAndMillingUtil.restore();
+    LogRocketUtil.init();
 
     this.subs.add(
       SharedService.events.detailPanelOpen,
@@ -60,6 +85,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.events,
       (event: NavigationEnd) =>
         this.onNavigationChange(event));
+
+    this.subs.add(SharedService.events.detailSelection, (selection) => {
+      if (selection) {
+        this.dialog.open(ItemComponent, {
+          width: '95%',
+          maxWidth: '100%',
+          data: selection
+        });
+      }
+    });
+
     this.angulartics2GoogleAnalytics.startTracking();
   }
 
@@ -77,6 +113,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.restorePreviousLocation();
     this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
     Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
+    this.displayChangelogIfRelevant();
+  }
+
+  private displayChangelogIfRelevant() {
+    NewsUtil.shouldTrigger()
+      .then(render => {
+        if (render) {
+          this.githubService.getChangeLogs()
+            .then((changelog) => {
+              this.dialog.open(NewsComponent, {
+                width: '95%',
+                maxWidth: '100%',
+                data: changelog
+              });
+            })
+            .catch(error => ErrorReport.sendHttpError(error));
+        }
+      });
   }
 
   ngAfterViewInit(): void {
@@ -135,6 +189,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onNavigationChange(event: NavigationEnd) {
+    if (TextUtil.contains(event.url, 'setup')) {
+      this.initialLoadWasSetup = true;
+    }
+
+    if (TextUtil.contains(event.url, 'settings') || TextUtil.contains(event.url, 'about')) {
+      this.isInNonAppDataPage = true;
+    } else if (event.url) {
+      this.isInNonAppDataPage = false;
+    }
+
     this.redirectToCorrectPath(event.url);
     this.saveCurrentRoute(event);
     const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);
@@ -144,6 +208,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     window.scroll(0, 0);
     Report.navigation(event);
+
+    this.isInTheSetup = TextUtil.contains(event.url, 'setup');
   }
 
   private saveCurrentRoute(event: NavigationEnd) {

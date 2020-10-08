@@ -7,7 +7,6 @@ import {DashboardComponent} from './dashboard/components/dashboard.component';
 import {UpdateComponent} from './admin/components/update/update.component';
 import {AuctionsComponent} from './auction/components/auctions/auctions.component';
 import {TradeVendorsComponent} from './core/components/trade-vendors/trade-vendors.component';
-import {WatchlistComponent} from './dashboard/components/manage/watchlist.component';
 import {DashboardItemsComponent} from './dashboard/components/dashboard-items/dashboard-items.component';
 import {PetsValueComponent} from './pet/components/pets-value.component';
 import {MarketResetComponent} from './market-reset/components/market-reset/market-reset.component';
@@ -24,13 +23,12 @@ import {TitledRoutes} from '../models/route/titled-routes.model';
 import {SettingsComponent} from './settings/components/settings.component';
 import {GeneralSettingsComponent} from './settings/components/general-settings/general-settings.component';
 import {CraftingSettingsComponent} from './settings/components/crafting-settings/crafting-settings.component';
-import {CustomPricesComponent} from './settings/components/crafting-settings/custom-prices/custom-prices.component';
-import {CustomProcComponent} from './settings/components/crafting-settings/custom-proc/custom-proc.component';
 import {CharactersComponent} from './character/components/characters.component';
 import {NotificationSettingsComponent} from './settings/components/notification-settings/notification-settings.component';
 import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
 import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/details.component';
 import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
+import {MonitorComponent} from './admin/components/monitor/monitor.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -73,9 +71,6 @@ const TOOLS_ROUTE: TitledRoute = {
       title: 'Milling & Prospecting', path: 'milling-and-prospecting', component: MillingComponent
     },
     {
-      title: 'Manage Dashboards', path: 'watchlist', redirectTo: '/dashboard/manage-dashboards'
-    },
-    {
       title: 'Reputations', path: 'reputations', component: ReputationsComponent
     }, {
       title: 'Pet value', path: 'pet-value', component: PetsValueComponent
@@ -83,10 +78,6 @@ const TOOLS_ROUTE: TitledRoute = {
     {
       title: 'Trade vendors', path: 'trade-vendor', component: TradeVendorsComponent
     },
-    /*
-    {
-      title: 'Sellers', path: 'sellers', component: SellersComponent
-    },*/
     {
       title: 'Disenchanting',
       path: 'disenchanting',
@@ -121,17 +112,10 @@ const DASHBOARD_ROUTE: TitledRoute = {
     {
       title: 'Item', path: 'items', component: DashboardItemsComponent
     },
-    /*
-    {
-      title: 'Seller', path: 'sellers', component: DashboardSellersComponent
-    },*/
     {
       title: 'AH summary', path: 'ah-summary', component: AhSummaryComponent
     },
-    {path: 'tsm', redirectTo: '/tools/tsm'},
-    {
-      title: 'Manage', path: 'manage-dashboards', component: WatchlistComponent
-    }
+    {path: '**', redirectTo: 'items'},
   ]
 };
 
@@ -170,6 +154,11 @@ const ADMIN_ROUTE: TitledRoute = {
   isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
   canActivate: [IsRegisteredService],
   children: [
+    {
+      title: 'Monitor',
+      component: MonitorComponent,
+      path: 'monitor'
+    },
     {
       title: 'Update and add items',
       component: UpdateComponent,

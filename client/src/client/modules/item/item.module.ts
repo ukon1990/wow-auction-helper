@@ -26,6 +26,8 @@ import { ContainedInTabComponent } from './components/contained-in-tab/contained
 import { AuctionsChartComponent } from './components/auctions-chart/auctions-chart.component';
 import { ItemPriceHistoryComponent } from './components/item-price-history/item-price-history.component';
 import {CraftingModule} from '../crafting/crafting.module';
+import {MatDialogModule} from '@angular/material/dialog';
+import {CoreModule} from '../core/core.module';
 import {HighchartsChartModule} from 'highcharts-angular';
 
 
@@ -60,6 +62,8 @@ import {HighchartsChartModule} from 'highcharts-angular';
     MatInputModule,
     MatProgressSpinnerModule,
     CraftingModule,
+    MatDialogModule,
+    CoreModule,
     HighchartsChartModule
   ],
   exports: [

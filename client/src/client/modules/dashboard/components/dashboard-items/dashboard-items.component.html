@@ -1,10 +1,55 @@
-<div class="row slim-sm">
-  <div class="col-md-12">
-    <wah-crafting-config></wah-crafting-config>
-  </div>
-  <ng-container *ngFor="let d of dashboards">
-    <div *ngIf="!d.isDisabled && d.data.length > 0" class="col-md-6 mb-3 slim-sm">
-      <wah-dashboard-item [dashboard]="d" filterParameter="name"></wah-dashboard-item>
+<mat-tab-group>
+  <mat-tab label="Dashboard matches ({{ numberOfBoardsWithAMatch }}/ {{ numberOfActiveBoards }})">
+    <p>
+      Click on an item's name to get more information about it, current prices, sources, historical pricing etc and the cogwheel to edit.
+    </p>
+    <div>
+      <div *ngIf="!numberOfCharactersOnRealm" class="row mat-toolbar mat-warn col-md-12">
+        <p>
+          It seems like you've not added any characters with recipes. This will cause some of the default boards to not return a result.
+        </p>
+        <p>
+          If you want to add any of your crafters, go to <a routerLink="/settings/characters">Settings -> Characters</a>.
+        </p>
+      </div>
+      <div class="row col-md-12 slim-sm pr-0">
+        <wah-crafting-config class="col"></wah-crafting-config>
+        <mat-checkbox class="col" [formControl]="displayHiddenForm">
+          Show hidden boards
+        </mat-checkbox>
+        <div class="col">
+          <button
+                  mat-stroked-button
+                  color="accent"
+                  (click)="openNewBoardDialog()"
+          >
+            Create a new board
+          </button>
+        </div>
+      </div>
+
+      <div class="row col-md-12 pr-0">
+        <ng-container *ngFor="let d of dashboards">
+          <div *ngIf="(!d.isDisabled && d.data.length > 0 || displayHiddenForm.value)"
+               class="col-xxxl-4 col-xl-6 mb-3 slim-sm">
+            <wah-dashboard-item [dashboard]="d"></wah-dashboard-item>
+          </div>
+        </ng-container>
+      </div>
     </div>
-  </ng-container>
-</div>
+  </mat-tab>
+
+  <mat-tab label="Organize/Sort boards">
+    <em>
+      Drag the names to sort the tables in your preferred order
+    </em>
+    <mat-list
+            cdkDropList
+            (cdkDropListDropped)="drop($event)">
+      <mat-list-item *ngFor="let d of dashboards"
+                     cdkDrag>
+        [{{d.isDisabled ? 'Disabled' : 'Active'}}] {{ d.title }} ({{d.data.length}})
+      </mat-list-item>
+    </mat-list>
+  </mat-tab>
+</mat-tab-group>

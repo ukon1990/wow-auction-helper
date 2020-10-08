@@ -19,6 +19,7 @@ import {ChartData} from '../../../util/models/chart.model';
 })
 export class ItemSaleSummaryComponent implements AfterContentInit, OnDestroy, OnChanges {
   @Input() itemId: number;
+  @Input() dialogId: string;
   @Output() saleRate: EventEmitter<number> = new EventEmitter<number>();
   readonly LOCAL_STORAGE_KEY = 'item-details-prefered-sale-rate';
   realm: string;

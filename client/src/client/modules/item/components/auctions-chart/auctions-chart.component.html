@@ -1,16 +1,28 @@
-<wah-charts-data-sets *ngIf="datasets && datasets.datasets.length"
-        [height]="20"
-        storageName="current-auction-price-chart"
-        [datasets]="datasets">
-</wah-charts-data-sets>
-<em>
-  The chart displays the auction price variation. Excluding auctions, that exceed the auctions unit price median({{ medianPrice * 10000 | gold}}) *
-  <mat-form-field
-          color="accent"
-  >
-    <input matInput
-            placeholder="Upper price threshold = {{(medianPercentLimit.value * medianPrice * 10000) | gold}}"
-            [formControl]="medianPercentLimit"
-            type="number"/>
-  </mat-form-field>
-</em>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Current prices and quantity
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <wah-charts-data-sets *ngIf="datasets && datasets.datasets.length"
+                          [height]="20"
+                          [storageName]="'current-auction-price-chart-' + dialogId"
+                          [datasets]="datasets">
+    </wah-charts-data-sets>
+    <em>
+      The chart displays the auction price variation. Excluding auctions, that exceed the auctions unit price
+      median({{ medianPrice * 10000 | gold}}) *
+      <mat-form-field
+              color="accent"
+      >
+        <input matInput
+               placeholder="Upper price threshold = {{(medianPercentLimit.value * medianPrice * 10000) | gold}}"
+               [formControl]="medianPercentLimit"
+               type="number"/>
+      </mat-form-field>
+    </em>
+
+  </mat-card-content>
+</mat-card>

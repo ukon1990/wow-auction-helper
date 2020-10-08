@@ -6,7 +6,7 @@ export class VendorLocation {
 }
 
 export class ReputationVendorRecipe {
-  constructor(public spellId: number,
+  constructor(public id: number,
               public name: string,
               public rank: number,
               public cost: number[],
@@ -34,16 +34,16 @@ export class ReputationVendor {
     public isHorde: boolean,
     public vendors: Vendor[],
     public professions: {
-      Alchemy?: ReputationVendorRecipe[];
-      Blacksmithing?: ReputationVendorRecipe[];
-      Cooking?: ReputationVendorRecipe[];
-      Leatherworking?: ReputationVendorRecipe[];
-      Mining?: ReputationVendorRecipe[];
-      Tailoring?: ReputationVendorRecipe[];
-      Engineering?: ReputationVendorRecipe[];
-      Enchanting?: ReputationVendorRecipe[];
-      Jewelcrafting?: ReputationVendorRecipe[];
-      Inscription?: ReputationVendorRecipe[];
+      171?: ReputationVendorRecipe[];
+      164?: ReputationVendorRecipe[];
+      185?: ReputationVendorRecipe[];
+      165?: ReputationVendorRecipe[];
+      186?: ReputationVendorRecipe[];
+      197?: ReputationVendorRecipe[];
+      202?: ReputationVendorRecipe[];
+      333?: ReputationVendorRecipe[];
+      755?: ReputationVendorRecipe[];
+      773?: ReputationVendorRecipe[];
     }
   ) {
   }

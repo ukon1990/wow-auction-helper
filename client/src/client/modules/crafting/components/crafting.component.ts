@@ -15,6 +15,18 @@ import {ThemeUtil} from '../../core/utils/theme.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../services/profession.service';
 
+interface FormModel {
+  searchQuery: string;
+  onlyKnownRecipes: boolean;
+  professionId: number;
+  profit: number;
+  demand: number;
+  minSold: number;
+  itemClass: number;
+  itemSubClass: number;
+  expansion: number;
+}
+
 @Component({
   selector: 'wah-crafting',
   templateUrl: './crafting.component.html',
@@ -28,18 +40,20 @@ export class CraftingComponent implements OnInit, OnDestroy {
   itemClasses = itemClasses;
   professions = [];
   expansions = GameBuild.expansionMap;
-  delayFilter = false;
+  private lastCalculationTime: number;
 
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
-    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true},
+    {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true, canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true},
     {key: 'roi', title: 'Profit', dataType: 'gold'},
     {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true},
     {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true},
-    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
+    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
+      idName: 'id',
+    }}
   ];
 
   constructor(private _formBuilder: FormBuilder, private _title: Title,
@@ -72,18 +86,17 @@ export class CraftingComponent implements OnInit, OnDestroy {
       this.searchForm.valueChanges,
       ((changes) => {
         localStorage['query_crafting'] = JSON.stringify(this.searchForm.value);
-
-        if (!this.delayFilter) {
-          this.delayFilter = true;
-          setTimeout(() => {
-            this.filter();
-            this.delayFilter = false;
-          }, 100);
-        }
+        this.lastCalculationTime = +new Date();
+        setTimeout(async () => {
+          const timeDiff = +new Date() - this.lastCalculationTime;
+          if (timeDiff >= 1000) {
+            this.filter(changes);
+          }
+        }, 1000);
       }));
 
     this.subs.add(
-      this.service.events.groupedList,
+      this.service.mapped,
       () =>
         this.filter());
 
@@ -106,7 +119,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  filter(changes = this.searchForm.value): void {
+  filter(changes: FormModel = this.searchForm.value): void {
     this.filtered = CraftingService.list.value
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {
@@ -124,7 +137,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
   }
 
   isKnownRecipe(recipe: Recipe): boolean {
-    return !this.searchForm.value.onlyKnownRecipes || SharedService.recipesForUser[recipe.id] || !recipe.professionId;
+    return !this.searchForm.value.onlyKnownRecipes ||
+      CraftingService.recipesForUser.value.has(recipe.id)
+      || !recipe.professionId;
   }
 
   isNameMatch(recipe: Recipe, name: string): boolean {

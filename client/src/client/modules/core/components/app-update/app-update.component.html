@@ -1,32 +1,31 @@
-<div class="full-screen" *ngIf="updateAvailable">
-    <mat-card class="mb-3">
-      <mat-card-header>
-        <mat-card-title>
-          A new version is available, and has been installed on your computer.
-        </mat-card-title>
-        <mat-card-subtitle>
-          Reload or click the button below to go to the new version.
-        </mat-card-subtitle>
-        <div class="action-icon mat-elevation-z5" (click)="close()">
-          <button mat-stroked-button class="btn btn-sm">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </mat-card-header>
+<wah-close-btn (close)="close()"></wah-close-btn>
 
-      <mat-card-actions>
-        <button mat-stroked-button
-                color="primary"
-                (click)="reload()">Reload</button>
-      </mat-card-actions>
+<h1 mat-dialog-title>
+  A new version is available, and has been installed on your computer.
+</h1>
 
-      <mat-card-content class="overflow">
-        <div class="scrollable">
-          <wah-changelog></wah-changelog>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
 
-  <div *ngIf="updateAvailable " class="backdrop " (click)="close() ">
-  </div>
+<mat-dialog-content>
+  Reload or click the button below to activate the new version.
+  <em>
+    If you find any bugs or wish to give feedback
+    on the app, please do so on
+    <a href="https://github.com/ukon1990/wow-auction-helper"
+       matTooltip="Github: Contribute report bugs/issues and feature requests">
+      <i class="fab fa-github"></i> Github
+    </a> or via PM to me on Reddit or Discord (Ukon1990). As always, any feedback is appreciated!
+  </em>
+
+  <wah-changelog [changeLogs]="changelog"></wah-changelog>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button
+          color="primary"
+          (click)="close()">
+    Close
+  </button>
+  <button mat-stroked-button
+          color="accent"
+          (click)="reload()">Reload to activate the update</button>
+</mat-dialog-actions>

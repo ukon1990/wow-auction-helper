@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {TradeVendor, TradeVendorItem} from '../../../../models/item/trade-vendor';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
@@ -10,14 +10,14 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {TRADE_VENDORS} from '../../../../data/trade-vendors';
 import {Zone} from '../../../zone/models/zone.model';
 import {ZoneService} from '../../../zone/service/zone.service';
-import {Item} from '../../../../models/item/item';
+import {ErrorReport} from '../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-trade-vendors',
   templateUrl: './trade-vendors.component.html',
   styleUrls: ['./trade-vendors.component.scss']
 })
-export class TradeVendorsComponent implements OnInit, OnDestroy {
+export class TradeVendorsComponent implements OnInit, OnDestroy, AfterViewInit {
   columns: Array<ColumnDescription> = new Array<ColumnDescription>();
   locale = localStorage['locale'].split('-')[0];
   form: FormGroup;
@@ -40,19 +40,6 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
         filter.onlyPotentiallyProfitable : false
     });
 
-    this.sm.add(
-      this.form.valueChanges,
-      ((change) => {
-        localStorage['query_trade_vendors'] = JSON.stringify(change);
-        this.filterVendors(change);
-      }));
-    this.sm.add(
-      this.service.events.groupedList,
-      () => this.filterVendors(this.form.getRawValue()));
-
-    this.sm.add(zoneService.mapped, (map) => {
-      this.zones = map;
-    });
   }
 
   ngOnInit() {
@@ -64,6 +51,22 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
     this.columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
     this.columns.push({key: 'roi', title: 'ROI', dataType: 'gold'});
 
+    this.sm.add(
+      this.form.valueChanges,
+      ((change) => {
+        localStorage['query_trade_vendors'] = JSON.stringify(change);
+        this.filterVendors(change);
+      }));
+    this.sm.add(
+      this.service.mapped,
+      () => this.filterVendors(this.form.getRawValue()));
+
+    this.sm.add(this.zoneService.mapped, (map) => {
+      this.zones = map;
+    });
+  }
+
+  ngAfterViewInit(): void {
     this.filterVendors(this.form.getRawValue());
   }
 
@@ -82,9 +85,19 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   }
 
   filteredTradeVendorItems(tv: TradeVendor, formData): void {
-    tv.itemsFiltered = tv.items
-      .filter(i =>
-        this.isMatch(i, tv, formData));
+    try {
+      tv.itemsFiltered = this.castTVToArray(tv.items)
+        .filter(i =>
+          this.isMatch(i, tv, formData));
+    } catch (e) {
+      ErrorReport.sendError('TradeVendorsComponent.filteredTradeVendorItems', e);
+      console.log('Error on', tv.items);
+    }
+  }
+
+  public castTVToArray(array: any[]) {
+    return array.length !== undefined ?
+      array : Object.keys(array).map(key => array[key]);
   }
 
   isMatch(item: TradeVendorItem, vendor: TradeVendor, {saleRate, avgDailySold, onlyPotentiallyProfitable, onlyBuyableSource}): boolean {
@@ -100,12 +113,11 @@ export class TradeVendorsComponent implements OnInit, OnDestroy {
   }
 
   getAuctionItem(tradeVendor: TradeVendor): AuctionItem {
-    return SharedService.auctionItemsMap[tradeVendor.itemID] ?
-      SharedService.auctionItemsMap[tradeVendor.itemID] : new AuctionItem();
+    return this.service.getById(tradeVendor.itemID) || new AuctionItem();
   }
 
   private isNotBOP(vendor: TradeVendor, onlyBuyableSource: boolean): boolean {
-    const sourceItem: AuctionItem = SharedService.auctionItemsMap[vendor.itemID];
+    const sourceItem: AuctionItem = this.service.getById(vendor.itemID);
     return !onlyBuyableSource ||
       sourceItem !== undefined;
   }

@@ -1,6 +1,6 @@
 {
   "name": "wah-api",
-  "version": "3.130.0",
+  "version": "3.202.0",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -14,9 +14,10 @@
     "deploy-dev-kr": "sls deploy -r ap-northeast-2 -s dev",
     "deploy-dev": "npm run deploy-dev-us && npm run deploy-dev-eu && npm run deploy-dev-kr",
     "deploy-eu": "sls deploy -r eu-west-1 -s prod",
+    "deploy-se": "sls deploy -r eu-north-1 -s prod",
     "deploy-us": "sls deploy -r us-west-1 -s prod",
     "deploy-kr": "sls deploy -r ap-northeast-2 -s prod",
-    "deploy": "npm run deploy-us && npm run deploy-eu && npm run deploy-kr",
+    "deploy": "npm run deploy-eu && npm run deploy-us && npm run deploy-kr && npm run deploy-se",
     "update-json-data-locally": "cd ../scripts;sh update-data.sh; cd .."
   },
   "private": true,
@@ -25,10 +26,13 @@
     "@ukon1990/subscription-manager": "^1.0.2",
     "aws-sdk": "^2.516.0",
     "file-saver": "^2.0.2",
+    "jwt-decode": "^3.0.0-beta.2",
     "mysql": "^2.17.1",
+    "njwt": "^1.0.0",
     "promise-throttle": "^1.0.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "secure-random": "^1.1.2",
     "source-map-explorer": "^2.1.0",
     "sqlstring": "^2.3.2",
     "tslib": "^1.9.3",

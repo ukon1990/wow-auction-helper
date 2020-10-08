@@ -49,13 +49,6 @@ export class Auction {
     }
     return auction.item;
   }
-
-  public static getBonusList(auction: AuctionItem): string {
-    if (auction.bonusIds) {
-      return auction.bonusIds.join(':');
-    }
-    return [].join(':');
-  }
 }
 
 interface Bonus {

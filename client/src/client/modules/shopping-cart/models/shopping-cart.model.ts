@@ -9,6 +9,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {ShoppingCartItem} from './shopping-cart-item.model';
 import {CraftingService} from '../../../services/crafting.service';
+import {AuctionsService} from '../../../services/auctions.service';
 
 
 export class ShoppingCart {
@@ -32,7 +33,7 @@ export class ShoppingCart {
   sumEstimatedInventoryCost = 0;
   tsmShoppingString = '';
 
-  constructor() {
+  constructor(private auctionService: AuctionsService) {
     const ls = localStorage['shopping_cart'],
       lsObject = ls ? JSON.parse(localStorage['shopping_cart']) : undefined;
     if (lsObject && lsObject.reagents && lsObject.reagents[0]) {
@@ -326,7 +327,7 @@ export class ShoppingCart {
       this.sumEstimatedInventoryCost = 0;
 
       this.recipes.forEach((item: ShoppingCartItem) => {
-        const auctionItem: AuctionItem = SharedService.auctionItemsMap[item.itemID];
+        const auctionItem: AuctionItem = this.auctionService.getById(item.itemID);
         if (auctionItem) {
           this.totalValue += auctionItem.buyout * item.quantity;
         }
@@ -371,7 +372,7 @@ export class ShoppingCart {
     need: { cost: number; count: number },
     total: { cost: number; count: number }
   } {
-    const auctionItem: AuctionItem = SharedService.auctionItemsMap[id],
+    const auctionItem: AuctionItem = this.auctionService.getById(id),
       result = {
         need: {
           cost: 0,
@@ -417,7 +418,7 @@ export class ShoppingCart {
   private handleVendorSource(reagent: ShoppingCartItem, currentQuantity: number): number {
     try {
       const item: Item = SharedService.items[reagent.id],
-        auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id],
+        auctionItem: AuctionItem = this.auctionService.getById(reagent.id),
         need = reagent.quantity - currentQuantity;
 
       if (this.isAvailableAtVendor(item) && this.isVendorCheaperThanAH(item, auctionItem)) {
@@ -443,7 +444,7 @@ export class ShoppingCart {
   private handleAuctionSource(reagent: ShoppingCartItem, addedCount: number) {
     try {
       const need = reagent.quantity - addedCount,
-        auctionItem: AuctionItem = SharedService.auctionItemsMap[reagent.id];
+        auctionItem: AuctionItem = this.auctionService.getById(reagent.id);
 
       if (need > 0 && auctionItem && auctionItem.quantityTotal > need) {
         const cartItem = new ShoppingCartItem(reagent.id, need);
@@ -483,7 +484,7 @@ export class ShoppingCart {
       this.tsmShoppingString = '';
       let item: AuctionItem;
       this.sources.ah.forEach((r: ShoppingCartItem) => {
-        item = SharedService.auctionItemsMap[r.id];
+        item = this.auctionService.getById(r.id);
         if (item) {
           this.tsmShoppingString += `${item.name}/exact/x${Math.ceil(r.quantity)};`;
         }

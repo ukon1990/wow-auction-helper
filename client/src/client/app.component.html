@@ -8,7 +8,9 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <router-outlet *ngIf="!isLoading; else loadingTemplate"></router-outlet>
+      <ng-container *ngIf="!isLoading || initialLoadWasSetup || isInNonAppDataPage; else loadingTemplate">
+        <router-outlet></router-outlet>
+      </ng-container>
     </mat-card-content>
   </mat-card>
   <wah-footer></wah-footer>
@@ -76,9 +78,3 @@
     </tbody>
   </table>
 </ng-template>
-
-<wah-news></wah-news>
-
-<wah-app-update></wah-app-update>
-
-<wah-item></wah-item>

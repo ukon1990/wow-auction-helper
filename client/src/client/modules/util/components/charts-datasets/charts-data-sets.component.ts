@@ -11,6 +11,7 @@ import {ChartData} from '../../models/chart.model';
   styleUrls: ['./charts-data-sets.component.scss']
 })
 export class ChartsDataSetsComponent implements OnDestroy, AfterViewInit, OnChanges {
+  @Input() extraId: string;
   @Input() datasets: ChartData;
   @Input() datasetLabel: string;
   @Input() storageName: string;

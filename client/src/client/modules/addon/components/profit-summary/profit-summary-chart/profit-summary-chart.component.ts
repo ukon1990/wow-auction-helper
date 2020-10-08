@@ -28,7 +28,7 @@ export class ProfitSummaryChartComponent implements OnInit, OnChanges, OnDestroy
       (data: TSMCSV) =>
         this.handleDataChange(data));
     this.sm.add(
-      this.service.events.list,
+      this.service.list,
       () => this.handleRealmChange(this.realm)
     );
   }

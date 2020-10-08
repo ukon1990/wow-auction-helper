@@ -15,7 +15,9 @@ describe('ItemReset', () => {
   });
 
   it('setBreakPoints', () => {
-    const item = new ItemReset(SharedService.auctionItems[10]);
+    const auctionItem = new AuctionItem(10);
+    auctionItem.auctions = [];
+    const item = new ItemReset(auctionItem);
     expect(item.breakPoints.length).toBe(2);
   });
 });

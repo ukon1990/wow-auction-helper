@@ -21,6 +21,7 @@ import {NumberUtil} from '../../../util/utils/number.util';
 })
 export class ResetCalcComponent implements OnInit, OnDestroy {
   @Input() auctionItem: AuctionItem;
+  @Input() dialogId:  string;
   pipe: GoldPipe = new GoldPipe();
   form: FormControl = new FormControl(0);
   resetPrice = {
@@ -41,19 +42,19 @@ export class ResetCalcComponent implements OnInit, OnDestroy {
     {key: 'newBuyout', title: 'New buyout', dataType: 'gold'},
     {key: 'avgBuyout', title: 'Avg cost/item', dataType: 'gold'},
     {key: 'sumBuyout', title: 'Total cost', dataType: 'gold'},
-    {key: 'sellTime', title: 'Sell time(maybe)', dataType: 'number'},
+    {key: 'sellTime', title: 'Est days to sell', dataType: 'number'},
   ];
 
   constructor() {
     this.formChanges = this.form.valueChanges.subscribe(() => {
-      // this.calculate();
       Report.send('Calculated', 'Reset calc');
     });
   }
 
   ngOnInit(): void {
     if (this.auctionItem) {
-      this.form.setValue(this.auctionItem.mktPrice * 1.5 / 10000);
+      const baseValue = this.auctionItem.buyout || this.auctionItem.mktPrice;
+      this.form.setValue((baseValue) * 1.5 / 10000);
     }
   }
 
