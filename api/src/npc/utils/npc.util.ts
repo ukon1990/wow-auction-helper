@@ -1,14 +1,14 @@
-import {HttpClientUtil} from './http-client.util';
-import {languages} from '../static-data/language.data';
-import {Language} from '../models/language.model';
-import {ItemLocale} from '../models/item/item-locale';
-import {WoWHeadUtil} from './wowhead.util';
-import {RDSQueryUtil} from './query.util';
-import {DatabaseUtil} from './database.util';
-import {LocaleUtil} from './locale.util';
+import {HttpClientUtil} from '../../utils/http-client.util';
+import {languages} from '../../static-data/language.data';
+import {Language} from '../../models/language.model';
+import {ItemLocale} from '../../models/item/item-locale';
+import {WoWHeadUtil} from '../../utils/wowhead.util';
+import {RDSQueryUtil} from '../../utils/query.util';
+import {DatabaseUtil} from '../../utils/database.util';
+import {LocaleUtil} from '../../utils/locale.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {ItemHandler} from '../handlers/item.handler';
-import {ZoneUtil} from './zone.util';
+import {ItemHandler} from '../../handlers/item.handler';
+import {ZoneUtil} from '../../utils/zone.util';
 
 const PromiseThrottle: any = require('promise-throttle');
 

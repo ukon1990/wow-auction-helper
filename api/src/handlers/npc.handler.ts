@@ -1,4 +1,4 @@
-import {DroppedItem, NPC, NPCUtil, VendorItem} from '../utils/npc.util';
+import {DroppedItem, NPC, NPCUtil, VendorItem} from '../npc/utils/npc.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {ItemLocale} from '../models/item/item-locale';
 import {ApiResponse} from '../models/api-response.model';

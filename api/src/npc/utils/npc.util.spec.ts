@@ -1,5 +1,5 @@
 import {NPC, NPCUtil} from './npc.util';
-import {environment} from '../../../client/src/environments/environment';
+import {environment} from '../../../../client/src/environments/environment';
 
 describe('NPCUtil', () => {
   beforeEach(() => {
