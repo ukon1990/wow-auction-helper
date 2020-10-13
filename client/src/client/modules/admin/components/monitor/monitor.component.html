@@ -41,18 +41,19 @@
 </div>
 
 <wah-data-table
-  filterParameter="info"
-  [columns]="columns"
-  [data]="processes"
+        filterParameter="info"
+        [columns]="columns"
+        [data]="processes"
 ></wah-data-table>
 
 <wah-data-table
-  filterParameter="info"
-  [columns]="processHistoryColumns"
-  [data]="processHistory"
+        filterParameter="info"
+        [columns]="processHistoryColumns"
+        [data]="processHistory"
 ></wah-data-table>
 
 <wah-data-table
-  [columns]="sizeColumns"
-  [data]="size"
+        filterParameter="name"
+        [columns]="sizeColumns"
+        [data]="size"
 ></wah-data-table>
