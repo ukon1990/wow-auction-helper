@@ -12,7 +12,7 @@ export abstract class Repository<T> {
 
     abstract getAllAfter(timestamp: number, locale: string, db: DatabaseUtil): Promise<T[]>;
 
-    abstract insert(data: T): Promise<T>;
+    abstract insert(data: T): Promise<any>;
 
     abstract update(data: T): Promise<T>;
 
