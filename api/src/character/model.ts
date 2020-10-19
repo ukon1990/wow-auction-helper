@@ -12,9 +12,10 @@ export class Character {
   achievementPoints: number;
   totalHonorableKills: number;
   media: {
-    bustUrl: string;
-    avatarUrl: string;
-    renderUrl: string;
+    avatar?: string;
+    inset?: string;
+    main?: string;
+    'main-raw'?: string;
   };
   calcClass: string;
   faction: number; // 0 = ally, 1 = horde

@@ -3,6 +3,7 @@ import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {CharacterUtil} from './util';
+import {CharacterGameDataMedia} from '../models/character/character-game-data.model';
 
 export class CharacterService {
   static get(region: string, realm: string, name: string, locale: string): Promise<Character> {
@@ -98,11 +99,17 @@ export class CharacterService {
       new HttpClientUtil().get(
         this.getUrl(realm, name, locale, region, 'character-media'))
         .then(({body}) => {
+          const media: CharacterGameDataMedia = body;
+
           character.media = {
-            renderUrl: body.render_url,
-            avatarUrl: body.avatar_url,
-            bustUrl: body.bust_url
           };
+
+          if (media.assets) {
+            media.assets.forEach(asset => {
+              character.media[asset.key] = asset.value;
+            });
+          }
+
           resolve();
         })
         .catch(reject);

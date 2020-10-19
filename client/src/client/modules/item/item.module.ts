@@ -28,6 +28,7 @@ import { ItemPriceHistoryComponent } from './components/item-price-history/item-
 import {CraftingModule} from '../crafting/crafting.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {CoreModule} from '../core/core.module';
+import {HighchartsChartModule} from 'highcharts-angular';
 
 
 @NgModule({
@@ -62,10 +63,12 @@ import {CoreModule} from '../core/core.module';
     MatProgressSpinnerModule,
     CraftingModule,
     MatDialogModule,
-    CoreModule
+    CoreModule,
+    HighchartsChartModule
   ],
   exports: [
-    ItemComponent
+    ItemComponent,
+    ItemPriceHistoryComponent
   ]
 })
 export class ItemModule {

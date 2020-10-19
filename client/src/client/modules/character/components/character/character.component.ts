@@ -11,7 +11,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
   templateUrl: './character.component.html',
   styleUrls: ['./character.component.scss']
 })
-export class CharacterComponent implements OnDestroy{
+export class CharacterComponent implements OnDestroy {
   @Input() index: number;
   @Input() character: Character;
   @Input() minimal: boolean;
@@ -31,12 +31,12 @@ export class CharacterComponent implements OnDestroy{
   }
 
   getAvatar(): string {
-    return `url(${this.character.media.avatarUrl})`;
+    return `url(${this.character.media.avatar})`;
   }
 
   getBackgroundImage() {
     if (this.character.media) {
-      return 'url(' + this.character.media.renderUrl + ')';
+      return 'url(' + this.character.media.main + ')';
     }
     return '';
   }

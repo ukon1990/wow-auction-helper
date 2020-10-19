@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import * as Highcharts from 'highcharts';
 import {Item} from '../../../../models/item/item';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
@@ -6,28 +7,90 @@ import {ItemPriceEntry} from '../../models/item-price-entry.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
-import {ChartData} from '../../../util/models/chart.model';
 import {NumberUtil} from '../../../util/utils/number.util';
 import {Report} from '../../../../utils/report.util';
+import {Chart, SeriesOptionsType, XAxisOptions} from 'highcharts';
 
 @Component({
   selector: 'wah-item-price-history',
   templateUrl: './item-price-history.component.html',
   styleUrls: ['./item-price-history.component.scss']
 })
-export class ItemPriceHistoryComponent implements OnChanges {
+export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
   @Input() dialogId: string;
+  Highcharts: typeof Highcharts = Highcharts;
   sm = new SubscriptionManager();
-  priceHistory: {hourly: ItemPriceEntry[], daily: any[]} = {
+  hourlyChart: SeriesOptionsType[] = [
+    {
+      name: 'Quantity',
+      data: [],
+      type: 'line',
+      yAxis: 1,
+      color: 'hsla(0, 100%, 50%, 0.7)',
+    }, {
+      name: 'Prices',
+      data: [],
+      color: 'rgba(0, 255, 22, 0.7)',
+      type: 'line',
+    }
+  ];
+  dailyChart: SeriesOptionsType[] = [
+    {
+      name: 'Price range',
+      data: [],
+      type: 'arearange',
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: 'rgba(0, 255, 22, 0.7)',
+      fillOpacity: 0.3,
+      zIndex: 0,
+      marker: {
+        enabled: false
+      }
+    }, {
+      name: 'Avg price',
+      data: [],
+      type: 'line',
+      zIndex: 1,
+      color: 'rgba(255, 144, 0, 0.8)',
+      marker: {
+        fillColor: 'white',
+        lineWidth: 2,
+        lineColor: 'rgba(255, 144, 0, 0.8)'
+      }
+    }, {
+      name: 'Quantity range',
+      data: [],
+      type: 'arearange',
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: 'hsla(0, 100%, 50%, 0.7)',
+      fillOpacity: 0.3,
+      zIndex: 0,
+      yAxis: 1,
+      marker: {
+        enabled: false
+      }
+    }, {
+      name: 'Quantity avg',
+      data: [],
+      type: 'line',
+      zIndex: 1,
+      yAxis: 1,
+      color: 'rgba(255, 144, 0, 0.8)',
+      marker: {
+        fillColor: 'red',
+        lineWidth: 2,
+        lineColor: 'hsla(0,100%,50%,0.7)'
+      }
+    }
+  ];
+  xAxis: XAxisOptions;
+  priceHistory: { hourly: ItemPriceEntry[], daily: any[] } = {
     hourly: [],
     daily: []
-  };
-  fourteenDayHourByHour: ChartData = {
-    labels: [],
-    datasets: [],
-    labelCallback: this.tooltipCallbackHourly
   };
   fourteenDayByHourTable = {
     columns: [
@@ -35,11 +98,6 @@ export class ItemPriceHistoryComponent implements OnChanges {
       {key: 'min', title: 'Price', dataType: 'gold'}
     ],
     data: []
-  };
-  dateData: ChartData = {
-    labels: [],
-    datasets: [],
-    labelCallback: this.tooltipCallbackDaily
   };
   groupedByDateTable = {
     columns: [
@@ -54,45 +112,47 @@ export class ItemPriceHistoryComponent implements OnChanges {
     data: []
   };
   isLoading = true;
-  private axisLabels = {
-    yAxis1: 'Price',
-    yAxis2: 'Quantity',
-    xAxis: 'Date'
-  };
+  updateDailyChart: any;
+  isInitiated: boolean;
 
   constructor(private service: ItemService) {
   }
 
   ngOnChanges({item, auctionItem}: SimpleChanges) {
-    if (auctionItem && auctionItem.currentValue) {
-      const ai = auctionItem.currentValue;
-      this.resetDailyChartData();
-      this.resetHourlyChart();
-
-      Report.debug(
-        'ItemPriceHistoryComponent',
-        'Item detail view',
-        `Price history tab for ${ai.itemID} - ${ai.name}`);
-      this.isLoading = true;
-      this.service.getPriceHistory(this.item.id, ai.petSpeciesId, ai.bonusIds)
-        .then((history) => {
-          this.priceHistory = history;
-          this.setAuctionAndDataset();
-          this.isLoading = false;
-        })
-        .catch((error) => {
-          this.setAuctionAndDataset();
-          this.isLoading = false;
-          this.priceHistory.daily = [];
-          this.priceHistory.hourly = [];
-          ErrorReport.sendHttpError(error);
-        });
+    if (this.isInitiated && auctionItem && auctionItem.currentValue) {
+      this.loadData(auctionItem.currentValue);
     }
   }
 
+  ngAfterViewInit() {
+    this.loadData();
+    setTimeout(() =>
+        this.isInitiated = true,
+      1000);
+  }
+
+  private loadData(auctionItem: AuctionItem = this.auctionItem) {
+    Report.debug(
+      'ItemPriceHistoryComponent',
+      'Item detail view',
+      `Price history tab for ${auctionItem.itemID} - ${auctionItem.name}`);
+    this.isLoading = true;
+    this.service.getPriceHistory(this.item.id, auctionItem.petSpeciesId, auctionItem.bonusIds)
+      .then((history) => {
+        this.priceHistory = history;
+        this.setAuctionAndDataset();
+        this.isLoading = false;
+      })
+      .catch((error) => {
+        this.setAuctionAndDataset();
+        this.isLoading = false;
+        this.priceHistory.daily = [];
+        this.priceHistory.hourly = [];
+        ErrorReport.sendHttpError(error);
+      });
+  }
+
   private setAuctionAndDataset() {
-    this.resetHourlyChart();
-    this.resetDailyChartData();
     if (this.priceHistory) {
       if (this.priceHistory.hourly && this.priceHistory.hourly.length) {
         this.processHourlyData();
@@ -100,6 +160,7 @@ export class ItemPriceHistoryComponent implements OnChanges {
       if (this.priceHistory.daily && this.priceHistory.daily.length) {
         this.processDailyData();
       }
+      this.updateDailyChart = Math.random();
     }
   }
 
@@ -111,128 +172,53 @@ export class ItemPriceHistoryComponent implements OnChanges {
     });
     this.groupedByDateTable.data.sort((a, b) =>
       b.timestamp - a.timestamp);
+    const format = '%e. %b %y';
+    this.xAxis = {
+      type: 'datetime',
+      labels: {
+        format: '{value}',
+        formatter: ({value}) => Highcharts.dateFormat(format, +value),
+      },
+      title: {
+        text: null
+      }
+    };
   }
 
   private processHourlyData() {
     this.priceHistory.hourly = this.priceHistory.hourly.sort((a, b) =>
       a.timestamp - b.timestamp);
-    const dateMap = {},
-      dates = [];
+    const dates = [];
     this.priceHistory.hourly.forEach((entry) => {
       const date = new Date(entry.timestamp);
-      this.calculateHourlyValues(entry.min / 10000, entry, date);
+      this.calculateHourlyValues(entry.min, entry, date);
     });
     this.populateDailyChartData(dates);
     this.fourteenDayByHourTable.data.sort((a, b) =>
       b.timestamp - a.timestamp);
   }
 
-  private resetHourlyChart() {
-    this.fourteenDayHourByHour.labels.length = 0;
-    this.fourteenDayByHourTable.data.length = 0;
-    this.fourteenDayHourByHour.datasets = [];
-    this.fourteenDayHourByHour.axisLabels = this.axisLabels;
-    this.fourteenDayHourByHour.datasets.push({
-      label: 'Price',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 255, 22, 0.4)'
-    });
-    this.fourteenDayHourByHour.datasets.push({
-      label: 'Quantity',
-      data: [],
-      type: 'line',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
-    });
-  }
-
   private populateDailyChartData(dates: any[]) {
     this.groupedByDateTable.data.length = 0;
-    dates.forEach(date => {
-      this.groupedByDateTable.data.push(date);
-      this.dateData.labels.push(date.date);
-      this.dateData.datasets[0].data.push(date.min);
-      this.dateData.datasets[1].data.push(date.avg);
-      this.dateData.datasets[2].data.push(date.max);
-      this.dateData.datasets[3].data.push(date.minQuantity);
-      this.dateData.datasets[4].data.push(date.avgQuantity);
-      this.dateData.datasets[5].data.push(date.maxQuantity);
-    });
+    this.dailyChart.forEach(series => series['data'].length = 0);
+
+    dates.forEach(date => this.calculateDailyValues(date));
   }
 
   private calculateHourlyValues(minGold: number, entry: ItemPriceEntry, date: Date) {
-    this.fourteenDayHourByHour.datasets[0].data.push(minGold);
-    this.fourteenDayHourByHour.datasets[1].data.push(entry.quantity);
-    this.fourteenDayHourByHour.labels.push(date.toLocaleString());
     this.fourteenDayByHourTable.data.push(entry);
+    this.hourlyChart[0]['data'].push([+date, entry.quantity]);
+    this.hourlyChart[1]['data'].push([+date, minGold]);
   }
 
   private calculateDailyValues(entry) {
-    const date = new Date(entry.timestamp).toLocaleDateString();
-    this.dateData.datasets[0].data.push(entry.min / 10000);
-    this.dateData.datasets[1].data.push(entry.avg / 10000);
-    this.dateData.datasets[2].data.push(entry.max / 10000);
-    this.dateData.datasets[3].data.push(entry.minQuantity);
-    this.dateData.datasets[4].data.push(entry.avgQuantity);
-    this.dateData.datasets[5].data.push(entry.maxQuantity);
-    this.dateData.labels.push(date);
-    this.groupedByDateTable.data.push({
-      ...entry,
-      date
-    });
-  }
+    this.groupedByDateTable.data.push(entry);
 
-  private resetDailyChartData() {
-    this.dateData.labels.length = 0;
-    this.dateData.datasets = [];
-    this.dateData.axisLabels = this.axisLabels;
-    this.dateData.datasets.push({
-      label: 'Min price',
-      data: [],
-      type: 'line',
-      fill: 2,
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 255, 22, 0.4)'
-    });
-    this.dateData.datasets.push({
-      label: 'Avg min price',
-      data: [],
-      type: 'line',
-      fill: 1,
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(255, 144, 0, 0.78)'
-    });
-    this.dateData.datasets.push({
-      label: 'Max min price',
-      data: [],
-      type: 'line',
-      fill: 0,
-      yAxisID: 'yAxes-1',
-      backgroundColor: 'rgba(0, 173, 255, 0.61)'
-    });
-    this.dateData.datasets.push({
-      label: 'Min quantity',
-      data: [],
-      type: 'bar',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(9,100%,50%,0.33)'
-    });
-    this.dateData.datasets.push({
-      label: 'Avg quantity',
-      data: [],
-      type: 'bar',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(0, 100%, 50%, 0.33)'
-    });
-    this.dateData.datasets.push({
-      label: 'Max quantity',
-      data: [],
-      type: 'bar',
-      yAxisID: 'yAxes-2',
-      backgroundColor: 'hsla(0,100%,17%,0.33)'
-    });
+    const date = new Date(entry).toLocaleDateString();
+    this.dailyChart[0]['data'].push([entry.timestamp, entry.min, entry.max]);
+    this.dailyChart[1]['data'].push([entry.timestamp, entry.avg]);
+    this.dailyChart[2]['data'].push([entry.timestamp, entry.minQuantity, entry.maxQuantity]);
+    this.dailyChart[3]['data'].push([entry.timestamp, entry.avgQuantity]);
   }
 
   tooltipCallbackDaily(items, data): string {
@@ -255,5 +241,12 @@ export class ItemPriceHistoryComponent implements OnChanges {
     }
     return dataset.label + ': ' +
       new GoldPipe().transform(data.datasets[datasetIndex].data[index] * 10000);
+  }
+
+  setChartInstance(chart: Chart) {
+    const start = +new Date(+new Date() - 1000 * 60 * 60 * 24 * 90);
+    const end = +new Date();
+    chart.xAxis[0].setExtremes(start, end, true);
+    chart.showResetZoom();
   }
 }

@@ -33,7 +33,7 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
 };
 
 describe('Recipev2Util', () => {
-  xdescribe('Not really tests', () => {
+  describe('Not really tests', () => {
     /*
     xit('"bruteforce" recipes', async () => {
       jest.setTimeout(10000000);
@@ -93,7 +93,7 @@ describe('Recipev2Util', () => {
       await db.query(`
           SELECT data
           FROM recipe
-          WHERE id NOT IN (SELECT id FROM recipes_new);`)
+          WHERE id NOT IN (SELECT id FROM recipes);`)
         .then(async r => {
           const count = r.length;
           let done = 0;
@@ -160,7 +160,7 @@ describe('Recipev2Util', () => {
     });
 
 
-    xit('getAndMapProfessions', async () => {
+    it('getAndMapProfessions', async () => {
       jest.setTimeout(9999999);
       const mapped = await RecipeV2Util.getAndMapProfessions();
       // console.log('mapped', JSON.stringify(mapped));
@@ -171,7 +171,7 @@ describe('Recipev2Util', () => {
       const type = 'Ring',
         query = `
           SELECT recipes.id as id, name.en_GB as recipeName, recipes.type as type, item.en_GB, item.id as itemId
-          FROM recipes_new AS recipes
+          FROM recipes
                    LEFT JOIN recipesName AS name ON name.id = recipes.id
                    LEFT JOIN professionSkillTiers as skillTier ON skillTier.id = recipes.professionSkillTierId
                    LEFT JOIN professions ON professions.id = skillTier.professionId
@@ -188,7 +188,7 @@ describe('Recipev2Util', () => {
           console.log('Num of rows', rows.length);
           for (const row of rows) {
             await conn.query(`
-                UPDATE recipes_new
+                UPDATE recipes
                 SET craftedItemId = ${row.itemId}
                 WHERE id = ${row.id}`);
           }

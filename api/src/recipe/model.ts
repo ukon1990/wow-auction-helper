@@ -4,6 +4,11 @@ export class Reagent {
   isOptional: boolean;
 }
 
+interface ModifiedSlot {
+  id: number;
+  sortOrder: number;
+}
+
 export class Recipe {
   id: number;
   icon: string;
@@ -19,6 +24,7 @@ export class Recipe {
   professionId: number;
   skillTierId: number;
   reagents: Reagent[];
+  modifiedSlots: ModifiedSlot[];
 
   timestamp: number;
 }

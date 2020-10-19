@@ -29,6 +29,7 @@ import {AddNpcsComponent} from './admin/components/add-npcs/add-npcs.component';
 import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/details.component';
 import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
 import {MonitorComponent} from './admin/components/monitor/monitor.component';
+import {TestComponent} from './admin/components/test/test.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -158,8 +159,11 @@ const ADMIN_ROUTE: TitledRoute = {
       title: 'Monitor',
       component: MonitorComponent,
       path: 'monitor'
-    },
-    {
+    }, {
+      title: 'Testing',
+      component: TestComponent,
+      path: 'test',
+    }, {
       title: 'Update and add items',
       component: UpdateComponent,
       path: 'update-or-add'

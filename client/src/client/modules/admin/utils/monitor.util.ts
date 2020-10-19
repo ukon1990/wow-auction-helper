@@ -1,12 +1,9 @@
 import {GlobalStatus} from '../../../../../../api/src/logs/model';
 import {ChartData} from '../../util/models/chart.model';
+import {SeriesOptionsType} from 'highcharts';
 
 export class MonitorUtil {
-  static getDataset(statuses: GlobalStatus[]): ChartData {
-    const labels: string[] = [];
-    const min: number[] = [];
-    const avg: number[] = [];
-    const max: number[] = [];
+  static getDataset(statuses: GlobalStatus[], series: SeriesOptionsType[]): void {
     const map = {};
     const list = [];
     statuses.forEach(status => {
@@ -30,41 +27,12 @@ export class MonitorUtil {
         map[time].avg = (map[time].avg + status.Threads_connected) / 2;
       }
     });
+
+    series.forEach(serie => serie['data'].length = 0);
     list.forEach(status => {
       const time = `${status.timestamp.getUTCHours()}:${status.timestamp.getUTCMinutes()}`;
-      labels.push(time);
-      min.push(status.min);
-      avg.push(status.avg);
-      max.push(status.max);
+      series[0]['data'].push([+status.timestamp, status.min, status.max]);
+      series[1]['data'].push([+status.timestamp, status.avg]);
     });
-
-    return {
-      labels,
-      axisLabels: {
-        yAxis1: 'Connections',
-      },
-      datasets: [{
-        label: 'Min',
-        data: min,
-        type: 'line',
-        fill: 2,
-        yAxisID: 'yAxes-1',
-        backgroundColor: 'rgba(0, 255, 22, 0.4)'
-      }, {
-        label: 'Avg',
-        data: avg,
-        type: 'line',
-        fill: 1,
-        yAxisID: 'yAxes-1',
-        backgroundColor: 'rgba(255, 144, 0, 0.78)'
-      }, {
-        label: 'Max',
-        data: max,
-        type: 'line',
-        fill: 0,
-        yAxisID: 'yAxes-1',
-        backgroundColor: 'rgba(0, 173, 255, 0.61)'
-      }]
-    };
   }
 }

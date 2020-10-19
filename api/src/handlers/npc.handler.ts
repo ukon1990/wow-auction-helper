@@ -51,10 +51,10 @@ export class NpcHandler {
     });
   }
 
-  static addNPCIfMissing(ids: number[]): Promise<NPC[]> {
+  static addNPCIfMissing(ids: number[], db: DatabaseUtil = new DatabaseUtil()): Promise<NPC[]> {
 
     return new Promise<NPC[]>(async (resolve, reject) => {
-      await new DatabaseUtil().query(`SELECT id FROM npc WHERE id not in (${ids.join(',')})`)
+      await db.query(`SELECT id FROM npc WHERE id not in (${ids.join(',')})`)
         .then(async (newIds: number[]) => {
           let result = [];
           if (newIds && newIds.length) {

@@ -36,7 +36,7 @@ export class ItemUtil {
     return item;
   }
 
-  static getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Item> {
+  static getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'us'): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints()

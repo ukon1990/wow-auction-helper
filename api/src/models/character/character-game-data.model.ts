@@ -102,17 +102,26 @@ export interface Encounters {
 }
 
 export interface CharacterGameDataMedia {
-  href: string;
-
+  _links: {
+    self: {
+      href: string;
+    };
+  };
   character: {
     key: Key;
     name: string;
     id: number;
-    realm: Realm;
+    realm: {
+      key: Key;
+      name: string;
+      id: number;
+      slug: string;
+    };
   };
-  avatar_url: string;
-  bust_url: string;
-  render_url: string;
+  assets: {
+    key: string;
+    value: string;
+  }[];
 }
 
 export interface Specializations {
