@@ -15,4 +15,10 @@ export class ProfessionService {
         .catch(reject);
     });
   }
+
+  getAllFromAPI(): Promise<ProfessionAPIResponse> {
+    return new Promise<ProfessionAPIResponse>((resolve, reject) => {
+      resolve();
+    });
+  }
 }

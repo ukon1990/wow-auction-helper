@@ -88,12 +88,12 @@ export class ItemHandler {
   }
 
   /* istanbul ignore next */
-  async addItem(id: number, locale: string): Promise<Item> {
+  async addItem(id: number, locale: string, db: DatabaseUtil = new DatabaseUtil(false)): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await this.getFreshItem(id, locale)
         .then(async item => {
 
-          await QueryIntegrity.getVerified('items', item)
+          await QueryIntegrity.getVerified('items', item, db)
             .then((friendlyItem) => {
               if (!friendlyItem) {
                 console.log(`Failed to add item: ${id} did not match the model`);
@@ -103,15 +103,15 @@ export class ItemHandler {
 
               const query = new RDSQueryUtil('items').insert(friendlyItem);
               console.log('Insert item SQL:', query);
-              new DatabaseUtil()
-                .query(query)
+              db.query(query)
                 .then(async itemSuccess => {
                   resolve(item);
                   console.log(`Successfully added ${friendlyItem.name} (${id})`);
                   await LocaleUtil.insertToDB(
                     'item_name_locale',
                     'id',
-                    item.nameLocales)
+                    item.nameLocales,
+                    db)
                     .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
                     .catch(console.error);
                   const map = {};

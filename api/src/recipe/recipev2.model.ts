@@ -14,6 +14,7 @@ export interface Recipev2 {
     media: {
         id: number;
         key: Key
+        icon: string;
     };
     reagents: {
         reagent: {
@@ -32,4 +33,11 @@ export interface Recipev2 {
         maximum: number;
         minimum: number;
     };
+    modified_crafting_slots: {
+        slot_type: {
+            key: Key;
+            id: number;
+        },
+        display_order: number;
+    }[];
 }

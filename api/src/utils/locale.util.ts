@@ -39,8 +39,8 @@ export class LocaleUtil {
   }
 
   /* istanbul ignore next */
-  public static async insertToDB(tableName: string, idName: string, data: ItemLocale) {
-    return await new DatabaseUtil()
+  public static async insertToDB(tableName: string, idName: string, data: ItemLocale, db: DatabaseUtil = new DatabaseUtil()) {
+    return await db
       .query(LocaleQuery.insert(tableName, idName, data))
       .then(result => {}) // console.log(`Locale added to db for ${data.en_GB}`)
       .catch(error =>
