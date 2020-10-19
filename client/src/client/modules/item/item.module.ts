@@ -67,7 +67,8 @@ import {HighchartsChartModule} from 'highcharts-angular';
     HighchartsChartModule
   ],
   exports: [
-    ItemComponent
+    ItemComponent,
+    ItemPriceHistoryComponent
   ]
 })
 export class ItemModule {

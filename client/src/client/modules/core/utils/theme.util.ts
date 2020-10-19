@@ -1,8 +1,14 @@
 import {Theme} from '../models/theme.model';
+import * as hc from 'highcharts';
+import {EventEmitter} from '@angular/core';
+import {Options} from 'highcharts';
+import {BehaviorSubject} from 'rxjs';
 
 export class ThemeUtil {
+  static chartThemeChange: BehaviorSubject<Options> = new BehaviorSubject<Options>(null);
+
   private static pinkAndBlue: Theme = new Theme(
-    '',
+    'pink-blue',
     'Pink & blue',
     '#3f51b5',
     '#ff4081',
@@ -56,6 +62,7 @@ export class ThemeUtil {
 
     this.update(theme);
     this.setBodyClass(this.current);
+    this.setChartTheme(this.current);
   }
 
   private static getFromLocalStorage(): Theme {
@@ -65,7 +72,9 @@ export class ThemeUtil {
     const current = new Theme('', '', '', '', undefined, false);
     this.update(
       theme ? theme[0] : ThemeUtil.unicornDarkBlue, current);
+
     this.setBodyClass(current);
+    this.setChartTheme(current);
     return current;
   }
 
@@ -81,5 +90,39 @@ export class ThemeUtil {
         .forEach(key => current[key] = theme[key]);
     } catch (e) {
     }
+  }
+
+  private static setChartTheme(current: Theme) {
+    const chartTheme: Options = {
+      chart: {
+        backgroundColor: 'transparent',
+      },
+      title: {
+        style: {
+          color: current.primaryColorCode,
+          font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
+        }
+      },
+      subtitle: {
+        style: {
+          color: current.accentColorCode,
+          font: 'bold 12px "Trebuchet MS", Verdana, sans-serif'
+        }
+      },
+      legend: {
+        backgroundColor: current.isDark ?
+          'hsla(0,0%,100%,0.8)' :
+          'hsla(0,0%,40%,0.8)',
+        itemStyle: {
+          font: '9pt Trebuchet MS, Verdana, sans-serif',
+          color: current.primaryColorCode
+        },
+        itemHoverStyle: {
+          color: current.accentColorCode
+        }
+      }
+    };
+
+    this.chartThemeChange.next(chartTheme);
   }
 }

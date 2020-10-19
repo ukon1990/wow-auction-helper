@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
 import {GlobalStatus, SQLProcess, TableSize} from '../../../../../../../api/src/logs/model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -6,7 +6,7 @@ import {interval, Observable} from 'rxjs';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {MonitorUtil} from '../../utils/monitor.util';
-import {ChartData} from '../../../util/models/chart.model';
+import {SeriesOptionsType, YAxisOptions} from 'highcharts';
 
 @Component({
   selector: 'wah-monitor',
@@ -53,7 +53,39 @@ export class MonitorComponent implements OnDestroy {
   private globalStatusInterval: Observable<number> = interval(2500);
 
   sm = new SubscriptionManager();
-  datasets: ChartData;
+  series: SeriesOptionsType[] = [{
+    name: 'Connections range',
+    data: [],
+    type: 'arearange',
+    lineWidth: 0,
+    linkedTo: ':previous',
+    color: 'rgba(0, 255, 22, 0.4)',
+    fillOpacity: 0.3,
+    zIndex: 0,
+    marker: {
+      enabled: false
+    }
+  }, {
+    name: 'Avg connections',
+    data: [],
+    type: 'line',
+    zIndex: 1,
+    marker: {
+      fillColor: 'white',
+      lineWidth: 2,
+      lineColor: 'rgba(255, 144, 0, 0.78)'
+    }
+  }];
+  updatedChart: boolean;
+
+  yAxis: YAxisOptions[] = [
+    { // Primary yAxis
+      type: 'logarithmic',
+      title: {
+        text: 'Connections',
+      }
+    }
+  ];
 
   constructor(private service: AdminService) {
     this.getSize();
@@ -121,7 +153,8 @@ export class MonitorComponent implements OnDestroy {
           ...status,
           timestamp: new Date()
         });
-        this.datasets = MonitorUtil.getDataset(this.globalStatuses);
+        MonitorUtil.getDataset(this.globalStatuses, this.series);
+        this.updatedChart = true;
       })
       .catch(console.error);
   }

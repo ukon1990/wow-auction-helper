@@ -57,7 +57,6 @@ export class DashboardCalculateUtil {
       droppedById: this.getIdParameterForName(board, 'dropped'),
       zoneId: this.getIdParameterForName(board, 'zone')
     };
-    Report.debug('Paths are', paths);
 
     try {
       const dataMap = new Map<string, any>();

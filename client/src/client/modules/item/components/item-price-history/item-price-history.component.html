@@ -1,20 +1,15 @@
-<ng-container *ngIf="!isLoading ; else loadingTemplate">
+<ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
   <h5>Prices grouped by hour the past 14 days</h5>
 
   <mat-tab-group>
     <mat-tab label="Chart">
-
-      <highcharts-chart
-              [Highcharts]="Highcharts"
-              [options]="chartOptions"
+      <wah-highcharts
+              title="Hourly prices and quantity for the past 14 days"
+              [series]="hourlyChart"
               [(update)]="updateDailyChart"
+      >
+      </wah-highcharts>
 
-              style="width: 100%; height: 400px; display: block;"
-      ></highcharts-chart><!--
-      <wah-charts-data-sets
-              [storageName]="'item-price-history-chart-' + dialogId"
-              [datasets]="fourteenDayHourByHour">
-      </wah-charts-data-sets>-->
     </mat-tab>
     <mat-tab label="Table">
       <wah-data-table
@@ -27,10 +22,14 @@
   <h5>Prices grouped by day</h5>
   <mat-tab-group>
     <mat-tab label="Chart">
-      <wah-charts-data-sets
-              [storageName]="'item-price-daily-history-chart-' + dialogId"
-              [datasets]="dateData">
-      </wah-charts-data-sets>
+      <wah-highcharts
+        title="Daily prices and quantity"
+        [series]="dailyChart"
+        [(update)]="updateDailyChart"
+        [xAxis]="xAxis"
+        (chartInstance)="setChartInstance($event)"
+      >
+      </wah-highcharts>
     </mat-tab>
     <mat-tab label="Table">
       <wah-data-table
