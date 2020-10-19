@@ -144,9 +144,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     character.name = this.form.value.name;
     character.realm = SharedService.realms[this.form.value.realm].name;
     character.media = {
-      renderUrl: '',
-      avatarUrl: '',
-      bustUrl: '',
+      main: '',
+      avatar: '',
+      inset: '',
     };
     character.level = 0;
 
