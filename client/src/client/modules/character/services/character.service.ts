@@ -202,7 +202,7 @@ export class CharacterService {
       const region = SharedService.user.region;
       this.getCharacter(
         character.name,
-        UserUtil.slugifyString(character.realm),
+        character.slug,
         region
       ).then(async c => {
         if (c && !c.error && SharedService.user && SharedService.user.characters) {
