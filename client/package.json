@@ -1,6 +1,6 @@
 {
   "name": "wah",
-  "version": "3.20.1",
+  "version": "3.21.0",
   "license": "MIT",
   "main": "handler.js",
   "scripts": {
@@ -43,6 +43,8 @@
     "distinct-colors": "^1.0.4",
     "file-saver": "^2.0.2",
     "logrocket": "^1.0.12",
+    "highcharts": "^8.2.0",
+    "highcharts-angular": "^2.8.0",
     "luaparse": "^0.2.1",
     "push.js": "^1.0.12",
     "rxjs": "^6.5.5",

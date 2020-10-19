@@ -33,10 +33,13 @@
   </div>
 
   <div class="col-md-9">
-    <wah-charts-data-sets *ngIf="datasets"
-                          storageName="connection-status"
-                          [datasets]="datasets"
-    ></wah-charts-data-sets>
+    <wah-highcharts
+            title="Hourly prices and quantity for the past 14 days"
+            [series]="series"
+            [yAxis]="yAxis"
+            [(update)]="updatedChart"
+    >
+    </wah-highcharts>
   </div>
 </div>
 
