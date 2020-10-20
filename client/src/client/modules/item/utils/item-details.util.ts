@@ -20,8 +20,10 @@ export class ItemDetailsUtil {
     } else if (item.id && item.bonusIds) {
       Report.debug('selected id + bonusIds');
       const id = item.id + AuctionItemStat.bonusIdRaw(item.bonusIds, false);
-      const auctionItem: AuctionItem = auctions.get(id);
-      return this.handleAuctionItem(auctionItem);
+      const auctionItem: AuctionItem = auctions.get(id) || auctions.get(item.id + '');
+      if (auctionItem) {
+        return this.handleAuctionItem(auctionItem);
+      }
     } else if (item.itemID) {
       Report.debug('selected itemID', item.itemID, auctions.get('' + item.itemID));
       return this.handleItemWithItemID(item, auctions);
@@ -32,6 +34,7 @@ export class ItemDetailsUtil {
       Report.debug('selected speciesId');
       return this.handlePet(item, auctions);
     }
+    return undefined;
   }
 
   private static handleAuctionItem(item: any): ItemSelection {

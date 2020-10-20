@@ -317,6 +317,7 @@ export class DashboardCalculateUtil {
     const obj = {
       id: item.itemID,
       bonusIds: item.bonusIds,
+      modifiers: item.modifiers,
       petSpeciesId: item.petSpeciesId,
       recipeId: paths.recipeId && +this.getValue(item, paths.recipeId),
       soldById: paths.soldById && +this.getValue(item, paths.soldById),

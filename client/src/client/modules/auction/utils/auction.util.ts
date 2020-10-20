@@ -47,14 +47,27 @@ export class AuctionUtil {
   private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[]) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
+    const idMap: Map<number, boolean> = new Map<number, boolean>();
+    /*
     TsmService.list.value.forEach(tsm => {
       const auction = new Auction();
       auction.item = +tsm.Id;
       this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
     });
+    */
 
-    auctions.forEach((a: Auction) =>
-      this.processAuction(a, map, list));
+    auctions.forEach((a: Auction) => {
+      this.processAuction(a, map, list);
+      idMap.set(a.item, true);
+    });
+
+    TsmService.list.value.forEach(tsm => {
+      if (!idMap.has(tsm.Id)) {
+        const auction = new Auction();
+        auction.item = +tsm.Id;
+        this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
+      }
+    });
 
     list.forEach(ai => {
       ai.auctions = ai.auctions.sort((a, b) => {
@@ -65,6 +78,7 @@ export class AuctionUtil {
         ai.buyout = lowest.buyout / lowest.quantity;
       }
     });
+
     return map;
   }
 
@@ -285,6 +299,7 @@ export class AuctionUtil {
   private static handleBonusIds(auction: Auction, tmpAuc: AuctionItem) {
     if (auction.bonusLists) {
       tmpAuc.bonusIds = auction.bonusLists.map(b => b.bonusListId);
+      tmpAuc.modifiers = auction.modifiers;
 
       tmpAuc.bonusIds.forEach(b => {
         const bonus = SharedService.bonusIdMap[b];

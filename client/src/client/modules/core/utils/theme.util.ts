@@ -12,6 +12,8 @@ export class ThemeUtil {
     'Pink & blue',
     '#3f51b5',
     '#ff4081',
+    '#f44336',
+    '#fff',
     undefined,
     false
   );
@@ -20,6 +22,8 @@ export class ThemeUtil {
     'Dark yellow',
     '#607d8b',
     '#ffd740',
+    '#ff5722',
+    '#424242',
     'table-dark',
     true
   );
@@ -28,6 +32,8 @@ export class ThemeUtil {
     'Dark blue',
     '#607d8b',
     '#40c4ff',
+    '#f44336',
+    '#424242',
     'table-dark',
     true
   );
@@ -36,6 +42,8 @@ export class ThemeUtil {
     'Dark pink',
     '#e91e63',
     '#eeeeee',
+    '#f44336',
+    '#424242',
     'table-dark',
     true
   );
@@ -69,7 +77,7 @@ export class ThemeUtil {
     const className = localStorage.getItem('theme');
     const theme = this.list.filter(t =>
       t.className === className);
-    const current = new Theme('', '', '', '', undefined, false);
+    const current = new Theme('', '', '', '', '','', undefined, false);
     this.update(
       theme ? theme[0] : ThemeUtil.unicornDarkBlue, current);
 
@@ -110,15 +118,21 @@ export class ThemeUtil {
         }
       },
       legend: {
-        backgroundColor: current.isDark ?
-          'hsla(0,0%,100%,0.8)' :
-          'hsla(0,0%,40%,0.8)',
+        backgroundColor: current.backgroundColor,
+        borderColor: current.primaryColorCode,
         itemStyle: {
           font: '9pt Trebuchet MS, Verdana, sans-serif',
-          color: current.primaryColorCode
+          color: current.accentColorCode
         },
         itemHoverStyle: {
           color: current.accentColorCode
+        }
+      },
+      tooltip: {
+        backgroundColor: current.backgroundColor,
+        borderColor: current.primaryColorCode,
+        style: {
+          color: current.accentColorCode,
         }
       }
     };
