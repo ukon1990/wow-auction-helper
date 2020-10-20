@@ -55,7 +55,7 @@ interface Bonus {
   bonusListId: number;
 }
 
-interface Modifiers {
+export interface Modifiers {
   type: number;
   value: number;
 }

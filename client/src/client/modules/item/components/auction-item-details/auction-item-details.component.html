@@ -1,69 +1,157 @@
-<strong>Lowest buyout per item:</strong> {{ item.buyout | gold }}
-<span *ngIf="!item.petSpeciesId">({{ item.buyout / item.mktPrice | percent }}
-  MV)</span>
-<br>
-<strong>Market value:</strong> {{ item.mktPrice | gold }}
-<br>
-<strong>Vendor value:</strong> {{ item.vendorSell | gold }}
-<br>
-<strong>Stock:</strong> {{ item.quantityTotal | number }} pcs
-<br>
-<div *ngIf="!item.petSpeciesId" class="clearfix">
-  <strong>Avg daily sold:</strong> {{ item.avgDailySold | number }}
-  <br>
-  <strong>Avg sale price:</strong> {{ item.regionSaleAvg | gold }}
-  <br>
-</div>
-<mat-card class="mt-3 mb-3"
-          *ngIf="item.regionSaleRate !== undefined || item?.hasPersonalSaleRate">
-  <mat-card-header>
-    <mat-card-subtitle>
-      Sale rate
-    </mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
-    <div *ngIf="item.regionSaleRate !== undefined">
-      <strong>Regional sale rate: </strong>
-      {{ item.regionSaleRate | percent }}
+<mat-list dense class="horizontal-item-list">
+  <mat-list-item *ngIf="baseItem">
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Expansion
     </div>
-
-    <ng-container *ngIf="item?.hasPersonalSaleRate && item?.totalSaleRate; else noPersonalSaleDataTemplate">
-      <ng-container *ngIf="item.past24HoursSaleRate">
-        <strong>Last 24 hours: </strong> {{ item.past24HoursSaleRate | percent }}<br>
-      </ng-container>
-      <ng-container *ngIf="item.past7DaysSaleRate">
-        <strong>Last 7 days: </strong> {{ (item.past7DaysSaleRate | percent)  || ''}}<br>
-      </ng-container>
-      <ng-container *ngIf="item.past14DaysSaleRate">
-        <strong>Last 14 days: </strong> {{ item.past14DaysSaleRate | percent }}<br>
-      </ng-container>
-      <ng-container *ngIf="item.past30DaysSaleRate">
-        <strong>Last 30 days: </strong> {{ item.past30DaysSaleRate | percent }}<br>
-      </ng-container>
-      <ng-container *ngIf="item.past60DaysSaleRate">
-        <strong>Last 60 days: </strong> {{ item.past60DaysSaleRate | percent }}<br>
-      </ng-container>
-      <ng-container *ngIf="item.past90DaysSaleRate">
-        <strong>Last 90 days: </strong> {{ item.past90DaysSaleRate | percent }}<br>
-      </ng-container>
-      <ng-container *ngIf="item.totalSaleRate">
-        <strong>Overall: </strong> {{ item.totalSaleRate | percent }}
-      </ng-container>
+    <div mat-line>
+      {{ expansions[baseItem?.expansionId] }}
+    </div>
+  </mat-list-item>
+  <ng-container *ngIf="item">
+    <mat-list-item *ngIf="bonuses">
+      <div mat-line [style]="{color: theme.accentColorCode}">
+        Bonuses
+      </div>
+      <div mat-line>
+        {{ bonuses }}
+      </div>
+    </mat-list-item>
+    <mat-list-item *ngIf="item.modifiers && item.modifiers.length">
+      <div mat-line [style]="{color: theme.accentColorCode}">
+        Modifiers Ids
+      </div>
+      <div mat-line>
+        {{ item.modifiers | json}}
+      </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line [style]="{color: theme.accentColorCode}">
+        Lowest buyout per item
+      </div>
+      <div mat-line>
+        {{ item.buyout | gold }}
+        <span *ngIf="!item.petSpeciesId">
+        (
+          {{ item.buyout / item.mktPrice | percent }}
+          MV)
+      </span>
+      </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line [style]="{color: theme.accentColorCode}">
+        Market value
+      </div>
+      <div mat-line>
+        {{ item.mktPrice | gold }}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line [style]="{color: theme.accentColorCode}">
+        Vendor value
+      </div>
+      <div mat-line>{{ item.vendorSell | gold }}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line [style]="{color: theme.accentColorCode}"
+      >Stock
+      </div>
+      <div mat-line>{{ item.quantityTotal | number }} pcs</div>
+    </mat-list-item>
+    <ng-container *ngIf="!item.petSpeciesId">
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}"
+        >Avg daily sold
+        </div>
+        <div mat-line>{{ item.avgDailySold | number }} pcs</div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Avg sale price
+        </div>
+        <div mat-line>{{ item.regionSaleAvg | gold }}</div>
+      </mat-list-item>
     </ng-container>
-    <ng-template #noPersonalSaleDataTemplate>
-      You have no personal sale data for this item.
-    </ng-template>
-    <br/>
+
+    <ng-container *ngIf="item.regionSaleRate !== undefined || item?.hasPersonalSaleRate">
+      <mat-list-item *ngIf="item.regionSaleRate !== undefined">
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Regional sale rate
+        </div>
+        <div mat-line>
+          {{ item.regionSaleRate | percent }}
+        </div>
+      </mat-list-item>
+
+      <ng-container *ngIf="item?.hasPersonalSaleRate && item?.totalSaleRate; else noPersonalSaleDataTemplate">
+        <mat-list-item *ngIf="item.past24HoursSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Last 24 hours
+          </div>
+          <div mat-line>
+            {{ item.past24HoursSaleRate | percent }}
+          </div>
+        </mat-list-item>
+        <mat-list-item *ngIf="item.past7DaysSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Last 7 days
+          </div>
+          <div mat-line>
+            {{ item.past7DaysSaleRate | percent }}
+          </div>
+        </mat-list-item>
+        <mat-list-item *ngIf="item.past14DaysSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Last 14 days
+          </div>
+          <div mat-line>
+            {{ item.past14DaysSaleRate | percent }}
+          </div>
+        </mat-list-item>
+        <mat-list-item *ngIf="item.past30DaysSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Last 30 days
+          </div>
+          <div mat-line>
+            {{ item.past30DaysSaleRate | percent }}
+          </div>
+        </mat-list-item>
+        <mat-list-item *ngIf="item.past60DaysSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Last 60 days
+          </div>
+          <div mat-line>
+            {{ item.past60DaysSaleRate | percent }}
+          </div>
+        </mat-list-item>
+        <mat-list-item *ngIf="item.past90DaysSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Last 90 days
+          </div>
+          <div mat-line>
+            {{ item.past90DaysSaleRate | percent }}
+          </div>
+        </mat-list-item>
+        <mat-list-item *ngIf="item.totalSaleRate">
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Overall
+          </div>
+          <div mat-line>
+            {{ item.totalSaleRate | percent }}
+          </div>
+        </mat-list-item>
+      </ng-container>
+      <ng-template #noPersonalSaleDataTemplate>
+        <mat-list-item>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Personal sale rate
+          </div>
+          <div mat-line>
+            You have no personal sale data for this item.
+          </div>
+        </mat-list-item>
+      </ng-template>
+    </ng-container>
+  </ng-container>
+  <mat-list-item>
     <wah-addon-import [minimal]="true"></wah-addon-import>
-  </mat-card-content>
-</mat-card>
-
-<wah-auctions-chart *ngIf="item.auctions.length > 1; else notEnoughAvailableTemplate"
-                    [dialogId]="dialogId"
-                    [auctions]="item.auctions">
-</wah-auctions-chart>
-
-<ng-template #notEnoughAvailableTemplate>
-  There are not enough auctions up for this item, to display the chart ({{ item?.auctions?.length | number }})
-</ng-template>
+  </mat-list-item>
+</mat-list>

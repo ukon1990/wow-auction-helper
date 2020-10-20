@@ -1,0 +1,22 @@
+<mat-tab-group
+        [selectedIndex]="selectedTabIndex"
+        (selectedIndexChange)="setTab($event)"
+>
+ <mat-tab label="Chart">
+   <ng-container *ngIf="selectedTabIndex === 0">
+     <wah-auctions-chart *ngIf="item.auctions.length > 1; else notEnoughAvailableTemplate"
+                         [auctions]="item.auctions">
+     </wah-auctions-chart>
+
+     <ng-template #notEnoughAvailableTemplate>
+       There are not enough auctions up for this item, to display the chart ({{ item?.auctions?.length | number }})
+     </ng-template>
+   </ng-container>
+ </mat-tab>
+  <mat-tab label="Table">
+    <wah-data-table [columns]="columns"
+                    [data]="item?.auctions"
+                    [numOfRows]="20">
+    </wah-data-table>
+  </mat-tab>
+</mat-tab-group>

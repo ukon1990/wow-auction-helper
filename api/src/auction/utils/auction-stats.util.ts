@@ -1,12 +1,141 @@
-import {ItemStats} from '../models/item-stats.model';
+import {ItemStats, Stat} from '../models/item-stats.model';
 import {AuctionProcessorUtil} from './auction-processor.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
+import {ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 export class AuctionStatsUtil {
   static processDays(rows: AuctionItemStat[]): ItemStats[] {
-    const hours = AuctionProcessorUtil.processHourlyPriceData(rows);
-    // rows.forEac
+    const map = new Map<string, ItemPriceEntry[]>(),
+      list: ItemPriceEntry[][] = [],
+      hours = AuctionProcessorUtil.processHourlyPriceData(rows);
+    hours.forEach(hour => {
+      const id = `${hour.itemId}-${hour.bonusIds}-${hour.petSpeciesId}${hour.ahId}`;
+      if (map.has(id)) {
+        const entry: ItemPriceEntry[] = [];
+        map.set(id, entry);
+        list.push(entry);
+      }
+      map.get(id).push({
+        id,
+        ...hour,
+      });
+    });
 
-    return [];
+    return list.map(item => this.processDaysForHourlyPriceData(item));
+  }
+
+  static processDaysForHourlyPriceData(hours: ItemPriceEntry[]): ItemStats {
+    const itemStats = this.getBaseItemStatItem(hours),
+          result = this.getBaseItemStatItem(hours);
+    hours
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .forEach((hour: ItemPriceEntry, index: number, array: ItemPriceEntry[]) => {
+        if (index === 0) {
+          return;
+        }
+        const priceDiff = hour.min - array[index - 1].min,
+          quantityDiff = hour.quantity - array[index - 1].quantity,
+          daysSince: number = DateUtil.timeSince(hour.timestamp, 'd'),
+          hoursSince: number = DateUtil.timeSince(hour.timestamp, 'h');
+        /*
+          Doing it this way, to hopefully save a couple MS in compute in AWS Lambda,
+          if I end up calculating this for whole realms of multiple items at a time.
+         */
+        if (daysSince <= 14) {
+          itemStats.past14Days = this.getEntryValues(itemStats.past14Days, hour, priceDiff, quantityDiff);
+
+          if (daysSince <= 7) {
+            itemStats.past7Days = this.getEntryValues(itemStats.past7Days, hour, priceDiff, quantityDiff);
+
+            if (daysSince <= 1) {
+              itemStats.past24Hours = this.getEntryValues(itemStats.past24Hours, hour, priceDiff, quantityDiff);
+
+              if (hoursSince <= 12) {
+                itemStats.past12Hours = this.getEntryValues(itemStats.past12Hours, hour, priceDiff, quantityDiff);
+              }
+            }
+          }
+        }
+    });
+    this.setResultForPeriod(result.past12Hours, itemStats.past12Hours);
+    this.setResultForPeriod(result.past24Hours, itemStats.past24Hours);
+    this.setResultForPeriod(result.past7Days, itemStats.past7Days);
+    this.setResultForPeriod(result.past14Days, itemStats.past14Days);
+    return result;
+  }
+
+  private static setResultForPeriod(result: Stat, sums: Stat) {
+    const twoDecimals = (number: number) => Math.round((number + Number.EPSILON) * 100) / 100;
+    result.quantity.trend = twoDecimals(sums.quantity.trend / sums.totalEntries);
+    result.quantity.avg = twoDecimals(sums.quantity.avg / sums.totalEntries);
+    result.price.trend = twoDecimals(sums.price.trend / sums.totalEntries);
+    result.price.avg = twoDecimals(sums.price.avg / sums.totalEntries);
+    result.totalEntries = sums.totalEntries;
+  }
+
+  private static getBaseItemStatItem(hours: ItemPriceEntry[]): ItemStats {
+    const statPart = {
+      trend: 0,
+      avg: 0,
+    };
+    return {
+      id: hours[0].id,
+      ahId: hours[0].ahId,
+      itemId: hours[0].itemId,
+      petSpeciesId: hours[0].petSpeciesId,
+      bonusIds: hours[0].bonusIds,
+      past12Hours: {
+        price: {
+          ...statPart,
+        },
+        quantity: {
+          ...statPart,
+        },
+        totalEntries: 0,
+      },
+      past24Hours: {
+        price: {
+          ...statPart,
+        },
+        quantity: {
+          ...statPart,
+        },
+        totalEntries: 0,
+      },
+      past7Days: {
+        price: {
+          ...statPart,
+        },
+        quantity: {
+          ...statPart,
+        },
+        totalEntries: 0,
+      },
+      past14Days: {
+        price: {
+          ...statPart,
+        },
+        quantity: {
+          ...statPart,
+        },
+        totalEntries: 0,
+      },
+    };
+  }
+
+  private static getEntryValues(entry: Stat, hour: ItemPriceEntry, priceDiff: number, quantityDiff: number): Stat {
+    const {price, quantity, totalEntries} = {...entry};
+    return {
+      price: {
+        trend: priceDiff + price.trend,
+        avg: hour.min + price.avg,
+      },
+      quantity: {
+        trend: quantityDiff + quantity.trend,
+        avg: hour.quantity + quantity.avg,
+      },
+      totalEntries: totalEntries + 1,
+    };
   }
 }

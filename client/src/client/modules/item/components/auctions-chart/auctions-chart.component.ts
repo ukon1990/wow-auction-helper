@@ -59,7 +59,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
     this.setAuctionAndDataset();
     setTimeout(() =>
         this.isInitiated = true,
-      1000);
+      500);
   }
 
   ngOnDestroy(): void {
@@ -94,7 +94,6 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
 
     this.series[0]['data'] = quantities;
     this.series[1]['data'] = prices;
-    console.log('Series', this.series);
     this.chartUpdated = true;
   }
 }

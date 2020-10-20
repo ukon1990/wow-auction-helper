@@ -29,6 +29,7 @@ import {CraftingModule} from '../crafting/crafting.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {CoreModule} from '../core/core.module';
 import {HighchartsChartModule} from 'highcharts-angular';
+import { AuctionsComponent } from './components/auctions/auctions.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import {HighchartsChartModule} from 'highcharts-angular';
     DroppedByTabComponent,
     ContainedInTabComponent,
     AuctionsChartComponent,
-    ItemPriceHistoryComponent
+    ItemPriceHistoryComponent,
+    AuctionsComponent
   ],
   imports: [
     CommonModule,

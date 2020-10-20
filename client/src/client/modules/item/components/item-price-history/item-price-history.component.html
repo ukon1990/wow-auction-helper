@@ -1,47 +1,120 @@
-<ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
-  <h5>Prices grouped by hour the past 14 days</h5>
+<ng-container *ngIf="isActiveTab">
+  <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
 
-  <mat-tab-group>
-    <mat-tab label="Chart">
-      <wah-highcharts
-              title="Hourly prices and quantity for the past 14 days"
-              [series]="hourlyChart"
-              [(update)]="updateDailyChart"
-      >
-      </wah-highcharts>
+    <h6>Hourly changes for the past 14 days</h6>
+    <mat-list dense class="horizontal-item-list mb-3">
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Past 12 hours
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+           {{ stats.past12Hours.price.trend | gold }}
+          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+          {{ stats.past12Hours.price.avg | gold }}
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.warnColorCode}">Avg change</span>
+          {{ stats.past12Hours.quantity.trend | number }}
+          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+          {{ stats.past12Hours.quantity.avg | number }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Past 24 hours
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+          {{ stats.past24Hours.price.trend | gold }}
+          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+          {{ stats.past24Hours.price.avg | gold }}
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.warnColorCode}">Avg change</span>
+          {{ stats.past24Hours.quantity.trend | number }}
+          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+          {{ stats.past24Hours.quantity.avg | number }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Past 7 days
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+          {{ stats.past7Days.price.trend | gold }}
+          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+          {{ stats.past7Days.price.avg | gold }}
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.warnColorCode}">Avg change</span>
+          {{ stats.past7Days.quantity.trend | number }}
+          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+          {{ stats.past7Days.quantity.avg | number }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Past 14 days
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+          {{ stats.past14Days.price.trend | gold }}
+          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+          {{ stats.past14Days.price.avg | gold }}
+        </div>
+        <div mat-line>
+          <span [style]="{color: theme.warnColorCode}">Avg change</span>
+          {{ stats.past14Days.quantity.trend | number }}
+          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+          {{ stats.past14Days.quantity.avg | number }}
+        </div>
+      </mat-list-item>
+    </mat-list>
 
-    </mat-tab>
-    <mat-tab label="Table">
-      <wah-data-table
-              [columns]="fourteenDayByHourTable.columns"
-              [data]="fourteenDayByHourTable.data">
-      </wah-data-table>
-    </mat-tab>
-  </mat-tab-group>
+    <h6>Prices grouped by hour the past 14 days</h6>
+    <mat-tab-group class="mb-3">
+      <mat-tab label="Chart">
+        <wah-highcharts
+                title="Hourly prices and quantity for the past 14 days"
+                [series]="hourlyChart"
+                [(update)]="updateDailyChart"
+        >
+        </wah-highcharts>
 
-  <h5>Prices grouped by day</h5>
-  <mat-tab-group>
-    <mat-tab label="Chart">
-      <wah-highcharts
-        title="Daily prices and quantity"
-        [series]="dailyChart"
-        [(update)]="updateDailyChart"
-        [xAxis]="xAxis"
-        (chartInstance)="setChartInstance($event)"
-      >
-      </wah-highcharts>
-    </mat-tab>
-    <mat-tab label="Table">
-      <wah-data-table
-              [columns]="groupedByDateTable.columns"
-              [data]="groupedByDateTable.data">
-      </wah-data-table>
-    </mat-tab>
-  </mat-tab-group>
+      </mat-tab>
+      <mat-tab label="Table">
+        <wah-data-table
+                [columns]="fourteenDayByHourTable.columns"
+                [data]="fourteenDayByHourTable.data">
+        </wah-data-table>
+      </mat-tab>
+    </mat-tab-group>
+
+    <h6>Prices grouped by day</h6>
+    <mat-tab-group>
+      <mat-tab label="Chart">
+        <wah-highcharts
+                title="Daily prices and quantity"
+                [series]="dailyChart"
+                [(update)]="updateDailyChart"
+                [xAxis]="xAxis"
+                (chartInstance)="setChartInstance($event)"
+        >
+        </wah-highcharts>
+      </mat-tab>
+      <mat-tab label="Table">
+        <wah-data-table
+                [columns]="groupedByDateTable.columns"
+                [data]="groupedByDateTable.data">
+        </wah-data-table>
+      </mat-tab>
+    </mat-tab-group>
+  </ng-container>
+
+  <ng-template #loadingTemplate>
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    Loading historical price data. This might take a couple seconds.
+  </ng-template>
 </ng-container>
-
-<ng-template #loadingTemplate>
-  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-  Loading historical price data. This might take a couple seconds,
-  depending on how far you are away from Norway.
-</ng-template>

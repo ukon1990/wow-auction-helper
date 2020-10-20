@@ -1,6 +1,4 @@
-import {StatsBase} from './stats-base.model';
-
-interface Stat {
+export interface Stat {
   price: {
     trend: number;
     avg: number;
@@ -9,11 +7,17 @@ interface Stat {
     trend: number;
     avg: number;
   };
-  uptime: number;
+  totalEntries: number;
 }
 
-export interface ItemStats extends StatsBase {
-  lastObservedInPeriod: number;
-  past24: Stat;
-  past30: Stat;
+export interface ItemStats {
+  id: string;
+  ahId: number;
+  itemId: number;
+  petSpeciesId: number;
+  bonusIds: string | number[];
+  past12Hours: Stat;
+  past24Hours: Stat;
+  past7Days: Stat;
+  past14Days: Stat;
 }

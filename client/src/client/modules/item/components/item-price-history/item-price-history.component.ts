@@ -10,6 +10,10 @@ import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {NumberUtil} from '../../../util/utils/number.util';
 import {Report} from '../../../../utils/report.util';
 import {Chart, SeriesOptionsType, XAxisOptions} from 'highcharts';
+import {AuctionStatsUtil} from '../../../../../../../api/src/auction/utils/auction-stats.util';
+import {ItemStats} from '../../../../../../../api/src/auction/models/item-stats.model';
+import {ThemeUtil} from '../../../core/utils/theme.util';
+import {Theme} from '../../../core/models/theme.model';
 
 @Component({
   selector: 'wah-item-price-history',
@@ -19,7 +23,9 @@ import {Chart, SeriesOptionsType, XAxisOptions} from 'highcharts';
 export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
+  @Input() isActiveTab = true;
   @Input() dialogId: string;
+  stats: ItemStats;
   Highcharts: typeof Highcharts = Highcharts;
   sm = new SubscriptionManager();
   hourlyChart: SeriesOptionsType[] = [
@@ -114,13 +120,19 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   isLoading = true;
   updateDailyChart: any;
   isInitiated: boolean;
+  theme: Theme = ThemeUtil.current;
 
   constructor(private service: ItemService) {
   }
 
-  ngOnChanges({item, auctionItem}: SimpleChanges) {
+  ngOnChanges({item, auctionItem, isActiveTab}: SimpleChanges) {
     if (this.isInitiated && auctionItem && auctionItem.currentValue) {
       this.loadData(auctionItem.currentValue);
+    }
+
+    if (this.isInitiated && !this.isLoading && isActiveTab && isActiveTab.currentValue) {
+      this.isInitiated = false;
+      this.ngAfterViewInit();
     }
   }
 
@@ -128,7 +140,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     this.loadData();
     setTimeout(() =>
         this.isInitiated = true,
-      1000);
+      500);
   }
 
   private loadData(auctionItem: AuctionItem = this.auctionItem) {
@@ -141,6 +153,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       .then((history) => {
         this.priceHistory = history;
         this.setAuctionAndDataset();
+        this.stats = AuctionStatsUtil.processDaysForHourlyPriceData(history.hourly);
         this.isLoading = false;
       })
       .catch((error) => {
@@ -155,9 +168,11 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   private setAuctionAndDataset() {
     if (this.priceHistory) {
       if (this.priceHistory.hourly && this.priceHistory.hourly.length) {
+        this.resetSeriesData(this.hourlyChart);
         this.processHourlyData();
       }
       if (this.priceHistory.daily && this.priceHistory.daily.length) {
+        this.resetSeriesData(this.dailyChart);
         this.processDailyData();
       }
       this.updateDailyChart = Math.random();
@@ -205,6 +220,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     dates.forEach(date => this.calculateDailyValues(date));
   }
 
+
   private calculateHourlyValues(minGold: number, entry: ItemPriceEntry, date: Date) {
     this.fourteenDayByHourTable.data.push(entry);
     this.hourlyChart[0]['data'].push([+date, entry.quantity]);
@@ -219,6 +235,12 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     this.dailyChart[1]['data'].push([entry.timestamp, entry.avg]);
     this.dailyChart[2]['data'].push([entry.timestamp, entry.minQuantity, entry.maxQuantity]);
     this.dailyChart[3]['data'].push([entry.timestamp, entry.avgQuantity]);
+  }
+
+  private resetSeriesData(series: SeriesOptionsType[]): void {
+    series.forEach(s => {
+      s['data'] = [];
+    });
   }
 
   tooltipCallbackDaily(items, data): string {
