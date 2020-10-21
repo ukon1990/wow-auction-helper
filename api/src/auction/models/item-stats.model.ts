@@ -11,13 +11,11 @@ export interface Stat {
 }
 
 export interface ItemStats {
-  id: string;
-  ahId: number;
   itemId: number;
-  petSpeciesId: number;
-  bonusIds: string | number[];
-  past12Hours: Stat;
-  past24Hours: Stat;
-  past7Days: Stat;
-  past14Days: Stat;
+  petSpeciesId?: number;
+  bonusIds?: string | number[];
+  past12Hours?: Stat;
+  past24Hours?: Stat;
+  past7Days?: Stat;
+  past14Days?: Stat;
 }

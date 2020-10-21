@@ -52,6 +52,14 @@ functions:
     handler: src/auction/controller.insertStatisticsData
     memorySize: 222
     timeout: 58
+
+  auctionsUpdateRealmTrends:
+    tags:
+      Function: Wah-updateRealmTrends
+      Project: WAH
+    handler: src/auction/controller.updateRealmTrends
+    memorySize: 768
+    timeout: 90
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses

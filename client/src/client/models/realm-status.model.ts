@@ -18,6 +18,10 @@ export class RealmStatus {
   lowestDelay: number;
   avgDelay: number;
   highestDelay: number;
+  stats: {
+    url: string;
+    lastModified: number;
+  };
 
   constructor(slug?: string, lastModified?: number) {
     if (slug) {

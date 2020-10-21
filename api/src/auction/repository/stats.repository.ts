@@ -2,7 +2,6 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
-import {LogRepository} from '../../logs/repository';
 
 export class StatsRepository {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
@@ -21,12 +20,13 @@ export class StatsRepository {
   constructor(private conn: DatabaseUtil, autoClose: boolean = true) {
   }
 
-  getAllStatsForRealmDate(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
+  getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
     return this.conn.query(`
         SELECT *
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${ahId}
-          AND date = '${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}';`);
+          AND date >= NOW() - INTERVAL 24 HOUR
+        ORDER BY date;`);
   }
 
   getAllStatsForRealmMonth(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {

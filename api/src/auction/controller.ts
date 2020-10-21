@@ -85,3 +85,9 @@ exports.updateTSMDataForOneRealm = (event: APIGatewayEvent, context: Context, ca
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, event, 500));
 };
+
+exports.updateRealmTrends = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().updateRealmTrends()
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, event, 500));
+};

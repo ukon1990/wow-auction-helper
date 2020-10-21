@@ -121,7 +121,7 @@ export class AuctionProcessorUtil {
     }
   }
 
-  static processHourlyPriceData(result: AuctionItemStat[]): ItemPriceEntry[] {
+  static processHourlyPriceData(result: AuctionItemStat[], callback?: (hour: ItemPriceEntry) => void): ItemPriceEntry[] {
     const list = [];
     result.forEach(entry => {
       for (let i = 0, maxHours = 23; i <= maxHours; i++) {
@@ -131,13 +131,19 @@ export class AuctionProcessorUtil {
           price = entry[`price${hour}`],
           quantity = entry[`quantity${hour}`];
         if (price) {
-          list.push({
+          const hourEntry: ItemPriceEntry = {
+            itemId: entry.itemId,
             timestamp: +date,
             petSpeciesId: entry.petSpeciesId,
             bonusIds: entry.bonusIds,
             min: price,
             quantity: quantity
-          });
+          };
+          if (callback) {
+            callback(hourEntry);
+          } else {
+            list.push(hourEntry);
+          }
         }
       }
     });

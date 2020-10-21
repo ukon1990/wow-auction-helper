@@ -245,32 +245,6 @@ export class AuctionService {
     });
   }
 
-  private async createLastModifiedFile(ahId: number, region: string) {
-    const start = +new Date();
-    return new Promise((resolve, reject) => {
-      this.realmRepository.getRealmsSeparated(ahId)
-        .then(realms => {
-          Promise.all(
-            realms.map(realm => new S3Handler().save(
-              realm,
-              `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
-              .then(uploaded => {
-                console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
-              })
-              .catch(error => {
-                console.error(error);
-              }))
-          )
-            .then(resolve)
-            .catch(reject);
-        })
-        .catch(error => {
-          console.error(error);
-          resolve();
-        });
-    });
-  }
-
   private async updateAllStatuses(region: string, conn: DatabaseUtil) {
     const start = +new Date();
     return new Promise((resolve, reject) => {
@@ -329,7 +303,7 @@ export class AuctionService {
             }),
         ])
           .then(async () => {
-            await this.createLastModifiedFile(+ahId, region)
+            await new RealmService().createLastModifiedFile(+ahId, region)
               .catch(err => console.error('Could not createLastModifiedFile', err));
             resolve();
           })

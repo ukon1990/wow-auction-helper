@@ -42,6 +42,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
           lowestDelay: house.lowestDelay,
           avgDelay: house.avgDelay,
           highestDelay: house.highestDelay,
+          stats: house.stats,
         });
       }));
     return realms;
@@ -206,6 +207,22 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
           });
       } else {
         reject('Nothing to delete');
+      }
+    });
+  }
+
+  getRealmsThatNeedsTrendUpdate(): Promise<AuctionHouse[]> {
+    return this.scan({
+      TableName: this.table,
+      FilterExpression:
+        '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) ' +
+        'AND #lastStatsInsert > #lastTrendUpdateInitiation',
+      ExpressionAttributeNames: {
+        '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
+        '#lastStatsInsert': 'lastStatsInsert',
+      },
+      ExpressionAttributeValues: {
+        ':time': +new Date() - 30 * 60 * 1000,
       }
     });
   }
