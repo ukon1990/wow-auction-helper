@@ -78,10 +78,14 @@ export class TsmService {
             localStorage['timestamp_tsm'] = new Date().toDateString();
             SharedService.downloading.tsmAuctions = false;
             console.log('TSM data download is complete');
-            this.processData(tsm);
-            this.addToDB(tsm);
-            this.openSnackbar('Completed TSM download');
-            resolve(tsm);
+           try {
+             this.processData(tsm);
+             this.addToDB(tsm);
+             this.openSnackbar('Completed TSM download');
+           } catch (error) {
+             ErrorReport.sendError('TsmService.get', error);
+           }
+            resolve(tsm || []);
           })
           .catch(error => {
             this.openSnackbar(
