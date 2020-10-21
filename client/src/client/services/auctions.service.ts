@@ -17,9 +17,13 @@ import {TsmService} from '../modules/tsm/tsm.service';
 import {CharacterService} from '../modules/character/services/character.service';
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {Report} from '../utils/report.util';
+import {ItemStats} from '../../../../api/src/auction/models/item-stats.model';
+import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 
 @Injectable()
 export class AuctionsService {
+  statsLastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  statsMap: BehaviorSubject<Map<string, ItemStats>> = new BehaviorSubject<Map<string, ItemStats>>(new Map<string, ItemStats>());
   list: BehaviorSubject<AuctionItem[]> = new BehaviorSubject<AuctionItem[]>([]);
   mapped: BehaviorSubject<Map<string, AuctionItem>> = new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>());
   auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
@@ -73,7 +77,8 @@ export class AuctionsService {
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
-    let auctions, stats;
+    let auctions;
+    const statsMap = new Map<string, ItemStats>();
     return Promise.all([
       this.http
         .get(realmStatus.url)
@@ -82,10 +87,10 @@ export class AuctionsService {
       this.http
         .get(realmStatus.stats.url)
         .toPromise()
-        .then(data => stats = data)
+        .then(({lastModified, data}: {lastModified: number, data: ItemStats[]}) =>
+          this.handleStatsResponse(data, statsMap, lastModified))
     ])
       .then(async () => {
-        Report.debug('Stats is', stats);
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
@@ -115,6 +120,21 @@ export class AuctionsService {
 
         ErrorReport.sendHttpError(error);
       });
+  }
+
+  private handleStatsResponse(data, statsMap: Map<string, ItemStats>, lastModified) {
+    data.forEach(stat => {
+      let id = '' + stat.itemId;
+      if (stat.bonusIds !== '-1') {
+        id += `-${stat.bonusIds}`;
+      }
+      if (stat.petSpeciesId !== -1) {
+        id += `-${stat.petSpeciesId}`;
+      }
+      statsMap.set(id, stat);
+    });
+    this.statsLastModified.next(lastModified);
+    this.statsMap.next(statsMap);
   }
 
   private openSnackbar(message: string): void {
@@ -157,12 +177,12 @@ export class AuctionsService {
     }
   }
 
-  async organize(auctions: Auction[] = this.auctions.value) {
+  async organize(auctions: Auction[] = this.auctions.value, statsMap: Map<string, ItemStats> = this.statsMap.value) {
     if (!this.isReady) {
       return;
     }
     // this.characterService.updateCharactersForRealmAndRecipes();
-    await AuctionUtil.organize(auctions)
+    await AuctionUtil.organize(auctions, statsMap)
       .then(({
                map,
                list,

@@ -154,6 +154,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
         this.priceHistory = history;
         this.setAuctionAndDataset();
         this.stats = AuctionStatsUtil.processDaysForHourlyPriceData(history.hourly);
+        console.log('Stats daily', AuctionStatsUtil.processDaysForHourlyPriceData(history.daily));
         this.isLoading = false;
       })
       .catch((error) => {

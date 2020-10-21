@@ -31,7 +31,6 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     SharedService.events.title.next('Auctions');
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
-    this.addColumns();
 
     this.form = formBuilder.group({
       name: filter && filter.name ? filter.name : '',
@@ -43,8 +42,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       onlyVendorSellable: filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false,
       expansion: filter && filter.expansion ? filter.expansion : null,
       minItemQuality: filter && filter.minItemQuality ? filter.minItemQuality : null,
-      minItemLevel: filter && filter.minItemLevel ? filter.minItemLevel : null
+      minItemLevel: filter && filter.minItemLevel ? filter.minItemLevel : null,
+      pastTimeSelection: filter && filter.pastTimeSelection ? +filter.pastTimeSelection : 24,
     });
+    this.addColumns();
   }
 
   ngOnInit() {
@@ -69,6 +70,9 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       () => {
         this.filterAuctions();
       });
+    this.subs.add(this.form.controls.pastTimeSelection.valueChanges, (value) => {
+      this.addColumns(value);
+    });
   }
 
   async ngAfterContentInit() {
@@ -77,15 +81,37 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+    this.table.data.length = 0;
   }
 
 
-  addColumns(): void {
-    const {columns} = this.table;
+  addColumns(pastTimeSelection: number = this.form.value.pastTimeSelection): void {
+    const columns = [];
     columns.push({key: 'name', title: 'Name', dataType: 'name'});
     columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true});
-    columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});
-    columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
+    columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});    if (pastTimeSelection === 12) {
+      /*
+        past12HoursPriceTrend
+        past12HoursPriceAvg
+        past12HoursQuantityTrend
+        past12HoursQuantityAvg
+       */
+      columns.push({key: 'past12HoursQuantityTrend', title: 'Qty trend', dataType: 'number', hideOnMobile: true});
+      columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
+      columns.push({key: 'past12HoursPriceAvg', title: 'Avg min price', dataType: 'gold', hideOnMobile: true});
+      columns.push({key: 'past12HoursPriceTrend', title: 'Price trend', dataType: 'gold', hideOnMobile: true});
+    } else {
+      /*
+      past24HoursPriceTrend
+      past24HoursPriceAvg
+      past24HoursQuantityTrend
+      past24HoursQuantityAvg
+      */
+      columns.push({key: 'past24HoursQuantityTrend', title: 'Qty trend', dataType: 'number', hideOnMobile: true});
+      columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
+      columns.push({key: 'past24HoursPriceAvg', title: 'Avg min price', dataType: 'gold', hideOnMobile: true});
+      columns.push({key: 'past24HoursPriceTrend', title: 'Price trend', dataType: 'gold', hideOnMobile: true});
+    }
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
@@ -96,15 +122,36 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
         idName: 'id',
       }
     });
+
+    this.table.columns = columns;
   }
 
   async filterAuctions(changes = this.form.value) {
-
-    this.table.data = this.auctionService.list.value
-      .filter(i => this.isMatch(i, changes))
-      .map(i => {
-        return {...SharedService.pets[i.petSpeciesId], ...i};
+    const result = [];
+    this.auctionService.list.value
+      .map(auction => {
+        if (this.isMatch(auction, changes)) {
+          let statsValues = {};
+          if (auction.stats) {
+            statsValues = {
+              past12HoursPriceTrend: auction.stats.past12Hours.price.trend,
+              past12HoursPriceAvg: auction.stats.past12Hours.price.avg,
+              past12HoursQuantityTrend: auction.stats.past12Hours.quantity.trend,
+              past12HoursQuantityAvg: auction.stats.past12Hours.quantity.avg,
+              past24HoursPriceTrend: auction.stats.past24Hours.price.trend,
+              past24HoursPriceAvg: auction.stats.past24Hours.price.avg,
+              past24HoursQuantityTrend: auction.stats.past24Hours.quantity.trend,
+              past24HoursQuantityAvg: auction.stats.past24Hours.quantity.avg,
+            };
+          }
+          result.push({
+            ...SharedService.pets[auction.petSpeciesId],
+            ...auction,
+            ...statsValues,
+          });
+        }
       });
+    this.table.data = result;
   }
 
   isMatch(auctionItem: AuctionItem, changes): boolean {
@@ -118,5 +165,11 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
       Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
       Filters.isExpansionMatch(auctionItem.itemID, changes.expansion);
+  }
+
+  resetForm() {
+    this.form.reset({
+      pastTimeSelection: 24
+    });
   }
 }
