@@ -91,3 +91,10 @@ exports.updateRealmTrends = (event: APIGatewayEvent, context: Context, callback:
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, event, 500));
 };
+
+exports.deleteOldPriceForRealm = (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
+  const {table, olderThan, period} = event;
+  new StatsService().deleteOldPriceForRealm(table, olderThan, period)
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
+};

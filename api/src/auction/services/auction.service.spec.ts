@@ -189,4 +189,12 @@ describe('AuctionHandler', () => {
     console.log('The datamodel is', result);
     expect(result).toBeTruthy();
   });
+
+  it('Update all daily for date', async () => {
+    jest.setTimeout(99999999);
+    await new StatsService().updateAllRealmDailyData(
+      1, 266, new DatabaseUtil(false), 13) // 13
+      .catch(console.error);
+    expect(0).toBe(1);
+  });
 });

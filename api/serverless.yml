@@ -81,6 +81,13 @@ functions:
     handler: src/auction/controller.deleteOldPriceHistoryForRealmAndSetDailyPrice
     memorySize: 200
     timeout: 60
+  deleteOldPriceForRealm:
+    tags:
+      Function: Wah-deleteOldPriceForRealm
+      Project: WAH
+    handler: src/auction/controller.deleteOldPriceForRealm
+    memorySize: 128
+    timeout: 200
   updateAllRealmDailyData:
     tags:
       Function: Wah-updateAllRealmDailyData

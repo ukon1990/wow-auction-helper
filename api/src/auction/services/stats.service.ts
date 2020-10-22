@@ -230,7 +230,7 @@ export class StatsService {
     });
   }
 
-  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false)): Promise<any> {
+  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false), daysAgo = 1): Promise<any> {
     return new Promise((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 5,
@@ -241,10 +241,10 @@ export class StatsService {
       for (let id = start; id <= end; id++) {// 242
         promises.push(promiseThrottle.add(() =>
           new Promise((ok) => {
-            this.compileDailyAuctionData(id, conn)
+            this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
               .then(() => {
                 processed++;
-                console.log(`Processed count: ${processed} of ${end - start} - date=${this.getYesterday().toString()}`);
+                console.log(`Processed count: ${processed} of ${end - start} - date=${this.getYesterday(daysAgo).toString()}`);
                 ok();
               })
               .catch((error) => {
@@ -294,8 +294,8 @@ export class StatsService {
     });
   }
 
-  private getYesterday(): Date {
-    return new Date(+new Date() - 1000 * 60 * 60 * 24);
+  private getYesterday(days = 1): Date {
+    return new Date(+new Date() - 1000 * 60 * 60 * 24 * days);
   }
 
   /*
@@ -364,41 +364,55 @@ export class StatsService {
     });
   }
 
+  deleteOldPriceForRealm(table: string, olderThan: number, period: string, conn = new DatabaseUtil(false)): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      new StatsRepository(conn).deleteOldDailyPricesForRealm(table, olderThan, period)
+        .then(() => {
+          conn.end();
+          resolve();
+        })
+        .catch((err) => {
+          conn.end();
+          reject(err);
+        });
+    });
+  }
+
   updateRealmTrends(): Promise<void> {
-   return new Promise((resolve, reject) => {
-     const startTime = +new Date();
-     const conn = new DatabaseUtil(false);
-     conn.enqueueHandshake()
-       .then(() => {
-         let completed = 0;
-         this.realmRepository.getRealmsThatNeedsTrendUpdate()
-           .then(async (houses) => {
-             for (const {region, id} of houses.slice(0, 10)) {
-               console.log('Time since start', DateUtil.timeSince(startTime, 's'), 'seconds');
-               if (DateUtil.timeSince(startTime, 's') < 50) {
-                 await this.setRealmTrends(region, id, conn)
-                   .then(async () => {
-                     completed++;
-                     await new RealmService().createLastModifiedFile(id, region)
-                       .catch(err => console.error('Could not createLastModifiedFile', err));
-                   })
-                   .catch(console.error);
-               }
-             }
-             console.log(`Done updating for ${completed}/${houses.length} in ${DateUtil.timeSince(startTime, 's')} sec`);
-             conn.end();
-             resolve();
-           })
-           .catch(err => {
-             conn.end();
-             reject(err);
-           });
-       })
-       .catch(err => {
-         conn.end();
-         reject(err);
-       });
-   });
+    return new Promise((resolve, reject) => {
+      const startTime = +new Date();
+      const conn = new DatabaseUtil(false);
+      conn.enqueueHandshake()
+        .then(() => {
+          let completed = 0;
+          this.realmRepository.getRealmsThatNeedsTrendUpdate()
+            .then(async (houses) => {
+              for (const {region, id} of houses.slice(0, 10)) {
+                console.log('Time since start', DateUtil.timeSince(startTime, 's'), 'seconds');
+                if (DateUtil.timeSince(startTime, 's') < 50) {
+                  await this.setRealmTrends(region, id, conn)
+                    .then(async () => {
+                      completed++;
+                      await new RealmService().createLastModifiedFile(id, region)
+                        .catch(err => console.error('Could not createLastModifiedFile', err));
+                    })
+                    .catch(console.error);
+                }
+              }
+              console.log(`Done updating for ${completed}/${houses.length} in ${DateUtil.timeSince(startTime, 's')} sec`);
+              conn.end();
+              resolve();
+            })
+            .catch(err => {
+              conn.end();
+              reject(err);
+            });
+        })
+        .catch(err => {
+          conn.end();
+          reject(err);
+        });
+    });
   }
 
   setRealmTrends(region: string, ahId: number, db: DatabaseUtil): Promise<void> {
@@ -425,10 +439,12 @@ export class StatsService {
                   } ms, processing=${
                     +new Date() - processStart
                   } ms`, success);
-                  this.realmRepository.updateEntry(ahId, {id: ahId, stats: {
+                  this.realmRepository.updateEntry(ahId, {
+                    id: ahId, stats: {
                       lastModified,
                       url: success.url
-                    }})
+                    }
+                  })
                     .then(() => resolve(success))
                     .catch(e => {
                       console.error('setRealmTrends', e);
