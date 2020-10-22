@@ -150,7 +150,7 @@ export class AuctionProcessorUtil {
     return list;
   }
 
-  static processDailyPriceData(result) {
+  static processDailyPriceData(result, callback?: (hour: ItemPriceEntry) => void): ItemPriceEntry[] {
     const list = [];
     result.forEach(entry => {
       for (let i = 1, maxDays = 31; i <= maxDays; i++) {
@@ -163,18 +163,30 @@ export class AuctionProcessorUtil {
         const day = i < 10 ? '0' + i : i,
           min = entry[`min${day}`];
         if (min) {
-          list.push({
-            timestamp: +date,
-            petSpeciesId: entry.petSpeciesId,
-            bonusIds: entry.bonusIds,
-            min,
-            minHour: entry[`minHour${day}`],
-            minQuantity: entry[`minQuantity${day}`],
-            avg: entry[`avg${day}`],
-            avgQuantity: entry[`avgQuantity${day}`],
-            max: entry[`max${day}`],
-            maxQuantity: entry[`maxQuantity${day}`]
-          });
+
+          if (callback) {
+            callback({
+              itemId: entry.itemId,
+              petSpeciesId: entry.petSpeciesId,
+              bonusIds: entry.bonusIds,
+              min: entry[`avg${day}`],
+              quantity: entry[`avgQuantity${day}`],
+              timestamp: +date,
+            });
+          } else {
+            list.push({
+              timestamp: +date,
+              petSpeciesId: entry.petSpeciesId,
+              bonusIds: entry.bonusIds,
+              min,
+              minHour: entry[`minHour${day}`],
+              minQuantity: entry[`minQuantity${day}`],
+              avg: entry[`avg${day}`],
+              avgQuantity: entry[`avgQuantity${day}`],
+              max: entry[`max${day}`],
+              maxQuantity: entry[`maxQuantity${day}`]
+            });
+          }
         }
       }
     });

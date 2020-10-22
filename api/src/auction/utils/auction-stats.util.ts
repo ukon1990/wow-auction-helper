@@ -18,7 +18,7 @@ export class AuctionStatsUtil {
       map.get(id).push(hour);
     };
     let start = +new Date();
-    AuctionProcessorUtil.processHourlyPriceData(rows,
+    AuctionProcessorUtil.processDailyPriceData(rows,
       (hour: ItemPriceEntry) => processedDBEntryCallback(hour));
     console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
     start = +new Date();
