@@ -48,6 +48,7 @@ export class StatsRepository {
     const insert = new RDSQueryUtil('itemPriceHistoryPerDay')
       .multiInsert(list)
       .replace(';', '');
+    console.log('multiInsertOrUpdateDailyPrices', list[0]);
     return this.conn.query(`${insert} ON DUPLICATE KEY UPDATE
       min${day} = VALUES(min${day}),
       minHour${day} = VALUES(minHour${day}),
@@ -106,5 +107,41 @@ export class StatsRepository {
       WHERE info NOT LIKE '%information_schema.processlist%' AND
           (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
               OR info LIKE '%DELETE FROM%');`);
+  }
+
+  deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH') {
+    return new Promise<void>(async (resolve, reject) => {
+      this.conn.query(`
+          SELECT ahId
+          FROM ${table}
+          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
+          GROUP BY ahId
+          ORDER BY ahId
+          LIMIT 1
+      `)
+        .then(ids => {
+          if (ids.length) {
+            this.conn.query(`
+          DELETE
+          FROM ${table}
+          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
+            AND ahId = ${ids[0].ahId};`)
+              .then(res => {
+                console.log(res);
+                resolve();
+              })
+              .catch(error => {
+                console.error(error);
+                reject(error);
+              });
+          } else {
+            resolve();
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
   }
 }
