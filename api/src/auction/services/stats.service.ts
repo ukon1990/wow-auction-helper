@@ -278,7 +278,7 @@ export class StatsService {
             .then(async realms => {
               for (const {id} of realms) {
                 if (DateUtil.timeSince(startTime, 's') < 40) {
-                  const queryStart = + new Date();
+                  const queryStart = +new Date();
                   await this.compileDailyAuctionData(id, conn, this.getYesterday(1))
                     .then(() => {
                       this.realmRepository.updateEntry(id, {
@@ -433,21 +433,17 @@ export class StatsService {
       const conn = new DatabaseUtil(false);
       conn.enqueueHandshake()
         .then(() => {
-          let completed = 0;
           this.realmRepository.getRealmsThatNeedsTrendUpdate()
             .then(async (houses) => {
-              for (const {region, id} of houses.slice(0, 10)) {
-                if (DateUtil.timeSince(startTime, 's') < 50) {
-                  await this.setRealmTrends(region, id, conn)
-                    .then(async () => {
-                      completed++;
-                      await new RealmService().createLastModifiedFile(id, region)
-                        .catch(err => console.error('Could not createLastModifiedFile', err));
-                    })
-                    .catch(console.error);
-                }
-              }
-              console.log(`Done updating for ${completed}/${houses.length} in ${DateUtil.timeSince(startTime, 's')} sec`);
+              const {region, id} = houses.sort((a, b) =>
+                a['lastTrendUpdateInitiation'] - b['lastTrendUpdateInitiation'])[0];
+              await this.setRealmTrends(region, id, conn)
+                .then(async () => {
+                  await new RealmService().createLastModifiedFile(id, region)
+                    .catch(err => console.error('Could not createLastModifiedFile', err));
+                })
+                .catch(console.error);
+              console.log(`Done updating in ${DateUtil.timeSince(startTime, 's')} sec`);
               conn.end();
               resolve();
             })
@@ -476,6 +472,7 @@ export class StatsService {
           const processStart = +new Date();
           try {
             const result: ItemStats[] = AuctionStatsUtil.processDays(rows);
+            console.log('Done proccessing with a result of ' + result.length + ' item variations');
             if (result.length) {
               const lastModified = +new Date();
               new S3Handler().save({
@@ -504,6 +501,7 @@ export class StatsService {
                   reject(e);
                 });
             }
+            resolve();
           } catch (e) {
             console.error('Failed in ' + (+new Date() - start) + 'ms', e);
             reject(e);

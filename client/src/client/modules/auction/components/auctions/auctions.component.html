@@ -91,11 +91,11 @@
       color="accent"
     >
       <mat-select
-              matTooltip="These columns indicate how much the price and quantity has changed for the past 12 or 24 hours. As well as the avg quantity and minimum buyout"
+              matTooltip="These columns indicate how much the price and quantity has changed for the past 7 or 14 days. As well as the avg quantity and avg min buyout"
               placeholder="Selected timespan for trend and avg columns"
               formControlName="pastTimeSelection">
-        <mat-option [value]="12">Previous 12 hours</mat-option>
-        <mat-option [value]="24">Previous 24 hours</mat-option>
+        <mat-option [value]="7">Previous 7 days</mat-option>
+        <mat-option [value]="14">Previous 14 days</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-checkbox class="col" formControlName="onlyVendorSellable"

@@ -190,11 +190,17 @@ describe('AuctionHandler', () => {
     expect(result).toBeTruthy();
   });
 
-  xit('Update all daily for date', async () => {
+  it('Update all daily for date', async () => {
     jest.setTimeout(99999999);
+    const conn = new DatabaseUtil(false);
+    /*
     await new StatsService().updateAllRealmDailyData(
-      242, 266, new DatabaseUtil(false), 0) // 0
+      242, 266, new DatabaseUtil(false), 0)
       .catch(console.error);
+      */
+    await new StatsService().setRealmTrends('eu', 69, conn)
+      .catch(console.error);
+    conn.end();
     expect(0).toBe(1);
   });
 });

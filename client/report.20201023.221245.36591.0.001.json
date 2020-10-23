@@ -1,0 +1,828 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20201023.221245.36591.0.001.json",
+    "dumpEventTime": "2020-10-23T22:12:45Z",
+    "dumpEventTimeStamp": "1603483965035",
+    "processId": 36591,
+    "cwd": "/Users/jonas/Dev/Hobby/Web/angular/wow-auction-helper/client",
+    "commandLine": [
+      "/Users/jonas/.nvm/versions/node/v12.9.0/bin/node",
+      "/Users/jonas/Dev/Hobby/Web/angular/wow-auction-helper/client/node_modules/@ngtools/webpack/src/type_checker_worker.js",
+      "9d93e901-158a-4cf9-ba1b-2f0582ffcfeb"
+    ],
+    "nodejsVersion": "v12.9.0",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "darwin",
+    "componentVersions": {
+      "node": "12.9.0",
+      "v8": "7.6.303.29-node.15",
+      "uv": "1.31.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.39.2",
+      "napi": "4",
+      "llhttp": "1.1.4",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1c",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019a",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "headersUrl": "https://nodejs.org/download/release/v12.9.0/node-v12.9.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.9.0/node-v12.9.0.tar.gz"
+    },
+    "osName": "Darwin",
+    "osRelease": "19.6.0",
+    "osVersion": "Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 89815420,
+        "nice": 0,
+        "sys": 50403570,
+        "idle": 374325810,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 6020660,
+        "nice": 0,
+        "sys": 2604030,
+        "idle": 505829570,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 74147050,
+        "nice": 0,
+        "sys": 31734620,
+        "idle": 408575070,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5544970,
+        "nice": 0,
+        "sys": 2208030,
+        "idle": 506701070,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 62339190,
+        "nice": 0,
+        "sys": 24351890,
+        "idle": 427765310,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5616560,
+        "nice": 0,
+        "sys": 2022820,
+        "idle": 506814490,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 52441690,
+        "nice": 0,
+        "sys": 18583390,
+        "idle": 443430960,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5693220,
+        "nice": 0,
+        "sys": 1853890,
+        "idle": 506906560,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 47192870,
+        "nice": 0,
+        "sys": 15280790,
+        "idle": 451982010,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5726760,
+        "nice": 0,
+        "sys": 1710590,
+        "idle": 507016110,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 39279420,
+        "nice": 0,
+        "sys": 11240100,
+        "idle": 463935790,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5802750,
+        "nice": 0,
+        "sys": 1592210,
+        "idle": 507058300,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 34895550,
+        "nice": 0,
+        "sys": 9020990,
+        "idle": 470538390,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5816780,
+        "nice": 0,
+        "sys": 1498480,
+        "idle": 507137790,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 31051700,
+        "nice": 0,
+        "sys": 7299300,
+        "idle": 476103550,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz",
+        "speed": 2400,
+        "user": 5836160,
+        "nice": 0,
+        "sys": 1422130,
+        "idle": 507194540,
+        "irq": 0
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "lo0",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "lo0",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "lo0",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::1",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 1
+      },
+      {
+        "name": "lo0",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.94.0.2",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "lo0",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.94.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "en5",
+        "internal": false,
+        "mac": "ac:de:48:00:11:22",
+        "address": "fe80::aede:48ff:fe00:1122",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 4
+      },
+      {
+        "name": "en0",
+        "internal": false,
+        "mac": "f8:ff:c2:06:71:02",
+        "address": "fe80::76:2eeb:c0ac:88a7",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 6
+      },
+      {
+        "name": "en0",
+        "internal": false,
+        "mac": "f8:ff:c2:06:71:02",
+        "address": "192.168.1.10",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "awdl0",
+        "internal": false,
+        "mac": "da:0b:fe:14:42:3e",
+        "address": "fe80::d80b:feff:fe14:423e",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 13
+      },
+      {
+        "name": "llw0",
+        "internal": false,
+        "mac": "da:0b:fe:14:42:3e",
+        "address": "fe80::d80b:feff:fe14:423e",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 14
+      },
+      {
+        "name": "utun0",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::2a07:8b93:e671:dd89",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 15
+      },
+      {
+        "name": "utun1",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::c4ff:63ab:4cb8:99d",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 16
+      },
+      {
+        "name": "utun2",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::9905:806c:55e5:8e59",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 17
+      },
+      {
+        "name": "utun3",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::474c:b79e:f803:6a57",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 18
+      },
+      {
+        "name": "utun4",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::7385:2329:f4b7:725e",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 19
+      },
+      {
+        "name": "utun5",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::2ee:5788:acc3:1763",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 20
+      },
+      {
+        "name": "utun6",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::3cd5:ef58:dbb1:7378",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 22
+      },
+      {
+        "name": "utun7",
+        "internal": false,
+        "mac": "00:00:00:00:00:00",
+        "address": "fe80::3c8a:173f:33e9:c90",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 24
+      }
+    ],
+    "host": "ukon"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x0000000100145bcc",
+      "symbol": "report::TriggerNodeReport(v8::Isolate*, node::Environment*, char const*, char const*, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, v8::Local<v8::String>) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000100078d1f",
+      "symbol": "node::OnFatalError(char const*, char const*) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x000000010016e297",
+      "symbol": "v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x000000010016e233",
+      "symbol": "v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002f18a5",
+      "symbol": "v8::internal::Heap::FatalProcessOutOfMemory(char const*) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002f2fcd",
+      "symbol": "v8::internal::Heap::RecomputeLimits(v8::internal::GarbageCollector) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002efd86",
+      "symbol": "v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002edcdc",
+      "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002f93b4",
+      "symbol": "v8::internal::Heap::AllocateRawWithLightRetry(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002f942f",
+      "symbol": "v8::internal::Heap::AllocateRawWithRetryOrFail(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001002c79d7",
+      "symbol": "v8::internal::Factory::NewFillerObject(int, bool, v8::internal::AllocationType) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x00000001005e8207",
+      "symbol": "v8::internal::Runtime_AllocateInYoungGeneration(int, unsigned long*, v8::internal::Isolate*) [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    },
+    {
+      "pc": "0x0000000100927b99",
+      "symbol": "Builtins_CEntry_Return1_DontSaveFPRegs_ArgvOnStack_NoBuiltinExit [/Users/jonas/.nvm/versions/node/v12.9.0/bin/node]"
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2187460608,
+    "totalCommittedMemory": 2186354208,
+    "usedMemory": 2084608112,
+    "availableMemory": 49065008,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 31744,
+        "capacity": 261832,
+        "used": 31432,
+        "available": 230400
+      },
+      "new_space": {
+        "memorySize": 33554432,
+        "committedMemory": 33544584,
+        "capacity": 16757248,
+        "used": 4137120,
+        "available": 12620128
+      },
+      "old_space": {
+        "memorySize": 1952821248,
+        "committedMemory": 1952616544,
+        "capacity": 1903812864,
+        "used": 1894710320,
+        "available": 9102544
+      },
+      "code_space": {
+        "memorySize": 19824640,
+        "committedMemory": 19166816,
+        "capacity": 17368960,
+        "used": 17368960,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 13111296,
+        "committedMemory": 13107672,
+        "capacity": 1074160,
+        "used": 1074160,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 167837696,
+        "committedMemory": 167837696,
+        "capacity": 167282664,
+        "used": 167282664,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 49152,
+        "committedMemory": 49152,
+        "capacity": 3456,
+        "used": 3456,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 16757248,
+        "used": 0,
+        "available": 16757248
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 427.348,
+    "kernelCpuSeconds": 23.3948,
+    "cpuConsumptionPercent": 6.32444,
+    "maxRss": 2373015568384,
+    "pageFaults": {
+      "IORequired": 11,
+      "IONotRequired": 3719175
+    },
+    "fsActivity": {
+      "reads": 0,
+      "writes": 0
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "npm_config_save_dev": "",
+    "npm_config_legacy_bundling": "",
+    "npm_config_dry_run": "",
+    "npm_package_dependencies_angulartics2": "^9.1.0",
+    "npm_package_dependencies__fortawesome_fontawesome_svg_core": "^1.2.29",
+    "npm_config_viewer": "man",
+    "npm_config_only": "",
+    "npm_config_commit_hooks": "true",
+    "npm_config_browser": "",
+    "npm_package_dependencies_push_js": "^1.0.12",
+    "npm_package_dependencies_highcharts_angular": "^2.8.0",
+    "npm_config_also": "",
+    "npm_package_dependencies__angular_router": "~10.0.1",
+    "npm_package_dependencies__angular_forms": "~10.0.1",
+    "npm_config_sign_git_commit": "",
+    "npm_config_rollback": "true",
+    "NODE": "/Users/jonas/.nvm/versions/node/v12.9.0/bin/node",
+    "npm_config_usage": "",
+    "npm_config_audit": "true",
+    "INIT_CWD": "/Users/jonas/Dev/Hobby/Web/angular/wow-auction-helper/client",
+    "npm_package_devDependencies_typescript": "3.9.5",
+    "NVM_CD_FLAGS": "",
+    "npm_config_globalignorefile": "/Users/jonas/.nvm/versions/node/v12.9.0/etc/npmignore",
+    "npm_package_devDependencies__angular_devkit_schematics": "^10.0.0",
+    "npm_package_dependencies_luaparse": "^0.2.1",
+    "npm_package_dependencies__ukon1990_subscription_manager": "^1.1.1",
+    "npm_package_scripts_ng_http_serve_prod": "ng build --prod && http-server -p 8080 -c-1 dist",
+    "SHELL": "/usr/local/bin/bash",
+    "TERM": "xterm-256color",
+    "npm_config_shell": "/usr/local/bin/bash",
+    "npm_config_maxsockets": "50",
+    "npm_config_init_author_url": "",
+    "npm_package_dependencies__angular_platform_browser_dynamic": "~10.0.1",
+    "npm_package_dependencies__angular_cdk": "^10.0.0",
+    "npm_package_scripts_test_build": "ng lint && npm test:headless --single-run && ng e2e && ng build --prod",
+    "npm_config_shrinkwrap": "true",
+    "npm_config_parseable": "",
+    "npm_config_metrics_registry": "https://registry.npmjs.org/",
+    "npm_package_devDependencies_tslint": "~6.1.0",
+    "npm_package_devDependencies__angular_language_service": "~10.0.1",
+    "npm_package_dependencies__angular_animations": "~10.0.1",
+    "TMPDIR": "/var/folders/rw/m2p9wrsx0gq0ygtv83v4bzp40000gn/T/",
+    "npm_config_timing": "",
+    "npm_config_init_license": "ISC",
+    "npm_package_scripts_lint": "ng lint",
+    "GRADLE_HOME": "/Users/jonas/.sdkman/candidates/gradle/current",
+    "npm_config_if_present": "",
+    "TAKECARGO_KEY_VAULT": "https://takecargo-qa-kv.vault.azure.net/",
+    "npm_config_sign_git_tag": "",
+    "npm_config_init_author_email": "",
+    "npm_config_cache_max": "Infinity",
+    "npm_config_preid": "",
+    "npm_config_long": "",
+    "npm_config_local_address": "",
+    "npm_config_git_tag_version": "true",
+    "npm_config_cert": "",
+    "npm_config_registry": "https://registry.npmjs.org/",
+    "npm_config_noproxy": "",
+    "npm_config_fetch_retries": "2",
+    "npm_package_devDependencies_karma_jasmine": "~3.3.0",
+    "npm_package_private": "true",
+    "npm_package_scripts_analyze": "source-map-explorer 'dist/*.js'",
+    "SDKMAN_PLATFORM": "Darwin",
+    "npm_config_versions": "",
+    "npm_config_message": "%s",
+    "npm_config_key": "",
+    "npm_package_scripts_update_json_data_locally": "cd ../scripts;sh update-data.sh; cd ..",
+    "USER": "jonas",
+    "NVM_DIR": "/Users/jonas/.nvm",
+    "npm_package_devDependencies__schematics_angular": "^10.0.0",
+    "npm_package_license": "MIT",
+    "npm_package_devDependencies_jasmine_core": "~3.5.0",
+    "npm_package_devDependencies__angular_devkit_build_angular": "~0.1000.0",
+    "SPRINGBOOT_HOME": "/Users/jonas/.sdkman/candidates/springboot/current",
+    "npm_config_globalconfig": "/Users/jonas/.nvm/versions/node/v12.9.0/etc/npmrc",
+    "npm_package_devDependencies_karma": "~5.0.0",
+    "SDKMAN_CANDIDATES_API": "https://api.sdkman.io/2",
+    "npm_config_prefer_online": "",
+    "npm_config_logs_max": "10",
+    "npm_config_always_auth": "",
+    "npm_package_devDependencies__types_jasminewd2": "~2.0.6",
+    "npm_package_dependencies_logrocket": "^1.0.12",
+    "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.f31B22yhzR/Listeners",
+    "npm_package_dependencies_words_to_numbers": "^1.5.1",
+    "__CF_USER_TEXT_ENCODING": "0x1F5:0x0:0xC",
+    "npm_execpath": "/Users/jonas/.nvm/versions/node/v12.9.0/lib/node_modules/npm/bin/npm-cli.js",
+    "npm_config_global_style": "",
+    "npm_config_cache_lock_retries": "10",
+    "npm_package_scripts_e2e": "ng e2e",
+    "npm_package_scripts_test_headless": "ng test --browsers ChromeHeadless --code-coverage",
+    "npm_package_scripts_ng_serve_secondary": "ng serve --port 4201",
+    "npm_config_update_notifier": "true",
+    "npm_config_cafile": "",
+    "npm_package_devDependencies_protractor": "~7.0.0",
+    "npm_config_heading": "npm",
+    "npm_config_audit_level": "low",
+    "npm_package_dependencies__angular_service_worker": "~10.0.1",
+    "npm_config_searchlimit": "20",
+    "npm_config_read_only": "",
+    "npm_config_offline": "",
+    "npm_config_fetch_retry_mintimeout": "10000",
+    "npm_config_json": "",
+    "npm_config_access": "",
+    "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"start\",\"--scripts-prepend-node-path\",\"auto\"],\"original\":[\"run\",\"start\",\"--scripts-prepend-node-path=auto\"]}",
+    "npm_package_devDependencies_jasmine_spec_reporter": "~5.0.0",
+    "npm_package_dependencies__fortawesome_free_solid_svg_icons": "^5.13.1",
+    "MAVEN_HOME": "/Users/jonas/.sdkman/candidates/maven/current",
+    "PATH": "/Users/jonas/.nvm/versions/node/v12.9.0/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/Users/jonas/Dev/Hobby/Web/angular/wow-auction-helper/client/node_modules/.bin:/Users/jonas/.sdkman/candidates/springboot/current/bin:/Users/jonas/.sdkman/candidates/maven/current/bin:/Users/jonas/.sdkman/candidates/kotlin/current/bin:/Users/jonas/.sdkman/candidates/java/current/bin:/Users/jonas/.sdkman/candidates/groovy/current/bin:/Users/jonas/.sdkman/candidates/gradle/current/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/jonas/.nvm/versions/node/v12.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:~/.node_modules/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/jonas/.node/bin:/Users/jonas/Library/Python/3.7/bin",
+    "npm_config_allow_same_version": "",
+    "npm_package_dependencies__angular_material": "^10.0.0",
+    "npm_config_https_proxy": "",
+    "npm_config_engine_strict": "",
+    "npm_config_description": "true",
+    "VERSIONER_PYTHON_VERSION": "2.7",
+    "npm_config_userconfig": "/Users/jonas/.npmrc",
+    "npm_config_init_module": "/Users/jonas/.npm-init.js",
+    "npm_package_devDependencies_karma_chrome_launcher": "~3.1.0",
+    "npm_config_cidr": "",
+    "npm_package_dependencies__angular_platform_browser": "~10.0.1",
+    "PWD": "/Users/jonas/Dev/Hobby/Web/angular/wow-auction-helper/client",
+    "npm_config_user": "501",
+    "npm_config_node_version": "12.9.0",
+    "npm_package_dependencies_core_js": "^3.2.1",
+    "JAVA_HOME": "/Users/jonas/.sdkman/candidates/java/current",
+    "npm_lifecycle_event": "start",
+    "TAKECARGO_APPLICATION_SECRET": "MKE1WEThq.?avQ86tHsiy:kC@b0BhEpq",
+    "npm_config_save": "true",
+    "npm_config_ignore_prepublish": "",
+    "npm_config_editor": "vi",
+    "npm_config_auth_type": "legacy",
+    "npm_package_name": "wah",
+    "npm_config_tag": "latest",
+    "npm_config_script_shell": "",
+    "npm_package_dependencies_file_saver": "^2.0.2",
+    "SDKMAN_VERSION": "5.7.4+362",
+    "npm_config_progress": "true",
+    "npm_config_global": "",
+    "npm_config_before": "",
+    "npm_package_devDependencies_karma_coverage_istanbul_reporter": "~3.0.2",
+    "npm_package_dependencies_rxjs": "^6.5.5",
+    "npm_package_scripts_build": "ng build --prod",
+    "npm_package_scripts_start": "ng serve",
+    "npm_config_searchstaleness": "900",
+    "npm_config_optional": "true",
+    "npm_config_ham_it_up": "",
+    "npm_package_dependencies_zone_js": "~0.10.3",
+    "XPC_FLAGS": "0x0",
+    "npm_config_save_prod": "",
+    "npm_config_force": "",
+    "npm_config_bin_links": "true",
+    "npm_package_devDependencies__angular_cli": "10.0.0",
+    "npm_package_dependencies_distinct_colors": "^1.0.4",
+    "TAKECARGO_APPLICATION_ID": "b05fa141-0596-49fe-8eee-ef177e2ce4b8",
+    "npm_config_searchopts": "",
+    "npm_config_node_gyp": "/Users/jonas/.nvm/versions/node/v12.9.0/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+    "npm_config_depth": "Infinity",
+    "npm_package_dependencies_dexie": "^3.0.2",
+    "npm_package_main": "handler.js",
+    "npm_config_sso_poll_frequency": "500",
+    "npm_config_rebuild_bundle": "true",
+    "npm_package_dependencies_chart_js": "^2.9.3",
+    "npm_package_scripts_ng": "ng",
+    "npm_package_version": "3.22.1",
+    "XPC_SERVICE_NAME": "com.jetbrains.intellij.46448",
+    "npm_config_unicode": "true",
+    "SHLVL": "1",
+    "HOME": "/Users/jonas",
+    "npm_config_fetch_retry_maxtimeout": "60000",
+    "npm_package_devDependencies__angular_compiler_cli": "^10.0.1",
+    "npm_package_dependencies_highcharts": "^8.2.0",
+    "npm_package_scripts_test": "ng test",
+    "npm_config_tag_version_prefix": "v",
+    "npm_config_strict_ssl": "true",
+    "npm_config_sso_type": "oauth",
+    "npm_config_save_prefix": "^",
+    "npm_config_loglevel": "notice",
+    "npm_config_ca": "",
+    "npm_config_scripts_prepend_node_path": "auto",
+    "npm_package_devDependencies_karma_cli": "~2.0.0",
+    "npm_config_save_exact": "",
+    "npm_config_group": "20",
+    "npm_config_fetch_retry_factor": "10",
+    "npm_config_dev": "",
+    "npm_config_version": "",
+    "npm_config_prefer_offline": "",
+    "npm_config_cache_lock_stale": "60000",
+    "npm_config_otp": "",
+    "npm_config_cache_min": "10",
+    "npm_package_devDependencies_ts_node": "~8.3.0",
+    "npm_package_dependencies__angular_compiler": "~10.0.1",
+    "npm_config_searchexclude": "",
+    "npm_config_cache": "/Users/jonas/.npm",
+    "npm_package_scripts_test_coverage": "ng test --code-coverage",
+    "LOGNAME": "jonas",
+    "KOTLIN_HOME": "/Users/jonas/.sdkman/candidates/kotlin/current",
+    "npm_lifecycle_script": "ng serve",
+    "npm_config_color": "true",
+    "SDKMAN_DIR": "/Users/jonas/.sdkman",
+    "GROOVY_HOME": "/Users/jonas/.sdkman/candidates/groovy/current",
+    "npm_config_proxy": "",
+    "npm_config_package_lock": "true",
+    "npm_package_devDependencies_codelyzer": "^5.1.2",
+    "npm_package_dependencies__ukon1990_js_utilities": "^1.9.3",
+    "LC_CTYPE": "nb_NO.UTF-8",
+    "TAKECARGO_ENVIRONMENT": "LOCAL",
+    "npm_config_package_lock_only": "",
+    "npm_config_fund": "true",
+    "npm_package_devDependencies_karma_jasmine_html_reporter": "^1.5.0",
+    "npm_package_dependencies__angular_common": "~10.0.1",
+    "npm_config_save_optional": "",
+    "npm_package_dependencies_tslib": "^2.0.0",
+    "NVM_BIN": "/Users/jonas/.nvm/versions/node/v12.9.0/bin",
+    "npm_config_ignore_scripts": "",
+    "npm_config_user_agent": "npm/6.13.6 node/v12.9.0 darwin x64",
+    "npm_package_dependencies__angular_core": "~10.0.1",
+    "npm_config_cache_lock_wait": "10000",
+    "npm_package_devDependencies__types_node": "^12.11.1",
+    "SDKMAN_CANDIDATES_DIR": "/Users/jonas/.sdkman/candidates",
+    "npm_config_production": "",
+    "npm_config_send_metrics": "",
+    "npm_config_save_bundle": "",
+    "npm_package_devDependencies__types_jquery": "^3.3.30",
+    "npm_config_umask": "0022",
+    "npm_config_node_options": "",
+    "npm_config_init_version": "1.0.0",
+    "npm_package_devDependencies__types_jasmine": "~3.3.16",
+    "npm_config_init_author_name": "",
+    "npm_config_git": "git",
+    "npm_config_scope": "",
+    "npm_package_devDependencies__angular_devkit_core": "^10.0.0",
+    "npm_config_unsafe_perm": "true",
+    "npm_config_tmp": "/var/folders/rw/m2p9wrsx0gq0ygtv83v4bzp40000gn/T",
+    "npm_config_onload_script": "",
+    "npm_package_dependencies__fortawesome_angular_fontawesome": "^0.6.1",
+    "npm_node_execpath": "/Users/jonas/.nvm/versions/node/v12.9.0/bin/node",
+    "npm_config_prefix": "/Users/jonas/.nvm/versions/node/v12.9.0",
+    "npm_config_link": "",
+    "npm_config_format_package_lock": "true",
+    "_": "/Users/jonas/Dev/Hobby/Web/angular/wow-auction-helper/client/node_modules/.bin/ng",
+    "BROWSERSLIST_IGNORE_OLD_DATA": "1",
+    "WEBPACK_DEV_SERVER": "true"
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": 0,
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 49152,
+      "hard": "unlimited"
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": 67104768
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": 5568,
+      "hard": 8352
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "/Users/jonas/.nvm/versions/node/v12.9.0/bin/node",
+    "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+    "/usr/lib/libSystem.B.dylib",
+    "/usr/lib/libc++.1.dylib",
+    "/usr/lib/libobjc.A.dylib",
+    "/usr/lib/libfakelink.dylib",
+    "/usr/lib/libDiagnosticMessagesClient.dylib",
+    "/usr/lib/libicucore.A.dylib",
+    "/usr/lib/libz.1.dylib",
+    "/usr/lib/libc++abi.dylib",
+    "/usr/lib/system/libcache.dylib",
+    "/usr/lib/system/libcommonCrypto.dylib",
+    "/usr/lib/system/libcompiler_rt.dylib",
+    "/usr/lib/system/libcopyfile.dylib",
+    "/usr/lib/system/libcorecrypto.dylib",
+    "/usr/lib/system/libdispatch.dylib",
+    "/usr/lib/system/libdyld.dylib",
+    "/usr/lib/system/libkeymgr.dylib",
+    "/usr/lib/system/liblaunch.dylib",
+    "/usr/lib/system/libmacho.dylib",
+    "/usr/lib/system/libquarantine.dylib",
+    "/usr/lib/system/libremovefile.dylib",
+    "/usr/lib/system/libsystem_asl.dylib",
+    "/usr/lib/system/libsystem_blocks.dylib",
+    "/usr/lib/system/libsystem_c.dylib",
+    "/usr/lib/system/libsystem_configuration.dylib",
+    "/usr/lib/system/libsystem_coreservices.dylib",
+    "/usr/lib/system/libsystem_darwin.dylib",
+    "/usr/lib/system/libsystem_dnssd.dylib",
+    "/usr/lib/system/libsystem_featureflags.dylib",
+    "/usr/lib/system/libsystem_info.dylib",
+    "/usr/lib/system/libsystem_m.dylib",
+    "/usr/lib/system/libsystem_malloc.dylib",
+    "/usr/lib/system/libsystem_networkextension.dylib",
+    "/usr/lib/system/libsystem_notify.dylib",
+    "/usr/lib/system/libsystem_sandbox.dylib",
+    "/usr/lib/system/libsystem_secinit.dylib",
+    "/usr/lib/system/libsystem_kernel.dylib",
+    "/usr/lib/system/libsystem_platform.dylib",
+    "/usr/lib/system/libsystem_pthread.dylib",
+    "/usr/lib/system/libsystem_symptoms.dylib",
+    "/usr/lib/system/libsystem_trace.dylib",
+    "/usr/lib/system/libunwind.dylib",
+    "/usr/lib/system/libxpc.dylib"
+  ]
+}

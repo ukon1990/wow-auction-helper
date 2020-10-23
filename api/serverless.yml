@@ -58,7 +58,7 @@ functions:
       Function: Wah-updateRealmTrends
       Project: WAH
     handler: src/auction/controller.updateRealmTrends
-    memorySize: 768
+    memorySize: 3008
     timeout: 90
   updateAllHouses:
     tags:

@@ -161,19 +161,9 @@ export class AuctionProcessorUtil {
         date.setUTCSeconds(1);
         date.setUTCMilliseconds(1);
         const day = i < 10 ? '0' + i : i,
-          min = entry[`min${day}`];
+          min = entry[`min${day}`],
+          avg = entry[`avg${day}`];
         if (min) {
-
-          if (callback) {
-            callback({
-              itemId: entry.itemId,
-              petSpeciesId: entry.petSpeciesId,
-              bonusIds: entry.bonusIds,
-              min: entry[`avg${day}`],
-              quantity: entry[`avgQuantity${day}`],
-              timestamp: +date,
-            });
-          } else {
             list.push({
               timestamp: +date,
               petSpeciesId: entry.petSpeciesId,
@@ -186,7 +176,15 @@ export class AuctionProcessorUtil {
               max: entry[`max${day}`],
               maxQuantity: entry[`maxQuantity${day}`]
             });
-          }
+        } else if (callback && avg) {
+          callback({
+            itemId: entry.itemId,
+            petSpeciesId: entry.petSpeciesId,
+            bonusIds: entry.bonusIds,
+            min: avg,
+            quantity: entry[`avgQuantity${day}`],
+            timestamp: +date,
+          });
         }
       }
     });

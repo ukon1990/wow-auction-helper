@@ -28,9 +28,15 @@ export class StatsRepository {
       prevYear = month === 1 ? year - 1 : year,
       currentQueryDate = `${year}-${month}-15`,
       previousQueryDate = `${prevYear}-${prevMonth}-15`;
+    const columns = [];
+    for (let i = 1; i <= 31; i++) {
+      const day = i < 10 ? '0' + i : i;
+      columns.push(`avg${day}`);
+      columns.push(`avgQuantity${day}`);
+    }
     const query = `
-        SELECT *
-        FROM itemPriceHistoryPerHour
+        SELECT date, itemId, petSpeciesId, bonusIds, ${columns.join(', ')}
+        FROM itemPriceHistoryPerDay
         WHERE ahId = ${ahId}
           AND (date = "${currentQueryDate}" OR date = "${previousQueryDate}");`;
     return this.conn.query(query);

@@ -10,16 +10,19 @@ export class AuctionStatsUtil {
       list: ItemPriceEntry[][] = [];
     const processedDBEntryCallback = (hour: ItemPriceEntry) => {
       const id = `${hour.itemId}-${hour.bonusIds}-${hour.petSpeciesId}`;
-      if (!map.has(id)) {
-        const entry: ItemPriceEntry[] = [];
-        map.set(id, entry);
-        list.push(entry);
+      if (hour.quantity > 0 && hour.min > 0) {
+        if (!map.has(id)) {
+          const entry: ItemPriceEntry[] = [];
+          map.set(id, entry);
+          list.push(entry);
+        }
+        map.get(id).push(hour);
       }
-      map.get(id).push(hour);
     };
     let start = +new Date();
     AuctionProcessorUtil.processDailyPriceData(rows,
       (hour: ItemPriceEntry) => processedDBEntryCallback(hour));
+    console.log(list.slice(0,2));
     console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
     start = +new Date();
     const result = list.map(item => this.processDaysForHourlyPriceData(item, false, true));
