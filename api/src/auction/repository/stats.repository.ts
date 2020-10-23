@@ -21,12 +21,19 @@ export class StatsRepository {
   }
 
   getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
-    return this.conn.query(`
+    const date = new Date(),
+      year = date.getUTCFullYear(),
+      month = date.getUTCMonth() + 1, // 2020-10-22
+      prevMonth = month === 1 ? 12 : month - 1,
+      prevYear = month === 1 ? year - 1 : year,
+      currentQueryDate = `${year}-${month}-15`,
+      previousQueryDate = `${prevYear}-${prevMonth}-15`;
+    const query = `
         SELECT *
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${ahId}
-          AND date >= NOW() - INTERVAL 24 HOUR
-        ORDER BY date;`);
+          AND (date = "${currentQueryDate}" OR date = "${previousQueryDate}");`;
+    return this.conn.query(query);
   }
 
   getAllStatsForRealmMonth(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
