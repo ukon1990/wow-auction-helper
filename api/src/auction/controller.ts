@@ -98,3 +98,9 @@ exports.deleteOldPriceForRealm = (event: {table: string, olderThan: number, peri
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, undefined, 500));
 };
+
+exports.updateNextRealmsDailyPrices = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().updateNextRealmsDailyPrices()
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
+};

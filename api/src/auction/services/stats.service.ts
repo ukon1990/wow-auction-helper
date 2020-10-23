@@ -267,6 +267,55 @@ export class StatsService {
     });
   }
 
+  updateNextRealmsDailyPrices(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const conn = new DatabaseUtil(false),
+        startTime = +new Date();
+      let completed = 0, avgQueryTime;
+      conn.enqueueHandshake()
+        .then(() => {
+          this.realmRepository.getRealmsThatNeedsDailyPriceUpdate()
+            .then(async realms => {
+              for (const {id} of realms) {
+                if (DateUtil.timeSince(startTime, 's') < 40) {
+                  const queryStart = + new Date();
+                  await this.compileDailyAuctionData(id, conn, this.getYesterday(1))
+                    .then(() => {
+                      this.realmRepository.updateEntry(id, {
+                        lastDailyPriceUpdate: +new Date(),
+                      })
+                        .then(() => {
+                          completed++;
+                        })
+                        .catch(console.error);
+                    })
+                    .catch(console.error);
+                  const queryTime = +new Date() - queryStart;
+                  if (!avgQueryTime) {
+                    avgQueryTime = queryTime;
+                  } else {
+                    avgQueryTime = (avgQueryTime + queryTime) / 2;
+                  }
+                }
+              }
+
+              console.log(`Done updating daily price for ${completed}/${realms.length
+              } houses. Avg query time was ${avgQueryTime}`);
+              conn.end();
+              resolve();
+            })
+            .catch(error => {
+              conn.end();
+              reject(error);
+            });
+        })
+        .catch(error => {
+          conn.end();
+          reject(error);
+        });
+    });
+  }
+
   compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<any> {
     console.log('Updating daily price data');
     const dayOfMonth = AuctionProcessorUtil.getDateNumber(date.getUTCDate());
@@ -388,7 +437,6 @@ export class StatsService {
           this.realmRepository.getRealmsThatNeedsTrendUpdate()
             .then(async (houses) => {
               for (const {region, id} of houses.slice(0, 10)) {
-                console.log('Time since start', DateUtil.timeSince(startTime, 's'), 'seconds');
                 if (DateUtil.timeSince(startTime, 's') < 50) {
                   await this.setRealmTrends(region, id, conn)
                     .then(async () => {

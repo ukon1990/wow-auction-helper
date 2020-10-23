@@ -216,13 +216,29 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
       TableName: this.table,
       FilterExpression:
         '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) ' +
-        'AND #lastStatsInsert > #lastTrendUpdateInitiation',
+        'AND #lastDailyPriceUpdate > #lastTrendUpdateInitiation',
       ExpressionAttributeNames: {
         '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
+        '#lastDailyPriceUpdate': 'lastDailyPriceUpdate',
+      },
+      ExpressionAttributeValues: {
+        ':time': +new Date() - 30 * 60 * 1000 * 12,
+      }
+    });
+  }
+
+  getRealmsThatNeedsDailyPriceUpdate(): Promise<AuctionHouse[]> {
+    return this.scan({
+      TableName: this.table,
+      FilterExpression:
+        '(#lastDailyPriceUpdate < :time OR attribute_not_exists(#lastDailyPriceUpdate)) ' +
+        'AND (#lastStatsInsert > #lastDailyPriceUpdate OR attribute_not_exists(#lastDailyPriceUpdate))',
+      ExpressionAttributeNames: {
+        '#lastDailyPriceUpdate': 'lastDailyPriceUpdate',
         '#lastStatsInsert': 'lastStatsInsert',
       },
       ExpressionAttributeValues: {
-        ':time': +new Date() - 30 * 60 * 1000,
+        ':time': +new Date() - 30 * 60 * 1000 * 12,
       }
     });
   }
