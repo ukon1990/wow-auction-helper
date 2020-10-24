@@ -139,10 +139,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
               past14DaysPriceAvg: auction.stats.past14Days.price.avg,
               past14DaysQuantityTrend: auction.stats.past14Days.quantity.trend,
               past14DaysQuantityAvg: auction.stats.past14Days.quantity.avg,
-              past30DaysPriceTrend: auction.stats.past30Days.price.trend,
-              past30DaysPriceAvg: auction.stats.past30Days.price.avg,
-              past30DaysQuantityTrend: auction.stats.past30Days.quantity.trend,
-              past30DaysQuantityAvg: auction.stats.past30Days.quantity.avg,
+              past7DaysPriceTrend: auction.stats.past7Days.price.trend,
+              past7DaysPriceAvg: auction.stats.past7Days.price.avg,
+              past7DaysQuantityTrend: auction.stats.past7Days.quantity.trend,
+              past7DaysQuantityAvg: auction.stats.past7Days.quantity.avg,
             };
           }
           result.push({

@@ -22,12 +22,23 @@ export class AuctionStatsUtil {
     let start = +new Date();
     AuctionProcessorUtil.processDailyPriceData(rows,
       (hour: ItemPriceEntry) => processedDBEntryCallback(hour));
-    console.log(list.slice(0,2));
     console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
     start = +new Date();
-    const result = list.map(item => this.processDaysForHourlyPriceData(item, false, true));
+    const result = [];
+    list.map(item => {
+      const res = this.processDaysForHourlyPriceData(item, false, true);
+      if (this.hasPrice(res, 'past14Days') ||
+        this.hasPrice(res, 'past7Days') ||
+        this.hasPrice(res, 'past24Hours')) {
+        result.push(res);
+      }
+    });
     console.log(`processDaysForHourlyPriceData took ${+new Date() - start} ms`);
     return result;
+  }
+
+  private static hasPrice(entry, field): boolean {
+    return entry[field] && !!entry[field].price.avg;
   }
 
   static processDaysForHourlyPriceData(hours: ItemPriceEntry[], isSortedAsc: boolean = false, isMinimal: boolean = false): ItemStats {
@@ -48,17 +59,13 @@ export class AuctionStatsUtil {
         Doing it this way, to hopefully save a couple MS in compute in AWS Lambda,
         if I end up calculating this for whole realms of multiple items at a time.
        */
-
-      if (daysSince <= 30) {
-        itemStats.past30Days = this.getEntryValues(itemStats.past30Days, hour, priceDiff, quantityDiff);
-      }
       if (daysSince <= 14) {
-          itemStats.past14Days = this.getEntryValues(itemStats.past14Days, hour, priceDiff, quantityDiff);
+        itemStats.past14Days = this.getEntryValues(itemStats.past14Days, hour, priceDiff, quantityDiff);
 
         if (daysSince <= 7) {
-            itemStats.past7Days = this.getEntryValues(itemStats.past7Days, hour, priceDiff, quantityDiff);
+          itemStats.past7Days = this.getEntryValues(itemStats.past7Days, hour, priceDiff, quantityDiff);
 
-          if (!isMinimal &&  daysSince <= 1) {
+          if (!isMinimal && daysSince <= 1) {
             itemStats.past24Hours = this.getEntryValues(itemStats.past24Hours, hour, priceDiff, quantityDiff);
 
             if (hoursSince <= 12) {
@@ -71,8 +78,6 @@ export class AuctionStatsUtil {
     if (!isMinimal) {
       this.setResultForPeriod(result.past12Hours, itemStats.past12Hours);
       this.setResultForPeriod(result.past24Hours, itemStats.past24Hours);
-    } else {
-      this.setResultForPeriod(result.past30Days, itemStats.past30Days);
     }
     this.setResultForPeriod(result.past14Days, itemStats.past14Days);
     this.setResultForPeriod(result.past7Days, itemStats.past7Days);
@@ -114,25 +119,13 @@ export class AuctionStatsUtil {
       },
     };
 
-    if (isMinimal) {
-      vals.past30Days = {
-        price: {
-        ...statPart,
-        },
-        quantity: {
-        ...statPart,
-        },
-        totalEntries: 0,
-      };
-    }
-
     if (!isMinimal) {
       vals.past12Hours = {
         price: {
-        ...statPart,
+          ...statPart,
         },
         quantity: {
-        ...statPart,
+          ...statPart,
         },
         totalEntries: 0,
       };
