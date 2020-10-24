@@ -66,7 +66,7 @@ export class AuctionsService {
     return this.mapped.value.get('' + id);
   }
 
-  getAuctions(): Promise<any> {
+  async getAuctions(): Promise<any> {
     if (SharedService.downloading.auctions) {
       return;
     }
@@ -84,12 +84,7 @@ export class AuctionsService {
     ];
 
     if (realmStatus.stats.lastModified !== this.statsLastModified.value) {
-      promises.push(
-        this.http
-          .get(realmStatus.stats.url + '?seed=' + Math.random() * 1000)
-          .toPromise()
-          .then(({lastModified, data}: { lastModified: number, data: ItemStats[] }) =>
-            this.handleStatsResponse(data, lastModified)));
+      promises.push(this.getStats(realmStatus.stats));
     }
 
     return Promise.all(promises)
@@ -198,5 +193,21 @@ export class AuctionsService {
         this.mapped.next(map);
       })
       .catch(error => ErrorReport.sendError('getAuctions', error));
+  }
+
+  private getStats(stats) {
+    return new Promise<any>(resolve => {
+      this.http
+        .get(stats.url + '?seed=' + Math.random() * 1000)
+        .toPromise()
+        .then(({lastModified, data}: { lastModified: number, data: ItemStats[] }) => {
+          this.handleStatsResponse(data, lastModified);
+          resolve();
+        })
+        .catch(error => {
+          console.error(error);
+          resolve();
+        });
+    });
   }
 }
