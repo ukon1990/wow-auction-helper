@@ -44,6 +44,7 @@ import {ProfessionService} from './modules/crafting/services/profession.service'
 import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatNativeDateModule} from '@angular/material/core';
+import {OAuthModule} from 'angular-oauth2-oidc';
 
 
 @NgModule({
@@ -55,6 +56,7 @@ import {MatNativeDateModule} from '@angular/material/core';
     AppRoutingModule,
     HttpClientModule,
     HttpClientJsonpModule,
+    OAuthModule.forRoot(),
     Angulartics2Module.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     BrowserAnimationsModule,
