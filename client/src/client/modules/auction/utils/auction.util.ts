@@ -23,6 +23,7 @@ export class AuctionUtil {
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
    * @param auctions A raw auction array
+   * @param statsMap map over price statistics for each item
    */
   public static organize(auctions: Auction[], statsMap: Map<string, ItemStats>): Promise<OrganizedAuctionResult> {
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {

@@ -90,29 +90,10 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     columns.push({key: 'name', title: 'Name', dataType: 'name'});
     columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});
-    if (pastTimeSelection === 7) {
-      /*
-        past14DaysPriceTrend
-        past14DaysPriceAvg
-        past14DaysQuantityTrend
-        past14DaysQuantityAvg
-       */
-      columns.push({key: 'past7DaysQuantityTrend', title: 'Qty trend', dataType: 'number', hideOnMobile: true});
-      columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-      columns.push({key: 'past7DaysPriceAvg', title: 'Avg min price', dataType: 'gold', hideOnMobile: true});
-      columns.push({key: 'past7DaysPriceTrend', title: 'Price trend', dataType: 'gold', hideOnMobile: true});
-    } else {
-      /*
-      past24HoursPriceTrend
-      past24HoursPriceAvg
-      past24HoursQuantityTrend
-      past24HoursQuantityAvg
-      */
-      columns.push({key: 'past14HoursQuantityTrend', title: 'Qty trend', dataType: 'number', hideOnMobile: true});
-      columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-      columns.push({key: 'past14HoursPriceAvg', title: 'Avg min price', dataType: 'gold', hideOnMobile: true});
-      columns.push({key: 'past14HoursPriceTrend', title: 'Price trend', dataType: 'gold', hideOnMobile: true});
-    }
+    columns.push({key: 'pastQuantityTrend', title: 'Avg daily qty trend', dataType: 'number', hideOnMobile: true});
+    columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
+    columns.push({key: 'pastPriceAvg', title: 'Avg daily min price', dataType: 'gold', hideOnMobile: true});
+    columns.push({key: 'pastPriceTrend', title: 'Daily avg price trend', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
@@ -135,15 +116,22 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           let statsValues = {};
           if (auction.stats) {
             statsValues = {
-              past14DaysPriceTrend: auction.stats.past14Days.price.trend,
-              past14DaysPriceAvg: auction.stats.past14Days.price.avg,
-              past14DaysQuantityTrend: auction.stats.past14Days.quantity.trend,
-              past14DaysQuantityAvg: auction.stats.past14Days.quantity.avg,
-              past7DaysPriceTrend: auction.stats.past7Days.price.trend,
-              past7DaysPriceAvg: auction.stats.past7Days.price.avg,
-              past7DaysQuantityTrend: auction.stats.past7Days.quantity.trend,
-              past7DaysQuantityAvg: auction.stats.past7Days.quantity.avg,
             };
+            if (changes.pastTimeSelection === 7) {
+              statsValues = {
+                pastPriceTrend: auction.stats.past7Days.price.trend,
+                pastPriceAvg: auction.stats.past7Days.price.avg,
+                pastQuantityTrend: auction.stats.past7Days.quantity.trend,
+                pastQuantityAvg: auction.stats.past7Days.quantity.avg,
+              };
+            } else {
+              statsValues = {
+                pastPriceTrend: auction.stats.past14Days.price.trend,
+                pastPriceAvg: auction.stats.past14Days.price.avg,
+                pastQuantityTrend: auction.stats.past14Days.quantity.trend,
+                pastQuantityAvg: auction.stats.past14Days.quantity.avg,
+              };
+            }
           }
           result.push({
             ...SharedService.pets[auction.petSpeciesId],

@@ -10,6 +10,11 @@ export interface Stat {
   totalEntries: number;
 }
 
+export class ItemStatsMap {
+  bonusIds: Map<string, ItemStats> = new Map<string, ItemStats>();
+  petSpeciesId: Map<string, ItemStats> = new Map<string, ItemStats>();
+}
+
 export interface ItemStats {
   itemId: number;
   petSpeciesId?: number;

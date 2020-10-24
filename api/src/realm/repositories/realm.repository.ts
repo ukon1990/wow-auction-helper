@@ -225,7 +225,8 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
         ':time': +new Date() - 60 * 60 * 1000 * 12,
       }
     };
-    return this.scan({
+    /**
+     {
       TableName: this.table,
       FilterExpression:
         '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) ' +
@@ -239,7 +240,9 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
         ':time': +new Date() - 30 * 60 * 1000,
         ':minDate': +new Date('2020/10/23 22:30')
       }
-    });
+    }
+     */
+    return this.scan(params);
   }
 
   getRealmsThatNeedsDailyPriceUpdate(): Promise<AuctionHouse[]> {

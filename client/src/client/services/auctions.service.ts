@@ -16,9 +16,7 @@ import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status
 import {TsmService} from '../modules/tsm/tsm.service';
 import {CharacterService} from '../modules/character/services/character.service';
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
-import {Report} from '../utils/report.util';
 import {ItemStats} from '../../../../api/src/auction/models/item-stats.model';
-import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 
 @Injectable()
 export class AuctionsService {
@@ -78,18 +76,23 @@ export class AuctionsService {
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     let auctions;
-    const statsMap = new Map<string, ItemStats>();
-    return Promise.all([
+    const promises = [
       this.http
         .get(realmStatus.url)
         .toPromise()
-        .then(data => auctions = data['auctions']),
-      this.http
-        .get(realmStatus.stats.url)
-        .toPromise()
-        .then(({lastModified, data}: {lastModified: number, data: ItemStats[]}) =>
-          this.handleStatsResponse(data, statsMap, lastModified))
-    ])
+        .then(data => auctions = data['auctions'])
+    ];
+
+    if (realmStatus.stats.lastModified !== this.statsLastModified.value) {
+      promises.push(
+        this.http
+          .get(realmStatus.stats.url + '?seed=' + Math.random() * 1000)
+          .toPromise()
+          .then(({lastModified, data}: { lastModified: number, data: ItemStats[] }) =>
+            this.handleStatsResponse(data, lastModified)));
+    }
+
+    return Promise.all(promises)
       .then(async () => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
@@ -122,7 +125,8 @@ export class AuctionsService {
       });
   }
 
-  private handleStatsResponse(data, statsMap: Map<string, ItemStats>, lastModified) {
+  private handleStatsResponse(data, lastModified) {
+    const statsMap = new Map<string, ItemStats>();
     data.forEach(stat => {
       let id = '' + stat.itemId;
       if (stat.bonusIds !== '-1') {
