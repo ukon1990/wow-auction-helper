@@ -1,8 +1,6 @@
 <ng-container *ngIf="isActiveTab">
   <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
-
-    <h6>Hourly trends</h6>
-    <em>Based on the prices and quantity for each hour of the day</em>
+    <h6>Prices grouped by hour the past 14 days</h6>
     <mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">
       <mat-list-item>
         <div mat-line [style]="{color: theme.accentColorCode}">
@@ -10,7 +8,7 @@
         </div>
         <div mat-line>
           <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-           {{ stats.past12Hours.price.trend | gold }}
+          {{ stats.past12Hours.price.trend | gold }}
           <span [style]="{color: theme.primaryColorCode}">Avg price</span>
           {{ stats.past12Hours.price.avg | gold }}
         </div>
@@ -73,8 +71,6 @@
         </div>
       </mat-list-item>
     </mat-list>
-
-    <h6>Prices grouped by hour the past 14 days</h6>
     <mat-tab-group class="mb-3">
       <mat-tab label="Chart">
         <wah-highcharts
@@ -92,12 +88,7 @@
         </wah-data-table>
       </mat-tab>
     </mat-tab-group>
-
-    <h6>Daily trends</h6>
-    <em>
-      Based on the daily avg min price and quantity for each day.
-      This will likely not be identical to the hourly values.
-    </em>
+    <h6>Prices grouped by day</h6>
     <mat-list dense class="horizontal-item-list mb-3" *ngIf="auctionItem.stats">
       <mat-list-item>
       </mat-list-item>
@@ -138,7 +129,6 @@
         </div>
       </mat-list-item>
     </mat-list>
-    <h6>Prices grouped by day</h6>
     <mat-tab-group>
       <mat-tab label="Chart">
         <wah-highcharts
