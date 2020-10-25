@@ -22,10 +22,11 @@ export class StatsRepository {
 
   getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
     const date = new Date(),
+      prevDate = new Date(+date - 24 * 60 * 60 * 1000),
       year = date.getUTCFullYear(),
-      month = date.getUTCMonth() + 1, // 2020-10-22
-      prevMonth = month === 1 ? 12 : month - 1,
-      prevYear = month === 1 ? year - 1 : year,
+      month = date.getUTCMonth() + 1,
+      prevYear = prevDate.getUTCFullYear(),
+      prevMonth = prevDate.getUTCMonth() + 1,
       currentQueryDate = `${year}-${month}-15`,
       previousQueryDate = `${prevYear}-${prevMonth}-15`;
     const columns = [];
