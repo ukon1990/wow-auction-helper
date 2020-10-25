@@ -62,10 +62,10 @@ export class AuctionStatsUtil {
       if (daysSince <= 14) {
         itemStats.past14Days = this.getEntryValues(itemStats.past14Days, hour, priceDiff, quantityDiff);
 
-        if (daysSince <= 7) {
+        if (!isMinimal && daysSince <= 7) {
           itemStats.past7Days = this.getEntryValues(itemStats.past7Days, hour, priceDiff, quantityDiff);
 
-          if (!isMinimal && daysSince <= 1) {
+          if (daysSince <= 1) {
             itemStats.past24Hours = this.getEntryValues(itemStats.past24Hours, hour, priceDiff, quantityDiff);
 
             if (hoursSince <= 12) {
@@ -78,9 +78,9 @@ export class AuctionStatsUtil {
     if (!isMinimal) {
       this.setResultForPeriod(result.past12Hours, itemStats.past12Hours);
       this.setResultForPeriod(result.past24Hours, itemStats.past24Hours);
+      this.setResultForPeriod(result.past7Days, itemStats.past7Days);
     }
     this.setResultForPeriod(result.past14Days, itemStats.past14Days);
-    this.setResultForPeriod(result.past7Days, itemStats.past7Days);
     return result;
   }
 
@@ -99,15 +99,6 @@ export class AuctionStatsUtil {
       avg: 0,
     }, vals: ItemStats = {
       itemId: hours[0].itemId,
-      past7Days: {
-        price: {
-          ...statPart,
-        },
-        quantity: {
-          ...statPart,
-        },
-        totalEntries: 0,
-      },
       past14Days: {
         price: {
           ...statPart,
@@ -135,6 +126,15 @@ export class AuctionStatsUtil {
         },
         quantity: {
           ...statPart,
+        },
+        totalEntries: 0,
+      };
+      vals.past7Days = {
+        price: {
+        ...statPart,
+        },
+        quantity: {
+        ...statPart,
         },
         totalEntries: 0,
       };
