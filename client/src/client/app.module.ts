@@ -45,6 +45,7 @@ import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatNativeDateModule} from '@angular/material/core';
 import {OAuthModule} from 'angular-oauth2-oidc';
+import {AmplifyUIAngularModule} from '@aws-amplify/ui-angular';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import {OAuthModule} from 'angular-oauth2-oidc';
     HttpClientModule,
     HttpClientJsonpModule,
     OAuthModule.forRoot(),
+    AmplifyUIAngularModule,
     Angulartics2Module.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     BrowserAnimationsModule,
