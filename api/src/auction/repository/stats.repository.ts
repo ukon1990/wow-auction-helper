@@ -35,11 +35,15 @@ export class StatsRepository {
       columns.push(`avg${day}`);
       columns.push(`avgQuantity${day}`);
     }
+    const dateCompare = prevMonth === month ?
+      `date = "${currentQueryDate}"` :
+      `(date = "${currentQueryDate}" OR date = "${previousQueryDate}")`;
+
     const query = `
         SELECT date, itemId, petSpeciesId, bonusIds, ${columns.join(', ')}
         FROM itemPriceHistoryPerDay
         WHERE ahId = ${ahId}
-          AND (date = "${currentQueryDate}" OR date = "${previousQueryDate}");`;
+          AND ${dateCompare};`;
     return this.conn.query(query);
   }
 

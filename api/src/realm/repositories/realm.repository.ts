@@ -215,15 +215,11 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     const params = {
       TableName: this.table,
       FilterExpression:
-        '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) ' +
-        'AND #lastDailyPriceUpdate > #lastTrendUpdateInitiation',
+        '#lastDailyPriceUpdate > #lastTrendUpdateInitiation',
       ExpressionAttributeNames: {
         '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
         '#lastDailyPriceUpdate': 'lastDailyPriceUpdate',
       },
-      ExpressionAttributeValues: {
-        ':time': +new Date() - 60 * 60 * 1000 * 12,
-      }
     };
     /**
      {

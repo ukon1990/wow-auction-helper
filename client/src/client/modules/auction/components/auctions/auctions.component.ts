@@ -116,22 +116,11 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
           let statsValues = {};
           if (auction.stats) {
             statsValues = {
+              pastPriceTrend: auction.stats.past14Days.price.trend,
+              pastPriceAvg: auction.stats.past14Days.price.avg,
+              pastQuantityTrend: auction.stats.past14Days.quantity.trend,
+              pastQuantityAvg: auction.stats.past14Days.quantity.avg,
             };
-            if (changes.pastTimeSelection === 7) {
-              statsValues = {
-                pastPriceTrend: auction.stats.past7Days.price.trend,
-                pastPriceAvg: auction.stats.past7Days.price.avg,
-                pastQuantityTrend: auction.stats.past7Days.quantity.trend,
-                pastQuantityAvg: auction.stats.past7Days.quantity.avg,
-              };
-            } else {
-              statsValues = {
-                pastPriceTrend: auction.stats.past14Days.price.trend,
-                pastPriceAvg: auction.stats.past14Days.price.avg,
-                pastQuantityTrend: auction.stats.past14Days.quantity.trend,
-                pastQuantityAvg: auction.stats.past14Days.quantity.avg,
-              };
-            }
           }
           result.push({
             ...SharedService.pets[auction.petSpeciesId],

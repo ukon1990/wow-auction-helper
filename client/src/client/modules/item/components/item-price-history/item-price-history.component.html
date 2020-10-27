@@ -89,46 +89,6 @@
       </mat-tab>
     </mat-tab-group>
     <h6>Prices grouped by day</h6>
-    <mat-list dense class="horizontal-item-list mb-3" *ngIf="auctionItem.stats">
-      <mat-list-item>
-      </mat-list-item>
-      <mat-list-item>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Past 7 days
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-          {{ auctionItem.stats.past7Days.price.trend | gold }}
-          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-          {{ auctionItem.stats.past7Days.price.avg | gold }}
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.warnColorCode}">Avg change</span>
-          {{ auctionItem.stats.past7Days.quantity.trend | number }}
-          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-          {{ auctionItem.stats.past7Days.quantity.avg | number }}
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Past 14 days
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-          {{ auctionItem.stats.past14Days.price.trend | gold }}
-          <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-          {{ auctionItem.stats.past14Days.price.avg | gold }}
-        </div>
-        <div mat-line>
-          <span [style]="{color: theme.warnColorCode}">Avg change</span>
-          {{ auctionItem.stats.past14Days.quantity.trend | number }}
-          <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-          {{ auctionItem.stats.past14Days.quantity.avg | number }}
-        </div>
-      </mat-list-item>
-    </mat-list>
     <mat-tab-group>
       <mat-tab label="Chart">
         <wah-highcharts
