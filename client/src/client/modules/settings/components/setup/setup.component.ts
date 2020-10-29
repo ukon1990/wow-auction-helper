@@ -1,13 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
-import {Realm} from '../../../../models/realm';
 import {Router} from '@angular/router';
-import {User} from '../../../../models/user/user';
 import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {BackgroundDownloadService} from '../../../core/services/background-download.service';
 import {UserUtil} from '../../../../utils/user/user.util';
+
+declare function require(moduleName: string): any;
+
+const version = require('../../../../../../package.json').version;
 
 @Component({
   selector: 'wah-setup',
@@ -68,8 +70,9 @@ export class SetupComponent {
   }
 
   redirectUserFromRestore(): void {
-    this.router.navigateByUrl('/crafting');
     Report.send('Imported existing setup', 'User registration');
+    this.router.navigateByUrl('/crafting')
+      .catch(console.error);
   }
 
   completeSetup(): void {
@@ -77,12 +80,22 @@ export class SetupComponent {
       localStorage['region'] = this.form.value.region;
       localStorage['realm'] = this.form.value.realm;
       localStorage['character'] = this.form.value.name;
-      localStorage['timestamp_news'] = new Date().toLocaleDateString();
+      localStorage['timestamp_news'] = version;
+      Report.send('New user registered', 'User registration');
 
       UserUtil.restore();
-      this.service.init();
-      this.router.navigateByUrl('/dashboard');
-      Report.send('New user registered', 'User registration');
+      /*
+      this.service.init()
+        .catch(console.error);
+      this.router.navigateByUrl('/dashboard')
+        .catch(console.error);
+      */
+
+      if (localStorage.getItem('initialUrl')) {
+        location.pathname = localStorage.getItem('initialUrl');
+      } else {
+        location.reload();
+      }
     }
   }
 

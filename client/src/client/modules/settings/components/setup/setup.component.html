@@ -102,13 +102,16 @@
         Import previous settings</mat-panel-title>
       <mat-panel-description>Click here to open</mat-panel-description>
     </mat-expansion-panel-header>
-    <mat-form-field class="col-md-10 float-left">
-      <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
-    </mat-form-field>
-    <button class="float-right" mat-button (click)="importUserData()" [disabled]="form.controls.importString.status === 'INVALID'">
-      <i class="fas fa-upload"></i>
-      Restore
-    </button>
+    <form [formGroup]="form" class="row">
+      <mat-form-field class="col-md-10 float-left">
+        <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
+      </mat-form-field>
+      <button class="float-right" mat-button (click)="importUserData()" [disabled]="form.controls.importString.status === 'INVALID'">
+        <i class="fas fa-upload"></i>
+        Restore
+      </button>
+    </form>
+
     <button mat-button (click)="fileInput.click()">
       <i class="fas fa-upload"></i>
       Select a settings file to import

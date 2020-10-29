@@ -24,6 +24,7 @@ export class ProfessionService {
   map: BehaviorSubject<Map<number, Profession>> = new BehaviorSubject<Map<number, Profession>>(
     new Map<number, Profession>());
   craftingSubscription: Subscription;
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private http: HttpClient, private dbService: DatabaseService) {
     this.craftingSubscription = CraftingService.list.subscribe((data) => {
@@ -74,7 +75,7 @@ export class ProfessionService {
     SharedService.downloading.professions = true;
 
     await this.dbService.clearProfessions();
-    await this.http.get(`${Endpoints.S3_BUCKET}/profession/${locales}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+    await this.http.get(`${Endpoints.S3_BUCKET}/profession/${locales}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then((response: ProfessionResponse) => {
         this.dbService.addProfessions(response.professions);

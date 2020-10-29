@@ -7,7 +7,6 @@ import {SharedService} from '../../services/shared.service';
 import {AuctionHouseStatus} from '../auction/models/auction-house-status.model';
 import {ErrorReport} from '../../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {RealmService} from '../../services/realm.service';
 import {environment} from '../../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
 
@@ -40,6 +39,7 @@ export class TsmService {
           .catch(err => error = err);
       }
 
+      /* Temp deactivated to see if it affects loading speeds
       if (!list || !list.length) {
         await this.getFromDB()
           .then(data => list = data)
@@ -48,6 +48,7 @@ export class TsmService {
             error = err;
           });
       }
+      */
 
       if (!list || !list.length) {
         await this.get(realmStatus)
@@ -78,13 +79,15 @@ export class TsmService {
             localStorage['timestamp_tsm'] = new Date().toDateString();
             SharedService.downloading.tsmAuctions = false;
             console.log('TSM data download is complete');
-           try {
-             this.processData(tsm);
-             this.addToDB(tsm);
-             this.openSnackbar('Completed TSM download');
-           } catch (error) {
-             ErrorReport.sendError('TsmService.get', error);
-           }
+            try {
+              this.processData(tsm);
+              /* Temp deactivated to see if it affects loading speeds
+              this.addToDB(tsm);
+               */
+              this.openSnackbar('Completed TSM download');
+            } catch (error) {
+              ErrorReport.sendError('TsmService.get', error);
+            }
             resolve(tsm || []);
           })
           .catch(error => {

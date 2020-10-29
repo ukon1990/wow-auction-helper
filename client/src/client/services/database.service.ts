@@ -463,10 +463,15 @@ export class DatabaseService {
     await this.clearProfessions();
   }
 
-  deleteDB(): void {
-    if (this.shouldNotUseIndexedDB()) {
-      return;
-    }
-    this.db.delete();
+  deleteDB(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (this.shouldNotUseIndexedDB()) {
+        resolve();
+        return;
+      }
+      return this.db.delete()
+        .then(() => resolve())
+        .catch(() => resolve());
+    });
   }
 }

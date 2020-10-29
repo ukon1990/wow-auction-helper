@@ -11,7 +11,6 @@ import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
 import wordsToNumbers from 'words-to-numbers';
-import {Report} from '../utils/report.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -20,11 +19,6 @@ class RecipeResponse {
 
 @Injectable()
 export class CraftingService {
-
-  constructor(private _http: HttpClient,
-              private dbService: DatabaseService,
-              public platform: Platform) {
-  }
 
   static recipesForUser: BehaviorSubject<Map<number, string[]>> = new BehaviorSubject(new Map<number, string[]>());
   static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
@@ -35,6 +29,12 @@ export class CraftingService {
   static itemRecipeMapPerKnown: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static reagentRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
 
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+  constructor(private _http: HttpClient,
+              private dbService: DatabaseService,
+              public platform: Platform) {
+  }
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
   static getRecipesForFaction(recipes: Recipe[]): Recipe[] {
@@ -105,7 +105,7 @@ export class CraftingService {
     console.log('Downloading recipes');
 
     SharedService.downloading.recipes = true;
-    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then(async (result: RecipeResponse) => {
         SharedService.downloading.recipes = false;

@@ -73,19 +73,20 @@ export class AuctionsService {
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
-    let auctions, stats;
-    return Promise.all([
-      this.http
-        .get(realmStatus.url)
-        .toPromise()
-        .then(data => auctions = data['auctions']),
+    let auctions;
+    /*
       this.http
         .get(realmStatus.stats.url)
         .toPromise()
         .then(data => stats = data)
+    */
+    return Promise.all([
+      this.http
+        .get(realmStatus.url)
+        .toPromise()
+        .then(data => auctions = data['auctions'])
     ])
       .then(async () => {
-        Report.debug('Stats is', stats);
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
@@ -128,7 +129,8 @@ export class AuctionsService {
 
     const previousLastModified = +localStorage['timestamp_auctions'];
     if (this.shouldDownload(status, previousLastModified)) {
-      this.getAuctions();
+      this.getAuctions()
+        .catch(console.error);
     }
   }
 
