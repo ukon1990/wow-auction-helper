@@ -100,11 +100,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private redirectToCorrectPath(url: string) {
+    if (url && !SharedService.user.realm && !SharedService.user.region &&
+      !localStorage.getItem('initialUrl') && !TextUtil.contains(url, 'setup')
+    ) {
+      localStorage.setItem('initialUrl', url);
+    }
+
     if (url === '/') {
       if (SharedService.user.realm && SharedService.user.region) {
-        this.router.navigateByUrl('dashboard');
+        this.router.navigateByUrl('dashboard')
+          .catch(console.error);
       } else {
-        this.router.navigateByUrl('setup');
+        this.router.navigateByUrl('setup')
+          .catch(console.error);
       }
     }
   }
@@ -191,6 +199,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private onNavigationChange(event: NavigationEnd) {
     if (TextUtil.contains(event.url, 'setup')) {
       this.initialLoadWasSetup = true;
+    } else {
+      this.initialLoadWasSetup = false;
     }
 
     if (TextUtil.contains(event.url, 'settings') || TextUtil.contains(event.url, 'about')) {

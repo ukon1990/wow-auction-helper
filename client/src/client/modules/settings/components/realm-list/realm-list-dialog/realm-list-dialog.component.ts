@@ -59,20 +59,23 @@ export class RealmListDialogComponent implements OnDestroy {
         });
         const times = {};
         const timeList = [];
+        const map = new Map<number, boolean>();
         realms.forEach(realm => {
+          if (map.has(realm.ahId)) {
+            return;
+          } else {
+            map.set(realm.ahId, true);
+          }
           const minute = new Date(realm.lastModified).getMinutes();
           if (!times[minute]) {
             times[minute] = {
               minute,
-              regions: {},
+              count: 0,
             };
             timeList.push(times[minute]);
           }
-          if (!times[minute].regions[realm.region]) {
-            times[minute].regions[realm.region] = 0;
-          }
 
-          times[minute].regions[realm.region]++;
+          times[minute].count++;
         });
         Report.debug('Realm times are', timeList.sort((a, b) => b.minute - a.minute));
         this.reset();

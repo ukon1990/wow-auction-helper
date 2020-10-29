@@ -7,61 +7,70 @@ import {DateUtil} from '@ukon1990/js-utilities';
 export class AuctionStatsUtil {
   static processDays(rows: AuctionItemStat[]): ItemStats[] {
     const map = new Map<string, ItemPriceEntry[]>(),
-      list: ItemPriceEntry[][] = [],
-      hours = AuctionProcessorUtil.processHourlyPriceData(rows);
-    hours.forEach(hour => {
-      const id = `${hour.itemId}-${hour.bonusIds}-${hour.petSpeciesId}${hour.ahId}`;
-      if (map.has(id)) {
+      list: ItemPriceEntry[][] = [];
+    const processedDBEntryCallback = (hour: ItemPriceEntry) => {
+      const id = `${hour.itemId}-${hour.bonusIds}-${hour.petSpeciesId}`;
+      if (!map.has(id)) {
         const entry: ItemPriceEntry[] = [];
         map.set(id, entry);
         list.push(entry);
       }
-      map.get(id).push({
-        id,
-        ...hour,
-      });
-    });
-
-    return list.map(item => this.processDaysForHourlyPriceData(item));
+      map.get(id).push(hour);
+    };
+    let start = +new Date();
+    AuctionProcessorUtil.processHourlyPriceData(rows,
+      (hour: ItemPriceEntry) => processedDBEntryCallback(hour));
+    console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
+    start = +new Date();
+    const result = list.map(item => this.processDaysForHourlyPriceData(item, true, true));
+    console.log(`processDaysForHourlyPriceData took ${+new Date() - start} ms`);
+    return result;
   }
 
-  static processDaysForHourlyPriceData(hours: ItemPriceEntry[]): ItemStats {
-    const itemStats = this.getBaseItemStatItem(hours),
-          result = this.getBaseItemStatItem(hours);
-    hours
-      .sort((a, b) => a.timestamp - b.timestamp)
-      .forEach((hour: ItemPriceEntry, index: number, array: ItemPriceEntry[]) => {
-        if (index === 0) {
-          return;
-        }
-        const priceDiff = hour.min - array[index - 1].min,
-          quantityDiff = hour.quantity - array[index - 1].quantity,
-          daysSince: number = DateUtil.timeSince(hour.timestamp, 'd'),
-          hoursSince: number = DateUtil.timeSince(hour.timestamp, 'h');
-        /*
-          Doing it this way, to hopefully save a couple MS in compute in AWS Lambda,
-          if I end up calculating this for whole realms of multiple items at a time.
-         */
-        if (daysSince <= 14) {
+  static processDaysForHourlyPriceData(hours: ItemPriceEntry[], isSortedAsc: boolean = false, isMinimal: boolean = false): ItemStats {
+    const itemStats = this.getBaseItemStatItem(hours, isMinimal),
+      result = this.getBaseItemStatItem(hours, isMinimal);
+    (isSortedAsc ?
+        hours :
+        hours.sort((a, b) => a.timestamp - b.timestamp)
+    ).forEach((hour: ItemPriceEntry, index: number, array: ItemPriceEntry[]) => {
+      if (index === 0) {
+        return;
+      }
+      const priceDiff = hour.min - array[index - 1].min,
+        quantityDiff = hour.quantity - array[index - 1].quantity,
+        daysSince: number = DateUtil.timeSince(hour.timestamp, 'd'),
+        hoursSince: number = DateUtil.timeSince(hour.timestamp, 'h');
+      /*
+        Doing it this way, to hopefully save a couple MS in compute in AWS Lambda,
+        if I end up calculating this for whole realms of multiple items at a time.
+       */
+      if (daysSince <= 14) {
+        if (!isMinimal) {
           itemStats.past14Days = this.getEntryValues(itemStats.past14Days, hour, priceDiff, quantityDiff);
+        }
 
-          if (daysSince <= 7) {
+        if (daysSince <= 7) {
+          if (!isMinimal) {
             itemStats.past7Days = this.getEntryValues(itemStats.past7Days, hour, priceDiff, quantityDiff);
+          }
 
-            if (daysSince <= 1) {
-              itemStats.past24Hours = this.getEntryValues(itemStats.past24Hours, hour, priceDiff, quantityDiff);
+          if ( daysSince <= 1) {
+            itemStats.past24Hours = this.getEntryValues(itemStats.past24Hours, hour, priceDiff, quantityDiff);
 
-              if (hoursSince <= 12) {
-                itemStats.past12Hours = this.getEntryValues(itemStats.past12Hours, hour, priceDiff, quantityDiff);
-              }
+            if (hoursSince <= 12) {
+              itemStats.past12Hours = this.getEntryValues(itemStats.past12Hours, hour, priceDiff, quantityDiff);
             }
           }
         }
+      }
     });
+    if (!isMinimal) {
+      this.setResultForPeriod(result.past14Days, itemStats.past14Days);
+      this.setResultForPeriod(result.past7Days, itemStats.past7Days);
+    }
     this.setResultForPeriod(result.past12Hours, itemStats.past12Hours);
     this.setResultForPeriod(result.past24Hours, itemStats.past24Hours);
-    this.setResultForPeriod(result.past7Days, itemStats.past7Days);
-    this.setResultForPeriod(result.past14Days, itemStats.past14Days);
     return result;
   }
 
@@ -71,20 +80,15 @@ export class AuctionStatsUtil {
     result.quantity.avg = twoDecimals(sums.quantity.avg / sums.totalEntries);
     result.price.trend = twoDecimals(sums.price.trend / sums.totalEntries);
     result.price.avg = twoDecimals(sums.price.avg / sums.totalEntries);
-    result.totalEntries = sums.totalEntries;
+    delete result.totalEntries;
   }
 
-  private static getBaseItemStatItem(hours: ItemPriceEntry[]): ItemStats {
+  private static getBaseItemStatItem(hours: ItemPriceEntry[], isMinimal: boolean): ItemStats {
     const statPart = {
       trend: 0,
       avg: 0,
-    };
-    return {
-      id: hours[0].id,
-      ahId: hours[0].ahId,
+    }, vals: ItemStats = {
       itemId: hours[0].itemId,
-      petSpeciesId: hours[0].petSpeciesId,
-      bonusIds: hours[0].bonusIds,
       past12Hours: {
         price: {
           ...statPart,
@@ -103,25 +107,36 @@ export class AuctionStatsUtil {
         },
         totalEntries: 0,
       },
-      past7Days: {
-        price: {
-          ...statPart,
-        },
-        quantity: {
-          ...statPart,
-        },
-        totalEntries: 0,
-      },
-      past14Days: {
-        price: {
-          ...statPart,
-        },
-        quantity: {
-          ...statPart,
-        },
-        totalEntries: 0,
-      },
     };
+
+    if (!isMinimal) {
+      vals.past7Days = {
+        price: {
+        ...statPart,
+        },
+        quantity: {
+        ...statPart,
+        },
+        totalEntries: 0,
+      };
+      vals.past14Days = {
+        price: {
+          ...statPart,
+        },
+        quantity: {
+          ...statPart,
+        },
+        totalEntries: 0,
+      };
+    }
+
+    if (hours[0].petSpeciesId) {
+      vals.petSpeciesId = hours[0].petSpeciesId;
+    }
+    if (hours[0].bonusIds) {
+      vals.bonusIds = hours[0].bonusIds;
+    }
+    return vals;
   }
 
   private static getEntryValues(entry: Stat, hour: ItemPriceEntry, priceDiff: number, quantityDiff: number): Stat {

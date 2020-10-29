@@ -1,4 +1,5 @@
 import {AuctionStatsUtil} from './auction-stats.util';
+import {StatsService} from '../services/stats.service';
 
 describe('AuctionStatsUtil', () => {
   const mock = {

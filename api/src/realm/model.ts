@@ -35,6 +35,10 @@ export interface AuctionHouse {
   lastModified: number;
   size: number;
   lastHistoryDeleteEvent: number;
+  stats: {
+    url: string;
+    lastModified: number;
+  };
 }
 
 export interface DumpDelay {

@@ -6,9 +6,11 @@ import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
 import {StatsRepository} from '../repository/stats.repository';
 import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
-import {LogRepository} from '../../logs/repository';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
+import {AuctionStatsUtil} from '../utils/auction-stats.util';
+import {ItemStats} from '../models/item-stats.model';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -141,8 +143,15 @@ export class StatsService {
                         if (query) {
                           const insertStart = +new Date();
                           await conn.query(query)
-                            .then(() => {
-                              s3.deleteObject(objects.Name, object.Key)
+                            .then(async () => {
+                              const [region, ahId] = object.Key.split('/')[2].split('-');
+                              await Promise.all([
+                                s3.deleteObject(objects.Name, object.Key)
+                                  .catch(console.error),
+                                this.realmRepository.updateEntry(+ahId, {
+                                  lastStatsInsert: +new Date(),
+                                }).catch(console.error)
+                              ])
                                 .catch(console.error);
                               completed++;
                             })
@@ -205,7 +214,7 @@ export class StatsService {
                 } = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
                 const query = StatsRepository.multiInsertOrUpdate(list, hour);
                 new S3Handler()
-                  .save(query, `statistics/inserts/${ahId}-${fileName}.sql.gz`, {region: 'eu-se'})
+                  .save(query, `statistics/inserts/${region}-${ahId}-${fileName}.sql.gz`, {region: 'eu-se'})
                   .then(ok => {
                     console.log(`Processed and uploaded statistics SQL in ${+new Date() - start} ms`);
                     resolve(ok);
@@ -221,7 +230,7 @@ export class StatsService {
     });
   }
 
-  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false)): Promise<any> {
+  updateAllRealmDailyData(start: number, end: number, conn = new DatabaseUtil(false), daysAgo = 1): Promise<any> {
     return new Promise((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
         requestsPerSecond: 5,
@@ -232,10 +241,10 @@ export class StatsService {
       for (let id = start; id <= end; id++) {// 242
         promises.push(promiseThrottle.add(() =>
           new Promise((ok) => {
-            this.compileDailyAuctionData(id, conn)
+            this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
               .then(() => {
                 processed++;
-                console.log(`Processed count: ${processed} of ${end - start} - date=${this.getYesterday().toString()}`);
+                console.log(`Processed count: ${processed} of ${end - start} - date=${this.getYesterday(daysAgo).toString()}`);
                 ok();
               })
               .catch((error) => {
@@ -254,6 +263,55 @@ export class StatsService {
         .catch(error => {
           conn.end();
           reject();
+        });
+    });
+  }
+
+  updateNextRealmsDailyPrices(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const conn = new DatabaseUtil(false),
+        startTime = +new Date();
+      let completed = 0, avgQueryTime;
+      conn.enqueueHandshake()
+        .then(() => {
+          this.realmRepository.getRealmsThatNeedsDailyPriceUpdate()
+            .then(async realms => {
+              for (const {id} of realms) {
+                if (DateUtil.timeSince(startTime, 's') < 40) {
+                  const queryStart = + new Date();
+                  await this.compileDailyAuctionData(id, conn, this.getYesterday(1))
+                    .then(() => {
+                      this.realmRepository.updateEntry(id, {
+                        lastDailyPriceUpdate: +new Date(),
+                      })
+                        .then(() => {
+                          completed++;
+                        })
+                        .catch(console.error);
+                    })
+                    .catch(console.error);
+                  const queryTime = +new Date() - queryStart;
+                  if (!avgQueryTime) {
+                    avgQueryTime = queryTime;
+                  } else {
+                    avgQueryTime = (avgQueryTime + queryTime) / 2;
+                  }
+                }
+              }
+
+              console.log(`Done updating daily price for ${completed}/${realms.length
+              } houses. Avg query time was ${avgQueryTime}`);
+              conn.end();
+              resolve();
+            })
+            .catch(error => {
+              conn.end();
+              reject(error);
+            });
+        })
+        .catch(error => {
+          conn.end();
+          reject(error);
         });
     });
   }
@@ -285,8 +343,8 @@ export class StatsService {
     });
   }
 
-  private getYesterday(): Date {
-    return new Date(+new Date() - 1000 * 60 * 60 * 24);
+  private getYesterday(days = 1): Date {
+    return new Date(+new Date() - 1000 * 60 * 60 * 24 * days);
   }
 
   /*
@@ -352,6 +410,106 @@ export class StatsService {
         console.log('Too many active queries', status.activeQueries);
         resolve();
       }
+    });
+  }
+
+  deleteOldPriceForRealm(table: string, olderThan: number, period: string, conn = new DatabaseUtil(false)): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      new StatsRepository(conn).deleteOldDailyPricesForRealm(table, olderThan, period)
+        .then(() => {
+          conn.end();
+          resolve();
+        })
+        .catch((err) => {
+          conn.end();
+          reject(err);
+        });
+    });
+  }
+
+  updateRealmTrends(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const startTime = +new Date();
+      const conn = new DatabaseUtil(false);
+      conn.enqueueHandshake()
+        .then(() => {
+          let completed = 0;
+          this.realmRepository.getRealmsThatNeedsTrendUpdate()
+            .then(async (houses) => {
+              for (const {region, id} of houses.slice(0, 10)) {
+                if (DateUtil.timeSince(startTime, 's') < 50) {
+                  await this.setRealmTrends(region, id, conn)
+                    .then(async () => {
+                      completed++;
+                      await new RealmService().createLastModifiedFile(id, region)
+                        .catch(err => console.error('Could not createLastModifiedFile', err));
+                    })
+                    .catch(console.error);
+                }
+              }
+              console.log(`Done updating for ${completed}/${houses.length} in ${DateUtil.timeSince(startTime, 's')} sec`);
+              conn.end();
+              resolve();
+            })
+            .catch(err => {
+              conn.end();
+              reject(err);
+            });
+        })
+        .catch(err => {
+          conn.end();
+          reject(err);
+        });
+    });
+  }
+
+  setRealmTrends(region: string, ahId: number, db: DatabaseUtil): Promise<void> {
+    const start = +new Date();
+    console.log('Starting setRealmTrends for', region, ahId);
+    return new Promise<void>(async (resolve, reject) => {
+      await this.realmRepository.updateEntry(ahId, {id: ahId, lastTrendUpdateInitiation: +new Date()})
+        .catch(console.error);
+      new StatsRepository(db).getAllStatsForRealmDate(ahId)
+        .then(rows => {
+          const downloadAndQueryTime = +new Date() - start;
+          console.log(`Query took ${downloadAndQueryTime} ms`);
+          const processStart = +new Date();
+          try {
+            const result: ItemStats[] = AuctionStatsUtil.processDays(rows);
+            if (result.length) {
+              const lastModified = +new Date();
+              new S3Handler().save({
+                lastModified: +new Date(),
+                data: result
+              }, `stats/${ahId}.json.gz`, {region})
+                .then(success => {
+                  console.log(`Processed and uploaded total ${(+new Date() - start)
+                  } ms, processing=${
+                    +new Date() - processStart
+                  } ms`, success);
+                  this.realmRepository.updateEntry(ahId, {
+                    id: ahId, stats: {
+                      lastModified,
+                      url: success.url
+                    }
+                  })
+                    .then(() => resolve(success))
+                    .catch(e => {
+                      console.error('setRealmTrends', e);
+                      reject(e);
+                    });
+                })
+                .catch(e => {
+                  console.error('Failed in ' + (+new Date() - start) + 'ms', e);
+                  reject(e);
+                });
+            }
+          } catch (e) {
+            console.error('Failed in ' + (+new Date() - start) + 'ms', e);
+            reject(e);
+          }
+        })
+        .catch(reject);
     });
   }
 }

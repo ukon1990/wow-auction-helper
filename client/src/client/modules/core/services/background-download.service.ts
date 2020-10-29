@@ -167,7 +167,13 @@ export class BackgroundDownloadService {
     return new Promise<Timestamps>((resolve, rejects) => {
       this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
-        .then(result => {
+        .then((result: Timestamps) => {
+          this.itemService.lastModified.next(+new Date(result.items));
+          this.npcService.lastModified.next(+new Date(result.npcs));
+          this.professionService.lastModified.next(+new Date(result.professions));
+          this.petService.lastModified.next(+new Date(result.pets));
+          this.craftingService.lastModified.next(+new Date(result.recipes));
+          this.zoneService.lastModified.next(+new Date(result.zones));
           resolve(result as Timestamps);
         })
         .catch(rejects);

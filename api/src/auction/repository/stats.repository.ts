@@ -2,7 +2,6 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
-import {LogRepository} from '../../logs/repository';
 
 export class StatsRepository {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
@@ -21,12 +20,13 @@ export class StatsRepository {
   constructor(private conn: DatabaseUtil, autoClose: boolean = true) {
   }
 
-  getAllStatsForRealmDate(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
+  getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
     return this.conn.query(`
         SELECT *
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${ahId}
-          AND date = '${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}';`);
+          AND date >= NOW() - INTERVAL 24 HOUR
+        ORDER BY date;`);
   }
 
   getAllStatsForRealmMonth(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
@@ -48,6 +48,7 @@ export class StatsRepository {
     const insert = new RDSQueryUtil('itemPriceHistoryPerDay')
       .multiInsert(list)
       .replace(';', '');
+    console.log('multiInsertOrUpdateDailyPrices', list[0]);
     return this.conn.query(`${insert} ON DUPLICATE KEY UPDATE
       min${day} = VALUES(min${day}),
       minHour${day} = VALUES(minHour${day}),
@@ -106,5 +107,41 @@ export class StatsRepository {
       WHERE info NOT LIKE '%information_schema.processlist%' AND
           (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
               OR info LIKE '%DELETE FROM%');`);
+  }
+
+  deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH') {
+    return new Promise<void>(async (resolve, reject) => {
+      this.conn.query(`
+          SELECT ahId
+          FROM ${table}
+          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
+          GROUP BY ahId
+          ORDER BY ahId
+          LIMIT 1
+      `)
+        .then(ids => {
+          if (ids.length) {
+            this.conn.query(`
+          DELETE
+          FROM ${table}
+          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
+            AND ahId = ${ids[0].ahId};`)
+              .then(res => {
+                console.log(res);
+                resolve();
+              })
+              .catch(error => {
+                console.error(error);
+                reject(error);
+              });
+          } else {
+            resolve();
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
   }
 }

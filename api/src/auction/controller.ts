@@ -85,3 +85,22 @@ exports.updateTSMDataForOneRealm = (event: APIGatewayEvent, context: Context, ca
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, event, 500));
 };
+
+exports.updateRealmTrends = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().updateRealmTrends()
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, event, 500));
+};
+
+exports.deleteOldPriceForRealm = (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
+  const {table, olderThan, period} = event;
+  new StatsService().deleteOldPriceForRealm(table, olderThan, period)
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
+};
+
+exports.updateNextRealmsDailyPrices = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().updateNextRealmsDailyPrices()
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
+};
