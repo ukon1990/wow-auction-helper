@@ -33,6 +33,7 @@ import {CraftingModule} from '../crafting/crafting.module';
 import { RealmListDialogComponent } from './components/realm-list/realm-list-dialog/realm-list-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatListModule,
     CraftingModule,
     MatDialogModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatExpansionModule
   ],
   exports: [RealmListComponent]
 })

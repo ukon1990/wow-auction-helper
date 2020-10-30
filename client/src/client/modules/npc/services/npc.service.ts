@@ -3,13 +3,11 @@ import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../../../services/endpoints';
 import {BehaviorSubject} from 'rxjs';
 import {NPC} from '../models/npc.model';
-import {Report} from '../../../utils/report.util';
 import {DatabaseService} from '../../../services/database.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {SharedService} from '../../../services/shared.service';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {ZoneService} from '../../zone/service/zone.service';
-import {NpcUtil} from '../utils/npc.util';
 import {DateUtil} from '@ukon1990/js-utilities';
 
 @Injectable({
@@ -23,6 +21,7 @@ export class NpcService {
 
   private storageName = 'timestamp_npcs';
   isLoading = false;
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private http: HttpClient, private db: DatabaseService, private zoneService: ZoneService) {
   }
@@ -59,7 +58,7 @@ export class NpcService {
     const locale = localStorage['locale'];
     this.isLoading = true;
     return new Promise<any[]>(async (resolve, reject) => {
-      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+      await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz?lastModified=${this.lastModified.value}`)
         .toPromise()
         .then(async (response) => {
           await this.db.clearNPCs();
