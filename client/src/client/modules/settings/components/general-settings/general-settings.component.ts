@@ -209,10 +209,8 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   deleteUser(): void {
     localStorage.clear();
-    this.dbServie.deleteDB();
-    setTimeout(() => {
-      location.reload();
-    }, 2000);
+    this.dbServie.deleteDB()
+      .then(() => location.reload());
   }
 
   realmSelectionEvent(change: { region: string; realm: string; locale: string }) {

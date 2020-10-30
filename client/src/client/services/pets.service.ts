@@ -18,6 +18,7 @@ class PetResponse {
 export class PetsService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_pets';
   mapped: BehaviorSubject<Map<number,  Pet>> = new BehaviorSubject(new Map<number,  Pet>());
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
@@ -44,7 +45,7 @@ export class PetsService {
   async getPets(): Promise<any> {
     const locales = localStorage['locale'];
     SharedService.downloading.pets = true;
-    await this._http.get(`${Endpoints.S3_BUCKET}/pet/${locales}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+    await this._http.get(`${Endpoints.S3_BUCKET}/pet/${locales}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then((response: PetResponse) => {
         this.handlePets(response);
