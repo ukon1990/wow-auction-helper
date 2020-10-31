@@ -49,7 +49,7 @@ export class AuthService {
   resendConfirmationCode(username: string): Promise<CodeDeliveryDetails> {
     return new Promise<any>((resolve, reject) => {
       Auth.resendSignUp(username)
-        .then(resolve)
+        .then(res => resolve(res.CodeDeliveryDetails))
         .catch(reject);
     });
   }

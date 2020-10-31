@@ -54,11 +54,12 @@ export class LoginComponent implements OnInit {
   }
 
   resendConfirmationCode() {
+    const {username, email} = this.registerForm.getRawValue();
     this.registerForm.disable();
     this.error = undefined;
     this.signup.message = undefined;
     this.signup.isWaitingForConfirmation = true;
-    this.service.resendConfirmationCode(this.registerForm.getRawValue().email)
+    this.service.resendConfirmationCode(username || email)
       .then(response => {
         this.signup.message = response.Destination;
         console.log(response);
@@ -72,14 +73,16 @@ export class LoginComponent implements OnInit {
   }
 
   confirmRegistration() {
+    const {username, email} = this.registerForm.getRawValue();
     this.error = undefined;
     this.signupConfirmation.disable();
     this.service.userConfirmation(
-      this.registerForm.getRawValue().email,
+      username || email,
       this.signupConfirmation.getRawValue().code)
-      .then(response => {
+      .then(() => {
         this.signup.isWaitingForConfirmation = false;
-        console.log('Response', response);
+        this.signup.isInSignup = false;
+        this.signup.userConfirmed = true;
       })
       .catch(error => {
         console.error(error);
