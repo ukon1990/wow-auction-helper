@@ -17,7 +17,8 @@ import {MatCardModule} from '@angular/material/card';
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatTooltipModule
   ],
   exports: [
     LoginComponent

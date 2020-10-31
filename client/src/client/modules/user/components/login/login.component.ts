@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
     confirmPassword: new FormControl(),
   });
   loginForm: FormGroup = new FormGroup({
-    email: new FormControl(),
+    username: new FormControl(),
     password: new FormControl(),
   });
 
@@ -93,10 +93,54 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.loginForm.disable();
     this.service.login(this.loginForm.value)
       .then(response => {
         console.log(response);
       })
-      .catch(console.error);
+      .catch(error => {
+        console.error(error);
+        if (error.code === 'UserNotConfirmedException') {
+          this.signup.userConfirmed = false;
+          this.signup.isWaitingForConfirmation = true;
+          this.service.resendConfirmationCode(this.loginForm.getRawValue().username)
+            .then(() => {
+              this.loginForm.enable();
+            })
+            .catch(err => {
+              console.error(err);
+              this.loginForm.enable();
+            });
+        } else {
+          this.error = error;
+          this.loginForm.enable();
+        }
+      });
+  }
+
+  forgotPassword() {
+    this.error = undefined;
+    this.loginForm.disable();
+    this.service.forgotPassword(this.loginForm.getRawValue())
+      .then(() => {
+        this.loginForm.enable();
+      })
+      .catch(error => {
+        this.error = error;
+        this.loginForm.enable();
+      });
+  }
+
+  verifyForgotPassword() {
+    this.error = undefined;
+    this.loginForm.disable();
+    this.service.verifyForgotPassword(this.loginForm.getRawValue())
+      .then(() => {
+        this.loginForm.enable();
+      })
+      .catch(error => {
+        this.error = error;
+        this.loginForm.enable();
+      });
   }
 }
