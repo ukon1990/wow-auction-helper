@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
+import {ValidatorsUtil} from '../../utils/validators.util';
 
 @Component({
   selector: 'wah-login',
@@ -20,14 +21,15 @@ export class LoginComponent implements OnInit {
     message: undefined,
   };
   registerForm: FormGroup = new FormGroup({
-    username: new FormControl(),
-    email: new FormControl(),
-    password: new FormControl(),
-    confirmPassword: new FormControl(),
+    username: new FormControl(null, [Validators.minLength(3)]),
+    email: new FormControl(null, [Validators.minLength(3), Validators.email]),
+    password: new FormControl(null, [ValidatorsUtil.password]),
+    confirmPassword: new FormControl(null,
+      [(control) => ValidatorsUtil.confirmPassword(control, this.registerForm)]),
   });
   loginForm: FormGroup = new FormGroup({
-    username: new FormControl(),
-    password: new FormControl(),
+    username: new FormControl(null, [Validators.minLength(3)]),
+    password: new FormControl(null, [ValidatorsUtil.password]),
   });
 
   constructor(private service: AuthService) { }
@@ -93,10 +95,11 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    console.log('Login start');
     this.loginForm.disable();
-    this.service.login(this.loginForm.value)
-      .then(response => {
-        console.log(response);
+    this.service.login(this.loginForm.getRawValue())
+      .then(() => {
+
       })
       .catch(error => {
         console.error(error);

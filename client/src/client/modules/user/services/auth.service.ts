@@ -30,7 +30,7 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.signIn(username, password)
         .then((user: CognitoUser) => {
-          console.log(user);
+          console.log('Successfully signed in', user);
           this.isAuthenticated.next(true);
           resolve();
         })

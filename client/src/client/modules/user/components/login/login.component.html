@@ -1,7 +1,7 @@
 <mat-card
         *ngIf="!signup.isInSignup; else registerTemplate"
 >
-  <form [formGroup]="registerForm">
+  <form [formGroup]="loginForm">
     <mat-card-content>
       <mat-form-field>
         <input matInput
@@ -40,7 +40,6 @@
         Forgot the password?
       </button>
       <button
-              [disabled]="!registerForm.valid"
               (click)="signup.isInSignup = true"
               color="accent"
               mat-stroked-button
