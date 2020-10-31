@@ -1,0 +1,129 @@
+<mat-card
+        *ngIf="!signup.isInSignup; else registerTemplate"
+>
+  <mat-card-content>
+    <form
+            [formGroup]="registerForm"
+            (submit)="login()">
+      <mat-form-field>
+        <input matInput
+               placeholder="Email"
+               type="email"
+               formControlName="email"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput
+               placeholder="Password"
+               formControlName="password"
+               autocomplete="current-password"
+               type="password"
+        />
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+
+    <button [disabled]="!loginForm.valid"
+            (click)="login()"
+            color="primary"
+            mat-stroked-button
+    >
+      Login
+    </button>
+    <button
+            [disabled]="!registerForm.valid"
+            (click)="signup.isInSignup = true"
+            color="accent"
+            mat-stroked-button
+    >
+      Register as a new user
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #registerTemplate>
+  <ng-container *ngIf="!signup.isWaitingForConfirmation; else confirmationTemplate">
+    <mat-card>
+      <mat-card-content>
+        <form
+                [formGroup]="registerForm"
+                (submit)="register()"
+        >
+          <mat-form-field>
+            <input matInput
+                   placeholder="Username (optional)"
+                   formControlName="username"
+                   type="text"
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Email"
+                   formControlName="email"
+                   type="email"
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Password"
+                   autocomplete="new-password"
+                   formControlName="password"
+                   type="password"
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Confirm password"
+                   autocomplete="new-password"
+                   formControlName="confirmPassword"
+                   type="password"
+            />
+          </mat-form-field>
+        </form>
+        <div *ngIf="error">
+          Error: {{error.message}}
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+                (click)="register()"
+                color="accent"
+                mat-stroked-button
+        >
+          Sign up
+        </button>
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="resendConfirmationCode()"
+        >
+          Resend confirmation code
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+
+  <ng-template #confirmationTemplate>
+    <form [formGroup]="signupConfirmation">
+      <mat-form-field>
+        <input matInput
+               placeholder="Confirmation code"
+               formControlName="code"
+        />
+      </mat-form-field>
+      <button
+              color="accent"
+              (click)="confirmRegistration()"
+      >
+        Confirm
+      </button>
+    </form>
+    <div *ngIf="signup.message">
+      {{ signup.message }}
+    </div>
+    <div *ngIf="error">
+      Error: {{error.message}}
+    </div>
+  </ng-template>
+</ng-template>
