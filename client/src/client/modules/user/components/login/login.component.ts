@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ValidatorsUtil} from '../../utils/validators.util';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Component({
   selector: 'wah-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   error: HttpErrorResponse;
   signupConfirmation = new FormGroup({
     code: new FormControl(),
@@ -31,10 +32,22 @@ export class LoginComponent implements OnInit {
     username: new FormControl(null, [Validators.minLength(3)]),
     password: new FormControl(null, [ValidatorsUtil.password]),
   });
+  user;
+  isAuthenticated;
+  private sm = new SubscriptionManager();
 
-  constructor(private service: AuthService) { }
+  constructor(private service: AuthService) {
+  }
 
   ngOnInit(): void {
+    this.sm.add(this.service.user,
+      user => this.user = user);
+    this.sm.add(this.service.isAuthenticated,
+      isAuthenticated => this.isAuthenticated = isAuthenticated);
+  }
+
+  ngOnDestroy() {
+    this.sm.unsubscribe();
   }
 
   register() {
@@ -145,5 +158,10 @@ export class LoginComponent implements OnInit {
         this.error = error;
         this.loginForm.enable();
       });
+  }
+
+  signOut() {
+    this.service.logOut()
+      .catch(() => {});
   }
 }

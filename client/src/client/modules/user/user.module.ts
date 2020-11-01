@@ -8,10 +8,11 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { ConfigureMfaComponent } from './components/mfa/configure-mfa/configure-mfa.component';
 
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, ConfigureMfaComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,

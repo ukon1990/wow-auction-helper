@@ -2,7 +2,7 @@
         *ngIf="!signup.isInSignup; else registerTemplate"
 >
   <form [formGroup]="loginForm">
-    <mat-card-content>
+    <mat-card-content *ngIf="!isAuthenticated; else loggedInTemplate">
       <mat-form-field>
         <input matInput
                placeholder="Username/email"
@@ -21,7 +21,8 @@
     </mat-card-content>
     <mat-card-actions>
 
-      <button [disabled]="!loginForm.valid"
+      <button *ngIf="!isAuthenticated"
+              [disabled]="!loginForm.valid"
               (click)="login()"
               color="primary"
               mat-stroked-button
@@ -29,7 +30,8 @@
       >
         Login
       </button>
-      <button [disabled]="loginForm.value.username && loginForm.value.username.length > 3"
+      <button *ngIf="!isAuthenticated"
+              [disabled]="loginForm.value.username && loginForm.value.username.length > 3"
               (click)="forgotPassword()"
               matTooltip="In case you forgot your password,
               type in your username and login. If not username was provided, the email is your username."
@@ -39,15 +41,27 @@
       >
         Forgot the password?
       </button>
-      <button
+      <button *ngIf="!isAuthenticated"
               (click)="signup.isInSignup = true"
               color="accent"
               mat-stroked-button
       >
         Register as a new user
       </button>
+
+      <button *ngIf="isAuthenticated"
+              (click)="signOut()"
+              mat-stroked-button
+              color="accent"
+      >
+        Sign out
+      </button>
     </mat-card-actions>
   </form>
+
+  <ng-template #loggedInTemplate>
+    Currently logged in as: {{user.username}}
+  </ng-template>
 </mat-card>
 
 <ng-template #registerTemplate>

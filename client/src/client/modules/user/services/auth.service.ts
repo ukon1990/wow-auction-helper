@@ -1,38 +1,128 @@
 import {Injectable} from '@angular/core';
-import {Auth} from '@aws-amplify/auth';
-import {CognitoUser, ISignUpResult, CodeDeliveryDetails} from 'amazon-cognito-identity-js';
+import {Auth, CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
+import {Hub} from '@aws-amplify/core';
+import {
+  CognitoUser, ISignUpResult, CodeDeliveryDetails,
+} from 'amazon-cognito-identity-js';
 import {COGNITO} from '../../../secrets';
 import {ForgotPassword, Login, Register} from '../models/auth.model';
 import {BehaviorSubject} from 'rxjs';
+import {FederatedProvider} from '../enums/federated-provider.enum';
+import {ICredentials} from '@aws-amplify/core';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
+  authEvent = new BehaviorSubject(undefined);
+  sm = new SubscriptionManager();
 
   constructor() {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
-      userPoolWebClientId: COGNITO.CLIENT_ID
+      userPoolWebClientId: COGNITO.CLIENT_ID,
+      oauth: {
+        region: 'eu-west-1',
+        domain: 'https://wow-auction-helper.auth.eu-west-1.amazoncognito.com',
+        scope: ['email', 'openid', 'aws.cognito.signin.user.admin'],
+        redirectSignIn: location.origin,
+        redirectSignOut: location.origin,
+        responseType: 'code',
+      }
+    });
+    this.getCurrentUser()
+      .catch(() => {});
+
+    Hub.listen('auth', ({payload: {event, data}}) => {
+      switch (event) {
+        case 'signIn':
+          this.getCurrentUser()
+            .catch(() => {});
+          break;
+        case 'signOut':
+          this.getCurrentUser()
+            .catch(() => {});
+          break;
+        case 'customOAuthState':
+          break;
+      }
     });
   }
 
-  getCurrentUser(): Promise<any> {
+  getCurrentUser(): Promise<CognitoUser> {
     return new Promise<any>((resolve, reject) => {
       Auth.currentAuthenticatedUser()
-        .then(resolve)
+        .then((user: CognitoUser) => {
+          this.user.next(user);
+          this.isAuthenticated.next(!!user);
+          console.log('Current user', user);
+          resolve(user);
+        })
         .catch(reject);
     });
   }
 
+  checkIfUserHasMFAS(): Promise<boolean> {
+    return new Promise<any>((resolve, reject) => {
+      this.getCurrentUser()
+        .then(async (user) => {
+          const preferredMFA = await Auth.getPreferredMFA(user)
+            .catch(console.error);
+
+          if (preferredMFA === 'NOMFA') {
+            console.log('No MFA is configured for the current user');
+          }
+          resolve(preferredMFA !== 'NOMFA');
+        })
+        .catch(reject);
+    });
+  }
+
+  getMFAQRCodeForUser(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      Auth.setupTOTP(this.user.value)
+        .then(code => {
+          const qrData = `otpauth://totp/Wow Auction Helper(${this.user.value.getUsername()})?secret=${code}`,
+            url = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(qrData)}&size=300x300`;
+          resolve(url);
+        })
+        .catch(reject);
+    });
+  }
+
+  setMFAForUser(verificationCode: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      Auth.verifyTotpToken(this.user.value, verificationCode)
+        .then(() => {
+          Auth.setPreferredMFA(this.user.value, 'TOTP')
+            .then(resolve)
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  /**
+   * @param username
+   * @param password
+   * @returns true if MFA auth is required
+   */
   login({username, password}: Login): Promise<void> {
     return new Promise<any>((resolve, reject) => {
       Auth.signIn(username, password)
-        .then((user: CognitoUser) => {
+        .then((user) => {
           console.log('Successfully signed in', user);
+          this.user.next(user);
           this.isAuthenticated.next(true);
-          resolve();
+
+          if (user.challengeName === 'SOFTWARE_TOKEN_MFA') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
         })
         .catch(error => {
           this.isAuthenticated.next(false);
@@ -42,16 +132,38 @@ export class AuthService {
     });
   }
 
+  federatedSignIn(provider: FederatedProvider | CognitoHostedUIIdentityProvider) {
+    return new Promise<ICredentials>((resolve, reject) => {
+      Auth.federatedSignIn({ provider: provider as CognitoHostedUIIdentityProvider})
+        .then(user => {})
+        .catch(reject);
+    });
+  }
+
+  confirmSignIn(verificationCode: string): Promise<CognitoUser> {
+    return new Promise<CognitoUser>((resolve, reject) => {
+      Auth.confirmSignIn(this.user.value, verificationCode, 'SOFTWARE_TOKEN_MFA')
+        .then(async user => {
+          await this.getCurrentUser()
+            .catch(() => {});
+          resolve(user);
+        })
+        .catch(reject);
+    });
+  }
+
   logOut(): Promise<void> {
     return new Promise<any>((resolve, reject) => {
       Auth.signOut()
         .then((user: CognitoUser) => {
           console.log(user);
-          this.isAuthenticated.next(true);
+          this.isAuthenticated.next(false);
+          this.user.next(undefined);
           resolve();
         })
         .catch(error => {
           this.isAuthenticated.next(false);
+          this.user.next(undefined);
           console.error(error);
           reject(error);
         });

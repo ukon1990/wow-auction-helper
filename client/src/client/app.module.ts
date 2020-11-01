@@ -46,6 +46,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatNativeDateModule} from '@angular/material/core';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {AmplifyUIAngularModule} from '@aws-amplify/ui-angular';
+import {AuthService} from './modules/user/services/auth.service';
 
 
 @NgModule({
@@ -97,7 +98,8 @@ import {AmplifyUIAngularModule} from '@aws-amplify/ui-angular';
     NpcService,
     ProfessionService,
     TsmService,
-    {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true},
+    AuthService,
   ],
   bootstrap: [AppComponent]
 })

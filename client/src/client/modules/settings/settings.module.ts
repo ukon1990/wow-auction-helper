@@ -34,6 +34,7 @@ import { RealmListDialogComponent } from './components/realm-list/realm-list-dia
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {UserModule} from '../user/user.module';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     CraftingModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    MatExpansionModule
+    MatExpansionModule,
+    UserModule
   ],
   exports: [RealmListComponent]
 })
