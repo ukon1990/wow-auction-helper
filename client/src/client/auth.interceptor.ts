@@ -13,7 +13,11 @@ export class AuthenticationInterceptor implements HttpInterceptor {
 
   intercept(r: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.service.session.value.getAccessToken().getJwtToken();
-    if (token && TextUtil.contains(r.url, 'execute-api') || TextUtil.contains(r.url, 'localhost')) {
+    if (token &&
+      TextUtil.contains(r.url, 'execute-api') ||
+      TextUtil.contains(r.url, 'localhost') ||
+      TextUtil.contains(r.url, 'appsync')
+    ) {
       return handler.handle(
         r.clone({
           headers: r.headers

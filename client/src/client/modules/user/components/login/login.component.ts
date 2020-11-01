@@ -4,6 +4,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ValidatorsUtil} from '../../utils/validators.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {AppSyncService} from '../../services/app-sync.service';
 
 @Component({
   selector: 'wah-login',
@@ -36,7 +37,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   isAuthenticated;
   private sm = new SubscriptionManager();
 
-  constructor(private service: AuthService) {
+  constructor(private service: AuthService,
+              private settingService: AppSyncService) {
   }
 
   ngOnInit(): void {
@@ -44,6 +46,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       user => this.user = user);
     this.sm.add(this.service.isAuthenticated,
       isAuthenticated => this.isAuthenticated = isAuthenticated);
+    this.settingService.getSettings()
+      .catch(console.error);
   }
 
   ngOnDestroy() {
