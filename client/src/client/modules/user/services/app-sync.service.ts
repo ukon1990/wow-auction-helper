@@ -24,7 +24,7 @@ export class AppSyncService {
       }
     });
 
-    setTimeout(() => this.createSettings(), 1000);
+    // setTimeout(() => this.createSettings(), 1000);
   }
 
   createSettings() {
@@ -47,7 +47,7 @@ export class AppSyncService {
             items: items.value,
           },
           craftingStrategy: user.craftingStrategy,
-          locale: user.locale,
+          locale: localStorage.getItem('locale'),
           lastModified: +new Date(),
           created: +new Date(),
         },
@@ -93,7 +93,10 @@ export class AppSyncService {
         query: GetSettings,
         fetchPolicy: 'network-only'
       })
-        .then(result => resolve(result))
+        .then(result => {
+          console.log('Settings are', result),
+          resolve(result);
+        })
         .catch(error => {
           console.error(error);
           reject(error);

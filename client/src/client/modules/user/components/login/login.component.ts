@@ -45,9 +45,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.sm.add(this.service.user,
       user => this.user = user);
     this.sm.add(this.service.isAuthenticated,
-      isAuthenticated => this.isAuthenticated = isAuthenticated);
-    this.settingService.getSettings()
-      .catch(console.error);
+      isAuthenticated => {
+        this.isAuthenticated = isAuthenticated;
+        if (isAuthenticated) {
+          this.settingService.getSettings()
+            .catch(console.error);
+        }
+      });
   }
 
   ngOnDestroy() {

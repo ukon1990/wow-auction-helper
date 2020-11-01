@@ -4,21 +4,21 @@ export const CreateSettingsMutation = gql(`
   mutation createWahUserSettings($input: CreateWahUserSettingsInput!) {
     createWahUserSettings(input: $input) {
       id
-      buyoutLimit
-      craftingStrategy
-      created
-      customPrices
-      customProcs
-      lastModified
-      locale
       realm
       region
+      customPrices
+      customProcs
+      buyoutLimit
+      useVendorPriceForCraftingIfAvailable
+      useIntermediateCrafting
       shoppingCart {
         items
         recipes
       }
-      useIntermediateCrafting
-      useVendorPriceForCraftingIfAvailable
+      craftingStrategy
+      locale
+      lastModified
+      created
     }
   }
 `);
