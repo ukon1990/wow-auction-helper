@@ -16,6 +16,9 @@ import {ProfessionService} from '../../crafting/services/profession.service';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {TsmService} from '../../tsm/tsm.service';
 import {BackgroundDownloadService} from '../../core/services/background-download.service';
+import {AuthService} from '../../user/services/auth.service';
+import {Endpoints} from '../../../services/endpoints';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +34,9 @@ export class DashboardService {
   private isInitiated: boolean;
 
   constructor(private auctionsService: AuctionsService, private db: DatabaseService,
+              private authService: AuthService, private http: HttpClient,
               private professionService: ProfessionService, private backgroundService: BackgroundDownloadService) {
+    this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
     this.sm.add(this.professionService.listWithRecipes, () => {
       this.sm.unsubscribeById('auctions');
 
@@ -69,6 +74,16 @@ export class DashboardService {
       this.allBoardsCalculatedEvent.next(+new Date());
     }
     Report.debug('Boards', this.list.value);
+  }
+
+  getDashboardsFromAPI(isAuthenticated: boolean): void {
+    console.log('Is authenticated?', isAuthenticated);
+    if (isAuthenticated) {
+      this.http.get(Endpoints.getLambdaUrl('dashboard'))
+        .toPromise()
+        .then(res => console.log('DB res', res))
+        .catch(console.error);
+    }
   }
 
   private async restore(): Promise<void> {

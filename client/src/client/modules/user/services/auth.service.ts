@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Auth, CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
 import {Hub} from '@aws-amplify/core';
 import {
-  CognitoUser, ISignUpResult, CodeDeliveryDetails,
+  CognitoUser, ISignUpResult, CodeDeliveryDetails, CognitoUserSession
 } from 'amazon-cognito-identity-js';
 import {COGNITO} from '../../../secrets';
 import {ForgotPassword, Login, Register} from '../models/auth.model';
@@ -17,6 +17,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 export class AuthService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
+  session: BehaviorSubject<CognitoUserSession> = new BehaviorSubject<CognitoUserSession>(undefined);
   authEvent = new BehaviorSubject(undefined);
   sm = new SubscriptionManager();
 
@@ -55,9 +56,13 @@ export class AuthService {
   getCurrentUser(): Promise<CognitoUser> {
     return new Promise<any>((resolve, reject) => {
       Auth.currentAuthenticatedUser()
-        .then((user: CognitoUser) => {
+        .then(async (user: CognitoUser) => {
           this.user.next(user);
+          await Auth.currentSession()
+            .then(session => this.session.next(session))
+            .catch(console.error);
           this.isAuthenticated.next(!!user);
+          console.log('Auth test', !!user, user, this.isAuthenticated.value);
           console.log('Current user', user);
           resolve(user);
         })
@@ -159,6 +164,7 @@ export class AuthService {
           console.log(user);
           this.isAuthenticated.next(false);
           this.user.next(undefined);
+          this.session.next(undefined);
           resolve();
         })
         .catch(error => {

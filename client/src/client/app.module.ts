@@ -47,6 +47,7 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {AmplifyUIAngularModule} from '@aws-amplify/ui-angular';
 import {AuthService} from './modules/user/services/auth.service';
+import {DashboardService} from './modules/dashboard/services/dashboard.service';
 
 
 @NgModule({
@@ -100,6 +101,7 @@ import {AuthService} from './modules/user/services/auth.service';
     TsmService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true},
     AuthService,
+    DashboardService,
   ],
   bootstrap: [AppComponent]
 })
