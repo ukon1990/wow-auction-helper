@@ -171,6 +171,29 @@ export class UpdatesService {
     });
   }
 
+  static getAndSetNpcV2(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      for (const locale of ['en_GB']) { // this.locales
+        await NpcHandler.getAll(locale, new Date(0).toJSON())
+          .then(async npcs => {
+            await new S3Handler().save(
+              npcs,
+              `npc/${locale}_v2.json.gz`,
+              {
+                region: ''
+              })
+              .then(() => {
+                console.log('Successfully uploaded NPCs');
+              })
+              .catch(console.error);
+          })
+          .catch(reject);
+      }
+
+      resolve(true);
+    });
+  }
+
   static getAndSetZones(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       for (const locale of this.locales) {
