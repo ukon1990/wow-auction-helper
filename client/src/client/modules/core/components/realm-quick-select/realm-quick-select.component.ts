@@ -14,6 +14,7 @@ import {CraftingService} from '../../../../services/crafting.service';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
+import {AppSyncService} from '../../../user/services/app-sync.service';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -40,6 +41,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
               private dbService: DatabaseService,
               private craftingService: CraftingService,
               private characterService: CharacterService,
+              private appSyncService: AppSyncService,
               private auctionsService: AuctionsService) {
   }
 
@@ -178,6 +180,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     }
 
     if (!this.isCurrentRealm(slug)) {
+      this.appSyncService.updateSettings({realm: slug});
       this.realmService.changeRealm(this.auctionsService, slug)
         .then((status) => {
           Report.send('handleRealmChange', 'RealmQuickSelectComponent');
@@ -192,8 +195,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private handleFactionChange(faction: number) {
-    SharedService.user.faction = faction;
-    UserUtil.save();
+    this.appSyncService.updateSettings({faction});
     this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();

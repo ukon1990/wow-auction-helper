@@ -4,19 +4,24 @@ import {AUTH_TYPE, AWSAppSyncClient} from 'aws-appsync';
 import {APP_SYNC} from '../../../secrets';
 import {GetSettings} from '../graphql/setting.queries';
 import {CreateSettingsMutation, DeleteSettingsMutation, UpdateSettingsMutation} from '../graphql/mutations';
-import {SharedService} from '../../../services/shared.service';
 import {User} from '../../../models/user/user';
+import {UserUtil} from '../../../utils/user/user.util';
+import {Character} from '../../character/models/character.model';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppSyncService {
+  settings: BehaviorSubject<User> = new BehaviorSubject<User>(undefined);
   private readonly client: AWSAppSyncClient<any>;
   // In case someone starts the dev environment without APP_SYNC configured
   private readonly hasConfig = APP_SYNC && APP_SYNC.aws_appsync_graphqlEndpoint;
+  private user: User;
+  private shoppingCartService: ShoppingCartService;
 
-  constructor(private shoppingCartService: ShoppingCartService) {
+  constructor() {
     if (!this.hasConfig) {
       console.log('There is no config available for AWS AppSync');
       return;
@@ -33,12 +38,21 @@ export class AppSyncService {
     // setTimeout(() => this.createSettings(), 1000);
   }
 
+  setInitial(user: User, shoppingCartService: ShoppingCartService) {
+    this.user = user;
+    this.shoppingCartService = shoppingCartService;
+
+    // UserUtil.restore();
+    // SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
+    // ProspectingAndMillingUtil.restore();
+  }
+
   createSettings() {
     if (!this.client) {
       return;
     }
     const mutate = CreateSettingsMutation;
-    const user: User = SharedService.user;
+    const user: User = this.user;
     const {recipes, items} = this.shoppingCartService;
     this.client.mutate({
       mutation: mutate,
@@ -62,25 +76,35 @@ export class AppSyncService {
         },
       }
     })
-      .then(console.log)
+      .then(settings => this.handleSettingsUpdate(settings as any))
       .catch(console.error);
   }
 
-  updateSettings() {
+  reduceCharacters(characters: Character[]): {characters: {lastModified, slug, name}[]} {
+    return {
+      characters: characters.map(({lastModified, slug, name}) => ({
+        lastModified, slug, name
+      }))
+    };
+  }
+
+  updateSettings(updateData: any) {
+    Object.assign(this.user, {
+      ...updateData,
+      characters: this.user.characters,
+    });
+    UserUtil.save();
     if (!this.client) {
       return;
     }
-    const mutate = UpdateSettingsMutation;
+
     this.client.mutate({
-      mutation: mutate,
+      mutation: UpdateSettingsMutation(Object.keys(updateData)),
       variables: {
-        input: {
-          ...SharedService.user,
-          lastModified: +new Date()
-        },
+        input: updateData,
       }
     })
-      .then(console.log)
+      .then(settings => this.handleSettingsUpdate(settings as any))
       .catch(console.error);
   }
 
@@ -92,10 +116,7 @@ export class AppSyncService {
     this.client.mutate({
       mutation: mutate,
       variables: {
-        input: {
-          ...SharedService.user,
-          lastModified: +new Date()
-        },
+        input: {},
       }
     })
       .then(console.log)
@@ -111,14 +132,26 @@ export class AppSyncService {
         query: GetSettings,
         fetchPolicy: 'network-only'
       })
-        .then(result => {
-          console.log('Settings are', result),
-          resolve(result);
+        .then(settings => {
+          this.handleSettingsUpdate(settings as any);
+          resolve();
         })
         .catch(error => {
           console.error(error);
           reject(error);
         });
     });
+  }
+
+  private handleSettingsUpdate(result: {data: {getWahUserSettings: User}}) {
+
+    const settings: User = result.data.getWahUserSettings;
+    Object.assign(this.user, {
+      ...settings,
+      characters: this.user.characters,
+    });
+    UserUtil.save();
+    this.settings.next(settings);
+    return undefined;
   }
 }

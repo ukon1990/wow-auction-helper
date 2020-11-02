@@ -131,6 +131,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   private addCharacter(c) {
     if (!c.error && c.status !== 'nok') {
       this.processCharacter(c);
+      this.characterService.updateAppSync();
       this.openSnackbar(`${c.name} was successfully added`);
 
       Report.send('Added character', 'Characters');

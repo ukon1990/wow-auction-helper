@@ -47,10 +47,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.sm.add(this.service.isAuthenticated,
       isAuthenticated => {
         this.isAuthenticated = isAuthenticated;
-        if (isAuthenticated) {
-          this.settingService.getSettings()
-            .catch(console.error);
-        }
       });
   }
 

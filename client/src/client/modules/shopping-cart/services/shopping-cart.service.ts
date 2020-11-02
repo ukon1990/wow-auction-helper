@@ -11,6 +11,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {ItemService} from '../../../services/item.service';
 import {BackgroundDownloadService} from '../../core/services/background-download.service';
 import {Report} from '../../../utils/report.util';
+import {AppSyncService} from '../../user/services/app-sync.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,10 @@ export class ShoppingCartService {
 
   private sm = new SubscriptionManager();
 
-  constructor(private auctionService: AuctionsService, private backgroundService: BackgroundDownloadService) {
+  constructor(private auctionService: AuctionsService,
+              private backgroundService: BackgroundDownloadService,
+              private appSyncService: AppSyncService,
+              ) {
     this.restore();
     this.sm.add(auctionService.mapped,
       (map: Map<string, AuctionItem>) => this.calculateCart(map));
@@ -95,6 +99,16 @@ export class ShoppingCartService {
     ]);
     this.calculateCart();
     this.saveRecipes();
+    this.updateAppSync();
+  }
+
+  private updateAppSync() {
+    this.appSyncService.updateSettings({
+      shoppingCart: {
+        recipes: this.recipes.value,
+        items: this.items.value,
+      }
+    });
   }
 
   private saveRecipes() {
@@ -133,6 +147,7 @@ export class ShoppingCartService {
     ]);
     this.calculateCart();
     this.saveItems();
+    this.updateAppSync();
   }
 
   private saveItems() {
@@ -173,5 +188,6 @@ export class ShoppingCartService {
     this.calculateCart();
     this.saveRecipes();
     this.saveItems();
+    this.updateAppSync();
   }
 }

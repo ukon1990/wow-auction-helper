@@ -16,6 +16,8 @@ import {Report} from '../../../utils/report.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
+import {AppSyncService} from '../../user/services/app-sync.service';
+import {User} from '../../../models/user/user';
 
 @Injectable()
 export class CharacterService {
@@ -29,7 +31,9 @@ export class CharacterService {
 
   constructor(private _http: HttpClient,
               private realmService: RealmService,
+              private appSync: AppSyncService,
               private craftingService: CraftingService) {
+    this.sm.add(appSync.settings, settings => this.handleSettingsUpdate(settings));
     this.sm.add(this.realmService.events.realmStatus,
       status => this.updateCharactersForRealmAndRecipes(status));
   }
@@ -179,6 +183,7 @@ export class CharacterService {
       const index = this.getCharacterIndex(character);
       SharedService.user.characters.splice(index, 1);
       localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+      this.updateAppSync();
       try {
         RealmService.gatherRealms();
         this.updateCharactersForRealmAndRecipes();
@@ -217,6 +222,7 @@ export class CharacterService {
           }
 
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+          this.updateAppSync();
           this.updateCharactersForRealmAndRecipes();
 
           Report.send('Updated', 'Characters');
@@ -232,6 +238,12 @@ export class CharacterService {
         reject(error);
       });
     });
+  }
+
+  updateAppSync() {
+    this.appSync.updateSettings(
+      this.appSync.reduceCharacters(
+        SharedService.user.characters));
   }
 
   private getCharacterIndex(character: Character) {
@@ -251,5 +263,38 @@ export class CharacterService {
       new ErrorOptions(
         true,
         `${name} could not be found on ${realm}. If you are sure that the name matches, try loggin in and out of the character.`));
+  }
+
+  private async handleSettingsUpdate(settings: User) {
+    if (settings && settings.characters) {
+      const characters: Character[] = [];
+      const charMap = new Map<string, Character>();
+      const updatePromises: Promise<void>[] = [];
+      const getId = (character: Character) => `${character.slug}-${character.name}`;
+
+      SharedService.user.characters.forEach(character => {
+        charMap.set(getId(character), character);
+      });
+      settings.characters.forEach(character => {
+        const alreadyStored: Character = charMap.get(getId(character));
+        if (alreadyStored &&
+          alreadyStored.lastModified > character.lastModified) {
+          characters.push(alreadyStored);
+        } else {
+          updatePromises.push(
+            new Promise<void>(async resolve => {
+              await this.update(character)
+                .then(char => characters.push(char))
+                .catch(console.error);
+              resolve();
+            })
+          );
+        }
+      });
+
+      await Promise.all(updatePromises)
+        .catch(console.error);
+      SharedService.user.characters = characters;
+    }
   }
 }

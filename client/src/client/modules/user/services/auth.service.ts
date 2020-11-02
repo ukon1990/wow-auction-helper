@@ -10,6 +10,7 @@ import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
 import {ICredentials} from '@aws-amplify/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {AppSyncService} from './app-sync.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class AuthService {
   authEvent = new BehaviorSubject(undefined);
   sm = new SubscriptionManager();
 
-  constructor() {
+  constructor(private sync: AppSyncService) {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
       userPoolWebClientId: COGNITO.CLIENT_ID,
@@ -34,8 +35,6 @@ export class AuthService {
         responseType: 'code',
       }
     });
-    this.getCurrentUser()
-      .catch(() => {});
 
     Hub.listen('auth', ({payload: {event, data}}) => {
       switch (event) {
@@ -53,6 +52,22 @@ export class AuthService {
     });
   }
 
+  init(): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.getCurrentUser()
+        .then(async () => {
+          if (this.isAuthenticated) {
+            await this.sync.getSettings()
+              .catch(console.error);
+            resolve();
+          }
+        })
+        .catch(() => {
+          resolve();
+        });
+    });
+  }
+
   getCurrentUser(): Promise<CognitoUser> {
     return new Promise<any>((resolve, reject) => {
       Auth.currentAuthenticatedUser()
@@ -62,7 +77,9 @@ export class AuthService {
             .then(session => this.session.next(session))
             .catch(console.error);
           this.isAuthenticated.next(!!user);
-          console.log('Auth test', !!user, user, this.isAuthenticated.value);
+          if (this.isAuthenticated) {
+            localStorage.setItem('useAppSync', 'true');
+          }
           console.log('Current user', user);
           resolve(user);
         })

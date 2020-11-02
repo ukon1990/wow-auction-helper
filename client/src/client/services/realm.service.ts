@@ -54,11 +54,13 @@ export class RealmService {
   }
 
   async changeRealm(auctionsService: AuctionsService, realm: string, region?: string) {
+    /*
     if (region) {
       SharedService.user.region = region;
     }
     SharedService.user.realm = realm;
     UserUtil.save();
+    */
     return new Promise<AuctionHouseStatus>((resolve, reject) => {
       this.getStatus(
         SharedService.user.region,

@@ -18,6 +18,7 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../../npc/services/npc.service';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {AppSyncService} from '../../../user/services/app-sync.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -39,6 +40,7 @@ export class GeneralSettingsComponent implements OnDestroy {
               private zoneService: ZoneService,
               private petsService: PetsService,
               private npcService: NpcService,
+              private appSyncService: AppSyncService,
               private professionService: ProfessionService,
               private _auctionService: AuctionsService) {
     this.form = this._formBuilder.group({
@@ -58,7 +60,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   private addSubscriptions() {
-
     this.subscriptions.add(
       this.form.valueChanges,
       (value) =>
@@ -91,8 +92,11 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   async saveRealmAndRegion() {
+    const {realm, region, locale} = this.form.value;
+    this.appSyncService.updateSettings({realm, region, locale});
+
     if (this.userChanges.has('locale')) {
-      localStorage['locale'] = this.form.value.locale;
+      localStorage.setItem('locale', locale);
       await Promise.all([
         this.zoneService.get(),
         this.professionService.getAll(),
@@ -114,9 +118,7 @@ export class GeneralSettingsComponent implements OnDestroy {
 
     if (this.hasChangedRealmOrRegion()) {
       await this._realmService.changeRealm(
-        this._auctionService,
-        this.form.value.realm,
-        this.form.value.region);
+        this._auctionService, realm, region);
     }
     this.setOriginalUserObject();
   }

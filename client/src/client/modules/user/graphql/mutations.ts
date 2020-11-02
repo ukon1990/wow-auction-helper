@@ -22,10 +22,35 @@ export const CreateSettingsMutation = gql(`
     }
   }
 `);
-
-export const UpdateSettingsMutation = gql(`
+/**
+ * TODO: Make it so that it generates the return values so that we save bandwidth
+ * @param keys
+ * @constructor
+ */
+export const UpdateSettingsMutation = (keys: string[]) => gql(`
   mutation updateWahUserSettings($input: UpdateWahUserSettingsInput!) {
-    updateWahUserSettings(input: $input)
+    updateWahUserSettings(input: $input) {
+      realm
+      region
+      customPrices
+      customProcs
+      buyoutLimit
+      useVendorPriceForCraftingIfAvailable
+      useIntermediateCrafting
+      shoppingCart {
+        items
+        recipes
+      }
+      craftingStrategy
+      locale
+      lastModified
+      created
+      characters {
+        lastModified
+        name
+        slug
+      }
+    }
   }
 `);
 
