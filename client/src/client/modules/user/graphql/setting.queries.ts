@@ -19,6 +19,11 @@ export const GetSettings = gql(`
       }
       useIntermediateCrafting
       useVendorPriceForCraftingIfAvailable
+      characters {
+        lastModified
+        name
+        slug
+      }
     }
   }
 `);
