@@ -12,7 +12,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
   }
 
   intercept(r: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.service.session.value.getAccessToken().getJwtToken();
+    const token = this.service.session.value ? this.service.session.value.getAccessToken().getJwtToken() : undefined;
     if (token &&
       TextUtil.contains(r.url, 'execute-api') ||
       TextUtil.contains(r.url, 'localhost') ||
@@ -21,7 +21,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
       return handler.handle(
         r.clone({
           headers: r.headers
-            .set('Authorization', `Bearer ${this.service.session.value.getAccessToken().getJwtToken()}`)
+            .set('Authorization', `Bearer ${token}`)
         }));
     }
 

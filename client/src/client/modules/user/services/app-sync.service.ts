@@ -12,9 +12,15 @@ import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.se
   providedIn: 'root'
 })
 export class AppSyncService {
-  readonly client: AWSAppSyncClient<any>;
+  private readonly client: AWSAppSyncClient<any>;
+  // In case someone starts the dev environment without APP_SYNC configured
+  private readonly hasConfig = APP_SYNC && APP_SYNC.aws_appsync_graphqlEndpoint;
 
   constructor(private shoppingCartService: ShoppingCartService) {
+    if (!this.hasConfig) {
+      console.log('There is no config available for AWS AppSync');
+      return;
+    }
     this.client = new AWSAppSyncClient({
       url: APP_SYNC.aws_appsync_graphqlEndpoint,
       region: APP_SYNC.aws_project_region,
@@ -28,6 +34,9 @@ export class AppSyncService {
   }
 
   createSettings() {
+    if (!this.client) {
+      return;
+    }
     const mutate = CreateSettingsMutation;
     const user: User = SharedService.user;
     const {recipes, items} = this.shoppingCartService;
@@ -58,6 +67,9 @@ export class AppSyncService {
   }
 
   updateSettings() {
+    if (!this.client) {
+      return;
+    }
     const mutate = UpdateSettingsMutation;
     this.client.mutate({
       mutation: mutate,
@@ -73,6 +85,9 @@ export class AppSyncService {
   }
 
   deleteSettings() {
+    if (!this.client) {
+      return;
+    }
     const mutate = DeleteSettingsMutation;
     this.client.mutate({
       mutation: mutate,
@@ -88,6 +103,9 @@ export class AppSyncService {
   }
 
   getSettings() {
+    if (!this.client) {
+      return;
+    }
     return new Promise<any>((resolve, reject) => {
       this.client.query({
         query: GetSettings,
