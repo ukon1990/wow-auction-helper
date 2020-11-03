@@ -181,7 +181,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
 
     if (!this.isCurrentRealm(slug)) {
       this.appSyncService.updateSettings({realm: slug});
-      this.realmService.changeRealm(this.auctionsService, slug)
+      this.realmService.changeRealm(slug)
         .then((status) => {
           Report.send('handleRealmChange', 'RealmQuickSelectComponent');
         })

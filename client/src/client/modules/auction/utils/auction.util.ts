@@ -114,9 +114,11 @@ export class AuctionUtil {
     // Dashboard -> Needs to be done after trade vendors
     // Dashboard.addDashboards();
 
+    /*
     if (SharedService.user && SharedService.user.shoppingCart) {
       SharedService.user.shoppingCart.calculateCosts();
     }
+    */
 
 
     const t2 = performance.now();

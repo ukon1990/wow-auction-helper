@@ -13,12 +13,15 @@ import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-updat
 import {RealmStatus} from '../models/realm-status.model';
 import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
+import {AppSyncService} from '../modules/user/services/app-sync.service';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
 
 @Injectable()
 export class RealmService {
   private statusInterval: Observable<number> = environment.test ? null : interval(25 * 1000);
   private isCheckingStatus: boolean;
   private timeSinceInterval: Observable<number> = environment.test ? null : interval(1000);
+  sm = new SubscriptionManager();
   previousUrl;
   events = {
     timeSince: new BehaviorSubject(0),
@@ -29,8 +32,18 @@ export class RealmService {
   };
 
   constructor(private http: HttpClient,
+              private appSync: AppSyncService,
               private matSnackBar: MatSnackBar) {
     if (!environment.test) {
+      this.sm.add(appSync.realmChange, (change) => {
+        if (change) {
+          const {region, realm} = change;
+          console.log('Realm change', realm);
+          /*
+          this.changeRealm(realm, region)
+            .catch(console.error);*/
+        }
+      });
       this.statusInterval.subscribe(() => this.checkForUpdates());
       this.timeSinceInterval.subscribe(() => this.setTimeSince());
     }
@@ -53,7 +66,7 @@ export class RealmService {
       SharedService.userRealms.push(tmpMap[key]));
   }
 
-  async changeRealm(auctionsService: AuctionsService, realm: string, region?: string) {
+  async changeRealm(realm: string, region?: string) {
     /*
     if (region) {
       SharedService.user.region = region;

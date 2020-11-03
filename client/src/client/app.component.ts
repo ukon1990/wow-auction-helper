@@ -69,6 +69,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private title: Title) {
     this.setLocale();
     UserUtil.restore();
+    ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
+    Report.init(this.angulartics2, this.reportService);
     this.appSyncService.setInitial(SharedService.user, shoppingCartService);
 
 
@@ -257,8 +259,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     NPC.init(this.auctionService);
     TsmLuaUtil.init(this.auctionService);
     Filters.init(this.auctionService);
-    ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
-    Report.init(this.angulartics2, this.reportService);
     InventoryUtil.init(this.auctionService);
 
 

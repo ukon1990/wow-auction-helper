@@ -28,12 +28,23 @@ export class CharacterService {
   events: EventEmitter<any> = new EventEmitter();
   charactersForRealm: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
   charactersForRealmWithRecipes: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
+  realmStatusIsReady: boolean;
+  appSyncIsReady: boolean;
 
   constructor(private _http: HttpClient,
               private realmService: RealmService,
               private appSync: AppSyncService,
               private craftingService: CraftingService) {
-    this.sm.add(appSync.settings, settings => this.handleSettingsUpdate(settings));
+    this.sm.add(appSync.settings, settings => {
+      this.appSyncIsReady = !!settings;
+      this.handleSettingsUpdate(settings)
+        .catch(console.error);
+    });
+    this.sm.add(realmService.events.list, (list) => {
+      this.realmStatusIsReady = !!list.length;
+      this.handleSettingsUpdate()
+        .catch(console.error);
+    });
     this.sm.add(this.realmService.events.realmStatus,
       status => this.updateCharactersForRealmAndRecipes(status));
   }
@@ -56,7 +67,6 @@ export class CharacterService {
           if (char['error']) {
             reject(char);
           } else {
-            this.emitChanges(char);
             resolve(char);
           }
         }).catch(error => {
@@ -89,7 +99,6 @@ export class CharacterService {
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
-        this.emitChanges(c);
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
@@ -97,11 +106,6 @@ export class CharacterService {
         ErrorReport.sendHttpError(error);
         return {error: error};
       });
-  }
-
-  private emitChanges(c: Object) {
-    setTimeout(() =>
-      this.events.emit(c));
   }
 
   updateCharactersForRealmAndRecipes(status: AuctionHouseStatus = this.realmService.events.realmStatus.value) {
@@ -196,7 +200,7 @@ export class CharacterService {
     });
   }
 
-  update(character: Character): Promise<Character> {
+  update(character: Character, updateAppSync = true): Promise<Character> {
     const professions = character.professions;
 
     return new Promise<Character>((resolve, reject) => {
@@ -222,10 +226,13 @@ export class CharacterService {
           }
 
           localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-          this.updateAppSync();
+          if (updateAppSync) {
+            this.updateAppSync();
+          }
           this.updateCharactersForRealmAndRecipes();
 
           Report.send('Updated', 'Characters');
+          this.events.emit(c);
           resolve(c);
         } else {
           ErrorReport.sendHttpError(
@@ -265,8 +272,12 @@ export class CharacterService {
         `${name} could not be found on ${realm}. If you are sure that the name matches, try loggin in and out of the character.`));
   }
 
-  private async handleSettingsUpdate(settings: User) {
+  private async handleSettingsUpdate(settings: User = this.appSync.settings.value) {
+    if (!this.realmStatusIsReady || !this.appSyncIsReady) {
+      return;
+    }
     if (settings && settings.characters) {
+      console.log('Checking for character updates on other devices');
       const characters: Character[] = [];
       const charMap = new Map<string, Character>();
       const updatePromises: Promise<void>[] = [];
@@ -278,12 +289,12 @@ export class CharacterService {
       settings.characters.forEach(character => {
         const alreadyStored: Character = charMap.get(getId(character));
         if (alreadyStored &&
-          alreadyStored.lastModified > character.lastModified) {
+          alreadyStored.lastModified >= character.lastModified) {
           characters.push(alreadyStored);
         } else {
           updatePromises.push(
             new Promise<void>(async resolve => {
-              await this.update(character)
+              await this.update(character, false)
                 .then(char => characters.push(char))
                 .catch(console.error);
               resolve();
@@ -291,6 +302,7 @@ export class CharacterService {
           );
         }
       });
+      console.log(`Updating ${updatePromises.length} characters`);
 
       await Promise.all(updatePromises)
         .catch(console.error);

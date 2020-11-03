@@ -9,17 +9,21 @@ import {UserUtil} from '../../../utils/user/user.util';
 import {Character} from '../../character/models/character.model';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 import {BehaviorSubject} from 'rxjs';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {CreateSettingsSubscription, UpdateSettingsSubscription} from '../graphql/subscriptions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppSyncService {
   settings: BehaviorSubject<User> = new BehaviorSubject<User>(undefined);
+  realmChange: BehaviorSubject<{realm: string, region: string}> = new BehaviorSubject(undefined);
   private readonly client: AWSAppSyncClient<any>;
   // In case someone starts the dev environment without APP_SYNC configured
   private readonly hasConfig = APP_SYNC && APP_SYNC.aws_appsync_graphqlEndpoint;
   private user: User;
   private shoppingCartService: ShoppingCartService;
+  private sm = new SubscriptionManager();
 
   constructor() {
     if (!this.hasConfig) {
@@ -35,7 +39,15 @@ export class AppSyncService {
       }
     });
 
-    // setTimeout(() => this.createSettings(), 1000);
+    /*
+    this.sm.add(
+      this.client.subscribe({query: CreateSettingsSubscription}),
+      ({data}) => this.handleSettingsUpdate(data.onCreateWahUserSettings));
+    */
+    this.sm.add(
+      this.client.subscribe({query: UpdateSettingsSubscription}),
+      ({data}) => this.handleSettingsUpdate(data.onUpdateWahUserSettings));
+    setTimeout(() => this.createSettings(), 1000);
   }
 
   setInitial(user: User, shoppingCartService: ShoppingCartService) {
@@ -76,7 +88,8 @@ export class AppSyncService {
         },
       }
     })
-      .then(settings => this.handleSettingsUpdate(settings as any))
+      .then(settings =>
+        this.handleSettingsUpdate(settings as any))
       .catch(console.error);
   }
 
@@ -132,8 +145,9 @@ export class AppSyncService {
         query: GetSettings,
         fetchPolicy: 'network-only'
       })
-        .then(settings => {
-          this.handleSettingsUpdate(settings as any);
+        .then(({data}) => {
+          this.handleSettingsUpdate(data['getWahUserSettings'] as User);
+          // TODO: Shopping cart sync fix!
           resolve();
         })
         .catch(error => {
@@ -143,12 +157,26 @@ export class AppSyncService {
     });
   }
 
-  private handleSettingsUpdate(result: {data: {getWahUserSettings: User}}) {
+  private handleSettingsUpdate(settings: User) {
+    console.log('Settings update', settings);
 
-    const settings: User = result.data.getWahUserSettings;
+    if (!settings) {
+      return;
+    }
+    if (settings && (settings.realm !== this.user.realm || settings.region !== this.user.region)) {
+      this.realmChange.next({region: settings.region, realm: settings.realm});
+    }
     Object.assign(this.user, {
-      ...settings,
-      characters: this.user.characters,
+      locale: settings.locale,
+      faction: settings.faction,
+      region: settings.region,
+      realm: settings.realm,
+      customPrices: settings.customPrices,
+      customProcs: settings.customProcs,
+      buyoutLimit: settings.buyoutLimit,
+      useVendorPriceForCraftingIfAvailable: settings.useVendorPriceForCraftingIfAvailable,
+      useIntermediateCrafting: settings.useIntermediateCrafting,
+      craftingStrategy: settings.craftingStrategy,
     });
     UserUtil.save();
     this.settings.next(settings);

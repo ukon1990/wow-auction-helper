@@ -117,8 +117,7 @@ export class GeneralSettingsComponent implements OnDestroy {
     }
 
     if (this.hasChangedRealmOrRegion()) {
-      await this._realmService.changeRealm(
-        this._auctionService, realm, region);
+      await this._realmService.changeRealm(realm, region);
     }
     this.setOriginalUserObject();
   }

@@ -1,22 +1,41 @@
 import gql from 'graphql-tag';
 
+export const ALL_SETTINGS_GRAPH_FIELDS = `
+  realm
+  region
+  customPrices
+  customProcs
+  buyoutLimit
+  useVendorPriceForCraftingIfAvailable
+  useIntermediateCrafting
+  shoppingCart {
+    items {
+      id
+      isIntermediate
+      quantity
+    }
+    recipes {
+      id
+      isIntermediate
+      quantity
+    }
+  }
+  craftingStrategy
+  locale
+  lastModified
+  created
+  characters {
+    lastModified
+    name
+    slug
+  }
+`;
+
 export const CreateSettingsMutation = gql(`
   mutation createWahUserSettings($input: CreateWahUserSettingsInput!) {
     createWahUserSettings(input: $input) {
       id
-      realm
-      region
-      customPrices
-      customProcs
-      buyoutLimit
-      useVendorPriceForCraftingIfAvailable
-      useIntermediateCrafting
-      shoppingCart {
-        items
-        recipes
-      }
-      craftingStrategy
-      locale
+      ${ALL_SETTINGS_GRAPH_FIELDS}
       lastModified
       created
     }
@@ -30,26 +49,7 @@ export const CreateSettingsMutation = gql(`
 export const UpdateSettingsMutation = (keys: string[]) => gql(`
   mutation updateWahUserSettings($input: UpdateWahUserSettingsInput!) {
     updateWahUserSettings(input: $input) {
-      realm
-      region
-      customPrices
-      customProcs
-      buyoutLimit
-      useVendorPriceForCraftingIfAvailable
-      useIntermediateCrafting
-      shoppingCart {
-        items
-        recipes
-      }
-      craftingStrategy
-      locale
-      lastModified
-      created
-      characters {
-        lastModified
-        name
-        slug
-      }
+      ${ALL_SETTINGS_GRAPH_FIELDS}
     }
   }
 `);

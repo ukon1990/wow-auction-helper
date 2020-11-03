@@ -1,29 +1,11 @@
 import gql from 'graphql-tag';
+import {ALL_SETTINGS_GRAPH_FIELDS} from './mutations';
 
 export const GetSettings = gql(`
   query getWahUserSettings {
     getWahUserSettings {
       id
-      buyoutLimit
-      craftingStrategy
-      created
-      customPrices
-      customProcs
-      lastModified
-      locale
-      realm
-      region
-      shoppingCart {
-        items
-        recipes
-      }
-      useIntermediateCrafting
-      useVendorPriceForCraftingIfAvailable
-      characters {
-        lastModified
-        name
-        slug
-      }
+      ${ALL_SETTINGS_GRAPH_FIELDS}
     }
   }
 `);
