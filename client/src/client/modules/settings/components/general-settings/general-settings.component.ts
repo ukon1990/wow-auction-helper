@@ -149,7 +149,7 @@ export class GeneralSettingsComponent implements OnDestroy {
   isValid(): boolean {
     return this.form.status === 'VALID';
   }
-
+/*
   exportData(): void {
     this.form.controls['exportString']
       .setValue(
@@ -165,7 +165,7 @@ export class GeneralSettingsComponent implements OnDestroy {
       'Exported settings to file',
       'General settings');
   }
-
+*/
   importUser(): void {
     if (this.isImportStringNotEmpty()) {
       SharedService.user.watchlist

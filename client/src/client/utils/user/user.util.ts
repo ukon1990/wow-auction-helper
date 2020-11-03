@@ -114,20 +114,24 @@ export class UserUtil {
     const user: User = new User();
 
     Object.keys(localStorage).forEach(key => {
+      const entry = localStorage.getItem(key);
+      if (!entry || entry !== 'undefined') {
+        return;
+      }
       switch (key) {
         case 'gameVersion':
         case 'faction':
         case 'craftingStrategy':
-          user[key] = +localStorage[key];
+          user[key] = +entry;
           break;
         case 'region':
         case 'realm':
         case 'classicRealm':
         case 'character':
-          user[key] = localStorage[key];
+          user[key] = entry;
           break;
         case 'custom_prices':
-          const cp = JSON.parse(localStorage[key]);
+          const cp = JSON.parse(entry);
           if (cp instanceof Array) {
             user.customPrices = cp;
           } else {
@@ -137,22 +141,22 @@ export class UserUtil {
           CustomPrices.createMap(user.customPrices);
           break;
         case 'custom_procs':
-          user.customProcs = JSON.parse(localStorage[key]);
+          user.customProcs = JSON.parse(entry);
           CustomProcUtil.createMap(user.customProcs);
           break;
         case 'crafting_buyout_limit':
-          user.buyoutLimit = parseFloat(localStorage[key]);
+          user.buyoutLimit = parseFloat(entry);
           break;
         case 'characters':
         case 'useIntermediateCrafting':
-          user[key] = JSON.parse(localStorage[key]);
+          user[key] = JSON.parse(entry);
           break;
         case 'notifications':
-          user.notifications = new NotificationSettings(JSON.parse(localStorage[key]));
+          user.notifications = new NotificationSettings(JSON.parse(entry));
           break;
         case 'watchlist':
           if (isExport) {
-            user.watchlist = JSON.parse(localStorage[key]);
+            user.watchlist = JSON.parse(entry);
           }
           break;
         case ProspectingAndMillingUtil.TYPES.MILLING:
@@ -167,7 +171,7 @@ export class UserUtil {
           break;
         default:
           try {
-            user[key] = JSON.parse(localStorage[key]);
+            user[key] = JSON.parse(entry);
           } catch (e) {
           }
           break;

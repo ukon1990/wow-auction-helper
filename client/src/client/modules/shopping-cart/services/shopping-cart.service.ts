@@ -12,6 +12,7 @@ import {ItemService} from '../../../services/item.service';
 import {BackgroundDownloadService} from '../../core/services/background-download.service';
 import {Report} from '../../../utils/report.util';
 import {AppSyncService} from '../../user/services/app-sync.service';
+import {UpdateSettingsMutation} from '../../user/services/settings/mutations';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,20 @@ import {AppSyncService} from '../../user/services/app-sync.service';
 export class ShoppingCartService {
   private util = new ShoppingCartUtil();
   private STORAGE_NAME = 'shopping_cart_';
+  private readonly GQL_FIELDS = `
+        shoppingCart {
+          items {
+            id
+            isIntermediate
+            quantity
+          }
+          recipes {
+            id
+            isIntermediate
+            quantity
+          }
+        }
+      `;
   cart: BehaviorSubject<ShoppingCartV2> = new BehaviorSubject<ShoppingCartV2>(undefined);
   items: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
   itemsMap: BehaviorSubject<Map<number, CartItem>> = new BehaviorSubject<Map<number, CartItem>>(new Map<number, CartItem>());
@@ -30,7 +45,7 @@ export class ShoppingCartService {
   constructor(private auctionService: AuctionsService,
               private backgroundService: BackgroundDownloadService,
               private appSyncService: AppSyncService,
-              ) {
+  ) {
     this.restore();
     this.sm.add(auctionService.mapped,
       (map: Map<string, AuctionItem>) => this.calculateCart(map));
@@ -103,12 +118,20 @@ export class ShoppingCartService {
   }
 
   private updateAppSync() {
-    this.appSyncService.updateSettings({
+    const input = {
       shoppingCart: {
         recipes: this.recipes.value,
         items: this.items.value,
       }
-    });
+    };
+    this.appSyncService.client.mutate({
+      mutation: UpdateSettingsMutation(this.GQL_FIELDS),
+      variables: {
+        input,
+      }
+    })
+      .then(console.log)
+      .catch(console.error);
   }
 
   private saveRecipes() {
@@ -181,7 +204,7 @@ export class ShoppingCartService {
     this.itemsMap.next(itemMap);
     const itemList: CartItem[] = [];
     this.items.next(itemList);
-    const recipeMap: Map<number, CartRecipe> =  new Map<number, CartRecipe>();
+    const recipeMap: Map<number, CartRecipe> = new Map<number, CartRecipe>();
     this.recipesMap.next(recipeMap);
     const recipeList: CartRecipe[] = [];
     this.recipes.next(recipeList);

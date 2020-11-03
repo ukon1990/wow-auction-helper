@@ -8,18 +8,6 @@ export const ALL_SETTINGS_GRAPH_FIELDS = `
   buyoutLimit
   useVendorPriceForCraftingIfAvailable
   useIntermediateCrafting
-  shoppingCart {
-    items {
-      id
-      isIntermediate
-      quantity
-    }
-    recipes {
-      id
-      isIntermediate
-      quantity
-    }
-  }
   craftingStrategy
   locale
   lastModified
@@ -46,10 +34,10 @@ export const CreateSettingsMutation = gql(`
  * @param keys
  * @constructor
  */
-export const UpdateSettingsMutation = (keys: string[]) => gql(`
+export const UpdateSettingsMutation = (fields = ALL_SETTINGS_GRAPH_FIELDS) => gql(`
   mutation updateWahUserSettings($input: UpdateWahUserSettingsInput!) {
     updateWahUserSettings(input: $input) {
-      ${ALL_SETTINGS_GRAPH_FIELDS}
+      ${fields}
     }
   }
 `);
