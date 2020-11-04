@@ -39,10 +39,8 @@ export class RealmService {
       this.sm.add(settingSync.realmChange, (change) => {
         if (change) {
           const {region, realm} = change;
-          console.log('Realm change', realm);
-          /*
           this.changeRealm(realm, region)
-            .catch(console.error);*/
+            .catch(console.error);
         }
       });
       this.statusInterval.subscribe(() => this.checkForUpdates());
@@ -68,14 +66,11 @@ export class RealmService {
   }
 
   async changeRealm(realm: string, region?: string) {
-    console.log('changeRealm', realm)
-    /*
     if (region) {
       SharedService.user.region = region;
     }
     SharedService.user.realm = realm;
     UserUtil.save();
-    */
     return new Promise<AuctionHouseStatus>((resolve, reject) => {
       this.getStatus(
         SharedService.user.region,
