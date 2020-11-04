@@ -82,6 +82,7 @@ export class AuthService {
           this.isAuthenticated.next(!!user);
           if (this.isAuthenticated) {
             localStorage.setItem('useAppSync', 'true');
+            this.settingsSync.init();
           }
           console.log('Current user', user);
           resolve(user);
