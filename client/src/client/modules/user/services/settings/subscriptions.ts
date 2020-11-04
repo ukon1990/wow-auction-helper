@@ -12,7 +12,9 @@ export const CreateSettingsSubscription = gql(`
 export const UpdateSettingsSubscription = gql(`
   subscription onUpdateWahUserSettings {
     onUpdateWahUserSettings {
-      ${ALL_SETTINGS_GRAPH_FIELDS}
+      realm
+      region
+      faction
     }
   }
 `);
