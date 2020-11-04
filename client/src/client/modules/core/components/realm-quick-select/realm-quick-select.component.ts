@@ -74,7 +74,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
-    this.sm.add(this.settingSync.settings,
+
+    this.sm.add(this.settingSync.realmChange,
         settings => this.setChanges(settings));
   }
 
@@ -102,8 +103,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
 
     this.realmList.sort((a, b) =>
       b.characterCount - a.characterCount);
-
-    this.handleRealmChange();
   }
 
   private setSlugFromRealms(realms: AuctionHouseStatus[], map) {
@@ -196,7 +195,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     const {region: prevRegion, realm: prevRealm, faction: prevFaction} = this.form.value;
     const {region, realm, faction} = settings;
     if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
-      this.form.setValue({region, realm, faction});
+      this.form.setValue({region, realm, faction}, {emitEvent: false});
     }
   }
 }

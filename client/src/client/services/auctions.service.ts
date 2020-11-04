@@ -39,6 +39,7 @@ export class AuctionsService {
     private tsmService: TsmService,
     private characterService: CharacterService,
     private realmService: RealmService) {
+
     this.subs.add(
       this.realmService.events.realmStatus,
       (status: AuctionHouseStatus) =>

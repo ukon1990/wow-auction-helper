@@ -68,6 +68,7 @@ export class RealmService {
   }
 
   async changeRealm(realm: string, region?: string) {
+    console.log('changeRealm', realm)
     /*
     if (region) {
       SharedService.user.region = region;

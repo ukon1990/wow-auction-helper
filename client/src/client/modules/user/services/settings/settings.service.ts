@@ -162,10 +162,6 @@ export class SettingsService {
     if (!settings) {
       return;
     }
-    if (settings && (settings.realm !== previousSettings.realm || settings.region !== previousSettings.region)) {
-      this.realmChange.next({region: settings.region, realm: settings.realm});
-    }
-
     Object.assign(SharedService.user, {
       locale: settings.locale,
       faction: settings.faction,
@@ -178,6 +174,11 @@ export class SettingsService {
       useIntermediateCrafting: settings.useIntermediateCrafting,
       craftingStrategy: settings.craftingStrategy,
     });
+
+    if (settings && (settings.realm !== previousSettings.realm || settings.region !== previousSettings.region)) {
+      this.realmChange.next({region: settings.region, realm: settings.realm});
+    }
+
     UserUtil.save();
     this.settings.next(settings);
     return undefined;
