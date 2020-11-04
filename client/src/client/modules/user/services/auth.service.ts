@@ -61,6 +61,7 @@ export class AuthService {
           if (this.isAuthenticated) {
             await this.settingsSync.getSettings()
               .catch(console.error);
+            console.log('Settings loaded', this.settingsSync.settings.value);
             resolve();
           }
         })

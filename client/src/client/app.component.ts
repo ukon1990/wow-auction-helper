@@ -35,6 +35,7 @@ import {AppSyncService} from './modules/user/services/app-sync.service';
 import {ShoppingCartService} from './modules/shopping-cart/services/shopping-cart.service';
 import {AuthService} from './modules/user/services/auth.service';
 import {CharacterService} from './modules/character/services/character.service';
+import {SettingsService} from './modules/user/services/settings/settings.service';
 
 @Component({
   selector: 'wah-root',
@@ -50,6 +51,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   isInTheSetup: boolean;
   initialLoadWasSetup: boolean;
   isInNonAppDataPage: boolean;
+  useAppSync = localStorage.getItem('useAppSync') ?
+    JSON.parse(localStorage.getItem('useAppSync')) : false;
 
   constructor(public platform: Platform,
               private router: Router,
@@ -63,6 +66,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private reportService: ReportService,
               private githubService: GithubService,
               private updateService: UpdateService,
+              public settingsSync: SettingsService,
               private shoppingCartService: ShoppingCartService,
               private authService: AuthService,
               private dialog: MatDialog,

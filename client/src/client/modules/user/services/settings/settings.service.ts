@@ -15,6 +15,8 @@ import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-
   providedIn: 'root'
 })
 export class SettingsService {
+  hasLoaded = new BehaviorSubject<boolean>(false);
+  isLoading = new BehaviorSubject<boolean>(false);
   settings = new BehaviorSubject<UserSettings>(new UserSettings());
   realmChange = new BehaviorSubject<{ realm: string, region: string }>(undefined);
   cartChange = new BehaviorSubject<{recipes: CartRecipe[], items: CartItem[]}>(undefined);
@@ -71,6 +73,7 @@ export class SettingsService {
         }
         const {data} = res;
         this.handleSettingsUpdate(data['createWahUserSettings']);
+        this.hasLoaded.next(true);
       })
       .catch(console.error);
   }
@@ -139,6 +142,10 @@ export class SettingsService {
             this.handleSettingsUpdate(settings);
           }
           // TODO: Shopping cart sync fix!
+
+          if (!this.hasLoaded.value) {
+            this.hasLoaded.next(true);
+          }
           resolve(settings);
         })
         .catch(error => {
