@@ -4,6 +4,7 @@ import {customPricesDefault} from '../../crafting/models/default-custom-prices';
 import {CustomProc} from '../../crafting/models/custom-proc.model';
 import {BaseCraftingUtil} from '../../crafting/utils/base-crafting.util';
 import {Theme} from '../../core/models/theme.model';
+import {CartItem, CartRecipe} from '../../shopping-cart/models/shopping-cart-v2.model';
 
 export class UserSettings {
   id?: string;
@@ -16,6 +17,10 @@ export class UserSettings {
   customProcs: CustomProc[] = [];
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
+  shoppingCart: {recipes: CartRecipe[], items: CartItem[]} = {
+    recipes: [],
+    items: [],
+  };
   useVendorPriceForCraftingIfAvailable = true;
   useIntermediateCrafting = true;
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;

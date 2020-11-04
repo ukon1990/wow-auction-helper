@@ -3,20 +3,21 @@ import {BehaviorSubject} from 'rxjs';
 import {AppSyncService} from '../app-sync.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {UpdateSettingsSubscription} from './subscriptions';
-import {User} from '../../../../models/user/user';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {UserSettings} from '../../models/settings.model';
-import {ShoppingCartService} from '../../../shopping-cart/services/shopping-cart.service';
 import {CreateSettingsMutation, DeleteSettingsMutation, UpdateSettingsMutation} from './mutations';
 import {Character} from '../../../character/models/character.model';
 import {GetSettings} from './setting.queries';
+import {SharedService} from '../../../../services/shared.service';
+import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-v2.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
   settings = new BehaviorSubject<UserSettings>(new UserSettings());
-  realmChange: BehaviorSubject<{ realm: string, region: string }> = new BehaviorSubject(undefined);
+  realmChange = new BehaviorSubject<{ realm: string, region: string }>(undefined);
+  cartChange = new BehaviorSubject<{recipes: CartRecipe[], items: CartItem[]}>(undefined);
   private sm = new SubscriptionManager();
 
   constructor(private appSync: AppSyncService) {
@@ -26,7 +27,14 @@ export class SettingsService {
   init(): void {
     this.sm.add(
       this.appSync.client.subscribe({query: UpdateSettingsSubscription}),
-      ({data}) => this.handleSettingsUpdate(data.onUpdateWahUserSettings));
+      (res) => {
+        if (!res) {
+          return;
+        }
+        const {data} = res;
+        console.log('Subscription update for settings', data);
+        this.handleSettingsUpdate(data.onUpdateWahUserSettings);
+      });
     /*
     this.sm.add(
       this.appSync.client.subscribe({query: CreateSettingsSubscription}),
@@ -57,8 +65,13 @@ export class SettingsService {
         },
       }
     })
-      .then(({data}) =>
-        this.handleSettingsUpdate(data['createWahUserSettings']))
+      .then((res) => {
+        if (!res) {
+          return;
+        }
+        const {data} = res;
+        this.handleSettingsUpdate(data['createWahUserSettings']);
+      })
       .catch(console.error);
   }
 
@@ -86,7 +99,7 @@ export class SettingsService {
         input: updateData,
       }
     })
-      .then(settings => this.handleSettingsUpdate(settings as any))
+      .then(settings => {}) // this.handleSettingsUpdate(settings as any)
       .catch(console.error);
   }
 
@@ -114,7 +127,11 @@ export class SettingsService {
         query: GetSettings,
         fetchPolicy: 'network-only' // network-only
       })
-        .then(({data}) => {
+        .then((res) => {
+          if (!res) {
+            return;
+          }
+          const {data} = res;
           const settings: UserSettings = data['getWahUserSettings'];
           if (!settings) {
             this.createSettings();
@@ -141,8 +158,8 @@ export class SettingsService {
     if (settings && (settings.realm !== previousSettings.realm || settings.region !== previousSettings.region)) {
       this.realmChange.next({region: settings.region, realm: settings.realm});
     }
-    /*
-    Object.assign(this.user, {
+
+    Object.assign(SharedService.user, {
       locale: settings.locale,
       faction: settings.faction,
       region: settings.region,
@@ -153,8 +170,8 @@ export class SettingsService {
       useVendorPriceForCraftingIfAvailable: settings.useVendorPriceForCraftingIfAvailable,
       useIntermediateCrafting: settings.useIntermediateCrafting,
       craftingStrategy: settings.craftingStrategy,
-    });*/
-    // UserUtil.save();
+    });
+    UserUtil.save();
     this.settings.next(settings);
     return undefined;
   }

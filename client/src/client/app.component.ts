@@ -71,7 +71,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
-    this.appSyncService.setInitial(SharedService.user, shoppingCartService);
+    // SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
+    ProspectingAndMillingUtil.restore();
 
 
     this.subs.add(

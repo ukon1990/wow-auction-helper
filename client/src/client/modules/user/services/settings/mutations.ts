@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 export const ALL_SETTINGS_GRAPH_FIELDS = `
   realm
   region
+  faction
   customPrices
   customProcs
   buyoutLimit
@@ -10,13 +11,25 @@ export const ALL_SETTINGS_GRAPH_FIELDS = `
   useIntermediateCrafting
   craftingStrategy
   locale
-  lastModified
-  created
   characters {
     lastModified
     name
     slug
   }
+  shoppingCart {
+    items {
+      id
+      isIntermediate
+      quantity
+    }
+    recipes {
+      id
+      isIntermediate
+      quantity
+    }
+  }
+  lastModified
+  created
 `;
 
 export const CreateSettingsMutation = gql(`

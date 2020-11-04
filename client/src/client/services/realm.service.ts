@@ -15,6 +15,7 @@ import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
 import {AppSyncService} from '../modules/user/services/app-sync.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {SettingsService} from '../modules/user/services/settings/settings.service';
 
 @Injectable()
 export class RealmService {
@@ -32,10 +33,10 @@ export class RealmService {
   };
 
   constructor(private http: HttpClient,
-              private appSync: AppSyncService,
+              private settingSync: SettingsService,
               private matSnackBar: MatSnackBar) {
     if (!environment.test) {
-      this.sm.add(appSync.realmChange, (change) => {
+      this.sm.add(settingSync.realmChange, (change) => {
         if (change) {
           const {region, realm} = change;
           console.log('Realm change', realm);

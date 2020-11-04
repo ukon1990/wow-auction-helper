@@ -11,6 +11,7 @@ import {FederatedProvider} from '../enums/federated-provider.enum';
 import {ICredentials} from '@aws-amplify/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from './app-sync.service';
+import {SettingsService} from './settings/settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class AuthService {
   authEvent = new BehaviorSubject(undefined);
   sm = new SubscriptionManager();
 
-  constructor(private sync: AppSyncService) {
+  constructor(private appSync: AppSyncService,
+              private settingsSync: SettingsService) {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
       userPoolWebClientId: COGNITO.CLIENT_ID,
@@ -57,7 +59,7 @@ export class AuthService {
       this.getCurrentUser()
         .then(async () => {
           if (this.isAuthenticated) {
-            await this.sync.getSettings()
+            await this.settingsSync.getSettings()
               .catch(console.error);
             resolve();
           }

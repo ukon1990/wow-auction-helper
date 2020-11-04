@@ -115,7 +115,7 @@ export class UserUtil {
 
     Object.keys(localStorage).forEach(key => {
       const entry = localStorage.getItem(key);
-      if (!entry || entry !== 'undefined') {
+      if (!entry || entry === 'undefined') {
         return;
       }
       switch (key) {

@@ -13,11 +13,9 @@ import {AuctionHouseStatus} from '../../auction/models/auction-house-status.mode
 import {CraftingService} from '../../../services/crafting.service';
 import {CharacterProfession} from '../../../../../../api/src/character/model';
 import {Report} from '../../../utils/report.util';
-import {AuctionsService} from '../../../services/auctions.service';
-import {AuctionUtil} from '../../auction/utils/auction.util';
-import {CraftingUtil} from '../../crafting/utils/crafting.util';
-import {AppSyncService} from '../../user/services/app-sync.service';
 import {User} from '../../../models/user/user';
+import {SettingsService} from '../../user/services/settings/settings.service';
+import {UserSettings} from '../../user/models/settings.model';
 
 @Injectable()
 export class CharacterService {
@@ -25,6 +23,13 @@ export class CharacterService {
     new BehaviorSubject<Map<number, string>>(new Map<number, string>());
 
   private sm = new SubscriptionManager();
+  private readonly GQL_FIELDS = `
+    characters {
+      lastModified
+      name
+      slug
+    }
+  `;
   events: EventEmitter<any> = new EventEmitter();
   charactersForRealm: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
   charactersForRealmWithRecipes: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
@@ -33,9 +38,9 @@ export class CharacterService {
 
   constructor(private _http: HttpClient,
               private realmService: RealmService,
-              private appSync: AppSyncService,
+              private settingsSync: SettingsService,
               private craftingService: CraftingService) {
-    this.sm.add(appSync.settings, settings => {
+    this.sm.add(settingsSync.settings, settings => {
       this.appSyncIsReady = !!settings;
       this.handleSettingsUpdate(settings)
         .catch(console.error);
@@ -248,8 +253,8 @@ export class CharacterService {
   }
 
   updateAppSync() {
-    this.appSync.updateSettings(
-      this.appSync.reduceCharacters(
+    this.settingsSync.updateSettings(
+      this.settingsSync.reduceCharacters(
         SharedService.user.characters));
   }
 
@@ -272,7 +277,7 @@ export class CharacterService {
         `${name} could not be found on ${realm}. If you are sure that the name matches, try loggin in and out of the character.`));
   }
 
-  private async handleSettingsUpdate(settings: User = this.appSync.settings.value) {
+  private async handleSettingsUpdate(settings: UserSettings = this.settingsSync.settings.value) {
     if (!this.realmStatusIsReady || !this.appSyncIsReady) {
       return;
     }

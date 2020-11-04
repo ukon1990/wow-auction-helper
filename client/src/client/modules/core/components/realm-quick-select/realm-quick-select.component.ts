@@ -11,10 +11,10 @@ import {Report} from '../../../../utils/report.util';
 import {RealmStatus} from '../../../../models/realm-status.model';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../../services/crafting.service';
-import {UserUtil} from '../../../../utils/user/user.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
-import {AppSyncService} from '../../../user/services/app-sync.service';
+import {SettingsService} from '../../../user/services/settings/settings.service';
+import {UserSettings} from '../../../user/models/settings.model';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -34,6 +34,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   hordeCharacterCountForRealm = 0;
   list = [];
   faUserPlus = faUserPlus;
+  private ignoreNextChange: boolean;
 
   sm = new SubscriptionManager();
 
@@ -41,7 +42,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
               private dbService: DatabaseService,
               private craftingService: CraftingService,
               private characterService: CharacterService,
-              private appSyncService: AppSyncService,
+              private settingSync: SettingsService,
               private auctionsService: AuctionsService) {
   }
 
@@ -73,6 +74,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
+    this.sm.add(this.settingSync.settings,
+        settings => this.setChanges(settings));
   }
 
   ngOnDestroy() {
@@ -113,7 +116,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private setRealmsFromCharacters(map) {
-    // this.pupulateDropdownWithCurrentRealm(map);
     SharedService.user.characters.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
@@ -136,22 +138,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       const realm = map[this.form.value.realm];
       this.allianceCharacterCountForRealm = realm.factions[0];
       this.allianceCharacterCountForRealm = realm.factions[1];
-    }
-  }
-
-  private pupulateDropdownWithCurrentRealm(map) {
-    const status: AuctionHouseStatus = this.realmService.events.realmStatus.value;
-    if (status) {
-      const currentRealm: RealmStatus = this.realmService.events.map.value[status.id];
-      if (currentRealm) {
-        map[currentRealm.name] = {
-          name: currentRealm.name,
-          slug: currentRealm.slug,
-          factions: [0, 0],
-          characterCount: 0
-        };
-        this.realmList.push(map[currentRealm.name]);
-      }
     }
   }
 
@@ -180,7 +166,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     }
 
     if (!this.isCurrentRealm(slug)) {
-      this.appSyncService.updateSettings({realm: slug});
       this.realmService.changeRealm(slug)
         .then((status) => {
           Report.send('handleRealmChange', 'RealmQuickSelectComponent');
@@ -195,10 +180,23 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private handleFactionChange(faction: number) {
-    this.appSyncService.updateSettings({faction});
+    if (!this.ignoreNextChange) {
+    }
+    this.settingSync.updateSettings({faction});
     this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();
     Report.send('handleFactionChange', 'RealmQuickSelectComponent');
+  }
+
+  private setChanges(settings: UserSettings) {
+    if (!settings || !settings.region || !settings.realm) {
+      return;
+    }
+    const {region: prevRegion, realm: prevRealm, faction: prevFaction} = this.form.value;
+    const {region, realm, faction} = settings;
+    if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
+      this.form.setValue({region, realm, faction});
+    }
   }
 }
