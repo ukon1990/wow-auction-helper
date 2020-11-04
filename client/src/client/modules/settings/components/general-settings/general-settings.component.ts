@@ -94,7 +94,6 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   async saveRealmAndRegion() {
     const {realm, region, locale} = this.form.value;
-    this.settingsSync.updateSettings({realm, region, locale});
 
     if (this.userChanges.has('locale')) {
       localStorage.setItem('locale', locale);
@@ -115,6 +114,10 @@ export class GeneralSettingsComponent implements OnDestroy {
       if (this.hasNotChangedRealmOrRegion()) {
         await this._auctionService.organize();
       }
+    }
+
+    if (locale !== localStorage.getItem('locale')) {
+      this.settingsSync.updateSettings({locale});
     }
 
     if (this.hasChangedRealmOrRegion()) {
