@@ -34,7 +34,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   shouldRecalculateDashboards: boolean;
   private lastCalculationTime: number;
 
-  constructor(private characterService: CharacterService,
+  constructor(public characterService: CharacterService,
               private snackBar: MatSnackBar,
               private realmService: RealmService,
               private craftingService: CraftingService,
@@ -191,10 +191,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       this.realmService
         .getRealms(this.form.value.region);
     }, 100);
-  }
-
-  getCharacters(): any[] {
-    return SharedService.user.characters;
   }
 
   private openSnackbar(message: string): void {

@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
 import {Realm} from '../models/realm';
-import {AuctionsService} from './auctions.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
@@ -13,7 +12,6 @@ import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-updat
 import {RealmStatus} from '../models/realm-status.model';
 import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
-import {AppSyncService} from '../modules/user/services/app-sync.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 
@@ -66,10 +64,10 @@ export class RealmService {
   }
 
   async changeRealm(realm: string, region: string = SharedService.user.region) {
+    console.log('Change realm input', realm, region);
     SharedService.user.region = region;
     SharedService.user.realm = realm;
 
-    this.settingSync.updateSettings({region, realm});
     UserUtil.save();
     return new Promise<AuctionHouseStatus>((resolve, reject) => {
       this.getStatus(

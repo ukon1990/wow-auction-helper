@@ -17,9 +17,10 @@ import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-
 export class SettingsService {
   hasLoaded = new BehaviorSubject<boolean>(false);
   isLoading = new BehaviorSubject<boolean>(false);
+  isUpdatingSettings = new BehaviorSubject<boolean>(false);
   settings = new BehaviorSubject<UserSettings>(new UserSettings());
   realmChange = new BehaviorSubject<{ realm: string, region: string }>(undefined);
-  cartChange = new BehaviorSubject<{recipes: CartRecipe[], items: CartItem[]}>(undefined);
+  cartChange = new BehaviorSubject<{ recipes: CartRecipe[], items: CartItem[] }>(undefined);
   private sm = new SubscriptionManager();
 
   constructor(private appSync: AppSyncService) {
@@ -27,6 +28,7 @@ export class SettingsService {
   }
 
   init(): void {
+    // Object.assign(this.settings.value, SharedService.user);
     this.sm.add(
       this.appSync.client.subscribe({query: UpdateSettingsSubscription}),
       (res) => {
@@ -87,10 +89,17 @@ export class SettingsService {
   }
 
   updateSettings(updateData: any) {
-    Object.assign(this.settings.value, {
+    console.log('Updating settings -> ', updateData, this.isUpdatingSettings.value);
+    if (this.isUpdatingSettings.value) {
+      return;
+    }
+    this.isUpdatingSettings.next(true);
+    const settings = this.settings.value;
+    Object.assign(settings, {
       ...updateData,
       characters: this.settings.value.characters,
     });
+    this.settings.next(settings);
     if (!this.appSync.client) {
       return;
     }
@@ -102,7 +111,9 @@ export class SettingsService {
         input: updateData,
       }
     })
-      .then(settings => {}) // this.handleSettingsUpdate(settings as any)
+      .then(settings => {
+        this.isUpdatingSettings.next(false);
+      }) // this.handleSettingsUpdate(settings as any)
       .catch(console.error);
   }
 
@@ -175,7 +186,12 @@ export class SettingsService {
       craftingStrategy: settings.craftingStrategy,
     });
 
-    if (settings && (settings.realm !== previousSettings.realm || settings.region !== previousSettings.region)) {
+    if (this.hasLoaded.value && settings &&
+      (
+        settings.realm !== previousSettings.realm ||
+        settings.region !== previousSettings.region
+      )
+    ) {
       this.realmChange.next({region: settings.region, realm: settings.realm});
     }
 

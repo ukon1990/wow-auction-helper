@@ -23,6 +23,7 @@ import {ProfessionService} from '../../crafting/services/profession.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {LogRocketUtil} from '../../../utils/log-rocket.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
+import {UserUtil} from '../../../utils/user/user.util';
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +93,9 @@ export class BackgroundDownloadService {
     const useAppSync = localStorage.getItem('useAppSync') ?
       JSON.parse(localStorage.getItem('useAppSync')) : false;
 
+    if (!useAppSync) {
+      UserUtil.restore();
+    }
     if (this.dbIsReady && (useAppSync && this.settingsAreReady || !useAppSync)) {
       await this.init();
       this.isInitialLoadCompleted.next(true);

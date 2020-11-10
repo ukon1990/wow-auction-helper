@@ -13,7 +13,6 @@ import {AuctionHouseStatus} from '../../auction/models/auction-house-status.mode
 import {CraftingService} from '../../../services/crafting.service';
 import {CharacterProfession} from '../../../../../../api/src/character/model';
 import {Report} from '../../../utils/report.util';
-import {User} from '../../../models/user/user';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserSettings} from '../../user/models/settings.model';
 
@@ -31,6 +30,7 @@ export class CharacterService {
     }
   `;
   events: EventEmitter<any> = new EventEmitter();
+  characters = new BehaviorSubject<Character[]>([]);
   charactersForRealm: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
   charactersForRealmWithRecipes: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
   realmStatusIsReady: boolean;
@@ -40,6 +40,14 @@ export class CharacterService {
               private realmService: RealmService,
               private settingsSync: SettingsService,
               private craftingService: CraftingService) {
+    const localStorageChars = localStorage.getItem('characters');
+    if (localStorageChars) {
+      try {
+        this.characters.next(JSON.parse(localStorageChars));
+      } catch (error) {
+        console.error(error);
+      }
+    }
     this.sm.add(settingsSync.settings, settings => {
       this.appSyncIsReady = !!settings;
       this.handleSettingsUpdate(settings)
@@ -117,10 +125,10 @@ export class CharacterService {
 
     const withRecipes: Character[] = [];
     const currentCharacters: Character[] = [];
-    if (SharedService.user && SharedService.user.characters && status) {
+    if (this.characters.value && status) {
       const map = new Map<number, string[]>();
       CraftingService.recipesForUser.value.clear();
-      SharedService.user.characters.filter(character => {
+      this.characters.value.filter(character => {
         if (TextUtil.contains(status.connectedTo.join(','), character.slug)) {
           currentCharacters.push(character);
 
@@ -190,8 +198,8 @@ export class CharacterService {
   remove(character: Character) {
     return new Promise<void>(async (resolve) => {
       const index = this.getCharacterIndex(character);
-      SharedService.user.characters.splice(index, 1);
-      localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+      this.characters.value.splice(index, 1);
+      localStorage['characters'] = JSON.stringify(this.characters.value);
       this.updateAppSync();
       try {
         RealmService.gatherRealms();
@@ -206,6 +214,9 @@ export class CharacterService {
   }
 
   update(character: Character, updateAppSync = true): Promise<Character> {
+    if (!character) {
+      return;
+    }
     const professions = character.professions;
 
     return new Promise<Character>((resolve, reject) => {
@@ -219,18 +230,18 @@ export class CharacterService {
         character.slug,
         region
       ).then(async c => {
-        if (c && !c.error && SharedService.user && SharedService.user.characters) {
+        if (c && !c.error && this.characters.value) {
           if (!c.professions) {
             c.professions = professions;
           }
           const index = this.getCharacterIndex(character);
           if (index !== undefined) {
-            SharedService.user.characters[index] = c;
+            this.characters.value[index] = c;
           } else {
-            SharedService.user.characters.push(c);
+            this.characters.next([...this.characters.value, c]);
           }
 
-          localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+          localStorage['characters'] = JSON.stringify(this.characters.value);
           if (updateAppSync) {
             this.updateAppSync();
           }
@@ -255,12 +266,12 @@ export class CharacterService {
   updateAppSync() {
     this.settingsSync.updateSettings(
       this.settingsSync.reduceCharacters(
-        SharedService.user.characters));
+        this.characters.value));
   }
 
   private getCharacterIndex(character: Character) {
     let index: number;
-    SharedService.user.characters
+    this.characters.value
       .forEach((char: Character, i: number) => {
         if (char.name === character.name && char.realm === character.realm) {
           index = i;
@@ -288,7 +299,7 @@ export class CharacterService {
       const updatePromises: Promise<void>[] = [];
       const getId = (character: Character) => `${character.slug}-${character.name}`;
 
-      SharedService.user.characters.forEach(character => {
+      (this.characters.value || []).forEach(character => {
         charMap.set(getId(character), character);
       });
       settings.characters.forEach(character => {
@@ -311,7 +322,7 @@ export class CharacterService {
 
       await Promise.all(updatePromises)
         .catch(console.error);
-      SharedService.user.characters = characters;
+      this.characters.next(characters);
     }
   }
 }

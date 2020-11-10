@@ -72,7 +72,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
-    UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
     // SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);

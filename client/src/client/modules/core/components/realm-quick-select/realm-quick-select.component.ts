@@ -47,12 +47,11 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.form.controls.region.setValue(
-      this.getFormValueFor('region'));
-    this.form.controls.realm.setValue(
-      this.getFormValueFor('realm'));
-    this.form.controls.faction.setValue(
-      this.getFormValueFor('faction'));
+    this.form.setValue({
+      region: this.getFormValueFor('region'),
+      realm: this.getFormValueFor('realm'),
+      faction: this.getFormValueFor('faction')
+    }, {emitEvent: false});
 
     this.sm.add(this.realmService.events.list,
       (realms: AuctionHouseStatus[]) => {
@@ -157,14 +156,17 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       return;
     }
     const realm = this.realmListMap[slug];
-    const faction = SharedService.user.faction;
+    // const faction = SharedService.user.faction;
+    const {faction, region} = this.form.value;
     if (realm && (!this.isCurrentRealm(slug) || faction === undefined)) {
       this.form.controls.faction.setValue(
-        realm.factions[0] > realm.factions[1] ? 0 : 1
+        realm.factions[0] > realm.factions[1] ? 0 : 1,
+        {emitEvent: false}
       );
     }
 
     if (!this.isCurrentRealm(slug)) {
+      this.settingSync.updateSettings({faction, realm: slug, region});
       this.realmService.changeRealm(slug)
         .then((status) => {
           Report.send('handleRealmChange', 'RealmQuickSelectComponent');
@@ -181,7 +183,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   private handleFactionChange(faction: number) {
     if (!this.ignoreNextChange) {
     }
-    this.settingSync.updateSettings({faction});
+    const {realm, region} = this.form.value;
+    this.settingSync.updateSettings({faction, realm, region});
     this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();
@@ -195,7 +198,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     const {region: prevRegion, realm: prevRealm, faction: prevFaction} = this.form.value;
     const {region, realm, faction} = settings;
     if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
-      this.form.setValue({region, realm, faction}, {emitEvent: false});
+      this.form.setValue({region, realm, faction: faction || 0}, {emitEvent: false});
     }
   }
 }
