@@ -1,5 +1,6 @@
 import {SharedService} from './shared.service';
 import {environment} from '../../environments/environment';
+import {USE_LOCAL_BACKEND} from '../secrets';
 
 export class Endpoints {
   public static readonly TSM_API = 'https://api.tradeskillmaster.com/v1/item';
@@ -37,7 +38,7 @@ export class Endpoints {
   // https://render-eu.worldofwarcraft.com/character/draenor/217/111838681-avatar.jpg
 
   public static getLambdaUrl(path: string, region?: string): string {
-    if (!environment.production) {
+    if (!environment.production && USE_LOCAL_BACKEND) {
       return 'http://localhost:3000/' + path;
     }
     if (!region) {

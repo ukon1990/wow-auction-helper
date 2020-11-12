@@ -11,6 +11,8 @@ import {ErrorReport} from '../../../utils/error-report.util';
 import {ItemService} from '../../../services/item.service';
 import {BackgroundDownloadService} from '../../core/services/background-download.service';
 import {Report} from '../../../utils/report.util';
+import {AppSyncService} from '../../user/services/app-sync.service';
+import {SettingsService} from '../../user/services/settings/settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,7 @@ import {Report} from '../../../utils/report.util';
 export class ShoppingCartService {
   private util = new ShoppingCartUtil();
   private STORAGE_NAME = 'shopping_cart_';
+
   cart: BehaviorSubject<ShoppingCartV2> = new BehaviorSubject<ShoppingCartV2>(undefined);
   items: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
   itemsMap: BehaviorSubject<Map<number, CartItem>> = new BehaviorSubject<Map<number, CartItem>>(new Map<number, CartItem>());
@@ -26,7 +29,11 @@ export class ShoppingCartService {
 
   private sm = new SubscriptionManager();
 
-  constructor(private auctionService: AuctionsService, private backgroundService: BackgroundDownloadService) {
+  constructor(private auctionService: AuctionsService,
+              private backgroundService: BackgroundDownloadService,
+              private appSyncService: AppSyncService,
+              private settingsSync: SettingsService,
+  ) {
     this.restore();
     this.sm.add(auctionService.mapped,
       (map: Map<string, AuctionItem>) => this.calculateCart(map));
@@ -37,16 +44,38 @@ export class ShoppingCartService {
           this.calculateCart();
         }
       });
+    if (appSyncService.client) {
+
+      this.sm.add(
+        settingsSync.cartChange,
+        ((settings) => {
+          if (!settings) {
+            return;
+          }
+          const setting: {items, recipes} = settings;
+          if (setting) {
+            console.log('Shopping cart update', setting);
+            this.restore(setting.items, setting.recipes);
+          }
+        })
+      );
+    }
   }
 
-  private restore(): void {
-    const items = localStorage.getItem(this.STORAGE_NAME + 'items');
-    const recipes = localStorage.getItem(this.STORAGE_NAME + 'recipes');
+  private restore(items?: CartItem[], recipes?: CartRecipe[]): void {
+    const storageItems = localStorage.getItem(this.STORAGE_NAME + 'items');
+    const storageRecipes = localStorage.getItem(this.STORAGE_NAME + 'recipes');
+    if (storageItems && !items) {
+      items = JSON.parse(storageItems);
+    }
+    if (storageRecipes && !recipes) {
+      recipes = JSON.parse(storageRecipes);
+    }
 
     if (items) {
       try {
         const map = new Map<number, CartItem>();
-        this.items.next(JSON.parse(items));
+        this.items.next(items);
         this.items.value.forEach(item => map.set(item.id, item));
         this.itemsMap.next(map);
       } catch (error) {
@@ -56,7 +85,7 @@ export class ShoppingCartService {
     if (recipes) {
       try {
         const map = new Map<number, CartRecipe>();
-        this.recipes.next(JSON.parse(recipes));
+        this.recipes.next(recipes);
         this.recipes.value.forEach(recipe => map.set(recipe.id, recipe));
         this.recipesMap.next(map);
       } catch (error) {
@@ -95,6 +124,17 @@ export class ShoppingCartService {
     ]);
     this.calculateCart();
     this.saveRecipes();
+    this.updateAppSync();
+  }
+
+  private updateAppSync() {
+    const input = {
+      shoppingCart: {
+        recipes: this.recipes.value,
+        items: this.items.value,
+      }
+    };
+    this.settingsSync.updateSettings(input);
   }
 
   private saveRecipes() {
@@ -133,6 +173,7 @@ export class ShoppingCartService {
     ]);
     this.calculateCart();
     this.saveItems();
+    this.updateAppSync();
   }
 
   private saveItems() {
@@ -166,12 +207,13 @@ export class ShoppingCartService {
     this.itemsMap.next(itemMap);
     const itemList: CartItem[] = [];
     this.items.next(itemList);
-    const recipeMap: Map<number, CartRecipe> =  new Map<number, CartRecipe>();
+    const recipeMap: Map<number, CartRecipe> = new Map<number, CartRecipe>();
     this.recipesMap.next(recipeMap);
     const recipeList: CartRecipe[] = [];
     this.recipes.next(recipeList);
     this.calculateCart();
     this.saveRecipes();
     this.saveItems();
+    this.updateAppSync();
   }
 }

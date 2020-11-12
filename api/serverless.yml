@@ -261,3 +261,26 @@ functions:
       Project: WAH
     handler: src/auction/controller.updateTSMDataForOneRealm
     memorySize: 256
+## User related
+  getAllDashboard:
+    handler: src/dashboard/controller.getAll
+    tags:
+      Function: Wah-getAllDashboard
+      Project: WAH
+    events:
+      - http:
+          method: GET
+          path: dashboard
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
+  saveDashboard:
+    handler: src/dashboard/controller.save
+    tags:
+      Function: Wah-saveDashboard
+      Project: WAH
+    events:
+      - http:
+          method: POST
+          path: dashboard/save
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'

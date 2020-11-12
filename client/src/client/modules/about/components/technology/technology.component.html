@@ -29,18 +29,44 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <p>
+      The backend comes in two parts. One that handles anything user related, and one that handles auction data, items etc.
+    </p>
+
+    <h6>User data backend</h6>
+    <p>
+      <strong>AWS Cognito:</strong>
+      Handles user login and sessions. The front-end uses AWS amplify to communicate with it.
+    </p>
+    <p>
+      <strong>AWS AppSync:</strong>
+      Handles user settings, and syncronizes them between devices and browsers.
+    </p>
+
+    <h6>Game data backend</h6>
+    <p>
       The current backend is written with NodeJS with TypeScript, and is created as AWS Lambdas.
       This is the third iteration of the back-end. Originally it was in PHP, then NodeJS with ExpressJS, and now it's moved to AWS Lambda.
     </p>
 
+    <h6>Storage</h6>
     <p>
-      For the database that stores all the item price data, recipes, items and pets it uses MariaDB.
+      <strong>DynamoDB(NoSQL):</strong>
+      Is used for keeping track of when auction houses last were updated, and similar data.
+      I am using it for this, as it is serverless, fast, cheap, and will not cause issues with too many concurrent connections.
     </p>
-
     <p>
-      Instead of querying the database for static data, this is stored on AWS s3 as compressed JSON files.
-      This reduces the hosting costs, as the app don't have to waste compute resources when it does not need to.
-      I do for now, store all auctions for the past 30 days on S3, and keep price history over the past 14 days in the database.
+      <strong>MariaDB(RDS):</strong>
+      The item price history is stored in a RDS database, as that is what makes sense for this kind of data.
+      It is only the backend that adds data to this database, and the insertion of new price data is queued in order to not loose price history.
+
+      The price history is stored per month for 6 day, and per hour for 14 days.
+
+      The RDS database also stores, recipes, items etc. But the user will never get the data directly from here, but instead via AWS S3 as that is faster.
+    </p>
+    <p>
+      <strong>AWS Simple Storage Solution (S3):</strong>
+      Is used to store any static data. Items, professions, the client, auction data, tsm data etc. AWS S3, is really fast and also scales really well.
+      Raw auction data is stored for 14 days. The app also uses to store queued item price history queries, and once a query is processed it's deleted from S3.
     </p>
 
     <p>For more details on this, feel free to check out the readme or code on Github (linked in the next section)</p>

@@ -31,6 +31,11 @@ import {LogRocketUtil} from './utils/log-rocket.util';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {GithubService} from './modules/about/services/github.service';
 import {UpdateService} from './services/update.service';
+import {AppSyncService} from './modules/user/services/app-sync.service';
+import {ShoppingCartService} from './modules/shopping-cart/services/shopping-cart.service';
+import {AuthService} from './modules/user/services/auth.service';
+import {CharacterService} from './modules/character/services/character.service';
+import {SettingsService} from './modules/user/services/settings/settings.service';
 
 @Component({
   selector: 'wah-root',
@@ -46,10 +51,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   isInTheSetup: boolean;
   initialLoadWasSetup: boolean;
   isInNonAppDataPage: boolean;
+  useAppSync = localStorage.getItem('useAppSync') ?
+    JSON.parse(localStorage.getItem('useAppSync')) : false;
 
   constructor(public platform: Platform,
               private router: Router,
               private matSnackBar: MatSnackBar,
+              private appSyncService: AppSyncService,
+              private characterService: CharacterService,
               private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
               private angulartics2: Angulartics2,
               private downloadService: BackgroundDownloadService,
@@ -57,24 +66,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private reportService: ReportService,
               private githubService: GithubService,
               private updateService: UpdateService,
+              public settingsSync: SettingsService,
+              private shoppingCartService: ShoppingCartService,
+              private authService: AuthService,
               private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
-    this.subs.add(downloadService.isLoading, (isLoading) => {
-      this.isLoading = isLoading;
-    });
-    ProspectingAndMillingUtil.init(auctionService);
-    CraftingUtil.init(auctionService);
-    NPC.init(auctionService);
-    TsmLuaUtil.init(auctionService);
-    Filters.init(auctionService);
-    InventoryUtil.init(auctionService);
-    UserUtil.restore();
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
-    SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
+    // SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
     ProspectingAndMillingUtil.restore();
-    LogRocketUtil.init();
+
 
     this.subs.add(
       SharedService.events.detailPanelOpen,
@@ -95,8 +97,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     });
+    this.subs.add(this.downloadService.isLoading, (isLoading) => {
+      this.isLoading = isLoading;
+    });
 
-    this.angulartics2GoogleAnalytics.startTracking();
+    authService.init()
+      .then(() => this.init());
   }
 
   private redirectToCorrectPath(url: string) {
@@ -249,5 +255,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   /* istanbul ignore next */
   getDownloading() {
     return SharedService.downloading;
+  }
+
+  private init() {
+    ProspectingAndMillingUtil.init(this.auctionService);
+    CraftingUtil.init(this.auctionService);
+    NPC.init(this.auctionService);
+    TsmLuaUtil.init(this.auctionService);
+    Filters.init(this.auctionService);
+    InventoryUtil.init(this.auctionService);
+
+
+    LogRocketUtil.init();
+
+    this.angulartics2GoogleAnalytics.startTracking();
   }
 }

@@ -1,5 +1,6 @@
 import {APIGatewayEvent} from 'aws-lambda';
 import {AccessToken} from '../models/user/access-token.model';
+import {COGNITO} from '../../../client/src/client/secrets';
 
 export class AuthorizationUtil {
   static token: AccessToken;
@@ -8,6 +9,20 @@ export class AuthorizationUtil {
   /**
    * TODO: Read this -> https://github.com/awslabs/aws-support-tools/tree/master/Cognito/decode-verify-jwt
    */
+
+  static isValidToken({ headers }: APIGatewayEvent): AccessToken {
+    if (headers && headers.Authorization) {
+      const rawToken = headers.Authorization.replace('Bearer ', '');
+      const token: AccessToken = new AccessToken(rawToken);
+      console.log('Token', token);
+      if (token.exp >= +new Date() &&
+        token.iss === `https://cognito-idp.eu-west-1.amazonaws.com/${COGNITO.POOL_ID}`) {
+        AuthorizationUtil.token = token;
+        return token;
+      }
+    }
+    return undefined;
+  }
 
   static setToken({ headers }: APIGatewayEvent): boolean {
     if (headers && headers.Authorization) {

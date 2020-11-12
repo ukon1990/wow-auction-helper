@@ -1,0 +1,151 @@
+<mat-card
+        *ngIf="!signup.isInSignup; else registerTemplate"
+>
+  <form [formGroup]="loginForm">
+    <mat-card-content *ngIf="!isAuthenticated; else loggedInTemplate">
+      <mat-form-field>
+        <input matInput
+               placeholder="Username/email"
+               type="text"
+               formControlName="username"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput
+               placeholder="Password"
+               formControlName="password"
+               autocomplete="current-password"
+               type="password"
+        />
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+
+      <button *ngIf="!isAuthenticated"
+              [disabled]="!loginForm.valid"
+              (click)="login()"
+              color="primary"
+              mat-stroked-button
+              type="submit"
+      >
+        Login
+      </button>
+      <button *ngIf="!isAuthenticated"
+              [disabled]="loginForm.value.username && loginForm.value.username.length > 3"
+              (click)="forgotPassword()"
+              matTooltip="In case you forgot your password,
+              type in your username and login. If not username was provided, the email is your username."
+              color="warn"
+              mat-stroked-button
+              type="button"
+      >
+        Forgot the password?
+      </button>
+      <button *ngIf="!isAuthenticated"
+              (click)="signup.isInSignup = true"
+              color="accent"
+              mat-stroked-button
+      >
+        Register as a new user
+      </button>
+
+      <button *ngIf="isAuthenticated"
+              (click)="signOut()"
+              mat-stroked-button
+              color="accent"
+      >
+        Sign out
+      </button>
+    </mat-card-actions>
+  </form>
+
+  <ng-template #loggedInTemplate>
+    Currently logged in as: {{user.username}}
+  </ng-template>
+</mat-card>
+
+<ng-template #registerTemplate>
+  <ng-container *ngIf="!signup.isWaitingForConfirmation; else confirmationTemplate">
+    <form [formGroup]="registerForm">
+      <mat-card>
+        <mat-card-content>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Username (optional)"
+                   formControlName="username"
+                   type="text"
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Email"
+                   formControlName="email"
+                   type="email"
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Password"
+                   autocomplete="new-password"
+                   formControlName="password"
+                   type="password"
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput
+                   placeholder="Confirm password"
+                   autocomplete="new-password"
+                   formControlName="confirmPassword"
+                   type="password"
+            />
+          </mat-form-field>
+          <div *ngIf="error">
+            Error: {{error.message}}
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+                  type="submit"
+                  (click)="register()"
+                  color="accent"
+                  mat-stroked-button
+          >
+            Sign up
+          </button>
+          <button
+                  mat-stroked-button
+                  color="primary"
+                  (click)="resendConfirmationCode()"
+          >
+            Resend confirmation code
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </ng-container>
+
+  <ng-template #confirmationTemplate>
+    <p>You will get an e-mail from <em>no-reply@verificationemail.com</em>, containing your verification email.</p>
+    <form [formGroup]="signupConfirmation">
+      <mat-form-field>
+        <input matInput
+               placeholder="Confirmation code"
+               formControlName="code"
+        />
+      </mat-form-field>
+      <button
+              color="accent"
+              (click)="confirmRegistration()"
+              type="submit"
+      >
+        Confirm
+      </button>
+    </form>
+    <div *ngIf="signup.message">
+      Registration mail sent to: {{ signup.message }}
+    </div>
+    <div *ngIf="error">
+      Error: {{error.message}}
+    </div>
+  </ng-template>
+</ng-template>

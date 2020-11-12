@@ -11,9 +11,10 @@ import {Report} from '../../../../utils/report.util';
 import {RealmStatus} from '../../../../models/realm-status.model';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {CraftingService} from '../../../../services/crafting.service';
-import {UserUtil} from '../../../../utils/user/user.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
+import {SettingsService} from '../../../user/services/settings/settings.service';
+import {UserSettings} from '../../../user/models/settings.model';
 
 @Component({
   selector: 'wah-realm-quick-select',
@@ -33,6 +34,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   hordeCharacterCountForRealm = 0;
   list = [];
   faUserPlus = faUserPlus;
+  private ignoreNextChange: boolean;
 
   sm = new SubscriptionManager();
 
@@ -40,16 +42,16 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
               private dbService: DatabaseService,
               private craftingService: CraftingService,
               private characterService: CharacterService,
+              private settingSync: SettingsService,
               private auctionsService: AuctionsService) {
   }
 
   ngOnInit() {
-    this.form.controls.region.setValue(
-      this.getFormValueFor('region'));
-    this.form.controls.realm.setValue(
-      this.getFormValueFor('realm'));
-    this.form.controls.faction.setValue(
-      this.getFormValueFor('faction'));
+    this.form.setValue({
+      region: this.getFormValueFor('region'),
+      realm: this.getFormValueFor('realm'),
+      faction: this.getFormValueFor('faction')
+    }, {emitEvent: false});
 
     this.sm.add(this.realmService.events.list,
       (realms: AuctionHouseStatus[]) => {
@@ -71,6 +73,9 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.sm.add(
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
+
+    this.sm.add(this.settingSync.realmChange,
+        settings => this.setChanges(settings));
   }
 
   ngOnDestroy() {
@@ -97,8 +102,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
 
     this.realmList.sort((a, b) =>
       b.characterCount - a.characterCount);
-
-    this.handleRealmChange();
   }
 
   private setSlugFromRealms(realms: AuctionHouseStatus[], map) {
@@ -111,7 +114,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private setRealmsFromCharacters(map) {
-    // this.pupulateDropdownWithCurrentRealm(map);
     SharedService.user.characters.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
@@ -137,22 +139,6 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     }
   }
 
-  private pupulateDropdownWithCurrentRealm(map) {
-    const status: AuctionHouseStatus = this.realmService.events.realmStatus.value;
-    if (status) {
-      const currentRealm: RealmStatus = this.realmService.events.map.value[status.id];
-      if (currentRealm) {
-        map[currentRealm.name] = {
-          name: currentRealm.name,
-          slug: currentRealm.slug,
-          factions: [0, 0],
-          characterCount: 0
-        };
-        this.realmList.push(map[currentRealm.name]);
-      }
-    }
-  }
-
   private handleRealmChange(slug?: string) {
     const realmStatus = this.realmService.events.realmStatus.value;
     if (!realmStatus) {
@@ -170,15 +156,18 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       return;
     }
     const realm = this.realmListMap[slug];
-    const faction = SharedService.user.faction;
+    // const faction = SharedService.user.faction;
+    const {faction, region} = this.form.value;
     if (realm && (!this.isCurrentRealm(slug) || faction === undefined)) {
       this.form.controls.faction.setValue(
-        realm.factions[0] > realm.factions[1] ? 0 : 1
+        realm.factions[0] > realm.factions[1] ? 0 : 1,
+        {emitEvent: false}
       );
     }
 
     if (!this.isCurrentRealm(slug)) {
-      this.realmService.changeRealm(this.auctionsService, slug)
+      this.settingSync.updateSettings({faction, realm: slug, region});
+      this.realmService.changeRealm(slug)
         .then((status) => {
           Report.send('handleRealmChange', 'RealmQuickSelectComponent');
         })
@@ -192,11 +181,24 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private handleFactionChange(faction: number) {
-    SharedService.user.faction = faction;
-    UserUtil.save();
+    if (!this.ignoreNextChange) {
+    }
+    const {realm, region} = this.form.value;
+    this.settingSync.updateSettings({faction, realm, region});
     this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();
     Report.send('handleFactionChange', 'RealmQuickSelectComponent');
+  }
+
+  private setChanges(settings: UserSettings) {
+    if (!settings || !settings.region || !settings.realm) {
+      return;
+    }
+    const {region: prevRegion, realm: prevRealm, faction: prevFaction} = this.form.value;
+    const {region, realm, faction} = settings;
+    if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
+      this.form.setValue({region, realm, faction: faction || 0}, {emitEvent: false});
+    }
   }
 }
