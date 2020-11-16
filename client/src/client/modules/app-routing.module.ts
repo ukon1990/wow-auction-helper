@@ -186,6 +186,7 @@ export const appRoutes: TitledRoutes = [
     component: SetupComponent,
     isHidden: ROUTE_HIDDEN_FLAGS.IS_REGISTERED
   },
+  {path: '', pathMatch: 'full', redirectTo: 'dashboard/items'},
   DASHBOARD_ROUTE,
   {
     title: 'Crafting',
@@ -214,7 +215,7 @@ export const appRoutes: TitledRoutes = [
   SETTINGS_ROUTE,
   ABOUT_ROUTE,
   ADMIN_ROUTE,
-  {path: '**', redirectTo: ''}
+  {path: '**', redirectTo: 'crafting'}
 ];
 
 @NgModule({

@@ -6,6 +6,7 @@ import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {BackgroundDownloadService} from '../../../core/services/background-download.service';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 declare function require(moduleName: string): any;
 
@@ -22,7 +23,11 @@ export class SetupComponent {
 
   sm = new SubscriptionManager();
 
-  constructor(private fb: FormBuilder, private router: Router, private service: BackgroundDownloadService) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<SetupComponent>) {
     this.form = this.fb.group({
       region: ['eu', Validators.required],
       realm: [null, Validators.required],
@@ -35,6 +40,10 @@ export class SetupComponent {
       locale => {
         localStorage['locale'] = locale;
       });
+  }
+
+  onClose(): void {
+    this.dialogRef.close();
   }
 
   isValid(): boolean {
