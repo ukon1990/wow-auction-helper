@@ -12,6 +12,9 @@ import {ICredentials} from '@aws-amplify/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
+import {SharedService} from '../../../services/shared.service';
+import {MatDialog} from '@angular/material/dialog';
+import {SetupComponent} from '../../settings/components/setup/setup.component';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +27,7 @@ export class AuthService {
   sm = new SubscriptionManager();
 
   constructor(private appSync: AppSyncService,
+              private dialog: MatDialog,
               private settingsSync: SettingsService) {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
@@ -87,7 +91,17 @@ export class AuthService {
           console.log('Current user', user);
           resolve(user);
         })
-        .catch(reject);
+        .catch(error => {
+          if (!SharedService.user.region || !SharedService.user.realm) {
+            this.dialog.open(SetupComponent, {
+              width: '95%',
+              maxWidth: '100%',
+              disableClose: false,
+            });
+          }
+          console.log('getUserError', error);
+          reject(error);
+        });
     });
   }
 
