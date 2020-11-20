@@ -192,6 +192,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private setChanges(settings: UserSettings) {
+    console.log('QuickChange.setChanges', settings);
     if (!settings || !settings.region || !settings.realm) {
       return;
     }

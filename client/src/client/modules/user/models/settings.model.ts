@@ -5,6 +5,7 @@ import {CustomProc} from '../../crafting/models/custom-proc.model';
 import {BaseCraftingUtil} from '../../crafting/utils/base-crafting.util';
 import {Theme} from '../../core/models/theme.model';
 import {CartItem, CartRecipe} from '../../shopping-cart/models/shopping-cart-v2.model';
+import {NotificationSettings} from '../../../models/user/notification';
 
 export class UserSettings {
   id?: string;
@@ -25,4 +26,5 @@ export class UserSettings {
   useIntermediateCrafting = true;
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
   theme: Theme;
+  notifications: NotificationSettings;
 }

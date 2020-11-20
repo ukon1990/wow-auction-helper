@@ -90,7 +90,7 @@ export class SettingsService {
 
   updateSettings(updateData: any) {
     console.log('Updating settings -> ', updateData, this.isUpdatingSettings.value);
-    if (this.isUpdatingSettings.value) {
+    if (this.isUpdatingSettings.value || !this.hasLoaded.value) {
       return;
     }
     this.isUpdatingSettings.next(true);
@@ -185,17 +185,15 @@ export class SettingsService {
       useIntermediateCrafting: settings.useIntermediateCrafting,
       craftingStrategy: settings.craftingStrategy,
     });
+    UserUtil.save();
 
-    if (this.hasLoaded.value && settings &&
-      (
-        settings.realm !== previousSettings.realm ||
-        settings.region !== previousSettings.region
-      )
+    if (
+      settings.realm !== previousSettings.realm ||
+      settings.region !== previousSettings.region
     ) {
       this.realmChange.next({region: settings.region, realm: settings.realm});
     }
 
-    UserUtil.save();
     this.settings.next(settings);
     return undefined;
   }

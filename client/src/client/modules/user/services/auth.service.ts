@@ -21,6 +21,7 @@ import {SetupComponent} from '../../settings/components/setup/setup.component';
 })
 export class AuthService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  hasLoadedSettings: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
   session: BehaviorSubject<CognitoUserSession> = new BehaviorSubject<CognitoUserSession>(undefined);
   authEvent = new BehaviorSubject(undefined);
@@ -67,10 +68,12 @@ export class AuthService {
               .catch(console.error);
             this.settingsSync.init();
             console.log('Settings loaded', this.settingsSync.settings.value);
+            this.hasLoadedSettings.next(true);
             resolve();
           }
         })
         .catch(() => {
+          this.hasLoadedSettings.next(true);
           resolve();
         });
     });
