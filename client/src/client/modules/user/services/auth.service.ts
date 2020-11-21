@@ -95,14 +95,14 @@ export class AuthService {
           resolve(user);
         })
         .catch(error => {
-          if (!SharedService.user.region || !SharedService.user.realm) {
+          const useAppSync = !!localStorage.getItem('useAppSync');
+          if (!SharedService.user.region || !SharedService.user.realm || useAppSync) {
             this.dialog.open(SetupComponent, {
               width: '95%',
               maxWidth: '100%',
-              disableClose: false,
+              disableClose: true,
             });
           }
-          console.log('getUserError', error);
           reject(error);
         });
     });

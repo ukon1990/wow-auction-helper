@@ -91,7 +91,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
 
   private setRealmList(realms: AuctionHouseStatus[] = this.realmService.events.list.value) {
 
-    if (!SharedService.user || !SharedService.user.characters || !realms) {
+    if (!this.characterService.characters.value || !realms) {
       return;
     }
     const map = {};
@@ -114,7 +114,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private setRealmsFromCharacters(map) {
-    SharedService.user.characters.forEach(character => {
+    this.characterService.characters.value.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
           name: character.realm,
