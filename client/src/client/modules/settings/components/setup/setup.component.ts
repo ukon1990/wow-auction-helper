@@ -4,7 +4,6 @@ import {SharedService} from '../../../../services/shared.service';
 import {Router} from '@angular/router';
 import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {BackgroundDownloadService} from '../../../core/services/background-download.service';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 

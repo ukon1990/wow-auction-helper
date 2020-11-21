@@ -15,6 +15,8 @@ import {SettingsService} from './settings/settings.service';
 import {SharedService} from '../../../services/shared.service';
 import {MatDialog} from '@angular/material/dialog';
 import {SetupComponent} from '../../settings/components/setup/setup.component';
+import {LoginComponent} from '../components/login/login.component';
+import {EmptyUtil} from '@ukon1990/js-utilities';
 
 @Injectable({
   providedIn: 'root'
@@ -47,11 +49,13 @@ export class AuthService {
       switch (event) {
         case 'signIn':
           this.getCurrentUser()
-            .catch(() => {});
+            .catch(() => {
+            });
           break;
         case 'signOut':
           this.getCurrentUser()
-            .catch(() => {});
+            .catch(() => {
+            });
           break;
         case 'customOAuthState':
           break;
@@ -69,6 +73,7 @@ export class AuthService {
             this.settingsSync.init();
             console.log('Settings loaded', this.settingsSync.settings.value);
             this.hasLoadedSettings.next(true);
+            this.openSetupDialog();
             resolve();
           }
         })
@@ -95,17 +100,36 @@ export class AuthService {
           resolve(user);
         })
         .catch(error => {
-          const useAppSync = !!localStorage.getItem('useAppSync');
-          if (!SharedService.user.region || !SharedService.user.realm || useAppSync) {
-            this.dialog.open(SetupComponent, {
-              width: '95%',
-              maxWidth: '100%',
+          const realm = localStorage.getItem('realm');
+          const region = localStorage.getItem('region');
+          const useAppSync = localStorage.getItem('useAppSync');
+          const isRealmSet: boolean = !!(realm && region);
+
+          if (EmptyUtil.isNullOrUndefined(useAppSync) || !!useAppSync && !isRealmSet) {
+            this.dialog.open(LoginComponent, {
               disableClose: true,
             });
+          } else {
+            this.openSetupDialog();
           }
           reject(error);
         });
     });
+  }
+
+  private openSetupDialog() {
+    const realm = localStorage.getItem('realm');
+    const region = localStorage.getItem('region');
+    const useAppSync = localStorage.getItem('useAppSync');
+    const isRealmSet: boolean = !!(realm && region);
+    if (!!useAppSync === false && !isRealmSet) {
+      console.log('Opening setup');
+      this.dialog.open(SetupComponent, {
+        width: '95%',
+        maxWidth: '100%',
+        disableClose: true,
+      });
+    }
   }
 
   checkIfUserHasMFAS(): Promise<boolean> {
@@ -177,8 +201,9 @@ export class AuthService {
 
   federatedSignIn(provider: FederatedProvider | CognitoHostedUIIdentityProvider) {
     return new Promise<ICredentials>((resolve, reject) => {
-      Auth.federatedSignIn({ provider: provider as CognitoHostedUIIdentityProvider})
-        .then(user => {})
+      Auth.federatedSignIn({provider: provider as CognitoHostedUIIdentityProvider})
+        .then(user => {
+        })
         .catch(reject);
     });
   }
@@ -188,7 +213,8 @@ export class AuthService {
       Auth.confirmSignIn(this.user.value, verificationCode, 'SOFTWARE_TOKEN_MFA')
         .then(async user => {
           await this.getCurrentUser()
-            .catch(() => {});
+            .catch(() => {
+            });
           resolve(user);
         })
         .catch(reject);

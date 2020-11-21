@@ -9,6 +9,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { ConfigureMfaComponent } from './components/mfa/configure-mfa/configure-mfa.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ConfigureMfaComponent } from './components/mfa/configure-mfa/configure-
     MatButtonModule,
     MatCardModule,
     MatTooltipModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ],
   exports: [
     LoginComponent

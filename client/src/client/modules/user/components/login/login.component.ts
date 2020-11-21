@@ -5,6 +5,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ValidatorsUtil} from '../../utils/validators.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from '../../services/app-sync.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'wah-login',
@@ -38,7 +39,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   private sm = new SubscriptionManager();
 
   constructor(private service: AuthService,
-              private settingService: AppSyncService) {
+              public dialog: MatDialog,
+              public dialogRef: MatDialogRef<LoginComponent>
+  ) {
   }
 
   ngOnInit(): void {
@@ -116,7 +119,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loginForm.disable();
     this.service.login(this.loginForm.getRawValue())
       .then(() => {
-
+        this.dialogRef.close();
       })
       .catch(error => {
         console.error(error);
@@ -167,5 +170,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   signOut() {
     this.service.logOut()
       .catch(() => {});
+  }
+
+  localMode() {
+    localStorage.setItem('useAppSync', 'false');
+    this.dialogRef.close();
   }
 }
