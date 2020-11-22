@@ -43,6 +43,7 @@ export class ProfileComponent implements OnInit {
       .then(() => {
         this.service.openLoginComponent.emit(true);
         this.dialogRef.close();
+        location.reload();
       })
       .catch(console.error );
   }

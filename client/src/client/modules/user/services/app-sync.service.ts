@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Auth} from '@aws-amplify/auth';
 import {AUTH_TYPE, AWSAppSyncClient} from 'aws-appsync';
 import {APP_SYNC} from '../../../secrets';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class AppSyncService {
   readonly client: AWSAppSyncClient<any>;
   // In case someone starts the dev environment without APP_SYNC configured
   private readonly hasConfig = APP_SYNC && APP_SYNC.aws_appsync_graphqlEndpoint;
+  public isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
     if (!this.hasConfig) {

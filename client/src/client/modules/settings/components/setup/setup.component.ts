@@ -89,7 +89,8 @@ export class SetupComponent {
       .catch(console.error);
   }
 
-  async completeSetup() {
+  completeSetup() {
+    console.log('Start on complete setup');
     if (this.isValid()) {
       const {region, realm, locale} = this.form.getRawValue();
       const settings = new UserSettings();
@@ -103,10 +104,16 @@ export class SetupComponent {
       settings.characters = this.settingsSync.reduceCharacters(
         this.characterService.characters.value).characters;
 
-      await this.settingsSync.createSettings(settings);
       Report.send('New user registered', 'User registration');
+      // this.dialogRef.close();
+      try {
+      } catch (err) {}
+      this.settingsSync.createSettings(settings)
+        .then(() => location.reload())
+        .catch(() => location.reload());
+      // UserUtil.restore();
+      this.dialogRef.close();
 
-      UserUtil.restore();
       /*
       this.service.init()
         .catch(console.error);
@@ -119,9 +126,6 @@ export class SetupComponent {
         // location.reload();
       }
       */
-
-
-      this.dialogRef.close();
     }
   }
 

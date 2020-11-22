@@ -103,6 +103,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   localMode() {
     localStorage.setItem('useAppSync', 'false');
+    this.service.openSetupComponent.emit(true);
     this.dialogRef.close();
   }
 

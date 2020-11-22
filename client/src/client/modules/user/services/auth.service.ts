@@ -10,7 +10,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
 import {MatDialog} from '@angular/material/dialog';
-import {EmptyUtil} from '@ukon1990/js-utilities';
+import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 
 @Injectable({
@@ -69,7 +69,6 @@ export class AuthService {
               .catch(console.error);
             this.settingsSync.init();
             const {realm, region} = this.settingsSync.settings.value || {};
-            console.log('Settings loaded', this.settingsSync.settings.value);
             this.hasLoadedSettings.next(true);
             this.openSetupDialog(realm, region);
             resolve();
@@ -91,10 +90,10 @@ export class AuthService {
             .then(session => this.session.next(session))
             .catch(console.error);
           this.isAuthenticated.next(!!user);
-          if (this.isAuthenticated) {
+          this.appSync.isAuthenticated.next(!!user);
+          if (this.isAuthenticated.value) {
             localStorage.setItem('useAppSync', 'true');
           }
-          console.log('Current user', user);
           resolve(user);
         })
         .catch(error => {
@@ -115,9 +114,7 @@ export class AuthService {
   }
 
   private openSetupDialog(realm: string, region: string ) {
-    const useAppSync = localStorage.getItem('useAppSync');
     const isRealmSet: boolean = !!(realm && region);
-    console.log('setup', !!useAppSync, !isRealmSet);
     if (!isRealmSet) {
       this.openSetupComponent.emit(true);
     }
@@ -172,7 +169,6 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.signIn(username, password)
         .then((user) => {
-          console.log('Successfully signed in', user);
           this.user.next(user);
           this.isAuthenticated.next(true);
 
@@ -216,8 +212,12 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.signOut()
         .then(async (user: CognitoUser) => {
-          console.log(user);
-          localStorage.clear();
+          Object.keys(localStorage)
+            .forEach(key => {
+              if (!TextUtil.contains(key, 'timestamp') || !TextUtil.contains(key, 'version')) {
+                localStorage.removeItem(key);
+              }
+            });
           await this.db.clearUserData()
             .catch(console.error);
           this.isAuthenticated.next(false);
@@ -244,7 +244,6 @@ export class AuthService {
             email
           }
         }).then((result: ISignUpResult) => {
-          console.log(result);
           resolve(result);
         })
           .catch(error => {
@@ -279,7 +278,6 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.forgotPassword(username)
         .then((response) => {
-          console.log(response);
           resolve(response);
         })
         .catch(error => {
@@ -293,7 +291,6 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.forgotPasswordSubmit(username, code, password)
         .then((response) => {
-          console.log(response);
           resolve(response);
         })
         .catch(error => {

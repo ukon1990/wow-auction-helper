@@ -36,11 +36,9 @@ export class RealmService {
     if (!environment.test) {
       this.sm.add(settingSync.realmChange, (change) => {
         if (change) {
-          /*
           const {region, realm} = change;
           this.changeRealm(realm, region)
             .catch(console.error);
-           */
         }
       });
       this.statusInterval.subscribe(() => this.checkForUpdates());

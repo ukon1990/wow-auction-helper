@@ -10,6 +10,8 @@ import {Character, SettingsCharacter} from '../../../character/models/character.
 import {GetSettings} from './setting.queries';
 import {SharedService} from '../../../../services/shared.service';
 import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-v2.model';
+import {Report} from '../../../../utils/report.util';
+import {update} from '../../../../../../../api/src/updates/controller';
 
 @Injectable({
   providedIn: 'root'
@@ -50,12 +52,12 @@ export class SettingsService {
 
   createSettings(settings = this.settings.value) {
     return new Promise(async (resolve, reject) => {
-      if (!this.appSync.client) {
+      if (!this.appSync.client || !this.appSync.isAuthenticated.value) {
         resolve();
         return;
       }
       if (!settings || !settings.realm || !settings.region) {
-        resolve();
+        reject();
         return;
       }
 
@@ -84,6 +86,8 @@ export class SettingsService {
           const {data} = res;
           this.handleSettingsUpdate(data['createWahUserSettings']);
           this.hasLoaded.next(true);
+          Report.debug('Successfully created settings');
+          resolve();
         })
         .catch(error => {
           console.error(error);
@@ -101,7 +105,6 @@ export class SettingsService {
   }
 
   updateSettings(updateData: any) {
-    console.log('Updating settings -> ', updateData, this.isUpdatingSettings.value);
     if (this.isUpdatingSettings.value || !this.hasLoaded.value || !this.settings.value.realm) {
       return;
     }
@@ -123,9 +126,11 @@ export class SettingsService {
         input: updateData,
       }
     })
-      .then(settings => {
+      .then(updatedSettings => {
+        const {data} = updatedSettings;
         this.isUpdatingSettings.next(false);
-      }) // this.handleSettingsUpdate(settings as any)
+        this.handleSettingsUpdate(data['updateWahUserSettings'] as any);
+      })
       .catch(console.error);
   }
 
@@ -178,13 +183,26 @@ export class SettingsService {
     });
   }
 
+  private removeTypeName(settings: any): void {
+    const varName = '__typename';
+    // TODO: Remove all from settings
+    Object.keys(settings)
+      .forEach(key => {
+        if (typeof settings[key] === 'object') {
+          this.removeTypeName(settings[key]);
+        } else if (key === varName) {
+          delete settings[key];
+        }
+      });
+  }
+
   private handleSettingsUpdate(settings: UserSettings) {
     const previousSettings: UserSettings = this.settings.value;
-    console.log('Settings update', settings);
 
     if (!settings) {
       return;
     }
+    this.removeTypeName(settings);
     Object.assign(SharedService.user, {
       locale: settings.locale,
       faction: settings.faction,
@@ -205,6 +223,8 @@ export class SettingsService {
     ) {
       this.realmChange.next({region: settings.region, realm: settings.realm});
     }
+
+    this.cartChange.next(settings.shoppingCart);
 
     this.settings.next(settings);
     return undefined;
