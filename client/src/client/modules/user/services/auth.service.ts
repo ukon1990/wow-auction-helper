@@ -11,6 +11,7 @@ import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
 import {MatDialog} from '@angular/material/dialog';
 import {EmptyUtil} from '@ukon1990/js-utilities';
+import {DatabaseService} from '../../../services/database.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +24,9 @@ export class AuthService {
   user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
   session: BehaviorSubject<CognitoUserSession> = new BehaviorSubject<CognitoUserSession>(undefined);
   authEvent = new BehaviorSubject(undefined);
-  sm = new SubscriptionManager();
 
   constructor(private appSync: AppSyncService,
+              private db: DatabaseService,
               private dialog: MatDialog,
               private settingsSync: SettingsService) {
     Auth.configure({
@@ -214,8 +215,11 @@ export class AuthService {
   logOut(): Promise<void> {
     return new Promise<any>((resolve, reject) => {
       Auth.signOut()
-        .then((user: CognitoUser) => {
+        .then(async (user: CognitoUser) => {
           console.log(user);
+          localStorage.clear();
+          await this.db.clearUserData()
+            .catch(console.error);
           this.isAuthenticated.next(false);
           this.user.next(undefined);
           this.session.next(undefined);

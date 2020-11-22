@@ -29,6 +29,7 @@ export class SettingsService {
 
   init(): void {
     // Object.assign(this.settings.value, SharedService.user);
+    /* Will interfere with other users, so might as well not have it unless it should be globally synced
     this.sm.add(
       this.appSync.client.subscribe({query: UpdateSettingsSubscription}),
       (res) => {
@@ -39,6 +40,7 @@ export class SettingsService {
         console.log('Subscription update for settings', data);
         this.handleSettingsUpdate(data.onUpdateWahUserSettings);
       });
+    */
     /*
     this.sm.add(
       this.appSync.client.subscribe({query: CreateSettingsSubscription}),

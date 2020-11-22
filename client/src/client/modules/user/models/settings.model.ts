@@ -27,4 +27,5 @@ export class UserSettings {
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
   theme: Theme;
   notifications: NotificationSettings;
+  lastModified?: number;
 }

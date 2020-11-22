@@ -345,6 +345,17 @@ export class DatabaseService {
     });
   }
 
+  clearDashboards() {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
+    return new Promise<void>((resolve, reject) => {
+      this.db.table('dashboards').clear()
+        .then(resolve)
+        .catch((reject));
+    });
+  }
+
   getDashboards(): Promise<DashboardV2[]> {
     return new Promise((resolve, reject) => {
       if (this.shouldNotUseIndexedDB()) {
@@ -461,6 +472,12 @@ export class DatabaseService {
     await this.clearRecipes();
     await this.clearZones();
     await this.clearProfessions();
+  }
+
+  async clearUserData(): Promise<void> {
+    await Promise.all([
+      await this.clearDashboards(),
+    ]).catch(console.error);
   }
 
   deleteDB(): Promise<void> {
