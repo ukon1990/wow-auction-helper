@@ -170,6 +170,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   signOut() {
     this.service.logOut()
       .catch(() => {});
+    this.dialogRef.close();
   }
 
   localMode() {
