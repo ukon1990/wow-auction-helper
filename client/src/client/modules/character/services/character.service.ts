@@ -302,7 +302,8 @@ export class CharacterService {
       (this.characters.value || []).forEach(character => {
         charMap.set(getId(character), character);
       });
-      settings.characters.forEach(character => {
+      // The overlap in the models should be similar enough for Character and SettingsCharacter
+      settings.characters.forEach((character: Character) => {
         const alreadyStored: Character = charMap.get(getId(character));
         if (alreadyStored &&
           alreadyStored.lastModified >= character.lastModified) {

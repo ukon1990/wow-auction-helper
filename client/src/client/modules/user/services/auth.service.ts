@@ -67,9 +67,10 @@ export class AuthService {
             await this.settingsSync.getSettings()
               .catch(console.error);
             this.settingsSync.init();
+            const {realm, region} = this.settingsSync.settings.value || {};
             console.log('Settings loaded', this.settingsSync.settings.value);
             this.hasLoadedSettings.next(true);
-            this.openSetupDialog();
+            this.openSetupDialog(realm, region);
             resolve();
           }
         })
@@ -104,20 +105,19 @@ export class AuthService {
           if (EmptyUtil.isNullOrUndefined(useAppSync) || !!useAppSync && !isRealmSet) {
             this.openLoginComponent.emit(true);
           } else {
-            this.openSetupDialog();
+            this.openSetupDialog(
+              localStorage.getItem('realm'),  localStorage.getItem('region'));
           }
           reject(error);
         });
     });
   }
 
-  private openSetupDialog() {
-    const realm = localStorage.getItem('realm');
-    const region = localStorage.getItem('region');
+  private openSetupDialog(realm: string, region: string ) {
     const useAppSync = localStorage.getItem('useAppSync');
     const isRealmSet: boolean = !!(realm && region);
-    if (!!useAppSync === false && !isRealmSet) {
-      console.log('Opening setup');
+    console.log('setup', !!useAppSync, !isRealmSet);
+    if (!isRealmSet) {
       this.openSetupComponent.emit(true);
     }
   }

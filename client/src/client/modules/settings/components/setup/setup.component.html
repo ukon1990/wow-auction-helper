@@ -43,15 +43,6 @@
         </mat-card>
       </form>
     </mat-card-content>
-    <mat-card-actions>
-      <button mat-stroked-button
-              [disabled]="!isValid()"
-              (click)="completeSetup()"
-              color="accent"
-      >
-        Complete the setup
-      </button>
-    </mat-card-actions>
   </mat-card>
 
   <mat-accordion>
@@ -130,3 +121,13 @@
     </mat-expansion-panel>
   </mat-accordion>
 </mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button
+          [disabled]="!isValid()"
+          (click)="completeSetup()"
+          color="accent"
+  >
+    Complete the setup
+  </button>
+</mat-dialog-actions>

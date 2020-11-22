@@ -1,4 +1,4 @@
-import { Character } from '../../character/models/character.model';
+import {Character, SettingsCharacter} from '../../character/models/character.model';
 import {CustomPrice} from '../../crafting/models/custom-price';
 import {customPricesDefault} from '../../crafting/models/default-custom-prices';
 import {CustomProc} from '../../crafting/models/custom-proc.model';
@@ -13,7 +13,7 @@ export class UserSettings {
   realm?: string;
   faction?: number;
   locale?: string;
-  characters: Character[] = [];
+  characters: SettingsCharacter[] = [];
   customPrices: CustomPrice[] = customPricesDefault;
   customProcs: CustomProc[] = [];
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)

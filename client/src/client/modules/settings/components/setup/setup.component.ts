@@ -6,6 +6,10 @@ import {Report} from '../../../../utils/report.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {SettingsService} from '../../../user/services/settings/settings.service';
+import {CharacterService} from '../../../character/services/character.service';
+import {UserSettings} from '../../../user/models/settings.model';
+import {ThemeUtil} from '../../../core/utils/theme.util';
 
 declare function require(moduleName: string): any;
 
@@ -25,6 +29,8 @@ export class SetupComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private settingsSync: SettingsService,
+    private characterService: CharacterService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<SetupComponent>) {
     this.form = this.fb.group({
@@ -83,12 +89,21 @@ export class SetupComponent {
       .catch(console.error);
   }
 
-  completeSetup(): void {
+  async completeSetup() {
     if (this.isValid()) {
-      localStorage['region'] = this.form.value.region;
-      localStorage['realm'] = this.form.value.realm;
-      localStorage['character'] = this.form.value.name;
+      const {region, realm, locale} = this.form.getRawValue();
+      const settings = new UserSettings();
+      localStorage['region'] = region;
+      localStorage['realm'] = realm;
       localStorage['timestamp_news'] = version;
+      settings.realm = realm;
+      settings.region = region;
+      settings.locale = locale;
+      settings.theme = ThemeUtil.current;
+      settings.characters = this.settingsSync.reduceCharacters(
+        this.characterService.characters.value).characters;
+
+      await this.settingsSync.createSettings(settings);
       Report.send('New user registered', 'User registration');
 
       UserUtil.restore();
@@ -97,13 +112,16 @@ export class SetupComponent {
         .catch(console.error);
       this.router.navigateByUrl('/dashboard')
         .catch(console.error);
-      */
 
       if (localStorage.getItem('initialUrl')) {
         location.pathname = localStorage.getItem('initialUrl');
       } else {
-        location.reload();
+        // location.reload();
       }
+      */
+
+
+      this.dialogRef.close();
     }
   }
 

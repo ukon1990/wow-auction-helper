@@ -6,7 +6,7 @@ import {UpdateSettingsSubscription} from './subscriptions';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {UserSettings} from '../../models/settings.model';
 import {CreateSettingsMutation, DeleteSettingsMutation, UpdateSettingsMutation} from './mutations';
-import {Character} from '../../../character/models/character.model';
+import {Character, SettingsCharacter} from '../../../character/models/character.model';
 import {GetSettings} from './setting.queries';
 import {SharedService} from '../../../../services/shared.service';
 import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-v2.model';
@@ -46,51 +46,61 @@ export class SettingsService {
     */
   }
 
-  createSettings() {
-    if (!this.appSync.client) {
-      return;
-    }
-    const settings = this.settings.value;
-    const mutate = CreateSettingsMutation;
-    this.appSync.client.mutate({
-      mutation: mutate,
-      variables: {
-        input: {
-          realm: settings.realm,
-          region: settings.region,
-          customPrices: [],
-          customProcs: [],
-          buyoutLimit: settings.buyoutLimit,
-          useVendorPriceForCraftingIfAvailable: settings.useVendorPriceForCraftingIfAvailable,
-          useIntermediateCrafting: settings.useIntermediateCrafting,
-          characters: settings.characters,
-          craftingStrategy: settings.craftingStrategy,
-          locale: settings.locale
-        },
+  createSettings(settings = this.settings.value) {
+    return new Promise(async (resolve, reject) => {
+      if (!this.appSync.client) {
+        resolve();
+        return;
       }
-    })
-      .then((res) => {
-        if (!res) {
-          return;
+      if (!settings || !settings.realm || !settings.region) {
+        resolve();
+        return;
+      }
+
+      this.appSync.client.mutate({
+        mutation: CreateSettingsMutation,
+        variables: {
+          input: {
+            realm: settings.realm,
+            region: settings.region,
+            customPrices: [],
+            customProcs: [],
+            buyoutLimit: settings.buyoutLimit,
+            useVendorPriceForCraftingIfAvailable: settings.useVendorPriceForCraftingIfAvailable,
+            useIntermediateCrafting: settings.useIntermediateCrafting,
+            characters: settings.characters,
+            craftingStrategy: settings.craftingStrategy,
+            locale: settings.locale
+          },
         }
-        const {data} = res;
-        this.handleSettingsUpdate(data['createWahUserSettings']);
-        this.hasLoaded.next(true);
       })
-      .catch(console.error);
+        .then((res) => {
+          if (!res) {
+            resolve();
+            return;
+          }
+          const {data} = res;
+          this.handleSettingsUpdate(data['createWahUserSettings']);
+          this.hasLoaded.next(true);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
   }
 
-  reduceCharacters(characters: Character[]): { characters: { lastModified, slug, name }[] } {
+  reduceCharacters(characters: Character[]): { characters: SettingsCharacter[] } {
     return {
-      characters: characters.map(({lastModified, slug, name}) => ({
-        lastModified, slug, name
+      characters: characters.map(({lastModified, slug, name, faction}) => ({
+        lastModified, slug, name, faction
       }))
     };
   }
 
   updateSettings(updateData: any) {
     console.log('Updating settings -> ', updateData, this.isUpdatingSettings.value);
-    if (this.isUpdatingSettings.value || !this.hasLoaded.value) {
+    if (this.isUpdatingSettings.value || !this.hasLoaded.value || !this.settings.value.realm) {
       return;
     }
     this.isUpdatingSettings.next(true);
@@ -148,7 +158,7 @@ export class SettingsService {
           const {data} = res;
           const settings: UserSettings = data['getWahUserSettings'];
           if (!settings) {
-            this.createSettings();
+            // this.createSettings();
           } else {
             this.handleSettingsUpdate(settings);
           }
