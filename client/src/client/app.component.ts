@@ -36,6 +36,8 @@ import {ShoppingCartService} from './modules/shopping-cart/services/shopping-car
 import {AuthService} from './modules/user/services/auth.service';
 import {CharacterService} from './modules/character/services/character.service';
 import {SettingsService} from './modules/user/services/settings/settings.service';
+import {LoginComponent} from './modules/user/components/login/login.component';
+import {SetupComponent} from './modules/settings/components/setup/setup.component';
 
 @Component({
   selector: 'wah-root',
@@ -72,6 +74,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
+    this.subs.add(this.authService.openLoginComponent, value => {
+      if (value) {
+        this.dialog.open(LoginComponent, {
+          disableClose: true,
+        });
+      }
+    });
+    this.subs.add(this.authService.openSetupComponent, value => {
+      if (value) {
+        this.dialog.open(SetupComponent, {
+          width: '95%',
+          maxWidth: '100%',
+          disableClose: true,
+        });
+      }
+    });
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
     ProspectingAndMillingUtil.restore();

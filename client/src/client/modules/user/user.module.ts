@@ -10,10 +10,20 @@ import {MatCardModule} from '@angular/material/card';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { ConfigureMfaComponent } from './components/mfa/configure-mfa/configure-mfa.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { RegisterComponent } from './components/register/register.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import {UtilModule} from '../util/util.module';
+import { RegistrationConfirmationComponent } from './components/register/registration-confirmation/registration-confirmation.component';
 
 
 @NgModule({
-  declarations: [LoginComponent, ConfigureMfaComponent],
+  declarations: [
+    LoginComponent,
+    ConfigureMfaComponent,
+    RegisterComponent,
+    ForgotPasswordComponent,
+    RegistrationConfirmationComponent
+  ],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -23,7 +33,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatCardModule,
     MatTooltipModule,
     MatTooltipModule,
-    MatDialogModule
+    MatDialogModule,
+    UtilModule
   ],
   exports: [
     LoginComponent

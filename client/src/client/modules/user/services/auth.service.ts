@@ -1,27 +1,23 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {Auth, CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
-import {Hub} from '@aws-amplify/core';
-import {
-  CognitoUser, ISignUpResult, CodeDeliveryDetails, CognitoUserSession
-} from 'amazon-cognito-identity-js';
+import {Hub, ICredentials} from '@aws-amplify/core';
+import {CodeDeliveryDetails, CognitoUser, CognitoUserSession, ISignUpResult} from 'amazon-cognito-identity-js';
 import {COGNITO} from '../../../secrets';
 import {ForgotPassword, Login, Register} from '../models/auth.model';
 import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
-import {ICredentials} from '@aws-amplify/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
-import {SharedService} from '../../../services/shared.service';
 import {MatDialog} from '@angular/material/dialog';
-import {SetupComponent} from '../../settings/components/setup/setup.component';
-import {LoginComponent} from '../components/login/login.component';
 import {EmptyUtil} from '@ukon1990/js-utilities';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  openSetupComponent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  openLoginComponent: EventEmitter<boolean> = new EventEmitter<boolean>();
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   hasLoadedSettings: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
@@ -106,9 +102,7 @@ export class AuthService {
           const isRealmSet: boolean = !!(realm && region);
 
           if (EmptyUtil.isNullOrUndefined(useAppSync) || !!useAppSync && !isRealmSet) {
-            this.dialog.open(LoginComponent, {
-              disableClose: true,
-            });
+            this.openLoginComponent.emit(true);
           } else {
             this.openSetupDialog();
           }
@@ -124,11 +118,7 @@ export class AuthService {
     const isRealmSet: boolean = !!(realm && region);
     if (!!useAppSync === false && !isRealmSet) {
       console.log('Opening setup');
-      this.dialog.open(SetupComponent, {
-        width: '95%',
-        maxWidth: '100%',
-        disableClose: true,
-      });
+      this.openSetupComponent.emit(true);
     }
   }
 
