@@ -14,6 +14,9 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import {UtilModule} from '../util/util.module';
 import { RegistrationConfirmationComponent } from './components/register/registration-confirmation/registration-confirmation.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ShowProfileComponent } from './components/profile/show-profile.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -22,7 +25,9 @@ import { RegistrationConfirmationComponent } from './components/register/registr
     ConfigureMfaComponent,
     RegisterComponent,
     ForgotPasswordComponent,
-    RegistrationConfirmationComponent
+    RegistrationConfirmationComponent,
+    ProfileComponent,
+    ShowProfileComponent
   ],
   imports: [
     CommonModule,
@@ -34,10 +39,12 @@ import { RegistrationConfirmationComponent } from './components/register/registr
     MatTooltipModule,
     MatTooltipModule,
     MatDialogModule,
-    UtilModule
+    UtilModule,
+    FontAwesomeModule
   ],
   exports: [
-    LoginComponent
+    LoginComponent,
+    ShowProfileComponent
   ],
   providers: [
     AuthService,

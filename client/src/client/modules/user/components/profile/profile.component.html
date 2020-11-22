@@ -1,0 +1,44 @@
+<wah-close-btn (close)="close()"></wah-close-btn>
+
+<h1 mat-dialog-title>
+  Profile
+</h1>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <input matInput
+             placeholder="Username"
+             formControlName="username"
+             type="text"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput
+             placeholder="Email"
+             formControlName="email"
+             type="text"
+      />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+          color="warn"
+          type="button"
+          mat-stroked-button
+          (click)="logout()"
+
+  >
+    Log out
+  </button>
+  <button
+          color="primary"
+          type="button"
+          mat-stroked-button
+          (click)="close()"
+  >
+    Close
+  </button>
+</mat-dialog-actions>

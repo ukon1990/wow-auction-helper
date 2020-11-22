@@ -44,6 +44,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.sm.add(this.service.isAuthenticated,
       isAuthenticated => {
         this.isAuthenticated = isAuthenticated;
+        if (isAuthenticated) {
+          this.dialogRef.close();
+        }
       });
   }
 
@@ -55,9 +58,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     console.log('Login start');
     this.loginForm.disable();
     this.service.login(this.loginForm.getRawValue())
-      .then(() => {
-        this.dialogRef.close();
-      })
       .catch(error => {
         console.error(error);
         if (error.code === 'UserNotConfirmedException') {
