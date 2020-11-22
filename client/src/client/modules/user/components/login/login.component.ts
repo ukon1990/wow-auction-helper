@@ -7,6 +7,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {RegisterComponent} from '../register/register.component';
 import {RegistrationConfirmationComponent} from '../register/registration-confirmation/registration-confirmation.component';
+import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 
 @Component({
   selector: 'wah-login',
@@ -114,6 +115,20 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.login();
       }
       this.sm.unsubscribeById(id);
+    }, {id});
+  }
+
+  forgotPassword() {
+    const id = 'forgot-password';
+    const {username, email} = this.loginForm.getRawValue();
+    const diag = this.dialog.open(ForgotPasswordComponent, {
+      data: username || email
+    });
+    this.sm.add(diag.afterClosed(), credentials => {
+      if (credentials) {
+        this.loginForm.setValue(credentials);
+        this.login();
+      }
     }, {id});
   }
 }

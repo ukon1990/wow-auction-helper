@@ -20,10 +20,6 @@ export class ProfileComponent implements OnInit {
               public dialog: MatDialog,
               public dialogRef: MatDialogRef<ProfileComponent>) {
     this.user = this.service.user.value;
-    this.user.getDevice({
-      onSuccess: (success => console.log('Devices', success)),
-      onFailure: err => console.error('Device error', err),
-    });
     this.form.setValue({
       username: this.user.getUsername(),
       email: this.user['attributes'].email,

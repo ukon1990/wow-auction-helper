@@ -29,7 +29,7 @@ export class ForgotPasswordComponent {
     }
   }
 
-  forgotPassword(username = this.username) {
+  forgotPassword(username = this.forgotForm.getRawValue().username) {
     this.service.forgotPassword(username)
       .then(() => {
       })

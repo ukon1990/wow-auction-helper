@@ -3,29 +3,29 @@
 </h1>
 
 <mat-dialog-content>
-  <form [formGroup]="loginForm">
-    <ng-container *ngIf="!isAuthenticated; else loggedInTemplate">
-      <mat-form-field>
-        <input matInput
-               placeholder="Username/email"
-               type="text"
-               formControlName="username"
-        />
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput
-               placeholder="Password"
-               formControlName="password"
-               autocomplete="current-password"
-               type="password"
-        />
-      </mat-form-field>
-    </ng-container>
+  <form id="login-form"
+        class="row"
+          [formGroup]="loginForm"
+          (ngSubmit)="login()"
+  >
+    <mat-form-field class="col">
+      <input matInput
+             placeholder="Username/email"
+             type="text"
+             autocomplete="username"
+             formControlName="username"
+      />
+    </mat-form-field>
+    <mat-form-field class="col">
+      <input matInput
+             placeholder="Password"
+             formControlName="password"
+             autocomplete="current-password"
+             type="password"
+      />
+    </mat-form-field>
   </form>
-
-  <ng-template #loggedInTemplate>
-    Currently logged in as: {{user.username}}
-  </ng-template>
+  <mat-error *ngIf="error">{{error.message}}</mat-error>
 </mat-dialog-content>
 
 <mat-dialog-actions>
@@ -35,6 +35,7 @@
           color="primary"
           mat-stroked-button
           type="submit"
+          form="login-form"
   >
     Login
   </button>

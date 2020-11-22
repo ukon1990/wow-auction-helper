@@ -271,7 +271,7 @@ export class AuthService {
     });
   }
 
-  forgotPassword({username}: Login): Promise<any> {
+  forgotPassword(username: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       Auth.forgotPassword(username)
         .then((response) => {
