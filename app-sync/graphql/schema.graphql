@@ -4,7 +4,7 @@ input CreateWahUserDashboardInput {
     idParam: String
     title: String!
     description: String
-    columns: [AWSJSON]
+    columns: [AWSJSON]!
     sortOrder: Int
     isDisabled: Boolean
     isDefault: Boolean
@@ -12,8 +12,7 @@ input CreateWahUserDashboardInput {
     sortRule: AWSJSON
     rules: [AWSJSON]!
     itemRules: [AWSJSON]!
-    isPublic: Boolean!
-    created: AWSTimestamp
+    isPublic: Boolean
     createdBy: String
     createdById: String
     lastModified: AWSTimestamp
@@ -33,6 +32,7 @@ input CreateWahUserSettingsInput {
     faction: Int
     customPrices: [AWSJSON]
     customProcs: [AWSJSON]
+    dashboards: [CreateWahUserDashboardInput]
     buyoutLimit: Int
     characters: [CreateWahUserSettingsCharacterInput]
     useVendorPriceForCraftingIfAvailable: Boolean
@@ -41,7 +41,6 @@ input CreateWahUserSettingsInput {
     craftingStrategy: Int
     locale: String!
     lastModified: AWSTimestamp
-    created: AWSTimestamp
 }
 
 input CreateWahUserShoppingCartEntryInput {
@@ -152,7 +151,7 @@ input UpdateWahUserSettingsDashboardInput {
     idParam: String
     title: String!
     description: String
-    columns: [AWSJSON]
+    columns: [AWSJSON]!
     sortOrder: Int
     isDisabled: Boolean
     isDefault: Boolean
@@ -160,8 +159,11 @@ input UpdateWahUserSettingsDashboardInput {
     sortRule: AWSJSON
     rules: [AWSJSON]!
     itemRules: [AWSJSON]!
-    isPublic: Boolean!
+    isPublic: Boolean
     idIsBackendGenerated: Boolean
+    createdBy: String
+    createdById: String
+    lastModified: AWSTimestamp
 }
 
 input UpdateWahUserSettingsInput {
@@ -171,6 +173,7 @@ input UpdateWahUserSettingsInput {
     faction: Int
     customPrices: [AWSJSON]
     customProcs: [AWSJSON]
+    dashboards: [UpdateWahUserSettingsDashboardInput]
     characters: [UpdateWahUserSettingsCharacterInput]
     buyoutLimit: Int
     useVendorPriceForCraftingIfAvailable: Boolean
@@ -178,6 +181,7 @@ input UpdateWahUserSettingsInput {
     shoppingCart: UpdateWahUserSettingsShoppingCartInput
     craftingStrategy: Int
     locale: String
+    created: AWSTimestamp
 }
 
 input UpdateWahUserSettingsShoppingCartInput {
@@ -199,7 +203,7 @@ type WahUserSettings {
     faction: Int
     customPrices: [AWSJSON]
     customProcs: [AWSJSON]
-    dashboard: [WahUserSettingsDashboard]
+    dashboards: [WahUserSettingsDashboard]
     characters: [WahUserSettingsCharacter]
     buyoutLimit: Int
     useVendorPriceForCraftingIfAvailable: Boolean
@@ -237,7 +241,6 @@ type WahUserSettingsDashboard {
     rules: [AWSJSON]!
     itemRules: [AWSJSON]!
     isPublic: Boolean!
-    created: AWSTimestamp
     createdBy: String
     createdById: String
     lastModified: AWSTimestamp!

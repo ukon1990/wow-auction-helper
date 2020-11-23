@@ -9,5 +9,21 @@
   #set( $attribs.lastModified = $util.dynamodb.toDynamoDB($util.time.nowEpochMilliSeconds()))
   #set( $attribs.created = $util.dynamodb.toDynamoDB($util.time.nowEpochMilliSeconds()))
 
+  #if( $ctx.args.input.dashboards )
+    #foreach( $entry in $ctx.args.input.dashboards )
+      #if (!$entry.idIsBackendGenerated)
+        #if (!$entry.id)
+          #set( $entry.id = $util.autoId() )
+        #end
+
+        #set( $entry.idIsBackendGenerated = true )
+      #end
+
+      #if (!$entry.isDefault && !$entry.createdById)
+        #set( $entry.createdById = $ctx.identity.sub )
+      #end
+    #end
+  #end
+
   "attributeValues" : $util.toJson($attribs)
 }
