@@ -40,8 +40,8 @@ export const ROUTE_HIDDEN_FLAGS = {
 const TOOLS_ROUTE: TitledRoute = {
   path: 'tools',
   title: 'Tools',
-  canActivate: [IsRegisteredService],
-  isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
+  // canActivate: [IsRegisteredService],
+  // isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
   children: [
     {
       path: 'tsm', redirectTo: 'addon/tsm'
@@ -106,8 +106,8 @@ const DASHBOARD_ROUTE: TitledRoute = {
   title: 'Dashboard',
   path: 'dashboard',
   component: DashboardComponent,
-  canActivate: [IsRegisteredService],
-  isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
+  // canActivate: [IsRegisteredService],
+  // isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
   children: [
     {path: '', pathMatch: 'full', redirectTo: 'items'},
     {
@@ -124,8 +124,8 @@ const SETTINGS_ROUTE: TitledRoute = {
   title: 'Settings',
   path: 'settings',
   component: SettingsComponent,
-  canActivate: [IsRegisteredService],
-  isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
+  // canActivate: [IsRegisteredService],
+  // isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
   children: [
     {
       path: '', redirectTo: 'settings/general', pathMatch: 'full'
@@ -153,7 +153,7 @@ const ADMIN_ROUTE: TitledRoute = {
   title: 'Admin',
   path: 'admin',
   isHidden: ROUTE_HIDDEN_FLAGS.ONLY_IN_DEVELOP,
-  canActivate: [IsRegisteredService],
+  // canActivate: [IsRegisteredService],
   children: [
     {
       title: 'Monitor',
@@ -182,24 +182,26 @@ export const appRoutes: TitledRoutes = [
   */
   {
     title: 'Setup',
-    path: 'setup',
+    path: 'setup', // TODO: The router bugs out if I remove it. CBA to remove it right now
     component: SetupComponent,
-    isHidden: ROUTE_HIDDEN_FLAGS.IS_REGISTERED
+    isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS
   },
+  {path: '', pathMatch: 'full', redirectTo: 'dashboard/items'},
   DASHBOARD_ROUTE,
   {
     title: 'Crafting',
     path: 'crafting',
     component: CraftingComponent,
-    canActivate: [IsRegisteredService],
-    isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED
+    // canActivate: [IsRegisteredService],
+    // isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED
   },
   {
     title: 'Auctions',
     path: 'auctions',
-    canActivate: [IsRegisteredService],
+    // canActivate: [IsRegisteredService],
     component: AuctionsComponent,
-    isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED/*,
+    // isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED
+    /*,
     children: [
       {title: 'Browse auctions', path: '', component: AuctionsComponent},
       {
@@ -214,7 +216,7 @@ export const appRoutes: TitledRoutes = [
   SETTINGS_ROUTE,
   ABOUT_ROUTE,
   ADMIN_ROUTE,
-  {path: '**', redirectTo: ''}
+  {path: '**', redirectTo: 'crafting'}
 ];
 
 @NgModule({

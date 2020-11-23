@@ -3,7 +3,6 @@ import {FormControl} from '@angular/forms';
 import {SummaryCard} from '../../../../models/summary-card.model';
 import {SharedService} from '../../../../services/shared.service';
 import {ChartData} from '../../../../models/chart-data.model';
-import {itemClasses} from '../../../../models/item/item-classes';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {SummaryUtil} from '../../../../utils/summary.util';
 import {Recipe} from '../../../crafting/models/recipe';
@@ -11,6 +10,7 @@ import {CraftingService} from '../../../../services/crafting.service';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {ItemClassService} from '../../../item/service/item-class.service';
 
 @Component({
   selector: 'wah-ah-summary',
@@ -92,8 +92,8 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
     return new SummaryCard(
       'Items by class',
       'pie',
-      itemClasses.classes.map(c =>
-        new ChartData(c.class, c.name)),
+      ItemClassService.getForLocale().map(c =>
+        new ChartData(c.id, c.name)),
       []);
   }
 
@@ -193,9 +193,9 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
 
 
   setItemClassLabels(): void {
-    itemClasses.classes.forEach(c => {
-      c.subclasses.forEach(sc => {
-        const id = `${c.class}-${sc.subclass}`;
+    ItemClassService.getForLocale().forEach(c => {
+      c.subClasses.forEach(sc => {
+        const id = `${c.id}-${sc.id}`;
 
         /**
          if (this.itemClassesMap[id]) {

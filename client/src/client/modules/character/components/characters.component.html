@@ -36,12 +36,12 @@
 
 <!-- Character overview -->
 <div class="mt-1">
-  <div *ngIf="getCharacters().length === 0; else overview" class="list-group-item">
+  <div *ngIf="characterService.characters.value.length === 0; else overview" class="list-group-item">
     You have not added any characters
   </div>
   <ng-template #overview>
     <div class="row col-md-12 slim-sm">
-      <div *ngFor="let character of getCharacters();" class="col-md-12 col-lg-6 col-xl-4 mt-2 mb-2">
+      <div *ngFor="let character of characterService.characters.value;" class="col-md-12 col-lg-6 col-xl-4 mt-2 mb-2">
         <wah-character
           [character]="character"
           [region]="region"

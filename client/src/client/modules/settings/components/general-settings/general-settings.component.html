@@ -51,37 +51,6 @@
       <mat-card class="mt-2">
         <mat-card-header>
           <mat-card-title>
-            Export your settings
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-form-field class="col-md-10"
-                          color="accent"
-          >
-            <textarea matInput formControlName="exportString"
-                      placeholder="The export string will appear here."></textarea>
-          </mat-form-field>
-          <button class="col-md-2"
-                  mat-button
-                  (click)="exportData()"
-                  color="primary"
-          >
-            <i class="fas fa-download"></i>
-            Export as string
-          </button>
-          <button mat-button
-                  (click)="exportAsFile()"
-                  color="primary"
-          >
-            <i class="fas fa-download"></i>
-            Export as file
-          </button>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="mt-2">
-        <mat-card-header>
-          <mat-card-title>
             Delete all stored data
           </mat-card-title>
         </mat-card-header>

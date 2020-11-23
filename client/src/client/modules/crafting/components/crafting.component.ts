@@ -4,7 +4,6 @@ import {Title} from '@angular/platform-browser';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
 import {GameBuild} from '../../../utils/game-build.util';
-import {itemClasses} from '../../../models/item/item-classes';
 import {ColumnDescription} from '../../table/models/column-description';
 import {SharedService} from '../../../services/shared.service';
 import {Filters} from '../../../utils/filtering';
@@ -14,6 +13,8 @@ import {AuctionsService} from '../../../services/auctions.service';
 import {ThemeUtil} from '../../core/utils/theme.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../services/profession.service';
+import {ItemClassService} from '../../item/service/item-class.service';
+import {ItemClass} from '../../item/models/item-class.model';
 
 interface FormModel {
   searchQuery: string;
@@ -37,7 +38,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
-  itemClasses = itemClasses;
+  itemClasses: ItemClass[] = ItemClassService.getForLocale();
   professions = [];
   expansions = GameBuild.expansionMap;
   private lastCalculationTime: number;

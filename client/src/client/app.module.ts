@@ -44,7 +44,15 @@ import {ProfessionService} from './modules/crafting/services/profession.service'
 import {TsmService} from './modules/tsm/tsm.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatNativeDateModule} from '@angular/material/core';
+import {AmplifyUIAngularModule} from '@aws-amplify/ui-angular';
+import {AuthService} from './modules/user/services/auth.service';
+import {DashboardService} from './modules/dashboard/services/dashboard.service';
+import {AppSyncService} from './modules/user/services/app-sync.service';
+import {Amplify} from 'aws-amplify';
+import {APP_SYNC} from './secrets';
+import {ItemClassService} from './modules/item/service/item-class.service';
 
+Amplify.configure(APP_SYNC);
 
 @NgModule({
   declarations: [
@@ -55,6 +63,7 @@ import {MatNativeDateModule} from '@angular/material/core';
     AppRoutingModule,
     HttpClientModule,
     HttpClientJsonpModule,
+    AmplifyUIAngularModule,
     Angulartics2Module.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     BrowserAnimationsModule,
@@ -93,7 +102,11 @@ import {MatNativeDateModule} from '@angular/material/core';
     NpcService,
     ProfessionService,
     TsmService,
-    {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true},
+    AuthService,
+    DashboardService,
+    AppSyncService,
+    ItemClassService,
   ],
   bootstrap: [AppComponent]
 })

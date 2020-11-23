@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Endpoints} from '../endpoints';
-import {LogEntry} from '../../../../../api/src/models/log-entry.model';
+// import {LogEntry} from '../../../../../api/src/models/log-entry.model';
 import {SharedService} from '../shared.service';
 
 @Injectable({
@@ -16,6 +16,7 @@ export class ReportService {
     if (SharedService.user.doNotReport) {
       return;
     }
+    /*
     this.http.post(
       Endpoints.getLambdaUrl('logger/client-event'),
       {
@@ -32,6 +33,7 @@ export class ReportService {
         localStorage.setItem('logUserId', res['userId']);
       })
       .catch(console.error);
+      */
   }
 
   delete(): Promise<any> {

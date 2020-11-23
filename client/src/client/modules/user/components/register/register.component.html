@@ -1,0 +1,72 @@
+<wah-close-btn (close)="close()"></wah-close-btn>
+
+<h1 mat-dialog-title>
+  Register as a new user
+</h1>
+
+<mat-dialog-content>
+  <em>
+    Your password needs to have at least have one: Lower case letter,
+    uppercase letter, number and be a minimum of 8 characters long
+  </em>
+  <form [formGroup]="registerForm">
+    <ng-container>
+      <mat-form-field>
+        <input matInput
+               placeholder="Username (optional)"
+               formControlName="username"
+               autocomplete="username"
+               type="text"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput
+               placeholder="Email"
+               formControlName="email"
+               autocomplete="email"
+               type="email"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput
+               placeholder="Password"
+               autocomplete="new-password"
+               formControlName="password"
+               type="password"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput
+               placeholder="Confirm password"
+               autocomplete="new-password"
+               formControlName="confirmPassword"
+               type="password"
+        />
+      </mat-form-field>
+      <div *ngIf="error">
+        Error: {{error.message}}
+      </div>
+    </ng-container>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+          [disabled]="!registerForm.valid"
+          type="submit"
+          (click)="register()"
+          color="accent"
+          mat-stroked-button
+  >
+    Sign up
+  </button>
+  <button
+          [disabled]="!registerForm.controls.username.valid ||
+            !registerForm.controls.email.valid"
+          mat-stroked-button
+          color="primary"
+          (click)="register(true)"
+  >
+    Resend confirmation code
+  </button>
+</mat-dialog-actions>

@@ -78,8 +78,7 @@ export class ThemeUtil {
     const theme = this.list.filter(t =>
       t.className === className);
     const current = new Theme('', '', '', '', '','', undefined, false);
-    this.update(
-      theme ? theme[0] : ThemeUtil.unicornDarkBlue, current);
+    this.update(theme[0] || ThemeUtil.unicornDarkBlue, current);
 
     this.setBodyClass(current);
     this.setChartTheme(current);

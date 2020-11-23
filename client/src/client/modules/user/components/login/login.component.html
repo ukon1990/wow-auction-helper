@@ -1,0 +1,75 @@
+<h1 mat-dialog-title>
+  Login or register
+</h1>
+
+<mat-dialog-content>
+  <form id="login-form"
+        class="row"
+          [formGroup]="loginForm"
+          (ngSubmit)="login()"
+  >
+    <mat-form-field class="col">
+      <input matInput
+             placeholder="Username/email"
+             type="text"
+             autocomplete="username"
+             formControlName="username"
+      />
+    </mat-form-field>
+    <mat-form-field class="col">
+      <input matInput
+             placeholder="Password"
+             formControlName="password"
+             autocomplete="current-password"
+             type="password"
+      />
+    </mat-form-field>
+  </form>
+  <mat-error *ngIf="error">{{error.message}}</mat-error>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button *ngIf="!isAuthenticated"
+          [disabled]="!loginForm.valid"
+          (click)="login()"
+          color="primary"
+          mat-stroked-button
+          type="submit"
+          form="login-form"
+  >
+    Login
+  </button>
+  <button *ngIf="!isAuthenticated"
+          [disabled]="!loginForm.value.username || loginForm.value.username.length < 3"
+          (click)="forgotPassword()"
+          matTooltip="In case you forgot your password,
+              type in your username and login. If not username was provided, the email is your username."
+          color="warn"
+          mat-stroked-button
+          type="button"
+  >
+    Forgot the password?
+  </button>
+  <button *ngIf="!isAuthenticated"
+          (click)="registerNewUser()"
+          color="accent"
+          mat-stroked-button
+  >
+    Register as a new user
+  </button>
+  <button *ngIf="!isAuthenticated"
+          (click)="localMode()"
+          color="accent"
+          mat-stroked-button
+  >
+    Use without registration
+  </button>
+
+  <button *ngIf="isAuthenticated"
+          (click)="signOut()"
+          mat-stroked-button
+          color="accent"
+  >
+    Sign out
+  </button>
+</mat-dialog-actions>

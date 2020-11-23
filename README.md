@@ -26,8 +26,10 @@ The application contains tools for making gold in World of Warcraft. It's featur
 ## Suggested VS code pack for angular:
 * Angular-Schule: Extension Pack
 
-## Code
-Do keep in mind that some of the code in this project is getting old. And the code quality might vary due to this.
+## Code quality
+Do keep in mind that parts code in this project is getting old. The code quality might vary due to this.
+So do not consider this as a project to see all the best practices. But you can get an idea about how certain 
+technologies can be used.
 
 ## Setup requirements
 You need to have nodejs and @angular/cli installed on your computer as both the backend and the front-end use it. The front-end just for building the project.
@@ -37,6 +39,7 @@ You need to have nodejs and @angular/cli installed on your computer as both the 
 ## Front and back-end documentation
 * [Front-end](client/src/client/client.md)
 * [AWS Lambda Back-end](api/src/lambda.md)
+* [AWS App sync Back-end (User settings)](app-sync/appSync.md)
 
 
 

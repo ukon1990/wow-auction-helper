@@ -19,14 +19,14 @@ export class ShoppingCartUtil {
                    recipes: CartRecipe[] = [],
                    items: CartItem[] = []): ShoppingCartV2 {
     const STRATEGY = BaseCraftingUtil.STRATEGY,
-      selectedStrategy = SharedService.user.craftingStrategy,
+      selectedStrategy = SharedService.user ? SharedService.user.craftingStrategy : STRATEGY,
       faction = SharedService.user.faction;
     const cart = new ShoppingCartV2();
     const neededItems = this.getNeededItems(recipeMap, recipes, items);
     const tmpRecipe: Recipe = new Recipe();
     tmpRecipe.reagents = neededItems.map(
       ({id, quantity}) => new Reagent(id, quantity));
-    switch (selectedStrategy) {
+    switch (selectedStrategy || STRATEGY) {
       case STRATEGY.OPTIMISTIC:
         this.strategy = new OptimisticCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
         break;

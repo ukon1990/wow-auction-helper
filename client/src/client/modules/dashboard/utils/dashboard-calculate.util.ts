@@ -14,7 +14,6 @@ import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
-import {Report} from '../../../utils/report.util';
 
 interface IdPaths {
   recipeId?: string;
@@ -91,7 +90,7 @@ export class DashboardCalculateUtil {
               path.push(parts[i + 1]);
             }
             path.push(`id`);
-            recipeIdKey =  path.join('.');
+            recipeIdKey = path.join('.');
             return recipeIdKey;
           }
         }
@@ -130,10 +129,11 @@ export class DashboardCalculateUtil {
 
   private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
                                        paths: IdPaths) {
-    if ((board.rules.length || board.itemRules && board.itemRules.length)) {
+    if ((board.rules.length || (board.itemRules && board.itemRules.length))) {
       try {
         const iterableKeyRules = board.rules.filter(rule => this.ruleContainsIterable(rule));
         const nonIterableKeyRules = board.rules.filter(rule => !this.ruleContainsIterable(rule));
+
         items.forEach((item: AuctionItem) => {
           if (this.isFollowingTheRules(nonIterableKeyRules, item)) {
             const id = this.getId(item);
@@ -235,8 +235,11 @@ export class DashboardCalculateUtil {
 
   private static isFollowingTheRules(rules: Rule[], item: AuctionItem) {
     for (let i = 0, length = rules.length; i < length; i++) {
-      if (rules[i].or && rules[i].or.length ?
-        !this.validateOrRule(rules[i], item) : !this.validateRule(rules[i], item)) {
+      if (rules[i].or && rules[i].or.length) {
+        if (!this.validateOrRule(rules[i], item)) {
+          return false;
+        }
+      } else if (!this.validateRule(rules[i], item)) {
         return false;
       }
     }
@@ -244,6 +247,10 @@ export class DashboardCalculateUtil {
   }
 
   private static validateOrRule(rule: Rule, item: AuctionItem): boolean {
+    if (this.validateRule(rule, item)) {
+      return true;
+    }
+
     for (let i = 0; i < rule.or.length; i++) {
       if (this.validateRule(rule.or[i], item)) {
         return true;

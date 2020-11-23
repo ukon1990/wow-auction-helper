@@ -34,13 +34,23 @@ export class RDSQueryUtil<T> {
     return `${query} WHERE id = ${id};`;
   }
 
-  insert(object: T): string {
+  insert(object: T, terminate: boolean = true): string {
     const cv = this.getColumnsAndValues(object);
     return `INSERT INTO ${this.table
     }(${
       cv.columns.join(',')
     }${this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.join(',')
-    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''});`;
+    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''})${terminate ? ';' : ' '}`;
+  }
+
+  insertOrUpdate(object: T): string {
+    const clone = {...object};
+    delete clone['id'];
+    const cv = this.getColumnsAndValues(clone);
+    const insert = this.insert(object, false);
+    return insert + ` ON DUPLICATE KEY UPDATE ${
+      cv.columns.map((column, index) => `${column} = ${cv.values[index]}`).join(',')
+    }`;
   }
 
   /* Need to have the same column count */

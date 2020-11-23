@@ -22,6 +22,9 @@ import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {LogRocketUtil} from '../../../utils/log-rocket.util';
+import {SettingsService} from '../../user/services/settings/settings.service';
+import {UserUtil} from '../../../utils/user/user.util';
+import {ItemClassService} from '../../item/service/item-class.service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,11 +46,14 @@ export class BackgroundDownloadService {
   private checkingForUpdates: boolean;
   private realmStatus: RealmStatus;
   private subs = new SubscriptionManager();
+  private dbIsReady = false;
+  private settingsAreReady = false;
 
   constructor(
     private http: HttpClient,
     private realmService: RealmService,
     private itemService: ItemService,
+    private itemClassService: ItemClassService,
     private craftingService: CraftingService,
     private auctionsService: AuctionsService,
     private petService: PetsService,
@@ -55,6 +61,7 @@ export class BackgroundDownloadService {
     private zoneService: ZoneService,
     private professionService: ProfessionService,
     private tsmService: TsmService,
+    private settingsService: SettingsService,
     private dbService: DatabaseService) {
 
     this.subs.add(
@@ -62,12 +69,14 @@ export class BackgroundDownloadService {
       (status) =>
         this.realmStatus = status);
 
-    Dashboard.addLoadingDashboards();
+    // Dashboard.addLoadingDashboards();
     this.subs.add(this.dbService.databaseIsReady, async (isReady) => {
-      if (isReady) {
-        await this.init();
-        this.isInitialLoadCompleted.next(true);
-      }
+      this.dbIsReady = isReady;
+      await this.initiateIfReady();
+    });
+    this.subs.add(this.settingsService.hasLoaded, async (hasLoaded) => {
+      this.settingsAreReady = hasLoaded;
+      await this.initiateIfReady();
     });
 
     setInterval(() => {
@@ -80,6 +89,19 @@ export class BackgroundDownloadService {
       this.timestamps.zone = localStorage.getItem('timestamp_zone');
       this.timestamps.professions = localStorage.getItem('timestamp_professions');
     }, 1000);
+  }
+
+  private async initiateIfReady() {
+    const useAppSync = localStorage.getItem('useAppSync') ?
+      JSON.parse(localStorage.getItem('useAppSync')) : false;
+
+    if (!useAppSync) {
+      UserUtil.restore();
+    }
+    if (this.dbIsReady && (useAppSync && this.settingsAreReady || !useAppSync)) {
+      await this.init();
+      this.isInitialLoadCompleted.next(true);
+    }
   }
 
   async init(): Promise<void> {
@@ -135,8 +157,10 @@ export class BackgroundDownloadService {
             console.log('Done loading zone data'))
           .catch(console.error);
 
-        const promises: Promise<any>[] = [
+        const promises: Promise<any>[] = [/* TODO: Remove?
           this.tsmService.load(this.realmService.events.realmStatus.value)
+            .catch(console.error),*/
+          this.itemClassService.getAll()
             .catch(console.error),
           this.professionService.load(timestamps.professions),
           this.itemService.loadItems(timestamps.items)

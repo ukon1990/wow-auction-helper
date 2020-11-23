@@ -46,4 +46,10 @@ describe('Update runner', () => {
       .catch(console.error);
     expect(timestamps).toBeTruthy();
   });
+
+  it('Update item classes', async () => {
+    const timestamps = await UpdatesService.getAndSetItemClasses()
+      .catch(console.error);
+    expect(timestamps).toBeTruthy();
+  });
 });
