@@ -1,123 +1,133 @@
-<wah-login></wah-login>
+<h1 mat-dialog-title>
+  Configure realm, region and characters
+</h1>
 
-<mat-card class="mb-4">
-  <mat-card-content>
-    <form [formGroup]="form" class="mb-4">
-      <div class="row">
-        <div class="col-md-8">
-          <wah-select-realm
-                  [region]="form.getRawValue().region"
-                  [realm]="form.getRawValue().realm"
-                  [locale]="form.getRawValue().locale"
-                  (changes)="realmSelectionEvent($event)">
-          </wah-select-realm>
+<mat-dialog-content>
+  <mat-card class="mb-4">
+    <mat-card-content>
+      <form [formGroup]="form" class="mb-4">
+        <div class="row">
+          <div class="col-md-8">
+            <wah-select-realm
+                    [region]="form.getRawValue().region"
+                    [realm]="form.getRawValue().realm"
+                    [locale]="form.getRawValue().locale"
+                    (changes)="realmSelectionEvent($event)">
+            </wah-select-realm>
+          </div>
+
+          <div class="col-md-4">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>
+                  Select between the themes with this button:
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <wah-theme-select></wah-theme-select>
+                <p>
+                  You can change this at any time, in the upper right corner.
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
         </div>
+      </form>
 
-        <div class="col-md-4">
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>
-                Select between the themes with this button:
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <wah-theme-select></wah-theme-select>
-              <p>
-                You can change this at any time, in the upper right corner.
-              </p>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </div>
-    </form>
+      <h5>Add characters (optional)</h5>
+      <form [formGroup]="form">
+        <mat-card>
+          <mat-card-content>
+            <wah-characters [region]="form.value.region" [realm]="form.value.realm"></wah-characters>
+          </mat-card-content>
+        </mat-card>
+      </form>
+    </mat-card-content>
+  </mat-card>
 
-    <h5>Add characters (optional)</h5>
-    <form [formGroup]="form">
-      <mat-card>
-        <mat-card-content>
-          <wah-characters [region]="form.value.region" [realm]="form.value.realm"></wah-characters>
-        </mat-card-content>
-      </mat-card>
-    </form>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-stroked-button
-            [disabled]="!isValid()"
-            (click)="completeSetup()"
-            color="accent"
-    >
-      Complete the setup
-    </button>
-  </mat-card-actions>
-</mat-card>
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Information and supported platforms</mat-panel-title>
+        <mat-panel-description>Click here to open</mat-panel-description>
+      </mat-expansion-panel-header>
 
-<mat-accordion>
-  <mat-expansion-panel [expanded]="false">
-    <mat-expansion-panel-header>
-      <mat-panel-title>Information and supported platforms</mat-panel-title>
-      <mat-panel-description>Click here to open</mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <h2>WoW auction helper web application</h2>
-    <wah-about-what-is></wah-about-what-is>
-    <h3>Privacy</h3>
-    <wah-about-privacy></wah-about-privacy>
-    <h3>Disclaimer</h3>
-    <ul>
-      <li>
-        For the best user experience, it's recommended that you use
-        <i class="fab fa-chrome"></i>
-        Chrome (latest version) as your browser for this app.
-      </li>
-      <li>
-        As I have a limited time on my hands, the following browsers are the ones I support(and run e2e tests on):
-        <em>
+      <h2>WoW auction helper web application</h2>
+      <wah-about-what-is></wah-about-what-is>
+      <h3>Privacy</h3>
+      <wah-about-privacy></wah-about-privacy>
+      <h3>Disclaimer</h3>
+      <ul>
+        <li>
+          For the best user experience, it's recommended that you use
           <i class="fab fa-chrome"></i>
-          Chrome (latest version) and
-          <i class="fab fa-firefox"></i>
-          Firefox Quantum (latest version).</em>
-      </li>
-      <li>
-        All calculations are done on the client (your computer).
-      </li>
-      <li>
-        Item, pet, recipe, TSM/Wowuction and auction data is stored on your computer in order to reduce load time and bandwidth usage.
-        This should take up about a maximum of 200MB total on your computer.
-      </li>
-      <li>
-        Using tools like CCleaner to clean your browser cache etc, will remove all your settings. So be aware of that.
-      </li>
-      <li>
-        If you wish to look at the code, please feel free to do so. The
-        <i class="fab fa-github"></i>
-        GitHub link can be found
-        <a routerLink="/about">here</a>.
-      </li>
-      <li>
-        The only data you need to input is your realm and region, anything else is optional. But to get the best experience, I recommend adding your characters(crafting).
-      </li>
-    </ul>
-  </mat-expansion-panel>
-  <mat-expansion-panel [expanded]="false">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Import previous settings</mat-panel-title>
-      <mat-panel-description>Click here to open</mat-panel-description>
-    </mat-expansion-panel-header>
-    <form [formGroup]="form" class="row">
-      <mat-form-field class="col-md-10 float-left">
-        <textarea class="col-md-12 row" matInput formControlName="importString" placeholder="Paste the string here"></textarea>
-      </mat-form-field>
-      <button class="float-right" mat-button (click)="importUserData()" [disabled]="form.controls.importString.status === 'INVALID'">
-        <i class="fas fa-upload"></i>
-        Restore
-      </button>
-    </form>
+          Chrome (latest version) as your browser for this app.
+        </li>
+        <li>
+          As I have a limited time on my hands, the following browsers are the ones I support(and run e2e tests on):
+          <em>
+            <i class="fab fa-chrome"></i>
+            Chrome (latest version) and
+            <i class="fab fa-firefox"></i>
+            Firefox Quantum (latest version).</em>
+        </li>
+        <li>
+          All calculations are done on the client (your computer).
+        </li>
+        <li>
+          Item, pet, recipe, TSM/Wowuction and auction data is stored on your computer in order to reduce load time and
+          bandwidth usage.
+          This should take up about a maximum of 200MB total on your computer.
+        </li>
+        <li>
+          Using tools like CCleaner to clean your browser cache etc, will remove all your settings. So be aware of that.
+        </li>
+        <li>
+          If you wish to look at the code, please feel free to do so. The
+          <i class="fab fa-github"></i>
+          GitHub link can be found
+          <a routerLink="/about">here</a>.
+        </li>
+        <li>
+          The only data you need to input is your realm and region, anything else is optional. But to get the best
+          experience, I recommend adding your characters(crafting).
+        </li>
+      </ul>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Import previous settings
+        </mat-panel-title>
+        <mat-panel-description>Click here to open</mat-panel-description>
+      </mat-expansion-panel-header>
+      <form [formGroup]="form" class="row">
+        <mat-form-field class="col-md-10 float-left">
+          <textarea class="col-md-12 row" matInput formControlName="importString"
+                    placeholder="Paste the string here"></textarea>
+        </mat-form-field>
+        <button class="float-right" mat-button (click)="importUserData()"
+                [disabled]="form.controls.importString.status === 'INVALID'">
+          <i class="fas fa-upload"></i>
+          Restore
+        </button>
+      </form>
 
-    <button mat-button (click)="fileInput.click()">
-      <i class="fas fa-upload"></i>
-      Select a settings file to import
-      <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
-    </button>
-  </mat-expansion-panel>
-</mat-accordion>
+      <button mat-button (click)="fileInput.click()">
+        <i class="fas fa-upload"></i>
+        Select a settings file to import
+        <input class="d-none" type="file" accept="application/json" (change)="importFromFile($event)" #fileInput/>
+      </button>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button
+          [disabled]="!isValid()"
+          (click)="completeSetup()"
+          color="accent"
+  >
+    Complete the setup
+  </button>
+</mat-dialog-actions>

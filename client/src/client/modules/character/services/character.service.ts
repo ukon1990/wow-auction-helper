@@ -15,6 +15,7 @@ import {CharacterProfession} from '../../../../../../api/src/character/model';
 import {Report} from '../../../utils/report.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserSettings} from '../../user/models/settings.model';
+import {AppSyncService} from '../../user/services/app-sync.service';
 
 @Injectable()
 export class CharacterService {
@@ -39,6 +40,7 @@ export class CharacterService {
   constructor(private _http: HttpClient,
               private realmService: RealmService,
               private settingsSync: SettingsService,
+              private appSync: AppSyncService,
               private craftingService: CraftingService) {
     const localStorageChars = localStorage.getItem('characters');
     if (localStorageChars) {
@@ -289,7 +291,7 @@ export class CharacterService {
   }
 
   private async handleSettingsUpdate(settings: UserSettings = this.settingsSync.settings.value) {
-    if (!this.realmStatusIsReady || !this.appSyncIsReady) {
+    if (!this.realmStatusIsReady || !this.appSyncIsReady || !this.appSync.isAuthenticated.value) {
       return;
     }
     if (settings && settings.characters) {
@@ -302,7 +304,8 @@ export class CharacterService {
       (this.characters.value || []).forEach(character => {
         charMap.set(getId(character), character);
       });
-      settings.characters.forEach(character => {
+      // The overlap in the models should be similar enough for Character and SettingsCharacter
+      settings.characters.forEach((character: Character) => {
         const alreadyStored: Character = charMap.get(getId(character));
         if (alreadyStored &&
           alreadyStored.lastModified >= character.lastModified) {

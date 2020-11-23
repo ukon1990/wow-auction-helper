@@ -17,6 +17,7 @@ import {ProfessionService} from '../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
+import {SettingsService} from '../../user/services/settings/settings.service';
 
 @Component({
   selector: 'wah-characters',
@@ -35,6 +36,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   private lastCalculationTime: number;
 
   constructor(public characterService: CharacterService,
+              private settingSync: SettingsService,
               private snackBar: MatSnackBar,
               private realmService: RealmService,
               private craftingService: CraftingService,
@@ -82,7 +84,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       return;
     }
     let firstDuplicateIndex: number;
-    SharedService.user.characters.forEach((character, index) => {
+    this.characterService.characters.value.forEach((character, index) => {
       if (TextUtil.isEqualIgnoreCase(character.slug, this.form.value.realm) &&
         TextUtil.isEqualIgnoreCase(character.name, name)) {
         firstDuplicateIndex = index;
@@ -158,8 +160,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
 
   async processCharacter(character: Character): Promise<void> {
     this.form.controls.name.setValue('');
-    SharedService.user.characters.push(character);
-    localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+    this.characterService.characters.value.push(character);
+    localStorage['characters'] = JSON.stringify(this.characterService.characters.value);
 
     this.characterService.updateCharactersForRealmAndRecipes();
 

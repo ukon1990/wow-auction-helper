@@ -4,12 +4,14 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ValidatorsUtil} from '../../utils/validators.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {AppSyncService} from '../../services/app-sync.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {RegisterComponent} from '../register/register.component';
+import {RegistrationConfirmationComponent} from '../register/registration-confirmation/registration-confirmation.component';
+import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 
 @Component({
   selector: 'wah-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
   error: HttpErrorResponse;
@@ -22,13 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     userConfirmed: false,
     message: undefined,
   };
-  registerForm: FormGroup = new FormGroup({
-    username: new FormControl(null, [Validators.minLength(3)]),
-    email: new FormControl(null, [Validators.minLength(3), Validators.email]),
-    password: new FormControl(null, [ValidatorsUtil.password]),
-    confirmPassword: new FormControl(null,
-      [(control) => ValidatorsUtil.confirmPassword(control, this.registerForm)]),
-  });
+
   loginForm: FormGroup = new FormGroup({
     username: new FormControl(null, [Validators.minLength(3)]),
     password: new FormControl(null, [ValidatorsUtil.password]),
@@ -38,7 +34,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   private sm = new SubscriptionManager();
 
   constructor(private service: AuthService,
-              private settingService: AppSyncService) {
+              public dialog: MatDialog,
+              public dialogRef: MatDialogRef<LoginComponent>
+  ) {
   }
 
   ngOnInit(): void {
@@ -47,6 +45,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.sm.add(this.service.isAuthenticated,
       isAuthenticated => {
         this.isAuthenticated = isAuthenticated;
+        if (isAuthenticated) {
+          this.dialogRef.close();
+        }
       });
   }
 
@@ -54,83 +55,15 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  register() {
-    this.signup.message = undefined;
-    this.error = undefined;
-    this.signup.isWaitingForConfirmation = true;
-    this.registerForm.disable();
-    this.service.signUp(this.registerForm.getRawValue())
-      .then(response => {
-        console.log(response);
-        this.signup.isWaitingForConfirmation = !response.userConfirmed;
-      })
-      .catch(error => {
-        console.error(error);
-        this.error = error;
-        this.registerForm.enable();
-        this.signup.isWaitingForConfirmation = false;
-      });
-  }
-
-  resendConfirmationCode() {
-    const {username, email} = this.registerForm.getRawValue();
-    this.registerForm.disable();
-    this.error = undefined;
-    this.signup.message = undefined;
-    this.signup.isWaitingForConfirmation = true;
-    this.service.resendConfirmationCode(username || email)
-      .then(response => {
-        this.signup.message = response.Destination;
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-        this.error = error;
-        this.registerForm.enable();
-        this.signup.isWaitingForConfirmation = false;
-      });
-  }
-
-  confirmRegistration() {
-    const {username, email} = this.registerForm.getRawValue();
-    this.error = undefined;
-    this.signupConfirmation.disable();
-    this.service.userConfirmation(
-      username || email,
-      this.signupConfirmation.getRawValue().code)
-      .then(() => {
-        this.signup.isWaitingForConfirmation = false;
-        this.signup.isInSignup = false;
-        this.signup.userConfirmed = true;
-      })
-      .catch(error => {
-        console.error(error);
-        this.error = error;
-        this.signupConfirmation.enable();
-        this.signup.message = 'Invalid confirmation code';
-      });
-  }
-
   login() {
     console.log('Login start');
     this.loginForm.disable();
     this.service.login(this.loginForm.getRawValue())
-      .then(() => {
-
-      })
+      .then(() => location.reload())
       .catch(error => {
         console.error(error);
         if (error.code === 'UserNotConfirmedException') {
-          this.signup.userConfirmed = false;
-          this.signup.isWaitingForConfirmation = true;
-          this.service.resendConfirmationCode(this.loginForm.getRawValue().username)
-            .then(() => {
-              this.loginForm.enable();
-            })
-            .catch(err => {
-              console.error(err);
-              this.loginForm.enable();
-            });
+          this.handleUserNotConfirmedException();
         } else {
           this.error = error;
           this.loginForm.enable();
@@ -138,34 +71,66 @@ export class LoginComponent implements OnInit, OnDestroy {
       });
   }
 
-  forgotPassword() {
-    this.error = undefined;
-    this.loginForm.disable();
-    this.service.forgotPassword(this.loginForm.getRawValue())
+  private handleUserNotConfirmedException() {
+    const username = this.loginForm.getRawValue().username;
+    this.service.resendConfirmationCode(username)
       .then(() => {
+        const id = 'registration-confirmation';
+        const diag = this.dialog.open(RegistrationConfirmationComponent, {
+          data: {
+            username
+          }
+        });
+        this.sm.add(diag.afterClosed(), res => {
+          if (res && res.success) {
+            this.login();
+          }
+          this.sm.unsubscribeById(id);
+        }, {id});
         this.loginForm.enable();
       })
-      .catch(error => {
-        this.error = error;
+      .catch(err => {
+        console.error(err);
         this.loginForm.enable();
       });
   }
 
-  verifyForgotPassword() {
-    this.error = undefined;
-    this.loginForm.disable();
-    this.service.verifyForgotPassword(this.loginForm.getRawValue())
-      .then(() => {
-        this.loginForm.enable();
-      })
-      .catch(error => {
-        this.error = error;
-        this.loginForm.enable();
-      });
-  }
 
   signOut() {
     this.service.logOut()
       .catch(() => {});
+    this.dialogRef.close();
+  }
+
+  localMode() {
+    localStorage.setItem('useAppSync', 'false');
+    this.service.openSetupComponent.emit(true);
+    this.dialogRef.close();
+  }
+
+  registerNewUser() {
+    const id = 'register-new-user';
+    const diag = this.dialog.open(RegisterComponent);
+    this.sm.add(diag.afterClosed(), (credentials) => {
+      if (credentials) {
+        this.loginForm.setValue(credentials);
+        this.login();
+      }
+      this.sm.unsubscribeById(id);
+    }, {id});
+  }
+
+  forgotPassword() {
+    const id = 'forgot-password';
+    const {username, email} = this.loginForm.getRawValue();
+    const diag = this.dialog.open(ForgotPasswordComponent, {
+      data: username || email
+    });
+    this.sm.add(diag.afterClosed(), credentials => {
+      if (credentials) {
+        this.loginForm.setValue(credentials);
+        this.login();
+      }
+    }, {id});
   }
 }

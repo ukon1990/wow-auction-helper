@@ -36,6 +36,8 @@ import {ShoppingCartService} from './modules/shopping-cart/services/shopping-car
 import {AuthService} from './modules/user/services/auth.service';
 import {CharacterService} from './modules/character/services/character.service';
 import {SettingsService} from './modules/user/services/settings/settings.service';
+import {LoginComponent} from './modules/user/components/login/login.component';
+import {SetupComponent} from './modules/settings/components/setup/setup.component';
 
 @Component({
   selector: 'wah-root',
@@ -72,16 +74,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private dialog: MatDialog,
               private title: Title) {
     this.setLocale();
+    this.subs.add(this.authService.openLoginComponent, value => {
+      if (value) {
+        this.dialog.open(LoginComponent, {
+          disableClose: true,
+        });
+      }
+    });
+    this.subs.add(this.authService.openSetupComponent, value => {
+      if (value) {
+        this.dialog.open(SetupComponent, {
+          width: '95%',
+          maxWidth: '100%',
+          disableClose: true,
+        });
+      }
+    });
     ErrorReport.init(this.angulartics2, this.matSnackBar, this.reportService);
     Report.init(this.angulartics2, this.reportService);
-    // SharedService.user.shoppingCart = new ShoppingCart(this.auctionService);
     ProspectingAndMillingUtil.restore();
-
-
-    this.subs.add(
-      SharedService.events.detailPanelOpen,
-      () =>
-        this.scrollToTheTop());
 
     this.subs.add(
       this.router.events,
@@ -105,26 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       .then(() => this.init());
   }
 
-  private redirectToCorrectPath(url: string) {
-    if (url && !SharedService.user.realm && !SharedService.user.region &&
-      !localStorage.getItem('initialUrl') && !TextUtil.contains(url, 'setup')
-    ) {
-      localStorage.setItem('initialUrl', url);
-    }
-
-    if (url === '/') {
-      if (SharedService.user.realm && SharedService.user.region) {
-        this.router.navigateByUrl('dashboard')
-          .catch(console.error);
-      } else {
-        this.router.navigateByUrl('setup')
-          .catch(console.error);
-      }
-    }
-  }
-
   ngOnInit(): void {
-    this.restorePreviousLocation();
     this.shouldAskForConcent = localStorage.getItem('doNotReport') === null;
     Report.debug('Local user config:', SharedService.user, this.shouldAskForConcent);
     this.displayChangelogIfRelevant();
@@ -160,20 +152,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  private restorePreviousLocation() {
-    if (this.isStandalone() && localStorage['current_path']) {
-      this.router.navigateByUrl(localStorage['current_path']);
-    }
-  }
-
-  private scrollToTheTop() {
-    // making sure that we are scrolled back to the correct position after opening the detail panel
-    /* TODO: Remove if it actually isnt needed
-    if (!this.isPanelOpen()) {
-      window.scroll(0, SharedService.preScrollPosition);
-    }*/
-  }
-
   private setLocale() {
     if (!localStorage['locale']) {
       switch (navigator.language) {
@@ -203,19 +181,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private onNavigationChange(event: NavigationEnd) {
-    if (TextUtil.contains(event.url, 'setup')) {
-      this.initialLoadWasSetup = true;
-    } else {
-      this.initialLoadWasSetup = false;
-    }
-
     if (TextUtil.contains(event.url, 'settings') || TextUtil.contains(event.url, 'about')) {
       this.isInNonAppDataPage = true;
     } else if (event.url) {
       this.isInNonAppDataPage = false;
     }
 
-    this.redirectToCorrectPath(event.url);
     this.saveCurrentRoute(event);
     const menuItem: MenuItem = RoutingUtil.getCurrentRoute(event.url);
     if (menuItem) {
@@ -224,8 +195,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     window.scroll(0, 0);
     Report.navigation(event);
-
-    this.isInTheSetup = TextUtil.contains(event.url, 'setup');
   }
 
   private saveCurrentRoute(event: NavigationEnd) {

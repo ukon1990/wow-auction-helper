@@ -74,7 +74,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
 
-    this.sm.add(this.settingSync.realmChange,
+    this.sm.add(this.settingSync.settings,
         settings => this.setChanges(settings));
   }
 
@@ -91,7 +91,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
 
   private setRealmList(realms: AuctionHouseStatus[] = this.realmService.events.list.value) {
 
-    if (!SharedService.user || !SharedService.user.characters || !realms) {
+    if (!this.characterService.characters.value || !realms) {
       return;
     }
     const map = {};
@@ -114,7 +114,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private setRealmsFromCharacters(map) {
-    SharedService.user.characters.forEach(character => {
+    this.characterService.characters.value.forEach(character => {
       if (!map[character.realm]) {
         map[character.realm] = {
           name: character.realm,
@@ -192,6 +192,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   }
 
   private setChanges(settings: UserSettings) {
+    console.log('QuickChange.setChanges', settings);
     if (!settings || !settings.region || !settings.realm) {
       return;
     }

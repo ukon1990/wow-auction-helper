@@ -26,6 +26,7 @@ export class ShoppingCartService {
   itemsMap: BehaviorSubject<Map<number, CartItem>> = new BehaviorSubject<Map<number, CartItem>>(new Map<number, CartItem>());
   recipes: BehaviorSubject<CartRecipe[]> = new BehaviorSubject<CartRecipe[]>([]);
   recipesMap: BehaviorSubject<Map<number, CartRecipe>> = new BehaviorSubject<Map<number, CartRecipe>>(new Map<number, CartRecipe>());
+  lastUpdateRequest: number;
 
   private sm = new SubscriptionManager();
 
@@ -56,6 +57,7 @@ export class ShoppingCartService {
           if (setting) {
             console.log('Shopping cart update', setting);
             this.restore(setting.items, setting.recipes);
+            this.calculateCart();
           }
         })
       );
@@ -124,7 +126,6 @@ export class ShoppingCartService {
     ]);
     this.calculateCart();
     this.saveRecipes();
-    this.updateAppSync();
   }
 
   private updateAppSync() {
@@ -139,6 +140,7 @@ export class ShoppingCartService {
 
   private saveRecipes() {
     localStorage.setItem(this.STORAGE_NAME + 'recipes', JSON.stringify(this.recipes.value));
+    this.saveToDynamo();
   }
 
   private removeRecipeIfQuantityIsZero(map: Map<number, CartRecipe>, id: number, list: CartRecipe[]) {
@@ -173,11 +175,11 @@ export class ShoppingCartService {
     ]);
     this.calculateCart();
     this.saveItems();
-    this.updateAppSync();
   }
 
   private saveItems() {
     localStorage.setItem(this.STORAGE_NAME + 'items', JSON.stringify(this.items.value));
+    this.saveToDynamo();
   }
 
   private removeItemIfQuantityIsZero(map: Map<number, CartItem>, id: number, list: CartItem[]): CartItem[] {
@@ -215,5 +217,17 @@ export class ShoppingCartService {
     this.saveRecipes();
     this.saveItems();
     this.updateAppSync();
+  }
+
+  private saveToDynamo() {
+     const delay = 2000; // 2 sec
+    this.lastUpdateRequest = +new Date();
+
+    setTimeout(() => {
+      const timeDiff = +new Date() - this.lastUpdateRequest;
+      if (timeDiff >= delay) {
+        this.updateAppSync();
+      }
+    }, delay);
   }
 }

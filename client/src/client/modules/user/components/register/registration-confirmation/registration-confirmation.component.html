@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>
+  Confirm registration
+</h1>
+
+<mat-dialog-content>
+  <p>You will get an e-mail from <em>no-reply@verificationemail.com</em>, containing your verification email.</p>
+  <form [formGroup]="signupConfirmation">
+    <mat-form-field>
+      <input matInput
+             placeholder="Confirmation code"
+             formControlName="code"
+      />
+    </mat-form-field>
+  </form>
+  <div *ngIf="data.email || destination; else noEmailProvided">
+    Registration mail sent to: {{ data.email || destination }}
+  </div>
+  <ng-template #noEmailProvided>
+    A registration mail has been sent to the user: {{data.username}}
+  </ng-template>
+
+  <div *ngIf="error">
+    Error: {{error.message}}
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+          mat-stroked-button
+          color="accent"
+          (click)="confirmRegistration()"
+          type="submit"
+  >
+    Confirm
+  </button>
+  <button
+          mat-stroked-button
+          color="primary"
+          (click)="resendConfirmationCode()"
+  >
+    Resend confirmation code
+  </button>
+</mat-dialog-actions>

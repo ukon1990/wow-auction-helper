@@ -1,29 +1,33 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {Auth, CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
-import {Hub} from '@aws-amplify/core';
-import {
-  CognitoUser, ISignUpResult, CodeDeliveryDetails, CognitoUserSession
-} from 'amazon-cognito-identity-js';
+import {Hub, ICredentials} from '@aws-amplify/core';
+import {CodeDeliveryDetails, CognitoUser, CognitoUserSession, ISignUpResult} from 'amazon-cognito-identity-js';
 import {COGNITO} from '../../../secrets';
 import {ForgotPassword, Login, Register} from '../models/auth.model';
 import {BehaviorSubject} from 'rxjs';
 import {FederatedProvider} from '../enums/federated-provider.enum';
-import {ICredentials} from '@aws-amplify/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AppSyncService} from './app-sync.service';
 import {SettingsService} from './settings/settings.service';
+import {MatDialog} from '@angular/material/dialog';
+import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
+import {DatabaseService} from '../../../services/database.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  openSetupComponent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  openLoginComponent: EventEmitter<boolean> = new EventEmitter<boolean>();
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  hasLoadedSettings: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   user: BehaviorSubject<CognitoUser> = new BehaviorSubject<CognitoUser>(undefined);
   session: BehaviorSubject<CognitoUserSession> = new BehaviorSubject<CognitoUserSession>(undefined);
   authEvent = new BehaviorSubject(undefined);
-  sm = new SubscriptionManager();
 
   constructor(private appSync: AppSyncService,
+              private db: DatabaseService,
+              private dialog: MatDialog,
               private settingsSync: SettingsService) {
     Auth.configure({
       userPoolId: COGNITO.POOL_ID,
@@ -42,11 +46,13 @@ export class AuthService {
       switch (event) {
         case 'signIn':
           this.getCurrentUser()
-            .catch(() => {});
+            .catch(() => {
+            });
           break;
         case 'signOut':
           this.getCurrentUser()
-            .catch(() => {});
+            .catch(() => {
+            });
           break;
         case 'customOAuthState':
           break;
@@ -59,14 +65,17 @@ export class AuthService {
       this.getCurrentUser()
         .then(async () => {
           if (this.isAuthenticated) {
+            this.settingsSync.init();
             await this.settingsSync.getSettings()
               .catch(console.error);
-            this.settingsSync.init();
-            console.log('Settings loaded', this.settingsSync.settings.value);
+            const {realm, region} = this.settingsSync.settings.value || {};
+            this.hasLoadedSettings.next(true);
+            this.openSetupDialog(realm, region);
             resolve();
           }
         })
         .catch(() => {
+          this.hasLoadedSettings.next(true);
           resolve();
         });
     });
@@ -81,14 +90,34 @@ export class AuthService {
             .then(session => this.session.next(session))
             .catch(console.error);
           this.isAuthenticated.next(!!user);
-          if (this.isAuthenticated) {
+          this.appSync.isAuthenticated.next(!!user);
+          if (this.isAuthenticated.value) {
             localStorage.setItem('useAppSync', 'true');
           }
-          console.log('Current user', user);
           resolve(user);
         })
-        .catch(reject);
+        .catch(error => {
+          const realm = localStorage.getItem('realm');
+          const region = localStorage.getItem('region');
+          const useAppSync = localStorage.getItem('useAppSync');
+          const isRealmSet: boolean = !!(realm && region);
+
+          if (EmptyUtil.isNullOrUndefined(useAppSync) || !!useAppSync && !isRealmSet) {
+            this.openLoginComponent.emit(true);
+          } else {
+            this.openSetupDialog(
+              localStorage.getItem('realm'),  localStorage.getItem('region'));
+          }
+          reject(error);
+        });
     });
+  }
+
+  private openSetupDialog(realm: string, region: string ) {
+    const isRealmSet: boolean = !!(realm && region);
+    if (!isRealmSet) {
+      this.openSetupComponent.emit(true);
+    }
   }
 
   checkIfUserHasMFAS(): Promise<boolean> {
@@ -140,7 +169,6 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.signIn(username, password)
         .then((user) => {
-          console.log('Successfully signed in', user);
           this.user.next(user);
           this.isAuthenticated.next(true);
 
@@ -160,8 +188,9 @@ export class AuthService {
 
   federatedSignIn(provider: FederatedProvider | CognitoHostedUIIdentityProvider) {
     return new Promise<ICredentials>((resolve, reject) => {
-      Auth.federatedSignIn({ provider: provider as CognitoHostedUIIdentityProvider})
-        .then(user => {})
+      Auth.federatedSignIn({provider: provider as CognitoHostedUIIdentityProvider})
+        .then(user => {
+        })
         .catch(reject);
     });
   }
@@ -171,7 +200,8 @@ export class AuthService {
       Auth.confirmSignIn(this.user.value, verificationCode, 'SOFTWARE_TOKEN_MFA')
         .then(async user => {
           await this.getCurrentUser()
-            .catch(() => {});
+            .catch(() => {
+            });
           resolve(user);
         })
         .catch(reject);
@@ -181,8 +211,15 @@ export class AuthService {
   logOut(): Promise<void> {
     return new Promise<any>((resolve, reject) => {
       Auth.signOut()
-        .then((user: CognitoUser) => {
-          console.log(user);
+        .then(async (user: CognitoUser) => {
+          Object.keys(localStorage)
+            .forEach(key => {
+              if (!TextUtil.contains(key, 'timestamp') && !TextUtil.contains(key, 'version')) {
+                localStorage.removeItem(key);
+              }
+            });
+          await this.db.clearUserData()
+            .catch(console.error);
           this.isAuthenticated.next(false);
           this.user.next(undefined);
           this.session.next(undefined);
@@ -207,7 +244,6 @@ export class AuthService {
             email
           }
         }).then((result: ISignUpResult) => {
-          console.log(result);
           resolve(result);
         })
           .catch(error => {
@@ -238,11 +274,10 @@ export class AuthService {
     });
   }
 
-  forgotPassword({username}: Login): Promise<any> {
+  forgotPassword(username: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       Auth.forgotPassword(username)
         .then((response) => {
-          console.log(response);
           resolve(response);
         })
         .catch(error => {
@@ -256,7 +291,6 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       Auth.forgotPasswordSubmit(username, code, password)
         .then((response) => {
-          console.log(response);
           resolve(response);
         })
         .catch(error => {

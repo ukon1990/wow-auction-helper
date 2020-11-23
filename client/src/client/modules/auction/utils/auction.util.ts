@@ -18,6 +18,38 @@ interface OrganizedAuctionResult {
 }
 
 export class AuctionUtil {
+
+  private static modifierTest(auctions: Auction[]): void {
+    const type = new Map<number, any>();
+    const list = [];
+    auctions.forEach(auction => {
+      if (auction.modifiers) {
+        auction.modifiers.forEach(modifier => {
+          if (!type.has(modifier.type)) {
+            type.set(modifier.type, {
+              type: modifier.type,
+              min: modifier.value,
+              max: modifier.value,
+              values: {},
+              items: {}
+            });
+            list.push(type.get(modifier.type));
+          }
+          const entry = type.get(modifier.type);
+          entry.values[modifier.value] = 1;
+          entry.items[auction.item] = 1;
+
+          if (entry.min > modifier.value) {
+            entry.min = modifier.value;
+          }
+          if (entry.max < modifier.value) {
+            entry.max = modifier.value;
+          }
+        });
+      }
+    });
+    console.log('modifiers', list);
+  }
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
@@ -26,6 +58,7 @@ export class AuctionUtil {
   public static organize(auctions: Auction[]): Promise<OrganizedAuctionResult> {
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {
       try {
+        // TODO: Remove later -> this.modifierTest(auctions);
         const t0 = performance.now();
         this.clearOldData();
         const list: AuctionItem[] = [];
