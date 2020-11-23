@@ -11,6 +11,26 @@ export const ALL_SETTINGS_GRAPH_FIELDS = `
   useIntermediateCrafting
   craftingStrategy
   locale
+  dashboards {
+    id
+    parentId
+    idParam
+    title
+    description
+    columns
+    sortOrder
+    isDisabled
+    isDefault
+    onlyItemsWithRules
+    sortRule
+    rules
+    itemRules
+    isPublic
+    createdBy
+    createdById
+    lastModified
+    idIsBackendGenerated
+  }
   characters {
     lastModified
     name

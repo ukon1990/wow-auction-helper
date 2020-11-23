@@ -325,11 +325,11 @@ export class DatabaseService {
     });
   }
 
-  addDashboards(boards: DashboardV2[]): void {
+  async addDashboards(boards: DashboardV2[]): Promise<void> {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    this.db.table('dashboards').bulkPut(boards)
+    await this.db.table('dashboards').bulkPut(boards)
       .catch(e =>
         ErrorReport.sendError('DatabaseService.addDashboards', e));
   }

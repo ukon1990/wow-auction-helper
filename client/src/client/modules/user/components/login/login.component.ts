@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     console.log('Login start');
     this.loginForm.disable();
     this.service.login(this.loginForm.getRawValue())
+      .then(() => location.reload())
       .catch(error => {
         console.error(error);
         if (error.code === 'UserNotConfirmedException') {

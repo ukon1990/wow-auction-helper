@@ -182,9 +182,9 @@ export const appRoutes: TitledRoutes = [
   */
   {
     title: 'Setup',
-    path: 'setup',
+    path: 'setup', // TODO: The router bugs out if I remove it. CBA to remove it right now
     component: SetupComponent,
-    isHidden: ROUTE_HIDDEN_FLAGS.IS_REGISTERED
+    isHidden: ROUTE_HIDDEN_FLAGS.ALWAYS
   },
   {path: '', pathMatch: 'full', redirectTo: 'dashboard/items'},
   DASHBOARD_ROUTE,

@@ -225,7 +225,7 @@ export class ShoppingCartService {
 
     setTimeout(() => {
       const timeDiff = +new Date() - this.lastUpdateRequest;
-      if (timeDiff >= 1000) {
+      if (timeDiff >= delay) {
         this.updateAppSync();
       }
     }, delay);

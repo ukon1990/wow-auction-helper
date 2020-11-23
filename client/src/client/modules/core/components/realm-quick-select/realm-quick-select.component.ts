@@ -74,7 +74,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       this.form.controls.faction.valueChanges,
       (faction: number) => this.handleFactionChange(faction));
 
-    this.sm.add(this.settingSync.realmChange,
+    this.sm.add(this.settingSync.settings,
         settings => this.setChanges(settings));
   }
 

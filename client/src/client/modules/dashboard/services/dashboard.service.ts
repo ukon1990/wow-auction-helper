@@ -8,7 +8,7 @@ import {AuctionItem} from '../../auction/models/auction-item.model';
 import {getDefaultDashboards} from '../data/default-doards.data';
 import {ErrorReport} from '../../../utils/error-report.util';
 import generateUUID from '../../../utils/uuid.util';
-import {ObjectUtil} from '@ukon1990/js-utilities';
+import {ObjectUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
 import {Report} from '../../../utils/report.util';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
@@ -19,6 +19,8 @@ import {BackgroundDownloadService} from '../../core/services/background-download
 import {AuthService} from '../../user/services/auth.service';
 import {Endpoints} from '../../../services/endpoints';
 import {HttpClient} from '@angular/common/http';
+import {SettingsService} from '../../user/services/settings/settings.service';
+import {DashboardAppsyncUtil} from '../utils/dashboard-appsync.util';
 
 @Injectable({
   providedIn: 'root'
@@ -32,11 +34,17 @@ export class DashboardService {
 
   private sm = new SubscriptionManager();
   private isInitiated: boolean;
+  private lastUpdateRequest: number;
 
-  constructor(private auctionsService: AuctionsService, private db: DatabaseService,
-              private authService: AuthService, private http: HttpClient,
-              private professionService: ProfessionService, private backgroundService: BackgroundDownloadService) {
-    this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
+  constructor(private auctionsService: AuctionsService,
+              private db: DatabaseService,
+              private authService: AuthService,
+              private settingsService: SettingsService,
+              private http: HttpClient,
+              private professionService: ProfessionService,
+              private backgroundService: BackgroundDownloadService
+  ) {
+    // this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
     this.sm.add(this.professionService.listWithRecipes, () => {
       this.sm.unsubscribeById('auctions');
 
@@ -48,6 +56,9 @@ export class DashboardService {
           id: 'auctions'
         });
     });
+
+    this.sm.add(settingsService.dashboards,
+        boards => this.saveAll(boards, true, false));
 
     this.sm.add(TsmService.list, () => {
       if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
@@ -76,6 +87,7 @@ export class DashboardService {
     Report.debug('Boards', this.list.value);
   }
 
+  /*
   getDashboardsFromAPI(isAuthenticated: boolean): void {
     console.log('Is authenticated?', isAuthenticated);
     if (isAuthenticated) {
@@ -85,17 +97,22 @@ export class DashboardService {
         .catch(console.error);
     }
   }
+  */
 
   private async restore(): Promise<void> {
     const defaultBoards = getDefaultDashboards(this.professionService.listWithRecipes.value);
     const dashboards: DashboardV2[] = [];
     const restoredMap: Map<string, DashboardV2> = new Map();
     const defaultMap: Map<string, DashboardV2> = new Map();
+    const restoredDefaultMap: Map<string, DashboardV2> = new Map();
     await this.db.getDashboards()
       .then(restored => {
         restored.forEach(board => {
           dashboards.push(board);
           restoredMap.set(board.id, board);
+          if (board.isDefault) {
+            restoredDefaultMap.set(board.parentId, board);
+          }
         });
       })
       .catch(error =>
@@ -103,6 +120,7 @@ export class DashboardService {
 
     defaultBoards.forEach(board => {
       defaultMap.set(board.id, board);
+      const parent = restoredMap.get(board.parentId);
       if (!restoredMap.has(board.id)) {
         dashboards.push(ObjectUtil.clone(board) as DashboardV2);
       }
@@ -133,14 +151,31 @@ export class DashboardService {
     }
   }
 
-  saveAll(boards: DashboardV2[], calculatePrice: boolean = true): void {
-    boards.forEach(board => this.save(board, calculatePrice));
+  saveAll(boards: DashboardV2[], calculatePrice: boolean = true, saveToAppSync = true): void {
+    boards.forEach(board => this.save(board, calculatePrice, false));
+
+    if (saveToAppSync) {
+      this.saveToAppSync();
+    }
   }
 
-  save(board: DashboardV2, calculatePrice: boolean = true): void {
+  async save(board: DashboardV2, calculatePrice: boolean = true, saveToAppSync = true): Promise<void> {
     if (!board.id) {
       board.id = generateUUID();
       board.idIsBackendGenerated = false;
+    }
+    if (TextUtil.contains(board.id, 'default')) {
+      board.isDefault = true;
+      board.parentId = board.id;
+      board.idIsBackendGenerated = false;
+    }
+
+    if (board.isPublic === undefined) {
+      board.isPublic = false;
+    }
+
+    if (!board.createdBy && this.authService.isAuthenticated.value && !board.isDefault) {
+      board.createdBy = this.authService.user.value.getUsername();
     }
     board.lastModified = +new Date();
 
@@ -152,12 +187,19 @@ export class DashboardService {
       this.list.value.unshift(board);
       this.list.next([...this.list.value]);
     }
+
     this.map.value.set(board.id, board);
-    this.db.addDashboards([{
+    Object.assign(this.map.value.get(board.id), board);
+    await this.db.addDashboards([{
       ...board,
       data: []
     }]);
     this.calculatedBoardEvent.emit(board.id);
+
+    // Should not save, if we are restoring from appSync
+    if (saveToAppSync) {
+      this.saveToAppSync();
+    }
   }
 
   delete(board: DashboardV2): void {
@@ -168,6 +210,8 @@ export class DashboardService {
     this.map.value.delete(board.id);
     this.list.next(list);
     this.calculatedBoardEvent.emit(board.id);
+
+    this.saveToAppSync();
   }
 
   move(previousIndex: number, currentIndex: number) {
@@ -192,5 +236,19 @@ export class DashboardService {
     } catch (error) {
       ErrorReport.sendError('DashboardService.move', error);
     }
+  }
+
+  private saveToAppSync(delay = 2500) {
+    this.lastUpdateRequest = +new Date();
+
+    setTimeout(() => {
+      const timeDiff = +new Date() - this.lastUpdateRequest;
+      if (timeDiff >= delay && this.lastUpdateRequest) {
+        this.lastUpdateRequest = undefined;
+        this.settingsService.updateSettings({
+          dashboards: DashboardAppsyncUtil.reduce(this.list.value)
+        });
+      }
+    }, delay);
   }
 }

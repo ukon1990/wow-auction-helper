@@ -16,6 +16,7 @@ export class UserSettings {
   characters: SettingsCharacter[] = [];
   customPrices: CustomPrice[] = customPricesDefault;
   customProcs: CustomProc[] = [];
+  dashboards: any[]; // Just a version of DashboardV2 but with JSON.stringify
   // If buyout is 200% of MV, use MV instead. (asuming the item is overpriced)
   buyoutLimit = 200;
   shoppingCart: {recipes: CartRecipe[], items: CartItem[]} = {

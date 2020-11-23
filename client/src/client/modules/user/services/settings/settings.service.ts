@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {AppSyncService} from '../app-sync.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {UpdateSettingsSubscription} from './subscriptions';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {UserSettings} from '../../models/settings.model';
 import {CreateSettingsMutation, DeleteSettingsMutation, UpdateSettingsMutation} from './mutations';
@@ -11,7 +10,10 @@ import {GetSettings} from './setting.queries';
 import {SharedService} from '../../../../services/shared.service';
 import {CartItem, CartRecipe} from '../../../shopping-cart/models/shopping-cart-v2.model';
 import {Report} from '../../../../utils/report.util';
-import {update} from '../../../../../../../api/src/updates/controller';
+import {DashboardV2} from '../../../dashboard/models/dashboard-v2.model';
+import {DashboardAppsyncUtil} from '../../../dashboard/utils/dashboard-appsync.util';
+import {ErrorReport} from '../../../../utils/error-report.util';
+import {DatabaseService} from '../../../../services/database.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +25,11 @@ export class SettingsService {
   settings = new BehaviorSubject<UserSettings>(new UserSettings());
   realmChange = new BehaviorSubject<{ realm: string, region: string }>(undefined);
   cartChange = new BehaviorSubject<{ recipes: CartRecipe[], items: CartItem[] }>(undefined);
+  dashboards = new BehaviorSubject<DashboardV2[]>([]);
   private sm = new SubscriptionManager();
 
-  constructor(private appSync: AppSyncService) {
+  constructor(private appSync: AppSyncService,
+              private db: DatabaseService) {
     // setTimeout(() => this.createSettings(), 1000);
   }
 
@@ -51,6 +55,7 @@ export class SettingsService {
   }
 
   createSettings(settings = this.settings.value) {
+    Report.debug('createSettings', settings);
     return new Promise(async (resolve, reject) => {
       if (!this.appSync.client || !this.appSync.isAuthenticated.value) {
         resolve();
@@ -60,6 +65,10 @@ export class SettingsService {
         reject();
         return;
       }
+      let dashboards: DashboardV2[];
+      await this.db.getDashboards()
+        .then(boards => dashboards = boards)
+        .catch(console.error);
 
       this.appSync.client.mutate({
         mutation: CreateSettingsMutation,
@@ -67,14 +76,17 @@ export class SettingsService {
           input: {
             realm: settings.realm,
             region: settings.region,
-            customPrices: [],
-            customProcs: [],
+            locale: settings.locale || localStorage.getItem('locale') || 'en_GB',
+            customPrices: JSON.stringify(settings.customPrices) || [],
+            customProcs: JSON.stringify(settings.customProcs) || [],
             buyoutLimit: settings.buyoutLimit,
             useVendorPriceForCraftingIfAvailable: settings.useVendorPriceForCraftingIfAvailable,
             useIntermediateCrafting: settings.useIntermediateCrafting,
-            characters: settings.characters,
+            characters: settings.characters ?
+              this.reduceCharacters(settings.characters as Character[]).characters : [],
+            dashboards: dashboards ?
+              DashboardAppsyncUtil.reduce(dashboards) : [],
             craftingStrategy: settings.craftingStrategy,
-            locale: settings.locale
           },
         }
       })
@@ -90,7 +102,7 @@ export class SettingsService {
           resolve();
         })
         .catch(error => {
-          console.error(error);
+          ErrorReport.sendError('SettingsService.createSettings', error);
           reject(error);
         });
     });
@@ -115,7 +127,7 @@ export class SettingsService {
       characters: this.settings.value.characters,
     });
     this.settings.next(settings);
-    if (!this.appSync.client) {
+    if (!this.appSync.client || !this.appSync.isAuthenticated.value) {
       return;
     }
     // UserUtil.save();
@@ -131,7 +143,8 @@ export class SettingsService {
         this.isUpdatingSettings.next(false);
         this.handleSettingsUpdate(data['updateWahUserSettings'] as any);
       })
-      .catch(console.error);
+      .catch(error =>
+          ErrorReport.sendError('SettingsService.updateSettings', error));
   }
 
   deleteSettings() {
@@ -146,26 +159,38 @@ export class SettingsService {
       }
     })
       .then(console.log)
-      .catch(console.error);
+      .catch(error =>
+        ErrorReport.sendError('SettingsService.deleteSettings', error));
   }
 
   getSettings() {
-    if (!this.appSync.client) {
-      return;
-    }
     return new Promise<any>((resolve, reject) => {
+      if (!this.appSync.client || !this.appSync.isAuthenticated.value) {
+        resolve();
+        return;
+      }
+
       this.appSync.client.query({
         query: GetSettings,
         fetchPolicy: 'network-only' // network-only
       })
-        .then((res) => {
+        .then(async (res) => {
           if (!res) {
+            resolve();
             return;
           }
           const {data} = res;
           const settings: UserSettings = data['getWahUserSettings'];
           if (!settings) {
-            // this.createSettings();
+            try {
+              const newSettings = new UserSettings();
+              Object.assign(newSettings, UserUtil.getSettings());
+              await this.createSettings(newSettings)
+                .then(() => location.reload())
+                .catch(console.error);
+            } catch (error) {
+              ErrorReport.sendError('SettingsService.getSettings', error);
+            }
           } else {
             this.handleSettingsUpdate(settings);
           }
@@ -177,20 +202,32 @@ export class SettingsService {
           resolve(settings);
         })
         .catch(error => {
-          console.error(error);
+          ErrorReport.sendError('SettingsService.getSettings', error);
           reject(error);
         });
     });
   }
 
+  /**
+   * For removing __typename from the settings.
+   * Doing this because I don't want to deal with modeling it out for everything
+   * @param settings
+   * @private
+   */
   private removeTypeName(settings: any): void {
     const varName = '__typename';
-    // TODO: Remove all from settings
+    if (!settings) {
+      return;
+    }
     Object.keys(settings)
       .forEach(key => {
         if (typeof settings[key] === 'object') {
           this.removeTypeName(settings[key]);
         } else if (key === varName) {
+          delete settings[key];
+        }
+
+        if (!settings[key] && settings[key] !== false) {
           delete settings[key];
         }
       });
@@ -202,6 +239,15 @@ export class SettingsService {
     if (!settings) {
       return;
     }
+    try {
+      if (typeof settings.customPrices === 'string') {
+        settings.customPrices = JSON.parse(settings.customPrices);
+      }
+      if (typeof settings.customProcs === 'string') {
+        settings.customProcs = JSON.parse(settings.customProcs);
+      }
+    } catch (error) {}
+
     this.removeTypeName(settings);
     Object.assign(SharedService.user, {
       locale: settings.locale,
@@ -225,6 +271,8 @@ export class SettingsService {
     }
 
     this.cartChange.next(settings.shoppingCart);
+
+    this.dashboards.next(DashboardAppsyncUtil.unParseJSON(settings.dashboards));
 
     this.settings.next(settings);
     return undefined;

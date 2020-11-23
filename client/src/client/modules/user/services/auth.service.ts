@@ -65,9 +65,9 @@ export class AuthService {
       this.getCurrentUser()
         .then(async () => {
           if (this.isAuthenticated) {
+            this.settingsSync.init();
             await this.settingsSync.getSettings()
               .catch(console.error);
-            this.settingsSync.init();
             const {realm, region} = this.settingsSync.settings.value || {};
             this.hasLoadedSettings.next(true);
             this.openSetupDialog(realm, region);
@@ -214,7 +214,7 @@ export class AuthService {
         .then(async (user: CognitoUser) => {
           Object.keys(localStorage)
             .forEach(key => {
-              if (!TextUtil.contains(key, 'timestamp') || !TextUtil.contains(key, 'version')) {
+              if (!TextUtil.contains(key, 'timestamp') && !TextUtil.contains(key, 'version')) {
                 localStorage.removeItem(key);
               }
             });
