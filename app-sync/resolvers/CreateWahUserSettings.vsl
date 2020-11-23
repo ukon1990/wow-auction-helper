@@ -1,0 +1,13 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "PutItem",
+  "key" : {
+    "id": $util.dynamodb.toDynamoDBJson($ctx.identity.sub),
+  },
+  #set( $attribs = $util.dynamodb.toMapValues($ctx.args.input) )
+
+  #set( $attribs.lastModified = $util.dynamodb.toDynamoDB($util.time.nowEpochMilliSeconds()))
+  #set( $attribs.created = $util.dynamodb.toDynamoDB($util.time.nowEpochMilliSeconds()))
+
+  "attributeValues" : $util.toJson($attribs)
+}
