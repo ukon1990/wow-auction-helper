@@ -13,14 +13,14 @@
         <mat-option [value]="-1">
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses.classes; let i = index;"
+        <mat-option *ngFor="let c of itemClasses; let i = index;"
                     [value]="i">
           {{ c.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="itemClasses.classes[form.value.itemClass]"
+    <mat-form-field *ngIf="itemClasses[form.value.itemClass]"
                     class="col"
                     color="accent"
     >
@@ -28,7 +28,7 @@
         <mat-option [value]="-1">
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses.classes[form.value['itemClass']].subclasses; let i = index;"
+        <mat-option *ngFor="let c of itemClasses[form.value['itemClass']].subClasses; let i = index;"
                     [value]="i"
         >
           {{ c.name }}

@@ -11,6 +11,7 @@
     <ng-container *ngFor="let rule of formArray.controls; let i = index">
       <wah-rule [formGroup]="rule"
                 [index]="i"
+                [allRules]="formArray"
                 (remove)="formArray.removeAt(i)">
       </wah-rule>
     </ng-container>

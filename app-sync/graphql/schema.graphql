@@ -240,7 +240,7 @@ type WahUserSettingsDashboard {
     sortRule: AWSJSON
     rules: [AWSJSON]!
     itemRules: [AWSJSON]!
-    isPublic: Boolean!
+    isPublic: Boolean
     createdBy: String
     createdById: String
     lastModified: AWSTimestamp!

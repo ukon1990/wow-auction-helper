@@ -42,6 +42,12 @@ export class CharacterService {
               private settingsSync: SettingsService,
               private appSync: AppSyncService,
               private craftingService: CraftingService) {
+    this.sm.add(this.characters, chars => {
+      if (SharedService.user) {
+        SharedService.user.characters = chars;
+      }
+    });
+
     const localStorageChars = localStorage.getItem('characters');
     if (localStorageChars) {
       try {

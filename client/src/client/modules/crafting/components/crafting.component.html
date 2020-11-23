@@ -31,14 +31,14 @@
         <mat-option [value]="-1">
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses.classes; let i = index;"
-                    [value]="i">
+        <mat-option *ngFor="let c of itemClasses; let i = index;"
+                    [value]="c.id">
           {{ c.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="itemClasses.classes[searchForm.value.itemClass]"
+    <mat-form-field *ngIf="itemClasses[searchForm.value.itemClass]"
                     class="ml-2 mr-2 col"
                     color="accent"
     >
@@ -51,8 +51,8 @@
         >
           All
         </mat-option>
-        <mat-option *ngFor="let c of itemClasses.classes[searchForm.value['itemClass']].subclasses; let i = index;"
-                    [value]="i"
+        <mat-option *ngFor="let c of itemClasses[searchForm.value['itemClass']].subClasses"
+                    [value]="c.id"
         >
           {{ c.name }}
         </mat-option>

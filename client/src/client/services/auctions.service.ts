@@ -50,9 +50,11 @@ export class AuctionsService {
     this.subs.add(
       this.realmService.events.realmChanged,
       (status) => {
-        this.tsmService.get(status)
-          .then(async () => await this.organize())
-          .catch(console.error);
+        if (this.isReady) {
+          this.tsmService.get(status)
+            .then(async () => await this.organize())
+            .catch(console.error);
+        }
       }
     );
 

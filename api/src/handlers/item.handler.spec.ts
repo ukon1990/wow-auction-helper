@@ -24,8 +24,45 @@ describe('ItemHandler', () => {
     expect(item.patch).toBe('6.0.1.18125');
   });
 
-  xdescribe('Not a test', () => {
-    it('Insert missing', async () => {
+  describe('Not a test', () => {
+    it('force insert or update', async () => {
+      environment.test = false;
+      const db = new DatabaseUtil(false);
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 5,
+        promiseImplementation: Promise
+      });
+      jest.setTimeout(99999999);
+      let completed = 0;
+      const promises = [];
+      const start = 184100, end = start + 50000, diff = end - start;
+      for (let id = start; id <= end; id++) {
+        promises.push(
+          promiseThrottle.add(() => new ItemHandler()
+            .addItem(id, 'en_GB', db)
+            .then(item => {
+              completed++;
+              console.log(`Completed ${completed} / ${diff} (${
+                Math.round(completed / diff * 100)}%)`);
+            })
+            .catch(error => {
+                completed++;
+                console.error(error);
+              }
+            )));
+      }
+
+      await Promise.all(promises)
+        .then(() => console.log('Success!'))
+        .catch((error) => {
+          console.error(error);
+        });
+      db.end();
+      environment.test = true;
+      expect(completed).toBeGreaterThan(0);
+    });
+
+    xit('Insert missing', async () => {
       environment.test = false;
       const db = new DatabaseUtil(false);
       const promiseThrottle = new PromiseThrottle({

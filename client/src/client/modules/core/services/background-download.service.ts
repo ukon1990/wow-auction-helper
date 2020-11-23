@@ -24,6 +24,7 @@ import {TsmService} from '../../tsm/tsm.service';
 import {LogRocketUtil} from '../../../utils/log-rocket.util';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {UserUtil} from '../../../utils/user/user.util';
+import {ItemClassService} from '../../item/service/item-class.service';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,7 @@ export class BackgroundDownloadService {
     private http: HttpClient,
     private realmService: RealmService,
     private itemService: ItemService,
+    private itemClassService: ItemClassService,
     private craftingService: CraftingService,
     private auctionsService: AuctionsService,
     private petService: PetsService,
@@ -155,8 +157,10 @@ export class BackgroundDownloadService {
             console.log('Done loading zone data'))
           .catch(console.error);
 
-        const promises: Promise<any>[] = [
+        const promises: Promise<any>[] = [/* TODO: Remove?
           this.tsmService.load(this.realmService.events.realmStatus.value)
+            .catch(console.error),*/
+          this.itemClassService.getAll()
             .catch(console.error),
           this.professionService.load(timestamps.professions),
           this.itemService.loadItems(timestamps.items)

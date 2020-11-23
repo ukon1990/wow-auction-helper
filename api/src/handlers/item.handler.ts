@@ -101,18 +101,19 @@ export class ItemHandler {
                 return;
               }
 
-              const query = new RDSQueryUtil('items').insert(friendlyItem);
+              const query = new RDSQueryUtil('items')
+                .insertOrUpdate(friendlyItem);
               console.log('Insert item SQL:', query);
               db.query(query)
                 .then(async itemSuccess => {
-                  resolve(item);
                   console.log(`Successfully added ${friendlyItem.name} (${id})`);
                   await LocaleUtil.insertToDB(
                     'item_name_locale',
                     'id',
                     item.nameLocales,
                     db)
-                    .then(localeSuccess => console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
+                    .then(localeSuccess =>
+                      console.log(`Successfully added locales for ${friendlyItem.name} (${id})`))
                     .catch(console.error);
                   const map = {};
                   item.itemSource.droppedBy
@@ -125,6 +126,7 @@ export class ItemHandler {
                   } catch (e) {
                     console.error('addItem failed at adding missing NPCs', e);
                   }
+                  resolve(item);
                 })
                 .catch((error) => {
                   reject(error);

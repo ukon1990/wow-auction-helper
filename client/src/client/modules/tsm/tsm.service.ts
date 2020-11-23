@@ -16,7 +16,7 @@ import {Platform} from '@angular/cdk/platform';
 export class TsmService {
   static list: BehaviorSubject<TSM[]> = new BehaviorSubject<TSM[]>([]);
   static mapped: BehaviorSubject<Map<number, TSM>> = new BehaviorSubject(new Map<number, TSM>());
-
+  private isDownloadingTSM = false;
 
   constructor(private http: HttpClient,
               private db: DatabaseService,
@@ -69,15 +69,17 @@ export class TsmService {
     console.log('status', realmStatus);
     return new Promise<TSM[]>((resolve, reject) => {
       // Regions such as Taiwan and Korea is not supported by TSM. But they should not have a tsmUrl
-      if (realmStatus && realmStatus.tsmUrl) {
+      if (realmStatus && realmStatus.tsmUrl && !this.isDownloadingTSM) {
         console.log('Downloading TSM data');
         this.openSnackbar('Downloading TSM data');
+        this.isDownloadingTSM = true;
         SharedService.downloading.tsmAuctions = true;
         this.http.get(realmStatus.tsmUrl)
           .toPromise()
           .then((tsm: TSM[]) => {
-            localStorage['timestamp_tsm'] = new Date().toDateString();
+            localStorage.setItem('timestamp_tsm', new Date().toDateString());
             SharedService.downloading.tsmAuctions = false;
+            this.isDownloadingTSM = false;
             console.log('TSM data download is complete');
             try {
               this.processData(tsm);
@@ -95,6 +97,7 @@ export class TsmService {
               `Something went wrong, while downloading TSM data.`);
             ErrorReport.sendError('TsmService.get', error);
             SharedService.downloading.tsmAuctions = false;
+            this.isDownloadingTSM = false;
             resolve([]);
           });
       } else {

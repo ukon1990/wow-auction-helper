@@ -9,6 +9,9 @@ import {NpcHandler} from '../handlers/npc.handler';
 import {ZoneHandler} from '../handlers/zone.handler';
 import {PetHandler} from '../handlers/pet.handler';
 import {ProfessionService} from '../profession/service';
+import {HttpClientUtil} from '../utils/http-client.util';
+import {AuthHandler} from '../handlers/auth.handler';
+import {Endpoints} from '../utils/endpoints.util';
 
 export class UpdatesService {
   static readonly locales = UpdatesService.getLocales();
@@ -120,6 +123,55 @@ export class UpdatesService {
       }
 
       db.end();
+      resolve(true);
+    });
+  }
+
+  static getAndSetItemClasses(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const classes = [];
+
+      const http = new HttpClientUtil();
+      await AuthHandler.getToken();
+      const url = new Endpoints().getPath(`item-class/index`, 'us', 'static');
+      await http.get(url)
+        .then(async ({body}) => {
+          const itemClasses = body.item_classes;
+          if (itemClasses) {
+            for (const {id, name} of itemClasses) {
+             const iClass = {
+               id,
+               name,
+               subClasses: [],
+             };
+              classes.push(iClass);
+
+              const urlSub = new Endpoints().getPath(`item-class/${id}`, 'us', 'static');
+
+              await http.get(urlSub)
+                .then((res) => {
+                  const sub = res.body.item_subclasses;
+                  if (sub) {
+                    sub.forEach(entry => iClass.subClasses.push({
+                      id: entry.id,
+                      name: entry.name,
+                    }));
+                  }
+                });
+            }
+          }
+        });
+
+      await new S3Handler().save(
+        classes,
+        `item/item-classes.json.gz`,
+        {
+          region: ''
+        })
+        .then(() => {
+          console.log('Successfully uploaded items');
+        })
+        .catch(console.error);
       resolve(true);
     });
   }

@@ -1,10 +1,9 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../../../data/rule-fields.data';
 import {GameBuild} from '../../../../../../utils/game-build.util';
 import {Profession} from '../../../../../../../../../api/src/profession/model';
 import {conditionLocale} from 'client/modules/dashboard/types/condition.enum';
-import {itemClasses} from 'client/models/item/item-classes';
 import {ProfessionService} from '../../../../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
@@ -13,6 +12,10 @@ import {Rule} from '../../../../models/rule.model';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {GoldPipe} from '../../../../../util/pipes/gold.pipe';
 import {ItemLocale} from '../../../../../../language/item.locale';
+import {RuleFieldGroup} from '../../../../models/rule-field.model';
+import {ThemeUtil} from '../../../../../core/utils/theme.util';
+import {ItemClassService} from '../../../../../item/service/item-class.service';
+import {ItemClass} from '../../../../../item/models/item-class.model';
 
 @Component({
   selector: 'wah-rule',
@@ -22,14 +25,19 @@ import {ItemLocale} from '../../../../../../language/item.locale';
 export class RuleComponent implements AfterViewInit, OnDestroy {
   @Input() formGroup: FormGroup;
   @Input() rules: Rule[];
+  @Input() allRules: FormArray;
   @Input() index: number;
   @Input() isOrRule: boolean;
   @Output() remove: EventEmitter<void> = new EventEmitter<void>();
+  theme = ThemeUtil.current;
   fields = ruleFields;
   conditionLocale = conditionLocale;
   expansions = GameBuild.expansionMap;
-  itemClasses = itemClasses.classes;
+  itemClasses: ItemClass[] = ItemClassService.getForLocale();
   itemQualities = ItemLocale.getQualities().list;
+  // Must be true, in order for sub class to be selectable
+  itemClassIdSelected: number;
+  itemSubClasses: any[] = [];
   professions: Profession[] = [];
   mainFieldType = {
     isProfession: false,
@@ -60,6 +68,12 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
       this.rules.forEach(rule =>
         this.addOrRule(rule));
     }
+
+    if (this.allRules && this.allRules instanceof FormArray) {
+      this.setItemClassSelected(this.allRules.getRawValue());
+      this.sm.add(this.allRules.valueChanges, value => this.setItemClassSelected(value));
+    }
+
     this.toValueGold = this.formGroup.controls.toValue.value;
     this.setMainFieldType();
     this.enableOrDisableToField();
@@ -134,11 +148,20 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
   }
 
   private setMainFieldType(value?: string) {
+    // TOdO: Disable toField if these are selected
     this.mainFieldType.isExpansion = this.isFieldType('expansion', value);
     this.mainFieldType.isProfession = this.isFieldType('profession', value);
     this.mainFieldType.isItemSubClass = this.isFieldType('itemSubClass', value);
     this.mainFieldType.isItemClass = this.isFieldType('itemClass', value) && !this.mainFieldType.isItemSubClass;
     this.mainFieldType.isQuality = this.isFieldType('quality', value);
+
+    const disableToField = Object.values(this.mainFieldType)
+      .filter((isTrue: boolean) => isTrue);
+    if (disableToField.length) {
+      this.formGroup.controls.toField.disable({emitEvent: false});
+    } else {
+      this.formGroup.controls.toField.enable({emitEvent: false});
+    }
   }
 
   setNewInputGoldValue(newValue: string) {
@@ -150,5 +173,38 @@ export class RuleComponent implements AfterViewInit, OnDestroy {
         this.lastCharacterTyped = undefined;
       }
     }, interval);
+  }
+
+  private setItemClassSelected(rules: Rule[]) {
+    this.itemClassIdSelected = undefined;
+    this.itemSubClasses = [];
+
+    rules.forEach(rule => {
+      if (this.isFieldType('itemClass', rule.field)) {
+        this.itemClassIdSelected = +rule.toValue;
+        const match = this.itemClasses
+          .filter(cl => cl.id === +rule.toValue);
+        if (match[0]) {
+          this.itemSubClasses = match[0].subClasses;
+        }
+      }
+    });
+
+    if (this.itemClassIdSelected === undefined) {
+      const relevantFields: RuleFieldGroup[] = [];
+      ruleFields.forEach(field => {
+        const matches = field.options.filter(option =>
+          !TextUtil.contains(option.key, 'itemSubClass'));
+        if (matches.length) {
+          relevantFields.push({
+            ...field,
+            options: matches,
+          });
+        }
+      });
+      this.fields = relevantFields;
+    } else {
+      this.fields = ruleFields;
+    }
   }
 }

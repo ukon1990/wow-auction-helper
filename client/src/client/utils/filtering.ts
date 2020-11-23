@@ -1,5 +1,4 @@
 import {SharedService} from '../services/shared.service';
-import {itemClasses} from '../models/item/item-classes';
 import {Item} from '../models/item/item';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 import {Recipe} from '../modules/crafting/models/recipe';
@@ -8,6 +7,8 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Pet} from '../modules/pet/models/pet';
 import {CraftingService} from '../services/crafting.service';
 import {AuctionsService} from '../services/auctions.service';
+import {ItemClassService} from '../modules/item/service/item-class.service';
+import {ItemClass} from '../modules/item/models/item-class.model';
 
 export class Filters {
   private static auctionService: AuctionsService;
@@ -102,13 +103,13 @@ export class Filters {
     if (EmptyUtil.isNullOrUndefined(itemClassIndex) || itemClassIndex === -1) {
       return true;
     }
-    const iClass = itemClasses.classes[itemClassIndex];
+    const iClass: ItemClass = ItemClassService.getForLocale()[itemClassIndex];
 
-    return !iClass || classForId === iClass.class &&
-      this.isItemSubclassMatch(itemID, iClass.subclasses, itemSubClassIndex);
+    return !iClass || classForId === iClass.id &&
+      this.isItemSubclassMatch(itemID, iClass.subClasses, itemSubClassIndex);
   }
 
-  private static isItemSubclassMatch(itemID: number, subClasses: any, itemSubClassIndex: number): boolean {
+  private static isItemSubclassMatch(itemID: number, subClasses: ItemClass[], itemSubClassIndex: number): boolean {
     const subClassForId = SharedService.items[itemID] ? SharedService.items[itemID].itemSubClass : -1;
 
     if (EmptyUtil.isNullOrUndefined(itemSubClassIndex) || itemSubClassIndex === -1) {
@@ -116,7 +117,7 @@ export class Filters {
     }
     const iSubClass = subClasses[itemSubClassIndex];
 
-    return !iSubClass || subClassForId === iSubClass.subclass;
+    return !iSubClass || subClassForId === iSubClass.id;
   }
 
   public static isUsingAPI(): boolean {
