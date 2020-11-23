@@ -20,7 +20,7 @@ export class NpcHandler {
         length: ids.length
       };
       ids.forEach(id => promises.push(
-        promiseThrottle.add(() => NPCUtil.getById(id, progress))));
+        promiseThrottle.add(() => NPCUtil.getById(id['id'] || id, progress))));
       Promise.all(promises)
         .then((npcs: NPC[]) => {
           resolve(npcs);
