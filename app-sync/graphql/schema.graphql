@@ -1,0 +1,259 @@
+input CreateWahUserDashboardInput {
+    id: String
+    parentId: String
+    idParam: String
+    title: String!
+    description: String
+    columns: [AWSJSON]!
+    sortOrder: Int
+    isDisabled: Boolean
+    isDefault: Boolean
+    onlyItemsWithRules: Boolean
+    sortRule: AWSJSON
+    rules: [AWSJSON]!
+    itemRules: [AWSJSON]!
+    isPublic: Boolean
+    createdBy: String
+    createdById: String
+    lastModified: AWSTimestamp
+    idIsBackendGenerated: Boolean
+}
+
+input CreateWahUserSettingsCharacterInput {
+    slug: String!
+    name: String!
+    faction: Int
+    lastModified: AWSTimestamp!
+}
+
+input CreateWahUserSettingsInput {
+    realm: String!
+    region: String!
+    faction: Int
+    customPrices: [AWSJSON]
+    customProcs: [AWSJSON]
+    dashboards: [CreateWahUserDashboardInput]
+    buyoutLimit: Int
+    characters: [CreateWahUserSettingsCharacterInput]
+    useVendorPriceForCraftingIfAvailable: Boolean
+    useIntermediateCrafting: Boolean
+    shoppingCart: CreateWahUserShoppingCartInput
+    craftingStrategy: Int
+    locale: String!
+    lastModified: AWSTimestamp
+}
+
+input CreateWahUserShoppingCartEntryInput {
+    id: Int
+    quantity: Int
+    isReagent: Boolean
+    isIntermediate: Boolean
+}
+
+input CreateWahUserShoppingCartInput {
+    recipes: [CreateWahUserShoppingCartEntryInput]
+    items: [CreateWahUserShoppingCartEntryInput]
+}
+
+input DeleteWahUserSettingsInput {
+    id: ID!
+}
+
+type Mutation {
+    createWahUserSettings(input: CreateWahUserSettingsInput!): WahUserSettings
+    updateWahUserSettings(input: UpdateWahUserSettingsInput!): WahUserSettings
+    deleteWahUserSettings(input: DeleteWahUserSettingsInput!): WahUserSettings
+}
+
+type Query {
+    getWahUserSettings(id: ID): WahUserSettings
+}
+
+input TableBooleanFilterInput {
+    ne: Boolean
+    eq: Boolean
+}
+
+input TableFloatFilterInput {
+    ne: Float
+    eq: Float
+    le: Float
+    lt: Float
+    ge: Float
+    gt: Float
+    contains: Float
+    notContains: Float
+    between: [Float]
+}
+
+input TableIDFilterInput {
+    ne: ID
+    eq: ID
+    le: ID
+    lt: ID
+    ge: ID
+    gt: ID
+    contains: ID
+    notContains: ID
+    between: [ID]
+    beginsWith: ID
+}
+
+input TableIntFilterInput {
+    ne: Int
+    eq: Int
+    le: Int
+    lt: Int
+    ge: Int
+    gt: Int
+    contains: Int
+    notContains: Int
+    between: [Int]
+}
+
+input TableStringFilterInput {
+    ne: String
+    eq: String
+    le: String
+    lt: String
+    ge: String
+    gt: String
+    contains: String
+    notContains: String
+    between: [String]
+    beginsWith: String
+}
+
+input TableWahUserSettingsFilterInput {
+    id: TableIDFilterInput
+    realm: TableStringFilterInput
+    region: TableStringFilterInput
+    faction: TableIntFilterInput
+    buyoutLimit: TableIntFilterInput
+    useVendorPriceForCraftingIfAvailable: TableBooleanFilterInput
+    useIntermediateCrafting: TableBooleanFilterInput
+    craftingStrategy: TableIntFilterInput
+    locale: TableStringFilterInput
+    lastModified: TableIntFilterInput
+    created: TableIntFilterInput
+}
+
+input UpdateWahUserSettingsCharacterInput {
+    slug: String!
+    name: String!
+    faction: Int
+    lastModified: AWSTimestamp!
+}
+
+input UpdateWahUserSettingsDashboardInput {
+    id: String!
+    parentId: String
+    idParam: String
+    title: String!
+    description: String
+    columns: [AWSJSON]!
+    sortOrder: Int
+    isDisabled: Boolean
+    isDefault: Boolean
+    onlyItemsWithRules: Boolean
+    sortRule: AWSJSON
+    rules: [AWSJSON]!
+    itemRules: [AWSJSON]!
+    isPublic: Boolean
+    idIsBackendGenerated: Boolean
+    createdBy: String
+    createdById: String
+    lastModified: AWSTimestamp
+}
+
+input UpdateWahUserSettingsInput {
+    id: ID
+    realm: String
+    region: String
+    faction: Int
+    customPrices: [AWSJSON]
+    customProcs: [AWSJSON]
+    dashboards: [UpdateWahUserSettingsDashboardInput]
+    characters: [UpdateWahUserSettingsCharacterInput]
+    buyoutLimit: Int
+    useVendorPriceForCraftingIfAvailable: Boolean
+    useIntermediateCrafting: Boolean
+    shoppingCart: UpdateWahUserSettingsShoppingCartInput
+    craftingStrategy: Int
+    locale: String
+    created: AWSTimestamp
+}
+
+input UpdateWahUserSettingsShoppingCartInput {
+    items: [UpdateWahUserShoppingCartEntryInput]
+    recipes: [UpdateWahUserShoppingCartEntryInput]
+}
+
+input UpdateWahUserShoppingCartEntryInput {
+    id: Int!
+    quantity: Int!
+    isReagent: Boolean
+    isIntermediate: Boolean
+}
+
+type WahUserSettings {
+    id: ID!
+    realm: String!
+    region: String!
+    faction: Int
+    customPrices: [AWSJSON]
+    customProcs: [AWSJSON]
+    dashboards: [WahUserSettingsDashboard]
+    characters: [WahUserSettingsCharacter]
+    buyoutLimit: Int
+    useVendorPriceForCraftingIfAvailable: Boolean
+    useIntermediateCrafting: Boolean
+    shoppingCart: WahUserShoppingCart
+    craftingStrategy: Int
+    locale: String!
+    lastModified: AWSTimestamp
+    created: AWSTimestamp
+}
+
+type WahUserSettingsCharacter {
+    slug: String!
+    name: String!
+    lastModified: AWSTimestamp!
+}
+
+type WahUserSettingsConnection {
+    items: [WahUserSettings]
+    nextToken: String
+}
+
+type WahUserSettingsDashboard {
+    id: String!
+    parentId: String
+    idParam: String
+    title: String!
+    description: String
+    columns: [AWSJSON]
+    sortOrder: Int
+    isDisabled: Boolean
+    isDefault: Boolean
+    onlyItemsWithRules: Boolean
+    sortRule: AWSJSON
+    rules: [AWSJSON]!
+    itemRules: [AWSJSON]!
+    isPublic: Boolean!
+    createdBy: String
+    createdById: String
+    lastModified: AWSTimestamp!
+    idIsBackendGenerated: Boolean
+}
+
+type WahUserShoppingCart {
+    recipes: [WahUserShoppingCartEntry]
+    items: [WahUserShoppingCartEntry]
+}
+
+type WahUserShoppingCartEntry {
+    id: Int
+    quantity: Int
+    isIntermediate: Boolean
+}

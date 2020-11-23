@@ -21,7 +21,7 @@ import {ItemNpcDetails} from '../modules/item/models/item-npc-details.model';
 
 @Injectable()
 export class SharedService {
-  public static user: User;
+  public static user: User = {} as User;
   public static locales = [
     {locale: 'en_GB', name: 'English (GB)'},
     {locale: 'en_US', name: 'English (US)'},

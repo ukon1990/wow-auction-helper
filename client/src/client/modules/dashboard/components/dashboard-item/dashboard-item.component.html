@@ -1,52 +1,55 @@
-<mat-card *ngIf="!isInDialogWindow; else contentTemplate">
-  <mat-card-header>
-    <div class="action-icon" *ngIf="!hideButtons">
-      <button
-              class="btn btn-sm mr-2"
-              mat-raised-button
-              color="accent"
-              matTooltip="Configure this dashboard"
-              (click)="toggleConfig()"
-      >
-        <fa-icon [icon]="faCog"></fa-icon>
-      </button>
-      <button
-              mat-raised-button
-              class="btn btn-sm"
-              (click)="openClose()"
-              color="primary"
-              matTooltip="Click to open the full window.">
-        <i matTooltip="Open detail view" class="far fa-window-restore"></i>
-      </button>
-    </div>
-    <mat-card-title>
-      {{ dashboard?.title }} ({{ dashboard?.data?.length | number }})
-    </mat-card-title>
-    <mat-card-subtitle *ngIf="dashboard.message">
-      {{ dashboard.message }}
-    </mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content *ngTemplateOutlet="contentTemplate">
-  </mat-card-content>
-</mat-card>
+<ng-container *ngIf="dashboard">
+  <mat-card *ngIf="!isInDialogWindow; else contentTemplate">
+    <mat-card-header>
+      <div class="action-icon" *ngIf="!hideButtons">
+        <button
+                class="btn btn-sm mr-2"
+                mat-raised-button
+                color="accent"
+                matTooltip="Configure this dashboard"
+                (click)="toggleConfig()"
+        >
+          <fa-icon [icon]="faCog"></fa-icon>
+        </button>
+        <button
+                mat-raised-button
+                class="btn btn-sm"
+                (click)="openClose()"
+                color="primary"
+                matTooltip="Click to open the full window.">
+          <i matTooltip="Open detail view" class="far fa-window-restore"></i>
+        </button>
+      </div>
+      <mat-card-title>
+        {{ dashboard?.title }} ({{ dashboard?.data?.length | number }})
+      </mat-card-title>
+      <mat-card-subtitle *ngIf="dashboard.message">
+        {{ dashboard.message }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content *ngTemplateOutlet="contentTemplate">
+    </mat-card-content>
+  </mat-card>
 
-<ng-template #contentTemplate>
-  <ng-container *ngIf="!dashboard.isDisabled; else disabledTemplate">
-    <wah-data-table [id]="dashboard?.idParam || 'id'"
-                    iconSize="22"
-                    [columns]="currentColumns"
-                    [filterParameter]="filterParameter"
-                    [data]="dashboard?.data"
-                    [numOfRows]="isInDialogWindow ? 20 : 10"
-                    [hideCraftingDetails]="true"></wah-data-table>
-    <!-- detailView -->
-    <mat-form-field *ngIf="isInDialogWindow && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
-                    class="row col-md-12">
-      <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
-    </mat-form-field>
-  </ng-container>
+  <ng-template #contentTemplate>
+    <ng-container *ngIf="!dashboard.isDisabled; else disabledTemplate">
+      <wah-data-table [id]="dashboard?.idParam || 'id'"
+                      iconSize="22"
+                      [columns]="currentColumns"
+                      [filterParameter]="filterParameter"
+                      [data]="dashboard?.data"
+                      [numOfRows]="isInDialogWindow ? 20 : 10"
+                      [hideCraftingDetails]="true"></wah-data-table>
+      <!-- detailView -->
+      <mat-form-field *ngIf="isInDialogWindow && dashboard.tsmShoppingString && dashboard?.tsmShoppingString.length > 0"
+                      class="row col-md-12">
+        <textarea matInput placeholder="TSM shopping string" [value]="dashboard.tsmShoppingString"></textarea>
+      </mat-form-field>
+    </ng-container>
 
-  <ng-template #disabledTemplate>
-    This dashboard has been disabled, and is therefore not calculated. If you wish to re-activate it. Go into it's settings(cogwheel).
+    <ng-template #disabledTemplate>
+      This dashboard has been disabled, and is therefore not calculated. If you wish to re-activate it. Go into it's
+      settings(cogwheel).
+    </ng-template>
   </ng-template>
-</ng-template>
+</ng-container>

@@ -31,6 +31,7 @@ import {MenuItemComponent} from './components/menu/menu-item/menu-item.component
 import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdown.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {DownloadDialogComponent} from './components/navbar/download/dialog/dialog.component';
+import {UserModule} from '../user/user.module';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import {DownloadDialogComponent} from './components/navbar/download/dialog/dialo
     MatBadgeModule,
     FontAwesomeModule,
     MarketResetModule,
-    MatDialogModule
+    MatDialogModule,
+    UserModule
   ],
   exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent, DownloadComponent]
 })

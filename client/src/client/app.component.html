@@ -20,6 +20,14 @@
   App data is loading, this might take a while the first time depending on your internet speed, computer and browser…
   <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
     <tbody>
+    <tr *ngIf="useAppSync">
+      <td>
+        <mat-spinner *ngIf="settingsSync.isLoading.value" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>
+        Settings
+      </td>
+    </tr>
     <tr>
       <td>
         <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>

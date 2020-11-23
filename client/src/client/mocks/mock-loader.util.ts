@@ -84,8 +84,8 @@ export class MockLoaderUtil {
   }
 
   private setRealms() {
-    const realms = this.getFile('realms');
-    const service = new RealmService(null, null);
-    service.handleRealms(realms);
+    // const realms = this.getFile('realms');
+    // const service = new RealmService(null, null);
+    // service.handleRealms(realms);
   }
 }

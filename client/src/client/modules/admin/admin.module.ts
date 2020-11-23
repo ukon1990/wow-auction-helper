@@ -18,6 +18,7 @@ import {UtilModule} from '../util/util.module';
 import {MatListModule} from '@angular/material/list';
 import { TestComponent } from './components/test/test.component';
 import {ItemModule} from '../item/item.module';
+import {UserModule} from "../user/user.module";
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import {ItemModule} from '../item/item.module';
     TableModule,
     UtilModule,
     MatListModule,
-    ItemModule
+    ItemModule,
+    UserModule
   ],
   providers: [AdminService]
 })

@@ -16,7 +16,8 @@ import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status
 import {TsmService} from '../modules/tsm/tsm.service';
 import {CharacterService} from '../modules/character/services/character.service';
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
-import {Report} from '../utils/report.util';
+import {SettingsService} from '../modules/user/services/settings/settings.service';
+import {UserSettings} from '../modules/user/models/settings.model';
 
 @Injectable()
 export class AuctionsService {
@@ -37,8 +38,10 @@ export class AuctionsService {
     private _dbService: DatabaseService,
     private _itemService: ItemService,
     private tsmService: TsmService,
+    private settingsSync: SettingsService,
     private characterService: CharacterService,
     private realmService: RealmService) {
+
     this.subs.add(
       this.realmService.events.realmStatus,
       (status: AuctionHouseStatus) =>
@@ -152,7 +155,8 @@ export class AuctionsService {
   }
 
   private sendNewAuctionDataAvailable() {
-    if (SharedService.user.notifications.isUpdateAvailable) {
+    const settings: UserSettings = this.settingsSync.settings.value;
+    if (settings && settings.notifications && settings.notifications.isUpdateAvailable) {
       Notifications.send(
         'WAH - New auction data',
         `There are new auctions available for ${SharedService.user.realm}.`);
