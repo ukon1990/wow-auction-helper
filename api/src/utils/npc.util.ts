@@ -73,9 +73,9 @@ export class DroppedItem {
   static setFromBody(body: string): DroppedItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'drops').map(({id, modes}) => ({
       id,
-      dropped: modes[1].count,
-      outOf: modes[1].outof,
-      dropChance: modes[1].count / modes[1].outof
+      dropped: modes[1] ? modes[1].count : 0,
+      outOf: modes[1] ? modes[1].outof : 0,
+      dropChance: modes[1] ? (modes[1].count / modes[1].outof) : 0
     }) as DroppedItem);
   }
 }

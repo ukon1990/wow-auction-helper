@@ -11,7 +11,7 @@ export class NpcHandler {
   static addNewNPCsByIds(ids: number[]): Promise<NPC[]> {
     return new Promise<NPC[]>((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 10,
+        requestsPerSecond: 5,
         promiseImplementation: Promise
       });
       const promises = [];

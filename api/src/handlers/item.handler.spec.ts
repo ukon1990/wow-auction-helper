@@ -29,13 +29,15 @@ describe('ItemHandler', () => {
       environment.test = false;
       const db = new DatabaseUtil(false);
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5,
+        requestsPerSecond: 1,
         promiseImplementation: Promise
       });
       jest.setTimeout(99999999);
       let completed = 0;
       const promises = [];
       const missingFromCrafting = `
+                                  SELECT *
+                                  FROM (
                                   SELECT craftedItemId as id
                                   FROM recipes WHERE craftedItemId NOT IN (
                                     SELECT id FROM items
@@ -54,7 +56,15 @@ describe('ItemHandler', () => {
                                   SELECT itemId as id
                                   FROM reagents WHERE itemId NOT IN (
                                     SELECT id FROM items
-                                  );`;
+                                  )
+                                  UNION ALL
+                                  SELECT itemId as id
+                                  FROM itemPriceHistoryPerHour
+                                  WHERE ahId = 69 AND itemId NOT IN (
+                                    SELECT id FROM items
+                                  )) as tbl
+                                  GROUP BY id
+                                  ORDER BY id DESC;`;
       let ids: number[] = [];
       await db.enqueueHandshake()
         .then(async () => await db.query(missingFromCrafting).then(res => ids = res.map(id => id.id)))
