@@ -35,8 +35,32 @@ describe('ItemHandler', () => {
       jest.setTimeout(99999999);
       let completed = 0;
       const promises = [];
-      const start = 184100, end = start + 50000, diff = end - start;
-      for (let id = start; id <= end; id++) {
+      const missingFromCrafting = `
+                                  SELECT craftedItemId as id
+                                  FROM recipes WHERE craftedItemId NOT IN (
+                                    SELECT id FROM items
+                                  )
+                                  UNION ALL
+                                  SELECT hordeCraftedItemId as id
+                                  FROM recipes WHERE hordeCraftedItemId NOT IN (
+                                    SELECT id FROM items
+                                  )
+                                  UNION ALL
+                                  SELECT allianceCraftedItemId as id
+                                  FROM recipes WHERE allianceCraftedItemId NOT IN (
+                                    SELECT id FROM items
+                                  )
+                                  UNION ALL
+                                  SELECT itemId as id
+                                  FROM reagents WHERE itemId NOT IN (
+                                    SELECT id FROM items
+                                  );`;
+      let ids: number[] = [];
+      await db.enqueueHandshake()
+        .then(async () => await db.query(missingFromCrafting).then(res => ids = res.map(id => id.id)))
+        .catch(console.error);
+      const start = 185100, end = start + 100000, diff = end - start;
+      for (const id of ids) {
         promises.push(
           promiseThrottle.add(() => new ItemHandler()
             .addItem(id, 'en_GB', db)

@@ -311,6 +311,7 @@ export class NPCUtil {
       updateIds
         .forEach(row => promises.push(
           promiseThrottle.add(async () => {
+            console.log('Get locale for row', row);
             await this.getLocaleForId(row.id)
               .then(async locale => {
                 locales.push(locale);

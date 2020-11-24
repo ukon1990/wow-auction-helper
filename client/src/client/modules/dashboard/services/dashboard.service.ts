@@ -186,6 +186,8 @@ export class DashboardService {
     if (!this.map.value.has(board.id)) {
       this.list.value.unshift(board);
       this.list.next([...this.list.value]);
+    } else {
+      this.list.next(this.list.value.map(b => b.id === board.id ? board : b));
     }
 
     this.map.value.set(board.id, board);
@@ -198,7 +200,7 @@ export class DashboardService {
 
     // Should not save, if we are restoring from appSync
     if (saveToAppSync) {
-      this.saveToAppSync();
+      this.saveToAppSync(0);
     }
   }
 
@@ -245,6 +247,7 @@ export class DashboardService {
       const timeDiff = +new Date() - this.lastUpdateRequest;
       if (timeDiff >= delay && this.lastUpdateRequest) {
         this.lastUpdateRequest = undefined;
+        Report.debug('saveToAppSync', DashboardAppsyncUtil.reduce(this.list.value));
         this.settingsService.updateSettings({
           dashboards: DashboardAppsyncUtil.reduce(this.list.value)
         });
