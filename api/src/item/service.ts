@@ -1,25 +1,103 @@
-import {APIGatewayEvent, Callback} from 'aws-lambda';
+import {RDSItemRepository} from './repository';
 import {DatabaseUtil} from '../utils/database.util';
-import {ItemQuery} from '../queries/item.query';
-import {Response} from '../utils/response.util';
-import {WoWDBItem} from '../models/item/wowdb';
-import {ItemUtil} from '../utils/item.util';
-import {WoWHeadUtil} from '../utils/wowhead.util';
-import {LocaleUtil} from '../utils/locale.util';
-import {WoWHead} from '../models/item/wowhead';
+import {BLIZZARD} from '../secrets';
+import PromiseThrottle from 'promise-throttle';
+import {ItemHandler} from '../handlers/item.handler';
 import {Item} from '../../../client/src/client/models/item/item';
+import {ItemQuery} from '../queries/item.query';
+import {ItemUtil} from '../utils/item.util';
 import {QueryIntegrity} from '../queries/integrity.query';
 import {RDSQueryUtil} from '../utils/query.util';
-import {NpcHandler} from './npc.handler';
-import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
-import {AuctionItemStat} from '../auction/models/auction-item-stat.model';
+import {LocaleUtil} from '../utils/locale.util';
+import {WoWDBItem} from '../models/item/wowdb';
+import {WoWHeadUtil} from '../utils/wowhead.util';
+import {WoWHead} from '../models/item/wowhead';
+import {UpdatesService} from '../updates/service';
 
-export class ItemHandler {
+export class ItemServiceV2 {
+  private readonly repository = new RDSItemRepository();
+
+  findMissingItemsAndImport(clientId?: string, clientSecret?: string): Promise<void> {
+    if (clientId) {
+      BLIZZARD.CLIENT_ID = clientId;
+    }
+    if (clientSecret) {
+      BLIZZARD.CLIENT_SECRET = clientSecret;
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      const db = new DatabaseUtil(false);
+      this.repository.findMissingItemsFromAuctions(db)
+        .then(ids => {
+          console.log(`There are ${ids.length} new items to add.`);
+          this.addOrUpdateItemsByIds(ids, db)
+            .then(() => {
+              db.end();
+              resolve();
+            })
+            .catch(err => {
+              db.end();
+              reject(err);
+            });
+        })
+        .catch(err => {
+          db.end();
+          reject(err);
+        });
+    });
+  }
+
+  private addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil) {
+    return new Promise<void>((resolve, reject) => {
+      let completed = 0;
+      let successfull = 0;
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 25,
+        promiseImplementation: Promise
+      });
+      const promises: Promise<any>[] = [];
+      ids.forEach(id => promises.push(
+        promiseThrottle.add(() => new ItemHandler()
+          .addItem(id, 'en_GB', db)
+          .then(() => {
+            completed++;
+            successfull++;
+            console.log(`Completed ${completed} / ${ids.length} (${
+              Math.round(completed / ids.length * 100)}%)`);
+          })
+          .catch(error => {
+              completed++;
+              console.error(error);
+            }
+          )
+        )));
+      Promise.all(promises)
+        .then(async () => {
+          console.log(`Done processing ${ids.length} items (${successfull} successfully so).`);
+          if (successfull) {
+            console.log('Starting to update the static files');
+            await UpdatesService.getAndSetItems()
+              .then(() => console.log('Done uploading items'))
+              .catch(console.error);
+            await UpdatesService.getAndSetTimestamps()
+              .then(() => console.log('Done updating the timestamps'))
+              .catch(console.error);
+            console.log('Done updating static files');
+          }
+          resolve();
+        })
+        .catch(err => {
+          console.error('Could not add items', err);
+          reject(err);
+        });
+    });
+  }
+
   /* istanbul ignore next */
   async getById(id: number, locale: string, conn: DatabaseUtil): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       conn.query(ItemQuery.getById(
-          id, locale))
+        id, locale))
         .then(async (items: Item[]) => {
           if (items[0]) {
             resolve(ItemUtil.handleItem(items[0]));
