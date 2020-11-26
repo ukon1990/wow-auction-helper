@@ -114,7 +114,7 @@ functions:
       Function: Wah-findMissingItemsAndImport
       Project: WAH
     handler: src/item/controller.findMissingItemsAndImport
-    memorySize: 1024
+    memorySize: 200
     timeout: 300
   getPriceHistoryForItem:
     tags:

@@ -1,7 +1,7 @@
 import {DatabaseUtil} from '../utils/database.util';
 
 export class RDSItemRepository {
-  findMissingItems(conn: DatabaseUtil): Promise<number[]> {
+  findMissingItemsFromAuctionsAndCrafts(conn: DatabaseUtil): Promise<number[]> {
     return new Promise<number[]>(((resolve, reject) => {
       conn.query(`
                                   SELECT *
@@ -33,6 +33,23 @@ export class RDSItemRepository {
                                   )) as tbl
                                   GROUP BY id
                                   ORDER BY id DESC;`)
+        .then(res => {
+          resolve(res.map(({id}) => id));
+        })
+        .catch(reject);
+    }));
+  }
+
+  findMissingItemsFromAuctions(conn: DatabaseUtil): Promise<number[]> {
+    return new Promise<number[]>(((resolve, reject) => {
+      conn.query(`
+                  SELECT itemId as id
+                  FROM itemPriceHistoryPerHour
+                  WHERE date > '2020-11-24' AND itemId NOT IN (
+                    SELECT id FROM items
+                  )
+                  GROUP BY id
+                  ORDER BY id DESC;`)
         .then(res => {
           resolve(res.map(({id}) => id));
         })

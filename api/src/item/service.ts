@@ -27,14 +27,23 @@ export class ItemServiceV2 {
 
     return new Promise<void>((resolve, reject) => {
       const db = new DatabaseUtil(false);
-      this.repository.findMissingItems(db)
+      this.repository.findMissingItemsFromAuctions(db)
         .then(ids => {
           console.log(`There are ${ids.length} new items to add.`);
           this.addOrUpdateItemsByIds(ids, db)
-            .then(resolve)
-            .catch(reject);
+            .then(() => {
+              db.end();
+              resolve();
+            })
+            .catch(err => {
+              db.end();
+              reject(err);
+            });
         })
-        .catch(reject);
+        .catch(err => {
+          db.end();
+          reject(err);
+        });
     });
   }
 
@@ -43,7 +52,7 @@ export class ItemServiceV2 {
       let completed = 0;
       let successfull = 0;
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5,
+        requestsPerSecond: 25,
         promiseImplementation: Promise
       });
       const promises: Promise<any>[] = [];
