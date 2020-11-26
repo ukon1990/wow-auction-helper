@@ -38,6 +38,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import { DetailsDialogComponent } from './components/dashboard-item/details-dialog/details-dialog.component';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
+import { TagsComponent } from './components/configure/tags/tags.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import {MatIconModule} from '@angular/material/icon';
     RuleComponent,
     MigrationComponent,
     DetailsDialogComponent,
+    TagsComponent,
   ],
   imports: [
     CommonModule,

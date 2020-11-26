@@ -13,6 +13,7 @@ export interface DashboardV2 {
   title: string;
   description?: string;
   columns: ColumnDescription[];
+  tags?: string[];
   sortOrder: number;
   isDisabled?: boolean;
   isDefault?: boolean;

@@ -16,6 +16,7 @@ import {DashboardService} from '../../services/dashboard.service';
 import {Report} from '../../../../utils/report.util';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {AuthService} from '../../../user/services/auth.service';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete/autocomplete';
 
 @Component({
   selector: 'wah-configure',
@@ -41,6 +42,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     idParam: new FormControl(),
     title: new FormControl(null, Validators.required),
     description: new FormControl(null, Validators.maxLength(128)),
+    tags: new FormControl([]),
     columns: new FormArray([]),
     sortOrder: new FormControl(0),
     onlyItemsWithRules: new FormControl(false),
