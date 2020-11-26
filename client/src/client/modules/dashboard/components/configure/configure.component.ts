@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
-import {ObjectUtil, TextUtil} from '@ukon1990/js-utilities';
+import {ObjectUtil} from '@ukon1990/js-utilities';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../data/rule-fields.data';
 import {Profession} from '../../../../../../../api/src/profession/model';
@@ -15,6 +15,7 @@ import {getDefaultDashboards} from '../../data/default-doards.data';
 import {DashboardService} from '../../services/dashboard.service';
 import {Report} from '../../../../utils/report.util';
 import {ProfessionService} from '../../../crafting/services/profession.service';
+import {AuthService} from '../../../user/services/auth.service';
 
 @Component({
   selector: 'wah-configure',
@@ -23,6 +24,7 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
 })
 export class ConfigureComponent implements OnInit, AfterViewInit {
   @Output() event: EventEmitter<void> = new EventEmitter<void>();
+  isAuthenticated: boolean;
   fields = ruleFields;
   professions: Profession[] = [];
   tmpBoard: DashboardV2;
@@ -38,6 +40,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     parentId: new FormControl(),
     idParam: new FormControl(),
     title: new FormControl(null, Validators.required),
+    description: new FormControl(null, Validators.maxLength(128)),
     columns: new FormArray([]),
     sortOrder: new FormControl(0),
     onlyItemsWithRules: new FormControl(false),
@@ -76,6 +79,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
+    private authService: AuthService,
     public dialogRef: MatDialogRef<ConfigureComponent>,
     @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2 | any,
     private auctionService: AuctionsService,
@@ -95,6 +99,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     } else {
       Report.send('Creating new board', 'Dashboard.ConfigureComponent');
     }
+    this.isAuthenticated = this.authService.isAuthenticated.value;
   }
 
   ngAfterViewInit() {

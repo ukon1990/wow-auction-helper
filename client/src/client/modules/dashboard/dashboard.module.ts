@@ -36,6 +36,8 @@ import { MigrationComponent } from './components/migration/migration.component';
 import {CoreModule} from '../core/core.module';
 import {MatStepperModule} from '@angular/material/stepper';
 import { DetailsDialogComponent } from './components/dashboard-item/details-dialog/details-dialog.component';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -78,7 +80,9 @@ import { DetailsDialogComponent } from './components/dashboard-item/details-dial
     MatDatepickerModule,
     MatListModule,
     CoreModule,
-    MatStepperModule
+    MatStepperModule,
+    MatChipsModule,
+    MatIconModule
   ]
 })
 export class DashboardModule {

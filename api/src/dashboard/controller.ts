@@ -8,14 +8,28 @@ exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) 
   if (!token) {
     Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
   } else {
-    new DashboardService().getAll(token.sub)
+    new DashboardService(token).getAll(token.sub)
       .then(res => Response.send(res, callback))
       .catch(error => Response.error(callback, error));
   }
 };
 
-exports.save = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new DashboardService().save('event', JSON.parse(event.body))
-    .then(res => Response.send(res, callback))
-    .catch(error => Response.error(callback, error));
+exports.save = (event: APIGatewayEvent, context: Context, callback: Callback) => {  const token = AuthorizationUtil.isValidToken(event);
+  if (!token) {
+    Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
+  } else {
+    new DashboardService(token).save('event', JSON.parse(event.body))
+      .then(res => Response.send(res, callback))
+      .catch(error => Response.error(callback, error));
+  }
+};
+
+exports.delete = (event: APIGatewayEvent, context: Context, callback: Callback) => {  const token = AuthorizationUtil.isValidToken(event);
+  if (!token) {
+    Response.error(callback, {code: 401, message: 'Not authorized'}, event, 401);
+  } else {
+    new DashboardService(token).delete('event', JSON.parse(event.body))
+      .then(res => Response.send(res, callback))
+      .catch(error => Response.error(callback, error));
+  }
 };

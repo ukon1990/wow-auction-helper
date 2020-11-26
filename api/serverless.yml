@@ -288,6 +288,17 @@ functions:
     events:
       - http:
           method: POST
-          path: dashboard/save
+          path: dashboard
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
+    deleteDashboard:
+      handler: src/dashboard/controller.save
+      tags:
+        Function: Wah-deleteDashboard
+        Project: WAH
+      events:
+        - http:
+            method: DELETE
+            path: dashboard/{id}
+            cors:
+              origin: 'http://localhost:4200,https://wah.jonaskf.net'

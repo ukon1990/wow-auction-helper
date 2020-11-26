@@ -58,7 +58,7 @@ export class DashboardService {
     });
 
     this.sm.add(settingsService.dashboards,
-        boards => this.saveAll(boards, true, false));
+      boards => this.saveAll(boards, true, false));
 
     this.sm.add(TsmService.list, () => {
       if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
@@ -85,6 +85,47 @@ export class DashboardService {
       this.allBoardsCalculatedEvent.next(+new Date());
     }
     Report.debug('Boards', this.list.value);
+  }
+
+  getAllPublic(): Promise<DashboardV2[]> {
+    return new Promise<DashboardV2[]>((resolve, reject) => {
+      this.http.get(Endpoints.getLambdaUrl('dashboard'))
+        .toPromise()
+        .then((res: DashboardV2[]) => resolve(res))
+        .catch(reject);
+    });
+  }
+
+  saveToPublicDataset(board: DashboardV2): Promise<DashboardV2> {
+    return new Promise<DashboardV2>((resolve, reject) => {
+      this.http.post(Endpoints.getLambdaUrl('dashboard'), board)
+        .toPromise()
+        .then((res: DashboardV2) => {
+          if (res.id) {
+            this.save(res)
+              .catch(console.error);
+            resolve(res);
+          } else {
+            Report.debug('saveToPublicDataset with no id', res);
+          }
+        })
+        .catch(reject);
+    });
+  }
+
+  deletePublicEntry(board: DashboardV2): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.http.delete(Endpoints.getLambdaUrl('dashboard/' + board.id))
+        .toPromise()
+        .then((res) => {
+          Report.debug('Delete dashboard response', res);
+          board.isPublic = false;
+          this.save(board)
+            .catch(console.error);
+          resolve();
+        })
+        .catch(reject);
+    });
   }
 
   /*
