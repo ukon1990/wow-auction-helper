@@ -24,12 +24,12 @@ describe('ItemHandler', () => {
     expect(item.patch).toBe('6.0.1.18125');
   });
 
-  describe('Not a test', () => {
+  xdescribe('Not a test', () => {
     it('force insert or update', async () => {
       environment.test = false;
       const db = new DatabaseUtil(false);
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 1,
+        requestsPerSecond: 5,
         promiseImplementation: Promise
       });
       jest.setTimeout(99999999);
@@ -60,7 +60,7 @@ describe('ItemHandler', () => {
                                   UNION ALL
                                   SELECT itemId as id
                                   FROM itemPriceHistoryPerHour
-                                  WHERE ahId = 69 AND itemId NOT IN (
+                                  WHERE date >= NOW() - INTERVAL 2 DAY AND itemId NOT IN (
                                     SELECT id FROM items
                                   )) as tbl
                                   GROUP BY id
@@ -70,27 +70,34 @@ describe('ItemHandler', () => {
         .then(async () => await db.query(missingFromCrafting).then(res => ids = res.map(id => id.id)))
         .catch(console.error);
       const start = 185100, end = start + 100000, diff = end - start;
+
+      // TODO: Missing from blizz API: Enchating materisls! 172231, 172230, 172232
       for (const id of ids) {
-        promises.push(
-          promiseThrottle.add(() => new ItemHandler()
-            .addItem(id, 'en_GB', db)
-            .then(item => {
+        await new ItemHandler()
+          .addItem(id, 'en_GB', db)
+          .then(item => {
+            completed++;
+            console.log(`Completed ${completed} / ${ids.length} (${
+              Math.round(completed / ids.length * 100)}%)`);
+          })
+          .catch(error => {
               completed++;
-              console.log(`Completed ${completed} / ${diff} (${
-                Math.round(completed / diff * 100)}%)`);
-            })
-            .catch(error => {
-                completed++;
-                console.error(error);
-              }
-            )));
+              console.error(error);
+            }
+          );
+        /*
+        promises.push(
+          promiseThrottle.add(() =>
+        ));*/
       }
 
+      /*
       await Promise.all(promises)
         .then(() => console.log('Success!'))
         .catch((error) => {
           console.error(error);
         });
+      */
       db.end();
       environment.test = true;
       expect(completed).toBeGreaterThan(0);

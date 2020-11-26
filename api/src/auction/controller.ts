@@ -18,7 +18,9 @@ exports.auctionsDownloadAndSave = (event: APIGatewayEvent, context: Context, cal
 };
 
 exports.updateHourlyRealmData = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new StatsService().processRecord(event['Records']);
+  new StatsService().processRecord(event['Records'])
+    .then(() => Response.send({}, callback))
+    .catch(error => Response.error(callback, error, event, 500));
 };
 
 exports.updateAllRealmDailyData = (event: APIGatewayEvent, context: Context, callback: Callback) => {

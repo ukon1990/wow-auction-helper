@@ -1,12 +1,20 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
 import {Response} from '../utils/response.util';
 import {NpcHandler} from '../handlers/npc.handler';
+import {DatabaseUtil} from '../utils/database.util';
 
 
 exports.addNewNPCsByIds = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  NpcHandler.addNewNPCsByIds(JSON.parse(event.body).ids)
-    .then(result => Response.send(result, callback))
-    .catch(error => Response.error(callback, error, event, 500));
+  const db = new DatabaseUtil(false);
+  NpcHandler.addNewNPCsByIds(JSON.parse(event.body).ids, db)
+    .then(result => {
+      db.end();
+      Response.send(result, callback);
+    })
+    .catch(error => {
+      db.end();
+      Response.error(callback, error, event, 500);
+    });
 };
 
 exports.getAll = (event: APIGatewayEvent, context: Context, callback: Callback) => {
