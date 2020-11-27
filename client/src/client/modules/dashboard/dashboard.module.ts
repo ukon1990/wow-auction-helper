@@ -36,6 +36,11 @@ import { MigrationComponent } from './components/migration/migration.component';
 import {CoreModule} from '../core/core.module';
 import {MatStepperModule} from '@angular/material/stepper';
 import { DetailsDialogComponent } from './components/dashboard-item/details-dialog/details-dialog.component';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
+import { TagsComponent } from './components/configure/tags/tags.component';
+import { SearchComponent } from './components/search/search.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -52,6 +57,8 @@ import { DetailsDialogComponent } from './components/dashboard-item/details-dial
     RuleComponent,
     MigrationComponent,
     DetailsDialogComponent,
+    TagsComponent,
+    SearchComponent,
   ],
   imports: [
     CommonModule,
@@ -78,7 +85,10 @@ import { DetailsDialogComponent } from './components/dashboard-item/details-dial
     MatDatepickerModule,
     MatListModule,
     CoreModule,
-    MatStepperModule
+    MatStepperModule,
+    MatChipsModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ]
 })
 export class DashboardModule {

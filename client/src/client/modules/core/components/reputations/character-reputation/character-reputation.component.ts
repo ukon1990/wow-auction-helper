@@ -3,7 +3,6 @@ import {Character} from '../../../../character/models/character.model';
 import {ReputationVendorsData} from '../../../../../data/reputation/reputations-list.data';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {SharedService} from '../../../../../services/shared.service';
-import {Subscription} from 'rxjs';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {ErrorOptions, ErrorReport} from '../../../../../utils/error-report.util';
 import {CharacterService} from '../../../../character/services/character.service';
@@ -25,7 +24,7 @@ import {BackgroundDownloadService} from '../../../services/background-download.s
 })
 export class CharacterReputationComponent implements AfterContentInit, OnDestroy {
   @Input() character: Character;
-  reputations = ReputationVendorsData.bfa;
+  reputations = ReputationVendorsData.shadowLands;
   professionMap: Map<number, Profession> = new Map<number, Profession>();
   relevantProfessions = [];
   relevantProfessionsMap = new Map<number, any>();

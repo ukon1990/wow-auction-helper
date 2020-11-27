@@ -8,7 +8,7 @@ describe('NPCUtil', () => {
   });
   it('Can fetch data for mob', async () => {
     const npcId = 90517;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Felbound Wolf');
     expect(npc.name.fr_FR).toBe('Loup gangre-lié');
@@ -29,7 +29,7 @@ describe('NPCUtil', () => {
 
   it('Can fetch data for vendor', async () => {
     const npcId = 3313;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     console.log(npc);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Trak\'gen');
@@ -54,7 +54,7 @@ describe('NPCUtil', () => {
 
   it('Can fetch data for a vendor selling with item as currency', async () => {
     const npcId = 66678;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Krystel');
     expect(npc.zoneId).toBe(5840);
@@ -75,7 +75,7 @@ describe('NPCUtil', () => {
 
   it('Can fetch data for a vendor selling limited supply item', async () => {
     const npcId = 6568;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Vizzklick');
     expect(npc.isAlliance).toBeTruthy();
@@ -102,15 +102,16 @@ describe('NPCUtil', () => {
 
   it('Can handle skinning', async () => {
     const npcId = 135510;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Azuresail the Ancient');
     expect(npc.isAlliance).toBeFalsy();
     expect(npc.isHorde).toBeFalsy();
-    expect(npc.minLevel).toBe(120);
-    expect(npc.maxLevel).toBe(120);
+    expect(npc.minLevel).toBe(50);
+    expect(npc.maxLevel).toBe(50);
     expect(npc.tag.en_GB).toBeFalsy();
     expect(npc.skinning.length).toBe(6);
+    console.log('skinning', npc.skinning);
 
     const shimmerScale = npc.skinning.filter(d => d.id === 153050)[0];
     expect(shimmerScale.id).toBe(153050);
@@ -119,7 +120,7 @@ describe('NPCUtil', () => {
 
   it('Can handle worth if present', async () => {
     const npcId = 152364;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Radiance of Azshara');
     expect(npc.classification).toBe(1);
@@ -130,7 +131,7 @@ describe('NPCUtil', () => {
 
   it('Can get WOD garrison vendor', async () => {
     const npcId = 87201;
-    const npc: NPC = await NPCUtil.getById(npcId);
+    const npc: NPC = await NPCUtil.getById(npcId, undefined);
     expect(npc.id).toBe(npcId);
     expect(npc.name.en_GB).toBe('Pyxni Pennypocket');
     for (const item of npc.sells) {

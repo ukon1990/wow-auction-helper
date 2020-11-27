@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {DashboardV2} from '../models/dashboard-v2.model';
+import {DashboardMinimal, DashboardV2} from '../models/dashboard-v2.model';
 import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -36,13 +36,14 @@ export class DashboardService {
   private isInitiated: boolean;
   private lastUpdateRequest: number;
 
-  constructor(private auctionsService: AuctionsService,
-              private db: DatabaseService,
-              private authService: AuthService,
-              private settingsService: SettingsService,
-              private http: HttpClient,
-              private professionService: ProfessionService,
-              private backgroundService: BackgroundDownloadService
+  constructor(
+    private auctionsService: AuctionsService,
+    private db: DatabaseService,
+    private authService: AuthService,
+    private settingsService: SettingsService,
+    private http: HttpClient,
+    private professionService: ProfessionService,
+    private backgroundService: BackgroundDownloadService
   ) {
     // this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
     this.sm.add(this.professionService.listWithRecipes, () => {
@@ -58,7 +59,7 @@ export class DashboardService {
     });
 
     this.sm.add(settingsService.dashboards,
-        boards => this.saveAll(boards, true, false));
+      boards => this.saveAll(boards, true, false));
 
     this.sm.add(TsmService.list, () => {
       if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
@@ -85,6 +86,78 @@ export class DashboardService {
       this.allBoardsCalculatedEvent.next(+new Date());
     }
     Report.debug('Boards', this.list.value);
+  }
+
+  getAllPublic(): Promise<DashboardMinimal[]> {
+    return new Promise<DashboardMinimal[]>((resolve, reject) => {
+      this.http.get(Endpoints.getLambdaUrl('dashboard'))
+        .toPromise()
+        .then((res: DashboardMinimal[]) => resolve(res))
+        .catch(reject);
+    });
+  }
+
+  getCopyById(id: string): Promise<DashboardV2> {
+    return this.http.get(Endpoints.getLambdaUrl('dashboard/copy/' + id))
+      .toPromise() as Promise<DashboardV2>;
+  }
+
+  importPublicBoard(id: string, existing: DashboardV2): Promise<void> {
+    return new Promise((resolve) => {
+      this.getCopyById(id)
+        .then((board: DashboardV2) => {
+          this.save({
+            ...board,
+            id: existing ? existing.id : board.id
+          })
+            .catch(console.error);
+          resolve();
+        })
+        .catch(error => {
+          ErrorReport.sendError('DashboardService.importPublicBoard', error);
+          resolve();
+        });
+    });
+  }
+
+  saveToPublicDataset(board: DashboardV2): Promise<DashboardV2> {
+    return new Promise<DashboardV2>((resolve, reject) => {
+      this.http.post(Endpoints.getLambdaUrl('dashboard'), {
+        ...board,
+        isDisabled: false // In case the user has a disabled board that they are updating which also is public
+      })
+        .toPromise()
+        .then((res: DashboardV2) => {
+          if (res.id) {
+            res.isDisabled = board.isDisabled;
+            this.save(res)
+              .catch(console.error);
+            resolve(res);
+          } else {
+            Report.debug('saveToPublicDataset with no id', res);
+          }
+        })
+        .catch(reject);
+    });
+  }
+
+  deletePublicEntry(board: DashboardV2, deleteLocal = false): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.http.delete(Endpoints.getLambdaUrl('dashboard/' + board.id))
+        .toPromise()
+        .then((res) => {
+          Report.debug('Delete dashboard response', res);
+          if (deleteLocal) {
+            this.delete(board);
+          } else {
+            board.isPublic = false;
+            this.save(board)
+              .catch(console.error);
+          }
+          resolve();
+        })
+        .catch(reject);
+    });
   }
 
   /*
@@ -177,7 +250,6 @@ export class DashboardService {
     if (!board.createdBy && this.authService.isAuthenticated.value && !board.isDefault) {
       board.createdBy = this.authService.user.value.getUsername();
     }
-    board.lastModified = +new Date();
 
     if (calculatePrice) {
       DashboardCalculateUtil.calculate(board, this.auctionsService.mapped.value);

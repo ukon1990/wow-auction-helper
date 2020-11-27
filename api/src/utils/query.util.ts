@@ -54,7 +54,7 @@ export class RDSQueryUtil<T> {
   }
 
   /* Need to have the same column count */
-  multiInsert(list: T[]): string {
+  multiInsert(list: T[], terminate = true): string {
     let queries = '';
     for (let i = 0, l = list.length; i < l; ++i) {
       const cv = this.getColumnsAndValues(list[i]);
@@ -67,7 +67,32 @@ export class RDSQueryUtil<T> {
         queries += `,(${cv.values.join(',')})`;
       }
     }
-    return queries + ';';
+    if (terminate) {
+      queries += ';';
+    }
+    return queries;
+  }
+
+  multiInsertOrUpdate(list: T[], updateTimestamp: boolean): string {
+    const query = this.multiInsert(list, false);
+
+    if (!query || !query.length) {
+      return;
+    }
+    const columnMap = new Map<string, string>();
+    const columns = [];
+    list.forEach(entry => {
+      const cv = this.getColumnsAndValues(entry);
+      cv.columns.forEach(column => {
+        if (!columnMap.has(column) && column !== 'id' && column !== 'timestamp') {
+          columnMap.set(column, column);
+          columns.push(column);
+        }
+      });
+    });
+    return `${query}  ON DUPLICATE KEY UPDATE ${
+      columns.map((column) => `${column} = VALUES(${column})`).join(',')
+    } ${updateTimestamp ? ', timestamp = CURRENT_TIMESTAMP' : ''};`;
   }
 
   private getColumnsAndValues(object: T) {
@@ -141,10 +166,8 @@ export class NoSQLQueryUtil {
     const attributeValues = {
       ':lastModified': +new Date()
     };
-    const updateExpression = [
-    ];
-    const expressionAttributeNames = {
-    };
+    const updateExpression = [];
+    const expressionAttributeNames = {};
 
     if (!input['lastModified']) {
       updateExpression.push('lastModified = :lastModified');

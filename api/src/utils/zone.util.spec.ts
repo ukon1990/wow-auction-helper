@@ -10,11 +10,11 @@ describe('ZoneUtil', () => {
     const zone: Zone = await ZoneUtil.getById(zoneId);
     expect(zone.id).toBe(zoneId);
     expect(zone.name.en_GB).toBe('Stormsong Valley');
-    expect(zone.territoryId).toBe(2); // Contested
+    expect(zone.territoryId).toBe(1); // Contested
     expect(zone.typeId).toBe(0); // Zone
     expect(zone.parentName).toBeFalsy();
-    expect(zone.minLevel).toBe(115);
-    expect(zone.maxLevel).toBe(undefined);
+    expect(zone.minLevel).toBe(35);
+    expect(zone.maxLevel).toBe(50);
   });
 
   it('getById returns Baradin hold and type = World PvP territory = Contested', async () => {

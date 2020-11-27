@@ -7,7 +7,6 @@ import {RDSQueryUtil} from './query.util';
 import {DatabaseUtil} from './database.util';
 import {LocaleUtil} from './locale.util';
 import {TextUtil} from '@ukon1990/js-utilities';
-import {ItemHandler} from '../handlers/item.handler';
 import {ZoneUtil} from './zone.util';
 
 const PromiseThrottle: any = require('promise-throttle');
@@ -49,7 +48,7 @@ export class VendorItem {
             price = cost[0];
           }
         } catch (e) {
-          console.error('NPCUtil.setFromBody: cost', cost,  e);
+          console.error('NPCUtil.setFromBody: cost', cost, e);
         }
         return {
           id,
@@ -73,37 +72,28 @@ export class DroppedItem {
   static setFromBody(body: string): DroppedItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'drops').map(({id, modes}) => ({
       id,
-      dropped: modes[1].count,
-      outOf: modes[1].outof,
-      dropChance: modes[1].count / modes[1].outof
+      dropped: modes[1] ? modes[1].count : 0,
+      outOf: modes[1] ? modes[1].outof : 0,
+      dropChance: modes[1] ? (modes[1].count / modes[1].outof) : 0
     }) as DroppedItem);
   }
 }
 
 export class SkinnedItem {
   id: number;
-  count: number = null;
+  dropped: number = null;
+  outOf: number = null;
   dropChance: number = null;
 
   static setFromBody(body: string): SkinnedItem[] {
     return WoWHeadUtil.getNewListViewData(body, 'item', 'skinning')
-      .map(({id, pctstack, count, totalCount}) => {/*
-        let dropChance = 0;
-        console.log(pctstack);
-        try {
-          if (pctstack) {
-            // tslint:disable-next-line:no-eval
-            const stackChance = eval(pctstack);
-            Object.keys(stackChance)
-              .forEach(size => dropChance += stackChance[size]);
-            console.log(stackChance, dropChance);
-          }
-        } catch (e) {
-        }*/
+      .map((entry: any) => {
+        // In case I care later: pctstack is = {1: 32.8257,2: 67.1743}
+        const {id, count, totalCount} = entry;
         return {
           id,
-          count,
-          totalCount,
+          dropped: count,
+          outOf: totalCount,
           dropChance: count / totalCount
         };
       });
@@ -238,7 +228,8 @@ export class NPCUtil {
   private static ignoreItemIds = {};
 
   // 160711
-  static getById(id: number, progress?: { processed: number, length: number }) {
+  static getById(id: number, progress?: { processed: number; length: number }, db: DatabaseUtil = new DatabaseUtil()) {
+    console.log('Fetching NPC ', id);
     return new Promise<NPC>((resolve, reject) => {
       const npc: NPC = new NPC(id),
         promises: Promise<any>[] = [];
@@ -258,7 +249,7 @@ export class NPCUtil {
               Math.round((progress.processed / progress.length) * 100)}% (${
               progress.processed} of ${progress.length}) - ${npc.name.en_GB}`);
           }
-          await this.insertNPCIntoDB(npc)
+          await this.insertNPCIntoDB(npc, db)
             .then(() => {
               // console.log(`Added ${npc.name.en_GB} to db`);
             })
@@ -435,34 +426,52 @@ export class NPCUtil {
   }
 
   private static async insertNPCIntoDB(npc: NPC, conn?: DatabaseUtil) {
+    const connIsPassedDown = !!conn;
+    if (!conn) {
+      conn = new DatabaseUtil(false);
+    }
     return new Promise<NPC>(async (resolve, reject) => {
       // Need to add the zone if it is missing
-      await ZoneUtil.getById(npc.zoneId)
+      if (!npc.zoneId) {
+        resolve();
+        return;
+      }
+      await ZoneUtil.getById(npc.zoneId, undefined, conn)
         .then(() => {
-          conn = new DatabaseUtil(false);
           this.insertNpcIntoDB(npc, conn)
             .then(async () => {
-              await this.insertNameIntoDB(npc).catch(console.error);
-              await this.insertTagIntoDB(npc).catch(console.error);
+              await this.insertNameIntoDB(npc, conn).catch(console.error);
+              await this.insertTagIntoDB(npc, conn).catch(console.error);
               await this.insertCoordsIntoDB(npc, conn).catch(console.error);
-              await this.insertSellsIntoDB(npc, conn).catch(console.error);
-              await this.insertDropsIntoDB(npc, conn).catch(console.error);
-              conn.end();
+              await this.insertSourceValuesIntoDB(npc.id, npc.sells, 'npcSells', conn).catch(console.error);
+              await this.insertSourceValuesIntoDB(npc.id, npc.drops, 'npcDrops', conn).catch(console.error);
+              await this.insertSourceValuesIntoDB(npc.id, npc.skinning, 'npcSkins', conn).catch(console.error);
+
+              if (!connIsPassedDown) {
+                conn.end();
+              }
 
               resolve(npc);
             })
             .catch((error) => {
-              conn.end();
+              if (!connIsPassedDown) {
+                conn.end();
+              }
               reject(error);
             });
         })
-        .catch(reject);
+        .catch(err => {
+          if (!connIsPassedDown) {
+            conn.end();
+          }
+          reject(err);
+        });
     });
   }
 
   private static insertNpcIntoDB(npc: NPC, conn: DatabaseUtil) {
     return new Promise<any>((resolve, reject) => {
-      const sql = new RDSQueryUtil('npc').insert({
+      const sql = new RDSQueryUtil('npc').insertOrUpdate({
         id: npc.id,
         isAlliance: npc.isAlliance,
         isHorde: npc.isHorde,
@@ -472,6 +481,7 @@ export class NPCUtil {
         expansionId: npc.expansionId,
         patch: npc.patch
       });
+      console.log('SQL for id:', npc.id, sql);
       conn.query(sql)
         .then(resolve)
         .catch((e) => {
@@ -485,24 +495,15 @@ export class NPCUtil {
     });
   }
 
-  private static async insertDropsIntoDB(npc: NPC, conn: DatabaseUtil) {
-    const drops = npc.drops.map(drop => ({
-      npcId: npc.id,
-      ...drop
+  private static async insertSourceValuesIntoDB(npcId, list: any[], table: string, conn: DatabaseUtil) {
+    const mappedList = list.map(npc => ({
+      npcId,
+      ...npc
     }));
-    const sql = new RDSQueryUtil('npcDrops').multiInsert(drops);
-    await conn.query(sql)
-      .catch(e => {
-        this.loggIfNotDuplicateError(e, sql);
-      });
-  }
-
-  private static async insertSellsIntoDB(npc: NPC, conn: DatabaseUtil) {
-    const sellers = npc.sells.map(sells => ({
-      npcId: npc.id,
-      ...sells
-    }));
-    const sql = new RDSQueryUtil('npcSells').multiInsert(sellers);
+    if (!mappedList.length) {
+      return;
+    }
+    const sql = new RDSQueryUtil(table).multiInsertOrUpdate(mappedList, true);
     await conn.query(sql)
       .catch(e => {
         console.log(e);
@@ -525,7 +526,7 @@ export class NPCUtil {
       id: npc.id,
       ...coords
     }));
-    const sql = new RDSQueryUtil('npcCoordinates').multiInsert(coordinates);
+    const sql = new RDSQueryUtil('npcCoordinates').multiInsertOrUpdate(coordinates, true);
     try {
       await conn.query(sql);
       await conn.query(new RDSQueryUtil('npc').update(npc.id, {id: npc.id}));
@@ -534,20 +535,20 @@ export class NPCUtil {
     }
   }
 
-  private static async insertNameIntoDB(npc: NPC) {
+  private static async insertNameIntoDB(npc: NPC, conn: DatabaseUtil) {
     try {
       if (Object.keys(npc.name).filter(k => npc.name[k] === undefined).length > 0) {
         return;
       }
-      await LocaleUtil.insertToDB('npcName', 'id', npc.name);
+      await LocaleUtil.insertToDB('npcName', 'id', npc.name, conn);
     } catch (e) {
     }
   }
 
-  private static async insertTagIntoDB(npc: NPC) {
+  private static async insertTagIntoDB(npc: NPC, conn: DatabaseUtil) {
     if (npc.tag && npc.tag.en_GB) {
       try {
-        await LocaleUtil.insertToDB('npcTag', 'id', npc.tag);
+        await LocaleUtil.insertToDB('npcTag', 'id', npc.tag, conn);
       } catch (e) {
       }
     }

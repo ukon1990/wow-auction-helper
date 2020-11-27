@@ -8,10 +8,10 @@ import {RDSQueryUtil} from '../utils/query.util';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class NpcHandler {
-  static addNewNPCsByIds(ids: number[]): Promise<NPC[]> {
+  static addNewNPCsByIds(ids: number[], db: DatabaseUtil): Promise<NPC[]> {
     return new Promise<NPC[]>((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 10,
+        requestsPerSecond: 5,
         promiseImplementation: Promise
       });
       const promises = [];
@@ -19,8 +19,13 @@ export class NpcHandler {
         processed: 0,
         length: ids.length
       };
-      ids.forEach(id => promises.push(
-        promiseThrottle.add(() => NPCUtil.getById(id['id'] || id, progress))));
+      ids.forEach(id => {
+        if (!id) {
+          return;
+        }
+        promises.push(
+          promiseThrottle.add(() => NPCUtil.getById(id, progress, db)));
+      });
       Promise.all(promises)
         .then((npcs: NPC[]) => {
           resolve(npcs);
@@ -58,13 +63,14 @@ export class NpcHandler {
         resolve();
         return;
       }
+      console.log('First npc:', ids[0]);
 
       await db.query(`SELECT id FROM npc WHERE id not in (${ids.join(',')})`)
-        .then(async (newIds: number[]) => {
+        .then(async (newIds: { id: number }[]) => {
           let result = [];
           if (newIds && newIds.length) {
             console.log(`Adding ${newIds.length} new NPCs to the DB`);
-            result = await this.addNewNPCsByIds(newIds);
+            result = await this.addNewNPCsByIds(newIds.map(({id}) => id), db);
           }
           resolve(result);
         })

@@ -19,6 +19,14 @@ export class DatabaseUtil {
         resolve([]);
         return;
       }
+
+      if (!query || !query.length) {
+        reject({
+          message: 'Query is empty'
+        });
+        return;
+      }
+
       this.enqueueHandshake()
         .then(() => {
           this.connection.query(query, (err: MysqlError, rows: any[]) => {

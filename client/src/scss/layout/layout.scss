@@ -212,3 +212,16 @@ wah-materials,
     }
   }
 }
+
+wah-search .description-line {
+  display: flex;
+  flex-direction: row;
+
+  .description {
+    flex: 1 1;
+  }
+
+  .actions {
+    flex: 0 1 20em;
+  }
+}
