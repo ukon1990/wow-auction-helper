@@ -4,7 +4,7 @@ import {ItemRule, Rule} from '../models/rule.model';
 import {ColumnDescription} from '../../table/models/column-description';
 import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
-import {TextUtil} from '@ukon1990/js-utilities';
+import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
@@ -282,7 +282,7 @@ export class DashboardCalculateUtil {
   }
 
   private static getValue(item: AuctionItem, field: string): any {
-    if (!field) {
+    if (EmptyUtil.isNullOrUndefined(field)) {
       return undefined;
     }
     return this.getValueFromField(field, item);
@@ -300,13 +300,13 @@ export class DashboardCalculateUtil {
         let value;
         fieldPath.split('.')
           .forEach(key => {
-            if (!value && item[key] && item) {
+            if (EmptyUtil.isNullOrUndefined(value) && item[key] && item) {
               value = item[key];
-            } else if (value) {
+            } else if (!EmptyUtil.isNullOrUndefined(value)) {
               value = value[key];
             }
           });
-        if (value) {
+        if (!EmptyUtil.isNullOrUndefined(value)) {
           resultValues.push(value);
         }
       });
