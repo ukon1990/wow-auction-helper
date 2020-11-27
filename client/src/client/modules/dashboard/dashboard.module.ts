@@ -39,6 +39,8 @@ import { DetailsDialogComponent } from './components/dashboard-item/details-dial
 import {MatChipsModule} from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
 import { TagsComponent } from './components/configure/tags/tags.component';
+import { SearchComponent } from './components/search/search.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,7 @@ import { TagsComponent } from './components/configure/tags/tags.component';
     MigrationComponent,
     DetailsDialogComponent,
     TagsComponent,
+    SearchComponent,
   ],
   imports: [
     CommonModule,
@@ -84,7 +87,8 @@ import { TagsComponent } from './components/configure/tags/tags.component';
     CoreModule,
     MatStepperModule,
     MatChipsModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ]
 })
 export class DashboardModule {

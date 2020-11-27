@@ -1,6 +1,6 @@
-import {EventEmitter, Injectable, Sanitizer} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {DashboardV2} from '../models/dashboard-v2.model';
+import {DashboardMinimal, DashboardV2} from '../models/dashboard-v2.model';
 import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
 import {AuctionsService} from '../../../services/auctions.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -37,7 +37,6 @@ export class DashboardService {
   private lastUpdateRequest: number;
 
   constructor(
-    private sanitizer: Sanitizer,
     private auctionsService: AuctionsService,
     private db: DatabaseService,
     private authService: AuthService,
@@ -89,28 +88,36 @@ export class DashboardService {
     Report.debug('Boards', this.list.value);
   }
 
-  getAllPublic(): Promise<DashboardV2[]> {
-    return new Promise<DashboardV2[]>((resolve, reject) => {
+  getAllPublic(): Promise<DashboardMinimal[]> {
+    return new Promise<DashboardMinimal[]>((resolve, reject) => {
       this.http.get(Endpoints.getLambdaUrl('dashboard'))
         .toPromise()
-        .then((res: DashboardV2[]) => resolve(res))
+        .then((res: DashboardMinimal[]) => resolve(res))
         .catch(reject);
     });
   }
 
-  importPublicBoard(board: DashboardV2): void {
-    this.save({
-      ...board,
-      id: generateUUID(),
-      parentId: board.id,
-      isPublic: false,
-      isDisabled: false,
-    })
-      .catch(console.error);
+  getCopyById(id: string): Promise<DashboardV2> {
+    return this.http.get(Endpoints.getLambdaUrl('dashboard/copy/' + id))
+      .toPromise() as Promise<DashboardV2>;
+  }
+
+  importPublicBoard(id: string): Promise<void> {
+    return new Promise((resolve) => {
+      this.getCopyById(id)
+        .then((board: DashboardV2) => {
+          this.save(board)
+            .catch(console.error);
+          resolve();
+        })
+        .catch(error => {
+          ErrorReport.sendError('DashboardService.importPublicBoard', error);
+          resolve();
+        });
+    });
   }
 
   saveToPublicDataset(board: DashboardV2): Promise<DashboardV2> {
-    // board.title = this.sanitizer.sanitize(SecurityContext.URL, board.title);
     return new Promise<DashboardV2>((resolve, reject) => {
       this.http.post(Endpoints.getLambdaUrl('dashboard'), {
         ...board,
@@ -240,7 +247,6 @@ export class DashboardService {
     if (!board.createdBy && this.authService.isAuthenticated.value && !board.isDefault) {
       board.createdBy = this.authService.user.value.getUsername();
     }
-    board.lastModified = +new Date();
 
     if (calculatePrice) {
       DashboardCalculateUtil.calculate(board, this.auctionsService.mapped.value);

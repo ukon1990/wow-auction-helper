@@ -1,0 +1,87 @@
+<wah-close-btn></wah-close-btn>
+
+<h1 mat-dialog-title>
+  Public dashboards
+</h1>
+
+<mat-dialog-content>
+  <em>Here you can find and copy dashboards created by other users, that are set to public in the settings.</em>
+
+  <mat-form-field class="row col-md-12">
+    <input matInput
+           [formControl]="searchField"
+           placeholder="Search by id, title, description or tag"
+    />
+  </mat-form-field>
+
+  <wah-loading *ngIf="isLoading; else contentTemplate" message="Loading…"></wah-loading>
+
+  <ng-template #contentTemplate>
+    <mat-list class="mb-2">
+      <mat-list-item *ngFor="let board of filteredBoards" class="mat-elevation-z5 mt-1 mb-1">
+        <h3 mat-line>
+          {{board.title}}
+        </h3>
+        <div mat-line>
+          <div class="row">
+            <div class="col-md-9">
+              {{board.description}}
+
+              <mat-chip-list aria-label="Fish selection">
+                <mat-chip *ngFor="let tag of board.tags" color="primary">
+                  {{ tag }}
+                </mat-chip>
+              </mat-chip-list>
+            </div>
+            <div class="col-md-3" *ngIf="!myDashboards.has(board.id)">
+              <button
+                      [disabled]="myCopiedDashboards.has(board.id) &&
+                        myCopiedDashboards.get(board.id).lastModified <= board.lastModified"
+                      type="button"
+                      class="float-right"
+                      mat-raised-button
+                      color="accent"
+                      matTooltip="Import/update a copy of this board into your library"
+                      (click)="import(board)"
+              >
+                <fa-icon *ngIf="!board.isImporting; else loadingImportTemplate"
+                         [icon]="myCopiedDashboards.has(board.id) ? faUpdate : faImport"></fa-icon>
+                {{myCopiedDashboards.has(board.id) ? 'Update' : 'Copy'}}
+              </button>
+              <button type="button"
+                      class="float-right mr-2"
+                      mat-raised-button
+                      color="primary"
+                      matTooltip="Import a copy of this board into you library"
+                      (click)="preview(board)"
+              >
+                <fa-icon *ngIf="!board.isLoading; else loadingPreviewTemplate"
+                         [icon]="faEye"></fa-icon>
+                Preview
+              </button>
+
+              <ng-template #loadingPreviewTemplate>
+                <mat-spinner color="accent" class="float-left ml-2"></mat-spinner>
+              </ng-template>
+
+              <ng-template #loadingImportTemplate>
+                <mat-spinner color="primary" class="float-left ml-2"></mat-spinner>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+        <div mat-line>
+          <div class="row">
+            <div class="col">
+              Created by: {{ board.createdBy }}
+            </div>
+            <div class="col">
+              {{board.lastModified | date: 'dd.MMM yyyy HH:mm'}}
+            </div>
+          </div>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </ng-template>
+</mat-dialog-content>

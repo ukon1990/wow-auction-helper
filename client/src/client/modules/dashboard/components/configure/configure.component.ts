@@ -151,6 +151,8 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     } else {
       Report.send('Saving a new board', 'Dashboard.ConfigureComponent');
     }
+    board.lastModified = +new Date();
+
     if (board.isPublic && this.isAuthenticated) {
       this.service.saveToPublicDataset(board)
         .catch(console.error);

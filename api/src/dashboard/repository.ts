@@ -17,4 +17,11 @@ export class DashboardRepository extends BaseRepository<DashboardV2> {
   getById(id: string | number): Promise<DashboardV2> {
     return this.getOne(id);
   }
+
+  getAll(): Promise<DashboardV2[]> {
+    return this.scan({
+      TableName: this.table,
+      ProjectionExpression: 'id, title, description, tags, createdBy, lastModified',
+    });
+  }
 }

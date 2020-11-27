@@ -1,7 +1,7 @@
 import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
 import {DashboardRepository} from './repository';
 import {AccessToken} from '../models/user/access-token.model';
-import generateUUID from '../../../client/src/client/utils/uuid.util';
+import {v4} from 'uuid';
 
 export class DashboardService {
   private repository: DashboardRepository;
@@ -10,9 +10,13 @@ export class DashboardService {
     this.repository = new DashboardRepository();
   }
 
+  getById(id: string): Promise<DashboardV2> {
+    return this.repository.getById(id);
+  }
+
   save(board: DashboardV2): Promise<any> {
     if (!board.id) {
-      board.id = generateUUID();
+      board.id = v4();
     }
     if (!board.createdBy) {
       board.createdBy = this.user.username;
@@ -22,16 +26,16 @@ export class DashboardService {
     }
 
     board.isPublic = true;
-    // TODO: Verifiser om det er slik jeg vil gjøre det, med tanke på eierskap til board osv
 
     return new Promise<any>((resolve, reject) => {
-      this.repository.getById(board.id)
+      const token = this.user;
+      this.getById(board.id)
         .then(storedVersion => {
           console.log('Stored version is', storedVersion);
           if (!storedVersion || storedVersion.createdById === this.user.sub) {
             this.repository.updateEntry(board.id, board)
               .then(() => {
-                console.log('Successfully updated board');
+                console.log(`${token ? token.username : 'Anonymous'} Successfully updated board (${board.id})`);
                 resolve(board);
               })
               .catch(error => {
@@ -47,24 +51,45 @@ export class DashboardService {
     });
   }
 
+  getCopyById(id, token: AccessToken = this.user): Promise<DashboardV2> {
+    console.log(`${token ? token.username : 'Anonymous'} copied ${id}`);
+    return new Promise<DashboardV2>(((resolve, reject) => {
+      this.getById(id)
+        .then(board => {
+          resolve({
+            ...board,
+            id: v4(),
+            parentId: id,
+            createdById: token ? token.sub : null,
+            createdBy: token ? token.username : null,
+            isPublic: false,
+            sortOrder: 0,
+          });
+        })
+        .catch(reject);
+    }));
+  }
+
   delete(id: string): Promise<any> {
+    const token = this.user;
     return new Promise<any>((resolve, reject) => {
-    this.repository.getById(id)
-      .then(storedVersion => {
-        if (storedVersion.createdById === this.user.sub) {
-          this.repository.delete(id)
-            .then(success => {
-              console.log('Successfully deleted ', id);
-              resolve({success: true});
-            })
-            .catch(reject);
-        } else {
-          console.log(`User with ID ${this.user.sub} tried to delete ${id}, which is owned by ${storedVersion.createdById}`);
-          reject({code: 401, message: 'You are not authorized to delete this board'});
-        }
-      })
-      .catch(reject);
-  });
+      this.getById(id)
+        .then(storedVersion => {
+          if (storedVersion.createdById === this.user.sub) {
+            this.repository.delete(id)
+              .then(success => {
+                console.log(`${token ? token.username : 'Anonymous'} Successfully deleted board (${id})`);
+                console.log('Successfully deleted ', id);
+                resolve({success: true});
+              })
+              .catch(reject);
+          } else {
+            console.log(`User with ID ${token.sub} tried to delete ${id}, which is owned by ${storedVersion.createdById}`);
+            reject({code: 401, message: 'You are not authorized to delete this board'});
+          }
+        })
+        .catch(reject);
+    });
   }
 
   // Update a file in S3?
