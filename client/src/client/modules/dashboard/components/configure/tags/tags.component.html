@@ -1,23 +1,26 @@
-<mat-chip-list #chipList aria-label="Tags">
+
+<mat-form-field class="w-100" *ngIf="inputField">
+  <mat-chip-list #chipList aria-label="Tags">
   <mat-chip
-          *ngFor="let fruit of fruits"
+          *ngFor="let tag of tags"
           [selectable]="selectable"
           [removable]="removable"
-          (removed)="remove(fruit)">
-    {{fruit}}
+          (removed)="remove(tag)">
+    {{tag}}
     <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
   </mat-chip>
   <input
-          placeholder="New fruit..."
-          #fruitInput
-          [formControl]="fruitCtrl"
+          placeholder="Tags (click enter to add)"
+          #tagInput
+          [formControl]="tagInputControl"
           [matAutocomplete]="auto"
           [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           (matChipInputTokenEnd)="add($event)">
 </mat-chip-list>
 <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-  <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
-    {{fruit}}
+  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+    {{tag}}
   </mat-option>
 </mat-autocomplete>
+</mat-form-field>

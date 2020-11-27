@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {EventEmitter, Injectable, Sanitizer} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {DashboardV2} from '../models/dashboard-v2.model';
 import {DashboardCalculateUtil} from '../utils/dashboard-calculate.util';
@@ -36,13 +36,15 @@ export class DashboardService {
   private isInitiated: boolean;
   private lastUpdateRequest: number;
 
-  constructor(private auctionsService: AuctionsService,
-              private db: DatabaseService,
-              private authService: AuthService,
-              private settingsService: SettingsService,
-              private http: HttpClient,
-              private professionService: ProfessionService,
-              private backgroundService: BackgroundDownloadService
+  constructor(
+    private sanitizer: Sanitizer,
+    private auctionsService: AuctionsService,
+    private db: DatabaseService,
+    private authService: AuthService,
+    private settingsService: SettingsService,
+    private http: HttpClient,
+    private professionService: ProfessionService,
+    private backgroundService: BackgroundDownloadService
   ) {
     // this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
     this.sm.add(this.professionService.listWithRecipes, () => {
@@ -97,6 +99,7 @@ export class DashboardService {
   }
 
   saveToPublicDataset(board: DashboardV2): Promise<DashboardV2> {
+    // board.title = this.sanitizer.sanitize(SecurityContext.URL, board.title);
     return new Promise<DashboardV2>((resolve, reject) => {
       this.http.post(Endpoints.getLambdaUrl('dashboard'), board)
         .toPromise()
@@ -113,15 +116,19 @@ export class DashboardService {
     });
   }
 
-  deletePublicEntry(board: DashboardV2): Promise<void> {
+  deletePublicEntry(board: DashboardV2, deleteLocal = false): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.http.delete(Endpoints.getLambdaUrl('dashboard/' + board.id))
         .toPromise()
         .then((res) => {
           Report.debug('Delete dashboard response', res);
-          board.isPublic = false;
-          this.save(board)
-            .catch(console.error);
+          if (deleteLocal) {
+            this.delete(board);
+          } else {
+            board.isPublic = false;
+            this.save(board)
+              .catch(console.error);
+          }
           resolve();
         })
         .catch(reject);
