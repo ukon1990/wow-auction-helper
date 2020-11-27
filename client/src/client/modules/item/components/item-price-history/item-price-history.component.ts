@@ -266,9 +266,12 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   }
 
   setChartInstance(chart: Chart) {
+    /* I leave this be for now, in case I want to add this back later.
+
     const start = +new Date(+new Date() - 1000 * 60 * 60 * 24 * 90);
     const end = +new Date();
     chart.xAxis[0].setExtremes(start, end, true);
     chart.showResetZoom();
+    */
   }
 }
