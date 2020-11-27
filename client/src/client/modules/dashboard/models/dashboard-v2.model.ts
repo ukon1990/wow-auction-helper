@@ -6,6 +6,18 @@ export interface SortRule {
   sortDesc?: boolean;
 }
 
+export interface DashboardMinimal {
+  id: string;
+  parentId: string;
+  title: string;
+  description: string;
+  tags: string[];
+  createdBy: string;
+  lastModified: number;
+  isImporting?: boolean;
+  isLoading?: boolean;
+}
+
 export interface DashboardV2 {
   id?: string; // UUID type id?
   parentId?: string;
@@ -13,6 +25,7 @@ export interface DashboardV2 {
   title: string;
   description?: string;
   columns: ColumnDescription[];
+  tags?: string[];
   sortOrder: number;
   isDisabled?: boolean;
   isDefault?: boolean;

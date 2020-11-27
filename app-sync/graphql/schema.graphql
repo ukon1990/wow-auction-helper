@@ -5,6 +5,7 @@ input CreateWahUserDashboardInput {
     title: String!
     description: String
     columns: [AWSJSON]!
+    tags: [String]
     sortOrder: Int
     isDisabled: Boolean
     isDefault: Boolean
@@ -152,6 +153,7 @@ input UpdateWahUserSettingsDashboardInput {
     title: String!
     description: String
     columns: [AWSJSON]!
+    tags: [String]
     sortOrder: Int
     isDisabled: Boolean
     isDefault: Boolean
@@ -232,6 +234,7 @@ type WahUserSettingsDashboard {
     idParam: String
     title: String!
     description: String
+    tags: [String]
     columns: [AWSJSON]
     sortOrder: Int
     isDisabled: Boolean

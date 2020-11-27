@@ -3,6 +3,7 @@ import * as AWS from 'aws-sdk';
 import {AWSError} from 'aws-sdk';
 import {NoSQLQueryUtil} from '../utils/query.util';
 import {AuthorizationUtil} from '../utils/authorization.util';
+import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
 
 export abstract class BaseRepository<T> {
   protected client: DocumentClient;
@@ -164,6 +165,12 @@ export abstract class BaseRepository<T> {
         ':lastModified': lastModified,
         ':userId': userId
       }
+    });
+  }
+
+  getAll(): Promise<T[]> {
+    return this.scan({
+      TableName: this.table
     });
   }
 

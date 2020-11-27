@@ -17,6 +17,7 @@ export const ALL_SETTINGS_GRAPH_FIELDS = `
     idParam
     title
     description
+    tags
     columns
     sortOrder
     isDisabled

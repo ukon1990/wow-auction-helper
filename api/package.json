@@ -36,6 +36,7 @@
     "source-map-explorer": "^2.1.0",
     "sqlstring": "^2.3.2",
     "tslib": "^1.9.3",
+    "uuidv4": "^6.2.5",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
