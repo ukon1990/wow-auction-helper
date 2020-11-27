@@ -31,8 +31,9 @@
               <strong>Created by:</strong> {{ board.createdBy }}
             </div>
             <mat-chip-list class="col d-none d-xl-block" aria-label="Board tags">
+              Tags:
               <mat-chip *ngFor="let tag of board.tags" color="primary">
-                Tags: {{ tag }}
+                {{ tag }}
               </mat-chip>
             </mat-chip-list>
             <div *ngIf="!myDashboards.has(board.id)" class="col-md-4">

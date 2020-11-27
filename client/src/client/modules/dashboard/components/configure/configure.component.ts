@@ -121,6 +121,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       // this.addDefaultColumns();
       return;
     }
+    Report.debug('Configuring board', board);
     this.form.controls.id.setValue(board.id, {emitEvent: false});
     this.form.controls.parentId.setValue(board.parentId, {emitEvent: false});
     this.form.controls.idParam.setValue(board.idParam, {emitEvent: false});
@@ -156,7 +157,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     if (board.isPublic && this.isAuthenticated) {
       this.service.saveToPublicDataset(board)
         .catch(console.error);
-    } else if (!board.isPublic && this.dashboard.isPublic && this.isAuthenticated) {
+    } else if (this.dashboard && !board.isPublic && this.dashboard.isPublic && this.isAuthenticated) {
       this.service.deletePublicEntry(board)
         .catch(console.error);
     } else {
