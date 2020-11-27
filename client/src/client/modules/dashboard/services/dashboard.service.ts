@@ -98,13 +98,28 @@ export class DashboardService {
     });
   }
 
+  importPublicBoard(board: DashboardV2): void {
+    this.save({
+      ...board,
+      id: generateUUID(),
+      parentId: board.id,
+      isPublic: false,
+      isDisabled: false,
+    })
+      .catch(console.error);
+  }
+
   saveToPublicDataset(board: DashboardV2): Promise<DashboardV2> {
     // board.title = this.sanitizer.sanitize(SecurityContext.URL, board.title);
     return new Promise<DashboardV2>((resolve, reject) => {
-      this.http.post(Endpoints.getLambdaUrl('dashboard'), board)
+      this.http.post(Endpoints.getLambdaUrl('dashboard'), {
+        ...board,
+        isDisabled: false // In case the user has a disabled board that they are updating which also is public
+      })
         .toPromise()
         .then((res: DashboardV2) => {
           if (res.id) {
+            res.isDisabled = board.isDisabled;
             this.save(res)
               .catch(console.error);
             resolve(res);

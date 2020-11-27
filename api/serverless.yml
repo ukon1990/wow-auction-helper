@@ -269,6 +269,17 @@ functions:
     handler: src/auction/controller.updateTSMDataForOneRealm
     memorySize: 256
 ## User related
+  deleteDashboard:
+    handler: src/dashboard/controller.delete
+    tags:
+      Function: Wah-deleteDashboard
+      Project: WAH
+    events:
+      - http:
+          method: DELETE
+          path: dashboard/{id}
+          cors:
+            origin: 'http://localhost:4200,https://wah.jonaskf.net'
   getAllDashboard:
     handler: src/dashboard/controller.getAll
     tags:
@@ -291,14 +302,3 @@ functions:
           path: dashboard
           cors:
             origin: 'http://localhost:4200,https://wah.jonaskf.net'
-    deleteDashboard:
-      handler: src/dashboard/controller.save
-      tags:
-        Function: Wah-deleteDashboard
-        Project: WAH
-      events:
-        - http:
-            method: DELETE
-            path: dashboard/{id}
-            cors:
-              origin: 'http://localhost:4200,https://wah.jonaskf.net'

@@ -15,6 +15,6 @@ export class DashboardRepository extends BaseRepository<DashboardV2> {
   }
 
   getById(id: string | number): Promise<DashboardV2> {
-    return Promise.resolve(undefined);
+    return this.getOne(id);
   }
 }

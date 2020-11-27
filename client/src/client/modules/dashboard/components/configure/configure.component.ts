@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output, SecurityContext} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
 import {ObjectUtil} from '@ukon1990/js-utilities';
@@ -105,10 +105,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.sm.add(this.form.valueChanges, (value) => {
-
-      console.log('URL', this.sanitizer.sanitize(SecurityContext.URL, value.title));
-
+    this.sm.add(this.form.valueChanges, () => {
       this.lastCalculationTime = +new Date();
       setTimeout(() => {
         const timeDiff = +new Date() - this.lastCalculationTime;
