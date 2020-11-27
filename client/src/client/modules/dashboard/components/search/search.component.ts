@@ -71,8 +71,8 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.filteredBoards = this.boards.filter(board =>
       TextUtil.contains(board.id, filter) ||
       TextUtil.contains(board.title, filter) ||
-      // TextUtil.contains(board.tags)
-      TextUtil.contains(board.description, filter)
+      TextUtil.contains(board.description, filter) ||
+      board.tags.filter(tag => TextUtil.contains(tag, filter)).length
     );
   }
 
