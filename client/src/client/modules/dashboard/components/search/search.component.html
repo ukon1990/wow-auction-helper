@@ -20,20 +20,22 @@
     <mat-list class="mb-2">
       <mat-list-item *ngFor="let board of filteredBoards" class="mat-elevation-z5 mt-1 mb-1">
         <h3 mat-line>
-          {{board.title}}
+          {{board.title}} ({{board.lastModified | date: 'dd.MMM yyyy HH:mm'}})
         </h3>
         <div mat-line>
-          <div class="row">
-            <div class="col-md-9">
-              {{board.description}}
-
-              <mat-chip-list aria-label="Fish selection">
-                <mat-chip *ngFor="let tag of board.tags" color="primary">
-                  {{ tag }}
-                </mat-chip>
-              </mat-chip-list>
+          {{board.description}}
+        </div>
+        <div mat-line>
+          <div class="row pt-1">
+            <div class="col">
+              <strong>Created by:</strong> {{ board.createdBy }}
             </div>
-            <div class="col-md-3" *ngIf="!myDashboards.has(board.id)">
+            <mat-chip-list class="col d-none d-xl-block" aria-label="Board tags">
+              <mat-chip *ngFor="let tag of board.tags" color="primary">
+                Tags: {{ tag }}
+              </mat-chip>
+            </mat-chip-list>
+            <div *ngIf="!myDashboards.has(board.id)" class="col-md-4">
               <button
                       [disabled]="myCopiedDashboards.has(board.id) &&
                         myCopiedDashboards.get(board.id).lastModified <= board.lastModified"
@@ -67,17 +69,6 @@
               <ng-template #loadingImportTemplate>
                 <mat-spinner color="primary" class="float-left ml-2"></mat-spinner>
               </ng-template>
-            </div>
-          </div>
-        </div>
-
-        <div mat-line>
-          <div class="row">
-            <div class="col">
-              Created by: {{ board.createdBy }}
-            </div>
-            <div class="col">
-              {{board.lastModified | date: 'dd.MMM yyyy HH:mm'}}
             </div>
           </div>
         </div>

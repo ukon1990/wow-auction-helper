@@ -16,7 +16,7 @@ import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
 
 @Component({
-  selector: 'wah-dasboard-items',
+  selector: 'wah-dashboard-items',
   templateUrl: './dashboard-items.component.html',
   styleUrls: ['./dashboard-items.component.scss']
 })

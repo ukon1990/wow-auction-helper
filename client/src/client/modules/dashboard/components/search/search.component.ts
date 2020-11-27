@@ -14,7 +14,8 @@ import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
 
 @Component({
   selector: 'wah-search',
-  templateUrl: './search.component.html'
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.html']
 })
 export class SearchComponent implements OnInit, OnDestroy {
   faEye = faEye;
@@ -77,8 +78,12 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   import(board: DashboardMinimal) {
     board.isImporting = true;
-    this.service.importPublicBoard(board.id)
-      .then(() => board.isImporting = false)
+    const copied = this.myCopiedDashboards.get(board.id);
+    this.service.importPublicBoard(board.id, copied)
+      .then(() => {
+        board.isImporting = false;
+        this.mapUserBoards();
+      })
       .catch(() => board.isImporting = false);
   }
 

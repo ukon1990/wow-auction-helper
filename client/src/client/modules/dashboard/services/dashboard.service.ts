@@ -102,11 +102,14 @@ export class DashboardService {
       .toPromise() as Promise<DashboardV2>;
   }
 
-  importPublicBoard(id: string): Promise<void> {
+  importPublicBoard(id: string, existing: DashboardV2): Promise<void> {
     return new Promise((resolve) => {
       this.getCopyById(id)
         .then((board: DashboardV2) => {
-          this.save(board)
+          this.save({
+            ...board,
+            id: existing ? existing.id : board.id
+          })
             .catch(console.error);
           resolve();
         })
