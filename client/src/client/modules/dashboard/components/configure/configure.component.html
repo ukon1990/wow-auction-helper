@@ -105,7 +105,7 @@
 <mat-dialog-actions align="end">
   <form [formGroup]="form"
         class="mr-2 pt-2">
-    <mat-checkbox *ngIf="isAuthenticated"
+    <mat-checkbox *ngIf="isAuthenticated && (!dashboard || !dashboard.isDefault)"
                   class="mr-2"
                   matTooltip="If you make the dashboard public, anyone can find it and make a copy of it (sharing is caring)."
                   formControlName="isPublic">

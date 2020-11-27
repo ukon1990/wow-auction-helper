@@ -11,6 +11,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faFileImport} from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faSyncAlt} from '@fortawesome/free-solid-svg-icons/faSyncAlt';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-search',
@@ -77,6 +78,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   import(board: DashboardMinimal) {
+    Report.send('DashboardSearchComponent.import', 'Imported dashboard');
     board.isImporting = true;
     const copied = this.myCopiedDashboards.get(board.id);
     this.service.importPublicBoard(board.id, copied)
@@ -88,6 +90,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   preview(board: DashboardMinimal) {
+    Report.send('DashboardSearchComponent.preview', 'Previewed dashboard');
     board.isLoading = true;
     this.service.getCopyById(board.id)
       .then(copy => {
