@@ -34,16 +34,16 @@ export class ReputationVendor {
     public isHorde: boolean,
     public vendors: Vendor[],
     public professions: {
-      171?: ReputationVendorRecipe[];
-      164?: ReputationVendorRecipe[];
-      185?: ReputationVendorRecipe[];
-      165?: ReputationVendorRecipe[];
-      186?: ReputationVendorRecipe[];
-      197?: ReputationVendorRecipe[];
-      202?: ReputationVendorRecipe[];
-      333?: ReputationVendorRecipe[];
-      755?: ReputationVendorRecipe[];
-      773?: ReputationVendorRecipe[];
+      171?: ReputationVendorRecipe[]; // Alchemy
+      164?: ReputationVendorRecipe[]; // Blacksmithing
+      185?: ReputationVendorRecipe[]; // Cooking
+      165?: ReputationVendorRecipe[]; // Leatherworking
+      186?: ReputationVendorRecipe[]; // Mining
+      197?: ReputationVendorRecipe[]; // Tailoring
+      202?: ReputationVendorRecipe[]; // Engineering
+      333?: ReputationVendorRecipe[]; // Enchanting
+      755?: ReputationVendorRecipe[]; // Jewelcrafting
+      773?: ReputationVendorRecipe[]; // Inscription
     }
   ) {
   }

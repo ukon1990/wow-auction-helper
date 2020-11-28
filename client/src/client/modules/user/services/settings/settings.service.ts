@@ -241,10 +241,14 @@ export class SettingsService {
     }
     try {
       if (typeof settings.customPrices === 'string') {
-        settings.customPrices = JSON.parse(settings.customPrices);
+        try {
+          settings.customPrices = JSON.parse(settings.customPrices);
+        } catch (e) {}
       }
       if (typeof settings.customProcs === 'string') {
-        settings.customProcs = JSON.parse(settings.customProcs);
+        try {
+          settings.customProcs = JSON.parse(settings.customProcs);
+        } catch (e) {}
       }
     } catch (error) {}
 

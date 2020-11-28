@@ -20,10 +20,28 @@ export class DashboardAppsyncUtil {
   static unParseJSON(boards: any[]): DashboardV2[] {
     return boards.map(board => ({
       ...board,
-      columns: board.columns.map(column => JSON.parse(column)),
-      rules: board.rules.map(rule => JSON.parse(rule)),
-      itemRules: board.itemRules.map(rule => JSON.parse(rule)),
-      sortRule: JSON.parse(board.sortRule)
+      columns: board.columns.map(column => {
+        try {
+          return JSON.parse(column);
+        } catch (e) {
+          return undefined;
+        }
+      }).filter(isTruthy => isTruthy),
+      rules: board.rules.map(rule => {
+        try {
+          return JSON.parse(rule);
+        } catch (e) {
+          return undefined;
+        }
+      }).filter(isTruthy => isTruthy),
+      itemRules: board.itemRules.map(rule => {
+        try {
+          return JSON.parse(rule);
+        } catch (e) {
+          return undefined;
+        }
+      }).filter(isTruthy => isTruthy),
+      sortRule: board.sortRule ? JSON.parse(board.sortRule) : undefined
     }));
   }
 }

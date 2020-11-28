@@ -141,7 +141,9 @@ export class RecipeRepository extends Repository<Recipe> {
           ];
 
           if (recipe.reagents) {
-            queries.push(...recipe.reagents.map(r => format(`
+            queries.push(`DELETE FROM \`100680-wah\`.\`reagents\`
+                            WHERE recipeId = ${recipe.id};`);
+            recipe.reagents.map(r => queries.push(format(`
                 INSERT INTO reagents
                 VALUES (?, ?, ?, ?);
             `, [
@@ -192,7 +194,11 @@ export class RecipeRepository extends Repository<Recipe> {
                     ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
                     1,
                     CURRENT_TIMESTAMP,
-                    null);
+                    null)
+            ON DUPLICATE KEY UPDATE
+                minCount = ${recipe.crafted_quantity ? recipe.crafted_quantity.minimum || recipe.crafted_quantity.value : 0},
+                maxCount = ${recipe.crafted_quantity ? recipe.crafted_quantity.maximum || recipe.crafted_quantity.value : 0},
+                timestamp = CURRENT_TIMESTAMP;
               `)
             .catch(console.error);
           Promise.all(
