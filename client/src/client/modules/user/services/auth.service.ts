@@ -12,6 +12,7 @@ import {SettingsService} from './settings/settings.service';
 import {MatDialog} from '@angular/material/dialog';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {DatabaseService} from '../../../services/database.service';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 @Injectable({
   providedIn: 'root'
@@ -180,7 +181,6 @@ export class AuthService {
         })
         .catch(error => {
           this.isAuthenticated.next(false);
-          console.error(error);
           reject(error);
         });
     });
