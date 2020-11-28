@@ -25,7 +25,7 @@ describe('ItemHandler', () => {
     expect(item.patch).toBe('6.0.1.18125');
   });
 
-  xdescribe('Not a test', () => {
+  describe('Not a test', () => {
     it('force insert or update', async () => {
       environment.test = false;
       const db = new DatabaseUtil(false);
@@ -44,8 +44,7 @@ describe('ItemHandler', () => {
         .catch(console.error);
       const start = 185100, end = start + 100000, diff = end - start;
 
-      // TODO: Missing from blizz API: Enchating materisls! 172231, 172230, 172232
-      for (const id of ids) {
+      for (const id of ids) { // ids - 183900
         await new ItemHandler()
           .addItem(id, 'en_GB', db)
           .then(item => {
