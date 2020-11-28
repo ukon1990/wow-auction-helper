@@ -13,6 +13,7 @@ import {WoWDBItem} from '../models/item/wowdb';
 import {WoWHeadUtil} from '../utils/wowhead.util';
 import {WoWHead} from '../models/item/wowhead';
 import {UpdatesService} from '../updates/service';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 export class ItemServiceV2 {
   private readonly repository = new RDSItemRepository();
@@ -47,7 +48,7 @@ export class ItemServiceV2 {
     });
   }
 
-  private addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil) {
+  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil) {
     return new Promise<void>((resolve, reject) => {
       let completed = 0;
       let successfull = 0;
@@ -55,22 +56,31 @@ export class ItemServiceV2 {
         requestsPerSecond: 25,
         promiseImplementation: Promise
       });
+      const startTime = +new Date();
       const promises: Promise<any>[] = [];
       ids.forEach(id => promises.push(
-        promiseThrottle.add(() => new ItemHandler()
-          .addItem(id, 'en_GB', db)
-          .then(() => {
-            completed++;
-            successfull++;
-            console.log(`Completed ${completed} / ${ids.length} (${
-              Math.round(completed / ids.length * 100)}%)`);
-          })
-          .catch(error => {
+        promiseThrottle.add(() =>
+        new Promise((success, fail) => {
+          if (DateUtil.timeSince(startTime, 's') > 200) {
+            success();
+            return;
+          }
+          new ItemHandler()
+            .addItem(id, 'en_GB', db)
+            .then(() => {
               completed++;
-              console.error(error);
-            }
-          )
-        )));
+              successfull++;
+              console.log(`Completed ${completed} / ${ids.length} (${
+                Math.round(completed / ids.length * 100)}%)`);
+              success();
+            })
+            .catch(error => {
+                completed++;
+                console.error(error);
+                fail(error);
+              }
+            );
+        }))));
       Promise.all(promises)
         .then(async () => {
           console.log(`Done processing ${ids.length} items (${successfull} successfully so).`);
