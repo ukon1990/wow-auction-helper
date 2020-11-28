@@ -8,6 +8,8 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {RegisterComponent} from '../register/register.component';
 import {RegistrationConfirmationComponent} from '../register/registration-confirmation/registration-confirmation.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
+import {Report} from '../../../../utils/report.util';
+import {ErrorReport} from '../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-login',
@@ -58,9 +60,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     this.loginForm.disable();
     this.service.login(this.loginForm.getRawValue())
-      .then(() => location.reload())
+      .then(() => {
+        Report.send('Successfull login', 'LoginComponent');
+        location.reload();
+      })
       .catch(error => {
         console.error(error);
+        ErrorReport.sendError('LoginComponent.login', error);
         if (error.code === 'UserNotConfirmedException') {
           this.handleUserNotConfirmedException();
         } else {
@@ -96,12 +102,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 
   signOut() {
+    Report.send('Sign out', 'LoginComponent');
     this.service.logOut()
       .catch(() => {});
     this.dialogRef.close();
   }
 
   localMode() {
+    Report.send('Anonymous login', 'LoginComponent');
     localStorage.setItem('useAppSync', 'false');
     this.service.openSetupComponent.emit(true);
     this.dialogRef.close();

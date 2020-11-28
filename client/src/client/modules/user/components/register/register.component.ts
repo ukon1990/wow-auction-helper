@@ -6,6 +6,8 @@ import {ValidatorsUtil} from '../../utils/validators.util';
 import {HttpErrorResponse} from '@angular/common/http';
 import {RegistrationConfirmationComponent} from './registration-confirmation/registration-confirmation.component';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {Report} from '../../../../utils/report.util';
+import {ErrorReport} from '../../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-register',
@@ -47,6 +49,7 @@ export class RegisterComponent implements OnDestroy {
         this.sm.add(registrationDialog.afterClosed(), result => {
           if (result && result.success) {
             const {username, email, password} = this.registerForm.getRawValue();
+            Report.send('Successfully registered a new user', 'RegisterComponent');
             this.dialogRef.close({
               username: username || email,
               password,
@@ -57,6 +60,7 @@ export class RegisterComponent implements OnDestroy {
         });
       })
       .catch(error => {
+        ErrorReport.sendError('RegisterComponent.register', error);
         console.error(error);
         this.error = error;
         this.registerForm.enable();
