@@ -1,4 +1,4 @@
-import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
+import {DashboardMinimal, DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
 import {DashboardRepository} from './repository';
 import {AccessToken} from '../models/user/access-token.model';
 import {v4} from 'uuid';
@@ -92,9 +92,13 @@ export class DashboardService {
     });
   }
 
-  // Update a file in S3?
-
   getAll(): Promise<DashboardV2[]> {
-    return this.repository.getAll();
+    return new Promise<DashboardV2[]>((resolve, reject) => {
+      this.repository.getAll()
+        .then((boards) => resolve(
+          boards.sort((a, b) =>
+            b.lastModified - a.lastModified)))
+        .catch(reject);
+    });
   }
 }

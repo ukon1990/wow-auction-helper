@@ -15,6 +15,9 @@ import {theRajani} from './bfa/the-rajani.data';
 import {ReputationVendor} from '../../models/reputation.model';
 import {theAscended} from './shadowlands/theAscended.data';
 import {theAvowed} from './shadowlands/theAvowed.data';
+import {courtOfHarvesters} from './shadowlands/courtOfHarvesters.data';
+import {theWildHunt} from './shadowlands/theWildHunt.data';
+import {theUndyingArmy} from './shadowlands/theUndyingArmy.data';
 
 export class ReputationVendorsData {
   public static bfa: ReputationVendor[] = [
@@ -37,5 +40,8 @@ export class ReputationVendorsData {
   public static shadowLands: ReputationVendor[] = [
     theAscended,
     theAvowed,
+    courtOfHarvesters,
+    theWildHunt,
+    theUndyingArmy,
   ];
 }
