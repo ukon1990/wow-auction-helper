@@ -69,6 +69,9 @@ export class Item {
   }
 
   private setSellPrice(item: ItemGameData) {
+    if (item.sell_price === undefined || item.preview_item.sell_price === undefined) {
+      return;
+    }
     const baseSellPrice = item.sell_price,
       previewSellPrice = item.preview_item.sell_price.value;
 

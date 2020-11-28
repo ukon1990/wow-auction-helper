@@ -291,25 +291,29 @@ export class DashboardCalculateUtil {
   static getValueFromField(field: string, item: AuctionItem) {
     const resultValues = [];
     const {regex, expressions} = this.getMathRegex(field);
-    field.split(regex)
-      .forEach((fieldPath, index) => {
-        if (!isNaN(+fieldPath)) {
-          resultValues.push(+fieldPath);
-          return;
-        }
-        let value;
-        fieldPath.split('.')
-          .forEach(key => {
-            if (EmptyUtil.isNullOrUndefined(value) && item[key] && item) {
-              value = item[key];
-            } else if (!EmptyUtil.isNullOrUndefined(value)) {
-              value = value[key];
-            }
-          });
-        if (!EmptyUtil.isNullOrUndefined(value)) {
-          resultValues.push(value);
-        }
-      });
+    try {
+      field.split(regex)
+        .forEach((fieldPath, index) => {
+          if (!isNaN(+fieldPath)) {
+            resultValues.push(+fieldPath);
+            return;
+          }
+          let value;
+          fieldPath.split('.')
+            .forEach(key => {
+              if (EmptyUtil.isNullOrUndefined(value) && item[key] && item) {
+                value = item[key];
+              } else if (!EmptyUtil.isNullOrUndefined(value)) {
+                value = value[key];
+              }
+            });
+          if (!EmptyUtil.isNullOrUndefined(value)) {
+            resultValues.push(value);
+          }
+        });
+    } catch (error) {
+      ErrorReport.sendError('DashboardCalculateUtil.getValueFromField', error);
+    }
     return this.calculateField(resultValues, expressions);
   }
 

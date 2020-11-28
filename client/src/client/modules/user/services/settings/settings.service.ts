@@ -14,6 +14,7 @@ import {DashboardV2} from '../../../dashboard/models/dashboard-v2.model';
 import {DashboardAppsyncUtil} from '../../../dashboard/utils/dashboard-appsync.util';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {DatabaseService} from '../../../../services/database.service';
+import {BaseCraftingUtil} from '../../../crafting/utils/base-crafting.util';
 
 @Injectable({
   providedIn: 'root'
@@ -77,8 +78,8 @@ export class SettingsService {
             realm: settings.realm,
             region: settings.region,
             locale: settings.locale || localStorage.getItem('locale') || 'en_GB',
-            customPrices: JSON.stringify(settings.customPrices) || [],
-            customProcs: JSON.stringify(settings.customProcs) || [],
+            customPrices: JSON.stringify(settings.customPrices || []),
+            customProcs: JSON.stringify(settings.customProcs || []),
             buyoutLimit: settings.buyoutLimit,
             useVendorPriceForCraftingIfAvailable: settings.useVendorPriceForCraftingIfAvailable,
             useIntermediateCrafting: settings.useIntermediateCrafting,
@@ -86,7 +87,7 @@ export class SettingsService {
               this.reduceCharacters(settings.characters as Character[]).characters : [],
             dashboards: dashboards ?
               DashboardAppsyncUtil.reduce(dashboards) : [],
-            craftingStrategy: settings.craftingStrategy,
+            craftingStrategy: settings.craftingStrategy || BaseCraftingUtil.STRATEGY.NEEDED,
           },
         }
       })

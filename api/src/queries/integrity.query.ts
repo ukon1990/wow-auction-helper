@@ -16,7 +16,7 @@ export class QueryIntegrity {
             }
             if (this.isNullButRequired(obj, Field, Null) || !this.isTypeMatch(obj[Field], Type)) {
               console.error(`Datatype missmatch for ${Field} = ${obj[Field]} of type it should be `,
-                Type, 'but was ', typeof obj[Field], this.contains(Type, 'tinyint'),
+                Type, 'but was ', typeof obj[Field], this.contains(Type, 'tinyint'), obj[Field],
                 this.isNullButRequired(obj, Field, Null), !this.isTypeMatch(obj[Field], Type));
               isValid = false;
             } else if (obj[Field]) {
