@@ -2,6 +2,9 @@ import {RecipeV2Util} from './recipev2.util';
 import {Recipev2} from './recipev2.model';
 import {DatabaseUtil} from '../utils/database.util';
 import {RDSQueryUtil} from '../utils/query.util';
+import {ItemLocale} from '../models/item/item-locale';
+import {Recipe} from './model';
+import {environment} from '../../../client/src/environments/environment';
 
 const setKeyMap = (res: any, keyMap: {} = {}) => {
   Object.keys(res).forEach(key => {
@@ -34,6 +37,74 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
 
 describe('Recipev2Util', () => {
   describe('Not really tests', () => {
+
+    xit('Darkmoon deck creation', async () => {
+      jest.setTimeout(99999);
+      const itemId = 173087;
+      environment.test = false;
+      const db = new DatabaseUtil(false);
+      const expansionId = 8;
+
+      await db.query(`
+          SELECT id, name
+          FROM items
+          WHERE expansionId = ${expansionId} AND name LIKE '%Darkmoon Deck%'
+          ORDER BY id DESC;`)
+        .then(async (items: {id, name}[]) => {
+          console.log('Res', items);
+          let startId = -1;
+          for (const item of items) {
+            const endOfName = item.name.replace('Darkmoon Deck: ', '');
+            await db.query(new RDSQueryUtil('recipes', false).insertOrUpdate({
+              id: startId,
+              craftedItemId: item.id,
+              minCount: 1,
+              maxCount: 1,
+              procRate: 1,
+              rank: 0,
+              type: 'Trinkets',
+            }))
+              .catch(console.error);
+            await db.query(`SELECT * FROM item_name_locale WHERE id = ${item.id}`)
+              .then(async (locale: ItemLocale[]) => {
+                if (locale && locale.length) {
+                  await db.query(new RDSQueryUtil('recipesName', false)
+                    .insertOrUpdate({
+                      ...locale[0],
+                      id: startId,
+                    }))
+                    .catch(console.error);
+                }
+              })
+              .catch(console.error);
+            await db.query(`
+              SELECT id, name, icon, itemClass
+              FROM items
+              WHERE name like '%of %'
+                AND name LIKE '%${endOfName.slice(0, 5)}%'
+                AND name NOT LIKE 'Blank%'
+                AND name NOT LIKE 'Darkmoon%'
+                AND itemClass = 7
+                AND expansionId = ${expansionId};`)
+              .then(async reagents => {
+                for (const {id} of reagents) {
+                  await db.query(new RDSQueryUtil('reagents', false)
+                    .insertOrUpdate({
+                      itemId: id,
+                      recipeId: startId,
+                      quantity: 1,
+                  }))
+                    .catch(console.error);
+                }
+              });
+            startId--;
+          }
+        })
+        .catch(console.error);
+      db.end();
+      environment.test = true;
+      expect(1).toBe(2);
+    });
     /*
     xit('"bruteforce" recipes', async () => {
       jest.setTimeout(10000000);

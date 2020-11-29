@@ -80,6 +80,6 @@ export class DownloadComponent {
 
   /* istanbul ignore next */
   isDownloading(): boolean {
-    return this.service.isLoading.value || SharedService.isDownloading();
+    return this.service.isLoading.value || SharedService.isDownloading() || this._realmService.isCheckingStatus;
   }
 }

@@ -18,7 +18,7 @@ import {SettingsService} from '../modules/user/services/settings/settings.servic
 @Injectable()
 export class RealmService {
   private statusInterval: Observable<number> = environment.test ? null : interval(25 * 1000);
-  private isCheckingStatus: boolean;
+  isCheckingStatus: boolean;
   private timeSinceInterval: Observable<number> = environment.test ? null : interval(1000);
   sm = new SubscriptionManager();
   previousUrl;
@@ -95,7 +95,7 @@ export class RealmService {
       region = SharedService.user.region;
       realm = SharedService.user.realm;
     }
-    this.isCheckingStatus = false;
+    this.isCheckingStatus = true;
     const realmStatus = this.events.realmStatus.value,
       timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
         realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,

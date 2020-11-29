@@ -45,7 +45,7 @@ export class CraftingUtil {
       Report.send(
         'calculateCost',
         'CraftingUtil',
-        'Calculated with strategy: ' + BaseCraftingUtil.STRATEGY_LIST[selectedStrategy].name);
+        'Calculated with strategy: ' + BaseCraftingUtil.STRATEGY_LIST[selectedStrategy || BaseCraftingUtil.STRATEGY.NEEDED].name);
     }
 
     this.strategy.calculate(CraftingService.list.value);

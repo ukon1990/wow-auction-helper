@@ -39,10 +39,18 @@ export class ProspectingAndMillingUtil {
   }
 
   public static calculateCost(): void {
-    ProspectingAndMillingUtil.setIndividualCost(
-      ProspectingAndMillingUtil.mills);
-    ProspectingAndMillingUtil.setIndividualCost(
-      ProspectingAndMillingUtil.prospecting);
+    try {
+      ProspectingAndMillingUtil.setIndividualCost(
+        ProspectingAndMillingUtil.mills);
+    } catch (error) {
+
+    }
+    try {
+      ProspectingAndMillingUtil.setIndividualCost(
+        ProspectingAndMillingUtil.prospecting);
+    } catch (error) {
+
+    }
   }
 
   private static setIndividualCost(list: Remains[]): void {
