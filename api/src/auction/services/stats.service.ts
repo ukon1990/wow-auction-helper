@@ -85,7 +85,7 @@ export class StatsService {
 
   private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any> {
     return new Promise((resolve, reject) => {
-      new StatsRepository(conn).getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds)
+      new StatsRepository(conn).getPriceHistoryHourly([{ahId, itemId: id, petSpeciesId, bonusIds}])
         .then((result => {
           resolve(AuctionProcessorUtil.processHourlyPriceData(result));
         }))

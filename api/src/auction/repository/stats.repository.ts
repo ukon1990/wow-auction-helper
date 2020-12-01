@@ -2,8 +2,11 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
+import {AhStatsRequest} from '../models/ah-stats-request.model';
 
 export class StatsRepository {
+  readonly FOURTEEN_DAYS = 60 * 60 * 24 * 1000 * 14;
+
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
     const formattedHour = (hour < 10 ? '0' + hour : '' + hour);
 
@@ -59,15 +62,33 @@ export class StatsRepository {
       maxQuantity${day} = VALUES(maxQuantity${day});`);
   }
 
+  /*
   getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[]) {
-    const fourteenDays = 60 * 60 * 24 * 1000 * 14;
     return this.conn.query(`SELECT *
                 FROM itemPriceHistoryPerHour
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
                   AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
-                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - fourteenDays) / 1000};`);
+                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - this.FOURTEEN_DAYS) / 1000};`);
+  }
+  */
+
+  getPriceHistoryHourly(items: AhStatsRequest[]): any {
+    return this.conn.query(`SELECT *
+                FROM itemPriceHistoryPerHour
+                WHERE (
+                ${
+                  items.map(({ahId, itemId, petSpeciesId, bonusIds}) => `
+                  (
+                    ahId = ${ahId}
+                    AND itemId = ${itemId}
+                    AND petSpeciesId = ${petSpeciesId}
+                    AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
+                    )
+                  `).join(' OR ')
+                }
+                ) AND UNIX_TIMESTAMP(date) > ${(+new Date() - this.FOURTEEN_DAYS) / 1000};`);
   }
 
   getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[]) {
