@@ -11,6 +11,7 @@ import {RealmService} from '../../realm/service';
 import {AuctionStatsUtil} from '../utils/auction-stats.util';
 import {ItemStats} from '../models/item-stats.model';
 import {DateUtil} from '@ukon1990/js-utilities';
+import {AhStatsRequest} from '../models/ah-stats-request.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -80,6 +81,19 @@ export class StatsService {
         console.error(e);
         reject(e);
       }
+    });
+  }
+
+  getPriceHistoryHourlyMultiple(items: AhStatsRequest[], conn: DatabaseUtil): Promise<any> {
+    return new Promise((resolve, reject) => {
+      new StatsRepository(conn).getPriceHistoryHourly(items)
+        .then((result => {
+          resolve(AuctionProcessorUtil.processHourlyPriceData(result));
+        }))
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
     });
   }
 

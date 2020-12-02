@@ -62,18 +62,6 @@ export class StatsRepository {
       maxQuantity${day} = VALUES(maxQuantity${day});`);
   }
 
-  /*
-  getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[]) {
-    return this.conn.query(`SELECT *
-                FROM itemPriceHistoryPerHour
-                WHERE ahId = ${ahId}
-                  AND itemId = ${id}
-                  AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
-                  AND UNIX_TIMESTAMP(date) > ${(+new Date() - this.FOURTEEN_DAYS) / 1000};`);
-  }
-  */
-
   getPriceHistoryHourly(items: AhStatsRequest[]): any {
     return this.conn.query(`SELECT *
                 FROM itemPriceHistoryPerHour

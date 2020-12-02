@@ -5,6 +5,7 @@ import {Endpoints} from '../utils/endpoints.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {StatsService} from './services/stats.service';
 import {TsmService} from './services/tsm.service';
+import {AhStatsRequest} from './models/ah-stats-request.model';
 
 /* istanbul ignore next */
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
@@ -33,8 +34,12 @@ exports.updateAllRealmDailyData = (event: APIGatewayEvent, context: Context, cal
 
 exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = JSON.parse(event.body);
+  const {items} = JSON.parse(event.body);
   const conn = new DatabaseUtil(false);
-  new StatsService().getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly, conn)
+  const service = new StatsService();
+  (items ?
+    service.getPriceHistoryHourlyMultiple(items, conn) :
+    service.getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly, conn))
     .then(async history => {
       conn.end();
       Response.send(history, callback);
