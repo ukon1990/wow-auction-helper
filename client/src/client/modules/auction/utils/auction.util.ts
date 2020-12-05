@@ -227,10 +227,12 @@ export class AuctionUtil {
     }
     let nameSuffix = '';
     let tags = '';
+    const bonusIdsNotInMap = [];
     if (auction.bonusLists && useSuffix) {
       auction.bonusLists.forEach(b => {
         const bonus = SharedService.bonusIdMap[b.bonusListId];
         if (!bonus) {
+          bonusIdsNotInMap.push(b.bonusListId);
           return;
         }
         if (bonus.name) {
@@ -251,8 +253,11 @@ export class AuctionUtil {
         }
       });
     }
+
+    const idSuffix = bonusIdsNotInMap.length ? `(${bonusIdsNotInMap.join(', ')})` : '';
+
     return SharedService.items[auction.item] ?
-      `${SharedService.items[auction.item].name}${nameSuffix}${tags}` :
+      `${SharedService.items[auction.item].name}${nameSuffix}${tags}${idSuffix}` :
       'Item name missing';
   }
 
@@ -319,6 +324,7 @@ export class AuctionUtil {
 
   private static getTempAuctionItem(auction: Auction, addAuction = true, id: string) {
     const tmpAuc = new AuctionItem();
+    this.handleBonusIds(auction, tmpAuc);
     tmpAuc.id = id;
     tmpAuc.itemID = auction.item;
     tmpAuc.petSpeciesId = auction.petSpeciesId;
@@ -329,7 +335,6 @@ export class AuctionUtil {
 
     tmpAuc.itemLevel = SharedService.items[auction.item] ?
       SharedService.items[auction.item].itemLevel : 0;
-    this.handleBonusIds(auction, tmpAuc);
 
     tmpAuc.owner = auction.owner;
     tmpAuc.ownerRealm = auction.ownerRealm;
