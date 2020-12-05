@@ -25,7 +25,7 @@ export class StatsRepository {
         SELECT *
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${ahId}
-          AND date >= NOW() - INTERVAL 24 HOUR
+          AND date >= NOW() - INTERVAL 7 HOUR
         ORDER BY date;`);
   }
 
