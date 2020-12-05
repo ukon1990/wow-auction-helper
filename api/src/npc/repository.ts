@@ -1,5 +1,5 @@
 import {DatabaseUtil} from '../utils/database.util';
-import {ZoneUtil} from '../utils/zone.util';
+import {Zone, ZoneUtil} from '../utils/zone.util';
 import {RDSQueryUtil} from '../utils/query.util';
 import {LocaleUtil} from '../utils/locale.util';
 import {TextUtil} from '@ukon1990/js-utilities';
@@ -33,26 +33,23 @@ export class NPCRepository {
         return;
       }
       await ZoneUtil.getById(npc.zoneId, undefined, this.db)
-        .then(() => {
-          this.insertNpcIntoDB(npc)
-            .then(async () => {
-              Promise.all([
-                this.insertNameIntoDB(npc).catch(console.error),
-                this.insertTagIntoDB(npc).catch(console.error),
-                this.insertCoordsIntoDB(npc).catch(console.error),
-                this.insertSourceValuesIntoDB(npc.id, npc.sells, 'npcSells').catch(console.error),
-                this.insertSourceValuesIntoDB(npc.id, npc.drops, 'npcDrops').catch(console.error),
-                this.insertSourceValuesIntoDB(npc.id, npc.skinning, 'npcSkins').catch(console.error),
-              ])
-                .then(() => resolve(npc))
-                .catch(() => resolve(npc));
-            })
-            .catch((error) => {
-              reject(error);
-            });
+        .catch(console.error);
+
+      this.insertNpcIntoDB(npc)
+        .then(async () => {
+          Promise.all([
+            this.insertNameIntoDB(npc).catch(console.error),
+            this.insertTagIntoDB(npc).catch(console.error),
+            this.insertCoordsIntoDB(npc).catch(console.error),
+            this.insertSourceValuesIntoDB(npc.id, npc.sells, 'npcSells').catch(console.error),
+            this.insertSourceValuesIntoDB(npc.id, npc.drops, 'npcDrops').catch(console.error),
+            this.insertSourceValuesIntoDB(npc.id, npc.skinning, 'npcSkins').catch(console.error),
+          ])
+            .then(() => resolve(npc))
+            .catch(() => resolve(npc));
         })
-        .catch(err => {
-          reject(err);
+        .catch((error) => {
+          reject(error);
         });
     });
   }

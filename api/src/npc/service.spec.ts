@@ -20,7 +20,7 @@ describe('NpcService', () => {
   });
 
 
-  it('findMissingNPCsFromLatestExpansion', async () => {
+  xit('findMissingNPCsFromLatestExpansion', async () => {
     environment.test = false;
     await new NPCService().findMissingNPCsFromLatestExpansion()
       .catch(console.error);
