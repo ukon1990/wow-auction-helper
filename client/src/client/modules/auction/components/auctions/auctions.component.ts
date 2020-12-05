@@ -9,6 +9,7 @@ import {SharedService} from '../../../../services/shared.service';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {ItemClass} from '../../../item/models/item-class.model';
+import {ColumnDescription} from '../../../table/models/column-description';
 
 @Component({
   selector: 'wah-auctions',
@@ -81,13 +82,21 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
 
   addColumns(): void {
-    const {columns} = this.table;
+    const columns: ColumnDescription[] =[...this.table.columns];
     columns.push({key: 'name', title: 'Name', dataType: 'name'});
     columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});
+    columns.push({key: 'quantityTrend', title: 'Stock trend', dataType: 'number', options: {
+        tooltip: 'Quantity trend per hour, the past 7 days'
+      }, hideOnMobile: true});
     columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
+    columns.push({key: 'priceTrend', title: 'Trend (per hour)', dataType: 'gold', options: {
+      tooltip: 'Price trend per hour, the past 7 days'
+    }});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
-    columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true});
+    columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', options: {
+        tooltip: 'The avg price the past 7 days'
+      }, hideOnMobile: true});
     columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
@@ -96,6 +105,8 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
         idName: 'id',
       }
     });
+
+    this.table.columns = columns;
   }
 
   async filterAuctions(changes = this.form.value) {
@@ -103,7 +114,12 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.table.data = this.auctionService.list.value
       .filter(i => this.isMatch(i, changes))
       .map(i => {
-        return {...SharedService.pets[i.petSpeciesId], ...i};
+        return {
+          ...SharedService.pets[i.petSpeciesId],
+          ...i,
+          quantityTrend: i.stats ? i.stats.past7Days.quantity.trend : 0,
+          priceTrend: i.stats ? i.stats.past7Days.price.trend : 0,
+        };
       });
   }
 

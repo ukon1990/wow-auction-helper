@@ -20,7 +20,7 @@
   <thead>
   <tr>
     <ng-container *ngFor="let c of columns">
-      <td (click)="sort(c)" *ngIf="displayColumn(c)">
+      <td (click)="sort(c)" *ngIf="displayColumn(c)" [matTooltip]="c.options && c.options.tooltip || undefined">
         <wah-sort-icon
                 *ngIf="!c.canNotSort"
                 [key]="sorter.getKey(c.key)">
