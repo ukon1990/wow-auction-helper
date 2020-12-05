@@ -220,7 +220,7 @@ export class ZoneUtil {
       if (!zone || ('' + zone.name) === 'MISSING THE LOCALE IN DB!') {
         zone = new Zone(id);
         const promiseThrottle = new PromiseThrottle({
-          requestsPerSecond: 25,
+          requestsPerSecond: 5,
           promiseImplementation: Promise
         });
         languages
@@ -229,6 +229,7 @@ export class ZoneUtil {
         await Promise.all(promises)
           .then(async () => {
             const localeSQL = new RDSQueryUtil('zoneName', false).insert(zone.name);
+            const connWasProvided = !!conn;
             if (!conn) {
               conn = new DatabaseUtil(false);
             }
@@ -256,7 +257,9 @@ export class ZoneUtil {
               .catch(console.error);
             await conn.query(localeSQL)
               .catch(console.error);
-            conn.end();
+            if (!connWasProvided) {
+              conn.end();
+            }
           })
           .catch(reject);
       }

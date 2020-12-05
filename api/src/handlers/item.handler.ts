@@ -102,7 +102,7 @@ export class ItemHandler {
               }
 
               const query = new RDSQueryUtil('items')
-                .insertOrUpdate(friendlyItem);
+                .insertOrUpdate(friendlyItem, true);
               console.log('Insert item SQL:', query);
               db.query(query)
                 .then(async itemSuccess => {
