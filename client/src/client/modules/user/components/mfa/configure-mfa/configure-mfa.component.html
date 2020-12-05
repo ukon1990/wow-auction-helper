@@ -1,0 +1,52 @@
+<ng-container *ngIf="userHasMFA; else configureTemplate">
+  <mat-card>
+    <mat-card-content>
+      You have Multi-factor authentication configured
+    </mat-card-content>
+  </mat-card>
+</ng-container>
+
+<ng-template #configureTemplate>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Configure Multi-factor authentication
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content *ngIf="url">
+      <form>
+        <img [src]="url"
+             alt="Configure MFA QR code"
+        />
+        <p>
+          Scan the QR code, in your desired Authentication app (Google or Microsoft's Authenticator etc).
+        </p>
+
+        <mat-form-field>
+          <input [formControl]="verificationCode"
+                 placeholder="Verification code"
+          />
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button *ngIf="!url"
+              type="button"
+              mat-stroked-button
+              color="accent"
+              (click)="getQRCode()"
+      >
+        Set up MFA
+      </button>
+      <button *ngIf="url"
+              type="submit"
+              (click)="addMFA()"
+              [disabled]="!verificationCode.valid"
+      >
+        Verify code
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</ng-template>

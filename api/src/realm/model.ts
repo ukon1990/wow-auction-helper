@@ -1,4 +1,4 @@
-interface Realm {
+export interface Realm {
   id: number;
   slug: string;
   name: string;
@@ -35,4 +35,14 @@ export interface AuctionHouse {
   lastModified: number;
   size: number;
   lastHistoryDeleteEvent: number;
+  stats: {
+    url: string;
+    lastModified: number;
+  };
+}
+
+export interface DumpDelay {
+  lowestDelay: number;
+  highestDelay: number;
+  avgDelay: number;
 }

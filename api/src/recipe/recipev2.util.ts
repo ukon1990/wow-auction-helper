@@ -6,6 +6,7 @@ import {AuthHandler} from '../handlers/auth.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RDSQueryUtil} from '../utils/query.util';
 import {ItemLocale} from '../models/item/item-locale';
+import {RecipeService} from './service';
 
 export class RecipeV2Util {
 
@@ -13,9 +14,17 @@ export class RecipeV2Util {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
       // TODO: Fetch media
-      const url = new Endpoints().getPath(`recipe/${id}`, 'eu', 'static');
+      const url = new Endpoints().getPath(`recipe/${id}`, 'us', 'static');
       new HttpClientUtil().get(url)
-        .then(({body}) => resolve(body))
+        .then(({body}) => {
+          this.getIcon(id)
+            .then(icon => {
+              const recipe: Recipev2 = body;
+              recipe.media.icon = icon;
+              resolve(recipe);
+            })
+            .catch(reject);
+        })
         .catch(reject);
     });
   }
@@ -41,7 +50,7 @@ export class RecipeV2Util {
       this.getIcon(recipe.id)
         .then(icon => {
           const queries = [
-            `INSERT INTO recipes_new(
+            `INSERT INTO recipes(
                         id,
                         icon,
                         rank,
@@ -107,11 +116,11 @@ export class RecipeV2Util {
       try {
         const result = [];
         const {body} = await http.get(
-          new Endpoints().getPath('profession/index', 'eu', 'static'));
+          new Endpoints().getPath('profession/index', 'us', 'static'));
 
         for (const p of body.professions) {
           await http.get(
-            new Endpoints().getPath('profession/' + p.id, 'eu', 'static'))
+            new Endpoints().getPath('profession/' + p.id, 'us', 'static'))
             .then(async ({body: profession}) => {
               const res = {
                 id: profession.id,
@@ -138,41 +147,45 @@ export class RecipeV2Util {
                   .catch(console.error);
               }
 
-              for (const skill of profession.skill_tiers) {
-                await http.get(
-                  new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'eu', 'static'))
-                  .then(async ({body: s}) => {
-                    const skillTier = {
-                      id: s.id,
-                      name: s.name,
-                      min: s.minimum_skill_level,
-                      max: s.maximum_skill_level,
-                      recipes: []
-                    };
-                    await db.query(format(`
+              if (profession && profession.skill_tiers) {
+                for (const skill of profession.skill_tiers) {
+                  await http.get(
+                    new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'us', 'static'))
+                    .then(async ({body: s}) => {
+                      const skillTier = {
+                        id: s.id,
+                        name: s.name,
+                        min: s.minimum_skill_level,
+                        max: s.maximum_skill_level,
+                        recipes: []
+                      };
+                      await db.query(format(`
                         INSERT INTO professionSkillTiers
                         VALUES (?, ?, ?, ?)`, [
-                      s.id, res.id, s.minimum_skill_level, s.maximum_skill_level
-                    ]))
-                      .catch(console.error);
-                    await this.insertLocale(s.id, 'professionSkillTiersName', skillTier.name, db)
-                      .catch(console.error);
+                        s.id, res.id, s.minimum_skill_level, s.maximum_skill_level
+                      ]))
+                        .catch(console.error);
+                      await this.insertLocale(s.id, 'professionSkillTiersName', skillTier.name, db)
+                        .catch(console.error);
 
-                    s.categories.forEach(c =>
-                      c.recipes.forEach(async r => {
-                        skillTier.recipes.push(r.id);
-                        await db.query(format(`
-                            UPDATE recipes_new
+                      s.categories.forEach(c =>
+                        c.recipes.forEach(async r => {
+                          skillTier.recipes.push(r.id);
+                          await RecipeService.getAndInsert(r.id, db)
+                            .catch(console.error);
+                          await db.query(format(`
+                            UPDATE recipes
                             SET professionSkillTierId = ?,
                                 type                  = ?
                             WHERE id = ?`, [
-                          s.id, c.name.en_GB, r.id
-                        ]))
-                          .catch(console.error);
-                      }));
-                    res.skillTiers.push(skillTier);
-                  })
-                  .catch(console.error);
+                            s.id, c.name.en_GB, r.id
+                          ]))
+                            .catch(console.error);
+                        }));
+                      res.skillTiers.push(skillTier);
+                    })
+                    .catch(console.error);
+                }
               }
             })
             .catch(console.error);
@@ -236,7 +249,7 @@ export class RecipeV2Util {
   static getIcon(id: number, type = 'recipe'): Promise<string> {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
-      const url = new Endpoints().getPath(`media/${type}/${id}`, 'eu', 'static');
+      const url = new Endpoints().getPath(`media/${type}/${id}`, 'us', 'static');
       new HttpClientUtil().get(
         url
       )
@@ -244,5 +257,7 @@ export class RecipeV2Util {
         .catch(reject);
     });
   }
+
+
 }
 

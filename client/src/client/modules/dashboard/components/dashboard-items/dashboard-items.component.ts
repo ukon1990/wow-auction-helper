@@ -9,9 +9,14 @@ import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {MigrationComponent} from '../migration/migration.component';
 import {NewsUtil} from '../../../about/utils/news.util';
 import {CharacterService} from '../../../character/services/character.service';
+import {Report} from '../../../../utils/report.util';
+import {ErrorReport} from '../../../../utils/error-report.util';
+import {SearchComponent} from '../search/search.component';
+import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
+import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
 
 @Component({
-  selector: 'wah-dasboard-items',
+  selector: 'wah-dashboard-items',
   templateUrl: './dashboard-items.component.html',
   styleUrls: ['./dashboard-items.component.scss']
 })
@@ -19,12 +24,17 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
   dashboards: DashboardV2[] = [];
   displayHiddenForm: FormControl = new FormControl(false);
   sm = new SubscriptionManager();
+  faImport = faFileImport;
+  faPlus = faPlus;
   displaySortPanel: any;
   numberOfCharactersOnRealm: number;
   numberOfBoardsWithAMatch: number;
   numberOfActiveBoards: number;
 
   constructor(private service: DashboardService, public dialog: MatDialog, private characterService: CharacterService) {
+  }
+
+  ngAfterViewInit() {
     this.sm.add(this.service.list, (boards: DashboardV2[]) =>
       this.dashboards = [...boards]);
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
@@ -34,9 +44,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
       chars => {
         this.numberOfCharactersOnRealm = chars.length;
       });
-  }
 
-  ngAfterViewInit() {
     this.setTabTitleNumbers();
   }
 
@@ -52,12 +60,22 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
 
   openNewBoardDialog() {
     this.dialog.open(ConfigureComponent, {
-      width: '95%'
+      width: '95%',
+      maxWidth: '100%',
     });
   }
 
   drop({previousIndex, currentIndex}: CdkDragDrop<DashboardV2, any>) {
-    this.service.move(previousIndex, currentIndex);
+    try {
+      Report.send(
+        'Rearranged board',
+        'DashboardItemsComponent.drop',
+        `Moved board from ${previousIndex} to ${currentIndex}`);
+      Report.debug(`Moved board from ${previousIndex} to ${currentIndex}`);
+      this.service.move(previousIndex, currentIndex);
+    } catch (error) {
+      ErrorReport.sendError('DashboardItemsComponent.drop', error);
+    }
   }
 
   onPanelClick(panelName: string) {
@@ -84,5 +102,12 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
         data: localStorage.getItem('watchlist')
       });
     }
+  }
+
+  openImportBoardDialog() {
+    this.dialog.open(SearchComponent, {
+      width: '95%',
+      maxWidth: '100%',
+    });
   }
 }

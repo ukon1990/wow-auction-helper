@@ -63,12 +63,17 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.pet.quality,
         defaultType: TargetValueEnum.NUMBER
       },
+      {
+        key: columnConfig.item.shoppingCartInput.key,
+        name: 'Item shopping cart input',
+        column: columnConfig.item.shoppingCartInput,
+        defaultType: TargetValueEnum.NUMBER
+      },
     ]
   },
   {
     name: 'Auction',
     options: [
-
       {
         key: 'buyout',
         name: 'Buyout',
@@ -210,6 +215,12 @@ export const ruleFields: RuleFieldGroup[] = [
         name: 'Profession',
         column: columnConfig.recipe.knownProfession,
         defaultType: TargetValueEnum.NUMBER
+      },
+      {
+        key: columnConfig.recipe.shoppingCartInput.key,
+        name: 'Recipe shopping cart input',
+        column: columnConfig.recipe.shoppingCartInput,
+        defaultType: TargetValueEnum.NUMBER
       }
     ]
   },
@@ -219,7 +230,7 @@ export const ruleFields: RuleFieldGroup[] = [
       {
         key: undefined,
         name: 'Add to cart action',
-        column: columnConfig.shoppingCartInput,
+        column: columnConfig.recipe.shoppingCartInput,
         defaultType: TargetValueEnum.INPUT_NUMBER
       },
       {

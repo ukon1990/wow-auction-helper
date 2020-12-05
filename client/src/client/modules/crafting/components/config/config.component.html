@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="row col">
   <mat-form-field class="col-md-6"
                   color="accent"
-                  [matTooltip]="strategies[form.controls.strategy.value].description"
+                  [matTooltip]="strategies[form.controls.strategy.value]?.description"
   >
     <mat-select [disableOptionCentering]="true"
                 placeholder="Crafting strategy"

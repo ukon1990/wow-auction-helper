@@ -12,12 +12,12 @@ import {Character} from '../models/character.model';
 import {AuctionUtil} from '../../auction/utils/auction.util';
 import {Report} from '../../../utils/report.util';
 import {Realm} from '../../../models/realm';
-import {UserUtil} from '../../../utils/user/user.util';
 import {DashboardService} from '../../dashboard/services/dashboard.service';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {CraftingUtil} from '../../crafting/utils/crafting.util';
+import {SettingsService} from '../../user/services/settings/settings.service';
 
 @Component({
   selector: 'wah-characters',
@@ -32,10 +32,11 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   downloading: boolean;
   form: FormGroup;
   private sm = new SubscriptionManager();
-  private shouldRecalculateDashboards: boolean;
+  shouldRecalculateDashboards: boolean;
   private lastCalculationTime: number;
 
-  constructor(private characterService: CharacterService,
+  constructor(public characterService: CharacterService,
+              private settingSync: SettingsService,
               private snackBar: MatSnackBar,
               private realmService: RealmService,
               private craftingService: CraftingService,
@@ -83,7 +84,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       return;
     }
     let firstDuplicateIndex: number;
-    SharedService.user.characters.forEach((character, index) => {
+    this.characterService.characters.value.forEach((character, index) => {
       if (TextUtil.isEqualIgnoreCase(character.slug, this.form.value.realm) &&
         TextUtil.isEqualIgnoreCase(character.name, name)) {
         firstDuplicateIndex = index;
@@ -91,7 +92,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       }
     });
     if (firstDuplicateIndex !== undefined) {
-      this.updateCharacter(firstDuplicateIndex);
       return;
     }
 
@@ -133,6 +133,7 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
   private addCharacter(c) {
     if (!c.error && c.status !== 'nok') {
       this.processCharacter(c);
+      this.characterService.updateAppSync();
       this.openSnackbar(`${c.name} was successfully added`);
 
       Report.send('Added character', 'Characters');
@@ -146,9 +147,9 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
     character.name = this.form.value.name;
     character.realm = SharedService.realms[this.form.value.realm].name;
     character.media = {
-      renderUrl: '',
-      avatarUrl: '',
-      bustUrl: '',
+      main: '',
+      avatar: '',
+      inset: '',
     };
     character.level = 0;
 
@@ -159,8 +160,8 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
 
   async processCharacter(character: Character): Promise<void> {
     this.form.controls.name.setValue('');
-    SharedService.user.characters.push(character);
-    localStorage['characters'] = JSON.stringify(SharedService.user.characters);
+    this.characterService.characters.value.push(character);
+    localStorage['characters'] = JSON.stringify(this.characterService.characters.value);
 
     this.characterService.updateCharactersForRealmAndRecipes();
 
@@ -169,43 +170,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     if (SharedService.user.region && SharedService.user.realm) {
       await this.auctionService.organize();
-    }
-  }
-
-  updateCharacter(index: number): void {
-    this.shouldRecalculateDashboards = true;
-    const character: Character = SharedService.user.characters[index],
-      professions = character.professions;
-    if (character.level) {
-      const name = SharedService.user.characters[index].name;
-      character['downloading'] = true;
-      this.characterService.getCharacter(
-        name,
-        UserUtil.slugifyString(SharedService.user.characters[index].realm),
-        this.form.value.region
-      ).then(async c => {
-        if (c && !c.error) {
-          if (!c.professions) {
-            c.professions = professions;
-          }
-
-          SharedService.user.characters[index] = c;
-          localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-          this.characterService.updateCharactersForRealmAndRecipes();
-
-          if (SharedService.user.region && SharedService.user.realm) {
-            await this.auctionService.organize();
-          }
-
-
-          Report.send('Updated', 'Characters');
-        } else {
-          delete SharedService.user.characters[index]['downloading'];
-          ErrorReport.sendHttpError(
-            c.error,
-            new ErrorOptions(true, 'Could not update the character'));
-        }
-      }).catch(error => this.handleCharacterError(error, name));
     }
   }
 
@@ -229,31 +193,6 @@ export class CharactersComponent implements OnChanges, AfterViewInit, OnDestroy 
       this.realmService
         .getRealms(this.form.value.region);
     }, 100);
-  }
-
-  removeCharacter(index: number): void {
-    this.shouldRecalculateDashboards = true;
-    SharedService.user.characters.splice(index, 1);
-    localStorage['characters'] = JSON.stringify(SharedService.user.characters);
-    try {
-      RealmService.gatherRealms();
-      this.characterService.updateCharactersForRealmAndRecipes();
-    } catch (e) {
-      ErrorReport.sendError('removeCharacter', e);
-    }
-
-    if (SharedService.user.region && SharedService.user.realm) {
-      AuctionUtil.organize(this.getAuctions())
-        .then(() => {
-          CraftingUtil.calculateCost(false, this.auctionService.mapped.value);
-        });
-    }
-
-    Report.send('Removed character', 'Characters');
-  }
-
-  getCharacters(): any[] {
-    return SharedService.user.characters;
   }
 
   private openSnackbar(message: string): void {

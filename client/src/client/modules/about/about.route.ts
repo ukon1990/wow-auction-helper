@@ -25,6 +25,8 @@ export const ABOUT_ROUTE: TitledRoute = {
       {
         title: 'Privacy', path: 'privacy', component: AboutPrivacyComponent},
       {
+        title: 'Terms of Service', path: 'terms-of-service', component: AboutPrivacyComponent},
+      {
         title: 'Technology', path: 'technology', component: TechnologyComponent},
       {
         title: 'Contributors', path: 'contributors', component: ContributorsComponent},

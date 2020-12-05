@@ -14,6 +14,7 @@ export class ZoneService {
   private storageName = 'timestamp_zone';
   list: BehaviorSubject<Zone[]> = new BehaviorSubject([]);
   mapped: BehaviorSubject<Map<number, Zone>> = new BehaviorSubject(new Map());
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private http: HttpClient, private dbService: DatabaseService) {
   }
@@ -40,8 +41,8 @@ export class ZoneService {
   get(): Promise<any[]> {
     SharedService.downloading.zone = true;
     const locale = localStorage['locale'];
-    return new Promise<any[]>((resolve, reject) => {
-      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+    return new Promise<any[]>((resolve) => {
+      this.http.get(`${Endpoints.S3_BUCKET}/zone/${locale}.json.gz?lastModified=${this.lastModified.value}`)
         .toPromise()
         .then(async (response) => {
           SharedService.downloading.zone = false;

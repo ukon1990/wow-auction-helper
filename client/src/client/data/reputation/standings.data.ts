@@ -1,3 +1,11 @@
+export enum Standing {
+  Neutral = 'Neutral',
+  Friendly = 'Friendly',
+  Honored = 'Honored',
+  Revered = 'Revered',
+  Exalted = 'Exaclted',
+}
+
 export class StandingData {
     public static list = [
         {

@@ -8,10 +8,10 @@ import {RDSQueryUtil} from '../utils/query.util';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class NpcHandler {
-  static addNewNPCsByIds(ids: number[]): Promise<NPC[]> {
+  static addNewNPCsByIds(ids: number[], db: DatabaseUtil): Promise<NPC[]> {
     return new Promise<NPC[]>((resolve, reject) => {
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 10,
+        requestsPerSecond: 5,
         promiseImplementation: Promise
       });
       const promises = [];
@@ -19,8 +19,13 @@ export class NpcHandler {
         processed: 0,
         length: ids.length
       };
-      ids.forEach(id => promises.push(
-        promiseThrottle.add(() => NPCUtil.getById(id, progress))));
+      ids.forEach(id => {
+        if (!id) {
+          return;
+        }
+        promises.push(
+          promiseThrottle.add(() => NPCUtil.getById(id, progress, db)));
+      });
       Promise.all(promises)
         .then((npcs: NPC[]) => {
           resolve(npcs);
@@ -51,67 +56,85 @@ export class NpcHandler {
     });
   }
 
-  static addNPCIfMissing(ids: number[]): Promise<NPC[]> {
+  static addNPCIfMissing(ids: number[], db: DatabaseUtil = new DatabaseUtil()): Promise<NPC[]> {
 
     return new Promise<NPC[]>(async (resolve, reject) => {
-      await new DatabaseUtil().query(`SELECT id FROM npc WHERE id not in (${ids.join(',')})`)
-        .then(async (newIds: number[]) => {
+      if (!ids.length) {
+        resolve();
+        return;
+      }
+      console.log('First npc:', ids[0]);
+
+      await db.query(`SELECT id FROM npc WHERE id not in (${ids.join(',')})`)
+        .then(async (newIds: { id: number }[]) => {
           let result = [];
           if (newIds && newIds.length) {
             console.log(`Adding ${newIds.length} new NPCs to the DB`);
-            result = await this.addNewNPCsByIds(newIds);
+            result = await this.addNewNPCsByIds(newIds.map(({id}) => id), db);
           }
           resolve(result);
         })
         .catch(() => {
+          resolve();
         });
     });
   }
 
   private static async getAllNPCSoldItems(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
-    await conn.query(`SELECT * FROM npcSells WHERE npcId in (select id from npc where ${RDSQueryUtil.unixTimestamp(timestamp)});`)
+    await conn.query(`SELECT id, npcId, standing, stock, price, unitPrice, stackSize, currency
+                            FROM npcSells
+                            WHERE npcId IN (
+                                select id from npc where ${RDSQueryUtil.unixTimestamp(timestamp)}
+                            );`)
       .then((list: any[]) => {
-        list.forEach(row => {
-          if (!npcMap[row.npcId]) {
+        list.forEach(({id, npcId, standing, stock, price, unitPrice, stackSize, currency}) => {
+          if (!npcMap[npcId]) {
             return;
           }
-          delete row.timestamp;
-          if (!npcMap[row.npcId]['sells']) {
-            npcMap[row.npcId]['sells'] = [];
+          if (!npcMap[npcId]['sells']) {
+            npcMap[npcId]['sells'] = [];
           }
-          npcMap[row.npcId]['sells'].push(row);
-          delete row.npcId;
+          npcMap[npcId]['sells'].push({
+            id, standing, stock, price, unitPrice, stackSize, currency
+          });
         });
       });
   }
 
   private static async getAllNPCDrops(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
-    await conn.query(`SELECT * FROM npcDrops WHERE npcId in (select id from npc where ${RDSQueryUtil.unixTimestamp(timestamp)});`)
+    await conn.query(`SELECT id, npcId, dropChance
+                            FROM npcDrops
+                            WHERE npcId in (
+                                select id from npc where ${RDSQueryUtil.unixTimestamp(timestamp)}
+                            );`)
       .then((list: any[]) => {
-        list.forEach(row => {
-          if (!npcMap[row.npcId]) {
+        list.forEach(({id, npcId, dropChance}) => {
+          if (!npcMap[npcId]) {
             return;
           }
-          delete row.timestamp;
-          if (!npcMap[row.npcId]['drops']) {
-            npcMap[row.npcId]['drops'] = [];
+          if (!npcMap[npcId]['drops']) {
+            npcMap[npcId]['drops'] = [];
           }
-          npcMap[row.npcId]['drops'].push(row);
-          delete row.npcId;
+          npcMap[npcId]['drops'].push({
+            id,
+            dropChance: +(dropChance).toFixed(3),
+          });
         });
       });
   }
 
   private static async getAllCoordinates(conn: DatabaseUtil, npcMap: {}, timestamp: string) {
-    await conn.query(`SELECT * FROM npcCoordinates WHERE id in (select id from npc where ${RDSQueryUtil.unixTimestamp(timestamp)});`)
+    await conn.query(`SELECT id, x, y
+                            FROM npcCoordinates
+                            WHERE id in (
+                                select id from npc where ${RDSQueryUtil.unixTimestamp(timestamp)}
+                            );`)
       .then((list: any[]) => {
-        list.forEach(row => {
-          delete row.timestamp;
-          if (!npcMap[row.id]['coordinates']) {
-            npcMap[row.id]['coordinates'] = [];
+        list.forEach(({id, x, y}) => {
+          if (!npcMap[id]['coordinates']) {
+            npcMap[id]['coordinates'] = [];
           }
-          npcMap[row.id]['coordinates'].push(row);
-          delete row.id;
+          npcMap[id]['coordinates'].push({x, y});
         });
       });
   }

@@ -20,12 +20,13 @@ export class StatsRepository {
   constructor(private conn: DatabaseUtil, autoClose: boolean = true) {
   }
 
-  getAllStatsForRealmDate(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
+  getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
     return this.conn.query(`
         SELECT *
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${ahId}
-          AND date = '${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}';`);
+          AND date >= NOW() - INTERVAL 24 HOUR
+        ORDER BY date;`);
   }
 
   getAllStatsForRealmMonth(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
@@ -47,6 +48,7 @@ export class StatsRepository {
     const insert = new RDSQueryUtil('itemPriceHistoryPerDay')
       .multiInsert(list)
       .replace(';', '');
+    console.log('multiInsertOrUpdateDailyPrices', list[0]);
     return this.conn.query(`${insert} ON DUPLICATE KEY UPDATE
       min${day} = VALUES(min${day}),
       minHour${day} = VALUES(minHour${day}),
@@ -77,19 +79,18 @@ export class StatsRepository {
                   AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`);
   }
 
-  getNextHouseInTheDeleteQueue(now: Date, day: number): Promise<any> {
+  getNextHouseInTheDeleteQueue(): Promise<any> {
     return this.conn.query(`SELECT *
-                        FROM auction_houses
-                        WHERE lastHistoryDeleteEvent IS NULL OR lastHistoryDeleteEvent < ${+new Date(+now - day)}
-                        ORDER BY lastHistoryDeleteEvent
-                        LIMIT 1;`);
+                            FROM auction_houses
+                            ORDER BY lastHistoryDeleteEvent
+                            LIMIT 1;`);
   }
 
-  deleteOldAuctionHouseData(id: any, now: Date, day: number): Promise<any> {
+  deleteOldAuctionHouseData(ahId: number, now: Date, day: number): Promise<any> {
     return this.conn.query(`
             DELETE FROM itemPriceHistoryPerHour
-            WHERE ahId = ${id} AND
-                  UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000};`);
+            WHERE ahId = ${ahId} AND UNIX_TIMESTAMP(date) < ${+new Date(+now - day * 15) / 1000}
+            LIMIT 100000;`);
   }
 
   updateLastDeleteEvent(id: number): Promise<any> {
@@ -97,5 +98,50 @@ export class StatsRepository {
         UPDATE auction_houses
         SET lastHistoryDeleteEvent = ${+new Date()}
         WHERE id = ${id};`);
+  }
+
+  getActiveQueries(): Promise<any> {
+    return this.conn.query(`
+      SELECT count(*) as activeQueries
+      FROM information_schema.processlist
+      WHERE info NOT LIKE '%information_schema.processlist%' AND
+          (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
+              OR info LIKE '%DELETE FROM%');`);
+  }
+
+  deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH') {
+    return new Promise<void>(async (resolve, reject) => {
+      this.conn.query(`
+          SELECT ahId
+          FROM ${table}
+          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
+          GROUP BY ahId
+          ORDER BY ahId
+          LIMIT 1
+      `)
+        .then(ids => {
+          if (ids.length) {
+            this.conn.query(`
+          DELETE
+          FROM ${table}
+          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
+            AND ahId = ${ids[0].ahId};`)
+              .then(res => {
+                console.log(res);
+                resolve();
+              })
+              .catch(error => {
+                console.error(error);
+                reject(error);
+              });
+          } else {
+            resolve();
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        });
+    });
   }
 }

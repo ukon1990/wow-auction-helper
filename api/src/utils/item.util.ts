@@ -36,7 +36,7 @@ export class ItemUtil {
     return item;
   }
 
-  static getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'eu'): Promise<Item> {
+  static getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'us'): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints()
@@ -49,8 +49,10 @@ export class ItemUtil {
           item.icon = await GameMediaUtil.getIcon(raw.media, region);
           resolve(item as Item);
         })
-        .catch(() =>
-          reject(`Could not find item with id=${id} from Blizzard`));
+        .catch((err) => {
+          console.error(err);
+          reject(`Could not find item with id=${id} from Blizzard`);
+        });
     });
   }
 

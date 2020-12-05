@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from '../../../services/shared.service';
 import {Endpoints} from '../../../services/endpoints';
 import {ErrorOptions, ErrorReport} from '../../../utils/error-report.util';
@@ -13,6 +13,9 @@ import {AuctionHouseStatus} from '../../auction/models/auction-house-status.mode
 import {CraftingService} from '../../../services/crafting.service';
 import {CharacterProfession} from '../../../../../../api/src/character/model';
 import {Report} from '../../../utils/report.util';
+import {SettingsService} from '../../user/services/settings/settings.service';
+import {UserSettings} from '../../user/models/settings.model';
+import {AppSyncService} from '../../user/services/app-sync.service';
 
 @Injectable()
 export class CharacterService {
@@ -20,24 +23,62 @@ export class CharacterService {
     new BehaviorSubject<Map<number, string>>(new Map<number, string>());
 
   private sm = new SubscriptionManager();
+  private readonly GQL_FIELDS = `
+    characters {
+      lastModified
+      name
+      slug
+    }
+  `;
   events: EventEmitter<any> = new EventEmitter();
+  characters = new BehaviorSubject<Character[]>([]);
   charactersForRealm: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
   charactersForRealmWithRecipes: BehaviorSubject<Character[]> = new BehaviorSubject<Character[]>([]);
+  realmStatusIsReady: boolean;
+  appSyncIsReady: boolean;
 
-  constructor(private _http: HttpClient, private realmService: RealmService, private craftingService: CraftingService) {
+  constructor(private _http: HttpClient,
+              private realmService: RealmService,
+              private settingsSync: SettingsService,
+              private appSync: AppSyncService,
+              private craftingService: CraftingService) {
+    this.sm.add(this.characters, chars => {
+      if (SharedService.user) {
+        SharedService.user.characters = chars;
+      }
+    });
+
+    const localStorageChars = localStorage.getItem('characters');
+    if (localStorageChars) {
+      try {
+        this.characters.next(JSON.parse(localStorageChars));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    this.sm.add(settingsSync.settings, settings => {
+      this.appSyncIsReady = !!settings;
+      this.handleSettingsUpdate(settings)
+        .catch(console.error);
+    });
+    this.sm.add(realmService.events.list, (list) => {
+      this.realmStatusIsReady = !!list.length;
+      this.handleSettingsUpdate()
+        .catch(console.error);
+    });
     this.sm.add(this.realmService.events.realmStatus,
       status => this.updateCharactersForRealmAndRecipes(status));
   }
 
-  getCharacter(character: string, realm: string, region?: string): Promise<Character> {
+  getCharacter(name: string, realm: string, region?: string): Promise<Character> {
     SharedService.downloading.characterData = true;
     return new Promise<Character>((resolve, reject) => {
       this._http
         .post(Endpoints.getLambdaUrl(`character`),
           {
             region: region ? region : SharedService.user.region,
-            realm: realm,
-            name: character,
+            realm,
+            name,
             locale: Endpoints.getRealm(UserUtil.slugifyString(realm)).locale,
             withFields: true
           })
@@ -47,7 +88,6 @@ export class CharacterService {
           if (char['error']) {
             reject(char);
           } else {
-            this.emitChanges(char);
             resolve(char);
           }
         }).catch(error => {
@@ -57,7 +97,7 @@ export class CharacterService {
           new ErrorOptions(
             true,
             `${
-              character
+              name
             } could not be found on the realm ${
               realm
             }.`));
@@ -80,7 +120,6 @@ export class CharacterService {
       .toPromise()
       .then(c => {
         SharedService.downloading.characterData = false;
-        this.emitChanges(c);
         return c;
       }).catch(error => {
         SharedService.downloading.characterData = false;
@@ -90,19 +129,14 @@ export class CharacterService {
       });
   }
 
-  private emitChanges(c: Object) {
-    setTimeout(() =>
-      this.events.emit(c));
-  }
-
   updateCharactersForRealmAndRecipes(status: AuctionHouseStatus = this.realmService.events.realmStatus.value) {
 
     const withRecipes: Character[] = [];
     const currentCharacters: Character[] = [];
-    if (SharedService.user && SharedService.user.characters && status) {
+    if (this.characters.value && status) {
       const map = new Map<number, string[]>();
       CraftingService.recipesForUser.value.clear();
-      SharedService.user.characters.filter(character => {
+      this.characters.value.filter(character => {
         if (TextUtil.contains(status.connectedTo.join(','), character.slug)) {
           currentCharacters.push(character);
 
@@ -167,5 +201,137 @@ export class CharacterService {
     }
     return !!(character.professions.primaries && character.professions.primaries.length) ||
       !!(character.professions.secondaries && character.professions.secondaries.length);
+  }
+
+  remove(character: Character) {
+    return new Promise<void>(async (resolve) => {
+      const index = this.getCharacterIndex(character);
+      this.characters.value.splice(index, 1);
+      localStorage['characters'] = JSON.stringify(this.characters.value);
+      this.updateAppSync();
+      try {
+        RealmService.gatherRealms();
+        this.updateCharactersForRealmAndRecipes();
+      } catch (e) {
+        ErrorReport.sendError('removeCharacter', e);
+      }
+
+      Report.send('Removed character', 'Characters');
+      resolve();
+    });
+  }
+
+  update(character: Character, updateAppSync = true): Promise<Character> {
+    if (!character) {
+      return;
+    }
+    const professions = character.professions;
+
+    return new Promise<Character>((resolve, reject) => {
+      if (!SharedService.user || !SharedService.user.region) {
+        resolve(character);
+        return;
+      }
+      const region = SharedService.user.region;
+      this.getCharacter(
+        character.name,
+        character.slug,
+        region
+      ).then(async c => {
+        if (c && !c.error && this.characters.value) {
+          if (!c.professions) {
+            c.professions = professions;
+          }
+          const index = this.getCharacterIndex(character);
+          if (index !== undefined) {
+            this.characters.value[index] = c;
+          } else {
+            this.characters.next([...this.characters.value, c]);
+          }
+
+          localStorage['characters'] = JSON.stringify(this.characters.value);
+          if (updateAppSync) {
+            this.updateAppSync();
+          }
+          this.updateCharactersForRealmAndRecipes();
+
+          Report.send('Updated', 'Characters');
+          this.events.emit(c);
+          resolve(c);
+        } else {
+          ErrorReport.sendHttpError(
+            c.error,
+            new ErrorOptions(true, 'Could not update the character'));
+          reject(c.error);
+        }
+      }).catch(error => {
+        this.handleCharacterError(error, name, character.realm);
+        reject(error);
+      });
+    });
+  }
+
+  updateAppSync() {
+    this.settingsSync.updateSettings(
+      this.settingsSync.reduceCharacters(
+        this.characters.value));
+  }
+
+  private getCharacterIndex(character: Character) {
+    let index: number;
+    this.characters.value
+      .forEach((char: Character, i: number) => {
+        if (char.name === character.name && char.realm === character.realm) {
+          index = i;
+        }
+      });
+    return index;
+  }
+
+  handleCharacterError(error: HttpErrorResponse, name: string, realm: string) {
+    ErrorReport.sendHttpError(
+      error,
+      new ErrorOptions(
+        true,
+        `${name} could not be found on ${realm}. If you are sure that the name matches, try loggin in and out of the character.`));
+  }
+
+  private async handleSettingsUpdate(settings: UserSettings = this.settingsSync.settings.value) {
+    if (!this.realmStatusIsReady || !this.appSyncIsReady || !this.appSync.isAuthenticated.value) {
+      return;
+    }
+    if (settings && settings.characters) {
+      console.log('Checking for character updates on other devices');
+      const characters: Character[] = [];
+      const charMap = new Map<string, Character>();
+      const updatePromises: Promise<void>[] = [];
+      const getId = (character: Character) => `${character.slug}-${character.name}`;
+
+      (this.characters.value || []).forEach(character => {
+        charMap.set(getId(character), character);
+      });
+      // The overlap in the models should be similar enough for Character and SettingsCharacter
+      settings.characters.forEach((character: Character) => {
+        const alreadyStored: Character = charMap.get(getId(character));
+        if (alreadyStored &&
+          alreadyStored.lastModified >= character.lastModified) {
+          characters.push(alreadyStored);
+        } else {
+          updatePromises.push(
+            new Promise<void>(async resolve => {
+              await this.update(character, false)
+                .then(char => characters.push(char))
+                .catch(console.error);
+              resolve();
+            })
+          );
+        }
+      });
+      console.log(`Updating ${updatePromises.length} characters`);
+
+      await Promise.all(updatePromises)
+        .catch(console.error);
+      this.characters.next(characters);
+    }
   }
 }

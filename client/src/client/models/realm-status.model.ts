@@ -1,3 +1,5 @@
+import { Realm } from '../../../../api/src/realm/model';
+
 export class RealmStatus {
   id: number;
   ahId: number;
@@ -5,6 +7,7 @@ export class RealmStatus {
   slug: string;
   name: string;
   connectedTo: string[];
+  realms: Realm[];
   battlegroup: string;
   locale: string;
   timezone: string;
@@ -15,6 +18,10 @@ export class RealmStatus {
   lowestDelay: number;
   avgDelay: number;
   highestDelay: number;
+  stats: {
+    url: string;
+    lastModified: number;
+  };
 
   constructor(slug?: string, lastModified?: number) {
     if (slug) {

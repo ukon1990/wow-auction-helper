@@ -196,3 +196,32 @@ wah-materials,
     .col-xxl-12 {}
   }
 }*/
+
+.horizontal-item-list {
+  display: flex !important;
+  flex-direction: column;
+  flex-flow: wrap;
+
+  .mat-list-item,
+  div {
+    height: auto !important;
+    flex: 1 1;
+
+    .mat-line:nth-child(1) {
+      font-weight: bold !important;
+    }
+  }
+}
+
+wah-search .description-line {
+  display: flex;
+  flex-direction: row;
+
+  .description {
+    flex: 1 1;
+  }
+
+  .actions {
+    flex: 0 1 20em;
+  }
+}

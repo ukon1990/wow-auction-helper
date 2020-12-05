@@ -1,14 +1,14 @@
 import {AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {AuctionItem} from '../../models/auction-item.model';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {itemClasses} from '../../../../models/item/item-classes';
 import {Filters} from '../../../../utils/filtering';
-import {Title} from '@angular/platform-browser';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {itemQualities} from '../../../../models/item/disenchanting-list';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SharedService} from '../../../../services/shared.service';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {ItemClassService} from '../../../item/service/item-class.service';
+import {ItemClass} from '../../../item/models/item-class.model';
 
 @Component({
   selector: 'wah-auctions',
@@ -17,7 +17,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 })
 export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, AfterContentInit {
   form: FormGroup;
-  itemClasses = itemClasses;
+  itemClasses: ItemClass[] = ItemClassService.getForLocale();
   itemQualities = itemQualities;
 
   table = {
@@ -91,7 +91,11 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    columns.push({key: '', title: 'Actions', dataType: 'action', actions: ['buy', 'wowhead', 'item-info'], hideOnMobile: true});
+    columns.push({
+      key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
+        idName: 'id',
+      }
+    });
   }
 
   async filterAuctions(changes = this.form.value) {

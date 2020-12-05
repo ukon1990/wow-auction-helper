@@ -1,4 +1,4 @@
-import {Auction} from './auction.model';
+import {Auction, Modifiers} from './auction.model';
 import {Recipe} from '../../crafting/models/recipe';
 import {Item} from '../../../models/item/item';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
@@ -13,6 +13,7 @@ export class AuctionItem {
   buyout = 0;
   bid = 0;
   bonusIds: number[];
+  modifiers: Modifiers[];
   owner: string;
   ownerRealm: string;
   petLevel?: number;

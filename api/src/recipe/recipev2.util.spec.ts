@@ -2,6 +2,9 @@ import {RecipeV2Util} from './recipev2.util';
 import {Recipev2} from './recipev2.model';
 import {DatabaseUtil} from '../utils/database.util';
 import {RDSQueryUtil} from '../utils/query.util';
+import {ItemLocale} from '../models/item/item-locale';
+import {Recipe} from './model';
+import {environment} from '../../../client/src/environments/environment';
 
 const setKeyMap = (res: any, keyMap: {} = {}) => {
   Object.keys(res).forEach(key => {
@@ -33,7 +36,75 @@ const setKeyMap = (res: any, keyMap: {} = {}) => {
 };
 
 describe('Recipev2Util', () => {
-  xdescribe('Not really tests', () => {
+  describe('Not really tests', () => {
+
+    xit('Darkmoon deck creation', async () => {
+      jest.setTimeout(99999);
+      const itemId = 173087;
+      environment.test = false;
+      const db = new DatabaseUtil(false);
+      const expansionId = 8;
+
+      await db.query(`
+          SELECT id, name
+          FROM items
+          WHERE expansionId = ${expansionId} AND name LIKE '%Darkmoon Deck%'
+          ORDER BY id DESC;`)
+        .then(async (items: {id, name}[]) => {
+          console.log('Res', items);
+          let startId = -1;
+          for (const item of items) {
+            const endOfName = item.name.replace('Darkmoon Deck: ', '');
+            await db.query(new RDSQueryUtil('recipes', false).insertOrUpdate({
+              id: startId,
+              craftedItemId: item.id,
+              minCount: 1,
+              maxCount: 1,
+              procRate: 1,
+              rank: 0,
+              type: 'Trinkets',
+            }))
+              .catch(console.error);
+            await db.query(`SELECT * FROM item_name_locale WHERE id = ${item.id}`)
+              .then(async (locale: ItemLocale[]) => {
+                if (locale && locale.length) {
+                  await db.query(new RDSQueryUtil('recipesName', false)
+                    .insertOrUpdate({
+                      ...locale[0],
+                      id: startId,
+                    }))
+                    .catch(console.error);
+                }
+              })
+              .catch(console.error);
+            await db.query(`
+              SELECT id, name, icon, itemClass
+              FROM items
+              WHERE name like '%of %'
+                AND name LIKE '%${endOfName.slice(0, 5)}%'
+                AND name NOT LIKE 'Blank%'
+                AND name NOT LIKE 'Darkmoon%'
+                AND itemClass = 7
+                AND expansionId = ${expansionId};`)
+              .then(async reagents => {
+                for (const {id} of reagents) {
+                  await db.query(new RDSQueryUtil('reagents', false)
+                    .insertOrUpdate({
+                      itemId: id,
+                      recipeId: startId,
+                      quantity: 1,
+                  }))
+                    .catch(console.error);
+                }
+              });
+            startId--;
+          }
+        })
+        .catch(console.error);
+      db.end();
+      environment.test = true;
+      expect(1).toBe(2);
+    });
     /*
     xit('"bruteforce" recipes', async () => {
       jest.setTimeout(10000000);
@@ -93,7 +164,7 @@ describe('Recipev2Util', () => {
       await db.query(`
           SELECT data
           FROM recipe
-          WHERE id NOT IN (SELECT id FROM recipes_new);`)
+          WHERE id NOT IN (SELECT id FROM recipes);`)
         .then(async r => {
           const count = r.length;
           let done = 0;
@@ -160,7 +231,7 @@ describe('Recipev2Util', () => {
     });
 
 
-    xit('getAndMapProfessions', async () => {
+    it('getAndMapProfessions', async () => {
       jest.setTimeout(9999999);
       const mapped = await RecipeV2Util.getAndMapProfessions();
       // console.log('mapped', JSON.stringify(mapped));
@@ -171,7 +242,7 @@ describe('Recipev2Util', () => {
       const type = 'Ring',
         query = `
           SELECT recipes.id as id, name.en_GB as recipeName, recipes.type as type, item.en_GB, item.id as itemId
-          FROM recipes_new AS recipes
+          FROM recipes
                    LEFT JOIN recipesName AS name ON name.id = recipes.id
                    LEFT JOIN professionSkillTiers as skillTier ON skillTier.id = recipes.professionSkillTierId
                    LEFT JOIN professions ON professions.id = skillTier.professionId
@@ -188,7 +259,7 @@ describe('Recipev2Util', () => {
           console.log('Num of rows', rows.length);
           for (const row of rows) {
             await conn.query(`
-                UPDATE recipes_new
+                UPDATE recipes
                 SET craftedItemId = ${row.itemId}
                 WHERE id = ${row.id}`);
           }

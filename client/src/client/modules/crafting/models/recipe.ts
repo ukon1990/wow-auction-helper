@@ -5,7 +5,7 @@ export class Recipe extends APIRecipe {
   // Added by the client
   itemID: number;
   icon: string;
-  reagents: Reagent[];
+  reagents: Reagent[] = [];
   expansion?: number;
   flaggedAsBugged?: boolean;
 

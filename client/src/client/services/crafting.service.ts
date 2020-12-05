@@ -11,7 +11,6 @@ import {Item} from '../models/item/item';
 import {ItemSpells} from '../models/item/itemspells';
 import {Reagent} from '../modules/crafting/models/reagent';
 import wordsToNumbers from 'words-to-numbers';
-import {Report} from '../utils/report.util';
 
 class RecipeResponse {
   timestamp: Date;
@@ -21,19 +20,21 @@ class RecipeResponse {
 @Injectable()
 export class CraftingService {
 
-  constructor(private _http: HttpClient,
-              private dbService: DatabaseService,
-              public platform: Platform) {
-  }
-
   static recipesForUser: BehaviorSubject<Map<number, string[]>> = new BehaviorSubject(new Map<number, string[]>());
   static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static fullList: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static map: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
+  static knownRecipeMap: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
   static itemRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static itemRecipeMapPerKnown: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
   static reagentRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
 
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+  constructor(private _http: HttpClient,
+              private dbService: DatabaseService,
+              public platform: Platform) {
+  }
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_recipes';
 
   static getRecipesForFaction(recipes: Recipe[]): Recipe[] {
@@ -104,7 +105,7 @@ export class CraftingService {
     console.log('Downloading recipes');
 
     SharedService.downloading.recipes = true;
-    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then(async (result: RecipeResponse) => {
         SharedService.downloading.recipes = false;
@@ -153,9 +154,11 @@ export class CraftingService {
 
   setItemRecipeMapPerKnown(map: Map<number, Recipe> = CraftingService.map.value, list: Recipe[] = CraftingService.list.value): void {
     const itemRecipeMapPerKnown = new Map<number, Recipe[]>();
+    const knownRecipeMap = new Map<number, Recipe>();
     list.forEach(recipe => {
       map.set(recipe.id, recipe);
       if (CraftingService.recipesForUser.value.has(recipe.id)) {
+        knownRecipeMap.set(recipe.id, recipe);
         if (!itemRecipeMapPerKnown.has(recipe.itemID)) {
           itemRecipeMapPerKnown.set(recipe.itemID, [recipe]);
         } else {
@@ -163,6 +166,7 @@ export class CraftingService {
         }
       }
     });
+    CraftingService.knownRecipeMap.next(knownRecipeMap);
     CraftingService.itemRecipeMapPerKnown.next(itemRecipeMapPerKnown);
   }
 

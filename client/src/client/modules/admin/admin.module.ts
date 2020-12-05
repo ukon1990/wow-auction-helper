@@ -16,6 +16,9 @@ import { MonitorComponent } from './components/monitor/monitor.component';
 import {AdminService} from './services/admin.service';
 import {UtilModule} from '../util/util.module';
 import {MatListModule} from '@angular/material/list';
+import { TestComponent } from './components/test/test.component';
+import {ItemModule} from '../item/item.module';
+import {UserModule} from "../user/user.module";
 
 
 @NgModule({
@@ -24,6 +27,7 @@ import {MatListModule} from '@angular/material/list';
     AddItemsComponent,
     AddNpcsComponent,
     MonitorComponent,
+    TestComponent,
   ],
   imports: [
     CommonModule,
@@ -37,7 +41,9 @@ import {MatListModule} from '@angular/material/list';
     MatTabsModule,
     TableModule,
     UtilModule,
-    MatListModule
+    MatListModule,
+    ItemModule,
+    UserModule
   ],
   providers: [AdminService]
 })

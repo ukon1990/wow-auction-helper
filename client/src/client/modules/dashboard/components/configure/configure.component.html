@@ -21,6 +21,20 @@
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
+
+          <mat-form-field class="col-md-8 mb-3">
+            <textarea matInput
+                   formControlName="description">
+            </textarea>
+
+            <mat-hint align="start">
+              <em>
+                Is displayed to users, when searching for public dashboards
+              </em>
+            </mat-hint>
+            <mat-hint align="end">{{(form.controls.description.value || '').length}} / 128</mat-hint>
+          </mat-form-field>
+          <wah-tags class="col-md-4 mb-3" [inputField]="form.controls.tags"></wah-tags>
         </div>
 
         <mat-accordion>
@@ -91,6 +105,12 @@
 <mat-dialog-actions align="end">
   <form [formGroup]="form"
         class="mr-2 pt-2">
+    <mat-checkbox *ngIf="isAuthenticated && (!dashboard || !dashboard.isDefault)"
+                  class="mr-2"
+                  matTooltip="If you make the dashboard public, anyone can find it and make a copy of it (sharing is caring)."
+                  formControlName="isPublic">
+      Make public
+    </mat-checkbox>
     <mat-checkbox formControlName="isDisabled">
       Disabled
     </mat-checkbox>

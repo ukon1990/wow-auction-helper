@@ -10,15 +10,6 @@ import {TsmService} from './services/tsm.service';
 exports.deactivateInactiveHouses = (event: APIGatewayEvent, context: Context, callback: Callback) =>
   new AuctionService().deactivateInactiveHouses(event, callback);
 
-/* istanbul ignore next */
-exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const id = +event.pathParameters.id;
-  Endpoints.setStage(event);
-  new AuctionService().getUpdateLog(id, 24 * 7)
-    .then(res => Response.send(res, callback))
-    .catch(err => Response.error(callback, err, event, 401));
-};
-
 exports.auctionsDownloadAndSave = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   Endpoints.setStage(event);
   new AuctionService().downloadAndSaveAuctionDump(event['Records'])
@@ -27,7 +18,9 @@ exports.auctionsDownloadAndSave = (event: APIGatewayEvent, context: Context, cal
 };
 
 exports.updateHourlyRealmData = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new StatsService().processRecord(event['Records']);
+  new StatsService().processRecord(event['Records'])
+    .then(() => Response.send({}, callback))
+    .catch(error => Response.error(callback, error, event, 500));
 };
 
 exports.updateAllRealmDailyData = (event: APIGatewayEvent, context: Context, callback: Callback) => {
@@ -65,7 +58,7 @@ exports.updateAll = (event: APIGatewayEvent, context: Context, callback: Callbac
 };
 
 exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new StatsService().deleteOldPriceHistoryForRealmAndSetDailyPrice()
+  new StatsService().deleteOldPriceHistoryForRealm()
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 500));
 };
@@ -93,4 +86,23 @@ exports.updateTSMDataForOneRealm = (event: APIGatewayEvent, context: Context, ca
   new TsmService().updateTSMDataForOneRealm(event['key'])
     .then(result => Response.send(result, callback))
     .catch(error => Response.error(callback, error, event, 500));
+};
+
+exports.updateRealmTrends = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().updateRealmTrends()
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, event, 500));
+};
+
+exports.deleteOldPriceForRealm = (event: {table: string, olderThan: number, period: string}, context: Context, callback: Callback) => {
+  const {table, olderThan, period} = event;
+  new StatsService().deleteOldPriceForRealm(table, olderThan, period)
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
+};
+
+exports.updateNextRealmsDailyPrices = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  new StatsService().updateNextRealmsDailyPrices()
+    .then(result => Response.send(result, callback))
+    .catch(error => Response.error(callback, error, undefined, 500));
 };

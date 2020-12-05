@@ -39,21 +39,21 @@
       </div>
     </div>
   </mat-card-content>
-  <mat-card-actions *ngIf="!isSeller">
+  <mat-card-actions>
     <button *ngIf="!disallowDelete"
             mat-stroked-button
             type="button"
             color="warn"
-            (click)="remove.emit('')">
+            (click)="remove()">
       <i class="fa fa-trash" aria-hidden="true"></i>
       Remove
     </button>
     <button mat-stroked-button
             type="button"
-            (click)="update.emit('')"
+            (click)="update()"
             color="accent"
     >
-      <div class="float-left mr-1" [ngClass]="{'loading': character.downloading}">
+      <div class="float-left mr-1" [ngClass]="{'loading': isUpdating}">
         <i class="fas fa-sync" aria-hidden="true"></i>
       </div>
       Update

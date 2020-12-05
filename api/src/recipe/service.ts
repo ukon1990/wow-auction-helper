@@ -1,6 +1,8 @@
 import {Recipe, RecipeAPIResponse} from './model';
 import {DatabaseUtil} from '../utils/database.util';
 import {RecipeRepository} from './repository';
+import {RecipeV2Util} from './recipev2.util';
+import {Recipev2} from './recipev2.model';
 
 export class RecipeService {
   private static repository = new RecipeRepository();
@@ -30,6 +32,18 @@ export class RecipeService {
             return recipe;
           })
         }))
+        .catch(reject);
+    });
+  }
+
+  static getAndInsert(id: number, db: DatabaseUtil): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      RecipeV2Util.getRecipeFromAPI(id)
+        .then((recipe: Recipev2) => {
+          this.repository.insertData(recipe, db)
+            .then(resolve)
+            .catch(reject);
+        })
         .catch(reject);
     });
   }

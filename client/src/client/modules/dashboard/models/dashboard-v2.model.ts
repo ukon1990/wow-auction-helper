@@ -1,4 +1,3 @@
-import {DefaultDashboardSettings} from './default-dashboard-settings.model';
 import {ItemRule, Rule} from './rule.model';
 import {ColumnDescription} from '../../table/models/column-description';
 
@@ -7,14 +6,29 @@ export interface SortRule {
   sortDesc?: boolean;
 }
 
+export interface DashboardMinimal {
+  id: string;
+  parentId: string;
+  title: string;
+  description: string;
+  tags: string[];
+  createdBy: string;
+  lastModified: number;
+  isImporting?: boolean;
+  isLoading?: boolean;
+}
+
 export interface DashboardV2 {
   id?: string; // UUID type id?
   parentId?: string;
   idParam: string; // The name of the id param for the table -> No longer needed?
   title: string;
+  description?: string;
   columns: ColumnDescription[];
+  tags?: string[];
   sortOrder: number;
   isDisabled?: boolean;
+  isDefault?: boolean;
   onlyItemsWithRules?: boolean;
   sortRule?: SortRule;
   rules: Rule[];

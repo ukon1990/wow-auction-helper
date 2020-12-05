@@ -31,6 +31,7 @@ export class ItemService {
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   private sm = new SubscriptionManager();
   selectionHistory: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+  lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
@@ -122,7 +123,7 @@ export class ItemService {
 
     this.dbService.clearItems();
     SharedService.itemsUnmapped.length = 0;
-    await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz?rand=${Math.round(Math.random() * 10000)}`)
+    await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then((response: ItemResponse) => {
         SharedService.itemsUnmapped = [];

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
-import {ObjectUtil, TextUtil} from '@ukon1990/js-utilities';
+import {ObjectUtil} from '@ukon1990/js-utilities';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ruleFields} from '../../data/rule-fields.data';
 import {Profession} from '../../../../../../../api/src/profession/model';
@@ -15,6 +15,8 @@ import {getDefaultDashboards} from '../../data/default-doards.data';
 import {DashboardService} from '../../services/dashboard.service';
 import {Report} from '../../../../utils/report.util';
 import {ProfessionService} from '../../../crafting/services/profession.service';
+import {AuthService} from '../../../user/services/auth.service';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete/autocomplete';
 
 @Component({
   selector: 'wah-configure',
@@ -23,6 +25,7 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
 })
 export class ConfigureComponent implements OnInit, AfterViewInit {
   @Output() event: EventEmitter<void> = new EventEmitter<void>();
+  isAuthenticated: boolean;
   fields = ruleFields;
   professions: Profession[] = [];
   tmpBoard: DashboardV2;
@@ -38,6 +41,8 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     parentId: new FormControl(),
     idParam: new FormControl(),
     title: new FormControl(null, Validators.required),
+    description: new FormControl(null, [Validators.maxLength(128)]),
+    tags: new FormControl([]),
     columns: new FormArray([]),
     sortOrder: new FormControl(0),
     onlyItemsWithRules: new FormControl(false),
@@ -76,6 +81,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
+    private authService: AuthService,
     public dialogRef: MatDialogRef<ConfigureComponent>,
     @Inject(MAT_DIALOG_DATA) public dashboard: DashboardV2 | any,
     private auctionService: AuctionsService,
@@ -95,6 +101,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     } else {
       Report.send('Creating new board', 'Dashboard.ConfigureComponent');
     }
+    this.isAuthenticated = this.authService.isAuthenticated.value;
   }
 
   ngAfterViewInit() {
@@ -114,19 +121,23 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       // this.addDefaultColumns();
       return;
     }
-    this.form.controls.id.setValue(board.id);
-    this.form.controls.parentId.setValue(board.parentId);
-    this.form.controls.idParam.setValue(board.idParam);
+    Report.debug('Configuring board', board);
+    this.form.controls.id.setValue(board.id, {emitEvent: false});
+    this.form.controls.parentId.setValue(board.parentId, {emitEvent: false});
+    this.form.controls.idParam.setValue(board.idParam, {emitEvent: false});
 
-    this.form.controls.title.setValue(board.title);
-    this.form.controls.onlyItemsWithRules.setValue(board.onlyItemsWithRules);
-    this.form.controls.sortOrder.setValue(board.sortOrder);
+    this.form.controls.title.setValue(board.title, {emitEvent: false});
+    this.form.controls.description.setValue(board.description, {emitEvent: false});
+    this.form.controls.tags.setValue(board.tags, {emitEvent: false});
+    this.form.controls.onlyItemsWithRules.setValue(board.onlyItemsWithRules, {emitEvent: false});
+    this.form.controls.sortOrder.setValue(board.sortOrder, {emitEvent: false});
 
-    this.form.controls.isDisabled.setValue(board.isDisabled || false);
-    this.form.controls.lastModified.setValue(new Date(board.lastModified));
+    this.form.controls.isDisabled.setValue(board.isDisabled || false, {emitEvent: false});
+    this.form.controls.lastModified.setValue(new Date(board.lastModified), {emitEvent: false});
 
-    this.form.controls.createdBy.setValue(board.createdBy);
-    this.form.controls.createdById.setValue(board.createdById);
+    this.form.controls.createdBy.setValue(board.createdBy, {emitEvent: false});
+    this.form.controls.createdById.setValue(board.createdById, {emitEvent: false});
+    this.form.controls.isPublic.setValue(board.isPublic, {emitEvent: false});
   }
 
   onEvent(board: DashboardV2 = this.form.getRawValue()) {
@@ -135,12 +146,23 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   onSave(): void {
+    const board: DashboardV2 = this.form.getRawValue();
     if (this.dashboard && this.dashboard.id) {
       Report.send('Saved existing board', 'Dashboard.ConfigureComponent');
     } else {
       Report.send('Saving a new board', 'Dashboard.ConfigureComponent');
     }
-    this.service.save(this.form.getRawValue());
+    board.lastModified = +new Date();
+
+    if (board.isPublic && this.isAuthenticated) {
+      this.service.saveToPublicDataset(board)
+        .catch(console.error);
+    } else if (this.dashboard && !board.isPublic && this.dashboard.isPublic && this.isAuthenticated) {
+      this.service.deletePublicEntry(board)
+        .catch(console.error);
+    } else {
+      this.service.save(board);
+    }
     this.event.emit();
     this.dialogRef.close();
   }
@@ -162,7 +184,13 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
 
   onDelete() {
-    this.service.delete(this.dashboard);
+    const board: DashboardV2 = this.dashboard;
+    if (board.isPublic && this.isAuthenticated) {
+      this.service.deletePublicEntry(board, true)
+        .catch(console.error);
+    } else {
+      this.service.delete(board);
+    }
     this.event.emit();
     this.dialogRef.close();
   }

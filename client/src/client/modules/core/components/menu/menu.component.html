@@ -50,12 +50,10 @@
 
   <div class="flex-spacer"></div>
 
-  <!-- TODO: Re-activate after fix
   <wah-shopping-cart
           *ngIf="!displayExtraMenu() && isUserSet"
           (click)="doNotClose($event)">
   </wah-shopping-cart>
-  -->
 
   <wah-download
           *ngIf="isUserSet"
@@ -68,6 +66,7 @@
   </wah-realm-quick-select>
 
   <wah-theme-select></wah-theme-select>
+  <wah-show-profile></wah-show-profile>
 
   <ng-container *ngIf="displayExtraMenu()">
     <ng-container *ngTemplateOutlet="extraMenuTemplate"></ng-container>

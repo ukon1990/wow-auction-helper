@@ -13,6 +13,12 @@ import {rustboltResistance} from './bfa/rustbolt-resistance.data';
 import {theUldumAccord} from './bfa/the-uldum-accord.data';
 import {theRajani} from './bfa/the-rajani.data';
 import {ReputationVendor} from '../../models/reputation.model';
+import {theAscended} from './shadowlands/theAscended.data';
+import {theAvowed} from './shadowlands/theAvowed.data';
+import {courtOfHarvesters} from './shadowlands/courtOfHarvesters.data';
+import {theWildHunt} from './shadowlands/theWildHunt.data';
+import {theUndyingArmy} from './shadowlands/theUndyingArmy.data';
+import {veNari} from './shadowlands/veNari.data';
 
 export class ReputationVendorsData {
   public static bfa: ReputationVendor[] = [
@@ -30,5 +36,14 @@ export class ReputationVendorsData {
     theHonorbound,
     theUldumAccord,
     theRajani,
+  ];
+
+  public static shadowLands: ReputationVendor[] = [
+    theAscended,
+    theAvowed,
+    courtOfHarvesters,
+    theWildHunt,
+    theUndyingArmy,
+    veNari,
   ];
 }

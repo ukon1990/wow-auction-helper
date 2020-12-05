@@ -3,8 +3,8 @@
     <p>
       Click on an item's name to get more information about it, current prices, sources, historical pricing etc and the cogwheel to edit.
     </p>
-    <div class="row">
-      <div *ngIf="!numberOfCharactersOnRealm" class="mat-toolbar mat-warn col-md-12">
+    <div>
+      <div *ngIf="!numberOfCharactersOnRealm" class="row mat-toolbar mat-warn col-md-12">
         <p>
           It seems like you've not added any characters with recipes. This will cause some of the default boards to not return a result.
         </p>
@@ -18,12 +18,21 @@
           Show hidden boards
         </mat-checkbox>
         <div class="col">
-          <button
+          <button class="float-right"
                   mat-stroked-button
                   color="accent"
                   (click)="openNewBoardDialog()"
           >
+            <fa-icon [icon]="faPlus"></fa-icon>
             Create a new board
+          </button>
+          <button class="mr-2 float-right"
+                  mat-stroked-button
+                  color="primary"
+                  (click)="openImportBoardDialog()"
+          >
+            <fa-icon [icon]="faImport"></fa-icon>
+            Search for public boards
           </button>
         </div>
       </div>
@@ -48,7 +57,7 @@
             (cdkDropListDropped)="drop($event)">
       <mat-list-item *ngFor="let d of dashboards"
                      cdkDrag>
-        [{{d.isDisabled ? 'Disabled' : 'Active'}}] {{ d.title }} ({{d.data.length}})
+        [{{ d.isDisabled ? 'Disabled' : 'Active' }}] {{ d.title }} ({{ d.data.length }})
       </mat-list-item>
     </mat-list>
   </mat-tab>

@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {faCog} from '@fortawesome/free-solid-svg-icons/faCog';
 import {RealmService} from '../../../../../services/realm.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {AuctionUpdateLog, AuctionUpdateLogEntry} from '../../../../../../../../api/src/models/auction/auction-update-log.model';
+import {AuctionUpdateLog} from '../../../../../../../../api/src/models/auction/auction-update-log.model';
 import {RealmStatus} from '../../../../../models/realm-status.model';
 import {ColumnDescription} from '../../../../table/models/column-description';
 import {DateUtil} from '@ukon1990/js-utilities';
@@ -26,7 +26,6 @@ export class RealmListDialogComponent implements OnDestroy {
     {key: 'battlegroup', title: 'Battlegroup', dataType: 'text'},
     {key: 'timezone', title: 'Timezone', dataType: 'text'},
     {key: 'locale', title: 'Locale', dataType: 'text'},
-    {key: 'autoUpdate', title: 'Is activated', dataType: 'boolean'},
     {key: 'lowestDelay', title: 'Minutes per update', dataType: 'number'},
     {key: 'size', title: 'Size in MB', dataType: 'number'},
     {key: 'lastModified', title: 'Last updated', dataType: 'date'},
@@ -60,20 +59,23 @@ export class RealmListDialogComponent implements OnDestroy {
         });
         const times = {};
         const timeList = [];
+        const map = new Map<number, boolean>();
         realms.forEach(realm => {
+          if (map.has(realm.ahId)) {
+            return;
+          } else {
+            map.set(realm.ahId, true);
+          }
           const minute = new Date(realm.lastModified).getMinutes();
           if (!times[minute]) {
             times[minute] = {
               minute,
-              regions: {},
+              count: 0,
             };
             timeList.push(times[minute]);
           }
-          if (!times[minute].regions[realm.region]) {
-            times[minute].regions[realm.region] = 0;
-          }
 
-          times[minute].regions[realm.region]++;
+          times[minute].count++;
         });
         Report.debug('Realm times are', timeList.sort((a, b) => b.minute - a.minute));
         this.reset();
@@ -112,14 +114,12 @@ export class RealmListDialogComponent implements OnDestroy {
           const first = res.entries[0];
           res.entries = [{
             id: first.id,
-            ahId: first.ahId,
             lastModified: first.lastModified + res.avgTime * 1000 * 60,
             timeSincePreviousDump: first.timeSincePreviousDump,
             url: '',
             size: first.size
           }, ...res.entries];
           res.entries.forEach(entry => {
-            entry.timeSincePreviousDump = this.msToMinutes(entry);
             entry['name'] = row.name;
           });
           this.updateLogForRealm = res;
@@ -134,8 +134,8 @@ export class RealmListDialogComponent implements OnDestroy {
     }
     // getLogForRealmWithId;
   }
-
-  private msToMinutes(entry: AuctionUpdateLogEntry) {
+/*
+  private msToMinutes(entry: AuctionUpdateLog) {
     return Math.round(entry.timeSincePreviousDump / 1000 / 60);
-  }
+  }*/
 }

@@ -1,4 +1,4 @@
-import {RealmRepository} from '../../realm/repository';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 import {HttpClientUtil} from '../../utils/http-client.util';
 import {S3Handler} from '../../handlers/s3.handler';
@@ -34,12 +34,15 @@ export class TsmService {
   }
 
   updateLastTsmModified(id: number, url: string): Promise<any> {
+    const tsm = {
+      lastModified: +new Date(),
+    };
+    if (url) {
+      tsm['url'] = url;
+    }
     return this.repository.updateEntry(id, {
       id,
-      tsm: {
-        lastModified: +new Date(),
-        url,
-      }
+      tsm
     });
   }
 
@@ -47,7 +50,8 @@ export class TsmService {
     return new Promise<void>((resolve, reject) => {
       this.getAndUpload(house, key)
         .then((queryData) => {
-          const url = queryData && queryData.url ? queryData.url : house.url;
+          const url = queryData && queryData.url ? queryData.url : undefined;
+          console.log('URL was', url, queryData);
           this.updateLastTsmModified(house.id, url)
             .then(resolve)
             .catch(reject);

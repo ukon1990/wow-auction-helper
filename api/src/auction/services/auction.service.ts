@@ -8,7 +8,6 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {RealmQuery} from '../../queries/realm.query';
 import {HttpClientUtil} from '../../utils/http-client.util';
-import {AuctionUpdateLog} from '../../models/auction/auction-update-log.model';
 import {RealmHandler} from '../../handlers/realm.handler';
 import {EventRecord, EventSchema} from '../../models/s3/event-record.model';
 import {GzipUtil} from '../../utils/gzip.util';
@@ -16,7 +15,7 @@ import {AuctionResponse} from '../../models/auction/auctions-response';
 import {AuctionTransformerUtil} from '../utils/auction-transformer.util';
 import {StatsService} from './stats.service';
 import {RealmService} from '../../realm/service';
-import {RealmRepository} from '../../realm/repository';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
 
 export class AuctionService {
@@ -24,15 +23,6 @@ export class AuctionService {
 
   constructor() {
     this.realmRepository = new RealmRepository();
-  }
-
-  async getUpdateLog(ahId: number, hours: number = 24, conn = new DatabaseUtil()): Promise<AuctionUpdateLog> {
-    const fromDate = +new Date() - hours * 60 * 60 * 1000;
-    return new Promise<AuctionUpdateLog>((resolve, reject) => {
-      conn.query(RealmQuery.getUpdateHistoryForRealm(ahId, fromDate))
-        .then(res => resolve(new AuctionUpdateLog(res)))
-        .catch(reject);
-    });
   }
 
   async latestDumpPathRequest(connectedId, region: string, realm: string, timestamp: number) {
@@ -255,41 +245,6 @@ export class AuctionService {
     });
   }
 
-  private async getDelay(id, conn = new DatabaseUtil()) {
-    const {minTime, avgTime, maxTime} = await this.getUpdateLog(id, 72, conn);
-
-    const lowestDelay = minTime > 120 ? 120 : minTime;
-    return {
-      lowest: lowestDelay, avg: avgTime, highest: maxTime
-    };
-  }
-
-  private async createLastModifiedFile(ahId: number, region: string) {
-    const start = +new Date();
-    return new Promise((resolve, reject) => {
-      this.realmRepository.getRealmsSeparated(ahId)
-        .then(realms => {
-          Promise.all(
-            realms.map(realm => new S3Handler().save(
-              realm,
-              `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
-              .then(uploaded => {
-                console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
-              })
-              .catch(error => {
-                console.error(error);
-              }))
-          )
-            .then(resolve)
-            .catch(reject);
-        })
-        .catch(error => {
-          console.error(error);
-          resolve();
-        });
-    });
-  }
-
   private async updateAllStatuses(region: string, conn: DatabaseUtil) {
     const start = +new Date();
     return new Promise((resolve, reject) => {
@@ -348,7 +303,7 @@ export class AuctionService {
             }),
         ])
           .then(async () => {
-            await this.createLastModifiedFile(+ahId, region)
+            await new RealmService().createLastModifiedFile(+ahId, region)
               .catch(err => console.error('Could not createLastModifiedFile', err));
             resolve();
           })
@@ -415,6 +370,54 @@ export class AuctionService {
         }
       }
       resolve();
+    });
+  }
+
+  generateDataModel(url: string): Promise<any> {
+    const getStructure = (obj, existing: any = {}) => {
+      Object.keys(obj).forEach(key => {
+        switch (typeof obj[key]) {
+          case 'object':
+            if (Array.isArray(obj[key])) {
+              let childObj = {
+                isArray: true,
+              };
+              obj[key].forEach(child => {
+                childObj = {
+                  ...childObj,
+                  ...getStructure(child, childObj)
+                };
+              });
+              existing[key] = childObj;
+            } else {
+              existing[key] = getStructure(obj[key], existing[key]);
+            }
+            break;
+          default:
+            if (obj[key]) {
+              existing[key] = typeof obj[key];
+            } else {
+              existing['id'] = typeof obj;
+            }
+            break;
+        }
+      });
+      return existing;
+    };
+
+    return new Promise(async (resolve, reject) => {
+      await AuthHandler.getToken();
+      const fullUrl = `${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
+      console.log('Full dump URL', fullUrl);
+      new HttpClientUtil().get(fullUrl)
+        .then(({body, headers}) => {
+          const result = {};
+          body.auctions.forEach(row => {
+            getStructure(row, result);
+          });
+          resolve(result);
+        })
+        .catch(reject);
     });
   }
 }

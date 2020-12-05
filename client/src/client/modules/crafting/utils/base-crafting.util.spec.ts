@@ -2,17 +2,18 @@ import {BaseCraftingUtil} from './base-crafting.util';
 import {OptimisticCraftingUtil} from './optimistic-crafting.util';
 import {Recipe} from '../models/recipe';
 import {Reagent} from '../models/reagent';
-import {SharedService} from '../../../services/shared.service';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {Auction} from '../../auction/models/auction.model';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {NeededCraftingUtil} from './needed-crafting.util';
 import {PessimisticCraftingUtil} from './pessimistic-crafting.util';
 import {NpcService} from '../../npc/services/npc.service';
+import {Item} from '../../../models/item/item';
 
-describe('BaseCraftingUtil', () => {
+fdescribe('BaseCraftingUtil', () => {
   let recipe: Recipe;
   let map: Map<string, AuctionItem>;
+  const itemMap = new Map<number, Item>();
   beforeEach(() => {
     map = new Map<string, AuctionItem>();
     recipe = new Recipe();
@@ -71,7 +72,7 @@ describe('BaseCraftingUtil', () => {
   describe('OptimisticCraftingUtil', () => {
     it('Can calculate', () => {
       const cost = 101;
-      new OptimisticCraftingUtil(map).calculate([recipe]);
+      new OptimisticCraftingUtil(map, itemMap, 0).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
       expect(recipe.roi).toBe(map.get('1').buyout * 0.95 - cost);
     });
@@ -80,16 +81,16 @@ describe('BaseCraftingUtil', () => {
   describe('NeededCraftingUtil', () => {
     it('Can calculate', () => {
       const cost = 159;
-      new NeededCraftingUtil(map).calculate([recipe]);
+      new NeededCraftingUtil(map, itemMap, 0).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
-      expect(recipe.roi).toBe(map.get('2').buyout * 0.95 - cost);
+      expect(recipe.roi).toBe(map.get('1').buyout * 0.95 - cost);
     });
   });
 
   describe('PessimisticCraftingUtil', () => {
     it('Can calculate', () => {
       const cost = 196;
-      new PessimisticCraftingUtil(undefined, undefined, map).calculate([recipe]);
+      new PessimisticCraftingUtil(map, itemMap, 0).calculate([recipe]);
       expect(recipe.cost).toBe(cost);
       expect(recipe.roi).toBe(map.get('1').buyout * 0.95 - cost);
     });

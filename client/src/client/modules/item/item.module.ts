@@ -28,6 +28,8 @@ import { ItemPriceHistoryComponent } from './components/item-price-history/item-
 import {CraftingModule} from '../crafting/crafting.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {CoreModule} from '../core/core.module';
+import {HighchartsChartModule} from 'highcharts-angular';
+import { AuctionsComponent } from './components/auctions/auctions.component';
 
 
 @NgModule({
@@ -40,7 +42,8 @@ import {CoreModule} from '../core/core.module';
     DroppedByTabComponent,
     ContainedInTabComponent,
     AuctionsChartComponent,
-    ItemPriceHistoryComponent
+    ItemPriceHistoryComponent,
+    AuctionsComponent
   ],
   imports: [
     CommonModule,
@@ -62,10 +65,12 @@ import {CoreModule} from '../core/core.module';
     MatProgressSpinnerModule,
     CraftingModule,
     MatDialogModule,
-    CoreModule
+    CoreModule,
+    HighchartsChartModule
   ],
   exports: [
-    ItemComponent
+    ItemComponent,
+    ItemPriceHistoryComponent
   ]
 })
 export class ItemModule {

@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Endpoints} from './endpoints';
 import {SharedService} from './shared.service';
 import {Realm} from '../models/realm';
-import {AuctionsService} from './auctions.service';
 import {ErrorReport} from '../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ArrayUtil, DateUtil} from '@ukon1990/js-utilities';
@@ -13,12 +12,15 @@ import {AuctionUpdateLog} from '../../../../api/src/models/auction/auction-updat
 import {RealmStatus} from '../models/realm-status.model';
 import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
+import {SubscriptionManager} from '@ukon1990/subscription-manager';
+import {SettingsService} from '../modules/user/services/settings/settings.service';
 
 @Injectable()
 export class RealmService {
   private statusInterval: Observable<number> = environment.test ? null : interval(25 * 1000);
-  private isCheckingStatus: boolean;
+  isCheckingStatus: boolean;
   private timeSinceInterval: Observable<number> = environment.test ? null : interval(1000);
+  sm = new SubscriptionManager();
   previousUrl;
   events = {
     timeSince: new BehaviorSubject(0),
@@ -29,8 +31,16 @@ export class RealmService {
   };
 
   constructor(private http: HttpClient,
+              private settingSync: SettingsService,
               private matSnackBar: MatSnackBar) {
     if (!environment.test) {
+      this.sm.add(settingSync.realmChange, (change) => {
+        if (change) {
+          const {region, realm} = change;
+          this.changeRealm(realm, region)
+            .catch(console.error);
+        }
+      });
       this.statusInterval.subscribe(() => this.checkForUpdates());
       this.timeSinceInterval.subscribe(() => this.setTimeSince());
     }
@@ -53,11 +63,11 @@ export class RealmService {
       SharedService.userRealms.push(tmpMap[key]));
   }
 
-  async changeRealm(auctionsService: AuctionsService, realm: string, region?: string) {
-    if (region) {
-      SharedService.user.region = region;
-    }
+  async changeRealm(realm: string, region: string = SharedService.user.region) {
+    console.log('Change realm input', realm, region);
+    SharedService.user.region = region;
     SharedService.user.realm = realm;
+
     UserUtil.save();
     return new Promise<AuctionHouseStatus>((resolve, reject) => {
       this.getStatus(
@@ -85,7 +95,7 @@ export class RealmService {
       region = SharedService.user.region;
       realm = SharedService.user.realm;
     }
-    this.isCheckingStatus = false;
+    this.isCheckingStatus = true;
     const realmStatus = this.events.realmStatus.value,
       timeSince = realmStatus ? DateUtil.getDifferenceInSeconds(
         realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,

@@ -4,7 +4,7 @@ export class UpdatesRepository {
         SELECT *
         FROM (
                  SELECT timestamp as recipes
-                 FROM recipes_new
+                 FROM recipes
                  ORDER BY timestamp DESC
                  LIMIT 1
              ) recipes,

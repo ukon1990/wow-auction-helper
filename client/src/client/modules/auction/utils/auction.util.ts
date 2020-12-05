@@ -18,6 +18,38 @@ interface OrganizedAuctionResult {
 }
 
 export class AuctionUtil {
+
+  private static modifierTest(auctions: Auction[]): void {
+    const type = new Map<number, any>();
+    const list = [];
+    auctions.forEach(auction => {
+      if (auction.modifiers) {
+        auction.modifiers.forEach(modifier => {
+          if (!type.has(modifier.type)) {
+            type.set(modifier.type, {
+              type: modifier.type,
+              min: modifier.value,
+              max: modifier.value,
+              values: {},
+              items: {}
+            });
+            list.push(type.get(modifier.type));
+          }
+          const entry = type.get(modifier.type);
+          entry.values[modifier.value] = 1;
+          entry.items[auction.item] = 1;
+
+          if (entry.min > modifier.value) {
+            entry.min = modifier.value;
+          }
+          if (entry.max < modifier.value) {
+            entry.max = modifier.value;
+          }
+        });
+      }
+    });
+    console.log('modifiers', list);
+  }
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
@@ -26,6 +58,7 @@ export class AuctionUtil {
   public static organize(auctions: Auction[]): Promise<OrganizedAuctionResult> {
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {
       try {
+        // TODO: Remove later -> this.modifierTest(auctions);
         const t0 = performance.now();
         this.clearOldData();
         const list: AuctionItem[] = [];
@@ -47,14 +80,27 @@ export class AuctionUtil {
   private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[]) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
+    const idMap: Map<number, boolean> = new Map<number, boolean>();
+    /*
     TsmService.list.value.forEach(tsm => {
       const auction = new Auction();
       auction.item = +tsm.Id;
       this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
     });
+    */
 
-    auctions.forEach((a: Auction) =>
-      this.processAuction(a, map, list));
+    auctions.forEach((a: Auction) => {
+      this.processAuction(a, map, list);
+      idMap.set(a.item, true);
+    });
+
+    TsmService.list.value.forEach(tsm => {
+      if (!idMap.has(tsm.Id)) {
+        const auction = new Auction();
+        auction.item = +tsm.Id;
+        this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
+      }
+    });
 
     list.forEach(ai => {
       ai.auctions = ai.auctions.sort((a, b) => {
@@ -65,6 +111,7 @@ export class AuctionUtil {
         ai.buyout = lowest.buyout / lowest.quantity;
       }
     });
+
     return map;
   }
 
@@ -100,9 +147,11 @@ export class AuctionUtil {
     // Dashboard -> Needs to be done after trade vendors
     // Dashboard.addDashboards();
 
+    /*
     if (SharedService.user && SharedService.user.shoppingCart) {
       SharedService.user.shoppingCart.calculateCosts();
     }
+    */
 
 
     const t2 = performance.now();
@@ -285,6 +334,7 @@ export class AuctionUtil {
   private static handleBonusIds(auction: Auction, tmpAuc: AuctionItem) {
     if (auction.bonusLists) {
       tmpAuc.bonusIds = auction.bonusLists.map(b => b.bonusListId);
+      tmpAuc.modifiers = auction.modifiers;
 
       tmpAuc.bonusIds.forEach(b => {
         const bonus = SharedService.bonusIdMap[b];

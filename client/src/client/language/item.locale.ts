@@ -146,7 +146,10 @@ const itemQualities: ItemLocaleModel[] = [
 ];
 
 export class ItemLocale {
-  static getQualities(locale: string = localStorage.getItem('locale') || 'en_GB') {
+  static getQualities(locale: string = localStorage.getItem('locale') || 'en_GB'): {
+    list: ItemLocaleModel[],
+    map: Map<number, ItemLocaleModel>
+  } {
     const list: ItemLocaleModel[] = [];
     const map = new Map<number, ItemLocaleModel>();
     itemQualities.forEach(quality => {

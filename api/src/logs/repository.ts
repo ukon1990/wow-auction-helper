@@ -10,12 +10,6 @@ export class LogRepository {
     'Uptime'
     );`;
 
-  static activeQueryCount = `
-      SELECT count(*) as activeQueries
-      FROM information_schema.processlist
-      WHERE info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
-         OR info LIKE '%DELETE FROM%'`;
-
   static processList = `
       SELECT id,
              query_id                         as queryId,

@@ -16,6 +16,8 @@ import {AuctionHouseStatus} from '../modules/auction/models/auction-house-status
 import {TsmService} from '../modules/tsm/tsm.service';
 import {CharacterService} from '../modules/character/services/character.service';
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
+import {SettingsService} from '../modules/user/services/settings/settings.service';
+import {UserSettings} from '../modules/user/models/settings.model';
 
 @Injectable()
 export class AuctionsService {
@@ -27,6 +29,7 @@ export class AuctionsService {
   };
   subs = new SubscriptionManager();
   doNotOrganize = false;
+  isReady = false;
 
 
   constructor(
@@ -35,8 +38,10 @@ export class AuctionsService {
     private _dbService: DatabaseService,
     private _itemService: ItemService,
     private tsmService: TsmService,
+    private settingsSync: SettingsService,
     private characterService: CharacterService,
     private realmService: RealmService) {
+
     this.subs.add(
       this.realmService.events.realmStatus,
       (status: AuctionHouseStatus) =>
@@ -45,9 +50,11 @@ export class AuctionsService {
     this.subs.add(
       this.realmService.events.realmChanged,
       (status) => {
-        this.tsmService.get(status)
-          .then(async () => await this.organize())
-          .catch(console.error);
+        if (this.isReady) {
+          this.tsmService.get(status)
+            .then(async () => await this.organize())
+            .catch(console.error);
+        }
       }
     );
 
@@ -71,14 +78,24 @@ export class AuctionsService {
     console.log('Downloading auctions');
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
-    return this.http
-      .get(realmStatus.url)
-      .toPromise()
-      .then(async a => {
+    let auctions;
+    /*
+      this.http
+        .get(realmStatus.stats.url)
+        .toPromise()
+        .then(data => stats = data)
+    */
+    return Promise.all([
+      this.http
+        .get(realmStatus.url)
+        .toPromise()
+        .then(data => auctions = data['auctions'])
+    ])
+      .then(async () => {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-          await this.organize(a['auctions'])
+          await this.organize(auctions)
             .catch(error => ErrorReport.sendError('getAuctions', error));
         }
 
@@ -87,7 +104,7 @@ export class AuctionsService {
 
         this.handleNotifications();
         SharedService.events.auctionUpdate.emit();
-        this.auctions.next(a['auctions']);
+        this.auctions.next(auctions);
         this.events.isDownloading.next(true);
       })
       .catch((error: HttpErrorResponse) => {
@@ -117,7 +134,8 @@ export class AuctionsService {
 
     const previousLastModified = +localStorage['timestamp_auctions'];
     if (this.shouldDownload(status, previousLastModified)) {
-      this.getAuctions();
+      this.getAuctions()
+        .catch(console.error);
     }
   }
 
@@ -139,7 +157,8 @@ export class AuctionsService {
   }
 
   private sendNewAuctionDataAvailable() {
-    if (SharedService.user.notifications.isUpdateAvailable) {
+    const settings: UserSettings = this.settingsSync.settings.value;
+    if (settings && settings.notifications && settings.notifications.isUpdateAvailable) {
       Notifications.send(
         'WAH - New auction data',
         `There are new auctions available for ${SharedService.user.realm}.`);
@@ -147,6 +166,9 @@ export class AuctionsService {
   }
 
   async organize(auctions: Auction[] = this.auctions.value) {
+    if (!this.isReady) {
+      return;
+    }
     // this.characterService.updateCharactersForRealmAndRecipes();
     await AuctionUtil.organize(auctions)
       .then(({

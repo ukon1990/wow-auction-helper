@@ -1,4 +1,5 @@
 import {AuctionStatsUtil} from './auction-stats.util';
+import {StatsService} from '../services/stats.service';
 
 describe('AuctionStatsUtil', () => {
   const mock = {
@@ -568,7 +569,7 @@ describe('AuctionStatsUtil', () => {
   describe('processDaily', () => {
     it('Should not contain more than 24 hours', () => {
       const result = AuctionStatsUtil.processDays(mock.hourly);
-      expect(result.length).toBe(1)
+      expect(result.length).toBe(1);
     });
   });
 });

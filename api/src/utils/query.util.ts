@@ -34,17 +34,29 @@ export class RDSQueryUtil<T> {
     return `${query} WHERE id = ${id};`;
   }
 
-  insert(object: T): string {
+  insert(object: T, terminate: boolean = true): string {
     const cv = this.getColumnsAndValues(object);
     return `INSERT INTO ${this.table
     }(${
       cv.columns.join(',')
     }${this.setTimestamp ? ',timestamp' : ''}) VALUES(${cv.values.join(',')
-    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''});`;
+    }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''})${terminate ? ';' : ' '}`;
+  }
+
+  insertOrUpdate(object: T, updateTimestamp = false): string {
+    const clone = {...object};
+    delete clone['id'];
+    const cv = this.getColumnsAndValues(clone);
+    const insert = this.insert(object, false);
+    return insert + ` ON DUPLICATE KEY UPDATE ${
+      cv.columns.map((column, index) => `${column} = ${cv.values[index]}`).join(',')
+    } ${
+      updateTimestamp ? ',timestamp = CURRENT_TIMESTAMP' : ''
+    }`;
   }
 
   /* Need to have the same column count */
-  multiInsert(list: T[]): string {
+  multiInsert(list: T[], terminate = true): string {
     let queries = '';
     for (let i = 0, l = list.length; i < l; ++i) {
       const cv = this.getColumnsAndValues(list[i]);
@@ -57,7 +69,32 @@ export class RDSQueryUtil<T> {
         queries += `,(${cv.values.join(',')})`;
       }
     }
-    return queries + ';';
+    if (terminate) {
+      queries += ';';
+    }
+    return queries;
+  }
+
+  multiInsertOrUpdate(list: T[], updateTimestamp: boolean): string {
+    const query = this.multiInsert(list, false);
+
+    if (!query || !query.length) {
+      return;
+    }
+    const columnMap = new Map<string, string>();
+    const columns = [];
+    list.forEach(entry => {
+      const cv = this.getColumnsAndValues(entry);
+      cv.columns.forEach(column => {
+        if (!columnMap.has(column) && column !== 'id' && column !== 'timestamp') {
+          columnMap.set(column, column);
+          columns.push(column);
+        }
+      });
+    });
+    return `${query}  ON DUPLICATE KEY UPDATE ${
+      columns.map((column) => `${column} = VALUES(${column})`).join(',')
+    } ${updateTimestamp ? ', timestamp = CURRENT_TIMESTAMP' : ''};`;
   }
 
   private getColumnsAndValues(object: T) {
@@ -131,10 +168,8 @@ export class NoSQLQueryUtil {
     const attributeValues = {
       ':lastModified': +new Date()
     };
-    const updateExpression = [
-    ];
-    const expressionAttributeNames = {
-    };
+    const updateExpression = [];
+    const expressionAttributeNames = {};
 
     if (!input['lastModified']) {
       updateExpression.push('lastModified = :lastModified');

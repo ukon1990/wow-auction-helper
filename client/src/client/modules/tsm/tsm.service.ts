@@ -7,7 +7,6 @@ import {SharedService} from '../../services/shared.service';
 import {AuctionHouseStatus} from '../auction/models/auction-house-status.model';
 import {ErrorReport} from '../../utils/error-report.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {RealmService} from '../../services/realm.service';
 import {environment} from '../../../environments/environment';
 import {Platform} from '@angular/cdk/platform';
 
@@ -17,7 +16,7 @@ import {Platform} from '@angular/cdk/platform';
 export class TsmService {
   static list: BehaviorSubject<TSM[]> = new BehaviorSubject<TSM[]>([]);
   static mapped: BehaviorSubject<Map<number, TSM>> = new BehaviorSubject(new Map<number, TSM>());
-
+  private isDownloadingTSM = false;
 
   constructor(private http: HttpClient,
               private db: DatabaseService,
@@ -31,29 +30,37 @@ export class TsmService {
   }
 
   load(realmStatus: AuctionHouseStatus): Promise<TSM[]> {
-    return new Promise<TSM[]>((resolve, reject) => {
+    return new Promise<TSM[]>(async (resolve, reject) => {
+      let list: TSM[] = [];
+      let error;
       if (new Date().toDateString() !== localStorage['timestamp_tsm']) {
-        this.get(realmStatus)
-          .then(resolve)
-          .catch(reject);
-      } else {
-        this.getFromDB()
-          .then(data => {
-            if (!data || !data.length) {
-              this.get(realmStatus)
-                .then(resolve)
-                .catch(reject);
-            } else {
-              this.processData(data);
-              resolve(data);
-            }
-          })
-          .catch((error) => {
+        await this.get(realmStatus)
+          .then(data => list = data)
+          .catch(err => error = err);
+      }
+
+      /* Temp deactivated to see if it affects loading speeds
+      if (!list || !list.length) {
+        await this.getFromDB()
+          .then(data => list = data)
+          .catch((err) => {
             ErrorReport.sendError('TsmService.load', error);
-            this.get(realmStatus)
-              .then(resolve)
-              .catch(reject);
+            error = err;
           });
+      }
+      */
+
+      if (!list || !list.length) {
+        await this.get(realmStatus)
+          .then(data => list = data)
+          .catch(err => error = err);
+      } else {
+        this.processData(list);
+      }
+      if (error) {
+        reject(error);
+      } else {
+        resolve(list);
       }
     });
   }
@@ -62,30 +69,39 @@ export class TsmService {
     console.log('status', realmStatus);
     return new Promise<TSM[]>((resolve, reject) => {
       // Regions such as Taiwan and Korea is not supported by TSM. But they should not have a tsmUrl
-      if (realmStatus && realmStatus.tsmUrl) {
+      if (realmStatus && realmStatus.tsmUrl && !this.isDownloadingTSM) {
         console.log('Downloading TSM data');
         this.openSnackbar('Downloading TSM data');
+        this.isDownloadingTSM = true;
         SharedService.downloading.tsmAuctions = true;
         this.http.get(realmStatus.tsmUrl)
           .toPromise()
-          .then(tsm => {
-            localStorage['timestamp_tsm'] = new Date().toDateString();
+          .then((tsm: TSM[]) => {
+            localStorage.setItem('timestamp_tsm', new Date().toDateString());
             SharedService.downloading.tsmAuctions = false;
+            this.isDownloadingTSM = false;
             console.log('TSM data download is complete');
-            this.processData(tsm as TSM[]);
-            this.addToDB(tsm as TSM[]);
-            this.openSnackbar('Completed TSM download');
-            resolve();
+            try {
+              this.processData(tsm);
+              /* Temp deactivated to see if it affects loading speeds
+              this.addToDB(tsm);
+               */
+              this.openSnackbar('Completed TSM download');
+            } catch (error) {
+              ErrorReport.sendError('TsmService.get', error);
+            }
+            resolve(tsm || []);
           })
           .catch(error => {
             this.openSnackbar(
               `Something went wrong, while downloading TSM data.`);
             ErrorReport.sendError('TsmService.get', error);
             SharedService.downloading.tsmAuctions = false;
-            resolve();
+            this.isDownloadingTSM = false;
+            resolve([]);
           });
       } else {
-        resolve();
+        resolve([]);
       }
     });
   }

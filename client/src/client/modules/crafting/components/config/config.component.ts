@@ -11,6 +11,7 @@ import {ThemeUtil} from '../../../core/utils/theme.util';
 import {UserUtil} from '../../../../utils/user/user.util';
 import {DashboardService} from '../../../dashboard/services/dashboard.service';
 import {AuctionsService} from '../../../../services/auctions.service';
+import {EmptyUtil} from '@ukon1990/js-utilities';
 
 @Component({
   selector: 'wah-crafting-config',
@@ -29,7 +30,9 @@ export class ConfigComponent implements OnDestroy {
     const useIntermediateCrafting = SharedService.user.useIntermediateCrafting;
     this.form = fb.group({
       intermediate: useIntermediateCrafting !== null ? useIntermediateCrafting : true,
-      strategy: SharedService.user.craftingStrategy,
+      strategy: EmptyUtil.isNullOrUndefined(SharedService.user.craftingStrategy) ?
+        BaseCraftingUtil.STRATEGY.NEEDED :
+        SharedService.user.craftingStrategy,
     });
 
     this.sm.add(

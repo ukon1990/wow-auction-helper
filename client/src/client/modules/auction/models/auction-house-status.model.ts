@@ -1,4 +1,6 @@
-export class AuctionHouseStatus {
+import {RealmStatus} from '../../../models/realm-status.model';
+
+export class AuctionHouseStatus extends RealmStatus {
   id: number;
   slug: string;
   name: string;

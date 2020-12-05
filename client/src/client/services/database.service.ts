@@ -325,11 +325,11 @@ export class DatabaseService {
     });
   }
 
-  addDashboards(boards: DashboardV2[]): void {
+  async addDashboards(boards: DashboardV2[]): Promise<void> {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    this.db.table('dashboards').bulkPut(boards)
+    await this.db.table('dashboards').bulkPut(boards)
       .catch(e =>
         ErrorReport.sendError('DatabaseService.addDashboards', e));
   }
@@ -340,6 +340,17 @@ export class DatabaseService {
     }
     return new Promise<void>((resolve, reject) => {
       this.db.table('dashboards').delete(id)
+        .then(resolve)
+        .catch((reject));
+    });
+  }
+
+  clearDashboards() {
+    if (this.shouldNotUseIndexedDB()) {
+      return;
+    }
+    return new Promise<void>((resolve, reject) => {
+      this.db.table('dashboards').clear()
         .then(resolve)
         .catch((reject));
     });
@@ -463,10 +474,21 @@ export class DatabaseService {
     await this.clearProfessions();
   }
 
-  deleteDB(): void {
-    if (this.shouldNotUseIndexedDB()) {
-      return;
-    }
-    this.db.delete();
+  async clearUserData(): Promise<void> {
+    await Promise.all([
+      await this.clearDashboards(),
+    ]).catch(console.error);
+  }
+
+  deleteDB(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (this.shouldNotUseIndexedDB()) {
+        resolve();
+        return;
+      }
+      return this.db.delete()
+        .then(() => resolve())
+        .catch(() => resolve());
+    });
   }
 }

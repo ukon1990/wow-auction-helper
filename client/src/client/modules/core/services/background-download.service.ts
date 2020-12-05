@@ -22,6 +22,9 @@ import {Endpoints} from '../../../services/endpoints';
 import {ProfessionService} from '../../crafting/services/profession.service';
 import {TsmService} from '../../tsm/tsm.service';
 import {LogRocketUtil} from '../../../utils/log-rocket.util';
+import {SettingsService} from '../../user/services/settings/settings.service';
+import {UserUtil} from '../../../utils/user/user.util';
+import {ItemClassService} from '../../item/service/item-class.service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,11 +46,14 @@ export class BackgroundDownloadService {
   private checkingForUpdates: boolean;
   private realmStatus: RealmStatus;
   private subs = new SubscriptionManager();
+  private dbIsReady = false;
+  private settingsAreReady = false;
 
   constructor(
     private http: HttpClient,
     private realmService: RealmService,
     private itemService: ItemService,
+    private itemClassService: ItemClassService,
     private craftingService: CraftingService,
     private auctionsService: AuctionsService,
     private petService: PetsService,
@@ -55,20 +61,22 @@ export class BackgroundDownloadService {
     private zoneService: ZoneService,
     private professionService: ProfessionService,
     private tsmService: TsmService,
+    private settingsService: SettingsService,
     private dbService: DatabaseService) {
-
 
     this.subs.add(
       this.realmService.events.realmStatus,
       (status) =>
         this.realmStatus = status);
 
-    Dashboard.addLoadingDashboards();
+    // Dashboard.addLoadingDashboards();
     this.subs.add(this.dbService.databaseIsReady, async (isReady) => {
-      if (isReady) {
-        await this.init();
-        this.isInitialLoadCompleted.next(true);
-      }
+      this.dbIsReady = isReady;
+      await this.initiateIfReady();
+    });
+    this.subs.add(this.settingsService.hasLoaded, async (hasLoaded) => {
+      this.settingsAreReady = hasLoaded;
+      await this.initiateIfReady();
     });
 
     setInterval(() => {
@@ -83,6 +91,19 @@ export class BackgroundDownloadService {
     }, 1000);
   }
 
+  private async initiateIfReady() {
+    const useAppSync = localStorage.getItem('useAppSync') ?
+      JSON.parse(localStorage.getItem('useAppSync')) : false;
+
+    if (!useAppSync) {
+      UserUtil.restore();
+    }
+    if (this.dbIsReady && (useAppSync && this.settingsAreReady || !useAppSync)) {
+      await this.init();
+      this.isInitialLoadCompleted.next(true);
+    }
+  }
+
   async init(): Promise<void> {
     const {realm, region} = SharedService.user;
     LogRocketUtil.identify();
@@ -92,13 +113,24 @@ export class BackgroundDownloadService {
       this.isLoading.next(true);
       console.log('Starting to load data');
       const startTimestamp = performance.now();
+      await this.initiateRealmSpecificDownloads(region, realm);
       if (!ItemService.list.value.length) {
         await this.getGetOrUpdateBasicAppData();
       }
-      await this.initiateRealmSpecificDownloads(region, realm);
+      await this.initiateAuctionOrganizingAndTSM();
       this.loggLoadingTime(startTimestamp);
       this.isLoading.next(false);
     }
+  }
+
+  private async initiateAuctionOrganizingAndTSM() {
+    this.auctionsService.isReady = true;
+    await this.tsmService.load(this.realmService.events.realmStatus.value)
+      .catch(console.error);
+    await this.auctionsService.organize()
+      .then(() => console.log('Organized'))
+      .catch(console.error);
+    await this.dbService.getAddonData();
   }
 
   private async initiateRealmSpecificDownloads(region: string, realm: string) {
@@ -107,21 +139,12 @@ export class BackgroundDownloadService {
       this.realmService.getStatus(),
       this.realmService.getRealms()
     ];
-
-    if (TsmService.list.value.length === 0) {
-      promises.unshift(
-        this.tsmService.load(this.realmService.events.realmStatus.value)
-      );
-    }
+    await this.dbService.getAddonData()
+      .catch(console.error);
 
     await Promise.all(promises)
-      .then(async () =>
-        await this.auctionsService.organize()
-          .catch(console.error))
       .catch(error =>
         ErrorReport.sendError('BackgroundDownloadService.init', error));
-
-    await this.dbService.getAddonData();
     console.log('Loaded realm specific data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
   }
 
@@ -134,8 +157,10 @@ export class BackgroundDownloadService {
             console.log('Done loading zone data'))
           .catch(console.error);
 
-        const promises: Promise<any>[] = [
+        const promises: Promise<any>[] = [/* TODO: Remove?
           this.tsmService.load(this.realmService.events.realmStatus.value)
+            .catch(console.error),*/
+          this.itemClassService.getAll()
             .catch(console.error),
           this.professionService.load(timestamps.professions),
           this.itemService.loadItems(timestamps.items)
@@ -166,7 +191,13 @@ export class BackgroundDownloadService {
     return new Promise<Timestamps>((resolve, rejects) => {
       this.http.get(`${Endpoints.S3_BUCKET}/timestamps.json.gz?rand=${Math.round(Math.random() * 10000)}`)
         .toPromise()
-        .then(result => {
+        .then((result: Timestamps) => {
+          this.itemService.lastModified.next(+new Date(result.items));
+          this.npcService.lastModified.next(+new Date(result.npcs));
+          this.professionService.lastModified.next(+new Date(result.professions));
+          this.petService.lastModified.next(+new Date(result.pets));
+          this.craftingService.lastModified.next(+new Date(result.recipes));
+          this.zoneService.lastModified.next(+new Date(result.zones));
           resolve(result as Timestamps);
         })
         .catch(rejects);

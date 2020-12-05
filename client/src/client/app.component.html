@@ -8,17 +8,26 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <!--  *ngIf="!isLoading || initialLoadWasSetup; else loadingTemplate" -->
-      <router-outlet></router-outlet>
+      <ng-container *ngIf="!isLoading || initialLoadWasSetup || isInNonAppDataPage; else loadingTemplate">
+        <router-outlet></router-outlet>
+      </ng-container>
     </mat-card-content>
   </mat-card>
   <wah-footer></wah-footer>
 </div>
 
 <ng-template #loadingTemplate>
-  App data is loading…
+  App data is loading, this might take a while the first time depending on your internet speed, computer and browser…
   <table class="table table-hover table-bordered table-striped table-sm {{theme.tableColorClass}}">
     <tbody>
+    <tr *ngIf="useAppSync">
+      <td>
+        <mat-spinner *ngIf="settingsSync.isLoading.value" class="float-left mr-2"></mat-spinner>
+      </td>
+      <td>
+        Settings
+      </td>
+    </tr>
     <tr>
       <td>
         <mat-spinner *ngIf="getDownloading().items" class="float-left mr-2"></mat-spinner>
@@ -77,5 +86,3 @@
     </tbody>
   </table>
 </ng-template>
-
-<wah-app-update></wah-app-update>

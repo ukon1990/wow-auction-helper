@@ -1,19 +1,17 @@
 import {Character} from '../../../client/src/client/modules/character/models/character.model';
-import {CharacterGameData, CharacterGameDataMedia, Faction} from '../models/character/character-game-data.model';
+import {CharacterGameData, Faction} from '../models/character/character-game-data.model';
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
 import {CharacterReputationsGameData} from '../models/character/character-reputations-game-data.model';
 
 export class CharacterUtil {
 
-  static get(region: string, realm: string, name: string, locale: string) {
+  static deprecatedGet(region: string, realm: string, name: string, locale: string) {
     return new Promise((resolve, reject) => {
       const character = new Character();
       Promise.all([
         this.getAndSetCharacterProfile(character, realm, name, locale, region),
         this.getAndSetReputations(character, realm, name, locale, region),
-        this.getAndSetThumbnail(character, realm, name, locale, region),
-        // this.getAndSetProfessions(character, realm, name, locale, region)
       ])
         .then(() =>
           resolve(character))
@@ -85,33 +83,5 @@ export class CharacterUtil {
       delete reputation.faction.key;
     });
     character.reputations = body.reputations;
-  }
-
-  private static getAndSetProfessions(character: Character, realm: string, name: string, locale: string, region: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      new HttpClientUtil().get(
-        this.getUrl(realm, name, locale, region, 'professions'))
-        .then(({body}) => {
-          console.log('Profession result:', body);
-          resolve();
-        })
-        .catch(reject);
-    });
-  }
-
-  private static getAndSetThumbnail(character: Character, realm: string, name: string, locale: string, region: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      new HttpClientUtil().get(
-        this.getUrl(realm, name, locale, region, 'character-media'))
-        .then(({body}) => {
-          character.media = {
-            renderUrl: body.render_url,
-            avatarUrl: body.avatar_url,
-            bustUrl: body.bust_url
-          };
-          resolve();
-        })
-        .catch(reject);
-    });
   }
 }

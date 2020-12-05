@@ -20,6 +20,8 @@ import {CraftingService} from '../../../services/crafting.service';
 import {AuctionsService} from '../../../services/auctions.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ItemDetailsUtil} from '../utils/item-details.util';
+import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
+import {Item} from '../../../models/item/item';
 
 @Component({
   selector: 'wah-item',
@@ -32,14 +34,17 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
   selectionHistory: any[] = [];
-  expansions = GameBuild.expansionMap;
   targetBuyoutValue: number;
   materialFor: Recipe[] = [];
   createdBy: Recipe[];
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
-  selected = {
+  selected: {
+    item: Item;
+    auctionItem: AuctionItem;
+    pet: Pet;
+  } = {
     item: undefined,
     auctionItem: undefined,
     pet: undefined
@@ -47,14 +52,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
   sm = new SubscriptionManager();
-  columns: ColumnDescription[] = [
-    {key: 'timeLeft', title: 'Time left', dataType: 'time-left'},
-    {key: 'buyout', title: 'Buyout/item', dataType: 'gold-per-item'},
-    {key: 'buyout', title: 'Buyout', dataType: 'gold', hideOnMobile: true},
-    {key: 'bid', title: 'Bid/item', dataType: 'gold-per-item'},
-    {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
-    {key: 'quantity', title: 'Size', dataType: ''}
-  ];
+
   droppedByColumns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'dropChance', title: 'Drop chance', dataType: 'percent'},
@@ -89,6 +87,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
               private zoneService: ZoneService,
               private auctionService: AuctionsService,
               private itemService: ItemService,
+              private shoppingCartService: ShoppingCartService,
               public dialogRef: MatDialogRef<ItemComponent>,
               @Inject(MAT_DIALOG_DATA) public selection: any) {
     this.itemNpcDetails = new ItemNpcDetails(npcService, zoneService);
@@ -196,19 +195,26 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     if (!this.selected.item) {
       return false;
     }
-    return CraftingService.itemRecipeMapPerKnown.value.has(this.selected.item.id);
+    const ai = this.auctionService.getById(this.selected.item.id);
+    return !!(ai && ai.source &&
+      ai.source.recipe &&
+      ai.source.recipe.known &&
+      ai.source.recipe.known.length);
   }
 
-  addEntryToCart(): void {
+  addEntryToCart(isRecipe: boolean = true): void {/*
     if (!this.userHasRecipeForItem()) {
       return;
+    }*/
+    const quantity: number = +this.shoppingCartQuantityField.value;
+    if (isRecipe) {
+      this.shoppingCartService.addRecipeByItemId(this.selected.item.id, quantity);
+      Report.send('Added to recipe shopping cart', 'Item detail view');
+    } else {
+      this.shoppingCartService.addItem(this.selected.item.id, quantity);
+      Report.send('Added to item shopping cart', 'Item detail view');
     }
-    SharedService.user.shoppingCart
-      .add(
-        CraftingService.itemRecipeMapPerKnown.value.get(this.selected.item.id)[0],
-        this.shoppingCartQuantityField.value);
 
-    Report.send('Added to recipe shopping cart', 'Item detail view');
   }
 
   /* istanbul ignore next */

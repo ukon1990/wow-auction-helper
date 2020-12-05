@@ -18,6 +18,8 @@ import {ProfessionService} from '../../../crafting/services/profession.service';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../../npc/services/npc.service';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {AppSyncService} from '../../../user/services/app-sync.service';
+import {SettingsService} from '../../../user/services/settings/settings.service';
 
 @Component({
   selector: 'wah-general-settings',
@@ -39,6 +41,7 @@ export class GeneralSettingsComponent implements OnDestroy {
               private zoneService: ZoneService,
               private petsService: PetsService,
               private npcService: NpcService,
+              private settingsSync: SettingsService,
               private professionService: ProfessionService,
               private _auctionService: AuctionsService) {
     this.form = this._formBuilder.group({
@@ -58,7 +61,6 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   private addSubscriptions() {
-
     this.subscriptions.add(
       this.form.valueChanges,
       (value) =>
@@ -91,8 +93,10 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   async saveRealmAndRegion() {
+    const {realm, region, locale} = this.form.value;
+
     if (this.userChanges.has('locale')) {
-      localStorage['locale'] = this.form.value.locale;
+      localStorage.setItem('locale', locale);
       await Promise.all([
         this.zoneService.get(),
         this.professionService.getAll(),
@@ -112,11 +116,12 @@ export class GeneralSettingsComponent implements OnDestroy {
       }
     }
 
+    if (locale !== localStorage.getItem('locale')) {
+      this.settingsSync.updateSettings({locale});
+    }
+
     if (this.hasChangedRealmOrRegion()) {
-      await this._realmService.changeRealm(
-        this._auctionService,
-        this.form.value.realm,
-        this.form.value.region);
+      await this._realmService.changeRealm(realm, region);
     }
     this.setOriginalUserObject();
   }
@@ -148,7 +153,7 @@ export class GeneralSettingsComponent implements OnDestroy {
   isValid(): boolean {
     return this.form.status === 'VALID';
   }
-
+/*
   exportData(): void {
     this.form.controls['exportString']
       .setValue(
@@ -164,7 +169,7 @@ export class GeneralSettingsComponent implements OnDestroy {
       'Exported settings to file',
       'General settings');
   }
-
+*/
   importUser(): void {
     if (this.isImportStringNotEmpty()) {
       SharedService.user.watchlist
@@ -209,10 +214,8 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   deleteUser(): void {
     localStorage.clear();
-    this.dbServie.deleteDB();
-    setTimeout(() => {
-      location.reload();
-    }, 2000);
+    this.dbServie.deleteDB()
+      .then(() => location.reload());
   }
 
   realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
