@@ -10,6 +10,7 @@ import {Report} from '../../../utils/report.util';
 import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -55,14 +56,14 @@ export class AuctionUtil {
    * Used in the auction service.
    * @param auctions A raw auction array
    */
-  public static organize(auctions: Auction[]): Promise<OrganizedAuctionResult> {
+  public static organize(auctions: Auction[], stats: Map<string, ItemStats>): Promise<OrganizedAuctionResult> {
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {
       try {
         // TODO: Remove later -> this.modifierTest(auctions);
         const t0 = performance.now();
         this.clearOldData();
         const list: AuctionItem[] = [];
-        const map = this.groupAuctions(auctions, list);
+        const map = this.groupAuctions(auctions, list, stats);
         this.calculateCosts(t0, map);
         SharedService.events.auctionUpdate.emit(true);
         Report.debug('AuctionUtil.organize', list);
@@ -77,7 +78,7 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[]) {
+  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[], stats: Map<string, ItemStats>) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     const idMap: Map<number, boolean> = new Map<number, boolean>();
@@ -90,7 +91,7 @@ export class AuctionUtil {
     */
 
     auctions.forEach((a: Auction) => {
-      this.processAuction(a, map, list);
+      this.processAuction(a, map, list, stats);
       idMap.set(a.item, true);
     });
 
@@ -98,7 +99,7 @@ export class AuctionUtil {
       if (!idMap.has(tsm.Id)) {
         const auction = new Auction();
         auction.item = +tsm.Id;
-        this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
+        this.addNewAuctionItem(auction, false, '' + auction.item, map, list, stats);
       }
     });
 
@@ -158,11 +159,11 @@ export class AuctionUtil {
     console.log(`Prices calc time ${t2 - t1} ms`);
   }
 
-  private static processAuction(a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[]) {
+  private static processAuction(a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[], stats: Map<string, ItemStats>) {
     const id = a.item + AuctionItemStat.bonusId(a.bonusLists, false);
     if (a.petSpeciesId && AuctionUtil.isPetNotInList(a, map)) {
       const petId = AuctionUtil.getPetId(a);
-      map.set(petId, this.newAuctionItem(a, true, petId));
+      map.set(petId, this.newAuctionItem(a, true, petId, stats));
       list.push(map.get(petId));
       AuctionUtil.setUserSaleRateForAuction(a);
 
@@ -172,21 +173,22 @@ export class AuctionUtil {
     } else {
       if (a.bonusLists) {
         if (!map.has(id)) {
-          this.addNewAuctionItem(a, true, id, map, list);
+          this.addNewAuctionItem(a, true, id, map, list, stats);
         } else {
           AuctionUtil.updateAuctionItem(a, id, map);
         }
       }
       if (!map.has(a.item + '')) {
-        this.addNewAuctionItem(a, true, '' + a.item, map, list);
+        this.addNewAuctionItem(a, true, '' + a.item, map, list, stats);
       } else {
         AuctionUtil.updateAuctionItem(a, '' + a.item, map);
       }
     }
   }
 
-  private static addNewAuctionItem(a, addAuction = true, id: string, map: Map<string, AuctionItem>, list: AuctionItem[]) {
-    map.set(id, this.newAuctionItem(a, addAuction, id));
+  private static addNewAuctionItem(a, addAuction = true, id: string, map: Map<string, AuctionItem>,
+                                   list: AuctionItem[], stats: Map<string, ItemStats>) {
+    map.set(id, this.newAuctionItem(a, addAuction, id, stats));
     list.push(map.get(id));
     AuctionUtil.setUserSaleRateForAuction(a);
   }
@@ -275,13 +277,24 @@ export class AuctionUtil {
     ai.auctions.push(auction);
   }
 
-  private static newAuctionItem(auction: Auction, addAuction = true, id: string): AuctionItem {
+  private static newAuctionItem(auction: Auction, addAuction = true, id: string, stats: Map<string, ItemStats>): AuctionItem {
     const tmpAuc = AuctionUtil.getTempAuctionItem(auction, addAuction, id);
+    const statsId = AuctionItemStat.getId(
+      auction.item,
+      auction.petSpeciesId,
+      tmpAuc.bonusIds,
+    );
 
     if (TsmService.mapped.value.has(auction.item)) {
       AuctionUtil.setTSMData(auction, tmpAuc);
-
     }
+
+    if (stats.has(statsId)) {
+      const stat = stats.get(statsId);
+      tmpAuc.mktPrice = stat.past7Days.price.avg;
+      tmpAuc.stats = stat;
+    }
+
     return tmpAuc;
   }
 

@@ -504,6 +504,7 @@ export class StatsService {
                   reject(e);
                 });
             }
+            resolve();
           } catch (e) {
             console.error('Failed in ' + (+new Date() - start) + 'ms', e);
             reject(e);

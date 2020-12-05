@@ -3,6 +3,7 @@ import {Recipe} from '../../crafting/models/recipe';
 import {Item} from '../../../models/item/item';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {TradeVendorItemValue} from '../../../models/item/trade-vendor';
+import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
 
 export class AuctionItem {
   id: string;
@@ -62,6 +63,7 @@ export class AuctionItem {
     npc: undefined,
     tradeVendor: undefined
   };
+  stats?: ItemStats;
 
   constructor(public itemID?: number) {
   }

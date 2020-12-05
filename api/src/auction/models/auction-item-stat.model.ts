@@ -1,4 +1,5 @@
 import {Auction} from '../../models/auction/auction';
+import {Modifiers} from '../../../../client/src/client/modules/auction/models/auction.model';
 
 class Bonus {
   bonusListId: number;
@@ -69,6 +70,10 @@ export class AuctionItemStat {
     }
   }
 
+  static getId(id: number, speciesId?: number, bonusIds?: number[], modifiers?: Modifiers[]): string {
+    return`${id}-${speciesId || '-1'}-${this.bonusIdRaw(bonusIds)}-${this.modifiersId(modifiers)}`;
+  }
+
   static bonusId(ids: Bonus[], alwaysHaveAValue = true): string {
     if (!ids) {
       return alwaysHaveAValue ? '-1' : '';
@@ -77,10 +82,22 @@ export class AuctionItemStat {
   }
 
   static bonusIdRaw(ids: number[], alwaysHaveAValue = true): string {
+
+    if (typeof ids === 'string') {
+      return ids;
+    }
+
     if (!ids) {
       return alwaysHaveAValue ? '-1' : '';
     }
     return ids.sort((a, b) => a - b)
       .join(',');
+  }
+
+  static modifiersId(modifiers: Modifiers[]): string {
+    if (!modifiers) {
+      return '-1';
+    }
+    return modifiers.map(mod => `${mod.type}=${mod.value}`).join(',');
   }
 }
