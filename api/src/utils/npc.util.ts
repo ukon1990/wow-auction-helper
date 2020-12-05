@@ -27,6 +27,7 @@ export class VendorItem {
   unitPrice: number = null;
   currency: number = null;
   stock: number = null;
+  standing?: number = null;
   stackSize: number = null;
 
   static setFromBody(body: string): VendorItem[] {
@@ -65,8 +66,8 @@ export class VendorItem {
 
 export class DroppedItem {
   id: number;
-  dropped: number = null;
-  outOf: number = null;
+  dropped?: number = null;
+  outOf?: number = null;
   dropChance: number = null;
 
   static setFromBody(body: string): DroppedItem[] {

@@ -56,4 +56,17 @@ export class RDSItemRepository {
         .catch(reject);
     }));
   }
+
+  getAllItemIdsFromCurrentExpansion(conn: DatabaseUtil) {
+    return new Promise<number[]>(((resolve, reject) => {
+      conn.query(`
+          SELECT id
+          FROM items
+          WHERE expansionId = 8 AND timestamp < NOW() - INTERVAL 1 DAY;`)
+        .then(res => {
+          resolve(res.map(({id}) => id));
+        })
+        .catch(reject);
+    }));
+  }
 }
