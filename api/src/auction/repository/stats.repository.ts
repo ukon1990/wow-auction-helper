@@ -71,7 +71,7 @@ export class StatsRepository {
                   (
                     ahId = ${ahId}
                     AND itemId = ${itemId}
-                    AND petSpeciesId = ${petSpeciesId}
+                    AND petSpeciesId = ${petSpeciesId || '-1'}
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
                     )
                   `).join(' OR ')
