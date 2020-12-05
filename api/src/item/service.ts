@@ -1,7 +1,6 @@
 import {RDSItemRepository} from './repository';
 import {DatabaseUtil} from '../utils/database.util';
 import {BLIZZARD} from '../secrets';
-import PromiseThrottle from 'promise-throttle';
 import {ItemHandler} from '../handlers/item.handler';
 import {Item} from '../../../client/src/client/models/item/item';
 import {ItemQuery} from '../queries/item.query';
@@ -14,6 +13,8 @@ import {WoWHeadUtil} from '../utils/wowhead.util';
 import {WoWHead} from '../models/item/wowhead';
 import {UpdatesService} from '../updates/service';
 import {DateUtil} from '@ukon1990/js-utilities';
+
+const PromiseThrottle: any = require('promise-throttle');
 
 export class ItemServiceV2 {
   private readonly repository = new RDSItemRepository();
@@ -48,12 +49,35 @@ export class ItemServiceV2 {
     });
   }
 
-  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil) {
+  updateExistingItemsForCurrentExpansion(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const db = new DatabaseUtil(false);
+      this.repository.getAllItemIdsFromCurrentExpansion(db)
+        .then(ids => {
+          console.log('Items to update', ids.length);
+          this.addOrUpdateItemsByIds(ids, db)
+            .then(() => {
+              db.end();
+              resolve();
+            })
+            .catch(error => {
+              db.end();
+              reject(error);
+            });
+        })
+        .catch(error => {
+          db.end();
+          reject(error);
+        });
+    });
+  }
+
+  addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let completed = 0;
       let successfull = 0;
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 25,
+        requestsPerSecond: 5,
         promiseImplementation: Promise
       });
       const startTime = +new Date();
