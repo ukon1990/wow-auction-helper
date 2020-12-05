@@ -11,6 +11,11 @@ import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
+import {DashboardCalculateUtil} from '../../dashboard/utils/dashboard-calculate.util';
+import {CraftingService} from '../../../services/crafting.service';
+import {NpcService} from '../../npc/services/npc.service';
+import {ItemService} from '../../../services/item.service';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -67,6 +72,7 @@ export class AuctionUtil {
         this.calculateCosts(t0, map);
         SharedService.events.auctionUpdate.emit(true);
         Report.debug('AuctionUtil.organize', list);
+        this.setItemSources(map);
         resolve({
           map,
           list,
@@ -366,6 +372,28 @@ export class AuctionUtil {
           tmpAuc.quality = bonus.quality;
         }
       });
+    }
+  }
+
+  private static setItemSources(items: Map<string, AuctionItem>): void {
+    try {
+      items.forEach(item => {
+        item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
+        if (item.source.recipe.all) {
+          item.source.recipe.all.sort((a, b) => b.roi - a.roi);
+        }
+        item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
+        item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
+        if (item.source.recipe.known) {
+          item.source.recipe.known.sort((a, b) => b.roi - a.roi);
+        }
+
+        item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
+        item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
+        item.item = ItemService.mapped.value.get(item.itemID);
+      });
+    } catch (error) {
+      ErrorReport.sendError('AuctionUtil.setItemSources', error);
     }
   }
 }
