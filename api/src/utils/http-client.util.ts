@@ -30,6 +30,7 @@ export class HttpClientUtil {
             }
             resolve(response);
           } catch (e) {
+            console.error('Error for url: ', url);
             reject(e);
           }
         });

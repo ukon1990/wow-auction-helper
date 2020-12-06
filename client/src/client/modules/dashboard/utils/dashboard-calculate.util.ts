@@ -23,27 +23,6 @@ interface IdPaths {
 }
 
 export class DashboardCalculateUtil {
-  static setItemSources(items: Map<string, AuctionItem>): void {
-    try {
-      items.forEach(item => {
-        item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
-        if (item.source.recipe.all) {
-          item.source.recipe.all.sort((a, b) => b.roi - a.roi);
-        }
-        item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
-        item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
-        if (item.source.recipe.known) {
-          item.source.recipe.known.sort((a, b) => b.roi - a.roi);
-        }
-
-        item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
-        item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
-        item.item = ItemService.mapped.value.get(item.itemID);
-      });
-    } catch (error) {
-      ErrorReport.sendError('DashboardCalculateUtil.setItemSources', error);
-    }
-  }
 
   static calculate(board: DashboardV2, items: Map<string, AuctionItem>): DashboardV2 {
     if (board.isDisabled) {

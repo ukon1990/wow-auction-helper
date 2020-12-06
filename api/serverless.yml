@@ -58,8 +58,8 @@ functions:
       Function: Wah-updateRealmTrends
       Project: WAH
     handler: src/auction/controller.updateRealmTrends
-    memorySize: 768
-    timeout: 90
+    memorySize: 3000
+    timeout: 300
   updateAllHouses:
     tags:
       Function: Wah-updateAllHouses
@@ -202,17 +202,6 @@ functions:
       Project: WAH
     handler: src/controllers/realm.realmAllRegions
     memorySize: 200
-  logger:
-    tags:
-      Function: Wah-logger
-      Project: WAH
-    handler: src/logs/controller.handler
-    memorySize: 128
-    provisionedConcurrency: 100
-    events:
-      - http:
-          method: any
-          path: logger
   loggerProcessAccessLogs:
     tags:
       Function: Wah-loggerProcessAccessLogs

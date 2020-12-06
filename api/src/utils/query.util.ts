@@ -43,13 +43,15 @@ export class RDSQueryUtil<T> {
     }${this.setTimestamp ? ',CURRENT_TIMESTAMP' : ''})${terminate ? ';' : ' '}`;
   }
 
-  insertOrUpdate(object: T): string {
+  insertOrUpdate(object: T, updateTimestamp = false): string {
     const clone = {...object};
     delete clone['id'];
     const cv = this.getColumnsAndValues(clone);
     const insert = this.insert(object, false);
     return insert + ` ON DUPLICATE KEY UPDATE ${
       cv.columns.map((column, index) => `${column} = ${cv.values[index]}`).join(',')
+    } ${
+      updateTimestamp ? ',timestamp = CURRENT_TIMESTAMP' : ''
     }`;
   }
 

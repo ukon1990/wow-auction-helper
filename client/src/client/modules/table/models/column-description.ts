@@ -20,6 +20,7 @@ export interface ColumnDescription {
   options?: {
     idName?: string;
     noIcon?: boolean;
+    tooltip?: string;
     tooltipType?: string;
     onModelChange?: Function;
   };

@@ -37,6 +37,26 @@ export const columnConfig = {
       title: 'Lowest buyout',
       dataType: 'gold',
     },
+    pricePast24HoursTrend: {
+      key: 'stats.past24Hours.price.trend',
+      title: '24H trend',
+      dataType: 'gold',
+    },
+    quantityPast24HoursTrend: {
+      key: 'stats.past24Hours.quantity.trend',
+      title: '24 H trend #',
+      dataType: 'number',
+    },
+    pricePast7DaysTrend: {
+      key: 'stats.past7Days.price.trend',
+      title: '7 Day trend',
+      dataType: 'gold',
+    },
+    quantityPast7DaysTrend: {
+      key: 'stats.past7Days.quantity.trend',
+      title: '7 Day trend #',
+      dataType: 'number',
+    },
     mktPriceMinusBuyout: {
       key: 'mktPrice-buyout',
       title: 'ROI',
