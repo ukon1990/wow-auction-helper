@@ -18,12 +18,15 @@ import {CharacterService} from '../modules/character/services/character.service'
 import {CraftingUtil} from '../modules/crafting/utils/crafting.util';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {UserSettings} from '../modules/user/models/settings.model';
+import {ItemStats} from '../../../../api/src/auction/models/item-stats.model';
+import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 
 @Injectable()
 export class AuctionsService {
   list: BehaviorSubject<AuctionItem[]> = new BehaviorSubject<AuctionItem[]>([]);
   mapped: BehaviorSubject<Map<string, AuctionItem>> = new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>());
   auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
+  stats: BehaviorSubject<Map<string, ItemStats>> = new BehaviorSubject(new Map<string, ItemStats>());
   events = {
     isDownloading: new BehaviorSubject<boolean>(true),
   };
@@ -79,13 +82,18 @@ export class AuctionsService {
     SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     let auctions;
-    /*
+    const statsMap = new Map<string, ItemStats>();
+    return Promise.all([
       this.http
         .get(realmStatus.stats.url)
         .toPromise()
-        .then(data => stats = data)
-    */
-    return Promise.all([
+        .then(({data}: {data: ItemStats[]}) => {
+          data.forEach(stat =>
+            statsMap.set(AuctionItemStat.getId(
+              stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
+            ), stat));
+          this.stats.next(statsMap);
+        }),
       this.http
         .get(realmStatus.url)
         .toPromise()
@@ -170,7 +178,7 @@ export class AuctionsService {
       return;
     }
     // this.characterService.updateCharactersForRealmAndRecipes();
-    await AuctionUtil.organize(auctions)
+    await AuctionUtil.organize(auctions, this.stats.value)
       .then(({
                map,
                list,

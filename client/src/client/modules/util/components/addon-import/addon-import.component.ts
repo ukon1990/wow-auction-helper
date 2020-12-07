@@ -226,7 +226,7 @@ export class AddonImportComponent implements OnInit {
     if (realm) {
       this.auctionsService.auctions.next(realm.auctions);
       // this.dbService.addClassicAuctions(realm);
-      await AuctionUtil.organize(realm.auctions);
+      await this.auctionsService.organize(realm.auctions);
       const status = new AuctionHouseStatus();
       status.lastModified = realm.lastScan;
       this.realmService.events.realmStatus.next(status);

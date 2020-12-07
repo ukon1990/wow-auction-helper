@@ -104,6 +104,30 @@ export const ruleFields: RuleFieldGroup[] = [
         defaultType: TargetValueEnum.TEXT
       },
       {
+        key: columnConfig.auction.pricePast24HoursTrend.key,
+        name: columnConfig.auction.pricePast24HoursTrend.title,
+        column: columnConfig.auction.pricePast24HoursTrend,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.auction.quantityPast24HoursTrend.key,
+        name: columnConfig.auction.quantityPast24HoursTrend.title,
+        column: columnConfig.auction.quantityPast24HoursTrend,
+        defaultType: TargetValueEnum.NUMBER
+      },
+      {
+        key: columnConfig.auction.pricePast7DaysTrend.key,
+        name: columnConfig.auction.pricePast7DaysTrend.title,
+        column: columnConfig.auction.pricePast7DaysTrend,
+        defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.auction.quantityPast7DaysTrend.key,
+        name: columnConfig.auction.quantityPast7DaysTrend.title,
+        column: columnConfig.auction.quantityPast7DaysTrend,
+        defaultType: TargetValueEnum.NUMBER
+      },
+      {
         key: 'regionSaleRate',
         name: 'Sale rate',
         column: columnConfig.auction.regionSaleRate,

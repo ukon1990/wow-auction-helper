@@ -450,7 +450,7 @@ export class StatsService {
           let completed = 0;
           this.realmRepository.getRealmsThatNeedsTrendUpdate()
             .then(async (houses) => {
-              for (const {region, id} of houses.slice(0, 10)) {
+              for (const {region, id} of houses.slice(0, 5)) {
                 if (DateUtil.timeSince(startTime, 's') < 50) {
                   await this.setRealmTrends(region, id, conn)
                     .then(async () => {
@@ -518,6 +518,7 @@ export class StatsService {
                   reject(e);
                 });
             }
+            resolve();
           } catch (e) {
             console.error('Failed in ' + (+new Date() - start) + 'ms', e);
             reject(e);
