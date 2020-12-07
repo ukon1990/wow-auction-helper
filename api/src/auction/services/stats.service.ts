@@ -436,7 +436,7 @@ export class StatsService {
           let completed = 0;
           this.realmRepository.getRealmsThatNeedsTrendUpdate()
             .then(async (houses) => {
-              for (const {region, id} of houses.slice(0, 5)) {
+              for (const {region, id} of houses.slice(0, 2)) {
                 if (DateUtil.timeSince(startTime, 's') < 50) {
                   await this.setRealmTrends(region, id, conn)
                     .then(async () => {
