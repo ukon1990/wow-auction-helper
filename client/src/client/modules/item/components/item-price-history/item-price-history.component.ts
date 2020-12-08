@@ -26,6 +26,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   @Input() isActiveTab = true;
   @Input() dialogId: string;
   stats: ItemStats;
+  statsDaily: ItemStats;
   Highcharts: typeof Highcharts = Highcharts;
   sm = new SubscriptionManager();
   hourlyChart: SeriesOptionsType[] = [
@@ -154,6 +155,8 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
         this.priceHistory = history;
         this.setAuctionAndDataset();
         this.stats = AuctionStatsUtil.processDaysForHourlyPriceData(history.hourly);
+        this.statsDaily = AuctionStatsUtil.processDaysForDailyPriceData(history.daily);
+        console.log('stats', this.statsDaily);
         this.isLoading = false;
       })
       .catch((error) => {
