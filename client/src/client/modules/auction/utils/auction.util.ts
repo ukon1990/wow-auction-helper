@@ -70,9 +70,8 @@ export class AuctionUtil {
         const list: AuctionItem[] = [];
         const map = this.groupAuctions(auctions, list, stats);
         this.calculateCosts(t0, map);
-        SharedService.events.auctionUpdate.emit(true);
-        Report.debug('AuctionUtil.organize', list);
         this.setItemSources(map);
+        Report.debug('AuctionUtil.organize', list, auctions.length);
         resolve({
           map,
           list,
