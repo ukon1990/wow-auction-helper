@@ -5,11 +5,16 @@ import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client
 import {DateUtil} from '@ukon1990/js-utilities';
 
 export class AuctionStatsUtil {
-  static processDays(rows: AuctionItemStat[]): ItemStats[] {
+
+  static getId(id: number, bonusIds: any, petSpeciesId: any): string {
+    return `${id}-${bonusIds}-${petSpeciesId}`;
+  }
+
+  static processHours(rows: AuctionItemStat[]): ItemStats[] {
     const map = new Map<string, ItemPriceEntry[]>(),
       list: ItemPriceEntry[][] = [];
     const processedDBEntryCallback = (hour: ItemPriceEntry) => {
-      const id = `${hour.itemId}-${hour.bonusIds}-${hour.petSpeciesId}`;
+      const id = this.getId(hour.itemId, hour.bonusIds, hour.petSpeciesId);
       if (!map.has(id)) {
         const entry: ItemPriceEntry[] = [];
         map.set(id, entry);
@@ -22,7 +27,30 @@ export class AuctionStatsUtil {
       (hour: ItemPriceEntry) => processedDBEntryCallback(hour));
     console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
     start = +new Date();
-    const result = list.map(item => this.processDaysForHourlyPriceData(item, true, true));
+    const result = list.map(item => this.processDaysForHourlyPriceData(item, false, true));
+    console.log(`processDaysForHourlyPriceData took ${+new Date() - start} ms`);
+    return result;
+  }
+
+  static processDays(rows: AuctionItemStat[]): ItemStats[] {
+    const map = new Map<string, ItemDailyPriceEntry[]>(),
+      list: ItemDailyPriceEntry[][] = [];
+    const processedDBEntryCallback = (hour: ItemDailyPriceEntry) => {
+      const id = this.getId(hour.itemId, hour.bonusIds, hour.petSpeciesId);
+      if (!map.has(id)) {
+        const entry: ItemDailyPriceEntry[] = [];
+        map.set(id, entry);
+        list.push(entry);
+      }
+      map.get(id).push(hour);
+    };
+    let start = +new Date();
+    AuctionProcessorUtil.processDailyPriceData(rows,
+      (hour: ItemDailyPriceEntry) => processedDBEntryCallback(hour));
+    console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
+    start = +new Date();
+    const result = list.map(item =>
+      this.processDaysForDailyPriceData(item, false, true));
     console.log(`processDaysForHourlyPriceData took ${+new Date() - start} ms`);
     return result;
   }
@@ -64,9 +92,9 @@ export class AuctionStatsUtil {
         }
       }
     });
-    this.setResultForPeriod(result.past7Days, itemStats.past7Days);
     this.setResultForPeriod(result.past24Hours, itemStats.past24Hours);
     if (!isMinimal) {
+      this.setResultForPeriod(result.past7Days, itemStats.past7Days);
       this.setResultForPeriod(result.past14Days, itemStats.past14Days);
       this.setResultForPeriod(result.past12Hours, itemStats.past12Hours);
     }

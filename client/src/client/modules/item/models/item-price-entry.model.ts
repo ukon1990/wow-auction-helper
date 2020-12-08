@@ -15,6 +15,7 @@ export interface ItemDailyPriceEntry {
   itemId: number;
   petSpeciesId: number;
   bonusIds: string;
+  minHour?: number;
   min: number;
   minQuantity: number;
   avg: number;

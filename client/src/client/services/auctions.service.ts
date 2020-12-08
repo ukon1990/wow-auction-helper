@@ -85,7 +85,7 @@ export class AuctionsService {
     const statsMap = new Map<string, ItemStats>();
     return Promise.all([
       this.http
-        .get(realmStatus.stats.url)
+        .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
         .toPromise()
         .then(({data}: {data: ItemStats[]}) => {
           data.forEach(stat =>

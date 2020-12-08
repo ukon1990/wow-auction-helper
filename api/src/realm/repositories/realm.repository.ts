@@ -213,7 +213,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
 
   getRealmsThatNeedsTrendUpdate(): Promise<AuctionHouse[]> {
     const HOUR = 1000 * 60 * 60;
-    const notOlderThan = +new Date(+new Date() - HOUR * 2);
+    const notOlderThan = +new Date(+new Date() - HOUR);
     return this.scan({
       TableName: this.table,
       FilterExpression:

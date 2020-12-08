@@ -5,6 +5,14 @@ class Bonus {
   bonusListId: number;
 }
 
+export interface AuctionItemStatDays {
+  ahId: number;
+  itemId: number;
+  petSpeciesId: string;
+  bonusIds: string;
+  date: string;
+}
+
 export class AuctionItemStat {
   itemId: number;
   petSpeciesId = -1;
