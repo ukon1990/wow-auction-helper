@@ -100,7 +100,9 @@ export class DashboardCalculateUtil {
         const item = items.get('' + rule.itemId);
         if (this.isFollowingTheRules(board.rules, item) &&
           this.isFollowingTheRules(rule.rules, items.get('' + rule.itemId))) {
-          dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+          try {
+            dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+          } catch (e) {}
         }
       });
     }
@@ -119,7 +121,9 @@ export class DashboardCalculateUtil {
             if (iterableKeyRules.length > 0) {
               this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, paths);
             } else {
-              dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+              try {
+                dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+              } catch (e) {}
             }
           }
         });
@@ -147,7 +151,9 @@ export class DashboardCalculateUtil {
               const childObject = this.getItemCopy(item);
               this.setValueAtPath(childObject, it, partialPath, index);
               if (this.isFollowingTheRules(iterableKeyRules, childObject)) {
-                list.push(this.getResultObject(childObject, board.columns, paths));
+                try {
+                  list.push(this.getResultObject(childObject, board.columns, paths));
+                } catch (e) {}
               }
             });
           }

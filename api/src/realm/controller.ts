@@ -11,3 +11,11 @@ exports.getUpdateLogForRealm = (event: APIGatewayEvent, context: Context, callba
     .then(res => Response.send(res, callback))
     .catch(err => Response.error(callback, err, event, 401));
 };
+
+exports.getStatus = (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  const id = +event.pathParameters.id;
+  Endpoints.setStage(event);
+  new RealmService().getUpdateLog(id, 24 * 7)
+    .then(res => Response.send(res, callback))
+    .catch(err => Response.error(callback, err, event, 401));
+};

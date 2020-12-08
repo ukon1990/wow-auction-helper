@@ -9,7 +9,7 @@
         </div>
         <div mat-line>
           <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-           {{ stats.past12Hours.price.trend | gold }}
+          {{ stats.past12Hours.price.trend | gold }}
           <span [style]="{color: theme.primaryColorCode}">Avg price</span>
           {{ stats.past12Hours.price.avg | gold }}
         </div>
@@ -72,9 +72,6 @@
         </div>
       </mat-list-item>
     </mat-list>
-
-    <ng-container *ngIf="fourteenDayByHourTable.data.length > 0">
-      <h6>Prices grouped by hour the past 14 days</h6>
       <mat-tab-group class="mb-3">
         <mat-tab label="Chart">
           <wah-highcharts
@@ -93,7 +90,96 @@
         </mat-tab>
       </mat-tab-group>
 
-      <h6>Prices grouped by day</h6>
+
+    <ng-container *ngIf="groupedByDateTable.data.length > 0">
+      <h6>Daily changes for the past 6 months</h6>
+      <mat-list dense class="horizontal-item-list mb-3" *ngIf="statsDaily">
+        <mat-list-item>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Past 7 days
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+            {{ statsDaily.past7Days.price.trend | gold }}
+            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+            {{ statsDaily.past7Days.price.avg | gold }}
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.warnColorCode}">Avg change</span>
+            {{ statsDaily.past7Days.quantity.trend | number }}
+            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+            {{ statsDaily.past7Days.quantity.avg | number }}
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Past 14 days
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+            {{ statsDaily.past14Days.price.trend | gold }}
+            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+            {{ statsDaily.past14Days.price.avg | gold }}
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.warnColorCode}">Avg change</span>
+            {{ statsDaily.past14Days.quantity.trend | number }}
+            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+            {{ statsDaily.past14Days.quantity.avg | number }}
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Past month
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+            {{ statsDaily.past30Days.price.trend | gold }}
+            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+            {{ statsDaily.past30Days.price.avg | gold }}
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.warnColorCode}">Avg change</span>
+            {{ statsDaily.past30Days.quantity.trend | number }}
+            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+            {{ statsDaily.past30Days.quantity.avg | number }}
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Past 3 months
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+            {{ statsDaily.past90Days.price.trend | gold }}
+            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+            {{ statsDaily.past90Days.price.avg | gold }}
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.warnColorCode}">Avg change</span>
+            {{ statsDaily.past90Days.quantity.trend | number }}
+            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+            {{ statsDaily.past90Days.quantity.avg | number }}
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            Past 6 months
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
+            {{ statsDaily.past180Days.price.trend | gold }}
+            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
+            {{ statsDaily.past180Days.price.avg | gold }}
+          </div>
+          <div mat-line>
+            <span [style]="{color: theme.warnColorCode}">Avg change</span>
+            {{ statsDaily.past180Days.quantity.trend | number }}
+            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
+            {{ statsDaily.past180Days.quantity.avg | number }}
+          </div>
+        </mat-list-item>
+      </mat-list>
       <mat-tab-group>
         <mat-tab label="Chart">
           <wah-highcharts

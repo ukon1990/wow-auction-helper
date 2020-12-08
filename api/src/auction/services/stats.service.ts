@@ -278,7 +278,7 @@ export class StatsService {
             .then(async realms => {
               for (const {id} of realms) {
                 if (DateUtil.timeSince(startTime, 's') < 40) {
-                  const queryStart = + new Date();
+                  const queryStart = +new Date();
                   await this.compileDailyAuctionData(id, conn, this.getYesterday(1))
                     .then(() => {
                       this.realmRepository.updateEntry(id, {
@@ -469,45 +469,97 @@ export class StatsService {
     return new Promise<void>(async (resolve, reject) => {
       await this.realmRepository.updateEntry(ahId, {id: ahId, lastTrendUpdateInitiation: +new Date()})
         .catch(console.error);
-      new StatsRepository(db).getAllStatsForRealmDate(ahId)
-        .then(rows => {
-          const downloadAndQueryTime = +new Date() - start;
-          console.log(`Query took ${downloadAndQueryTime} ms`);
+      const repo = new StatsRepository(db);
+      const results: ItemStats[] = [],
+        map = new Map<string, ItemStats>();
+
+      Promise.all([
+        new Promise((success, fail) => {
+          repo.getRealmPriceHistoryDailyPastDays(ahId, 8)
+            .then(rows => {
+              const downloadAndQueryTime = +new Date() - start;
+              AuctionStatsUtil.processDays(rows).forEach(item => {
+                const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
+                if (!map.has(id)) {
+                  item.past24Hours = {
+                    price: {
+                      trend: item.past7Days.price.trend / 24,
+                      avg: item.past7Days.price.avg / 24
+                    },
+                    quantity: {
+                      trend: item.past7Days.quantity.trend / 24,
+                      avg: item.past7Days.quantity.avg / 24
+                    },
+                    totalEntries: item.past7Days.totalEntries,
+                  };
+                  map.set(id, item);
+                  results.push(item);
+                } else {
+                  map.get(id).past7Days = item.past7Days;
+                }
+              });
+              console.log(`Daily query took ${downloadAndQueryTime} ms, processing took = ${+new Date() - start} ms len=${rows.length}`);
+              success();
+            })
+            .catch(error => {
+              console.error(error);
+              fail(error);
+            });
+        }),
+        new Promise((success, fail) => {
+          repo.getAllStatsForRealmDate(ahId)
+            .then(rows => {
+              const downloadAndQueryTime = +new Date() - start;
+              AuctionStatsUtil.processHours(rows).forEach(item => {
+                const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
+                if (!map.has(id)) {
+                  item.past7Days = item.past24Hours;
+                  map.set(id, item);
+                  results.push(item);
+                } else {
+                  map.get(id).past24Hours = item.past24Hours;
+                }
+              });
+              console.log(`Hours query took ${downloadAndQueryTime} ms, processing took = ${+new Date() - start} ms len=${rows.length}`);
+              success();
+            })
+            .catch(error => {
+              console.error(error);
+              fail(error);
+            });
+        })
+      ])
+        .then(() => {
           const processStart = +new Date();
-          try {
-            const result: ItemStats[] = AuctionStatsUtil.processDays(rows);
-            if (result.length) {
-              const lastModified = +new Date();
-              new S3Handler().save({
-                lastModified: +new Date(),
-                data: result
-              }, `stats/${ahId}.json.gz`, {region})
-                .then(success => {
-                  console.log(`Processed and uploaded total ${(+new Date() - start)
-                  } ms, processing=${
-                    +new Date() - processStart
-                  } ms`, success);
-                  this.realmRepository.updateEntry(ahId, {
-                    id: ahId, stats: {
-                      lastModified,
-                      url: success.url
-                    }
-                  })
-                    .then(() => resolve(success))
-                    .catch(e => {
-                      console.error('setRealmTrends', e);
-                      reject(e);
-                    });
+          if (results.length) {
+            const lastModified = +new Date();
+            new S3Handler().save({
+              lastModified: +new Date(),
+              data: results
+            }, `stats/${ahId}.json.gz`, {region})
+              .then(success => {
+                console.log(`Processed and uploaded total ${(+new Date() - start)
+                } ms, Upload=${
+                  +new Date() - processStart
+                } ms`, success);
+                this.realmRepository.updateEntry(ahId, {
+                  id: ahId, stats: {
+                    lastModified,
+                    url: success.url
+                  }
                 })
-                .catch(e => {
-                  console.error('Failed in ' + (+new Date() - start) + 'ms', e);
-                  reject(e);
-                });
-            }
+                  .then(() => resolve(success))
+                  .catch(e => {
+                    console.error('setRealmTrends', e);
+                    reject(e);
+                  });
+              })
+              .catch(e => {
+                console.error('Failed in ' + (+new Date() - start) + 'ms', e);
+                reject(e);
+              });
+          } else {
             resolve();
-          } catch (e) {
-            console.error('Failed in ' + (+new Date() - start) + 'ms', e);
-            reject(e);
           }
         })
         .catch(reject);

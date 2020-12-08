@@ -82,20 +82,20 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
 
 
   addColumns(): void {
-    const columns: ColumnDescription[] =[...this.table.columns];
+    const columns: ColumnDescription[] = [ ...this.table.columns];
     columns.push({key: 'name', title: 'Name', dataType: 'name'});
     columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});
     columns.push({key: 'quantityTrend', title: 'Stock trend', dataType: 'number', options: {
-        tooltip: 'Quantity trend per hour, the past 7 days'
+        tooltip: 'Avg quantity trend per day, the past 7 days'
       }, hideOnMobile: true});
     columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-    columns.push({key: 'priceTrend', title: 'Trend (per hour)', dataType: 'gold', options: {
-      tooltip: 'Price trend per hour, the past 7 days'
+    columns.push({key: 'priceTrend', title: '7 Day trend', dataType: 'gold', options: {
+      tooltip: 'Price trend per day, the past 7 days'
     }});
     columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', options: {
-        tooltip: 'The avg price the past 7 days'
+        tooltip: 'The avg price the past 7 days, per day'
       }, hideOnMobile: true});
     columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
     columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});

@@ -4,7 +4,7 @@
 */
 import {Auction} from '../../models/auction/auction';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
-import {ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 
 export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number): {
@@ -150,7 +150,7 @@ export class AuctionProcessorUtil {
     return list;
   }
 
-  static processDailyPriceData(result) {
+  static processDailyPriceData(result, callback?: (hour: ItemDailyPriceEntry) => void) {
     const list = [];
     result.forEach(entry => {
       for (let i = 1, maxDays = 31; i <= maxDays; i++) {
@@ -163,8 +163,9 @@ export class AuctionProcessorUtil {
         const day = i < 10 ? '0' + i : i,
           min = entry[`min${day}`];
         if (min) {
-          list.push({
+          const timeEntry: ItemDailyPriceEntry = {
             timestamp: +date,
+            itemId: entry.itemId,
             petSpeciesId: entry.petSpeciesId,
             bonusIds: entry.bonusIds,
             min,
@@ -174,7 +175,13 @@ export class AuctionProcessorUtil {
             avgQuantity: entry[`avgQuantity${day}`],
             max: entry[`max${day}`],
             maxQuantity: entry[`maxQuantity${day}`]
-          });
+          };
+
+          if (callback) {
+            callback(timeEntry);
+          } else {
+            list.push(timeEntry);
+          }
         }
       }
     });
@@ -263,5 +270,37 @@ export class AuctionProcessorUtil {
       };
       result.daily.push(dayMap[date.toDateString()]);
     }
+  }
+
+  static getDailyColumnsSince(daysSince: number, currentDate = new Date()) {
+    const DAY = 1000 * 60 * 60 * 24;
+    const startDate = new Date(+currentDate - DAY * daysSince);
+    const columns: string[] = []; // avg01, avgQuantity01
+    const columnMap = new Map<string, string>();
+    const months: string[] = []; // '2020-12-15' OR date = '2020-12-15'
+    const monthMap = new Map<string, string>();
+
+    for (let i = 0; i < daysSince; i++) {
+      const date = new Date(+startDate + DAY * i),
+        day = date.getUTCDate(),
+        dayString = (day < 10 ? '0' : '') + day,
+        monthString = `'${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-15'`;
+      const columnSet = `min${dayString}, avg${dayString}, avgQuantity${dayString}`;
+
+      if (!columnMap.has(columnSet)) {
+        columns.push(columnSet);
+        columnMap.set(columnSet, columnSet);
+      }
+
+      if (!monthMap.has(monthString)) {
+        months.push(monthString);
+        monthMap.set(monthString, monthString);
+      }
+    }
+
+    return {
+      columns,
+      months
+    };
   }
 }

@@ -212,15 +212,16 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
   }
 
   getRealmsThatNeedsTrendUpdate(): Promise<AuctionHouse[]> {
-    const notOlderThan = +new Date(+new Date() - 1000 * 60 * 60);
+    const HOUR = 1000 * 60 * 60;
+    const notOlderThan = +new Date(+new Date() - HOUR);
     return this.scan({
       TableName: this.table,
       FilterExpression:
         '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) ' +
-        'AND #lastDailyPriceUpdate > #lastTrendUpdateInitiation',
+        'AND #lastStatsInsert > #lastTrendUpdateInitiation', // Was: lastDailyPriceUpdate
       ExpressionAttributeNames: {
         '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
-        '#lastDailyPriceUpdate': 'lastDailyPriceUpdate',
+        '#lastStatsInsert': 'lastStatsInsert',
       },
       ExpressionAttributeValues: {
         ':time': notOlderThan,

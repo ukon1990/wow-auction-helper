@@ -2,6 +2,7 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 export class StatsRepository {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
@@ -25,8 +26,23 @@ export class StatsRepository {
         SELECT *
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${ahId}
-          AND date >= NOW() - INTERVAL 7 DAY
+          AND date >= NOW() - INTERVAL 2 DAY
         ORDER BY date;`);
+  }
+
+  getRealmPriceHistoryDailyPastDays(ahId: number, daysSince: number) {
+    const {
+      columns,
+      months
+    } = AuctionProcessorUtil.getDailyColumnsSince(daysSince);
+    return this.conn.query(`
+          SELECT date, itemId, petSpeciesId, bonusIds, ${columns.join(', ')}
+          FROM itemPriceHistoryPerDay
+          WHERE ${months.map(month => `(
+          ahId = ${ahId}
+            AND date = ${month}
+          )`).join(' OR ')};
+    `);
   }
 
   getAllStatsForRealmMonth(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {
