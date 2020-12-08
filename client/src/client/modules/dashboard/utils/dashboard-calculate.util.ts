@@ -6,14 +6,11 @@ import {TargetValueEnum} from '../types/target-value.enum';
 import {ConditionEnum} from '../types/condition.enum';
 import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
 import {AuctionUtil} from '../../auction/utils/auction.util';
-import {CraftingService} from '../../../services/crafting.service';
-import {NpcService} from '../../npc/services/npc.service';
-import {SharedService} from '../../../services/shared.service';
-import {ItemService} from '../../../services/item.service';
 import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {Report} from '../../../utils/report.util';
 
 interface IdPaths {
   recipeId?: string;
@@ -95,14 +92,37 @@ export class DashboardCalculateUtil {
   private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
                                             paths: IdPaths) {
     if (board.itemRules && board.itemRules.length) {
-      board.itemRules.forEach((rule: ItemRule) => {
-        const id = this.getId(undefined, rule);
-        const item = items.get('' + rule.itemId);
-        if (this.isFollowingTheRules(board.rules, item) &&
-          this.isFollowingTheRules(rule.rules, items.get('' + rule.itemId))) {
+      board.itemRules.forEach((itemRule: ItemRule) => {
+        const id = this.getId(undefined, itemRule);
+        const item = items.get('' + itemRule.itemId);
+        const iterableKeyRules = [
+          ...board.rules.filter(rule => this.ruleContainsIterable(rule)),
+          ...itemRule.rules.filter(rule => this.ruleContainsIterable(rule))
+        ];
+        const nonIterableKeyRules = [
+
+          ...board.rules.filter(rule => !this.ruleContainsIterable(rule)),
+          ...itemRule.rules.filter(rule => !this.ruleContainsIterable(rule))
+        ];
+        const iterableFields = [
+          ...board.columns.map(column => ({
+            field: column.key, condition: null, targetValueType: null, isAlwaysValid: true
+          })).filter(column =>
+            this.ruleContainsIterable(column))
+        ];
+
+        if (item && !itemRule.rules.length && !board.rules.length && iterableFields.length) {
+          if (item && this.isFollowingTheRules(nonIterableKeyRules, item)) {
+            this.addMatchingForIterableFields(iterableFields, item, board, dataMap, id, paths, true);
+          }
+        } else if (iterableKeyRules.length > 0) {
+          this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, paths);
+        } else if (item && this.isFollowingTheRules(board.rules, item) &&
+          this.isFollowingTheRules(itemRule.rules, item)) {
           try {
             dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
-          } catch (e) {}
+          } catch (e) {
+          }
         }
       });
     }
@@ -112,18 +132,19 @@ export class DashboardCalculateUtil {
                                        paths: IdPaths) {
     if ((board.rules.length || (board.itemRules && board.itemRules.length))) {
       try {
-        const iterableKeyRules = board.rules.filter(rule => this.ruleContainsIterable(rule));
-        const nonIterableKeyRules = board.rules.filter(rule => !this.ruleContainsIterable(rule));
+        const iterableKeyRules = (board.rules || []).filter(rule => this.ruleContainsIterable(rule));
+        const nonIterableKeyRules = (board.rules || []).filter(rule => !this.ruleContainsIterable(rule));
 
         items.forEach((item: AuctionItem) => {
-          if (this.isFollowingTheRules(nonIterableKeyRules, item)) {
+          if (item && this.isFollowingTheRules(nonIterableKeyRules, item)) {
             const id = this.getId(item);
             if (iterableKeyRules.length > 0) {
               this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, paths);
             } else {
               try {
                 dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
-              } catch (e) {}
+              } catch (e) {
+              }
             }
           }
         });
@@ -134,7 +155,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: DashboardV2,
-                                              dataMap: Map<string, any>, id: string, paths: IdPaths) {
+                                              dataMap: Map<string, any>, id: string, paths: IdPaths, printLog: boolean = false) {
     const list = [];
     let arr: any[];
     const partialPath = [];
@@ -153,7 +174,8 @@ export class DashboardCalculateUtil {
               if (this.isFollowingTheRules(iterableKeyRules, childObject)) {
                 try {
                   list.push(this.getResultObject(childObject, board.columns, paths));
-                } catch (e) {}
+                } catch (e) {
+                }
               }
             });
           }
@@ -220,12 +242,14 @@ export class DashboardCalculateUtil {
 
   private static isFollowingTheRules(rules: Rule[], item: AuctionItem) {
     for (let i = 0, length = rules.length; i < length; i++) {
-      if (rules[i].or && rules[i].or.length) {
-        if (!this.validateOrRule(rules[i], item)) {
+      if (!rules[i].isAlwaysValid) {
+        if (rules[i].or && rules[i].or.length) {
+          if (!this.validateOrRule(rules[i], item)) {
+            return false;
+          }
+        } else if (!this.validateRule(rules[i], item)) {
           return false;
         }
-      } else if (!this.validateRule(rules[i], item)) {
-        return false;
       }
     }
     return true;

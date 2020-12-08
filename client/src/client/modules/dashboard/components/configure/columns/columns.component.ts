@@ -94,7 +94,7 @@ export class ColumnsComponent implements AfterViewInit, OnDestroy {
   drop(event: CdkDragDrop<FormGroup[]>) {
     try {
       const {previousIndex, currentIndex} = event;
-      Report.debug(`Moved column from ${previousIndex} to ${currentIndex}`);
+      Report.debug(`Moved column from ${previousIndex} to ${currentIndex}`, event);
       if (previousIndex !== currentIndex &&
         previousIndex !== undefined && currentIndex !== undefined) {
         const column = this.formArray.at(previousIndex);

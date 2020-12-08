@@ -84,34 +84,48 @@ export class AuctionsService {
     let auctions;
     const statsMap = new Map<string, ItemStats>();
     return Promise.all([
-      this.http
-        .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
-        .toPromise()
-        .then(({data}: {data: ItemStats[]}) => {
-          data.forEach(stat =>
-            statsMap.set(AuctionItemStat.getId(
-              stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
-            ), stat));
-          this.stats.next(statsMap);
-        }),
-      this.http
-        .get(realmStatus.url)
-        .toPromise()
-        .then(data => auctions = data['auctions'])
+      new Promise((resolve, reject) => {
+        this.http
+          .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
+          .toPromise()
+          .then(({data}: {data: ItemStats[]}) => {
+            data.forEach(stat =>
+              statsMap.set(AuctionItemStat.getId(
+                stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
+              ), stat));
+            this.stats.next(statsMap);
+            resolve(statsMap);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      }),
+      new Promise((resolve, reject) => {
+        this.http
+          .get(realmStatus.url)
+          .toPromise()
+          .then(data => {
+            auctions = data['auctions'];
+            resolve(auctions);
+          })
+          .catch(error => {
+            console.error(error);
+            reject(error);
+          });
+      })
     ])
       .then(async () => {
+        console.log('Auction download is completed');
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
+        // if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
           await this.organize(auctions)
             .catch(error => ErrorReport.sendError('getAuctions', error));
-        }
+        // }
 
-        console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
 
         this.handleNotifications();
-        SharedService.events.auctionUpdate.emit();
         this.auctions.next(auctions);
         this.events.isDownloading.next(true);
       })
@@ -174,7 +188,7 @@ export class AuctionsService {
   }
 
   async organize(auctions: Auction[] = this.auctions.value) {
-    if (!this.isReady) {
+    if (!this.isReady || !auctions.length) {
       return;
     }
     // this.characterService.updateCharactersForRealmAndRecipes();
@@ -188,6 +202,7 @@ export class AuctionsService {
         this.auctions.next(auctions);
         this.list.next(list);
         this.mapped.next(map);
+        SharedService.events.auctionUpdate.emit(true);
       })
       .catch(error => ErrorReport.sendError('getAuctions', error));
   }

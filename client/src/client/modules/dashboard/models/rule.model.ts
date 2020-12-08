@@ -8,6 +8,7 @@ export interface Rule {
   toField?: string;
   toValue?: number | string | boolean;
   or?: Rule[];
+  isAlwaysValid?: boolean; // This is just a dummy, for itemRules with no actual rules
 }
 
 export interface ItemRule {
