@@ -22,12 +22,25 @@ export class StatsRepository {
   }
 
   getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
-    return this.conn.query(`
-        SELECT *
+    let result = [];
+
+    return new Promise<AuctionItemStat[]>((resolve, reject) => {
+      Promise.all(
+        AuctionProcessorUtil.getHourlyColumnsSince()
+          .map(data => this.conn.query(`
+        SELECT date, itemId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
         FROM itemPriceHistoryPerHour
-        WHERE ahId = ${ahId}
-          AND date >= NOW() - INTERVAL 2 DAY
-        ORDER BY date;`);
+        WHERE ahId = ${ahId} AND date = ${data.date};`)
+            .then(res => {
+              result = [...result, ...res];
+            })
+          )
+      )
+        .then(() => {
+          resolve(result);
+        })
+        .catch(reject);
+    });
   }
 
   getRealmPriceHistoryDailyPastDays(ahId: number, daysSince: number) {
