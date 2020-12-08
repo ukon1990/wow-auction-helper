@@ -480,19 +480,18 @@ export class StatsService {
               const downloadAndQueryTime = +new Date() - start;
               AuctionStatsUtil.processDays(rows).forEach(item => {
                 const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
-                item.past7Days = {
-                  price: {
-                    trend: item.past7Days.price.trend / 24,
-                    avg: item.past7Days.price.avg / 24
-                  },
-                  quantity: {
-                    trend: item.past7Days.quantity.trend / 24,
-                    avg: item.past7Days.quantity.avg / 24
-                  },
-                  totalEntries: item.past7Days.totalEntries,
-                };
                 if (!map.has(id)) {
-                  item.past24Hours = item.past7Days;
+                  item.past24Hours = {
+                    price: {
+                      trend: item.past7Days.price.trend / 24,
+                      avg: item.past7Days.price.avg / 24
+                    },
+                    quantity: {
+                      trend: item.past7Days.quantity.trend / 24,
+                      avg: item.past7Days.quantity.avg / 24
+                    },
+                    totalEntries: item.past7Days.totalEntries,
+                  };
                   map.set(id, item);
                   results.push(item);
                 } else {

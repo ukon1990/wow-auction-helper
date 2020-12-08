@@ -23,7 +23,7 @@
                 <wah-rules
                         [displayHeader]="true"
                         [form]="formGroup(rule)"
-                        [rules]="rules ? rules[i].rules : undefined"
+                        [rules]="rules && rules[i] ? rules[i].rules : undefined"
                 ></wah-rules>
 
                 <button
