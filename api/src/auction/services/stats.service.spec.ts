@@ -8,7 +8,7 @@ describe('StatsService', () => {
   beforeEach(() => environment.test = false);
   afterEach(() => environment.test = true);
 
-  it('Update trend for realm', async () => {
+  xit('Update trend for realm', async () => {
     jest.setTimeout(99999);
     const conn = new DatabaseUtil(false);
     await conn.enqueueHandshake();
