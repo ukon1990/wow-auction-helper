@@ -1,7 +1,6 @@
 import {SharedService} from '../../../services/shared.service';
 import {Auction} from '../models/auction.model';
 import {AuctionItem} from '../models/auction-item.model';
-import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
@@ -11,7 +10,6 @@ import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
-import {DashboardCalculateUtil} from '../../dashboard/utils/dashboard-calculate.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
@@ -56,6 +54,7 @@ export class AuctionUtil {
     });
     console.log('modifiers', list);
   }
+
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
@@ -87,13 +86,6 @@ export class AuctionUtil {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     const idMap: Map<number, boolean> = new Map<number, boolean>();
-    /*
-    TsmService.list.value.forEach(tsm => {
-      const auction = new Auction();
-      auction.item = +tsm.Id;
-      this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
-    });
-    */
 
     auctions.forEach((a: Auction) => {
       this.processAuction(a, map, list, stats);
@@ -166,6 +158,15 @@ export class AuctionUtil {
 
   private static processAuction(a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[], stats: Map<string, ItemStats>) {
     const id = a.item + AuctionItemStat.bonusId(a.bonusLists, false);
+    /**
+     * Maybe implement this one instead in the future.
+     AuctionItemStat.getId(
+     a.item,
+     a.petSpeciesId,
+     a.bonusLists ? a.bonusLists.map(b => b.bonusListId) : undefined,
+     a.modifiers
+     );
+     */
     if (a.petSpeciesId && AuctionUtil.isPetNotInList(a, map)) {
       const petId = AuctionUtil.getPetId(a);
       map.set(petId, this.newAuctionItem(a, true, petId, stats));
@@ -183,11 +184,13 @@ export class AuctionUtil {
           AuctionUtil.updateAuctionItem(a, id, map);
         }
       }
+      // TODO: Look into this, to avoid "non bonus" duplicates
       if (!map.has(a.item + '')) {
         this.addNewAuctionItem(a, true, '' + a.item, map, list, stats);
       } else {
         AuctionUtil.updateAuctionItem(a, '' + a.item, map);
       }
+
     }
   }
 
@@ -289,18 +292,18 @@ export class AuctionUtil {
 
   private static newAuctionItem(auction: Auction, addAuction = true, id: string, stats: Map<string, ItemStats>): AuctionItem {
     const tmpAuc = AuctionUtil.getTempAuctionItem(auction, addAuction, id);
-    const statsId = AuctionItemStat.getId(
+    const statId = AuctionItemStat.getId(
       auction.item,
       auction.petSpeciesId,
-      tmpAuc.bonusIds,
+      auction.bonusLists ? auction.bonusLists.map(b => b.bonusListId) : undefined
     );
 
     if (TsmService.mapped.value.has(auction.item)) {
       AuctionUtil.setTSMData(auction, tmpAuc);
     }
 
-    if (stats.has(statsId)) {
-      const stat = stats.get(statsId);
+    if (stats.has(statId)) {
+      const stat = stats.get(statId);
       tmpAuc.mktPrice = stat.past7Days.price.avg;
       tmpAuc.stats = stat;
     }
@@ -329,7 +332,6 @@ export class AuctionUtil {
 
   private static getTempAuctionItem(auction: Auction, addAuction = true, id: string) {
     const tmpAuc = new AuctionItem();
-    this.handleBonusIds(auction, tmpAuc);
     tmpAuc.id = id;
     tmpAuc.itemID = auction.item;
     tmpAuc.petSpeciesId = auction.petSpeciesId;
@@ -341,6 +343,7 @@ export class AuctionUtil {
     tmpAuc.itemLevel = SharedService.items[auction.item] ?
       SharedService.items[auction.item].itemLevel : 0;
 
+    this.handleBonusIds(auction, tmpAuc);
     tmpAuc.owner = auction.owner;
     tmpAuc.ownerRealm = auction.ownerRealm;
     tmpAuc.buyout = auction.buyout / auction.quantity;
@@ -366,6 +369,7 @@ export class AuctionUtil {
         }
         if (bonus.level) {
           tmpAuc.itemLevel += bonus.level;
+          tmpAuc.name += ` +${bonus.level} iLvL`;
         }
         if (bonus.quality) {
           tmpAuc.quality = bonus.quality;
