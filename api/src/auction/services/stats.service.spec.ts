@@ -23,33 +23,25 @@ describe('StatsService', () => {
     jest.setTimeout(999999);
     const itemId = 177715;
     let toStatic: ItemStats;
-    let rawDataToStatic = [];
     let toClient: ItemStats;
     let rawDataToClient = [];
 
     beforeAll(async () => {
       const conn = new DatabaseUtil(false);
-      const repo = new StatsRepository(conn);
       await conn.enqueueHandshake();
-      await repo.getAllStatsForRealmDate(69)
+      await new StatsService().getRealmPriceTrends(69, conn)
         .then(rows => {
-          toStatic = AuctionStatsUtil.processHours(rows).filter(item => item.itemId === itemId)[0];
-          rawDataToStatic = AuctionProcessorUtil.processHourlyPriceData(rows.filter(r => r.itemId === itemId));
+          toStatic = rows.filter(item => item.itemId === itemId)[0];
         });
-      await new StatsService().getPriceHistoryFor(69, itemId, undefined, undefined, true, conn)
+      await new StatsService().getPriceHistoryFor(69, itemId, undefined, undefined, false, conn)
         .then(results => {
-          toClient = AuctionStatsUtil.processDaysForHourlyPriceData(results);
-          rawDataToClient = AuctionProcessorUtil.processHourlyPriceData(results);
+          toClient = AuctionStatsUtil.processDaysForHourlyPriceData(results.hourly);
+          rawDataToClient = AuctionProcessorUtil.processHourlyPriceData(results.hourly);
         })
         .catch(console.error);
       conn.end();
     });
 
-    it('Both result sets should have the same length', () => {
-      rawDataToStatic.forEach(entry => console.log('Date:', ))
-      expect(rawDataToStatic.length).toBe(24);
-      expect(rawDataToClient.length).toBe(336);
-    });
     it('The avg price should be identical', () => {
       expect(toStatic.past24Hours.price.avg)
         .toBe(toClient.past24Hours.price.avg);
