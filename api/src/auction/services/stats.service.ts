@@ -454,6 +454,7 @@ export class StatsService {
             })
             .catch(err => {
               conn.end();
+              console.error(err);
               reject(err);
             });
         })
@@ -502,34 +503,44 @@ export class StatsService {
         })
       ])
         .then(() => {
-
-          AuctionProcessorUtil.setCurrentDayFromHourly({
-            hourly: hourlyData,
-            daily: dailyData,
-          });
           AuctionStatsUtil.processHours(hourlyData).forEach(item => {
             const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
             if (!map.has(id)) {
-              item.past7Days = item.past24Hours;
+              item.past7Days = {
+                price: {
+                  trend: item.past24Hours.price.trend * 24,
+                  avg: item.past24Hours.price.avg * 24
+                },
+                quantity: {
+                  trend: item.past24Hours.quantity.trend * 24,
+                  avg: item.past24Hours.quantity.avg * 24
+                },
+                totalEntries: item.past24Hours.totalEntries,
+              };
               map.set(id, item);
               results.push(item);
             } else {
               map.get(id).past24Hours = item.past24Hours;
             }
           });
+
+          AuctionProcessorUtil.setCurrentDayFromHourly({
+            hourly: hourlyData,
+            daily: dailyData,
+          });
           AuctionStatsUtil.processDays(dailyData).forEach(item => {
             const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
             if (!map.has(id)) {
               item.past24Hours = {
                 price: {
-                  trend: item.past7Days.price.trend / 24,
-                  avg: item.past7Days.price.avg / 24
+                  trend: 0,
+                  avg: 0
                 },
                 quantity: {
-                  trend: item.past7Days.quantity.trend / 24,
-                  avg: item.past7Days.quantity.avg / 24
+                  trend: 0,
+                  avg: 0
                 },
-                totalEntries: item.past7Days.totalEntries,
+                totalEntries: 0,
               };
               map.set(id, item);
               results.push(item);
@@ -568,7 +579,7 @@ export class StatsService {
                     lastModified,
                     url: success.url
                   }
-                })
+                }, false)
                   .then(() => resolve(success))
                   .catch(e => {
                     console.error('setRealmTrends', e);
