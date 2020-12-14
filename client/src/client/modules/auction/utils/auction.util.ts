@@ -17,6 +17,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
+  mapVariations: Map<number, AuctionItem[]>;
   list: AuctionItem[];
   auctions: Auction[];
 }
@@ -67,6 +68,7 @@ export class AuctionUtil {
         const t0 = performance.now();
         this.clearOldData();
         const list: AuctionItem[] = [];
+        const mapVariations = new Map<number, AuctionItem[]>();
         const map = this.groupAuctions(auctions, list, stats);
         this.calculateCosts(t0, map);
         this.setItemSources(map);
@@ -74,7 +76,8 @@ export class AuctionUtil {
         resolve({
           map,
           list,
-          auctions
+          auctions,
+          mapVariations
         });
       } catch (e) {
         reject(e);

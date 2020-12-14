@@ -33,6 +33,7 @@ export class DashboardCalculateUtil {
       zoneId: this.getIdParameterForName(board, 'zone')
     };
 
+    // TODO: Filter away TSM stuff temporarily
     try {
       const dataMap = new Map<string, any>();
       if (board.onlyItemsWithRules) {
