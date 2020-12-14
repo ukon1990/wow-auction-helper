@@ -69,7 +69,7 @@ export class AuctionUtil {
         this.clearOldData();
         const list: AuctionItem[] = [];
         const mapVariations = new Map<number, AuctionItem[]>();
-        const map = this.groupAuctions(auctions, list, stats);
+        const map = this.groupAuctions(auctions, list, stats, mapVariations);
         this.calculateCosts(t0, map);
         this.setItemSources(map);
         Report.debug('AuctionUtil.organize', list, auctions.length);
@@ -85,13 +85,13 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[], stats: Map<string, ItemStats>) {
+  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[], stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     const idMap: Map<number, boolean> = new Map<number, boolean>();
 
     auctions.forEach((a: Auction) => {
-      this.processAuction(a, map, list, stats);
+      this.processAuction(a, map, list, stats, mapVariations);
       idMap.set(a.item, true);
     });
 
@@ -159,7 +159,10 @@ export class AuctionUtil {
     console.log(`Prices calc time ${t2 - t1} ms`);
   }
 
-  private static processAuction(a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[], stats: Map<string, ItemStats>) {
+  private static processAuction(
+    a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[],
+    stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>
+  ) {
     const id = a.item + AuctionItemStat.bonusId(a.bonusLists, false);
     /**
      * Maybe implement this one instead in the future.
@@ -180,9 +183,13 @@ export class AuctionUtil {
         this.handlePetAuction(a, petId);
       }
     } else {
+      if (!mapVariations.has(a.item)) {
+        mapVariations.set(a.item, []);
+      }
       if (a.bonusLists) {
         if (!map.has(id)) {
           this.addNewAuctionItem(a, true, id, map, list, stats);
+          mapVariations.get(a.item).push(map.get(id));
         } else {
           AuctionUtil.updateAuctionItem(a, id, map);
         }
@@ -190,6 +197,7 @@ export class AuctionUtil {
       // TODO: Look into this, to avoid "non bonus" duplicates
       if (!map.has(a.item + '')) {
         this.addNewAuctionItem(a, true, '' + a.item, map, list, stats);
+        mapVariations.get(a.item).push(map.get(a.item + ''));
       } else {
         AuctionUtil.updateAuctionItem(a, '' + a.item, map);
       }

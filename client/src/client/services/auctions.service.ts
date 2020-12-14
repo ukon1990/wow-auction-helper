@@ -25,6 +25,7 @@ import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-s
 export class AuctionsService {
   list: BehaviorSubject<AuctionItem[]> = new BehaviorSubject<AuctionItem[]>([]);
   mapped: BehaviorSubject<Map<string, AuctionItem>> = new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>());
+  mappedVariations: BehaviorSubject<Map<number, AuctionItem[]>> = new BehaviorSubject(new Map<number, AuctionItem[]>());
   auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
   stats: BehaviorSubject<Map<string, ItemStats>> = new BehaviorSubject(new Map<string, ItemStats>());
   events = {
@@ -88,7 +89,7 @@ export class AuctionsService {
         this.http
           .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
           .toPromise()
-          .then(({data}: {data: ItemStats[]}) => {
+          .then(({data}: { data: ItemStats[] }) => {
             data.forEach(stat =>
               statsMap.set(AuctionItemStat.getId(
                 stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
@@ -119,8 +120,8 @@ export class AuctionsService {
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
         // if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-          await this.organize(auctions)
-            .catch(error => ErrorReport.sendError('getAuctions', error));
+        await this.organize(auctions)
+          .catch(error => ErrorReport.sendError('getAuctions', error));
         // }
 
         this.openSnackbar(`Auction download is completed`);
@@ -196,9 +197,11 @@ export class AuctionsService {
       .then(({
                map,
                list,
-               auctions: auc
+               auctions: auc,
+               mapVariations,
              }) => {
         CraftingUtil.calculateCost(true, map);
+        this.mappedVariations.next(mapVariations);
         this.auctions.next(auctions);
         this.list.next(list);
         this.mapped.next(map);
