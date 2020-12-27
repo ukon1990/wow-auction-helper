@@ -52,38 +52,38 @@ export class ProspectingAndMillingUtil {
     ProspectingAndMillingUtil.save();
   }
 
-  public static calculateCost(): void {
+  public static calculateCost(map?: Map<string, AuctionItem>): void {
     try {
       ProspectingAndMillingUtil.setIndividualCost(
-        ProspectingAndMillingUtil.mills);
+        ProspectingAndMillingUtil.mills, map);
     } catch (error) {
 
     }
     try {
       ProspectingAndMillingUtil.setIndividualCost(
-        ProspectingAndMillingUtil.prospecting);
+        ProspectingAndMillingUtil.prospecting, map);
     } catch (error) {
 
     }
   }
 
-  private static setIndividualCost(list: Remains[]): void {
+  private static setIndividualCost(list: Remains[], map: Map<string, AuctionItem>): void {
     list.forEach((remains: Remains) => {
       let tmpValue = 0;
       remains.sources.forEach(source => {
-        source.cost = ProspectingAndMillingUtil.getAuctionItem(source.id).buyout;
+        source.cost = ProspectingAndMillingUtil.getAuctionItem(source.id, map).buyout;
         source.value = source.cost * source.dropChance;
         tmpValue += source.value;
       });
 
-      remains.buyout = ProspectingAndMillingUtil.getAuctionItem(remains.id).buyout;
+      remains.buyout = ProspectingAndMillingUtil.getAuctionItem(remains.id, map).buyout;
       remains.yield = (tmpValue - remains.buyout) * 0.95;
     });
     ProspectingAndMillingUtil.save();
   }
 
-  public static getAuctionItem(id: number): AuctionItem {
-    return this.auctionService.getById(id) || new AuctionItem();
+  public static getAuctionItem(id: number, map: Map<string, AuctionItem>): AuctionItem {
+    return this.auctionService.getById(id, map) || new AuctionItem();
   }
 
   public static save(): void {

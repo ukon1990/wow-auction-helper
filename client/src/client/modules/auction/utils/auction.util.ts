@@ -85,7 +85,9 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[], stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>) {
+  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[],
+                               stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>
+  ) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     const idMap: Map<number, boolean> = new Map<number, boolean>();
@@ -141,7 +143,7 @@ export class AuctionUtil {
     } catch (e) {
     }
     // ProspectingAndMillingUtil.setCosts();
-    ProspectingAndMillingUtil.calculateCost();
+    ProspectingAndMillingUtil.calculateCost(map);
     const t2 = performance.now();
     console.log(`Prices calc time ${t2 - t1} ms`);
   }

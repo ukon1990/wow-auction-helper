@@ -10,6 +10,7 @@ const profitableCrafts: DashboardV2 = {
   sortOrder: 0,
   idParam: 'id',
   title: 'Profitable crafts',
+  tags: ['Crafting'],
   columns: [
     columnConfig.item.name,
     columnConfig.auction.buyout,
@@ -54,6 +55,7 @@ const profitableKnownCrafts: DashboardV2 = {
   sortOrder: 1,
   idParam: 'id',
   title: 'Profitable known crafts',
+  tags: ['Crafting'],
   columns: [
     columnConfig.item.name,
     columnConfig.auction.buyout,
@@ -98,6 +100,7 @@ const potentialDeals: DashboardV2 = {
   sortOrder: 2,
   idParam: 'id',
   title: 'Potential deals',
+  tags: ['Deals'],
   columns: [
     columnConfig.item.name,
     columnConfig.auction.mktPrice,
@@ -152,6 +155,7 @@ const potentialBidDeals: DashboardV2 = {
   sortOrder: 3,
   idParam: 'id',
   title: 'Potential bid deals',
+  tags: ['Deals'],
   columns: [
     columnConfig.item.name,
     columnConfig.auction.auctionsBid,
@@ -217,6 +221,7 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
   sortOrder: 4,
   idParam: 'id',
   title: 'Potential 2 hour bid deals',
+  tags: ['Deals'],
   columns: [
     columnConfig.item.name,
     columnConfig.auction.bid,
@@ -254,6 +259,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
   sortOrder: 6,
   idParam: 'id',
   title: 'Buyout below vendor sell price',
+  tags: ['Deals'],
   columns: [
     columnConfig.item.name,
     columnConfig.auction.buyout,
@@ -351,6 +357,7 @@ const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => p
     sortOrder: 1,
     idParam: 'id',
     title: p.name,
+    tags: ['Crafting'],
     columns: profitableKnownCrafts.columns,
     sortRule: {
       field: columnConfig.recipe.knownROI.key,
@@ -391,6 +398,7 @@ const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2
   sortOrder: 6,
   idParam: 'id',
   title: `Profitable ${type}`,
+  tags: ['Destroy'],
   sortRule: {
     field: `source.destroy.${type}.sourceIn.yield`,
     sortDesc: true
@@ -405,7 +413,7 @@ const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2
   rules: [{
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.GOLD,
-    field: 'source.destroy.milling.sourceIn.yield',
+    field: `source.destroy.${type}.sourceIn.yield`,
     toValue: '0c',
   },
   ],

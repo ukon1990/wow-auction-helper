@@ -69,8 +69,8 @@ export class AuctionsService {
     });
   }
 
-  getById(id: string | number): AuctionItem {
-    return this.mapped.value.get('' + id);
+  getById(id: string | number, map: Map<string, AuctionItem> = this.mapped.value): AuctionItem {
+    return map.get('' + id);
   }
 
   getAuctions(): Promise<any> {
