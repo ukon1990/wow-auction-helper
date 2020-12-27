@@ -409,6 +409,40 @@ export const ruleFields: RuleFieldGroup[] = [
     ]
   },
   {
+    name: 'Destroying: Prospecting',
+    options: [
+      {
+        key: columnConfig.prospecting.name.key,
+        name: columnConfig.prospecting.name.title,
+        column: columnConfig.prospecting.name,
+        defaultType: TargetValueEnum.TEXT
+      },
+      {
+        key: columnConfig.prospecting.yield.key,
+        name: columnConfig.prospecting.yield.title,
+        column: columnConfig.prospecting.yield,
+        defaultType: TargetValueEnum.GOLD
+      }
+    ]
+  },
+  {
+    name: 'Destroying: Milling',
+    options: [
+      {
+        key: columnConfig.milling.name.key,
+        name: columnConfig.milling.name.title,
+        column: columnConfig.milling.name,
+        defaultType: TargetValueEnum.TEXT
+      },
+      {
+        key: columnConfig.milling.yield.key,
+        name: columnConfig.milling.yield.title,
+        column: columnConfig.milling.yield,
+        defaultType: TargetValueEnum.GOLD
+      }
+    ]
+  },
+  {
     name: 'Inventory',
     options: [
       {

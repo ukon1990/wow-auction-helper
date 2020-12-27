@@ -358,6 +358,14 @@ export const columnConfig = {
 
     }
   },
+  prospecting: {
+    name: {key: `source.destroy.prospecting.sourceIn.name`, title: 'Name', dataType: 'name'},
+    yield: {key: `source.destroy.prospecting.sourceIn.yield`, title: 'ROI', dataType: 'gold'},
+  },
+  milling: {
+    name: {key: `source.destroy.milling.sourceIn.name`, title: 'Name', dataType: 'name'},
+    yield: {key: `source.destroy.milling.sourceIn.yield`, title: 'ROI', dataType: 'gold'},
+  },
   inventory: {
     quantity: {
       key: 'item.inventory.quantity', title: 'Inventory qty', dataType: 'number'
