@@ -1,12 +1,14 @@
 <mat-tab-group>
   <mat-tab label="Dashboard matches ({{ numberOfBoardsWithAMatch }}/ {{ numberOfActiveBoards }})">
     <p>
-      Click on an item's name to get more information about it, current prices, sources, historical pricing etc and the cogwheel to edit.
+      Click on an item's name to get more information about it, current prices, sources, historical pricing etc and the
+      cogwheel to edit.
     </p>
     <div>
       <div *ngIf="!numberOfCharactersOnRealm" class="row mat-toolbar mat-warn col-md-12">
         <p>
-          It seems like you've not added any characters with recipes. This will cause some of the default boards to not return a result.
+          It seems like you've not added any characters with recipes. This will cause some of the default boards to not
+          return a result.
         </p>
         <p>
           If you want to add any of your crafters, go to <a routerLink="/settings/characters">Settings -> Characters</a>.
@@ -14,9 +16,6 @@
       </div>
       <div class="row col-md-12 slim-sm pr-0">
         <wah-crafting-config class="col"></wah-crafting-config>
-        <mat-checkbox class="col" [formControl]="displayHiddenForm">
-          Show hidden boards
-        </mat-checkbox>
         <div class="col">
           <button class="float-right"
                   mat-stroked-button
@@ -37,14 +36,48 @@
         </div>
       </div>
 
+      <form class="row col-md-12" [formGroup]="form">
+        <mat-form-field class="col-md-4">
+          <input matInput
+                 placeholder="Filter by boards names or boards containing a match for a specific item"
+                 type="text"
+                 formControlName="search"
+          />
+        </mat-form-field>
+
+        <mat-checkbox class="col" formControlName="displayHidden">
+          Show hidden boards
+        </mat-checkbox>
+
+        <mat-paginator *ngIf="filteredBoards.length > pageRows[0]"
+                       class="col-md-5"
+                       color="accent"
+                       [length]="filteredBoards.length"
+                       [pageSize]="pageEvent.pageSize"
+                       [pageSizeOptions]="pageRows"
+                       [pageIndex]="pageEvent.pageIndex"
+                       [showFirstLastButtons]="true"
+                       (page)="pageChange($event)"
+        >
+        </mat-paginator>
+      </form>
       <div class="row col-md-12 pr-0">
-        <ng-container *ngFor="let d of dashboards">
-          <div *ngIf="(!d.isDisabled && d.data.length > 0 || displayHiddenForm.value)"
-               class="col-xxxl-4 col-xl-6 mb-3 slim-sm">
-            <wah-dashboard-item [dashboard]="d"></wah-dashboard-item>
-          </div>
-        </ng-container>
+        <wah-dashboard-item
+                class="col-xxxl-4 col-xl-6 mb-3 slim-sm"
+                *ngFor="let board of filteredBoards | slice: fromValue : toValue"
+                [dashboard]="board">
+        </wah-dashboard-item>
       </div>
+      <mat-paginator *ngIf="filteredBoards.length > pageRows[0]"
+                     color="accent"
+                     [length]="filteredBoards.length"
+                     [pageSize]="pageEvent.pageSize"
+                     [pageSizeOptions]="pageRows"
+                     [pageIndex]="pageEvent.pageIndex"
+                     [showFirstLastButtons]="true"
+                     (page)="pageChange($event)"
+      >
+      </mat-paginator>
     </div>
   </mat-tab>
 

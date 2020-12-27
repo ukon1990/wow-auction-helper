@@ -4,6 +4,7 @@ import {Item} from '../../../models/item/item';
 import {ItemNpcDetails} from '../../item/models/item-npc-details.model';
 import {TradeVendorItemValue} from '../../../models/item/trade-vendor';
 import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
+import {Remains, RemainsSourceTarget} from '../../../models/item/remains.model';
 
 export class AuctionItem {
   id: string;
@@ -39,6 +40,16 @@ export class AuctionItem {
 
   item: Item;
   source: {
+    destroy: {
+      prospecting: {
+        sourceIn: Remains;
+        targetIn: RemainsSourceTarget[]
+      };
+      milling: {
+        sourceIn: Remains;
+        targetIn: RemainsSourceTarget[]
+      }
+    };
     tradeVendor: TradeVendorItemValue;
     recipe: {
       known: Recipe[],
@@ -61,7 +72,11 @@ export class AuctionItem {
       targetIn: []
     },
     npc: undefined,
-    tradeVendor: undefined
+    tradeVendor: undefined,
+    destroy: {
+      milling: undefined,
+      prospecting: undefined,
+    },
   };
   stats?: ItemStats;
 

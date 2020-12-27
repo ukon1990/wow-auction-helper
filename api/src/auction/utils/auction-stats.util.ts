@@ -10,7 +10,7 @@ export class AuctionStatsUtil {
     return `${id}-${bonusIds}-${petSpeciesId}`;
   }
 
-  static processHours(rows: AuctionItemStat[]): ItemStats[] {
+  static processHours(rows: ItemPriceEntry[]): ItemStats[] {
     const map = new Map<string, ItemPriceEntry[]>(),
       list: ItemPriceEntry[][] = [];
     const processedDBEntryCallback = (hour: ItemPriceEntry) => {
@@ -23,8 +23,11 @@ export class AuctionStatsUtil {
       map.get(id).push(hour);
     };
     let start = +new Date();
+    /*
     AuctionProcessorUtil.processHourlyPriceData(rows,
       (hour: ItemPriceEntry) => processedDBEntryCallback(hour));
+     */
+    rows.forEach(row => processedDBEntryCallback(row));
     console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
     start = +new Date();
     const result = list.map(item => this.processDaysForHourlyPriceData(item, false, true));
@@ -32,7 +35,7 @@ export class AuctionStatsUtil {
     return result;
   }
 
-  static processDays(rows: AuctionItemStat[]): ItemStats[] {
+  static processDays(rows: ItemDailyPriceEntry[]): ItemStats[] {
     const map = new Map<string, ItemDailyPriceEntry[]>(),
       list: ItemDailyPriceEntry[][] = [];
     const processedDBEntryCallback = (hour: ItemDailyPriceEntry) => {
@@ -45,8 +48,7 @@ export class AuctionStatsUtil {
       map.get(id).push(hour);
     };
     let start = +new Date();
-    AuctionProcessorUtil.processDailyPriceData(rows,
-      (hour: ItemDailyPriceEntry) => processedDBEntryCallback(hour));
+    rows.forEach((hour: ItemDailyPriceEntry) => processedDBEntryCallback(hour));
     console.log(`processHourlyPriceData took ${+new Date() - start} ms`);
     start = +new Date();
     const result = list.map(item =>

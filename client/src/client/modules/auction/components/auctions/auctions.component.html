@@ -103,11 +103,10 @@
 
 </form>
 <wah-data-table
-        *ngIf="table.data"
+        *ngIf="tableData"
         iconSize="22"
         itemsPerPage="20"
         id="itemID"
-        [showOwner]="true"
-        [columns]="table.columns"
-        [data]="table.data">
+        [columns]="columns"
+        [data]="tableData">
 </wah-data-table>

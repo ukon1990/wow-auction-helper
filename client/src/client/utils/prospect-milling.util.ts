@@ -1,14 +1,28 @@
-import {Remains, RemainsSource} from '../models/item/remains.model';
+import {Remains, RemainsSource, RemainsSourceTarget} from '../models/item/remains.model';
 import {Item} from '../models/item/item';
 import {defaultProspecting} from './default-prospecting.util';
 import {defaultMilling} from './default-milling.util';
 import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {AuctionsService} from '../services/auctions.service';
 
+export const millingRecipeMap = {
+  34540: 1, 34541: 1, 34542: 1, 34543: 1, 34544: 1, 34545: 1, 35802: 1,
+  35803: 1, 35804: 1, 35805: 1, 35806: 1, 35807: 1, 35825: 1, 36654: 1, 38965: 1, 38966: 1, 38967: 1,
+  38968: 1, 38969: 1, 38970: 1, 38971: 1, 40699: 1, 42880: 1, 42881: 1, 42882: 1, 42883: 1, 42884: 1, 42885: 1,
+};
+export const prospectingRecipeMap = {
+  36135: 1,  36136: 1,  36668: 1,  39002: 1,  39003: 1,  39004: 1,  40840: 1,
+  42933: 1,  42934: 1,  42935: 1,  42936: 1,  42937: 1,  42938: 1,
+};
+
 export class ProspectingAndMillingUtil {
   private static auctionService: AuctionsService;
   public static prospecting: Remains[] = [];
+  public static prospectingSourceMap = new Map<number, Remains>();
+  public static prospectingSourceTargetsMap = new Map<number, RemainsSourceTarget[]>();
   public static mills: Remains[] = [];
+  public static millsSourceMap = new Map<number, Remains>();
+  public static millsSourceTargetsMap = new Map<number, RemainsSourceTarget[]>();
 
   public static TYPES = {
     MILLING: 'MILLING',
@@ -94,99 +108,68 @@ export class ProspectingAndMillingUtil {
   }
 
   public static restore(): void {
-    if (localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]) {
-      ProspectingAndMillingUtil.prospecting =
-        JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]);
-    } else {
-      ProspectingAndMillingUtil.prospecting = defaultProspecting;
-    }
+    this.restoreProspecting();
 
+    this.restoreMilling();
+  }
+
+  private static restoreMilling() {
     if (localStorage[ProspectingAndMillingUtil.TYPES.MILLING]) {
-      ProspectingAndMillingUtil.mills =
-        JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.MILLING]);
+      const list: Remains[] = [];
+      const map = new Map<number, Remains>();
+      [
+        ...JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.MILLING]),
+        ...defaultMilling
+      ].forEach(remains => {
+        if (!map.has(remains.id)) {
+          map.set(remains.id, remains);
+          // this.millsSourceMap.set(remains.id, {});
+          this.millsSourceMap.set(remains.id, remains);
+          list.push(remains);
+          remains.sources.forEach(source => {
+            if (!this.prospectingSourceTargetsMap.has(source.id)) {
+              this.prospectingSourceTargetsMap.set(source.id, []);
+            }
+            this.prospectingSourceTargetsMap.get(source.id).push({
+              target: source,
+              origin: remains,
+            });
+          });
+        }
+      });
+      ProspectingAndMillingUtil.mills = list.sort((a, b) => b.id - a.id);
     } else {
       ProspectingAndMillingUtil.mills = defaultMilling;
     }
   }
 
-  /*
-    public static isSourceMilling(item: Item): void {
-      if (item.itemSource && item.itemSource.milledFrom && item.itemSource.milledFrom.length > 0) {
-        const target = new Remains(item);
-        ProspectingAndMillingUtil.pigments.push(target);
-        item.itemSource.milledFrom.forEach(t => {
-          target.sources.push(
-            new RemainsSource(SharedService.items[t.id], t.count, t.outof));
-        });
-      }
-
-      if (item.itemSource && item.itemSource.prospectedFrom && item.itemSource.prospectedFrom.length > 0) {
-        const target = new Remains(item);
-        ProspectingAndMillingUtil.gems.push(target);
-        item.itemSource.prospectedFrom.forEach(t => {
-          target.sources.push(
-            new RemainsSource(SharedService.items[t.id], t.count, t.outof));
-        });
-      }
-    }
-
-    public static combineSources(array: Remains[], map: Map<number, Remains>, toArray: Remains[]): void {
-      toArray.length = 0;
-      map.clear();
-
-      array.forEach(remains => {
-        remains.sources.forEach(source => {
-          if (!map[source.id]) {
-            map[source.id] = new Remains(SharedService.items[source.id]);
-            map[source.id].yield = 0;
-            map[source.id].buyout = ProspectingAndMillingUtil.getAHValue(source.id);
-            toArray.push(map[source.id]);
-          }
-          if (source.dropChance > 0) {
-            const targetItem = new RemainsSource(SharedService.items[source.id], source.count, map[source.id]);
-            targetItem.id = remains.id;
-            targetItem.name = remains.name;
-            targetItem.dropChance = source.dropChance;
-            targetItem.cost = (ProspectingAndMillingUtil.getAHValue(remains.id) / ProspectingAndMillingUtil.NEEDED_PER) * source.dropChance;
-            targetItem.roi = targetItem.cost - ProspectingAndMillingUtil.getAHValue(remains.id);
-            map[source.id].yield += targetItem.roi;
-            (map[source.id] as Remains).sources.push(targetItem);
-            map[source.id].outOf = source['outOf'];
-            delete targetItem['outOf'];
-          }
-        });
+  private static restoreProspecting() {
+    if (localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]) {
+      const list: Remains[] = [];
+      const map = new Map<number, Remains>();
+      ProspectingAndMillingUtil.prospecting.forEach(remains => map.set(remains.id, remains));
+      [
+        ...JSON.parse(localStorage[ProspectingAndMillingUtil.TYPES.PROSPECTING]),
+        ...defaultProspecting
+      ].forEach((remains: Remains) => {
+        if (!map.has(remains.id)) {
+          map.set(remains.id, remains);
+          this.prospectingSourceMap.set(remains.id, remains);
+          list.push(remains);
+          remains.sources.forEach(source => {
+            if (!this.prospectingSourceTargetsMap.has(source.id)) {
+              this.prospectingSourceTargetsMap.set(source.id, []);
+            }
+            this.prospectingSourceTargetsMap.get(source.id).push({
+              target: source,
+              origin: remains,
+            });
+          });
+        }
       });
+      ProspectingAndMillingUtil.prospecting = list.sort((a, b) => b.id - a.id);
+    } else {
+      ProspectingAndMillingUtil.prospecting = defaultProspecting;
     }
-
-    public static setCosts(): void {
-      ProspectingAndMillingUtil.setCost(ProspectingAndMillingUtil.pigments);
-      ProspectingAndMillingUtil.combineSources(
-        ProspectingAndMillingUtil.pigments, ProspectingAndMillingUtil.pigmentSourceMap, ProspectingAndMillingUtil.pigmentSource);
-      ProspectingAndMillingUtil.setCost(ProspectingAndMillingUtil.gems);
-      ProspectingAndMillingUtil.combineSources(
-        ProspectingAndMillingUtil.gems, ProspectingAndMillingUtil.gemSourceMap, ProspectingAndMillingUtil.gemSource);
-
-      ProspectingAndMillingUtil.mills = ProspectingAndMillingUtil.pigmentSource;
-      ProspectingAndMillingUtil.prospecting = ProspectingAndMillingUtil.gemSource;
-      ProspectingAndMillingUtil.save();
-    }
-
-    private static setCost(array: Remains[]): void {
-      array.forEach((item: Remains) => {
-        const i = SharedService.auctionItemsMap[item.id];
-        item.buyout = i ? i.buyout : 0;
-        item.sources.forEach((source: RemainsSource) => {
-          const is: AuctionItem = SharedService.auctionItemsMap[source.id];
-          source.cost = is ? (is.buyout * ProspectingAndMillingUtil.NEEDED_PER) / source.dropChance : 0;
-          source.roi = item.buyout - source.cost;
-        });
-      });
-
-      array.sort((a, b) =>
-        SharedService.items[b.id].expansionId - SharedService.items[a.id].expansionId);
-    }
-
-    public static getAHValue(id: number): number {
-      return SharedService.auctionItemsMap[id] ? SharedService.auctionItemsMap[id].buyout : 0;
-    }*/
+  }
 }

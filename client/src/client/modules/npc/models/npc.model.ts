@@ -9,6 +9,7 @@ import {currencyMap} from '../../../data/currency.data';
 import {Report} from '../../../utils/report.util';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionsService} from '../../../services/auctions.service';
+import {ItemService} from '../../../services/item.service';
 
 export interface NPCCoordinate {
   x: number;
@@ -186,15 +187,15 @@ export class NPC {
               tradeVendor.expansionId = npc.expansionId;
               tradeVendor.useForCrafting = i && i.itemBind !== 0;
               tradeVendorsItemMap[tradeVendorId] = tradeVendor;
-              TRADE_VENDORS.push(tradeVendor);
             }
 
-            if (!tradeVendorItemMap[id]) {
+            if (i && !tradeVendorItemMap[id] && i.itemBind === 0) {
               tradeVendor.items.push(new TradeVendorItem(item.id, item.stackSize / item.price));
               tradeVendorItemMap[id] = true;
             }
-            if (!npcVendorMap[npcId]) {
+            if (!npcVendorMap[npcId] && tradeVendor.items.length) {
               tradeVendor.vendors.push(npc);
+              TRADE_VENDORS.push(tradeVendor);
               npcVendorMap[npcId] = true;
             }
           }

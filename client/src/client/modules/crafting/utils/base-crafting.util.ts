@@ -10,6 +10,8 @@ import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
 import {Item, ItemInventory} from '../../../models/item/item';
+import {ItemService} from '../../../services/item.service';
+import {millingRecipeMap, ProspectingAndMillingUtil, prospectingRecipeMap} from '../../../utils/prospect-milling.util';
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {
@@ -193,6 +195,22 @@ export abstract class BaseCraftingUtil {
   }
 
   private setROI(recipe: Recipe) {
+    if (millingRecipeMap[recipe.id]) {
+      const id = recipe.reagents[0].id;
+      const milling = ProspectingAndMillingUtil.millsSourceMap.get(id);
+      if (milling) {
+        recipe.roi = milling.yield * recipe.reagents[0].quantity;
+        return;
+      }
+    }
+    if (prospectingRecipeMap[recipe.id]) {
+      const id = recipe.reagents[0].id;
+      const prospecting = ProspectingAndMillingUtil.prospectingSourceMap.get(id);
+      if (prospecting) {
+        recipe.roi = prospecting.yield * recipe.reagents[0].quantity;
+        return;
+      }
+    }
     recipe.roi = (recipe.buyout * this.ahCutModifier) - recipe.cost;
   }
 
@@ -289,11 +307,20 @@ export abstract class BaseCraftingUtil {
   }
 
   getVendorPriceDetails(id: number): { price: number; stock: number } {
-    const item: ItemNpcDetails = NpcService.itemNpcMap.value.get(id);
-    if (item) {
+    const npcItem: ItemNpcDetails = NpcService.itemNpcMap.value.get(id);
+    const item: Item = this.items.get(id);
+    if (item && item.buyPrice && npcItem && npcItem.vendorBuyPrice) {
+      const stock = npcItem
+        ? npcItem.vendorAvailable < 0
+          ? 0 : npcItem.vendorAvailable
+        : 0;
+      const price = item.buyPrice ?
+        item.buyPrice
+        : npcItem ?
+          npcItem.vendorBuyPrice : undefined;
       return {
-        price: item.vendorBuyPrice,
-        stock: item.vendorAvailable < 0 ? 0 : item.vendorAvailable
+        price,
+        stock
       };
     }
     return undefined;

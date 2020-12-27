@@ -17,7 +17,7 @@ const profitableCrafts: DashboardV2 = {
     columnConfig.recipe.ROI,
     columnConfig.recipe.ROIPercent,
     columnConfig.recipe.cost,
-    columnConfig.auction.regionSaleRate,
+    // columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel,
     columnConfig.recipe.shoppingCartInput
   ],
@@ -31,7 +31,8 @@ const profitableCrafts: DashboardV2 = {
     field: columnConfig.auction.buyout.key,
     toValue: 110,
     toField: columnConfig.recipe.cost.key
-  }, {
+  }
+  /* , {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.regionSaleRate.key,
@@ -41,9 +42,10 @@ const profitableCrafts: DashboardV2 = {
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.avgDailySold.key,
     toValue: 1
-  }],
+  }*/
+  ],
   data: [],
-  lastModified: 1595541600000
+  lastModified: 1608352139874
 };
 
 const profitableKnownCrafts: DashboardV2 = {
@@ -59,7 +61,7 @@ const profitableKnownCrafts: DashboardV2 = {
     columnConfig.recipe.knownROI,
     columnConfig.recipe.knownROIPercent,
     columnConfig.recipe.knownCost,
-    columnConfig.auction.regionSaleRate,
+    // columnConfig.auction.regionSaleRate,
     columnConfig.item.itemLevel,
     columnConfig.recipe.shoppingCartInput,
   ],
@@ -73,7 +75,8 @@ const profitableKnownCrafts: DashboardV2 = {
     field: columnConfig.auction.buyout.key,
     toValue: 110,
     toField: columnConfig.recipe.knownCost.key
-  }, {
+  }
+  /*, {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: columnConfig.auction.regionSaleRate.key,
@@ -83,9 +86,10 @@ const profitableKnownCrafts: DashboardV2 = {
     targetValueType: TargetValueEnum.NUMBER,
     field: columnConfig.auction.avgDailySold.key,
     toValue: 1
-  }],
+  }*/
+  ],
   data: [],
-  lastModified: 1595541600000
+  lastModified: 1608352139874
 };
 
 const potentialDeals: DashboardV2 = {
@@ -101,7 +105,7 @@ const potentialDeals: DashboardV2 = {
     columnConfig.auction.mktPriceMinusBuyout,
     columnConfig.item.vendorSell,
     columnConfig.auction.avgDailySold,
-    columnConfig.auction.regionSaleRate,
+    // columnConfig.auction.regionSaleRate,
     columnConfig.auction.regionSaleAvg,
   ],
   sortRule: {
@@ -113,7 +117,9 @@ const potentialDeals: DashboardV2 = {
     targetValueType: TargetValueEnum.NUMBER,
     field: 'quality',
     toValue: 0
-  }, {
+  }
+  /*
+  , {
     condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: 'regionSaleRate',
@@ -123,7 +129,8 @@ const potentialDeals: DashboardV2 = {
     targetValueType: TargetValueEnum.NUMBER,
     field: 'avgDailySold',
     toValue: 1
-  }, {
+  }*/
+    , {
     condition: ConditionEnum.LESS_THAN_OR_EQUAL_TO,
     targetValueType: TargetValueEnum.PERCENT,
     field: 'buyout',
@@ -136,7 +143,7 @@ const potentialDeals: DashboardV2 = {
     toValue: '0c'
   }],
   data: [],
-  lastModified: 1595541600000
+  lastModified: 1608352139874
 };
 
 const potentialBidDeals: DashboardV2 = {
@@ -171,6 +178,7 @@ const potentialBidDeals: DashboardV2 = {
       field: 'bid',
       toValue: '0c'
     },
+    /*
     {
       condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
       targetValueType: TargetValueEnum.PERCENT,
@@ -181,7 +189,8 @@ const potentialBidDeals: DashboardV2 = {
       targetValueType: TargetValueEnum.NUMBER,
       field: 'avgDailySold',
       toValue: 1
-    }, {
+    },
+    */{
       condition: ConditionEnum.GREATER_THAN,
       targetValueType: TargetValueEnum.NUMBER,
       field: 'quality',
@@ -199,7 +208,7 @@ const potentialBidDeals: DashboardV2 = {
       toField: 'buyout'
     }],
   data: [],
-  lastModified: 1595541600000
+  lastModified: 1608352139874
 };
 
 const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
@@ -321,52 +330,87 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
     targetValueType: TargetValueEnum.GOLD,
     field: 'source.tradeVendor.roi',
     toValue: '0c',
-  }, {
+  },
+  /*
+  {
     condition: ConditionEnum.GREATER_THAN,
     targetValueType: TargetValueEnum.PERCENT,
     field: 'regionSaleRate',
     toValue: 10,
-  }],
+  }
+  */
+  ],
   data: [],
-  lastModified: 1595541600000
+  lastModified: 1608352139874
 };
 
 const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => professions.map(p => (
   {
-  id: 'default-get-known-profession-' + p.id,
+    id: 'default-get-known-profession-' + p.id,
+    idIsBackendGenerated: false,
+    sortOrder: 1,
+    idParam: 'id',
+    title: p.name,
+    columns: profitableKnownCrafts.columns,
+    sortRule: {
+      field: columnConfig.recipe.knownROI.key,
+      sortDesc: true
+    },
+    rules: [{
+      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.PERCENT,
+      field: columnConfig.auction.buyout.key,
+      toValue: 110,
+      toField: columnConfig.recipe.knownCost.key
+    }, {
+      condition: ConditionEnum.EQUAL_TO,
+      targetValueType: TargetValueEnum.NUMBER,
+      field: columnConfig.recipe.knownProfession.key,
+      toValue: p.id
+    },
+      /*
+      {
+      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.PERCENT,
+      field: columnConfig.auction.regionSaleRate.key,
+      toValue: 15
+    }, {
+      condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
+      targetValueType: TargetValueEnum.NUMBER,
+      field: columnConfig.auction.avgDailySold.key,
+      toValue: 1
+    }*/
+    ],
+    data: [],
+    lastModified: 1608352139874
+  }));
+
+const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2 => ({
+  id: `default-${type}`,
   idIsBackendGenerated: false,
-  sortOrder: 1,
+  sortOrder: 6,
   idParam: 'id',
-  title: p.name,
-  columns: profitableKnownCrafts.columns,
+  title: `Profitable ${type}`,
   sortRule: {
-    field: columnConfig.recipe.knownROI.key,
+    field: `source.destroy.${type}.sourceIn.yield`,
     sortDesc: true
   },
+  columns: [
+    {
+      key: 'name', title: 'Item name', dataType: 'name'
+    },
+    {key: 'buyout', title: 'Value', dataType: 'gold'},
+    {key: `source.destroy.${type}.sourceIn.yield`, title: 'ROI', dataType: 'gold'},
+  ],
   rules: [{
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.PERCENT,
-    field: columnConfig.auction.buyout.key,
-    toValue: 110,
-    toField: columnConfig.recipe.knownCost.key
-  }, {
-    condition: ConditionEnum.EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: columnConfig.recipe.knownProfession.key,
-    toValue: p.id
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.PERCENT,
-    field: columnConfig.auction.regionSaleRate.key,
-    toValue: 15
-  }, {
-    condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
-    targetValueType: TargetValueEnum.NUMBER,
-    field: columnConfig.auction.avgDailySold.key,
-    toValue: 1
-  }],
+    condition: ConditionEnum.GREATER_THAN,
+    targetValueType: TargetValueEnum.GOLD,
+    field: 'source.destroy.milling.sourceIn.yield',
+    toValue: '0c',
+  },
+  ],
   data: [],
-  lastModified: 1595541600000
+  lastModified: 1608352139874
 }));
 
 export const getDefaultDashboards = (professions: Profession[]): DashboardV2[] => [
@@ -377,5 +421,6 @@ export const getDefaultDashboards = (professions: Profession[]): DashboardV2[] =
   potentialBidDeals,
   potentialBidDealsWith2HOrLessLeft,
   buyoutBelowVendorSellPrice,
-  tradeVendorCurrencyInGold
+  tradeVendorCurrencyInGold,
+  ...destroyBoards
 ];

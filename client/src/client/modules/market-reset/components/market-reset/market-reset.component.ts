@@ -13,6 +13,9 @@ import {Report} from '../../../../utils/report.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {columnConfig} from '../../../dashboard/data/columns.data';
+import {GameBuild} from '../../../../utils/game-build.util';
+import {ItemClass} from '../../../item/models/item-class.model';
+import {ItemClassService} from '../../../item/service/item-class.service';
 
 @Component({
   selector: 'wah-market-reset',
@@ -23,7 +26,7 @@ export class MarketResetComponent implements OnInit {
   form: FormGroup;
   formDefaults = {
     name: '',
-    timeToSell: 10,
+    timeToSell: 10, // Dependent on TSM
     breakPointPercent: 101.01,
     mktPriceUpperThreshold: 400,
     minROI: 0,
@@ -32,6 +35,8 @@ export class MarketResetComponent implements OnInit {
     useHighestROIResult: true,
     newVsCurrentBuyoutPriceLimit: 400
   };
+  itemClasses: ItemClass[] = ItemClassService.getForLocale();
+  expansions = GameBuild.expansionMap;
   data = [];
   sm = new SubscriptionManager();
   tsmShoppingString = '';
@@ -61,6 +66,9 @@ export class MarketResetComponent implements OnInit {
         query.name || this.formDefaults.name),
       timeToSell: new FormControl(query.timeToSell),
       breakPointPercent: new FormControl(query.breakPointPercent),
+      expansion: new FormControl(query.expansion),
+      itemClass: new FormControl(query.itemClass),
+      itemSubClass: new FormControl(query.itemSubClass),
       mktPriceUpperThreshold: new FormControl(query.mktPriceUpperThreshold),
       minROI: new FormControl(query.minROI),
       minROIPercent: new FormControl(query.minROIPercent),
@@ -129,7 +137,11 @@ export class MarketResetComponent implements OnInit {
     this.rowShoppingString = '';
 
     this.auctionService.list.value.forEach(ai => {
-      if (!Filters.isNameMatch(ai.itemID, query.name)) {
+      if (
+        !Filters.isNameMatch(ai.itemID, query.name) ||
+        !Filters.isExpansionMatch(ai.itemID, query.expansion) ||
+        !Filters.isItemClassMatch(ai.itemID, query.itemClass, query.itemSubClass)
+      ) {
         return;
       }
 
@@ -139,13 +151,15 @@ export class MarketResetComponent implements OnInit {
         const bp = item.breakPoints[i];
         if (bp && bp.potentialProfit > 0) {
 
-          if (this.isSellTimeMatch(bp, query) &&
+          if (
+            this.isSellTimeMatch(bp, query) &&
             this.isMktPriceThreasholdMatch(bp, query, ai) &&
             this.isMinROIMatch(query, bp) &&
             this.isMinROIPercentMatch(query, bp) &&
             this.isMaxTotalBuyoutPerItemMatch(query, bp) &&
             this.isHigherROIThanPrevious(query, bp, matchPoint) &&
-            this.isNewVsCurrentBuyoutPriceLimit(query, bp)) {
+            this.isNewVsCurrentBuyoutPriceLimit(query, bp)
+          ) {
             matchPoint = {
               itemID: item.id,
               name: item.name,
@@ -167,7 +181,7 @@ export class MarketResetComponent implements OnInit {
   }
 
   private isSellTimeMatch(bp, query: any) {
-    return Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
+    return true; // TSM dependent -> Filters.isXSmallerThanOrEqualToY(bp.sellTime, query.timeToSell);
   }
 
   private isMinROIMatch(query: any, bp) {
@@ -249,9 +263,9 @@ export class MarketResetComponent implements OnInit {
     this.columns.push({key: 'auctionCount', title: '# Auctions', dataType: 'number'});
     this.columns.push({key: 'itemCount', title: '# Item', dataType: 'number'});
     this.columns.push({key: 'breakEvenQuantity', title: 'Break-even #', dataType: 'number'});
-    this.columns.push(columnConfig.auction.avgDailySold);
-    this.columns.push(columnConfig.auction.regionSaleRate);
-    this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
+    // TSM dependent -> this.columns.push(columnConfig.auction.avgDailySold);
+    // TSM dependent -> this.columns.push(columnConfig.auction.regionSaleRate);
+    // TSM dependent -> this.columns.push({key: 'sellTime', title: 'Est days to sell', dataType: 'number'});
   }
 
   setNewInputGoldValue(newValue: any, field: string) {

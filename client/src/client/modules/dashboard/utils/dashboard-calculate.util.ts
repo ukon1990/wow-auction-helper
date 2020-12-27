@@ -10,7 +10,6 @@ import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
-import {Report} from '../../../utils/report.util';
 
 interface IdPaths {
   recipeId?: string;
@@ -33,6 +32,7 @@ export class DashboardCalculateUtil {
       zoneId: this.getIdParameterForName(board, 'zone')
     };
 
+    // TODO: Filter away TSM stuff temporarily
     try {
       const dataMap = new Map<string, any>();
       if (board.onlyItemsWithRules) {
@@ -100,7 +100,6 @@ export class DashboardCalculateUtil {
           ...itemRule.rules.filter(rule => this.ruleContainsIterable(rule))
         ];
         const nonIterableKeyRules = [
-
           ...board.rules.filter(rule => !this.ruleContainsIterable(rule)),
           ...itemRule.rules.filter(rule => !this.ruleContainsIterable(rule))
         ];

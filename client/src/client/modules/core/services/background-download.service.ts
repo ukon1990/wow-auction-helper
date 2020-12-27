@@ -172,6 +172,9 @@ export class BackgroundDownloadService {
         ];
 
         await Promise.all(promises)
+          .then(() => {
+            this.npcService.initCalculationAndMapping();
+          })
           .catch(console.error);
         console.log('Loaded basic app data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
       })

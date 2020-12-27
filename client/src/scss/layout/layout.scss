@@ -225,3 +225,9 @@ wah-search .description-line {
     flex: 0 1 20em;
   }
 }
+
+form {
+  mat-checkbox {
+    padding-top: 1rem;
+  }
+}

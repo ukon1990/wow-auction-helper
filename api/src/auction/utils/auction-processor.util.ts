@@ -306,11 +306,11 @@ export class AuctionProcessorUtil {
 
   static getHourlyColumnsSince(currentDate = new Date()) {
     const HOUR = 1000 * 60 * 60;
-    const startDate = new Date(+currentDate - HOUR * 24);
+    const startDate = new Date(+currentDate - HOUR * 25);
     const dates: {date: string, columns: string[]}[] = []; // avg01, avgQuantity01
     const monthMap = new Map<string, {date: string, columns: string[]}>();
 
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i <= 24; i++) {
       const date = new Date(+startDate + HOUR * i),
         hour = date.getUTCHours(),
         hourString = (hour < 10 ? '0' : '') + hour,

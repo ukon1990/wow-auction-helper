@@ -198,8 +198,10 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   reset(): void {
     const defaultBoards = getDefaultDashboards(this.professionService.list.value);
     for (let i = 0; i < defaultBoards.length; i++) {
-      if (this.dashboard.id === defaultBoards[i].id) {
-        this.populateForm(defaultBoards[i]);
+      if (this.dashboard.id === defaultBoards[i].id || this.dashboard.parentId === defaultBoards[i].id) {
+        this.form.reset(defaultBoards[i]);
+        this.dashboard = defaultBoards[i];
+        // this.populateForm(defaultBoards[i]);
         setTimeout(() => this.onSave());
         return;
       }
