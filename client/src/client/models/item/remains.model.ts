@@ -1,5 +1,4 @@
 import { Item } from './item';
-import { WoWHeadProspectedFrom } from './wowhead';
 export class RemainsSource {
   id: number;
   name: string;
@@ -24,7 +23,12 @@ export class RemainsSource {
   }
 }
 
-export class Remains {
+export interface RemainsSourceTarget {
+  target: RemainsSource;
+  origin: Remains;
+}
+
+export class  Remains {
   id: number;
   name: string;
   outOf: number;

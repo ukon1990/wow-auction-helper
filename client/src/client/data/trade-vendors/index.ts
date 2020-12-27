@@ -28,4 +28,6 @@ const inkTrader: TradeVendor = {
   ]
 };
 // ...legionTradeVendors, inkTrader, ...draenorTradeVendors, ...mopTradeVendors, ...wotlkTradeVendors
+
+// Are now added via npc.model.ts
 export const TRADE_VENDORS = [];

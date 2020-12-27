@@ -140,21 +140,8 @@ export class AuctionUtil {
       TradeVendors.setValues(map);
     } catch (e) {
     }
-
     // ProspectingAndMillingUtil.setCosts();
-
     ProspectingAndMillingUtil.calculateCost();
-
-    // Dashboard -> Needs to be done after trade vendors
-    // Dashboard.addDashboards();
-
-    /*
-    if (SharedService.user && SharedService.user.shoppingCart) {
-      SharedService.user.shoppingCart.calculateCosts();
-    }
-    */
-
-
     const t2 = performance.now();
     console.log(`Prices calc time ${t2 - t1} ms`);
   }
@@ -405,6 +392,17 @@ export class AuctionUtil {
         item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
         item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
         item.item = ItemService.mapped.value.get(item.itemID);
+
+        item.source.destroy = {
+          milling: {
+            targetIn: ProspectingAndMillingUtil.millsSourceTargetsMap.get(item.itemID),
+            sourceIn: ProspectingAndMillingUtil.millsSourceMap.get(item.itemID)
+          },
+          prospecting: {
+            targetIn: ProspectingAndMillingUtil.prospectingSourceTargetsMap.get(item.itemID),
+            sourceIn: ProspectingAndMillingUtil.prospectingSourceMap.get(item.itemID)
+          }
+        };
       });
     } catch (error) {
       ErrorReport.sendError('AuctionUtil.setItemSources', error);

@@ -103,4 +103,8 @@ export class MillingComponent implements OnInit, OnDestroy {
     this.isEditing = false;
     this.isEditingType = undefined;
   }
+
+  resetDefaults(MILLING: string) {
+
+  }
 }
