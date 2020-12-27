@@ -260,7 +260,9 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
       return;
     }
 
-    this.selected = ItemDetailsUtil.getSelection(item, this.auctionService.mapped.value);
+    this.selected = ItemDetailsUtil.getSelection(item,
+      this.auctionService.mapped.value,
+      this.auctionService.mappedVariations.value);
     this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
       .sort((a, b) => b.itemLevel - a.itemLevel);
     this.itemService.addToSelectionHistory({...this.selected});

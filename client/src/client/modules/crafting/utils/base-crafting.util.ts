@@ -10,7 +10,6 @@ import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
 import {Item, ItemInventory} from '../../../models/item/item';
-import {ItemService} from '../../../services/item.service';
 import {millingRecipeMap, ProspectingAndMillingUtil, prospectingRecipeMap} from '../../../utils/prospect-milling.util';
 
 export abstract class BaseCraftingUtil {
@@ -54,8 +53,14 @@ export abstract class BaseCraftingUtil {
     sumPrice: 0,
   };
 
-  protected constructor(public map: Map<string, AuctionItem>, public items: Map<number, Item>, public faction: number,
-                        public useIntermediateCrafting: boolean = false, public useInventory: boolean = false) {
+  protected constructor(
+    public map: Map<string, AuctionItem>,
+    public variations: Map<number, AuctionItem[]>,
+    public items: Map<number, Item>,
+    public faction: number,
+    public useIntermediateCrafting: boolean = false,
+    public useInventory: boolean = false
+  ) {
   }
 
   calculate(recipes: Recipe[]): void {
@@ -250,7 +255,18 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipePriceAndStatData(recipe: Recipe) {
-    const auctionItem: AuctionItem = this.map.get('' + recipe.itemID);
+    // const auctionItem: AuctionItem = this.map.get('' + recipe.itemID);
+    const variationMatch = this.variations.get(recipe.craftedItemId);
+    let auctionItem: AuctionItem = variationMatch ? variationMatch[0] : undefined;
+    if (recipe.bonusIds && recipe.bonusIds.length) {
+      this.variations.get(recipe.craftedItemId).forEach((variation) => {
+        variation.bonusIds.forEach(id => {
+          if (recipe.bonusIds.filter(bId => bId === id).length) {
+            auctionItem = variation;
+          }
+        });
+      });
+    }
     if (auctionItem) {
       recipe.buyout = auctionItem.buyout;
       recipe.mktPrice = auctionItem.mktPrice;
@@ -308,7 +324,7 @@ export abstract class BaseCraftingUtil {
 
   getVendorPriceDetails(id: number): { price: number; stock: number } {
     const npcItem: ItemNpcDetails = NpcService.itemNpcMap.value.get(id);
-    const item: Item = this.items.get(id);
+    const item: Item = this.items ? this.items.get(id) : undefined;
     if (item && item.buyPrice && npcItem && npcItem.vendorBuyPrice) {
       const stock = npcItem
         ? npcItem.vendorAvailable < 0

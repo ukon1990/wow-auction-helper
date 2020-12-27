@@ -14,6 +14,7 @@ import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {Recipe} from '../../crafting/models/recipe';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -378,15 +379,35 @@ export class AuctionUtil {
     }
   }
 
+  private static getRecipeWithVariation(item: AuctionItem, recipes: Recipe[]) {
+    if (!recipes) {
+      return undefined;
+    }
+    return recipes.filter(recipe => {
+      if (recipe.bonusIds && recipe.bonusIds.length) {
+        for (let i = 0; i < item.bonusIds.length; i++) {
+          if (recipe.bonusIds.filter(bId => bId === item.bonusIds[0]).length) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        return true;
+      }
+    });
+  }
+
   private static setItemSources(items: Map<string, AuctionItem>): void {
     try {
       items.forEach(item => {
-        item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
+        item.source.recipe.all = this.getRecipeWithVariation(item,
+          CraftingService.itemRecipeMap.value.get(item.itemID));
         if (item.source.recipe.all) {
           item.source.recipe.all.sort((a, b) => b.roi - a.roi);
         }
         item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
-        item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
+        item.source.recipe.known = this.getRecipeWithVariation(item,
+          CraftingService.itemRecipeMapPerKnown.value.get(item.itemID));
         if (item.source.recipe.known) {
           item.source.recipe.known.sort((a, b) => b.roi - a.roi);
         }
