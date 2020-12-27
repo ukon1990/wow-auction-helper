@@ -95,7 +95,7 @@ describe('NoSQLQueryUtil', () => {
         id: 1,
         name: 'example'
       };
-      const params = NoSQLQueryUtil.update('test', obj);
+      const params = NoSQLQueryUtil.update('test', obj, true);
       expect(params.UpdateExpression)
         .toBe('set lastModified = :lastModified, name = :name');
       expect(params.ExpressionAttributeValues[':name'])

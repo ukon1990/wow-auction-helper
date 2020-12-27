@@ -1,8 +1,12 @@
 import {AuctionStatsUtil} from './auction-stats.util';
 import {AuctionProcessorUtil} from './auction-processor.util';
+import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 
 describe('AuctionStatsUtil', () => {
-  const mock = {
+  const mock: {
+    hourly: any[],
+    daily: any[],
+  } = {
     daily: [
       {
         ahId: 69,
@@ -568,7 +572,7 @@ describe('AuctionStatsUtil', () => {
   };
   describe('processDaily', () => {
     it('Should not contain more than 24 hours', () => {
-      const result = AuctionStatsUtil.processDays(mock.hourly);
+      const result = AuctionStatsUtil.processHours(mock.hourly);
       expect(result.length).toBe(1);
     });
   });
@@ -580,8 +584,8 @@ describe('AuctionStatsUtil', () => {
         months
       } = AuctionProcessorUtil.getDailyColumnsSince(7, new Date(575375889600000)); // '20202-12-9'
       expect(columns.length).toBe(7);
-      expect(columns[0]).toBe('avg02, avgQuantity02');
-      expect(columns[6]).toBe('avg08, avgQuantity08');
+      expect(columns[0]).toBe('min02, avg02, avgQuantity02');
+      expect(columns[6]).toBe('min02, avg08, avgQuantity08');
       expect(months.length).toBe(1);
       expect(months[0]).toBe('20202-12-15');
     });

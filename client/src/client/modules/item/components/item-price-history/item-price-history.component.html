@@ -1,5 +1,9 @@
 <ng-container *ngIf="isActiveTab">
   <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
+    <em>
+      Note: The prices here might deviate, from what you see in external tables.
+      This data is updated right now, unlike the "external" which has some delay due to calculation time.
+    </em>
 
     <h6>Hourly changes for the past 14 days</h6>
     <mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">

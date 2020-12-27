@@ -212,20 +212,27 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
   }
 
   getRealmsThatNeedsTrendUpdate(): Promise<AuctionHouse[]> {
-    const HOUR = 1000 * 60 * 60;
-    const notOlderThan = +new Date(+new Date() - HOUR);
-    return this.scan({
-      TableName: this.table,
-      FilterExpression:
-        '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) ' +
-        'AND #lastStatsInsert > #lastTrendUpdateInitiation', // Was: lastDailyPriceUpdate
-      ExpressionAttributeNames: {
-        '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
-        '#lastStatsInsert': 'lastStatsInsert',
-      },
-      ExpressionAttributeValues: {
-        ':time': notOlderThan,
-      }
+    // const HOUR = 1000 * 60 * 60;
+    // const notOlderThan = +new Date(+new Date() - HOUR);
+    return new Promise<AuctionHouse[]>((resolve, reject) => {
+      this.scan({
+        TableName: this.table,
+        FilterExpression:
+        // '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) AND ' +
+          '#lastStatsInsert > #lastTrendUpdateInitiation', // Was: lastDailyPriceUpdate
+        ExpressionAttributeNames: {
+          '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
+          '#lastStatsInsert': 'lastStatsInsert',
+        },
+        /*
+        ExpressionAttributeValues: {
+          ':time': notOlderThan,
+        }*/
+      })
+        .then(houses => resolve(
+          houses.sort((a, b) => b.lastTrendUpdateInitiation - a.lastTrendUpdateInitiation)
+        ))
+        .catch(reject);
     });
   }
 

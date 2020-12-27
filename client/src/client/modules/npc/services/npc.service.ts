@@ -43,12 +43,16 @@ export class NpcService {
         await this.get()
           .catch(console.error);
       }
+      resolve(NpcService.list.value);
+    });
+  }
 
+  initCalculationAndMapping() {
+    if (NpcService.itemNpcMap.value.size === 0) {
       NPC.getTradeVendorsAndSetUnitPriceIfMissing(NpcService.list.value);
 
       this.mapNPCsToItems();
-      resolve(NpcService.list.value);
-    });
+    }
   }
 
   get(): Promise<NPC[]> {

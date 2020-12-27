@@ -40,6 +40,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
+  itemVariations: AuctionItem[] = [];
   selected: {
     item: Item;
     auctionItem: AuctionItem;
@@ -49,6 +50,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     auctionItem: undefined,
     pet: undefined
   };
+  auctionItems: AuctionItem[] = [];
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
   sm = new SubscriptionManager();
@@ -259,11 +261,18 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     }
 
     this.selected = ItemDetailsUtil.getSelection(item, this.auctionService.mapped.value);
+    this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
+      .sort((a, b) => b.itemLevel - a.itemLevel);
     this.itemService.addToSelectionHistory({...this.selected});
+    this.auctionItems = this.auctionService.mappedVariations.value.get(this.selected.item.id);
     this.onItemSelection();
     this.itemSelectionHistoryForm.setValue(0);
     this.ignoreNextSelectionHistoryFormChange = true;
+    Report.debug('ItemComponent.setSelection', this.selected);
   }
 
 
+  openVariation(variation: AuctionItem) {
+    SharedService.events.detailSelection.emit(variation);
+  }
 }

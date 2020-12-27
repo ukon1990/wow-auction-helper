@@ -2,6 +2,12 @@
   <mat-form-field class="col"
                   color="accent"
   >
+    <input matInput type="text" placeholder="Item name" formControlName="name">
+  </mat-form-field>
+  <!--
+  <mat-form-field class="col"
+                  color="accent"
+  >
     <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
            matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
   </mat-form-field>
@@ -10,6 +16,7 @@
   >
     <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
   </mat-form-field>
+  -->
 
   <mat-checkbox class="col" formControlName="onlyBuyableSource">
     Only sources that are found at the AH
@@ -18,15 +25,21 @@
   <mat-checkbox class="col" formControlName="onlyPotentiallyProfitable">
     Only potentially profitable
   </mat-checkbox>
+
+  <mat-paginator *ngIf="filtered.length > pageRows[0]"
+                 color="accent"
+                 [length]="filtered.length"
+                 [pageSize]="pageEvent.pageSize"
+                 [pageSizeOptions]="pageRows"
+                 [pageIndex]="pageEvent.pageIndex"
+                 [showFirstLastButtons]="true"
+                 (page)="pageChange($event)"
+  >
+  </mat-paginator>
 </form>
 
-<em>
-  Temporarily disabled. I will be fixing this as soon as I can.
-</em>
-
-
 <div class="row">
-  <ng-container *ngFor="let tv of vendors">
+  <ng-container *ngFor="let tv of filtered | slice: fromValue : toValue">
     <div class="col-xxxl-4 col-xl-6 mb-3 slim-sm" *ngIf="tv.itemsFiltered.length > 0">
       <mat-card>
         <mat-card-header>
@@ -65,3 +78,14 @@
     </div>
   </ng-container>
 </div>
+
+<mat-paginator *ngIf="filtered.length > pageRows[0]"
+               color="accent"
+               [length]="filtered.length"
+               [pageSize]="pageEvent.pageSize"
+               [pageSizeOptions]="pageRows"
+               [pageIndex]="pageEvent.pageIndex"
+               [showFirstLastButtons]="true"
+               (page)="pageChange($event)"
+>
+</mat-paginator>

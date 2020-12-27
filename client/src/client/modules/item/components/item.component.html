@@ -119,6 +119,19 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+  <mat-select *ngIf="itemVariations && itemVariations.length > 1"
+              class="col"
+              placeholder="Item variations"
+  >
+    <mat-option *ngFor="let variation of itemVariations"
+                (click)="openVariation(variation)"
+    >
+      {{ variation.itemLevel }} - {{variation.name}} -
+      {{variation.buyout | gold}} - {{ variation.quantityTotal | number }} pcs
+    </mat-option>
+  </mat-select>
+
+
   <button (click)="openInNewTab('https://www.wowdb.com/items/' + selected.item?.id, 'WoWDB')"
           mat-stroked-button
           color="primary"

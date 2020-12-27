@@ -86,12 +86,12 @@ export abstract class BaseRepository<T> {
     });
   }
 
-  updateEntry(id: string | number, entry: T | any): Promise<T> {
+  updateEntry(id: string | number, entry: T | any, updateLastModified = true): Promise<T> {
     return new Promise((resolve, reject) => {
       this.client.update(NoSQLQueryUtil.update(this.table, {
           id,
           ...entry,
-        }),
+        }, updateLastModified),
         (error, data) => {
           if (error) {
             reject(error);

@@ -37,7 +37,7 @@ export class DataBoardsComponent implements OnInit {
   }
 
     /* istanbul ignore next */
-  getToValue(): number {
+  get toValue(): number {
     if (!this.pageEvent || !this.pageEvent.pageSize) {
       return this.pageRows[0];
     }
@@ -45,7 +45,7 @@ export class DataBoardsComponent implements OnInit {
   }
 
     /* istanbul ignore next */
-  getFromValue(): number {
+  get fromValue(): number {
     if (!this.pageEvent || !this.pageEvent.pageSize) {
       return 0;
     }
