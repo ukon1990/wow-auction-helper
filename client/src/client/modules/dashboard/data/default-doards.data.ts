@@ -4,6 +4,17 @@ import {TargetValueEnum} from '../types/target-value.enum';
 import {columnConfig} from './columns.data';
 import {Profession} from '../../../../../../api/src/profession/model';
 
+enum BoardModifiedDate {
+  DECEMBER_27_2020 = 1609059487771,
+  DECEMBER_19_2020 = 1608352139874,
+  JULY_24_2020 = 1595541600000,
+}
+const previousTimestamps = [
+  BoardModifiedDate.DECEMBER_19_2020,
+  BoardModifiedDate.JULY_24_2020,
+];
+
+
 const profitableCrafts: DashboardV2 = {
   id: 'default-profitable-crafts',
   idIsBackendGenerated: false,
@@ -46,7 +57,7 @@ const profitableCrafts: DashboardV2 = {
   }*/
   ],
   data: [],
-  lastModified: 1608352139874
+  lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
 const profitableKnownCrafts: DashboardV2 = {
@@ -91,7 +102,7 @@ const profitableKnownCrafts: DashboardV2 = {
   }*/
   ],
   data: [],
-  lastModified: 1608352139874
+  lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
 const potentialDeals: DashboardV2 = {
@@ -146,7 +157,7 @@ const potentialDeals: DashboardV2 = {
     toValue: '0c'
   }],
   data: [],
-  lastModified: 1608352139874
+  lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
 const potentialBidDeals: DashboardV2 = {
@@ -212,7 +223,7 @@ const potentialBidDeals: DashboardV2 = {
       toField: 'buyout'
     }],
   data: [],
-  lastModified: 1608352139874
+  lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
 const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
@@ -250,7 +261,7 @@ const potentialBidDealsWith2HOrLessLeft: DashboardV2 = {
     ]
   }],
   data: [],
-  lastModified: 1595541600000
+  lastModified: BoardModifiedDate.JULY_24_2020
 };
 
 const buyoutBelowVendorSellPrice: DashboardV2 = {
@@ -264,7 +275,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
     columnConfig.item.name,
     columnConfig.auction.buyout,
     columnConfig.item.vendorSell,
-    columnConfig.auction.buyoutVsVendorSell,
+    columnConfig.auction.vendorSellVsBuyout,
   ],
   sortRule: {
     field: 'buyout',
@@ -292,7 +303,7 @@ const buyoutBelowVendorSellPrice: DashboardV2 = {
     toValue: 2
   }],
   data: [],
-  lastModified: 1595541600000
+  lastModified: BoardModifiedDate.JULY_24_2020
 };
 
 const tradeVendorCurrencyInGold: DashboardV2 = {
@@ -347,7 +358,7 @@ const tradeVendorCurrencyInGold: DashboardV2 = {
   */
   ],
   data: [],
-  lastModified: 1608352139874
+  lastModified: BoardModifiedDate.DECEMBER_19_2020
 };
 
 const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => professions.map(p => (
@@ -389,7 +400,7 @@ const getKnownProfessionBoards = (professions: Profession[]): DashboardV2[] => p
     }*/
     ],
     data: [],
-    lastModified: 1608352139874
+    lastModified: BoardModifiedDate.DECEMBER_19_2020
   }));
 
 const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2 => ({
@@ -418,7 +429,7 @@ const destroyBoards = ['milling', 'prospecting'].map((type: string): DashboardV2
   },
   ],
   data: [],
-  lastModified: 1608352139874
+  lastModified: BoardModifiedDate.DECEMBER_19_2020
 }));
 
 export const getDefaultDashboards = (professions: Profession[]): DashboardV2[] => [

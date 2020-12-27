@@ -23,7 +23,8 @@ export class CraftingUtil {
   }
 
   public static calculateCost(strategyHasChanged = true,
-                              map: Map<string, AuctionItem>,
+                              map: Map<string, AuctionItem> = this.auctionService.mapped.value,
+                              variations: Map<number, AuctionItem[]> = this.auctionService.mappedVariations.value,
                               items: Map<number, Item> = ItemService.mapped.value,
                               useInventory: boolean = false): void {
     const STRATEGY = BaseCraftingUtil.STRATEGY,
@@ -33,13 +34,13 @@ export class CraftingUtil {
     if (!this.strategy || strategyHasChanged) {
       switch (selectedStrategy) {
         case STRATEGY.OPTIMISTIC:
-          this.strategy = new OptimisticCraftingUtil(map, items, faction, int, useInventory);
+          this.strategy = new OptimisticCraftingUtil(map, variations, items, faction, int, useInventory);
           break;
         case STRATEGY.PESSIMISTIC:
-          this.strategy = new PessimisticCraftingUtil(map, items, faction, int, useInventory);
+          this.strategy = new PessimisticCraftingUtil(map, variations, items, faction, int, useInventory);
           break;
         default:
-          this.strategy = new NeededCraftingUtil(map, items, faction, int, useInventory);
+          this.strategy = new NeededCraftingUtil(map, variations, items, faction, int, useInventory);
           break;
       }
       Report.send(

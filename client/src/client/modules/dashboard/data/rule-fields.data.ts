@@ -93,10 +93,16 @@ export const ruleFields: RuleFieldGroup[] = [
         defaultType: TargetValueEnum.GOLD
       },
       {
+        key: columnConfig.auction.vendorSellVsBuyout.key,
+        name: columnConfig.auction.vendorSellVsBuyout.title,
+        column: columnConfig.auction.vendorSellVsBuyout,
+        defaultType: TargetValueEnum.PERCENT
+      },
+      {
         key: columnConfig.auction.buyoutVsVendorSell.key,
         name: columnConfig.auction.buyoutVsVendorSell.title,
         column: columnConfig.auction.buyoutVsVendorSell,
-        defaultType: TargetValueEnum.GOLD
+        defaultType: TargetValueEnum.PERCENT
       }, {
         key: columnConfig.auction.timeLeft.key,
         name: columnConfig.auction.timeLeft.title,
@@ -144,6 +150,12 @@ export const ruleFields: RuleFieldGroup[] = [
         name: 'Market price',
         column: columnConfig.auction.mktPrice,
         defaultType: TargetValueEnum.GOLD
+      },
+      {
+        key: columnConfig.auction.buyoutVsMktPrice.key,
+        name: columnConfig.auction.buyoutVsMktPrice.title,
+        column: columnConfig.auction.buyoutVsMktPrice,
+        defaultType: TargetValueEnum.PERCENT
       },
       {
         key: 'regionSaleAvg',

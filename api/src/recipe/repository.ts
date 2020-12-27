@@ -90,7 +90,22 @@ export class RecipeRepository extends Repository<Recipe> {
                     });
                   });
 
-                  resolve(recipes);
+
+                db.query(`
+                  SELECT bonusId, recipeId
+                  FROM recipesBonusId;
+                `)
+                      .then((bonusIds: {bonusId, recipeId}[]) => {
+                        bonusIds.forEach(bonus => {
+                          const recipe = (map[bonus.recipeId] as Recipe);
+                          if (!recipe.bonusIds) {
+                            recipe.bonusIds = [];
+                          }
+                          recipe.bonusIds.push(bonus.bonusId);
+                        });
+                        resolve(recipes);
+                      })
+                      .catch(reject);
                 })
                 .catch(reject);
             })

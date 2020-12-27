@@ -62,6 +62,14 @@ export const columnConfig = {
       title: 'ROI',
       dataType: 'gold'
     },
+    buyoutVsMktPrice: {
+      key: 'buyout/mktPrice',
+      title: 'Buyout Vs Mv',
+      dataType: 'gold',
+      options: {
+        tooltip: 'Buyout vs',
+      }
+    },
     bid: {
       key: 'bid',
       title: 'Lowest bid',
@@ -79,6 +87,11 @@ export const columnConfig = {
     },
     buyoutVsVendorSell: {
       key: 'buyout/vendorSell',
+      title: 'Buyout vs vendor',
+      dataType: 'percent'
+    },
+    vendorSellVsBuyout: {
+      key: 'vendorSell/buyout',
       title: 'Vendor ROI',
       dataType: 'percent'
     },
@@ -276,7 +289,9 @@ export const columnConfig = {
   source: {
     soldBy: {
       name: {
-        key: 'source.npc.[soldBy].name', title: 'Vendor', dataType: 'name', options: {
+        key: 'source.npc.[soldBy].name',
+        title: 'Vendor', dataType: 'name',
+        options: {
           idName: 'soldById',
           noIcon: true,
           tooltipType: 'npc'

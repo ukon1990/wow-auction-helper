@@ -200,7 +200,7 @@ export class AuctionsService {
                auctions: auc,
                mapVariations,
              }) => {
-        CraftingUtil.calculateCost(true, map);
+        CraftingUtil.calculateCost(true, map, mapVariations);
         this.mappedVariations.next(mapVariations);
         this.auctions.next(auctions);
         this.list.next(list);
