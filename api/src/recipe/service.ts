@@ -36,12 +36,12 @@ export class RecipeService {
     });
   }
 
-  static getAndInsert(id: number, db: DatabaseUtil): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  static getAndInsert(id: number, db: DatabaseUtil): Promise<Recipev2> {
+    return new Promise<Recipev2>((resolve, reject) => {
       RecipeV2Util.getRecipeFromAPI(id)
         .then((recipe: Recipev2) => {
           this.repository.insertData(recipe, db)
-            .then(resolve)
+            .then(() => resolve(recipe))
             .catch(reject);
         })
         .catch(reject);
