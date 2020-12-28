@@ -14,6 +14,7 @@ export class ShoppingCartUtil {
 
   calculateSources(recipeMap: Map<number, Recipe>,
                    auctionMap: Map<string, AuctionItem>,
+                   variations: Map<number, AuctionItem[]>,
                    itemMap: Map<number, Item>,
                    useInventory: boolean,
                    recipes: CartRecipe[] = [],
@@ -28,13 +29,13 @@ export class ShoppingCartUtil {
       ({id, quantity}) => new Reagent(id, quantity));
     switch (selectedStrategy || STRATEGY) {
       case STRATEGY.OPTIMISTIC:
-        this.strategy = new OptimisticCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
+        this.strategy = new OptimisticCraftingUtil(auctionMap, variations, itemMap, faction, false, useInventory);
         break;
       case STRATEGY.PESSIMISTIC:
-        this.strategy = new PessimisticCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
+        this.strategy = new PessimisticCraftingUtil(auctionMap, variations, itemMap, faction, false, useInventory);
         break;
       default:
-        this.strategy = new NeededCraftingUtil(auctionMap, itemMap, faction, false, useInventory);
+        this.strategy = new NeededCraftingUtil(auctionMap, variations, itemMap, faction, false, useInventory);
         break;
     }
     this.strategy.calculateOne(tmpRecipe);

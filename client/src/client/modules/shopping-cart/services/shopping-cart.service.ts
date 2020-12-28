@@ -193,10 +193,14 @@ export class ShoppingCartService {
     return list;
   }
 
-  private calculateCart(map: Map<string, AuctionItem> = this.auctionService.mapped.value, useInventory: boolean = true) {
+  private calculateCart(
+    map: Map<string, AuctionItem> = this.auctionService.mapped.value,
+    variations: Map<number, AuctionItem[]> = this.auctionService.mappedVariations.value,
+    useInventory: boolean = true) {
     this.cart.next(this.util.calculateSources(
       CraftingService.map.value,
       map,
+      variations,
       ItemService.mapped.value,
       useInventory,
       this.recipes.value,
