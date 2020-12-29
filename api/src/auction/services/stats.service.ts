@@ -12,6 +12,7 @@ import {AuctionStatsUtil} from '../utils/auction-stats.util';
 import {ItemStats} from '../models/item-stats.model';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import {AuctionHouse} from '../../realm/model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -48,7 +49,6 @@ export class StatsService {
     date.setUTCSeconds(0);
     date.setUTCMilliseconds(0);
 
-    console.log('Date', date, new Date(+date - offsetHours * 60 * 60 * 1000), offsetHours);
     return new Date(+date - offsetHours * 60 * 60 * 1000);
   }
 
@@ -466,12 +466,12 @@ export class StatsService {
           let completed = 0;
           this.realmRepository.getRealmsThatNeedsTrendUpdate()
             .then(async (houses) => {
-              for (const {region, id} of houses.slice(0, 10)) {
+              for (const house of houses.slice(0, 10)) {
                 if (DateUtil.timeSince(startTime, 's') < 50) {
-                  await this.setRealmTrends(region, id, conn)
+                  await this.setRealmTrends(house, conn)
                     .then(async () => {
                       completed++;
-                      await new RealmService().createLastModifiedFile(id, region)
+                      await new RealmService().createLastModifiedFile(house.id, house.region)
                         .catch(err => console.error('Could not createLastModifiedFile', err));
                     })
                     .catch(console.error);
@@ -494,7 +494,7 @@ export class StatsService {
     });
   }
 
-  getRealmPriceTrends(ahId: number, db: DatabaseUtil): Promise<any> {
+  getRealmPriceTrends(house: AuctionHouse, db: DatabaseUtil): Promise<any> {
     const start = +new Date();
     const repo = new StatsRepository(db);
     const results: ItemStats[] = [],
@@ -505,7 +505,7 @@ export class StatsService {
     return new Promise((resolve, reject) => {
       Promise.all([
         new Promise((success, fail) => {
-          repo.getRealmPriceHistoryDailyPastDays(ahId, 8)
+          repo.getRealmPriceHistoryDailyPastDays(house.id, 8)
             .then(rows => {
               const downloadAndQueryTime = +new Date() - start;
               dailyData = AuctionProcessorUtil.processDailyPriceData(rows);
@@ -519,7 +519,7 @@ export class StatsService {
             });
         }),
         new Promise((success, fail) => {
-          repo.getAllStatsForRealmDate(ahId)
+          repo.getAllStatsForRealmDate(house)
             .then(rows => {
               hourlyData = AuctionProcessorUtil.processHourlyPriceData(rows);
               // AuctionStatsUtil.processHours(rows);
@@ -583,13 +583,13 @@ export class StatsService {
     });
   }
 
-  setRealmTrends(region: string, ahId: number, db: DatabaseUtil): Promise<void> {
+  setRealmTrends(house: AuctionHouse, db: DatabaseUtil): Promise<void> {
     const start = +new Date();
-    console.log('Starting setRealmTrends for', region, ahId);
+    console.log('Starting setRealmTrends for', house.region, house.id);
     return new Promise<void>(async (resolve, reject) => {
-      await this.realmRepository.updateEntry(ahId, {id: ahId, lastTrendUpdateInitiation: +new Date()})
+      await this.realmRepository.updateEntry(house.id, {id: house.id, lastTrendUpdateInitiation: +new Date()})
         .catch(console.error);
-    this.getRealmPriceTrends(ahId, db)
+    this.getRealmPriceTrends(house, db)
         .then((results) => {
           const processStart = +new Date();
           if (results.length) {
@@ -597,14 +597,14 @@ export class StatsService {
             new S3Handler().save({
               lastModified: +new Date(),
               data: results
-            }, `stats/${ahId}.json.gz`, {region})
+            }, `stats/${house.id}.json.gz`, {region: house.region})
               .then(success => {
                 console.log(`Processed and uploaded total ${(+new Date() - start)
                 } ms, Upload=${
                   +new Date() - processStart
                 } ms`, success);
-                this.realmRepository.updateEntry(ahId, {
-                  id: ahId, stats: {
+                this.realmRepository.updateEntry(house.id, {
+                  id: house.id, stats: {
                     lastModified,
                     url: success.url
                   }
