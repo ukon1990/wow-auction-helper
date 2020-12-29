@@ -65,9 +65,9 @@ export const columnConfig = {
     buyoutVsMktPrice: {
       key: 'buyout/mktPrice',
       title: 'Buyout Vs Mv',
-      dataType: 'gold',
+      dataType: 'percent',
       options: {
-        tooltip: 'Buyout vs',
+        tooltip: 'Buyout vs market value',
       }
     },
     bid: {

@@ -436,7 +436,7 @@ export const getDefaultDashboards = (professions: Profession[]): DashboardV2[] =
   profitableCrafts,
   profitableKnownCrafts,
   ...getKnownProfessionBoards(professions),
-  potentialDeals,
+  // TODO: FInd a better rule for them, as TSM data is no longer available -> potentialDeals,
   potentialBidDeals,
   potentialBidDealsWith2HOrLessLeft,
   buyoutBelowVendorSellPrice,
