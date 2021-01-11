@@ -380,7 +380,7 @@ export class AuctionUtil {
   }
 
   private static getRecipeWithVariation(item: AuctionItem, recipes: Recipe[]) {
-    if (!recipes) {
+    if (!item || !recipes || !item.bonusIds) {
       return undefined;
     }
     return recipes.filter(recipe => {
@@ -400,6 +400,9 @@ export class AuctionUtil {
   private static setItemSources(items: Map<string, AuctionItem>): void {
     try {
       items.forEach(item => {
+        if (!item) {
+          return;
+        }
         item.source.recipe.all = this.getRecipeWithVariation(item,
           CraftingService.itemRecipeMap.value.get(item.itemID));
         if (item.source.recipe.all) {
