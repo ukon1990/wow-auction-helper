@@ -7,6 +7,7 @@ import {Item} from '../../../../models/item/item';
 import {SharedService} from '../../../../services/shared.service';
 import {Report} from '../../../../utils/report.util';
 import {ItemLocale} from '../../../../language/item.locale';
+import {SettingsService} from '../../../user/services/settings/settings.service';
 
 @Component({
   selector: 'wah-auction-item-details',
@@ -21,6 +22,10 @@ export class AuctionItemDetailsComponent implements OnChanges {
   expansions = GameBuild.expansionMap;
   qualityLocale = ItemLocale.getQualities();
   bonuses: string;
+  faction = this.settingsService.settings.value.faction || 0;
+
+  constructor(private settingsService: SettingsService) {
+  }
 
   ngOnChanges({item}: SimpleChanges): void {
     if (item && item.currentValue) {
