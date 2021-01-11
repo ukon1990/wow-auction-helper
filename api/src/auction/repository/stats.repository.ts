@@ -3,6 +3,7 @@ import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {DateUtil} from '@ukon1990/js-utilities';
+import {AuctionHouse} from '../../realm/model';
 
 export class StatsRepository {
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
@@ -21,7 +22,7 @@ export class StatsRepository {
   constructor(private conn: DatabaseUtil, autoClose: boolean = true) {
   }
 
-  getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
+  getAllStatsForRealmDate(house: AuctionHouse): Promise<AuctionItemStat[]> {
     let result = [];
 
     return new Promise<AuctionItemStat[]>((resolve, reject) => {
@@ -30,7 +31,7 @@ export class StatsRepository {
           .map(data => this.conn.query(`
         SELECT date, itemId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
         FROM itemPriceHistoryPerHour
-        WHERE ahId = ${ahId} AND date = ${data.date};`)
+        WHERE ahId = ${house.id} AND date = ${data.date};`)
             .then(res => {
               result = [...result, ...res];
             })

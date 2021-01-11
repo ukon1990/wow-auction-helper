@@ -65,9 +65,9 @@ export const columnConfig = {
     buyoutVsMktPrice: {
       key: 'buyout/mktPrice',
       title: 'Buyout Vs Mv',
-      dataType: 'gold',
+      dataType: 'percent',
       options: {
-        tooltip: 'Buyout vs',
+        tooltip: 'Buyout vs market value',
       }
     },
     bid: {
@@ -100,6 +100,7 @@ export const columnConfig = {
       title: 'Profit',
       dataType: 'gold'
     },
+    /* TODO: If TSM is public again
     regionSaleRate: {
       key: 'regionSaleRate',
       title: 'Sale rate',
@@ -109,7 +110,7 @@ export const columnConfig = {
       key: 'avgDailySold',
       title: 'Avg daily sold',
       dataType: 'number'
-    },
+    },*/
     timeLeft: {
       key: '[auctions].timeLeft',
       title: 'Time left',
@@ -128,9 +129,11 @@ export const columnConfig = {
       title: 'Market value',
       dataType: 'gold'
     },
+    /* TODO: If TSM is public again
     regionSaleAvg: {
       key: 'regionSaleAvg', title: 'Avg sales price', dataType: 'gold'
     },
+    */
     past24HoursSaleRate: {
       key: 'past24HoursSaleRate', title: '24h Sale rate', dataType: 'percent'
     },

@@ -98,20 +98,17 @@ export class AuthService {
           resolve(user);
         })
         .catch(error => {
-          this.openLoginComponent.emit(true);
-          reject(error);
-          /*
           const realm = localStorage.getItem('realm');
           const region = localStorage.getItem('region');
           const useAppSync = localStorage.getItem('useAppSync');
           const isRealmSet: boolean = !!(realm && region);
-
-          if (EmptyUtil.isNullOrUndefined(useAppSync) || !!useAppSync && !isRealmSet || error === 'The user is not authenticated') {
+          const userIsNotAuthenticated = error === 'The user is not authenticated';
+          if (userIsNotAuthenticated && useAppSync === 'true' || EmptyUtil.isNullOrUndefined(useAppSync)) {
             this.openLoginComponent.emit(true);
-          } else {
+          } else if (!isRealmSet) {
             this.openSetupDialog(
               localStorage.getItem('realm'),  localStorage.getItem('region'));
-          }*/
+          }
           reject(error);
         });
     });

@@ -77,7 +77,7 @@ export class ItemServiceV2 {
       let completed = 0;
       let successfull = 0;
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5,
+        requestsPerSecond: 1,
         promiseImplementation: Promise
       });
       const startTime = +new Date();
@@ -104,7 +104,7 @@ export class ItemServiceV2 {
                 fail(error);
               }
             );
-        }))));
+        }).catch(console.error))));
       Promise.all(promises)
         .then(async () => {
           console.log(`Done processing ${ids.length} items (${successfull} successfully so).`);

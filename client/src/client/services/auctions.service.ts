@@ -28,6 +28,7 @@ export class AuctionsService {
   mappedVariations: BehaviorSubject<Map<number, AuctionItem[]>> = new BehaviorSubject(new Map<number, AuctionItem[]>());
   auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
   stats: BehaviorSubject<Map<string, ItemStats>> = new BehaviorSubject(new Map<string, ItemStats>());
+  statsVariations: BehaviorSubject<Map<number, ItemStats[]>> = new BehaviorSubject(new Map<number, ItemStats[]>());
   events = {
     isDownloading: new BehaviorSubject<boolean>(true),
   };
@@ -90,10 +91,17 @@ export class AuctionsService {
           .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
           .toPromise()
           .then(({data}: { data: ItemStats[] }) => {
-            data.forEach(stat =>
+            const variations = new Map<number, ItemStats[]>();
+            data.forEach(stat => {
               statsMap.set(AuctionItemStat.getId(
                 stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
-              ), stat));
+              ), stat);
+              if (!variations.has(stat.itemId)) {
+                variations.set(stat.itemId, []);
+              }
+              variations.get(stat.itemId).push(stat);
+            });
+            this.statsVariations.next(variations);
             this.stats.next(statsMap);
             resolve(statsMap);
           })

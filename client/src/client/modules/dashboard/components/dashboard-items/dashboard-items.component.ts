@@ -149,7 +149,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
           return false;
         }
 
-        if (!data.length && !displayHidden) {
+        if ((!data || !data.length) && !displayHidden) {
           return false;
         }
 

@@ -1,10 +1,10 @@
 import {environment} from '../../../../client/src/environments/environment';
 import {StatsService} from './stats.service';
 import {DatabaseUtil} from '../../utils/database.util';
-import {StatsRepository} from '../repository/stats.repository';
 import {AuctionStatsUtil} from '../utils/auction-stats.util';
 import {ItemStats} from '../models/item-stats.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
+import {AuctionHouse} from '../../realm/model';
 
 describe('StatsService', () => {
   beforeEach(() => environment.test = false);
@@ -14,7 +14,10 @@ describe('StatsService', () => {
     jest.setTimeout(99999);
     const conn = new DatabaseUtil(false);
     await conn.enqueueHandshake();
-    await new StatsService().setRealmTrends('eu', 69, conn);
+    await new StatsService().setRealmTrends({
+      id: 69,
+      region: 'eu'
+    } as AuctionHouse, conn);
     conn.end();
     expect(1).toBe(2);
   });
@@ -29,7 +32,10 @@ describe('StatsService', () => {
     beforeAll(async () => {
       const conn = new DatabaseUtil(false);
       await conn.enqueueHandshake();
-      await new StatsService().getRealmPriceTrends(69, conn)
+      await new StatsService().getRealmPriceTrends({
+        id: 69,
+        region: 'eu'
+      } as AuctionHouse, conn)
         .then(rows => {
           toStatic = rows.filter(item => item.itemId === itemId)[0];
         });
