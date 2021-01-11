@@ -118,9 +118,9 @@ const potentialDeals: DashboardV2 = {
     columnConfig.auction.buyout,
     columnConfig.auction.mktPriceMinusBuyout,
     columnConfig.item.vendorSell,
-    columnConfig.auction.avgDailySold,
+    // columnConfig.auction.avgDailySold,
     // columnConfig.auction.regionSaleRate,
-    columnConfig.auction.regionSaleAvg,
+    // columnConfig.auction.regionSaleAvg,
   ],
   sortRule: {
     field: 'mktPrice-buyout',

@@ -125,8 +125,10 @@ export class BackgroundDownloadService {
 
   private async initiateAuctionOrganizingAndTSM() {
     this.auctionsService.isReady = true;
+    /* TODO: TSM Dependent
     await this.tsmService.load(this.realmService.events.realmStatus.value)
       .catch(console.error);
+    */
     await this.auctionsService.organize()
       .then(() => console.log('Organized'))
       .catch(console.error);
