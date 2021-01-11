@@ -56,31 +56,8 @@
       </div>
       <div mat-line>{{ item.quantityTotal | number }} pcs</div>
     </mat-list-item>
-    <ng-container *ngIf="!item.petSpeciesId">
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}"
-        >Avg daily sold
-        </div>
-        <div mat-line>{{ item.avgDailySold | number }} pcs</div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Avg sale price
-        </div>
-        <div mat-line>{{ item.regionSaleAvg | gold }}</div>
-      </mat-list-item>
-    </ng-container>
 
-    <ng-container *ngIf="item.regionSaleRate !== undefined || item?.hasPersonalSaleRate">
-      <mat-list-item *ngIf="item.regionSaleRate !== undefined">
-        <div mat-line [style]="{color: theme.accentColorCode}">
-          Regional sale rate
-        </div>
-        <div mat-line>
-          {{ item.regionSaleRate | percent }}
-        </div>
-      </mat-list-item>
-
+    <ng-container *ngIf="item?.hasPersonalSaleRate">
       <ng-container *ngIf="item?.hasPersonalSaleRate && item?.totalSaleRate; else noPersonalSaleDataTemplate">
         <mat-list-item *ngIf="item.past24HoursSaleRate">
           <div mat-line [style]="{color: theme.accentColorCode}">

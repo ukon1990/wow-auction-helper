@@ -133,6 +133,7 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.auction.quantityPast7DaysTrend,
         defaultType: TargetValueEnum.NUMBER
       },
+      /* TODO: If TSM is public again
       {
         key: 'regionSaleRate',
         name: 'Sale rate',
@@ -145,6 +146,7 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.auction.avgDailySold,
         defaultType: TargetValueEnum.NUMBER
       },
+      */
       {
         key: 'mktPrice',
         name: 'Market price',
@@ -157,12 +159,13 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.auction.buyoutVsMktPrice,
         defaultType: TargetValueEnum.PERCENT
       },
+      /* TODO: If TSM is public again
       {
         key: 'regionSaleAvg',
         name: 'Avg sales price',
         column: columnConfig.auction.regionSaleAvg,
         defaultType: TargetValueEnum.GOLD
-      },
+      },*/
       {
         key: 'quantityTotal',
         name: 'Quantity total',
