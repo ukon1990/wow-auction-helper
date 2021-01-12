@@ -98,11 +98,10 @@ export class UserProfit {
     return ms / day;
   }
 
-  setSaleRateForItem(itemId: number, fieldName: string): void {
+  setSaleRateForItem(itemId: number, fieldName: string, auctionItem: AuctionItem = this.auctionService.getById(itemId)): void {
     const sales = this.sales.itemMap[itemId],
       expired = this.expired.itemMap[itemId],
-      cancelled = this.cancelled.itemMap[itemId],
-      auctionItem: AuctionItem = this.auctionService.getById(itemId);
+      cancelled = this.cancelled.itemMap[itemId];
     let total = 0, plus = 0, saleRate = 0;
 
     if (sales) {

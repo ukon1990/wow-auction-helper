@@ -40,8 +40,8 @@ export class AuctionsService {
   constructor(
     private http: HttpClient,
     public snackBar: MatSnackBar,
-    private _dbService: DatabaseService,
-    private _itemService: ItemService,
+    private dbService: DatabaseService,
+    private itemService: ItemService,
     private tsmService: TsmService,
     private settingsSync: SettingsService,
     private characterService: CharacterService,
