@@ -18,6 +18,7 @@ import { AddonDatasetComponent } from './components/addon-dataset/addon-dataset.
 import {RouterModule} from '@angular/router';
 import { ProfitSummaryChartComponent } from './components/profit-summary/profit-summary-chart/profit-summary-chart.component';
 import { GoldSummaryChartComponent } from './components/profit-summary/gold-summary-chart/gold-summary-chart.component';
+import { ProfitSummary2Component } from './components/profit-summary2/profit-summary2.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { GoldSummaryChartComponent } from './components/profit-summary/gold-summ
     ItemSaleSummaryComponent,
     AddonDatasetComponent,
     ProfitSummaryChartComponent,
-    GoldSummaryChartComponent],
+    GoldSummaryChartComponent,
+    ProfitSummary2Component],
   exports: [
     ItemSaleSummaryComponent,
     AddonComponent
