@@ -109,6 +109,9 @@ export class NpcService {
   private mapNPCsToItems() {
     const map: Map<number, ItemNpcDetails> = new Map();
     NpcService.list.value.forEach(npc => {
+      if (!npc) {
+        return;
+      }
       (npc.drops || []).forEach(item => {
         if (!map.has(item.id)) {
           map.set(item.id, new ItemNpcDetails(this, this.zoneService));

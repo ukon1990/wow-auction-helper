@@ -259,7 +259,8 @@ export abstract class BaseCraftingUtil {
     const variationMatch = this.variations.get(recipe.craftedItemId);
     let auctionItem: AuctionItem = variationMatch ? variationMatch[0] : undefined;
     if (recipe.bonusIds && recipe.bonusIds.length) {
-      this.variations.get(recipe.craftedItemId).forEach((variation) => {
+      const variationsForId = this.variations.get(recipe.craftedItemId);
+      (variationsForId || []).forEach((variation) => {
         if (variation && variation.bonusIds) {
           variation.bonusIds.forEach(id => {
             if (recipe.bonusIds.filter(bId => bId === id).length) {
