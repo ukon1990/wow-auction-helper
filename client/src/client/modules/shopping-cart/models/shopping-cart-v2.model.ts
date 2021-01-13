@@ -10,6 +10,9 @@ interface CartObject {
 export interface CartRecipe extends CartObject {
   itemId?: number;
   isIntermediate: boolean;
+  cost?: number;
+  roi?: number;
+  sumRoi?: number;
 }
 
 export interface CartItem extends CartObject {

@@ -197,7 +197,7 @@ export class ShoppingCartService {
     map: Map<string, AuctionItem> = this.auctionService.mapped.value,
     variations: Map<number, AuctionItem[]> = this.auctionService.mappedVariations.value,
     useInventory: boolean = true) {
-    this.cart.next(this.util.calculateSources(
+    const cart: ShoppingCartV2 = this.util.calculateSources(
       CraftingService.map.value,
       map,
       variations,
@@ -205,7 +205,9 @@ export class ShoppingCartService {
       useInventory,
       this.recipes.value,
       this.items.value
-    ));
+    );
+    console.log('ShoppingCartService.calculateCart', cart);
+    this.cart.next(cart);
   }
 
   clear() {
