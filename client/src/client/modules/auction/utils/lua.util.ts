@@ -1,4 +1,6 @@
 import * as lua from 'luaparse';
+import {ErrorReport} from '../../../utils/error-report.util';
+import {Report} from '../../../utils/report.util';
 
 class LuaKey {
   type: string;
@@ -20,9 +22,17 @@ class TableKey {
 }
 
 export class LuaUtil {
-  static toObject(input): object {
-    const {fields} = lua.parse(input).body[0].init[0];
-    return this.handleFields(fields as TableKey[]);
+  static toObject(input): unknown {
+    try {
+      const parsed = lua.parse(input);
+      Report.debug('LuaUtil.toObject.parsed', parsed);
+      const {fields} = parsed.body[0].init[0];
+
+      return this.handleFields(fields as TableKey[]);
+    } catch (error) {
+      ErrorReport.sendError('LuaUtil.toObject', error);
+      return undefined;
+    }
   }
 
   private static handleTableKey({key, value, type}: TableKey) {
@@ -55,7 +65,7 @@ export class LuaUtil {
     }
   }
 
-  private static handleFields(fields: TableKey[]) {
+  private static handleFields(fields: TableKey[]): unknown {
     const result = {};
     if (!fields) {
       return result;

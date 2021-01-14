@@ -12,7 +12,8 @@ export class GameBuild {
     AHDB: {file: 'AuctionDB.lua', name: 'AHDB'},
     AuctioneerClassic: {file: 'Auc-ScanData.lua', name: 'Auctioneer classic'},
     Auctioneer: {file: 'Auctioneer_Stats_OverTime.lua', name: 'Auctioneer retail'},
-    TSM: {file: 'TradeSkillMaster.lua', name: 'TSM'}
+    TSM: {file: 'TradeSkillMaster.lua', name: 'TSM'},
+    TSM_APP_DATA: {file: 'AppData.lua', name: 'TSM App data'}
   };
 
   /**

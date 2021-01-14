@@ -58,24 +58,30 @@ export class TsmLuaUtil {
 
   public processLuaData(input: any) {
     const result = {};
-    const fields = lua.parse(input).body[0].init[0].fields;
+    try {
+      const parsed = lua.parse(input);
+      Report.debug('TSMLuaUtil.processLuaData.raw', parsed);
+      const fields = parsed.body[0].init[0].fields;
 
-    fields.forEach(field => {
-      const fRes = this.convertField(field);
-      if (!fRes) {
-        return;
-      }
-
-      if (fRes.character && fRes.character.realm) {
-        this.addRealmBoundData(fRes, result, field);
-
-      } else {
-        if (fRes.type === undefined || fRes.type === 'undefined') {
-        } else {
-          result[fRes.type] = fRes.data;
+      fields.forEach(field => {
+        const fRes = this.convertField(field);
+        if (!fRes) {
+          return;
         }
-      }
-    });
+
+        if (fRes.character && fRes.character.realm) {
+          this.addRealmBoundData(fRes, result, field);
+
+        } else {
+          if (fRes.type === undefined || fRes.type === 'undefined') {
+          } else {
+            result[fRes.type] = fRes.data;
+          }
+        }
+      });
+    } catch (error) {
+      ErrorReport.sendError('TSMLuaUtil.processLuaData', error);
+    }
     return result;
   }
 

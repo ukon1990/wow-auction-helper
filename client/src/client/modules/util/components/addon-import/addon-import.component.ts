@@ -20,6 +20,7 @@ import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {UserUtil} from '../../../../utils/user/user.util';
+import {AppDataLuaUtil} from '../../../auction/utils/app-data-lua.util';
 
 @Component({
   selector: 'wah-addon-import',
@@ -39,6 +40,7 @@ export class AddonImportComponent implements OnInit {
 
   readonly ADDONS = {
     TSM: GameBuild.ADDONS.TSM,
+    TSM_APP_DATA: GameBuild.ADDONS.TSM_APP_DATA,
     // Auctioneer: GameBuild.ADDONS.Auctioneer
   };
   readonly ADDON_LIST: string = Object.keys(this.ADDONS).map(k => `${k} (${this.ADDONS[k].file})`).join(', ');
@@ -153,6 +155,9 @@ export class AddonImportComponent implements OnInit {
       case this.ADDONS.Auctioneer:
         AuctioneerStatsOverTimeUtil.import(result);
         break;*/
+        case this.ADDONS.TSM_APP_DATA.file:
+          Report.debug('File data', name, AppDataLuaUtil.process(result));
+          break;
         default:
           Report.debug('File data', name, LuaUtil.toObject(result));
           break;
