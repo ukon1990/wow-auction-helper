@@ -19,6 +19,7 @@ import {RouterModule} from '@angular/router';
 import { ProfitSummaryChartComponent } from './components/profit-summary/profit-summary-chart/profit-summary-chart.component';
 import { GoldSummaryChartComponent } from './components/profit-summary/gold-summary-chart/gold-summary-chart.component';
 import { ProfitSummary2Component } from './components/profit-summary2/profit-summary2.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ProfitSummary2Component } from './components/profit-summary2/profit-sum
     MatButtonModule,
     RouterModule,
     MatInputModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDatepickerModule
   ]
 })
 export class AddonModule { }

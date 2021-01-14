@@ -16,6 +16,26 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field>
+        <mat-label>Period start</mat-label>
+        <input matInput
+               [matDatepicker]="startPicker"
+               formControlName="startDate"
+        >
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Period end</mat-label>
+        <input matInput
+               [matDatepicker]="endPicker"
+               formControlName="startDate"
+        >
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
     </form>
 
     <em>
