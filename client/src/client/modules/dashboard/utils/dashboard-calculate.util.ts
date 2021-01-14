@@ -10,6 +10,7 @@ import {Sorter} from '../../../models/sorter';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {GoldPipe} from '../../util/pipes/gold.pipe';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {Report} from '../../../utils/report.util';
 
 interface IdPaths {
   recipeId?: string;
@@ -127,8 +128,12 @@ export class DashboardCalculateUtil {
     }
   }
 
-  private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-                                       paths: IdPaths) {
+  private static addMatchingBoardRules(
+    board: DashboardV2,
+    items: Map<string, AuctionItem>,
+    dataMap: Map<string, any>,
+    paths: IdPaths
+  ) {
     if ((board.rules.length || (board.itemRules && board.itemRules.length))) {
       try {
         const iterableKeyRules = (board.rules || []).filter(rule => this.ruleContainsIterable(rule));
@@ -176,12 +181,22 @@ export class DashboardCalculateUtil {
                 } catch (e) {
                 }
               }
+              if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
+                Report.debug('DashboardCalculateUtil.addMatchingBoardRules', {
+                  childObject, arr, arrKey,
+                });
+              }
             });
           }
         } else {
           obj = obj ? obj[key] : item[key];
         }
       });
+    if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
+      Report.debug('DashboardCalculateUtil.addMatchingBoardRules 2', {
+        obj, list
+      });
+    }
     if (list.length) {
       dataMap.set(id, list);
     }
