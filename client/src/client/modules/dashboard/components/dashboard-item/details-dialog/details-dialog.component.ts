@@ -12,7 +12,6 @@ interface Data {
 @Component({
   selector: 'wah-details-dialog',
   templateUrl: './details-dialog.component.html',
-  styleUrls: ['./details-dialog.component.scss']
 })
 export class DetailsDialogComponent implements OnInit {
   faCog = faCog;

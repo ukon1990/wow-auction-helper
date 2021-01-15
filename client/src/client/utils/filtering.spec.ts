@@ -3,7 +3,6 @@ import {AuctionItem} from '../modules/auction/models/auction-item.model';
 import {Filters} from './filtering';
 import {Item} from '../models/item/item';
 import {Recipe} from '../modules/crafting/models/recipe';
-import {itemClasses} from '../models/item/item-classes';
 import {MockLoaderUtil} from '../mocks/mock-loader.util';
 import {AuctionsService} from '../services/auctions.service';
 import {TestBed} from '@angular/core/testing';
@@ -83,30 +82,6 @@ describe('Filters', () => {
 
       expect(Filters.isItemClassMatch(ai.itemID, null, null)).toBeTruthy();
       expect(Filters.isItemClassMatch(ai.itemID, -1, undefined)).toBeTruthy();
-    });
-
-    it('Should be able true if the itemClass is a match', () => {
-      SharedService.items[25] = new Item();
-      const itemClass = itemClasses.classes[3];
-      const subClass = itemClass.subclasses[0];
-      SharedService.items[25].itemClass = itemClass.class;
-      SharedService.items[25].itemSubClass = subClass.subclass;
-      expect(Filters.isItemClassMatch(25, 3, -1)).toBeTruthy();
-      expect(Filters.isItemClassMatch(25, 3, undefined)).toBeTruthy();
-      expect(Filters.isItemClassMatch(25, 3, null)).toBeTruthy();
-      expect(Filters.isItemClassMatch(25, 3, 0)).toBeTruthy();
-    });
-
-    it('Missmatches return false', () => {
-      SharedService.items[25] = new Item();
-      const itemClass = itemClasses.classes[3];
-      const subClass = itemClass.subclasses[0];
-      SharedService.items[25].itemClass = itemClass.class;
-      SharedService.items[25].itemSubClass = subClass.subclass;
-      expect(Filters.isItemClassMatch(25, 1, -1)).toBeFalsy();
-      expect(Filters.isItemClassMatch(25, 1, undefined)).toBeFalsy();
-      expect(Filters.isItemClassMatch(25, 1, null)).toBeFalsy();
-      expect(Filters.isItemClassMatch(25, 3, 1)).toBeFalsy();
     });
   });
 
