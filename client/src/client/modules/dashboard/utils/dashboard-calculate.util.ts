@@ -1,16 +1,16 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
-import {AuctionItem} from '../../auction/models/auction-item.model';
-import {ItemRule, Rule} from '../models/rule.model';
-import {ColumnDescription} from '../../table/models/column-description';
-import {TargetValueEnum} from '../types/target-value.enum';
-import {ConditionEnum} from '../types/condition.enum';
-import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
-import {AuctionUtil} from '../../auction/utils/auction.util';
-import {Sorter} from '../../../models/sorter';
-import {ErrorReport} from '../../../utils/error-report.util';
-import {GoldPipe} from '../../util/pipes/gold.pipe';
-import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
-import {Report} from '../../../utils/report.util';
+import { DashboardV2 } from '../models/dashboard-v2.model';
+import { AuctionItem } from '../../auction/models/auction-item.model';
+import { ItemRule, Rule } from '../models/rule.model';
+import { ColumnDescription } from '../../table/models/column-description';
+import { TargetValueEnum } from '../types/target-value.enum';
+import { ConditionEnum } from '../types/condition.enum';
+import { EmptyUtil, TextUtil } from '@ukon1990/js-utilities';
+import { AuctionUtil } from '../../auction/utils/auction.util';
+import { Sorter } from '../../../models/sorter';
+import { ErrorReport } from '../../../utils/error-report.util';
+import { GoldPipe } from '../../util/pipes/gold.pipe';
+import { AuctionItemStat } from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import { Report } from '../../../utils/report.util';
 
 interface IdPaths {
   recipeId?: string;
@@ -54,7 +54,7 @@ export class DashboardCalculateUtil {
     let recipeIdKey;
     board.columns.forEach(column => {
       if (!recipeIdKey && TextUtil.contains(column.key, name)) {
-        const {regex, expressions} = this.getMathRegex(column.key);
+        const { regex, expressions } = this.getMathRegex(column.key);
         const keys = column.key.split(regex)
           .filter(key => TextUtil.contains(key, name))[0];
         const parts = keys.split('.');
@@ -91,7 +91,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-                                            paths: IdPaths) {
+    paths: IdPaths) {
     if (board.itemRules && board.itemRules.length) {
       board.itemRules.forEach((itemRule: ItemRule) => {
         const id = this.getId(undefined, itemRule);
@@ -159,7 +159,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: DashboardV2,
-                                              dataMap: Map<string, any>, id: string, paths: IdPaths, printLog: boolean = false) {
+    dataMap: Map<string, any>, id: string, paths: IdPaths, printLog: boolean = false) {
     const list = [];
     let arr: any[];
     const partialPath = [];
@@ -189,12 +189,32 @@ export class DashboardCalculateUtil {
             });
           }
         } else {
-          obj = obj ? obj[key] : item[key];
+          if (obj) {
+            if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
+              // ErrorReport.sendError('DashboardCalculateUtil.addMatchingBoardRules', error);
+              Report.debug('DashboardCalculateUtil.addMatchingBoardRules obj', {
+                item, key, obj
+              });
+            }
+
+            obj = obj[key];
+          } else {
+            try {
+              obj = item[key];
+            } catch (error) {
+              if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
+                // ErrorReport.sendError('DashboardCalculateUtil.addMatchingBoardRules', error);
+                Report.debug('DashboardCalculateUtil.addMatchingBoardRules err', {
+                  item, key
+                });
+              }
+            }
+          }
         }
       });
     if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
       Report.debug('DashboardCalculateUtil.addMatchingBoardRules 2', {
-        obj, list
+        obj, list, item, partialPath,
       });
     }
     if (list.length) {
@@ -227,11 +247,11 @@ export class DashboardCalculateUtil {
 
   private static getParamWithArrayIndicator(iterableKeyRules: Rule[]) {
     if (iterableKeyRules[0].field.indexOf('[') > -1) {
-      const {regex: rx} = this.getMathRegex(iterableKeyRules[0].field);
+      const { regex: rx } = this.getMathRegex(iterableKeyRules[0].field);
       const sp = iterableKeyRules[0].field.split(rx);
       return sp.length > 1 ? sp[1] : sp[0];
     }
-    const {regex} = this.getMathRegex(iterableKeyRules[0].toField);
+    const { regex } = this.getMathRegex(iterableKeyRules[0].toField);
     const split = iterableKeyRules[0].toField.split(regex);
     return split.length > 1 ? split[1] : split[0];
   }
@@ -313,7 +333,7 @@ export class DashboardCalculateUtil {
 
   static getValueFromField(field: string, item: AuctionItem) {
     const resultValues = [];
-    const {regex, expressions} = this.getMathRegex(field);
+    const { regex, expressions } = this.getMathRegex(field);
     try {
       field.split(regex)
         .forEach((fieldPath, index) => {
@@ -343,11 +363,11 @@ export class DashboardCalculateUtil {
   private static getMathRegex(field: string) {
     const regex = /[*\-\/+]/gi;
     const expressions = field.match(regex);
-    return {regex, expressions};
+    return { regex, expressions };
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[],
-                                 paths: IdPaths, printLog: boolean = false) {
+    paths: IdPaths, printLog: boolean = false) {
     const obj = {
       id: item.itemID,
       bonusIds: item.bonusIds,
