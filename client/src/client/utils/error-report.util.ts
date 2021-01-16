@@ -51,6 +51,8 @@ export class ErrorReport {
   }
 
   public static sendError(functionName: string, error: Error, options?: ErrorOptions): void {
+
+    console.error(functionName, error);
     if (!this.doNotReport()) {
       const action = `Error: ${functionName}`;
       const category = `Errors (${version})`;
@@ -64,10 +66,7 @@ export class ErrorReport {
           version
         },
       });
-      // this.service.send(action, category, version, 'error-runtime', label);
     }
-
-    console.error(functionName, error);
 
     if (options) {
       ErrorReport.sb.open(

@@ -144,7 +144,7 @@ fdescribe('DashboardCalculateUtil', () => {
             {
               condition: ConditionEnum.GREATER_THAN_OR_EQUAL_TO,
               targetValueType: TargetValueEnum.PERCENT,
-              field: columnConfig.auction.regionSaleRate.key,
+              field: 'regionSaleRate',
               toValue: 15
             }
           ]), auctionItems);

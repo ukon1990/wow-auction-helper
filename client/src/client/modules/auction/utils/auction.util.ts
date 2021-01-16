@@ -165,9 +165,10 @@ export class AuctionUtil {
      */
     if (a.petSpeciesId && AuctionUtil.isPetNotInList(a, map)) {
       const petId = AuctionUtil.getPetId(a);
-      map.set(petId, this.newAuctionItem(a, true, petId, stats));
-      list.push(map.get(petId));
-      AuctionUtil.setUserSaleRateForAuction(a);
+      const auctionItem: AuctionItem = this.newAuctionItem(a, true, petId, stats);
+      map.set(petId, auctionItem);
+      list.push(auctionItem);
+      AuctionUtil.setUserSaleRateForAuction(auctionItem);
 
       if (!AuctionUtil.isPetMissing(a)) {
         this.handlePetAuction(a, petId);
@@ -197,9 +198,10 @@ export class AuctionUtil {
 
   private static addNewAuctionItem(a, addAuction = true, id: string, map: Map<string, AuctionItem>,
                                    list: AuctionItem[], stats: Map<string, ItemStats>) {
-    map.set(id, this.newAuctionItem(a, addAuction, id, stats));
-    list.push(map.get(id));
-    AuctionUtil.setUserSaleRateForAuction(a);
+    const auctionItem: AuctionItem = this.newAuctionItem(a, addAuction, id, stats);
+    map.set(id, auctionItem);
+    list.push(auctionItem);
+    AuctionUtil.setUserSaleRateForAuction(auctionItem);
   }
 
   private static handlePetAuction(a: Auction, petId) {
@@ -312,14 +314,14 @@ export class AuctionUtil {
     return tmpAuc;
   }
 
-  private static setUserSaleRateForAuction(auction: Auction) {
+  private static setUserSaleRateForAuction(auction: AuctionItem) {
     const profitSummaryMain = SharedService.tsmAddonData.profitSummary;
     if (!profitSummaryMain || !SharedService.realms) {
       return;
     }
     const profitSummary: ProfitSummary = profitSummaryMain[SharedService.realms[SharedService.user.realm].name];
     if (profitSummary) {
-      profitSummary.setSaleRateForItem(auction.item);
+      profitSummary.setSaleRateForItem(auction.itemID, auction);
     }
   }
 
@@ -380,19 +382,25 @@ export class AuctionUtil {
   }
 
   private static getRecipeWithVariation(item: AuctionItem, recipes: Recipe[]) {
-    if (!item || !recipes || !item.bonusIds) {
+    if (!item || !recipes) {
       return undefined;
     }
     return recipes.filter(recipe => {
-      if (recipe.bonusIds && recipe.bonusIds.length) {
-        for (let i = 0; i < item.bonusIds.length; i++) {
-          if (recipe.bonusIds.filter(bId => bId === item.bonusIds[0]).length) {
-            return true;
+      try {
+        if (recipe && recipe.bonusIds && recipe.bonusIds.length) {
+          for (let i = 0; i < item.bonusIds.length; i++) {
+            const idMatches = recipe.bonusIds.filter(bId => bId === item.bonusIds[i]);
+            if (idMatches && idMatches.length) {
+              return true;
+            }
           }
+          return false;
+        } else {
+          return true;
         }
+      } catch (error) {
+        ErrorReport.sendError('AuctionUtil.getRecipeWithVariation', error);
         return false;
-      } else {
-        return true;
       }
     });
   }

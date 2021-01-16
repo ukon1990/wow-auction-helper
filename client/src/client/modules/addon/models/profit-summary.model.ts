@@ -1,6 +1,7 @@
 import {SharedService} from '../../../services/shared.service';
 import {UserProfit} from './user-profit.model';
 import {AuctionsService} from '../../../services/auctions.service';
+import {AuctionItem} from '../../auction/models/auction-item.model';
 
 export class ProfitSummary {
   past24Hours: UserProfit;
@@ -27,13 +28,13 @@ export class ProfitSummary {
         this.setSaleRateForItem(+id));
   }
 
-  setSaleRateForItem(id: number) {
-    this.past24Hours.setSaleRateForItem(id, 'past24Hours');
-    this.past7Days.setSaleRateForItem(id, 'past7Days');
-    this.past14Days.setSaleRateForItem(id, 'past14Days');
-    this.past30Days.setSaleRateForItem(id, 'past30Days');
-    this.past60Days.setSaleRateForItem(id, 'past60Days');
-    this.past90Days.setSaleRateForItem(id, 'past90Days');
-    this.total.setSaleRateForItem(id, 'total');
+  setSaleRateForItem(id: number, auctionItem?: AuctionItem) {
+    this.past24Hours.setSaleRateForItem(id, 'past24Hours', auctionItem);
+    this.past7Days.setSaleRateForItem(id, 'past7Days', auctionItem);
+    this.past14Days.setSaleRateForItem(id, 'past14Days', auctionItem);
+    this.past30Days.setSaleRateForItem(id, 'past30Days', auctionItem);
+    this.past60Days.setSaleRateForItem(id, 'past60Days', auctionItem);
+    this.past90Days.setSaleRateForItem(id, 'past90Days', auctionItem);
+    this.total.setSaleRateForItem(id, 'total', auctionItem);
   }
 }
