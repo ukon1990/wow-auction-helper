@@ -4,6 +4,7 @@ import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
+import {ProfitSummaryUtil} from '../../utils/profit-summary.util';
 
 interface TableEntry {
   id: number;
@@ -30,8 +31,8 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
   form = new FormGroup({
     realm: new FormControl(),
     character: new FormControl(),
-    startDate: new FormControl(),
-    endDate: new FormControl(),
+    startDate: new FormControl(new Date(+new Date() - 1000 * 60 * 60 * 24 * 30)),
+    endDate: new FormControl(new Date()),
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
@@ -47,6 +48,15 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
       TsmLuaUtil.events,
       (data: TSMCSV) =>
         this.handleTsmEvent(data));
+    this.sm.add(this.form.valueChanges, ({
+      realm,
+      character,
+      startDate,
+      endDate
+                                         }) => {
+
+      new ProfitSummaryUtil().calculate(TsmLuaUtil.events.value, realm, startDate, endDate);
+    });
 
     this.initContent();
   }
@@ -74,7 +84,8 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
     this.realms.length = 0;
 
     Object.keys(data.profitSummary)
-      .forEach(realm =>
-        this.realms.push(realm));
+      .forEach(realm => {
+        this.realms.push(realm);
+      });
   }
 }

@@ -8,16 +8,50 @@ import {Report} from '../report.util';
 import {ProfitSummary} from '../../modules/addon/models/profit-summary.model';
 import {AuctionsService} from '../../services/auctions.service';
 
+interface CSVSaleAndBuys {
+  bonusIds: number[];
+  id: number;
+  name: string;
+  otherPlayer: string;
+  ownerRealm: string;
+  player: string;
+  price: number;
+  quantity: number;
+  source: string;
+  stackSize: number;
+  time: number;
+}
+
+interface CSVExpiredAndCancelled {
+  bonusIds: number[];
+  id: number;
+  name: string;
+  ownerRealm: string;
+  player: string;
+  quantity: number;
+  stackSize: number;
+  time: number;
+}
+
+interface CSVIncomeAndExpense {
+  amount: number;
+  otherPlayer: string;
+  ownerRealm: string;
+  player: string;
+  time: number;
+  type: string;
+}
+
 export class TSMCSV {
   characterGuilds?: any;
   csvAuctionDBScan?: any[];
-  csvCancelled?: any[];
-  csvExpired?: any[];
-  csvExpense?: any[];
-  csvSales?: any[];
-  csvIncome?: any[];
-  csvBuys?: any[];
-  profitSummary?: any;
+  csvCancelled?: { [key: string]: CSVExpiredAndCancelled[] };
+  csvExpired?: { [key: string]: CSVExpiredAndCancelled[] };
+  csvSales?: { [key: string]: CSVSaleAndBuys[] };
+  csvBuys?: { [key: string]: CSVSaleAndBuys[] };
+  csvExpense?: { [key: string]: CSVIncomeAndExpense[] };
+  csvIncome?: { [key: string]: CSVIncomeAndExpense[] };
+  profitSummary?: { [key: string]: ProfitSummary };
   inventory?: object;
   inventoryMap?: object;
   auctionDBScanTime?: number;
