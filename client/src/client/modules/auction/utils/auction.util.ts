@@ -382,19 +382,25 @@ export class AuctionUtil {
   }
 
   private static getRecipeWithVariation(item: AuctionItem, recipes: Recipe[]) {
-    if (!item || !recipes || !item.bonusIds) {
+    if (!item || !recipes) {
       return undefined;
     }
     return recipes.filter(recipe => {
-      if (recipe.bonusIds && recipe.bonusIds.length) {
-        for (let i = 0; i < item.bonusIds.length; i++) {
-          if (recipe.bonusIds.filter(bId => bId === item.bonusIds[0]).length) {
-            return true;
+      try {
+        if (recipe && recipe.bonusIds && recipe.bonusIds.length) {
+          for (let i = 0; i < item.bonusIds.length; i++) {
+            const idMatches = recipe.bonusIds.filter(bId => bId === item.bonusIds[i]);
+            if (idMatches && idMatches.length) {
+              return true;
+            }
           }
+          return false;
+        } else {
+          return true;
         }
+      } catch (error) {
+        ErrorReport.sendError('AuctionUtil.getRecipeWithVariation', error);
         return false;
-      } else {
-        return true;
       }
     });
   }

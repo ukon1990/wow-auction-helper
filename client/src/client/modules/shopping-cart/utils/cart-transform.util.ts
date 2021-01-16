@@ -8,15 +8,30 @@ import {Reagent} from '../../crafting/models/reagent';
 
 export class CartTransformUtil {
 
-  static recipes(value: CartRecipe[], auctions: Map<string, AuctionItem>) {
+  static recipes(value: CartRecipe[], auctions: Map<string, AuctionItem>, reagents: Reagent[]) {
+    const mapReagents = new Map<number, Reagent>();
+    reagents.forEach(reagent => mapReagents.set(reagent.id, reagent));
+
     return value.map(entry => {
       const recipe: Recipe = CraftingService.map.value.get(entry.id);
       const ai: AuctionItem = auctions.get('' + recipe.itemID);
+      const buyout: number = ai ? ai.buyout : 0;
+      const cost: number = recipe.reagents.reduce((sum, reagent) => {
+        const mappedReagent = mapReagents.get(reagent.id);
+        if (!mappedReagent || !mappedReagent.avgPrice) {
+          return sum || 0;
+        }
+        return (mappedReagent.avgPrice * reagent.quantity) + sum;
+      }, 0);
+      const roi: number = buyout - cost;
       return {
         ...entry,
         itemId: recipe ? recipe.itemID : undefined,
         name: recipe ? recipe.name : '',
-        buyout: ai ? ai.buyout : 0,
+        buyout,
+        cost,
+        roi,
+        sumRoi: roi * entry.quantity,
       };
     });
   }

@@ -11,8 +11,7 @@ import {SettingsService} from '../../../user/services/settings/settings.service'
 
 @Component({
   selector: 'wah-auction-item-details',
-  templateUrl: './auction-item-details.component.html',
-  styleUrls: ['./auction-item-details.component.scss']
+  templateUrl: './auction-item-details.component.html'
 })
 export class AuctionItemDetailsComponent implements OnChanges {
   @Input() item: AuctionItem;

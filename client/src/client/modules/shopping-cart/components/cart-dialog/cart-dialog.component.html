@@ -3,11 +3,11 @@
 <h1 mat-dialog-title>Shopping cart</h1>
 <mat-dialog-content>
 
-  <div class="row">
-    <div class="col-xxl-3 col-xl-4 col-lg-4 mt-3">
+  <div class="row shopping-cart">
+    <div class="col-xxl-12 col-xl-12 col-lg-12">
       <wah-summary [cart]="cart"></wah-summary>
     </div>
-    <div class="col-xxl-4 col-xl-4 col-lg-8 mt-3">
+    <div class="col-xxl-6 col-xl-6 col-lg-12 mt-1">
       <mat-card>
         <mat-card-content>
           <mat-tab-group>
@@ -33,7 +33,7 @@
       </mat-card>
     </div>
 
-    <div class="col-xxl-5 col-xl-4 col-lg-12 mt-3">
+    <div class="col-xxl-6 col-xl-6 col-lg-12 mt-1">
       <mat-card>
         <mat-card-header>
           <mat-card-title>
@@ -50,7 +50,7 @@
       </mat-card>
     </div>
   </div>
-  <div class="row mt-3">
+  <div class="row mt-1">
     <mat-card class="col-md-12">
       <mat-card-header>
         <mat-card-title>
@@ -60,7 +60,7 @@
 
       <mat-card-content>
         <div class="row">
-          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.ah?.length">
+          <div class="col col-xl-6 col-lg-12 mt-1" *ngIf="cart?.sources?.ah?.length">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>
@@ -76,7 +76,7 @@
               </mat-card-content>
             </mat-card>
           </div>
-          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.vendor?.length">
+          <div class="col col-xl-6 col-lg-12 mt-1" *ngIf="cart?.sources?.vendor?.length">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>
@@ -92,7 +92,7 @@
               </mat-card-content>
             </mat-card>
           </div>
-          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.tradeVendor?.length">
+          <div class="col col-xl-6 col-lg-12 mt-1" *ngIf="cart?.sources?.tradeVendor?.length">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>
@@ -108,7 +108,7 @@
               </mat-card-content>
             </mat-card>
           </div>
-          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="cart?.sources?.farm?.length">
+          <div class="col col-xl-6 col-lg-12 mt-1" *ngIf="cart?.sources?.farm?.length">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>
@@ -124,7 +124,7 @@
               </mat-card-content>
             </mat-card>
           </div>
-          <div class="col col-xl-6 col-lg-12 mt-3" *ngIf="inventory?.length">
+          <div class="col col-xl-6 col-lg-12 mt-1" *ngIf="inventory?.length">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>
