@@ -72,9 +72,9 @@ export class CraftingService {
   private static getItemIdForCurrentFaction(recipe: Recipe): number {
     let itemId = recipe.craftedItemId;
     if (!itemId) {
-      if (!SharedService.user.faction) {
+      if (!SharedService.user.faction && recipe.allianceCraftedItemId) {
         itemId = recipe.allianceCraftedItemId;
-      } else {
+      } else if (recipe.hordeCraftedItemId) {
         itemId = recipe.hordeCraftedItemId;
       }
     }

@@ -382,7 +382,7 @@ export class AuctionUtil {
   }
 
   private static getRecipeWithVariation(item: AuctionItem, recipes: Recipe[]) {
-    if (!item || !recipes || !item.bonusIds) {
+    if (!item || !recipes) {
       return undefined;
     }
     return recipes.filter(recipe => {

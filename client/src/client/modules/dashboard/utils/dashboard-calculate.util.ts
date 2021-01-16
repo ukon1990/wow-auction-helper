@@ -10,7 +10,6 @@ import { Sorter } from '../../../models/sorter';
 import { ErrorReport } from '../../../utils/error-report.util';
 import { GoldPipe } from '../../util/pipes/gold.pipe';
 import { AuctionItemStat } from '../../../../../../api/src/auction/models/auction-item-stat.model';
-import { Report } from '../../../utils/report.util';
 
 interface IdPaths {
   recipeId?: string;
@@ -169,7 +168,7 @@ export class DashboardCalculateUtil {
         partialPath.push(key);
         if (key.indexOf('[') === 0) {
           const arrKey = key.replace(/[\[\]]/gi, '');
-          arr = obj ? obj[arrKey] : item[arrKey];
+          arr = obj ? obj[arrKey] : item ? item[arrKey] : undefined;
 
           if (arr) {
             arr.forEach((it, index) => {
@@ -181,42 +180,19 @@ export class DashboardCalculateUtil {
                 } catch (e) {
                 }
               }
-              if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
-                Report.debug('DashboardCalculateUtil.addMatchingBoardRules', {
-                  childObject, arr, arrKey,
-                });
-              }
             });
           }
         } else {
           if (obj) {
-            if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
-              // ErrorReport.sendError('DashboardCalculateUtil.addMatchingBoardRules', error);
-              Report.debug('DashboardCalculateUtil.addMatchingBoardRules obj', {
-                item, key, obj
-              });
-            }
-
             obj = obj[key];
           } else {
             try {
               obj = item[key];
             } catch (error) {
-              if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
-                // ErrorReport.sendError('DashboardCalculateUtil.addMatchingBoardRules', error);
-                Report.debug('DashboardCalculateUtil.addMatchingBoardRules err', {
-                  item, key
-                });
-              }
             }
           }
         }
       });
-    if (TextUtil.contains(board.title, 'cooking') && item.itemID === 184690) {
-      Report.debug('DashboardCalculateUtil.addMatchingBoardRules 2', {
-        obj, list, item, partialPath,
-      });
-    }
     if (list.length) {
       dataMap.set(id, list);
     }
