@@ -13,6 +13,7 @@ import {BackgroundDownloadService} from '../../core/services/background-download
 import {Report} from '../../../utils/report.util';
 import {AppSyncService} from '../../user/services/app-sync.service';
 import {SettingsService} from '../../user/services/settings/settings.service';
+import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,8 @@ export class ShoppingCartService {
     this.restore();
     this.sm.add(auctionService.mapped,
       (map: Map<string, AuctionItem>) => this.calculateCart(map));
+
+    this.sm.add(TsmLuaUtil.events, () => this.calculateCart());
 
     this.sm.add(backgroundService.isInitialLoadCompleted,
       (isDone) => {
