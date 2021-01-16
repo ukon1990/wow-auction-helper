@@ -4,7 +4,7 @@ import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
-import {ProfitSummaryUtil} from '../../utils/profit-summary.util';
+import {ItemSaleHistory, ProfitSummaryUtil} from '../../utils/profit-summary.util';
 
 interface TableEntry {
   id: number;
@@ -36,9 +36,18 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
   });
   columns: ColumnDescription[] = [
     {key: 'name', title: 'Name', dataType: 'name'},
+
+    {key: 'avgSalePrice', title: 'Avg sale price', dataType: 'gold'},
+    {key: 'sumSalePrice', title: 'Sum sale price', dataType: 'gold'},
+    {key: 'soldQuantity', title: '# sold', dataType: 'number'},
+
+    {key: 'avgBuyPrice', title: 'Avg buy price', dataType: 'gold'},
+    {key: 'sumBuyPrice', title: 'Sum buy price', dataType: 'gold'},
+    {key: 'boughtQuantity', title: '# bought', dataType: 'number'},
   ];
   tableData: TableData;
   private sm = new SubscriptionManager();
+  mappedData: ItemSaleHistory[] = [];
 
   constructor() {
   }
@@ -55,7 +64,8 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
       endDate
                                          }) => {
 
-      new ProfitSummaryUtil().calculate(TsmLuaUtil.events.value, realm, startDate, endDate);
+      this.mappedData = new ProfitSummaryUtil().calculate(
+        TsmLuaUtil.events.value, realm, startDate, endDate);
     });
 
     this.initContent();

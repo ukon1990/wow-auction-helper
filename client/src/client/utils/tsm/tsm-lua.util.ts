@@ -8,7 +8,7 @@ import {Report} from '../report.util';
 import {ProfitSummary} from '../../modules/addon/models/profit-summary.model';
 import {AuctionsService} from '../../services/auctions.service';
 
-interface CSVSaleAndBuys {
+export interface CSVSaleAndBuys {
   bonusIds: number[];
   id: number;
   name: string;
@@ -22,7 +22,7 @@ interface CSVSaleAndBuys {
   time: number;
 }
 
-interface CSVExpiredAndCancelled {
+export interface CSVExpiredAndCancelled {
   bonusIds: number[];
   id: number;
   name: string;
@@ -33,7 +33,7 @@ interface CSVExpiredAndCancelled {
   time: number;
 }
 
-interface CSVIncomeAndExpense {
+export interface CSVIncomeAndExpense {
   amount: number;
   otherPlayer: string;
   ownerRealm: string;

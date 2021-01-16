@@ -38,10 +38,13 @@
       </mat-form-field>
     </form>
 
-    <em>
-      TODO: Add a gold chart
-    </em>
-
-
+    <wah-data-table
+      id="itemId"
+      iconSize="22"
+      itemsPerPage="100"
+      [columns]="columns"
+      [data]="mappedData"
+    >
+    </wah-data-table>
   </mat-card-content>
 </mat-card>
