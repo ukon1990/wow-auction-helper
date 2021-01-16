@@ -6,7 +6,7 @@ import {Auction} from '../../auction/models/auction.model';
 import {Reagent} from '../../crafting/models/reagent';
 import {Item} from '../../../models/item/item';
 
-fdescribe('ShoppingCartUtil', () => {
+describe('ShoppingCartUtil', () => {
   const auctionMap = new Map<string, AuctionItem>();
   const recipeMap = new Map<number, Recipe>();
   let util: ShoppingCartUtil;
@@ -58,7 +58,9 @@ fdescribe('ShoppingCartUtil', () => {
       isIntermediate: false
     }];
     const cart: ShoppingCartV2 = util.calculateSources(
-      recipeMap, auctionMap,
+      recipeMap,
+      auctionMap,
+      new Map<number, AuctionItem[]>(),
       new Map<number, Item>(),
       false,
       recipes,
