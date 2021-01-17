@@ -10,6 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
@@ -42,6 +43,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatListModule,
     TableModule,
     UtilModule,
     MatButtonModule,

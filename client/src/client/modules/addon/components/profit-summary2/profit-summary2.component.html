@@ -38,10 +38,37 @@
       </mat-form-field>
     </form>
 
+    <mat-list dense class="horizontal-item-list">
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Expenses
+        </div>
+        <div mat-line>
+          {{ data?.sumCost | gold }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Income
+        </div>
+        <div mat-line>
+          {{ data?.sumIncome | gold }}
+        </div>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Profit
+        </div>
+        <div mat-line>
+          {{ data?.sumProfit | gold }}
+        </div>
+      </mat-list-item>
+    </mat-list>
+
     <wah-data-table
       id="itemId"
       iconSize="22"
-      itemsPerPage="100"
+      itemsPerPage="20"
       [columns]="columns"
       [data]="mappedData"
     >

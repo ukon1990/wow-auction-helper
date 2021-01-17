@@ -4,7 +4,9 @@ import {TSMCSV, TsmLuaUtil} from '../../../../utils/tsm/tsm-lua.util';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
-import {ItemSaleHistory, ProfitSummaryUtil} from '../../utils/profit-summary.util';
+import {ItemSaleHistory, ItemSaleHistorySummary, ProfitSummaryUtil} from '../../utils/profit-summary.util';
+import { Theme } from '../../../core/models/theme.model';
+import { ThemeUtil } from '../../../core/utils/theme.util';
 
 interface TableEntry {
   id: number;
@@ -48,6 +50,8 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
   tableData: TableData;
   private sm = new SubscriptionManager();
   mappedData: ItemSaleHistory[] = [];
+  data: ItemSaleHistorySummary;
+  theme: Theme = ThemeUtil.current;
 
   constructor() {
   }
@@ -64,8 +68,10 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
       endDate
                                          }) => {
 
-      this.mappedData = new ProfitSummaryUtil().calculate(
+      this.data = new ProfitSummaryUtil().calculate(
         TsmLuaUtil.events.value, realm, startDate, endDate);
+      this.mappedData = this.data.list;
+      console.log('Data', this.data);
     });
 
     this.initContent();
