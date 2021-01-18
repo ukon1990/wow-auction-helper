@@ -57,24 +57,26 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initContent();
+
     this.sm.add(
       TsmLuaUtil.events,
       (data: TSMCSV) =>
         this.handleTsmEvent(data));
-    this.sm.add(this.form.valueChanges, ({
-      realm,
-      character,
-      startDate,
-      endDate
-                                         }) => {
+    this.sm.add(this.form.valueChanges, change => this.calculateData(change));
 
-      this.data = new ProfitSummaryUtil().calculate(
-        TsmLuaUtil.events.value, realm, startDate, endDate);
-      this.mappedData = this.data.list;
-      console.log('Data', this.data);
-    });
+  }
 
-    this.initContent();
+  private calculateData({
+                          realm,
+                          character,
+                          startDate,
+                          endDate
+                        } = this.form.getRawValue()) {
+    this.data = new ProfitSummaryUtil().calculate(
+      TsmLuaUtil.events.value, realm, startDate, endDate);
+    this.mappedData = this.data.list;
+    console.log('Data', this.data);
   }
 
   ngOnDestroy(): void {
@@ -103,5 +105,6 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
       .forEach(realm => {
         this.realms.push(realm);
       });
+    this.calculateData();
   }
 }

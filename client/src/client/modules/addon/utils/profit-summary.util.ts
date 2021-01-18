@@ -1,5 +1,7 @@
-import { CSVIncomeAndExpense, CSVSaleAndBuys, CSVExpiredAndCancelled } from './../../../utils/tsm/tsm-lua.util';
-import { TSMCSV } from '../../../utils/tsm/tsm-lua.util';
+import {CSVExpiredAndCancelled, CSVIncomeAndExpense, CSVSaleAndBuys} from './../../../utils/tsm/tsm-lua.util';
+import {TSMCSV} from '../../../utils/tsm/tsm-lua.util';
+import {TimeUtil} from '../../../../../../api/src/auction/utils/time.util';
+import {DateUtil} from '@ukon1990/js-utilities';
 
 export interface ItemSaleHistory {
   itemId: number;
@@ -28,17 +30,16 @@ export interface ItemSaleHistory {
 
 export interface ItemSaleHistorySummary {
   list: ItemSaleHistory[];
+  dailyStats: any[];
   sumCost: number;
   sumIncome: number;
   sumProfit: number;
+  avgPerDay?: number;
 }
 
 export class ProfitSummaryUtil {
   private isWithinTimeLimit(time: number, start: Date, end: Date): boolean {
-    if (time < +start || time > +end) {
-      return false;
-    }
-    return true;
+    return !(time < +start || time > +end);
   }
 
   processData(
@@ -50,8 +51,8 @@ export class ProfitSummaryUtil {
     cancelled: CSVExpiredAndCancelled[]): ItemSaleHistorySummary {
     const map: Map<number, ItemSaleHistory> = new Map<number, ItemSaleHistory>();
     const list: ItemSaleHistory[] = [];
-    let sumCost: number = 0;
-    let sumIncome: number = 0;
+    let sumCost = 0;
+    let sumIncome = 0;
 
     const addEntryIfMissing = (id: number, name: string) => {
       let entry: ItemSaleHistory;
@@ -60,22 +61,22 @@ export class ProfitSummaryUtil {
           itemId: id,
           bonusIds: [],
           name,
-  
+
           cancelled: 0,
           expired: 0,
-  
+
           minSalePrice: 0,
           avgSalePrice: 0,
           maxSalePrice: 0,
           sumSalePrice: 0,
           soldQuantity: 0,
-  
+
           minBuyPrice: 0,
           avgBuyPrice: 0,
           maxBuyPrice: 0,
           sumBuyPrice: 0,
           boughtQuantity: 0,
-  
+
           diff: 0,
           diffPercent: 0,
         };
@@ -95,7 +96,6 @@ export class ProfitSummaryUtil {
       if (!entry.minSalePrice || entry.minSalePrice > sale.price) {
         entry.minSalePrice = sale.price;
       }
-
 
       if (!entry.maxSalePrice || entry.maxSalePrice < sale.price) {
         entry.maxSalePrice = sale.price;
@@ -150,10 +150,10 @@ export class ProfitSummaryUtil {
 
   /**
    * Reducing the tsm data to a mapped dataset for the defined period
-   * @param csvData 
-   * @param realm 
-   * @param startDate 
-   * @param endDate 
+   * @param csvData
+   * @param realm
+   * @param startDate
+   * @param endDate
    */
   calculate(csvData: TSMCSV, realm: string, startDate: Date, endDate: Date): ItemSaleHistorySummary {
     endDate.setHours(23);
@@ -161,26 +161,28 @@ export class ProfitSummaryUtil {
     endDate.setSeconds(59);
     endDate.setMilliseconds(999);
 
-    const expenses: CSVIncomeAndExpense[] = csvData.csvExpense[realm].filter(({ time }) =>
+    const expenses: CSVIncomeAndExpense[] = csvData.csvExpense[realm].filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
-    const income: CSVIncomeAndExpense[] = csvData.csvIncome[realm].filter(({ time }) =>
-      this.isWithinTimeLimit(time, startDate, endDate));
-
-    const sales: CSVSaleAndBuys[] = csvData.csvSales[realm].filter(({ time }) =>
-      this.isWithinTimeLimit(time, startDate, endDate));
-    const purcheses: CSVSaleAndBuys[] = csvData.csvBuys[realm].filter(({ time }) =>
+    const income: CSVIncomeAndExpense[] = csvData.csvIncome[realm].filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
 
-    const expired: CSVExpiredAndCancelled[] = csvData.csvExpired[realm].filter(({ time }) =>
+    const sales: CSVSaleAndBuys[] = csvData.csvSales[realm].filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
-    const cancelled: CSVExpiredAndCancelled[] = csvData.csvCancelled[realm].filter(({ time }) =>
+    const purcheses: CSVSaleAndBuys[] = csvData.csvBuys[realm].filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
 
-    const result = this.processData(
+    const expired: CSVExpiredAndCancelled[] = csvData.csvExpired[realm].filter(({time}) =>
+      this.isWithinTimeLimit(time, startDate, endDate));
+    const cancelled: CSVExpiredAndCancelled[] = csvData.csvCancelled[realm].filter(({time}) =>
+      this.isWithinTimeLimit(time, startDate, endDate));
+
+    const result: ItemSaleHistorySummary = this.processData(
       expenses, income,
       sales, purcheses,
       expired, cancelled
     );
+
+    result.avgPerDay = result.sumProfit / DateUtil.getDifferenceInDays(startDate, endDate);
 
     return result;
   }

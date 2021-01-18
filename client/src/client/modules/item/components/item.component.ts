@@ -21,6 +21,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ItemDetailsUtil} from '../utils/item-details.util';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 import {Item} from '../../../models/item/item';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 @Component({
   selector: 'wah-item',
@@ -258,14 +259,19 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.selected = ItemDetailsUtil.getSelection(item,
       this.auctionService.mapped.value,
       this.auctionService.mappedVariations.value);
-    this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
-      .sort((a, b) => b.itemLevel - a.itemLevel);
-    this.itemService.addToSelectionHistory({...this.selected});
-    this.auctionItems = this.auctionService.mappedVariations.value.get(this.selected.item.id);
-    this.onItemSelection();
-    this.itemSelectionHistoryForm.setValue(0);
-    this.ignoreNextSelectionHistoryFormChange = true;
-    Report.debug('ItemComponent.setSelection', this.selected);
+    console.log('Shithead', item, this.selected);
+    try {
+      this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
+        .sort((a, b) => b.itemLevel - a.itemLevel);
+      this.itemService.addToSelectionHistory({...this.selected});
+      this.auctionItems = this.auctionService.mappedVariations.value.get(this.selected.item.id);
+      this.onItemSelection();
+      this.itemSelectionHistoryForm.setValue(0);
+      this.ignoreNextSelectionHistoryFormChange = true;
+      Report.debug('ItemComponent.setSelection', this.selected);
+    } catch (error) {
+      ErrorReport.sendError('ItemComponent.setSelection', error);
+    }
   }
 
 

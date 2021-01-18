@@ -63,6 +63,14 @@
           {{ data?.sumProfit | gold }}
         </div>
       </mat-list-item>
+      <mat-list-item>
+        <div mat-line [style]="{color: theme.accentColorCode}">
+          Profit per day
+        </div>
+        <div mat-line>
+          {{ data?.avgPerDay | gold }}
+        </div>
+      </mat-list-item>
     </mat-list>
 
     <wah-data-table
