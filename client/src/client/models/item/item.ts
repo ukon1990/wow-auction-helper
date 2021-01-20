@@ -18,7 +18,7 @@ export class Item {
   currencyId: number;
   sellPrice: number;
   itemBind: number;
-  minFactionId: string;
+  minFactionId: number;
   minReputation: number;
   isDropped: boolean;
   vendorBoughtLimit?: number;
@@ -47,7 +47,7 @@ export class Item {
     if (item.preview_item.requirements &&
       item.preview_item.requirements.reputation &&
       item.preview_item.requirements.reputation.faction) {
-      this.minFactionId = '' + item.preview_item.requirements.reputation.faction.id;
+      this.minFactionId = item.preview_item.requirements.reputation.faction.id;
       this.minReputation = item.preview_item.requirements.reputation.min_reputation_level;
     }
     // TODO: this.itemSpells = this.getItemSpellsFromGameData(item.preview_item.spells);

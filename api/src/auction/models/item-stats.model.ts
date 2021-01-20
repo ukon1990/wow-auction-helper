@@ -18,4 +18,8 @@ export interface ItemStats {
   past24Hours?: Stat;
   past7Days?: Stat;
   past14Days?: Stat;
+  past30Days?: Stat;
+  past60Days?: Stat;
+  past90Days?: Stat;
+  past180Days?: Stat;
 }

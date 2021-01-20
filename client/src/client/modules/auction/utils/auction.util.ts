@@ -1,7 +1,6 @@
 import {SharedService} from '../../../services/shared.service';
 import {Auction} from '../models/auction.model';
 import {AuctionItem} from '../models/auction-item.model';
-import {CraftingUtil} from '../../crafting/utils/crafting.util';
 import {TradeVendors} from '../../../models/trade-vendors';
 import {AuctionPet} from '../models/auction-pet.model';
 import {ProspectingAndMillingUtil} from '../../../utils/prospect-milling.util';
@@ -11,14 +10,15 @@ import {ProfitSummary} from '../../addon/models/profit-summary.model';
 import {TsmService} from '../../tsm/tsm.service';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
 import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
-import {DashboardCalculateUtil} from '../../dashboard/utils/dashboard-calculate.util';
 import {CraftingService} from '../../../services/crafting.service';
 import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {Recipe} from '../../crafting/models/recipe';
 
 interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
+  mapVariations: Map<number, AuctionItem[]>;
   list: AuctionItem[];
   auctions: Auction[];
 }
@@ -56,6 +56,7 @@ export class AuctionUtil {
     });
     console.log('modifiers', list);
   }
+
   /**
    * Organizes the auctions into groups of auctions per item
    * Used in the auction service.
@@ -68,15 +69,16 @@ export class AuctionUtil {
         const t0 = performance.now();
         this.clearOldData();
         const list: AuctionItem[] = [];
-        const map = this.groupAuctions(auctions, list, stats);
+        const mapVariations = new Map<number, AuctionItem[]>();
+        const map = this.groupAuctions(auctions, list, stats, mapVariations);
         this.calculateCosts(t0, map);
-        SharedService.events.auctionUpdate.emit(true);
-        Report.debug('AuctionUtil.organize', list);
         this.setItemSources(map);
+        Report.debug('AuctionUtil.organize', list, auctions.length);
         resolve({
           map,
           list,
-          auctions
+          auctions,
+          mapVariations
         });
       } catch (e) {
         reject(e);
@@ -84,20 +86,15 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[], stats: Map<string, ItemStats>) {
+  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[],
+                               stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>
+  ) {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     const idMap: Map<number, boolean> = new Map<number, boolean>();
-    /*
-    TsmService.list.value.forEach(tsm => {
-      const auction = new Auction();
-      auction.item = +tsm.Id;
-      this.addNewAuctionItem(auction, false, '' + auction.item, map, list);
-    });
-    */
 
     auctions.forEach((a: Auction) => {
-      this.processAuction(a, map, list, stats);
+      this.processAuction(a, map, list, stats, mapVariations);
       idMap.set(a.item, true);
     });
 
@@ -146,57 +143,65 @@ export class AuctionUtil {
       TradeVendors.setValues(map);
     } catch (e) {
     }
-
     // ProspectingAndMillingUtil.setCosts();
-
-    ProspectingAndMillingUtil.calculateCost();
-
-    // Dashboard -> Needs to be done after trade vendors
-    // Dashboard.addDashboards();
-
-    /*
-    if (SharedService.user && SharedService.user.shoppingCart) {
-      SharedService.user.shoppingCart.calculateCosts();
-    }
-    */
-
-
+    ProspectingAndMillingUtil.calculateCost(map);
     const t2 = performance.now();
     console.log(`Prices calc time ${t2 - t1} ms`);
   }
 
-  private static processAuction(a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[], stats: Map<string, ItemStats>) {
+  private static processAuction(
+    a: Auction, map: Map<string, AuctionItem>, list: AuctionItem[],
+    stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>
+  ) {
     const id = a.item + AuctionItemStat.bonusId(a.bonusLists, false);
+    /**
+     * Maybe implement this one instead in the future.
+     AuctionItemStat.getId(
+     a.item,
+     a.petSpeciesId,
+     a.bonusLists ? a.bonusLists.map(b => b.bonusListId) : undefined,
+     a.modifiers
+     );
+     */
     if (a.petSpeciesId && AuctionUtil.isPetNotInList(a, map)) {
       const petId = AuctionUtil.getPetId(a);
-      map.set(petId, this.newAuctionItem(a, true, petId, stats));
-      list.push(map.get(petId));
-      AuctionUtil.setUserSaleRateForAuction(a);
+      const auctionItem: AuctionItem = this.newAuctionItem(a, true, petId, stats);
+      map.set(petId, auctionItem);
+      list.push(auctionItem);
+      AuctionUtil.setUserSaleRateForAuction(auctionItem);
 
       if (!AuctionUtil.isPetMissing(a)) {
         this.handlePetAuction(a, petId);
       }
     } else {
+      if (!mapVariations.has(a.item)) {
+        mapVariations.set(a.item, []);
+      }
       if (a.bonusLists) {
         if (!map.has(id)) {
           this.addNewAuctionItem(a, true, id, map, list, stats);
+          mapVariations.get(a.item).push(map.get(id));
         } else {
           AuctionUtil.updateAuctionItem(a, id, map);
         }
       }
+      // TODO: Look into this, to avoid "non bonus" duplicates
       if (!map.has(a.item + '')) {
         this.addNewAuctionItem(a, true, '' + a.item, map, list, stats);
+        mapVariations.get(a.item).push(map.get(a.item + ''));
       } else {
         AuctionUtil.updateAuctionItem(a, '' + a.item, map);
       }
+
     }
   }
 
   private static addNewAuctionItem(a, addAuction = true, id: string, map: Map<string, AuctionItem>,
                                    list: AuctionItem[], stats: Map<string, ItemStats>) {
-    map.set(id, this.newAuctionItem(a, addAuction, id, stats));
-    list.push(map.get(id));
-    AuctionUtil.setUserSaleRateForAuction(a);
+    const auctionItem: AuctionItem = this.newAuctionItem(a, addAuction, id, stats);
+    map.set(id, auctionItem);
+    list.push(auctionItem);
+    AuctionUtil.setUserSaleRateForAuction(auctionItem);
   }
 
   private static handlePetAuction(a: Auction, petId) {
@@ -290,18 +295,18 @@ export class AuctionUtil {
 
   private static newAuctionItem(auction: Auction, addAuction = true, id: string, stats: Map<string, ItemStats>): AuctionItem {
     const tmpAuc = AuctionUtil.getTempAuctionItem(auction, addAuction, id);
-    const statsId = AuctionItemStat.getId(
+    const statId = AuctionItemStat.getId(
       auction.item,
       auction.petSpeciesId,
-      tmpAuc.bonusIds,
+      auction.bonusLists ? auction.bonusLists.map(b => b.bonusListId) : undefined
     );
 
     if (TsmService.mapped.value.has(auction.item)) {
       AuctionUtil.setTSMData(auction, tmpAuc);
     }
 
-    if (stats.has(statsId)) {
-      const stat = stats.get(statsId);
+    if (stats.has(statId)) {
+      const stat = stats.get(statId);
       tmpAuc.mktPrice = stat.past7Days.price.avg;
       tmpAuc.stats = stat;
     }
@@ -309,14 +314,14 @@ export class AuctionUtil {
     return tmpAuc;
   }
 
-  private static setUserSaleRateForAuction(auction: Auction) {
+  private static setUserSaleRateForAuction(auction: AuctionItem) {
     const profitSummaryMain = SharedService.tsmAddonData.profitSummary;
     if (!profitSummaryMain || !SharedService.realms) {
       return;
     }
     const profitSummary: ProfitSummary = profitSummaryMain[SharedService.realms[SharedService.user.realm].name];
     if (profitSummary) {
-      profitSummary.setSaleRateForItem(auction.item);
+      profitSummary.setSaleRateForItem(auction.itemID, auction);
     }
   }
 
@@ -330,7 +335,6 @@ export class AuctionUtil {
 
   private static getTempAuctionItem(auction: Auction, addAuction = true, id: string) {
     const tmpAuc = new AuctionItem();
-    this.handleBonusIds(auction, tmpAuc);
     tmpAuc.id = id;
     tmpAuc.itemID = auction.item;
     tmpAuc.petSpeciesId = auction.petSpeciesId;
@@ -342,6 +346,7 @@ export class AuctionUtil {
     tmpAuc.itemLevel = SharedService.items[auction.item] ?
       SharedService.items[auction.item].itemLevel : 0;
 
+    this.handleBonusIds(auction, tmpAuc);
     tmpAuc.owner = auction.owner;
     tmpAuc.ownerRealm = auction.ownerRealm;
     tmpAuc.buyout = auction.buyout / auction.quantity;
@@ -367,6 +372,7 @@ export class AuctionUtil {
         }
         if (bonus.level) {
           tmpAuc.itemLevel += bonus.level;
+          tmpAuc.name += ` +${bonus.level} iLvL`;
         }
         if (bonus.quality) {
           tmpAuc.quality = bonus.quality;
@@ -375,15 +381,44 @@ export class AuctionUtil {
     }
   }
 
+  private static getRecipeWithVariation(item: AuctionItem, recipes: Recipe[]) {
+    if (!item || !recipes) {
+      return undefined;
+    }
+    return recipes.filter(recipe => {
+      try {
+        if (recipe && recipe.bonusIds && recipe.bonusIds.length) {
+          for (let i = 0; i < item.bonusIds.length; i++) {
+            const idMatches = recipe.bonusIds.filter(bId => bId === item.bonusIds[i]);
+            if (idMatches && idMatches.length) {
+              return true;
+            }
+          }
+          return false;
+        } else {
+          return true;
+        }
+      } catch (error) {
+        ErrorReport.sendError('AuctionUtil.getRecipeWithVariation', error);
+        return false;
+      }
+    });
+  }
+
   private static setItemSources(items: Map<string, AuctionItem>): void {
     try {
       items.forEach(item => {
-        item.source.recipe.all = CraftingService.itemRecipeMap.value.get(item.itemID);
+        if (!item) {
+          return;
+        }
+        item.source.recipe.all = this.getRecipeWithVariation(item,
+          CraftingService.itemRecipeMap.value.get(item.itemID));
         if (item.source.recipe.all) {
           item.source.recipe.all.sort((a, b) => b.roi - a.roi);
         }
         item.source.recipe.materialFor = CraftingService.reagentRecipeMap.value.get(item.itemID);
-        item.source.recipe.known = CraftingService.itemRecipeMapPerKnown.value.get(item.itemID);
+        item.source.recipe.known = this.getRecipeWithVariation(item,
+          CraftingService.itemRecipeMapPerKnown.value.get(item.itemID));
         if (item.source.recipe.known) {
           item.source.recipe.known.sort((a, b) => b.roi - a.roi);
         }
@@ -391,6 +426,17 @@ export class AuctionUtil {
         item.source.npc = NpcService.itemNpcMap.value.get(item.itemID);
         item.source.tradeVendor = SharedService.tradeVendorItemMap[item.itemID];
         item.item = ItemService.mapped.value.get(item.itemID);
+
+        item.source.destroy = {
+          milling: {
+            targetIn: ProspectingAndMillingUtil.millsSourceTargetsMap.get(item.itemID),
+            sourceIn: ProspectingAndMillingUtil.millsSourceMap.get(item.itemID)
+          },
+          prospecting: {
+            targetIn: ProspectingAndMillingUtil.prospectingSourceTargetsMap.get(item.itemID),
+            sourceIn: ProspectingAndMillingUtil.prospectingSourceMap.get(item.itemID)
+          }
+        };
       });
     } catch (error) {
       ErrorReport.sendError('AuctionUtil.setItemSources', error);

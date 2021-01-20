@@ -225,3 +225,14 @@ wah-search .description-line {
     flex: 0 1 20em;
   }
 }
+
+form {
+  mat-checkbox {
+    padding-top: 1rem;
+  }
+}
+.shopping-cart {
+  .table tr td mat-form-field.mat-form-field, table tr td .input-column {
+    width: 4em !important;;
+  }
+}

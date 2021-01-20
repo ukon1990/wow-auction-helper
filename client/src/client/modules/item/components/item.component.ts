@@ -2,7 +2,6 @@ import {AfterContentInit, AfterViewInit, Component, Inject, OnDestroy, OnInit, V
 import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {FormControl} from '@angular/forms';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
-import {GameBuild} from '../../../utils/game-build.util';
 import {Recipe} from '../../crafting/models/recipe';
 import {ColumnDescription} from '../../table/models/column-description';
 import {WowdbService} from '../../../services/wowdb.service';
@@ -40,6 +39,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
   locale = localStorage['locale'].split('-')[0];
   indexStoredName = 'item_tab_index';
   selectedTab = localStorage[this.indexStoredName] ? +localStorage[this.indexStoredName] : 0;
+  itemVariations: AuctionItem[] = [];
   selected: {
     item: Item;
     auctionItem: AuctionItem;
@@ -49,6 +49,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     auctionItem: undefined,
     pet: undefined
   };
+  auctionItems: AuctionItem[] = [];
   itemNpcDetails: ItemNpcDetails;
   shoppingCartQuantityField: FormControl = new FormControl(1);
   sm = new SubscriptionManager();
@@ -65,8 +66,6 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
-    {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
 
@@ -76,8 +75,6 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     {key: 'profession', title: 'Source', dataType: ''},
     {key: 'cost', title: 'Cost', dataType: 'gold'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
-    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent'},
-    {key: 'avgDailySold', title: 'Avg daily sold', dataType: 'number'},
     {key: undefined, title: 'In cart', dataType: 'cart-recipe-count'}
   ];
   private tabSubId = 'tab-subscription';
@@ -258,12 +255,21 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
       return;
     }
 
-    this.selected = ItemDetailsUtil.getSelection(item, this.auctionService.mapped.value);
+    this.selected = ItemDetailsUtil.getSelection(item,
+      this.auctionService.mapped.value,
+      this.auctionService.mappedVariations.value);
+    this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
+      .sort((a, b) => b.itemLevel - a.itemLevel);
     this.itemService.addToSelectionHistory({...this.selected});
+    this.auctionItems = this.auctionService.mappedVariations.value.get(this.selected.item.id);
     this.onItemSelection();
     this.itemSelectionHistoryForm.setValue(0);
     this.ignoreNextSelectionHistoryFormChange = true;
+    Report.debug('ItemComponent.setSelection', this.selected);
   }
 
 
+  openVariation(variation: AuctionItem) {
+    SharedService.events.detailSelection.emit(variation);
+  }
 }

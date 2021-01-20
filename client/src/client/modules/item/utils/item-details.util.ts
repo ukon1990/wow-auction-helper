@@ -4,6 +4,7 @@ import {SharedService} from '../../../services/shared.service';
 import {Pet} from '../../pet/models/pet';
 import {Item} from '../../../models/item/item';
 import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import {Recipe} from '../../crafting/models/recipe';
 
 interface ItemSelection {
   auctionItem: AuctionItem;
@@ -12,9 +13,12 @@ interface ItemSelection {
 }
 
 export class ItemDetailsUtil {
-  static getSelection(item: any, auctions: Map<string, AuctionItem>): ItemSelection {
+  static getSelection(item: any, auctions: Map<string, AuctionItem>, variations: Map<number, AuctionItem[]>): ItemSelection {
 
-    if (item.auctions && typeof item.item === 'number') {
+    if (item instanceof Recipe || item.craftedItemId) {
+      Report.debug('selected recipe');
+      return this.handleRecipe(item, variations);
+    } else if (item.auctions && typeof item.item === 'number') {
       Report.debug('selected auctions');
       return this.handleAuctionItem(item);
     } else if (item.id && item.bonusIds) {
@@ -75,6 +79,25 @@ export class ItemDetailsUtil {
       pet,
       auctionItem,
       item: SharedService.items[auctionItem ? auctionItem.itemID : undefined],
+    };
+  }
+
+  private static handleRecipe(recipe: Recipe, variations: Map<number, AuctionItem[]>): ItemSelection {
+    const variationMatch = variations.get(recipe.craftedItemId);
+    let auctionItem: AuctionItem = variationMatch ? variationMatch[0] : undefined;
+    if (recipe.bonusIds && recipe.bonusIds.length) {
+      variations.get(recipe.craftedItemId).forEach((variation) => {
+        variation.bonusIds.forEach(id => {
+          if (recipe.bonusIds.filter(bId => bId === id).length) {
+            auctionItem = variation;
+          }
+        });
+      });
+    }
+    return {
+      auctionItem: auctionItem,
+      item: SharedService.items[recipe.craftedItemId],
+      pet: undefined,
     };
   }
 }

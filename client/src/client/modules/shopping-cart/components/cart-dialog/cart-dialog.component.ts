@@ -8,12 +8,10 @@ import {BackgroundDownloadService} from '../../../core/services/background-downl
 import {CartTransformUtil} from '../../utils/cart-transform.util';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Reagent} from '../../../crafting/models/reagent';
-import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-cart-dialog',
   templateUrl: './cart-dialog.component.html',
-  styleUrls: ['./cart-dialog.component.scss']
 })
 export class CartDialogComponent implements OnInit, OnDestroy {
   sm = new SubscriptionManager();
@@ -41,6 +39,11 @@ export class CartDialogComponent implements OnInit, OnDestroy {
       key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
         idName: 'id',
       }
+    },
+    {
+      key: 'sumRoi',
+      title: 'ROI',
+      dataType: 'gold'
     },
   ];
   itemColumns: ColumnDescription[] = [
@@ -168,7 +171,10 @@ export class CartDialogComponent implements OnInit, OnDestroy {
 
   private setRecipes() {
     this.recipes = CartTransformUtil.recipes(
-      this.service.recipes.value, this.auctionService.mapped.value);
+      this.service.recipes.value,
+      this.auctionService.mapped.value,
+      this.cart ? this.cart.neededItems : []
+    );
   }
 
   private setItems() {

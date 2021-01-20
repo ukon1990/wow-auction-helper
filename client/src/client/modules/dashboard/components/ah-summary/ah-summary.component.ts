@@ -32,10 +32,11 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
       [],
       []),
     new SummaryCard(
-      'BFA Recipes with at least 10% profit',
+      'Shadowlands Recipes with at least 10% profit',
       'pie',
       [],
       []),
+    /*
     new SummaryCard(
       'Recipes with at least 10% profit and 10+ daily sold',
       'pie',
@@ -43,10 +44,10 @@ export class AhSummaryComponent implements OnInit, OnDestroy {
       []),
 
     new SummaryCard(
-      'BFA Recipes with at least 10% profit and 10+ daily sold',
+      'Shadowlands Recipes with at least 10% profit and 10+ daily sold',
       'pie',
       [],
-      [])
+      [])*/
   ];
 
   /**

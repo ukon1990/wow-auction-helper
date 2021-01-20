@@ -102,10 +102,10 @@ export class AuthService {
           const region = localStorage.getItem('region');
           const useAppSync = localStorage.getItem('useAppSync');
           const isRealmSet: boolean = !!(realm && region);
-
-          if (EmptyUtil.isNullOrUndefined(useAppSync) || !!useAppSync && !isRealmSet) {
+          const userIsNotAuthenticated = error === 'The user is not authenticated';
+          if (userIsNotAuthenticated && useAppSync === 'true' || EmptyUtil.isNullOrUndefined(useAppSync)) {
             this.openLoginComponent.emit(true);
-          } else {
+          } else if (!isRealmSet) {
             this.openSetupDialog(
               localStorage.getItem('realm'),  localStorage.getItem('region'));
           }

@@ -13,6 +13,7 @@ import {BackgroundDownloadService} from '../../core/services/background-download
 import {Report} from '../../../utils/report.util';
 import {AppSyncService} from '../../user/services/app-sync.service';
 import {SettingsService} from '../../user/services/settings/settings.service';
+import {TsmLuaUtil} from '../../../utils/tsm/tsm-lua.util';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,8 @@ export class ShoppingCartService {
     this.restore();
     this.sm.add(auctionService.mapped,
       (map: Map<string, AuctionItem>) => this.calculateCart(map));
+
+    this.sm.add(TsmLuaUtil.events, () => this.calculateCart());
 
     this.sm.add(backgroundService.isInitialLoadCompleted,
       (isDone) => {
@@ -193,15 +196,21 @@ export class ShoppingCartService {
     return list;
   }
 
-  private calculateCart(map: Map<string, AuctionItem> = this.auctionService.mapped.value, useInventory: boolean = true) {
-    this.cart.next(this.util.calculateSources(
+  private calculateCart(
+    map: Map<string, AuctionItem> = this.auctionService.mapped.value,
+    variations: Map<number, AuctionItem[]> = this.auctionService.mappedVariations.value,
+    useInventory: boolean = true) {
+    const cart: ShoppingCartV2 = this.util.calculateSources(
       CraftingService.map.value,
       map,
+      variations,
       ItemService.mapped.value,
       useInventory,
       this.recipes.value,
       this.items.value
-    ));
+    );
+    console.log('ShoppingCartService.calculateCart', cart);
+    this.cart.next(cart);
   }
 
   clear() {

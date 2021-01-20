@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {Title} from '@angular/platform-browser';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Recipe} from '../models/recipe';
 import {GameBuild} from '../../../utils/game-build.util';
@@ -15,6 +14,9 @@ import {CraftingService} from '../../../services/crafting.service';
 import {ProfessionService} from '../services/profession.service';
 import {ItemClassService} from '../../item/service/item-class.service';
 import {ItemClass} from '../../item/models/item-class.model';
+import {AuctionItem} from '../../auction/models/auction-item.model';
+import {SettingsService} from '../../user/services/settings/settings.service';
+import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
 
 interface FormModel {
   searchQuery: string;
@@ -50,15 +52,45 @@ export class CraftingComponent implements OnInit, OnDestroy {
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
     {key: 'mktPrice', title: 'Market value', dataType: 'gold', hideOnMobile: true},
     {key: 'roi', title: 'Profit', dataType: 'gold'},
-    {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true},
-    {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true},
-    {key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
-      idName: 'id',
-    }}
+    {
+      key: 'priceAvg24', title: '24H avg', dataType: 'gold', options: {
+        tooltip: 'Avg price, for the past ~24 hours'
+      }
+    },
+    {
+      key: 'priceTrend', title: '7 Day trend', dataType: 'gold', options: {
+        tooltip: 'Price trend per day, the past 7 days'
+      }
+    },
+    {
+      key: 'past60DaysSaleRate',
+      title: 'Pers. sale rate(60)',
+      dataType: 'percent',
+      options: {
+        tooltip: `Displays your personal sale rate, the past 60 days. The calculation is based in data imported via the TSM addon.`
+      },
+      hideOnMobile: true
+    },
+    {
+      key: 'inventoryQuantity',
+      title: 'In inventory',
+      dataType: 'number',
+      options: {
+        tooltip: `The calculation is based in data imported via the TSM addon.`
+      },
+      hideOnMobile: true
+    },
+    {
+      key: undefined, title: 'In cart', dataType: 'cart-recipe-count', options: {
+        idName: 'id',
+      }
+    }
   ];
 
-  constructor(private _formBuilder: FormBuilder, private _title: Title,
-              private service: AuctionsService, private professionService: ProfessionService) {
+  constructor(private _formBuilder: FormBuilder,
+              private service: AuctionsService,
+              private settingsService: SettingsService,
+              private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
@@ -134,6 +166,28 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
         }
         return false;
+      })
+      .map((recipe: Recipe) => {
+        const item: AuctionItem[] = this.service.mappedVariations.value.get(recipe.craftedItemId);
+        if (!item) {
+          return recipe;
+        }
+        const stats: ItemStats[] = this.service.statsVariations.value.get(recipe.craftedItemId);
+        const faction = this.settingsService.settings.value.faction || 0;
+        const stat = (item[0] && item[0].stats) || (stats && stats[0]) ?
+          item[0].stats || stats[0] : undefined;
+        const past60DaysSaleRate = item[0] && item[0].past60DaysSaleRate ? item[0].past60DaysSaleRate : 0.001;
+        const inventoryQuantity = item[0] && item[0].item && item[0].item.inventory ?
+          item[0].item.inventory[faction].quantity
+          : 0;
+
+        return {
+          ...recipe,
+          priceAvg24: stat ? stat.past24Hours.price.avg : 0,
+          priceTrend: stat ? stat.past7Days.price.trend : 0,
+          past60DaysSaleRate,
+          inventoryQuantity,
+        };
       });
   }
 

@@ -25,8 +25,10 @@ import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-s
 export class AuctionsService {
   list: BehaviorSubject<AuctionItem[]> = new BehaviorSubject<AuctionItem[]>([]);
   mapped: BehaviorSubject<Map<string, AuctionItem>> = new BehaviorSubject<Map<string, AuctionItem>>(new Map<string, AuctionItem>());
+  mappedVariations: BehaviorSubject<Map<number, AuctionItem[]>> = new BehaviorSubject(new Map<number, AuctionItem[]>());
   auctions: BehaviorSubject<Auction[]> = new BehaviorSubject<Auction[]>([]);
   stats: BehaviorSubject<Map<string, ItemStats>> = new BehaviorSubject(new Map<string, ItemStats>());
+  statsVariations: BehaviorSubject<Map<number, ItemStats[]>> = new BehaviorSubject(new Map<number, ItemStats[]>());
   events = {
     isDownloading: new BehaviorSubject<boolean>(true),
   };
@@ -38,8 +40,8 @@ export class AuctionsService {
   constructor(
     private http: HttpClient,
     public snackBar: MatSnackBar,
-    private _dbService: DatabaseService,
-    private _itemService: ItemService,
+    private dbService: DatabaseService,
+    private itemService: ItemService,
     private tsmService: TsmService,
     private settingsSync: SettingsService,
     private characterService: CharacterService,
@@ -68,8 +70,8 @@ export class AuctionsService {
     });
   }
 
-  getById(id: string | number): AuctionItem {
-    return this.mapped.value.get('' + id);
+  getById(id: string | number, map: Map<string, AuctionItem> = this.mapped.value): AuctionItem {
+    return map.get('' + id);
   }
 
   getAuctions(): Promise<any> {
@@ -84,34 +86,55 @@ export class AuctionsService {
     let auctions;
     const statsMap = new Map<string, ItemStats>();
     return Promise.all([
-      this.http
-        .get(realmStatus.stats.url)
-        .toPromise()
-        .then(({data}: {data: ItemStats[]}) => {
-          data.forEach(stat =>
-            statsMap.set(AuctionItemStat.getId(
-              stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
-            ), stat));
-          this.stats.next(statsMap);
-        }),
-      this.http
-        .get(realmStatus.url)
-        .toPromise()
-        .then(data => auctions = data['auctions'])
+      new Promise((resolve, reject) => {
+        this.http
+          .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
+          .toPromise()
+          .then(({data}: { data: ItemStats[] }) => {
+            const variations = new Map<number, ItemStats[]>();
+            data.forEach(stat => {
+              statsMap.set(AuctionItemStat.getId(
+                stat.itemId, stat.petSpeciesId, (stat.bonusIds as number[])
+              ), stat);
+              if (!variations.has(stat.itemId)) {
+                variations.set(stat.itemId, []);
+              }
+              variations.get(stat.itemId).push(stat);
+            });
+            this.statsVariations.next(variations);
+            this.stats.next(statsMap);
+            resolve(statsMap);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      }),
+      new Promise((resolve, reject) => {
+        this.http
+          .get(realmStatus.url)
+          .toPromise()
+          .then(data => {
+            auctions = data['auctions'];
+            resolve(auctions);
+          })
+          .catch(error => {
+            console.error(error);
+            reject(error);
+          });
+      })
     ])
       .then(async () => {
+        console.log('Auction download is completed');
         SharedService.downloading.auctions = false;
         localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-          await this.organize(auctions)
-            .catch(error => ErrorReport.sendError('getAuctions', error));
-        }
+        // if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
+        await this.organize(auctions)
+          .catch(error => ErrorReport.sendError('getAuctions', error));
+        // }
 
-        console.log('Auction download is completed');
         this.openSnackbar(`Auction download is completed`);
 
         this.handleNotifications();
-        SharedService.events.auctionUpdate.emit();
         this.auctions.next(auctions);
         this.events.isDownloading.next(true);
       })
@@ -174,7 +197,7 @@ export class AuctionsService {
   }
 
   async organize(auctions: Auction[] = this.auctions.value) {
-    if (!this.isReady) {
+    if (!this.isReady || !auctions.length) {
       return;
     }
     // this.characterService.updateCharactersForRealmAndRecipes();
@@ -182,12 +205,15 @@ export class AuctionsService {
       .then(({
                map,
                list,
-               auctions: auc
+               auctions: auc,
+               mapVariations,
              }) => {
-        CraftingUtil.calculateCost(true, map);
+        CraftingUtil.calculateCost(true, map, mapVariations);
+        this.mappedVariations.next(mapVariations);
         this.auctions.next(auctions);
         this.list.next(list);
         this.mapped.next(map);
+        SharedService.events.auctionUpdate.emit(true);
       })
       .catch(error => ErrorReport.sendError('getAuctions', error));
   }

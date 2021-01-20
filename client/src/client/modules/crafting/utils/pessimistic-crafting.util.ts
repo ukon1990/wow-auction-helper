@@ -16,15 +16,23 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
    * @param threshold Price threshold to trigger not using the cheapest auction
    * @param checkPercent The percent of the total quantity of an item available to check
    * @param map
+   * @param variations
    * @param items
    * @param faction The current faction
    * @param useIntermediateCrafting
    * @param useInventory
    */
-  constructor(map: Map<string, AuctionItem>, public items: Map<number, Item>, public faction: number,
-              useIntermediateCrafting: boolean = false, public useInventory: boolean = false,
-              private threshold: number = 1.05, private checkPercent: number = 0.1) {
-    super(map, items, faction, useIntermediateCrafting, useInventory);
+  constructor(
+    public map: Map<string, AuctionItem>,
+    public variations: Map<number, AuctionItem[]>,
+    public items: Map<number, Item>,
+    public faction: number,
+    useIntermediateCrafting: boolean = false,
+    public useInventory: boolean = false,
+    private threshold: number = 1.05,
+    private checkPercent: number = 0.1
+  ) {
+    super(map, variations, items, faction, useIntermediateCrafting, useInventory);
   }
 
   getPrice(id: number, quantity: number): number {

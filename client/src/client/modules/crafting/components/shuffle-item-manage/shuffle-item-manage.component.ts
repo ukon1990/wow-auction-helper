@@ -3,7 +3,6 @@ import {} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {startWith, map} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
-import {Angulartics2} from 'angulartics2';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Remains, RemainsSource} from '../../../../models/item/remains.model';

@@ -1,19 +1,15 @@
-import {DashboardV2} from '../models/dashboard-v2.model';
-import {AuctionItem} from '../../auction/models/auction-item.model';
-import {ItemRule, Rule} from '../models/rule.model';
-import {ColumnDescription} from '../../table/models/column-description';
-import {TargetValueEnum} from '../types/target-value.enum';
-import {ConditionEnum} from '../types/condition.enum';
-import {EmptyUtil, TextUtil} from '@ukon1990/js-utilities';
-import {AuctionUtil} from '../../auction/utils/auction.util';
-import {CraftingService} from '../../../services/crafting.service';
-import {NpcService} from '../../npc/services/npc.service';
-import {SharedService} from '../../../services/shared.service';
-import {ItemService} from '../../../services/item.service';
-import {Sorter} from '../../../models/sorter';
-import {ErrorReport} from '../../../utils/error-report.util';
-import {GoldPipe} from '../../util/pipes/gold.pipe';
-import {AuctionItemStat} from '../../../../../../api/src/auction/models/auction-item-stat.model';
+import { DashboardV2 } from '../models/dashboard-v2.model';
+import { AuctionItem } from '../../auction/models/auction-item.model';
+import { ItemRule, Rule } from '../models/rule.model';
+import { ColumnDescription } from '../../table/models/column-description';
+import { TargetValueEnum } from '../types/target-value.enum';
+import { ConditionEnum } from '../types/condition.enum';
+import { EmptyUtil, TextUtil } from '@ukon1990/js-utilities';
+import { AuctionUtil } from '../../auction/utils/auction.util';
+import { Sorter } from '../../../models/sorter';
+import { ErrorReport } from '../../../utils/error-report.util';
+import { GoldPipe } from '../../util/pipes/gold.pipe';
+import { AuctionItemStat } from '../../../../../../api/src/auction/models/auction-item-stat.model';
 
 interface IdPaths {
   recipeId?: string;
@@ -36,6 +32,7 @@ export class DashboardCalculateUtil {
       zoneId: this.getIdParameterForName(board, 'zone')
     };
 
+    // TODO: Filter away TSM stuff temporarily
     try {
       const dataMap = new Map<string, any>();
       if (board.onlyItemsWithRules) {
@@ -56,7 +53,7 @@ export class DashboardCalculateUtil {
     let recipeIdKey;
     board.columns.forEach(column => {
       if (!recipeIdKey && TextUtil.contains(column.key, name)) {
-        const {regex, expressions} = this.getMathRegex(column.key);
+        const { regex, expressions } = this.getMathRegex(column.key);
         const keys = column.key.split(regex)
           .filter(key => TextUtil.contains(key, name))[0];
         const parts = keys.split('.');
@@ -93,33 +90,64 @@ export class DashboardCalculateUtil {
   }
 
   private static addOnlyIncludedInItemRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-                                            paths: IdPaths) {
+    paths: IdPaths) {
     if (board.itemRules && board.itemRules.length) {
-      board.itemRules.forEach((rule: ItemRule) => {
-        const id = this.getId(undefined, rule);
-        const item = items.get('' + rule.itemId);
-        if (this.isFollowingTheRules(board.rules, item) &&
-          this.isFollowingTheRules(rule.rules, items.get('' + rule.itemId))) {
-          dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+      board.itemRules.forEach((itemRule: ItemRule) => {
+        const id = this.getId(undefined, itemRule);
+        const item = items.get('' + itemRule.itemId);
+        const iterableKeyRules = [
+          ...board.rules.filter(rule => this.ruleContainsIterable(rule)),
+          ...itemRule.rules.filter(rule => this.ruleContainsIterable(rule))
+        ];
+        const nonIterableKeyRules = [
+          ...board.rules.filter(rule => !this.ruleContainsIterable(rule)),
+          ...itemRule.rules.filter(rule => !this.ruleContainsIterable(rule))
+        ];
+        const iterableFields = [
+          ...board.columns.map(column => ({
+            field: column.key, condition: null, targetValueType: null, isAlwaysValid: true
+          })).filter(column =>
+            this.ruleContainsIterable(column))
+        ];
+
+        if (item && !itemRule.rules.length && !board.rules.length && iterableFields.length) {
+          if (item && this.isFollowingTheRules(nonIterableKeyRules, item)) {
+            this.addMatchingForIterableFields(iterableFields, item, board, dataMap, id, paths, true);
+          }
+        } else if (iterableKeyRules.length > 0) {
+          this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, paths);
+        } else if (item && this.isFollowingTheRules(board.rules, item) &&
+          this.isFollowingTheRules(itemRule.rules, item)) {
+          try {
+            dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+          } catch (e) {
+          }
         }
       });
     }
   }
 
-  private static addMatchingBoardRules(board: DashboardV2, items: Map<string, AuctionItem>, dataMap: Map<string, any>,
-                                       paths: IdPaths) {
+  private static addMatchingBoardRules(
+    board: DashboardV2,
+    items: Map<string, AuctionItem>,
+    dataMap: Map<string, any>,
+    paths: IdPaths
+  ) {
     if ((board.rules.length || (board.itemRules && board.itemRules.length))) {
       try {
-        const iterableKeyRules = board.rules.filter(rule => this.ruleContainsIterable(rule));
-        const nonIterableKeyRules = board.rules.filter(rule => !this.ruleContainsIterable(rule));
+        const iterableKeyRules = (board.rules || []).filter(rule => this.ruleContainsIterable(rule));
+        const nonIterableKeyRules = (board.rules || []).filter(rule => !this.ruleContainsIterable(rule));
 
         items.forEach((item: AuctionItem) => {
-          if (this.isFollowingTheRules(nonIterableKeyRules, item)) {
+          if (item && this.isFollowingTheRules(nonIterableKeyRules, item)) {
             const id = this.getId(item);
             if (iterableKeyRules.length > 0) {
               this.addMatchingForIterableFields(iterableKeyRules, item, board, dataMap, id, paths);
             } else {
-              dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+              try {
+                dataMap.set(id, [this.getResultObject(item, board.columns, paths)]);
+              } catch (e) {
+              }
             }
           }
         });
@@ -130,7 +158,7 @@ export class DashboardCalculateUtil {
   }
 
   private static addMatchingForIterableFields(iterableKeyRules: Rule[], item: AuctionItem, board: DashboardV2,
-                                              dataMap: Map<string, any>, id: string, paths: IdPaths) {
+    dataMap: Map<string, any>, id: string, paths: IdPaths, printLog: boolean = false) {
     const list = [];
     let arr: any[];
     const partialPath = [];
@@ -140,19 +168,29 @@ export class DashboardCalculateUtil {
         partialPath.push(key);
         if (key.indexOf('[') === 0) {
           const arrKey = key.replace(/[\[\]]/gi, '');
-          arr = obj ? obj[arrKey] : item[arrKey];
+          arr = obj ? obj[arrKey] : item ? item[arrKey] : undefined;
 
           if (arr) {
             arr.forEach((it, index) => {
               const childObject = this.getItemCopy(item);
               this.setValueAtPath(childObject, it, partialPath, index);
               if (this.isFollowingTheRules(iterableKeyRules, childObject)) {
-                list.push(this.getResultObject(childObject, board.columns, paths));
+                try {
+                  list.push(this.getResultObject(childObject, board.columns, paths));
+                } catch (e) {
+                }
               }
             });
           }
         } else {
-          obj = obj ? obj[key] : item[key];
+          if (obj) {
+            obj = obj[key];
+          } else {
+            try {
+              obj = item[key];
+            } catch (error) {
+            }
+          }
         }
       });
     if (list.length) {
@@ -185,11 +223,11 @@ export class DashboardCalculateUtil {
 
   private static getParamWithArrayIndicator(iterableKeyRules: Rule[]) {
     if (iterableKeyRules[0].field.indexOf('[') > -1) {
-      const {regex: rx} = this.getMathRegex(iterableKeyRules[0].field);
+      const { regex: rx } = this.getMathRegex(iterableKeyRules[0].field);
       const sp = iterableKeyRules[0].field.split(rx);
       return sp.length > 1 ? sp[1] : sp[0];
     }
-    const {regex} = this.getMathRegex(iterableKeyRules[0].toField);
+    const { regex } = this.getMathRegex(iterableKeyRules[0].toField);
     const split = iterableKeyRules[0].toField.split(regex);
     return split.length > 1 ? split[1] : split[0];
   }
@@ -214,12 +252,14 @@ export class DashboardCalculateUtil {
 
   private static isFollowingTheRules(rules: Rule[], item: AuctionItem) {
     for (let i = 0, length = rules.length; i < length; i++) {
-      if (rules[i].or && rules[i].or.length) {
-        if (!this.validateOrRule(rules[i], item)) {
+      if (!rules[i].isAlwaysValid) {
+        if (rules[i].or && rules[i].or.length) {
+          if (!this.validateOrRule(rules[i], item)) {
+            return false;
+          }
+        } else if (!this.validateRule(rules[i], item)) {
           return false;
         }
-      } else if (!this.validateRule(rules[i], item)) {
-        return false;
       }
     }
     return true;
@@ -269,7 +309,7 @@ export class DashboardCalculateUtil {
 
   static getValueFromField(field: string, item: AuctionItem) {
     const resultValues = [];
-    const {regex, expressions} = this.getMathRegex(field);
+    const { regex, expressions } = this.getMathRegex(field);
     try {
       field.split(regex)
         .forEach((fieldPath, index) => {
@@ -299,11 +339,11 @@ export class DashboardCalculateUtil {
   private static getMathRegex(field: string) {
     const regex = /[*\-\/+]/gi;
     const expressions = field.match(regex);
-    return {regex, expressions};
+    return { regex, expressions };
   }
 
   private static getResultObject(item: AuctionItem, columns: ColumnDescription[],
-                                 paths: IdPaths, printLog: boolean = false) {
+    paths: IdPaths, printLog: boolean = false) {
     const obj = {
       id: item.itemID,
       bonusIds: item.bonusIds,

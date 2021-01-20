@@ -125,8 +125,10 @@ export class BackgroundDownloadService {
 
   private async initiateAuctionOrganizingAndTSM() {
     this.auctionsService.isReady = true;
+    /* TODO: TSM Dependent
     await this.tsmService.load(this.realmService.events.realmStatus.value)
       .catch(console.error);
+    */
     await this.auctionsService.organize()
       .then(() => console.log('Organized'))
       .catch(console.error);
@@ -172,6 +174,9 @@ export class BackgroundDownloadService {
         ];
 
         await Promise.all(promises)
+          .then(() => {
+            this.npcService.initCalculationAndMapping();
+          })
           .catch(console.error);
         console.log('Loaded basic app data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
       })

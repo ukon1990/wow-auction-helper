@@ -29,6 +29,10 @@ export class TsmService {
     return this.mapped.value.get(id);
   }
 
+  /**
+   * Deprecated
+   * @param realmStatus
+   */
   load(realmStatus: AuctionHouseStatus): Promise<TSM[]> {
     return new Promise<TSM[]>(async (resolve, reject) => {
       let list: TSM[] = [];

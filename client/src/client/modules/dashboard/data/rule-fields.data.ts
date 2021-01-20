@@ -93,10 +93,16 @@ export const ruleFields: RuleFieldGroup[] = [
         defaultType: TargetValueEnum.GOLD
       },
       {
+        key: columnConfig.auction.vendorSellVsBuyout.key,
+        name: columnConfig.auction.vendorSellVsBuyout.title,
+        column: columnConfig.auction.vendorSellVsBuyout,
+        defaultType: TargetValueEnum.PERCENT
+      },
+      {
         key: columnConfig.auction.buyoutVsVendorSell.key,
         name: columnConfig.auction.buyoutVsVendorSell.title,
         column: columnConfig.auction.buyoutVsVendorSell,
-        defaultType: TargetValueEnum.GOLD
+        defaultType: TargetValueEnum.PERCENT
       }, {
         key: columnConfig.auction.timeLeft.key,
         name: columnConfig.auction.timeLeft.title,
@@ -127,6 +133,7 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.auction.quantityPast7DaysTrend,
         defaultType: TargetValueEnum.NUMBER
       },
+      /* TODO: If TSM is public again
       {
         key: 'regionSaleRate',
         name: 'Sale rate',
@@ -139,6 +146,7 @@ export const ruleFields: RuleFieldGroup[] = [
         column: columnConfig.auction.avgDailySold,
         defaultType: TargetValueEnum.NUMBER
       },
+      */
       {
         key: 'mktPrice',
         name: 'Market price',
@@ -146,11 +154,18 @@ export const ruleFields: RuleFieldGroup[] = [
         defaultType: TargetValueEnum.GOLD
       },
       {
+        key: columnConfig.auction.buyoutVsMktPrice.key,
+        name: columnConfig.auction.buyoutVsMktPrice.title,
+        column: columnConfig.auction.buyoutVsMktPrice,
+        defaultType: TargetValueEnum.PERCENT
+      },
+      /* TODO: If TSM is public again
+      {
         key: 'regionSaleAvg',
         name: 'Avg sales price',
         column: columnConfig.auction.regionSaleAvg,
         defaultType: TargetValueEnum.GOLD
-      },
+      },*/
       {
         key: 'quantityTotal',
         name: 'Quantity total',
@@ -404,6 +419,40 @@ export const ruleFields: RuleFieldGroup[] = [
         key: 'source.tradeVendor.buyout',
         name: 'Best value buyout',
         column: columnConfig.source.tradeVendor.buyout,
+        defaultType: TargetValueEnum.GOLD
+      }
+    ]
+  },
+  {
+    name: 'Destroying: Prospecting',
+    options: [
+      {
+        key: columnConfig.prospecting.name.key,
+        name: columnConfig.prospecting.name.title,
+        column: columnConfig.prospecting.name,
+        defaultType: TargetValueEnum.TEXT
+      },
+      {
+        key: columnConfig.prospecting.yield.key,
+        name: columnConfig.prospecting.yield.title,
+        column: columnConfig.prospecting.yield,
+        defaultType: TargetValueEnum.GOLD
+      }
+    ]
+  },
+  {
+    name: 'Destroying: Milling',
+    options: [
+      {
+        key: columnConfig.milling.name.key,
+        name: columnConfig.milling.name.title,
+        column: columnConfig.milling.name,
+        defaultType: TargetValueEnum.TEXT
+      },
+      {
+        key: columnConfig.milling.yield.key,
+        name: columnConfig.milling.yield.title,
+        column: columnConfig.milling.yield,
         defaultType: TargetValueEnum.GOLD
       }
     ]

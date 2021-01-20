@@ -25,6 +25,7 @@ export class Recipe {
   skillTierId: number;
   reagents: Reagent[];
   modifiedSlots: ModifiedSlot[];
+  bonusIds: number[];
 
   timestamp: number;
 }

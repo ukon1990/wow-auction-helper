@@ -1,4 +1,5 @@
 import {DroppedItem, NPC, NPCCoordinate, SkinnedItem, VendorItem} from '../models/npc.model';
+import {ErrorReport} from '../../../utils/error-report.util';
 
 export interface SellsType {
   id: string;
@@ -28,32 +29,43 @@ export interface NpcSplitType {
 
 export class NpcUtil {
 
+  private static getValue<T>(item: SellsType | DropsType | SkinningType): number[] {
+    return (item && item.foundOn ? item.foundOn : []);
+  }
+
   static combine(data: NpcSplitType): NPC[] {
     const map = new Map<number, NPC>();
     const list: NPC[] = [];
 
-    data.bases.forEach(npc => {
-      map.set(npc.id, npc);
-      list.push(npc);
-    });
-
-    data.sells.forEach(item => {
-      item.foundOn.forEach(npcId => {
-        map.get(npcId).sells.push(item.item);
+    if (data) {
+      data.bases.forEach(npc => {
+        if (!npc) {
+          return;
+        }
+        map.set(npc.id, npc);
+        list.push(npc);
       });
-    });
 
-    data.drops.forEach(item => {
-      item.foundOn.forEach(npcId => {
-        map.get(npcId).drops.push(item.item);
+      data.sells.forEach(item => {
+        this.getValue(item).forEach(npcId => {
+          map.get(npcId).sells.push(item.item);
+        });
       });
-    });
 
-    data.skinning.forEach(item => {
-      item.foundOn.forEach(npcId => {
-        map.get(npcId).skinning.push(item.item);
+      data.drops.forEach(item => {
+        this.getValue(item).forEach(npcId => {
+          map.get(npcId).drops.push(item.item);
+        });
       });
-    });
+
+      data.skinning.forEach(item => {
+        this.getValue(item).forEach(npcId => {
+          map.get(npcId).skinning.push(item.item);
+        });
+      });
+    } else {
+      ErrorReport.sendError('NpcUtil.combine', {name: 'The value is empty', stack: ''} as Error);
+    }
 
     return list;
   }

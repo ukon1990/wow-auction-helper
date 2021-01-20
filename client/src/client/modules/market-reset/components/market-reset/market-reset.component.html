@@ -4,97 +4,159 @@
   <strong>Items to buy:</strong> {{ sum?.itemsToBuy | number }}
 </p>
 
-<form [formGroup]="form" class="row">
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput placeholder="Item name" formControlName="name">
-  </mat-form-field>
+<form [formGroup]="form">
+  <div class="row">
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput placeholder="Item name" formControlName="name">
+    </mat-form-field>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput placeholder="ROI increment percent"
-           formControlName="breakPointPercent"
-           type="number"
-           min="101">
-  </mat-form-field>
+    <!-- TSM dependent
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             placeholder="Est days to sell"
+             formControlName="timeToSell"
+             type="number"
+             min="0">
+    </mat-form-field>
+    -->
+    <mat-form-field class="ml-2 mr-2 col"
+                    color="accent"
+    >
+      <mat-select
+              [disableOptionCentering]="true"
+              placeholder="Item class"
+              formControlName="itemClass">
+        <mat-option [value]="-1">
+          All
+        </mat-option>
+        <mat-option *ngFor="let c of itemClasses; let i = index;"
+                    [value]="c.id">
+          {{ c.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput
-           placeholder="Est days to sell"
-           formControlName="timeToSell"
-           type="number"
-           min="0">
-  </mat-form-field>
+    <mat-form-field *ngIf="itemClasses[form.value.itemClass]"
+                    class="ml-2 mr-2 col"
+                    color="accent"
+    >
+      <mat-select
+              [disableOptionCentering]="true"
+              placeholder="Item sub class"
+              formControlName="itemSubClass">
+        <mat-option
+                [value]="-1"
+        >
+          All
+        </mat-option>
+        <mat-option *ngFor="let c of itemClasses[form.value.itemClass].subClasses"
+                    [value]="c.id"
+        >
+          {{ c.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <mat-select
+              [disableOptionCentering]="true"
+              placeholder="Expansion"
+              formControlName="expansion">
+        <mat-option
+                [value]="null"
+        >
+          All
+        </mat-option>
+        <mat-option
+                *ngFor="let expansion of expansions; let i = index"
+                [value]="i"
+        >
+          {{ expansion }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput
-           placeholder="Max x% of market value"
-           type="number"
-           formControlName="mktPriceUpperThreshold">
-  </mat-form-field>
+    <div class="col">
+      <button mat-stroked-button
+              color="warn"
+              type="button"
+              (click)="resetForm()">
+        Reset
+      </button>
+    </div>
+  </div>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput
-           placeholder="Max x% of current min price"
-           matTooltip="The new price can at max, be x % of the current lowest buyout price"
-           formControlName="newVsCurrentBuyoutPriceLimit"
-           type="number"
-           min="0">
-  </mat-form-field>
+  <div class="row">
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput placeholder="ROI increment percent"
+             formControlName="breakPointPercent"
+             type="number"
+             min="101">
+    </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             placeholder="Max x% of market value"
+             type="number"
+             formControlName="mktPriceUpperThreshold">
+    </mat-form-field>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput
-           placeholder="Min profit in gold"
-           formControlName="minROI"
-           type="text"
-           [ngModel]="toValueGold.minROI | gold"
-           (ngModelChange)="setNewInputGoldValue($event, 'minROI')">
-  </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             placeholder="Max x% of current min price"
+             matTooltip="The new price can at max, be x % of the current lowest buyout price"
+             formControlName="newVsCurrentBuyoutPriceLimit"
+             type="number"
+             min="0">
+    </mat-form-field>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput
-           placeholder="Min ROI in percent"
-           formControlName="minROIPercent"
-           type="number"
-           min="0">
-  </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             placeholder="Min profit in gold"
+             formControlName="minROI"
+             type="text"
+             [ngModel]="toValueGold.minROI | gold"
+             (ngModelChange)="setNewInputGoldValue($event, 'minROI')">
+    </mat-form-field>
 
-  <mat-form-field class="col"
-                  color="accent"
-  >
-    <input matInput
-           placeholder="Max sum buyout per reset"
-           formControlName="maxTotalBuyoutPerItem"
-           [ngModel]="toValueGold.maxTotalBuyoutPerItem | gold"
-           (ngModelChange)="setNewInputGoldValue($event, 'maxTotalBuyoutPerItem')"
-           type="text">
-  </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             placeholder="Min ROI in percent"
+             formControlName="minROIPercent"
+             type="number"
+             min="0">
+    </mat-form-field>
 
-  <mat-checkbox class="col"
-                formControlName="useHighestROIResult"
-                matTooltip="Prioritizes a better return on investment over gold earned">
-    Prioritize ROI over most gold per row
-  </mat-checkbox>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             placeholder="Max sum buyout per reset"
+             formControlName="maxTotalBuyoutPerItem"
+             [ngModel]="toValueGold.maxTotalBuyoutPerItem | gold"
+             (ngModelChange)="setNewInputGoldValue($event, 'maxTotalBuyoutPerItem')"
+             type="text">
+    </mat-form-field>
 
-  <div class="col">
-    <button mat-stroked-button
-            color="warn"
-            type="button"
-            (click)="resetForm()">
-      Reset
-    </button>
+    <mat-checkbox class="col"
+                  formControlName="useHighestROIResult"
+                  matTooltip="Prioritizes a better return on investment over gold earned">
+      Prioritize ROI over most gold per row
+    </mat-checkbox>
   </div>
 </form>
 

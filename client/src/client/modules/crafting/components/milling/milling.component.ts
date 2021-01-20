@@ -71,8 +71,9 @@ export class MillingComponent implements OnInit, OnDestroy {
         this.filterData(minROI, type);
       });
     }*/
-    this.sm.add(SharedService.events.auctionUpdate, () => {
+    this.sm.add(this.auctionService.mapped, () => {
       const {minROI, type} = this.form.value;
+      ProspectingAndMillingUtil.calculateCost();
       this.filterData(minROI, type);
     });
   }
@@ -101,5 +102,9 @@ export class MillingComponent implements OnInit, OnDestroy {
   closeEditWindow(): void {
     this.isEditing = false;
     this.isEditingType = undefined;
+  }
+
+  resetDefaults(MILLING: string) {
+
   }
 }

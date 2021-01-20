@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DashboardService} from '../../services/dashboard.service';
 import {DashboardV2} from '../../models/dashboard-v2.model';
-import {FormControl} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {ConfigureComponent} from '../configure/configure.component';
 import {MatDialog} from '@angular/material/dialog';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
@@ -14,6 +14,8 @@ import {ErrorReport} from '../../../../utils/error-report.util';
 import {SearchComponent} from '../search/search.component';
 import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
+import {PageEvent} from '@angular/material/paginator';
+import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
 
 @Component({
   selector: 'wah-dashboard-items',
@@ -21,22 +23,47 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
   styleUrls: ['./dashboard-items.component.scss']
 })
 export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
+  form: FormGroup = new FormGroup({
+    displayHidden: new FormControl(false),
+    search: new FormControl()
+  });
   dashboards: DashboardV2[] = [];
-  displayHiddenForm: FormControl = new FormControl(false);
+  filteredBoards: DashboardV2[] = [];
+  // displayHiddenForm: FormControl = new FormControl(false);
+  // displaySearch: FormControl = new FormControl();
+  itemsPerPage = 8;
+  pageRows: Array<number> = [4, 8, 12, 24, 36];
+  pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
   sm = new SubscriptionManager();
   faImport = faFileImport;
   faPlus = faPlus;
-  displaySortPanel: any;
   numberOfCharactersOnRealm: number;
   numberOfBoardsWithAMatch: number;
   numberOfActiveBoards: number;
+  private lastCalculationTime: number;
 
-  constructor(private service: DashboardService, public dialog: MatDialog, private characterService: CharacterService) {
+  constructor(private service: DashboardService,
+              public dialog: MatDialog,
+              private characterService: CharacterService
+  ) {
+    this.sm.add(this.form.valueChanges, value => {
+      const delay = 500;
+      this.lastCalculationTime = +new Date();
+
+      setTimeout(() => {
+        const timeDiff = +new Date() - this.lastCalculationTime;
+        if (timeDiff >= delay) {
+          this.filter(value);
+        }
+      }, delay);
+    });
   }
 
   ngAfterViewInit() {
-    this.sm.add(this.service.list, (boards: DashboardV2[]) =>
-      this.dashboards = [...boards]);
+    this.sm.add(this.service.list, (boards: DashboardV2[]) => {
+      this.dashboards = [...boards];
+      this.filter();
+    });
     this.sm.add(NewsUtil.events, isDisplaying => this.renderMigration(isDisplaying));
     this.sm.add(this.service.calculatedBoardEvent, () =>
       this.setTabTitleNumbers());
@@ -78,20 +105,24 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
     }
   }
 
-  onPanelClick(panelName: string) {
-    if (panelName === 'sort') {
-      if (this.displaySortPanel) {
-        this.displaySortPanel = false;
-      } else {
-        this.displaySortPanel = true;
-      }
-    } else {
-      if (!this.displaySortPanel && panelName === 'boards') {
-        this.displaySortPanel = true;
-      } else {
-        this.displaySortPanel = false;
-      }
+  pageChange(event: PageEvent): void {
+    this.pageEvent = event;
+  }
+
+  /* istanbul ignore next */
+  get toValue(): number {
+    if (!this.pageEvent || !this.pageEvent.pageSize) {
+      return this.pageRows[0];
     }
+    return this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1);
+  }
+
+  /* istanbul ignore next */
+  get fromValue(): number {
+    if (!this.pageEvent || !this.pageEvent.pageSize) {
+      return 0;
+    }
+    return (this.pageEvent.pageSize * (this.pageEvent.pageIndex + 1)) - this.pageEvent.pageSize;
   }
 
   private renderMigration(isDisplaying: boolean) {
@@ -109,5 +140,41 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
       width: '95%',
       maxWidth: '100%',
     });
+  }
+
+  private filter({search, displayHidden} = this.form.value) {
+    this.filteredBoards = this.dashboards
+      .filter(({title, data, isDisabled, tags}) => {
+        if (!displayHidden && isDisabled) {
+          return false;
+        }
+
+        if ((!data || !data.length) && !displayHidden) {
+          return false;
+        }
+
+        if (!search || TextUtil.contains(title, search)) {
+          return true;
+        }
+
+        if (tags) {
+          for (let i = 0; i < tags.length; i++) {
+            if (tags[i] && TextUtil.contains(tags[i], search)) {
+              return true;
+            }
+          }
+        }
+
+        for (let i = 0; i < data.length; i++) {
+          const values = Object.keys(data[i]);
+          for (let ix = 0; ix < values.length; ix++) {
+            const source = '' + data[i][values[ix]];
+            if (source && TextUtil.contains(source, search)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      });
   }
 }

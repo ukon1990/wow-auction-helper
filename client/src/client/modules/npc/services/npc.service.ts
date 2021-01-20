@@ -43,12 +43,16 @@ export class NpcService {
         await this.get()
           .catch(console.error);
       }
+      resolve(NpcService.list.value);
+    });
+  }
 
+  initCalculationAndMapping() {
+    if (NpcService.itemNpcMap.value.size === 0) {
       NPC.getTradeVendorsAndSetUnitPriceIfMissing(NpcService.list.value);
 
       this.mapNPCsToItems();
-      resolve(NpcService.list.value);
-    });
+    }
   }
 
   get(): Promise<NPC[]> {
@@ -105,6 +109,9 @@ export class NpcService {
   private mapNPCsToItems() {
     const map: Map<number, ItemNpcDetails> = new Map();
     NpcService.list.value.forEach(npc => {
+      if (!npc) {
+        return;
+      }
       (npc.drops || []).forEach(item => {
         if (!map.has(item.id)) {
           map.set(item.id, new ItemNpcDetails(this, this.zoneService));

@@ -21,10 +21,47 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   itemClasses: ItemClass[] = ItemClassService.getForLocale();
   itemQualities = itemQualities;
 
-  table = {
-    columns: [],
-    data: []
-  };
+  columns: ColumnDescription[] = [
+    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true},
+    {key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true},
+    {
+      key: 'quantityTrend24', title: '24H stock trend', dataType: 'number', options: {
+        tooltip: 'Avg quantity trend per hour, the past ~24 hours'
+      }, hideOnMobile: true
+    },
+    {
+      key: 'quantityTrend', title: 'Stock trend', dataType: 'number', options: {
+        tooltip: 'Avg quantity trend per day, the past 7 days'
+      }, hideOnMobile: true
+    },
+    {key: 'buyout', title: 'Buyout', dataType: 'gold'},
+    {
+      key: 'priceTrend24', title: '24H trend', dataType: 'gold', options: {
+        tooltip: 'Price trend per hour, the past ~24 hours'
+      }
+    },
+    {
+      key: 'priceTrend', title: '7 Day trend', dataType: 'gold', options: {
+        tooltip: 'Price trend per day, the past 7 days'
+      }
+    },
+    {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
+    {
+      key: 'mktPrice', title: 'Market value', dataType: 'gold', options: {
+        tooltip: 'The avg price the past 7 days, per day'
+      }, hideOnMobile: true
+    },
+    {
+      key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
+        idName: 'id',
+      }
+    },
+    // {key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true}
+    // {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true}
+    // {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true}
+  ];
+  tableData = [];
   expansions = GameBuild.expansionMap;
   delayFilter = false;
   private subs = new SubscriptionManager();
@@ -32,7 +69,6 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
   constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
     SharedService.events.title.next('Auctions');
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
-    this.addColumns();
 
     this.form = formBuilder.group({
       name: filter && filter.name ? filter.name : '',
@@ -80,45 +116,18 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.subs.unsubscribe();
   }
 
-
-  addColumns(): void {
-    const columns: ColumnDescription[] =[...this.table.columns];
-    columns.push({key: 'name', title: 'Name', dataType: 'name'});
-    columns.push({key: 'itemLevel', title: 'iLvL', dataType: 'number', hideOnMobile: true});
-    columns.push({key: 'quantityTotal', title: 'Stock', dataType: 'number', hideOnMobile: true});
-    columns.push({key: 'quantityTrend', title: 'Stock trend', dataType: 'number', options: {
-        tooltip: 'Quantity trend per hour, the past 7 days'
-      }, hideOnMobile: true});
-    columns.push({key: 'buyout', title: 'Buyout', dataType: 'gold'});
-    columns.push({key: 'priceTrend', title: 'Trend (per hour)', dataType: 'gold', options: {
-      tooltip: 'Price trend per hour, the past 7 days'
-    }});
-    columns.push({key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true});
-    columns.push({key: 'mktPrice', title: 'Market value', dataType: 'gold', options: {
-        tooltip: 'The avg price the past 7 days'
-      }, hideOnMobile: true});
-    columns.push({key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true});
-    columns.push({key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true});
-    columns.push({key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true});
-    columns.push({
-      key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
-        idName: 'id',
-      }
-    });
-
-    this.table.columns = columns;
-  }
-
   async filterAuctions(changes = this.form.value) {
 
-    this.table.data = this.auctionService.list.value
+    this.tableData = this.auctionService.list.value
       .filter(i => this.isMatch(i, changes))
       .map(i => {
         return {
           ...SharedService.pets[i.petSpeciesId],
           ...i,
           quantityTrend: i.stats ? i.stats.past7Days.quantity.trend : 0,
+          quantityTrend24: i.stats ? i.stats.past24Hours.quantity.trend : 0,
           priceTrend: i.stats ? i.stats.past7Days.price.trend : 0,
+          priceTrend24: i.stats ? i.stats.past24Hours.price.trend : 0,
         };
       });
   }

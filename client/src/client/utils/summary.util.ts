@@ -30,7 +30,7 @@ export class SummaryUtil {
 
   public static isCurrentExpansionMatch(itemID: number, onlyCurrentExpansion: boolean) {
     if (onlyCurrentExpansion) {
-      return SummaryUtil.getItem(itemID).expansionId === 7;
+      return SummaryUtil.getItem(itemID).expansionId === 8;
     }
     return true;
   }

@@ -2,6 +2,8 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
+import {DateUtil} from '@ukon1990/js-utilities';
+import {AuctionHouse} from '../../realm/model';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
 
 export class StatsRepository {
@@ -23,13 +25,41 @@ export class StatsRepository {
   constructor(private conn: DatabaseUtil, autoClose: boolean = true) {
   }
 
-  getAllStatsForRealmDate(ahId: number): Promise<AuctionItemStat[]> {
-    return this.conn.query(`
-        SELECT *
+  getAllStatsForRealmDate(house: AuctionHouse): Promise<AuctionItemStat[]> {
+    let result = [];
+
+    return new Promise<AuctionItemStat[]>((resolve, reject) => {
+      Promise.all(
+        AuctionProcessorUtil.getHourlyColumnsSince()
+          .map(data => this.conn.query(`
+        SELECT date, itemId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
         FROM itemPriceHistoryPerHour
-        WHERE ahId = ${ahId}
-          AND date >= NOW() - INTERVAL 7 DAY
-        ORDER BY date;`);
+        WHERE ahId = ${house.id} AND date = ${data.date};`)
+            .then(res => {
+              result = [...result, ...res];
+            })
+          )
+      )
+        .then(() => {
+          resolve(result);
+        })
+        .catch(reject);
+    });
+  }
+
+  getRealmPriceHistoryDailyPastDays(ahId: number, daysSince: number) {
+    const {
+      columns,
+      months
+    } = AuctionProcessorUtil.getDailyColumnsSince(daysSince);
+    return this.conn.query(`
+          SELECT date, itemId, petSpeciesId, bonusIds, ${columns.join(', ')}
+          FROM itemPriceHistoryPerDay
+          WHERE ${months.map(month => `(
+          ahId = ${ahId}
+            AND date = ${month}
+          )`).join(' OR ')};
+    `);
   }
 
   getAllStatsForRealmMonth(ahId: number, date: Date = new Date()): Promise<AuctionItemStat[]> {

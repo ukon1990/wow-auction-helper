@@ -145,12 +145,12 @@ export class RDSQueryUtil<T> {
 
 export class NoSQLQueryUtil {
 
-  static update(table: string, input: any) {
+  static update(table: string, input: any, updateLastModified: boolean) {
     const {
       attributeValues,
       updateExpression,
       expressionAttributeNames
-    } = this.getAttributeValues(input);
+    } = this.getAttributeValues(input, updateLastModified);
 
     return {
       TableName: table,
@@ -164,14 +164,14 @@ export class NoSQLQueryUtil {
     };
   }
 
-  private static getAttributeValues<T>(input: T) {
+  private static getAttributeValues<T>(input: T, updateLastModified: boolean) {
     const attributeValues = {
-      ':lastModified': +new Date()
     };
     const updateExpression = [];
     const expressionAttributeNames = {};
 
-    if (!input['lastModified']) {
+    if (!input['lastModified'] && updateLastModified) {
+      attributeValues[':lastModified'] = +new Date();
       updateExpression.push('lastModified = :lastModified');
     }
 

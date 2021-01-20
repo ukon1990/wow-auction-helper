@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Rule} from '../../../models/rule.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
@@ -8,7 +8,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
   templateUrl: './rules.component.html',
   styleUrls: ['./rules.component.scss']
 })
-export class RulesComponent implements OnInit, OnDestroy {
+export class RulesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() form: FormGroup;
   @Input() rules: Rule[];
   @Input() displayHeader: boolean;
@@ -23,6 +23,14 @@ export class RulesComponent implements OnInit, OnDestroy {
     if (this.rules) {
       this.formArray.clear();
       this.rules.forEach(rule =>
+        this.addRule(undefined, rule));
+    }
+  }
+
+  ngOnChanges({rules}: SimpleChanges): void {
+    if (rules) {
+      this.formArray.clear();
+      (rules.currentValue || []).forEach(rule =>
         this.addRule(undefined, rule));
     }
   }

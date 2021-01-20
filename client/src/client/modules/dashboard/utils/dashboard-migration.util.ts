@@ -100,6 +100,7 @@ export class DashboardMigrationUtil {
   }
 
   private static setDailySoldAndSaleRate(group: WatchlistGroup, board: DashboardV2) {
+    /* TODO: If TSM is public again
     if (group.matchDailySold) {
       board.rules.push({
         field: columnConfig.auction.avgDailySold.key,
@@ -117,6 +118,7 @@ export class DashboardMigrationUtil {
         toValue: group.matchSaleRate,
       });
     }
+    */
   }
 
   private static translateCondition(criteria: string): ConditionEnum {

@@ -62,6 +62,14 @@ export const columnConfig = {
       title: 'ROI',
       dataType: 'gold'
     },
+    buyoutVsMktPrice: {
+      key: 'buyout/mktPrice',
+      title: 'Buyout Vs Mv',
+      dataType: 'percent',
+      options: {
+        tooltip: 'Buyout vs market value',
+      }
+    },
     bid: {
       key: 'bid',
       title: 'Lowest bid',
@@ -79,6 +87,11 @@ export const columnConfig = {
     },
     buyoutVsVendorSell: {
       key: 'buyout/vendorSell',
+      title: 'Buyout vs vendor',
+      dataType: 'percent'
+    },
+    vendorSellVsBuyout: {
+      key: 'vendorSell/buyout',
       title: 'Vendor ROI',
       dataType: 'percent'
     },
@@ -87,6 +100,7 @@ export const columnConfig = {
       title: 'Profit',
       dataType: 'gold'
     },
+    /* TODO: If TSM is public again
     regionSaleRate: {
       key: 'regionSaleRate',
       title: 'Sale rate',
@@ -96,7 +110,7 @@ export const columnConfig = {
       key: 'avgDailySold',
       title: 'Avg daily sold',
       dataType: 'number'
-    },
+    },*/
     timeLeft: {
       key: '[auctions].timeLeft',
       title: 'Time left',
@@ -115,9 +129,11 @@ export const columnConfig = {
       title: 'Market value',
       dataType: 'gold'
     },
+    /* TODO: If TSM is public again
     regionSaleAvg: {
       key: 'regionSaleAvg', title: 'Avg sales price', dataType: 'gold'
     },
+    */
     past24HoursSaleRate: {
       key: 'past24HoursSaleRate', title: '24h Sale rate', dataType: 'percent'
     },
@@ -276,7 +292,9 @@ export const columnConfig = {
   source: {
     soldBy: {
       name: {
-        key: 'source.npc.[soldBy].name', title: 'Vendor', dataType: 'name', options: {
+        key: 'source.npc.[soldBy].name',
+        title: 'Vendor', dataType: 'name',
+        options: {
           idName: 'soldById',
           noIcon: true,
           tooltipType: 'npc'
@@ -357,6 +375,14 @@ export const columnConfig = {
       }
 
     }
+  },
+  prospecting: {
+    name: {key: `source.destroy.prospecting.sourceIn.name`, title: 'Name', dataType: 'name'},
+    yield: {key: `source.destroy.prospecting.sourceIn.yield`, title: 'ROI', dataType: 'gold'},
+  },
+  milling: {
+    name: {key: `source.destroy.milling.sourceIn.name`, title: 'Name', dataType: 'name'},
+    yield: {key: `source.destroy.milling.sourceIn.yield`, title: 'ROI', dataType: 'gold'},
   },
   inventory: {
     quantity: {

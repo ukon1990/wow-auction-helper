@@ -9,7 +9,7 @@
 >
 </mat-paginator>
 <div class="row col-md-12">
-  <div *ngFor="let item of data | slice:getFromValue():getToValue(); let i = index"
+  <div *ngFor="let item of data | slice: fromValue : toValue; let i = index"
        class="col-xs-12 col-md-6 col-lg-6 col-xl-4 mb-2">
     <mat-card>
       <mat-card-header>

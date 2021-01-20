@@ -31,6 +31,14 @@
     >
       Add new source item
     </button>
+    <button class="mr-2 mt-2 float-right"
+            (click)="resetDefaults(editingType.MILLING)"
+            mat-stroked-button
+            color="warn"
+    >
+      Reset to default
+    </button>
+
     <wah-data-boards
             [columns]="columns"
             [data]="data.milling"
