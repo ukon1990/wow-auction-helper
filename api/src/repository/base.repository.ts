@@ -1,6 +1,6 @@
 import {DeleteItemOutput, DocumentClient, QueryOutput} from 'aws-sdk/clients/dynamodb';
 import * as AWS from 'aws-sdk';
-import {AWSError} from 'aws-sdk';
+import {AWSError, DynamoDB} from 'aws-sdk';
 import {NoSQLQueryUtil} from '../utils/query.util';
 import {AuthorizationUtil} from '../utils/authorization.util';
 import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
@@ -53,7 +53,7 @@ export abstract class BaseRepository<T> {
     return new Promise((resolve, reject) => {
       this.client.put({
         TableName: this.table,
-        Item: data
+        Item: data,
       }, (error: AWSError) => {
         if (error) {
           reject(error);
@@ -86,12 +86,15 @@ export abstract class BaseRepository<T> {
     });
   }
 
-  updateEntry(id: string | number, entry: T | any, updateLastModified = true): Promise<T> {
+  updateEntry(id: string | number, entry: T | any, updateLastModified = true, returnValue: DynamoDB.ReturnValue = 'UPDATED_NEW'): Promise<T> {
     return new Promise((resolve, reject) => {
       this.client.update(NoSQLQueryUtil.update(this.table, {
           id,
           ...entry,
-        }, updateLastModified),
+        },
+        updateLastModified,
+        returnValue
+        ),
         (error, data) => {
           if (error) {
             reject(error);

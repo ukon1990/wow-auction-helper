@@ -1,5 +1,6 @@
 interface Base<T> {
-    id: number;
+    id: string;
+    itemId: number;
     petSpeciesId: number;
     history: {[key: string]: T};
     timestamp: number;
