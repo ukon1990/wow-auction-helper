@@ -2,7 +2,6 @@ import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {RDSQueryUtil} from '../../utils/query.util';
-import {DateUtil} from '@ukon1990/js-utilities';
 import {AuctionHouse} from '../../realm/model';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
 
@@ -97,32 +96,48 @@ export class StatsRepository {
                 FROM itemPriceHistoryPerHour
                 WHERE (
                 ${
-                  items.map(({ahId, itemId, petSpeciesId, bonusIds}) => `
+      items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds}) => `
                   (
                     ahId = ${ahId}
                     AND itemId = ${itemId}
-                    AND petSpeciesId = ${petSpeciesId || '-1'}
+                    AND petSpeciesId = ${petSpeciesId}
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
                     )
                   `).join(' OR ')
-                }
-                ) AND UNIX_TIMESTAMP(date) > ${(+new Date() - this.FOURTEEN_DAYS) / 1000};`);
+    }
+                ) AND UNIX_TIMESTAMP(date) >= ${(+new Date() - this.FOURTEEN_DAYS) / 1000};`);
   }
 
-  getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[]) {
+  getPriceHistoryDaily(items: AhStatsRequest[]) {
+    /*  Original : Query
     return this.conn.query(`SELECT *
                 FROM itemPriceHistoryPerDay
                 WHERE ahId = ${ahId}
                   AND itemId = ${id}
                   AND petSpeciesId = ${petSpeciesId}
                   AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`);
+    */
+
+    return this.conn.query(
+      `SELECT *
+              FROM itemPriceHistoryPerDay
+              WHERE (
+                ${items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds}) => `
+                  (
+                    ahId = ${ahId}
+                    AND itemId = ${itemId}
+                    AND petSpeciesId = ${petSpeciesId}
+                    AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
+                    )
+                  `).join(' OR ')
+      }
+                );`);
   }
 
   getNextHouseInTheDeleteQueue(): Promise<any> {
     return this.conn.query(`SELECT *
                             FROM auction_houses
-                            ORDER BY lastHistoryDeleteEvent
-                            LIMIT 1;`);
+                            ORDER BY lastHistoryDeleteEvent LIMIT 1;`);
   }
 
   deleteOldAuctionHouseData(ahId: number, now: Date, day: number): Promise<any> {
@@ -141,11 +156,11 @@ export class StatsRepository {
 
   getActiveQueries(): Promise<any> {
     return this.conn.query(`
-      SELECT count(*) as activeQueries
-      FROM information_schema.processlist
-      WHERE info NOT LIKE '%information_schema.processlist%' AND
-          (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
-              OR info LIKE '%DELETE FROM%');`);
+        SELECT count(*) as activeQueries
+        FROM information_schema.processlist
+        WHERE info NOT LIKE '%information_schema.processlist%'
+          AND (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
+            OR info LIKE '%DELETE FROM%');`);
   }
 
   deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH') {

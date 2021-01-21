@@ -1,3 +1,8 @@
+export interface ItemPriceEntryResponse {
+  daily: ItemDailyPriceEntry[];
+  hourly: ItemPriceEntry[];
+}
+
 export interface ItemPriceEntry {
   id?: string;
   quantity: number;

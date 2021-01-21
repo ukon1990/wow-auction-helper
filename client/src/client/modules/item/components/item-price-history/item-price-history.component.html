@@ -1,5 +1,15 @@
 <ng-container *ngIf="isActiveTab">
   <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
+    <form [formGroup]="form" *ngIf="auctionItem.source?.recipe?.all">
+      <mat-form-field>
+        <mat-select formControlName="recipe" placeholder="Crafting cost by recipe">
+          <mat-option>No recipe is selected</mat-option>
+          <mat-option *ngFor="let recipe of auctionItem.source?.recipe?.all" [value]="recipe">
+            {{recipe.name}} - {{recipe.rank}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
     <em>
       Note: The prices here might deviate, from what you see in external tables.
       This data is updated right now, unlike the "external" which has some delay due to calculation time.

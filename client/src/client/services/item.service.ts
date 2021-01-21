@@ -10,11 +10,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {ItemOverrides} from '../overrides/item.overrides';
 import {Platform} from '@angular/cdk/platform';
 import {Report} from '../utils/report.util';
-import {ItemPriceEntry} from '../modules/item/models/item-price-entry.model';
+import {
+  ItemDailyPriceEntry,
+  ItemPriceEntry,
+  ItemPriceEntryResponse
+} from '../modules/item/models/item-price-entry.model';
 import {RealmService} from './realm.service';
 import {BehaviorSubject} from 'rxjs';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
+import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
 
 class ItemResponse {
   timestamp: Date;
@@ -27,7 +32,7 @@ export class ItemService {
   static itemSelection: EventEmitter<number> = new EventEmitter<number>();
   static list: BehaviorSubject<Item[]> = new BehaviorSubject<Item[]>([]);
   static mapped: BehaviorSubject<Map<number, Item>> = new BehaviorSubject<Map<number, Item>>(new Map<number, Item>());
-  private historyMap: BehaviorSubject<Map<number, Map<string, any>>> = new BehaviorSubject(new Map());
+  private historyMap: BehaviorSubject<Map<number, Map<string, ItemPriceEntryResponse>>> = new BehaviorSubject(new Map());
   readonly LOCAL_STORAGE_TIMESTAMP = 'timestamp_items';
   private sm = new SubscriptionManager();
   selectionHistory: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
@@ -206,39 +211,79 @@ export class ItemService {
       .toPromise() as Promise<any>;
   }
 
-  getPriceHistory(id: number, petSpeciesId: number = -1, bonusIds?: any[]): Promise<any> {
-    const storedId = `${id}-${petSpeciesId}-${AuctionItemStat.bonusId(bonusIds)}`;
+  getPriceHistory(items: AhStatsRequest[]): Promise<Map<string, ItemPriceEntryResponse>> {
     const startTime = +new Date();
     const ahId = this.realmService.events.realmStatus.value.id,
       realmMap = this.historyMap.value;
-    if (realmMap.get(ahId) && realmMap.get(ahId).get(storedId)) {
-      return new Promise<ItemPriceEntry[]>(resolve => {
-        Report.send('getPriceHistory', 'ItemService',
-          `Time to fetch history from memory, for ahId=${ahId} and item id = ${id} was ${+new Date() - startTime}ms`);
-        resolve(realmMap.get(ahId).get(storedId));
-      });
+    const result: Map<string, any> = new Map<string, any>();
+    const missing: AhStatsRequest[] = [];
+    const getStoreId = ({itemId, petSpeciesId, bonusIds}: AhStatsRequest | ItemPriceEntry | ItemDailyPriceEntry) =>
+      `${itemId}-${petSpeciesId}-${
+        typeof bonusIds === 'string' ?
+          bonusIds : AuctionItemStat.bonusIdRaw(bonusIds)}`;
+
+    items.forEach((item) => {
+      const storedId = getStoreId(item);
+      if (realmMap.get(ahId) && realmMap.get(ahId).get(storedId)) {
+        console.log('Eksisterer alt', {
+          id: storedId,
+          stored: realmMap.get(ahId).get(storedId), realm: realmMap.get(ahId), full: realmMap
+        });
+        result.set(storedId, realmMap.get(ahId).get(storedId));
+      } else {
+        console.log('Eksisterer ikke ', storedId, realmMap, realmMap.get(ahId));
+        missing.push(item);
+      }
+    });
+    console.log('hahaaha', {result, missing, items});
+
+
+    if (!missing.length) {
+      return new Promise(resolve => resolve(result));
     }
 
     return this._http.post(Endpoints.getLambdaUrl('item/history', 'EU_NORTH'),
       {
-        id,
-        ahId,
-        petSpeciesId,
-        bonusIds,
+        items: missing,
         onlyHourly: false
       })
       .toPromise()
-      .then((entries: ItemPriceEntry[]) => {
+      .then((entries: ItemPriceEntryResponse) => {
         if (!realmMap.has(ahId)) {
           realmMap.set(ahId, new Map());
         }
-        realmMap.get(ahId).set(storedId, entries);
+
+        entries.hourly.forEach(entry => {
+          const id = getStoreId(entry);
+          if (!realmMap.get(ahId).has(id)) {
+            realmMap.get(ahId).set(id, {
+              daily: [],
+              hourly: []
+            });
+            result.set(id, realmMap.get(ahId).get(id));
+          }
+          realmMap.get(ahId).get(id).hourly.push(entry);
+        });
+        entries.daily.forEach(entry => {
+          const id = getStoreId(entry);
+          if (!realmMap.get(ahId).has(id)) {
+            realmMap.get(ahId).set(id, {
+              daily: [],
+              hourly: []
+            });
+            result.set(id, realmMap.get(ahId).get(id));
+          }
+          realmMap.get(ahId).get(id).daily.push(entry);
+        });
         Report.send('getPriceHistory', 'ItemService',
-          `Time to fetch history from DB, for ahId=${ahId} and item id = ${storedId} was ${+new Date() - startTime}ms`);
+          `Time to fetch history from DB, for ahId=${ahId
+        } and item id = ${missing.map(m => getStoreId(m))
+        } was ${+new Date() - startTime}ms`);
+
         this.historyMap.next(realmMap);
-        return entries;
+        return result;
       })
-      .catch(console.error) as Promise<ItemPriceEntry[]>;
+      .catch(console.error) as Promise<Map<string, ItemPriceEntryResponse>>;
   }
 
   /**

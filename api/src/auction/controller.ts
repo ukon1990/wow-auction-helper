@@ -37,9 +37,7 @@ exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, call
   const {items} = JSON.parse(event.body);
   const conn = new DatabaseUtil(false);
   const service = new StatsService();
-  (items ?
-    service.getPriceHistoryHourlyMultiple(items, conn) :
-    service.getPriceHistoryFor(ahId, id, petSpeciesId, bonusIds, onlyHourly, conn))
+  service.getPriceHistoryFor(items || [{ahId, itemId: id, petSpeciesId, bonusIds}], onlyHourly, conn)
     .then(async history => {
       conn.end();
       Response.send(history, callback);

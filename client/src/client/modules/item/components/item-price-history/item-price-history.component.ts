@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts';
 import {Item} from '../../../../models/item/item';
 import {ItemService} from '../../../../services/item.service';
 import {AuctionItem} from '../../../auction/models/auction-item.model';
-import {ItemPriceEntry} from '../../models/item-price-entry.model';
+import {ItemDailyPriceEntry, ItemPriceEntry, ItemPriceEntryResponse} from '../../models/item-price-entry.model';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ErrorReport} from '../../../../utils/error-report.util';
 import {GoldPipe} from '../../../util/pipes/gold.pipe';
@@ -14,6 +14,10 @@ import {AuctionStatsUtil} from '../../../../../../../api/src/auction/utils/aucti
 import {ItemStats} from '../../../../../../../api/src/auction/models/item-stats.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {Theme} from '../../../core/models/theme.model';
+import {RealmService} from "../../../../services/realm.service";
+import {AuctionItemStat} from "../../../../../../../api/src/auction/models/auction-item-stat.model";
+import {Recipe} from "../../../crafting/models/recipe";
+import {FormControl, FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'wah-item-price-history',
@@ -25,6 +29,10 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   @Input() auctionItem: AuctionItem;
   @Input() isActiveTab = true;
   @Input() dialogId: string;
+  private ahId: number;
+  form: FormGroup = new FormGroup({
+    recipe: new FormControl(),
+  });
   stats: ItemStats;
   statsDaily: ItemStats;
   Highcharts: typeof Highcharts = Highcharts;
@@ -95,10 +103,11 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     }
   ];
   xAxis: XAxisOptions;
-  priceHistory: { hourly: ItemPriceEntry[], daily: any[] } = {
+  priceHistory: ItemPriceEntryResponse = {
     hourly: [],
     daily: []
   };
+  craftingCostHistory: ItemPriceEntryResponse;
   fourteenDayByHourTable = {
     columns: [
       {key: 'timestamp', title: 'Time', dataType: 'date'},
@@ -123,7 +132,9 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   isInitiated: boolean;
   theme: Theme = ThemeUtil.current;
 
-  constructor(private service: ItemService) {
+  constructor(private service: ItemService, private realmService: RealmService) {
+    this.ahId =  realmService.events.realmStatus.value ?  realmService.events.realmStatus.value.id : undefined;
+    this.sm.add(this.form.valueChanges, ({recipe}) => this.loadCraftingCost(recipe as Recipe));
   }
 
   ngOnChanges({item, auctionItem, isActiveTab}: SimpleChanges) {
@@ -144,25 +155,96 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       500);
   }
 
+  private loadCraftingCost(recipe: Recipe): void {
+    if (!recipe) {
+      this.craftingCostHistory = undefined;
+      return;
+    }
+    this.service.getPriceHistory(recipe.reagents.map(reagent => ({
+      ahId: this.ahId, itemId: reagent.id, petSpeciesId: -1, bonusIds: undefined
+    })))
+      .then(result => {
+        const dailyMap = new Map<number, ItemDailyPriceEntry>();
+        const hourlyMap = new Map<number, ItemPriceEntry>();
+        const groupedValues: ItemPriceEntryResponse = {
+          hourly: [],
+          daily: []
+        };
+        recipe.reagents.forEach(reagent => {
+          const history = result.get(`${reagent.id}--1--1`);
+          if (history) {
+            history.hourly.forEach(entry => {
+              if (!hourlyMap.has(entry.timestamp)) {
+                hourlyMap.set(entry.timestamp, {
+                  itemId: 0,
+                  bonusIds: '-1',
+                  petSpeciesId: -1,
+                  min: 0,
+                  quantity: 0,
+                  timestamp: entry.timestamp,
+                });
+                groupedValues.hourly.push(hourlyMap.get(entry.timestamp));
+              }
+              hourlyMap.get(entry.timestamp).min += entry.min * reagent.quantity;
+            });
+            history.daily.forEach(entry => {
+              if (!dailyMap.has(entry.timestamp)) {
+                dailyMap.set(entry.timestamp, {
+                  itemId: 0,
+                  bonusIds: '-1',
+                  petSpeciesId: -1,
+                  min: 0,
+                  minQuantity: 0,
+                  avg: 0,
+                  avgQuantity: 0,
+                  max: 0,
+                  maxQuantity: 0,
+                  timestamp: entry.timestamp,
+                });
+                groupedValues.daily.push(dailyMap.get(entry.timestamp));
+              }
+              dailyMap.get(entry.timestamp).min += entry.min * reagent.quantity;
+              dailyMap.get(entry.timestamp).avg += entry.avg * reagent.quantity;
+              dailyMap.get(entry.timestamp).max += entry.max * reagent.quantity;
+            });
+          }
+        });
+        console.log('Reagent cost', result, groupedValues);
+        this.craftingCostHistory = groupedValues;
+      })
+      .catch(() => {});
+  }
+
   private loadData(auctionItem: AuctionItem = this.auctionItem) {
     Report.debug(
       'ItemPriceHistoryComponent',
       'Item detail view',
       `Price history tab for ${auctionItem.itemID} - ${auctionItem.name}`);
     this.isLoading = true;
-    this.service.getPriceHistory(this.item.id, auctionItem.petSpeciesId, auctionItem.bonusIds)
+    this.service.getPriceHistory([{
+      ahId: this.ahId, itemId: this.item.id, petSpeciesId: auctionItem.petSpeciesId || -1, bonusIds: auctionItem.bonusIds
+    }])
       .then((history) => {
-        this.priceHistory = history;
+        const {itemID, petSpeciesId = -1, bonusIds} = auctionItem;
+        this.priceHistory = history.get(`${itemID}-${petSpeciesId}-${AuctionItemStat.bonusIdRaw(bonusIds)}`);
+        Report.debug('get history', {
+          history,
+          id: `${itemID}-${petSpeciesId}-${AuctionItemStat.bonusIdRaw(bonusIds)}`,
+          local: this.priceHistory
+      });
         this.setAuctionAndDataset();
-        this.stats = AuctionStatsUtil.processDaysForHourlyPriceData(history.hourly);
-        this.statsDaily = AuctionStatsUtil.processDaysForDailyPriceData(history.daily);
+        this.stats = AuctionStatsUtil.processDaysForHourlyPriceData(this.priceHistory.hourly);
+        this.statsDaily = AuctionStatsUtil.processDaysForDailyPriceData(this.priceHistory.daily);
         console.log('stats', this.statsDaily);
         this.isLoading = false;
       })
       .catch((error) => {
         this.setAuctionAndDataset();
         this.isLoading = false;
-        this.priceHistory.daily = [];
+        this.priceHistory = {
+          daily: [],
+          hourly: []
+        };
         this.priceHistory.hourly = [];
         ErrorReport.sendHttpError(error);
       });

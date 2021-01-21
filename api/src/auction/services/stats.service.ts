@@ -28,12 +28,14 @@ export class StatsService {
 
 
   /* istanbul ignore next */
-  async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true,
+  async getPriceHistoryFor(items: AhStatsRequest[], onlyHourly = true,
                            conn: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
-    console.log(`getPriceHistoryFor ahId=${ahId} item=${id} pet=${petSpeciesId}`);
+    items.forEach(({ahId, itemId, petSpeciesId}) =>
+      console.log(`getPriceHistoryFor ahId=${ahId} item=${itemId} pet=${petSpeciesId}`));
+
     if (onlyHourly) {
       return new Promise((resolve, reject) => {
-        this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+        this.getPriceHistoryHourly(items, conn)
           .then(r => {
             resolve(r);
           })
@@ -55,10 +57,10 @@ export class StatsService {
         conn.enqueueHandshake()
           .then(() => {
             Promise.all([
-              this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+              this.getPriceHistoryHourly(items, conn)
                 .then(r => result.hourly = r)
                 .catch(console.error),
-              this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
+              this.getPriceHistoryDaily(items, conn)
                 .then(r => result.daily = r)
                 .catch(console.error)
             ])
@@ -101,9 +103,9 @@ export class StatsService {
     });
   }
 
-  private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any> {
+  private getPriceHistoryHourly(items: AhStatsRequest[], conn: DatabaseUtil): Promise<any> {
     return new Promise((resolve, reject) => {
-      new StatsRepository(conn).getPriceHistoryHourly([{ahId, itemId: id, petSpeciesId, bonusIds}])
+      new StatsRepository(conn).getPriceHistoryHourly(items)
         .then((result => {
           resolve(AuctionProcessorUtil.processHourlyPriceData(result));
         }))
@@ -114,10 +116,10 @@ export class StatsService {
     });
   }
 
-  private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any[]> {
+  private getPriceHistoryDaily(items: AhStatsRequest[], conn: DatabaseUtil): Promise<any[]> {
     return new Promise((resolve, reject) => {
       new StatsRepository(conn)
-        .getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds)
+        .getPriceHistoryDaily(items)
         .then((result => {
           resolve(AuctionProcessorUtil.processDailyPriceData(result));
         }))
