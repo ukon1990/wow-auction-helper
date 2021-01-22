@@ -1,5 +1,5 @@
-import { BaseRepository } from "../../repository/base.repository";
-import { HourlyPriceHistoryEntryDBO } from "../models/price-history.model";
+import { BaseRepository } from '../../repository/base.repository';
+import { HourlyPriceHistoryEntryDBO } from '../models/price-history.model';
 
 export class StatsHourlyRepository extends BaseRepository<HourlyPriceHistoryEntryDBO> {
   constructor() {
@@ -15,7 +15,7 @@ export class StatsHourlyRepository extends BaseRepository<HourlyPriceHistoryEntr
   }
 
   getAllAfterTimestamp(timestamp: number): Promise<HourlyPriceHistoryEntryDBO[]> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   upsert(data: HourlyPriceHistoryEntryDBO): Promise<void> {
