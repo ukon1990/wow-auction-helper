@@ -43,7 +43,7 @@ export class Response {
   }
 
   private static getEvent(event: APIGatewayEvent) {
-    return event && event.requestContext.stage === 'dev' ? event : undefined;
+    return event && event.requestContext && event.requestContext.stage === 'dev' ? event : undefined;
   }
 
   private static getErrorMessage(error) {
