@@ -115,14 +115,14 @@ export class StatsService {
   }
 
 
-  insertStats(): Promise<void> {
+  insertStats(region: string): Promise<void> {
     const insertStatsStart = +new Date();
     return new Promise<void>((resolve, reject) => {
       let completed = 0, total = 0, avgQueryTime;
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
 
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
+      s3.list('wah-data-eu-se', 'statistics/inserts/', 5000)
         .then(async (objects: ListObjectsV2Output) => {
           total = objects.Contents.length;
           if (total > 0) {
@@ -140,26 +140,30 @@ export class StatsService {
                 if ((+new Date() - insertStatsStart) / 1000 < 50) {
                   const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
                     .catch(error => console.error(`StatsService.insertStats.Contents`, error));
+                  const [entryRegion, ahId] = object.Key.split('/')[2].split('-');
+                  if (entryRegion !== region) {
+                    return;
+                  }
+                  console.log('Processing insert for ', object.Key);
 
                   if (status.activeQueries < 10) {
                     await s3.getAndDecompress(objects.Name, object.Key)
                       .then(async (query: string) => {
                         if (query) {
                           const insertStart = +new Date();
-                          await conn.query(query)
-                            .then(async () => {
-                              const [region, ahId] = object.Key.split('/')[2].split('-');
-                              await Promise.all([
-                                s3.deleteObject(objects.Name, object.Key)
-                                  .catch(console.error),
-                                this.realmRepository.updateEntry(+ahId, {
-                                  lastStatsInsert: +new Date(),
-                                }).catch(console.error)
-                              ])
-                                .catch(console.error);
-                              completed++;
-                            })
-                            .catch(console.error);
+                            await conn.query(query)
+                              .then(async () => {
+                                await Promise.all([
+                                  s3.deleteObject(objects.Name, object.Key)
+                                    .catch(console.error),
+                                  this.realmRepository.updateEntry(+ahId, {
+                                    lastStatsInsert: +new Date(),
+                                  }).catch(console.error)
+                                ])
+                                  .catch(console.error);
+                                completed++;
+                              })
+                              .catch(console.error);
                           if (!avgQueryTime) {
                             avgQueryTime = +new Date() - insertStart;
                           } else {

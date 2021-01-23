@@ -64,9 +64,15 @@ exports.deleteOldPriceHistoryForRealmAndSetDailyPrice = (event: APIGatewayEvent,
 };
 
 exports.insertStatisticsData = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  new StatsService().insertStats()
-    .then(res => Response.send(res, callback))
-    .catch(err => Response.error(callback, err, event, 500));
+  const region = event['region'];
+  console.log('Fetching data for region!', region);
+  if (region) {
+    new StatsService().insertStats(region)
+      .then(res => Response.send(res, callback))
+      .catch(err => Response.error(callback, err, event, 500));
+  } else {
+    Response.error(callback, new Error('No region was provided'), event, 400);
+  }
 };
 
 exports.updateStaticS3Data = (event: APIGatewayEvent, context: Context, callback: Callback) => {
