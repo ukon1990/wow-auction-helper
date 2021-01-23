@@ -1,15 +1,24 @@
 import * as mysql from 'mysql';
-import {DATABASE_CREDENTIALS} from '../secrets';
+import {DATABASE_CREDENTIALS, RDS_CREDENTIALS} from '../secrets';
 import {Connection, MysqlError} from 'mysql';
+
 import {environment} from '../../../client/src/environments/environment';
+import {RDSDataService, SecretsManager} from 'aws-sdk';
+import {AWSError} from 'aws-sdk/lib/error';
 
 export class DatabaseUtil {
-  private readonly connection: Connection;
+  private readonly connection: RDSDataService;
   private isConnectionActive = false;
+  private client = new SecretsManager({
+    region: 'eu-west-1'
+  });
 
   constructor(private autoTerminate: boolean = true) {
     if (!environment.test) {
-      this.connection = mysql.createConnection(DATABASE_CREDENTIALS);
+      // this.connection = mysql.createConnection(DATABASE_CREDENTIALS);
+      this.connection = new RDSDataService({
+        region: 'eu-west-1'
+      });
     }
   }
 
@@ -29,10 +38,15 @@ export class DatabaseUtil {
 
       this.enqueueHandshake()
         .then(() => {
-          this.connection.query(query, (err: MysqlError, rows: any[]) => {
+          this.connection.executeStatement({
+            ...RDS_CREDENTIALS,
+            sql: query,
+          }, (err: AWSError, data: RDSDataService.Types.ExecuteStatementResponse) => {
+            /*
             if (this.autoTerminate) {
               this.end();
             }
+            */
 
             if (err) {
               const msg = this.handleSQLError(err);
@@ -40,7 +54,7 @@ export class DatabaseUtil {
               return;
             }
 
-            resolve(rows);
+            resolve(data.records);
           });
         })
         .catch((error) => {
@@ -50,13 +64,15 @@ export class DatabaseUtil {
     });
   }
 
-  private handleSQLError(err) {
+  private handleSQLError(err: AWSError) {
     const msg = {
       ...err
     };
-    if (msg.sql) {
+    /*
+    if (msg) {
       msg.sql = msg.sql.slice(0, 256);
     }
+    */
 
     if (msg.message) {
       msg.message = msg.message.slice(0, 256);
@@ -70,15 +86,19 @@ export class DatabaseUtil {
   }
 
   end(): void {
+    /* TODO: Not needed for Aurora RDS Serverless
     if (environment.test) {
       return;
     }
     console.log('Closing the DB connection on thread on:' + this.connection.threadId);
     this.connection.end();
+    */
   }
 
   enqueueHandshake(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
+      resolve();
+      /*
       if (!this.connection) {
         console.error('No connection is available');
         reject('No connection is available');
@@ -111,6 +131,7 @@ export class DatabaseUtil {
           resolve();
         }
       });
+    */
     });
   }
 }
