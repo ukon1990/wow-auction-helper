@@ -51,7 +51,7 @@ functions:
       Project: WAH
     handler: src/auction/controller.insertStatisticsData
     memorySize: 222
-    timeout: 58
+    timeout: 60
 
   auctionsUpdateRealmTrends:
     tags:

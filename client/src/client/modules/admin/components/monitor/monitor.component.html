@@ -2,46 +2,63 @@
   Time: {{time | date:'full'}}
 </h4>
 
-<div class="row">
-  <div class="col-md-3">
-    <mat-list>
-      <mat-list-item>
-        <div mat-line>
-          Conntected threads
-        </div>
-        <div mat-line>
-          {{ globalStatuses[globalStatuses?.length - 1]?.Threads_connected | number }}
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line>
-          Max connections
-        </div>
-        <div mat-line>
-          {{ globalStatuses[globalStatuses?.length - 1]?.Max_used_connections | number }}
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line>
-          Uptime
-        </div>
-        <div mat-line>
-          {{ globalStatuses[globalStatuses?.length - 1]?.Uptime / 60 / 60 | number }} hours
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </div>
-
-  <div class="col-md-9">
-    <wah-highcharts
-            title="Hourly prices and quantity for the past 14 days"
-            [series]="series"
-            [yAxis]="yAxis"
-            [(update)]="updatedChart"
-    >
-    </wah-highcharts>
-  </div>
-</div>
+<mat-list dense class="horizontal-item-list">
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Connected threads
+    </div>
+    <div mat-line>
+      {{ globalStatuses[globalStatuses?.length - 1]?.Threads_connected | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Max connections
+    </div>
+    <div mat-line>
+      {{ globalStatuses[globalStatuses?.length - 1]?.Max_used_connections | number }}
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Uptime
+    </div>
+    <div mat-line>
+      {{ globalStatuses[globalStatuses?.length - 1]?.Uptime / 60 / 60 | number }} hours
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Fastest query time
+    </div>
+    <div mat-line>
+      {{ this.queryTime.min | number }} ms
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Avg query time
+    </div>
+    <div mat-line>
+      {{ this.queryTime.avg | number }} ms
+    </div>
+  </mat-list-item>
+  <mat-list-item>
+    <div mat-line [style]="{color: theme.accentColorCode}">
+      Max query time
+    </div>
+    <div mat-line>
+      {{ this.queryTime.max | number }} ms
+    </div>
+  </mat-list-item>
+</mat-list>
+<wah-highcharts
+        title="Hourly prices and quantity for the past 14 days"
+        [series]="series"
+        [yAxis]="yAxis"
+        [(update)]="updatedChart"
+>
+</wah-highcharts>
 
 <wah-data-table
         filterParameter="info"

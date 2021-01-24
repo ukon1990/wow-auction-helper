@@ -36,7 +36,7 @@ export class DatabaseUtil {
 
             if (err) {
               const msg = this.handleSQLError(err);
-              reject({message: `Failed to execute the query: ${query}`, error: msg.stack});
+              reject(msg);
               return;
             }
 
@@ -45,7 +45,7 @@ export class DatabaseUtil {
         })
         .catch((error) => {
           this.handleSQLError(error);
-          reject();
+          reject(error);
         });
     });
   }
