@@ -156,7 +156,7 @@ export class RecipeRepository extends Repository<Recipe> {
           ];
 
           if (recipe.reagents) {
-            queries.push(`DELETE FROM \`100680-wah\`.\`reagents\`
+            queries.push(`DELETE FROM \`wah\`.\`reagents\`
                             WHERE recipeId = ${recipe.id};`);
             recipe.reagents.map(r => queries.push(format(`
                 INSERT INTO reagents

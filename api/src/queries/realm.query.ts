@@ -30,7 +30,7 @@ export class RealmQuery {
   }
 
   static insertHouse(house): string {
-    return `INSERT INTO \`100680-wah\`.\`auction_houses\`
+    return `INSERT INTO \`wah\`.\`auction_houses\`
                   (\`region\`,
                   \`isUpdating\`,
                   \`isActive\`,
@@ -43,7 +43,7 @@ export class RealmQuery {
   }
 
   static insertRealm(realm): string {
-    return `INSERT INTO \`100680-wah\`.\`auction_house_realm\`
+    return `INSERT INTO \`wah\`.\`auction_house_realm\`
               (\`ahId\`,
               \`slug\`,
               \`name\`,
@@ -165,7 +165,7 @@ export class RealmQuery {
   }
 
   static insertNewDumpLogRow(ahId: number, url: string, lastModified: number, oldLastModified: number, size: number): string {
-    return `INSERT INTO \`100680-wah\`.\`auction_houses_dump_log\`
+    return `INSERT INTO \`wah\`.\`auction_houses_dump_log\`
               (\`ahId\`,
               \`lastModified\`,
               \`url\`,
@@ -182,7 +182,7 @@ export class RealmQuery {
 
   static updateUrl(ahId: number, url: string, lastModified: number, size: number,
                    delay: { avg: number; highest: number; lowest: number }): string {
-    return `UPDATE \`100680-wah\`.\`auction_houses\`
+    return `UPDATE \`wah\`.\`auction_houses\`
             SET
               \`url\` = "${url}",
               \`lastModified\` = ${lastModified},
@@ -276,14 +276,14 @@ export class RealmQuery {
   }
 
   static isUpdating(id: number, isUpdating: boolean) {
-    return `UPDATE \`100680-wah\`.\`auction_houses\`
+    return `UPDATE \`wah\`.\`auction_houses\`
             SET
               \`isUpdating\` = ${isUpdating ? 1 : 0}
                 WHERE \`id\` = ${id};`;
   }
 
   static activateHouse(id: any): string {
-    return `UPDATE \`100680-wah\`.\`auction_houses\`
+    return `UPDATE \`wah\`.\`auction_houses\`
             SET
               \`firstRequested\` = ${+new Date()},
               \`lastRequested\` = ${+new Date()},
@@ -293,7 +293,7 @@ export class RealmQuery {
 
   static updateLastRequested(id: any): string {
 
-    return `UPDATE \`100680-wah\`.\`auction_houses\`
+    return `UPDATE \`wah\`.\`auction_houses\`
             SET
               \`lastRequested\` = ${+new Date()}
                 WHERE \`id\` = ${id};`;

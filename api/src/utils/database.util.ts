@@ -55,15 +55,15 @@ export class DatabaseUtil {
       ...err
     };
     if (msg.sql) {
-      msg.sql = msg.sql.slice(0, 256);
+      msg.sql = msg.sql.slice(0, 64);
     }
 
     if (msg.message) {
-      msg.message = msg.message.slice(0, 256);
+      msg.message = msg.message.slice(0, 64);
     }
 
     if (msg.stack) {
-      msg.stack = msg.stack.slice(0, 256);
+      msg.stack = msg.stack.slice(0, 64);
     }
     console.error(msg);
     return msg;

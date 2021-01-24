@@ -122,7 +122,7 @@ export class StatsService {
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
 
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
+      s3.list('wah-data-eu-se', 'statistics/inserts/', 999999)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           total = objects.Contents.length;
           if (total > 0) {
@@ -171,8 +171,6 @@ export class StatsService {
                   } else {
                     console.log('There are too many active queries', status.activeQueries);
                   }
-                } else {
-                  console.log('The time since limit has passed');
                 }
               }
               console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
