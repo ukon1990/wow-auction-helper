@@ -34,12 +34,12 @@ export class LogRepository {
              TABLE_ROWS                                        as 'rows',
              ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb
       FROM information_schema.TABLES
-      WHERE TABLE_SCHEMA = '100680-wah'
+      WHERE TABLE_SCHEMA = 'wah'
       ORDER BY (DATA_LENGTH + INDEX_LENGTH)
           DESC;`;
 
   static userEvent(entry: LogEntry): string {
-    return `INSERT INTO \`100680-wah\`.\`event_log\` (
+    return `INSERT INTO \`wah\`.\`event_log\` (
                   \`userId\`,
                   \`version\`,
                   \`type\`,
@@ -68,7 +68,7 @@ export class LogRepository {
   }
 
   static s3Event(data: any[]) {/*
-    return `INSERT INTO \`100680-wah\`.\`s3-logs\`
+    return `INSERT INTO \`wah\`.\`s3-logs\`
                           (\`type\`,
                           \`bucket\`,
                           \`region\`,
@@ -88,13 +88,13 @@ export class LogRepository {
                             ${this.isMe(requestData)},
                             "${requestData.userAgent}",
                             CURRENT_TIMESTAMP);`;*/
-    return new RDSQueryUtil(`\`100680-wah\`.\`s3-logs\``)
+    return new RDSQueryUtil(`\`wah\`.\`s3-logs\``)
       .multiInsert(data)
       .replace(';', '');
   }
 
   static deleteUser(entry: LogEntry) {
-    return `DELETE FROM \`100680-wah\`.\`event_log\`
+    return `DELETE FROM \`wah\`.\`event_log\`
             WHERE userId = ${entry.userId};`;
   }
 }

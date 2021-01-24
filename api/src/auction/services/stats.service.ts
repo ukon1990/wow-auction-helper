@@ -138,7 +138,7 @@ export class StatsService {
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
 
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
+      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           total = objects.Contents.length;
           if (total > 0) {
@@ -149,15 +149,20 @@ export class StatsService {
           conn.enqueueHandshake()
             .then(async () => {
               objects.Contents
-                .sort((a, b) =>
-                  +new Date(a.LastModified) - +new Date(b.LastModified));
+                .sort((a, b) => {
+                  const getTimestamp = (obj) => {
+                    const [_, __, timestamp] = obj.Key.split('/')[2].split('-');
+                    return +timestamp;
+                  };
+                  return getTimestamp(a) - getTimestamp(b);
+                });
 
               for (const object of objects.Contents) {
                 if ((+new Date() - insertStatsStart) / 1000 < 50) {
                   const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
                     .catch(error => console.error(`StatsService.insertStats.Contents`, error));
 
-                  if (status.activeQueries < 10) {
+                  if (status.activeQueries < 2) {
                     await s3.getAndDecompress(objects.Name, object.Key)
                       .then(async (query: string) => {
                         if (query) {
@@ -187,8 +192,6 @@ export class StatsService {
                   } else {
                     console.log('There are too many active queries', status.activeQueries);
                   }
-                } else {
-                  console.log('The time since limit has passed');
                 }
               }
               console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);

@@ -7,6 +7,8 @@ import {ColumnDescription} from '../../../table/models/column-description';
 import {TextUtil} from '@ukon1990/js-utilities';
 import {MonitorUtil} from '../../utils/monitor.util';
 import {SeriesOptionsType, YAxisOptions} from 'highcharts';
+import {Theme} from '../../../core/models/theme.model';
+import {ThemeUtil} from '../../../core/utils/theme.util';
 
 @Component({
   selector: 'wah-monitor',
@@ -45,6 +47,11 @@ export class MonitorComponent implements OnDestroy {
   ];
   time: Date;
   globalStatuses: GlobalStatus[] = [];
+  queryTime = {
+    min: 0,
+    avg: 0,
+    max: 0,
+  };
 
 
   private statusInterval: Observable<number> = interval(500);
@@ -86,6 +93,7 @@ export class MonitorComponent implements OnDestroy {
       }
     }
   ];
+  theme: Theme = ThemeUtil.current;
 
   constructor(private service: AdminService) {
     this.getSize();
@@ -111,9 +119,9 @@ export class MonitorComponent implements OnDestroy {
     this.processes = queries.filter(q =>
       !TextUtil.contains(q.info, 'information_schema'))
       .map(q => ({
-        ...q,
-        info: q.info.slice(0, 1024)
-      }));
+          ...q,
+          info: q.info.slice(0, 1024)
+        }));
 
     this.processes.forEach(process => {
       const res = {
@@ -128,12 +136,29 @@ export class MonitorComponent implements OnDestroy {
         const stored: SQLProcess = this.processHistoryMap.get(id);
         stored.examinedRows = process.examinedRows;
         stored.time = process.time;
+        stored.timeMs = process.timeMs;
         stored.memoryUsed = process.memoryUsed;
         stored.state = process.state;
       }
     });
     this.processHistory.sort((a, b) => b.timestamp - a.timestamp);
     this.processHistory = [...this.processHistory];
+
+    this.queryTime = {
+      min: 0, avg: 0, max: 0
+    };
+    this.processHistory.forEach((q: SQLProcess) => {
+      const time = q.timeMs;
+      if (this.queryTime.min === 0 || this.queryTime.min > time && time !== 0) {
+        this.queryTime.min = time;
+      }
+      if (this.queryTime.max < time) {
+        this.queryTime.max = time;
+      }
+      if (!this.queryTime.avg && time !== 0) {
+        this.queryTime.avg = (this.queryTime.avg + time) / 2;
+      }
+    });
   }
 
   private getSize() {

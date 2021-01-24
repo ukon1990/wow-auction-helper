@@ -149,14 +149,16 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
 
   private defaultTooltip(): string {
     const getFormatter = (point: TooltipFormatterContextObject, axis: 'yAxis' | 'xAxis' = 'yAxis'): any => {
-      if (point && point.series[axis]) {
-        const seriesAxis: Axis = point.series[axis];
-        const labelFormatter = seriesAxis['labelFormatter'];
-        if (labelFormatter) {
-          return labelFormatter;
+      try {
+        if (point && point.series[axis]) {
+          const seriesAxis: Axis = point.series[axis];
+          const labelFormatter = seriesAxis['labelFormatter'];
+          if (labelFormatter) {
+            return labelFormatter;
+          }
+          return seriesAxis.defaultLabelFormatter;
         }
-        return seriesAxis.defaultLabelFormatter;
-      }
+      } catch (error) {}
       return undefined;
     };
 
@@ -176,36 +178,40 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
       }
     };
 
-    if (isxAxisVisible) {
-      tip += '<strong>';
-      if (firstPointXFormatter) {
-        try {
-          tip += firstPointXFormatter({value: firstPoint.x});
-        } catch (e) {
+    try {
+      if (isxAxisVisible) {
+        tip += '<strong>';
+        if (firstPointXFormatter) {
+          try {
+            tip += firstPointXFormatter({value: firstPoint.x});
+          } catch (e) {
+            setTip();
+          }
+        } else {
           setTip();
         }
-      } else {
-        setTip();
+        tip += '</strongh><br />';
       }
-      tip += '</strongh><br />';
-    }
-    points.forEach(point => {
-      const formatter = getFormatter(point);
-      const label = point.series.name;
-      tip += `
+      points.forEach(point => {
+        const formatter = getFormatter(point);
+        const label = point.series.name;
+        tip += `
         <span style="color: ${point.color}">${label}</span>
       `;
-      if (!isNaN(point.y)) {
-        if (point.point.low && point.point.high) {
-          tip += `${formatter({value: point.point.low})} - ${formatter({value: point.point.high})}`;
+        if (!isNaN(point.y)) {
+          if (point.point.low && point.point.high) {
+            tip += `${formatter({value: point.point.low})} - ${formatter({value: point.point.high})}`;
+          } else {
+            tip += formatter({value: point.y});
+          }
         } else {
-          tip += formatter({value: point.y});
+          tip += point.y;
         }
-      } else {
-        tip += point.y;
-      }
-      tip += '<br />';
-    });
+        tip += '<br />';
+      });
+    } catch (error) {
+      console.error(error);
+    }
     return tip;
   }
 }
