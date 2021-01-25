@@ -16,6 +16,8 @@ export interface SQLProcess {
 
 export interface TableSize {
   name: string;
+  tableSizeInMb: number;
+  indexSizeInMb: number;
   sizeInMb: number;
   rows: number;
 }

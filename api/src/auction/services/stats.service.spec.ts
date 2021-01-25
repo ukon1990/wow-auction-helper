@@ -65,4 +65,10 @@ describe('StatsService', () => {
         .toBe(toClient.past24Hours.quantity.trend);
     });
   });
+
+  xit('Import daily data', async () => {
+    const service = new StatsService();
+    await service.importDailyDataForDate(2);
+    expect(1).toBe(1);
+  });
 });

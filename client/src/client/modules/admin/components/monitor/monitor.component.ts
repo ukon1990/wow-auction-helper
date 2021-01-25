@@ -19,7 +19,9 @@ export class MonitorComponent implements OnDestroy {
   size: TableSize[] = [];
   sizeColumns: ColumnDescription[] = [
     {key: 'name', title: 'Table', dataType: 'string'},
-    {key: 'sizeInMb', title: 'Size (MB)', dataType: 'number'},
+    {key: 'tableSizeInMb', title: 'Table size (MB)', dataType: 'number'},
+    {key: 'indexSizeInMb', title: 'Index size (MB)', dataType: 'number'},
+    {key: 'sizeInMb', title: 'Total size (MB)', dataType: 'number'},
     {key: 'rows', title: 'Rows', dataType: 'number'},
   ];
   processes: SQLProcess[] = [];
