@@ -5,7 +5,7 @@ import {GzipUtil} from '../../utils/gzip.util';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {NumberUtil} from '../../../../client/src/client/modules/util/utils/number.util';
 import {StatsRepository} from '../repository/stats.repository';
-import {ListObjectsV2Output, ObjectList} from 'aws-sdk/clients/s3';
+import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {RealmService} from '../../realm/service';
 import {AuctionStatsUtil} from '../utils/auction-stats.util';
@@ -14,6 +14,7 @@ import {DateUtil} from '@ukon1990/js-utilities';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
+import {LogRepository} from '../../logs/repository';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -126,24 +127,29 @@ export class StatsService {
       s3.list('wah-data-eu-se', 'statistics/inserts/', 1000)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           const realmMap = new Map<string, S3.Object>();
-          const files = objects.Contents.filter(file => {
-            const [_, ahId, timestamp] = file.Key.split('/')[2].split('-');
-            const date = new Date(timestamp);
-            const id = `${ahId}-${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
-            if (!realmMap.has(id)) {
-              realmMap.set(id, file);
-              return true;
-            }
-            return false;
-          }).sort((a, b) => {
-            const getTimestamp = (obj) => {
-              const [_, __, timestamp] = obj.Key.split('/')[2].split('-');
-              return +timestamp;
-            };
-            return getTimestamp(a) - getTimestamp(b);
-          });
+          const files = objects.Contents
+            .sort((a, b) => {
+              const getTimestamp = (obj) => {
+                const [_, __, timestamp] = obj.Key.split('/')[2].split('-');
+                return +timestamp;
+              };
+              return getTimestamp(b) - getTimestamp(a);
+            })/*.filter(file => {
+              const [_, ahId, timestamp] = file.Key.split('/')[2].split('-');
+              const date = new Date(timestamp);
+              const id = `${ahId}-${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
+              if (!realmMap.has(id)) {
+                realmMap.set(id, file);
+                return true;
+              }
+              return false;
+            })*/;
           total = files.length;
-          if (total > 0) {
+          const openTables: { Table: string, In_use: number }[] = await conn.query(LogRepository.showOpenTables)
+            .catch(error => console.error(`StatsService.insertStats.getActiveQueries`, error));
+          const isTableLocked: boolean = !!openTables.filter(table => table.Table === 'itemPriceHistoryPerHour')[0].In_use;
+
+          if (total > 0 && !isTableLocked) {
             await new RealmService().updateAllRealmStatuses()
               .catch(console.error);
 
@@ -186,16 +192,24 @@ export class StatsService {
                     }
                   }
                 }
-                console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
+                console.log(`Completed ${completed} / ${total} (total in queue=${
+                  objects.Contents.length
+                }) in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
                 conn.end();
                 resolve();
               })
               .catch(error => {
                 console.error(error);
+                conn.end();
                 reject(error);
               });
+          } else if (isTableLocked) {
+            console.log('There is a lock on the table. Items in queue: ', objects.Contents.length);
+            conn.end();
+            resolve();
           } else {
             console.log('There is no new queries to insert', total);
+            conn.end();
             resolve();
           }
         })
@@ -335,7 +349,7 @@ export class StatsService {
     });
   }
 
-  importDailyDataForDate(daysAgo: number = 1): Promise<void>{
+  importDailyDataForDate(daysAgo: number = 1): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
       const conn = new DatabaseUtil(false),
@@ -346,18 +360,18 @@ export class StatsService {
           this.realmRepository.getAll()
             .then(async realms => {
               for (const {id} of realms) {
-                  const queryStart = +new Date();
-                  await this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
-                    .then(() => {
-                      completed++;
-                    })
-                    .catch(console.error);
-                  const queryTime = +new Date() - queryStart;
-                  if (!avgQueryTime) {
-                    avgQueryTime = queryTime;
-                  } else {
-                    avgQueryTime = (avgQueryTime + queryTime) / 2;
-                  }
+                const queryStart = +new Date();
+                await this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
+                  .then(() => {
+                    completed++;
+                  })
+                  .catch(console.error);
+                const queryTime = +new Date() - queryStart;
+                if (!avgQueryTime) {
+                  avgQueryTime = queryTime;
+                } else {
+                  avgQueryTime = (avgQueryTime + queryTime) / 2;
+                }
               }
 
               console.log(`Done updating daily price for ${completed}/${realms.length
@@ -620,7 +634,7 @@ export class StatsService {
     return new Promise<void>(async (resolve, reject) => {
       await this.realmRepository.updateEntry(house.id, {id: house.id, lastTrendUpdateInitiation: +new Date()})
         .catch(console.error);
-    this.getRealmPriceTrends(house, db)
+      this.getRealmPriceTrends(house, db)
         .then((results) => {
           const processStart = +new Date();
           if (results.length) {

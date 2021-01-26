@@ -10,6 +10,8 @@ export class LogRepository {
     'Uptime'
     );`;
 
+  static showOpenTables = `show open tables;`;
+
   static processList = `
       SELECT id,
              query_id                         as queryId,
