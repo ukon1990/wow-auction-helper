@@ -124,7 +124,7 @@ export class StatsService {
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
 
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 1000)// default: 50
+      s3.list('wah-data-eu-se', 'statistics/inserts/', 5000)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           const realmMap = new Map<string, S3.Object>();
           const files = objects.Contents
@@ -134,7 +134,7 @@ export class StatsService {
                 return +timestamp;
               };
               return getTimestamp(b) - getTimestamp(a);
-            })/*.filter(file => {
+            }).filter(file => {
               const [_, ahId, timestamp] = file.Key.split('/')[2].split('-');
               const date = new Date(timestamp);
               const id = `${ahId}-${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
@@ -143,7 +143,7 @@ export class StatsService {
                 return true;
               }
               return false;
-            })*/;
+            });
           total = files.length;
           const openTables: { Table: string, In_use: number }[] = await conn.query(LogRepository.showOpenTables)
             .catch(error => console.error(`StatsService.insertStats.getActiveQueries`, error));

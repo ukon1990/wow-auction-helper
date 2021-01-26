@@ -1,6 +1,6 @@
 import {GzipUtil} from '../utils/gzip.util';
 import {AWS_DETAILS} from '../secrets';
-import {ListObjectsV2Output} from 'aws-sdk/clients/s3';
+import {ListObjectsV2Output, ObjectList} from 'aws-sdk/clients/s3';
 import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
 import {StatsRepository} from '../auction/repository/stats.repository';
 
@@ -42,17 +42,41 @@ export class S3Handler {
   list(bucket: string, prefix: string, maxKeys = 10): Promise<ListObjectsV2Output> {
     return new Promise<any>((resolve, reject) => {
       const s3 = this.getS3();
-      s3.listObjectsV2({
+      const params = {
         Bucket: bucket,
         Prefix: prefix,
         MaxKeys: maxKeys
-      }, (error, data) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(data);
-      });
+      };
+      if (maxKeys > 1000) {
+        const resultObjects: ObjectList = [];
+        let baseObject: ListObjectsV2Output;
+        s3.listObjectsV2(params).eachPage((error, data, done) => {
+          if (!data || !data.Contents) {
+            resolve({
+              ...baseObject,
+              Contents: resultObjects,
+            });
+            return;
+          }
+          data.Contents.forEach(obj => {
+            if (obj.Key) {
+              resultObjects.push(obj);
+            }
+          });
+          if (!baseObject) {
+            baseObject = data;
+          }
+          done();
+        });
+      } else {
+        s3.listObjectsV2(params, (error, data) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(data);
+        });
+      }
     });
   }
 
