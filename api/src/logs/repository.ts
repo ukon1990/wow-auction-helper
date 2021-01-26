@@ -10,6 +10,8 @@ export class LogRepository {
     'Uptime'
     );`;
 
+  static showOpenTables = `show open tables;`;
+
   static processList = `
       SELECT id,
              query_id                         as queryId,
@@ -32,6 +34,8 @@ export class LogRepository {
   static tableSize = `
       SELECT TABLE_NAME                                        AS 'name',
              TABLE_ROWS                                        as 'rows',
+             ROUND((DATA_LENGTH) / 1024 / 1024) AS tableSizeInMb,
+             ROUND((INDEX_LENGTH) / 1024 / 1024) AS indexSizeInMb,
              ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS sizeInMb
       FROM information_schema.TABLES
       WHERE TABLE_SCHEMA = 'wah'

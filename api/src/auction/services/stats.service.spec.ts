@@ -5,6 +5,7 @@ import {AuctionStatsUtil} from '../utils/auction-stats.util';
 import {ItemStats} from '../models/item-stats.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {AuctionHouse} from '../../realm/model';
+import {S3Handler} from '../../handlers/s3.handler';
 
 describe('StatsService', () => {
   beforeEach(() => environment.test = false);
@@ -64,5 +65,19 @@ describe('StatsService', () => {
       expect(toStatic.past24Hours.quantity.trend)
         .toBe(toClient.past24Hours.quantity.trend);
     });
+  });
+
+  xit('Import daily data', async () => {
+    const service = new StatsService();
+    await service.importDailyDataForDate(2);
+    expect(1).toBe(1);
+  });
+
+  xit('Test', async () => {
+    jest.setTimeout(999999);
+    const list = await new S3Handler()
+      .list('wah-data-eu-se', 'statistics/inserts/', 9999999);
+    console.log(list)
+    expect(list.Contents.length).toBe(100);
   });
 });
