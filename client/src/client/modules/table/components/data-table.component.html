@@ -9,6 +9,7 @@
 
 <mat-paginator class="float-right"
                color="accent"
+               *ngIf="data && data.length > pageEvent.pageSize"
                [length]="filteredData.length"
                [pageSize]="pageEvent.pageSize"
                [pageSizeOptions]="pageRows"
@@ -170,12 +171,14 @@
   </tbody>
 </table>
 
-<mat-paginator [length]="filteredData.length"
-               [pageSize]="pageEvent.pageSize"
-               [pageSizeOptions]="pageRows"
-               [pageIndex]="pageEvent.pageIndex"
-               [showFirstLastButtons]="true"
-               (page)="pageChange($event)"
-               color="accent"
+<mat-paginator
+  *ngIf="data && data.length > pageEvent.pageSize"
+  [length]="filteredData.length"
+  [pageSize]="pageEvent.pageSize"
+  [pageSizeOptions]="pageRows"
+  [pageIndex]="pageEvent.pageIndex"
+  [showFirstLastButtons]="true"
+  (page)="pageChange($event)"
+  color="accent"
 >
 </mat-paginator>

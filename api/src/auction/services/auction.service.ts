@@ -118,7 +118,7 @@ export class AuctionService {
     });
   }
 
-  async updateAllHouses(): Promise<any> {
+  async updateAllHouses(): Promise<void> {
     await AuthHandler.getToken()
       .catch(console.error);
     console.log('Starting AH updates');
@@ -190,6 +190,7 @@ export class AuctionService {
         .then((r: AHDumpResponse) =>
           ahDumpResponse = r)
         .catch(e => {
+          console.error('Could not fetch AH dump', house.id, e);
           error = e;
         });
 
@@ -261,7 +262,7 @@ export class AuctionService {
     });
   }
 
-  updateStaticS3Data(records: EventRecord[]) {
+  updateStaticS3Data(records: EventRecord[]): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const promises = [];
       for (const record of records) {
@@ -279,7 +280,7 @@ export class AuctionService {
     });
   }
 
-  private processS3Record(record: EventSchema) {
+  private processS3Record(record: EventSchema): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
@@ -291,26 +292,33 @@ export class AuctionService {
         const [auctions, region, ahId, fileName] = splitted;
         const start = +new Date();
         const lastModified = +fileName.replace(/-lastModified.json.gz/gi, '');
+        let house: AuctionHouse;
+          await this.realmRepository.getById(+ahId)
+            .then(h => house = h)
+          .catch(console.error);
 
-        const fileSize = +(record.object.size / 1000000).toFixed(2),
-          url = `${S3Handler.getBucketUrlForRegion(region, `auctions/${region}/${ahId}/${fileName}`)}`;
-        console.log(`Checked update and updated realm status in ${+new Date() - start} ms`);
-        Promise.all([
-          this.updateRealmStatus(ahId, lastModified, url, fileSize),
+        if (house && house.lastModified < lastModified) {
+          const fileSize = +(record.object.size / 1000000).toFixed(2),
+            url = `${S3Handler.getBucketUrlForRegion(region, `auctions/${region}/${ahId}/${fileName}`)}`;
+          console.log(`Checked update and updated realm status in ${+new Date() - start} ms`);
           new StatsService().processRecord(record)
+            .then(async () => {
+              await this.updateRealmStatus(ahId, lastModified, url, fileSize)
+                .catch(err => console.error('Could not update realm status', err));
+              await new RealmService().createLastModifiedFile(+ahId, region)
+                .catch(err => console.error('Could not createLastModifiedFile', err));
+              resolve();
+            })
             .catch(err => {
-              console.error('Could not processAuctions', err);
-            }),
-        ])
-          .then(async () => {
-            await new RealmService().createLastModifiedFile(+ahId, region)
-              .catch(err => console.error('Could not createLastModifiedFile', err));
-            resolve();
-          })
-          .catch(err => {
-            console.error(err);
-            reject(err);
-          });
+              console.error(err);
+              reject(err);
+            });
+        } else {
+          const msg = `Was trying to update with the same or an older version of the AH dump ${
+            house ? house.lastModified : undefined} with ${lastModified}`;
+          console.error(msg);
+          reject(new Error(msg));
+        }
       } else {
         resolve();
       }

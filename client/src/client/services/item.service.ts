@@ -225,24 +225,17 @@ export class ItemService {
     items.forEach((item) => {
       const storedId = getStoreId(item);
       if (realmMap.get(ahId) && realmMap.get(ahId).get(storedId)) {
-        console.log('Eksisterer alt', {
-          id: storedId,
-          stored: realmMap.get(ahId).get(storedId), realm: realmMap.get(ahId), full: realmMap
-        });
         result.set(storedId, realmMap.get(ahId).get(storedId));
       } else {
-        console.log('Eksisterer ikke ', storedId, realmMap, realmMap.get(ahId));
         missing.push(item);
       }
     });
-    console.log('hahaaha', {result, missing, items});
 
 
     if (!missing.length) {
       return new Promise(resolve => resolve(result));
     }
-
-    return this._http.post(Endpoints.getLambdaUrl('item/history', 'EU_NORTH'),
+    return this._http.post(Endpoints.getLambdaUrl('item/history'),
       {
         items: missing,
         onlyHourly: false
@@ -253,7 +246,7 @@ export class ItemService {
           realmMap.set(ahId, new Map());
         }
 
-        entries.hourly.forEach(entry => {
+        (entries.hourly || []).forEach(entry => {
           const id = getStoreId(entry);
           if (!realmMap.get(ahId).has(id)) {
             realmMap.get(ahId).set(id, {
@@ -264,7 +257,7 @@ export class ItemService {
           }
           realmMap.get(ahId).get(id).hourly.push(entry);
         });
-        entries.daily.forEach(entry => {
+        (entries.daily || []).forEach(entry => {
           const id = getStoreId(entry);
           if (!realmMap.get(ahId).has(id)) {
             realmMap.get(ahId).set(id, {

@@ -1,19 +1,47 @@
 <ng-container *ngIf="isActiveTab">
   <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
     <form [formGroup]="form" *ngIf="auctionItem.source?.recipe?.all">
-      <mat-form-field>
-        <mat-select formControlName="recipe" placeholder="Crafting cost by recipe">
-          <mat-option>No recipe is selected</mat-option>
+      <mat-form-field class="w-100">
+        <mat-select *ngIf="auctionItem.source?.recipe?.all.length"
+                    formControlName="recipe"
+                    placeholder="Crafting cost by recipe"
+        >
           <mat-option *ngFor="let recipe of auctionItem.source?.recipe?.all" [value]="recipe">
-            {{recipe.name}} - {{recipe.rank}}
+            <ng-container *ngIf="professions && professions[recipe.professionId]">
+              [{{professions[recipe.professionId].name}}]
+            </ng-container>
+            {{ recipe.name }}<span *ngIf="recipe.rank"> - Rank: {{ recipe.rank }}</span>
           </mat-option>
         </mat-select>
       </mat-form-field>
     </form>
     <em>
       Note: The prices here might deviate, from what you see in external tables.
-      This data is updated right now, unlike the "external" which has some delay due to calculation time.
+      This data is updated right now, unlike the "external" which is updated once per day to save on the hosting cost.
     </em>
+
+    <!-- TODO: Add back, if it feels relevant
+    <ng-container *ngIf="reagents && reagents.length">
+      <h6>Reagents(click for details):</h6>
+      <mat-list dense class="horizontal-item-list">
+        <mat-list-item
+                *ngFor="let reagent of reagents"
+        >
+          <wah-icon mat-list-icon [size]="22" [id]="reagent.id"></wah-icon>
+          <div mat-line [style]="{color: theme.accentColorCode}">
+            <a rel="domain={{ locale }},item={{ reagent.id }}"
+               (click)="setSelectedItem(reagent.id)"
+            >
+              {{reagent.name}} x {{ reagent.quantity }}
+            </a>
+          </div>
+          <div mat-line>
+            {{ reagent.avgPrice * reagent.quantity | gold }}
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </ng-container>
+    -->
 
     <h6>Hourly changes for the past 14 days</h6>
     <mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">
@@ -86,23 +114,23 @@
         </div>
       </mat-list-item>
     </mat-list>
-      <mat-tab-group class="mb-3">
-        <mat-tab label="Chart">
-          <wah-highcharts
-                  title="Hourly prices and quantity for the past 14 days"
-                  [series]="hourlyChart"
-                  [(update)]="updateDailyChart"
-          >
-          </wah-highcharts>
+    <mat-tab-group class="mb-3">
+      <mat-tab label="Chart">
+        <wah-highcharts
+                title="Hourly prices and quantity for the past 14 days"
+                [series]="hourlyChart"
+                [(update)]="updateDailyChart"
+        >
+        </wah-highcharts>
 
-        </mat-tab>
-        <mat-tab label="Table">
-          <wah-data-table
-                  [columns]="fourteenDayByHourTable.columns"
-                  [data]="fourteenDayByHourTable.data">
-          </wah-data-table>
-        </mat-tab>
-      </mat-tab-group>
+      </mat-tab>
+      <mat-tab label="Table">
+        <wah-data-table
+                [columns]="fourteenDayByHourTable.columns"
+                [data]="fourteenDayByHourTable.data">
+        </wah-data-table>
+      </mat-tab>
+    </mat-tab-group>
 
 
     <ng-container *ngIf="groupedByDateTable.data.length > 0">
@@ -212,6 +240,49 @@
           </wah-data-table>
         </mat-tab>
       </mat-tab-group>
+    </ng-container>
+    <ng-container *ngIf="statsMap">
+      <h6 class="mt-2">
+        Historical data, mapped out by weekday
+      </h6>
+      <form [formGroup]="form">
+        <div formGroupName="period">
+          <mat-form-field color="accent">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="rangePicker">
+              <input formControlName="start"
+                     matStartDate
+                     placeholder="Start date"
+              >
+              <input formControlName="end"
+                     matEndDate
+                     placeholder="End date"
+              >
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #rangePicker>
+              <mat-date-range-picker-actions>
+                <button mat-button matDateRangePickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
+              </mat-date-range-picker-actions>
+            </mat-date-range-picker>
+          </mat-form-field>
+        </div>
+      </form>
+      <wah-data-table
+              [columns]="statsMap?.columns"
+              [data]="statsMap?.prices">
+        <div class="float-left history-in-table-toolbar">
+          Prices
+        </div>
+      </wah-data-table>
+      <wah-data-table *ngIf="statsMap?.roi.length"
+                      [columns]="statsMap?.columns"
+                      [data]="statsMap?.roi">
+        <div class="float-left history-in-table-toolbar">
+          ROI
+        </div>
+      </wah-data-table>
     </ng-container>
   </ng-container>
 

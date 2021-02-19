@@ -30,6 +30,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {CoreModule} from '../core/core.module';
 import {HighchartsChartModule} from 'highcharts-angular';
 import { AuctionsComponent } from './components/auctions/auctions.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -66,7 +67,8 @@ import { AuctionsComponent } from './components/auctions/auctions.component';
     CraftingModule,
     MatDialogModule,
     CoreModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    MatDatepickerModule
   ],
   exports: [
     ItemComponent,

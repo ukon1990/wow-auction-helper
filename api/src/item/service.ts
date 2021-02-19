@@ -1,6 +1,6 @@
 import {RDSItemRepository} from './repository';
 import {DatabaseUtil} from '../utils/database.util';
-import {BLIZZARD} from '../secrets';
+import {BLIZZARD, isOffline} from '../secrets';
 import {ItemHandler} from '../handlers/item.handler';
 import {Item} from '../../../client/src/client/models/item/item';
 import {ItemQuery} from '../queries/item.query';
@@ -11,8 +11,8 @@ import {LocaleUtil} from '../utils/locale.util';
 import {WoWDBItem} from '../models/item/wowdb';
 import {WoWHeadUtil} from '../utils/wowhead.util';
 import {WoWHead} from '../models/item/wowhead';
-import {UpdatesService} from '../updates/service';
 import {DateUtil} from '@ukon1990/js-utilities';
+import {UpdatesService} from '../updates/service';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -73,7 +73,7 @@ export class ItemServiceV2 {
   }
 
   addOrUpdateItemsByIds(ids: number[], db: DatabaseUtil): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       let completed = 0;
       let successfull = 0;
       const promiseThrottle = new PromiseThrottle({
@@ -82,48 +82,37 @@ export class ItemServiceV2 {
       });
       const startTime = +new Date();
       const promises: Promise<any>[] = [];
-      ids.forEach(id => promises.push(
-        promiseThrottle.add(() =>
-        new Promise((success, fail) => {
-          if (DateUtil.timeSince(startTime, 's') > 200) {
-            success();
-            return;
-          }
-          new ItemHandler()
-            .addItem(id, 'en_GB', db)
-            .then(() => {
+      for (const id of ids) {
+        if (!isOffline && DateUtil.timeSince(startTime, 's') > 200) {
+          continue;
+        }
+        await new ItemHandler()
+          .addItem(id, 'en_GB', db)
+          .then(() => {
+            completed++;
+            successfull++;
+            console.log(`Completed ${completed} / ${ids.length} (${
+              Math.round(completed / ids.length * 100)}%)`);
+          })
+          .catch(error => {
               completed++;
-              successfull++;
-              console.log(`Completed ${completed} / ${ids.length} (${
-                Math.round(completed / ids.length * 100)}%)`);
-              success();
-            })
-            .catch(error => {
-                completed++;
-                console.error(error);
-                fail(error);
-              }
-            );
-        }).catch(console.error))));
-      Promise.all(promises)
-        .then(async () => {
-          console.log(`Done processing ${ids.length} items (${successfull} successfully so).`);
-          if (successfull) {
-            console.log('Starting to update the static files');
-            await UpdatesService.getAndSetItems()
-              .then(() => console.log('Done uploading items'))
-              .catch(console.error);
-            await UpdatesService.getAndSetTimestamps()
-              .then(() => console.log('Done updating the timestamps'))
-              .catch(console.error);
-            console.log('Done updating static files');
-          }
-          resolve();
-        })
-        .catch(err => {
-          console.error('Could not add items', err);
-          reject(err);
-        });
+              console.error(error);
+            }
+          );
+      }
+      console.log(`Done processing ${ids.length} items (${successfull} successfully so).`);
+
+      if (successfull && !isOffline) {
+        console.log('Starting to update the static files');
+        await UpdatesService.getAndSetItems()
+          .then(() => console.log('Done uploading items'))
+          .catch(console.error);
+        await UpdatesService.getAndSetTimestamps()
+          .then(() => console.log('Done updating the timestamps'))
+          .catch(console.error);
+        console.log('Done updating static files');
+      }
+      resolve();
     });
   }
 
@@ -278,6 +267,10 @@ export class ItemServiceV2 {
             item.setDataFromWoWHead(wowHead);
           })
           .catch(e => error = e);
+      }
+
+      if (item.id > 175264 && (item.expansionId < 8 || !item.expansionId)) {
+        item.expansionId = 8;
       }
 
       if (error) {

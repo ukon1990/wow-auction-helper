@@ -1,3 +1,4 @@
+import { RealmRepository } from './../../realm/repositories/realm.repository';
 import {DatabaseUtil} from '../../utils/database.util';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
@@ -7,6 +8,7 @@ import {AhStatsRequest} from '../models/ah-stats-request.model';
 
 export class StatsRepository {
   readonly FOURTEEN_DAYS = 60 * 60 * 24 * 1000 * 14;
+  private realmRepository = new RealmRepository();
 
   static multiInsertOrUpdate(list: AuctionItemStat[], hour: number): string {
     const formattedHour = (hour < 10 ? '0' + hour : '' + hour);
@@ -69,7 +71,7 @@ export class StatsRepository {
           AND date = '${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-15';`);
   }
 
-  insertStats(id: number, date: Date, dayOfMonth: string): Promise<any> {
+  getHourlyStatsForRealmAtDate(id: number, date: Date, dayOfMonth: string): Promise<any> {
     return this.conn.query(`SELECT *
                 FROM itemPriceHistoryPerHour
                 WHERE ahId = ${id} and date = '${date.getUTCFullYear()}-${
@@ -80,7 +82,6 @@ export class StatsRepository {
     const insert = new RDSQueryUtil('itemPriceHistoryPerDay')
       .multiInsert(list)
       .replace(';', '');
-    console.log('multiInsertOrUpdateDailyPrices', list[0]);
     return this.conn.query(`${insert} ON DUPLICATE KEY UPDATE
       min${day} = VALUES(min${day}),
       minHour${day} = VALUES(minHour${day}),
@@ -102,22 +103,13 @@ export class StatsRepository {
                     AND itemId = ${itemId}
                     AND petSpeciesId = ${petSpeciesId}
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
+                    AND date > NOW() - INTERVAL 15 DAY
                     )
-                  `).join(' OR ')
-    }
-                ) AND UNIX_TIMESTAMP(date) >= ${(+new Date() - this.FOURTEEN_DAYS) / 1000};`);
+                  `).join(' OR ')}
+                );`);
   }
 
   getPriceHistoryDaily(items: AhStatsRequest[]) {
-    /*  Original : Query
-    return this.conn.query(`SELECT *
-                FROM itemPriceHistoryPerDay
-                WHERE ahId = ${ahId}
-                  AND itemId = ${id}
-                  AND petSpeciesId = ${petSpeciesId}
-                  AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}';`);
-    */
-
     return this.conn.query(
       `SELECT *
               FROM itemPriceHistoryPerDay
@@ -128,9 +120,9 @@ export class StatsRepository {
                     AND itemId = ${itemId}
                     AND petSpeciesId = ${petSpeciesId}
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
+                    AND date > NOW() - INTERVAL 7 MONTH
                     )
-                  `).join(' OR ')
-      }
+                  `).join(' OR ')}
                 );`);
   }
 
@@ -154,33 +146,44 @@ export class StatsRepository {
         WHERE id = ${id};`);
   }
 
-  getActiveQueries(): Promise<any> {
+  getActiveQueries(table = 'itemPriceHistoryPerHour'): Promise<any> {
     return this.conn.query(`
         SELECT count(*) as activeQueries
         FROM information_schema.processlist
         WHERE info NOT LIKE '%information_schema.processlist%'
-          AND (info LIKE 'INSERT INTO itemPriceHistoryPerHour%'
-            OR info LIKE '%DELETE FROM%');`);
+          AND (info LIKE 'INSERT INTO ${table}%'
+            OR info LIKE '%DELETE FROM ${table}%');`);
+  }
+
+  getCurrentDeleteQueries(table = 'itemPriceHistoryPerHour'): Promise<any> {
+    return this.conn.query(`
+        SELECT count(*) as activeQueries
+        FROM information_schema.processlist
+        WHERE info NOT LIKE '%information_schema.processlist%'
+          AND (info LIKE 'SELECT ahId FROM ${table} WHERE date < NOW() - INTERVAL%'
+            OR info LIKE '%DELETE FROM ${table}%');`);
   }
 
   deleteOldDailyPricesForRealm(table: string = 'itemPriceHistoryPerDay', olderThan: number = 7, period: string = 'MONTH') {
     return new Promise<void>(async (resolve, reject) => {
-      this.conn.query(`
-          SELECT ahId
-          FROM ${table}
-          WHERE date < NOW() - INTERVAL ${olderThan} ${period}
-          GROUP BY ahId
-          ORDER BY ahId
-          LIMIT 1
-      `)
-        .then(ids => {
+      const key = `lastHistoryDeleteEvent${table === 'itemPriceHistoryPerDay' ? 'Daily' : ''}`;
+     this.realmRepository.getRealmsThatNeedsStatDeletion(key)
+        .then(async ids => {
           if (ids.length) {
+            const entry = ids[0];
+            const updatedValue = {};
+            updatedValue[key] = +new Date();
+            entry[key] = updatedValue[key];
+            await this.realmRepository.update(entry.id, updatedValue)
+              .catch(console.error);
+
+            console.log('Deleting old items for', entry.id, entry.lastHistoryDeleteEvent, entry.lastHistoryDeleteEventDaily);
             this.conn.query(`
           DELETE
           FROM ${table}
           WHERE date < NOW() - INTERVAL ${olderThan} ${period}
-            AND ahId = ${ids[0].ahId};`)
-              .then(res => {
+            AND ahId = ${entry.id};`)
+              .then(async res => {
                 console.log(res);
                 resolve();
               })
