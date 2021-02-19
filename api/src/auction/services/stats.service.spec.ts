@@ -6,6 +6,7 @@ import {ItemStats} from '../models/item-stats.model';
 import {AuctionProcessorUtil} from '../utils/auction-processor.util';
 import {AuctionHouse} from '../../realm/model';
 import {S3Handler} from '../../handlers/s3.handler';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 
 describe('StatsService', () => {
   beforeEach(() => environment.test = false);
@@ -40,7 +41,11 @@ describe('StatsService', () => {
         .then(rows => {
           toStatic = rows.filter(item => item.itemId === itemId)[0];
         });
-      await new StatsService().getPriceHistoryFor(69, itemId, undefined, undefined, false, conn)
+      await new StatsService().getPriceHistoryFor([{
+        ahId: 69, itemId,
+        bonusIds: undefined,
+        petSpeciesId: undefined
+      }], false, conn)
         .then(results => {
           toClient = AuctionStatsUtil.processDaysForHourlyPriceData(results.hourly);
           rawDataToClient = AuctionProcessorUtil.processHourlyPriceData(results.hourly);
@@ -68,16 +73,39 @@ describe('StatsService', () => {
   });
 
   xit('Import daily data', async () => {
-    const service = new StatsService();
-    await service.importDailyDataForDate(2);
-    expect(1).toBe(1);
+    jest.setTimeout(999999999);
+    const service = new StatsService(); // Dag 7 dager siden
+    const hasError = await service.importDailyDataForDate(9);
+    expect(hasError).toBe(false);
+  });
+
+  it('Delete old history data', async () => {
+    jest.setTimeout(999999999);
+    const service = new StatsService(); // Dag 7 dager siden
+    const realmRepository = new RealmRepository();
+    // const hasError = await service.deleteOldPriceForRealm('itemPriceHistoryPerHour', 15, 'DAY');
+    const key = `lastHistoryDeleteEvent`;
+    const list: AuctionHouse[] = await realmRepository.getRealmsThatNeedsStatDeletion(key);
+
+    expect(list.length).toBe(0);
   });
 
   xit('Test', async () => {
     jest.setTimeout(999999);
     const list = await new S3Handler()
       .list('wah-data-eu-se', 'statistics/inserts/', 9999999);
-    console.log(list)
+    const queue = {};
+    list.Contents.forEach(entry => {
+
+      const [region, ahId, timestamp] = entry.Key.split('/')[2].split('-');
+      const date = new Date(+timestamp);
+      const dateId = `${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
+      if (!queue[dateId]) {
+        queue[dateId] = 0;
+      }
+      queue[dateId]++;
+    });
+    console.log('Queue: ', queue);
     expect(list.Contents.length).toBe(100);
   });
 });

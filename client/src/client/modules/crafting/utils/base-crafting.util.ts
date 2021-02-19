@@ -226,9 +226,9 @@ export abstract class BaseCraftingUtil {
   }
 
   private setRecipeForReagent(r: Reagent, parentRecipe: Recipe) {
-    const recipe: Recipe[] = CraftingService.itemRecipeMap.value.get(r.id);
+    const recipe: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(r.id);
     if (!r.recipe && recipe) {
-      r.recipe = recipe[0];
+      r.recipe = recipe.sort((a, b) => b.roi - a.roi)[0];
       if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.id)) {
         BaseCraftingUtil.intermediateEligible.push(parentRecipe);
         BaseCraftingUtil.intermediateMap.set(parentRecipe.id, parentRecipe);

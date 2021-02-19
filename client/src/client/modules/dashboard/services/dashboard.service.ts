@@ -61,11 +61,13 @@ export class DashboardService {
     this.sm.add(settingsService.dashboards,
       boards => this.saveAll(boards, true, false));
 
+    /*
     this.sm.add(TsmService.list, () => {
       if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
         this.calculateAll();
       }
     });
+    */
   }
 
   async init(): Promise<void> {

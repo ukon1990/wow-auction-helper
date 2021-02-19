@@ -97,7 +97,7 @@ export abstract class BaseRepository<T> {
             reject(error);
             return;
           }
-          resolve(data as T);
+          resolve(data.Attributes as T);
         });
     });
   }

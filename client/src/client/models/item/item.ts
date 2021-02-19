@@ -15,6 +15,7 @@ export class Item {
   itemSource?: WoWHead = new WoWHead();
   itemSpells?: ItemSpells[];
   buyPrice: number;
+  buyQuantity: number;
   currencyId: number;
   sellPrice: number;
   itemBind: number;
@@ -43,6 +44,7 @@ export class Item {
     this.itemSubClass = item.item_subclass.id;
     this.quality = QualityUtil.get(item.quality.type);
     this.buyPrice = item.purchase_price;
+    this.buyQuantity = item.purchase_quantity;
     this.setSellPrice(item);
     if (item.preview_item.requirements &&
       item.preview_item.requirements.reputation &&

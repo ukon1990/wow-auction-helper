@@ -140,27 +140,23 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     });
   }
 
-  update(id: number, entry: { size: number; lastModified: number; id: number; url: string }) {
+  update(id: number, entry: {
+    lastModified?: number;
+    url?: string;
+    size?: number;
+    nextUpdate?: number;
+  }) {
     return new Promise<void>((resolve, reject) => {
-      this.repository.getUpdateDelays(id)
-        .then(delays => {
-          this.updateEntry(id, {
-            ...entry,
-            ...delays,
-            nextUpdate: entry.lastModified + (delays.lowestDelay * 60 * 1000)
-          })
-            .then(() => {
-              console.log(`Successfully updated ${id} with ${
-                new Date(entry.lastModified).toUTCString()}`, delays);
-              resolve();
-            })
-            .catch(error => {
-              console.error('Could not update', delays, error);
-              reject(error);
-            });
+      this.updateEntry(id, {
+        ...entry,
+      }, false)
+        .then(() => {
+          console.log(`Successfully updated ${id} with ${
+            new Date(entry.lastModified).toUTCString()}`);
+          resolve();
         })
         .catch(error => {
-          console.error('Could not get delay', error);
+          console.error('Could not update', error);
           reject(error);
         });
     });
@@ -211,9 +207,31 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
     });
   }
 
+  getRealmsThatNeedsStatDeletion(timeKey: string): Promise<AuctionHouse[]> {
+    const HOUR = 1000 * 60 * 60;
+    const notOlderThan = +new Date(+new Date() - HOUR * 24);
+    return new Promise<AuctionHouse[]>((resolve, reject) => {
+      const filterExpression = `(#${timeKey} < :time OR attribute_not_exists(#${timeKey}))`;
+      const attributeNames = {};
+      attributeNames['#' + timeKey] = timeKey;
+      this.scan({
+        TableName: this.table,
+        FilterExpression: filterExpression,
+        ExpressionAttributeNames: attributeNames,
+        ExpressionAttributeValues: {
+          ':time': notOlderThan,
+        }
+      })
+        .then(houses => resolve(
+          houses.sort((a, b) => b[timeKey] - a[timeKey])
+        ))
+        .catch(reject);
+    });
+  }
+
   getRealmsThatNeedsTrendUpdate(): Promise<AuctionHouse[]> {
     const HOUR = 1000 * 60 * 60;
-    const notOlderThan = +new Date(+new Date() - HOUR * 4);
+    const notOlderThan = +new Date(+new Date() - HOUR * 24);
     return new Promise<AuctionHouse[]>((resolve, reject) => {
       this.scan({
         TableName: this.table,
@@ -227,7 +245,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
         ExpressionAttributeValues: {
           ':time': notOlderThan,
         }
-      })
+      })// TODO: Filter here based on current time and timezone
         .then(houses => resolve(
           houses.sort((a, b) => b.lastTrendUpdateInitiation - a.lastTrendUpdateInitiation)
         ))
