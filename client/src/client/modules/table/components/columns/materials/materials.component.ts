@@ -27,7 +27,6 @@ export class MaterialsComponent implements OnInit {
     if (this.recipeId) {
       this.recipe = CraftingService.map.value.get(this.recipeId);
     }
-    console.log('Recipe', this.recipe);
   }
 
   getItemValue(itemID: number) {

@@ -228,7 +228,6 @@ export abstract class BaseCraftingUtil {
   private setRecipeForReagent(r: Reagent, parentRecipe: Recipe) {
     const recipe: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(r.id);
     if (!r.recipe && recipe) {
-      r.recipe = recipe.sort((a, b) => b.roi - a.roi)[0];
       if (!BaseCraftingUtil.intermediateMap.get(parentRecipe.id)) {
         BaseCraftingUtil.intermediateEligible.push(parentRecipe);
         BaseCraftingUtil.intermediateMap.set(parentRecipe.id, parentRecipe);
@@ -358,10 +357,17 @@ export abstract class BaseCraftingUtil {
     recipe.cost = 0;
     recipe.roi = 0;
     recipe.reagents.forEach(reagent => {
-      const knownRecipes: Recipe[] = CraftingService.itemRecipeMapPerKnown.value.get(reagent.id);
-      if (knownRecipes && this.shouldUseIntermediateForReagent(knownRecipes[0], reagent) && !this.getOverridePrice(reagent.id)) {
+      const knownRecipes: Recipe[] = (CraftingService.itemRecipeMapPerKnown.value.get(reagent.id) || [])
+        .filter(r => r.roi > 0)
+        .sort((a, b) => a.cost - b.cost);
+      if (
+        knownRecipes &&
+        this.shouldUseIntermediateForReagent(knownRecipes[0], reagent) &&
+        !this.getOverridePrice(reagent.id)
+      ) {
         reagent.intermediateEligible = true;
         reagent.intermediateCount = reagent.quantity;
+        reagent.recipe = knownRecipes[0];
         recipe.cost += knownRecipes[0].cost * reagent.quantity;
       } else {
         reagent.intermediateEligible = false;
