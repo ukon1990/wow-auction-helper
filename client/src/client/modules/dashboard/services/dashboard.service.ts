@@ -46,11 +46,14 @@ export class DashboardService {
     private backgroundService: BackgroundDownloadService
   ) {
     // this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
-    this.sm.add(this.professionService.listWithRecipes, () => {
+    this.sm.add(this.professionService.listWithRecipes, (list) => {
       this.sm.unsubscribeById('auctions');
 
-      this.init()
-        .catch(error => ErrorReport.sendError('DashboardService.init', error));
+      if (list.length) {
+        console.log('boards listWithRecipes', list);
+        this.init()
+          .catch(error => ErrorReport.sendError('DashboardService.init', error));
+      }
       this.sm.add(this.auctionsService.mapped,
         (map) => this.calculateAll(map),
         {
@@ -85,8 +88,8 @@ export class DashboardService {
         this.calculatedBoardEvent.emit(board.id);
       });
       this.allBoardsCalculatedEvent.next(+new Date());
+      Report.debug('Boards', this.list.value);
     }
-    Report.debug('Boards', this.list.value);
   }
 
   getAllPublic(): Promise<DashboardMinimal[]> {
