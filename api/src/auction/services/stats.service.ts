@@ -16,6 +16,7 @@ import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
+import {AuctionItemStat} from '../models/auction-item-stat.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -285,12 +286,21 @@ export class StatsService {
                   list,
                   hour
                 } = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
-                const query = StatsRepository.multiInsertOrUpdate(list, hour);
-                new S3Handler()
-                  .save(query, `statistics/inserts/${region}-${ahId}-${fileName}.sql.gz`, {region: 'eu-se'})
-                  .then(ok => {
+                const queries = AuctionProcessorUtil.splitEntries(list)
+                  .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
+                const s3 = new S3Handler();
+
+                Promise.all(
+                  queries.map((query, index) =>
+                    s3.save(
+                      query,
+                      `statistics/inserts/${region}-${ahId}-${fileName}-part-${index}.sql.gz`,
+                      {region: 'eu-se'}
+                    ))
+                )
+                  .then(() => {
                     console.log(`Processed and uploaded statistics SQL in ${+new Date() - start} ms`);
-                    resolve(ok);
+                    resolve();
                   })
                   .catch(error => {
                     reject(error);
