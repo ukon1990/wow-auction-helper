@@ -154,7 +154,7 @@ export class StatsService {
 
             conn.enqueueHandshake()
               .then(async () => {
-                for (const object of files.slice(0, 10)) {
+                for (const object of files.slice(0, 50)) {
                   const __ret = await this.insertAndDeleteStatsInsertFile(
                     insertStatsStart, conn, s3, objects, object, completed, avgQueryTime);
 
