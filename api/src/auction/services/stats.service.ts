@@ -154,7 +154,7 @@ export class StatsService {
 
             conn.enqueueHandshake()
               .then(async () => {
-                for (const object of files.slice(0, 50)) {
+                for (const object of files) {
                   const __ret = await this.insertAndDeleteStatsInsertFile(
                     insertStatsStart, conn, s3, objects, object, completed, avgQueryTime);
 
@@ -242,7 +242,8 @@ export class StatsService {
           return +timestamp;
         };
         return getTimestamp(b) - getTimestamp(a);
-      }).filter(file => {
+      }); /* TODO: Put back if splitting into smaller chunks did not help
+      .filter(file => {
         const [_, ahId, timestamp] = file.Key.split('/')[2].split('-');
         const date = new Date(timestamp);
         const id = `${ahId}-${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
@@ -251,7 +252,7 @@ export class StatsService {
           return true;
         }
         return false;
-      });
+      });*/
   }
 
   private async getIsTableLocked(conn: DatabaseUtil, tableName: string) {
