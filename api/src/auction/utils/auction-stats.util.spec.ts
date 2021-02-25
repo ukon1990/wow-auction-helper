@@ -608,7 +608,7 @@ describe('AuctionStatsUtil', () => {
   it('Can split array into chunks', () => {
     const list: AuctionItemStat[] = [];
 
-    for(let i = 0; i < 23000; i++) {
+    for (let i = 0; i < 23000; i++) {
       list.push({
         itemId: 1,
         petSpeciesId: 1,
@@ -616,7 +616,7 @@ describe('AuctionStatsUtil', () => {
       } as AuctionItemStat);
     }
 
-    const result = AuctionProcessorUtil.splitEntries(list);
+    const result = AuctionProcessorUtil.splitEntries<AuctionItemStat>(list);
     expect(result.length).toBe(5);
     expect(result[0].length).toBe(5000);
     expect(result[4].length).toBe(3000);

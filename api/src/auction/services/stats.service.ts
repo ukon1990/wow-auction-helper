@@ -141,7 +141,7 @@ export class StatsService {
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
 
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 180)// default: 50
+      s3.list('wah-data-eu', 'statistics/inserts/', 180)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
           const files = this.getFilteredAndSortedInsertStatements(objects);
           total = files.length;
@@ -296,7 +296,7 @@ export class StatsService {
                     s3.save(
                       query,
                       `statistics/inserts/${region}-${ahId}-${fileName}-part-${index}.sql.gz`,
-                      {region: 'eu-se'}
+                      {region: 'eu'}
                     ))
                 )
                   .then(() => {
@@ -490,7 +490,12 @@ export class StatsService {
           console.log(`Calculated stats for ${id} in ${+new Date() - calculationStartTime}ms.`);
 
           const queryStartTime = +new Date();
-          new StatsRepository(conn).multiInsertOrUpdateDailyPrices(list, dayOfMonth)
+
+          const repo = new StatsRepository(conn);
+          Promise.all(
+            AuctionProcessorUtil.splitEntries(list).map(entries =>
+              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth))
+          )
             .then(() => {
               console.log(`Done updating daily price data for ${id} in ${+new Date() - queryStartTime}ms.`);
               resolve();

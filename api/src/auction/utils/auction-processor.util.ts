@@ -32,8 +32,8 @@ export class AuctionProcessorUtil {
     };
   }
 
-  static splitEntries(list: AuctionItemStat[]): AuctionItemStat[][] {
-    const result: AuctionItemStat[][] = [];
+  static splitEntries<T>(list: T[]): T[][] {
+    const result: T[][] = [];
     list.forEach(entry => {
       let index = (result.length || 1) - 1;
       if (result[index] && result[index].length >= 5000) {
