@@ -99,7 +99,7 @@ export class PriceHistoryComponentUtil {
 
 
     const columns = [
-      {key: 'name', title: '', dataType: 'name'},
+      {key: 'name', title: '', dataType: 'text'},
       {key: '1', title: 'Monday', dataType: 'gold'},
       {key: '2', title: 'Tuesday', dataType: 'gold'},
       {key: '3', title: 'Wednesday', dataType: 'gold'},
