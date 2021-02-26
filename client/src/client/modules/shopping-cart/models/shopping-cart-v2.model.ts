@@ -8,6 +8,7 @@ interface CartObject {
 }
 
 export interface CartRecipe extends CartObject {
+  bonusIds: number[];
   itemId?: number;
   isIntermediate: boolean;
   cost?: number;

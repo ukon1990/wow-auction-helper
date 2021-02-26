@@ -26,7 +26,7 @@ export class ShoppingCartService {
   items: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
   itemsMap: BehaviorSubject<Map<number, CartItem>> = new BehaviorSubject<Map<number, CartItem>>(new Map<number, CartItem>());
   recipes: BehaviorSubject<CartRecipe[]> = new BehaviorSubject<CartRecipe[]>([]);
-  recipesMap: BehaviorSubject<Map<number, CartRecipe>> = new BehaviorSubject<Map<number, CartRecipe>>(new Map<number, CartRecipe>());
+  recipesMap: BehaviorSubject<Map<string, CartRecipe>> = new BehaviorSubject<Map<string, CartRecipe>>(new Map<string, CartRecipe>());
   lastUpdateRequest: number;
 
   private sm = new SubscriptionManager();
@@ -89,9 +89,9 @@ export class ShoppingCartService {
     }
     if (recipes) {
       try {
-        const map = new Map<number, CartRecipe>();
+        const map = new Map<string, CartRecipe>();
         this.recipes.next(recipes);
-        this.recipes.value.forEach(recipe => map.set(recipe.id, recipe));
+        this.recipes.value.forEach(recipe => map.set(recipe.id, recipe.bonusIds, recipe));
         this.recipesMap.next(map);
       } catch (error) {
         ErrorReport.sendError('ShoppingCartService.restore recipes', error);
@@ -103,13 +103,13 @@ export class ShoppingCartService {
     const auctionItem: AuctionItem = this.auctionService.mapped.value.get('' + id);
     if (auctionItem && auctionItem.source && auctionItem.source.recipe && auctionItem.source.recipe.known) {
       const recipe: Recipe = auctionItem.source.recipe.known[0];
-      this.addRecipe(recipe.id, quantity);
+      this.addRecipe(recipe.id, undefined, quantity);
     }
   }
 
-  addRecipe(id: number, quantity: number): void {
+  addRecipe(id: number, bonusIds: number[] = [], quantity: number): void {
     let list: CartRecipe[] = this.recipes.value;
-    const map: Map<number, CartRecipe> = this.recipesMap.value;
+    const map: Map<string, CartRecipe> = this.recipesMap.value;
 
     if (map.has(id)) {
       map.get(id).quantity += quantity;
