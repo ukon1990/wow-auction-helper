@@ -57,7 +57,7 @@
       <div mat-line>{{ item.quantityTotal | number }} pcs</div>
     </mat-list-item>
 
-    <mat-list-item *ngIf="baseItem.inventory">
+    <mat-list-item *ngIf="baseItem.inventory && baseItem.inventory[faction]">
       <div mat-line [style]="{color: theme.accentColorCode}">
         Inventory
       </div>

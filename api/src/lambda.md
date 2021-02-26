@@ -19,7 +19,7 @@ function shouldUseLocal() {
 }
 
 export const DATABASE_CREDENTIALS = {
-  database: '100680-wah',
+  database: 'wah',
   host: shouldUseLocal() ? '127.0.0.1' : 'your-external-database',
   user: shouldUseLocal() ? 'username' : 'username',
   password: shouldUseLocal() ? 'password' : 'password',

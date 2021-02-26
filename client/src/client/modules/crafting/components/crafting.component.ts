@@ -174,12 +174,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
         }
         const stats: ItemStats[] = this.service.statsVariations.value.get(recipe.craftedItemId);
         const faction = this.settingsService.settings.value.faction || 0;
-        const stat = (item[0] && item[0].stats) || (stats && stats[0]) ?
-          item[0].stats || stats[0] : undefined;
-        const past60DaysSaleRate = item[0] && item[0].past60DaysSaleRate ? item[0].past60DaysSaleRate : 0.001;
-        const inventoryQuantity = item[0] && item[0].item && item[0].item.inventory ?
-          item[0].item.inventory[faction].quantity
-          : 0;
+        const stat = this.getStatsForItem(item, stats);
+        const past60DaysSaleRate = this.getPersonalSaleRateForitem(item);
+        const inventoryQuantity = this.getInventoryQuantityForItemAndFaction(item, faction);
 
         return {
           ...recipe,
@@ -189,6 +186,21 @@ export class CraftingComponent implements OnInit, OnDestroy {
           inventoryQuantity,
         };
       });
+  }
+
+  private getStatsForItem(item: AuctionItem[], stats: ItemStats[]) {
+    return (item[0] && item[0].stats) || (stats && stats[0]) ?
+      item[0].stats || stats[0] : undefined;
+  }
+
+  private getPersonalSaleRateForitem(item: AuctionItem[]) {
+    return item[0] && item[0].past60DaysSaleRate ? item[0].past60DaysSaleRate : 0.001;
+  }
+
+  private getInventoryQuantityForItemAndFaction(item: AuctionItem[], faction: number) {
+    return item[0] && item[0].item && item[0].item.inventory ?
+      item[0].item.inventory[faction] ? item[0].item.inventory[faction].quantity : 0
+      : 0;
   }
 
   isKnownRecipe(recipe: Recipe): boolean {

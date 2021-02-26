@@ -160,7 +160,7 @@ export class NoSQLQueryUtil {
       UpdateExpression: updateExpression,
       ExpressionAttributeValues: attributeValues,
       ExpressionAttributeNames: expressionAttributeNames,
-      ReturnValues: 'UPDATED_NEW'
+      ReturnValues: 'ALL_NEW'
     };
   }
 

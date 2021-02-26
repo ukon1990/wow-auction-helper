@@ -46,26 +46,40 @@ export class DashboardService {
     private backgroundService: BackgroundDownloadService
   ) {
     // this.sm.add(authService.isAuthenticated, isAuthenticated => this.getDashboardsFromAPI(isAuthenticated));
-    this.sm.add(this.professionService.listWithRecipes, () => {
+    this.sm.add(this.professionService.listWithRecipes, (list) => {
       this.sm.unsubscribeById('auctions');
 
-      this.init()
-        .catch(error => ErrorReport.sendError('DashboardService.init', error));
-      this.sm.add(this.auctionsService.mapped,
-        (map) => this.calculateAll(map),
-        {
-          id: 'auctions'
-        });
+      if (list.length) {
+        this.init()
+          .catch(error => ErrorReport.sendError('DashboardService.init', error));
+
+        this.sm.add(this.auctionsService.mapped,
+          (map) => {
+            this.calculateAll(map);
+          },
+          {
+            id: 'auctions'
+          });
+      }
     });
+
+    this.sm.add(this.backgroundService.isInitialLoadCompleted, isInitialLoadCompleted => {
+      if (isInitialLoadCompleted) {
+        this.calculateAll(undefined, isInitialLoadCompleted);
+        this.sm.unsubscribeById('isInitialLoadCompleted');
+      }
+    }, {id: 'isInitialLoadCompleted'});
 
     this.sm.add(settingsService.dashboards,
       boards => this.saveAll(boards, true, false));
 
+    /*
     this.sm.add(TsmService.list, () => {
       if (this.isInitiated && this.backgroundService.isInitialLoadCompleted.value) {
         this.calculateAll();
       }
     });
+    */
   }
 
   async init(): Promise<void> {
@@ -74,17 +88,20 @@ export class DashboardService {
     this.isInitiated = true;
   }
 
-  calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
-    if (map.size > 0) {
+  calculateAll(
+    map: Map<string, AuctionItem> = this.auctionsService.mapped.value,
+    isInitialLoadCompleted: boolean = this.backgroundService.isInitialLoadCompleted.value,
+  ): void {
+    if (map.size > 0 && isInitialLoadCompleted) {
       CraftingUtil.calculateCost(false, map);
       this.list.value.forEach(board => {
         DashboardCalculateUtil.calculate(board, map);
         this.map.value.set(board.id, board);
         this.calculatedBoardEvent.emit(board.id);
       });
+      Report.debug('Boards', this.list.value);
       this.allBoardsCalculatedEvent.next(+new Date());
     }
-    Report.debug('Boards', this.list.value);
   }
 
   getAllPublic(): Promise<DashboardMinimal[]> {

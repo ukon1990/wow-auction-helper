@@ -36,14 +36,14 @@ functions:
       Function: Wah-auctionsDownloadAndSave
       Project: WAH
     handler: src/auction/controller.auctionsDownloadAndSave
-    memorySize: 400
+    memorySize: 400 # Original value 400
     timeout: 60
   auctionsUpdateStaticS3Data:
     tags:
       Function: Wah-auctionsUpdateStaticS3Data
       Project: WAH
     handler: src/auction/controller.updateStaticS3Data
-    memorySize: 400
+    memorySize: 400 # Original value 400
     timeout: 30
   auctionsInsertStatisticsData:
     tags:
@@ -51,14 +51,14 @@ functions:
       Project: WAH
     handler: src/auction/controller.insertStatisticsData
     memorySize: 222
-    timeout: 58
+    timeout: 120
 
   auctionsUpdateRealmTrends:
     tags:
       Function: Wah-updateRealmTrends
       Project: WAH
     handler: src/auction/controller.updateRealmTrends
-    memorySize: 830
+    memorySize:  1344 # Original memory usage based: 830
     timeout: 300
   updateAllHouses:
     tags:
@@ -86,15 +86,15 @@ functions:
       Function: Wah-updateNextRealmsDailyPrices
       Project: WAH
     handler: src/auction/controller.updateNextRealmsDailyPrices
-    memorySize: 650
+    memorySize: 1024 # Original size: 650
     timeout: 60
   deleteOldPriceForRealm:
     tags:
       Function: Wah-deleteOldPriceForRealm
       Project: WAH
     handler: src/auction/controller.deleteOldPriceForRealm
-    memorySize: 128
-    timeout: 200
+    memorySize: 250
+    timeout: 10
   # TODO: Remove!
   updateAllRealmDailyData:
     tags:

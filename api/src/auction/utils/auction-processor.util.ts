@@ -32,6 +32,21 @@ export class AuctionProcessorUtil {
     };
   }
 
+  static splitEntries<T>(list: T[]): T[][] {
+    const result: T[][] = [];
+    list.forEach(entry => {
+      let index = (result.length || 1) - 1;
+      if (result[index] && result[index].length >= 5000) {
+        index++;
+      }
+      if (!result[index]) {
+        result.push([]);
+      }
+      result[index].push(entry);
+    });
+    return result;
+  }
+
   private static processAuction(map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string) {
     const id = AuctionItemStat.bonusId(auction.bonusLists),
       mapId = this.getMapId(auction, id),

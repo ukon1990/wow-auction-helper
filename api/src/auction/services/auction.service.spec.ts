@@ -4,6 +4,8 @@ import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {environment} from '../../../../client/src/environments/environment';
 import {StatsService} from './stats.service';
+import {RealmService} from '../../realm/service';
+import {RealmRepository} from '../../realm/repositories/realm.repository';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -111,10 +113,10 @@ describe('AuctionHandler', () => {
     expect(str).toBeTruthy();
   });
 
-  xit('Adding stuff to db', async () => {
+  it('Adding stuff to db', async () => {
     jest.setTimeout(1000000000);
     const promiseThrottle = new PromiseThrottle({
-      requestsPerSecond: 5,
+      requestsPerSecond: 30, // 5
       promiseImplementation: Promise
     });
     const s3 = new S3Handler(),
@@ -122,23 +124,29 @@ describe('AuctionHandler', () => {
     const promises = [];
     let totalLength = 0;
     let processed = 0;
-    for (const s3Region of [{id: 'eu', list: ['eu']}, {id: 'us', list: ['us']}, {id: 'as', list: ['kr', 'tw']}]) {
+    const repo = new RealmRepository();
+    const  realms = await repo.getAll();
+    console.log('Realms', realms.length);
+    const regions = [{id: 'eu', list: ['eu']}, {id: 'us', list: ['us']}, {id: 'as', list: ['kr', 'tw']}];
+    for (const s3Region of regions) {
+    // const s3Region = regions[0];
       for (const region of s3Region.list) {
-        // 95
-        // Alt frem til og med id=20
-        const realmId = 207, interval = 40;
-        for (let id = realmId; id <= realmId + interval; id++) {// 242
+        console.log('Starting with region: ', region, realms.filter(realm => realm.region === region).length);
+        const idsForRealm = realms.filter(realm => realm.region === region).map(realm => realm.id);
+
+        for (const id of idsForRealm) {
           const bucket = 'wah-data-' + s3Region.id;
-          s3.list(bucket, `auctions/${region}/${id}/`, 999999)
+          await s3.list(bucket, `auctions/${region}/${id}/`, 999999)
             .then(list => {
-              const day = 3;
-              const startDay = +new Date(`5/${day}/2020`),
-                endDay = +new Date(`5/4/2020`), // max: 1/21/2020
+              const day = 9; // Startet på 21-22
+              const startDay = +new Date(`1/${day}/2021`),
+                endDay = +new Date(`1/${day + 3}/2021`), // max: 1/22/2021
                 filteredFiles = list.Contents.filter(file =>
                   +new Date(file.LastModified) >= startDay &&
                   +new Date(file.LastModified) <= endDay)
                   .sort((a, b) =>
                     +new Date(b.LastModified) - +new Date(a.LastModified));
+              console.log(`Getting ready to process ${filteredFiles.length}/${list.Contents.length} files.`);
 
               totalLength += filteredFiles.length;
               for (const file of filteredFiles) {
