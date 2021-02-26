@@ -50,16 +50,25 @@ export class DashboardService {
       this.sm.unsubscribeById('auctions');
 
       if (list.length) {
-        console.log('boards listWithRecipes', list);
         this.init()
           .catch(error => ErrorReport.sendError('DashboardService.init', error));
+
+        this.sm.add(this.auctionsService.mapped,
+          (map) => {
+            this.calculateAll(map);
+          },
+          {
+            id: 'auctions'
+          });
       }
-      this.sm.add(this.auctionsService.mapped,
-        (map) => this.calculateAll(map),
-        {
-          id: 'auctions'
-        });
     });
+
+    this.sm.add(this.backgroundService.isInitialLoadCompleted, isInitialLoadCompleted => {
+      if (isInitialLoadCompleted) {
+        this.calculateAll(undefined, isInitialLoadCompleted);
+        this.sm.unsubscribeById('isInitialLoadCompleted');
+      }
+    }, {id: 'isInitialLoadCompleted'});
 
     this.sm.add(settingsService.dashboards,
       boards => this.saveAll(boards, true, false));
@@ -79,16 +88,19 @@ export class DashboardService {
     this.isInitiated = true;
   }
 
-  calculateAll(map: Map<string, AuctionItem> = this.auctionsService.mapped.value): void {
-    if (map.size > 0) {
+  calculateAll(
+    map: Map<string, AuctionItem> = this.auctionsService.mapped.value,
+    isInitialLoadCompleted: boolean = this.backgroundService.isInitialLoadCompleted.value,
+  ): void {
+    if (map.size > 0 && isInitialLoadCompleted) {
       CraftingUtil.calculateCost(false, map);
       this.list.value.forEach(board => {
         DashboardCalculateUtil.calculate(board, map);
         this.map.value.set(board.id, board);
         this.calculatedBoardEvent.emit(board.id);
       });
-      this.allBoardsCalculatedEvent.next(+new Date());
       Report.debug('Boards', this.list.value);
+      this.allBoardsCalculatedEvent.next(+new Date());
     }
   }
 

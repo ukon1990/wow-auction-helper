@@ -43,7 +43,6 @@ export class ConfigComponent implements OnDestroy {
         SharedService.user.useIntermediateCrafting = intermediate;
         UserUtil.save();
         CraftingUtil.calculateCost(strategyChanged, this.auctionService.mapped.value);
-        // Dashboard.addDashboards();
         this.dashboardService.calculateAll();
         if (strategyChanged) {
           const strategyObj = BaseCraftingUtil.STRATEGY_LIST[strategy];
