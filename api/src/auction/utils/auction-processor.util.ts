@@ -287,7 +287,7 @@ export class AuctionProcessorUtil {
     }
   }
 
-  static getDailyColumnsSince(daysSince: number, currentDate = new Date()) {
+  static getDailyColumnsSince(daysSince: number, currentDate = new Date(), includeAllKeys = false) {
     const DAY = 1000 * 60 * 60 * 24;
     const startDate = new Date(+currentDate - DAY * daysSince);
     const columns: string[] = []; // avg01, avgQuantity01
@@ -300,7 +300,11 @@ export class AuctionProcessorUtil {
         day = date.getUTCDate(),
         dayString = (day < 10 ? '0' : '') + day,
         monthString = `'${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-15'`;
-      const columnSet = `min${dayString}, avg${dayString}, avgQuantity${dayString}`;
+      let columnSet = `min${dayString}, avg${dayString}, avgQuantity${dayString}`;
+
+      if (includeAllKeys) {
+        columnSet += `,max${dayString}, minHour${dayString}, minQuantity${dayString}, maxQuantity${dayString}`;
+      }
 
       if (!columnMap.has(columnSet)) {
         columns.push(columnSet);
