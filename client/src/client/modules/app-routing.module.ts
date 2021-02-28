@@ -98,6 +98,9 @@ const TOOLS_ROUTE: TitledRoute = {
           component: NpcDetailsComponent
         }
       ]
+    },
+    {
+      title: 'AH summary', path: 'ah-summary', component: AhSummaryComponent
     }
   ]
 };
@@ -105,18 +108,11 @@ const TOOLS_ROUTE: TitledRoute = {
 const DASHBOARD_ROUTE: TitledRoute = {
   title: 'Dashboard',
   path: 'dashboard',
-  component: DashboardComponent,
+  component: DashboardItemsComponent,
   // canActivate: [IsRegisteredService],
   // isHidden: ROUTE_HIDDEN_FLAGS.IS_NOT_REGISTERED,
   children: [
-    {path: '', pathMatch: 'full', redirectTo: 'items'},
-    {
-      title: 'Item', path: 'items', component: DashboardItemsComponent
-    },
-    {
-      title: 'AH summary', path: 'ah-summary', component: AhSummaryComponent
-    },
-    {path: '**', redirectTo: 'items'},
+    {path: '**', redirectTo: ''},
   ]
 };
 
