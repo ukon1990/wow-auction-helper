@@ -100,20 +100,10 @@
     >
       <input
               matInput
-              placeholder="Sale rate % (default 0)"
+              placeholder="Personal Sale rate % (default 0)"
               formControlName="demand"
               type="number"
-              matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
-    </mat-form-field>
-
-    <mat-form-field class="col"
-                    color="accent"
-    >
-      <input
-              matInput
-              placeholder="Minimum avg daily sold"
-              formControlName="minSold"
-              type="number">
+              matTooltip="A value between 0 and 100. This is calculated based in you importing your sale history via the Tools -> Addons section.">
     </mat-form-field>
 
     <div class="col">

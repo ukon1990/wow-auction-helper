@@ -202,7 +202,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
 
   constructor(
     private service: ItemService,
-              private realmService: RealmService,
+    private realmService: RealmService,
     private auctionService: AuctionsService,
     private professionService: ProfessionService,
   ) {
@@ -225,11 +225,12 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
 
     if (this.isInitiated && !this.isLoading && isActiveTab && isActiveTab.currentValue) {
       this.isInitiated = false;
-      // this.ngAfterViewInit();
+      this.ngAfterViewInit();
     }
   }
 
   ngAfterViewInit() {
+    console.log('ngAfterViewInit');
     const firstRecipe: Recipe = this.auctionItem && this.auctionItem.source && this.auctionItem.source.recipe.all ?
       this.auctionItem.source.recipe.all.sort((a, b) => b.roi - a.roi)[0] : undefined;
     const id = this.auctionItem.itemID;

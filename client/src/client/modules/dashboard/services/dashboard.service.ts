@@ -194,18 +194,28 @@ export class DashboardService {
     const restoredMap: Map<string, DashboardV2> = new Map();
     const defaultMap: Map<string, DashboardV2> = new Map();
     const restoredDefaultMap: Map<string, DashboardV2> = new Map();
-    await this.db.getDashboards()
-      .then(restored => {
-        restored.forEach(board => {
-          dashboards.push(board);
-          restoredMap.set(board.id, board);
-          if (board.isDefault) {
-            restoredDefaultMap.set(board.parentId, board);
-          }
-        });
-      })
-      .catch(error =>
-        ErrorReport.sendError('DashboardService.restore', error));
+    const fromOnlineStorage: DashboardV2[] = this.settingsService.dashboards.value;
+
+    const handleModifiedBoards = (boards: DashboardV2[]) => {
+      boards.forEach(board => {
+        dashboards.push(board);
+        restoredMap.set(board.id, board);
+        if (board.isDefault) {
+          restoredDefaultMap.set(board.parentId, board);
+        }
+      });
+    };
+
+    if (fromOnlineStorage && fromOnlineStorage.length) {
+      handleModifiedBoards(fromOnlineStorage);
+    } else {
+      await this.db.getDashboards()
+        .then(restored => {
+          handleModifiedBoards(restored);
+        })
+        .catch(error =>
+          ErrorReport.sendError('DashboardService.restore', error));
+    }
 
     defaultBoards.forEach(board => {
       defaultMap.set(board.id, board);
