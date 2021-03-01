@@ -6,21 +6,11 @@ import {LogService} from './log.service';
 const connection = new DatabaseUtil(false);
 
 /* istanbul ignore next */
-exports.handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  // context.callbackWaitsForEmptyEventLoop = false;
-  new LogService(event, connection)
-    .handleS3AccessLog()
-    .then(() => Response.send({message: 'success'}, callback))
-    .catch(err => Response.error(callback, {message: 'error', err}));
-};
-
-/* istanbul ignore next */
 exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   Response.send({success: true, userId: null}, callback);
   // new LogService(event, callback, connection).clientEvent();
 };
-
 
 /* istanbul ignore next */
 exports.clientDelete = (event: APIGatewayEvent, context: Context, callback: Callback) => {

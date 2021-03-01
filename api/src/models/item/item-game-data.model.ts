@@ -12,6 +12,7 @@ export interface ItemGameData {
   item_subclass: ItemClass;
   inventory_type: Quality;
   purchase_price: number;
+  purchase_quantity?: number;
   sell_price: number;
   max_count: number;
   is_equippable: boolean;
@@ -78,6 +79,8 @@ export interface PreviewItem {
   item: { id: number };
   quality: Quality;
   name: string;
+  context: number;
+  bonus_list: number[];
   binding: Quality;
   sell_price: { value: number };
   requirements: Requirements;

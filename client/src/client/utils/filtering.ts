@@ -79,7 +79,10 @@ export class Filters {
     if (!item && !requirePresence && !saleRate) {
       return true;
     }
-    return item && item.regionSaleRate >= minSaleRatePercent;
+    // Original param used: regionSaleRate
+    return item && (
+      item.past7DaysSaleRate || item.past14DaysSaleRate || item.past30DaysSaleRate || item.totalSaleRate
+    ) >= minSaleRatePercent;
   }
 
   public static isDailySoldMatch(itemID: number, avgDailySold: number, requirePresence = true): boolean {

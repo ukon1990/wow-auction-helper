@@ -1,6 +1,7 @@
 import {AuctionStatsUtil} from './auction-stats.util';
 import {AuctionProcessorUtil} from './auction-processor.util';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import { AuctionItemStat } from '../models/auction-item-stat.model';
 
 describe('AuctionStatsUtil', () => {
   const mock: {
@@ -602,5 +603,22 @@ describe('AuctionStatsUtil', () => {
       expect(months[0]).toBe('20202-11-15');
       expect(months[1]).toBe('20202-12-15');
     });
+  });
+
+  it('Can split array into chunks', () => {
+    const list: AuctionItemStat[] = [];
+
+    for (let i = 0; i < 23000; i++) {
+      list.push({
+        itemId: 1,
+        petSpeciesId: 1,
+        date: '',
+      } as AuctionItemStat);
+    }
+
+    const result = AuctionProcessorUtil.splitEntries<AuctionItemStat>(list);
+    expect(result.length).toBe(5);
+    expect(result[0].length).toBe(5000);
+    expect(result[4].length).toBe(3000);
   });
 });

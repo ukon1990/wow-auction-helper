@@ -28,4 +28,16 @@ export class TimeUtil {
 
     return new Date(+date - offsetHours * 60 * 60 * 1000);
   }
+
+  getDateAtNDaysSinceNow(timeSince: number, startOfDay = false): Date {
+    const day = timeSince * (24 * 60 * 60 * 1000);
+    const date = new Date(+new Date() - day);
+    if (startOfDay) {
+      date.setHours(0);
+      date.setMinutes(0);
+      date.setSeconds(0);
+      date.setMilliseconds(0);
+    }
+    return date;
+  }
 }

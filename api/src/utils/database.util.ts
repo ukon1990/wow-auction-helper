@@ -3,13 +3,21 @@ import {DATABASE_CREDENTIALS} from '../secrets';
 import {Connection, MysqlError} from 'mysql';
 import {environment} from '../../../client/src/environments/environment';
 
+interface Credentials {
+  database: string;
+  host: string;
+  user: string;
+  password?: string;
+  port?: number;
+}
+
 export class DatabaseUtil {
   private readonly connection: Connection;
   private isConnectionActive = false;
 
-  constructor(private autoTerminate: boolean = true) {
+  constructor(private autoTerminate: boolean = true, credentials: Credentials = DATABASE_CREDENTIALS) {
     if (!environment.test) {
-      this.connection = mysql.createConnection(DATABASE_CREDENTIALS);
+      this.connection = mysql.createConnection(credentials);
     }
   }
 
@@ -36,7 +44,7 @@ export class DatabaseUtil {
 
             if (err) {
               const msg = this.handleSQLError(err);
-              reject({message: `Failed to execute the query: ${query}`, error: msg.stack});
+              reject(msg);
               return;
             }
 
@@ -45,7 +53,7 @@ export class DatabaseUtil {
         })
         .catch((error) => {
           this.handleSQLError(error);
-          reject();
+          reject(error);
         });
     });
   }
@@ -55,15 +63,15 @@ export class DatabaseUtil {
       ...err
     };
     if (msg.sql) {
-      msg.sql = msg.sql.slice(0, 256);
+      msg.sql = msg.sql.slice(0, 64);
     }
 
     if (msg.message) {
-      msg.message = msg.message.slice(0, 256);
+      msg.message = msg.message.slice(0, 64);
     }
 
     if (msg.stack) {
-      msg.stack = msg.stack.slice(0, 256);
+      msg.stack = msg.stack.slice(0, 64);
     }
     console.error(msg);
     return msg;

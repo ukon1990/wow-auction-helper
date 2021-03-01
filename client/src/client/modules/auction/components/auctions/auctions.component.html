@@ -67,19 +67,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-  </div>
-  <div class="row">
-    <mat-form-field class="col"
-                    color="accent"
-    >
-      <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
-             matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
-    </mat-form-field>
-    <mat-form-field class="col"
-                    color="accent"
-    >
-      <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
-    </mat-form-field>
+
     <mat-form-field class="col"
                     color="accent"
     >
@@ -100,14 +88,29 @@
       </button>
     </div>
   </div>
+  <div class="row">
+    <!--
+      <mat-form-field class="col"
+                      color="accent"
+      >
+        <input matInput type="number" placeholder="Sale rate % (default 0)" formControlName="saleRate"
+               matTooltip="A value between 0 and 100 (instead of 0.04 as TSM displays, do 4 etc)">
+      </mat-form-field>
+      <mat-form-field class="col"
+                      color="accent"
+      >
+        <input matInput type="number" placeholder="Minimum daily sold" formControlName="avgDailySold">
+      </mat-form-field>
+      -->
 
-</form>
-<wah-data-table
-        *ngIf="tableData"
-        filterParameter="name"
-        iconSize="22"
-        itemsPerPage="20"
-        id="itemID"
-        [columns]="columns"
-        [data]="tableData">
-</wah-data-table>
+    </div>
+
+  </form>
+  <wah-data-table
+          *ngIf="tableData"
+          iconSize="22"
+          itemsPerPage="20"
+          id="itemID"
+          [columns]="columns"
+          [data]="tableData">
+  </wah-data-table>

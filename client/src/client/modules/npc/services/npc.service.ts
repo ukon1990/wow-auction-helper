@@ -23,7 +23,8 @@ export class NpcService {
   isLoading = false;
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  constructor(private http: HttpClient, private db: DatabaseService, private zoneService: ZoneService) {
+  // , private db: DatabaseService,
+  constructor(private http: HttpClient, private zoneService: ZoneService) {
   }
 
   getAll(forceUpdate = false, latestTimestamp?: Date): Promise<NPC[]> {
@@ -32,12 +33,14 @@ export class NpcService {
     }
     return new Promise<NPC[]>(async (resolve) => {
       const timestamp = localStorage.getItem(this.storageName);
+      /*
       await this.db.getAllNPCs()
         .then(list => {
           this.mapAndSetNextValueForNPCs(list);
         })
         .catch(error =>
           ErrorReport.sendError('NpcService.getAll', error));
+      */
 
       if (!NpcService.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
         await this.get()
@@ -57,23 +60,24 @@ export class NpcService {
 
   get(): Promise<NPC[]> {
     const start = +new Date();
-    console.log('Downloading NPC data');
-    SharedService.downloading.npc = true;
+    console.log('Downloading NPC data');    SharedService.downloading.npc = true;
     const locale = localStorage['locale'];
     this.isLoading = true;
     return new Promise<any[]>(async (resolve, reject) => {
       await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz?lastModified=${this.lastModified.value}`)
         .toPromise()
         .then(async (response) => {
-          await this.db.clearNPCs();
+          // await this.db.clearNPCs();
           SharedService.downloading.npc = false;
           const list = response['npcs'],
             map = {};
           this.isLoading = false;
           this.setTimestamp(response);
           this.mapAndSetNextValueForNPCs(response['npcs']);
+          /*
           this.db.addNPCs(response['npcs'])
             .catch(console.error);
+          */
 
           console.log('Downloaded and saved NPC data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
           resolve(list);

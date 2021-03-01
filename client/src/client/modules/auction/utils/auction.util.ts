@@ -387,7 +387,7 @@ export class AuctionUtil {
     }
     return recipes.filter(recipe => {
       try {
-        if (recipe && recipe.bonusIds && recipe.bonusIds.length) {
+        if (recipe && recipe.bonusIds && recipe.bonusIds.length && item.bonusIds) {
           for (let i = 0; i < item.bonusIds.length; i++) {
             const idMatches = recipe.bonusIds.filter(bId => bId === item.bonusIds[i]);
             if (idMatches && idMatches.length) {

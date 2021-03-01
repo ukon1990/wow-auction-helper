@@ -63,7 +63,19 @@ export class RealmService {
     url: string;
     size: number;
   }): Promise<any> {
-    return this.repository.update(id, {...entry, id});
+    return new Promise<any>((resolve, reject) => {
+      this.logRepository.getUpdateDelays(id)
+        .then(delay => {
+          this.repository.update(id, {
+            ...entry,
+            ...delay,
+            nextUpdate: entry.lastModified + (delay.lowestDelay * 60 * 1000),
+          })
+            .then(resolve)
+            .catch(reject);
+        })
+        .catch(reject);
+    });
   }
 
   updateAllRealmStatuses(): Promise<void> {

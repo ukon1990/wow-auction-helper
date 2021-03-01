@@ -35,6 +35,7 @@ export interface AuctionHouse {
   lastModified: number;
   size: number;
   lastHistoryDeleteEvent: number;
+  lastHistoryDeleteEventDaily: number;
   lastTrendUpdateInitiation?: number;
   stats: {
     url: string;

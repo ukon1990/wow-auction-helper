@@ -13,6 +13,10 @@ import {ItemStats} from '../models/item-stats.model';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 import {AuctionHouse} from '../../realm/model';
+import {S3} from 'aws-sdk';
+import {LogRepository} from '../../logs/repository';
+import {AhStatsRequest} from '../models/ah-stats-request.model';
+import {AuctionItemStat} from '../models/auction-item-stat.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -27,12 +31,14 @@ export class StatsService {
 
 
   /* istanbul ignore next */
-  async getPriceHistoryFor(ahId: number, id: number, petSpeciesId: number = -1, bonusIds?: any[], onlyHourly = true,
+  async getPriceHistoryFor(items: AhStatsRequest[], onlyHourly = true,
                            conn: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
-    console.log(`getPriceHistoryFor ahId=${ahId} item=${id} pet=${petSpeciesId}`);
+    items.forEach(({ahId, itemId, petSpeciesId}) =>
+      console.log(`getPriceHistoryFor ahId=${ahId} item=${itemId} pet=${petSpeciesId}`));
+
     if (onlyHourly) {
       return new Promise((resolve, reject) => {
-        this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+        this.getPriceHistoryHourly(items, conn)
           .then(r => {
             resolve(r);
           })
@@ -54,10 +60,10 @@ export class StatsService {
         conn.enqueueHandshake()
           .then(() => {
             Promise.all([
-              this.getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds, conn)
+              this.getPriceHistoryHourly(items, conn)
                 .then(r => result.hourly = r)
                 .catch(console.error),
-              this.getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds, conn)
+              this.getPriceHistoryDaily(items, conn)
                 .then(r => result.daily = r)
                 .catch(console.error)
             ])
@@ -87,9 +93,9 @@ export class StatsService {
     });
   }
 
-  private getPriceHistoryHourly(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any> {
+  getPriceHistoryHourlyMultiple(items: AhStatsRequest[], conn: DatabaseUtil): Promise<any> {
     return new Promise((resolve, reject) => {
-      new StatsRepository(conn).getPriceHistoryHourly(ahId, id, petSpeciesId, bonusIds)
+      new StatsRepository(conn).getPriceHistoryHourly(items)
         .then((result => {
           resolve(AuctionProcessorUtil.processHourlyPriceData(result));
         }))
@@ -100,10 +106,23 @@ export class StatsService {
     });
   }
 
-  private getPriceHistoryDaily(ahId: number, id: number, petSpeciesId: number, bonusIds: number[], conn: DatabaseUtil): Promise<any[]> {
+  private getPriceHistoryHourly(items: AhStatsRequest[], conn: DatabaseUtil): Promise<any> {
+    return new Promise((resolve, reject) => {
+      new StatsRepository(conn).getPriceHistoryHourly(items)
+        .then((result => {
+          resolve(AuctionProcessorUtil.processHourlyPriceData(result));
+        }))
+        .catch((error) => {
+          console.error(error);
+          resolve([]);
+        });
+    });
+  }
+
+  private getPriceHistoryDaily(items: AhStatsRequest[], conn: DatabaseUtil): Promise<any[]> {
     return new Promise((resolve, reject) => {
       new StatsRepository(conn)
-        .getPriceHistoryDaily(ahId, id, petSpeciesId, bonusIds)
+        .getPriceHistoryDaily(items)
         .then((result => {
           resolve(AuctionProcessorUtil.processDailyPriceData(result));
         }))
@@ -122,67 +141,46 @@ export class StatsService {
       const s3 = new S3Handler(),
         conn = new DatabaseUtil(false);
 
-      s3.list('wah-data-eu-se', 'statistics/inserts/', 50)
+      s3.list('wah-data-eu', 'statistics/inserts/', 180)// default: 50
         .then(async (objects: ListObjectsV2Output) => {
-          total = objects.Contents.length;
-          if (total > 0) {
+          const files = this.getFilteredAndSortedInsertStatements(objects);
+          total = files.length;
+          const isTableLocked = await this.getIsTableLocked(conn, 'itemPriceHistoryPerHour');
+
+          if (total > 0 && !isTableLocked) {
+            console.log(`Starting processing the next batch of ${total} out  of ${objects.Contents.length} queries.`);
             await new RealmService().updateAllRealmStatuses()
               .catch(console.error);
-          }
 
-          conn.enqueueHandshake()
-            .then(async () => {
-              objects.Contents
-                .sort((a, b) =>
-                  +new Date(a.LastModified) - +new Date(b.LastModified));
+            conn.enqueueHandshake()
+              .then(async () => {
+                for (const object of files) {
+                  const __ret = await this.insertAndDeleteStatsInsertFile(
+                    insertStatsStart, conn, s3, objects, object, completed, avgQueryTime);
 
-              for (const object of objects.Contents) {
-                if ((+new Date() - insertStatsStart) / 1000 < 50) {
-                  const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
-                    .catch(error => console.error(`StatsService.insertStats.Contents`, error));
-
-                  if (status.activeQueries < 10) {
-                    await s3.getAndDecompress(objects.Name, object.Key)
-                      .then(async (query: string) => {
-                        if (query) {
-                          const insertStart = +new Date();
-                          await conn.query(query)
-                            .then(async () => {
-                              const [region, ahId] = object.Key.split('/')[2].split('-');
-                              await Promise.all([
-                                s3.deleteObject(objects.Name, object.Key)
-                                  .catch(console.error),
-                                this.realmRepository.updateEntry(+ahId, {
-                                  lastStatsInsert: +new Date(),
-                                }).catch(console.error)
-                              ])
-                                .catch(console.error);
-                              completed++;
-                            })
-                            .catch(console.error);
-                          if (!avgQueryTime) {
-                            avgQueryTime = +new Date() - insertStart;
-                          } else {
-                            avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
-                          }
-                        }
-                      })
-                      .catch(error => console.error(`StatsService.insertStats.Contents`, error));
-                  } else {
-                    console.log('There are too many active queries', status.activeQueries);
-                  }
-                } else {
-                  console.log('The time since limit has passed');
+                  completed = __ret.completed;
+                  avgQueryTime = __ret.avgQueryTime;
                 }
-              }
-              console.log(`Completed ${completed} / ${total} in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
-              conn.end();
-              resolve();
-            })
-            .catch(error => {
-              console.error(error);
-              reject(error);
-            });
+                console.log(`Completed ${completed} / ${total} (total in queue=${
+                  objects.Contents.length
+                }) in ${+new Date() - insertStatsStart} ms with an avg of ${avgQueryTime} ms`);
+                conn.end();
+                resolve();
+              })
+              .catch(error => {
+                console.error(error);
+                conn.end();
+                reject(error);
+              });
+          } else if (isTableLocked) {
+            console.log('There is a lock on the table. Items in queue: ', objects.Contents.length);
+            conn.end();
+            resolve();
+          } else {
+            console.log('There is no new queries to insert', total);
+            conn.end();
+            resolve();
+          }
         })
         .catch(error => {
           console.error(error);
@@ -190,6 +188,79 @@ export class StatsService {
           reject(error);
         });
     });
+  }
+
+  private async insertAndDeleteStatsInsertFile(
+    insertStatsStart: number, conn: DatabaseUtil,
+    s3: S3Handler, objects: S3.ListObjectsV2Output, object: S3.Object,
+    completed: number, avgQueryTime
+  ) {
+    if ((+new Date() - insertStatsStart) / 1000 < 50) {
+      const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries()
+        .catch(error => console.error(`StatsService.insertStats.getActiveQueries`, error));
+
+      if (status.activeQueries < 1) {
+        await s3.getAndDecompress(objects.Name, object.Key)
+          .then(async (query: string) => {
+            if (query) {
+              const insertStart = +new Date();
+              await conn.query(query)
+                .then(async () => {
+                  const [region, ahId] = object.Key.split('/')[2].split('-');
+                  await Promise.all([
+                    s3.deleteObject(objects.Name, object.Key)
+                      .catch(console.error),
+                    this.realmRepository.updateEntry(+ahId, {
+                      lastStatsInsert: +new Date(),
+                    }).catch(console.error)
+                  ])
+                    .catch(console.error);
+                  completed++;
+                })
+                .catch(console.error);
+              if (!avgQueryTime) {
+                avgQueryTime = +new Date() - insertStart;
+              } else {
+                avgQueryTime = (avgQueryTime + +new Date() - insertStart) / 2;
+              }
+            }
+          })
+          .catch(error => console.error(`StatsService.insertStats.getAndDecompress`, error));
+      } else {
+        // console.log('There are too many active queries', status.activeQueries);
+      }
+    }
+    return {completed, avgQueryTime};
+  }
+
+  private getFilteredAndSortedInsertStatements(objects: S3.ListObjectsV2Output) {
+    const realmMap = new Map<string, S3.Object>();
+    return objects.Contents
+      .sort((a, b) => {
+        const getTimestamp = (obj) => {
+          const [_, __, timestamp] = obj.Key.split('/')[2].split('-');
+          return +timestamp;
+        };
+        return getTimestamp(b) - getTimestamp(a);
+      }); /* TODO: Put back if splitting into smaller chunks did not help
+      .filter(file => {
+        const [_, ahId, timestamp] = file.Key.split('/')[2].split('-');
+        const date = new Date(timestamp);
+        const id = `${ahId}-${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
+        if (!realmMap.has(id)) {
+          realmMap.set(id, file);
+          return true;
+        }
+        return false;
+      });*/
+  }
+
+  private async getIsTableLocked(conn: DatabaseUtil, tableName: string) {
+    const openTables: { Table: string, In_use: number }[] = await conn.query(LogRepository.showOpenTables)
+      .catch(error => console.error(`StatsService.insertStats.getActiveQueries`, error));
+    const isLockedRow: { Table: string; In_use: number } = openTables.filter(table => table.Table === 'itemPriceHistoryPerHour')
+      .filter(table => table.Table === tableName)[0];
+    return isLockedRow ? !!isLockedRow.In_use : false;
   }
 
   processRecord(record: EventSchema, conn: DatabaseUtil = new DatabaseUtil()): Promise<void> {
@@ -216,12 +287,21 @@ export class StatsService {
                   list,
                   hour
                 } = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
-                const query = StatsRepository.multiInsertOrUpdate(list, hour);
-                new S3Handler()
-                  .save(query, `statistics/inserts/${region}-${ahId}-${fileName}.sql.gz`, {region: 'eu-se'})
-                  .then(ok => {
+                const queries = AuctionProcessorUtil.splitEntries(list)
+                  .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
+                const s3 = new S3Handler();
+
+                Promise.all(
+                  queries.map((query, index) =>
+                    s3.save(
+                      query,
+                      `statistics/inserts/${region}-${ahId}-${fileName}-part-${index}.sql.gz`,
+                      {region: 'eu'}
+                    ))
+                )
+                  .then(() => {
                     console.log(`Processed and uploaded statistics SQL in ${+new Date() - start} ms`);
-                    resolve(ok);
+                    resolve();
                   })
                   .catch(error => {
                     reject(error);
@@ -277,10 +357,25 @@ export class StatsService {
         startTime = +new Date();
       let completed = 0, avgQueryTime;
       conn.enqueueHandshake()
-        .then(() => {
+        .then(async () => {
+          const openTables: { Table: string, In_use: number }[] = await conn.query(LogRepository.showOpenTables)
+            .catch(error => console.error(`StatsService.insertStats.getActiveQueries`, error));
+          const isTableLocked: boolean = !!openTables.filter(table => table.Table === 'itemPriceHistoryPerDay')[0].In_use;
+          const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getActiveQueries('itemPriceHistoryPerDay')
+            .catch(error => console.error(`StatsService.insertStats.getActiveQueries`, error));
+
+          if (isTableLocked || status.activeQueries > 1) {
+            console.log('The table is locked or has too many active queries.',
+              {locked: isTableLocked, queries: status.activeQueries});
+            conn.end();
+            resolve();
+            return;
+          }
+
+          console.log('Preparing to process: ', this.getYesterday());
           this.realmRepository.getRealmsThatNeedsDailyPriceUpdate()
             .then(async realms => {
-              for (const {id} of realms) {
+              for (const {id} of realms.slice(0, 4)) {
                 if (DateUtil.timeSince(startTime, 's') < 40) {
                   const queryStart = +new Date();
                   await this.compileDailyAuctionData(id, conn, this.getYesterday(1))
@@ -320,13 +415,71 @@ export class StatsService {
     });
   }
 
-  compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<any> {
+  /**
+   * This method is used, in case the database needs to be rebuilt
+   * @param daysAgo
+   */
+  importDailyDataForDate(daysAgo: number = 1): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      console.log('Preparing to process: ', this.getYesterday(daysAgo));
+      const conn = new DatabaseUtil(false),
+        startTime = +new Date();
+      let completed = 0, avgQueryTime;
+      conn.enqueueHandshake()
+        .then(() => {
+          this.realmRepository.getAll()
+            .then(async realms => {
+              let hasHadError = false;
+              const max = 38; // 260 er den høyeste id'n
+              const filteredAndSorted = realms.sort((a, b) => b.id - a.id)
+                .filter(entry => entry.id >= max - 40 && entry.id < max);
+              for (const {id} of filteredAndSorted) {
+                if (!hasHadError) {
+                  const queryStart = +new Date();
+                  await this.compileDailyAuctionData(id, conn, this.getYesterday(daysAgo))
+                    .then(() => {
+                      completed++;
+                      console.log(`Done with ${id} in ${+new Date() - queryStart} ms - ${
+                        completed}/${filteredAndSorted.length}`);
+                    })
+                    .catch(error => {
+                      console.error(error);
+                      hasHadError = true;
+                    });
+                  const queryTime = +new Date() - queryStart;
+                  if (!avgQueryTime) {
+                    avgQueryTime = queryTime;
+                  } else {
+                    avgQueryTime = (avgQueryTime + queryTime) / 2;
+                  }
+                }
+              }
+
+              console.log(`Done updating daily price for ${completed}/${filteredAndSorted.length
+              } houses. Avg query time was ${avgQueryTime}`);
+              conn.end();
+              resolve(hasHadError);
+            })
+            .catch(error => {
+              conn.end();
+              reject(error);
+            });
+        })
+        .catch(error => {
+          conn.end();
+          reject(error);
+        });
+    });
+  }
+
+  compileDailyAuctionData(id: number, conn = new DatabaseUtil(false), date = this.getYesterday()): Promise<void> {
     console.log('Updating daily price data');
     const dayOfMonth = AuctionProcessorUtil.getDateNumber(date.getUTCDate());
-    return new Promise<any>((resolve, reject) => {
-      new StatsRepository(conn).insertStats(id, date, dayOfMonth)
+    return new Promise<void>((resolve, reject) => {
+      new StatsRepository(conn).getHourlyStatsForRealmAtDate(id, date, dayOfMonth)
         .then(rows => {
           const list = [];
+          const calculationStartTime = +new Date();
           rows.forEach(row => {
             AuctionProcessorUtil.compilePricesForDay(id, row, date, dayOfMonth, list);
           });
@@ -334,10 +487,19 @@ export class StatsService {
             resolve();
             return;
           }
+          console.log(`Calculated stats for ${id} in ${+new Date() - calculationStartTime}ms.`);
 
-          console.log('Done updating daily price data');
-          new StatsRepository(conn).multiInsertOrUpdateDailyPrices(list, dayOfMonth)
-            .then(resolve)
+          const queryStartTime = +new Date();
+
+          const repo = new StatsRepository(conn);
+          Promise.all(
+            AuctionProcessorUtil.splitEntries(list).map(entries =>
+              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth))
+          )
+            .then(() => {
+              console.log(`Done updating daily price data for ${id} in ${+new Date() - queryStartTime}ms.`);
+              resolve();
+            })
             .catch(error => {
               console.error('SQL error for id=', id);
               reject(error);
@@ -417,22 +579,42 @@ export class StatsService {
     });
   }
 
-  deleteOldPriceForRealm(table: string, olderThan: number, period: string, conn = new DatabaseUtil(false)): Promise<void> {
+  deleteOldPriceForRealm(table: string, olderThan: number, period: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      new StatsRepository(conn).deleteOldDailyPricesForRealm(table, olderThan, period)
-        .then(() => {
-          conn.end();
-          resolve();
+      const conn = new DatabaseUtil(false);
+      console.log('Starting history deletion for: ', table);
+
+      conn.enqueueHandshake()
+        .then(async () => {
+          const [status]: { activeQueries: number }[] = await new StatsRepository(conn).getCurrentDeleteQueries(table)
+            .catch(error => console.error(`StatsService.deleteOldPriceHistoryForRealm`, error));
+
+          if (status && status.activeQueries > 0) {
+            console.log('There is already another active deletion going on.');
+            conn.end();
+            resolve();
+            return;
+          }
+
+          new StatsRepository(conn).deleteOldDailyPricesForRealm(table, olderThan, period)
+            .then(() => {
+              conn.end();
+              resolve();
+            })
+            .catch((err) => {
+              conn.end();
+              reject(err);
+            });
         })
-        .catch((err) => {
-          conn.end();
-          reject(err);
+        .catch(error => {
+          console.error(error);
+          reject(error);
         });
     });
   }
 
   updateRealmTrends(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const startTime = +new Date();
       const conn = new DatabaseUtil(false);
       conn.enqueueHandshake()
@@ -563,7 +745,7 @@ export class StatsService {
     return new Promise<void>(async (resolve, reject) => {
       await this.realmRepository.updateEntry(house.id, {id: house.id, lastTrendUpdateInitiation: +new Date()})
         .catch(console.error);
-    this.getRealmPriceTrends(house, db)
+      this.getRealmPriceTrends(house, db)
         .then((results) => {
           const processStart = +new Date();
           if (results.length) {
@@ -578,7 +760,8 @@ export class StatsService {
                   +new Date() - processStart
                 } ms`, success);
                 this.realmRepository.updateEntry(house.id, {
-                  id: house.id, stats: {
+                  id: house.id,
+                  stats: {
                     lastModified,
                     url: success.url
                   }

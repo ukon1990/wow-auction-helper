@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, Input, OnDestroy} from '@angular/core';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {DashboardService} from '../../services/dashboard.service';
 import {DashboardV2} from '../../models/dashboard-v2.model';
@@ -22,15 +22,13 @@ import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
   templateUrl: './dashboard-items.component.html',
   styleUrls: ['./dashboard-items.component.scss']
 })
-export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
+export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
   form: FormGroup = new FormGroup({
     displayHidden: new FormControl(false),
     search: new FormControl()
   });
   dashboards: DashboardV2[] = [];
   filteredBoards: DashboardV2[] = [];
-  // displayHiddenForm: FormControl = new FormControl(false);
-  // displaySearch: FormControl = new FormControl();
   itemsPerPage = 8;
   pageRows: Array<number> = [4, 8, 12, 24, 36];
   pageEvent: PageEvent = { pageIndex: 0, pageSize: this.itemsPerPage, length: 0 };
@@ -59,7 +57,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     this.sm.add(this.service.list, (boards: DashboardV2[]) => {
       this.dashboards = [...boards];
       this.filter();

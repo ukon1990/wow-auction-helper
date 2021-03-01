@@ -4,7 +4,6 @@ import {SharedService} from '../../../../../services/shared.service';
 import {CraftingUtil} from '../../../../crafting/utils/crafting.util';
 import {Recipe} from '../../../../crafting/models/recipe';
 import {ItemService} from '../../../../../services/item.service';
-import {Item} from '../../../../../models/item/item';
 import {CustomProcUtil} from '../../../../crafting/utils/custom-proc.util';
 import {NumberUtil} from '../../../../util/utils/number.util';
 import {NpcService} from '../../../../npc/services/npc.service';
