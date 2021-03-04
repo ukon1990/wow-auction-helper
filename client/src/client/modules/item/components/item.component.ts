@@ -259,7 +259,6 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     this.selected = ItemDetailsUtil.getSelection(item,
       this.auctionService.mapped.value,
       this.auctionService.mappedVariations.value);
-    console.log('Shithead', item, this.selected);
     try {
       this.itemVariations = (this.auctionService.mappedVariations.value.get(this.selected.item.id) || [])
         .sort((a, b) => b.itemLevel - a.itemLevel);

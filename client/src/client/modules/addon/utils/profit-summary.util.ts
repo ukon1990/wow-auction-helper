@@ -1,6 +1,5 @@
 import {CSVExpiredAndCancelled, CSVIncomeAndExpense, CSVSaleAndBuys} from './../../../utils/tsm/tsm-lua.util';
 import {TSMCSV} from '../../../utils/tsm/tsm-lua.util';
-import {TimeUtil} from '../../../../../../api/src/auction/utils/time.util';
 import {DateUtil} from '@ukon1990/js-utilities';
 
 export interface ItemSaleHistory {
@@ -16,6 +15,8 @@ export interface ItemSaleHistory {
   maxSalePrice: number;
   sumSalePrice: number;
   soldQuantity: number;
+  cancelledAndExpiredQuantity: number;
+  saleRate: number;
 
   minBuyPrice: number;
   avgBuyPrice: number;
@@ -37,6 +38,8 @@ export interface ItemSaleHistorySummary {
   avgPerDay?: number;
 }
 
+type AddIfMissing = (id: number, bonusIds: number[], name: string) => ItemSaleHistory;
+
 export class ProfitSummaryUtil {
   private isWithinTimeLimit(time: number, start: Date, end: Date): boolean {
     return !(time < +start || time > +end);
@@ -54,12 +57,12 @@ export class ProfitSummaryUtil {
     let sumCost = 0;
     let sumIncome = 0;
 
-    const addEntryIfMissing = (id: number, name: string) => {
+    const addEntryIfMissing = (id: number, bonusIds: number[], name: string) => {
       let entry: ItemSaleHistory;
       if (!map.has(id)) {
         entry = {
           itemId: id,
-          bonusIds: [],
+          bonusIds,
           name,
 
           cancelled: 0,
@@ -70,6 +73,8 @@ export class ProfitSummaryUtil {
           maxSalePrice: 0,
           sumSalePrice: 0,
           soldQuantity: 0,
+          cancelledAndExpiredQuantity: 0,
+          saleRate: 0,
 
           minBuyPrice: 0,
           avgBuyPrice: 0,
@@ -89,63 +94,88 @@ export class ProfitSummaryUtil {
     };
 
     sales.forEach(sale => {
-      if (sale.source !== 'Auction') {
-        return;
-      }
-      const entry: ItemSaleHistory = addEntryIfMissing(sale.id, sale.name);
-      if (!entry.minSalePrice || entry.minSalePrice > sale.price) {
-        entry.minSalePrice = sale.price;
-      }
-
-      if (!entry.maxSalePrice || entry.maxSalePrice < sale.price) {
-        entry.maxSalePrice = sale.price;
-      }
-
-
-      if (!entry.avgSalePrice) {
-        entry.avgSalePrice = sale.price;
-      } else {
-        entry.avgSalePrice = (sale.price + entry.avgSalePrice) / 2;
-      }
-
-      entry.sumSalePrice += sale.price * sale.quantity;
-      entry.soldQuantity += sale.quantity;
-      sumIncome += sale.price * sale.quantity;
+      sumIncome = this.calculateSales(sale, addEntryIfMissing, sumIncome);
     });
 
     purcheses.forEach(bought => {
-      if (bought.source !== 'Auction') {
-        return;
-      }
-      const entry: ItemSaleHistory = addEntryIfMissing(bought.id, bought.name);
-      if (!entry.minBuyPrice || entry.minBuyPrice > bought.price) {
-        entry.minBuyPrice = bought.price;
-      }
+      sumCost = this.calculatePurchases(bought, addEntryIfMissing, sumCost);
+    });
 
+    expired.forEach(expire => {
+      const entry = addEntryIfMissing(expire.id, expire.bonusIds, expire.name);
+      entry.cancelledAndExpiredQuantity += expire.quantity;
+    });
+    cancelled.forEach(cancel => {
+      const entry = addEntryIfMissing(cancel.id, cancel.bonusIds, cancel.name);
+      entry.cancelledAndExpiredQuantity += cancel.quantity;
+    });
 
-      if (!entry.maxBuyPrice || entry.maxBuyPrice < bought.price) {
-        entry.maxBuyPrice = bought.price;
-      }
-
-
-      if (!entry.avgBuyPrice) {
-        entry.avgBuyPrice = bought.price;
-      } else {
-        entry.avgBuyPrice = (bought.price + entry.avgBuyPrice) / 2;
-      }
-
-
-      entry.sumBuyPrice += bought.price * bought.quantity;
-      entry.boughtQuantity += bought.quantity;
-      sumCost += bought.price * bought.quantity;
+    list.forEach(row => {
+      row.saleRate = row.soldQuantity / (row.cancelledAndExpiredQuantity + row.soldQuantity);
     });
 
     return {
+      avgPerDay: 0,
+      dailyStats: [],
       list,
       sumCost,
       sumIncome,
-      sumProfit: sumIncome - sumCost,
+      sumProfit: sumIncome - sumCost
     };
+  }
+
+  private calculatePurchases(bought: CSVSaleAndBuys, addEntryIfMissing: AddIfMissing, sumCost: number) {
+    if (bought.source !== 'Auction') {
+      return;
+    }
+    const entry: ItemSaleHistory = addEntryIfMissing(bought.id, bought.bonusIds, bought.name);
+    if (!entry.minBuyPrice || entry.minBuyPrice > bought.price) {
+      entry.minBuyPrice = bought.price;
+    }
+
+
+    if (!entry.maxBuyPrice || entry.maxBuyPrice < bought.price) {
+      entry.maxBuyPrice = bought.price;
+    }
+
+
+    if (!entry.avgBuyPrice) {
+      entry.avgBuyPrice = bought.price;
+    } else {
+      entry.avgBuyPrice = (bought.price + entry.avgBuyPrice) / 2;
+    }
+
+
+    entry.sumBuyPrice += bought.price * bought.quantity;
+    entry.boughtQuantity += bought.quantity;
+    sumCost += bought.price * bought.quantity;
+    return sumCost;
+  }
+
+  private calculateSales(sale: CSVSaleAndBuys, addEntryIfMissing: AddIfMissing, sumIncome: number) {
+    if (sale.source !== 'Auction') {
+      return;
+    }
+    const entry: ItemSaleHistory = addEntryIfMissing(sale.id, sale.bonusIds, sale.name);
+    if (!entry.minSalePrice || entry.minSalePrice > sale.price) {
+      entry.minSalePrice = sale.price;
+    }
+
+    if (!entry.maxSalePrice || entry.maxSalePrice < sale.price) {
+      entry.maxSalePrice = sale.price;
+    }
+
+
+    if (!entry.avgSalePrice) {
+      entry.avgSalePrice = sale.price;
+    } else {
+      entry.avgSalePrice = (sale.price + entry.avgSalePrice) / 2;
+    }
+
+    entry.sumSalePrice += sale.price * sale.quantity;
+    entry.soldQuantity += sale.quantity;
+    sumIncome += sale.price * sale.quantity;
+    return sumIncome;
   }
 
   /**

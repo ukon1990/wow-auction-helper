@@ -37,11 +37,12 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
     endDate: new FormControl(new Date()),
   });
   columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'name', title: 'Name', dataType: 'name', options: {idName: 'itemId'}},
 
     {key: 'avgSalePrice', title: 'Avg sale price', dataType: 'gold'},
     {key: 'sumSalePrice', title: 'Sum sale price', dataType: 'gold'},
     {key: 'soldQuantity', title: '# sold', dataType: 'number'},
+    {key: 'saleRate', title: 'Sale rate', dataType: 'percent'},
 
     {key: 'avgBuyPrice', title: 'Avg buy price', dataType: 'gold'},
     {key: 'sumBuyPrice', title: 'Sum buy price', dataType: 'gold'},
