@@ -58,56 +58,41 @@ export class ProfitSummaryUtil {
     let sumIncome = 0;
 
     const addEntryIfMissing = (id: number, bonusIds: number[], name: string) => {
-      let entry: ItemSaleHistory;
-      if (!map.has(id)) {
-        entry = {
-          itemId: id,
-          bonusIds,
-          name,
-
-          cancelled: 0,
-          expired: 0,
-
-          minSalePrice: 0,
-          avgSalePrice: 0,
-          maxSalePrice: 0,
-          sumSalePrice: 0,
-          soldQuantity: 0,
-          cancelledAndExpiredQuantity: 0,
-          saleRate: 0,
-
-          minBuyPrice: 0,
-          avgBuyPrice: 0,
-          maxBuyPrice: 0,
-          sumBuyPrice: 0,
-          boughtQuantity: 0,
-
-          diff: 0,
-          diffPercent: 0,
-        };
-        map.set(id, entry);
-        list.push(entry);
-      } else {
-        entry = map.get(id);
-      }
-      return entry;
+      return this.addEntryIfMissing(map, id, bonusIds, name, list);
     };
 
     sales.forEach(sale => {
-      sumIncome = this.calculateSales(sale, addEntryIfMissing, sumIncome);
+      if (sale.source !== 'Auction') {
+        return;
+      }
+      const entry: ItemSaleHistory = this.addEntryIfMissing(map, sale.id, sale.bonusIds, sale.name, list);
+
+      entry.minSalePrice = this.getMinPrice(entry.minSalePrice, sale.price);
+      entry.maxSalePrice = this.getMaxPrice(entry.maxSalePrice, sale.price);
+      entry.avgSalePrice = this.getAvgPrice(entry.avgSalePrice, sale.price);
+
+      entry.sumSalePrice += sale.price * sale.quantity;
+      entry.soldQuantity += sale.quantity;
+      sumIncome += sale.price * sale.quantity;
     });
 
     purcheses.forEach(bought => {
-      sumCost = this.calculatePurchases(bought, addEntryIfMissing, sumCost);
+      if (bought.source !== 'Auction') {
+        return;
+      }
+      const entry: ItemSaleHistory = this.addEntryIfMissing(map, bought.id, bought.bonusIds, bought.name, list);
+      entry.minBuyPrice = this.getMinPrice(entry.minBuyPrice, bought.price);
+      entry.maxBuyPrice = this.getMaxPrice(entry.maxBuyPrice, bought.price);
+      entry.avgBuyPrice = this.getAvgPrice(entry.avgBuyPrice, bought.price);
+
+      entry.sumBuyPrice += bought.price * bought.quantity;
+      entry.boughtQuantity += bought.quantity;
+      sumCost += bought.price * bought.quantity;
     });
 
-    expired.forEach(expire => {
-      const entry = addEntryIfMissing(expire.id, expire.bonusIds, expire.name);
-      entry.cancelledAndExpiredQuantity += expire.quantity;
-    });
-    cancelled.forEach(cancel => {
-      const entry = addEntryIfMissing(cancel.id, cancel.bonusIds, cancel.name);
-      entry.cancelledAndExpiredQuantity += cancel.quantity;
+    [...expired, ...cancelled].forEach(({id, bonusIds, name, quantity}) => {
+      const entry = addEntryIfMissing(id, bonusIds, name);
+      entry.cancelledAndExpiredQuantity += quantity;
     });
 
     list.forEach(row => {
@@ -124,58 +109,62 @@ export class ProfitSummaryUtil {
     };
   }
 
-  private calculatePurchases(bought: CSVSaleAndBuys, addEntryIfMissing: AddIfMissing, sumCost: number) {
-    if (bought.source !== 'Auction') {
-      return;
+  private getMinPrice(minPrice: number, price: number): number {
+    if (!minPrice || minPrice > price) {
+      return price;
     }
-    const entry: ItemSaleHistory = addEntryIfMissing(bought.id, bought.bonusIds, bought.name);
-    if (!entry.minBuyPrice || entry.minBuyPrice > bought.price) {
-      entry.minBuyPrice = bought.price;
-    }
-
-
-    if (!entry.maxBuyPrice || entry.maxBuyPrice < bought.price) {
-      entry.maxBuyPrice = bought.price;
-    }
-
-
-    if (!entry.avgBuyPrice) {
-      entry.avgBuyPrice = bought.price;
-    } else {
-      entry.avgBuyPrice = (bought.price + entry.avgBuyPrice) / 2;
-    }
-
-
-    entry.sumBuyPrice += bought.price * bought.quantity;
-    entry.boughtQuantity += bought.quantity;
-    sumCost += bought.price * bought.quantity;
-    return sumCost;
+    return minPrice;
   }
 
-  private calculateSales(sale: CSVSaleAndBuys, addEntryIfMissing: AddIfMissing, sumIncome: number) {
-    if (sale.source !== 'Auction') {
-      return;
+  private getMaxPrice(maxPrice: number, price: number): number {
+    if (!maxPrice || maxPrice < price) {
+      return price;
     }
-    const entry: ItemSaleHistory = addEntryIfMissing(sale.id, sale.bonusIds, sale.name);
-    if (!entry.minSalePrice || entry.minSalePrice > sale.price) {
-      entry.minSalePrice = sale.price;
-    }
+    return maxPrice;
+  }
 
-    if (!entry.maxSalePrice || entry.maxSalePrice < sale.price) {
-      entry.maxSalePrice = sale.price;
-    }
-
-
-    if (!entry.avgSalePrice) {
-      entry.avgSalePrice = sale.price;
+  private getAvgPrice(avgPrice: number, price: number): number {
+    if (!avgPrice) {
+      return price;
     } else {
-      entry.avgSalePrice = (sale.price + entry.avgSalePrice) / 2;
+      return (price + avgPrice) / 2;
     }
+  }
 
-    entry.sumSalePrice += sale.price * sale.quantity;
-    entry.soldQuantity += sale.quantity;
-    sumIncome += sale.price * sale.quantity;
-    return sumIncome;
+  private addEntryIfMissing(map: Map<number, ItemSaleHistory>, id: number, bonusIds: number[], name: string, list: ItemSaleHistory[]) {
+    let entry: ItemSaleHistory;
+    if (!map.has(id)) {
+      entry = {
+        itemId: id,
+        bonusIds,
+        name,
+
+        cancelled: 0,
+        expired: 0,
+
+        minSalePrice: 0,
+        avgSalePrice: 0,
+        maxSalePrice: 0,
+        sumSalePrice: 0,
+        soldQuantity: 0,
+        cancelledAndExpiredQuantity: 0,
+        saleRate: 0,
+
+        minBuyPrice: 0,
+        avgBuyPrice: 0,
+        maxBuyPrice: 0,
+        sumBuyPrice: 0,
+        boughtQuantity: 0,
+
+        diff: 0,
+        diffPercent: 0,
+      };
+      map.set(id, entry);
+      list.push(entry);
+    } else {
+      entry = map.get(id);
+    }
+    return entry;
   }
 
   /**
