@@ -24,7 +24,7 @@
   "dependencies": {
     "@ukon1990/js-utilities": "^1.9.3",
     "@ukon1990/subscription-manager": "^1.0.2",
-    "aws-sdk": "^2.516.0",
+    "aws-sdk": "^2.859.0",
     "file-saver": "^2.0.2",
     "jwt-decode": "^3.0.0-beta.2",
     "mysql": "^2.17.1",
@@ -40,7 +40,7 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.31",
+    "@types/aws-lambda": "8.10.72",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.6.8",
     "@types/sqlstring": "^2.2.1",

@@ -1,18 +1,20 @@
 import {DeleteItemOutput, DocumentClient, QueryOutput} from 'aws-sdk/clients/dynamodb';
 import * as AWS from 'aws-sdk';
-import {AWSError} from 'aws-sdk';
+import {AWSError, DynamoDB} from 'aws-sdk';
 import {NoSQLQueryUtil} from '../utils/query.util';
 import {AuthorizationUtil} from '../utils/authorization.util';
 import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
 
 export abstract class BaseRepository<T> {
   protected client: DocumentClient;
+  protected db: DynamoDB;
 
   protected constructor(protected table: string) {
     AWS.config.update({
       region: 'eu-west-1', // environment.region
     });
     this.client = new DocumentClient();
+    this.db = new AWS.DynamoDB();
   }
 
   abstract add(data: T): Promise<T>;
