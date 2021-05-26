@@ -2,6 +2,14 @@ import {CSVExpiredAndCancelled, CSVIncomeAndExpense, CSVSaleAndBuys} from './../
 import {TSMCSV} from '../../../utils/tsm/tsm-lua.util';
 import {DateUtil} from '@ukon1990/js-utilities';
 
+interface ItemHistory {
+  time: number;
+  buyPrice: number;
+  buyQuantity: number;
+  salePrice: number;
+  saleQuantity: number;
+}
+
 export interface ItemSaleHistory {
   itemId: number;
   name: string;
@@ -27,6 +35,7 @@ export interface ItemSaleHistory {
   diff: number;
   diffPercent: number;
 
+  history: ItemHistory[];
 }
 
 export interface ItemSaleHistorySummary {
@@ -96,7 +105,11 @@ export class ProfitSummaryUtil {
     });
 
     list.forEach(row => {
-      row.saleRate = row.soldQuantity / (row.cancelledAndExpiredQuantity + row.soldQuantity);
+      const saleRate = row.soldQuantity / (row.cancelledAndExpiredQuantity + row.soldQuantity);
+      const hasBuyAndSalePrice = row.avgSalePrice && row.avgBuyPrice;
+      row.saleRate = saleRate || 0;
+      row.diff = hasBuyAndSalePrice ? row.avgSalePrice - row.avgBuyPrice : 0;
+      row.diffPercent = hasBuyAndSalePrice ? row.avgSalePrice / row.avgBuyPrice : 0;
     });
 
     return {
@@ -158,6 +171,7 @@ export class ProfitSummaryUtil {
 
         diff: 0,
         diffPercent: 0,
+        history: [],
       };
       map.set(id, entry);
       list.push(entry);

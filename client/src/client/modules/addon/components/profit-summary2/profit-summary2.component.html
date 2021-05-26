@@ -26,6 +26,21 @@
 
         <mat-datepicker #startPicker></mat-datepicker>
       </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Period" [formControl]="periodInput">
+          <mat-option [value]="null">No period selected</mat-option>
+          <mat-option [value]="1">Past 24 hours</mat-option>
+          <mat-option [value]="7">Past 7 days</mat-option>
+          <mat-option [value]="14">Past 14 days</mat-option>
+          <mat-option [value]="30">Past 30 days</mat-option>
+          <mat-option [value]="60">Past 60 days</mat-option>
+          <mat-option [value]="90">Past 90 days</mat-option>
+          <mat-option [value]="365">Past year</mat-option>
+          <mat-option [value]="0">All</mat-option>
+        </mat-select>
+      </mat-form-field>
+
       <mat-form-field>
         <mat-label>Period end</mat-label>
         <input matInput

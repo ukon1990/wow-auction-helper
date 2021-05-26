@@ -30,10 +30,15 @@ interface TableData {
 })
 export class ProfitSummary2Component implements OnInit, OnDestroy {
   realms = [];
+  private readonly previousPeriodKey = 'profit_summary_display_period';
+  private readonly previousPeriod: string | undefined = localStorage.getItem(this.previousPeriodKey);
+  periodInput: FormControl = new FormControl(
+    this.previousPeriod ? +this.previousPeriod : 30);
   form = new FormGroup({
     realm: new FormControl(),
     character: new FormControl(),
-    startDate: new FormControl(new Date(+new Date() - 1000 * 60 * 60 * 24 * 30)),
+    startDate: new FormControl(new Date(this.getDateAtPeriodStart(this.periodInput.value))),
+    period: new FormControl(30),
     endDate: new FormControl(new Date()),
   });
   columns: ColumnDescription[] = [
@@ -42,7 +47,9 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
     {key: 'avgSalePrice', title: 'Avg sale price', dataType: 'gold'},
     {key: 'sumSalePrice', title: 'Sum sale price', dataType: 'gold'},
     {key: 'soldQuantity', title: '# sold', dataType: 'number'},
+
     {key: 'saleRate', title: 'Sale rate', dataType: 'percent'},
+    {key: 'diff', title: 'Diff', dataType: 'gold', options: {tooltip: 'Avg sale price - avg buy price'}},
 
     {key: 'avgBuyPrice', title: 'Avg buy price', dataType: 'gold'},
     {key: 'sumBuyPrice', title: 'Sum buy price', dataType: 'gold'},
@@ -65,6 +72,17 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
       (data: TSMCSV) =>
         this.handleTsmEvent(data));
     this.sm.add(this.form.valueChanges, change => this.calculateData(change));
+    this.sm.add(this.periodInput.valueChanges, period => {
+      localStorage.setItem(this.previousPeriodKey, period);
+      if (period !== null) {
+        const startDate = this.getDateAtPeriodStart(period);
+        this.form.setValue({
+          ...this.form.value,
+          startDate: new Date(startDate),
+          endDate: new Date(),
+        });
+      }
+    });
 
   }
 
@@ -107,5 +125,9 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
         this.realms.push(realm);
       });
     this.calculateData();
+  }
+
+  private getDateAtPeriodStart(period: number): number {
+    return period === 0 ? +new Date('2010-01-01') : +new Date() - 1000 * 60 * 60 * 24 * period;
   }
 }
