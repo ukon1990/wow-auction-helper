@@ -6,6 +6,7 @@ import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {RealmStatus} from '../../../../models/realm-status.model';
 import {RealmService} from '../../../../services/realm.service';
 import {SharedService} from '../../../../services/shared.service';
+import {ahTypes} from '../../../../data/ah-types.data';
 
 @Component({
   selector: 'wah-select-realm',
@@ -24,6 +25,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   }> = new EventEmitter();
 
   form: FormGroup = new FormGroup({
+    ahTypeId: new FormControl(0),
     region: new FormControl(),
     realm: new FormControl(),
     locale: new FormControl()
@@ -31,6 +33,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   autocompleteField = new FormControl('');
   locales = SharedService.locales;
   currentRealm: RealmStatus;
+  ahTypes = ahTypes;
   filteredRealms: any[] = [];
 
   sm = new SubscriptionManager();
@@ -88,6 +91,9 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     this.realms
       .forEach((status: RealmStatus) => {
         if (form.region === status.region && form.realm === status.slug) {
+          if (this.currentRealm.gameBuild !== status.gameBuild) {
+            this.form.controls.ahTypeId.setValue(status.gameBuild ? ahTypes[0].id : 0);
+          }
           this.currentRealm = status;
           this.autocompleteField
             .setValue(this.getRealmNameAndRegion(status));

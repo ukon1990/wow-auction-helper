@@ -16,6 +16,10 @@ import {faUserPlus} from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 import {UserSettings} from '../../../user/models/settings.model';
 
+interface Realm extends AuctionHouseStatus {
+  characterCount?: number;
+}
+
 @Component({
   selector: 'wah-realm-quick-select',
   templateUrl: './realm-quick-select.component.html',
@@ -27,8 +31,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     realm: new FormControl(),
     faction: new FormControl()
   });
-  realmListAll: AuctionHouseStatus[] = [];
-  realmList = [];
+  realmListAll: Realm[] = [];
+  realmList: Realm[] = [];
   realmListMap = {};
   allianceCharacterCountForRealm = 0;
   hordeCharacterCountForRealm = 0;

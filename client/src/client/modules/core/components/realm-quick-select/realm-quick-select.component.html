@@ -18,14 +18,14 @@
       <mat-optgroup label="With characters">
         <mat-option *ngFor="let realm of realmList"
                     [value]="realm.slug">
-          {{ realm.name }} ({{ realm.characterCount || 0 }})
+          {{ realm.name }} ({{ realm.characterCount || 0 }}) - {{realm.gameBuild === 1 ? 'Classic' : 'Retail'}}
         </mat-option>
       </mat-optgroup>
 
       <mat-optgroup label="All realms">
         <mat-option *ngFor="let realm of realmListAll"
                     [value]="realm.slug">
-          {{ realm.name }}
+          {{ realm.name }} - {{realm.gameBuild === 1 ? 'Classic' : 'Retail'}}
         </mat-option>
       </mat-optgroup>
     </mat-select>
