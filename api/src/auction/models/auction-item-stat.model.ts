@@ -66,7 +66,7 @@ export class AuctionItemStat {
   price22?: number;
   price23?: number;
 
-  constructor(public ahId: number, public bonusIds: string, auction: Auction, timestamp: number, hour: string) {
+  constructor(public ahId: number, public bonusIds: string, auction: Auction, timestamp: number, hour: string, public ahTypeId: number) {
     const date = new Date(timestamp),
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
     this.itemId = auction.item;

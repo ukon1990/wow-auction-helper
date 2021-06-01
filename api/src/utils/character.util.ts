@@ -3,6 +3,7 @@ import {CharacterGameData, Faction} from '../models/character/character-game-dat
 import {HttpClientUtil} from './http-client.util';
 import {Endpoints} from './endpoints.util';
 import {CharacterReputationsGameData} from '../models/character/character-reputations-game-data.model';
+import {NameSpace} from '../enums/name-space.enum';
 
 export class CharacterUtil {
 
@@ -61,7 +62,7 @@ export class CharacterUtil {
         }?locale=${
           locale
         }`,
-        region, 'profile');
+        region, NameSpace.PROFILE_RETAIL);
   }
 
   static setProfileBaseData(gameData: CharacterGameData, character: Character): void {

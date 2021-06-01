@@ -17,6 +17,10 @@ import {StatsService} from './stats.service';
 import {RealmService} from '../../realm/service';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
 import {AuctionHouse} from '../../realm/model';
+import {NameSpace} from '../../enums/name-space.enum';
+import {GameBuildVersion} from '../../../../client/src/client/utils/game-build.util';
+import {HttpResponse} from '../../models/http-response.model';
+import {ObjectUtil} from '@ukon1990/js-utilities';
 
 export class AuctionService {
   realmRepository: RealmRepository;
@@ -25,7 +29,7 @@ export class AuctionService {
     this.realmRepository = new RealmRepository();
   }
 
-  async latestDumpPathRequest(connectedId, region: string, realm: string, timestamp: number) {
+  async latestDumpPathRequest(connectedId, region: string, realm: string, timestamp: number, gameBuild: GameBuildVersion) {
     return new Promise<any>(async (resolve, reject) => {
       if (region && realm) {
         let apiResponse;
@@ -34,7 +38,7 @@ export class AuctionService {
           .then(token => BLIZZARD.ACCESS_TOKEN = token)
           .catch(() => console.error('Unable to fetch token'));
 
-        apiResponse = await this.getLatestDumpPath(connectedId, region)
+        apiResponse = await this.getLatestDumpPath(connectedId, region, gameBuild)
           .then(response => apiResponse = response)
           .catch(() => console.error('Unable to fetch data'));
 
@@ -45,21 +49,14 @@ export class AuctionService {
     });
   }
 
-  async getAuctionDump(url: string) {
-    return new Promise<any>((resolve, reject) => {
-      if (url) {
-        this.downloadDump(url)
-          .then(({body}) => resolve({auctions: AuctionTransformerUtil.transform(body)}))
-          .catch(reject);
-      } else {
-        reject('Could not get the auction dump, no URL were provided');
-      }
-    });
-  }
-
-  getLatestDumpPath(id: number, region: string): Promise<AHDumpResponse> {
+  getLatestDumpPath(id: number, region: string, gameBuild: GameBuildVersion = GameBuildVersion.Retail): Promise<AHDumpResponse> {
+    const isClassic = gameBuild === GameBuildVersion.Classic;
     return new Promise<AHDumpResponse>((resolve, reject) => {
-      const url = new Endpoints().getPath(`connected-realm/${id}/auctions`, region, 'dynamic');
+      const url = new Endpoints().getPath(
+        `connected-realm/${id}/auctions${isClassic ? '/index' : ''}`,
+        region,
+        isClassic ? NameSpace.DYNAMIC_CLASSIC : NameSpace.DYNAMIC_RETAIL
+      );
       new HttpClientUtil().get(url, false, {
         'If-Modified-Since': 'Sat, 14 Mar 3000 20:07:10 GMT'
       })
@@ -67,19 +64,20 @@ export class AuctionService {
           const newLastModified = headers['last-modified'];
           resolve({
             lastModified: +new Date(newLastModified),
-            url: url.replace(`access_token=${BLIZZARD.ACCESS_TOKEN}&`, '')
+            url: url.replace(`access_token=${BLIZZARD.ACCESS_TOKEN}&`, ''),
+            gameBuild,
           });
         })
         .catch(reject);
     });
   }
 
-  private async sendToS3(data: any, region: string, ahId: number, lastModified: number): Promise<any> {
+  private async sendToS3(data: { ahTypeId: number, data: any }, region: string, ahId: number, lastModified: number): Promise<any> {
     return new Promise((resolve, reject) => {
       console.log(`Sending ${ahId} to S3`);
       new S3Handler().save(
-        data,
-        `auctions/${region}/${ahId}/${lastModified}-lastModified.json.gz`,
+        data.data,
+        `auctions/${region}/${ahId}/${data.ahTypeId}/${lastModified}-lastModified.json.gz`,
         {
           region, ahId, lastModified
         })
@@ -91,19 +89,29 @@ export class AuctionService {
     });
   }
 
-  private downloadDump(url: string): Promise<any> {
+  private downloadDump(url: string, gameBuild: GameBuildVersion, ahTypeId = 0): Promise<{data: any, ahTypeId: number}[]> {
     return new Promise<any>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const fullUrl = `${url}&access_token=${BLIZZARD.ACCESS_TOKEN}`;
       console.log('Full dump URL', fullUrl);
       new HttpClientUtil().get(fullUrl)
-        .then(({body, headers}) => {
+        .then(async ({body, headers}: HttpResponse<{auctions: any[]}>) => {
           console.log('Header', headers);
+          const result: {data: any, ahTypeId: number}[] = [];
           if (body) {
-            const data = {auctions: AuctionTransformerUtil.transform(body)};
-            if (data && data.auctions.length) {
-              resolve(data);
+            if (gameBuild === GameBuildVersion.Classic) {
+              for (const ah of body.auctions) {
+                await this.downloadDump(ah.key.href, undefined, ah.id)
+                  .then(res => result.push(res[0]))
+                  .catch(console.error);
+              }
+            } else {
+              const data = {auctions: AuctionTransformerUtil.transform(body)};
+              if (data && data.auctions.length) {
+                result.push({data, ahTypeId});
+              }
             }
+            resolve(result);
           } else {
             reject({
               message: 'The body was empty, so there is likely no new data',
@@ -134,13 +142,18 @@ export class AuctionService {
           console.log(`Updating ${houses.length} houses.`);
           let updated = 0;
           Promise.all(houses.map(house =>
-            this.updateHouse(house)
-              .then(hadUpdate => {
-                if (hadUpdate) {
-                  updated++;
-                }
-              })
-              .catch(console.error)
+            new Promise((success) => {
+              this.updateHouse(house)
+                .then(hadUpdate => {
+                  if (hadUpdate) {
+                    updated++;
+                  }
+                  success();
+                })
+                .catch(() => {
+                  success();
+                });
+            })
           ))
             .then(() => {
               console.log(`Done initiating AH updates ${updated}/${houses.length}`);
@@ -185,13 +198,17 @@ export class AuctionService {
   private async updateHouse(house: AuctionHouse): Promise<boolean> {
     let error, ahDumpResponse: AHDumpResponse;
     return new Promise<any>(async (resolve, reject) => {
-      const startGetDumpPath = +new Date();
-      await this.getLatestDumpPath(house.connectedId, house.region)
+      await this.getLatestDumpPath(house.connectedId, house.region, house.gameBuild)
         .then((r: AHDumpResponse) =>
           ahDumpResponse = r)
-        .catch(e => {
-          console.error('Could not fetch AH dump', house.id, e);
-          error = e;
+        .catch(async e => {
+          error = e || {message: 'Could not fetch AH dump'};
+          const minutesToNextAttempt = 30;
+          const nextUpdateAttemptAppend = 1000 * 60 * minutesToNextAttempt;
+          await this.realmRepository.update(house.id, {nextUpdate: +new Date() + nextUpdateAttemptAppend})
+            .catch(console.error);
+          console.error(`Could not get AH data for ${
+            house.id}(${house.region}), trying again in ${minutesToNextAttempt} minutes.`, error);
         });
 
       if (!error && ahDumpResponse && ahDumpResponse.lastModified > house.lastModified) {
@@ -219,13 +236,15 @@ export class AuctionService {
     const dumpDownloadStart = +new Date();
     console.log(`Downloading dump for ${id} with url=${ahDumpResponse.url}`);
     return new Promise((resolve, reject) => {
-      this.downloadDump(ahDumpResponse.url)
-        .then(async (body) => {
-          if (body && body.auctions) {
+      this.downloadDump(ahDumpResponse.url, ahDumpResponse.gameBuild)
+        .then(async (auctions: {data: any, ahTypeId: number}[]) => {
+          if (auctions.length && auctions[0].data.auctions) {
             console.log(`Done downloading for id=${id} (${+new Date() - dumpDownloadStart}ms)`);
-            this.sendToS3(
-              body, region, id,
-              ahDumpResponse.lastModified)
+            Promise.all(
+              auctions.map(newData => this.sendToS3(
+                newData, region, id,
+                ahDumpResponse.lastModified))
+            )
               .then(async (res) => {
                 console.log('Successfully uploaded to bucket for id=', id);
                 resolve(res);
@@ -285,11 +304,11 @@ export class AuctionService {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
-      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
+      const regex = /auctions\/[a-z]{1,4}\/[\d]{1,4}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
-        const [auctions, region, ahId, fileName] = splitted;
+        const [auctions, region, ahId, ahTypeId, fileName] = splitted;
         const start = +new Date();
         const lastModified = +fileName.replace(/-lastModified.json.gz/gi, '');
         let house: AuctionHouse;
@@ -297,13 +316,13 @@ export class AuctionService {
             .then(h => house = h)
           .catch(console.error);
 
-        if (house && house.lastModified < lastModified) {
+        if (house) {
           const fileSize = +(record.object.size / 1000000).toFixed(2),
-            url = `${S3Handler.getBucketUrlForRegion(region, `auctions/${region}/${ahId}/${fileName}`)}`;
+            url = `${S3Handler.getBucketUrlForRegion(region, `auctions/${region}/${ahId}/${ahTypeId}/${fileName}`)}`;
           console.log(`Checked update and updated realm status in ${+new Date() - start} ms`);
           new StatsService().processRecord(record)
             .then(async () => {
-              await this.updateRealmStatus(ahId, lastModified, url, fileSize)
+              await this.updateRealmStatus(ahId, lastModified, url, +ahTypeId, fileSize)
                 .catch(err => console.error('Could not update realm status', err));
               await new RealmService().createLastModifiedFile(+ahId, region)
                 .catch(err => console.error('Could not createLastModifiedFile', err));
@@ -320,18 +339,31 @@ export class AuctionService {
           reject(new Error(msg));
         }
       } else {
+        console.log('No match for regex', record.object.key);
         resolve();
       }
     });
   }
 
-  private updateRealmStatus(ahId: string, lastModified: number, url: string, fileSize: number): Promise<void> {
+  private updateRealmStatus(ahId: string, lastModified: number, url: string, ahTypeId: number, fileSize: number): Promise<void> {
     const realmService = new RealmService();
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
+      let prevData = {};
+      console.log('Updating realm status for type', ahTypeId);
+      if (ahTypeId > 0) {
+        await realmService.getById(+ahId)
+          .then(((ah) => {
+            if (ah.url) {
+              prevData = ObjectUtil.isObject(ah.url) ? ah.url : {};
+            }
+          }))
+          .catch(console.error);
+        prevData[ahTypeId] = url;
+      }
       realmService.updateLastModified(+ahId, {
         lastModified,
-        url,
+        url: ahTypeId > 0 ? prevData : url,
         size: fileSize,
       })
         .then(async () => {
@@ -367,6 +399,7 @@ export class AuctionService {
               const splitted = s3.object.key.split('/');
               const [_, region, ahId, fileName] = splitted;
               const ahDumpResponse: AuctionResponse = await new GzipUtil().decompress(Body);
+
               console.log(`Updating id=${ahId}`, ahDumpResponse);
               await Promise.all([
                 this.getAndUploadAuctionDump(ahDumpResponse, ahId, region)

@@ -4,6 +4,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {Endpoints} from '../utils/endpoints.util';
 import {CharacterUtil} from './util';
 import {CharacterGameDataMedia} from '../models/character/character-game-data.model';
+import {NameSpace} from '../enums/name-space.enum';
 
 export class CharacterService {
   static get(region: string, realm: string, name: string, locale: string): Promise<Character> {
@@ -78,7 +79,7 @@ export class CharacterService {
         }?locale=${
           locale
         }`,
-        region, 'profile');
+        region, NameSpace.PROFILE_RETAIL);
   }
 
 

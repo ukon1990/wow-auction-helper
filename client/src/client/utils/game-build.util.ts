@@ -1,12 +1,13 @@
-export class GameBuild {
 
-  /**
-   * The version of the game client that the user uses
-   */
-  static readonly versions = [
-    'Retail',
-    'Classic'
-  ];
+
+/**
+ * The version of the game client that the user uses
+ */
+export enum GameBuildVersion {
+  Retail,
+  Classic
+}
+export class GameBuild {
 
   static readonly ADDONS = {
     AHDB: {file: 'AuctionDB.lua', name: 'AHDB'},
