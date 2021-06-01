@@ -22,7 +22,9 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
 
   private connectRealmsFromHouses(houses: AuctionHouse[]) {
     const realms: RealmStatus[] = [];
-    houses.forEach(house =>
+    houses
+      .filter(house => house.url)
+      .forEach(house =>
       house.realms.forEach(realm => {
         realms.push({
           id: house.id,
@@ -36,13 +38,14 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
           locale: realm.locale,
           timezone: realm.timezone,
           url: house.url,
-          tsmUrl: house.tsm.url,
+          tsmUrl: house.tsm ? house.tsm.url : undefined,
           lastModified: house.lastModified,
           size: house.size,
           lowestDelay: house.lowestDelay,
           avgDelay: house.avgDelay,
           highestDelay: house.highestDelay,
           stats: house.stats,
+          gameBuild: house.gameBuild
         });
       }));
     return realms;
@@ -64,7 +67,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
   getRealmsToUpdate(): Promise<AuctionHouse[]> {
     return this.scan({
       TableName: this.table,
-      FilterExpression: '#nextUpdate <= :now',
+      FilterExpression: '#nextUpdate <= :now OR attribute_not_exists(#nextUpdate)',
       ExpressionAttributeNames: {
         '#nextUpdate': 'nextUpdate',
       },
@@ -79,7 +82,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
       this.getAllAfterTimestamp(0)
         .then(houses => {
           const realms = this.connectRealmsFromHouses(houses);
-          resolve(realms.sort((a, b) =>
+          resolve(realms.filter(r => r.url).sort((a, b) =>
             a.slug.localeCompare(b.slug)));
         })
         .catch(reject);
@@ -91,7 +94,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
       this.getById(id)
         .then(house => {
           const realms = this.connectRealmsFromHouses([house]);
-          resolve(realms);
+          resolve(realms.filter(r => r.url));
         })
         .catch(reject);
     });
@@ -142,7 +145,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
 
   update(id: number, entry: {
     lastModified?: number;
-    url?: string;
+    url?: string | {[key: string]: string};
     size?: number;
     nextUpdate?: number;
   }) {

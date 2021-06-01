@@ -18,7 +18,7 @@ import {LuaUtil} from '../../../auction/utils/lua.util';
 import {AuctionDBImportUtil} from '../../../auction/utils/auction-db-import.util';
 import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {AuctionHouseStatus} from '../../../auction/models/auction-house-status.model';
-import {GameBuild} from '../../../../utils/game-build.util';
+import {GameBuild, GameBuildVersion} from '../../../../utils/game-build.util';
 import {UserUtil} from '../../../../utils/user/user.util';
 
 @Component({
@@ -32,7 +32,7 @@ export class AddonImportComponent implements OnInit {
   lastModified: number;
   result = [];
   realmControl = new FormControl();
-  gameVersions = GameBuild.versions;
+  gameVersions = GameBuildVersion;
   form: FormGroup;
   sm = new SubscriptionManager();
   reader = new FileReader();

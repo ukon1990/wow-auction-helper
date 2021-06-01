@@ -263,30 +263,30 @@ export class StatsService {
     return isLockedRow ? !!isLockedRow.In_use : false;
   }
 
-  processRecord(record: EventSchema, conn: DatabaseUtil = new DatabaseUtil()): Promise<void> {
+  processRecord(record: EventSchema): Promise<void> {
     const start = +new Date();
     return new Promise<void>((resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
-      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
+      const regex = /auctions\/[a-z]{1,4}\/[\d]{1,4}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
-        const [_, region, ahId, fileName] = splitted;
+        const [_, region, ahId, ahTypeId, fileName] = splitted;
         new S3Handler().get(record.bucket.name, record.object.key)
           .then(async data => {
             await new GzipUtil().decompress(data['Body'])
               .then(({auctions}) => {
                 const lastModified = +fileName.split('-')[0];
-                if (!lastModified) {
+                if (!lastModified || !auctions) {
                   resolve();
                   return;
                 }
                 const {
                   list,
                   hour
-                } = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
+                } = AuctionProcessorUtil.process(auctions, lastModified, +ahId, +ahTypeId);
                 const queries = AuctionProcessorUtil.splitEntries(list)
                   .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
                 const s3 = new S3Handler();
@@ -295,7 +295,7 @@ export class StatsService {
                   queries.map((query, index) =>
                     s3.save(
                       query,
-                      `statistics/inserts/${region}-${ahId}-${fileName}-part-${index}.sql.gz`,
+                      `statistics/inserts/${region}-${ahId}-${ahTypeId}-${fileName}-part-${index}.sql.gz`,
                       {region: 'eu'}
                     ))
                 )
@@ -310,6 +310,8 @@ export class StatsService {
               .catch(reject);
           })
           .catch(reject);
+      } else {
+        reject();
       }
     });
   }

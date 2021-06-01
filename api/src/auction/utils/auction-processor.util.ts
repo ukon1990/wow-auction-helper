@@ -7,7 +7,7 @@ import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 
 export class AuctionProcessorUtil {
-  static process(auctions: Auction[], lastModified: number, ahId: number): {
+  static process(auctions: Auction[], lastModified: number, ahId: number, ahTypeId: number): {
     list: AuctionItemStat[];
     hour: number;
   } {
@@ -23,7 +23,7 @@ export class AuctionProcessorUtil {
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
     console.log('Date is ' + dateString + ' Hour= ' + hour);
     for (let i = 0, l = auctions.length; i < l; ++i) {
-      this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour));
+      this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour), ahTypeId);
     }
     console.log(`Processed ${auctions.length} in ${+new Date() - start} ms`);
     return {
@@ -47,7 +47,9 @@ export class AuctionProcessorUtil {
     return result;
   }
 
-  private static processAuction(map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string) {
+  private static processAuction(
+    map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string, ahTypeId: number
+  ) {
     const id = AuctionItemStat.bonusId(auction.bonusLists),
       mapId = this.getMapId(auction, id),
       unitPrice = auction.buyout / auction.quantity;
@@ -56,7 +58,7 @@ export class AuctionProcessorUtil {
     }
 
     if (!map[mapId]) {
-      map[mapId] = new AuctionItemStat(ahId, id, auction, lastModified, hour);
+      map[mapId] = new AuctionItemStat(ahId, id, auction, lastModified, hour, ahTypeId);
       list.push(map[mapId]);
     } else {
       // Add something like avg price variation?

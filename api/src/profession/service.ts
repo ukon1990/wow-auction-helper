@@ -4,6 +4,7 @@ import {Endpoints} from '../utils/endpoints.util';
 import {AuthHandler} from '../handlers/auth.handler';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {ItemLocale} from '../models/item/item-locale';
+import {NameSpace} from '../enums/name-space.enum';
 
 export class ProfessionService {
   private http = new HttpClientUtil();
@@ -26,11 +27,11 @@ export class ProfessionService {
       await AuthHandler.getToken();
       const result = [];
       const {body} = await this.http.get(
-        new Endpoints().getPath('profession/index', 'us', 'static'));
+        new Endpoints().getPath('profession/index', 'us', NameSpace.STATIC_RETAIL));
 
       for (const p of body.professions) {
         await this.http.get(
-          new Endpoints().getPath('profession/' + p.id, 'us', 'static'))
+          new Endpoints().getPath('profession/' + p.id, 'us', NameSpace.STATIC_RETAIL))
           .then(async ({body: profession}) => {
             const res = {
               id: profession.id,
@@ -45,7 +46,7 @@ export class ProfessionService {
             if (profession && profession.skill_tiers) {
               for (const skill of profession.skill_tiers) {
                 await this.http.get(
-                  new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'us', 'static'))
+                  new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'us', NameSpace.STATIC_RETAIL))
                   .then(async ({body: s}) => {
                     const skillTier = {
                       id: s.id,
@@ -74,7 +75,7 @@ export class ProfessionService {
   private getIcon(id: number, type = 'recipe'): Promise<string> {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
-      const url = new Endpoints().getPath(`media/${type}/${id}`, 'us', 'static');
+      const url = new Endpoints().getPath(`media/${type}/${id}`, 'us', NameSpace.STATIC_RETAIL);
       new HttpClientUtil().get(
         url
       )

@@ -1,4 +1,5 @@
 import { Realm } from '../../../../api/src/realm/model';
+import {GameBuildVersion} from '../utils/game-build.util';
 
 export class RealmStatus {
   id: number;
@@ -11,13 +12,14 @@ export class RealmStatus {
   battlegroup: string;
   locale: string;
   timezone: string;
-  url: string;
+  url: string | {[key: string]: string};
   tsmUrl: string;
   lastModified: any;
   size: number;
   lowestDelay: number;
   avgDelay: number;
   highestDelay: number;
+  gameBuild?: GameBuildVersion;
   stats: {
     url: string;
     lastModified: number;

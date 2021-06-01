@@ -1,6 +1,9 @@
 import {RealmService} from './service';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {environment} from '../../../client/src/environments/environment';
+import {RealmRepository} from './repositories/realm.repository';
+import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
+import {NameSpace} from '../enums/name-space.enum';
 
 describe('RealmService', () => {
   const service: RealmService = new RealmService();
@@ -12,6 +15,24 @@ describe('RealmService', () => {
     xit('Migrate', async () => {
       await service.extractRDSDataToDynamoDB()
         .catch(console.error);
+      expect(1).toBe(2);
+    });
+    it('Import new realms', async () => {
+      jest.setTimeout(99999);
+      // console.log('Token:', await AuthHandler.getToken());
+      await service.getAllRealmsFromAPI('beta', NameSpace.DYNAMIC_CLASSIC);
+      /* To delete all classic realms
+      const repo = new RealmRepository();
+      await repo.getAll()
+        .then(async realms => {
+          for (const realm of realms) {
+            if (realm.gameBuild === GameBuildVersion.Classic) {
+              await repo.delete(realm.id);
+            }
+          }
+        })
+        .catch(console.error);
+        */
       expect(1).toBe(2);
     });
   });

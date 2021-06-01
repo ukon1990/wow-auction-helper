@@ -1,9 +1,17 @@
 import {DatabaseUtil} from '../utils/database.util';
-import { RealmRepository} from './repositories/realm.repository';
-import {AuctionHouse} from './model';
+import {RealmRepository} from './repositories/realm.repository';
+import {AuctionHouse, ConnectedRealmAPI} from './model';
 import {S3Handler} from '../handlers/s3.handler';
 import {AuctionUpdateLog} from '../models/auction/auction-update-log.model';
 import {RealmLogRepository} from './repositories/realm-log.repository';
+import {HttpClientUtil} from '../utils/http-client.util';
+import {Endpoints} from '../utils/endpoints.util';
+import {NameSpace} from '../enums/name-space.enum';
+import {AuthHandler} from '../handlers/auth.handler';
+import {BLIZZARD} from '../secrets';
+import {HttpResponse} from '../models/http-response.model';
+import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
+import {TextUtil} from '@ukon1990/js-utilities';
 
 export class RealmService {
   private repository: RealmRepository;
@@ -12,6 +20,10 @@ export class RealmService {
   constructor() {
     this.repository = new RealmRepository();
     this.logRepository = new RealmLogRepository();
+  }
+
+  getById(ahId: number): Promise<AuctionHouse> {
+    return this.repository.getById(ahId);
   }
 
   getUpdateLog(ahId: number, hours: number = 24): Promise<AuctionUpdateLog> {
@@ -60,7 +72,7 @@ export class RealmService {
 
   updateLastModified(id: number, entry: {
     lastModified: number;
-    url: string;
+    url: string | {[key: string]: string};
     size: number;
   }): Promise<any> {
     return new Promise<any>((resolve, reject) => {
@@ -206,6 +218,54 @@ export class RealmService {
           console.error(error);
           resolve();
         });
+    });
+  }
+
+  getAllRealmsFromAPI(region: string, nameSpace: NameSpace.DYNAMIC_CLASSIC | NameSpace.DYNAMIC_RETAIL): Promise<any> {
+    const http = new HttpClientUtil();
+    return new Promise<any>(async (resolve, reject) => {
+      await AuthHandler.getToken();
+      const url = new Endpoints().getPath(`connected-realm/`, region, nameSpace);
+      console.log('URL', url);
+      http.get(url)
+        .then(async ({body: parentBody}: HttpResponse<{connected_realms: {href: string}[]}>) => {
+          const realms = [];
+
+          for (const realm of parentBody.connected_realms) {
+            try {
+              const {body}: HttpResponse<ConnectedRealmAPI> = await http.get(
+                `${realm.href}&access_token=${BLIZZARD.ACCESS_TOKEN}`);
+              const locales = body.realms[0].locale;
+              const firstRealmLocale = `${locales[0]}${locales[1]}_${locales[2]}${locales[3]}`;
+              const {body: locale}: HttpResponse<ConnectedRealmAPI> = await http.get(
+                `${realm.href}&access_token=${BLIZZARD.ACCESS_TOKEN}&locale=${firstRealmLocale}`);
+
+              const processedRealm: AuctionHouse = {
+                id: body.id,
+                connectedId: body.id,
+                autoUpdate: true,
+                realmSlugs: body.realms.map(({slug}) => slug).join(','),
+                realms: locale.realms.map(r => ({
+                  id: r.id,
+                  slug: r.slug,
+                  name: r.name,
+                  timezone: r.timezone,
+                  locale: `${r.locale[0]}${r.locale[1]}_${r.locale[2]}${r.locale[3]}`,
+                })),
+                region,
+                gameBuild: TextUtil.contains(nameSpace, 'classic') ?
+                  GameBuildVersion.Classic : GameBuildVersion.Retail,
+              };
+              realms.push(processedRealm);
+              await this.repository.add(processedRealm);
+            } catch (error) {
+              console.error(`Realm not found for ${realm.href}`, error);
+            }
+          }
+
+          resolve(realms);
+        })
+        .catch(reject);
     });
   }
 }

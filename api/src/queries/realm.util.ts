@@ -5,6 +5,7 @@ import {RealmHandler} from '../handlers/realm.handler';
 import {DatabaseUtil} from '../utils/database.util';
 import {RealmQuery} from './realm.query';
 import {RDSQueryUtil} from '../utils/query.util';
+import {NameSpace} from '../enums/name-space.enum';
 const PromiseThrottle: any = require('promise-throttle');
 
 export class RealmUtil {
@@ -52,7 +53,7 @@ export class RealmUtil {
   static getConnectedRealmIdForHouse(id: number, region: string, slug: string): Promise<number> {
     return new Promise<any>(async (resolve, reject) => {
       await AuthHandler.getToken();
-      const path = new Endpoints().getPath(`realm/${slug}`, region, 'dynamic');
+      const path = new Endpoints().getPath(`realm/${slug}`, region, NameSpace.DYNAMIC_RETAIL);
       new HttpClientUtil().get(path)
         .then(({body}) => {
           const url: string = body['connected_realm']['href'],

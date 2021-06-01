@@ -13,6 +13,7 @@ export class S3Handler {
       case 'eu':
         return `https://wah-data-eu.s3.eu-west-1.amazonaws.com/` + path;
       case 'us':
+      case 'beta':
         return `https://wah-data-us.s3-us-west-1.amazonaws.com/` + path;
       case 'kr':
       case 'tw':
@@ -137,9 +138,9 @@ export class S3Handler {
   private uploadGzip(path: string, buffer: Buffer, queryData: any) {
     return new Promise<any>((resolve, reject) => {
       const s3 = this.getS3(),
-        region = queryData.region;
+        region = queryData.region === 'beta' ? 'us' : queryData.region;
 
-      console.log(`Uploading to s3 -> ${path}`);
+      console.log(`Uploading to s3 -> ${path}`, this.getBucketName(region));
       s3.upload({
         Bucket: this.getBucketName(region),
         Key: path,
