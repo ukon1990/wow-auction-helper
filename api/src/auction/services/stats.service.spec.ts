@@ -83,7 +83,7 @@ describe('StatsService', () => {
     jest.setTimeout(999999999);
     const service = new StatsService(); // Dag 7 dager siden
     const realmRepository = new RealmRepository();
-    // const hasError = await service.deleteOldPriceForRealm('itemPriceHistoryPerHour', 15, 'DAY');
+    // const hasError = await service.deleteOldPriceForRealm('itemPriceHistoryPerDay', 4, 'MONTH');
     const key = `lastHistoryDeleteEvent`;
     const list: AuctionHouse[] = await realmRepository.getRealmsThatNeedsStatDeletion(key);
 
