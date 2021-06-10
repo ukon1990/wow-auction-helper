@@ -3,4 +3,5 @@ export interface AhStatsRequest {
   itemId: number;
   petSpeciesId: number;
   bonusIds: number[];
+  ahTypeId?: number;
 }

@@ -63,7 +63,7 @@ export class Filters {
 
   public static isAboveItemLevel(itemId: number, minItemLevel: number): boolean {
     /* istanbul ignore next */
-    if (EmptyUtil.isNullOrUndefined(minItemLevel)) {
+    if (EmptyUtil.isNullOrUndefined(minItemLevel) || minItemLevel === 0) {
       return true;
     }
     const item: Item = SharedService.items[itemId];
@@ -71,7 +71,7 @@ export class Filters {
   }
 
   public static isSaleRateMatch(itemID: number, saleRate: number, requirePresence = true): boolean {
-    if (EmptyUtil.isNullOrUndefined(saleRate) || !Filters.isUsingAPI()) {
+    if (EmptyUtil.isNullOrUndefined(saleRate) || saleRate === 0 || !Filters.isUsingAPI()) {
       return true;
     }
     const item: AuctionItem = this.auctionService.getById(itemID),
@@ -86,7 +86,7 @@ export class Filters {
   }
 
   public static isDailySoldMatch(itemID: number, avgDailySold: number, requirePresence = true): boolean {
-    if (EmptyUtil.isNullOrUndefined(avgDailySold) || !Filters.isUsingAPI()) {
+    if (EmptyUtil.isNullOrUndefined(avgDailySold) || avgDailySold === 0 || !Filters.isUsingAPI()) {
       return true;
     }
 
@@ -133,8 +133,14 @@ export class Filters {
       SharedService.items[itemID].name : '';
   }
 
-  public static isExpansionMatch(itemID: number, expansionId: number): boolean {
+  public static isExpansionMatch(itemID: number, expansionId: number, ahTypeId: number = 0): boolean {
     const item: Item = SharedService.items[itemID] as Item;
+
+    // If we are on classic, and the recipe is for an expansion after TBC
+    if (item && ahTypeId > 0 && item.expansionId > 1) {
+      return false;
+    }
+
     if (EmptyUtil.isNullOrUndefined(expansionId) || expansionId === -1) {
       return true;
     }

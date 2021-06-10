@@ -8,7 +8,7 @@
         >
           <mat-option *ngFor="let recipe of auctionItem.source?.recipe?.all" [value]="recipe">
             <ng-container *ngIf="professions && professions[recipe.professionId]">
-              [{{professions[recipe.professionId].name}}]
+              [{{ professions[recipe.professionId].name }}]
             </ng-container>
             {{ recipe.name }}<span *ngIf="recipe.rank"> - Rank: {{ recipe.rank }}</span>
           </mat-option>
@@ -43,7 +43,7 @@
     </ng-container>
     -->
 
-    <h6>Hourly changes for the past 14 days</h6>
+    <h6>Hourly changes for the past 14 days or less</h6>
     <mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">
       <mat-list-item>
         <div mat-line [style]="{color: theme.accentColorCode}">
@@ -134,7 +134,7 @@
 
 
     <ng-container *ngIf="groupedByDateTable.data.length > 0">
-      <h6>Daily changes for the past 6 months</h6>
+      <h6>Daily changes for the past 3 months or less</h6>
       <mat-list dense class="horizontal-item-list mb-3" *ngIf="statsDaily">
         <mat-list-item>
           <div mat-line [style]="{color: theme.accentColorCode}">
@@ -202,23 +202,6 @@
             {{ statsDaily.past90Days.quantity.trend | number }}
             <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
             {{ statsDaily.past90Days.quantity.avg | number }}
-          </div>
-        </mat-list-item>
-        <mat-list-item>
-          <div mat-line [style]="{color: theme.accentColorCode}">
-            Past 6 months
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.primaryColorCode}">Avg change</span>
-            {{ statsDaily.past180Days.price.trend | gold }}
-            <span [style]="{color: theme.primaryColorCode}">Avg price</span>
-            {{ statsDaily.past180Days.price.avg | gold }}
-          </div>
-          <div mat-line>
-            <span [style]="{color: theme.warnColorCode}">Avg change</span>
-            {{ statsDaily.past180Days.quantity.trend | number }}
-            <span [style]="{color: theme.warnColorCode}">Avg quantity</span>
-            {{ statsDaily.past180Days.quantity.avg | number }}
           </div>
         </mat-list-item>
       </mat-list>

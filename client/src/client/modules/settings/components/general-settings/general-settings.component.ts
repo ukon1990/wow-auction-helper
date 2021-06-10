@@ -1,5 +1,5 @@
 import {Component, OnDestroy} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {RealmService} from '../../../../services/realm.service';
@@ -47,6 +47,7 @@ export class GeneralSettingsComponent implements OnDestroy {
     this.form = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
       realm: [SharedService.user.realm, Validators.required],
+      ahTypeId: [SharedService.user.ahTypeId || 0, Validators.required],
       importString: '',
       exportString: '',
       locale: localStorage['locale']
@@ -93,7 +94,7 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   async saveRealmAndRegion() {
-    const {realm, region, locale} = this.form.value;
+    const {realm, region, locale, ahTypeId} = this.form.value;
 
     if (this.userChanges.has('locale')) {
       localStorage.setItem('locale', locale);
@@ -121,7 +122,7 @@ export class GeneralSettingsComponent implements OnDestroy {
     }
 
     if (this.hasChangedRealmOrRegion()) {
-      await this._realmService.changeRealm(realm, region);
+      await this._realmService.changeRealm(realm, region, ahTypeId);
     }
     this.setOriginalUserObject();
   }
@@ -218,7 +219,11 @@ export class GeneralSettingsComponent implements OnDestroy {
       .then(() => location.reload());
   }
 
-  realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
+  realmSelectionEvent(change: { region: string; realm: string; locale: string, ahTypeId: number }) {
+    if (!change.region || !change.realm) {
+      return;
+    }
+    console.log('yo', change);
     Object.keys(change)
       .forEach(key =>
         this.form.controls[key]

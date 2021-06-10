@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 export const ALL_SETTINGS_GRAPH_FIELDS = `
   realm
+  ahTypeId
   region
   faction
   customPrices

@@ -75,7 +75,7 @@ describe('StatsService', () => {
   xit('Import daily data', async () => {
     jest.setTimeout(999999999);
     const service = new StatsService(); // Dag 7 dager siden
-    const hasError = await service.importDailyDataForDate(9);
+    const hasError = await service.importDailyDataForDate(2);
     expect(hasError).toBe(false);
   });
 
@@ -83,11 +83,15 @@ describe('StatsService', () => {
     jest.setTimeout(999999999);
     const service = new StatsService(); // Dag 7 dager siden
     const realmRepository = new RealmRepository();
-    // const hasError = await service.deleteOldPriceForRealm('itemPriceHistoryPerDay', 4, 'MONTH');
+
+    for (let i = 0; i < 300; i++) {
+      // await service.deleteOldPriceForRealm('itemPriceHistoryPerHour', 15, 'DAY');
+      // await service.deleteOldPriceForRealm('itemPriceHistoryPerDay', 4, 'MONTH');
+    }
     const key = `lastHistoryDeleteEvent`;
     const list: AuctionHouse[] = await realmRepository.getRealmsThatNeedsStatDeletion(key);
 
-    expect(list.length).toBe(0);
+    expect(list.length).toBe(276);
   });
 
   xit('Test', async () => {

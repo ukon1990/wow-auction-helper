@@ -43,6 +43,7 @@ export class MonitorComponent implements OnDestroy {
     {key: 'state', title: 'State', dataType: 'string'},
     {key: 'time', title: 'Time', dataType: 'number'},
     {key: 'timeMs', title: 'Time ms', dataType: 'number'},
+    {key: 'progress', title: 'Progress', dataType: 'number'},
     {key: 'memoryUsed', title: 'Memory used', dataType: 'number'},
     {key: 'examinedRows', title: 'Examined rows', dataType: 'number'},
     {key: 'info', title: 'SQL', dataType: 'string'},
@@ -141,6 +142,7 @@ export class MonitorComponent implements OnDestroy {
         stored.timeMs = process.timeMs;
         stored.memoryUsed = process.memoryUsed;
         stored.state = process.state;
+        stored.progress = process.progress;
       }
     });
     this.processHistory.sort((a, b) => b.timestamp - a.timestamp);

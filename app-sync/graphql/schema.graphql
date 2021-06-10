@@ -28,6 +28,7 @@ input CreateWahUserSettingsCharacterInput {
 }
 
 input CreateWahUserSettingsInput {
+    ahTypeId: Int
     realm: String!
     region: String!
     faction: Int
@@ -127,6 +128,7 @@ input TableStringFilterInput {
 
 input TableWahUserSettingsFilterInput {
     id: TableIDFilterInput
+    ahTypeId: TableIntFilterInput
     realm: TableStringFilterInput
     region: TableStringFilterInput
     faction: TableIntFilterInput
@@ -170,6 +172,7 @@ input UpdateWahUserSettingsDashboardInput {
 
 input UpdateWahUserSettingsInput {
     id: ID
+    ahTypeId: Int
     realm: String
     region: String
     faction: Int
@@ -200,6 +203,7 @@ input UpdateWahUserShoppingCartEntryInput {
 
 type WahUserSettings {
     id: ID!
+    ahTypeId: Int
     realm: String!
     region: String!
     faction: Int

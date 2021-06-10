@@ -85,8 +85,27 @@ export class AuctionsService {
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     let auctions;
     const statsMap = new Map<string, ItemStats>();
-    return Promise.all([
+    const ahTypeId = SharedService.user.ahTypeId;
+    const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId];
+
+    const promises = [
       new Promise((resolve, reject) => {
+        this.http
+          .get(url)
+          .toPromise()
+          .then(data => {
+            auctions = data['auctions'];
+            resolve(auctions);
+          })
+          .catch(error => {
+            console.error(error);
+            reject(error);
+          });
+      })
+    ];
+
+    if (realmStatus.stats && realmStatus.stats.url) {
+      promises.push(new Promise((resolve, reject) => {
         this.http
           .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
           .toPromise()
@@ -108,21 +127,9 @@ export class AuctionsService {
           .catch(error => {
             reject(error);
           });
-      }),
-      new Promise((resolve, reject) => {
-        this.http
-          .get(realmStatus.url)
-          .toPromise()
-          .then(data => {
-            auctions = data['auctions'];
-            resolve(auctions);
-          })
-          .catch(error => {
-            console.error(error);
-            reject(error);
-          });
-      })
-    ])
+      }));
+    }
+    return Promise.all(promises)
       .then(async () => {
         console.log('Auction download is completed');
         SharedService.downloading.auctions = false;

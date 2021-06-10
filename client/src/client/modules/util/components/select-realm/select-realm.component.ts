@@ -84,21 +84,25 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
 
   setSelectedRealm(): void {
     const form = this.form.getRawValue();
-    if (EmptyUtil.isNullOrUndefined(form.region)) {
+    if (EmptyUtil.isNullOrUndefined(form.region) || !form.realm || !form.region) {
       return;
     }
 
     this.realms
       .forEach((status: RealmStatus) => {
         if (form.region === status.region && form.realm === status.slug) {
-          if (this.currentRealm.gameBuild !== status.gameBuild) {
-            this.form.controls.ahTypeId.setValue(status.gameBuild ? ahTypes[0].id : 0);
+          if (!this.currentRealm || this.currentRealm.gameBuild !== status.gameBuild) {
+            const factionId = SharedService.user.faction || 0;
+            const ahTypeId = ahTypes[factionId].id;
+            this.form.controls.ahTypeId.setValue(ahTypes[factionId].id, {emitEvent: false});
+            form.ahTypeId = ahTypeId;
           }
           this.currentRealm = status;
           this.autocompleteField
             .setValue(this.getRealmNameAndRegion(status));
         }
       });
+    console.log('Form value', form, this.currentRealm);
   }
 
   private processRealms(list: RealmStatus[]) {

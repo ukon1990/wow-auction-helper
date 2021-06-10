@@ -433,8 +433,8 @@ export class StatsService {
             .then(async realms => {
               let hasHadError = false;
               const max = 38; // 260 er den høyeste id'n
-              const filteredAndSorted = realms.sort((a, b) => b.id - a.id)
-                .filter(entry => entry.id >= max - 40 && entry.id < max);
+              const filteredAndSorted = realms.sort((a, b) => b.id - a.id);
+                // .filter(entry => entry.id >= max - 40 && entry.id < max);
               for (const {id} of filteredAndSorted) {
                 if (!hasHadError) {
                   const queryStart = +new Date();
@@ -481,9 +481,10 @@ export class StatsService {
       new StatsRepository(conn).getHourlyStatsForRealmAtDate(id, date, dayOfMonth)
         .then(rows => {
           const list = [];
+          const ahListMap = new Map<number, any[]>();
           const calculationStartTime = +new Date();
           rows.forEach(row => {
-            AuctionProcessorUtil.compilePricesForDay(id, row, date, dayOfMonth, list);
+            AuctionProcessorUtil.compilePricesForDay(id, row, date, dayOfMonth, list, ahListMap);
           });
           if (!list.length) {
             resolve();
@@ -494,10 +495,12 @@ export class StatsService {
           const queryStartTime = +new Date();
 
           const repo = new StatsRepository(conn);
-          Promise.all(
-            AuctionProcessorUtil.splitEntries(list).map(entries =>
-              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth))
-          )
+          const promises = [];
+          ahListMap.forEach(ahList => {
+            AuctionProcessorUtil.splitEntries(ahList).map(entries =>
+              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth));
+          });
+          Promise.all(promises)
             .then(() => {
               console.log(`Done updating daily price data for ${id} in ${+new Date() - queryStartTime}ms.`);
               resolve();

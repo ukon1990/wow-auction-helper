@@ -34,6 +34,7 @@ export class UserUtil {
           SharedService.user[key] = user[key];
           break;
         case 'faction':
+        case 'ahTypeId':
         case 'gameVersion':
         case 'craftingStrategy':
           // Number values
@@ -121,6 +122,7 @@ export class UserUtil {
       switch (key) {
         case 'gameVersion':
         case 'faction':
+        case 'ahTypeId':
         case 'craftingStrategy':
           user[key] = +entry;
           break;

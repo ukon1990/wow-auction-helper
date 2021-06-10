@@ -22,9 +22,9 @@ import {PriceHistoryComponentUtil} from '../../utils/price-history.util';
 import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util';
 import {SharedService} from '../../../../services/shared.service';
 import {Reagent} from '../../../crafting/models/reagent';
-import {TimeUtil} from "../../../../../../../api/src/auction/utils/time.util";
-import {DateUtil} from "@ukon1990/js-utilities";
-import {ColumnDescription} from "../../../table/models/column-description";
+import {TimeUtil} from '../../../../../../../api/src/auction/utils/time.util';
+import {DateUtil} from '@ukon1990/js-utilities';
+import {ColumnDescription} from '../../../table/models/column-description';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {Profession} from '../../../../../../../api/src/profession/model';
 
@@ -36,6 +36,7 @@ import {Profession} from '../../../../../../../api/src/profession/model';
 export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   private ahId: number;
   private readonly util: PriceHistoryComponentUtil;
+  private readonly ahTypeId: number = SharedService.user.ahTypeId || 0;
 
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
@@ -189,6 +190,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     data: []
   };
   isLoading = true;
+  isLoadingCraftingCost = false;
   updateDailyChart: any;
   isInitiated: boolean;
   reagents: Reagent[];
@@ -222,30 +224,38 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     if (this.isInitiated && auctionItem && auctionItem.currentValue) {
       // this.loadData(auctionItem.currentValue);
     }
-
-    if (this.isInitiated && !this.isLoading && isActiveTab && isActiveTab.currentValue) {
+    if (this.isInitiated && !this.isLoading && isActiveTab && isActiveTab.currentValue && auctionItem.currentValue !== this.auctionItem) {
       this.isInitiated = false;
       this.ngAfterViewInit();
     }
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit');
     const firstRecipe: Recipe = this.auctionItem && this.auctionItem.source && this.auctionItem.source.recipe.all ?
       this.auctionItem.source.recipe.all.sort((a, b) => b.roi - a.roi)[0] : undefined;
     const id = this.auctionItem.itemID;
     if (firstRecipe && !ProspectingAndMillingUtil.prospectingSourceMap.get(id) && !ProspectingAndMillingUtil.millsSourceMap.get(id)) {
       const subId = 'recipeSubscription';
-      this.form.controls.recipe.setValue(firstRecipe);
 
       if (!this.sm.getById(subId)) {
-        this.sm.add(this.form.valueChanges, ({recipe}) => {
-          this.isLoading = true;
-          this.loadCraftingCost(recipe as Recipe)
-            .catch(console.error)
-            .finally(() => this.isLoading = false);
+        this.sm.add(this.form.controls.recipe.valueChanges, (recipe) => {
+          const previousRecipe = this.form.value.recipe;
+          if (
+            recipe && !previousRecipe ||
+            recipe.id !== previousRecipe.id
+          ) {
+            this.isLoading = true;
+            this.isLoadingCraftingCost = true;
+            this.loadCraftingCost(recipe as Recipe)
+              .catch(console.error)
+              .finally(() => {
+                this.isLoading = false;
+                this.isLoadingCraftingCost = false;
+              });
+          }
         }, {id: subId});
       }
+      this.form.controls.recipe.setValue(firstRecipe, {emitEvent: false});
     } else {
       this.hourlyChart = [...this.hourlyChart.slice(0, 2)];
       this.dailyChart = [...this.dailyChart.slice(0, 4)];
@@ -281,13 +291,16 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  private handleRecipeReagentResult(result?: Map<string, ItemPriceEntryResponse>, recipe: Recipe = this.form.value.recipe) {
+  private handleRecipeReagentResult(
+    result: Map<string, ItemPriceEntryResponse> = this.service.getLocalPriceHistoryForRealm(),
+    recipe: Recipe = this.form.value.recipe
+  ) {
     this.hourlyCostChart['data'] = [];
     this.dailyChartCrafting.forEach( entry => entry['data'] = []);
     this.craftingCostHistory = undefined;
     try {
       if (result && recipe && recipe.reagents) {
-        const groupedValues = this.util.extractGroupedValuesFromReagentHistory(recipe, result);
+        const groupedValues = this.util.extractGroupedValuesFromReagentHistory(recipe, result, this.ahTypeId);
         this.hourlyChart = [
           this.hourlyQuantityChart,
           this.hourlyPriceChart,
@@ -313,7 +326,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       return [];
     }
     return recipe.reagents.map(reagent => ({
-      ahId: this.ahId, itemId: reagent.id, petSpeciesId: -1, bonusIds: undefined
+      ahId: this.ahId, itemId: reagent.id, petSpeciesId: -1, bonusIds: undefined, ahTypeId: this.ahTypeId
     }));
   }
 
@@ -325,14 +338,17 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       ahId: this.ahId,
       itemId: this.item.id,
       petSpeciesId: auctionItem.petSpeciesId || -1,
+      ahTypeId: this.ahTypeId,
       bonusIds: auctionItem.bonusIds
     }, ...reagents])
       .then(async (history) => {
         const {itemID, petSpeciesId = -1, bonusIds} = auctionItem;
-        this.priceHistory = history.get(`${itemID}-${petSpeciesId}-${AuctionItemStat.bonusIdRaw(bonusIds)}`);
+        this.priceHistory = history.get(`${itemID}-${petSpeciesId}-${AuctionItemStat.bonusIdRaw(bonusIds)}-${this.ahTypeId}`);
         await this.setAuctionAndDataset(history);
-        this.stats = AuctionStatsUtil.processDaysForHourlyPriceData(this.priceHistory.hourly);
-        this.statsDaily = AuctionStatsUtil.processDaysForDailyPriceData(this.priceHistory.daily);
+        this.stats = this.priceHistory.hourly ?
+          AuctionStatsUtil.processDaysForHourlyPriceData(this.priceHistory.hourly) : undefined;
+        this.statsDaily = this.priceHistory.daily.length ?
+          AuctionStatsUtil.processDaysForDailyPriceData(this.priceHistory.daily) : undefined;
         this.isLoading = false;
         try {
         this.setHeatTable();
@@ -341,6 +357,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
         }
       })
       .catch(async (error) => {
+        console.error('in catch', error);
         await this.setAuctionAndDataset();
         this.isLoading = false;
         this.priceHistory = {

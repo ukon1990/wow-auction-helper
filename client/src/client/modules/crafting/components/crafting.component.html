@@ -106,7 +106,7 @@
               matTooltip="A value between 0 and 100. This is calculated based in you importing your sale history via the Tools -> Addons section.">
     </mat-form-field>
 
-    <div class="col">
+    <div class="col" *ngIf="!isClassic">
       <mat-checkbox
               formControlName="onlyKnownRecipes"
               matTooltip="Displays only those recipes your character for this realm knows">

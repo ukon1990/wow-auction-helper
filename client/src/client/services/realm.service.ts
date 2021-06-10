@@ -63,10 +63,11 @@ export class RealmService {
       SharedService.userRealms.push(tmpMap[key]));
   }
 
-  async changeRealm(realm: string, region: string = SharedService.user.region) {
+  async changeRealm(realm: string, region: string = SharedService.user.region, ahTypeId: number = SharedService.user.ahTypeId) {
     console.log('Change realm input', realm, region);
     SharedService.user.region = region;
     SharedService.user.realm = realm;
+    SharedService.user.ahTypeId = ahTypeId;
 
     UserUtil.save();
     return new Promise<AuctionHouseStatus>((resolve, reject) => {

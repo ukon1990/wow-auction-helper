@@ -9,6 +9,7 @@ import {NotificationSettings} from '../../../models/user/notification';
 
 export class UserSettings {
   id?: string;
+  ahTypeId?: number;
   region?: string;
   realm?: string;
   faction?: number;
