@@ -217,8 +217,8 @@ export class ItemService {
 
   getPriceHistory(items: AhStatsRequest[]): Promise<Map<string, ItemPriceEntryResponse>> {
     const startTime = +new Date();
-    const ahId = this.realmService.events.realmStatus.value.id,
-      ahTypeId = SharedService.user.ahTypeId;
+    const {id: ahId, gameBuild} = this.realmService.events.realmStatus.value,
+      ahTypeId = gameBuild === 1 ? SharedService.user.ahTypeId : 0;
     let realmMap = this.historyMap.value;
     const result: Map<string, any> = new Map<string, any>();
     const missing: AhStatsRequest[] = [];

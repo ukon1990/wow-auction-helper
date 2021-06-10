@@ -7,6 +7,7 @@ import {RealmStatus} from '../../../../models/realm-status.model';
 import {RealmService} from '../../../../services/realm.service';
 import {SharedService} from '../../../../services/shared.service';
 import {ahTypes} from '../../../../data/ah-types.data';
+import {Report} from '../../../../utils/report.util';
 
 @Component({
   selector: 'wah-select-realm',
@@ -16,19 +17,23 @@ import {ahTypes} from '../../../../data/ah-types.data';
 export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChanges {
   @Input() region: string;
   @Input() realm: string;
+  @Input() ahTypeId: number;
   @Input() locale: string;
   @Input() minimal: boolean;
   @Output() changes: EventEmitter<{
+    ahTypeId: number;
     region: string;
     realm: string;
     locale: string;
+    realmStatus: RealmStatus
   }> = new EventEmitter();
 
   form: FormGroup = new FormGroup({
     ahTypeId: new FormControl(0),
     region: new FormControl(),
     realm: new FormControl(),
-    locale: new FormControl()
+    locale: new FormControl(),
+    realmStatus: new FormControl()
   });
   autocompleteField = new FormControl('');
   locales = SharedService.locales;
@@ -82,19 +87,21 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
         this.form.controls[key].setValue(this[key]));
   }
 
-  setSelectedRealm(): void {
-    const form = this.form.getRawValue();
+  setSelectedRealm(form = this.form.value): any {
     if (EmptyUtil.isNullOrUndefined(form.region) || !form.realm || !form.region) {
       return;
     }
+    let ahTypeId = 0;
 
+    Report.debug('setSelectedRealm', form);
     this.realms
       .forEach((status: RealmStatus) => {
         if (form.region === status.region && form.realm === status.slug) {
+          Report.debug('setSelectedRealm forEach match', !this.currentRealm || this.currentRealm.gameBuild !== status.gameBuild);
           if (!this.currentRealm || this.currentRealm.gameBuild !== status.gameBuild) {
             const factionId = SharedService.user.faction || 0;
-            const ahTypeId = ahTypes[factionId].id;
-            this.form.controls.ahTypeId.setValue(ahTypes[factionId].id, {emitEvent: false});
+            ahTypeId = status.gameBuild === 1 ? ahTypes[factionId || 0].id : 0;
+            this.form.controls.ahTypeId.setValue(ahTypeId, {emitEvent: false});
             form.ahTypeId = ahTypeId;
           }
           this.currentRealm = status;
@@ -102,7 +109,10 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
             .setValue(this.getRealmNameAndRegion(status));
         }
       });
-    console.log('Form value', form, this.currentRealm);
+    Report.debug('realmSelectionEvent inside', form);
+    return {
+      ...form
+    };
   }
 
   private processRealms(list: RealmStatus[]) {
@@ -120,8 +130,13 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   }
 
   private handleFormChanges(value: any) {
-    this.changes.emit(value);
-    this.setSelectedRealm();
+    const result = this.setSelectedRealm(value);
+
+    if (!result) {
+      return;
+    }
+    Report.debug('realmSelectionEvent handleFormChanges', result);
+    this.changes.emit(result);
   }
 
   private filterRealms(value?: string) {
@@ -154,7 +169,14 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
 
   onOptionSelected(realm: RealmStatus) {
     this.currentRealm = realm;
-    this.form.controls.region.setValue(realm.region);
-    this.form.controls.realm.setValue(realm.slug);
+    const factionId = SharedService.user.faction || 0;
+    const ahTypeId = realm.gameBuild === 1 ? ahTypes[factionId || 0].id : 0;
+    this.form.setValue({
+      ...this.form.value,
+      region: realm.region,
+      realm: realm.slug,
+      ahTypeId,
+      realmStatus: realm,
+    });
   }
 }

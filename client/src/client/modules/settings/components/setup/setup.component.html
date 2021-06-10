@@ -11,6 +11,7 @@
             <wah-select-realm
                     [region]="form.getRawValue().region"
                     [realm]="form.getRawValue().realm"
+                    [ahTypeId]="form.getRawValue().ahTypeId"
                     [locale]="form.getRawValue().locale"
                     (changes)="realmSelectionEvent($event)">
             </wah-select-realm>
@@ -38,7 +39,14 @@
       <form [formGroup]="form">
         <mat-card>
           <mat-card-content>
-            <wah-characters [region]="form.value.region" [realm]="form.value.realm"></wah-characters>
+            <wah-characters *ngIf="this.selectedGameBuild === 0; else notAvailableForClassic"
+                            [region]="form.value.region"
+                            [realm]="form.value.realm">
+            </wah-characters>
+
+            <ng-template #notAvailableForClassic>
+              Blizzard does currently not support adding characters to classic realms at this time.
+            </ng-template>
           </mat-card-content>
         </mat-card>
       </form>

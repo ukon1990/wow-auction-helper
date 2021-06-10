@@ -10,6 +10,7 @@ import {SettingsService} from '../../../user/services/settings/settings.service'
 import {CharacterService} from '../../../character/services/character.service';
 import {UserSettings} from '../../../user/models/settings.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
+import {RealmStatus} from '../../../../models/realm-status.model';
 
 declare function require(moduleName: string): any;
 
@@ -23,6 +24,7 @@ const version = require('../../../../../../package.json').version;
 export class SetupComponent {
   form: FormGroup;
   locales = SharedService.locales;
+  selectedGameBuild = 0;
 
   sm = new SubscriptionManager();
 
@@ -34,6 +36,7 @@ export class SetupComponent {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<SetupComponent>) {
     this.form = this.fb.group({
+      ahTypeId: [0, Validators.required],
       region: ['eu', Validators.required],
       realm: [null, Validators.required],
       importString: '',
@@ -92,12 +95,14 @@ export class SetupComponent {
   completeSetup() {
     console.log('Start on complete setup');
     if (this.isValid()) {
-      const {region, realm, locale} = this.form.getRawValue();
+      const {region, realm, locale, ahTypeId} = this.form.getRawValue();
       const settings = new UserSettings();
       localStorage['region'] = region;
       localStorage['realm'] = realm;
+      localStorage['ahTypeId'] = ahTypeId;
       localStorage['timestamp_news'] = version;
       settings.realm = realm;
+      settings.ahTypeId = ahTypeId;
       settings.region = region;
       settings.locale = locale;
       settings.theme = ThemeUtil.current;
@@ -133,7 +138,17 @@ export class SetupComponent {
     return SharedService.user.isDarkMode;
   }
 
-  realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
+  realmSelectionEvent(change: { region: string; realm: string; locale: string, ahTypeId: number, realmStatus: RealmStatus }) {
+    Report.debug('realmSelectionEvent', change);
+    if (!change) {
+      return;
+    }
+    if (!change.ahTypeId) {
+      change.ahTypeId = 0;
+    }
+    // TODO: Should make it so that gameBuild is returned here
+    this.selectedGameBuild = change.realmStatus.id < 600 ? 0 : 1;
+    delete change.realmStatus;
     Object.keys(change)
       .forEach(key =>
         this.form.controls[key]

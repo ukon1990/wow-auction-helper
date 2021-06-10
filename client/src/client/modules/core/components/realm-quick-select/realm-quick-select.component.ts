@@ -27,6 +27,7 @@ interface Realm extends AuctionHouseStatus {
 })
 export class RealmQuickSelectComponent implements OnInit, OnDestroy {
   form: FormGroup = new FormGroup({
+    ahTypeId: new FormControl(),
     region: new FormControl(),
     realm: new FormControl(),
     faction: new FormControl()
@@ -52,6 +53,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.setValue({
+      ahTypeId: this.getFormValueFor('ahTypeId'),
       region: this.getFormValueFor('region'),
       realm: this.getFormValueFor('realm'),
       faction: this.getFormValueFor('faction')
@@ -86,7 +88,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     this.sm.unsubscribe();
   }
 
-  private getFormValueFor(userField: string): any {
+  private getFormValueFor(userField: string): number | string | boolean {
     if (SharedService.user && SharedService.user[userField] !== undefined) {
       return SharedService.user[userField];
     }
@@ -168,7 +170,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     const realm = this.realmListMap[slug];
     // const faction = SharedService.user.faction;
     const {faction, region, ahTypeId} = this.form.value;
-    const newAhTypeId = ahTypeId || SharedService.user.ahTypeId;
+    const ahTypeIdForFaction = faction === 0 ? 2 : 6;
+    const newAhTypeId = ahTypeId || SharedService.user.ahTypeId || ahTypeIdForFaction;
     if (realm && (!this.isCurrentRealm(slug, newAhTypeId) || faction === undefined)) {
       this.form.controls.faction.setValue(
         realm.factions[0] > realm.factions[1] ? 0 : 1,
@@ -196,7 +199,8 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     if (!this.ignoreNextChange) {
     }
     const {realm, region} = this.form.value;
-    this.settingSync.updateSettings({faction, realm, region});
+    const ahTypeIdForFaction = faction === 1 ? 6 : 2;
+    this.settingSync.updateSettings({faction, realm, region, ahTypeId: ahTypeIdForFaction});
     this.craftingService.handleRecipes(CraftingService.list.value);
 
     this.dbService.getAddonData();
@@ -209,9 +213,9 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       return;
     }
     const {region: prevRegion, realm: prevRealm, faction: prevFaction} = this.form.value;
-    const {region, realm, faction} = settings;
+    const {region, realm, faction, ahTypeId} = settings;
     if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
-      this.form.setValue({region, realm, faction: faction || 0}, {emitEvent: false});
+      this.form.setValue({region, realm, faction: faction || 0, ahTypeId}, {emitEvent: false});
     }
   }
 }
