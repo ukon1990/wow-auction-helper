@@ -22,13 +22,14 @@ export class NeededCraftingUtil extends BaseCraftingUtil {
       for (let i = 0; i < auctionItem.auctions.length && foundCount <= quantity; i++) {
         const auc = auctionItem.auctions[i],
           unitPrice = auc.buyout / auc.quantity;
-        foundCount += auc.quantity;
-
-        if (foundCount > quantity) {
-          price += unitPrice * (quantity - usedForCraftCount);
-        } else {
-          price += unitPrice * auc.quantity;
-          usedForCraftCount += auc.quantity;
+        if (unitPrice > 0) {
+          foundCount += auc.quantity;
+          if (foundCount > quantity) {
+            price += unitPrice * (quantity - usedForCraftCount);
+          } else {
+            price += unitPrice * auc.quantity;
+            usedForCraftCount += auc.quantity;
+          }
         }
       }
     }

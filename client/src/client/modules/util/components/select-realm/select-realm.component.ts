@@ -6,6 +6,7 @@ import {EmptyUtil} from '@ukon1990/js-utilities/dist/utils/empty.util';
 import {RealmStatus} from '../../../../models/realm-status.model';
 import {RealmService} from '../../../../services/realm.service';
 import {SharedService} from '../../../../services/shared.service';
+import {ahTypes} from '../../../../data/ah-types.data';
 
 @Component({
   selector: 'wah-select-realm',
@@ -24,6 +25,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   }> = new EventEmitter();
 
   form: FormGroup = new FormGroup({
+    ahTypeId: new FormControl(0),
     region: new FormControl(),
     realm: new FormControl(),
     locale: new FormControl()
@@ -31,6 +33,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   autocompleteField = new FormControl('');
   locales = SharedService.locales;
   currentRealm: RealmStatus;
+  ahTypes = ahTypes;
   filteredRealms: any[] = [];
 
   sm = new SubscriptionManager();
@@ -81,18 +84,25 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
 
   setSelectedRealm(): void {
     const form = this.form.getRawValue();
-    if (EmptyUtil.isNullOrUndefined(form.region)) {
+    if (EmptyUtil.isNullOrUndefined(form.region) || !form.realm || !form.region) {
       return;
     }
 
     this.realms
       .forEach((status: RealmStatus) => {
         if (form.region === status.region && form.realm === status.slug) {
+          if (!this.currentRealm || this.currentRealm.gameBuild !== status.gameBuild) {
+            const factionId = SharedService.user.faction || 0;
+            const ahTypeId = ahTypes[factionId].id;
+            this.form.controls.ahTypeId.setValue(ahTypes[factionId].id, {emitEvent: false});
+            form.ahTypeId = ahTypeId;
+          }
           this.currentRealm = status;
           this.autocompleteField
             .setValue(this.getRealmNameAndRegion(status));
         }
       });
+    console.log('Form value', form, this.currentRealm);
   }
 
   private processRealms(list: RealmStatus[]) {

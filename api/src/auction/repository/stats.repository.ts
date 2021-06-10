@@ -33,7 +33,7 @@ export class StatsRepository {
       Promise.all(
         AuctionProcessorUtil.getHourlyColumnsSince()
           .map(data => this.conn.query(`
-        SELECT date, itemId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
+        SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${data.columns.join(', ')}
         FROM itemPriceHistoryPerHour
         WHERE ahId = ${house.id} AND date = ${data.date};`)
             .then(res => {
@@ -54,7 +54,7 @@ export class StatsRepository {
       months
     } = AuctionProcessorUtil.getDailyColumnsSince(daysSince);
     return this.conn.query(`
-          SELECT date, itemId, petSpeciesId, bonusIds, ${columns.join(', ')}
+          SELECT date, itemId, ahTypeId, petSpeciesId, bonusIds, ${columns.join(', ')}
           FROM itemPriceHistoryPerDay
           WHERE ${months.map(month => `(
           ahId = ${ahId}
@@ -97,9 +97,10 @@ export class StatsRepository {
                 FROM itemPriceHistoryPerHour
                 WHERE (
                 ${
-      items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds}) => `
+      items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds, ahTypeId = 0}) => `
                   (
                     ahId = ${ahId}
+                    AND ahTypeId = ${ahTypeId}
                     AND itemId = ${itemId}
                     AND petSpeciesId = ${petSpeciesId}
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
@@ -114,10 +115,11 @@ export class StatsRepository {
       `SELECT *
               FROM itemPriceHistoryPerDay
               WHERE (
-                ${items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds}) => `
+                ${items.map(({ahId, itemId, petSpeciesId = '-1', bonusIds, ahTypeId= 0}) => `
                   (
                     ahId = ${ahId}
                     AND itemId = ${itemId}
+                    AND ahTypeId = ${ahTypeId}
                     AND petSpeciesId = ${petSpeciesId}
                     AND bonusIds = '${AuctionItemStat.bonusIdRaw(bonusIds)}'
                     AND date > NOW() - INTERVAL 7 MONTH

@@ -11,6 +11,7 @@ import {NpcService} from '../../npc/services/npc.service';
 import {ItemDroppedByRow} from '../../item/models/item-dropped-by-row.model';
 import {Item, ItemInventory} from '../../../models/item/item';
 import {millingRecipeMap, ProspectingAndMillingUtil, prospectingRecipeMap} from '../../../utils/prospect-milling.util';
+import {Report} from "../../../utils/report.util";
 
 export abstract class BaseCraftingUtil {
   static readonly STRATEGY = {

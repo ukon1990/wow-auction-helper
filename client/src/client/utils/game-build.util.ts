@@ -8,6 +8,7 @@ export enum GameBuildVersion {
   Classic
 }
 export class GameBuild {
+  static readonly latestClassicExpansion = 1;
 
   static readonly ADDONS = {
     AHDB: {file: 'AuctionDB.lua', name: 'AHDB'},

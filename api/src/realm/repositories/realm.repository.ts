@@ -217,6 +217,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
       const filterExpression = `(#${timeKey} < :time OR attribute_not_exists(#${timeKey}))`;
       const attributeNames = {};
       attributeNames['#' + timeKey] = timeKey;
+
       this.scan({
         TableName: this.table,
         FilterExpression: filterExpression,
@@ -226,7 +227,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
         }
       })
         .then(houses => resolve(
-          houses.sort((a, b) => b[timeKey] - a[timeKey])
+          houses.sort((a, b) => a[timeKey] - b[timeKey])
         ))
         .catch(reject);
     });
