@@ -1,24 +1,20 @@
 import {Component, OnDestroy} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {RealmService} from '../../../../services/realm.service';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {FileService} from '../../../../services/file.service';
 import {ItemService} from '../../../../services/item.service';
 import {CraftingService} from '../../../../services/crafting.service';
 import {PetsService} from '../../../../services/pets.service';
-import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {DatabaseService} from '../../../../services/database.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../utils/report.util';
-import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {Difference} from '@ukon1990/js-utilities/dist/models/difference.model';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../../npc/services/npc.service';
 import {UserUtil} from '../../../../utils/user/user.util';
-import {AppSyncService} from '../../../user/services/app-sync.service';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 
 @Component({

@@ -23,7 +23,6 @@ import {ProspectingAndMillingUtil} from '../../../../utils/prospect-milling.util
 import {SharedService} from '../../../../services/shared.service';
 import {Reagent} from '../../../crafting/models/reagent';
 import {TimeUtil} from '../../../../../../../api/src/auction/utils/time.util';
-import {DateUtil} from '@ukon1990/js-utilities';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {Profession} from '../../../../../../../api/src/profession/model';
@@ -36,7 +35,7 @@ import {Profession} from '../../../../../../../api/src/profession/model';
 export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   private ahId: number;
   private readonly util: PriceHistoryComponentUtil;
-  private readonly ahTypeId: number = SharedService.user.ahTypeId || 0;
+  private ahTypeId: number = SharedService.user.ahTypeId || 0;
 
   @Input() item: Item;
   @Input() auctionItem: AuctionItem;
@@ -208,6 +207,8 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     private auctionService: AuctionsService,
     private professionService: ProfessionService,
   ) {
+    const {gameBuild} = this.realmService.events.realmStatus.value;
+    this.ahTypeId = gameBuild === 1 ? SharedService.user.ahTypeId : 0;
     this.util = new PriceHistoryComponentUtil(auctionService);
 
     this.ahId = realmService.events.realmStatus.value ? realmService.events.realmStatus.value.id : undefined;
