@@ -22,6 +22,7 @@ export class RealmService {
   private timeSinceInterval: Observable<number> = environment.test ? null : interval(1000);
   sm = new SubscriptionManager();
   previousUrl;
+  isClassic = false;
   events = {
     timeSince: new BehaviorSubject(0),
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
@@ -105,6 +106,7 @@ export class RealmService {
       this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
         .toPromise()
         .then(async (status: AuctionHouseStatus) => {
+          this.isClassic = status.gameBuild > 0;
           this.previousUrl = status.url;
           this.events.realmStatus.next({
             ...status,

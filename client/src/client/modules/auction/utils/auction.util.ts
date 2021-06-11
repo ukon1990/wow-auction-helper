@@ -16,7 +16,7 @@ import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Recipe} from '../../crafting/models/recipe';
 
-interface OrganizedAuctionResult {
+export interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
   mapVariations: Map<number, AuctionItem[]>;
   list: AuctionItem[];

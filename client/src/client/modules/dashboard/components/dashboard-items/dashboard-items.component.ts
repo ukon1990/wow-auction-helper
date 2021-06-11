@@ -16,6 +16,7 @@ import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
 import {faPlus} from '@fortawesome/free-solid-svg-icons/faPlus';
 import {PageEvent} from '@angular/material/paginator';
 import {TextUtil} from '@ukon1990/js-utilities/dist/utils/text.util';
+import {RealmService} from '../../../../services/realm.service';
 
 @Component({
   selector: 'wah-dashboard-items',
@@ -27,6 +28,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
     displayHidden: new FormControl(false),
     search: new FormControl()
   });
+  isClassic = true;
   dashboards: DashboardV2[] = [];
   filteredBoards: DashboardV2[] = [];
   itemsPerPage = 8;
@@ -42,6 +44,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
 
   constructor(private service: DashboardService,
               public dialog: MatDialog,
+              private realmService: RealmService,
               private characterService: CharacterService
   ) {
     this.sm.add(this.form.valueChanges, value => {
@@ -78,6 +81,7 @@ export class DashboardItemsComponent implements OnDestroy, AfterContentInit {
   }
 
   private setTabTitleNumbers() {
+    this.isClassic = this.realmService.isClassic;
     this.numberOfBoardsWithAMatch = this.dashboards.filter(board =>
       board.data.length && !board.isDisabled).length;
     this.numberOfActiveBoards = this.dashboards.filter(board => !board.isDisabled).length;
