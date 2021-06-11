@@ -10,6 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from '../table/table.module';
@@ -18,6 +19,8 @@ import { AddonDatasetComponent } from './components/addon-dataset/addon-dataset.
 import {RouterModule} from '@angular/router';
 import { ProfitSummaryChartComponent } from './components/profit-summary/profit-summary-chart/profit-summary-chart.component';
 import { GoldSummaryChartComponent } from './components/profit-summary/gold-summary-chart/gold-summary-chart.component';
+import { ProfitSummary2Component } from './components/profit-summary2/profit-summary2.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,8 @@ import { GoldSummaryChartComponent } from './components/profit-summary/gold-summ
     ItemSaleSummaryComponent,
     AddonDatasetComponent,
     ProfitSummaryChartComponent,
-    GoldSummaryChartComponent],
+    GoldSummaryChartComponent,
+    ProfitSummary2Component],
   exports: [
     ItemSaleSummaryComponent,
     AddonComponent
@@ -39,12 +43,14 @@ import { GoldSummaryChartComponent } from './components/profit-summary/gold-summ
     MatFormFieldModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatListModule,
     TableModule,
     UtilModule,
     MatButtonModule,
     RouterModule,
     MatInputModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDatepickerModule
   ]
 })
 export class AddonModule { }
