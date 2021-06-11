@@ -144,8 +144,8 @@ export class AuctionProcessorUtil {
     }
   }
 
-  static processHourlyPriceData(result: AuctionItemStat[], callback?: (hour: ItemPriceEntry) => void): ItemPriceEntry[] {
-    const list = [];
+  static processHourlyPriceData(result: AuctionItemStat[], callback?: (hour: ItemPriceEntry) => void): {[key: number]: ItemPriceEntry[]} {
+    const list: {[key: number]: ItemPriceEntry[]} = {};
     result.forEach(entry => {
       for (let i = 0, maxHours = 23; i <= maxHours; i++) {
         const date: Date = new Date(+entry.date);
@@ -166,7 +166,10 @@ export class AuctionProcessorUtil {
           if (callback) {
             callback(hourEntry);
           } else {
-            list.push(hourEntry);
+            if (!list[hourEntry.ahTypeId]) {
+              list[hourEntry.ahTypeId] = [];
+            }
+            list[hourEntry.ahTypeId].push(hourEntry);
           }
         }
       }
@@ -174,8 +177,8 @@ export class AuctionProcessorUtil {
     return list;
   }
 
-  static processDailyPriceData(result, callback?: (hour: ItemDailyPriceEntry) => void) {
-    const list = [];
+  static processDailyPriceData(result, callback?: (hour: ItemDailyPriceEntry) => void): {[key: number]: ItemDailyPriceEntry[]} {
+    const list: {[key: number]: ItemDailyPriceEntry[]} = {};
     result.forEach(entry => {
       for (let i = 1, maxDays = 31; i <= maxDays; i++) {
         const date: Date = new Date(+entry.date);
@@ -205,7 +208,10 @@ export class AuctionProcessorUtil {
           if (callback) {
             callback(timeEntry);
           } else {
-            list.push(timeEntry);
+            if (!list[timeEntry.ahTypeId]) {
+              list[timeEntry.ahTypeId] = [];
+            }
+            list[timeEntry.ahTypeId].push(timeEntry);
           }
         }
       }
