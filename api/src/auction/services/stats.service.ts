@@ -11,12 +11,14 @@ import {RealmService} from '../../realm/service';
 import {AuctionStatsUtil} from '../utils/auction-stats.util';
 import {ItemStats} from '../models/item-stats.model';
 import {DateUtil} from '@ukon1990/js-utilities';
-import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import {
+  ItemDailyPriceEntry,
+  ItemPriceEntry
+} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 import {AuctionHouse} from '../../realm/model';
 import {S3} from 'aws-sdk';
 import {LogRepository} from '../../logs/repository';
 import {AhStatsRequest} from '../models/ah-stats-request.model';
-import {AuctionItemStat} from '../models/auction-item-stat.model';
 
 const request: any = require('request');
 const PromiseThrottle: any = require('promise-throttle');
@@ -110,7 +112,8 @@ export class StatsService {
     return new Promise((resolve, reject) => {
       new StatsRepository(conn).getPriceHistoryHourly(items)
         .then((result => {
-          resolve(AuctionProcessorUtil.processHourlyPriceData(result));
+          const ahTypeId = items[0].ahTypeId;
+          resolve(AuctionProcessorUtil.processHourlyPriceData(result)[ahTypeId]);
         }))
         .catch((error) => {
           console.error(error);
@@ -124,7 +127,8 @@ export class StatsService {
       new StatsRepository(conn)
         .getPriceHistoryDaily(items)
         .then((result => {
-          resolve(AuctionProcessorUtil.processDailyPriceData(result));
+          const ahTypeId = items[0].ahTypeId;
+          resolve(AuctionProcessorUtil.processDailyPriceData(result)[ahTypeId]);
         }))
         .catch((error) => {
           console.error(error);
@@ -434,7 +438,7 @@ export class StatsService {
               let hasHadError = false;
               const max = 38; // 260 er den høyeste id'n
               const filteredAndSorted = realms.sort((a, b) => b.id - a.id);
-                // .filter(entry => entry.id >= max - 40 && entry.id < max);
+              // .filter(entry => entry.id >= max - 40 && entry.id < max);
               for (const {id} of filteredAndSorted) {
                 if (!hasHadError) {
                   const queryStart = +new Date();
@@ -655,13 +659,11 @@ export class StatsService {
     });
   }
 
-  getRealmPriceTrends(house: AuctionHouse, db: DatabaseUtil): Promise<any> {
+  getRealmPriceTrends(house: AuctionHouse, db: DatabaseUtil): Promise<{ [key: number]: ItemStats[] }> {
     const start = +new Date();
     const repo = new StatsRepository(db);
-    const results: ItemStats[] = [],
-      map = new Map<string, ItemStats>();
-    let hourlyData: ItemPriceEntry[] = [],
-      dailyData: ItemDailyPriceEntry[] = [];
+    let hourlyData: { [key: number]: ItemPriceEntry[] } = {},
+      dailyData: { [key: number]: ItemDailyPriceEntry[] } = [];
 
     return new Promise((resolve, reject) => {
       Promise.all([
@@ -693,55 +695,77 @@ export class StatsService {
         })
       ])
         .then(() => {
-          AuctionStatsUtil.processHours(hourlyData).forEach(item => {
-            const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
-            if (!map.has(id)) {
-              item.past7Days = {
-                price: {
-                  trend: item.past24Hours.price.trend * 24,
-                  avg: item.past24Hours.price.avg * 24
-                },
-                quantity: {
-                  trend: item.past24Hours.quantity.trend * 24,
-                  avg: item.past24Hours.quantity.avg * 24
-                },
-                totalEntries: item.past24Hours.totalEntries,
-              };
-              map.set(id, item);
-              results.push(item);
-            } else {
-              map.get(id).past24Hours = item.past24Hours;
-            }
-          });
-
-          AuctionProcessorUtil.setCurrentDayFromHourly({
-            hourly: hourlyData,
-            daily: dailyData,
-          });
-          AuctionStatsUtil.processDays(dailyData).forEach(item => {
-            const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
-            if (!map.has(id)) {
-              item.past24Hours = {
-                price: {
-                  trend: 0,
-                  avg: 0
-                },
-                quantity: {
-                  trend: 0,
-                  avg: 0
-                },
-                totalEntries: 0,
-              };
-              map.set(id, item);
-              results.push(item);
-            } else {
-              map.get(id).past7Days = item.past7Days;
-            }
-          });
-          resolve(results);
+          const processedData = this.getProcessedAndCombineHourlyAndDailyTrends(hourlyData, dailyData);
+          resolve(processedData);
         })
         .catch(reject);
     });
+  }
+
+  /**
+   * Combines the hourly and daily data, for each AH per realm.
+   * @param hourlyData
+   * @param dailyData
+   * @private
+   */
+  private getProcessedAndCombineHourlyAndDailyTrends(
+    hourlyData: { [key: number]: ItemPriceEntry[] },
+    dailyData: { [key: number]: ItemDailyPriceEntry[] }
+  ) {
+    const processedData: { [key: number]: ItemStats[] } = {};
+    /*
+      Looping over each AH found in the hourly data
+     */
+    Object.keys(hourlyData)
+      .forEach(ahTypeId => {
+        processedData[ahTypeId] = [];
+        const map = new Map<string, ItemStats>();
+        AuctionStatsUtil.processHours(hourlyData[ahTypeId]).forEach(item => {
+          const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
+          if (!map.has(id)) {
+            item.past7Days = {
+              price: {
+                trend: item.past24Hours.price.trend * 24,
+                avg: item.past24Hours.price.avg * 24
+              },
+              quantity: {
+                trend: item.past24Hours.quantity.trend * 24,
+                avg: item.past24Hours.quantity.avg * 24
+              },
+              totalEntries: item.past24Hours.totalEntries,
+            };
+            map.set(id, item);
+            processedData[ahTypeId].push(item);
+          } else {
+            map.get(id).past24Hours = item.past24Hours;
+          }
+        });
+        AuctionProcessorUtil.setCurrentDayFromHourly({
+          hourly: hourlyData[ahTypeId],
+          daily: dailyData[ahTypeId],
+        });
+        AuctionStatsUtil.processDays(dailyData[ahTypeId]).forEach(item => {
+          const id = AuctionStatsUtil.getId(item.itemId, item.bonusIds, item.petSpeciesId);
+          if (!map.has(id)) {
+            item.past24Hours = {
+              price: {
+                trend: 0,
+                avg: 0
+              },
+              quantity: {
+                trend: 0,
+                avg: 0
+              },
+              totalEntries: 0,
+            };
+            map.set(id, item);
+            processedData[ahTypeId].push(item);
+          } else {
+            map.get(id).past7Days = item.past7Days;
+          }
+        });
+      });
+    return processedData;
   }
 
   setRealmTrends(house: AuctionHouse, db: DatabaseUtil): Promise<void> {
@@ -753,37 +777,53 @@ export class StatsService {
       this.getRealmPriceTrends(house, db)
         .then((results) => {
           const processStart = +new Date();
-          if (results.length) {
-            const lastModified = +new Date();
-            new S3Handler().save({
-              lastModified: +new Date(),
-              data: results
-            }, `stats/${house.id}.json.gz`, {region: house.region})
-              .then(success => {
-                console.log(`Processed and uploaded total ${(+new Date() - start)
-                } ms, Upload=${
-                  +new Date() - processStart
-                } ms`, success);
-                this.realmRepository.updateEntry(house.id, {
-                  id: house.id,
-                  stats: {
-                    lastModified,
-                    url: success.url
-                  }
-                }, false)
-                  .then(() => resolve(success))
-                  .catch(e => {
-                    console.error('setRealmTrends', e);
-                    reject(e);
-                  });
-              })
-              .catch(e => {
-                console.error('Failed in ' + (+new Date() - start) + 'ms', e);
-                reject(e);
-              });
-          } else {
-            resolve();
-          }
+          const hasMultipleAH = Object.keys(results).length > 1;
+          const updatedStats = {
+            lastModified: +new Date(),
+            url: hasMultipleAH ? {} : ''
+          };
+
+          Promise.all(
+            Object.keys(results)
+              .map(ahTypeId => new Promise((success, failed) => {
+                if (results[ahTypeId].length) {
+                  new S3Handler().save({
+                    lastModified: +new Date(),
+                    data: results[ahTypeId]
+                  }, `stats/${house.id}-${ahTypeId}.json.gz`, {region: house.region})
+                    .then(uploadSuccess => {
+                      console.log(`Processed and uploaded total ${(+new Date() - start)
+                      } ms, Upload=${
+                        +new Date() - processStart
+                      } ms`, uploadSuccess);
+                      if (hasMultipleAH) {
+                        updatedStats.url[ahTypeId] = uploadSuccess.url;
+                      } else {
+                        updatedStats.url = uploadSuccess.url;
+                      }
+                      success();
+                    })
+                    .catch(e => {
+                      console.error('Failed in ' + (+new Date() - start) + 'ms', e);
+                      failed(e);
+                    });
+                } else {
+                  resolve();
+                }
+              }))
+          )
+            .then(() => {
+              this.realmRepository.updateEntry(house.id, {
+                id: house.id,
+                stats: updatedStats,
+              }, false)
+                .then(() => resolve())
+                .catch(e => {
+                  console.error('setRealmTrends', e);
+                  reject(e);
+                });
+            })
+            .catch(reject);
         })
         .catch(reject);
     });

@@ -241,7 +241,7 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
         TableName: this.table,
         FilterExpression:
         '(#lastTrendUpdateInitiation < :time OR attribute_not_exists(#lastTrendUpdateInitiation)) AND ' +
-          '#lastStatsInsert > #lastTrendUpdateInitiation', // Was: lastDailyPriceUpdate
+          '(#lastStatsInsert > #lastTrendUpdateInitiation OR attribute_not_exists(#lastStatsInsert))', // Was: lastDailyPriceUpdate
         ExpressionAttributeNames: {
           '#lastTrendUpdateInitiation': 'lastTrendUpdateInitiation',
           '#lastStatsInsert': 'lastStatsInsert',

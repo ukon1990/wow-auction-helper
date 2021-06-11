@@ -39,7 +39,7 @@ describe('StatsService', () => {
         region: 'eu'
       } as AuctionHouse, conn)
         .then(rows => {
-          toStatic = rows.filter(item => item.itemId === itemId)[0];
+          toStatic = rows[0].filter(item => item.itemId === itemId)[0];
         });
       await new StatsService().getPriceHistoryFor([{
         ahId: 69, itemId,
@@ -48,7 +48,7 @@ describe('StatsService', () => {
       }], false, conn)
         .then(results => {
           toClient = AuctionStatsUtil.processDaysForHourlyPriceData(results.hourly);
-          rawDataToClient = AuctionProcessorUtil.processHourlyPriceData(results.hourly);
+          rawDataToClient = AuctionProcessorUtil.processHourlyPriceData(results.hourly)[0];
         })
         .catch(console.error);
       conn.end();
