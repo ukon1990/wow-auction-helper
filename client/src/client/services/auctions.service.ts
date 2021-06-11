@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SharedService} from './shared.service';
-import {AuctionUtil} from '../modules/auction/utils/auction.util';
+import {AuctionUtil, OrganizedAuctionResult} from '../modules/auction/utils/auction.util';
 import {DatabaseService} from './database.service';
 import {ItemService} from './item.service';
 import {Notifications} from '../models/user/notification';
@@ -74,9 +74,19 @@ export class AuctionsService {
     return map.get('' + id);
   }
 
-  getAuctions(realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.value, isForComparisons?: boolean): Promise<any> {
+  /**
+   * Downloading Auction and auction stats data for the given realm
+   * @param realmStatus
+   * @param isForComparisons
+   * @param ahTypeId
+   */
+  getAuctions(
+    realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.value,
+    isForComparisons?: boolean,
+    ahTypeId: number = SharedService.user.ahTypeId
+  ): Promise<OrganizedAuctionResult> {
     if (SharedService.downloading.auctions && !isForComparisons) {
-      return;
+      return new Promise((resolve) => resolve(undefined));
     }
     if (!isForComparisons) {
       this.events.isDownloading.next(true);
@@ -86,7 +96,6 @@ export class AuctionsService {
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     let auctions;
     const statsMap = new Map<string, ItemStats>();
-    const ahTypeId = SharedService.user.ahTypeId;
     const isStatusAvailable = realmStatus.stats && realmStatus.stats.url && !isForComparisons;
     /**
      * Stats and AH data URL's will contain an object instead of a string for classic realms
@@ -113,6 +122,9 @@ export class AuctionsService {
       })
     ];
 
+    /**
+     * Downloading stats data if available
+     */
     if (isStatusAvailable && statusUrl) {
       promises.push(new Promise((resolve, reject) => {
         this.http
@@ -138,36 +150,44 @@ export class AuctionsService {
           });
       }));
     }
-    return Promise.all(promises)
-      .then(async () => {
-        console.log('Auction download is completed');
-        SharedService.downloading.auctions = false;
-        localStorage['timestamp_auctions'] = realmStatus.lastModified;
-        // if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
-        await this.organize(auctions)
-          .catch(error => ErrorReport.sendError('getAuctions', error));
-        // }
+    return new Promise<OrganizedAuctionResult>((resolve, reject) => {
+      Promise.all(promises)
+        .then(async () => {
+          console.log('Auction download is completed');
+          localStorage['timestamp_auctions'] = realmStatus.lastModified;
+          let organizedResults: OrganizedAuctionResult;
+          // if (!this.doNotOrganize && !realmStatus.isInitialLoad) {
+          await this.organize(auctions, isForComparisons)
+            .then(result => organizedResults = result)
+            .catch(error => ErrorReport.sendError('getAuctions', error));
+          // }
 
-        this.openSnackbar(`Auction download is completed`);
+          this.openSnackbar(`Auction download is completed`);
 
-        this.handleNotifications();
-        this.auctions.next(auctions);
-        this.events.isDownloading.next(true);
-      })
-      .catch((error: HttpErrorResponse) => {
-        SharedService.downloading.auctions = false;
-        this.events.isDownloading.next(true);
-        console.error('Auction download failed', error);
-        switch (error.status) {
-          case 504:
-            this.openSnackbar(`Auction download failed. The server took too long time to respond`);
-            break;
-          default:
-            this.openSnackbar(`Auction download failed (${error.status} - ${error.statusText})`);
-        }
+          this.handleNotifications();
+          if (!isForComparisons) {
+            this.auctions.next(auctions);
+          }
+          SharedService.downloading.auctions = false;
+          this.events.isDownloading.next(false);
+          resolve(organizedResults);
+        })
+        .catch((error: HttpErrorResponse) => {
+          SharedService.downloading.auctions = false;
+          this.events.isDownloading.next(false);
+          console.error('Auction download failed', error);
+          switch (error.status) {
+            case 504:
+              this.openSnackbar(`Auction download failed. The server took too long time to respond`);
+              break;
+            default:
+              this.openSnackbar(`Auction download failed (${error.status} - ${error.statusText})`);
+          }
 
-        ErrorReport.sendHttpError(error);
-      });
+          ErrorReport.sendHttpError(error);
+          reject(error);
+        });
+    });
   }
 
   private openSnackbar(message: string): void {
@@ -212,25 +232,39 @@ export class AuctionsService {
     }
   }
 
-  async organize(auctions: Auction[] = this.auctions.value) {
-    if (!this.isReady || !auctions.length) {
-      return;
-    }
-    // this.characterService.updateCharactersForRealmAndRecipes();
-    await AuctionUtil.organize(auctions, this.stats.value)
-      .then(({
-               map,
-               list,
-               auctions: auc,
-               mapVariations,
-             }) => {
-        CraftingUtil.calculateCost(true, map, mapVariations);
-        this.mappedVariations.next(mapVariations);
-        this.auctions.next(auctions);
-        this.list.next(list);
-        this.mapped.next(map);
-        SharedService.events.auctionUpdate.emit(true);
-      })
-      .catch(error => ErrorReport.sendError('getAuctions', error));
+  organize(auctions: Auction[] = this.auctions.value, doNotTriggerEvents?: boolean): Promise<OrganizedAuctionResult> {
+    return new Promise((resolve, reject) => {
+      if (!this.isReady || !auctions.length) {
+        resolve(undefined);
+        return;
+      }
+      // this.characterService.updateCharactersForRealmAndRecipes();
+      AuctionUtil.organize(auctions, this.stats.value)
+        .then(({
+                 map,
+                 list,
+                 auctions: auc,
+                 mapVariations,
+               }) => {
+          if (!doNotTriggerEvents) {
+            CraftingUtil.calculateCost(true, map, mapVariations);
+            this.mappedVariations.next(mapVariations);
+            this.auctions.next(auctions);
+            this.list.next(list);
+            this.mapped.next(map);
+            SharedService.events.auctionUpdate.emit(true);
+          }
+          resolve({
+            map,
+            list,
+            auctions,
+            mapVariations
+          });
+        })
+        .catch(error => {
+          ErrorReport.sendError('getAuctions', error);
+          reject(error);
+        });
+    });
   }
 }

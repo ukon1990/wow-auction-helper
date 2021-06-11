@@ -34,7 +34,7 @@
       </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field class="col-md-{{ (currentRealm?.gameBuild > 0 ? 0 : 4) + (locale ? 4 : 8) }}"
+    <mat-form-field class="col-md-{{ (currentRealm?.gameBuild > 0 ? 0 : 4) + (locale && !minimal ? 4 : 8) }}"
                     color="accent"
     >
       <input matInput
@@ -53,7 +53,7 @@
     </mat-form-field>
 
     <mat-form-field class="col-md-4"
-                    *ngIf="locale"
+                    *ngIf="locale && !minimal"
                     color="accent"
     >
       <mat-select [disableOptionCentering]="true"

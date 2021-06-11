@@ -1,0 +1,130 @@
+<div class="row">
+  <wah-select-realm
+          class="col"
+          [region]="selections?.comparisonSetOne?.region"
+          [realm]="selections?.comparisonSetOne?.slug"
+          [minimal]="true"
+          (changes)="handleRealmSelection($event, 'comparisonSetOne')"
+  ></wah-select-realm>
+  <wah-select-realm
+          class="col"
+          [region]="selections?.comparisonSetTwo?.region"
+          [realm]="selections?.comparisonSetTwo?.slug"
+          [minimal]="true"
+          (changes)="handleRealmSelection($event, 'comparisonSetTwo')"
+  ></wah-select-realm>
+</div>
+
+<form class="form-inline" [formGroup]="form">
+  <div class="row">
+
+    <mat-form-field class="col">
+      <input matInput placeholder="Item name" formControlName="name">
+    </mat-form-field>
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <mat-select [disableOptionCentering]="true"
+                  placeholder="Item class"
+                  formControlName="itemClass">
+        <mat-option [value]="-1">
+          All
+        </mat-option>
+        <mat-option *ngFor="let c of itemClasses; let i = index;"
+                    [value]="i">
+          {{ c.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="itemClasses[form.value.itemClass]"
+                    class="col"
+                    color="accent"
+    >
+      <mat-select [disableOptionCentering]="true" placeholder="Item sub class" formControlName="itemSubClass">
+        <mat-option [value]="-1">
+          All
+        </mat-option>
+        <mat-option *ngFor="let c of itemClasses[form.value['itemClass']].subClasses; let i = index;"
+                    [value]="i"
+        >
+          {{ c.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput type="number" placeholder="Minimum item level" formControlName="minItemLevel"
+             matTooltip="Some items may appear with incorrect iLvL.">
+    </mat-form-field>
+
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <mat-select [disableOptionCentering]="true"
+                  placeholder="Minimum item quality"
+                  formControlName="minItemQuality">
+        <mat-option [value]="null">Any</mat-option>
+        <mat-option *ngFor="let quality of itemQualities; let i = index" [value]="i">
+          {{ quality }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <mat-select [disableOptionCentering]="true" placeholder="Expansion" formControlName="expansion">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option *ngFor="let expansion of expansions; let i = index"
+                    [value]="i">
+          {{ expansion }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             type="number"
+             placeholder="Buyout vs other buyout"
+             formControlName="buyoutDifference"
+      >
+    </mat-form-field>
+
+    <mat-form-field class="col"
+                    color="accent"
+    >
+      <input matInput
+             type="number"
+             placeholder="Buyout vs other buyout %"
+             formControlName="buyoutDifferencePercent"
+      >
+    </mat-form-field>
+
+    <div class="col">
+      <button mat-stroked-button
+              type="button"
+              (click)="form.reset()"
+              color="warn"
+      >
+        Reset
+      </button>
+    </div>
+  </div>
+
+</form>
+
+<wah-data-table *ngIf="!isComparisonOneLoading && !isComparisonTwoLoading; else isLoadingDataTemplate"
+                iconSize="22"
+                itemsPerPage="20"
+                id="itemID"
+                [columns]="columns"
+                [data]="tableData"
+></wah-data-table>
+<ng-template #isLoadingDataTemplate>
+  <wah-loading message="Downloading auction data"></wah-loading>
+</ng-template>

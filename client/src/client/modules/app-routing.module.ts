@@ -30,6 +30,7 @@ import {DetailsComponent as NpcDetailsComponent} from './npc/components/details/
 import {ListComponent as NpcListComponent} from './npc/components/list/list.component';
 import {MonitorComponent} from './admin/components/monitor/monitor.component';
 import {TestComponent} from './admin/components/test/test.component';
+import {AuctionComparisonComponent} from './auction/components/auction-comparison/auction-comparison.component';
 
 export const ROUTE_HIDDEN_FLAGS = {
   IS_NOT_REGISTERED: 'IS_NOT_REGISTERED',
@@ -67,6 +68,9 @@ const TOOLS_ROUTE: TitledRoute = {
     },
     {
       title: 'Market reset', path: 'market-reset', component: MarketResetComponent
+    },
+    {
+      title: 'Compare auction houses', path: 'realm-compare', component: AuctionComparisonComponent
     },
     {
       title: 'Milling & Prospecting', path: 'milling-and-prospecting', component: MillingComponent

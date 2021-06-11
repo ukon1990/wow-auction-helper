@@ -18,7 +18,7 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
   @Input() region: string;
   @Input() realm: string;
   @Input() ahTypeId: number;
-  @Input() locale: string;
+  @Input() locale: string = localStorage.getItem('locale') || 'en_GB';
   @Input() minimal: boolean;
   @Output() changes: EventEmitter<{
     ahTypeId: number;
@@ -171,8 +171,10 @@ export class SelectRealmComponent implements AfterContentInit, OnDestroy, OnChan
     this.currentRealm = realm;
     const factionId = SharedService.user.faction || 0;
     const ahTypeId = realm.gameBuild === 1 ? ahTypes[factionId || 0].id : 0;
+    const formValue = this.form.value;
     this.form.setValue({
-      ...this.form.value,
+      ...formValue,
+      locale: formValue.locale || this.locale,
       region: realm.region,
       realm: realm.slug,
       ahTypeId,
