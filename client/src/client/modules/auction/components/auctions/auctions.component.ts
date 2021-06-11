@@ -62,7 +62,13 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     // {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true}
   ];
   tableData = [];
-  expansions = GameBuild.expansionMap;
+  readonly isClassic = SharedService.user && SharedService.user.ahTypeId && SharedService.user.ahTypeId > 0;
+  expansions =  GameBuild.expansionMap.filter((v, index) => {
+    if (this.isClassic) {
+      return index <= GameBuild.latestClassicExpansion;
+    }
+    return true;
+  });
   delayFilter = false;
   private subs = new SubscriptionManager();
 
@@ -74,11 +80,13 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       name: filter && filter.name ? filter.name : '',
       itemClass: filter ? filter.itemClass : '-1',
       itemSubClass: filter ? filter.itemSubClass : '-1',
-      mktPrice: filter && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : 0,
-      saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : 0,
-      avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : 0,
+      mktPrice: filter && filter.mktPrice !== null ? parseFloat(filter.mktPrice) : null,
+      saleRate: filter && filter.saleRate !== null ? parseFloat(filter.saleRate) : null,
+      avgDailySold: filter && filter.avgDailySold !== null ? parseFloat(filter.avgDailySold) : null,
       onlyVendorSellable: filter && filter.onlyVendorSellable !== null ? filter.onlyVendorSellable : false,
-      expansion: filter && filter.expansion ? filter.expansion : null,
+      expansion: filter && filter.expansion ? (
+        this.isClassic && filter.expansion < GameBuild.latestClassicExpansion ? 0 : filter.expansion
+      ) : null,
       minItemQuality: filter && filter.minItemQuality ? filter.minItemQuality : null,
       minItemLevel: filter && filter.minItemLevel ? filter.minItemLevel : null
     });

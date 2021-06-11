@@ -263,30 +263,30 @@ export class StatsService {
     return isLockedRow ? !!isLockedRow.In_use : false;
   }
 
-  processRecord(record: EventSchema, conn: DatabaseUtil = new DatabaseUtil()): Promise<void> {
+  processRecord(record: EventSchema): Promise<void> {
     const start = +new Date();
     return new Promise<void>((resolve, reject) => {
       if (!record || !record.object || !record.object.key) {
         resolve();
       }
-      const regex = /auctions\/[a-z]{2}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
+      const regex = /auctions\/[a-z]{1,4}\/[\d]{1,4}\/[\d]{1,4}\/[\d]{13,999}-lastModified.json.gz/gi;
       if (regex.exec(record.object.key)) {
         const splitted = record.object.key.split('/');
         console.log('Processing S3 auction data update');
-        const [_, region, ahId, fileName] = splitted;
+        const [_, region, ahId, ahTypeId, fileName] = splitted;
         new S3Handler().get(record.bucket.name, record.object.key)
           .then(async data => {
             await new GzipUtil().decompress(data['Body'])
               .then(({auctions}) => {
                 const lastModified = +fileName.split('-')[0];
-                if (!lastModified) {
+                if (!lastModified || !auctions) {
                   resolve();
                   return;
                 }
                 const {
                   list,
                   hour
-                } = AuctionProcessorUtil.process(auctions, lastModified, +ahId);
+                } = AuctionProcessorUtil.process(auctions, lastModified, +ahId, +ahTypeId);
                 const queries = AuctionProcessorUtil.splitEntries(list)
                   .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
                 const s3 = new S3Handler();
@@ -295,7 +295,7 @@ export class StatsService {
                   queries.map((query, index) =>
                     s3.save(
                       query,
-                      `statistics/inserts/${region}-${ahId}-${fileName}-part-${index}.sql.gz`,
+                      `statistics/inserts/${region}-${ahId}-${ahTypeId}-${fileName}-part-${index}.sql.gz`,
                       {region: 'eu'}
                     ))
                 )
@@ -310,6 +310,8 @@ export class StatsService {
               .catch(reject);
           })
           .catch(reject);
+      } else {
+        reject();
       }
     });
   }
@@ -431,8 +433,8 @@ export class StatsService {
             .then(async realms => {
               let hasHadError = false;
               const max = 38; // 260 er den høyeste id'n
-              const filteredAndSorted = realms.sort((a, b) => b.id - a.id)
-                .filter(entry => entry.id >= max - 40 && entry.id < max);
+              const filteredAndSorted = realms.sort((a, b) => b.id - a.id);
+                // .filter(entry => entry.id >= max - 40 && entry.id < max);
               for (const {id} of filteredAndSorted) {
                 if (!hasHadError) {
                   const queryStart = +new Date();
@@ -479,9 +481,10 @@ export class StatsService {
       new StatsRepository(conn).getHourlyStatsForRealmAtDate(id, date, dayOfMonth)
         .then(rows => {
           const list = [];
+          const ahListMap = new Map<number, any[]>();
           const calculationStartTime = +new Date();
           rows.forEach(row => {
-            AuctionProcessorUtil.compilePricesForDay(id, row, date, dayOfMonth, list);
+            AuctionProcessorUtil.compilePricesForDay(id, row, date, dayOfMonth, list, ahListMap);
           });
           if (!list.length) {
             resolve();
@@ -492,10 +495,12 @@ export class StatsService {
           const queryStartTime = +new Date();
 
           const repo = new StatsRepository(conn);
-          Promise.all(
-            AuctionProcessorUtil.splitEntries(list).map(entries =>
-              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth))
-          )
+          const promises = [];
+          ahListMap.forEach(ahList => {
+            AuctionProcessorUtil.splitEntries(ahList).map(entries =>
+              repo.multiInsertOrUpdateDailyPrices(entries, dayOfMonth));
+          });
+          Promise.all(promises)
             .then(() => {
               console.log(`Done updating daily price data for ${id} in ${+new Date() - queryStartTime}ms.`);
               resolve();

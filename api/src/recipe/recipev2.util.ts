@@ -7,6 +7,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {RDSQueryUtil} from '../utils/query.util';
 import {ItemLocale} from '../models/item/item-locale';
 import {RecipeService} from './service';
+import {NameSpace} from '../enums/name-space.enum';
 
 export class RecipeV2Util {
 
@@ -14,7 +15,7 @@ export class RecipeV2Util {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
       // TODO: Fetch media
-      const url = new Endpoints().getPath(`recipe/${id}`, 'us', 'static');
+      const url = new Endpoints().getPath(`recipe/${id}`, 'us', NameSpace.STATIC_RETAIL);
       new HttpClientUtil().get(url)
         .then(({body}) => {
           this.getIcon(id)
@@ -116,11 +117,11 @@ export class RecipeV2Util {
       try {
         const result = [];
         const {body} = await http.get(
-          new Endpoints().getPath('profession/index', 'us', 'static'));
+          new Endpoints().getPath('profession/index', 'us', NameSpace.STATIC_RETAIL));
 
         for (const p of body.professions) {
           await http.get(
-            new Endpoints().getPath('profession/' + p.id, 'us', 'static'))
+            new Endpoints().getPath('profession/' + p.id, 'us', NameSpace.STATIC_RETAIL))
             .then(async ({body: profession}) => {
               const res = {
                 id: profession.id,
@@ -150,7 +151,7 @@ export class RecipeV2Util {
               if (profession && profession.skill_tiers) {
                 for (const skill of profession.skill_tiers) {
                   await http.get(
-                    new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'us', 'static'))
+                    new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'us', NameSpace.STATIC_RETAIL))
                     .then(async ({body: s}) => {
                       const skillTier = {
                         id: s.id,
@@ -249,7 +250,7 @@ export class RecipeV2Util {
   static getIcon(id: number, type = 'recipe'): Promise<string> {
     return new Promise(async (resolve, reject) => {
       await AuthHandler.getToken();
-      const url = new Endpoints().getPath(`media/${type}/${id}`, 'us', 'static');
+      const url = new Endpoints().getPath(`media/${type}/${id}`, 'us', NameSpace.STATIC_RETAIL);
       new HttpClientUtil().get(
         url
       )

@@ -5,6 +5,7 @@ export interface ItemPriceEntryResponse {
 
 export interface ItemPriceEntry {
   id?: string;
+  ahTypeId?: number;
   quantity: number;
   // ahId: number;
   itemId: number;
@@ -16,6 +17,7 @@ export interface ItemPriceEntry {
 
 export interface ItemDailyPriceEntry {
   id?: string;
+  ahTypeId?: number;
   // ahId: number;
   itemId: number;
   petSpeciesId: number;

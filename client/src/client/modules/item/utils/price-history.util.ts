@@ -6,7 +6,7 @@ export class PriceHistoryComponentUtil {
   constructor(private auctionService: AuctionsService) {
   }
 
-  extractGroupedValuesFromReagentHistory(recipe: Recipe, result: Map<string, ItemPriceEntryResponse>) {
+  extractGroupedValuesFromReagentHistory(recipe: Recipe, result: Map<string, ItemPriceEntryResponse>, ahTypeId: number) {
     const dailyMap = new Map<number, ItemDailyPriceEntry>();
     const hourlyMap = new Map<number, ItemPriceEntry>();
     const groupedValues: ItemPriceEntryResponse = {
@@ -14,7 +14,7 @@ export class PriceHistoryComponentUtil {
       daily: []
     };
     recipe.reagents.forEach(reagent => {
-      const history = result.get(`${reagent.id}--1--1`);
+      const history = result.get(`${reagent.id}--1--1-${ahTypeId}`);
       const item = this.auctionService.getById(reagent.id);
       const vendorPrice = item && item.source && item.source.npc ? item.source.npc.vendorBuyPrice : 0;
       if (history) {

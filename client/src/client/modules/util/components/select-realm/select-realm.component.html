@@ -26,7 +26,15 @@
 
 <ng-template #realmAutoCompleteTemplate>
   <form class="row" [formGroup]="form">
-    <mat-form-field class="col-md-{{ locale ? 8 : 12 }}"
+    <mat-form-field color="accent" class="col-md-4"  *ngIf="currentRealm?.gameBuild > 0">
+      <mat-select placeholder="Select your AH"
+                  formControlName="ahTypeId"
+      ><mat-option *ngFor="let type of ahTypes" [value]="type.id">
+        {{type.name[form.value.locale || 'en_GB']}}
+      </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col-md-{{ (currentRealm?.gameBuild > 0 ? 0 : 4) + (locale && !minimal ? 4 : 8) }}"
                     color="accent"
     >
       <input matInput
@@ -39,13 +47,13 @@
         <mat-option (onSelectionChange)="onOptionSelected(realm.realm)"
                     *ngFor="let realm of filteredRealms"
                     [value]="realm.value">
-          {{ realm.match.start }}<u><strong>{{ realm.match.match }}</strong></u>{{ realm.match.end }}
+          {{ realm.match.start }}<u><strong>{{ realm.match.match }}</strong></u>{{ realm.match.end }} - {{realm.realm.gameBuild === 1 ? 'Classic' : 'Retail'}}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
 
     <mat-form-field class="col-md-4"
-                    *ngIf="locale"
+                    *ngIf="locale && !minimal"
                     color="accent"
     >
       <mat-select [disableOptionCentering]="true"

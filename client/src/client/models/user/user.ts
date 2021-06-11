@@ -27,6 +27,7 @@ export class User {
   isDarkMode = true;
   doNotReport = false;
   gameVersion = 0;
+  ahTypeId = 0;
   classicRealm: string;
   craftingStrategy: number = BaseCraftingUtil.STRATEGY.NEEDED;
   locale: string;

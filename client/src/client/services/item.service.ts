@@ -211,23 +211,31 @@ export class ItemService {
       .toPromise() as Promise<any>;
   }
 
+  getLocalPriceHistoryForRealm(ahId = this.realmService.events.realmStatus.value.id): Map<string, ItemPriceEntryResponse> {
+    return this.historyMap.value.get(ahId);
+  }
+
   getPriceHistory(items: AhStatsRequest[]): Promise<Map<string, ItemPriceEntryResponse>> {
     const startTime = +new Date();
-    const ahId = this.realmService.events.realmStatus.value.id,
-      realmMap = this.historyMap.value;
+    const {id: ahId, gameBuild} = this.realmService.events.realmStatus.value,
+      ahTypeId = gameBuild === 1 ? SharedService.user.ahTypeId : 0;
+    let realmMap = this.historyMap.value;
     const result: Map<string, any> = new Map<string, any>();
     const missing: AhStatsRequest[] = [];
-    const getStoreId = ({itemId, petSpeciesId, bonusIds}: AhStatsRequest | ItemPriceEntry | ItemDailyPriceEntry) =>
+    const getStoreId = ({itemId, petSpeciesId, bonusIds, ahTypeId: typeId}: AhStatsRequest | ItemPriceEntry | ItemDailyPriceEntry) =>
       `${itemId}-${petSpeciesId}-${
         typeof bonusIds === 'string' ?
-          bonusIds : AuctionItemStat.bonusIdRaw(bonusIds)}`;
+          bonusIds : AuctionItemStat.bonusIdRaw(bonusIds)}-${typeId}`;
 
     items.forEach((item) => {
       const storedId = getStoreId(item);
-      if (realmMap.get(ahId) && realmMap.get(ahId).get(storedId)) {
+      if (realmMap.has(ahId) && realmMap.get(ahId).has(storedId)) {
         result.set(storedId, realmMap.get(ahId).get(storedId));
       } else {
-        missing.push(item);
+        missing.push({
+          ...item,
+          ahTypeId: item.ahTypeId || ahTypeId
+        });
       }
     });
 
@@ -235,48 +243,55 @@ export class ItemService {
     if (!missing.length) {
       return new Promise(resolve => resolve(result));
     }
-    return this._http.post(Endpoints.getLambdaUrl('item/history'),
-      {
-        items: missing,
-        onlyHourly: false
-      })
-      .toPromise()
-      .then((entries: ItemPriceEntryResponse) => {
-        if (!realmMap.has(ahId)) {
-          realmMap.set(ahId, new Map());
-        }
-
-        (entries.hourly || []).forEach(entry => {
-          const id = getStoreId(entry);
-          if (!realmMap.get(ahId).has(id)) {
-            realmMap.get(ahId).set(id, {
-              daily: [],
-              hourly: []
-            });
-            result.set(id, realmMap.get(ahId).get(id));
+    return new Promise<Map<string, ItemPriceEntryResponse>>((resolve, reject) => {
+      this._http.post(Endpoints.getLambdaUrl('item/history'),
+        {
+          items: missing,
+          onlyHourly: false
+        })
+        .toPromise()
+        .then((entries: ItemPriceEntryResponse) => {
+          // In case there has ben ran another request while this one was running or ran prior to it
+          realmMap = this.historyMap.value;
+          if (!realmMap.has(ahId)) {
+            realmMap.set(ahId, new Map());
           }
-          realmMap.get(ahId).get(id).hourly.push(entry);
-        });
-        (entries.daily || []).forEach(entry => {
-          const id = getStoreId(entry);
-          if (!realmMap.get(ahId).has(id)) {
-            realmMap.get(ahId).set(id, {
-              daily: [],
-              hourly: []
-            });
-            result.set(id, realmMap.get(ahId).get(id));
-          }
-          realmMap.get(ahId).get(id).daily.push(entry);
-        });
-        Report.send('getPriceHistory', 'ItemService',
-          `Time to fetch history from DB, for ahId=${ahId
-        } and item id = ${missing.map(m => getStoreId(m))
-        } was ${+new Date() - startTime}ms`);
 
-        this.historyMap.next(realmMap);
-        return result;
-      })
-      .catch(console.error) as Promise<Map<string, ItemPriceEntryResponse>>;
+          (entries.hourly || []).forEach(entry => {
+            const id = getStoreId(entry);
+            if (!realmMap.get(ahId).has(id)) {
+              realmMap.get(ahId).set(id, {
+                daily: [],
+                hourly: []
+              });
+              result.set(id, realmMap.get(ahId).get(id));
+            }
+            realmMap.get(ahId).get(id).hourly.push(entry);
+          });
+          (entries.daily || []).forEach(entry => {
+            const id = getStoreId(entry);
+            if (!realmMap.get(ahId).has(id)) {
+              realmMap.get(ahId).set(id, {
+                daily: [],
+                hourly: []
+              });
+              result.set(id, realmMap.get(ahId).get(id));
+            }
+            realmMap.get(ahId).get(id).daily.push(entry);
+          });
+          Report.send('getPriceHistory', 'ItemService',
+            `Time to fetch history from DB, for ahId=${ahId
+            } and item id = ${missing.map(m => getStoreId(m))
+            } was ${+new Date() - startTime}ms`);
+
+          this.historyMap.next(realmMap);
+          resolve(result);
+        })
+        .catch(error => {
+          console.error('getPriceHistory error', error);
+          reject(error);
+        });
+    });
   }
 
   /**

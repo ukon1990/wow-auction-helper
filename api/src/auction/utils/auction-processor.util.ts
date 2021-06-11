@@ -7,7 +7,7 @@ import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
 
 export class AuctionProcessorUtil {
-  static process(auctions: Auction[], lastModified: number, ahId: number): {
+  static process(auctions: Auction[], lastModified: number, ahId: number, ahTypeId: number): {
     list: AuctionItemStat[];
     hour: number;
   } {
@@ -23,7 +23,7 @@ export class AuctionProcessorUtil {
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
     console.log('Date is ' + dateString + ' Hour= ' + hour);
     for (let i = 0, l = auctions.length; i < l; ++i) {
-      this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour));
+      this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour), ahTypeId);
     }
     console.log(`Processed ${auctions.length} in ${+new Date() - start} ms`);
     return {
@@ -47,7 +47,9 @@ export class AuctionProcessorUtil {
     return result;
   }
 
-  private static processAuction(map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string) {
+  private static processAuction(
+    map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string, ahTypeId: number
+  ) {
     const id = AuctionItemStat.bonusId(auction.bonusLists),
       mapId = this.getMapId(auction, id),
       unitPrice = auction.buyout / auction.quantity;
@@ -56,7 +58,7 @@ export class AuctionProcessorUtil {
     }
 
     if (!map[mapId]) {
-      map[mapId] = new AuctionItemStat(ahId, id, auction, lastModified, hour);
+      map[mapId] = new AuctionItemStat(ahId, id, auction, lastModified, hour, ahTypeId);
       list.push(map[mapId]);
     } else {
       // Add something like avg price variation?
@@ -77,9 +79,14 @@ export class AuctionProcessorUtil {
     return mapId;
   }
 
-  static compilePricesForDay(id: number, row, date: Date, dayOfMonth: string, list: any[]) {
+  static compilePricesForDay(id: number, row, date: Date, dayOfMonth: string, list: any[], ahListMap: Map<number, any[]>) {
+    if (!ahListMap.has(row.ahTypeId)) {
+      ahListMap.set(row.ahTypeId, []);
+    }
+    const ahTypePriceList = ahListMap.get(row.ahTypeId);
     const result = {
       ahId: id,
+      ahTypeId: row.ahTypeId,
       itemId: row.itemId,
       petSpeciesId: row.petSpeciesId,
       bonusIds: row.bonusIds,
@@ -97,6 +104,7 @@ export class AuctionProcessorUtil {
       }
     }
     list.push(result);
+    ahTypePriceList.push(result);
   }
 
   static getDateNumber(input: number): string {
@@ -148,6 +156,7 @@ export class AuctionProcessorUtil {
         if (price) {
           const hourEntry: ItemPriceEntry = {
             itemId: entry.itemId,
+            ahTypeId: entry.ahTypeId,
             timestamp: +date,
             petSpeciesId: entry.petSpeciesId,
             bonusIds: entry.bonusIds,
@@ -181,6 +190,7 @@ export class AuctionProcessorUtil {
           const timeEntry: ItemDailyPriceEntry = {
             timestamp: +date,
             itemId: entry.itemId,
+            ahTypeId: entry.ahTypeId,
             petSpeciesId: entry.petSpeciesId,
             bonusIds: entry.bonusIds,
             min,

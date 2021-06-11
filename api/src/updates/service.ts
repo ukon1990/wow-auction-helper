@@ -12,6 +12,7 @@ import {ProfessionService} from '../profession/service';
 import {HttpClientUtil} from '../utils/http-client.util';
 import {AuthHandler} from '../handlers/auth.handler';
 import {Endpoints} from '../utils/endpoints.util';
+import {NameSpace} from '../enums/name-space.enum';
 
 export class UpdatesService {
   static readonly locales = UpdatesService.getLocales();
@@ -133,7 +134,7 @@ export class UpdatesService {
 
       const http = new HttpClientUtil();
       await AuthHandler.getToken();
-      const url = new Endpoints().getPath(`item-class/index`, 'us', 'static');
+      const url = new Endpoints().getPath(`item-class/index`, 'us', NameSpace.STATIC_RETAIL);
       await http.get(url)
         .then(async ({body}) => {
           const itemClasses = body.item_classes;
@@ -146,7 +147,7 @@ export class UpdatesService {
              };
               classes.push(iClass);
 
-              const urlSub = new Endpoints().getPath(`item-class/${id}`, 'us', 'static');
+              const urlSub = new Endpoints().getPath(`item-class/${id}`, 'us', NameSpace.STATIC_RETAIL);
 
               await http.get(urlSub)
                 .then((res) => {

@@ -4,21 +4,17 @@ import {SharedService} from '../../../../services/shared.service';
 import {User} from '../../../../models/user/user';
 import {RealmService} from '../../../../services/realm.service';
 import {AuctionsService} from '../../../../services/auctions.service';
-import {FileService} from '../../../../services/file.service';
 import {ItemService} from '../../../../services/item.service';
 import {CraftingService} from '../../../../services/crafting.service';
 import {PetsService} from '../../../../services/pets.service';
-import {AuctionUtil} from '../../../auction/utils/auction.util';
 import {DatabaseService} from '../../../../services/database.service';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {Report} from '../../../../utils/report.util';
-import {ObjectUtil} from '@ukon1990/js-utilities/dist/utils/object.util';
 import {Difference} from '@ukon1990/js-utilities/dist/models/difference.model';
 import {ProfessionService} from '../../../crafting/services/profession.service';
 import {ZoneService} from '../../../zone/service/zone.service';
 import {NpcService} from '../../../npc/services/npc.service';
 import {UserUtil} from '../../../../utils/user/user.util';
-import {AppSyncService} from '../../../user/services/app-sync.service';
 import {SettingsService} from '../../../user/services/settings/settings.service';
 
 @Component({
@@ -47,6 +43,7 @@ export class GeneralSettingsComponent implements OnDestroy {
     this.form = this._formBuilder.group({
       region: [SharedService.user.region, Validators.required],
       realm: [SharedService.user.realm, Validators.required],
+      ahTypeId: [SharedService.user.ahTypeId || 0, Validators.required],
       importString: '',
       exportString: '',
       locale: localStorage['locale']
@@ -93,7 +90,7 @@ export class GeneralSettingsComponent implements OnDestroy {
   }
 
   async saveRealmAndRegion() {
-    const {realm, region, locale} = this.form.value;
+    const {realm, region, locale, ahTypeId} = this.form.value;
 
     if (this.userChanges.has('locale')) {
       localStorage.setItem('locale', locale);
@@ -121,7 +118,7 @@ export class GeneralSettingsComponent implements OnDestroy {
     }
 
     if (this.hasChangedRealmOrRegion()) {
-      await this._realmService.changeRealm(realm, region);
+      await this._realmService.changeRealm(realm, region, ahTypeId);
     }
     this.setOriginalUserObject();
   }
@@ -218,7 +215,11 @@ export class GeneralSettingsComponent implements OnDestroy {
       .then(() => location.reload());
   }
 
-  realmSelectionEvent(change: { region: string; realm: string; locale: string }) {
+  realmSelectionEvent(change: { region: string; realm: string; locale: string, ahTypeId: number }) {
+    if (!change.region || !change.realm) {
+      return;
+    }
+    console.log('yo', change);
     Object.keys(change)
       .forEach(key =>
         this.form.controls[key]

@@ -22,6 +22,7 @@ export class RealmService {
   private timeSinceInterval: Observable<number> = environment.test ? null : interval(1000);
   sm = new SubscriptionManager();
   previousUrl;
+  isClassic = false;
   events = {
     timeSince: new BehaviorSubject(0),
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
@@ -63,10 +64,11 @@ export class RealmService {
       SharedService.userRealms.push(tmpMap[key]));
   }
 
-  async changeRealm(realm: string, region: string = SharedService.user.region) {
+  async changeRealm(realm: string, region: string = SharedService.user.region, ahTypeId: number = SharedService.user.ahTypeId) {
     console.log('Change realm input', realm, region);
     SharedService.user.region = region;
     SharedService.user.realm = realm;
+    SharedService.user.ahTypeId = ahTypeId;
 
     UserUtil.save();
     return new Promise<AuctionHouseStatus>((resolve, reject) => {
@@ -104,6 +106,7 @@ export class RealmService {
       this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
         .toPromise()
         .then(async (status: AuctionHouseStatus) => {
+          this.isClassic = status.gameBuild > 0;
           this.previousUrl = status.url;
           this.events.realmStatus.next({
             ...status,

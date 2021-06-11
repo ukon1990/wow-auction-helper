@@ -16,7 +16,7 @@ import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Recipe} from '../../crafting/models/recipe';
 
-interface OrganizedAuctionResult {
+export interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
   mapVariations: Map<number, AuctionItem[]>;
   list: AuctionItem[];
@@ -122,7 +122,8 @@ export class AuctionUtil {
   private static getLowest(ai: AuctionItem) {
     let lowest = ai.auctions[0];
     for (let i = 0; i < ai.auctions.length; i++) {
-      if (ai.auctions[i].buyout > ai.auctions[i].bid) {
+      const {buyout, bid} = ai.auctions[i];
+      if (buyout > 0 && buyout >= bid) {
         lowest = ai.auctions[i];
         return lowest;
       }

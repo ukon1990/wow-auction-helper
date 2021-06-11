@@ -15,10 +15,12 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { AuctionComparisonComponent } from './components/auction-comparison/auction-comparison.component';
 
 @NgModule({
   declarations: [
-    AuctionsComponent
+    AuctionsComponent,
+    AuctionComparisonComponent
   ],
   imports: [
     CommonModule,

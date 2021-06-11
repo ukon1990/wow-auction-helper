@@ -1,5 +1,6 @@
 import {BLIZZARD} from '../secrets';
 import {APIGatewayEvent} from 'aws-lambda';
+import {NameSpace} from "../enums/name-space.enum";
 
 export class Endpoints {
   static STAGE: string;
@@ -68,12 +69,12 @@ export class Endpoints {
     return region ? this.COMMUNITY_ENDPOINT[region] : this.COMMUNITY_ENDPOINT.eu;
   }
 
-  getPath(query: string, region?: string, namespaceType?: string): string {
-    return this.getGameDataBase(region, namespaceType) +
+  getPath(query: string, region?: string, namespaceType?: NameSpace): string {
+    return this.getGameDataBase(region === 'beta' ? 'us' : region, namespaceType) +
       this.addQueriesToQueries(query, region, namespaceType);
   }
 
-  private addQueriesToQueries(query: string, region?: string, namespaceType?: string): string {
+  private addQueriesToQueries(query: string, region?: string, namespaceType?: NameSpace): string {
     const namespace = region ? `&namespace=${namespaceType || 'static'}-${region}` : '';
     const base = `access_token=${BLIZZARD.ACCESS_TOKEN}${namespace}`;
     if (query.indexOf('?') > -1) {

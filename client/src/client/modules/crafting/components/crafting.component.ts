@@ -17,6 +17,7 @@ import {ItemClass} from '../../item/models/item-class.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
+import {Report} from "../../../utils/report.util";
 
 interface FormModel {
   searchQuery: string;
@@ -36,13 +37,19 @@ interface FormModel {
   styleUrls: ['./crafting.component.scss']
 })
 export class CraftingComponent implements OnInit, OnDestroy {
+  readonly isClassic = SharedService.user && SharedService.user.ahTypeId && SharedService.user.ahTypeId > 0;
   theme = ThemeUtil.current;
   searchForm: FormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
   itemClasses: ItemClass[] = ItemClassService.getForLocale();
   professions = [];
-  expansions = GameBuild.expansionMap;
+  expansions = GameBuild.expansionMap.filter((v, index) => {
+    if (SharedService.user && SharedService.user.ahTypeId && SharedService.user.ahTypeId > 0) {
+      return index <= GameBuild.latestClassicExpansion;
+    }
+    return true;
+  });
   private lastCalculationTime: number;
 
   columns: ColumnDescription[] = [
@@ -97,18 +104,21 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
-      onlyKnownRecipes: query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true,
+      onlyKnownRecipes: this.isClassic ?
+        false : (query && query.onlyKnownRecipes !== undefined ? query.onlyKnownRecipes : true),
       professionId: query && query.professionId ? query.professionId : 0,
-      profit: query && query.profit !== null ? parseFloat(query.profit) : 0,
-      demand: query && query.demand !== null ? parseFloat(query.demand) : 0,
-      minSold: query && query.minSold !== null ? parseFloat(query.minSold) : 0,
+      profit: query && query.profit !== null ? parseFloat(query.profit) : null,
+      demand: query && query.demand !== null ? parseFloat(query.demand) : null,
+      minSold: query && query.minSold !== null ? parseFloat(query.minSold) : null,
       itemClass: query ? query.itemClass : '-1',
       itemSubClass: query ? query.itemSubClass : '-1',
 
       // Disenchanting
       selectedDEMaterial: query && query.selectedDisenchanting ? query.selectedDisenchanting : 0,
       DEOnlyProfitable: query && query.onlyProfitable ? query.onlyProfitable : false,
-      expansion: query && query.expansion ? query.expansion : null
+      expansion: query && query.expansion ? (
+        this.isClassic && query.expansion < GameBuild.latestClassicExpansion ? 0 : query.expansion
+      ) : null
     });
   }
 
@@ -163,7 +173,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
             && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
-            && Filters.isExpansionMatch(recipe.itemID, changes.expansion);
+            && Filters.isExpansionMatch(recipe.itemID, changes.expansion, SharedService.user.ahTypeId);
         }
         return false;
       })

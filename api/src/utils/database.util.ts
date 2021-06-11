@@ -85,6 +85,28 @@ export class DatabaseUtil {
     this.connection.end();
   }
 
+  private connect(connection: Connection = this.connection): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      connection.connect((error) => {
+        if (error) {
+          this.isConnectionActive = false;
+          const msg = 'Could not connect to the database';
+          console.error(msg, error);
+          reject({
+            message: msg,
+            error: msg,
+            stack: error.stack
+          });
+          return;
+        } else {
+          console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
+          this.isConnectionActive = true;
+          resolve();
+        }
+      });
+    });
+  }
+
   enqueueHandshake(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.connection) {
@@ -102,23 +124,9 @@ export class DatabaseUtil {
       }
 
       this.isConnectionActive = true;
-      this.connection.connect((error) => {
-        if (error) {
-          this.isConnectionActive = false;
-          const msg = 'Could not connect to the database';
-          console.error(msg, error);
-          reject({
-            message: msg,
-            error: msg,
-            stack: error.stack
-          });
-          return;
-        } else {
-          console.log('DatabaseUtil.query -> Connected as id ' + this.connection.threadId);
-          this.isConnectionActive = true;
-          resolve();
-        }
-      });
+      return this.connect()
+        .then(() => resolve())
+        .catch(reject);
     });
   }
 }

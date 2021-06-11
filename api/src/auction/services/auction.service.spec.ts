@@ -6,12 +6,34 @@ import {environment} from '../../../../client/src/environments/environment';
 import {StatsService} from './stats.service';
 import {RealmService} from '../../realm/service';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
+import {EventRecord, EventSchema} from '../../models/s3/event-record.model';
 
 const PromiseThrottle: any = require('promise-throttle');
 
 describe('AuctionHandler', () => {
   beforeEach(() => environment.test = false);
   afterEach(() => environment.test = true);
+
+  xit('processS3Record', async () => {
+    jest.setTimeout(999999);
+    await new AuctionService().updateStaticS3Data([{
+      s3: {
+        bucket: {
+          name: 'wah-data-eu'
+        },
+        object: {
+          key: 'auctions/eu/33/0/1622495261000-lastModified.json.gz',
+          size: 1395780,
+        },
+        s3SchemaVersion: '1.0',
+        configurationId: '',
+      }
+    } as EventRecord])
+      .then(console.log)
+      .catch(console.log);
+    console.log('Done');
+    expect(1).toBe(2);
+  });
 
   xit('Update all statuses', async () => {
     jest.setTimeout(99999);
@@ -163,8 +185,7 @@ describe('AuctionHandler', () => {
                         object: {key: file.Key, size: 0},
                         s3SchemaVersion: '',
                         configurationId: ''
-                      },
-                      conn)
+                      })
                       .then(() => {
                         processed++;
                         console.log(`region=${region} ah=${id} date=${date}`);

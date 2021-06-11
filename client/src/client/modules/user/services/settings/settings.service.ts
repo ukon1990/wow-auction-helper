@@ -118,6 +118,7 @@ export class SettingsService {
   }
 
   updateSettings(updateData: any) {
+    Report.debug('updateSettings', updateData);
     if (this.isUpdatingSettings.value || !this.hasLoaded.value || !this.settings.value.realm) {
       return;
     }
@@ -256,6 +257,7 @@ export class SettingsService {
     this.removeTypeName(settings);
     Object.assign(SharedService.user, {
       locale: settings.locale,
+      ahTypeId: settings.ahTypeId,
       faction: settings.faction,
       region: settings.region,
       realm: settings.realm,
