@@ -5,7 +5,7 @@
       cogwheel to edit.
     </p>
     <div>
-      <div *ngIf="!numberOfCharactersOnRealm" class="row mat-toolbar mat-warn col-md-12">
+      <div *ngIf="!numberOfCharactersOnRealm && !isClassic" class="row mat-toolbar mat-warn col-md-12">
         <p>
           It seems like you've not added any characters with recipes. This will cause some of the default boards to not
           return a result.
