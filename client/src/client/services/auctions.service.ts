@@ -74,19 +74,28 @@ export class AuctionsService {
     return map.get('' + id);
   }
 
-  getAuctions(): Promise<any> {
-    if (SharedService.downloading.auctions) {
+  getAuctions(realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.value, isForComparisons?: boolean): Promise<any> {
+    if (SharedService.downloading.auctions && !isForComparisons) {
       return;
     }
-    this.events.isDownloading.next(true);
-    const realmStatus: AuctionHouseStatus = this.realmService.events.realmStatus.getValue();
+    if (!isForComparisons) {
+      this.events.isDownloading.next(true);
+      SharedService.downloading.auctions = true;
+    }
     console.log('Downloading auctions');
-    SharedService.downloading.auctions = true;
     this.openSnackbar(`Downloading auctions for ${SharedService.user.realm}`);
     let auctions;
     const statsMap = new Map<string, ItemStats>();
     const ahTypeId = SharedService.user.ahTypeId;
+    const isStatusAvailable = realmStatus.stats && realmStatus.stats.url && !isForComparisons;
+    /**
+     * Stats and AH data URL's will contain an object instead of a string for classic realms
+     * So in these cases, we will need to use the ahTypeId to get the correct URL.
+     */
     const url = typeof realmStatus.url === 'string' ? realmStatus.url : realmStatus.url[ahTypeId];
+    const statusUrl = isStatusAvailable ? (
+      typeof realmStatus.stats.url === 'string' ? realmStatus.stats.url : realmStatus.stats.url[ahTypeId]
+    ) : undefined;
 
     const promises = [
       new Promise((resolve, reject) => {
@@ -104,10 +113,10 @@ export class AuctionsService {
       })
     ];
 
-    if (realmStatus.stats && realmStatus.stats.url) {
+    if (isStatusAvailable && statusUrl) {
       promises.push(new Promise((resolve, reject) => {
         this.http
-          .get(`${realmStatus.stats.url}?lastModified=${realmStatus.stats.lastModified}`)
+          .get(`${statusUrl}?lastModified=${realmStatus.stats.lastModified}`)
           .toPromise()
           .then(({data}: { data: ItemStats[] }) => {
             const variations = new Map<number, ItemStats[]>();
