@@ -42,6 +42,13 @@ export interface CSVIncomeAndExpense {
   type: string;
 }
 
+export interface GoldLogEntry {
+  minute: number;
+  copper: number;
+  ownerRealm: string;
+  character: string;
+}
+
 export class TSMCSV {
   characterGuilds?: any;
   csvAuctionDBScan?: any[];
@@ -52,6 +59,9 @@ export class TSMCSV {
   csvExpense?: { [key: string]: CSVIncomeAndExpense[] };
   csvIncome?: { [key: string]: CSVIncomeAndExpense[] };
   profitSummary?: { [key: string]: ProfitSummary };
+  goldLog?: { [key: string]: {
+      [key: string]: GoldLogEntry[]
+    } };
   inventory?: object;
   inventoryMap?: object;
   auctionDBScanTime?: number;

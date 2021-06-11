@@ -5,8 +5,10 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {ColumnDescription} from '../../../table/models/column-description';
 import {SharedService} from '../../../../services/shared.service';
 import {ItemSaleHistory, ItemSaleHistorySummary, ProfitSummaryUtil} from '../../utils/profit-summary.util';
-import { Theme } from '../../../core/models/theme.model';
-import { ThemeUtil } from '../../../core/utils/theme.util';
+import {Theme} from '../../../core/models/theme.model';
+import {ThemeUtil} from '../../../core/utils/theme.util';
+import {RowClickEvent} from '../../../table/models/row-click-event.model';
+import {SeriesOptionsType} from 'highcharts';
 
 interface TableEntry {
   id: number;
@@ -51,15 +53,20 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
     {key: 'saleRate', title: 'Sale rate', dataType: 'percent'},
     {key: 'diff', title: 'Diff', dataType: 'gold', options: {tooltip: 'Avg sale price - avg buy price'}},
 
-    {key: 'avgBuyPrice', title: 'Avg buy price', dataType: 'gold'},
-    {key: 'sumBuyPrice', title: 'Sum buy price', dataType: 'gold'},
-    {key: 'boughtQuantity', title: '# bought', dataType: 'number'},
+    {key: 'avgBuyPrice', title: 'Avg purchase price', dataType: 'gold'},
+    {key: 'sumBuyPrice', title: 'Sum purchase price', dataType: 'gold'},
+    {key: 'boughtQuantity', title: '# Purchased', dataType: 'number'},
   ];
   tableData: TableData;
   private sm = new SubscriptionManager();
   mappedData: ItemSaleHistory[] = [];
   data: ItemSaleHistorySummary;
   theme: Theme = ThemeUtil.current;
+  selectedRowData: ItemSaleHistory;
+  selectedSeries: SeriesOptionsType[] = [];
+  goldLog: SeriesOptionsType[] = [];
+  goldLogUpdate = false;
+  selectedRowSeriesUpdate = false;
 
   constructor() {
   }
@@ -95,7 +102,13 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
     this.data = new ProfitSummaryUtil().calculate(
       TsmLuaUtil.events.value, realm, startDate, endDate);
     this.mappedData = this.data.list;
-    console.log('Data', this.data);
+    this.goldLog = [{
+      name: 'Gold log',
+      type: 'line',
+      color: 'rgba(0, 255, 22, 0.7)',
+      data: this.data.goldLog,
+    }];
+    this.goldLogUpdate = !this.goldLogUpdate;
   }
 
   ngOnDestroy(): void {
@@ -129,5 +142,54 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
 
   private getDateAtPeriodStart(period: number): number {
     return period === 0 ? +new Date('2010-01-01') : +new Date() - 1000 * 60 * 60 * 24 * period;
+  }
+
+  handleRowClick({row}: RowClickEvent<ItemSaleHistory>) {
+    this.selectedSeries = [
+      {
+        name: '# Sold',
+        data: row.history.map(entry => [entry.time, entry.saleQuantity]),
+        type: 'line',
+        yAxis: 1,
+        color: 'hsla(0, 100%, 50%, 0.7)',
+      },
+      {
+        name: 'Sum sale price',
+        data: row.history.map(entry => [entry.time, entry.salePrice]),
+        type: 'line',
+        color: 'rgba(0, 255, 22, 0.7)',
+      },
+      {
+        name: 'Avg sale price',
+        data: row.history.map(entry => [entry.time, entry.salePrice / entry.saleQuantity]),
+        type: 'line',
+        color: 'rgba(0, 255, 22, 0.7)',
+      },
+      {
+        name: '# Purchased',
+        data: row.history.map(entry => [entry.time, entry.buyQuantity]),
+        type: 'line',
+        yAxis: 1,
+        color: 'hsla(230,93%,52%,0.7)',
+      },
+      {
+        name: 'Sum purchase price',
+        data: row.history.map(entry => [entry.time, entry.buyPrice]),
+        type: 'line',
+        color: 'rgba(248,197,96,0.7)',
+      },
+      {
+        name: 'Avg purchase price',
+        data: row.history.map(entry => [entry.time, entry.buyPrice / entry.buyQuantity]),
+        type: 'line',
+        color: 'rgba(248,197,96,0.7)',
+      },
+    ];
+    this.selectedRowData = row;
+    this.selectedRowSeriesUpdate = !this.selectedRowSeriesUpdate;
+  }
+
+  clearSelection() {
+    this.selectedRowData = undefined;
   }
 }

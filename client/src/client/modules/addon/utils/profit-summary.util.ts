@@ -1,4 +1,4 @@
-import {CSVExpiredAndCancelled, CSVIncomeAndExpense, CSVSaleAndBuys} from './../../../utils/tsm/tsm-lua.util';
+import {CSVExpiredAndCancelled, CSVIncomeAndExpense, CSVSaleAndBuys, GoldLogEntry} from '../../../utils/tsm/tsm-lua.util';
 import {TSMCSV} from '../../../utils/tsm/tsm-lua.util';
 import {DateUtil} from '@ukon1990/js-utilities';
 
@@ -36,10 +36,12 @@ export interface ItemSaleHistory {
   diffPercent: number;
 
   history: ItemHistory[];
+  historyMap: Map<number, ItemHistory>;
 }
 
 export interface ItemSaleHistorySummary {
   list: ItemSaleHistory[];
+  goldLog: number[][];
   dailyStats: any[];
   sumCost: number;
   sumIncome: number;
@@ -58,9 +60,11 @@ export class ProfitSummaryUtil {
     expenses: CSVIncomeAndExpense[],
     income: CSVIncomeAndExpense[],
     sales: CSVSaleAndBuys[],
-    purcheses: CSVSaleAndBuys[],
+    purchases: CSVSaleAndBuys[],
     expired: CSVExpiredAndCancelled[],
-    cancelled: CSVExpiredAndCancelled[]): ItemSaleHistorySummary {
+    cancelled: CSVExpiredAndCancelled[],
+    goldLog: GoldLogEntry[]
+  ): ItemSaleHistorySummary {
     const map: Map<number, ItemSaleHistory> = new Map<number, ItemSaleHistory>();
     const list: ItemSaleHistory[] = [];
     let sumCost = 0;
@@ -83,9 +87,10 @@ export class ProfitSummaryUtil {
       entry.sumSalePrice += sale.price * sale.quantity;
       entry.soldQuantity += sale.quantity;
       sumIncome += sale.price * sale.quantity;
+      this.addOrUpdateItemHistoryEntry(entry, sale, true);
     });
 
-    purcheses.forEach(bought => {
+    purchases.forEach(bought => {
       if (bought.source !== 'Auction') {
         return;
       }
@@ -97,6 +102,7 @@ export class ProfitSummaryUtil {
       entry.sumBuyPrice += bought.price * bought.quantity;
       entry.boughtQuantity += bought.quantity;
       sumCost += bought.price * bought.quantity;
+      this.addOrUpdateItemHistoryEntry(entry, bought);
     });
 
     [...expired, ...cancelled].forEach(({id, bonusIds, name, quantity}) => {
@@ -115,6 +121,7 @@ export class ProfitSummaryUtil {
     return {
       avgPerDay: 0,
       dailyStats: [],
+      goldLog: this.getGoldHistory(goldLog),
       list,
       sumCost,
       sumIncome,
@@ -172,6 +179,7 @@ export class ProfitSummaryUtil {
         diff: 0,
         diffPercent: 0,
         history: [],
+        historyMap: new Map<number, ItemHistory>(),
       };
       map.set(id, entry);
       list.push(entry);
@@ -212,11 +220,102 @@ export class ProfitSummaryUtil {
     const result: ItemSaleHistorySummary = this.processData(
       expenses, income,
       sales, purcheses,
-      expired, cancelled
+      expired, cancelled,
+      csvData.goldLog[realm] ?
+        csvData.goldLog[realm].All : [],
     );
 
     result.avgPerDay = result.sumProfit / DateUtil.getDifferenceInDays(startDate, endDate);
 
-    return result;
+    return {
+      ...result,
+      goldLog: result.goldLog.filter(([minute]) => this.isWithinTimeLimit(minute, startDate, endDate))
+    };
+  }
+
+  private addOrUpdateItemHistoryEntry(entry: ItemSaleHistory, sale: CSVSaleAndBuys, isSale?: boolean) {
+    // Getting the start of the selected day for the user
+    const time = +this.getStartOfDayForDate(sale.time);
+    // Grouping the history entries per day
+    let history = entry.historyMap.get(time);
+    if (!history) {
+      const newHistory: ItemHistory = {
+        time,
+        buyPrice: 0,
+        buyQuantity: 0,
+        salePrice: 0,
+        saleQuantity: 0,
+      };
+      entry.historyMap.set(time, newHistory);
+      entry.history.push(newHistory);
+      history = newHistory;
+    }
+
+    if (isSale) {
+      history.saleQuantity += sale.quantity;
+      history.salePrice += sale.price;
+    } else {
+      history.buyQuantity += sale.quantity;
+      history.buyPrice += sale.price;
+    }
+  }
+
+  private getGoldHistory(log: GoldLogEntry[]) {
+    const sortedLog: GoldLogEntry[] = log.sort((a, b) => a[0] - b[0]);
+    const charMap = new Map<string, Map<number, GoldLogEntry>>();
+    const dateMap = new Map<number, any>();
+    const dateList: number[] = [];
+    const goldLog: number[][] = [];
+    const map: Map<number, number[]> = new Map<number, number[]>();
+    sortedLog.forEach(entry => {
+      let character = charMap.get(entry.character);
+      if (!character) {
+        character = new Map<number, GoldLogEntry>();
+        charMap.set(entry.character, character);
+      }
+      const time = this.getStartOfDayForDate(entry.minute);
+      character.set(+time, {
+        ...entry,
+        minute: +time,
+      });
+      if (!dateMap.has(+time)) {
+        dateMap.set(+time, +time);
+        dateList.push(+time);
+      }
+    });
+
+    charMap.forEach(character => {
+      const history = [];
+      dateList.forEach((minute: number, index) => {
+        let entry = character.get(minute);
+        if (!character.has(minute)) {
+          entry = {
+            ...history[history.length - 1],
+            minute
+          } || {minute, copper: 0};
+        }
+
+        const time = entry.minute;
+        let value = map.get(+time);
+        if (!value) {
+          const newValue = [+time, 0];
+          map.set(+time, newValue);
+          goldLog.push(newValue);
+          value = newValue;
+        }
+        value[1] += entry.copper;
+        history.push(entry);
+      });
+    });
+    return goldLog.sort((a, b) => a[0] - b[0]);
+  }
+
+  private getStartOfDayForDate(input: number): number {
+    const time = new Date(input);
+    time.setHours(0);
+    time.setMinutes(0);
+    time.setSeconds(0);
+    time.setMilliseconds(0);
+    return +time;
   }
 }

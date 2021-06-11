@@ -3,12 +3,17 @@
     <mat-card-title>
       Profit and cost summary
     </mat-card-title>
+    <mat-card-subtitle>
+      Click anywhere on the rows, to get a sale and
+      purchase graph for the item. Clicking on the name will open the details popup.
+    </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
-    <form [formGroup]="form">
+    <form [formGroup]="form" class="row">
       <mat-form-field
               color="accent"
+              class="col"
       >
         <mat-select placeholder="Realm" formControlName="realm">
           <mat-option *ngFor="let realm of realms" [value]="realm">
@@ -16,7 +21,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field class="col">
         <mat-label>Period start</mat-label>
         <input matInput
                [matDatepicker]="startPicker"
@@ -27,7 +32,7 @@
         <mat-datepicker #startPicker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="col">
         <mat-select placeholder="Period" [formControl]="periodInput">
           <mat-option [value]="null">No period selected</mat-option>
           <mat-option [value]="1">Past 24 hours</mat-option>
@@ -41,7 +46,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="col">
         <mat-label>Period end</mat-label>
         <input matInput
                [matDatepicker]="endPicker"
@@ -52,6 +57,14 @@
         <mat-datepicker #endPicker></mat-datepicker>
       </mat-form-field>
     </form>
+
+    <wah-highcharts
+            *ngIf="goldLog && goldLog[0]"
+            class="col-md-6"
+            title="Gold log"
+            [series]="goldLog"
+            [(update)]="goldLogUpdate"
+    ></wah-highcharts>
 
     <mat-list dense class="horizontal-item-list">
       <mat-list-item>
@@ -88,12 +101,40 @@
       </mat-list-item>
     </mat-list>
 
+    <mat-card *ngIf="selectedRowData">
+      <mat-card-header>
+        <mat-card-title>
+          Sale and purchase history for: {{selectedRowData.name}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <wah-highcharts
+                class="col-md-6"
+                title="History"
+                [series]="selectedSeries"
+                [(update)]="selectedRowSeriesUpdate"
+        ></wah-highcharts>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+                mat-stroked-button
+                color="warn"
+                (click)="clearSelection()"
+        >
+          Close
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
     <wah-data-table
       id="itemId"
       iconSize="22"
       itemsPerPage="20"
+      filterParameter="name"
       [columns]="columns"
       [data]="mappedData"
+      (rowClicked)="handleRowClick($event)"
     >
     </wah-data-table>
   </mat-card-content>
