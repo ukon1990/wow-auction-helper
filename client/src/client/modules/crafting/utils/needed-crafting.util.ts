@@ -17,7 +17,7 @@ export class NeededCraftingUtil extends BaseCraftingUtil {
   getPrice(id: number, quantity: number): number {
     let price = 0;
     const auctionItem: AuctionItem = this.map.get('' + id);
-    if (auctionItem) {
+    if (auctionItem && auctionItem.buyout > 0) {
       let foundCount = 0, usedForCraftCount = 0;
       for (let i = 0; i < auctionItem.auctions.length && foundCount <= quantity; i++) {
         const auc = auctionItem.auctions[i],

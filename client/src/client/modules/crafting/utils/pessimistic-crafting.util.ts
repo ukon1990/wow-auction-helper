@@ -38,7 +38,7 @@ export class PessimisticCraftingUtil extends BaseCraftingUtil {
   getPrice(id: number, quantity: number): number {
     let cost = 0;
     const auctionItem: AuctionItem = this.map.get('' + id);
-    if (auctionItem) {
+    if (auctionItem && auctionItem.buyout > 0) {
       const auctions = auctionItem.auctions;
       let foundCount = 0, usedForCraftCount = 0;
       let startPrice: StartPrice = this.startPriceMap.get(id);
