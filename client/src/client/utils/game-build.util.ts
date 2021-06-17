@@ -54,10 +54,12 @@ export class GameBuild {
     'Leatherworking',
     'Alchemy',
     'Cooking',
+    'Jewelcrafting',
     'Mining',
     'Tailoring',
     'Engineering',
     'Enchanting',
     'First aid',
+    'None'
   ];
 }

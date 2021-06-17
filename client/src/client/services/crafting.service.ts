@@ -104,7 +104,7 @@ export class CraftingService {
     const locale = localStorage['locale'];
     console.log('Downloading recipes');
 
-    SharedService.downloading.recipes = true;
+    SharedService.downloading.recipes = true; // classic/
     return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then(async (result: RecipeResponse) => {

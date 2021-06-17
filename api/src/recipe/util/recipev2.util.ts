@@ -6,8 +6,8 @@ import {AuthHandler} from '../../handlers/auth.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {RDSQueryUtil} from '../../utils/query.util';
 import {ItemLocale} from '../../models/item/item-locale';
-import {RecipeService} from '../service';
 import {NameSpace} from '../../enums/name-space.enum';
+import {RecipeService} from '../service/service';
 
 export class RecipeV2Util {
 

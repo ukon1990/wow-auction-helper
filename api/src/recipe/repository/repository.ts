@@ -1,9 +1,9 @@
-import {Repository} from '../core/repository';
-import {DatabaseUtil} from '../utils/database.util';
-import {Reagent, Recipe} from './model';
-import {RDSQueryUtil} from '../utils/query.util';
+import {Repository} from '../../core/repository';
+import {DatabaseUtil} from '../../utils/database.util';
+import {Reagent, Recipe} from '../model';
+import {RDSQueryUtil} from '../../utils/query.util';
 import {format} from 'sqlstring';
-import {Recipev2} from './recipev2.model';
+import {Recipev2} from '../recipev2.model';
 
 export class RecipeRepository extends Repository<Recipe> {
 

@@ -1,11 +1,9 @@
-import {Recipe, RecipeAPIResponse} from './model';
-import {DatabaseUtil} from '../utils/database.util';
-import {RecipeRepository} from './repository';
-import {RecipeV2Util} from './recipev2.util';
-import {Recipev2} from './recipev2.model';
+import {Recipe, RecipeAPIResponse} from '../model';
+import {DatabaseUtil} from '../../utils/database.util';
+import {ClassicRecipeRepository} from '../repository/classic-recipe.repository';
 
-export class RecipeService {
-  private static repository = new RecipeRepository();
+export class ClassicRecipeService {
+  private static repository = new ClassicRecipeRepository();
 
   static getById(id: any, locale: any) {
     return new Promise<Recipe>(async (resolve, reject) => {
@@ -36,9 +34,10 @@ export class RecipeService {
     });
   }
 
+  /*
   static getAndInsert(id: number, db: DatabaseUtil): Promise<Recipev2> {
     return new Promise<Recipev2>((resolve, reject) => {
-      RecipeV2Util.getRecipeFromAPI(id)
+      ClassicRecipeUtil.getRecipeFromAPI(id)
         .then((recipe: Recipev2) => {
           this.repository.insertData(recipe, db)
             .then(() => resolve(recipe))
@@ -47,4 +46,5 @@ export class RecipeService {
         .catch(reject);
     });
   }
+  */
 }

@@ -8,8 +8,13 @@ import {languages} from '../static-data/language.data';
 import {ItemLocale} from '../models/item/item-locale';
 
  */
-import {Recipe} from '../model';
+import {Reagent, Recipe} from '../model';
 import {GameBuild} from '../../../../client/src/client/utils/game-build.util';
+import { HttpClientUtil } from '../../utils/http-client.util';
+import {WoWHeadUtil} from '../../utils/wowhead.util';
+import {ItemLocale} from '../../models/item/item-locale';
+import {languages} from '../../static-data/language.data';
+import {ProfessionRepository} from '../../profession/repository';
 
 export class ClassicRecipeUtil {
 
@@ -20,10 +25,10 @@ export class ClassicRecipeUtil {
   public static convert(wowDB): Recipe {
     const basePoints = wowDB.Effects[0].BasePoints;
     return {
-      spellID: wowDB.ID,
-      itemID: wowDB.CreatedItemID,
+      id: wowDB.ID * -1,
+      spellId: wowDB.ID,
+      craftedItemId: wowDB.CreatedItemID,
       name: wowDB.Name,
-      profession: 'none',
       rank: wowDB.Rank,
       minCount: basePoints > 0 ? basePoints : 1,
       maxCount: basePoints > 0 ? basePoints : 1,
@@ -34,34 +39,54 @@ export class ClassicRecipeUtil {
   public static convertReagents(reagents: any[]): Reagent[] {
     const r = [];
     reagents.forEach(reagent => {
-      r.push({itemID: reagent.Item, name: '', count: reagent.ItemQty, dropped: false});
+      r.push({
+        id: reagent.Item,
+        quantity: reagent.ItemQty
+      });
     });
     return r;
   }
 
-  static getRecipeListForPatch(patchNumber: number, gameVersion?: string): Promise<Recipe[]> {
-    const professions = gameVersion ? GameBuild.professionsClassic : GameBuild.professions;
-    return new Promise<any>((resolve, reject) => {
+  static getRecipeListForPatch(patchNumber: number, gameVersion?: string, professions = GameBuild.professionsClassic): Promise<Recipe[]> {
+    // gameVersion ? GameBuild.professionsClassic : GameBuild.professions;
+    return new Promise<any>(async (resolve, reject) => {
+      const professionRepository = new ProfessionRepository();
+      const professionToIdMap: {[key: string]: number} = {};
+      await professionRepository.getAllAfter(0, 'en_GB')
+        .then(profs => {
+          profs.forEach(profession => {
+            professionToIdMap[profession.name] = profession.id;
+          });
+        })
+        .catch(console.error);
       Promise.all(professions.map(profession =>
-        this.getRecipeListForPatchAndProfession(patchNumber, profession, gameVersion)))
+        this.getRecipeListForPatchAndProfession(patchNumber, profession, gameVersion, professionToIdMap)))
         .then((lists) => {
           let recipes = [];
-          lists.forEach(r => recipes = [...recipes, ...r]);
+          lists.forEach(r => {
+            recipes = [...recipes, ...r];
+          });
           resolve(recipes);
         })
         .catch(reject);
     });
   }
 
-  static getRecipeListForPatchAndProfession(patchNumber: number, profession: string, gameVersion?: string): Promise<Recipe[]> {
+  static getRecipeListForPatchAndProfession(
+    patchNumber: number,
+    profession: string,
+    gameVersion?: string,
+    professionToIdMap?: { [key: string]: number }
+  ): Promise<Recipe[]> {
     return new Promise<Recipe[]>((resolve, reject) => {
       const urlName = this.getUrlName(this.slugifyString(profession), gameVersion);
-      const url = this.getUrl(gameVersion, urlName, patchNumber);
+      const url = profession === 'None' ? 'https://tbc.wowhead.com/spells?filter=20:25;1:3;0:0#50' : this.getUrl(urlName);
       new HttpClientUtil().get(url, false)
         .then(async ({body}) => {
-          const list = this.getList(gameVersion, body);
+          const list = this.getList('', body);
           console.log(profession, list.length);
-          resolve(this.mapResultToRecipe(list, profession, gameVersion));
+          const professionId = (profession === 'First aid' ? 1 : professionToIdMap[profession]) || null;
+          resolve(this.mapResultToRecipe(list, professionId, gameVersion));
         })
         .catch((error) => {
           console.log(error);
@@ -77,55 +102,59 @@ export class ClassicRecipeUtil {
   }
 
   private static getUrlName(profession: string, gameVersion: string) {
+    switch (profession.toLowerCase()) {
+      case 'cooking':
+      case 'first-aid':
+        return `secondary-skills/${profession}`;
+      default:
+        return `professions/${profession}`;
+    }
     return profession === 'Cooking' && !gameVersion ? `cooking-recipe` : profession;
   }
 
-  private static getUrl(gameVersion: string, urlName: string, patchNumber: number) {
-    return `https://${gameVersion.length ? gameVersion : 'ptr'}.wowhead.com/${
-      urlName.toLocaleLowerCase()}${gameVersion === '' ? '-spells' : ''}?filter=21;2;${patchNumber}`;
+  private static getUrl(urlName: string) {
+    return `https://tbc.wowhead.com/spells/${urlName.toLocaleLowerCase()}?filter=20;1;0`;
   }
 
-  private static async mapResultToRecipe(list, profession: string, gameVersion?: string) {
-    const recipes = [];
+  private static async mapResultToRecipe(list, professionId: number, gameVersion?: string) {
+    const recipes: Recipe[] = [];
     for (const recipe of list) {
       const {id, creates, name, reagents} = recipe;
-      await this.setRankAndNameForRecipe(id, gameVersion, recipe);
+      await this.setRankAndNameForRecipe(id, recipe);
 
       const minCount = creates ? creates[1] : 1,
         maxCount = creates ? creates[1] : 1;
       recipes.push({
-        spellID: id,
-        itemID: creates ? creates[0] : -1,
+        id: +id * -1,
+        spellId: id,
+        craftedItemId: creates ? +creates[0] : -1,
         name: recipe.name,
         minCount: minCount ? minCount : 1,
         maxCount: maxCount ? maxCount : 1,
-        rank: recipe.rank,
-        profession,
-        reagents: reagents ? reagents.map(reagent => ({
-          itemID: reagent[0],
-          name: '',
-          count: reagent[1],
-          dropped: undefined
-        })) : [],
-        expansion: gameVersion ? 1 : 8
-      });
+        rank: recipe.rank || 0,
+        professionId,
+        reagents: (reagents || []).map(reagent => ({
+          id: +reagent[0],
+          quantity: +reagent[1]
+        }))
+      } as Recipe);
       console.log(recipes[recipes.length - 1]);
     }
     return recipes;
   }
 
-  private static async setRankAndNameForRecipe(id: number, gameVersion: string = '', recipe): Promise<any> {
+  private static async setRankAndNameForRecipe(id: number, recipe): Promise<any> {
     recipe.name = new ItemLocale();
     for (const language of languages) {
-      await this.getRecipeTooltip(id, language, gameVersion, recipe);
+      await this.getRecipeTooltip(id, language, recipe);
     }
     return recipe;
   }
 
-  private static async getRecipeTooltip(id, language, gameVersion: string, recipe) {
+  private static async getRecipeTooltip(id, language, recipe) {
     await new Promise<number>((resolve, reject) => {
       new HttpClientUtil().get(
-        `https://${gameVersion ? gameVersion : 'www'}.wowhead.com/tooltip/spell/${id}?locale=${language.key}`)
+        `https://tbc.wowhead.com/tooltip/spell/${id}?locale=${language.key}`)
         .then(({body}) => {
           if (language.key === 'en') {
             const regexResult = (/Rank [\d]{0,1}/g).exec(body.tooltip);

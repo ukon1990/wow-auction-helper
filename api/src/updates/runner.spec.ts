@@ -23,6 +23,12 @@ describe('Update runner', () => {
     expect(timestamps).toBeTruthy();
   });
 
+  it('Update classic recipes', async () => {
+    const timestamps = await UpdatesService.getAndSetClassicRecipes()
+      .catch(console.error);
+    expect(timestamps).toBeTruthy();
+  });
+
   it('Update items', async () => {
     const timestamps = await UpdatesService.getAndSetItems()
       .catch(console.error);
