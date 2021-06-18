@@ -62,13 +62,36 @@ export class DatabaseService {
     return environment.test || this.platform === null || this.unsupported;
   }
 
+  private splitEntries<T>(list: T[], batchSize = 50000): T[][] {
+    const result: T[][] = [];
+    list.forEach(entry => {
+      let index = (result.length || 1) - 1;
+      if (result[index] && result[index].length >= batchSize) {
+        index++;
+      }
+      if (!result[index]) {
+        result.push([]);
+      }
+      result[index].push(entry);
+    });
+    return result;
+  }
+
   addItems(items: Array<Item>): void {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    this.db.table('items').bulkPut(items)
-      .catch(e =>
-        ErrorReport.sendError('DatabaseService.addItems', e));
+    console.log('Starting to save items into local DB');
+    try {
+      const start = +new Date();
+      for (const list of this.splitEntries(items)) {
+        this.db.table('items').bulkPut(list)
+          .catch(console.error);
+      }
+      console.log(`Saved items to local db in ${DateUtil.getDifferenceInSeconds(start, +new Date())}s`);
+    } catch (error) {
+      ErrorReport.sendError('DatabaseService.addItems', error);
+    }
   }
 
   async getAllItems(): Promise<any> {
@@ -80,15 +103,17 @@ export class DatabaseService {
 
     return new Dexie.Promise<any>(async (resolve) => {
       let items: Item[] = [];
+      const start = +new Date();
       const add = (result) => items = [...items, ...result];
       await this.getItemsInBatch(0, 50000)
         .then((res) => add(res));
       await this.getItemsInBatch(50001, 100000)
         .then((res) => add(res));
-      await this.getItemsInBatch(100001, 200000)
+      await this.getItemsInBatch(100001, 150000)
         .then((res) => add(res));
-      await this.getItemsInBatch(200001, 1000000)
+      await this.getItemsInBatch(150001, 200000)
         .then((res) => add(res));
+      console.log(`Restored items from local db in ${DateUtil.getDifferenceInSeconds(start, +new Date())}s`);
       SharedService.events.items.emit(true);
       resolve(items);
     });
@@ -102,11 +127,6 @@ export class DatabaseService {
         .toArray()
         .then(items => {
           SharedService.downloading.items = false;
-          /*
-          SharedService.itemsUnmapped = SharedService.itemsUnmapped.concat(items);
-          items.forEach(i => {
-            SharedService.items[i.id] = i;
-          });*/
           resolve(items);
         }).catch(e => {
         console.error('Could not restore items from local DB', e);
@@ -157,13 +177,13 @@ export class DatabaseService {
     }
     return new Promise<NPC[]>((resolve, reject) => {
       console.log('Loading NPCs from local DB');
+      const start = +new Date();
       const npcs: NpcSplitType = {
         bases: [],
         sells: [],
         drops: [],
         skinning: [],
       };
-      const start = +new Date();
       const promises: Promise<any>[] = [
         this.db.table('npcsBase').toArray()
           .then((base: NPC[]) => npcs.bases = base),
