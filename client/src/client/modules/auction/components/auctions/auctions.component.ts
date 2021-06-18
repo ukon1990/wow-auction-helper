@@ -10,6 +10,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
 import {ItemClassService} from '../../../item/service/item-class.service';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ColumnDescription} from '../../../table/models/column-description';
+import {RealmService} from "../../../../services/realm.service";
 
 @Component({
   selector: 'wah-auctions',
@@ -62,18 +63,18 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     // {key: 'regionSaleRate', title: 'Sale rate', dataType: 'percent', hideOnMobile: true}
   ];
   tableData = [];
-  readonly isClassic = SharedService.user && SharedService.user.ahTypeId && SharedService.user.ahTypeId > 0;
-  expansions =  GameBuild.expansionMap.filter((v, index) => {
-    if (this.isClassic) {
-      return index <= GameBuild.latestClassicExpansion;
-    }
-    return true;
-  });
+  isClassic = false;
+  expansions = [];
   delayFilter = false;
   private subs = new SubscriptionManager();
 
-  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private auctionService: AuctionsService,
+    private realmService: RealmService
+  ) {
     SharedService.events.title.next('Auctions');
+    this.isClassic = realmService.isClassic;
     const filter = JSON.parse(localStorage.getItem('query_auctions')) || undefined;
 
     this.form = formBuilder.group({
@@ -124,7 +125,21 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     this.subs.unsubscribe();
   }
 
+  private setExpansions(): void {
+    this.expansions = GameBuild.expansionMap.filter((v, index) => {
+      if (this.isClassic) {
+        return index <= GameBuild.latestClassicExpansion;
+      }
+      return true;
+    });
+  }
+
   async filterAuctions(changes = this.form.value) {
+    this.isClassic = this.realmService.isClassic;
+    /**
+     * Setting the expansion list here, in case the user changes between retail and classic
+     */
+    this.setExpansions();
 
     this.tableData = this.auctionService.list.value
       .filter(i => this.isMatch(i, changes))

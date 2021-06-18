@@ -1,7 +1,7 @@
 export class Reagent {
   id: number;
   quantity: number;
-  isOptional: boolean;
+  isOptional?: boolean;
 }
 
 interface ModifiedSlot {
@@ -11,23 +11,24 @@ interface ModifiedSlot {
 
 export class Recipe {
   id: number;
-  icon: string;
+  spellId?: number;
+  icon?: string;
   name: string;
-  description: string;
-  rank: number;
+  description?: string;
+  rank?: number;
   craftedItemId: number;
-  hordeCraftedItemId: number;
-  allianceCraftedItemId: number;
-  minCount: number;
-  maxCount: number;
-  procRate: number;
-  professionId: number;
-  skillTierId: number;
+  hordeCraftedItemId?: number;
+  allianceCraftedItemId?: number;
+  minCount?: number;
+  maxCount?: number;
+  procRate?: number;
+  professionId?: number;
+  skillTierId?: number;
   reagents: Reagent[];
-  modifiedSlots: ModifiedSlot[];
-  bonusIds: number[];
+  modifiedSlots?: ModifiedSlot[];
+  bonusIds?: number[];
 
-  timestamp: number;
+  timestamp?: number;
 }
 
 export interface RecipeAPIResponse {

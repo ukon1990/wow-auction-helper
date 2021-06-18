@@ -17,7 +17,7 @@ import {ItemClass} from '../../item/models/item-class.model';
 import {AuctionItem} from '../../auction/models/auction-item.model';
 import {SettingsService} from '../../user/services/settings/settings.service';
 import {ItemStats} from '../../../../../../api/src/auction/models/item-stats.model';
-import {Report} from "../../../utils/report.util";
+import {RealmService} from '../../../services/realm.service';
 
 interface FormModel {
   searchQuery: string;
@@ -37,19 +37,14 @@ interface FormModel {
   styleUrls: ['./crafting.component.scss']
 })
 export class CraftingComponent implements OnInit, OnDestroy {
-  readonly isClassic = SharedService.user && SharedService.user.ahTypeId && SharedService.user.ahTypeId > 0;
+  isClassic = false;
   theme = ThemeUtil.current;
   searchForm: FormGroup;
   filtered: Recipe[] = [];
   subs = new SubscriptionManager();
   itemClasses: ItemClass[] = ItemClassService.getForLocale();
   professions = [];
-  expansions = GameBuild.expansionMap.filter((v, index) => {
-    if (SharedService.user && SharedService.user.ahTypeId && SharedService.user.ahTypeId > 0) {
-      return index <= GameBuild.latestClassicExpansion;
-    }
-    return true;
-  });
+  expansions = [];
   private lastCalculationTime: number;
 
   columns: ColumnDescription[] = [
@@ -96,12 +91,13 @@ export class CraftingComponent implements OnInit, OnDestroy {
 
   constructor(private _formBuilder: FormBuilder,
               private service: AuctionsService,
+              private realmService: RealmService,
               private settingsService: SettingsService,
               private professionService: ProfessionService) {
     SharedService.events.title.next('Crafting');
+    this.isClassic = realmService.isClassic;
     const query = localStorage.getItem('query_crafting') === null ?
       undefined : JSON.parse(localStorage.getItem('query_crafting'));
-
     this.searchForm = this._formBuilder.group({
       searchQuery: query && query.searchQuery !== undefined ? query.searchQuery : '',
       onlyKnownRecipes: this.isClassic ?
@@ -152,7 +148,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
         ...(this.getProfessionsSorted(professions)),
         {
           id: -1,
-          name: 'None'
+          name: 'On use'
         }
       ];
     });
@@ -162,7 +158,22 @@ export class CraftingComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
+  setExpansions(): void {
+    this.expansions = GameBuild.expansionMap.filter((v, index) => {
+      if (this.isClassic) {
+        return index <= GameBuild.latestClassicExpansion;
+      }
+      return true;
+    });
+  }
+
   filter(changes: FormModel = this.searchForm.value): void {
+    /**
+     * Setting the expansion here in case a user changes between retail and classic while
+     * on the recipes page
+     */
+    this.isClassic = this.realmService.isClassic;
+    this.setExpansions();
     this.filtered = CraftingService.list.value
       .filter(recipe => {
         if (!EmptyUtil.isNullOrUndefined(recipe)) {

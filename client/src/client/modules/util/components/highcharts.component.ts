@@ -32,9 +32,6 @@ addMore(Highcharts);
         [style.display]="'block'"
         (chartInstance)="chartInstance.emit($event)"
       ></highcharts-chart>
-      <em>
-        You can drag to zoom in on the chart data along the x axis. Hold control and drag to pan.
-      </em>
     </ng-container>
 
     <ng-template #noEntriesTemplate>

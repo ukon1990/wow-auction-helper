@@ -149,6 +149,23 @@ export class DatabaseUtil {
       professions: this.PROFESSION_TABLE_COLUMNS,
       addons: this.ADDON,
       dashboards: this.DASHBOARD_TABLE_COLUMNS
+    },
+    {
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes2: this.RECIPE_TABLE_COLUMNS,
+      recipesClassic: this.RECIPE_TABLE_COLUMNS,
+      npcsBase: this.NPC_TABLE_COLUMNS,
+      npcsDrops: this.NPC_ENTRY_COLUMNS,
+      npcsSells: this.NPC_ENTRY_COLUMNS,
+      npcsSkinns: this.NPC_ENTRY_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON,
+      dashboards: this.DASHBOARD_TABLE_COLUMNS
     }
   ];
 

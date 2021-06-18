@@ -9,6 +9,12 @@ export class UpdatesRepository {
                  LIMIT 1
              ) recipes,
              (
+                 SELECT timestamp as recipes
+                 FROM recipesClassic
+                 ORDER BY timestamp DESC
+                 LIMIT 1
+             ) recipesClassic,
+             (
                  SELECT timestamp as items
                  FROM items
                  ORDER BY timestamp DESC

@@ -158,6 +158,7 @@ export class BackgroundDownloadService {
           .then(() =>
             console.log('Done loading zone data'))
           .catch(console.error);
+        const recipeTimestamp = this.realmService.isClassic ? timestamps.recipesClassic : timestamps.recipes;
 
         const promises: Promise<any>[] = [/* TODO: Remove?
           this.tsmService.load(this.realmService.events.realmStatus.value)
@@ -169,7 +170,9 @@ export class BackgroundDownloadService {
             .then(() => console.log('Loaded items in ' + DateUtil.getDifferenceInSeconds(start, +new Date()))),
           this.petService.loadPets(timestamps.pets),
           this.npcService.getAll(false, timestamps.npcs),
-          this.craftingService.load(timestamps.recipes),
+          this.craftingService.load(
+            recipeTimestamp,
+            this.realmService.isClassic),
           this.itemService.getBonusIds(),
         ];
 
@@ -202,6 +205,7 @@ export class BackgroundDownloadService {
           this.professionService.lastModified.next(+new Date(result.professions));
           this.petService.lastModified.next(+new Date(result.pets));
           this.craftingService.lastModified.next(+new Date(result.recipes));
+          this.craftingService.lastModifiedClassic.next(+new Date(result.recipesClassic));
           this.zoneService.lastModified.next(+new Date(result.zones));
           resolve(result as Timestamps);
         })

@@ -253,10 +253,10 @@ export class ProfitSummaryUtil {
 
     if (isSale) {
       history.saleQuantity += sale.quantity;
-      history.salePrice += sale.price;
+      history.salePrice += sale.price * sale.quantity;
     } else {
       history.buyQuantity += sale.quantity;
-      history.buyPrice += sale.price;
+      history.buyPrice += sale.price * sale.quantity;
     }
   }
 
