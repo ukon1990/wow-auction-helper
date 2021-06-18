@@ -71,7 +71,7 @@ export class RealmService {
     SharedService.user.ahTypeId = ahTypeId;
 
     UserUtil.save();
-    return new Promise<AuctionHouseStatus>((resolve, reject) => {
+    return new Promise<AuctionHouseStatus>(async (resolve, reject) => {
       this.getStatus(
         SharedService.user.region,
         realm,

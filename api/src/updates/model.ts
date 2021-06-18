@@ -3,6 +3,7 @@ export interface Timestamps {
   pets: Date;
   items: Date;
   recipes: Date;
+  recipesClassic: Date;
   npcs: Date;
   zones: Date;
 }

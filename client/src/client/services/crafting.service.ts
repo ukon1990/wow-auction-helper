@@ -21,6 +21,7 @@ class RecipeResponse {
 export class CraftingService {
 
   static recipesForUser: BehaviorSubject<Map<number, string[]>> = new BehaviorSubject(new Map<number, string[]>());
+  static loadedGameBuild: BehaviorSubject<number> = new BehaviorSubject(0);
   static list: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static fullList: BehaviorSubject<Recipe[]> = new BehaviorSubject([]);
   static map: BehaviorSubject<Map<number, Recipe>> = new BehaviorSubject(new Map<number, Recipe>());
@@ -30,6 +31,7 @@ export class CraftingService {
   static reagentRecipeMap: BehaviorSubject<Map<number, Recipe[]>> = new BehaviorSubject(new Map<number, Recipe[]>());
 
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  lastModifiedClassic: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
@@ -46,7 +48,8 @@ export class CraftingService {
         return;
       }
       const itemId = this.getItemIdForCurrentFaction(recipe);
-      if (!itemId) {
+      // It is ok for enchants to not create an item
+      if (!itemId && recipe.professionId !== 333) {
         return;
       }
       recipe.itemID = itemId;
@@ -81,31 +84,38 @@ export class CraftingService {
     return itemId;
   }
 
-  async load(latestTimestamp: Date) {
-    await this.dbService.getAllRecipes()
+  private getStorageKey(isClassic: boolean) {
+    return `${this.LOCAL_STORAGE_TIMESTAMP}${isClassic ? '_classic' : ''}`;
+  }
+
+  async load(latestTimestamp: Date, isClassic = SharedService.user.gameVersion > 0) {
+    console.log('Game version', isClassic);
+    await this.dbService.getAllRecipes(isClassic)
       .then(async (result) => {
         this.handleRecipes(result);
         if (CraftingService.list.value.length === 0) {
-          delete localStorage['timestamp_recipes'];
+          delete localStorage[this.getStorageKey(isClassic)];
         }
       })
       .catch(async (error) =>
         ErrorReport.sendError('CraftingService.loadRecipes', error));
 
-    const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+    const timestamp = localStorage.getItem(this.getStorageKey(isClassic));
 
     if (!CraftingService.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
-      await this.get();
+      await this.get(isClassic);
     }
     this.setOnUseCraftsWithNoReagents();
   }
 
-  get(): Promise<any> {
+  get(isClassic = SharedService.user.gameVersion > 0): Promise<any> {
     const locale = localStorage['locale'];
     console.log('Downloading recipes');
 
-    SharedService.downloading.recipes = true; // classic/
-    return this._http.get(`${Endpoints.S3_BUCKET}/recipe/${locale}.json.gz?lastModified=${this.lastModified.value}`)
+    SharedService.downloading.recipes = true;
+    return this._http.get(`${Endpoints.S3_BUCKET}${
+      isClassic ? '/classic' : ''
+    }/recipe/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then(async (result: RecipeResponse) => {
         SharedService.downloading.recipes = false;
@@ -118,12 +128,12 @@ export class CraftingService {
       });
   }
 
-  private async clearAndSaveResult(result: RecipeResponse) {
+  private async clearAndSaveResult(result: RecipeResponse, isClassic = SharedService.user.gameVersion > 0) {
     await this.dbService.clearRecipes();
     try {
       if (this.platform !== null && !this.platform.WEBKIT) {
-        await this.dbService.addRecipes(result.recipes);
-        localStorage[this.LOCAL_STORAGE_TIMESTAMP] = result.timestamp;
+        await this.dbService.addRecipes(result.recipes, SharedService.user.gameVersion > 0);
+        localStorage[this.getStorageKey(isClassic)] = result.timestamp;
       }
     } catch (error) {
       console.error(error);
