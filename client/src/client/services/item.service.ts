@@ -52,18 +52,18 @@ export class ItemService {
     this.selectionHistory.next( [newValue, ...this.selectionHistory.value]);
   }
 
-  async loadItems(latestTimestamp: Date) {/*
+  async loadItems(latestTimestamp: Date) {
     await this.dbService.getAllItems()
       .then(async (items) => {
         if (items.length === 0) {
           delete localStorage['timestamp_items'];
         }
-        this.handleItems({items, timestamp: latestTimestamp});
+        this.handleItems({items, timestamp: latestTimestamp}, false);
       })
       .catch(async error => {
         delete localStorage['timestamp_items'];
         ErrorReport.sendError('ItemService.loadItems', error);
-      });*/
+      });
     const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
 
     if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp) || !ItemService.list.value.length) {
@@ -143,7 +143,7 @@ export class ItemService {
       });
   }
 
-  handleItems(items: ItemResponse): void {
+  handleItems(items: ItemResponse, shouldSave = true): void {
     const missingItems: number[] = [];
     SharedService.downloading.items = false;
     const list: Item[] = [];
@@ -186,10 +186,10 @@ export class ItemService {
       // TODO: when I have time -> this.addItems(missingItems);
     }
 
-    if (this.platform !== null && !this.platform.WEBKIT) {
-      // this.dbService.addItems(items.items);
-      localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
+    if (shouldSave && this.platform !== null && !this.platform.WEBKIT) {
+      this.dbService.addItems(items.items);
     }
+    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
     SharedService.events.items.emit(true);
     ItemService.mapped.next(mapped);
     ItemService.list.next(list);
