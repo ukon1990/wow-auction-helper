@@ -14,6 +14,7 @@ import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
+import {CraftingService} from "./crafting.service";
 
 @Injectable()
 export class RealmService {
@@ -33,6 +34,7 @@ export class RealmService {
 
   constructor(private http: HttpClient,
               private settingSync: SettingsService,
+              private craftingService: CraftingService,
               private matSnackBar: MatSnackBar) {
     if (!environment.test) {
       this.sm.add(settingSync.realmChange, (change) => {
@@ -106,8 +108,16 @@ export class RealmService {
       this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
         .toPromise()
         .then(async (status: AuctionHouseStatus) => {
-          this.isClassic = status.gameBuild > 0;
-          this.previousUrl = status.url;
+          const isClassic = status.gameBuild > 0;
+          const recipeLength = CraftingService.list.value.length;
+
+          if (this.isClassic !== undefined && isClassic !== this.isClassic && recipeLength) {
+            await this.craftingService.load(undefined, isClassic)
+              .catch(console.error);
+          }
+
+          this.isClassic = isClassic;
+            this.previousUrl = status.url;
           this.events.realmStatus.next({
             ...status,
             connectedTo: status.connectedTo && typeof status.connectedTo === 'string' ?

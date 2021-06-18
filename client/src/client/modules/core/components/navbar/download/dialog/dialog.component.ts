@@ -265,7 +265,7 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
     if (forceUpdate) {
       delete localStorage['timestamp_recipes'];
     }
-    await this.craftingService.get();
+    await this.craftingService.get(this.realmService.isClassic);
 
     if (forceUpdate) {
       await this.auctionsService.organize();
