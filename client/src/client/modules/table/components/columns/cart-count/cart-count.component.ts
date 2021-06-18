@@ -20,7 +20,7 @@ export class CartCountComponent extends BaseComponent implements OnInit, OnDestr
   }
 
   ngOnInit() {
-    this.isKnownRecipe = this.getIsKnownRecipe();
+    this.isKnownRecipe = true; // this.getIsKnownRecipe();
     this.cartCount = this.getCartCount();
 
     if (this.isRecipeCart) {

@@ -2,7 +2,7 @@ import {DatabaseUtil} from '../utils/database.util';
 import {UpdatesRepository} from './repository';
 import {Timestamps} from './model';
 import {S3Handler} from '../handlers/s3.handler';
-import {RecipeService} from '../recipe/service';
+import {RecipeService} from '../recipe/service/service';
 import {LocaleUtil} from '../utils/locale.util';
 import {ItemHandler} from '../handlers/item.handler';
 import {NpcHandler} from '../handlers/npc.handler';
@@ -13,6 +13,7 @@ import {HttpClientUtil} from '../utils/http-client.util';
 import {AuthHandler} from '../handlers/auth.handler';
 import {Endpoints} from '../utils/endpoints.util';
 import {NameSpace} from '../enums/name-space.enum';
+import {ClassicRecipeService} from '../recipe/service/classic-recipe.service';
 
 export class UpdatesService {
   static readonly locales = UpdatesService.getLocales();
@@ -89,6 +90,30 @@ export class UpdatesService {
               })
               .then(() => {
                 console.log('Successfully uploaded recipes');
+              })
+              .catch(reject);
+          })
+          .catch(reject);
+      }
+
+      db.end();
+      resolve(true);
+    });
+  }
+
+  static getAndSetClassicRecipes(db: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      for (const locale of this.locales) {
+        await ClassicRecipeService.getAllAfter(0, this.getDbLocale(locale), db)
+          .then(async recipes => {
+            await new S3Handler().save(
+              recipes,
+              `classic/recipe/${locale}.json.gz`,
+              {
+                region: ''
+              })
+              .then(() => {
+                console.log('Successfully uploaded classic recipes');
               })
               .catch(reject);
           })

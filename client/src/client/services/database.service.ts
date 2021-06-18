@@ -293,23 +293,23 @@ export class DatabaseService {
     this.db.table('pets').clear();
   }
 
-  addRecipes(recipes: Recipe[]): void {
+  addRecipes(recipes: Recipe[], isClassic?: boolean): void {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    this.db.table('recipes2').bulkPut(recipes)
+    this.db.table(isClassic ? 'recipesClassic' : 'recipes2').bulkPut(recipes)
       .catch(e =>
         ErrorReport.sendError('DatabaseService.addRecipes', e));
   }
 
-  getAllRecipes(): Promise<Recipe[]> {
+  getAllRecipes(isClassic?: boolean): Promise<Recipe[]> {
     SharedService.downloading.recipes = true;
     return new Promise((resolve, reject) => {
       if (this.shouldNotUseIndexedDB()) {
         return resolve([]);
       }
 
-      this.db.table('recipes2')
+      this.db.table(isClassic ? 'recipesClassic' : 'recipes2')
         .toArray()
         .then(recipes => {
           SharedService.downloading.recipes = false;
@@ -376,11 +376,11 @@ export class DatabaseService {
     });
   }
 
-  async clearRecipes(): Promise<void> {
+  async clearRecipes(isClassic?: boolean): Promise<void> {
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    await this.db.table('recipes2').clear()
+    await this.db.table(isClassic ? 'recipesClassic' : 'recipes2').clear()
       .catch(e =>
         ErrorReport.sendError('DatabaseService.clearRecipes', e));
   }

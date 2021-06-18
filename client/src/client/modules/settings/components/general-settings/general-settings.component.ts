@@ -91,8 +91,9 @@ export class GeneralSettingsComponent implements OnDestroy {
 
   async saveRealmAndRegion() {
     const {realm, region, locale, ahTypeId} = this.form.value;
+    const hasLocaleChanges = this.userChanges.has('locale');
 
-    if (this.userChanges.has('locale')) {
+    if (hasLocaleChanges) {
       localStorage.setItem('locale', locale);
       await Promise.all([
         this.zoneService.get(),
@@ -100,7 +101,7 @@ export class GeneralSettingsComponent implements OnDestroy {
         this.itemService.getItems(),
         this.npcService.get(),
         this.petsService.getPets(),
-        this.craftingService.get()
+        this.craftingService.get(this._realmService.isClassic)
       ])
         .catch(console.error);
 
