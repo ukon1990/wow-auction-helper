@@ -202,19 +202,19 @@ export class ProfitSummaryUtil {
     endDate.setSeconds(59);
     endDate.setMilliseconds(999);
 
-    const expenses: CSVIncomeAndExpense[] = csvData.csvExpense[realm].filter(({time}) =>
+    const expenses: CSVIncomeAndExpense[] = (csvData.csvExpense[realm] || []).filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
-    const income: CSVIncomeAndExpense[] = csvData.csvIncome[realm].filter(({time}) =>
-      this.isWithinTimeLimit(time, startDate, endDate));
-
-    const sales: CSVSaleAndBuys[] = csvData.csvSales[realm].filter(({time}) =>
-      this.isWithinTimeLimit(time, startDate, endDate));
-    const purcheses: CSVSaleAndBuys[] = csvData.csvBuys[realm].filter(({time}) =>
+    const income: CSVIncomeAndExpense[] = (csvData.csvIncome[realm] || []).filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
 
-    const expired: CSVExpiredAndCancelled[] = csvData.csvExpired[realm].filter(({time}) =>
+    const sales: CSVSaleAndBuys[] = (csvData.csvSales[realm] || []).filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
-    const cancelled: CSVExpiredAndCancelled[] = csvData.csvCancelled[realm].filter(({time}) =>
+    const purcheses: CSVSaleAndBuys[] = (csvData.csvBuys[realm] || []).filter(({time}) =>
+      this.isWithinTimeLimit(time, startDate, endDate));
+
+    const expired: CSVExpiredAndCancelled[] = (csvData.csvExpired[realm] || []).filter(({time}) =>
+      this.isWithinTimeLimit(time, startDate, endDate));
+    const cancelled: CSVExpiredAndCancelled[] = (csvData.csvCancelled[realm] || []).filter(({time}) =>
       this.isWithinTimeLimit(time, startDate, endDate));
 
     const result: ItemSaleHistorySummary = this.processData(
@@ -222,7 +222,7 @@ export class ProfitSummaryUtil {
       sales, purcheses,
       expired, cancelled,
       csvData.goldLog[realm] ?
-        csvData.goldLog[realm].All : [],
+        (csvData.goldLog[realm].All || []) : [],
     );
 
     result.avgPerDay = result.sumProfit / DateUtil.getDifferenceInDays(startDate, endDate);
@@ -289,10 +289,12 @@ export class ProfitSummaryUtil {
       dateList.forEach((minute: number, index) => {
         let entry = character.get(minute);
         if (!character.has(minute)) {
-          entry = {
-            ...history[history.length - 1],
+          const previous = history[history.length - 1];
+          entry = previous ? {
+            ...previous,
+            copper: previous.copper,
             minute
-          } || {minute, copper: 0};
+          } : {minute, copper: 0};
         }
 
         const time = entry.minute;

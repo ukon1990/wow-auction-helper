@@ -9,6 +9,7 @@ import {Theme} from '../../../core/models/theme.model';
 import {ThemeUtil} from '../../../core/utils/theme.util';
 import {RowClickEvent} from '../../../table/models/row-click-event.model';
 import {SeriesOptionsType} from 'highcharts';
+import {Report} from '../../../../utils/report.util';
 
 interface TableEntry {
   id: number;
@@ -108,6 +109,7 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
       color: 'rgba(0, 255, 22, 0.7)',
       data: this.data.goldLog,
     }];
+    Report.debug('calculateData', this.data);
     this.goldLogUpdate = !this.goldLogUpdate;
   }
 
