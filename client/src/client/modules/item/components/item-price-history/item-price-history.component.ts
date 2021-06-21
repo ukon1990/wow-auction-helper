@@ -58,6 +58,9 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     data: [],
     color: this.theme.accentColorCode,
     type: 'line',
+    marker: {
+      enabled: false
+    }
   };
   hourlyQuantityChart: SeriesOptionsType = {
     name: 'Quantity',
@@ -65,12 +68,18 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     type: 'line',
     yAxis: 1,
     color: 'hsla(0, 100%, 50%, 0.7)',
+    marker: {
+      enabled: false
+    }
   };
   hourlyPriceChart: SeriesOptionsType = {
     name: 'Prices',
     data: [],
     color: 'rgba(0, 255, 22, 0.7)',
     type: 'line',
+    marker: {
+      enabled: false
+    }
   };
   hourlyChart: SeriesOptionsType[] = [
     this.hourlyQuantityChart,
@@ -96,10 +105,12 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       type: 'line',
       zIndex: 1,
       color: 'rgba(255, 144, 0, 0.8)',
-      marker: {
+      marker: {/*
         fillColor: 'white',
         lineWidth: 2,
         lineColor: 'rgba(255, 144, 0, 0.8)'
+        */
+        enabled: false
       }
     }
   ];
@@ -124,10 +135,12 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       zIndex: 1,
       yAxis: 1,
       color: 'rgba(255, 144, 0, 0.8)',
-      marker: {
+      marker: {/*
         fillColor: 'red',
         lineWidth: 2,
         lineColor: 'hsla(0,100%,50%,0.7)'
+      */
+      enabled: false
       }
     }
   ];
@@ -152,10 +165,12 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       type: 'line',
       zIndex: 1,
       color: this.theme.accentColorCode,
-      marker: {
+      marker: {/*
         fillColor: 'red',
         lineWidth: 2,
-        lineColor: this.theme.accentColorCode
+        lineColor: this.theme.accentColorCode*/
+
+        enabled: false
       }
     }
   ];

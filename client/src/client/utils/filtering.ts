@@ -153,6 +153,9 @@ export class Filters {
     if (!professionId) {
       return true;
     }
+    if (professionId === -1) {
+      professionId = null;
+    }
 
     const recipe: Recipe = CraftingService.map.value.get(id);
 

@@ -23,8 +23,11 @@ export class NpcService {
   isLoading = false;
   lastModified: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  // , private db: DatabaseService,
-  constructor(private http: HttpClient, private zoneService: ZoneService) {
+  constructor(
+    private http: HttpClient,
+    private zoneService: ZoneService,
+    private db: DatabaseService,
+  ) {
   }
 
   getAll(forceUpdate = false, latestTimestamp?: Date): Promise<NPC[]> {
@@ -33,14 +36,12 @@ export class NpcService {
     }
     return new Promise<NPC[]>(async (resolve) => {
       const timestamp = localStorage.getItem(this.storageName);
-      /*
       await this.db.getAllNPCs()
         .then(list => {
           this.mapAndSetNextValueForNPCs(list);
         })
         .catch(error =>
           ErrorReport.sendError('NpcService.getAll', error));
-      */
 
       if (!NpcService.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
         await this.get()
@@ -67,17 +68,17 @@ export class NpcService {
       await this.http.get(`${Endpoints.S3_BUCKET}/npc/${locale}.json.gz?lastModified=${this.lastModified.value}`)
         .toPromise()
         .then(async (response) => {
-          // await this.db.clearNPCs();
+          await this.db.clearNPCs();
           SharedService.downloading.npc = false;
           const list = response['npcs'],
             map = {};
           this.isLoading = false;
           this.setTimestamp(response);
           this.mapAndSetNextValueForNPCs(response['npcs']);
-          /*
+
           this.db.addNPCs(response['npcs'])
             .catch(console.error);
-          */
+
 
           console.log('Downloaded and saved NPC data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
           resolve(list);
