@@ -15,6 +15,7 @@ import {AuctionsService} from '../../../../services/auctions.service';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
+  private isClassic = false;
   inProd = environment.production;
   updated = {
     recipes: {
@@ -59,7 +60,7 @@ export class UpdateComponent implements OnInit {
       this.updated.recipes.list = [];
       CraftingService.list.value
         .filter((recipe: Recipe) =>
-          Filters.isExpansionMatch(recipe.itemID, 7))
+          Filters.isExpansionMatch(recipe.itemID, 7, this.isClassic))
         .forEach(r => {
           if (r) {
             this.updated.recipes.list.push(r);
@@ -155,7 +156,7 @@ export class UpdateComponent implements OnInit {
 
   printData() {
     const recipes = CraftingService.list.value.filter(r =>
-      Filters.isExpansionMatch(r.itemID, 7)).slice(0, 99);
+      Filters.isExpansionMatch(r.itemID, 7, this.isClassic)).slice(0, 99);
     const pets = Object.keys(SharedService.pets)
       .map(k =>
         SharedService.pets[k]).slice(0, 99);

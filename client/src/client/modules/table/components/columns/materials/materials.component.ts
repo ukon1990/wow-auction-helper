@@ -90,6 +90,6 @@ export class MaterialsComponent implements OnInit {
 
   getAhCountTooltip(id: number) {
     return `There are currently ${
-      NumberUtil.format(this.getAtAHCount(id)) } at the auction house. Click for details.`;
+      NumberUtil.format(this.getAtAHCount(id)) } at the auction house.`;
   }
 }

@@ -4,7 +4,10 @@
   <mat-card *ngIf="r.intermediateEligible && useIntermediateCrafting(); else regular" class="p-0 m-0 pt-2 pb-2">
     <mat-card-header (click)="setSelectedItem(r)">
       <mat-card-subtitle>
-        <a class="col-md-12" rel="spell={{ r.recipe.id }}"
+        <a class="col-md-12"
+           wahItemTooltip
+           [item]="r.recipe"
+           linkType="recipe"
            [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }">
           <wah-icon *ngIf="r.id" class="float-left" size="22" [id]="r.id"></wah-icon>
           {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} -
@@ -19,9 +22,11 @@
       <div class="ml-3 mr-1 mb-1"
            *ngFor="let subR of r.recipe.reagents"
            (click)="setSelectedItem(subR)">
-        <a rel="item={{ subR.id }}"
+        <a
+           wahItemTooltip
+           [item]="subR"
            [ngClass]="{'not-found': !isEnoughAtAH(subR.id, subR.quantity) }"
-           [matTooltip]="getAhCountTooltip(subR.id)">
+           [extra]="getAhCountTooltip(subR.id)">
           <wah-icon *ngIf="subR.id" class="float-left" size="22" [id]="subR.id"></wah-icon>
           {{ subR.quantity * r.quantity / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }}
           x {{ getItemName(subR.id) }} -
@@ -37,9 +42,10 @@
   <!-- No reasonable intermidiate crafts available -->
   <ng-template #regular>
     <div (click)="setSelectedItem(r)">
-      <a rel="item={{ r.id }}"
+      <a wahItemTooltip
+         [item]="r"
          [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }"
-         [matTooltip]="getAhCountTooltip(r.id)">
+         [extra]="getAhCountTooltip(r.id)">
         <wah-icon *ngIf="r.id"
                   class="float-left"
                   size="22"

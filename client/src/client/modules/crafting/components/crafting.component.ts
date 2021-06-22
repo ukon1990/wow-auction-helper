@@ -48,7 +48,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
   private lastCalculationTime: number;
 
   columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'name', title: 'Name', dataType: 'name', options: {
+        tooltipType: 'recipe',
+      }},
     {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true, canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
