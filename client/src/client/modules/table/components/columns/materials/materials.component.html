@@ -7,7 +7,7 @@
         <a class="col-md-12"
            wahItemTooltip
            [item]="r.recipe"
-           linkType="recipe"
+           linkType="item"
            [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }">
           <wah-icon *ngIf="r.id" class="float-left" size="22" [id]="r.id"></wah-icon>
           {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} -
