@@ -1,5 +1,5 @@
 import {APIGatewayEvent, Callback, Context} from 'aws-lambda';
-import {RecipeService} from './service';
+import {RecipeService} from './service/service';
 import {Response} from '../utils/response.util';
 import {DatabaseUtil} from '../utils/database.util';
 

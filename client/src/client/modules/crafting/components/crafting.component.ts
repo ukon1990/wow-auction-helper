@@ -48,7 +48,9 @@ export class CraftingComponent implements OnInit, OnDestroy {
   private lastCalculationTime: number;
 
   columns: ColumnDescription[] = [
-    {key: 'name', title: 'Name', dataType: 'name'},
+    {key: 'name', title: 'Name', dataType: 'name'/*, options: {
+        tooltipType: 'recipe',
+      }*/},
     {key: 'reagents', title: 'Materials (min vs avg price)', dataType: 'materials', hideOnMobile: true, canNotSort: true},
     {key: 'cost', title: 'Cost', dataType: 'gold', hideOnMobile: true},
     {key: 'buyout', title: 'Buyout', dataType: 'gold'},
@@ -184,7 +186,7 @@ export class CraftingComponent implements OnInit, OnDestroy {
             && Filters.isDailySoldMatch(recipe.itemID, changes.minSold, false)
             && Filters.recipeIsProfessionMatch(recipe.id, changes.professionId)
             && Filters.isItemClassMatch(recipe.itemID, changes.itemClass, changes.itemSubClass)
-            && Filters.isExpansionMatch(recipe.itemID, changes.expansion, SharedService.user.ahTypeId);
+            && Filters.isExpansionMatch(recipe.itemID, changes.expansion, this.isClassic);
         }
         return false;
       })

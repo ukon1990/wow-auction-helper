@@ -60,7 +60,8 @@ import { CartCountComponent } from './components/columns/cart-count/cart-count.c
   exports: [
     DataTableComponent,
     SortIconComponent,
-    MaterialsComponent
+    MaterialsComponent,
+    NameComponent
   ]
 })
 export class TableModule {

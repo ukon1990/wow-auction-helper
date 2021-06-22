@@ -16,6 +16,7 @@ import {columnConfig} from '../../../dashboard/data/columns.data';
 import {GameBuild} from '../../../../utils/game-build.util';
 import {ItemClass} from '../../../item/models/item-class.model';
 import {ItemClassService} from '../../../item/service/item-class.service';
+import {RealmService} from '../../../../services/realm.service';
 
 @Component({
   selector: 'wah-market-reset',
@@ -58,7 +59,11 @@ export class MarketResetComponent implements OnInit {
   private lastCharacterTyped: number;
   private lastCalculationTime: number;
 
-  constructor(private formBuilder: FormBuilder, private auctionService: AuctionsService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private auctionService: AuctionsService,
+    private realmService: RealmService
+  ) {
     SharedService.events.title.next('Market resetter');
     const query = this.getQuery();
     this.form = this.formBuilder.group({
@@ -139,7 +144,7 @@ export class MarketResetComponent implements OnInit {
     this.auctionService.list.value.forEach(ai => {
       if (
         !Filters.isNameMatch(ai.itemID, query.name) ||
-        !Filters.isExpansionMatch(ai.itemID, query.expansion) ||
+        !Filters.isExpansionMatch(ai.itemID, query.expansion, this.realmService.isClassic) ||
         !Filters.isItemClassMatch(ai.itemID, query.itemClass, query.itemSubClass)
       ) {
         return;
