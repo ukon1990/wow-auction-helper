@@ -1,5 +1,5 @@
 import {RecipeService} from './service';
-import {DatabaseUtil} from '../utils/database.util';
+import {DatabaseUtil} from '../../utils/database.util';
 
 describe('RecipeService', () => {
   it('getById', async () => {

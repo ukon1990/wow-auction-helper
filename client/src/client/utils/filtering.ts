@@ -133,11 +133,11 @@ export class Filters {
       SharedService.items[itemID].name : '';
   }
 
-  public static isExpansionMatch(itemID: number, expansionId: number, ahTypeId: number = 0): boolean {
+  public static isExpansionMatch(itemID: number, expansionId: number, isClassic: boolean): boolean {
     const item: Item = SharedService.items[itemID] as Item;
 
     // If we are on classic, and the recipe is for an expansion after TBC
-    if (item && ahTypeId > 0 && item.expansionId > 1) {
+    if (item && isClassic && item.expansionId > 1) {
       return false;
     }
 
