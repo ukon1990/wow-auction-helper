@@ -4,10 +4,10 @@
   <div class="row">
     <a mat-card-avatar
        class="col-md-12"
-       rel="domain={{ locale }},{{
-              getPet() ?
-              ('npc=' + getPet().creatureId) : ('item=' + selected?.item?.id)
-            }}">
+       wahItemTooltip
+       [item]="getPet() ? getPet() : selected?.auctionItem || selected?.item"
+       [linkType]="getPet() ? 'npc' : 'item'"
+    >
       <wah-icon *ngIf="selected?.item?.id"
                 size="36"
                 [id]="selected?.item?.id"
@@ -126,8 +126,8 @@
     <mat-option *ngFor="let variation of itemVariations"
                 (click)="openVariation(variation)"
     >
-      {{ variation.itemLevel }} - {{variation.name}} -
-      {{variation.buyout | gold}} - {{ variation.quantityTotal | number }} pcs
+      {{ variation.itemLevel }} - {{ variation.name }} -
+      {{ variation.buyout | gold }} - {{ variation.quantityTotal | number }} pcs
     </mat-option>
   </mat-select>
 
@@ -139,7 +139,7 @@
     WoWDB
     <i class="fas fa-external-link-square-alt"></i>
   </button>
-  <button (click)="openInNewTab('http://www.wowhead.com/item=' + selected.item?.id, 'WoWHead')"
+  <button (click)="openInNewTab(wowheadBaseUrl + selected.item?.id, 'WoWHead')"
           mat-stroked-button
           color="primary"
   >

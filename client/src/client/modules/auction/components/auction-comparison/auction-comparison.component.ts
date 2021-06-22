@@ -118,7 +118,7 @@ export class AuctionComparisonComponent implements OnInit, OnDestroy {
       Filters.isBelowSellToVendorPrice(item.itemID, changes.onlyVendorSellable) &&
       Filters.isItemAboveQuality(item.itemID, changes.minItemQuality) &&
       Filters.isAboveItemLevel(item.itemID, changes.minItemLevel) &&
-      Filters.isExpansionMatch(item.itemID, changes.expansion) &&
+      Filters.isExpansionMatch(item.itemID, changes.expansion, this.realmService.isClassic) &&
       (!changes.buyoutDifference || item.buyoutDifference >= changes.buyoutDifference) &&
       (!changes.buyoutDifferencePercent || item.buyoutDifferencePercent >= changes.buyoutDifferencePercent / 100);
   }

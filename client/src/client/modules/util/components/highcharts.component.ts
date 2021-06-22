@@ -40,6 +40,11 @@ addMore(Highcharts);
   `
 })
 export class HighchartsComponent implements OnChanges, OnDestroy {
+  /**
+   * TODO: Calculate outliers and find a way to set the "min and max" value from there
+   * Allow the user to select linear or logarithmic graph
+   * @private
+   */
   private goldPipe = new GoldPipe();
   Highcharts: typeof Highcharts = Highcharts;
   isReady: boolean;

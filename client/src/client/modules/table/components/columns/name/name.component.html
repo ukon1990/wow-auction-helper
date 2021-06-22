@@ -5,8 +5,9 @@
       >
         <a wahItemTooltip
            [item]="row"
-           [rel]="relData"
-           matTooltip="You can click item names, to get more information about them."
+           [column]="column"
+           [idName]="idName"
+           [linkType]="linkType"
            [routerLink]="routerLink">
           <wah-icon *ngIf="!(column && column.options && column.options.noIcon) && itemId" class="float-left"
                     [size]="iconSize ? iconSize : 36" [id]="itemId"

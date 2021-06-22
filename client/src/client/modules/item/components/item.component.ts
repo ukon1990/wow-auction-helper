@@ -22,6 +22,7 @@ import {ItemDetailsUtil} from '../utils/item-details.util';
 import {ShoppingCartService} from '../../shopping-cart/services/shopping-cart.service';
 import {Item} from '../../../models/item/item';
 import {ErrorReport} from '../../../utils/error-report.util';
+import {RealmService} from '../../../services/realm.service';
 
 @Component({
   selector: 'wah-item',
@@ -30,6 +31,7 @@ import {ErrorReport} from '../../../utils/error-report.util';
 })
 export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy {
   @ViewChild('tabs') tabs;
+  wowheadBaseUrl: string;
 
   ignoreNextSelectionHistoryFormChange = false;
   itemSelectionHistoryForm: FormControl = new FormControl(0);
@@ -82,6 +84,7 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
 
   constructor(private _wowDBService: WowdbService,
               private npcService: NpcService,
+              private realmService: RealmService,
               private zoneService: ZoneService,
               private auctionService: AuctionsService,
               private itemService: ItemService,
@@ -271,6 +274,9 @@ export class ItemComponent implements AfterViewInit, AfterContentInit, OnDestroy
     } catch (error) {
       ErrorReport.sendError('ItemComponent.setSelection', error);
     }
+    this.wowheadBaseUrl = `http://${
+      this.realmService.isClassic ? 'tbc' : 'www'
+    }.wowhead.com/item=`;
   }
 
 

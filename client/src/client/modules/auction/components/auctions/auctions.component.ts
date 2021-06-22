@@ -165,6 +165,6 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
       Filters.isBelowSellToVendorPrice(auctionItem.itemID, changes.onlyVendorSellable) &&
       Filters.isItemAboveQuality(auctionItem.itemID, changes.minItemQuality) &&
       Filters.isAboveItemLevel(auctionItem.itemID, changes.minItemLevel) &&
-      Filters.isExpansionMatch(auctionItem.itemID, changes.expansion);
+      Filters.isExpansionMatch(auctionItem.itemID, changes.expansion, this.isClassic);
   }
 }

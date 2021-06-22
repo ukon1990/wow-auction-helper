@@ -79,10 +79,12 @@ export class ItemService {
       .catch(console.error);
   }
 
-  getTooltip(id: number, bonusIds: number[]): Promise<string> {
-    let url = 'https://www.wowhead.com/tooltip/item/' + id + '?';
+  getTooltip(type: string, id: number, bonusIds: number[]): Promise<Element> {
+    const isClassic = this.realmService.isClassic;
+    const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
+    let url = `https://${isClassic ? 'tbc' : 'www'}.wowhead.com/tooltip/${type}/${id}?locale=${locale}`;
     if (bonusIds && bonusIds.length) {
-      url += 'bonus=' + bonusIds.join(':');
+      url += '&bonus=' + bonusIds.join(':');
     }
     return new Promise((resolve, reject) => {
       this._http.get(url)

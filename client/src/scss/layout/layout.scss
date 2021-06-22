@@ -16,6 +16,57 @@
   z-index: 2000 !important;
 }
 
+.item-name {
+  display: inherit;
+
+  .wah-tooltip {
+    display: none;
+  }
+
+  .wah-tooltip.wowhead-tooltip {
+    td, th {
+      background: none !important;
+    }
+  }
+  table tbody tr {
+    background: none !important;
+  }
+
+  &:hover {
+    .wah-tooltip {
+      margin-top: .5rem;
+      display: block;
+      visibility: visible;
+      position: absolute;
+      background: #2f354a; /*rgb(18 21 31 / 96%)*/
+      padding: .5rem;
+      width: 25rem;
+      max-width: 95%;
+
+      .tooltip-extra {
+        font-family: Verdana,"Open Sans",Arial,"Helvetica Neue",Helvetica,sans-serif;
+        font-size: 12px;
+        line-height: 17px;
+        color: #fff;
+
+        padding: .5rem;
+      }
+
+      table:first-child {
+        width: 100%;
+
+        td {
+          border: none;
+          width: 100%;
+          background: none;
+
+          table:first-child th {}
+        }
+      }
+    }
+  }
+}
+
 .cdk-overlay-container {
   z-index: 1030 !important;
 }
@@ -187,6 +238,7 @@ wah-materials,
   .mat-menu-panel {
     max-width: 100% !important;;
     width: 100% !important;;
+
     a, button {
       width: 100% !important;
     }
@@ -234,6 +286,7 @@ form {
     padding-top: 1rem;
   }
 }
+
 .shopping-cart {
   .table tr td mat-form-field.mat-form-field, table tr td .input-column {
     width: 4em !important;;
