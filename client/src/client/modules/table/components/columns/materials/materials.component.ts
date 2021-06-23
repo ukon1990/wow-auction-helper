@@ -10,6 +10,7 @@ import {NpcService} from '../../../../npc/services/npc.service';
 import {ItemNpcDetails} from '../../../../item/models/item-npc-details.model';
 import {AuctionsService} from '../../../../../services/auctions.service';
 import {CraftingService} from '../../../../../services/crafting.service';
+import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 
 @Component({
   selector: 'wah-materials',
@@ -19,6 +20,7 @@ import {CraftingService} from '../../../../../services/crafting.service';
 export class MaterialsComponent implements OnInit {
   @Input() recipe: Recipe;
   @Input() recipeId: number;
+  private goldPipe: GoldPipe = new GoldPipe();
 
   constructor(private auctionService: AuctionsService) {
   }
@@ -62,6 +64,15 @@ export class MaterialsComponent implements OnInit {
     return CustomProcUtil.get(recipe);
   }
 
+  getPriceString(reagent: Reagent): string {
+    const avgPrice = reagent.avgPrice;
+    const minPrice = this.getItemValue(reagent.id);
+    if (avgPrice === minPrice || !avgPrice) {
+      return this.goldPipe.transform(minPrice);
+    }
+    return `${this.goldPipe.transform(avgPrice)}${this.getReagentFromVendorString(reagent)}`;
+  }
+
   vendorTooltip(reagent: Reagent): string {
     if (this.usingVendor) {
       const item: ItemNpcDetails = NpcService.itemNpcMap.value.get(reagent.id);
@@ -88,8 +99,17 @@ export class MaterialsComponent implements OnInit {
       SharedService.items[reagent.id].vendorBoughtLimit >= reagent.quantity;
   }
 
-  getAhCountTooltip(id: number) {
-    return `There are currently ${
-      NumberUtil.format(this.getAtAHCount(id)) } at the auction house.`;
+  getAhCountTooltip(reagent: Reagent) {
+    const ahCountString = `There are currently ${
+      NumberUtil.format(this.getAtAHCount(reagent.id)) } at the auction house.`;
+    const vendorTooltip = this.usingVendor(reagent) ?
+      `<div class="row col-md-12">${this.vendorTooltip(reagent)}</div>` : '';
+    return `
+      <div class="row col-md-12">${ahCountString}</div>
+      ${vendorTooltip}
+      <div class="row col-md-12">Avg price for ${reagent.quantity}: ${this.goldPipe.transform(reagent.avgPrice)}</div>
+      <div class="row col-md-12">Min buyout: ${this.goldPipe.transform(this.getItemValue(reagent.id))}</div>
+      <div class="row col-md-12">Sum cost: ${this.goldPipe.transform(reagent.sumPrice)}</div>
+    `;
   }
 }
