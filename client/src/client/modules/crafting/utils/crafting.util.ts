@@ -87,9 +87,9 @@ export class CraftingUtil {
     const itemNpcDetails = NpcService.itemNpcMap.value.get(itemID);
     if (itemNpcDetails) {
       if (itemNpcDetails.soldBy.length && SharedService.user.useVendorPriceForCraftingIfAvailable) {
-        if (!this.auctionService.getById(itemID)) {
+        if (!this.auctionService.getById(itemID) || !this.auctionService.getById(itemID).quantityTotal) {
           return true;
-        } else if (itemNpcDetails.vendorBuyPrice < this.auctionService.getById(itemID).buyout) {
+        } else if (itemNpcDetails.vendorBuyPrice < this.auctionService.getById(itemID).buyout && itemNpcDetails.vendorAvailable === 0) {
           return true;
         }
       }

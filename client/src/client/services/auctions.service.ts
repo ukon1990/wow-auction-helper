@@ -200,7 +200,7 @@ export class AuctionsService {
     }
 
     const previousLastModified = +localStorage['timestamp_auctions'];
-    if (this.shouldDownload(status, previousLastModified)) {
+    if (this.shouldDownload(status, previousLastModified) || status.ahTypeIsChanged) {
       this.getAuctions()
         .catch(console.error);
     }

@@ -1,5 +1,5 @@
 <form [formGroup]="form" class="row col">
-  <mat-form-field class="col-md-6"
+  <mat-form-field class="col-md-{{isClassic ? '12' : '6'}}"
                   color="accent"
                   [matTooltip]="strategies[form.controls.strategy.value]?.description"
   >
@@ -16,7 +16,7 @@
     </mat-select>
   </mat-form-field>
 
-  <div class="col-md-6">
+  <div class="col-md-6" *ngIf="!isClassic">
     <mat-checkbox formControlName="intermediate">
       Intermediate crafting
     </mat-checkbox>
