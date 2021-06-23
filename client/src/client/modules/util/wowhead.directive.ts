@@ -53,7 +53,7 @@ export class WowheadDirective {
     if ((this.item as AuctionItem).petSpeciesId || (this.item as any).speciesId) {
       type = 'npc';
       id = ((this.item as any).creatureId ? (this.item as any).creatureId : this.creatureId);
-    } else if ((this.item as Recipe).spellId && type === 'recipe') {
+    } else if ((this.item as Recipe).spellId && (type === 'recipe' || (this.item as Recipe).craftedItemId  <= 0)) {
       id = (this.item as Recipe).spellId;
       type = 'spell';
     } else {
