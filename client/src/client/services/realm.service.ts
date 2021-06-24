@@ -160,10 +160,6 @@ export class RealmService {
     }));
   }
 
-  private openSnackbar(message: string): void {
-    this.matSnackBar.open(message, 'Ok', {duration: 3000});
-  }
-
   public handleRealms(realms: any[]) {
     if (ArrayUtil.isArray(realms)) {
       Object.keys(SharedService.realms).forEach(key => {

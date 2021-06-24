@@ -21,6 +21,7 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
 import {AuctionHouseStatus} from "../modules/auction/models/auction-house-status.model";
+import {GameBuild} from "../utils/game-build.util";
 
 class ItemResponse {
   timestamp: Date;
@@ -153,8 +154,11 @@ export class ItemService {
     const list: Item[] = [];
     const mapped = new Map<number, Item>();
 
-    // TODO: Remove or move?
     items.items.forEach((item: Item) => {
+      // Removing non current items from classic
+      if (isClassic && item.classicPhase <= GameBuild.latestClassicPhase) {
+        return;
+      }
       // Making sure that the tradevendor item names are updated in case of locale change
       if (SharedService.tradeVendorMap[item.id]) {
         SharedService.tradeVendorMap[item.id].name = item.name;
