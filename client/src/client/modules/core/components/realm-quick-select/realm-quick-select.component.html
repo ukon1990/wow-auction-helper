@@ -1,13 +1,13 @@
 <form [formGroup]="form">
-  <mat-form-field *ngIf="realmList.length">
+  <mat-form-field>
     <mat-select placeholder="Faction"
                 formControlName="faction"
                 matTooltip="Only relevant for the shopping cart">
       <mat-option [value]="0">
-        Alliance ({{ realmListMap[form.getRawValue().realm]?.factions[0] || 0 | number }})
+        Alliance <span *ngIf="realmList.length">({{ realmListMap[form.getRawValue().realm]?.factions[0] || 0 | number }})</span>
       </mat-option>
       <mat-option [value]="1">
-        Horde ({{ realmListMap[form.getRawValue().realm]?.factions[1] || 0 | number }})
+        Horde <span *ngIf="realmList.length">({{ realmListMap[form.getRawValue().realm]?.factions[1] || 0 | number }})</span>
       </mat-option>
     </mat-select>
   </mat-form-field>

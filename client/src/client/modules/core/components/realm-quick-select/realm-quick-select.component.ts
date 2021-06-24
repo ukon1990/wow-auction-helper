@@ -56,7 +56,7 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
       ahTypeId: this.getFormValueFor('ahTypeId'),
       region: this.getFormValueFor('region'),
       realm: this.getFormValueFor('realm'),
-      faction: this.getFormValueFor('faction')
+      faction: this.getFaction()
     }, {emitEvent: false});
 
     this.sm.add(this.realmService.events.list,
@@ -200,6 +200,15 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     }
     const {realm, region} = this.form.value;
     const ahTypeIdForFaction = faction === 1 ? 6 : 2;
+    if (this.realmService.events.realmStatus.value.gameBuild > 0) {
+      this.form.controls.ahTypeId.setValue(ahTypeIdForFaction);
+      this.realmService.changeRealm(realm, region, ahTypeIdForFaction)
+        .then((status) => {
+          Report.send('handleRealmChange', 'RealmQuickSelectComponent');
+        })
+        .catch(error =>
+          ErrorReport.sendError('RealmQuickSelectComponent', error));
+    }
     this.settingSync.updateSettings({faction, realm, region, ahTypeId: ahTypeIdForFaction});
     this.craftingService.handleRecipes(CraftingService.list.value);
 
@@ -216,6 +225,23 @@ export class RealmQuickSelectComponent implements OnInit, OnDestroy {
     const {region, realm, faction, ahTypeId} = settings;
     if (region !== prevRegion || realm !== prevRealm || faction !== prevFaction) {
       this.form.setValue({region, realm, faction: faction || 0, ahTypeId}, {emitEvent: false});
+    }
+  }
+
+  private getFaction() {
+    const faction = this.getFormValueFor('faction');
+    const ahTypeId = this.getFormValueFor('ahTypeId');
+    if (faction) {
+      return faction;
+    }
+    if (ahTypeId) {
+      switch (ahTypeId) {
+        case 0:
+        case 2:
+          return 0;
+        default:
+          return 1;
+      }
     }
   }
 }

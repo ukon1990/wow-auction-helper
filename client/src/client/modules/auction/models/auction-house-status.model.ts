@@ -22,4 +22,5 @@ export class AuctionHouseStatus extends RealmStatus {
 
   // To check for initial load
   isInitialLoad?: boolean;
+  ahTypeIsChanged?: boolean;
 }

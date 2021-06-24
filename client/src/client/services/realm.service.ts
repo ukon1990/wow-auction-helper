@@ -67,7 +67,7 @@ export class RealmService {
   }
 
   async changeRealm(realm: string, region: string = SharedService.user.region, ahTypeId: number = SharedService.user.ahTypeId) {
-    console.log('Change realm input', realm, region);
+    const ahTypeChanged = SharedService.user.ahTypeId !== ahTypeId;
     SharedService.user.region = region;
     SharedService.user.realm = realm;
     SharedService.user.ahTypeId = ahTypeId;
@@ -77,7 +77,9 @@ export class RealmService {
       this.getStatus(
         SharedService.user.region,
         realm,
-        true)
+        true,
+        ahTypeChanged
+      )
         .then(status => {
           this.events.realmChanged.emit(status);
           resolve(status);
@@ -94,7 +96,7 @@ export class RealmService {
       Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
-  getStatus(region?: string, realm?: string, isInitialLoad = false): Promise<AuctionHouseStatus> {
+  getStatus(region?: string, realm?: string, isInitialLoad = false, ahTypeIdChanged = false): Promise<AuctionHouseStatus> {
     if (!region || !realm && SharedService.user.realm) {
       region = SharedService.user.region;
       realm = SharedService.user.realm;
@@ -110,6 +112,7 @@ export class RealmService {
         .then(async (status: AuctionHouseStatus) => {
           const isClassic = status.gameBuild > 0;
           const recipeLength = CraftingService.list.value.length;
+          status.ahTypeIsChanged = ahTypeIdChanged;
 
           if (this.isClassic !== undefined && isClassic !== this.isClassic && recipeLength) {
             await this.craftingService.load(undefined, isClassic)

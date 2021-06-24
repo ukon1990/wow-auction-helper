@@ -11,7 +11,7 @@
            [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }">
           <wah-icon *ngIf="r.id" class="float-left" size="22" [id]="r.id"></wah-icon>
           {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ r.recipe.name }} -
-          <span class="float-right" [matTooltip]="usingVendor(r) ? vendorTooltip(r) : ''">
+          <span class="float-right">
             {{ r.recipe.cost | gold }}
             {{ getReagentFromVendorString(r) }}
           </span>
@@ -26,13 +26,12 @@
            wahItemTooltip
            [item]="subR"
            [ngClass]="{'not-found': !isEnoughAtAH(subR.id, subR.quantity) }"
-           [extra]="getAhCountTooltip(subR.id)">
+           [extra]="getAhCountTooltip(subR)">
           <wah-icon *ngIf="subR.id" class="float-left" size="22" [id]="subR.id"></wah-icon>
           {{ subR.quantity * r.quantity / getMinCount(recipe) / getMinCount(r.recipe) | number : '1.2' }}
           x {{ getItemName(subR.id) }} -
-          <span class="float-right" [matTooltip]="usingVendor(subR) ? vendorTooltip(subR) : ''">
-            {{ getItemValue(subR.id) | gold }}
-            {{ getReagentFromVendorString(subR) }} / {{subR.avgPrice | gold}}
+          <span class="float-right">
+            {{ getPriceString(subR) }}
           </span>
         </a>
       </div>
@@ -45,16 +44,14 @@
       <a wahItemTooltip
          [item]="r"
          [ngClass]="{'not-found': !isEnoughAtAH(r.id, r.quantity) }"
-         [extra]="getAhCountTooltip(r.id)">
+         [extra]="getAhCountTooltip(r)">
         <wah-icon *ngIf="r.id"
                   class="float-left"
                   size="22"
                   [id]="r.id"></wah-icon>
         {{ r.quantity / getMinCount(recipe) | number : '1.2' }} x {{ getItemName(r.id) }} -
-        <span class="float-right" [ngClass]="{'not-found': !vendorHasEnough(r) && usingVendor(r)}"
-              [matTooltip]="vendorTooltip(r)">
-          {{ getItemValue(r.id) | gold }}
-          {{ getReagentFromVendorString(r) }} / {{r.avgPrice | gold}}
+        <span class="float-right" [ngClass]="{'not-found': !vendorHasEnough(r) && usingVendor(r)}">
+          {{ getPriceString(r) }}
         </span>
       </a>
     </div>
