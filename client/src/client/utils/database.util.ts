@@ -8,6 +8,8 @@ export class DatabaseUtil {
   private readonly WOWUCTION_TABLE_COLUMNS = 'id,mktPrice,avgDailyed,avgDailySold,estDemand,dailyPriceChange';
   private readonly ITEM_TABLE_COLUMNS = 'id,name,icon,itemLevel,itemClass,itemSubClass,quality,itemSpells'
     + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation';
+  private readonly ITEM_CLASSIC_TABLE_COLUMNS = 'id,name,icon,itemLevel,itemClass,itemSubClass,quality,itemSpells'
+    + ',itemSource,buyPrice,sellPrice,itemBind,minFactionId,minReputation,classicPhase';
   private readonly PET_TABLE_COLUMNS = 'speciesId,petTypeId,creatureId,name,icon,description,source';
   private readonly AUCTIONS_TABLE_COLUMNS = 'auc,item,owner,ownerRealm,bid,buyout,quantity,timeLeft,rand,seed,context,realm,timestamp';
   private readonly RECIPE_TABLE_COLUMNS = 'id,icon,name,description,rank,craftedItemId,hordeCraftedItemId,' +
@@ -155,6 +157,24 @@ export class DatabaseUtil {
       'classic-auctions': this.AUCTIONS_TABLE_COLUMNS,
       tsm: this.TSM_TABLE_COLUMNS,
       items: this.ITEM_TABLE_COLUMNS,
+      pets: this.PET_TABLE_COLUMNS,
+      recipes2: this.RECIPE_TABLE_COLUMNS,
+      recipesClassic: this.RECIPE_TABLE_COLUMNS,
+      npcsBase: this.NPC_TABLE_COLUMNS,
+      npcsDrops: this.NPC_ENTRY_COLUMNS,
+      npcsSells: this.NPC_ENTRY_COLUMNS,
+      npcsSkinns: this.NPC_ENTRY_COLUMNS,
+      zones: this.ZONE_TABLE_COLUMNS,
+      professions: this.PROFESSION_TABLE_COLUMNS,
+      addons: this.ADDON,
+      dashboards: this.DASHBOARD_TABLE_COLUMNS
+    },
+    {
+      auctions: this.AUCTIONS_TABLE_COLUMNS,
+      auctionsClassic: this.AUCTIONS_TABLE_COLUMNS,
+      tsm: this.TSM_TABLE_COLUMNS,
+      items: this.ITEM_TABLE_COLUMNS,
+      itemsClassic: this.ITEM_CLASSIC_TABLE_COLUMNS,
       pets: this.PET_TABLE_COLUMNS,
       recipes2: this.RECIPE_TABLE_COLUMNS,
       recipesClassic: this.RECIPE_TABLE_COLUMNS,

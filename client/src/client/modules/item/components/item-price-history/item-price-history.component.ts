@@ -296,7 +296,10 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
         quantity: reagent.quantity / recipe.minCount,
         name: this.auctionService.getById(reagent.id) ? this.auctionService.getById(reagent.id).name : '' + reagent.id,
       }));
-      this.service.getPriceHistory(this.getReagentsForRecipe(recipe))
+      this.service.getPriceHistory(
+        this.getReagentsForRecipe(recipe),
+        this.realmService.events.realmStatus.value
+      )
         .then(result => {
           this.handleRecipeReagentResult(result);
           resolve();
@@ -308,7 +311,9 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   }
 
   private handleRecipeReagentResult(
-    result: Map<string, ItemPriceEntryResponse> = this.service.getLocalPriceHistoryForRealm(),
+    result: Map<string, ItemPriceEntryResponse> = this.service.getLocalPriceHistoryForRealm(
+      this.realmService.events.realmStatus.value.id
+    ),
     recipe: Recipe = this.form.value.recipe
   ) {
     this.hourlyCostChart['data'] = [];
@@ -356,7 +361,9 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       petSpeciesId: auctionItem.petSpeciesId || -1,
       ahTypeId: this.ahTypeId,
       bonusIds: auctionItem.bonusIds
-    }, ...reagents])
+    }, ...reagents],
+      this.realmService.events.realmStatus.value
+    )
       .then(async (history) => {
         const {itemID, petSpeciesId = -1, bonusIds} = auctionItem;
         this.priceHistory = history.get(`${itemID}-${petSpeciesId}-${AuctionItemStat.bonusIdRaw(bonusIds)}-${this.ahTypeId}`);

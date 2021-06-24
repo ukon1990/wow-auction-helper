@@ -20,6 +20,7 @@ import {BehaviorSubject} from 'rxjs';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionItemStat} from '../../../../api/src/auction/models/auction-item-stat.model';
 import {AhStatsRequest} from '../../../../api/src/auction/models/ah-stats-request.model';
+import {AuctionHouseStatus} from "../modules/auction/models/auction-house-status.model";
 
 class ItemResponse {
   timestamp: Date;
@@ -41,33 +42,33 @@ export class ItemService {
   constructor(private _http: HttpClient,
               private dbService: DatabaseService,
               public snackBar: MatSnackBar,
-              private realmService: RealmService,
               public platform: Platform) {
-    this.sm.add(this.realmService.events.realmStatus, () => {
-      this.historyMap.next(new Map());
-    });
+  }
+
+  clearItemHistoryMap(): void {
+    this.historyMap.next(new Map());
   }
 
   addToSelectionHistory(newValue: any): void {
     this.selectionHistory.next( [newValue, ...this.selectionHistory.value]);
   }
 
-  async loadItems(latestTimestamp: Date) {
-    await this.dbService.getAllItems()
+  async loadItems(latestTimestamp: Date, isClassic = SharedService.user.gameVersion > 0) {
+    await this.dbService.getAllItems(isClassic)
       .then(async (items) => {
         if (items.length === 0) {
-          delete localStorage['timestamp_items'];
+          localStorage.removeItem(this.getStorageKey(isClassic));
         }
-        this.handleItems({items, timestamp: latestTimestamp}, false);
+        this.handleItems({items, timestamp: latestTimestamp}, false, isClassic);
       })
       .catch(async error => {
         delete localStorage['timestamp_items'];
         ErrorReport.sendError('ItemService.loadItems', error);
       });
-    const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+    const timestamp = localStorage.getItem(this.getStorageKey(isClassic));
 
     if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp) || !ItemService.list.value.length) {
-      await this.getItems();
+      await this.getItems(isClassic);
     }
   }
 
@@ -79,8 +80,7 @@ export class ItemService {
       .catch(console.error);
   }
 
-  getTooltip(type: string, id: number, bonusIds: number[]): Promise<Element> {
-    const isClassic = this.realmService.isClassic;
+  getTooltip(type: string, id: number, bonusIds: number[], isClassic: boolean): Promise<Element> {
     const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
     let url = `https://${isClassic ? 'tbc' : 'www'}.wowhead.com/tooltip/${type}/${id}?locale=${locale}`;
     if (bonusIds && bonusIds.length) {
@@ -123,21 +123,23 @@ export class ItemService {
       }) as Promise<any>;
   }*/
 
-  async getItems(): Promise<any> {
+  async getItems(isClassic = SharedService.user.gameVersion > 0): Promise<any> {
     const locale = localStorage['locale'];
     console.log('Downloading items');
     SharedService.downloading.items = true;
 
-    this.dbService.clearItems();
+    this.dbService.clearItems(isClassic);
     SharedService.itemsUnmapped.length = 0;
-    await this._http.get(`${Endpoints.S3_BUCKET}/item/${locale}.json.gz?lastModified=${this.lastModified.value}`)
+    await this._http.get(`${Endpoints.S3_BUCKET}${
+      isClassic ? '/classic' : ''
+    }/item/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then((response: ItemResponse) => {
         SharedService.itemsUnmapped = [];
         Object.keys(SharedService.items).forEach(id =>
           delete SharedService.items[id]);
         SharedService.downloading.items = false;
-        this.handleItems(response);
+        this.handleItems(response, true, isClassic);
       })
       .catch(error => {
         ErrorReport.sendHttpError(error);
@@ -145,7 +147,7 @@ export class ItemService {
       });
   }
 
-  handleItems(items: ItemResponse, shouldSave = true): void {
+  handleItems(items: ItemResponse, shouldSave = true, isClassic = SharedService.user.gameVersion > 0): void {
     const missingItems: number[] = [];
     SharedService.downloading.items = false;
     const list: Item[] = [];
@@ -189,9 +191,9 @@ export class ItemService {
     }
 
     if (shouldSave && this.platform !== null && !this.platform.WEBKIT) {
-      this.dbService.addItems(items.items);
+      this.dbService.addItems(items.items, isClassic);
     }
-    localStorage[this.LOCAL_STORAGE_TIMESTAMP] = items.timestamp;
+    localStorage.setItem(this.getStorageKey(isClassic), `${items.timestamp}`);
     SharedService.events.items.emit(true);
     ItemService.mapped.next(mapped);
     ItemService.list.next(list);
@@ -213,13 +215,13 @@ export class ItemService {
       .toPromise() as Promise<any>;
   }
 
-  getLocalPriceHistoryForRealm(ahId = this.realmService.events.realmStatus.value.id): Map<string, ItemPriceEntryResponse> {
+  getLocalPriceHistoryForRealm(ahId): Map<string, ItemPriceEntryResponse> {
     return this.historyMap.value.get(ahId);
   }
 
-  getPriceHistory(items: AhStatsRequest[]): Promise<Map<string, ItemPriceEntryResponse>> {
+  getPriceHistory(items: AhStatsRequest[], realmStatus: AuctionHouseStatus): Promise<Map<string, ItemPriceEntryResponse>> {
     const startTime = +new Date();
-    const {id: ahId, gameBuild} = this.realmService.events.realmStatus.value,
+    const {id: ahId, gameBuild} = realmStatus,
       ahTypeId = gameBuild === 1 ? SharedService.user.ahTypeId : 0;
     let realmMap = this.historyMap.value;
     const result: Map<string, any> = new Map<string, any>();
@@ -343,11 +345,7 @@ export class ItemService {
     }
   }
 
-  private openSnackbar(message: string): void {
-    this.snackBar.open(message, 'Ok', {duration: 3000});
-  }
-
-  private isTimestampNotDefined(timestamp: string) {
-    return timestamp === undefined || timestamp === 'undefined';
+  private getStorageKey(isClassic: boolean) {
+    return `${this.LOCAL_STORAGE_TIMESTAMP}${isClassic ? '_classic' : ''}`;
   }
 }

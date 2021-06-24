@@ -15,6 +15,7 @@ import {environment} from '../../environments/environment';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
 import {CraftingService} from "./crafting.service";
+import {ItemService} from "./item.service";
 
 @Injectable()
 export class RealmService {
@@ -35,6 +36,7 @@ export class RealmService {
   constructor(private http: HttpClient,
               private settingSync: SettingsService,
               private craftingService: CraftingService,
+              private itemService: ItemService,
               private matSnackBar: MatSnackBar) {
     if (!environment.test) {
       this.sm.add(settingSync.realmChange, (change) => {
@@ -117,10 +119,13 @@ export class RealmService {
           if (this.isClassic !== undefined && isClassic !== this.isClassic && recipeLength) {
             await this.craftingService.load(undefined, isClassic)
               .catch(console.error);
+            await this.itemService.loadItems(undefined, isClassic)
+              .catch(console.error);
           }
 
           this.isClassic = isClassic;
-            this.previousUrl = status.url;
+          this.previousUrl = status.url;
+          this.itemService.clearItemHistoryMap();
           this.events.realmStatus.next({
             ...status,
             connectedTo: status.connectedTo && typeof status.connectedTo === 'string' ?

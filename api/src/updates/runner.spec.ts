@@ -35,6 +35,12 @@ describe('Update runner', () => {
     expect(timestamps).toBeTruthy();
   });
 
+  it('Update classic items', async () => {
+    const timestamps = await UpdatesService.getAndSetClassicItems()
+      .catch(console.error);
+    expect(timestamps).toBeTruthy();
+  });
+
   it('Update NPCs', async () => {
     const timestamps = await UpdatesService.getAndSetNpc()
       .catch(console.error);

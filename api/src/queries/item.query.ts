@@ -114,7 +114,12 @@ export class ItemQuery {
             WHERE name like '%${name}%';`;
   }
 
-  public static getAllAuctionsAfterAndOrderByTimestamp(locale: string, timestamp: Date) {
+  public static getAllItemsAfterAndOrderByTimestamp(
+    locale: string,
+    timestamp: Date,
+    table = 'items',
+    localeTable = 'item_name_locale'
+  ) {
     return `
     SELECT
          i.id,
@@ -134,8 +139,8 @@ export class ItemQuery {
          isDropped,
          expansionId,
          timestamp
-    FROM items as i
-    LEFT OUTER JOIN item_name_locale as l ON i.id = l.id
+    FROM ${table} as i
+    LEFT OUTER JOIN ${localeTable} as l ON i.id = l.id
     WHERE UNIX_TIMESTAMP(timestamp) > ${+new Date(timestamp) / 1000}
     ORDER BY timestamp desc;`;
   }

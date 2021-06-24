@@ -6,6 +6,7 @@ import {ItemGameData} from '../models/item/item-game-data.model';
 import {WoWDBItem} from '../models/item/wowdb';
 import {GameMediaUtil} from './game-media.util';
 import {WoWHeadUtil} from './wowhead.util';
+import {NameSpace} from '../enums/name-space.enum';
 
 export class ItemUtil {
   public static handleItems(items: Item[]): Item[] {
@@ -16,15 +17,18 @@ export class ItemUtil {
 
   public static handleItem(item: Item): Item {
     delete item['timestamp'];
+    item.icon = GameMediaUtil.getRawIconFileName(item.icon, 'us');
+
+    if (item.itemSource) {
       try {
-        if (item.itemSource) {
           item.itemSource = JSON.parse((item.itemSource as any).replace(/[\n]/g, ''));
           delete item.itemSource.soldBy;
           delete item.itemSource.droppedBy;
-        }
       } catch (e) {
-        console.log(`Malformed source JSON for item ${item.id} - ${item.name}`);
+        // console.log(`Malformed source JSON for item ${item.id} - ${item.name}`);
+        delete item.itemSource;
       }
+    }
     // TODO: Fix some issues regarding this json in the DB - r.itemSpells
    try {
      if (item.itemSpells) {
@@ -36,11 +40,16 @@ export class ItemUtil {
     return item;
   }
 
-  static getFromBlizzard(id: number, locale: string = 'en_GB', region: string = 'us'): Promise<Item> {
+  static getFromBlizzard(
+    id: number,
+    locale: string = 'en_GB',
+    region: string = 'us',
+    namespaceType: NameSpace = NameSpace.STATIC_RETAIL
+  ): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints()
-        .getPath(`item/${id}`, region);
+        .getPath(`item/${id}`, region, namespaceType);
       console.log('URL', url);
       new HttpClientUtil().get(url)
         .then(async ({body}) => {

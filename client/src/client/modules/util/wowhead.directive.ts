@@ -86,7 +86,7 @@ export class WowheadDirective {
     if (id) {
       const isClassic = this.realmService.isClassic;
       const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-      this.service.getTooltip(type, id, bonusIds)
+      this.service.getTooltip(type, id, bonusIds, this.realmService.isClassic)
         .then((tooltip) => {
           const nativeElement = (this.element.nativeElement as Element);
           nativeElement.innerHTML = `

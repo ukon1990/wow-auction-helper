@@ -13,11 +13,21 @@ import {WoWHeadUtil} from '../utils/wowhead.util';
 import {WoWHead} from '../models/item/wowhead';
 import {DateUtil} from '@ukon1990/js-utilities';
 import {UpdatesService} from '../updates/service';
+import {NameSpace} from '../enums/name-space.enum';
 
 const PromiseThrottle: any = require('promise-throttle');
 
 export class ItemServiceV2 {
   private readonly repository = new RDSItemRepository();
+  private table: string;
+  private localeTable: string;
+  private nameSpace: NameSpace;
+
+  constructor(private isClassic = false) {
+  this.table = isClassic ? 'itemsClassic' : 'items';
+  this.localeTable = isClassic ? 'itemClassic_name_locale' : 'item_name_locale';
+  this.nameSpace = isClassic ? NameSpace.STATIC_CLASSIC : NameSpace.STATIC_RETAIL;
+  }
 
   findMissingItemsAndImport(clientId?: string, clientSecret?: string): Promise<void> {
     if (clientId) {
@@ -29,7 +39,7 @@ export class ItemServiceV2 {
 
     return new Promise<void>((resolve, reject) => {
       const db = new DatabaseUtil(false);
-      this.repository.findMissingItemsFromAuctions(db)
+      (this.isClassic ? this.repository.findMissingItemsFromAuctionsClassic(db) : this.repository.findMissingItemsFromAuctions(db))
         .then(ids => {
           console.log(`There are ${ids.length} new items to add.`);
           this.addOrUpdateItemsByIds(ids, db)
@@ -86,8 +96,7 @@ export class ItemServiceV2 {
         if (!isOffline && DateUtil.timeSince(startTime, 's') > 200) {
           continue;
         }
-        await new ItemHandler()
-          .addItem(id, 'en_GB', db)
+        await this.addItem(id, 'en_GB', db)
           .then(() => {
             completed++;
             successfull++;
@@ -143,14 +152,14 @@ export class ItemServiceV2 {
     return new Promise<Item>((resolve, reject) => {
       this.getFreshItem(id, locale)
         .then(async item => {
-          await QueryIntegrity.getVerified('items', item, conn)
+          await QueryIntegrity.getVerified(this.table, item, conn)
             .then((friendlyItem) => {
               if (!friendlyItem) {
                 console.log(`Failed to add item: ${id} did not match the model`);
                 reject('The item did not follow the data model - ' + item.id);
                 return;
               }
-              const sql = new RDSQueryUtil('items').update(item.id, friendlyItem);
+              const sql = new RDSQueryUtil(this.table).update(item.id, friendlyItem);
               delete friendlyItem.itemSpells;
               conn.query(sql)
                 .then(() => {
@@ -171,7 +180,7 @@ export class ItemServiceV2 {
   /* istanbul ignore next */
   getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
     return new Promise((resolve, reject) => {
-      const sql = ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp);
+      const sql = ItemQuery.getAllItemsAfterAndOrderByTimestamp(locale, timestamp);
       console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
@@ -194,7 +203,7 @@ export class ItemServiceV2 {
       await this.getFreshItem(id, locale)
         .then(async item => {
 
-          await QueryIntegrity.getVerified('items', item, db)
+          await QueryIntegrity.getVerified(this.table, item, db)
             .then((friendlyItem) => {
               if (!friendlyItem) {
                 console.log(`Failed to add item: ${id} did not match the model`);
@@ -202,14 +211,14 @@ export class ItemServiceV2 {
                 return;
               }
 
-              const query = new RDSQueryUtil('items')
+              const query = new RDSQueryUtil(this.table)
                 .insertOrUpdate(friendlyItem);
               console.log('Insert item SQL:', query);
               db.query(query)
                 .then(async itemSuccess => {
                   console.log(`Successfully added ${friendlyItem.name} (${id})`);
                   await LocaleUtil.insertToDB(
-                    'item_name_locale',
+                    this.localeTable,
                     'id',
                     item.nameLocales,
                     db)
@@ -242,42 +251,37 @@ export class ItemServiceV2 {
     });
   }
 
-  getFreshItem(id: number, locale: string): Promise<Item> {
+  getFreshItem(id: number, locale: string, namespace: NameSpace = this.nameSpace): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
-      let item: Item = new Item();
       let error;
+      const isClassic = namespace === NameSpace.STATIC_CLASSIC;
 
       console.log('Adding missing item', id);
 
-      await ItemUtil.getFromBlizzard(id, locale)
-        .then((i: Item) =>
-          item = i)
-        .catch(e => error = e);
+      await ItemUtil.getFromBlizzard(id, locale, undefined, namespace)
+        .then(async (it: Item) => {
+          let item: Item = new Item();
+          item = it;
 
-      if (!error) {
-        await ItemUtil.getWowDBData(id)
-          .then(i =>
-            WoWDBItem.setItemWithWoWDBValues(i, item))
-          .catch(e => error = e);
-      }
+          await ItemUtil.getWowDBData(id)
+            .then(i =>
+              WoWDBItem.setItemWithWoWDBValues(i, item))
+            .catch(e => error = e);
+          await WoWHeadUtil.getWowHeadData(id, isClassic)
+            .then((wowHead: WoWHead) => {
+              item.setDataFromWoWHead(wowHead);
+            })
+            .catch(e => error = e);
 
-      if (!error) {
-        await WoWHeadUtil.getWowHeadData(id)
-          .then((wowHead: WoWHead) => {
-            item.setDataFromWoWHead(wowHead);
-          })
-          .catch(e => error = e);
-      }
-
-      if (item.id > 175264 && (item.expansionId < 8 || !item.expansionId)) {
-        item.expansionId = 8;
-      }
-
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(item);
+          if (item.id > 175264 && (item.expansionId < 8 || !item.expansionId)) {
+            item.expansionId = 8;
+          }
+          resolve(item);
+        })
+        .catch(e => {
+          error = e;
+          reject(error);
+        });
     });
   }
 }

@@ -15,6 +15,12 @@ import {AuctionProcessorUtil} from '../auction/utils/auction-processor.util';
 import {AuctionItemStat} from '../auction/models/auction-item-stat.model';
 
 export class ItemHandler {
+  constructor(
+    private table = 'items',
+    private localeTable = 'item_name_locale',
+    private isClassic = false
+  ) {
+  }
   /* istanbul ignore next */
   async getById(id: number, locale: string, conn: DatabaseUtil): Promise<Item> {
     return new Promise<Item>(async (resolve, reject) => {
@@ -69,8 +75,14 @@ export class ItemHandler {
 
   /* istanbul ignore next */
   getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
+    console.log('YO', this.table, this.localeTable);
     return new Promise((resolve, reject) => {
-      const sql = ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp);
+      const sql = ItemQuery.getAllItemsAfterAndOrderByTimestamp(
+        locale,
+        timestamp,
+        this.table,
+        this.localeTable
+      );
       console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {
@@ -93,7 +105,7 @@ export class ItemHandler {
       await this.getFreshItem(id, locale)
         .then(async item => {
 
-          await QueryIntegrity.getVerified('items', item, db)
+          await QueryIntegrity.getVerified(this.table, item, db)
             .then((friendlyItem) => {
               if (!friendlyItem) {
                 console.log(`Failed to add item: ${id} did not match the model`);
@@ -101,14 +113,14 @@ export class ItemHandler {
                 return;
               }
 
-              const query = new RDSQueryUtil('items')
+              const query = new RDSQueryUtil(this.table)
                 .insertOrUpdate(friendlyItem, true);
               console.log('Insert item SQL:', query);
               db.query(query)
                 .then(async itemSuccess => {
                   console.log(`Successfully added ${friendlyItem.name} (${id})`);
                   await LocaleUtil.insertToDB(
-                    'item_name_locale',
+                    this.localeTable,
                     'id',
                     item.nameLocales,
                     db)
