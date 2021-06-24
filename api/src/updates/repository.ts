@@ -9,7 +9,7 @@ export class UpdatesRepository {
                  LIMIT 1
              ) recipes,
              (
-                 SELECT timestamp as recipes
+                 SELECT timestamp as recipesClassic
                  FROM recipesClassic
                  ORDER BY timestamp DESC
                  LIMIT 1
@@ -20,6 +20,12 @@ export class UpdatesRepository {
                  ORDER BY timestamp DESC
                  LIMIT 1
              ) items,
+             (
+                 SELECT timestamp as itemsClassic
+                 FROM itemsClassic
+                 ORDER BY timestamp DESC
+                 LIMIT 1
+             ) itemsClassic,
              (
                  SELECT timestamp as npcs
                  FROM npc

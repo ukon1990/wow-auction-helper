@@ -12,6 +12,7 @@ export class WoWHead {
   milledFrom: WoWHeadProspectedFrom[];
   patch: string;
   // objectiveOf: WoWHeadObjectiveOf[];
+  classicPhase?: number;
 }
 
 export class WoWHeadSoldBy {

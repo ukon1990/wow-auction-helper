@@ -57,9 +57,9 @@ export class Endpoints {
       this.LAMBDAS[region.toUpperCase()][Endpoints.STAGE]}${path}`;
   }
 
-  getGameDataBase(region: string, namespaceType: string) {
+  getGameDataBase(region: string, namespaceType: NameSpace) {
     let suffix = 'data/wow/';
-    if (namespaceType === 'profile') {
+    if (namespaceType === NameSpace.PROFILE_RETAIL) {
       suffix = 'profile/wow/';
     }
     return (region ? this.GAME_DATA_ENDPOINT[region] : this.GAME_DATA_ENDPOINT.eu) + suffix;

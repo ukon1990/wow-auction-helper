@@ -26,7 +26,8 @@ export class Item {
   isBoughtForGold?: boolean;
   expansionId = 0;
   patch: string;
-  nameLocales: ItemLocale;
+  nameLocales?: ItemLocale;
+  classicPhase?: number;
 
   inventory: ItemInventory;
 
@@ -60,7 +61,8 @@ export class Item {
     this.expansionId = wowHead.expansionId;
     this.patch = wowHead.patch;
     delete wowHead.expansionId;
-    this.itemSource = wowHead;
+    this.itemSource = wowHead as WoWHead;
+    this.classicPhase = wowHead.classicPhase;
   }
 
   private getItemSpellsFromGameData(spells: PreviewItemSpells[]) {

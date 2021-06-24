@@ -153,6 +153,33 @@ export class UpdatesService {
     });
   }
 
+  static getAndSetClassicItems(db: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      for (const locale of this.locales) {
+        await new ItemHandler(
+          'itemsClassic',
+          'item_name_locale'
+        ).getAllRelevant(new Date(0), locale, db)
+          .then(async items => {
+            await new S3Handler().save(
+              items,
+              `classic/item/${locale}.json.gz`,
+              {
+                region: ''
+              })
+              .then(() => {
+                console.log('Successfully uploaded items');
+              })
+              .catch(console.error);
+          })
+          .catch(reject);
+      }
+
+      db.end();
+      resolve(true);
+    });
+  }
+
   static getAndSetItemClasses(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const classes = [];
