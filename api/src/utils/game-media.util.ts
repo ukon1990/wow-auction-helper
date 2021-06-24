@@ -35,6 +35,8 @@ export class GameMediaUtil {
   static getRawIconFileName(icon: string, region: string): string {
     return icon
       .replace(`https://render-${region}.worldofwarcraft.com/icons/56/`, '')
+      .replace(`https://render.worldofwarcraft.com/classic-${region}/icons/56/`, '')
+      .replace(`https://render.worldofwarcraft.com/${region}/icons/56/`, '')
       .replace('.jpg', '');
   }
 }

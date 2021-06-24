@@ -159,6 +159,7 @@ export class BackgroundDownloadService {
             console.log('Done loading zone data'))
           .catch(console.error);
         const recipeTimestamp = this.realmService.isClassic ? timestamps.recipesClassic : timestamps.recipes;
+        const itemTimestamp = this.realmService.isClassic ? timestamps.itemsClassic : timestamps.items;
 
         const promises: Promise<any>[] = [/* TODO: Remove?
           this.tsmService.load(this.realmService.events.realmStatus.value)
@@ -166,7 +167,8 @@ export class BackgroundDownloadService {
           this.itemClassService.getAll()
             .catch(console.error),
           this.professionService.load(timestamps.professions),
-          this.itemService.loadItems(timestamps.items)
+          this.itemService.loadItems(itemTimestamp,
+            this.realmService.isClassic)
             .then(() => console.log('Loaded items in ' + DateUtil.getDifferenceInSeconds(start, +new Date()))),
           this.petService.loadPets(timestamps.pets),
           this.npcService.getAll(false, timestamps.npcs),

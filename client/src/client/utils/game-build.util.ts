@@ -62,4 +62,5 @@ export class GameBuild {
     'First aid',
     'None'
   ];
+  static latestClassicPhase = 1;
 }

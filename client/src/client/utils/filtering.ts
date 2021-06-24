@@ -9,6 +9,7 @@ import {CraftingService} from '../services/crafting.service';
 import {AuctionsService} from '../services/auctions.service';
 import {ItemClassService} from '../modules/item/service/item-class.service';
 import {ItemClass} from '../modules/item/models/item-class.model';
+import {GameBuild} from "./game-build.util";
 
 export class Filters {
   private static auctionService: AuctionsService;
@@ -135,6 +136,11 @@ export class Filters {
 
   public static isExpansionMatch(itemID: number, expansionId: number, isClassic: boolean): boolean {
     const item: Item = SharedService.items[itemID] as Item;
+
+
+    if (isClassic && item.classicPhase <= GameBuild.latestClassicPhase) {
+      return false;
+    }
 
     // If we are on classic, and the recipe is for an expansion after TBC
     if (item && isClassic && item.expansionId > 1) {

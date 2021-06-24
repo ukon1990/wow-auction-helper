@@ -277,7 +277,7 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
       delete localStorage['timestamp_items'];
     }
 
-    await this.itemService.getItems();
+    await this.itemService.getItems(this.realmService.isClassic);
 
     if (forceUpdate) {
       await this.auctionsService.organize();

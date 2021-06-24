@@ -29,6 +29,7 @@ export class WoWHeadUtil {
     wh.droppedBy = WoWHeadUtil.getDroppedBy(body);
     wh.prospectedFrom = WoWHeadUtil.getProspectedFrom(body);
     wh.milledFrom = WoWHeadUtil.getMilledFrom(body);
+    wh.classicPhase = WoWHeadUtil.getClassicPhaseFrom(body);
     return wh;
   }
 
@@ -181,10 +182,10 @@ export class WoWHeadUtil {
     return data;
   }
 
-  public static getWowHeadData(id: number): Promise<WoWHead> {
+  public static getWowHeadData(id: number, isClassic = false): Promise<WoWHead> {
     return new Promise<WoWHead>(((resolve, reject) => {
       request.get(
-        `http://www.wowhead.com/item=${id}`,
+        `http://${isClassic ? 'tbc' : 'www'}.wowhead.com/item=${id}`,
         null,
         (whError, whResponse, whBody) => {
           if (whError) {
@@ -263,5 +264,15 @@ export class WoWHeadUtil {
       return +levelResultResult[0].replace(/Level:[ ]{1,}/, '');
     }
     return undefined;
+  }
+
+  private static getClassicPhaseFrom(body: string) {
+    const phaseRegex = new RegExp(/Phase [0-9]{1,2}/g),
+      phase = phaseRegex.exec(body);
+    if (phase && phase[0]) {
+      const p = phase[0].replace('Phase ', '');
+      return +p;
+    }
+    return 0;
   }
 }

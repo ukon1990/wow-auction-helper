@@ -77,7 +77,8 @@ export class DatabaseService {
     return result;
   }
 
-  addItems(items: Array<Item>): void {
+  addItems(items: Array<Item>, isClassic = false): void {
+    console.log('Adding items to classic?', isClassic, isClassic ? 'itemsClassic' : 'items');
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
@@ -85,7 +86,7 @@ export class DatabaseService {
     try {
       const start = +new Date();
       for (const list of this.splitEntries(items)) {
-        this.db.table('items').bulkPut(list)
+        this.db.table(isClassic ? 'itemsClassic' : 'items').bulkPut(list)
           .catch(console.error);
       }
       console.log(`Saved items to local db in ${DateUtil.getDifferenceInSeconds(start, +new Date())}s`);
@@ -94,7 +95,7 @@ export class DatabaseService {
     }
   }
 
-  async getAllItems(): Promise<any> {
+  async getAllItems(isClassic: boolean): Promise<any> {
     if (this.shouldNotUseIndexedDB()) {
       return new Dexie.Promise<any>((resolve, reject) => reject());
     }
@@ -102,16 +103,17 @@ export class DatabaseService {
     SharedService.downloading.items = true;
 
     return new Dexie.Promise<any>(async (resolve) => {
+      const table = isClassic ? 'itemsClassic' : 'items';
       let items: Item[] = [];
       const start = +new Date();
       const add = (result) => items = [...items, ...result];
-      await this.getItemsInBatch(0, 50000)
+      await this.getItemsInBatch(0, 50000, table)
         .then((res) => add(res));
-      await this.getItemsInBatch(50001, 100000)
+      await this.getItemsInBatch(50001, 100000, table)
         .then((res) => add(res));
-      await this.getItemsInBatch(100001, 150000)
+      await this.getItemsInBatch(100001, 150000, table)
         .then((res) => add(res));
-      await this.getItemsInBatch(150001, 200000)
+      await this.getItemsInBatch(150001, 200000, table)
         .then((res) => add(res));
       console.log(`Restored items from local db in ${DateUtil.getDifferenceInSeconds(start, +new Date())}s`);
       SharedService.events.items.emit(true);
@@ -119,9 +121,9 @@ export class DatabaseService {
     });
   }
 
-  private getItemsInBatch(from: number, to: number) {
+  private getItemsInBatch(from: number, to: number, table: string) {
     return new Promise<Item[]>((resolve, reject) => {
-      this.db.table('items')
+      this.db.table(table)
         .where(':id')
         .between(from, to)
         .toArray()
@@ -136,11 +138,12 @@ export class DatabaseService {
     });
   }
 
-  clearItems(): void {
+  clearItems(isClassic: boolean): void {
+    const table = isClassic ? 'itemsClassic' : 'items';
     if (this.shouldNotUseIndexedDB()) {
       return;
     }
-    this.db.table('items').clear();
+    this.db.table(table).clear();
   }
 
   async addNPCs(list: NPC[]): Promise<void> {
@@ -486,10 +489,12 @@ export class DatabaseService {
   }
 
   async clearWowDataFromDB(): Promise<void> {
-    await this.clearItems();
+    await this.clearItems(true);
+    await this.clearItems(false);
     await this.clearNPCs();
     await this.clearPets();
     await this.clearRecipes();
+    await this.clearRecipes(true);
     await this.clearZones();
     await this.clearProfessions();
   }
