@@ -75,8 +75,14 @@ export class ItemHandler {
 
   /* istanbul ignore next */
   getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
+    console.log('YO', this.table, this.localeTable);
     return new Promise((resolve, reject) => {
-      const sql = ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp);
+      const sql = ItemQuery.getAllItemsAfterAndOrderByTimestamp(
+        locale,
+        timestamp,
+        this.table,
+        this.localeTable
+      );
       console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {

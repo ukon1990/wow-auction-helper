@@ -180,7 +180,7 @@ export class ItemServiceV2 {
   /* istanbul ignore next */
   getAllRelevant(timestamp: Date, locale: string, conn: DatabaseUtil) {
     return new Promise((resolve, reject) => {
-      const sql = ItemQuery.getAllAuctionsAfterAndOrderByTimestamp(locale, timestamp);
+      const sql = ItemQuery.getAllItemsAfterAndOrderByTimestamp(locale, timestamp);
       console.log('Item fetch', sql);
       conn.query(sql)
         .then((rows: any[]) => {

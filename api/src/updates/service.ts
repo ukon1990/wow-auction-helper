@@ -158,7 +158,8 @@ export class UpdatesService {
       for (const locale of this.locales) {
         await new ItemHandler(
           'itemsClassic',
-          'item_name_locale'
+          'itemClassic_name_locale',
+          true
         ).getAllRelevant(new Date(0), locale, db)
           .then(async items => {
             await new S3Handler().save(

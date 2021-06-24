@@ -17,6 +17,7 @@ export class ItemUtil {
 
   public static handleItem(item: Item): Item {
     delete item['timestamp'];
+    item.icon = GameMediaUtil.getRawIconFileName(item.icon, 'us');
 
     if (item.itemSource) {
       try {
