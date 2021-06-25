@@ -138,7 +138,7 @@ export class Filters {
     const item: Item = SharedService.items[itemID] as Item;
 
 
-    if (isClassic && item.classicPhase <= GameBuild.latestClassicPhase) {
+    if (isClassic && item && item.classicPhase <= GameBuild.latestClassicPhase) {
       return false;
     }
 
