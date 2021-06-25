@@ -3,7 +3,7 @@ import {Response} from '../utils/response.util';
 import {DatabaseUtil} from '../utils/database.util';
 import {LogService} from './log.service';
 
-const connection = new DatabaseUtil(false);
+const connection = new DatabaseUtil(false, true);
 
 /* istanbul ignore next */
 exports.clientEvent = (event: APIGatewayEvent, context: Context, callback: Callback) => {

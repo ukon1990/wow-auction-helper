@@ -34,7 +34,7 @@ export class StatsService {
 
   /* istanbul ignore next */
   async getPriceHistoryFor(items: AhStatsRequest[], onlyHourly = true,
-                           conn: DatabaseUtil = new DatabaseUtil(false)): Promise<any> {
+                           conn: DatabaseUtil = new DatabaseUtil(false, true)): Promise<any> {
     items.forEach(({ahId, itemId, petSpeciesId}) =>
       console.log(`getPriceHistoryFor ahId=${ahId} item=${itemId} pet=${petSpeciesId}`));
 

@@ -15,7 +15,9 @@ export class DatabaseUtil {
   private readonly connection: Connection;
   private isConnectionActive = false;
 
-  constructor(private autoTerminate: boolean = true, credentials: Credentials = DATABASE_CREDENTIALS) {
+  constructor(private autoTerminate: boolean = true, isReadOnly = false, credentialsOverride?: Connection) {
+    const credentials: Credentials = credentialsOverride ||
+      (isReadOnly ? DATABASE_CREDENTIALS.READ : DATABASE_CREDENTIALS.ADMIN);
     if (!environment.test) {
       this.connection = mysql.createConnection(credentials);
     }

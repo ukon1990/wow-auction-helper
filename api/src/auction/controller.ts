@@ -35,7 +35,7 @@ exports.updateAllRealmDailyData = (event: APIGatewayEvent, context: Context, cal
 exports.getPriceHistoryForItem = (event: APIGatewayEvent, context: Context, callback: Callback) => {
   const {ahId, id, petSpeciesId, bonusIds, onlyHourly} = JSON.parse(event.body);
   const {items} = JSON.parse(event.body);
-  const conn = new DatabaseUtil(false);
+  const conn = new DatabaseUtil(false, true);
   const service = new StatsService();
   service.getPriceHistoryFor(items || [{ahId, itemId: id, petSpeciesId, bonusIds}], onlyHourly, conn)
     .then(async history => {
