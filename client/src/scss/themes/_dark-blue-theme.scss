@@ -27,4 +27,10 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
   wah-general-settings mat-card:not(.full-screen) {
     background-color: #5d5d5d1a !important;
   }
+
+  wah-tooltip .wah-tooltip .wowhead-tooltip.custom {
+    b.q3, .q3 {
+      /*color: #40c4ff !important;*/
+    }
+  }
 }

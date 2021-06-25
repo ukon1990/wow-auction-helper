@@ -32,6 +32,7 @@ import {MenuDropdownComponent} from './components/menu/menu-dropdown/menu-dropdo
 import {MatDialogModule} from '@angular/material/dialog';
 import {DownloadDialogComponent} from './components/navbar/download/dialog/dialog.component';
 import {UserModule} from '../user/user.module';
+import { TooltipComponent } from './components/tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import {UserModule} from '../user/user.module';
     ThemeSelectComponent,
     MenuItemComponent,
     MenuDropdownComponent,
-    DownloadDialogComponent
+    DownloadDialogComponent,
+    TooltipComponent
   ],
   imports: [
     CommonModule,
@@ -70,7 +72,7 @@ import {UserModule} from '../user/user.module';
     MatDialogModule,
     UserModule
   ],
-  exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent, DownloadComponent]
+  exports: [NavbarComponent, FooterComponent, AppUpdateComponent, MenuComponent, ThemeSelectComponent, DownloadComponent, TooltipComponent]
 })
 export class CoreModule {
   constructor() {

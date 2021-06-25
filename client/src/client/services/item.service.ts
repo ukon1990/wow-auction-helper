@@ -81,20 +81,6 @@ export class ItemService {
       .catch(console.error);
   }
 
-  getTooltip(type: string, id: number, bonusIds: number[], isClassic: boolean): Promise<Element> {
-    const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-    let url = `https://${isClassic ? 'tbc' : 'www'}.wowhead.com/tooltip/${type}/${id}?locale=${locale}`;
-    if (bonusIds && bonusIds.length) {
-      url += '&bonus=' + bonusIds.join(':');
-    }
-    return new Promise((resolve, reject) => {
-      this._http.get(url)
-        .toPromise()
-        .then(r => resolve(r['tooltip']))
-        .catch(reject);
-    });
-  }
-
   /*
   addItem(itemID: number): Promise<any> {
     Report.debug('Attempting to add item data for ' + itemID);
