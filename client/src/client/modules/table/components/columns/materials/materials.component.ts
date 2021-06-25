@@ -20,6 +20,7 @@ import {GoldPipe} from '../../../../util/pipes/gold.pipe';
 export class MaterialsComponent implements OnInit {
   @Input() recipe: Recipe;
   @Input() recipeId: number;
+  @Input() showRecipeName: boolean;
   private goldPipe: GoldPipe = new GoldPipe();
 
   constructor(private auctionService: AuctionsService) {

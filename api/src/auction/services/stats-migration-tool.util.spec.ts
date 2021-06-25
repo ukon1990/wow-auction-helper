@@ -17,7 +17,7 @@ export class StatsMigrationToolUtil {
   private util: RDSQueryUtil<unknown>;
 
   constructor() {
-    this.localDB = new DatabaseUtil(false, {
+    this.localDB = new DatabaseUtil(false, false, {
       database: 'wah',
       host: '127.0.0.1',
       user: 'root',

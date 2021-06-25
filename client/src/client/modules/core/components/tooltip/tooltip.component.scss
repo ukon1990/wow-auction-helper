@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  width: 25rem;
+  max-width: 95%;
+}
+
+.wah-tooltip {
+  margin-top: .5rem;
+  display: block;
+  visibility: visible;
+  position: fixed;
+  padding: .5rem;
+  background: #2f354a;
+  z-index: 999999999999;
+  width: 25rem;
+  max-width: 95%;
+
+  .wowhead-tooltip {
+  }
+
+  .tooltip-extra {
+    font-family: Verdana,"Open Sans",Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-size: 12px;
+    line-height: 17px;
+    color: #fff;
+
+    padding: .5rem;
+
+    .recipe-container {
+      border-top: 1px white !important;
+      border-bottom: 1px white !important;
+    }
+  }
+
+}
+

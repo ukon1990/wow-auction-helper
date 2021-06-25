@@ -1,0 +1,45 @@
+<div
+        *ngIf="activeTooltip"
+        class="wah-tooltip mat-elevation-z10"
+        [ngStyle]="{
+                top: activeTooltip.y + 'px',
+                left: activeTooltip.x + 'px'
+              }"
+>
+    <div class="wowhead-tooltip custom" [innerHtml]="activeTooltip.body"></div>
+    <div class="tooltip-extra">
+        <ng-container *ngIf="recipes || recipeId">
+            <div class="recipe-container" *ngFor="let recipe of recipes">
+                <wah-materials
+
+                        [showRecipeName]="true"
+                        [recipe]="recipe"
+                        [recipeId]="recipeId"
+                >
+                </wah-materials>
+                <div class="row col-md-12" *ngIf="recipe">
+                    Cost: {{ recipe.cost | gold }}<br/>
+                    Profit: {{ recipe.roi | gold }} <br/>
+                </div>
+            </div>
+        </ng-container>
+        <div *ngIf="activeTooltip.extra" [innerHTML]="activeTooltip.extra"></div>
+        <br>
+
+        <small>
+            Click on the item name for more details.
+        </small>
+        <br>
+        <small>
+            Tooltip by: <a
+                [ngStyle]="{
+                    color: currentTheme.accentColorCode
+                }"
+                target="_blank"
+                href="https://{{locale}}.{{isClassic ? 'tbc' : ''}}.wowhead.com/item/{{activeTooltip.id}}"
+        >
+            WowHead
+        </a>.
+        </small>
+    </div>
+</div>

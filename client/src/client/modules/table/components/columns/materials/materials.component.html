@@ -1,3 +1,6 @@
+<b *ngIf="showRecipeName">
+  {{recipe?.name}}
+</b>
 <div class="materials-scrollable full-width mt-2 mb-2" *ngFor="let r of recipe?.reagents">
 
   <!-- Intermidiate craft -->

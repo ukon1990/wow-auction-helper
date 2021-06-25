@@ -16,55 +16,72 @@
   z-index: 2000 !important;
 }
 
-.item-name {
-  display: inherit;
+/**
+This is placed here, as the wowhead content is not a component, but HTML that is inserted
+ */
+.wah-tooltip {
 
-  .wah-tooltip {
-    display: none;
-  }
+  .wowhead-tooltip {
+    visibility: visible;
+    $money-padding: 5px;
 
-  .wah-tooltip.wowhead-tooltip {
-    td, th {
-      background: none !important;
+
+    .moneyitem {
+      padding-right: $money-padding !important;
     }
-  }
-  table tbody tr {
-    background: none !important;
-  }
 
-  &:hover {
-    .wah-tooltip {
-      margin-top: .5rem;
-      display: block;
-      visibility: visible;
-      position: absolute;
-      background: #2f354a; /*rgb(18 21 31 / 96%)*/
-      padding: .5rem;
-      width: 25rem;
-      max-width: 95%;
+    .moneygold {
+      padding-right: $money-padding !important;
+      background-image: none !important;
 
-      .tooltip-extra {
-        font-family: Verdana,"Open Sans",Arial,"Helvetica Neue",Helvetica,sans-serif;
-        font-size: 12px;
-        line-height: 17px;
-        color: #fff;
-
-        padding: .5rem;
+      &:after {
+        content: 'g'
       }
+    }
 
-      table:first-child {
+    .moneysilver {
+      padding-right: $money-padding !important;
+      background-image: none !important;;
+
+      &:after {
+        content: 's'
+      }
+    }
+
+    .moneycopper {
+      padding-right: $money-padding !important;
+      background-image: none !important;;
+
+      &:after {
+        content: 'c'
+      }
+    }
+
+    table:first-child {
+      width: 100%;
+
+      td {
+        border: none;
         width: 100%;
+        background: none;
 
-        td {
-          border: none;
-          width: 100%;
-          background: none;
-
-          table:first-child th {}
+        table:first-child th {
         }
       }
     }
+
+    td, th {
+      background: none !important;
+    }
+
+    tbody tr {
+      background: none !important;
+    }
   }
+}
+
+.item-name {
+  display: inherit;
 }
 
 .cdk-overlay-container {

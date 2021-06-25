@@ -40,12 +40,12 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     {
       key: 'priceTrend24', title: '24H trend', dataType: 'gold', options: {
         tooltip: 'Price trend per hour, the past ~24 hours'
-      }
+      }, hideOnMobile: true
     },
     {
       key: 'priceTrend', title: '7 Day trend', dataType: 'gold', options: {
         tooltip: 'Price trend per day, the past 7 days'
-      }
+      }, hideOnMobile: true
     },
     {key: 'bid', title: 'Bid', dataType: 'gold', hideOnMobile: true},
     {
@@ -56,7 +56,7 @@ export class AuctionsComponent implements OnInit, OnDestroy, AfterViewInit, Afte
     {
       key: undefined, title: 'In cart', dataType: 'cart-item-count', options: {
         idName: 'id',
-      }
+      }, hideOnMobile: true
     },
     // {key: 'regionSaleAvg', title: 'Avg sale price', dataType: 'gold', hideOnMobile: true}
     // {key: 'avgDailySold', title: 'Daily sold', dataType: 'number', hideOnMobile: true}

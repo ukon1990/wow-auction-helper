@@ -9,6 +9,7 @@ import {TableUtil} from '../table/utils/table.util';
 import {ColumnDescription} from '../table/models/column-description';
 import {SharedService} from '../../services/shared.service';
 import {Recipe} from '../crafting/models/recipe';
+import {TooltipService} from '../core/services/tooltip.service';
 
 @Directive({
   selector: '[wahItemTooltip]'
@@ -19,13 +20,11 @@ export class WowheadDirective {
   @Input() idName = 'id';
   @Input() extra: string;
   @Input() linkType = 'item';
-  tooltip: Element;
   private creatureId: any;
 
   constructor(
-    private service: ItemService,
-    private realmService: RealmService,
-    private element: ElementRef
+    private service: TooltipService,
+    private realmService: RealmService
   ) {
   }
 
@@ -66,10 +65,11 @@ export class WowheadDirective {
     };
   }
 
-  @HostListener('mouseenter') getTooltip() {
-    if (this.tooltip) {
-      return;
-    }
+  @HostListener('mouseleave', ['$event']) clearTip() {
+    this.service.clearTooltip();
+  }
+
+  @HostListener('mouseenter', ['$event']) getTooltip(event: MouseEvent) {
     const {
       id,
       type
@@ -84,38 +84,7 @@ export class WowheadDirective {
     }
 
     if (id) {
-      const isClassic = this.realmService.isClassic;
-      const locale = (localStorage.getItem('locale') || 'en').split('_')[0];
-      this.service.getTooltip(type, id, bonusIds, this.realmService.isClassic)
-        .then((tooltip) => {
-          const nativeElement = (this.element.nativeElement as Element);
-          nativeElement.innerHTML = `
-            <div class="item-name">
-              ${nativeElement.innerHTML}
-              <div class="wah-tooltip wowhead-tooltip mat-elevation-z10">
-                ${tooltip}
-                <div class="tooltip-extra">
-                  ${this.extra || ''}
-                  <br>
-
-                  <small>
-                    Click on the item name for more details.
-                  </small>
-                  <br>
-                  <small>
-                   Tooltip by: <a
-                     target="_blank"
-                     href="https://${locale}.${isClassic ? 'tbc' : ''}.wowhead.com/item/${id}"
-                   >
-                   WowHead
-                   </a>.
-                  </small>
-                </div>
-              </div>
-            </div>
-          `;
-          this.tooltip = tooltip;
-        })
+      this.service.get(type, id, bonusIds, this.realmService.isClassic, event, this.item, this.extra)
         .catch(console.error);
     }
   }
