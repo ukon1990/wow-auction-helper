@@ -15,6 +15,8 @@ import {NpcService} from '../../npc/services/npc.service';
 import {ItemService} from '../../../services/item.service';
 import {ErrorReport} from '../../../utils/error-report.util';
 import {Recipe} from '../../crafting/models/recipe';
+import {AuctionTransformerUtil} from "../../../../../../api/src/auction/utils/auction-transformer.util";
+import {AuctionV2} from "../../../../../../api/src/models/auction/auction-v2.model";
 
 export interface OrganizedAuctionResult {
   map: Map<string, AuctionItem>;
@@ -62,7 +64,7 @@ export class AuctionUtil {
    * Used in the auction service.
    * @param auctions A raw auction array
    */
-  public static organize(auctions: Auction[], stats: Map<string, ItemStats>): Promise<OrganizedAuctionResult> {
+  public static organize(auctions: AuctionV2[] | Auction[], stats: Map<string, ItemStats>): Promise<OrganizedAuctionResult> {
     return new Promise<OrganizedAuctionResult>((resolve, reject) => {
       try {
         // TODO: Remove later -> this.modifierTest(auctions);
@@ -70,14 +72,17 @@ export class AuctionUtil {
         this.clearOldData();
         const list: AuctionItem[] = [];
         const mapVariations = new Map<number, AuctionItem[]>();
-        const map = this.groupAuctions(auctions, list, stats, mapVariations);
+        const {
+          map,
+          auctionList
+        } = this.groupAuctions(auctions, list, stats, mapVariations);
         this.calculateCosts(t0, map);
         this.setItemSources(map);
         Report.debug('AuctionUtil.organize', list, auctions.length);
         resolve({
           map,
           list,
-          auctions,
+          auctions: auctionList,
           mapVariations
         });
       } catch (e) {
@@ -86,16 +91,25 @@ export class AuctionUtil {
     });
   }
 
-  private static groupAuctions(auctions: Array<Auction>, list: AuctionItem[],
-                               stats: Map<string, ItemStats>, mapVariations: Map<number, AuctionItem[]>
-  ) {
+  private static groupAuctions(
+    auctions: AuctionV2[] | Auction[],
+    list: AuctionItem[],
+    stats: Map<string, ItemStats>,
+    mapVariations: Map<number, AuctionItem[]>
+  ): {
+    map: Map<string, AuctionItem>,
+    auctionList: Auction[]
+  } {
     // Add back, if support for classic is added: SharedService.userAuctions.organizeCharacters(SharedService.user.characters);
     const map: Map<string, AuctionItem> = new Map<string, AuctionItem>();
     const idMap: Map<number, boolean> = new Map<number, boolean>();
+    const auctionList: Auction[] = [];
 
-    auctions.forEach((a: Auction) => {
+    auctions.forEach((auction: AuctionV2 | Auction) => {
+      const a = AuctionTransformerUtil.transform(auction);
       this.processAuction(a, map, list, stats, mapVariations);
       idMap.set(a.item, true);
+      auctionList.push(a);
     });
 
     TsmService.list.value.forEach(tsm => {
@@ -116,7 +130,10 @@ export class AuctionUtil {
       }
     });
 
-    return map;
+    return {
+      map,
+      auctionList,
+    };
   }
 
   private static getLowest(ai: AuctionItem) {

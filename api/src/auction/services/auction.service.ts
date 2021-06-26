@@ -106,7 +106,7 @@ export class AuctionService {
                   .catch(console.error);
               }
             } else {
-              const data = {auctions: AuctionTransformerUtil.transform(body)};
+              const data = body;
               if (data && data.auctions.length) {
                 result.push({data, ahTypeId});
               }
