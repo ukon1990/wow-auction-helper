@@ -5,6 +5,7 @@
 import {Auction} from '../../models/auction/auction';
 import {AuctionItemStat} from '../models/auction-item-stat.model';
 import {ItemDailyPriceEntry, ItemPriceEntry} from '../../../../client/src/client/modules/item/models/item-price-entry.model';
+import {AuctionTransformerUtil} from './auction-transformer.util';
 
 export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number, ahTypeId: number): {
@@ -23,7 +24,15 @@ export class AuctionProcessorUtil {
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
     console.log('Date is ' + dateString + ' Hour= ' + hour);
     for (let i = 0, l = auctions.length; i < l; ++i) {
-      this.processAuction(map, list, auctions[i], lastModified, ahId, (hour < 10 ? '0' + hour : '' + hour), ahTypeId);
+      this.processAuction(
+        map,
+        list,
+        AuctionTransformerUtil.transform(auctions[i]),
+        lastModified,
+        ahId,
+        (hour < 10 ? '0' + hour : '' + hour),
+        ahTypeId
+      );
     }
     console.log(`Processed ${auctions.length} in ${+new Date() - start} ms`);
     return {
