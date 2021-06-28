@@ -291,7 +291,7 @@ export class StatsService {
                   list,
                   hour
                 } = AuctionProcessorUtil.process(auctions, lastModified, +ahId, +ahTypeId);
-                const queries = AuctionProcessorUtil.splitEntries(list)
+                const queries = list.filter(subList => subList.length)
                   .map(dataset => StatsRepository.multiInsertOrUpdate(dataset, hour));
                 const s3 = new S3Handler();
 
