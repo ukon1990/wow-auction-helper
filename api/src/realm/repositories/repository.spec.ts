@@ -1,6 +1,7 @@
 import {RealmRepository} from './realm.repository';
 import {RealmStatus} from '../../../../client/src/client/models/realm-status.model';
 import {AuctionHouse} from '../model';
+import {RealmService} from "../service";
 
 describe('RealmRepository', () => {
   const repository: RealmRepository = new RealmRepository();
@@ -40,5 +41,23 @@ describe('RealmRepository', () => {
         .catch(console.error);
       expect(2).toBe(3);
     });
+  });
+
+  xit('Update', async () => {
+    jest.setTimeout(9999999);
+    let realms: AuctionHouse[] = [];
+    const service = new RealmService();
+    await repository.getAll().then(list =>
+      realms = list.filter(realm => !realm.lastRequested || realm.lastRequested < 1624744800000))
+      .catch(console.error);
+
+    console.log('Realms to update', realms.length);
+    /*
+    for (const realm of realms) {
+      await service.updateLastRequested(realm.id, 1624744800000);
+    }
+    */
+
+    expect(1).toBe(2);
   });
 });
