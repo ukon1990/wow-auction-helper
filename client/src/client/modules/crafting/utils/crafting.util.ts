@@ -89,7 +89,7 @@ export class CraftingUtil {
       if (itemNpcDetails.soldBy.length && SharedService.user.useVendorPriceForCraftingIfAvailable) {
         if (!this.auctionService.getById(itemID) || !this.auctionService.getById(itemID).quantityTotal) {
           return true;
-        } else if (itemNpcDetails.vendorBuyPrice < this.auctionService.getById(itemID).buyout && itemNpcDetails.vendorAvailable === 0) {
+        } else if (itemNpcDetails.vendorBuyPrice < this.auctionService.getById(itemID).buyout && itemNpcDetails.vendorAvailable === -1) {
           return true;
         }
       }
