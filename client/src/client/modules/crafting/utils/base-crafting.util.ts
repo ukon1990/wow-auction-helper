@@ -327,7 +327,7 @@ export abstract class BaseCraftingUtil {
   getVendorPriceDetails(id: number): { price: number; stock: number } {
     const npcItem: ItemNpcDetails = NpcService.itemNpcMap.value.get(id);
     const item: Item = this.items ? this.items.get(id) : undefined;
-    if (item && item.buyPrice && npcItem && npcItem.vendorBuyPrice && npcItem.vendorAvailable === 0) {
+    if (item && item.buyPrice && npcItem && npcItem.vendorBuyPrice && npcItem.vendorAvailable === -1) {
       const stock = npcItem
         ? npcItem.vendorAvailable < 0
           ? 0 : npcItem.vendorAvailable

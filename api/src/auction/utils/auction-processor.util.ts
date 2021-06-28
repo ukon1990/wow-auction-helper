@@ -9,11 +9,12 @@ import {AuctionTransformerUtil} from './auction-transformer.util';
 
 export class AuctionProcessorUtil {
   static process(auctions: Auction[], lastModified: number, ahId: number, ahTypeId: number): {
-    list: AuctionItemStat[];
+    list: AuctionItemStat[][];
     hour: number;
   } {
     const start = +new Date();
-    const list: AuctionItemStat[] = [], map = {}, hour = new Date(lastModified).getUTCHours();
+
+    const list: AuctionItemStat[][] = [], map = {}, hour = new Date(lastModified).getUTCHours();
     if (!auctions) {
       return {
         list: [],
@@ -24,9 +25,16 @@ export class AuctionProcessorUtil {
       dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
     console.log('Date is ' + dateString + ' Hour= ' + hour);
     for (let i = 0, l = auctions.length; i < l; ++i) {
+      let index = (list.length || 1) - 1;
+      if (list[index] && list[index].length >= 5000) {
+        index++;
+      }
+      if (!list[index]) {
+        list.push([]);
+      }
       this.processAuction(
         map,
-        list,
+        list[index],
         AuctionTransformerUtil.transform(auctions[i]),
         lastModified,
         ahId,
@@ -57,7 +65,13 @@ export class AuctionProcessorUtil {
   }
 
   private static processAuction(
-    map: any, list: AuctionItemStat[], auction: Auction, lastModified: number, ahId: number, hour: string, ahTypeId: number
+    map: any,
+    list: AuctionItemStat[],
+    auction: Auction,
+    lastModified: number,
+    ahId: number,
+    hour: string,
+    ahTypeId: number
   ) {
     const id = AuctionItemStat.bonusId(auction.bonusLists),
       mapId = this.getMapId(auction, id),
