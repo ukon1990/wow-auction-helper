@@ -65,14 +65,22 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
   }
 
   getRealmsToUpdate(): Promise<AuctionHouse[]> {
+    const daysIntoThePastThreshold = 7;
+    const inactiveRealmUpdateRate = 4;
     return this.scan({
       TableName: this.table,
-      FilterExpression: '#nextUpdate <= :now OR attribute_not_exists(#nextUpdate)',
+      FilterExpression: // #nextUpdate <= :now OR attribute_not_exists(#nextUpdate)
+        // Avoiding realms that haven't been requested for the past 7 days.
+        '((#nextUpdate <= :now OR attribute_not_exists(#nextUpdate)) AND #lastRequested => :lastRequestedLimit)' +
+        // Make sure that we at least
+        ' OR (#lastRequested =< :lastRequestedLimit)',
       ExpressionAttributeNames: {
         '#nextUpdate': 'nextUpdate',
+        '#lastRequested': 'lastRequested',
       },
       ExpressionAttributeValues: {
         ':now': +new Date(),
+        ':lastRequestedLimit': +new Date() - (1000 * 60 * 60 * 24) * daysIntoThePastThreshold
       }
     });
   }
