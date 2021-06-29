@@ -19,6 +19,8 @@ import {courtOfHarvesters} from './shadowlands/courtOfHarvesters.data';
 import {theWildHunt} from './shadowlands/theWildHunt.data';
 import {theUndyingArmy} from './shadowlands/theUndyingArmy.data';
 import {veNari} from './shadowlands/veNari.data';
+import {archivistsCodex} from './shadowlands/archivistsCodex.data';
+import {deathsAdvance} from './shadowlands/deathsAdvance.data';
 
 export class ReputationVendorsData {
   public static bfa: ReputationVendor[] = [
@@ -45,5 +47,7 @@ export class ReputationVendorsData {
     theWildHunt,
     theUndyingArmy,
     veNari,
+    archivistsCodex,
+    deathsAdvance,
   ];
 }

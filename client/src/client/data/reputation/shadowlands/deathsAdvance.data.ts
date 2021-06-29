@@ -10,30 +10,28 @@ export const deathsAdvance: ReputationVendor = {
   expansion: 8, // Tome of origins is for all professions
   professions: {
     164: [
-      new ReputationVendorRecipe(1, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
-      new ReputationVendorRecipe(1, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(45739, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(46066, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
     ],
     165: [
-      new ReputationVendorRecipe(1, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
-      new ReputationVendorRecipe(1, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(45739, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(46068, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
     ],
     197: [
-      new ReputationVendorRecipe(1, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
-      new ReputationVendorRecipe(1, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(45739, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(46069, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
     ],
     202: [
-      new ReputationVendorRecipe(1, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
-      new ReputationVendorRecipe(1, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(45739, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
     ],
     755: [
-      new ReputationVendorRecipe(1, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
-      new ReputationVendorRecipe(1, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(45739, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
+      new ReputationVendorRecipe(46067, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
     ],
     773: [// item id = 186598
       // Item id = 186724
       new ReputationVendorRecipe(1, 'Technique: Contract: Death\'s Advance', 1, [2500, 0, 1767], Standing.Revered),
-      new ReputationVendorRecipe(1, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
-    ],
+     ],
   },
   isAlly: true,
   isHorde: true,
