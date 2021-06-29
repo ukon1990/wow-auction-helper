@@ -42,7 +42,7 @@ export class TooltipComponent implements OnInit, OnDestroy {
          if ((tooltip.data as Recipe).reagents && (tooltip.data as Recipe).reagents.length) {
            this.recipes = [tooltip.data as Recipe];
          } else if (this.hasRecipeSource(tooltip.data as AuctionItem)) {
-           this.recipes = (tooltip.data as AuctionItem).source.recipe.all;
+           this.recipes = this.sliceAndSortByROI((tooltip.data as AuctionItem).source.recipe.all);
          } else if ((tooltip.data as any).recipeId) {
            // For dashboards
            this.recipeId = +(tooltip.data as any).recipeId;
@@ -52,7 +52,7 @@ export class TooltipComponent implements OnInit, OnDestroy {
          } else if ((tooltip.data as any).recipe) {
            this.recipes = [(tooltip.data as any).recipe];
          } else if (CraftingService.itemRecipeMap.value.has(tooltip.id)) {
-           this.recipes = CraftingService.itemRecipeMap.value.get(tooltip.id);
+           this.recipes = this.sliceAndSortByROI(CraftingService.itemRecipeMap.value.get(tooltip.id));
          }
        } catch (e) {
        }
@@ -66,6 +66,10 @@ export class TooltipComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.activeTooltipSub.unsubscribe();
+  }
+
+  sliceAndSortByROI(recipes: Recipe[]): Recipe[] {
+    return (recipes || []).sort((a, b) => b.roi - a.roi).slice(0, 2);
   }
 
   private moveTooltipIfOutOfBounds() {
