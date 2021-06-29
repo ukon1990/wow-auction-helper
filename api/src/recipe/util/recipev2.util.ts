@@ -113,13 +113,16 @@ export class RecipeV2Util {
       await AuthHandler.getToken();
       const http = new HttpClientUtil(),
         db = new DatabaseUtil(false);
+      await db.enqueueHandshake()
+        .catch(reject);
       const recipeMap = {};
       try {
         const result = [];
-        const {body} = await http.get(
-          new Endpoints().getPath('profession/index', 'us', NameSpace.STATIC_RETAIL));
+        const url = new Endpoints().getPath('profession/index', 'us', NameSpace.STATIC_RETAIL);
+        console.log('URL is', url);
+        const {body} = await http.get(url);
 
-        for (const p of body.professions) {
+        for (const p of (body.professions || [])) {
           await http.get(
             new Endpoints().getPath('profession/' + p.id, 'us', NameSpace.STATIC_RETAIL))
             .then(async ({body: profession}) => {
@@ -132,6 +135,7 @@ export class RecipeV2Util {
                 skillTiers: [], // profession.skill_tiers
               };
               result.push(res);
+              /*
               await db.query(format(`INSERT INTO professions
                                      VALUES (?, ?, ?)`, [
                 res.id,
@@ -147,11 +151,14 @@ export class RecipeV2Util {
                 await this.insertLocale(res.id, 'professionsDescription', res.description, db)
                   .catch(console.error);
               }
+              */
 
               if (profession && profession.skill_tiers) {
                 for (const skill of profession.skill_tiers) {
-                  await http.get(
-                    new Endpoints().getPath(`profession/${profession.id}/skill-tier/${skill.id}`, 'us', NameSpace.STATIC_RETAIL))
+                  const skillUrl = new Endpoints().getPath(
+                    `profession/${profession.id}/skill-tier/${skill.id}`, 'us', NameSpace.STATIC_RETAIL);
+                  console.log('skillUrl', skillUrl);
+                  await http.get(skillUrl)
                     .then(async ({body: s}) => {
                       const skillTier = {
                         id: s.id,
@@ -160,6 +167,7 @@ export class RecipeV2Util {
                         max: s.maximum_skill_level,
                         recipes: []
                       };
+                      /*
                       await db.query(format(`
                         INSERT INTO professionSkillTiers
                         VALUES (?, ?, ?, ?)`, [
@@ -168,8 +176,14 @@ export class RecipeV2Util {
                         .catch(console.error);
                       await this.insertLocale(s.id, 'professionSkillTiersName', skillTier.name, db)
                         .catch(console.error);
+                      */
 
-                      s.categories.forEach(c =>
+                      // Skipping over it if it's not shadowlands recipes
+                      if (skillTier.name.en_GB.indexOf('Shadowlands') === -1) {
+                        return;
+                      }
+
+                      (s.categories || []).forEach(c =>
                         c.recipes.forEach(async r => {
                           skillTier.recipes.push(r.id);
                           await RecipeService.getAndInsert(r.id, db)
@@ -254,7 +268,13 @@ export class RecipeV2Util {
       new HttpClientUtil().get(
         url
       )
-        .then(({body}) => resolve(body.assets[0].value))
+        .then(({body}) => {
+          if (body.assets && body.assets.length) {
+            resolve(body.assets[0].value);
+          } {
+            reject({message: 'Missing', body});
+          }
+        })
         .catch(reject);
     });
   }

@@ -7,16 +7,23 @@ import {RecipeV2Util} from '../util/recipev2.util';
 export class RecipeService {
   private static repository = new RecipeRepository();
 
-  static getById(id: any, locale: any) {
+  static getById(id: any, locale: any, db?: DatabaseUtil) {
     return new Promise<Recipe>(async (resolve, reject) => {
-      const db = new DatabaseUtil(false);
+      const closeConnection = db === undefined;
+      if (!db) {
+        db = new DatabaseUtil(false);
+      }
       await this.repository.getById(id, locale, db)
         .then(res => {
-          db.end();
+          if (closeConnection) {
+            db.end();
+          }
           resolve(res);
         })
         .catch(err => {
-          db.end();
+          if (closeConnection) {
+            db.end();
+          }
           reject(err);
         });
     });
@@ -38,13 +45,25 @@ export class RecipeService {
 
   static getAndInsert(id: number, db: DatabaseUtil): Promise<Recipev2> {
     return new Promise<Recipev2>((resolve, reject) => {
-      RecipeV2Util.getRecipeFromAPI(id)
-        .then((recipe: Recipev2) => {
-          this.repository.insertData(recipe, db)
-            .then(() => resolve(recipe))
-            .catch(reject);
+      this.getById(id, 'en_GB', db)
+        .then(existingRecipe => {
+          resolve();
         })
-        .catch(reject);
+        .catch(error => {
+          if (error === 'missing') {
+            console.log('Downloading recipe with id', id);
+            RecipeV2Util.getRecipeFromAPI(id)
+              .then((recipe: Recipev2) => {
+                console.log('Found a new recipe', id, recipe.name.en_GB);
+                this.repository.insertData(recipe, db)
+                  .then(() => resolve(recipe))
+                  .catch(reject);
+              })
+              .catch(reject);
+          } else {
+            reject(error);
+          }
+        });
     });
   }
 }
