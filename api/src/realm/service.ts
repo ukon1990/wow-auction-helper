@@ -35,8 +35,12 @@ export class RealmService {
     });
   }
 
-  updateLastRequested(id: number, lastRequested: number): Promise<any> {
-    return this.repository.updateEntry(id, {id, lastRequested});
+  updateLastRequested(id: number, lastRequested: number, nextUpdate?: number): Promise<any> {
+    const updatedValue = {id, lastRequested};
+    if (nextUpdate) {
+      updatedValue['nextUpdate'] = nextUpdate;
+    }
+    return this.repository.updateEntry(id, updatedValue);
   }
 
   updateLastRequestedWithRegionAndSlug(region: string, slug: string, lastRequested: number): Promise<void> {
@@ -44,7 +48,8 @@ export class RealmService {
       this.repository.getByRegionAndSlug(region, slug)
         .then((realm: AuctionHouse) => {
           if (realm) {
-            this.updateLastRequested(realm.id, +lastRequested)
+            const isInactive = this.isHouseInactive(realm.lastRequested);
+            this.updateLastRequested(realm.id, +lastRequested, isInactive ? +new Date() : undefined)
               .then(resolve)
               .catch(reject);
           } else {
@@ -74,20 +79,43 @@ export class RealmService {
     lastModified: number;
     url: string | {[key: string]: string};
     size: number;
+    lastRequested: number;
   }): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.logRepository.getUpdateDelays(id)
-        .then(delay => {
-          this.repository.update(id, {
-            ...entry,
-            ...delay,
-            nextUpdate: entry.lastModified + (delay.lowestDelay * 60 * 1000),
-          })
-            .then(resolve)
-            .catch(reject);
+      const minute = 60 * 1000;
+      const hour = minute * 60;
+      const isInactiveHouse = this.isHouseInactive(entry.lastRequested);
+      if (isInactiveHouse) {
+        const nextUpdate = +new Date() + hour * 6;
+        this.repository.update(id, {
+          ...entry,
+          nextUpdate,
         })
-        .catch(reject);
+          .then(resolve)
+          .catch(reject);
+      } else {
+        this.logRepository.getUpdateDelays(id)
+          .then(delay => {
+            // Setting the delay to 115 as a max, in case of newly activated realms
+            const lowestDelay = (delay.lowestDelay > 120 ? 115 : delay.lowestDelay);
+            const nextUpdate = entry.lastModified + lowestDelay * minute;
+            this.repository.update(id, {
+              ...entry,
+              ...delay,
+              nextUpdate,
+            })
+              .then(resolve)
+              .catch(reject);
+          })
+          .catch(reject);
+      }
     });
+  }
+
+  private isHouseInactive(lastRequested: number) {
+    const minute = 60 * 1000;
+    const hour = minute * 60;
+    return lastRequested <= +new Date() - hour * 24 * 7;
   }
 
   updateAllRealmStatuses(): Promise<void> {
