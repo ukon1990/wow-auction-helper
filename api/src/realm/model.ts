@@ -38,6 +38,7 @@ export interface AuctionHouse {
   autoUpdate: boolean;
   firstRequested?: number;
   lowestDelay?: number;
+  nextUpdate?: number;
   lastModified?: number;
   size?: number;
   lastHistoryDeleteEvent?: number;

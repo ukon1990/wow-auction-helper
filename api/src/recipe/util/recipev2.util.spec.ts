@@ -231,9 +231,11 @@ describe('Recipev2Util', () => {
     });
 
 
-    it('getAndMapProfessions', async () => {
+    xit('getAndMapProfessions', async () => {
       jest.setTimeout(9999999);
+      environment.test = false;
       const mapped = await RecipeV2Util.getAndMapProfessions();
+      environment.test = true;
       // console.log('mapped', JSON.stringify(mapped));
       expect(mapped).toBeTruthy();
     });

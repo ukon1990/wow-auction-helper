@@ -20,7 +20,7 @@ export const courtOfHarvesters: ReputationVendor = {
     ],
     773: [
       new ReputationVendorRecipe(45781, 'Technique: Crafter\'s Mark III', 1, [2000 * 100000, 0, 0], Standing.Revered),
-        new ReputationVendorRecipe(44895, 'Technique: Contract: Court of Harvesters', 1, [1350 * 100000, 0, 0], Standing.Revered),
+      new ReputationVendorRecipe(44895, 'Technique: Contract: Court of Harvesters', 1, [1350 * 100000, 0, 0], Standing.Revered),
     ],
   },
   isAlly: true,

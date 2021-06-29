@@ -68,7 +68,12 @@ export class ItemService {
       });
     const timestamp = localStorage.getItem(this.getStorageKey(isClassic));
 
-    if (!timestamp || +new Date(latestTimestamp) > +new Date(timestamp) || !ItemService.list.value.length) {
+    if (
+      !timestamp ||
+      +new Date(latestTimestamp) > +new Date(timestamp) ||
+      !ItemService.list.value.length ||
+      !ItemService.mapped.value.has(186973)
+    ) {
       await this.getItems(isClassic);
     }
   }
@@ -122,6 +127,7 @@ export class ItemService {
     }/item/${locale}.json.gz?lastModified=${this.lastModified.value}`)
       .toPromise()
       .then((response: ItemResponse) => {
+        localStorage.setItem(this.getStorageKey(isClassic), `${response.timestamp}`);
         SharedService.itemsUnmapped = [];
         Object.keys(SharedService.items).forEach(id =>
           delete SharedService.items[id]);
@@ -183,7 +189,6 @@ export class ItemService {
     if (shouldSave && this.platform !== null && !this.platform.WEBKIT) {
       this.dbService.addItems(items.items, isClassic);
     }
-    localStorage.setItem(this.getStorageKey(isClassic), `${items.timestamp}`);
     SharedService.events.items.emit(true);
     ItemService.mapped.next(mapped);
     ItemService.list.next(list);
