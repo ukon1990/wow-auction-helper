@@ -89,6 +89,14 @@ export class RDSItemRepository {
                      AND itemId NOT IN (
                        SELECT id
                        FROM items
+                       )
+                   UNION ALL
+                   SELECT itemId as id
+                   FROM itemPriceHistoryPerHour
+                   WHERE date >= NOW() - INTERVAL 1 DAY
+                     AND itemId NOT IN (
+                       SELECT id
+                       FROM items
                        )) as tbl
           GROUP BY id
           ORDER BY id DESC;`)

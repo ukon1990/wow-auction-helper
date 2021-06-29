@@ -322,7 +322,7 @@ export class AuctionService {
           console.log(`Checked update and updated realm status in ${+new Date() - start} ms`);
           new StatsService().processRecord(record)
             .then(async () => {
-              await this.updateRealmStatus(ahId, lastModified, url, +ahTypeId, fileSize)
+              await this.updateRealmStatus(ahId, lastModified, url, +ahTypeId, fileSize, house.lastRequested)
                 .catch(err => console.error('Could not update realm status', err));
               await new RealmService().createLastModifiedFile(+ahId, region)
                 .catch(err => console.error('Could not createLastModifiedFile', err));
@@ -345,7 +345,14 @@ export class AuctionService {
     });
   }
 
-  private updateRealmStatus(ahId: string, lastModified: number, url: string, ahTypeId: number, fileSize: number): Promise<void> {
+  private updateRealmStatus(
+    ahId: string,
+    lastModified: number,
+    url: string,
+    ahTypeId: number,
+    fileSize: number,
+    lastRequested: number
+  ): Promise<void> {
     const realmService = new RealmService();
 
     return new Promise<void>(async (resolve, reject) => {
@@ -365,6 +372,7 @@ export class AuctionService {
         lastModified,
         url: ahTypeId > 0 ? prevData : url,
         size: fileSize,
+        lastRequested,
       })
         .then(async () => {
           realmService.addUpdateDumpLog(+ahId, {
