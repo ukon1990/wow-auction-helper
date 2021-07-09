@@ -28,9 +28,8 @@ export const deathsAdvance: ReputationVendor = {
       new ReputationVendorRecipe(45739, 'Recipe: Crafter\'s Mark III', 1, [2000, 0, 1767], Standing.Honored),
       new ReputationVendorRecipe(46067, 'Tome of Origins', 1, [2000, 0, 1767], Standing.Honored),
     ],
-    773: [// item id = 186598
-      // Item id = 186724
-      new ReputationVendorRecipe(1, 'Technique: Contract: Death\'s Advance', 1, [2500, 0, 1767], Standing.Revered),
+    773: [
+      new ReputationVendorRecipe(46200, 'Technique: Contract: Death\'s Advance', 1, [2500, 0, 1767], Standing.Revered),
      ],
   },
   isAlly: true,

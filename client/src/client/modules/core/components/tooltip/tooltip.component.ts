@@ -8,6 +8,7 @@ import {AuctionItem} from '../../../auction/models/auction-item.model';
 import {ThemeUtil} from '../../utils/theme.util';
 import {Report} from '../../../../utils/report.util';
 import {CraftingService} from '../../../../services/crafting.service';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'wah-tooltip',
@@ -16,6 +17,7 @@ import {CraftingService} from '../../../../services/crafting.service';
 })
 export class TooltipComponent implements OnInit, OnDestroy {
   private activeTooltipSub: Subscription = new Subscription();
+  faTimes = faTimes;
   currentTheme = ThemeUtil.current;
   locale = 'en';
   isClassic = false;
@@ -35,12 +37,6 @@ export class TooltipComponent implements OnInit, OnDestroy {
     this.activeTooltipSub.add(this.service.activeTooltip.subscribe(tooltip => {
       this.tooltipOpenedTimestamp = tooltip ? +new Date() : undefined;
       this.setTooltipContent(tooltip);
-
-      setTimeout(() => {
-        if (this.tooltipOpenedTimestamp) {
-          this.service.clearTooltip();
-        }
-      }, 30 * 1000);
     }));
   }
 
@@ -123,5 +119,9 @@ export class TooltipComponent implements OnInit, OnDestroy {
       return true;
     }
     return false;
+  }
+
+  close() {
+    this.service.clearTooltip();
   }
 }

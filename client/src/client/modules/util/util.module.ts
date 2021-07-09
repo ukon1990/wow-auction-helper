@@ -14,7 +14,7 @@ import {SelectRealmComponent} from './components/select-realm/select-realm.compo
 import {AddonImportComponent} from './components/addon-import/addon-import.component';
 import {ChartsDataSetsComponent} from './components/charts-datasets/charts-data-sets.component';
 import {WowheadDirective} from './wowhead.directive';
-import {CloseBtnComponent} from './components/close-btn/close-btn.component';
+import {CloseBtnComponent} from './components/close-btn.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { LoadingComponent } from './components/loading.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
