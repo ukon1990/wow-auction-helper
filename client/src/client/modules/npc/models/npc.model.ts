@@ -181,7 +181,7 @@ export class NPC {
               tradeVendor = new TradeVendor();
               tradeVendor.itemID = item.currency;
               tradeVendor.name = garrisonResourceIdExtra.length ?
-                `${npc.name} (${currency && currency.name[locale]})` :
+                `${npc.name} (${currency && (currency.name[locale] || currency.name.en_GB)})` :
                 (currency && currency.name[locale] || npc.name) + '- ' + item.currency;
               tradeVendor.items = [];
               tradeVendor.expansionId = npc.expansionId;

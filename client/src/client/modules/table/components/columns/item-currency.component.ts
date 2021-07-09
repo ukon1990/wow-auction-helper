@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ColumnDescription} from '../../models/column-description';
 import {BaseComponent} from './base.component';
+import {currencyMap} from '../../../../data/currency.data';
 
 @Component({
   selector: 'wah-item-currency',
@@ -10,18 +11,39 @@ import {BaseComponent} from './base.component';
                 {{ row[column.key] | gold }}
               </span>
       <ng-template #itemCurrency>
-        <a rel="domain={{ locale }},item={{ row.currency }}">
+        <span
+                wahItemTooltip
+                [item]="row"
+                idName="currency"
+                [linkType]="row.currencyType ? row.currencyType : 'item'"
+        >
           <div class="float-left">
-            {{ row[column.key] | number }} x
-          </div>
           <wah-icon *ngIf="idName"
                     class="float-left ml-1"
                     [size]="22"
+                    [icon]="icon"
                     [id]="row.currency"></wah-icon>
-        </a>
+              x
+              {{ row[column.key] | number }}
+          </div>
+        </span>
       </ng-template>
     </ng-container>
   `,
 })
-export class ItemCurrencyComponent extends BaseComponent {
+export class ItemCurrencyComponent extends BaseComponent implements OnInit {
+  icon: string;
+  constructor() {
+    super();
+  }
+
+  ngOnInit() {
+    if (this.row.currencyType && this.row.currencyType === 'currency' && this.row.currency) {
+      const currency = currencyMap.get(this.row.currency);
+      if (currency) {
+
+        this.icon = currency.icon;
+      }
+    }
+  }
 }

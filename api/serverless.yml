@@ -35,8 +35,21 @@ functions:
     tags:
       Function: Wah-updateLastRequestedWithRegionAndSlug
       Project: WAH
-    handler: src/realm/controller.updateLastRequestedWithRegionAndSlug
+    handler: src/realm/controller.updateLastRequested
     memorySize: 200
+    timeout: 5
+  updateLastRequested:
+    tags:
+      Function: Wah-updateLastRequested
+      Project: WAH
+    handler: src/realm/controller.updateLastRequested
+    memorySize: 200
+    timeout: 5
+    #events:
+     # - http:
+         # method: post
+          #path: realms/update-last-requested
+          #cors: 'http://localhost:4200,https://wah.jonaskf.net'
   auctionsDownloadAndSave:
     tags:
       Function: Wah-auctionsDownloadAndSave

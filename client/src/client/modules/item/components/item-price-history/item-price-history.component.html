@@ -1,8 +1,8 @@
 <ng-container *ngIf="isActiveTab">
   <ng-container *ngIf="isInitiated && !isLoading ; else loadingTemplate">
     <form [formGroup]="form" *ngIf="auctionItem.source?.recipe?.all">
-      <mat-form-field class="w-100">
-        <mat-select *ngIf="auctionItem.source?.recipe?.all.length"
+      <mat-form-field class="w-100" *ngIf="auctionItem.source?.recipe?.all.length">
+        <mat-select
                     formControlName="recipe"
                     placeholder="Crafting cost by recipe"
         >
@@ -15,29 +15,6 @@
         </mat-select>
       </mat-form-field>
     </form>
-
-    <!-- TODO: Add back, if it feels relevant
-    <ng-container *ngIf="reagents && reagents.length">
-      <h6>Reagents(click for details):</h6>
-      <mat-list dense class="horizontal-item-list">
-        <mat-list-item
-                *ngFor="let reagent of reagents"
-        >
-          <wah-icon mat-list-icon [size]="22" [id]="reagent.id"></wah-icon>
-          <div mat-line [style]="{color: theme.accentColorCode}">
-            <a rel="domain={{ locale }},item={{ reagent.id }}"
-               (click)="setSelectedItem(reagent.id)"
-            >
-              {{reagent.name}} x {{ reagent.quantity }}
-            </a>
-          </div>
-          <div mat-line>
-            {{ reagent.avgPrice * reagent.quantity | gold }}
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </ng-container>
-    -->
 
     <h6>Hourly changes for the past 14 days or less</h6>
     <mat-list dense class="horizontal-item-list mb-3" *ngIf="stats">

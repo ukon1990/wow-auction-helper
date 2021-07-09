@@ -176,15 +176,7 @@ export class RecipeRepository extends Repository<Recipe> {
             }));
           }
 
-          if (recipe.modified_crafting_slots) {
-            recipe.modified_crafting_slots.forEach(slot => queries.push(
-              new RDSQueryUtil('recipesModifiedCraftingSlot', false).insert({
-                id: slot.slot_type.id,
-                recipeId: recipe.id,
-                sortOrder: slot.display_order,
-              })
-            ));
-          }
+          this.getModifiedCraftingSlotQueries(recipe, queries);
           await db.query(`INSERT INTO recipes(
                         id,
                         icon,
@@ -222,6 +214,18 @@ export class RecipeRepository extends Repository<Recipe> {
             .then(() => resolve())
             .catch(reject);
         });
+  }
+
+  getModifiedCraftingSlotQueries(recipe: Recipev2, queries: string[]) {
+    if (recipe.modified_crafting_slots) {
+      recipe.modified_crafting_slots.forEach(slot => queries.push(
+        new RDSQueryUtil('recipesModifiedCraftingSlot', false).insert({
+          id: slot.slot_type.id,
+          recipeId: recipe.id,
+          sortOrder: slot.display_order,
+        })
+      ));
+    }
   }
 
   update(data: Recipe): Promise<Recipe> {

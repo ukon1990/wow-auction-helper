@@ -49,9 +49,6 @@ describe('RealmRepository', () => {
   it('Realms sorted by update', async () => {
     let realms: AuctionHouse[];
 
-    await repository.delete(4618);
-    await repository.delete(4620);
-    await repository.delete(4619);
     await repository.getRealmsToUpdate()
       .then(r => realms = r)
       .catch(console.error);
@@ -122,7 +119,7 @@ describe('RealmRepository', () => {
             };
             if (houseIdMap.get(id).lastRequested <= +new Date(+new Date() - 1000 * 60 * 60 * 24 * 5)) {
               console.log('Actually active', new Date(+new Date() - 1000 * 60 * 60 * 24 * 5), realm, region);
-              await service.updateLastRequestedWithRegionAndSlug(region, realm, 1624719534290);
+              await service.updateLastRequestedWithRegionAndSlug(region, realm);
             }
           }
         }))

@@ -175,9 +175,9 @@ export class AddonImportComponent implements OnInit {
     if (this.form.value.realm) {
       this.loadData();
     }
-    const realms: RealmStatus[] = [];
+    const realms: AuctionHouseStatus[] = [];
     this.result.forEach(r =>
-      realms.push(new RealmStatus(r.realm, +r.lastScan)));
+      realms.push(new AuctionHouseStatus(r.realm, +r.lastScan)));
     localStorage.setItem('classicRealms', JSON.stringify(realms));
     this.realmService.events.list.next(realms);
   }

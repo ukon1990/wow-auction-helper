@@ -33,7 +33,7 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
     {key: 'isKnown', title: 'Known', dataType: 'boolean'},
     {key: 'name', title: 'Name', dataType: 'name'},
     {key: 'rank', title: 'Rank', dataType: 'number'},
-    {key: 'cost', title: 'Cost', dataType: 'gold'},
+    {key: 'cost', title: 'Cost', dataType: 'vendor-currency'},
     {key: 'roi', title: 'ROI', dataType: 'gold'},
     {key: 'requiredStanding', title: 'Standing', dataType: 'text'}
   ];
@@ -135,6 +135,8 @@ export class CharacterReputationComponent implements AfterContentInit, OnDestroy
               rank: repRecipe.rank,
               requiredStanding: repRecipe.requiredStanding,
               cost: repRecipe.cost[0],
+              currency: repRecipe.cost[2],
+              currencyType: 'currency',
               isKnown: knownRecipes.filter(reci =>
                 reci.rank >= recipe.rank && reci.name === recipe.name).length > 0,
               roi: this.getRecipe(recipe).roi

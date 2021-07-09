@@ -20186,7 +20186,7 @@
   },
   "5262": {
     "id": 5262,
-    "ilevel": "59 @plvl 1 - 80 @plvl 80",
+    "ilevel": "201 @plvl 1 - 240 @plvl 240.59234619140625",
     "curveId": 8595
   },
   "5263": {
@@ -28643,118 +28643,6 @@
     "ilevel": "95 @plvl 45 - 158 @plvl 158",
     "curveId": 17263
   },
-  "6773": {
-    "id": 6773,
-    "tag": "Rank 7"
-  },
-  "6774": {
-    "id": 6774,
-    "tag": "Rank 6"
-  },
-  "6775": {
-    "id": 6775,
-    "tag": "Rank 5"
-  },
-  "6776": {
-    "id": 6776,
-    "tag": "Rank 4"
-  },
-  "6777": {
-    "id": 6777,
-    "tag": "Rank 3"
-  },
-  "6778": {
-    "id": 6778,
-    "tag": "Rank 2"
-  },
-  "6780": {
-    "id": 6780,
-    "tag": "Rank 7"
-  },
-  "6781": {
-    "id": 6781,
-    "tag": "Rank 6"
-  },
-  "6782": {
-    "id": 6782,
-    "tag": "Rank 5"
-  },
-  "6783": {
-    "id": 6783,
-    "tag": "Rank 4"
-  },
-  "6784": {
-    "id": 6784,
-    "tag": "Rank 3"
-  },
-  "6785": {
-    "id": 6785,
-    "tag": "Rank 2"
-  },
-  "6786": {
-    "id": 6786,
-    "tag": "Rank 1"
-  },
-  "6787": {
-    "id": 6787,
-    "tag": "Rank 7"
-  },
-  "6788": {
-    "id": 6788,
-    "tag": "Rank 6"
-  },
-  "6789": {
-    "id": 6789,
-    "tag": "Rank 5"
-  },
-  "6790": {
-    "id": 6790,
-    "tag": "Rank 4"
-  },
-  "6791": {
-    "id": 6791,
-    "tag": "Rank 3"
-  },
-  "6792": {
-    "id": 6792,
-    "tag": "Rank 2"
-  },
-  "6793": {
-    "id": 6793,
-    "tag": "Rank 1"
-  },
-  "6794": {
-    "id": 6794,
-    "tag": "Rank 7"
-  },
-  "6795": {
-    "id": 6795,
-    "tag": "Rank 6"
-  },
-  "6796": {
-    "id": 6796,
-    "tag": "Rank 5"
-  },
-  "6797": {
-    "id": 6797,
-    "tag": "Rank 4"
-  },
-  "6798": {
-    "id": 6798,
-    "tag": "Rank 3"
-  },
-  "6799": {
-    "id": 6799,
-    "tag": "Rank 2"
-  },
-  "6800": {
-    "id": 6800,
-    "tag": "Rank 1"
-  },
-  "6801": {
-    "id": 6801,
-    "tag": "Rank 1"
-  },
   "6802": {
     "id": 6802,
     "ilevel": "75 @plvl 45 - 138 @plvl 138",
@@ -28932,7 +28820,8 @@
     "name_override": {
       "base": "Expanded Potential",
       "slots": {
-        "waist": "Sash of Expanded Potential"
+        "waist": "Sash of Expanded Potential",
+        "feet": "Boots of Expanded Potential"
       }
     }
   },
@@ -28951,7 +28840,8 @@
     "name_override": {
       "base": "Disciplinary Command",
       "slots": {
-        "finger": "Band of Disciplinary Command"
+        "finger": "Band of Disciplinary Command",
+        "waist": "Wristwraps of Disciplinary Command"
       }
     }
   },
@@ -28982,7 +28872,8 @@
     "name_override": {
       "base": "Temporal Warp",
       "slots": {
-        "finger": "Loop of Time"
+        "finger": "Loop of Time",
+        "chest": "Inscribed Mantle of Time"
       }
     }
   },
@@ -29150,7 +29041,7 @@
       "id": 125523,
       "index": 2,
       "spell": {
-        "id": 330767,
+        "id": 330765,
         "name": "Unbound Changeling",
         "icon": "spell_animaardenweald_nova"
       }
@@ -29162,7 +29053,7 @@
       "id": 125525,
       "index": 2,
       "spell": {
-        "id": 330739,
+        "id": 330080,
         "name": "Unbound Changeling",
         "icon": "inv_pet_spectralporcupinered"
       }
@@ -29174,7 +29065,7 @@
       "id": 125526,
       "index": 2,
       "spell": {
-        "id": 330740,
+        "id": 330733,
         "name": "Unbound Changeling",
         "icon": "inv_pet_spectralporcupinegreen"
       }
@@ -29186,7 +29077,7 @@
       "id": 125527,
       "index": 2,
       "spell": {
-        "id": 330741,
+        "id": 330734,
         "name": "Unbound Changeling",
         "icon": "inv_pet_spectralporcupineblue"
       }
@@ -29279,7 +29170,8 @@
     "name_override": {
       "base": "Arcane Harmony",
       "slots": {
-        "hands": "Laced Wraps of Arcane Harmony"
+        "hands": "Laced Wraps of Arcane Harmony",
+        "shoulder": "Embroidered Shoulderpads of Arcane Harmony"
       }
     }
   },
@@ -29352,7 +29244,10 @@
     },
     "quality": 5,
     "name_override": {
-      "base": "Incanter's Circlet"
+      "base": "Incanter's Circlet",
+      "slots": {
+        "hands": "Incanter's Gloves"
+      }
     }
   },
   "6932": {
@@ -29386,7 +29281,8 @@
     "name_override": {
       "base": "Molten Skyfall",
       "slots": {
-        "wrist": "Wristwraps of the Molten Sky"
+        "wrist": "Wristwraps of the Molten Sky",
+        "neck": "Charm of the Molten Sky"
       }
     }
   },
@@ -29441,7 +29337,9 @@
     "name_override": {
       "base": "Grisly Icicle",
       "slots": {
-        "head": "Cowl of Deep-Freeze"
+        "head": "Cowl of Deep-Freeze",
+        "shoulder": "Shoulderpads of Deep-Freeze",
+        "neck": "Talisman of Deep-Freeze"
       }
     }
   },
@@ -29481,7 +29379,9 @@
     "name_override": {
       "base": "Crimson Rune",
       "slots": {
-        "hands": "Handguards of the Crimson Rune"
+        "hands": "Handguards of the Crimson Rune",
+        "shoulder": "Shoulderguards of the Crimson Rune",
+        "waist": "Waistguard of the Crimson Rune"
       }
     }
   },
@@ -29500,7 +29400,8 @@
     "name_override": {
       "base": "Vampiric Aura",
       "slots": {
-        "chest": "Vampiric Chestplate"
+        "chest": "Vampiric Chestplate",
+        "finger": "Vampiric Band"
       }
     }
   },
@@ -29567,7 +29468,8 @@
     "name_override": {
       "base": "Absolute Zero",
       "slots": {
-        "neck": "Chain of Absolute Zero"
+        "neck": "Chain of Absolute Zero",
+        "wrist": "Armguards of Absolute Zero"
       }
     }
   },
@@ -29602,7 +29504,8 @@
     "name_override": {
       "base": "Grip of the Everlasting",
       "slots": {
-        "waist": "Belt of the Unending Grasp"
+        "waist": "Belt of the Unending Grasp",
+        "feet": "Warboots of the Unending Grasp"
       }
     }
   },
@@ -29621,7 +29524,8 @@
     "name_override": {
       "base": "Reanimated Shambler",
       "slots": {
-        "legs": "Legguards of Reanimation"
+        "legs": "Legguards of Reanimation",
+        "waist": "Waistguard of Reanimation"
       }
     }
   },
@@ -29640,7 +29544,8 @@
     "name_override": {
       "base": "Frenzied Monstrosity",
       "slots": {
-        "back": "Monstrosity Drapes"
+        "back": "Monstrosity Drapes",
+        "legs": "Legplates of Monstrosity"
       }
     }
   },
@@ -29675,7 +29580,8 @@
     "name_override": {
       "base": "Deadliest Coil",
       "slots": {
-        "back": "Cloak of the Deadly Coil"
+        "back": "Cloak of the Deadly Coil",
+        "chest": "Chestplate of the Deadly Coil"
       }
     }
   },
@@ -29745,7 +29651,8 @@
     "name_override": {
       "base": "Thunderlord",
       "slots": {
-        "feet": "Thunderlord Stompers"
+        "feet": "Thunderlord Stompers",
+        "hands": "Gauntlets of the Thunderlord"
       }
     }
   },
@@ -29812,7 +29719,8 @@
     "name_override": {
       "base": "Battlelord",
       "slots": {
-        "neck": "Battlelord's Charm"
+        "neck": "Battlelord's Charm",
+        "wrist": "Battlelord's Wristguard"
       }
     }
   },
@@ -29847,7 +29755,8 @@
     "name_override": {
       "base": "Enduring Blow",
       "slots": {
-        "head": "Painbringer Helm"
+        "head": "Painbringer Helm",
+        "waist": "Painbringer Waistguard"
       }
     }
   },
@@ -29966,7 +29875,8 @@
     "name_override": {
       "base": "Reprisal",
       "slots": {
-        "feet": "Sabatons of Reprisal"
+        "feet": "Sabatons of Reprisal",
+        "legs": "Legguards of Reprisal"
       }
     }
   },
@@ -29985,7 +29895,9 @@
     "name_override": {
       "base": "Unhinged",
       "slots": {
-        "hands": "Gauntlets of the Unhinged"
+        "hands": "Gauntlets of the Unhinged",
+        "wrist": "Armplates of the Unhinged",
+        "finger": "Band of the Unhinged"
       }
     }
   },
@@ -30004,7 +29916,9 @@
     "name_override": {
       "base": "Seismic Reverberation",
       "slots": {
-        "shoulder": "Shoulderplates of Seismic Reverberation"
+        "shoulder": "Shoulderplates of Seismic Reverberation",
+        "head": "Great Helm of Seismic Reverberation",
+        "feet": "Sabatons of Seismic Reverberation"
       }
     }
   },
@@ -30250,7 +30164,8 @@
     "name_override": {
       "base": "Deeptremor Stonetreads",
       "slots": {
-        "waist": "Deeptremor Girdle"
+        "waist": "Deeptremor Girdle",
+        "finger": "Deeptremor Signet"
       }
     }
   },
@@ -30269,7 +30184,8 @@
     "name_override": {
       "base": "Helm of Deep Elements",
       "slots": {
-        "shoulder": "Deep Elemental Shoulderguards"
+        "shoulder": "Deep Elemental Shoulderguards",
+        "wrist": "Wristwraps of Deep Elements"
       }
     }
   },
@@ -30555,7 +30471,8 @@
     "name_override": {
       "base": "Nessingwary's Trapper Boots",
       "slots": {
-        "waist": "Hemet's Belt of Trapping"
+        "waist": "Hemet's Belt of Trapping",
+        "neck": "Nessingwary's Pendant of Trapping"
       }
     }
   },
@@ -30574,7 +30491,8 @@
     "name_override": {
       "base": "Mask of Soulforge Embers",
       "slots": {
-        "shoulder": "Soulforge Ember Epaulets"
+        "shoulder": "Soulforge Ember Epaulets",
+        "finger": "Band of Soulforge Embers"
       }
     }
   },
@@ -30669,7 +30587,8 @@
     "name_override": {
       "base": "Rylakstalker's Treads",
       "slots": {
-        "back": "Cloak of the Master Rylakstalker"
+        "back": "Cloak of the Master Rylakstalker",
+        "legs": "Rylakstalker's Greaves"
       }
     }
   },
@@ -30883,7 +30802,8 @@
     "name_override": {
       "base": "Relic of Demonic Synergy",
       "slots": {
-        "head": "Vision of Demonic Synergy"
+        "head": "Vision of Demonic Synergy",
+        "shoulder": "Mantle of Demonic Synergy"
       }
     }
   },
@@ -31129,7 +31049,10 @@
     },
     "quality": 5,
     "name_override": {
-      "base": "Collective Anguish"
+      "base": "Collective Anguish",
+      "slots": {
+        "wrist": "Solemn Grasp of Collective Anguish"
+      }
     }
   },
   "7042": {
@@ -31147,7 +31070,8 @@
     "name_override": {
       "base": "Half-Giant Empowerment",
       "slots": {
-        "head": "Half-Giant Mask"
+        "head": "Half-Giant Mask",
+        "shoulder": "Half-Giant Shoulderguards"
       }
     }
   },
@@ -31166,7 +31090,8 @@
     "name_override": {
       "base": "Darkglare Boon",
       "slots": {
-        "neck": "Darkglare Medallion"
+        "neck": "Darkglare Medallion",
+        "waist": "Darkglare Waistband"
       }
     }
   },
@@ -31185,7 +31110,8 @@
     "name_override": {
       "base": "Vesture of the Darkest Hour",
       "slots": {
-        "chest": "Shroud of the Darkest Hour"
+        "chest": "Shroud of the Darkest Hour",
+        "legs": "Vesture of the Darkest Hour"
       }
     }
   },
@@ -31204,7 +31130,8 @@
     "name_override": {
       "base": "Medallion of the Darkness Flame",
       "slots": {
-        "head": "Darkness Flame Cowl"
+        "head": "Darkness Flame Cowl",
+        "neck": "Emblazoned Medallion of the Darkness Flame"
       }
     }
   },
@@ -31223,7 +31150,8 @@
     "name_override": {
       "base": "Razelikh's Defilement",
       "slots": {
-        "legs": "Defiler's Lost Legguards"
+        "legs": "Defiler's Lost Legguards",
+        "wrist": "Defiler's Lost Vambraces"
       }
     }
   },
@@ -31242,7 +31170,8 @@
     "name_override": {
       "base": "Spiraling Fel Flame Lash",
       "slots": {
-        "finger": "Unceasing Loop of Fel Flame"
+        "finger": "Unceasing Loop of Fel Flame",
+        "waist": "Spiraling Fel Flame Lash"
       }
     }
   },
@@ -31261,7 +31190,8 @@
     "name_override": {
       "base": "Scorched Soul Shackles",
       "slots": {
-        "hands": "Reckless Grasp of Fiery Soul"
+        "hands": "Reckless Grasp of Fiery Soul",
+        "wrist": "Scorched Soul Shackles"
       }
     }
   },
@@ -31280,7 +31210,8 @@
     "name_override": {
       "base": "Inner Demons",
       "slots": {
-        "feet": "Doomlord's Hooves"
+        "feet": "Doomlord's Hooves",
+        "shoulder": "Spaulders of a Fallen Doomlord"
       }
     }
   },
@@ -31299,7 +31230,7 @@
     "name_override": {
       "base": "Chaos Digits",
       "slots": {
-        "waist": "Cycle of Chaos"
+        "waist": "Unending Cycle of Chaos"
       }
     }
   },
@@ -31318,7 +31249,8 @@
     "name_override": {
       "base": "Erratic Fel Core",
       "slots": {
-        "feet": "Erratic Fel Footing"
+        "feet": "Erratic Fel Footing",
+        "finger": "Erratic Fel Core"
       }
     }
   },
@@ -31335,9 +31267,11 @@
     },
     "quality": 5,
     "name_override": {
-      "base": "Fel Bombardier Cloak",
+      "base": "Fel Bombardier",
       "slots": {
-        "chest": "Fel Enflamed Bandolier"
+        "head": "Fel Enflamed Helm",
+        "neck": "Fel Bombadier Pendant",
+        "shoulder": "Fel Bombardier's Shoulderguards"
       }
     }
   },
@@ -31356,7 +31290,7 @@
     "name_override": {
       "base": "Uther's Guard",
       "slots": {
-        "neck": "Uther's Sanctuary",
+        "neck": "Uther's Devotion",
         "chest": "Uther's Sanctuary"
       }
     }
@@ -31376,7 +31310,8 @@
     "name_override": {
       "base": "The Mad Paragon",
       "slots": {
-        "feet": "Mad Paragon's Pursuit"
+        "feet": "Mad Paragon's Pursuit",
+        "waist": "Bind of the Mad Paragon"
       }
     }
   },
@@ -31395,8 +31330,9 @@
     "name_override": {
       "base": "Of Dusk and Dawn",
       "slots": {
+        "head": "Sight of Dusk and Dawn",
         "shoulder": "Mantle of Dusk and Dawn",
-        "head": "Sight of Dusk and Dawn"
+        "neck": "Choker of Dusk and Dawn"
       }
     }
   },
@@ -31456,7 +31392,7 @@
       "spell": {
         "id": 337825,
         "name": "Shock Barrier",
-        "icon": "ability_paladin_blessedmending"
+        "icon": "spell_holy_greaterblessingoflight"
       }
     },
     "quality": 5,
@@ -31578,7 +31514,8 @@
     "name_override": {
       "base": "Relentless Inquisitor",
       "slots": {
-        "back": "Relentless Inquisitor's Mantle"
+        "back": "Relentless Inquisitor's Mantle",
+        "legs": "Relentless Inquisitor's Scales"
       }
     }
   },
@@ -31840,10 +31777,7 @@
   },
   "7083": {
     "id": 7083,
-    "effect": {
-      "id": 0,
-      "index": 0
-    },
+    "effect": null,
     "quality": 5
   },
   "7084": {
@@ -31933,13 +31867,13 @@
       "index": 0,
       "spell": {
         "id": 339144,
-        "name": "Cat-eye Curio",
+        "name": "Cat-Eye Curio",
         "icon": "inv_jewelcrafting_gem_30"
       }
     },
     "quality": 5,
     "name_override": {
-      "base": "Cat-eye Curio"
+      "base": "Cat-Eye Curio"
     }
   },
   "7090": {
@@ -32314,7 +32248,8 @@
     "name_override": {
       "base": "Toxic Bladed Girdle",
       "slots": {
-        "feet": "Toxic Bladed Boots"
+        "feet": "Toxic Bladed Boots",
+        "waist": "Toxic Poisoner's Waistwrap"
       }
     }
   },
@@ -32333,7 +32268,8 @@
     "name_override": {
       "base": "Blood-Fanged Hood",
       "slots": {
-        "shoulder": "Blood-Fanged Spaulders"
+        "shoulder": "Blood-Fanged Spaulders",
+        "finger": "Blood-Fanged Band"
       }
     }
   },
@@ -32387,7 +32323,8 @@
     "name_override": {
       "base": "Bloodstained Doomblade Gloves",
       "slots": {
-        "shoulder": "Bloodstanding Doomblade Epaulettes"
+        "shoulder": "Bloodstanding Doomblade Epaulettes",
+        "back": "Bloodstained Shroud"
       }
     }
   },
@@ -32406,7 +32343,8 @@
     "name_override": {
       "base": "Zoldyck Family Training Shackles",
       "slots": {
-        "feet": "Footsteps of the Zoldyck Family"
+        "feet": "Footsteps of the Zoldyck Family",
+        "legs": "Zoldyck Family Training Leggins"
       }
     }
   },
@@ -32425,7 +32363,8 @@
     "name_override": {
       "base": "Duskwalker's Patch",
       "slots": {
-        "chest": "Duskwalker's Patch"
+        "chest": "Duskwalker's Patch",
+        "finger": "Duskwalker's Loop"
       }
     }
   },
@@ -32444,7 +32383,8 @@
     "name_override": {
       "base": "Greenskin Wickers",
       "slots": {
-        "hands": "Greenskin Wickers"
+        "head": "Greenskin Wickers",
+        "waist": "Greenskin Waterlogged Waistband"
       }
     }
   },
@@ -32463,7 +32403,8 @@
     "name_override": {
       "base": "Bandit's Guile",
       "slots": {
-        "neck": "Bandit's Charm"
+        "neck": "Bandit's Charm",
+        "wrist": "Guile Bracelet"
       }
     }
   },
@@ -32482,7 +32423,8 @@
     "name_override": {
       "base": "Celerity",
       "slots": {
-        "finger": "Celerity Loop"
+        "finger": "Celerity Loop",
+        "shoulder": "Celerity Mantle"
       }
     }
   },
@@ -32501,7 +32443,8 @@
     "name_override": {
       "base": "Concealed Blunderbuss",
       "slots": {
-        "hands": "Concealed Blunderbuss"
+        "hands": "Concealed Blunderbuss",
+        "wrist": "Bird Whistle Vambraces"
       }
     }
   },
@@ -32520,7 +32463,8 @@
     "name_override": {
       "base": "Finality",
       "slots": {
-        "back": "Final Curtain"
+        "back": "Final Curtain",
+        "chest": "Finality"
       }
     }
   },
@@ -32539,7 +32483,8 @@
     "name_override": {
       "base": "Akaari's Soul Fragment",
       "slots": {
-        "hands": "Akaari's Soul Fragment"
+        "hands": "Akaari's Soul Fragment",
+        "head": "Akaari's Twisted Vision"
       }
     }
   },
@@ -32558,7 +32503,8 @@
     "name_override": {
       "base": "The Rotten",
       "slots": {
-        "back": "Rotten Appetite"
+        "back": "Rotten Appetite",
+        "legs": "Rotten Aftermath"
       }
     }
   },
@@ -32577,7 +32523,8 @@
     "name_override": {
       "base": "Deathly Shadows",
       "slots": {
-        "legs": "Deathly Shadows"
+        "legs": "Deathly Shadows",
+        "waist": "Deathly Shadow Wrap"
       }
     }
   },
@@ -32660,62 +32607,6 @@
     "id": 7144,
     "ilevel": "85 @plvl 48 - 154 @plvl 154",
     "curveId": 21132
-  },
-  "7145": {
-    "id": 7145,
-    "tag": "Rank 1"
-  },
-  "7146": {
-    "id": 7146,
-    "tag": "Rank 2"
-  },
-  "7147": {
-    "id": 7147,
-    "tag": "Rank 3"
-  },
-  "7148": {
-    "id": 7148,
-    "tag": "Rank 4"
-  },
-  "7149": {
-    "id": 7149,
-    "tag": "Rank 5"
-  },
-  "7150": {
-    "id": 7150,
-    "tag": "Rank 6"
-  },
-  "7151": {
-    "id": 7151,
-    "tag": "Rank 7"
-  },
-  "7152": {
-    "id": 7152,
-    "tag": "Rank 1"
-  },
-  "7153": {
-    "id": 7153,
-    "tag": "Rank 2"
-  },
-  "7154": {
-    "id": 7154,
-    "tag": "Rank 3"
-  },
-  "7155": {
-    "id": 7155,
-    "tag": "Rank 4"
-  },
-  "7156": {
-    "id": 7156,
-    "tag": "Rank 5"
-  },
-  "7157": {
-    "id": 7157,
-    "tag": "Rank 6"
-  },
-  "7158": {
-    "id": 7158,
-    "tag": "Rank 7"
   },
   "7159": {
     "id": 7159,
@@ -32926,41 +32817,14 @@
     "id": 7191,
     "ilevel": "3 @plvl 1 - 158 @plvl 158",
     "curveId": 22118,
-    "quality": 3
+    "quality": 3,
+    "tag": "Timewarped"
   },
   "7192": {
     "id": 7192,
     "ilevel": "75 @plvl 45 - 138 @plvl 138",
     "curveId": 16667,
     "quality": 3
-  },
-  "7195": {
-    "id": 7195,
-    "tag": "Rank 1 of 7"
-  },
-  "7196": {
-    "id": 7196,
-    "tag": "Rank 2 of 7"
-  },
-  "7197": {
-    "id": 7197,
-    "tag": "Rank 3 of 7"
-  },
-  "7198": {
-    "id": 7198,
-    "tag": "Rank 4 of 7"
-  },
-  "7199": {
-    "id": 7199,
-    "tag": "Rank 5 of 7"
-  },
-  "7200": {
-    "id": 7200,
-    "tag": "Rank 6 of 7"
-  },
-  "7201": {
-    "id": 7201,
-    "tag": "Rank 7 of 7"
   },
   "7202": {
     "id": 7202,
@@ -33043,7 +32907,8 @@
     "name_override": {
       "base": "Vanquished Doomlord Spaulders",
       "slots": {
-        "feet": "Doomlord Hooves"
+        "feet": "Doomlord Hooves",
+        "legs": "Doomlord Legguards"
       }
     }
   },
@@ -33062,7 +32927,8 @@
     "name_override": {
       "base": "Everburn",
       "slots": {
-        "chest": "Everburning Chestguard"
+        "chest": "Everburning Chestguard",
+        "shoulder": "Ever Burning Shoulderguards"
       }
     }
   },
@@ -33110,34 +32976,6 @@
     "id": 7230,
     "tag": "Elite"
   },
-  "7231": {
-    "id": 7231,
-    "tag": "Rank 1"
-  },
-  "7232": {
-    "id": 7232,
-    "tag": "Rank 2"
-  },
-  "7233": {
-    "id": 7233,
-    "tag": "Rank 3"
-  },
-  "7234": {
-    "id": 7234,
-    "tag": "Rank 4"
-  },
-  "7235": {
-    "id": 7235,
-    "tag": "Rank 5"
-  },
-  "7236": {
-    "id": 7236,
-    "tag": "Rank 6"
-  },
-  "7237": {
-    "id": 7237,
-    "tag": "Rank 7"
-  },
   "7238": {
     "id": 7238,
     "ilevel": "164 @plvl 0 - 164 @plvl 164",
@@ -33177,5 +33015,1418 @@
   "7246": {
     "id": 7246,
     "quality": 5
+  },
+  "7247": {
+    "id": 7247,
+    "ilevel": "5 @plvl 1 - 138 @plvl 138",
+    "curveId": 24823,
+    "tag": "Timewarped"
+  },
+  "7250": {
+    "id": 7250,
+    "quality": 4,
+    "ilevel": "233 @plvl 50 - 233 @plvl 233",
+    "curveId": 24868
+  },
+  "7305": {
+    "id": 7305,
+    "tag": "Unranked"
+  },
+  "7306": {
+    "id": 7306,
+    "tag": "Combatant"
+  },
+  "7307": {
+    "id": 7307,
+    "tag": "Challenger"
+  },
+  "7308": {
+    "id": 7308,
+    "tag": "Rival"
+  },
+  "7309": {
+    "id": 7309,
+    "tag": "Duelist"
+  },
+  "7310": {
+    "id": 7310,
+    "tag": "Elite"
+  },
+  "7311": {
+    "id": 7311,
+    "tag": "Unranked"
+  },
+  "7312": {
+    "id": 7312,
+    "tag": "Combatant"
+  },
+  "7313": {
+    "id": 7313,
+    "tag": "Challenger"
+  },
+  "7314": {
+    "id": 7314,
+    "tag": "Rival"
+  },
+  "7315": {
+    "id": 7315,
+    "tag": "Duelist"
+  },
+  "7316": {
+    "id": 7316,
+    "tag": "Elite"
+  },
+  "7317": {
+    "id": 7317,
+    "tag": "Unranked"
+  },
+  "7318": {
+    "id": 7318,
+    "tag": "Combatant"
+  },
+  "7319": {
+    "id": 7319,
+    "tag": "Challenger"
+  },
+  "7320": {
+    "id": 7320,
+    "tag": "Rival"
+  },
+  "7321": {
+    "id": 7321,
+    "tag": "Duelist"
+  },
+  "7322": {
+    "id": 7322,
+    "tag": "Elite"
+  },
+  "7323": {
+    "id": 7323,
+    "tag": "Unranked"
+  },
+  "7324": {
+    "id": 7324,
+    "tag": "Combatant"
+  },
+  "7325": {
+    "id": 7325,
+    "tag": "Challenger"
+  },
+  "7326": {
+    "id": 7326,
+    "tag": "Rival"
+  },
+  "7327": {
+    "id": 7327,
+    "tag": "Duelist"
+  },
+  "7328": {
+    "id": 7328,
+    "tag": "Elite"
+  },
+  "7329": {
+    "id": 7329,
+    "tag": "Unranked"
+  },
+  "7330": {
+    "id": 7330,
+    "tag": "Combatant"
+  },
+  "7331": {
+    "id": 7331,
+    "tag": "Challenger"
+  },
+  "7332": {
+    "id": 7332,
+    "tag": "Rival"
+  },
+  "7333": {
+    "id": 7333,
+    "tag": "Duelist"
+  },
+  "7334": {
+    "id": 7334,
+    "tag": "Elite"
+  },
+  "7335": {
+    "id": 7335,
+    "tag": "Unranked"
+  },
+  "7336": {
+    "id": 7336,
+    "tag": "Combatant"
+  },
+  "7337": {
+    "id": 7337,
+    "tag": "Challenger"
+  },
+  "7338": {
+    "id": 7338,
+    "tag": "Rival"
+  },
+  "7339": {
+    "id": 7339,
+    "tag": "Duelist"
+  },
+  "7340": {
+    "id": 7340,
+    "tag": "Elite"
+  },
+  "7341": {
+    "id": 7341,
+    "tag": "Unranked"
+  },
+  "7342": {
+    "id": 7342,
+    "tag": "Combatant"
+  },
+  "7343": {
+    "id": 7343,
+    "tag": "Challenger"
+  },
+  "7344": {
+    "id": 7344,
+    "tag": "Rival"
+  },
+  "7345": {
+    "id": 7345,
+    "tag": "Duelist"
+  },
+  "7346": {
+    "id": 7346,
+    "tag": "Elite"
+  },
+  "7357": {
+    "id": 7357,
+    "effect": {
+      "id": 138395,
+      "index": 2
+    }
+  },
+  "7359": {
+    "id": 7359,
+    "tag": "Mythic"
+  },
+  "7452": {
+    "id": 7452,
+    "ilevel": "160 @plvl 1 - 160 @plvl 160",
+    "curveId": 25740
+  },
+  "7453": {
+    "id": 7453,
+    "ilevel": "163 @plvl 1 - 163 @plvl 163",
+    "curveId": 25741
+  },
+  "7458": {
+    "id": 7458,
+    "effect": {
+      "id": 138570,
+      "index": 0,
+      "spell": {
+        "id": 353447,
+        "name": "Abomination's Frenzy",
+        "icon": "warlock_curse_shadow_aura"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Abomination's Frenzy",
+      "slots": {
+        "hands": "Grips of the Abomination",
+        "waist": "Waistguard of the Abomination",
+        "wrist": "Wristguards of the Abomination"
+      }
+    }
+  },
+  "7461": {
+    "id": 7461,
+    "ilevel": "230 @plvl 0 - 230 @plvl 230",
+    "curveId": 25832
+  },
+  "7464": {
+    "id": 7464,
+    "ilevel": "3 @plvl 1 - 184 @plvl 184",
+    "curveId": 25919,
+    "quality": 3,
+    "tag": "Timewarped"
+  },
+  "7465": {
+    "id": 7465,
+    "ilevel": "5 @plvl 1 - 164 @plvl 164",
+    "curveId": 25920,
+    "tag": "Timewarped"
+  },
+  "7466": {
+    "id": 7466,
+    "effect": {
+      "id": 138709,
+      "index": 0,
+      "spell": {
+        "id": 353882,
+        "name": "Rampant Transference",
+        "icon": "ability_ardenweald_deathknight"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Rampant Transference",
+      "slots": {
+        "chest": "Chestplate of Rampant Transference",
+        "waist": "Waistguard of Rampant Trasnference"
+      }
+    }
+  },
+  "7467": {
+    "id": 7467,
+    "effect": {
+      "id": 138714,
+      "index": 0,
+      "spell": {
+        "id": 353822,
+        "name": "Final Sentence",
+        "icon": "ability_bastion_deathknight"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Final Sentence",
+      "slots": {
+        "head": "Helm of Finality",
+        "legs": "Legplates of Finality",
+        "back": "Cloak of Finality"
+      }
+    }
+  },
+  "7468": {
+    "id": 7468,
+    "effect": {
+      "id": 138715,
+      "index": 0,
+      "spell": {
+        "id": 353699,
+        "name": "Insatiable Hunger",
+        "icon": "spell_animarevendreth_groundstate"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Insatiable Hunger",
+      "slots": {
+        "feet": "Greaves of the Insatiable Hunger",
+        "legs": "Legplates of the Insatiable Hunger"
+      }
+    }
+  },
+  "7469": {
+    "id": 7469,
+    "effect": {
+      "id": 138719,
+      "index": 0,
+      "spell": {
+        "id": 353577,
+        "name": "Glory",
+        "icon": "ability_maldraxxus_warrior"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Glory",
+      "slots": {
+        "chest": "Breastplate of Glory",
+        "waist": "Waistguard of Glory"
+      }
+    }
+  },
+  "7470": {
+    "id": 7470,
+    "effect": {
+      "id": 138722,
+      "index": 0,
+      "spell": {
+        "id": 354131,
+        "name": "Sinful Surge",
+        "icon": "ability_revendreth_warrior"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Sinful Surge",
+      "slots": {
+        "shoulder": "Sinful Pauldrons",
+        "head": "Helm of the Sinful",
+        "neck": "Pendant of the Sinful"
+      }
+    }
+  },
+  "7471": {
+    "id": 7471,
+    "effect": {
+      "id": 138726,
+      "index": 0,
+      "spell": {
+        "id": 354161,
+        "name": "Nature's Fury",
+        "icon": "ability_ardenweald_warrior"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Nature's Fury"
+    }
+  },
+  "7472": {
+    "id": 7472,
+    "effect": {
+      "id": 138727,
+      "index": 0,
+      "spell": {
+        "id": 354123,
+        "name": "Unbridled Swarm",
+        "icon": "ability_maldraxxus_druid"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Locust Swarm",
+      "slots": {
+        "chest": "Chestguard of the Wrathful Swarm",
+        "wrist": "Bindings of the Locust Swarm"
+      }
+    }
+  },
+  "7473": {
+    "id": 7473,
+    "effect": {
+      "id": 138734,
+      "index": 0,
+      "spell": {
+        "id": 354186,
+        "name": "Harmonic Echo",
+        "icon": "ability_bastion_mage"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Harmonic Echo"
+    }
+  },
+  "7474": {
+    "id": 7474,
+    "effect": {
+      "id": 138729,
+      "index": 0,
+      "spell": {
+        "id": 354109,
+        "name": "Sinful Hysteria",
+        "icon": "ability_revendreth_druid"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Sinful Hysteria",
+      "slots": {
+        "hands": "Grips of Sinful Hysteria",
+        "wrist": "Bindings of the Wrathful Swarm"
+      }
+    }
+  },
+  "7475": {
+    "id": 7475,
+    "effect": {
+      "id": 138747,
+      "index": 0,
+      "spell": {
+        "id": 354294,
+        "name": "Death's Fathom",
+        "icon": "ability_maldraxxus_mage"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Death's Fathom"
+    }
+  },
+  "7476": {
+    "id": 7476,
+    "effect": {
+      "id": 138750,
+      "index": 0,
+      "spell": {
+        "id": 354333,
+        "name": "Sinful Delight",
+        "icon": "ability_revendreth_mage"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Sinful Delight"
+    }
+  },
+  "7477": {
+    "id": 7477,
+    "effect": {
+      "id": 138742,
+      "index": 0,
+      "spell": {
+        "id": 354115,
+        "name": "Kindred Affinity",
+        "icon": "ability_bastion_druid"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Kindred Affinity",
+      "slots": {
+        "shoulder": "Spaulders of Kindred Affinity",
+        "neck": "Talisman of Kindred Affinity"
+      }
+    }
+  },
+  "7478": {
+    "id": 7478,
+    "effect": {
+      "id": 138802,
+      "index": 0,
+      "spell": {
+        "id": 354473,
+        "name": "Toxic Onslaught",
+        "icon": "ability_ardenweald_rogue"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Toxic Onslaught"
+    }
+  },
+  "7570": {
+    "id": 7570,
+    "effect": {
+      "id": 139098,
+      "index": 0,
+      "spell": {
+        "id": 354647,
+        "name": "Splintered Elements",
+        "icon": "spell_nature_elementalprecision_1"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Splintered Elements",
+      "slots": {
+        "waist": "Waist Wrap of Splintered Elements",
+        "neck": "Amulet of Splintered Elements"
+      }
+    }
+  },
+  "7571": {
+    "id": 7571,
+    "effect": {
+      "id": 138799,
+      "index": 0,
+      "spell": {
+        "id": 354118,
+        "name": "Celestial Spirits",
+        "icon": "ability_ardenweald_druid"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Celestial Spirits",
+      "slots": {
+        "feet": "Treads of Celestial Spirits",
+        "legs": "Leggings of Celestial Spirits"
+      }
+    }
+  },
+  "7572": {
+    "id": 7572,
+    "effect": {
+      "id": 138819,
+      "index": 0,
+      "spell": {
+        "id": 354703,
+        "name": "Obedience",
+        "icon": "ability_revendreth_rogue"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Obedience"
+    }
+  },
+  "7573": {
+    "id": 7573,
+    "effect": {
+      "id": 138822,
+      "index": 0,
+      "spell": {
+        "id": 354731,
+        "name": "Deathspike",
+        "icon": "ability_maldraxxus_rogue"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Deathspike"
+    }
+  },
+  "7576": {
+    "id": 7576,
+    "socket": 1
+  },
+  "7577": {
+    "id": 7577,
+    "effect": {
+      "id": 138842,
+      "index": 0,
+      "spell": {
+        "id": 354837,
+        "name": "Resounding Clarity",
+        "icon": "ability_bastion_rogue"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Resounding Clarity",
+      "slots": {
+        "shoulder": "Shoulderpads of Resounding Clarity",
+        "waist": "Waistguard of Resounding Clarity"
+      }
+    }
+  },
+  "7679": {
+    "id": 7679,
+    "effect": {
+      "id": 138976,
+      "index": 0,
+      "spell": {
+        "id": 355098,
+        "name": "Divine Resonance",
+        "icon": "ability_bastion_paladin"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Divine Resonance",
+      "slots": {
+        "waist": "Waistguard of Divine Resonance",
+        "chest": "Chestplate of Divine Resonance"
+      }
+    }
+  },
+  "7680": {
+    "id": 7680,
+    "effect": {
+      "id": 138985,
+      "index": 0,
+      "spell": {
+        "id": 355099,
+        "name": "Duty-Bound Gavel",
+        "icon": "ability_maldraxxus_paladin"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Duty-Bound Gavel",
+      "slots": {
+        "head": "Helm of the Duty-Bound Gavel",
+        "shoulder": "Pauldrons of the Duty-Bound Gavel",
+        "finger": "Ring of the Duty-Bound Gavel"
+      }
+    }
+  },
+  "7681": {
+    "id": 7681,
+    "effect": {
+      "id": 138992,
+      "index": 0,
+      "spell": {
+        "id": 355886,
+        "name": "Agony Gaze",
+        "icon": "ability_revendreth_demonhunter"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Agony Gaze"
+    }
+  },
+  "7698": {
+    "id": 7698,
+    "effect": {
+      "id": 138995,
+      "index": 0,
+      "spell": {
+        "id": 355890,
+        "name": "Blazing Slaughter",
+        "icon": "ability_ardenweald_demonhunter"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Blazing Slaughter",
+      "slots": {
+        "feet": "Leggings of Blazing Slaughter",
+        "shoulder": "Spaulders of Blazing Slaughter",
+        "back": "Shroud of Blazing Slaughter"
+      }
+    }
+  },
+  "7699": {
+    "id": 7699,
+    "effect": {
+      "id": 138998,
+      "index": 0,
+      "spell": {
+        "id": 355893,
+        "name": "Blind Faith",
+        "icon": "ability_bastion_demonhunter"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Blind Faith"
+    }
+  },
+  "7700": {
+    "id": 7700,
+    "effect": {
+      "id": 139005,
+      "index": 0,
+      "spell": {
+        "id": 355996,
+        "name": "Demonic Oath",
+        "icon": "ability_maldraxxus_demonhunter"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Demonic Oath"
+    }
+  },
+  "7701": {
+    "id": 7701,
+    "effect": {
+      "id": 139008,
+      "index": 0,
+      "spell": {
+        "id": 355447,
+        "name": "Radiant Embers",
+        "icon": "ability_revendreth_paladin"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Radiant Embers",
+      "slots": {
+        "hands": "Grips of Radiant Embers",
+        "waist": "Waistguard of Divine Resonance",
+        "wrist": "Bracers of Radiant Embers"
+      }
+    }
+  },
+  "7702": {
+    "id": 7702,
+    "effect": {
+      "id": 138983,
+      "index": 0,
+      "spell": {
+        "id": 355100,
+        "name": "Seasons of Plenty",
+        "icon": "ability_ardenweald_paladin_winter"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Seasons of Plenty",
+      "slots": {
+        "feet": "Boots of the Seasons of Plenty",
+        "legs": "Leggings of the Seasons of Plenty"
+      }
+    }
+  },
+  "7703": {
+    "id": 7703,
+    "effect": {
+      "id": 139044,
+      "index": 0,
+      "spell": {
+        "id": 356391,
+        "name": "Bwonsamdi's Pact",
+        "icon": "ability_ardenweald_priest"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Bwonsamdi's Pact",
+      "slots": {
+        "head": "Helm of Bwonsamdi's Pact",
+        "waist": "Clasp of Bwonsamdi's Pact",
+        "hands": "Grips of Bwondsamdi's Pact"
+      }
+    }
+  },
+  "7704": {
+    "id": 7704,
+    "effect": {
+      "id": 139043,
+      "index": 0,
+      "spell": {
+        "id": 356392,
+        "name": "Shadow Word: Manipulation",
+        "icon": "ability_revendreth_priest"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Shadow Word: Manipulation",
+      "slots": {
+        "wrist": "Bracers of Bwonsamdi's Pact"
+      }
+    }
+  },
+  "7705": {
+    "id": 7705,
+    "effect": {
+      "id": 139063,
+      "index": 0,
+      "spell": {
+        "id": 355441,
+        "name": "Mawsworn Shackles",
+        "icon": "trade_engineering"
+      }
+    },
+    "name_override": {
+      "base": "Unchained Gladiator's Mawsworn Shackles"
+    }
+  },
+  "7706": {
+    "id": 7706,
+    "effect": {
+      "id": 139065,
+      "index": 0,
+      "spell": {
+        "id": 356565,
+        "name": "Shackles of Malediction",
+        "icon": "trade_engineering"
+      }
+    },
+    "name_override": {
+      "base": "Unchained Gladiator's Shackles of Malediction"
+    }
+  },
+  "7707": {
+    "id": 7707,
+    "effect": {
+      "id": 139070,
+      "index": 0,
+      "spell": {
+        "id": 356592,
+        "name": "Bountiful Brew",
+        "icon": "ability_maldraxxus_monk"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Bountiful Brew",
+      "slots": {
+        "chest": "Vest of the Bountiful",
+        "shoulder": "Pauldrons of the Bountiful"
+      }
+    }
+  },
+  "7708": {
+    "id": 7708,
+    "effect": {
+      "id": 139201,
+      "index": 0,
+      "spell": {
+        "id": 356218,
+        "name": "Seeds of Rampant Growth",
+        "icon": "spell_lifegivingseed"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Seeds of Rampant Growth"
+    }
+  },
+  "7709": {
+    "id": 7709,
+    "effect": {
+      "id": 139202,
+      "index": 0,
+      "spell": {
+        "id": 356250,
+        "name": "Elemental Conduit",
+        "icon": "spell_animarevendreth_beam"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Elemental Conduit",
+      "slots": {
+        "chest": "Chain Shirt of the Elemental Conduit",
+        "wrist": "Wristwraps of Elemental Conductivity"
+      }
+    }
+  },
+  "7710": {
+    "id": 7710,
+    "effect": {
+      "id": 139203,
+      "index": 0,
+      "spell": {
+        "id": 356254,
+        "name": "Languishing Soul Detritus",
+        "icon": "ability_warlock_soulswap"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Languishing Soul Detritus"
+    }
+  },
+  "7711": {
+    "id": 7711,
+    "effect": {
+      "id": 139199,
+      "index": 0,
+      "spell": {
+        "id": 356344,
+        "name": "Shard of Annihilation",
+        "icon": "inv_enchanting_wod_crystalshard"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Shard of Annihilation",
+      "slots": {
+        "legs": "Shard of Annihilation Leggings",
+        "waist": "Belt of Shards of Annihilation"
+      }
+    }
+  },
+  "7712": {
+    "id": 7712,
+    "effect": {
+      "id": 139204,
+      "index": 0,
+      "spell": {
+        "id": 356362,
+        "name": "Decaying Soul Satchel",
+        "icon": "spell_misc_zandalari_council_soulswap"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Decaying Soul Satchel",
+      "slots": {
+        "feet": "Footpads of Decaying Souls",
+        "hands": "Decaying Soul Satchel Handwraps"
+      }
+    }
+  },
+  "7713": {
+    "id": 7713,
+    "effect": {
+      "id": 139205,
+      "index": 0,
+      "spell": {
+        "id": 356259,
+        "name": "Contained Perpetual Explosion",
+        "icon": "ability_revendreth_warlock"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Contained Perpetual Explosion",
+      "slots": {
+        "head": "Headwrap of the Contained Perpetual Explosion",
+        "shoulder": "Shoulderguards of Perpetual Explosive Energy",
+        "neck": "Charm of Perpetual Explosion"
+      }
+    }
+  },
+  "7714": {
+    "id": 7714,
+    "effect": {
+      "id": 139206,
+      "index": 0,
+      "spell": {
+        "id": 356262,
+        "name": "Pact of the Soulstalkers",
+        "icon": "ability_bastion_hunter"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Pact of the Soulstalkers",
+      "slots": {
+        "hands": "Gloves of the Soulstalkers",
+        "waist": "Waistband of Soulstalking"
+      }
+    }
+  },
+  "7715": {
+    "id": 7715,
+    "effect": {
+      "id": 139207,
+      "index": 0,
+      "spell": {
+        "id": 356264,
+        "name": "Bag of Munitions",
+        "icon": "spell_animamaldraxxus_groundstate"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Bag of Munitions",
+      "slots": {
+        "wrist": "Gauntlets of Master Munitions",
+        "head": "Chain Hood of Munitions"
+      }
+    }
+  },
+  "7716": {
+    "id": 7716,
+    "effect": {
+      "id": 139208,
+      "index": 0,
+      "spell": {
+        "id": 356375,
+        "name": "Fragments of the Elder Antlers",
+        "icon": "trade_archaeology_antleredcloakclasp"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Fragments of the Elder Antlers",
+      "slots": {
+        "neck": "Necklace of Elder Antler Fragments"
+      }
+    }
+  },
+  "7717": {
+    "id": 7717,
+    "effect": {
+      "id": 139211,
+      "index": 0,
+      "spell": {
+        "id": 356618,
+        "name": "Pouch of Razor Fragments",
+        "icon": "ability_hunter_razorwire"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Pouch of Razor Fragments",
+      "slots": {
+        "feet": "Boots of Razor Fragments",
+        "legs": "Legguards of Razor Wire"
+      }
+    }
+  },
+  "7718": {
+    "id": 7718,
+    "effect": {
+      "id": 139088,
+      "index": 0,
+      "spell": {
+        "id": 356684,
+        "name": "Call to Arms",
+        "icon": "ability_bastion_monk"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Call to Arms"
+    }
+  },
+  "7719": {
+    "id": 7719,
+    "effect": {
+      "id": 139091,
+      "index": 0,
+      "spell": {
+        "id": 356750,
+        "name": "Adjust Weapon",
+        "icon": "trade_engineering"
+      }
+    }
+  },
+  "7720": {
+    "id": 7720,
+    "effect": {
+      "id": 139091,
+      "index": 0,
+      "spell": {
+        "id": 356750,
+        "name": "Adjust Weapon",
+        "icon": "trade_engineering"
+      }
+    }
+  },
+  "7721": {
+    "id": 7721,
+    "effect": {
+      "id": 139095,
+      "index": 0,
+      "spell": {
+        "id": 356705,
+        "name": "Faeline Harmony",
+        "icon": "ability_ardenweald_monk"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Faeline Harmony",
+      "slots": {
+        "hands": "Wrappings of the Fae Harmony",
+        "waist": "Waistcord of Fae Harmony"
+      }
+    }
+  },
+  "7722": {
+    "id": 7722,
+    "effect": {
+      "id": 139212,
+      "index": 0,
+      "spell": {
+        "id": 356789,
+        "name": "Raging Vesper Vortex",
+        "icon": "ability_bastion_shaman"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Raging Vesper Vortex",
+      "slots": {
+        "legs": "Leggings of the Vesper Vortex",
+        "feet": "Footwraps of Raging Vesper"
+      }
+    }
+  },
+  "7723": {
+    "id": 7723,
+    "effect": {
+      "id": 139091,
+      "index": 0,
+      "spell": {
+        "id": 356750,
+        "name": "Adjust Weapon",
+        "icon": "trade_engineering"
+      }
+    }
+  },
+  "7724": {
+    "id": 7724,
+    "effect": {
+      "id": 139091,
+      "index": 0,
+      "spell": {
+        "id": 356750,
+        "name": "Adjust Weapon",
+        "icon": "trade_engineering"
+      }
+    }
+  },
+  "7725": {
+    "id": 7725,
+    "effect": {
+      "id": 139091,
+      "index": 0,
+      "spell": {
+        "id": 356750,
+        "name": "Adjust Weapon",
+        "icon": "trade_engineering"
+      }
+    }
+  },
+  "7726": {
+    "id": 7726,
+    "effect": {
+      "id": 139111,
+      "index": 0,
+      "spell": {
+        "id": 356818,
+        "name": "Sinister Teachings",
+        "icon": "ability_revendreth_monk"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Sinister Teachings",
+      "slots": {
+        "wrist": "Wristwraps of Sinister Teachings",
+        "finger": "Band of Sinister Teachings"
+      }
+    }
+  },
+  "7727": {
+    "id": 7727,
+    "effect": {
+      "id": 139114,
+      "index": 0,
+      "spell": {
+        "id": 356877,
+        "name": "Heart of the Fae",
+        "icon": "ability_ardenweald_mage"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Heart of the Fae"
+    }
+  },
+  "7728": {
+    "id": 7728,
+    "effect": {
+      "id": 139046,
+      "index": 0,
+      "spell": {
+        "id": 356395,
+        "name": "Spheres' Harmony",
+        "icon": "ability_bastion_priest"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Spheres' Harmony",
+      "slots": {
+        "shoulder": "Mantle of the Spheres' Harmony",
+        "legs": "Leggings of the Spheres' Harmony"
+      }
+    }
+  },
+  "7729": {
+    "id": 7729,
+    "effect": {
+      "id": 139042,
+      "index": 0,
+      "spell": {
+        "id": 356390,
+        "name": "Pallid Command",
+        "icon": "ability_maldraxxus_priest"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Pallid Command",
+      "slots": {
+        "finger": "Ring of Pallid Command",
+        "feet": "Sandals of Pallid Command"
+      }
+    }
+  },
+  "7730": {
+    "id": 7730,
+    "effect": {
+      "id": 139244,
+      "index": 0,
+      "spell": {
+        "id": 357996,
+        "name": "Elysian Might",
+        "icon": "ability_bastion_warrior"
+      }
+    },
+    "quality": 5,
+    "name_override": {
+      "base": "Elysian Might",
+      "slots": {
+        "feet": "Sabatons of Elysian Might",
+        "legs": "Greaves of Elysian Might"
+      }
+    }
+  },
+  "7732": {
+    "id": 7732,
+    "tag": "Priceless"
+  },
+  "7733": {
+    "id": 7733,
+    "rawStats": [
+      {
+        "stat": 32,
+        "amount": 2300,
+        "name": "Crit"
+      }
+    ],
+    "stats": "100% Crit [0.2300]"
+  },
+  "7734": {
+    "id": 7734,
+    "rawStats": [
+      {
+        "stat": 36,
+        "amount": 4700,
+        "name": "Haste"
+      }
+    ],
+    "stats": "100% Haste [0.4700]"
+  },
+  "7735": {
+    "id": 7735,
+    "effect": {
+      "id": 139259,
+      "index": 2,
+      "spell": {
+        "id": 357585,
+        "name": "Render Tribute",
+        "icon": "inv_sword_2h_mawraid_d_01"
+      }
+    }
+  },
+  "7736": {
+    "id": 7736,
+    "rawStats": [
+      {
+        "stat": 32,
+        "amount": 1840,
+        "name": "Crit"
+      }
+    ],
+    "stats": "100% Crit [0.1840]"
+  },
+  "7737": {
+    "id": 7737,
+    "rawStats": [
+      {
+        "stat": 36,
+        "amount": 3760,
+        "name": "Haste"
+      }
+    ],
+    "stats": "100% Haste [0.3760]"
+  },
+  "7738": {
+    "id": 7738,
+    "effect": {
+      "id": 139261,
+      "index": 2,
+      "spell": {
+        "id": 358562,
+        "name": "Harsh Tutelage",
+        "icon": "inv_sword_2h_mawraid_d_01"
+      }
+    }
+  },
+  "7739": {
+    "id": 7739,
+    "rawStats": [
+      {
+        "stat": 32,
+        "amount": 1380,
+        "name": "Crit"
+      }
+    ],
+    "stats": "100% Crit [0.1380]"
+  },
+  "7740": {
+    "id": 7740,
+    "rawStats": [
+      {
+        "stat": 36,
+        "amount": 2820,
+        "name": "Haste"
+      }
+    ],
+    "stats": "100% Haste [0.2820]"
+  },
+  "7741": {
+    "id": 7741,
+    "effect": {
+      "id": 139262,
+      "index": 2,
+      "spell": {
+        "id": 358565,
+        "name": "Harsh Tutelage",
+        "icon": "inv_sword_2h_mawraid_d_01"
+      }
+    }
+  },
+  "7742": {
+    "id": 7742,
+    "rawStats": [
+      {
+        "stat": 32,
+        "amount": 920,
+        "name": "Crit"
+      }
+    ],
+    "stats": "100% Crit [0.0920]"
+  },
+  "7743": {
+    "id": 7743,
+    "rawStats": [
+      {
+        "stat": 36,
+        "amount": 1880,
+        "name": "Haste"
+      }
+    ],
+    "stats": "100% Haste [0.1880]"
+  },
+  "7744": {
+    "id": 7744,
+    "effect": {
+      "id": 139263,
+      "index": 2,
+      "spell": {
+        "id": 358567,
+        "name": "Harsh Tutelage",
+        "icon": "inv_sword_2h_mawraid_d_01"
+      }
+    }
+  },
+  "7745": {
+    "id": 7745,
+    "rawStats": [
+      {
+        "stat": 32,
+        "amount": 460,
+        "name": "Crit"
+      }
+    ],
+    "stats": "100% Crit [0.0460]"
+  },
+  "7746": {
+    "id": 7746,
+    "rawStats": [
+      {
+        "stat": 36,
+        "amount": 940,
+        "name": "Haste"
+      }
+    ],
+    "stats": "100% Haste [0.0940]"
+  },
+  "7747": {
+    "id": 7747,
+    "effect": {
+      "id": 139264,
+      "index": 2,
+      "spell": {
+        "id": 358569,
+        "name": "Harsh Tutelage",
+        "icon": "inv_sword_2h_mawraid_d_01"
+      }
+    }
+  },
+  "7748": {
+    "id": 7748,
+    "effect": {
+      "id": 139265,
+      "index": 2,
+      "spell": {
+        "id": 358571,
+        "name": "Harsh Tutelage",
+        "icon": "inv_sword_2h_mawraid_d_01"
+      }
+    }
+  },
+  "7756": {
+    "id": 7756,
+    "tag": "Timewarped"
   }
 }

@@ -1,6 +1,7 @@
 import {EmptyUtil} from '@ukon1990/js-utilities';
 import {safeifyString} from './string.util';
 import {S3} from 'aws-sdk';
+import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
 
 export class RDSQueryUtil<T> {
   static getSQLTimestamp(timestamp: S3.LastModified) {
@@ -145,7 +146,7 @@ export class RDSQueryUtil<T> {
 
 export class NoSQLQueryUtil {
 
-  static update(table: string, input: any, updateLastModified: boolean) {
+  static update(table: string, input: any, updateLastModified: boolean, returnValues = DynamoDbReturnValue.ALL_NEW) {
     const {
       attributeValues,
       updateExpression,
@@ -160,7 +161,7 @@ export class NoSQLQueryUtil {
       UpdateExpression: updateExpression,
       ExpressionAttributeValues: attributeValues,
       ExpressionAttributeNames: expressionAttributeNames,
-      ReturnValues: 'ALL_NEW'
+      ReturnValues: returnValues
     };
   }
 

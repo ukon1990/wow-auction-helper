@@ -62,7 +62,10 @@ export class ProfessionService {
           });
       }
 
-      const timestamp = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+      let timestamp: string | number = localStorage.getItem(this.LOCAL_STORAGE_TIMESTAMP);
+      if (!timestamp || timestamp === 'undefined') {
+        timestamp = 0;
+      }
       if (!this.list.value.length || !timestamp || +new Date(latestTimestamp) > +new Date(timestamp)) {
         await this.getAll();
       }

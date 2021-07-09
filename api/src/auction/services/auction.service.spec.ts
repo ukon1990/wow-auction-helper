@@ -1,12 +1,10 @@
 import {AuctionService} from './auction.service';
-import {AuctionUpdateLog} from '../../models/auction/auction-update-log.model';
 import {S3Handler} from '../../handlers/s3.handler';
 import {DatabaseUtil} from '../../utils/database.util';
 import {environment} from '../../../../client/src/environments/environment';
 import {StatsService} from './stats.service';
-import {RealmService} from '../../realm/service';
 import {RealmRepository} from '../../realm/repositories/realm.repository';
-import {EventRecord, EventSchema} from '../../models/s3/event-record.model';
+import {EventRecord} from '../../models/s3/event-record.model';
 
 const PromiseThrottle: any = require('promise-throttle');
 
@@ -35,46 +33,6 @@ describe('AuctionHandler', () => {
     expect(1).toBe(2);
   });
 
-  xit('Update all statuses', async () => {
-    jest.setTimeout(99999);
-    const conn = new DatabaseUtil(false);
-    await conn.query(`
-        SELECT
-            *
-        FROM
-            (SELECT
-                 id, region, connectedId, COUNT(*) AS count
-             FROM
-                 auction_houses
-             WHERE
-                     id IN (SELECT
-                                ahId
-                            FROM
-                                auction_house_realm)
-             GROUP BY connectedId) tbl
-        WHERE
-            count = 1
-        ORDER BY connectedId ASC;`)
-      .then(async (rows: {id, region}[]) => {
-        const promiseThrottle = new PromiseThrottle({
-            requestsPerSecond: 5,
-            promiseImplementation: Promise
-          }),
-          promises = [];
-        rows.forEach(row => {
-          promises.push(
-            promiseThrottle.add(
-              () => new AuctionService()
-                .updateStatuses(row.region, row.id, conn)));
-        });
-        console.log('Lengt of proms', promises.length);
-        await Promise.all(promises)
-          .catch(console.error);
-      })
-      .catch(console.error);
-    expect(1).toBe(2);
-  });
-
   xit('Testing the behavior of shit', async () => {
     jest.setTimeout(100000);
     await new AuctionService().getAndUploadAuctionDump({
@@ -84,6 +42,13 @@ describe('AuctionHandler', () => {
       lastModified: 1584374834000, url: 'https://eu.api.blizzard.com/data/wow/connected-realm/3391/auctions?namespace=dynamic-eu'
     }, 115, 'eu');
     expect(1).toBe(1);
+  });
+
+  it('Can update all houses', async () => {
+    jest.setTimeout(9999999);
+    const service = new AuctionService();
+    await service.updateAllHouses().catch(console.error);
+    expect(true).toBeTruthy();
   });
 
   xit('can add daily data from hourly', async () => {

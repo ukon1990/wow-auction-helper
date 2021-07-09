@@ -76,6 +76,7 @@ export class SettingsService {
         variables: {
           input: {
             realm: settings.realm,
+            ahId: settings.ahId,
             region: settings.region,
             locale: settings.locale || localStorage.getItem('locale') || 'en_GB',
             customPrices: JSON.stringify(settings.customPrices || []),

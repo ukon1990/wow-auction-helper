@@ -13,11 +13,14 @@
        class="col-xs-12 col-md-6 col-lg-6 col-xl-4 mb-2">
     <mat-card>
       <mat-card-header>
-        <mat-card-title (click)="setSelectedItem(item)" class="small-title">
-          <a rel="domain={{ locale }},item={{ item.id }}">
-            <wah-icon class="float-left" [size]="22" [id]="item.id"></wah-icon>
-            {{ item.name }}
-          </a>
+        <mat-card-title
+                (click)="setSelectedItem(item)"
+                class="small-title"
+                wahItemTooltip
+                [item]="item"
+        >
+          <wah-icon class="float-left" [size]="22" [id]="item.id"></wah-icon>
+          {{ item.name }}
         </mat-card-title>
         <mat-card-subtitle>
           <strong>Buyout</strong> {{ item.buyout | gold }}<br>

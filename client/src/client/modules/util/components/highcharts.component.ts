@@ -2,10 +2,10 @@ import {Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChan
 import * as Highcharts from 'highcharts';
 import {
   Axis,
+  AxisTypeValue,
   Chart,
-  Point, Series,
   SeriesOptionsType,
-  Tooltip, TooltipFormatterCallbackFunction,
+  Tooltip,
   TooltipFormatterContextObject,
   XAxisOptions,
   YAxisOptions
@@ -51,6 +51,7 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
   @Input() height = '20em';
   @Input() width = '100%';
   @Input() title: string;
+  @Input() axisType: AxisTypeValue = 'linear';
   @Input() tooltipFormatter: (tip?: Tooltip) => string = this.defaultTooltip;
   @Input() options: Highcharts.Options = {
     title: {
@@ -69,16 +70,17 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
     },
     yAxis: [
       { // Primary yAxis
-        type: 'logarithmic',
+        type: this.axisType,
         labels: {
           format: '{value}',
           formatter: ({value}) => this.goldPipe.transform(+value),
         },
         title: {
           text: 'Gold',
-        }
+        },
+        opposite: true
       }, {
-        type: 'logarithmic',
+        type: this.axisType,
         title: {
           text: 'Quantity',
         },
@@ -86,7 +88,6 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
           format: '{value} qty',
           formatter: ({value}) => NumberUtil.format(+value),
         },
-        opposite: true
       }
     ],
     tooltip: {
@@ -134,6 +135,27 @@ export class HighchartsComponent implements OnChanges, OnDestroy {
 
     if (series && series.currentValue) {
       this.options.series = series.currentValue;
+
+      if (Array.isArray(this.options.yAxis)) {
+        this.options.yAxis.forEach((axis, index) => {
+          let min = 0, max = 0;
+          this.options.series.forEach((s: any) => {
+            if (s.yAxis === index || !index && !s.yAxis) {
+              const minMax = NumberUtil.getUpperAndLowerThreshold(s.data);
+              if (minMax.min < axis.min || !axis.min) {
+                min = minMax.min;
+                axis.min = minMax.min;
+              }
+              if (axis.max < minMax.max || !axis.max) {
+                max = minMax.max;
+                axis.max = minMax.max;
+              }
+            }
+          });
+        });
+      } else {
+
+      }
     }
 
     if (tooltipFormatter && tooltipFormatter.currentValue) {

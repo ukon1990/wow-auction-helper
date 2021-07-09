@@ -14,7 +14,9 @@ export class RealmStatus {
   timezone: string;
   url: string | {[key: string]: string};
   tsmUrl: string;
-  lastModified: any;
+  lastModified: number;
+  lastRequested: number;
+  nextUpdate: number;
   size: number;
   lowestDelay: number;
   avgDelay: number;
@@ -24,6 +26,7 @@ export class RealmStatus {
     url: string;
     lastModified: number;
   };
+  ahTypeIsChanged?: boolean;
 
   constructor(slug?: string, lastModified?: number) {
     if (slug) {

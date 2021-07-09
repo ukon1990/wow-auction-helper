@@ -1,6 +1,8 @@
 import {environment} from '../../../client/src/environments/environment';
 import {ItemUtil} from './item.util';
 import {Item} from '../../../client/src/client/models/item/item';
+import {ItemServiceV2} from "../item/service";
+import {DatabaseUtil} from "./database.util";
 
 describe('ItemUtil', () => {
   let originalEnvironment;
@@ -67,10 +69,17 @@ describe('ItemUtil', () => {
 
   });
 
-  xit('getItemsByQualityForPatch', async () => {
-    jest.setTimeout(30000);
-    const list = await ItemUtil.getNewItemsForPatch(80300);
+  it('getItemsByQualityForPatch', async () => {
+    jest.setTimeout(999999999);
+    const list = await ItemUtil.getNewItemsForPatch(90100);
     console.log('ids', list.map(l => l.id).join(','));
-    expect(list.length).toBe(1918);
+    const itemService = new ItemServiceV2();
+    /*
+    const db = new DatabaseUtil(false);
+    await itemService.addOrUpdateItemsByIds(list.map(l => l.id), db)
+      .catch(console.error);
+    db.end();
+    */
+    expect(list.length).toBe(315);
   });
 });

@@ -12,6 +12,7 @@ export class User {
   faction: number;
   region: string;
   realm: string;
+  ahId: number;
   character = '';
   characters: Array<Character> = new Array<Character>();
   customPrices: CustomPrice[] = customPricesDefault;

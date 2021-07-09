@@ -46,7 +46,21 @@ export class RecipeService {
   static getAndInsert(id: number, db: DatabaseUtil): Promise<Recipev2> {
     return new Promise<Recipev2>((resolve, reject) => {
       this.getById(id, 'en_GB', db)
-        .then(existingRecipe => {
+        .then(async existingRecipe => {
+          await RecipeV2Util.getRecipeFromAPI(id)
+            .then((recipe: Recipev2) => {
+              this.repository.insertData(recipe, db)
+                .then(async () => {
+                  const queries = [];
+                  this.repository.getModifiedCraftingSlotQueries(existingRecipe[0], queries);
+                  for (const query of queries) {
+                    await db.query(query).catch(console.error);
+                  }
+                  console.log('Updating existing recipe', id, recipe.name.en_GB, queries.length);
+                })
+                .catch(reject);
+            })
+            .catch(reject);
           resolve();
         })
         .catch(error => {

@@ -6,6 +6,7 @@
                 left: activeTooltip.x + 'px'
               }"
 >
+    <wah-close-btn (close)="close()"></wah-close-btn>
     <div class="wowhead-tooltip custom" [innerHtml]="activeTooltip.body"></div>
     <div class="tooltip-extra">
         <ng-container *ngIf="recipes || recipeId">

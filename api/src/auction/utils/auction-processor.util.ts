@@ -245,7 +245,7 @@ export class AuctionProcessorUtil {
   static setCurrentDayFromHourly(result: { daily: any[]; hourly: any[] }) {
     let latestTimestamp;
     const dayMap = {};
-    result.daily.forEach(day => {
+    (result.daily || []).forEach(day => {
       if (!latestTimestamp || latestTimestamp < day.timestamp) {
         latestTimestamp = day.timestamp;
       }
@@ -255,7 +255,7 @@ export class AuctionProcessorUtil {
     latestTimestamp.setUTCMinutes(0);
     latestTimestamp.setUTCSeconds(0);
     latestTimestamp = +latestTimestamp;
-    result.hourly.forEach(({timestamp, min, quantity, petSpeciesId, bonusIds}) => {
+    (result.hourly || []).forEach(({timestamp, min, quantity, petSpeciesId, bonusIds}) => {
       if (timestamp > latestTimestamp) {
         const date = new Date(timestamp);
         date.setUTCHours(12);
