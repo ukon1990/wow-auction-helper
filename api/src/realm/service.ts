@@ -140,17 +140,10 @@ export class RealmService {
     return new Promise<void>((resolve, reject) => {
       this.repository.getAllRealmsSeparated()
         .then(realms => {
-          Promise.all([
-              ...['eu', 'us', 'tw', 'kr']
-              .map(region =>
-                new S3Handler().save(realms, `status/${region}/all.json.gz`, {url: '', region})
-                  .catch(console.error)),
-            // TODO: Remove once the frontend is updated
-            ...['eu', 'us', 'tw', 'kr']
+          Promise.all(['eu', 'us', 'tw', 'kr']
             .map(region =>
-              new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
+              new S3Handler().save(realms, `status/${region}/all.json.gz`, {url: '', region})
                 .catch(console.error))
-            ]
           ).then(() => resolve())
             .catch(reject);
         })
@@ -258,29 +251,15 @@ export class RealmService {
         .catch(console.error);
       this.repository.getRealmsSeparated(ahId)
         .then(realms => {
-          Promise.all(
-            [
-              s3.save(
-                house,
-                `status/${region}/${house.id}.json.gz`, {url: '', region})
-                .then(uploaded => {
-                  console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
-                })
-                .catch(error => {
-                  console.error(error);
-                }),
-              // TODO: Remove this
-              ...realms.map(realm => s3.save(
-              realm,
-              `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
-              .then(uploaded => {
-                console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
-              })
-              .catch(error => {
-                console.error(error);
-              }))
-            ]
-          )
+          s3.save(
+            house,
+            `status/${region}/${house.id}.json.gz`, {url: '', region})
+            .then(uploaded => {
+              console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
+            })
+            .catch(error => {
+              console.error(error);
+            })
             .then(resolve)
             .catch(reject);
         })
