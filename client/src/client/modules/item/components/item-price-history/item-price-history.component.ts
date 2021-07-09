@@ -58,6 +58,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     data: [],
     color: this.theme.accentColorCode,
     type: 'line',
+    dashStyle: 'ShortDot',
     marker: {
       enabled: false
     }
@@ -67,7 +68,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
     data: [],
     type: 'line',
     yAxis: 1,
-    color: 'hsla(0, 100%, 50%, 0.7)',
+    color: this.theme.warnColorCode,
     marker: {
       enabled: false
     }
@@ -75,7 +76,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
   hourlyPriceChart: SeriesOptionsType = {
     name: 'Prices',
     data: [],
-    color: 'rgba(0, 255, 22, 0.7)',
+    color: this.theme.primaryColorCode,
     type: 'line',
     marker: {
       enabled: false
@@ -93,7 +94,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       type: 'arearange',
       lineWidth: 0,
       linkedTo: ':previous',
-      color: 'rgba(0, 255, 22, 0.7)',
+      color: this.theme.primaryColorCode,
       fillOpacity: 0.3,
       zIndex: 0,
       marker: {
@@ -104,7 +105,8 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       data: [],
       type: 'line',
       zIndex: 1,
-      color: 'rgba(255, 144, 0, 0.8)',
+      color: this.theme.primaryColorCode,
+      dashStyle: 'Dash',
       marker: {/*
         fillColor: 'white',
         lineWidth: 2,
@@ -121,7 +123,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       type: 'arearange',
       lineWidth: 0,
       linkedTo: ':previous',
-      color: 'hsla(0, 100%, 50%, 0.7)',
+      color: this.theme.warnColorCode,
       fillOpacity: 0.3,
       zIndex: 0,
       yAxis: 1,
@@ -134,7 +136,8 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       type: 'line',
       zIndex: 1,
       yAxis: 1,
-      color: 'rgba(255, 144, 0, 0.8)',
+      color: this.theme.warnColorCode,
+      dashStyle: 'Dash',
       marker: {/*
         fillColor: 'red',
         lineWidth: 2,
@@ -165,6 +168,7 @@ export class ItemPriceHistoryComponent implements OnChanges, AfterViewInit {
       type: 'line',
       zIndex: 1,
       color: this.theme.accentColorCode,
+      dashStyle: 'ShortDot',
       marker: {/*
         fillColor: 'red',
         lineWidth: 2,

@@ -50,11 +50,9 @@ export class RealmListDialogComponent implements OnDestroy {
       this.service.events.list,
       (realms: RealmStatus[]) => {
         this.realms = realms.map(status => {
-          const nextUpdate = status.lastModified + status.lowestDelay * 1000 * 60;
           return {
             ...status,
-            timeLeft: DateUtil.timeSince(new Date(nextUpdate), 'm') * -1,
-            nextUpdate: nextUpdate
+            timeLeft: DateUtil.timeSince(new Date(status.nextUpdate), 'm') * -1,
           };
         });
         const times = {};

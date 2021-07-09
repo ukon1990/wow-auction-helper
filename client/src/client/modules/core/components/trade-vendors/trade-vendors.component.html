@@ -43,12 +43,14 @@
     <div class="col-xxxl-4 col-xl-6 mb-3 slim-sm" *ngIf="tv.itemsFiltered.length > 0">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>
-            <a rel="domain={{ locale }},item={{ tv.itemID }}"
-               routerLink="."
-               (click)="select(tv)">
-              {{ tv.name }}
-            </a>
+          <mat-card-title
+            wahItemTooltip
+            [item]="tv"
+            idName="itemID"
+            linkType="item"
+            (click)="select(tv)"
+          >
+            {{ tv.name }}
           </mat-card-title>
           <mat-card-subtitle>
             <strong>Sold by: </strong>

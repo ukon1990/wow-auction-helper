@@ -4,6 +4,7 @@ import {AWSError} from 'aws-sdk';
 import {NoSQLQueryUtil} from '../utils/query.util';
 import {AuthorizationUtil} from '../utils/authorization.util';
 import {DashboardV2} from '../../../client/src/client/modules/dashboard/models/dashboard-v2.model';
+import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
 
 export abstract class BaseRepository<T> {
   protected client: DocumentClient;
@@ -86,12 +87,12 @@ export abstract class BaseRepository<T> {
     });
   }
 
-  updateEntry(id: string | number, entry: T | any, updateLastModified = true): Promise<T> {
+  updateEntry(id: string | number, entry: T | any, updateLastModified = true, returnValues?: DynamoDbReturnValue): Promise<T> {
     return new Promise((resolve, reject) => {
       this.client.update(NoSQLQueryUtil.update(this.table, {
           id,
           ...entry,
-        }, updateLastModified),
+        }, updateLastModified, returnValues),
         (error, data) => {
           if (error) {
             reject(error);

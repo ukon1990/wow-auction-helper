@@ -239,7 +239,7 @@ export class DownloadDialogComponent implements OnInit, OnDestroy {
   }
 
   private async downloadAuctions() {
-    await this.realmService.getStatus(SharedService.user.region, SharedService.user.realm);
+    await this.realmService.getStatus();
     await this.auctionsService.getAuctions();
   }
 

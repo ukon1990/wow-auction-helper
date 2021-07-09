@@ -14,8 +14,8 @@ import {UserUtil} from '../utils/user/user.util';
 import {environment} from '../../environments/environment';
 import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {SettingsService} from '../modules/user/services/settings/settings.service';
-import {CraftingService} from "./crafting.service";
-import {ItemService} from "./item.service";
+import {CraftingService} from './crafting.service';
+import {ItemService} from './item.service';
 
 @Injectable()
 export class RealmService {
@@ -28,8 +28,8 @@ export class RealmService {
   events = {
     timeSince: new BehaviorSubject(0),
     realmStatus: new BehaviorSubject<AuctionHouseStatus>(undefined),
-    list: new BehaviorSubject([]),
-    map: new BehaviorSubject(new Map<number, RealmStatus>()),
+    list: new BehaviorSubject<AuctionHouseStatus[]>([]),
+    map: new BehaviorSubject<Map<number, RealmStatus>>(new Map<number, RealmStatus>()),
     realmChanged: new EventEmitter<AuctionHouseStatus>()
   };
 
@@ -68,17 +68,24 @@ export class RealmService {
       SharedService.userRealms.push(tmpMap[key]));
   }
 
-  async changeRealm(realm: string, region: string = SharedService.user.region, ahTypeId: number = SharedService.user.ahTypeId) {
+  async changeRealm(
+    slug: string,
+    region: string = SharedService.user.region,
+    ahTypeId: number = SharedService.user.ahTypeId
+  ) {
     const ahTypeChanged = SharedService.user.ahTypeId !== ahTypeId;
+    const ahId = this.getAhIdForSlug(region, slug);
     SharedService.user.region = region;
-    SharedService.user.realm = realm;
+    SharedService.user.realm = slug;
     SharedService.user.ahTypeId = ahTypeId;
+    SharedService.user.ahId = ahId;
 
     UserUtil.save();
     return new Promise<AuctionHouseStatus>(async (resolve, reject) => {
       this.getStatus(
         SharedService.user.region,
-        realm,
+        SharedService.user.realm,
+        ahId,
         true,
         ahTypeChanged
       )
@@ -93,15 +100,42 @@ export class RealmService {
     });
   }
 
+  private getAhIdForSlug(region: string, slug: string) {
+    const ahId = this.events.list.value.filter(realm =>
+      realm.slug === slug && realm.region === region)[0].id;
+    console.log('Regi slu', region, slug, ahId);
+    return ahId;
+  }
+
   getLogForRealmWithId(ahId: number): Promise<AuctionUpdateLog> {
     return this.http.get(
       Endpoints.getLambdaUrl(`auction/log/${ahId}`)).toPromise() as Promise<AuctionUpdateLog>;
   }
 
-  getStatus(region?: string, realm?: string, isInitialLoad = false, ahTypeIdChanged = false): Promise<AuctionHouseStatus> {
-    if (!region || !realm && SharedService.user.realm) {
+  private updateLastRequestedForRealm(
+    region: string,
+    ahId: number,
+    lastRequested: number
+  ): Promise<any> {
+    return this.http.post(Endpoints.getLambdaUrl('realms/update-last-requested', region), {
+      id: ahId,
+      lastRequested,
+    }).toPromise();
+  }
+
+  getStatus(
+    region: string = SharedService.user.region,
+    realm: string = SharedService.user.realm,
+    ahId?: number,
+    isInitialLoad = false, ahTypeIdChanged = false): Promise<AuctionHouseStatus> {
+    if (!region || !ahId) {
       region = SharedService.user.region;
-      realm = SharedService.user.realm;
+      if (!SharedService.user.ahId && SharedService.user.realm) {
+        SharedService.user.ahId = this.getAhIdForSlug(region, realm);
+      }
+      if (SharedService.user.ahId) {
+        ahId = SharedService.user.ahId;
+      }
     }
     this.isCheckingStatus = true;
     const realmStatus = this.events.realmStatus.value,
@@ -109,12 +143,23 @@ export class RealmService {
         realmStatus.lowestDelay * 1000 * 60 + realmStatus.lastModified, new Date()) : false,
       versionId = timeSince && timeSince > 1 ? '?timeDiff=' + timeSince : '';
     return new Promise<AuctionHouseStatus>(((resolve, reject) => {
-      this.http.get(Endpoints.getS3URL(region, 'auctions', realm) + versionId)
+      this.http.get(Endpoints.getS3URL(region, 'status', `${ahId}`) + versionId)
         .toPromise()
-        .then(async (status: AuctionHouseStatus) => {
+        .then(async (house: AuctionHouseStatus) => {
+          const status = this.connectRealmForHouse(house, realm);
+          console.log('Status', status);
           const isClassic = status.gameBuild > 0;
           const recipeLength = CraftingService.list.value.length;
           status.ahTypeIsChanged = ahTypeIdChanged;
+
+          /* TODO: Activate if I decide to allow the client to do this
+          if (!realmStatus || status.lastModified !== realmStatus.lastModified) {
+            // So that we can keep track of which realms to keep up to date
+            this.updateLastRequestedForRealm(status.region, status.ahId, status.lastRequested)
+              .then(res => console.log('updateLastRequestedForRealm', res))
+              .catch(console.error);
+          }
+          */
 
           if (this.isClassic !== undefined && isClassic !== this.isClassic && recipeLength) {
             await this.craftingService.load(undefined, isClassic)
@@ -131,7 +176,7 @@ export class RealmService {
             connectedTo: status.connectedTo && typeof status.connectedTo === 'string' ?
               ('' + status['connectedTo']).split(',') : status.connectedTo,
             isInitialLoad,
-          });
+          } as AuctionHouseStatus);
 
           this.isCheckingStatus = false;
           resolve(status);
@@ -146,7 +191,7 @@ export class RealmService {
 
   getRealms(region?: string): Promise<any> {
     return new Promise<any>(((resolve, reject) => {
-      this.http.get(Endpoints.getS3URL(region, 'auctions', 'status') +
+      this.http.get(Endpoints.getS3URL(region, 'status', 'all') +
         '?random=' + (Math.random() * 1000)) // Endpoints.getLambdaUrl('realm/all', region)
         .toPromise()
         .then((realms: any[]) => {
@@ -180,9 +225,9 @@ export class RealmService {
   }
 
   private async checkForUpdates() {
-    const {region, realm} = SharedService.user;
-    if (!this.isCheckingStatus && this.shouldUpdateRealmStatus() && realm && region) {
-      await this.getStatus(region, realm);
+    const {region, ahId, realm} = SharedService.user;
+    if (!this.isCheckingStatus && this.shouldUpdateRealmStatus() && ahId && region) {
+      await this.getStatus(region, realm, ahId);
     }
   }
 
@@ -201,5 +246,36 @@ export class RealmService {
     } else {
       this.events.timeSince.next(0);
     }
+  }
+
+  private connectRealmForHouse(house: any, slug: string): AuctionHouseStatus {
+      const realms: AuctionHouseStatus[] = [];
+      house.realms.forEach(realm => {
+      realms.push({
+        id: house.id,
+        ahId: house.id,
+        region: house.region,
+        slug: realm.slug,
+        name: realm.name,
+        connectedTo: house.realmSlugs.split(','),
+        realms: house.realms,
+        battlegroup: house.battlegroup,
+        locale: realm.locale,
+        timezone: realm.timezone,
+        url: house.url,
+        tsmUrl: house.tsm ? house.tsm.url : undefined,
+        lastModified: house.lastModified,
+        lastRequested: house.lastRequested,
+        nextUpdate: house.nextUpdate,
+        size: house.size,
+        lowestDelay: house.lowestDelay,
+        avgDelay: house.avgDelay,
+        highestDelay: house.highestDelay,
+        stats: house.stats,
+        gameBuild: house.gameBuild,
+        firstRequested: house.firstRequested,
+      });
+    });
+    return realms.filter(h => h.slug === slug)[0];
   }
 }

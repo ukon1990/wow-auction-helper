@@ -12,6 +12,7 @@ export class UserSettings {
   ahTypeId?: number;
   region?: string;
   realm?: string;
+  ahId?: number;
   faction?: number;
   locale?: string;
   characters: SettingsCharacter[] = [];

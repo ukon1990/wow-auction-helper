@@ -46,6 +46,7 @@ export class ItemUtil {
     region: string = 'us',
     namespaceType: NameSpace = NameSpace.STATIC_RETAIL
   ): Promise<Item> {
+    console.log('Fetching item by id:', id);
     return new Promise<Item>(async (resolve, reject) => {
       await AuthHandler.getToken();
       const url = new Endpoints()
@@ -97,8 +98,8 @@ export class ItemUtil {
 
   private static getItemsByQualityForPatch(patchNumber: number, quality: number): Promise<any> {
     return new Promise<any>((resolve) => {
-      const url = `https://ptr.wowhead.com/items/quality:${
-        quality}?filter=82:161;2:1;${patchNumber}:0`;
+      const url = `https://wowhead.com/items/quality:${
+        quality}?filter=82:161:2;2:1:2;${patchNumber}:0:0`;
       console.log('getItemsByQualityForPatch', url);
       new HttpClientUtil().get(url, false)
         .then(({body}) => {

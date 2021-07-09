@@ -12,6 +12,7 @@ import {BLIZZARD} from '../secrets';
 import {HttpResponse} from '../models/http-response.model';
 import {GameBuildVersion} from '../../../client/src/client/utils/game-build.util';
 import {TextUtil} from '@ukon1990/js-utilities';
+import {DynamoDbReturnValue} from "../enums/dynamo-db-return-value.enum";
 
 export class RealmService {
   private repository: RealmRepository;
@@ -35,21 +36,34 @@ export class RealmService {
     });
   }
 
-  updateLastRequested(id: number, lastRequested: number, nextUpdate?: number): Promise<any> {
-    const updatedValue = {id, lastRequested};
-    if (nextUpdate) {
-      updatedValue['nextUpdate'] = nextUpdate;
-    }
-    return this.repository.updateEntry(id, updatedValue);
+  updateLastRequested(id: number, lastRequested?: number): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (!lastRequested) {
+        await this.repository.getById(id)
+          .then(house => {
+            lastRequested = house.lastRequested;
+          })
+          .catch(console.error);
+      }
+
+      const isInactive = this.isHouseInactive(lastRequested);
+      const nextUpdate = isInactive ? +new Date() : undefined;
+      const updatedValue = {id, lastRequested: +new Date()};
+      if (nextUpdate) {
+        updatedValue['nextUpdate'] = nextUpdate;
+      }
+      this.repository.updateEntry(id, updatedValue, undefined, DynamoDbReturnValue.NONE)
+        .then(resolve)
+        .catch(reject);
+    });
   }
 
-  updateLastRequestedWithRegionAndSlug(region: string, slug: string, lastRequested: number): Promise<void> {
+  updateLastRequestedWithRegionAndSlug(region: string, slug: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.repository.getByRegionAndSlug(region, slug)
         .then((realm: AuctionHouse) => {
           if (realm) {
-            const isInactive = this.isHouseInactive(realm.lastRequested);
-            this.updateLastRequested(realm.id, +lastRequested, isInactive ? +new Date() : undefined)
+            this.updateLastRequested(realm.id, realm.lastRequested)
               .then(resolve)
               .catch(reject);
           } else {
@@ -88,7 +102,9 @@ export class RealmService {
       if (isInactiveHouse) {
         const nextUpdate = +new Date() + hour * 6;
         this.repository.update(id, {
-          ...entry,
+          lastModified: entry.lastModified,
+          url: entry.url,
+          size: entry.size,
           nextUpdate,
         })
           .then(resolve)
@@ -97,10 +113,12 @@ export class RealmService {
         this.logRepository.getUpdateDelays(id)
           .then(delay => {
             // Setting the delay to 115 as a max, in case of newly activated realms
-            const lowestDelay = (delay.lowestDelay > 120 ? 115 : delay.lowestDelay);
+            const lowestDelay = (delay.lowestDelay > 120 ? 60 : delay.lowestDelay);
             const nextUpdate = entry.lastModified + lowestDelay * minute;
             this.repository.update(id, {
-              ...entry,
+              lastModified: entry.lastModified,
+              url: entry.url,
+              size: entry.size,
               ...delay,
               nextUpdate,
             })
@@ -115,17 +133,24 @@ export class RealmService {
   private isHouseInactive(lastRequested: number) {
     const minute = 60 * 1000;
     const hour = minute * 60;
-    return lastRequested <= +new Date() - hour * 24 * 7;
+    return lastRequested <= +new Date() - hour * 24 * 14;
   }
 
   updateAllRealmStatuses(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.repository.getAllRealmsSeparated()
         .then(realms => {
-          Promise.all(['eu', 'us', 'tw', 'kr']
+          Promise.all([
+              ...['eu', 'us', 'tw', 'kr']
+              .map(region =>
+                new S3Handler().save(realms, `status/${region}/all.json.gz`, {url: '', region})
+                  .catch(console.error)),
+            // TODO: Remove once the frontend is updated
+            ...['eu', 'us', 'tw', 'kr']
             .map(region =>
               new S3Handler().save(realms, `auctions/${region}/status.json.gz`, {url: '', region})
                 .catch(console.error))
+            ]
           ).then(() => resolve())
             .catch(reject);
         })
@@ -225,11 +250,27 @@ export class RealmService {
 
   async createLastModifiedFile(ahId: number, region: string) {
     const start = +new Date();
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      const s3 = new S3Handler();
+      let house: AuctionHouse;
+      await this.getById(ahId)
+        .then(h => house = h)
+        .catch(console.error);
       this.repository.getRealmsSeparated(ahId)
         .then(realms => {
           Promise.all(
-            realms.map(realm => new S3Handler().save(
+            [
+              s3.save(
+                house,
+                `status/${region}/${house.id}.json.gz`, {url: '', region})
+                .then(uploaded => {
+                  console.log(`Timestamp uploaded for ${ahId} @ ${uploaded.url} in ${+new Date() - start} ms`);
+                })
+                .catch(error => {
+                  console.error(error);
+                }),
+              // TODO: Remove this
+              ...realms.map(realm => s3.save(
               realm,
               `auctions/${region}/${realm.slug}.json.gz`, {url: '', region})
               .then(uploaded => {
@@ -238,6 +279,7 @@ export class RealmService {
               .catch(error => {
                 console.error(error);
               }))
+            ]
           )
             .then(resolve)
             .catch(reject);

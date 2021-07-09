@@ -203,7 +203,7 @@ export class AuctionService {
           ahDumpResponse = r)
         .catch(async e => {
           error = e || {message: 'Could not fetch AH dump'};
-          const minutesToNextAttempt = 30;
+          const minutesToNextAttempt = 5;
           const nextUpdateAttemptAppend = 1000 * 60 * minutesToNextAttempt;
           await this.realmRepository.update(house.id, {nextUpdate: +new Date() + nextUpdateAttemptAppend})
             .catch(console.error);
@@ -211,7 +211,12 @@ export class AuctionService {
             house.id}(${house.region}), trying again in ${minutesToNextAttempt} minutes.`, error);
         });
 
-      if (!error && ahDumpResponse && ahDumpResponse.lastModified > house.lastModified) {
+      /**
+       * used to be:  !error  && ahDumpResponse && ahDumpResponse.lastModified > house.lastModified
+       * Changed it, since there seemed to be some issues with it.
+       * But I'm keeping this comment, in case I find cost issues related to not checking for the dump date vs stored date.
+       */
+      if (!error) {
         console.log('Starting upload');
         new S3Handler().save(ahDumpResponse, `auctions/${house.region}/${house.id}/dump-path.json.gz`,
           {region: house.region})

@@ -23,7 +23,8 @@ export class ProfessionRepository extends Repository<Profession> {
                type,
                skillTierName.${locale} AS skillTier,
                min,
-               max
+               max,
+               timestamp
         FROM professions AS p
           LEFT JOIN professionsName AS n ON n.id = p.id
           LEFT JOIN professionsDescription AS d ON d.id = p.id
@@ -39,6 +40,7 @@ export class ProfessionRepository extends Repository<Profession> {
                 description: row['description'],
                 icon: row['icon'],
                 type: row['type'],
+                timestamp: row['timestamp'],
                 skillTiers: []
               };
 

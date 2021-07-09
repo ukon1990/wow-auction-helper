@@ -106,7 +106,7 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
     this.goldLog = [{
       name: 'Gold log',
       type: 'line',
-      color: 'rgba(0, 255, 22, 0.7)',
+      color: this.theme.primaryColorCode,
       data: this.data.goldLog,
     }];
     Report.debug('calculateData', this.data);
@@ -153,38 +153,41 @@ export class ProfitSummary2Component implements OnInit, OnDestroy {
         data: row.history.map(entry => [entry.time, entry.saleQuantity]),
         type: 'line',
         yAxis: 1,
-        color: 'hsla(0, 100%, 50%, 0.7)',
+        color: this.theme.warnColorCode,
       },
       {
         name: 'Sum sale price',
         data: row.history.map(entry => [entry.time, entry.salePrice]),
         type: 'line',
-        color: 'rgba(0, 255, 22, 0.7)',
+        color: this.theme.primaryColorCode,
       },
       {
         name: 'Avg sale price',
         data: row.history.map(entry => [entry.time, entry.salePrice / entry.saleQuantity]),
         type: 'line',
-        color: 'rgba(0, 255, 22, 0.7)',
+        color: this.theme.accentColorCode,
       },
       {
         name: '# Purchased',
         data: row.history.map(entry => [entry.time, entry.buyQuantity]),
         type: 'line',
+        dashStyle: 'Dash',
         yAxis: 1,
-        color: 'hsla(230,93%,52%,0.7)',
+        color: this.theme.warnColorCode,
       },
       {
         name: 'Sum purchase price',
         data: row.history.map(entry => [entry.time, entry.buyPrice]),
         type: 'line',
-        color: 'rgba(248,197,96,0.7)',
+        color: this.theme.primaryColorCode,
+        dashStyle: 'DashDot'
       },
       {
         name: 'Avg purchase price',
         data: row.history.map(entry => [entry.time, entry.buyPrice / entry.buyQuantity]),
         type: 'line',
-        color: 'rgba(248,197,96,0.7)',
+        color: this.theme.accentColorCode,
+        dashStyle: 'Dash'
       },
     ];
     this.selectedRowData = row;

@@ -137,16 +137,17 @@ export class BackgroundDownloadService {
 
   private async initiateRealmSpecificDownloads(region: string, realm: string) {
     const start = +new Date();
-    const promises: Promise<any>[] = [
-      this.realmService.getStatus(),
-      this.realmService.getRealms()
-    ];
+
+
     await this.dbService.getAddonData()
       .catch(console.error);
 
-    await Promise.all(promises)
-      .catch(error =>
-        ErrorReport.sendError('BackgroundDownloadService.init', error));
+    try {
+      await this.realmService.getRealms();
+      await this.realmService.getStatus();
+    } catch (error) {
+      ErrorReport.sendError('BackgroundDownloadService.init', error);
+    }
     console.log('Loaded realm specific data in ' + DateUtil.getDifferenceInSeconds(start, +new Date()));
   }
 

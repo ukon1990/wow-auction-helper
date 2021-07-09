@@ -18,7 +18,7 @@ export class Endpoints {
   };
   public static readonly S3_BUCKET = `https://s3-eu-west-1.amazonaws.com/wah-data`;
 
-  static getS3URL(region: string, type: 'auctions' | 'tsm', path: string) {
+  static getS3URL(region: string, type: 'auctions' | 'tsm' | 'status', path: string) {
     if (!region) {
       region = SharedService.user && SharedService.user.region ?
         SharedService.user.region : 'eu';

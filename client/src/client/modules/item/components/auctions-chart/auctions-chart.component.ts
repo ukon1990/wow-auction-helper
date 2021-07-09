@@ -3,9 +3,8 @@ import {SubscriptionManager} from '@ukon1990/subscription-manager';
 import {AuctionsService} from '../../../../services/auctions.service';
 import {Auction} from '../../../auction/models/auction.model';
 import {FormControl} from '@angular/forms';
-import {NumberUtil} from '../../../util/utils/number.util';
-import {GoldPipe} from '../../../util/pipes/gold.pipe';
 import {SeriesOptionsType, XAxisOptions} from 'highcharts';
+import {ThemeUtil} from '../../../core/utils/theme.util';
 
 @Component({
   selector: 'wah-auctions-chart',
@@ -16,6 +15,7 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
   @Input() auctions: Auction[] = [];
   @Input() dialogId: string;
 
+  private theme = ThemeUtil.current;
   sm = new SubscriptionManager();
   medianPercentLimit: FormControl;
   medianPrice: number;
@@ -33,11 +33,11 @@ export class AuctionsChartComponent implements OnChanges, OnDestroy, AfterConten
       data: [],
       type: 'line',
       yAxis: 1,
-      color: 'hsla(0, 100%, 50%, 0.7)',
+      color: this.theme.warnColorCode,
     }, {
       name: 'Prices',
       data: [],
-      color: 'rgba(0, 255, 22, 0.7)',
+      color: this.theme.primaryColorCode,
       type: 'line',
     }
   ];

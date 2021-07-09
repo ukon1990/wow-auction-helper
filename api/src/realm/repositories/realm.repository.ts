@@ -40,6 +40,8 @@ export class RealmRepository extends BaseRepository<AuctionHouse> {
           url: house.url,
           tsmUrl: house.tsm ? house.tsm.url : undefined,
           lastModified: house.lastModified,
+          lastRequested: house.lastRequested,
+          nextUpdate: house.nextUpdate,
           size: house.size,
           lowestDelay: house.lowestDelay,
           avgDelay: house.avgDelay,
