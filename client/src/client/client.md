@@ -19,7 +19,7 @@ export const APP_SYNC = {
 };
 ```
 
-You can keep USE_LOCAL_BACKEND set to false, as that would not require you to set up the backend.
+You can keep USE_LOCAL_BACKEND set to false and set production to true, as that would not require you to set up the backend.
 
 ## Updating Angular
 To update angular, simply type `ng update` into the terminal while in the client directory.
